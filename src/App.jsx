@@ -422,8 +422,8 @@ export default function App() {
         onOpenAuth={() => setIsAuthOpen(true)}
       />
 
-      {/* 2. Secondary Sub-Bar (Theory Handbook trigger & Weekly Word Target Progress) */}
-      <div className="bg-slate-100 border-b border-slate-200 px-4 py-1.5 flex flex-wrap items-center justify-between text-xs gap-2">
+      {/* 2. Secondary Sub-Bar (Desktop Theory & Weekly Word Target Progress) */}
+      <div className="hidden sm:flex bg-slate-100 border-b border-slate-200 px-4 py-1.5 items-center justify-between text-xs gap-2">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsTheoryOpen(true)}
@@ -434,7 +434,7 @@ export default function App() {
 
           <button
             onClick={() => setIsMistakeLogOpen(true)}
-            className="hidden sm:flex items-center space-x-1 px-2 py-1 rounded-md hover:bg-slate-200 text-slate-700 font-medium transition-colors"
+            className="flex items-center space-x-1 px-2 py-1 rounded-md hover:bg-slate-200 text-slate-700 font-medium transition-colors"
           >
             <span>⚠️ Sổ tay lỗi sai ({mistakes.length})</span>
           </button>

@@ -68,16 +68,17 @@ export default function Navbar({
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
       <div className="max-w-7xl mx-auto px-3 sm:px-6">
-        <div className="flex items-center justify-between h-16 gap-2">
+        {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
           
-          {/* 1. LEFT ZONE: Brand & Compact Skills Dropdown */}
-          <div className="flex items-center space-x-2.5 sm:space-x-3.5">
+          {/* 1. LEFT ZONE: Brand & Skills Dropdown */}
+          <div className="flex items-center space-x-2 sm:space-x-3.5">
             {/* Logo */}
             <div className="flex items-center space-x-2 shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-sm text-sm">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-sm text-xs sm:text-sm">
                 IELTS
               </div>
-              <div className="hidden lg:block">
+              <div className="hidden sm:block">
                 <span className="font-extrabold text-slate-900 text-sm leading-none block">STUDIO</span>
                 <span className="text-[10px] text-slate-400 font-semibold tracking-wider block mt-0.5">ACADEMIC AI</span>
               </div>
@@ -91,7 +92,7 @@ export default function Navbar({
                   setIsPracticeMenuOpen(false);
                   setIsToolsMenuOpen(false);
                 }}
-                className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/70 hover:bg-red-100/80 text-red-700 text-xs font-bold transition-all shadow-2xs group"
+                className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/70 hover:bg-red-100/80 text-red-700 text-xs font-bold transition-all shadow-2xs group"
                 title="Chuyển đổi kỹ năng IELTS"
               >
                 <CurrentSkillIcon className="w-3.5 h-3.5 text-red-600" />
@@ -151,12 +152,11 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* 2. CENTER ZONE: Current Task & Mode Selection */}
-          <div className="flex items-center space-x-2">
-            {/* Task Selector Dropdown Trigger */}
+          {/* 2. DESKTOP CENTER ZONE: Current Task Selector (hidden on mobile row 1) */}
+          <div className="hidden md:flex items-center space-x-2">
             <button 
               onClick={onOpenLibrary}
-              className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group"
+              className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group"
               title="Nhấn để đổi đề thi hoặc xem danh sách bài"
             >
               <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${
@@ -164,7 +164,7 @@ export default function Navbar({
               }`}>
                 Task {currentTask.taskNumber}
               </span>
-              <span className="text-xs font-semibold text-slate-800 max-w-[100px] sm:max-w-[150px] md:max-w-[200px] truncate">
+              <span className="text-xs font-semibold text-slate-800 max-w-[150px] lg:max-w-[220px] truncate">
                 {currentTask.title}
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform" />
@@ -172,7 +172,7 @@ export default function Navbar({
 
             {/* Streak Badge */}
             <div 
-              className="hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold"
               title="Chuỗi ngày luyện tập liên tục!"
             >
               <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
@@ -180,7 +180,7 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* 3. RIGHT ZONE: Grouped Action Dropdowns & Settings */}
+          {/* 3. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
             {/* Desktop Only: Phòng Luyện Bổ Trợ */}
@@ -367,13 +367,46 @@ export default function Navbar({
           </div>
 
         </div>
+
+        {/* ROW 2: Mobile Only Task & Action Bar (Clean 2nd line, no clipping) */}
+        <div className="md:hidden py-2 border-t border-slate-100 flex items-center justify-between gap-2">
+          {/* Mobile Task Selector - Expands flexibly */}
+          <button 
+            onClick={onOpenLibrary}
+            className="flex-1 flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all text-left shadow-2xs min-w-0"
+            title="Đổi đề bài hoặc chọn từ thư viện"
+          >
+            <div className="flex items-center space-x-2 truncate">
+              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shrink-0 ${
+                currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+              }`}>
+                Task {currentTask.taskNumber}
+              </span>
+              <span className="text-xs font-bold text-slate-800 truncate">
+                {currentTask.title}
+              </span>
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" />
+          </button>
+
+          {/* Mobile Streak & Theory Fast Buttons */}
+          <button
+            onClick={onOpenTheory}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold shrink-0 shadow-2xs"
+            title="Xem cẩm nang lý thuyết"
+          >
+            <span>📖</span>
+            <span className="text-[11px]">Lý Thuyết</span>
+          </button>
+        </div>
+
       </div>
 
       {/* Mobile Drawer Navigation (Side sheet / dropdown for mobile) */}
       {isMobileDrawerOpen && (
-        <div className="md:hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-slate-900/50 backdrop-blur-xs flex flex-col justify-end animate-in fade-in duration-150">
+        <div className="md:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex flex-col justify-end animate-in fade-in duration-150">
           <div 
-            className="bg-white rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto shadow-2xl border-t border-slate-200 space-y-4 animate-in slide-in-from-bottom duration-200"
+            className="bg-white rounded-t-3xl p-5 max-h-[88vh] overflow-y-auto shadow-2xl border-t border-slate-200 space-y-4 animate-in slide-in-from-bottom duration-200"
           >
             {/* User info header inside mobile drawer */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
