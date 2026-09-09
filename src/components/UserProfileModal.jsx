@@ -70,9 +70,6 @@ export default function UserProfileModal({
     reader.readAsText(file);
   };
 
-  // If modal is not open, don't render
-  if (!isOpen) return null;
-
   // 1. Calculate Learning Stats from Submissions
   const stats = useMemo(() => {
     if (!submissions || submissions.length === 0) {
@@ -179,6 +176,9 @@ export default function UserProfileModal({
     { id: 'vocab', label: 'Sổ Tay Từ Vựng & Lỗi', icon: Bookmark, count: vocabList.length },
     { id: 'account', label: 'Cài Đặt & Dữ Liệu', icon: Settings, status: user ? 'Đã đăng nhập' : 'Chưa đăng nhập' }
   ];
+
+  // If modal is not open, don't render DOM (must be after all hooks!)
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/80 backdrop-blur-md animate-fadeIn">

@@ -306,11 +306,7 @@ export default function Navbar({
                     </div>
                     <button
                       onClick={() => { 
-                        if (user) {
-                          onOpenProfile?.();
-                        } else {
-                          onOpenAuth();
-                        }
+                        onOpenProfile?.();
                         setIsToolsMenuOpen(false); 
                       }}
                       className="w-full flex items-center space-x-2 p-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-900 transition-colors"
