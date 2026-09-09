@@ -21,6 +21,7 @@ import DocumentIngestModal from './components/DocumentIngestModal';
 import MockTestModal from './components/MockTestModal';
 import VocabGrammarSpellingModal from './components/VocabGrammarSpellingModal';
 import AuthModal from './components/AuthModal';
+import FeaturesGuideModal from './components/FeaturesGuideModal';
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -136,6 +137,7 @@ export default function App() {
   const [isRevisionOpen, setIsRevisionOpen] = useState(false);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [isMockTestOpen, setIsMockTestOpen] = useState(false);
+  const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
 
   // AI Operation States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -442,6 +444,7 @@ export default function App() {
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenTheory={() => setIsTheoryOpen(true)}
         onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
+        onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
         mistakesCount={mistakes.length}
         apiKey={apiKey}
         user={currentUser}
@@ -758,6 +761,11 @@ export default function App() {
         onClose={() => setIsAuthOpen(false)}
         user={currentUser}
         onAuthSuccess={(user) => setCurrentUser(user)}
+      />
+
+      <FeaturesGuideModal
+        isOpen={isFeaturesGuideOpen}
+        onClose={() => setIsFeaturesGuideOpen(false)}
       />
 
     </div>

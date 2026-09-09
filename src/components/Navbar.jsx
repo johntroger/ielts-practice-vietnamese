@@ -22,7 +22,8 @@ import {
   GraduationCap,
   User,
   Menu,
-  X
+  X,
+  Compass
 } from 'lucide-react';
 
 export default function Navbar({
@@ -44,6 +45,7 @@ export default function Navbar({
   onOpenSettings,
   onOpenTheory,
   onOpenMistakeLog,
+  onOpenFeaturesGuide,
   mistakesCount = 0,
   apiKey,
   user,
@@ -315,6 +317,17 @@ export default function Navbar({
                       <History className="w-4 h-4 text-blue-600" />
                       <span>Lịch Sử Bài Viết & Điểm</span>
                     </button>
+
+                    <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      Khám Phá & Học Tập
+                    </div>
+                    <button
+                      onClick={() => { onOpenFeaturesGuide(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2 p-2 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 hover:from-red-100 hover:to-rose-100 transition-colors"
+                    >
+                      <Compass className="w-4 h-4 text-red-600" />
+                      <span>Giới Thiệu Tính Năng Web</span>
+                    </button>
                   </div>
                 </>
               )}
@@ -542,6 +555,20 @@ export default function Navbar({
                     <span>Cài Đặt Hệ Thống & Gemini API Key</span>
                   </div>
                   <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                </button>
+
+                {/* Mobile Features Guide Button */}
+                <button
+                  onClick={() => { onOpenFeaturesGuide(); setIsMobileDrawerOpen(false); }}
+                  className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white text-left text-xs font-bold shadow-md active:scale-95 transition-all mt-2"
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <Compass className="w-4 h-4 text-white" />
+                    <span>Khám Phá Tất Cả Tính Năng Web</span>
+                  </div>
+                  <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full uppercase font-extrabold">
+                    Hướng Dẫn
+                  </span>
                 </button>
               </div>
             </div>
