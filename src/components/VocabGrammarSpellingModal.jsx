@@ -45,7 +45,7 @@ export default function VocabGrammarSpellingModal({
   // Active Tab: 'spelling' | 'grammar' | 'vocab'
   const [activeTab, setActiveTab] = useState('spelling');
 
-  // Band Filter: 'all' (Tất cả 6.0 - 7.5) | 'band-6' (Band 6.0 - 6.5) | 'band-7' (Band 7.0 - 7.5)
+  // Band Filter: 'all' (Tất cả 5.5 - 7.5) | 'band-5.5' (Band 5.5 - 6.0) | 'band-6' (Band 6.0 - 6.5) | 'band-7' (Band 7.0 - 7.5)
   const [selectedBandTier, setSelectedBandTier] = useState('all');
 
   // ==========================================
@@ -61,6 +61,9 @@ export default function VocabGrammarSpellingModal({
 
   // Filtered spelling items by band tier
   const filteredSpellingList = useMemo(() => {
+    if (selectedBandTier === 'band-5.5') {
+      return rawSpellingList.filter(item => item.bandLevel === '5.5' || item.bandLevel === '6.0');
+    }
     if (selectedBandTier === 'band-6') {
       return rawSpellingList.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5');
     }
@@ -127,11 +130,14 @@ export default function VocabGrammarSpellingModal({
   });
 
   const filteredGrammarList = useMemo(() => {
+    if (selectedBandTier === 'band-5.5') {
+      return rawGrammarList.filter(item => item.bandLevel === '5.5' || item.bandLevel === '6.0' || item.bandTarget?.includes('5.5'));
+    }
     if (selectedBandTier === 'band-6') {
-      return rawGrammarList.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5' || item.bandTarget.includes('6.'));
+      return rawGrammarList.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5' || item.bandTarget?.includes('6.'));
     }
     if (selectedBandTier === 'band-7') {
-      return rawGrammarList.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5' || item.bandTarget.includes('7.'));
+      return rawGrammarList.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5' || item.bandTarget?.includes('7.'));
     }
     return rawGrammarList;
   }, [rawGrammarList, selectedBandTier]);
@@ -172,6 +178,9 @@ export default function VocabGrammarSpellingModal({
   // Filter cards by selected band tier
   const filteredCards = useMemo(() => {
     if (!currentDeck) return [];
+    if (selectedBandTier === 'band-5.5') {
+      return currentDeck.cards.filter(c => c.bandLevel === '5.5' || c.bandLevel === '6.0' || c.bandScore === '5.5' || c.bandScore === '6.0');
+    }
     if (selectedBandTier === 'band-6') {
       return currentDeck.cards.filter(c => c.bandLevel === '6.0' || c.bandLevel === '6.5');
     }
@@ -236,9 +245,15 @@ export default function VocabGrammarSpellingModal({
       return;
     }
     setIsAiGenerating(true);
-    setAiMessage('Gemini đang tạo bài tập chuẩn trọng tâm Band 6.0 - 7.5...');
+    setAiMessage('Gemini đang tạo bài tập chuẩn trọng tâm theo dải điểm...');
 
-    const targetBand = selectedBandTier === 'band-6' ? '6.5' : selectedBandTier === 'band-7' ? '7.5' : '7.0';
+    const targetBand = selectedBandTier === 'band-5.5'
+      ? '5.5'
+      : selectedBandTier === 'band-6'
+        ? '6.5'
+        : selectedBandTier === 'band-7'
+          ? '7.5'
+          : '6.0';
 
     try {
       if (activeTab === 'spelling') {
@@ -252,9 +267,11 @@ export default function VocabGrammarSpellingModal({
         } catch (e) {}
         setAiMessage(`Đã tạo bẫy chính tả Band ${targetBand}: "${newTrap.correct}"!`);
       } else if (activeTab === 'grammar') {
-        const types = targetBand.startsWith('6') 
-          ? ['Concession with While/Although', 'Relative Clauses', 'Academic Passive Voice']
-          : ['Participle Clause V-ing', 'Cleft Sentence', 'Not only Inversion', 'Nominalization'];
+        const types = targetBand === '5.5'
+          ? ['Subject-Verb Agreement with Complex Subjects', 'Compound Sentences & Eliminating Comma Splices', 'Cause and Effect with Because / As a result']
+          : targetBand.startsWith('6') 
+            ? ['Concession with While/Although', 'Relative Clauses', 'Academic Passive Voice']
+            : ['Participle Clause V-ing', 'Cleft Sentence', 'Not only Inversion', 'Nominalization'];
         const randomType = types[Math.floor(Math.random() * types.length)];
         const newGrammar = await generateGrammarDrillAi({ apiKey, model, grammarType: randomType, bandLevel: targetBand });
         const updated = [newGrammar, ...rawGrammarList];
@@ -309,11 +326,11 @@ export default function VocabGrammarSpellingModal({
               <div className="flex items-center space-x-2">
                 <h2 className="text-lg font-bold tracking-tight">Luyện Từ Vựng, Ngữ Pháp & Chính Tả</h2>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
-                  Trọng Tâm Band 6.0 - 7.5
+                  Trọng Tâm Band 5.5 - 7.5+
                 </span>
               </div>
               <p className="text-xs text-slate-300">
-                Phương pháp Active Recall, phân tầng rõ rệt Band 6.0-6.5 (Cốt lõi) và Band 7.0-7.5 (Bứt phá)
+                Phương pháp Active Recall, phân tầng rõ rệt: Band 5.5-6.0 (Nền tảng vững chắc), Band 6.0-6.5 (Cốt lõi) và Band 7.0-7.5 (Bứt phá)
               </p>
             </div>
           </div>
@@ -324,20 +341,22 @@ export default function VocabGrammarSpellingModal({
               onClick={handleGenerateAiItem}
               disabled={isAiGenerating}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
-              title="Nhờ Gemini tạo thêm bài tập thực chiến Band 6.0 - 7.5"
+              title="Nhờ Gemini tạo thêm bài tập thực chiến theo dải điểm đã chọn"
             >
               {isAiGenerating ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
               ) : (
                 <Sparkles className="w-3.5 h-3.5" />
               )}
-              <span>{isAiGenerating ? 'Đang tạo...' : '+ AI Sinh Bài Mới'}</span>
+              <span className="hidden sm:inline">
+                {isAiGenerating ? 'Đang tạo...' : 'Gemini Sinh Đề Luyện'}
+              </span>
             </button>
 
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -360,7 +379,17 @@ export default function VocabGrammarSpellingModal({
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              Toàn Bộ (Band 6.0 - 7.5)
+              Toàn Bộ (5.5 - 7.5+)
+            </button>
+            <button
+              onClick={() => setSelectedBandTier('band-5.5')}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                selectedBandTier === 'band-5.5'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              📗 Band 5.5 - 6.0 (Nền tảng & Chống mất điểm)
             </button>
             <button
               onClick={() => setSelectedBandTier('band-6')}
@@ -376,11 +405,11 @@ export default function VocabGrammarSpellingModal({
               onClick={() => setSelectedBandTier('band-7')}
               className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                 selectedBandTier === 'band-7'
-                  ? 'bg-emerald-600 text-white shadow-xs'
+                  ? 'bg-purple-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              ⭐ Band 7.0 - 7.5 (Bứt phá học thuật)
+              🚀 Band 7.0 - 7.5 (Bứt phá học thuật)
             </button>
           </div>
         </div>

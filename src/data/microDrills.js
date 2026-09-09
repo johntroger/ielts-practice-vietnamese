@@ -73,6 +73,26 @@ export const INITIAL_MICRO_DRILLS = [
 
   // 3. SENTENCE PARAPHRASING DRILLS
   {
+    id: 'drill-para-b5-1',
+    type: 'paraphrase',
+    title: 'Luyện Paraphrase Mở Bài: Giáo dục & Nghề nghiệp',
+    category: 'Task 2 Introduction (Band 5.5 - 6.0)',
+    originalSentence: 'A lot of young people want to go to university because they want to get a good job.',
+    targetBand: 'Band 5.5 - 6.0',
+    hints: ['Thay "A lot of young people" bằng "Many high school graduates" hoặc "A significant proportion of young adults"', 'Thay "get a good job" bằng "secure stable employment" hoặc "pursue desirable careers"'],
+    sampleBand8: 'A growing proportion of high school graduates pursue university education with the primary goal of securing stable and well-remunerated careers.',
+  },
+  {
+    id: 'drill-para-b5-2',
+    type: 'paraphrase',
+    title: 'Luyện Paraphrase Task 1: Câu mở bài biểu đồ đường',
+    category: 'Task 1 Introduction (Band 5.5 - 6.0)',
+    originalSentence: 'The graph shows how many people used mobile phones in three countries between 2010 and 2020.',
+    targetBand: 'Band 5.5 - 6.0',
+    hints: ['Thay "shows" bằng "illustrates" hoặc "presents data on"', 'Thay "how many people used" bằng "the number of mobile phone users"'],
+    sampleBand8: 'The line graph illustrates the number of mobile phone subscribers across three distinct countries over a ten-year period from 2010 to 2020.',
+  },
+  {
     id: 'drill-para-1',
     type: 'paraphrase',
     title: 'Luyện Paraphrase Mở Bài: AI & Việc làm',

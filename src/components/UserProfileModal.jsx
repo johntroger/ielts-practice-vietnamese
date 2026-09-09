@@ -163,6 +163,7 @@ export default function UserProfileModal({
     if (num >= 8.0) return { title: 'IELTS Scholar', color: 'bg-amber-500 text-slate-950 font-black', badge: 'Band 8.0+ Elite' };
     if (num >= 7.0) return { title: 'Academic Master', color: 'bg-purple-600 text-white font-black', badge: 'Band 7.0 - 7.5' };
     if (num >= 6.0) return { title: 'IELTS Challenger', color: 'bg-blue-600 text-white font-black', badge: 'Band 6.0 - 6.5' };
+    if (num >= 5.5) return { title: 'IELTS Foundation Builder', color: 'bg-teal-600 text-white font-black', badge: 'Band 5.5 - 6.0' };
     return { title: 'IELTS Trainee', color: 'bg-slate-700 text-slate-200 font-bold', badge: 'Khởi đầu lộ trình' };
   };
 

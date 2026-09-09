@@ -891,10 +891,10 @@ Format output cleanly in Vietnamese with clear bullet points. Keep it punchy and
 export async function generateSpellingTrapAi({ apiKey, model = DEFAULT_MODEL, category = 'Academic Register', bandLevel = '6.5' }) {
   if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key.');
 
-  const prompt = `Act as a senior Cambridge IELTS examiner. Generate 1 practical IELTS spelling trap item targeting Band ${bandLevel} (within target Band 6.0 - 7.5) in JSON format:
+  const prompt = `Act as a senior Cambridge IELTS examiner. Generate 1 practical IELTS spelling trap item targeting Band ${bandLevel} (within target Band 5.5 - 7.5) in JSON format:
 {
-  "correct": "exact correctly spelled word suitable for Band ${bandLevel} IELTS Writing (e.g. environment, government, definitely, separate, necessary, maintenance, privilege, proportion, accommodate, etc.)",
-  "distractors": ["3 common deceptive misspellings that Band 6.0 - 7.0 students make"],
+  "correct": "exact correctly spelled word suitable for Band ${bandLevel} IELTS Writing (e.g. environment, government, definitely, separate, necessary, maintenance, privilege, proportion, accommodate, until, convenient, technology, opportunity, believe, receive, etc.)",
+  "distractors": ["3 common deceptive misspellings that Band ${bandLevel === '5.5' ? '5.0 - 5.5' : '6.0 - 7.0'} students make"],
   "rule": "Một câu mẹo ghi nhớ cực kỳ sắc bén bằng tiếng Việt (mẹo chữ cái, gốc từ, hình ảnh)",
   "contextSentence": "An academic IELTS sentence using the word with '________' replacing the word.",
   "explanation": "Giải thích ngắn gọn nguồn gốc từ và lỗi sai phổ biến bằng tiếng Việt",
@@ -924,14 +924,14 @@ Return ONLY raw valid JSON without markdown fences.`;
 export async function generateGrammarDrillAi({ apiKey, model = DEFAULT_MODEL, grammarType = 'Complex Sentences', bandLevel = '7.0' }) {
   if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key.');
 
-  const prompt = `Act as an elite IELTS Writing Coach. Create 1 practical grammar drill targeting Band ${bandLevel} (range Band 6.0 - 7.5) for pattern "${grammarType}" in JSON format:
+  const prompt = `Act as an elite IELTS Writing Coach. Create 1 practical grammar drill targeting Band ${bandLevel} (range Band 5.5 - 7.5) for pattern "${grammarType}" in JSON format:
 {
-  "title": "Tên cấu trúc ngữ pháp (e.g. While/Whereas contrast, Relative clauses, Passive voice, Participle clauses, Not only inversion, Cleft sentence)",
-  "bandTarget": "Band ${bandLevel === '6.0' || bandLevel === '6.5' ? 'Band 6.0 - 6.5' : 'Band 7.0 - 7.5'}",
+  "title": "Tên cấu trúc ngữ pháp (e.g. Subject-Verb Agreement, Compound Sentences, Cause and Effect, While/Whereas contrast, Relative clauses, Passive voice, Participle clauses, Not only inversion, Cleft sentence)",
+  "bandTarget": "Band ${bandLevel === '5.5' ? 'Band 5.5 - 6.0' : (bandLevel === '6.0' || bandLevel === '6.5' ? 'Band 6.0 - 6.5' : 'Band 7.0 - 7.5')}",
   "bandLevel": "${bandLevel}",
   "formula": "Công thức ngữ pháp rõ ràng, dễ áp dụng",
   "rationale": "Tại sao cấu trúc này giúp bài viết đạt điểm chuẩn Band ${bandLevel} (tiếng Việt)",
-  "basicSentence": "Một câu văn thường Band 5.5 - 6.0 diễn đạt ý này",
+  "basicSentence": "Một câu văn thường Band 5.0 - 5.5 diễn đạt ý này",
   "band8Sentence": "Câu văn chuẩn Band ${bandLevel} đã áp dụng cấu trúc",
   "prompt": "Yêu cầu luyện tập cho học viên (tiếng Việt)",
   "testInput": "Câu đề bài cần viết lại",
@@ -939,7 +939,7 @@ export async function generateGrammarDrillAi({ apiKey, model = DEFAULT_MODEL, gr
   "drills": [
     {
       "question": "Câu hỏi thực hành bổ sung",
-      "origin": "Câu gốc Band 5.5",
+      "origin": "Câu gốc Band 5.0 - 5.5",
       "correctPattern": "Câu viết lại Band ${bandLevel}"
     }
   ]
@@ -967,7 +967,7 @@ Return ONLY raw valid JSON without markdown fences.`;
 export async function generateThematicVocabAi({ apiKey, model = DEFAULT_MODEL, topic = 'Technology & Digital Life', bandLevel = '7.0' }) {
   if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key.');
 
-  const prompt = `Act as a Cambridge Lexical Resource specialist. Generate 2 practical vocabulary items / collocations strictly in Band ${bandLevel} (range Band 6.0 - 7.5) for IELTS topic "${topic}" in JSON format:
+  const prompt = `Act as a Cambridge Lexical Resource specialist. Generate 2 practical vocabulary items / collocations strictly in Band ${bandLevel} (range Band 5.5 - 7.5) for IELTS topic "${topic}" in JSON format:
 [
   {
     "term": "Natural academic phrase / collocation chunk (Band ${bandLevel})",

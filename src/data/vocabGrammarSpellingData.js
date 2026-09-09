@@ -1,4 +1,4 @@
-// IELTS Academic Spelling, Grammar, and Thematic Decks (Categorized: Band 6.0 - 6.5 & Band 7.0 - 7.5)
+// IELTS Academic Spelling, Grammar, and Thematic Decks (Categorized: Band 5.5 - 6.0, Band 6.0 - 6.5 & Band 7.0 - 7.5)
 
 export const IELTS_SPELLING_TRAPS = [
   {
@@ -210,10 +210,140 @@ export const IELTS_SPELLING_TRAPS = [
     "explanation": "Tính từ Band 7.5 chỉ sự chu đáo, tận tụy và có trách nhiệm cao trong công việc.",
     "category": "Workplace & Career",
     "bandLevel": "7.5"
+  },
+  {
+    "id": "sp-b5-1",
+    "correct": "until",
+    "distractors": [
+      "untill",
+      "untile",
+      "untle"
+    ],
+    "rule": "Quy tắc vàng: 'until' chỉ có DUY NHẤT 1 chữ 'l' (khác với 'till' có 2 chữ 'l').",
+    "contextSentence": "Many young people delay marriage ________ they achieve financial independence.",
+    "explanation": "Hơn 50% thí sinh Band 5.0 - 5.5 mắc lỗi viết 'untill' do nhầm lẫn với từ 'till'.",
+    "category": "Core Grammar & Conjunctions",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-b5-2",
+    "correct": "convenient",
+    "distractors": [
+      "convinient",
+      "conveniant",
+      "convinent"
+    ],
+    "rule": "Nhớ cụm 'VENI': con-VENI-ent (giống gốc từ souvenir). Không viết thành 'convi'.",
+    "contextSentence": "Online shopping is widely regarded as far more ________ than traditional retail.",
+    "explanation": "Do phát âm âm /ɪ/, thí sinh Band 5.5 rất hay viết nhầm 'e' thành 'i'.",
+    "category": "Technology & Daily Life",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-b5-3",
+    "correct": "technology",
+    "distractors": [
+      "technoly",
+      "technolagy",
+      "thechnology"
+    ],
+    "rule": "Gốc từ Hy Lạp 'tech-no-logy'. Chữ 'h' nằm ngay sau chữ 'c', và kết thúc bằng đuôi '-logy'.",
+    "contextSentence": "Modern digital ________ plays an indispensable role in contemporary education.",
+    "explanation": "Từ khóa cốt lõi của chủ đề Công nghệ, viết sai sẽ bị trừ điểm Lexical Resource ngay lập tức.",
+    "category": "Technology & Innovation",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-b5-4",
+    "correct": "opportunity",
+    "distractors": [
+      "oppurtunity",
+      "oportunity",
+      "opportunaty"
+    ],
+    "rule": "Nhớ: 2 chữ 'p' và chữ 'o' ở giữa: op-por-tu-ni-ty (không phải oppur).",
+    "contextSentence": "Studying abroad provides undergraduates with a valuable ________ to broaden their horizons.",
+    "explanation": "Thí sinh hay nhầm âm /ɜː/ và viết thành 'oppur' hoặc quên nhân đôi chữ 'p'.",
+    "category": "Education & Career",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-b5-5",
+    "correct": "believe",
+    "distractors": [
+      "beleive",
+      "beleave",
+      "belive"
+    ],
+    "rule": "Quy tắc thần thánh: 'I' before 'E' except after 'C' (chữ 'i' đứng trước 'e': be-LIE-ve - nhớ chữ LIE).",
+    "contextSentence": "Many sociologists ________ that strict parental supervision reduces youth crime.",
+    "explanation": "Lỗi đảo vị trí 'ie' thành 'ei' xuất hiện dày đặc trong bài viết của học viên Band 5.0 - 5.5.",
+    "category": "Academic Writing Core",
+    "bandLevel": "5.5"
   }
 ];
 
 export const IELTS_GRAMMAR_PACK = [
+  {
+    "id": "gr-b5-1",
+    "title": "Subject-Verb Agreement with Complex Subjects (Hòa hợp chủ - vị: khắc phục lỗi chí mạng mất điểm Band 5.5)",
+    "bandTarget": "Band 5.5 - 6.0",
+    "bandLevel": "5.5",
+    "formula": "The number of + Noun số nhiều + Động từ số ít (is / has / V-s) | A number of + Noun số nhiều + Động từ số nhiều (are / have / V)",
+    "rationale": "Hơn 60% học viên ở mức 5.0 - 5.5 bị trừ điểm GRA nặng nề vì chia động từ theo danh từ nằm trong cụm giới từ xen giữa (ví dụ: The consumption of fast foods IS chứ không phải ARE). Khắc phục lỗi này là bước đầu tiên để chạm mốc Band 6.0.",
+    "basicSentence": "The number of students in the university are increasing every year.",
+    "band8Sentence": "The number of students enrolled in higher education institutions has increased steadily over the past decade.",
+    "prompt": "Sửa lỗi chia động từ trong câu sau để đạt chuẩn ngữ pháp chính xác:",
+    "testInput": "The development of new technologies have changed the way people communicate.",
+    "modelAnswer": "The development of new technologies has changed the way people communicate.",
+    "drills": [
+      {
+        "question": "Chia đúng động từ hòa hợp với chủ ngữ số ít 'The consumption of processed foods':",
+        "origin": "The consumption of processed foods and sugary drinks lead to obesity.",
+        "correctPattern": "The consumption of processed foods and sugary drinks leads directly to obesity."
+      }
+    ]
+  },
+  {
+    "id": "gr-b5-2",
+    "title": "Compound Sentences & Eliminating Comma Splices (Câu ghép chuẩn mực - Chấm dứt lỗi phẩy ghép câu run-on)",
+    "bandTarget": "Band 5.5 - 6.0",
+    "bandLevel": "5.5",
+    "formula": "Clause 1, and/but/so + Clause 2 HOẶC Clause 1; however, Clause 2",
+    "rationale": "Lỗi Comma Splice (dùng dấu phẩy nối 2 câu đơn độc lập không có liên từ) là nguyên nhân hàng đầu khiến giám khảo hạ điểm xuống Band 5.0 - 5.5. Viết đúng câu ghép với liên từ là điều kiện tiên quyết để chạm mốc Band 6.0.",
+    "basicSentence": "Public transport is very cheap, people do not like using it.",
+    "band8Sentence": "Public transport is highly affordable, but many commuters still prefer using private vehicles.",
+    "prompt": "Sửa lỗi phẩy ghép câu (Comma Splice) bằng cách thêm liên từ nối thích hợp:",
+    "testInput": "Online learning saves travel time, students often feel isolated at home.",
+    "modelAnswer": "Online learning saves travel time, but students often feel isolated when studying at home.",
+    "drills": [
+      {
+        "question": "Dùng '; however,' để nối 2 mệnh đề tương phản độc lập thay vì dấu phẩy thông thường:",
+        "origin": "Electric cars are environmentally friendly, they are still too expensive for average families.",
+        "correctPattern": "Electric cars are environmentally friendly; however, they remain prohibitively expensive for average families."
+      }
+    ]
+  },
+  {
+    "id": "gr-b5-3",
+    "title": "Logical Cause & Effect (Mối quan hệ nguyên nhân - kết quả, tránh bẫy lặp 'Because... so...')",
+    "bandTarget": "Band 5.5 - 6.0",
+    "bandLevel": "5.5",
+    "formula": "Because + Clause 1, Clause 2 HOẶC S + V. As a result, S + V HOẶC S + leads to / results in + Noun phrase",
+    "rationale": "Người học Việt Nam hay mắc thói quen nói 'Vì... nên...' dẫn đến viết sai 'Because... so...' trong cùng một câu tiếng Anh. Sử dụng linh hoạt 'As a result' hoặc 'leads to' giúp bài viết đạt chuẩn ngữ pháp Band 6.0 vững chắc.",
+    "basicSentence": "Because air pollution is getting worse, so the government should plant more trees.",
+    "band8Sentence": "Because atmospheric pollution is worsening rapidly, municipal authorities should implement extensive tree-planting programs.",
+    "prompt": "Chuyển đổi câu nguyên nhân - kết quả sau sang dạng dùng 'leads to' + Cụm danh từ:",
+    "testInput": "People eat too much junk food, so they suffer from health problems.",
+    "modelAnswer": "Excessive consumption of junk food leads directly to severe health problems.",
+    "drills": [
+      {
+        "question": "Dùng 'As a result,' ở đầu câu thứ hai để liên kết kết quả logic:",
+        "origin": "Many graduates lack practical workplace skills because they only study theory in university.",
+        "correctPattern": "Many graduates focus excessively on theoretical knowledge at university. As a result, they lack essential practical workplace skills."
+      }
+    ]
+  },
   {
     "id": "gr-b6-1",
     "title": "Complex Contrast & Concession (Mệnh đề nhượng bộ: Although / While / Whereas)",
@@ -363,6 +493,38 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
     "color": "from-blue-600 to-indigo-700",
     "cards": [
       {
+        "id": "c-tech-b5-1",
+        "term": "Access the Internet",
+        "phonetic": "/ˈækses ði ˈɪntənet/",
+        "wordType": "verb phrase / collocation",
+        "meaningVi": "Truy cập mạng Internet (cụm cơ bản chuẩn xác)",
+        "collocations": [
+          "gain access to the Internet",
+          "unrestricted Internet access",
+          "daily access to the Internet"
+        ],
+        "bandScore": "5.5",
+        "bandLevel": "5.5",
+        "example": "Almost every contemporary household now has reliable access to the Internet for study and work.",
+        "mastery": "learning"
+      },
+      {
+        "id": "c-tech-b5-2",
+        "term": "Electronic device",
+        "phonetic": "/ɪˌlekˈtrɒnɪk dɪˈvaɪs/",
+        "wordType": "noun phrase",
+        "meaningVi": "Thiết bị điện tử cầm tay (điện thoại, máy tính...)",
+        "collocations": [
+          "overuse electronic devices",
+          "dependent on electronic devices",
+          "modern electronic devices"
+        ],
+        "bandScore": "5.5",
+        "bandLevel": "5.5",
+        "example": "Schoolchildren should not spend excessive hours staring at electronic devices each day.",
+        "mastery": "learning"
+      },
+      {
         "id": "c-tech-b6-1",
         "term": "Digital device",
         "phonetic": "/ˈdɪdʒɪtl dɪˈvaɪs/",
@@ -460,6 +622,38 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
     "topicName": "Environment & Climate (Môi trường & Biến đổi khí hậu)",
     "color": "from-emerald-600 to-teal-700",
     "cards": [
+      {
+        "id": "c-env-b5-1",
+        "term": "Protect the environment",
+        "phonetic": "/prəˈtekt ði ɪnˈvaɪrənmənt/",
+        "wordType": "verb phrase / collocation",
+        "meaningVi": "Bảo vệ môi trường (cụm diễn đạt căn bản)",
+        "collocations": [
+          "take action to protect the environment",
+          "protect the natural environment",
+          "campaigns to protect the environment"
+        ],
+        "bandScore": "5.5",
+        "bandLevel": "5.5",
+        "example": "Every individual should take practical actions to protect the natural environment.",
+        "mastery": "learning"
+      },
+      {
+        "id": "c-env-b5-2",
+        "term": "Air and water pollution",
+        "phonetic": "/eər ənd ˈwɔːtə pəˈluːʃn/",
+        "wordType": "noun phrase",
+        "meaningVi": "Ô nhiễm không khí và nguồn nước",
+        "collocations": [
+          "tackle air and water pollution",
+          "suffer from severe air pollution",
+          "causes of water pollution"
+        ],
+        "bandScore": "5.5",
+        "bandLevel": "5.5",
+        "example": "Uncontrolled factory emissions cause severe air and water pollution in developing urban regions.",
+        "mastery": "learning"
+      },
       {
         "id": "c-env-b6-1",
         "term": "Renewable energy",
@@ -561,6 +755,38 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
     "topicName": "Society & Urban Life (Xã hội & Đời sống đô thị)",
     "color": "from-amber-600 to-rose-700",
     "cards": [
+      {
+        "id": "c-soc-b5-1",
+        "term": "Healthy lifestyle",
+        "phonetic": "/ˈhelθi ˈlaɪfstaɪl/",
+        "wordType": "noun phrase",
+        "meaningVi": "Lối sống lành mạnh, khoa học (từ vựng nền tảng)",
+        "collocations": [
+          "maintain a healthy lifestyle",
+          "adopt a healthy lifestyle",
+          "encourage a healthy lifestyle"
+        ],
+        "bandScore": "5.5",
+        "bandLevel": "5.5",
+        "example": "Regular physical exercise is the foundation for maintaining a healthy lifestyle.",
+        "mastery": "learning"
+      },
+      {
+        "id": "c-soc-b5-2",
+        "term": "Job opportunity",
+        "phonetic": "/dʒɒb ˌɒpəˈtjuːnəti/",
+        "wordType": "noun phrase",
+        "meaningVi": "Cơ hội việc làm",
+        "collocations": [
+          "create more job opportunities",
+          "equal job opportunities",
+          "lack of job opportunities"
+        ],
+        "bandScore": "5.5",
+        "bandLevel": "5.5",
+        "example": "Metropolitan areas attract young graduates because they offer a wider variety of job opportunities.",
+        "mastery": "learning"
+      },
       {
         "id": "c-soc-b6-1",
         "term": "Cost of living",

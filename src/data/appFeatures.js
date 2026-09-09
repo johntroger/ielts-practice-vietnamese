@@ -47,9 +47,27 @@ export const SKILL_DEFINITIONS = {
 
 export const APP_FEATURES = [
   {
+    id: 'feat-band-55-60-expansion',
+    version: 'v2.6',
+    badge: 'Mới Ra Mắt',
+    category: 'ai',
+    targetSkills: ['writing', 'reading', 'speaking'],
+    title: 'Mở Rộng Phân Tầng Trình Độ: Dải Điểm Band 5.5 - 6.0',
+    shortDesc: 'Bổ sung hệ sinh thái luyện tập toàn diện cho dải điểm Band 5.5 - 6.0 nhằm phục vụ học viên xây gốc vững chắc và bứt phá lên 6.5+.',
+    icon: 'Target',
+    highlights: [
+      'Phân loại 4 dải điểm: Toàn bộ (5.5 - 7.5+), Band 5.5-6.0 (Nền tảng vững chắc), Band 6.0-6.5 (Cốt lõi chuẩn xác) và Band 7.0-7.5 (Bứt phá học thuật).',
+      'Huy hiệu Học thuật mới: Tích hợp thứ hạng "IELTS Foundation Builder (Band 5.5 - 6.0)" tại Trang Cá Nhân Học Viên.',
+      'Bộ bài tập chống mất điểm cơ bản: Luyện bẫy chính tả (until, convenient, technology, opportunity, believe) và ngữ pháp hòa hợp chủ-vị, câu ghép chống comma splice.',
+      'Gemini AI thông minh theo dải điểm: Hỗ trợ sinh đề bài tập ngữ pháp, từ vựng chuẩn trọng tâm Band 5.5 - 6.0.',
+      'Cẩm nang lý thuyết mới: Bài viết chuyên sâu "Chinh phục mốc Band 5.5 - 6.0: Xóa bỏ 5 lỗi chí mạng & checklist 3 phút trước khi nộp bài".'
+    ],
+    usageGuide: 'Mở "Vocab & Lỗi Sai" -> Bấm chọn tab "📗 Band 5.5 - 6.0 (Nền tảng & Chống mất điểm)" hoặc vào "Cẩm Nang Lý Thuyết" để đọc hướng dẫn.'
+  },
+  {
     id: 'feat-task1-image-upload',
     version: 'v2.5',
-    badge: 'Mới Ra Mắt',
+    badge: 'Hot',
     category: 'community',
     targetSkills: ['writing', 'reading'],
     title: 'Upload & Dán Ảnh Đề Bài Thực Tế Cho IELTS Writing Task 1',
