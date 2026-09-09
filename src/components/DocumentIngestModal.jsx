@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { FileUp, Sparkles, CheckCircle2, AlertCircle, X, Loader2, ArrowRight } from 'lucide-react';
 import { parseDocumentToTask } from '../services/geminiService';
+import TaskImageUploader from './TaskImageUploader';
 
 export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, apiKey, model }) {
   if (!isOpen) return null;
 
   const [rawText, setRawText] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -40,9 +42,16 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
         apiKey,
         model
       });
+
+      // Gắn kèm ảnh đã upload/dán nếu có
+      if (imageUrl) {
+        parsedTask.imageUrl = imageUrl;
+      }
+
       onTaskImported(parsedTask);
       alert(`Đã trích xuất thành công: "${parsedTask.title}"! Đề thi đã được thêm vào Thư viện cá nhân của bạn.`);
       setRawText('');
+      setImageUrl('');
       onClose();
     } catch (err) {
       setErrorMsg(err.message || 'Lỗi khi trích xuất tài liệu bằng AI.');
@@ -100,11 +109,20 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
               </label>
             </div>
             <textarea
-              rows={9}
+              rows={8}
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
               placeholder="Dán toàn bộ bài đọc, đề bài hoặc bài mẫu bạn có vào đây (Ví dụ: Cambridge 18 Test 3 Writing Task 2... Some people argue that... Sample Answer: In the contemporary era...)"
               className="w-full p-4 rounded-xl border border-slate-200 text-xs text-slate-800 font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 resize-none bg-slate-50/50"
+            />
+          </div>
+
+          {/* Task 1 Visual Attachment Uploader */}
+          <div className="p-3.5 rounded-xl bg-purple-50/50 border border-purple-200/80">
+            <TaskImageUploader
+              imageUrl={imageUrl}
+              onImageChange={setImageUrl}
+              label="Ảnh Đề Bài Đi Kèm (Dành cho Task 1 - Biểu đồ / Bản đồ / Sơ đồ quy trình):"
             />
           </div>
 

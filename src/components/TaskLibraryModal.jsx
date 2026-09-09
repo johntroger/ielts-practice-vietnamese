@@ -17,6 +17,7 @@ import {
   Users
 } from 'lucide-react';
 import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
+import TaskImageUploader from './TaskImageUploader';
 
 export default function TaskLibraryModal({
   isOpen,
@@ -44,6 +45,7 @@ export default function TaskLibraryModal({
   const [manualTaskNum, setManualTaskNum] = useState(2);
   const [manualType, setManualType] = useState('opinion');
   const [manualPrompt, setManualPrompt] = useState('');
+  const [manualImageUrl, setManualImageUrl] = useState('');
   const [manualModelAnswer, setManualModelAnswer] = useState('');
 
   // Source list depending on activeTab
@@ -77,6 +79,7 @@ export default function TaskLibraryModal({
       type: manualType,
       title: manualTitle.trim(),
       prompt: manualPrompt.trim(),
+      imageUrl: Number(manualTaskNum) === 1 ? manualImageUrl.trim() : '',
       modelAnswer: manualModelAnswer.trim(),
       minWords: Number(manualTaskNum) === 1 ? 150 : 250,
       timeLimit: Number(manualTaskNum) === 1 ? 20 : 40,
@@ -87,6 +90,7 @@ export default function TaskLibraryModal({
     onAddNewCustomTask(newTask);
     setManualTitle('');
     setManualPrompt('');
+    setManualImageUrl('');
     setManualModelAnswer('');
     setIsAddingManual(false);
   };
@@ -276,6 +280,37 @@ export default function TaskLibraryModal({
                 </div>
               </div>
 
+              {/* Dạng bài chi tiết */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Dạng bài cụ thể:</label>
+                <select
+                  value={manualType}
+                  onChange={(e) => setManualType(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none"
+                >
+                  {manualTaskNum === 1 ? (
+                    TASK1_TYPES.map(t => (
+                      <option key={t.id} value={t.id}>{t.label}</option>
+                    ))
+                  ) : (
+                    TASK2_TYPES.map(t => (
+                      <option key={t.id} value={t.id}>{t.label} ({t.vi})</option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              {/* TASK 1: Upload / Dán Ảnh Cho Đề Bài */}
+              {manualTaskNum === 1 && (
+                <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
+                  <TaskImageUploader
+                    imageUrl={manualImageUrl}
+                    onImageChange={setManualImageUrl}
+                    label="Ảnh Đề Bài Task 1 (Biểu đồ / Bản đồ / Quy trình):"
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="text-xs font-bold text-slate-700 block mb-1">Nội dung đề bài chính xác (Prompt):</label>
                 <textarea
@@ -350,6 +385,11 @@ export default function TaskLibraryModal({
                         {t.isCustom && (
                           <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold">
                             Tự Nạp
+                          </span>
+                        )}
+                        {t.imageUrl && (
+                          <span className="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-semibold flex items-center space-x-1">
+                            <span>📷 Có Ảnh</span>
                           </span>
                         )}
                         {t.isPublic && (

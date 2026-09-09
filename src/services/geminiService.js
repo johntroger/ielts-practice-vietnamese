@@ -189,13 +189,35 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
       "example": "example sentence"
     }
   ]
-}`;
+}
+`;
+
+  const contentParts = [{ text: prompt }];
+
+  // Hỗ trợ Gemini Vision chấm trực tiếp từ hình ảnh đề bài Task 1
+  if (task.imageUrl && typeof task.imageUrl === 'string' && task.imageUrl.startsWith('data:image/')) {
+    try {
+      const mimeMatch = task.imageUrl.match(/^data:(image\/[a-zA-Z+]+);base64,/);
+      const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const base64Data = task.imageUrl.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
+      if (base64Data) {
+        contentParts.unshift({
+          inlineData: {
+            mimeType,
+            data: base64Data
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Could not parse task.imageUrl for Gemini vision:', e);
+    }
+  }
 
   const response = await callGeminiApi({
     model,
     apiKey,
     body: {
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [{ parts: contentParts }],
       generationConfig: {
         temperature: 0.2,
         responseMimeType: 'application/json'

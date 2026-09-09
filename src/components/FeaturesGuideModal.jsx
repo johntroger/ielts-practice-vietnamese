@@ -21,11 +21,13 @@ import {
   Mic,
   Headphones,
   Layers,
-  GraduationCap
+  GraduationCap,
+  Image as ImageIcon
 } from 'lucide-react';
 import { APP_FEATURES, SKILL_DEFINITIONS } from '../data/appFeatures';
 
 const ICON_MAP = {
+  Image: ImageIcon,
   Users: Users,
   Smartphone: Smartphone,
   ShieldCheck: ShieldCheck,

@@ -47,9 +47,26 @@ export const SKILL_DEFINITIONS = {
 
 export const APP_FEATURES = [
   {
+    id: 'feat-task1-image-upload',
+    version: 'v2.5',
+    badge: 'Mới Ra Mắt',
+    category: 'community',
+    targetSkills: ['writing', 'reading'],
+    title: 'Upload & Dán Ảnh Đề Bài Thực Tế Cho IELTS Writing Task 1',
+    shortDesc: 'Hỗ trợ tải lên hoặc bấm Ctrl+V để dán trực tiếp ảnh chụp biểu đồ, bản đồ, quy trình từ sách Cambridge hoặc đề thi thật.',
+    icon: 'Image',
+    highlights: [
+      'Dán ảnh 1 chạm (Ctrl+V): Chụp màn hình đề bài (Win+Shift+S) rồi dán trực tiếp mà không cần lưu ra file.',
+      'Tự động tối ưu dung lượng: Nén và resize chuẩn nét cao, an toàn khi lưu trữ trên đám mây Supabase và LocalStorage.',
+      'Khu vực hiển thị ảnh chuyên nghiệp: Xem ảnh ngay trên cột Đề bài, có chế độ Phóng to chi tiết (Zoom Modal) để soi rõ từng con số.',
+      'Gemini Vision AI: Giám khảo AI đọc trực quan hình ảnh đính kèm để đối chiếu số liệu và chấm điểm Task Achievement cực kỳ chính xác.'
+    ],
+    usageGuide: 'Vào "Kho Đề Thi" -> "Nạp Đề Cá Nhân Mới" (chọn Task 1) hoặc vào "Nạp Đề & Bài Mẫu Thô" -> Kéo thả hoặc dán ảnh (Ctrl+V) vào ô upload.'
+  },
+  {
     id: 'feat-dual-task-management',
     version: 'v2.4',
-    badge: 'Mới Nhất',
+    badge: 'Hot',
     category: 'community',
     targetSkills: ['writing', 'reading'],
     title: 'Hệ Thống Đề Thi Cá Nhân & Thư Viện Cộng Đồng (Phương án C)',
