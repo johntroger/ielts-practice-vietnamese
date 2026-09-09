@@ -18,7 +18,13 @@ export default function SettingsModal({
 
   const [inputKey, setInputKey] = useState(apiKey || '');
   const [showKey, setShowKey] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(model || 'gemini-3.6-flash');
+  const [selectedModel, setSelectedModel] = useState(() => {
+    const deprecated = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.0-pro', 'gemini-pro'];
+    if (!model || deprecated.includes(model) || model.startsWith('gemini-1.') || model.startsWith('gemini-2.0')) {
+      return 'gemini-2.5-flash';
+    }
+    return model;
+  });
   const [customModel, setCustomModel] = useState('');
   const [isCustom, setIsCustom] = useState(false);
   const [availableModels, setAvailableModels] = useState(POPULAR_GEMINI_MODELS);
@@ -267,8 +273,13 @@ export default function SettingsModal({
                     </option>
                   ))}
                 </select>
-                {isLoadingModels && (
+                {isLoadingModels ? (
                   <p className="text-[11px] text-slate-400 mt-1">Đang tải danh sách model Google cấp phép...</p>
+                ) : (
+                  <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span>Đã tự động loại bỏ các model cũ đã ngừng hỗ trợ (Gemini 1.0, 1.5, 2.0).</span>
+                  </p>
                 )}
               </div>
             ) : (
@@ -277,7 +288,7 @@ export default function SettingsModal({
                   type="text"
                   value={customModel}
                   onChange={(e) => setCustomModel(e.target.value)}
-                  placeholder="Nhập mã model (vd: gemini-3.6-flash, gemini-2.5-pro, ...)"
+                  placeholder="Nhập mã model (vd: gemini-2.5-flash, gemini-2.5-pro, ...)"
                   className="w-full px-3 py-2 rounded-xl border border-indigo-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-indigo-50/30"
                 />
               </div>

@@ -3,21 +3,35 @@
  * Directly communicates with Google Gemini API using structured JSON prompts.
  */
 
-const DEFAULT_MODEL = 'gemini-3.6-flash';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+
+export const DEPRECATED_GEMINI_MODELS = [
+  'gemini-1.5-flash',
+  'gemini-1.5-flash-8b',
+  'gemini-1.5-pro',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.0-pro',
+  'gemini-1.0-pro-001',
+  'gemini-pro',
+  'gemini-pro-vision'
+];
 
 export const POPULAR_GEMINI_MODELS = [
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (Khuyên dùng mới nhất - Phản hồi siêu tốc, thông minh)' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Tối ưu tốc độ cao)' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Phân tích chuyên sâu Band 8.5+)' },
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash-Lite' },
-  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Bản ổn định v1)' },
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Bản ổn định v1)' }
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Khuyên dùng - Phản hồi siêu tốc, chấm bài chuẩn)' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Chuyên sâu - Chấm điểm & phân tích chi tiết Band 8.5+)' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite (Siêu nhẹ - Tiết kiệm hạn ngạch API)' },
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (Thế hệ mới 3.x - Phản hồi thông minh)' },
+  { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro (Thế hệ mới 3.x - Lập luận logic & tư duy phản biện)' }
 ];
 
 function cleanModelName(model) {
   if (!model) return DEFAULT_MODEL;
-  return model.replace(/^models\//, '').trim();
+  const cleaned = model.replace(/^models\//, '').trim();
+  if (DEPRECATED_GEMINI_MODELS.includes(cleaned) || cleaned.startsWith('gemini-1.') || cleaned.startsWith('gemini-2.0')) {
+    return DEFAULT_MODEL;
+  }
+  return cleaned;
 }
 
 /**
@@ -62,13 +76,27 @@ export async function fetchAvailableModels(apiKey) {
     if (!response.ok) return POPULAR_GEMINI_MODELS;
     const data = await response.json();
     if (data.models && Array.isArray(data.models)) {
+      const deprecatedOrNonChatPattern = /(1\.0|1\.5|2\.0|embedding|aqa|imagen|tts|whisper|chirp|nano)/i;
+      
       const supported = data.models
-        .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+        .filter(m => {
+          const rawId = m.name.replace('models/', '');
+          const canGenerate = m.supportedGenerationMethods?.includes('generateContent');
+          const isNotDeprecated = !deprecatedOrNonChatPattern.test(rawId) && !DEPRECATED_GEMINI_MODELS.includes(rawId);
+          return canGenerate && isNotDeprecated;
+        })
         .map(m => {
           const rawId = m.name.replace('models/', '');
+          let label = rawId;
+          if (rawId === 'gemini-2.5-flash') label = 'Gemini 2.5 Flash (Khuyên dùng - Phản hồi siêu tốc)';
+          else if (rawId === 'gemini-2.5-pro') label = 'Gemini 2.5 Pro (Chuyên sâu - Chuẩn Band 8.5+)';
+          else if (rawId === 'gemini-2.5-flash-lite') label = 'Gemini 2.5 Flash-Lite (Siêu nhẹ)';
+          else if (rawId === 'gemini-3.6-flash') label = 'Gemini 3.6 Flash (Thế hệ mới nhất 3.x)';
+          else if (rawId === 'gemini-3.1-pro') label = 'Gemini 3.1 Pro (Thế hệ mới 3.x)';
+          else if (m.displayName) label = `${m.displayName} (${rawId})`;
           return {
             id: rawId,
-            name: `${rawId} (${m.displayName || rawId})`
+            name: label
           };
         });
       return supported.length > 0 ? supported : POPULAR_GEMINI_MODELS;

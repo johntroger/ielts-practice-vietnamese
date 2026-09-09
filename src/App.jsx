@@ -45,7 +45,14 @@ import { countWords } from './utils/textAnalytics';
 export default function App() {
   // 1. Persistent Storage State
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('ielts_gemini_api_key') || '');
-  const [model, setModel] = useState(() => localStorage.getItem('ielts_gemini_model') || 'gemini-3.6-flash');
+  const [model, setModel] = useState(() => {
+    const saved = localStorage.getItem('ielts_gemini_model');
+    const deprecated = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.0-pro', 'gemini-pro'];
+    if (!saved || deprecated.includes(saved) || saved.startsWith('gemini-1.') || saved.startsWith('gemini-2.0')) {
+      return 'gemini-2.5-flash';
+    }
+    return saved;
+  });
   
   const [allTasks, setAllTasks] = useState(() => {
     const saved = localStorage.getItem('ielts_all_tasks');
