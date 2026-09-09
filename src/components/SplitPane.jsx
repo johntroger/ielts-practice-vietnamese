@@ -86,11 +86,11 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
       {/* Main Two-Pane Container */}
       <div 
         ref={containerRef} 
-        className="flex flex-col lg:flex-row flex-1 w-full relative lg:overflow-hidden lg:h-[calc(100vh-64px)]"
+        className="flex flex-col lg:flex-row flex-1 w-full relative lg:min-h-[740px] xl:min-h-[840px]"
       >
         {/* Left Pane (Prompt / Chart / Notes) */}
         <div 
-          className={`w-full lg:h-full shrink-0 lg:shrink overflow-y-auto bg-white border-b lg:border-b-0 lg:border-r border-slate-200 transition-all ${
+          className={`w-full lg:min-h-[740px] xl:min-h-[840px] shrink-0 lg:shrink overflow-y-auto bg-white border-b lg:border-b-0 lg:border-r border-slate-200 transition-all ${
             mobileTab === 'editor' ? 'hidden lg:block' : 'block'
           }`}
           style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${splitRatio}%` : '100%' }}
@@ -111,7 +111,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
         <div 
           className={`w-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1 transition-all ${
             mobileTab === 'prompt' ? 'hidden lg:flex' : 'flex'
-          } ${mobileTab === 'editor' ? 'min-h-[75vh]' : 'min-h-[620px]'} lg:min-h-0 lg:h-full`}
+          } ${mobileTab === 'editor' ? 'min-h-[75vh]' : 'min-h-[620px]'} lg:min-h-[740px] xl:min-h-[840px]`}
           style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${100 - splitRatio}%` : '100%' }}
         >
           {rightPane}
