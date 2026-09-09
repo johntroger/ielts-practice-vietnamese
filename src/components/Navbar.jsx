@@ -23,7 +23,8 @@ import {
   User,
   Menu,
   X,
-  Compass
+  Compass,
+  Mail
 } from 'lucide-react';
 
 export default function Navbar({
@@ -47,6 +48,7 @@ export default function Navbar({
   onOpenMistakeLog,
   onOpenFeaturesGuide,
   onOpenProfile,
+  onOpenContact,
   mistakesCount = 0,
   apiKey,
   user,
@@ -339,6 +341,13 @@ export default function Navbar({
                       <Compass className="w-4 h-4 text-red-600" />
                       <span>Giới Thiệu Tính Năng Web</span>
                     </button>
+                    <button
+                      onClick={() => { onOpenContact?.(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors"
+                    >
+                      <Mail className="w-4 h-4 text-rose-600" />
+                      <span>Liên Hệ & Góp Ý</span>
+                    </button>
                   </div>
                 </>
               )}
@@ -601,6 +610,18 @@ export default function Navbar({
                   <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full uppercase font-extrabold">
                     Hướng Dẫn
                   </span>
+                </button>
+
+                {/* Mobile Contact Button */}
+                <button
+                  onClick={() => { onOpenContact?.(); setIsMobileDrawerOpen(false); }}
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 mt-2"
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <Mail className="w-4 h-4 text-rose-600" />
+                    <span>Liên Hệ & Góp Ý (Mr. Tung Tran)</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-medium">Hỗ trợ 24/7</span>
                 </button>
               </div>
             </div>

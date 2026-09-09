@@ -23,6 +23,7 @@ import VocabGrammarSpellingModal from './components/VocabGrammarSpellingModal';
 import AuthModal from './components/AuthModal';
 import FeaturesGuideModal from './components/FeaturesGuideModal';
 import UserProfileModal from './components/UserProfileModal';
+import ContactModal from './components/ContactModal';
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -147,6 +148,7 @@ export default function App() {
   const [isMockTestOpen, setIsMockTestOpen] = useState(false);
   const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   // AI Operation States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -465,6 +467,7 @@ export default function App() {
         onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
         onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenContact={() => setIsContactOpen(true)}
         mistakesCount={mistakes.length}
         apiKey={apiKey}
         user={currentUser}
@@ -846,6 +849,11 @@ export default function App() {
         onOpenLibrary={() => { setIsProfileOpen(false); setIsLibraryOpen(true); }}
         onExportAllData={handleExportAllData}
         onImportData={handleImportData}
+      />
+
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
       />
 
     </div>
