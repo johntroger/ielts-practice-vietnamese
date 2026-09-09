@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Lightbulb, 
   Highlighter, 
@@ -7,16 +7,68 @@ import {
   EyeOff, 
   Tag, 
   CheckCircle2, 
-  Sparkles,
-  Info,
-  Layers,
-  Compass,
-  Image as ImageIcon,
-  X,
-  ZoomIn
+  Sparkles, 
+  Info, 
+  Layers, 
+  Compass, 
+  Image as ImageIcon, 
+  X, 
+  ZoomIn,
+  RotateCcw
 } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
+
+// Helper to escape special characters for RegExp
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Helper to render prompt with persistent inline highlights
+function renderHighlightedPrompt(promptText, highlights, onRemoveHighlight) {
+  if (!promptText) return null;
+  if (!highlights || highlights.length === 0) {
+    return promptText;
+  }
+
+  // Filter valid highlight strings and sort by length descending to match longer phrases first
+  const validHighlights = highlights
+    .filter(h => typeof h === 'string' && h.trim().length > 0)
+    .sort((a, b) => b.length - a.length);
+
+  if (validHighlights.length === 0) return promptText;
+
+  try {
+    const pattern = new RegExp(`(${validHighlights.map(escapeRegExp).join('|')})`, 'gi');
+    const parts = promptText.split(pattern);
+
+    return parts.map((part, index) => {
+      const isMatched = validHighlights.some(h => h.toLowerCase() === part.toLowerCase());
+      if (isMatched) {
+        return (
+          <mark
+            key={index}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemoveHighlight(part);
+            }}
+            title="Nhấp vào để xóa highlight cụm từ này"
+            className="bg-amber-200 hover:bg-amber-300 text-amber-950 px-1 py-0.5 rounded font-semibold transition-all cursor-pointer inline shadow-2xs border-b-2 border-amber-400 group relative"
+          >
+            {part}
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 text-[10px] text-amber-800 font-bold">
+              ✕
+            </span>
+          </mark>
+        );
+      }
+      return part;
+    });
+  } catch (err) {
+    console.warn('Highlight regex error:', err);
+    return promptText;
+  }
+}
 
 export default function PromptPane({
   task,
@@ -32,20 +84,67 @@ export default function PromptPane({
   const [showOutline, setShowOutline] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
-  const [highlights, setHighlights] = useState([]);
 
-  // Simple prompt highlighter helper
+  // Persistent highlights per task ID
+  const [highlights, setHighlights] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`ielts_highlights_${task?.id}`);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [];
+  });
+
+  const promptContainerRef = useRef(null);
+
+  // Sync highlights when current task changes
+  useEffect(() => {
+    if (!task?.id) return;
+    try {
+      const saved = localStorage.getItem(`ielts_highlights_${task.id}`);
+      setHighlights(saved ? JSON.parse(saved) : []);
+    } catch (e) {
+      setHighlights([]);
+    }
+  }, [task?.id]);
+
+  const updateHighlights = (newHighlights) => {
+    setHighlights(newHighlights);
+    if (task?.id) {
+      try {
+        localStorage.setItem(`ielts_highlights_${task.id}`, JSON.stringify(newHighlights));
+      } catch (e) {}
+    }
+  };
+
+  // Text selection highlighter handler
   const handleHighlightSelection = () => {
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
+
+    // Ensure selection occurred within the prompt container
+    if (promptContainerRef.current && !promptContainerRef.current.contains(selection.anchorNode)) {
+      return;
+    }
+
     const selectedText = selection.toString().trim();
-    if (selectedText.length > 2 && !highlights.includes(selectedText)) {
-      setHighlights(prev => [...prev, selectedText]);
+    if (selectedText.length >= 2) {
+      const exists = highlights.some(h => h.toLowerCase() === selectedText.toLowerCase());
+      if (!exists) {
+        const updated = [...highlights, selectedText];
+        updateHighlights(updated);
+      }
+      // Clear native selection so inline mark becomes immediately visible
+      selection.removeAllRanges();
     }
   };
 
   const removeHighlight = (text) => {
-    setHighlights(prev => prev.filter(h => h !== text));
+    const updated = highlights.filter(h => h.toLowerCase() !== text.toLowerCase());
+    updateHighlights(updated);
+  };
+
+  const clearAllHighlights = () => {
+    updateHighlights([]);
   };
 
   const isChartTask = task.taskNumber === 1 && !!task.chartData;
@@ -88,40 +187,61 @@ export default function PromptPane({
 
         {/* Prompt Card with text selection highlighter */}
         <div 
+          ref={promptContainerRef}
           onMouseUp={handleHighlightSelection}
-          className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-800 font-sans text-sm sm:text-base leading-relaxed relative select-text"
+          className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 font-sans text-sm sm:text-base leading-relaxed relative select-text shadow-2xs hover:border-slate-300 transition-all"
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center space-x-1">
-              <Info className="w-3.5 h-3.5" />
-              <span>Đề bài chính thức (Bôi đen để highlight)</span>
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2.5 border-b border-slate-100">
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200/70 px-2.5 py-1 rounded-lg">
+              <Highlighter className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+              <span>Bút Highlight Đề Bài</span>
+              <span className="text-[11px] font-normal text-amber-700 hidden sm:inline">(Bôi đen chữ bất kỳ để ghim đánh dấu)</span>
+            </div>
+
             {highlights.length > 0 && (
-              <button 
-                onClick={() => setHighlights([])}
-                className="text-[11px] text-red-600 hover:underline"
-              >
-                Xóa highlights ({highlights.length})
-              </button>
+              <div className="flex items-center space-x-2">
+                <span className="text-[11px] font-semibold text-slate-500">
+                  Đã ghim {highlights.length} cụm từ
+                </span>
+                <button 
+                  onClick={clearAllHighlights}
+                  className="text-[11px] text-red-600 hover:text-red-700 font-bold hover:underline flex items-center space-x-0.5"
+                >
+                  <RotateCcw className="w-3 h-3 inline mr-0.5" />
+                  <span>Xóa tất cả</span>
+                </button>
+              </div>
             )}
           </div>
 
-          <p className="whitespace-pre-line text-slate-900 font-medium">
-            {task.prompt}
+          {/* Render Prompt with Persistent Inline Highlights */}
+          <p className="whitespace-pre-line text-slate-900 font-medium text-sm sm:text-base leading-relaxed">
+            {renderHighlightedPrompt(task.prompt, highlights, removeHighlight)}
           </p>
 
-          {/* Highlighted badges */}
+          {/* Highlighted badges list */}
           {highlights.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-slate-200 flex flex-wrap gap-1.5">
-              {highlights.map((h, i) => (
-                <span 
-                  key={i} 
-                  className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-amber-200 text-amber-950 text-xs font-semibold"
-                >
-                  <span>{h}</span>
-                  <button onClick={() => removeHighlight(h)} className="text-amber-700 hover:text-amber-950 font-bold ml-1">×</button>
-                </span>
-              ))}
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
+                Các từ khóa trọng tâm đã trích xuất:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {highlights.map((h, i) => (
+                  <span 
+                    key={i} 
+                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-100/80 text-amber-950 text-xs font-bold border border-amber-300/60 shadow-2xs"
+                  >
+                    <span>{h}</span>
+                    <button 
+                      onClick={() => removeHighlight(h)} 
+                      className="text-amber-700 hover:text-amber-950 font-bold ml-1 hover:bg-amber-200 rounded p-0.5 transition-colors"
+                      title="Xóa từ khóa này"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
