@@ -41,10 +41,30 @@ export default function UserProfileModal({
   onDeleteTask,
   onViewSubmission,
   onSignOut,
-  onOpenAuth
+  onOpenAuth,
+  onOpenIngest,
+  onOpenGenerator,
+  onOpenLibrary,
+  onExportAllData,
+  onImportData
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'resources' | 'submissions' | 'account'
   const [resourceFilter, setResourceFilter] = useState('all'); // 'all' | 'public' | 'private'
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const parsed = JSON.parse(evt.target.result);
+        onImportData?.(parsed);
+      } catch (err) {
+        alert('File không hợp lệ hoặc bị lỗi cú pháp JSON.');
+      }
+    };
+    reader.readAsText(file);
+  };
 
   // If modal is not open, don't render
   if (!isOpen) return null;
@@ -335,6 +355,70 @@ export default function UserProfileModal({
                 </div>
               </div>
 
+              {/* EMPTY STATE HELPER & QUICK STARTER TASKS */}
+              {stats.totalEssays === 0 && (
+                <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-red-50 via-rose-50 to-amber-50 border border-red-200 shadow-xs space-y-4">
+                  <div className="flex items-start space-x-3.5">
+                    <div className="p-3 rounded-2xl bg-red-600 text-white shadow-md shrink-0">
+                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm sm:text-base font-bold text-slate-900">
+                        Chào mừng bạn đến với Phòng Luyện Thi IELTS Cá Nhân!
+                      </h4>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                        Bạn chưa nộp bài viết nào trên thiết bị/tài khoản này. Để hình thành <strong>Bảng Phân Tích 4 Tiêu Chí</strong> và <strong>Ước Tính Band Điểm</strong>, bạn chỉ cần hoàn thành và nộp bài luận đầu tiên.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3 Step Roadmap */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                    <div className="p-3 bg-white/90 rounded-xl border border-red-100 flex items-center space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-black text-xs flex items-center justify-center shrink-0">1</span>
+                      <span className="text-xs font-semibold text-slate-800">Chọn 1 đề thi gợi ý bên dưới</span>
+                    </div>
+                    <div className="p-3 bg-white/90 rounded-xl border border-red-100 flex items-center space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-black text-xs flex items-center justify-center shrink-0">2</span>
+                      <span className="text-xs font-semibold text-slate-800">Nhấn "Nộp Bài & Chấm Điểm AI"</span>
+                    </div>
+                    <div className="p-3 bg-white/90 rounded-xl border border-red-100 flex items-center space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-black text-xs flex items-center justify-center shrink-0">3</span>
+                      <span className="text-xs font-semibold text-slate-800">Điểm số sẽ tự động phân tích tại đây</span>
+                    </div>
+                  </div>
+
+                  {/* Suggested Tasks */}
+                  <div className="pt-2 border-t border-red-100">
+                    <span className="text-xs font-bold text-slate-800 block mb-2">Đề bài gợi ý để bạn bắt đầu ngay:</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {allTasks.slice(0, 2).map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => {
+                            onSelectTask?.(t);
+                            onClose();
+                          }}
+                          className="p-3 rounded-xl bg-white hover:bg-red-50/50 border border-slate-200 hover:border-red-200 text-left flex items-center justify-between group transition-all shadow-2xs"
+                        >
+                          <div className="truncate pr-2">
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black uppercase mr-1.5 ${
+                              t.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              Task {t.taskNumber}
+                            </span>
+                            <span className="text-xs font-bold text-slate-800 group-hover:text-red-700 transition-colors">
+                              {t.title}
+                            </span>
+                          </div>
+                          <span className="text-xs font-bold text-red-600 shrink-0">Viết ngay →</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Detailed 4-Criteria Radar / Progress Bars */}
               <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between border-b pb-3">
@@ -456,14 +540,76 @@ export default function UserProfileModal({
 
               {/* Tasks List */}
               {filteredCustomTasks.length === 0 ? (
-                <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                    <BookOpen className="w-6 h-6" />
+                <div className="space-y-4">
+                  <div className="p-6 sm:p-8 text-center bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <div className="w-12 h-12 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                      <BookOpen className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-800 text-sm sm:text-base">Kho đề cá nhân của bạn hiện chưa có đề tự tạo</h4>
+                      <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
+                        Bạn có thể dùng AI để nạp nhanh đề từ tài liệu/sách Cambridge (có ảnh Task 1) hoặc sinh đề mới để luyện thi và chia sẻ cùng cộng đồng.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                      {onOpenIngest && (
+                        <button
+                          onClick={onOpenIngest}
+                          className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Nạp Đề Bằng AI (Smart Ingest)</span>
+                        </button>
+                      )}
+                      {onOpenGenerator && (
+                        <button
+                          onClick={onOpenGenerator}
+                          className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5"
+                        >
+                          <span>➕ Sinh Đề Mới Bằng AI</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Chưa có đề bài nào trong danh mục này</h4>
-                  <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    Bạn có thể nạp tài liệu bằng AI Smart Ingest hoặc tự tạo đề mới để luyện tập và chia sẻ với cộng đồng.
-                  </p>
+
+                  {/* System Sample Tasks to Practice Immediately */}
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        Đề Thi Tiêu Biểu Trong Hệ Thống (Có Thể Làm Ngay)
+                      </span>
+                      <span className="text-[11px] text-slate-400">15 đề chuẩn Cambridge</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {(allTasks || []).slice(0, 4).map((t) => (
+                        <div
+                          key={t.id}
+                          className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-between transition-colors"
+                        >
+                          <div className="truncate pr-2">
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black uppercase mr-1.5 ${
+                              t.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              Task {t.taskNumber}
+                            </span>
+                            <span className="text-xs font-bold text-slate-800">
+                              {t.title}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              onSelectTask?.(t);
+                              onClose();
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-white hover:bg-red-50 text-red-700 text-xs font-bold border border-slate-200 shrink-0 shadow-2xs transition-colors"
+                          >
+                            Viết ngay →
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -694,6 +840,41 @@ export default function UserProfileModal({
                     <span className="text-slate-400 block mb-1">Chính sách bảo mật</span>
                     <span className="text-slate-600">Row Level Security (RLS) bảo vệ 100% dữ liệu cá nhân</span>
                   </div>
+                </div>
+              </div>
+
+              {/* Data Backup & Migration Area */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900">Sao Lưu & Di Chuyển Dữ Liệu Học Tập (JSON)</h4>
+                    <p className="text-xs text-slate-500">Giúp bạn chuyển toàn bộ bài làm, từ vựng và ghi chú từ thiết bị khác hoặc localhost sang đây</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  {onExportAllData && (
+                    <button
+                      onClick={onExportAllData}
+                      className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all shadow-2xs flex items-center space-x-1.5"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Xuất Tệp Dữ Liệu (.JSON)</span>
+                    </button>
+                  )}
+
+                  {onImportData && (
+                    <label className="cursor-pointer px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold border border-red-200 transition-all shadow-2xs flex items-center space-x-1.5">
+                      <Bookmark className="w-3.5 h-3.5" />
+                      <span>Nhập Tệp Dữ Liệu (.JSON) Vào Tài Khoản</span>
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
                 </div>
               </div>
 

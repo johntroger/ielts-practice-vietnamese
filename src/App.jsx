@@ -213,13 +213,16 @@ export default function App() {
     });
   }, []);
 
-  // Fetch from Cloud when user logs in
+  // Fetch from Cloud when user logs in with Bi-directional Auto-Sync
   useEffect(() => {
     if (currentUser) {
       // 1. Fetch Cloud Submissions
       fetchUserSubmissions(currentUser.id).then(cloudSubs => {
         if (cloudSubs && cloudSubs.length > 0) {
           setSubmissions(cloudSubs);
+        } else if (submissions && submissions.length > 0) {
+          // Auto-migrate local submissions to Supabase Cloud for this user
+          submissions.forEach(sub => saveUserSubmission(currentUser.id, sub));
         }
       });
 
@@ -227,6 +230,9 @@ export default function App() {
       fetchUserVocab(currentUser.id).then(cloudVocab => {
         if (cloudVocab && cloudVocab.length > 0) {
           setVocabList(cloudVocab);
+        } else if (vocabList && vocabList.length > 0) {
+          // Auto-migrate local vocab to Supabase Cloud
+          vocabList.forEach(v => saveUserVocabItem(currentUser.id, v));
         }
       });
 
@@ -238,6 +244,10 @@ export default function App() {
             const newToAdd = cloudTasks.filter(t => !existingIds.has(t.id));
             return [...newToAdd, ...prev];
           });
+        } else {
+          // Auto-migrate local custom tasks to Supabase Cloud
+          const localCustom = (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
+          localCustom.forEach(t => saveUserCustomTask(currentUser.id, t, t.isPublic || false, currentUser.email));
         }
       });
     }
@@ -824,6 +834,11 @@ export default function App() {
           setIsProfileOpen(false);
         }}
         onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenIngest={() => { setIsProfileOpen(false); setIsIngestOpen(true); }}
+        onOpenGenerator={() => { setIsProfileOpen(false); setIsGeneratorOpen(true); }}
+        onOpenLibrary={() => { setIsProfileOpen(false); setIsLibraryOpen(true); }}
+        onExportAllData={handleExportAllData}
+        onImportData={handleImportData}
       />
 
     </div>
