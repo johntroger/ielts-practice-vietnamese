@@ -109,7 +109,7 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Cẩm nang toàn diện giúp bạn khai thác tối đa sức mạnh của IELTS Writing Master Studio
+                Cẩm nang toàn diện giúp bạn khai thác tối đa sức mạnh của IELTS Practice Vietnamese Studio
               </p>
             </div>
           </div>

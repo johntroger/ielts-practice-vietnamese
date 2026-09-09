@@ -1,6 +1,6 @@
 /**
  * FEATURES_CHANGELOG
- * Danh mục các tính năng & nhật ký cập nhật của IELTS Writing Master Studio.
+ * Danh mục các tính năng & nhật ký cập nhật của IELTS Practice Vietnamese Studio.
  * File này hoạt động như một Single Source of Truth: Mỗi khi thêm tính năng mới,
  * chỉ cần bổ sung vào danh sách này, giao diện Modal Giới Thiệu Tính Năng trên web 
  * sẽ tự động cập nhật ngay lập tức mà không cần sửa giao diện!

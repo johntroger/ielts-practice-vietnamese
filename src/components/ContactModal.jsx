@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Mail, 
   Send, 
@@ -77,7 +77,7 @@ export default function ContactModal({ isOpen, onClose }) {
           subject: finalSubject,
           category: catLabel,
           message: message.trim(),
-          from_name: 'IELTS Writing Master Studio'
+          from_name: 'IELTS Practice Vietnamese Studio'
         })
       });
 

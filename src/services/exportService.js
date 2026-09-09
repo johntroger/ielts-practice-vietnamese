@@ -102,7 +102,7 @@ export function exportToWord({ task, essayText, evaluation, stats }) {
 
       <br><hr>
       <p style="text-align: center; font-size: 9pt; color: #94A3B8;">
-        Được xuất từ IELTS Writing Master - Local Practice & Gemini AI Engine
+        Được xuất từ IELTS Practice Vietnamese - Local Practice & Gemini AI Engine
       </p>
     </body>
     </html>
