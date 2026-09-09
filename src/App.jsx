@@ -582,6 +582,10 @@ export default function App() {
         onTaskImported={(newTask) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
+          // Sync to Cloud if logged in
+          if (currentUser) {
+            saveUserCustomTask(currentUser.id, newTask, false, currentUser.email);
+          }
         }}
         apiKey={apiKey}
         model={model}
@@ -607,7 +611,13 @@ export default function App() {
         task={currentTask}
         v1Essay={currentEssay}
         v1Evaluation={currentEvaluation}
-        onSaveV2Submission={(v2Sub) => setSubmissions(prev => [v2Sub, ...prev])}
+        onSaveV2Submission={(v2Sub) => {
+          setSubmissions(prev => [v2Sub, ...prev]);
+          // Sync V2 to Cloud if logged in
+          if (currentUser) {
+            saveUserSubmission(currentUser.id, v2Sub);
+          }
+        }}
         apiKey={apiKey}
         model={model}
       />
