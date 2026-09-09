@@ -527,6 +527,8 @@ export default function App() {
         isSubmitting={isSubmitting}
         wordCount={countWords(currentEssay)}
         minWords={currentTask.minWords}
+        apiKey={apiKey}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* 5. Modals System */}
