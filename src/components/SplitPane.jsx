@@ -41,13 +41,12 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
   return (
     <div 
       ref={containerRef} 
-      className="flex flex-col lg:flex-row flex-1 w-full overflow-hidden relative"
-      style={{ height: 'calc(100vh - 64px)' }}
+      className="flex flex-col lg:flex-row flex-1 w-full relative overflow-y-auto lg:overflow-hidden lg:h-[calc(100vh-64px)]"
     >
       {/* Left Pane (Prompt / Chart / Notes) */}
       <div 
-        className="w-full lg:h-full overflow-y-auto bg-white border-b lg:border-b-0 lg:border-r border-slate-200"
-        style={{ width: window.innerWidth >= 1024 ? `${splitRatio}%` : '100%' }}
+        className="w-full lg:h-full shrink-0 lg:shrink overflow-y-auto bg-white border-b lg:border-b-0 lg:border-r border-slate-200"
+        style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${splitRatio}%` : '100%' }}
       >
         {leftPane}
       </div>
@@ -63,8 +62,8 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
 
       {/* Right Pane (Editor / Stats / Tools) */}
       <div 
-        className="w-full lg:h-full overflow-y-auto bg-slate-50/50 flex flex-col"
-        style={{ width: window.innerWidth >= 1024 ? `${100 - splitRatio}%` : '100%' }}
+        className="w-full min-h-[500px] lg:min-h-0 lg:h-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1"
+        style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${100 - splitRatio}%` : '100%' }}
       >
         {rightPane}
       </div>
