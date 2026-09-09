@@ -22,6 +22,7 @@ import MockTestModal from './components/MockTestModal';
 import VocabGrammarSpellingModal from './components/VocabGrammarSpellingModal';
 import AuthModal from './components/AuthModal';
 import FeaturesGuideModal from './components/FeaturesGuideModal';
+import UserProfileModal from './components/UserProfileModal';
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -138,6 +139,7 @@ export default function App() {
   const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [isMockTestOpen, setIsMockTestOpen] = useState(false);
   const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // AI Operation States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -445,6 +447,7 @@ export default function App() {
         onOpenTheory={() => setIsTheoryOpen(true)}
         onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
         onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
+        onOpenProfile={() => setIsProfileOpen(true)}
         mistakesCount={mistakes.length}
         apiKey={apiKey}
         user={currentUser}
@@ -778,6 +781,49 @@ export default function App() {
       <FeaturesGuideModal
         isOpen={isFeaturesGuideOpen}
         onClose={() => setIsFeaturesGuideOpen(false)}
+      />
+
+      <UserProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={currentUser}
+        submissions={submissions}
+        vocabList={vocabList}
+        mistakes={mistakes}
+        streakCount={streakCount}
+        allTasks={allTasks}
+        onSelectTask={(t) => setCurrentTaskId(t.id)}
+        onTogglePublic={(taskId, isPub) => {
+          setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
+          if (currentUser) {
+            toggleTaskPublicity(currentUser.id, taskId, isPub);
+            if (isPub) {
+              const taskToShare = allTasks.find(t => t.id === taskId);
+              if (taskToShare) {
+                setCommunityTasks(prev => [{ ...taskToShare, isPublic: true, creatorEmail: currentUser.email, isCommunity: true }, ...prev]);
+              }
+            } else {
+              setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
+            }
+          }
+        }}
+        onDeleteTask={(taskId) => {
+          setAllTasks(prev => prev.filter(t => t.id !== taskId));
+          setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
+          if (currentUser) {
+            deleteUserCustomTask(currentUser.id, taskId);
+          }
+        }}
+        onViewSubmission={(sub) => {
+          setCurrentTaskId(sub.task.id);
+          setCurrentEvaluation(sub.evaluation);
+          setIsFeedbackOpen(true);
+        }}
+        onSignOut={async () => {
+          await supabase.auth.signOut();
+          setIsProfileOpen(false);
+        }}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
     </div>
