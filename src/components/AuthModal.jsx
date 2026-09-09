@@ -46,9 +46,13 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
 
     try {
       if (mode === 'register') {
+        const redirectUrl = typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://ielts-practice-vietnamese.vercel.app';
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password: password.trim(),
+          options: {
+            emailRedirectTo: redirectUrl
+          }
         });
 
         if (error) throw error;
@@ -91,10 +95,11 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
     setLoading(true);
     setErrorMsg('');
     try {
+      const redirectUrl = typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://ielts-practice-vietnamese.vercel.app';
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: redirectUrl
         }
       });
       if (error) throw error;
