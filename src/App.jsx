@@ -414,6 +414,9 @@ export default function App() {
         onOpenNotebook={() => setIsNotebookOpen(true)}
         onOpenHistory={() => setIsHistoryOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenTheory={() => setIsTheoryOpen(true)}
+        onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
+        mistakesCount={mistakes.length}
         apiKey={apiKey}
         user={currentUser}
         onOpenAuth={() => setIsAuthOpen(true)}
