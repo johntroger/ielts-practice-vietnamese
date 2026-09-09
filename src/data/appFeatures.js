@@ -6,12 +6,52 @@
  * sẽ tự động cập nhật ngay lập tức mà không cần sửa giao diện!
  */
 
+export const SKILL_DEFINITIONS = {
+  writing: {
+    id: 'writing',
+    name: 'Writing',
+    label: 'IELTS Writing',
+    color: 'bg-red-50 text-red-700 border-red-200',
+    dotColor: 'bg-red-500',
+    icon: 'PenTool',
+    desc: 'Bổ trợ trực tiếp kỹ năng Viết (Task 1 & Task 2), phát triển ý tưởng, cấu trúc bài và ngữ pháp nâng cao.'
+  },
+  reading: {
+    id: 'reading',
+    name: 'Reading',
+    label: 'IELTS Reading',
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    dotColor: 'bg-blue-500',
+    icon: 'BookOpen',
+    desc: 'Bổ trợ kỹ năng Đọc hiểu thông qua phân tích đề, đọc bài mẫu Band 8.5+, tài liệu học thuật và cẩm nang lý thuyết.'
+  },
+  speaking: {
+    id: 'speaking',
+    name: 'Speaking',
+    label: 'IELTS Speaking',
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    dotColor: 'bg-emerald-500',
+    icon: 'Mic',
+    desc: 'Bổ trợ kỹ năng Nói qua việc tích lũy collocations C1-C2, ngân hàng ý tưởng (Idea Bank) và cấu trúc lập luận phản biện.'
+  },
+  listening: {
+    id: 'listening',
+    name: 'Listening',
+    label: 'IELTS Listening',
+    color: 'bg-amber-50 text-amber-700 border-amber-200',
+    dotColor: 'bg-amber-500',
+    icon: 'Headphones',
+    desc: 'Bổ trợ kỹ năng Nghe qua việc làm quen với dạng bài thực tế, từ vựng theo ngữ cảnh học thuật và chính tả chuẩn xác.'
+  }
+};
+
 export const APP_FEATURES = [
   {
     id: 'feat-dual-task-management',
     version: 'v2.4',
     badge: 'Mới Nhất',
     category: 'community',
+    targetSkills: ['writing', 'reading'],
     title: 'Hệ Thống Đề Thi Cá Nhân & Thư Viện Cộng Đồng (Phương án C)',
     shortDesc: 'Tự do lưu trữ đề thi cá nhân riêng tư hoặc chia sẻ 1 chạm lên thư viện chung cho toàn bộ cộng đồng IELTS cùng luyện tập.',
     icon: 'Users',
@@ -27,6 +67,7 @@ export const APP_FEATURES = [
     version: 'v2.3',
     badge: 'Tối Ưu Mobile',
     category: 'ux',
+    targetSkills: ['writing'],
     title: 'Giao Diện Mobile 2 Dòng & Chế Độ "Soạn Bài Rộng Rãi"',
     shortDesc: 'Bố cục thanh điều hướng 2 dòng chống che khuất và tab chuyển đổi giúp vùng gõ bài trên điện thoại rộng thênh thang.',
     icon: 'Smartphone',
@@ -42,6 +83,7 @@ export const APP_FEATURES = [
     version: 'v2.2',
     badge: 'Bảo Mật Cao',
     category: 'ai',
+    targetSkills: ['writing'],
     title: 'Mô Hình BYOK (Bring Your Own Key) & Trí Tuệ Nhân Tạo Gemini',
     shortDesc: 'Chấm điểm chuẩn Cambridge bằng API Key cá nhân miễn phí từ Google AI Studio, bảo mật tuyệt đối 100%.',
     icon: 'ShieldCheck',
@@ -57,13 +99,14 @@ export const APP_FEATURES = [
     version: 'v2.1',
     badge: 'Cốt Lõi',
     category: 'evaluation',
+    targetSkills: ['writing', 'reading', 'speaking'],
     title: 'Giám Khảo AI Chấm Điểm 4 Tiêu Chí Chuẩn Cambridge',
     shortDesc: 'Chấm điểm chi tiết Task Response, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy kèm biểu đồ Radar.',
     icon: 'Award',
     highlights: [
       'Biểu đồ mạng nhện (Radar Chart): Trực quan hóa điểm mạnh và điểm yếu của từng tiêu chí.',
       'Sửa lỗi từng câu (Inline Corrections): Chỉ ra câu gốc sai chỗ nào, sửa lại chuẩn Band 8.0 kèm giải thích ngữ pháp.',
-      'Gợi ý viết lại bài luận (Band 8.5+ Rewrite): Cung cấp bài viết mẫu nâng cấp từ chính ý tưởng của bạn.',
+      'Gợi ý viết lại bài luận (Band 8.5+ Rewrite): Cung cấp bài viết mẫu nâng cấp từ chính ý tưởng của bạn (học collocations đắt giá bổ trợ cho cả Speaking & Writing).',
       'Xuất báo cáo Word (.docx) & In ấn: Tải kết quả chấm điểm chuyên nghiệp chỉ với 1 click.'
     ],
     usageGuide: 'Sau khi viết bài xong ở cột bên phải, bấm nút đỏ "Nộp Bài & Chấm Điểm AI" ở thanh công cụ dưới đáy màn hình.'
@@ -73,6 +116,7 @@ export const APP_FEATURES = [
     version: 'v2.0',
     badge: 'Đám Mây',
     category: 'cloud',
+    targetSkills: ['writing'],
     title: 'Tài Khoản Đa Nền Tảng & Đồng Bộ Đám Mây (Supabase)',
     shortDesc: 'Đăng ký nhanh bằng Google 1-click hoặc Email. Toàn bộ lịch sử bài thi và sổ tay từ vựng được sao lưu an toàn.',
     icon: 'Cloud',
@@ -88,12 +132,14 @@ export const APP_FEATURES = [
     version: 'v1.8',
     badge: 'Học Thuật',
     category: 'theory',
+    targetSkills: ['writing', 'reading'],
     title: 'Cẩm Nang Lý Thuyết & Chiến Thuật 7 Dạng Task 1 + 5 Dạng Task 2',
     shortDesc: 'Trọn bộ bí kíp bứt phá từ Band 6.0 lên 7.5+, phân tích cấu trúc bài, checklist 10 lỗi cấm kỵ và sổ tay ghi chú cá nhân.',
     icon: 'BookOpen',
     highlights: [
       'Đầy đủ 7 dạng Task 1: Line, Bar, Pie, Table, Mixed, Process và Map Comparison.',
       'Chiến thuật 5 dạng Task 2: Opinion, Discussion, Advantages/Disadvantages, Causes/Solutions, Two-Part Question.',
+      'Đọc phân tích cấu trúc & từ nối: Giúp nâng cao khả năng phân tích logic tương tự các bài đọc IELTS Reading.',
       'Ghi chú cá nhân (Personal Notes): Cho phép bạn tự thêm, sửa, xóa các mẹo học của riêng mình ngay trong cẩm nang.'
     ],
     usageGuide: 'Bấm nút "📖 Lý Thuyết" trên thanh điều hướng hoặc trong Menu Hamburger bất cứ lúc nào.'
@@ -103,12 +149,13 @@ export const APP_FEATURES = [
     version: 'v1.5',
     badge: 'Luyện Bổ Trợ',
     category: 'practice',
+    targetSkills: ['writing', 'speaking', 'reading'],
     title: 'Phòng Luyện Bổ Trợ: Micro-Drills, Vocab C1-C2 & Lỗi Sai Thường Gặp',
     shortDesc: 'Hệ sinh thái bài tập nhỏ giúp tăng phản xạ viết câu phức, ghép từ nối học thuật và ghi nhớ lỗi ngữ pháp.',
     icon: 'Puzzle',
     highlights: [
       'Micro-Drills: Luyện viết câu đơn thành câu phức, paraphrase đề bài, nối ý bằng danh từ hóa.',
-      'Flashcard Vocab & Grammar: Hàng trăm cụm collocations đắt giá theo chủ đề cùng bẫy lỗi hay gặp.',
+      'Flashcard Vocab & Grammar: Hàng trăm cụm collocations đắt giá theo chủ đề cùng bẫy lỗi hay gặp (áp dụng mượt mà vào cả IELTS Speaking Part 3).',
       'Sổ tay lỗi sai & Sổ tay từ vựng: Tự động gom các lỗi sai từ bài chấm của AI vào sổ để ôn tập lại.'
     ],
     usageGuide: 'Mở Menu -> Chọn mục trong phần "Học & Luyện Thi" (Micro-Drills, Vocab & Lỗi Sai, Sổ tay từ vựng).'
@@ -118,11 +165,13 @@ export const APP_FEATURES = [
     version: 'v1.0',
     badge: 'Thực Chiến',
     category: 'exam',
+    targetSkills: ['writing', 'reading'],
     title: 'Thi Thử 60 Phút Thực Chiến (Full Mock Test)',
     shortDesc: 'Mô phỏng 100% áp lực phòng thi IELTS trên máy tính với đồng hồ đếm ngược và kiểm soát số từ thời gian thực.',
     icon: 'Clock',
     highlights: [
       'Làm trọn gói Task 1 (20 phút) + Task 2 (40 phút) liên tục không ngắt quãng.',
+      'Rèn luyện kỹ năng đọc - phân tích đề nhanh (Skimming/Scanning) và quản lý thời gian thi chuẩn Cambridge.',
       'Bộ đếm từ và chỉ số TTR (Độ phong phú từ vựng), tốc độ gõ phím WPM thời gian thực.',
       'Chế độ Practice vs Exam: Bật/tắt kiểm tra chính tả linh hoạt theo nhu cầu ôn luyện.'
     ],

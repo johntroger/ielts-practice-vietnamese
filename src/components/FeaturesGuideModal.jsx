@@ -16,9 +16,14 @@ import {
   ChevronRight,
   Compass,
   Zap,
-  Tag
+  Tag,
+  PenTool,
+  Mic,
+  Headphones,
+  Layers,
+  GraduationCap
 } from 'lucide-react';
-import { APP_FEATURES } from '../data/appFeatures';
+import { APP_FEATURES, SKILL_DEFINITIONS } from '../data/appFeatures';
 
 const ICON_MAP = {
   Users: Users,
@@ -31,19 +36,35 @@ const ICON_MAP = {
   Clock: Clock
 };
 
+const SKILL_ICONS = {
+  writing: PenTool,
+  reading: BookOpen,
+  speaking: Mic,
+  listening: Headphones
+};
+
 export default function FeaturesGuideModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedSkill, setSelectedSkill] = useState('all'); // 'all' | 'writing' | 'reading' | 'speaking' | 'listening'
   const [activeFeatureId, setActiveFeatureId] = useState(APP_FEATURES[0].id);
 
   const categories = [
-    { id: 'all', label: 'Tất Cả Tính Năng' },
+    { id: 'all', label: 'Tất Cả Danh Mục' },
     { id: 'community', label: 'Cộng Đồng & Đề Thi' },
     { id: 'ai', label: 'AI & Chấm Điểm' },
     { id: 'ux', label: 'Giao Diện & Mobile' },
     { id: 'practice', label: 'Luyện Tập & Lý Thuyết' }
+  ];
+
+  const skillFilters = [
+    { id: 'all', label: '4 Kỹ Năng', icon: GraduationCap },
+    { id: 'writing', label: 'Writing', icon: PenTool, color: 'text-red-600' },
+    { id: 'reading', label: 'Reading', icon: BookOpen, color: 'text-blue-600' },
+    { id: 'speaking', label: 'Speaking', icon: Mic, color: 'text-emerald-600' },
+    { id: 'listening', label: 'Listening', icon: Headphones, color: 'text-amber-600' }
   ];
 
   const filteredFeatures = APP_FEATURES.filter(f => {
@@ -53,16 +74,20 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
       (selectedCategory === 'ux' && (f.category === 'ux' || f.category === 'cloud')) ||
       (selectedCategory === 'practice' && (f.category === 'theory' || f.category === 'practice' || f.category === 'exam'));
 
+    const matchesSkill = selectedSkill === 'all' || 
+      (f.targetSkills && f.targetSkills.includes(selectedSkill));
+
     const matchesSearch = !searchQuery || 
       f.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       f.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()));
+      f.highlights.some(h => h.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (f.targetSkills && f.targetSkills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase())));
 
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesSkill && matchesSearch;
   });
 
   const activeFeature = APP_FEATURES.find(f => f.id === activeFeatureId) || filteredFeatures[0] || APP_FEATURES[0];
-  const ActiveIcon = ICON_MAP[activeFeature.icon] || Sparkles;
+  const ActiveIcon = ICON_MAP[activeFeature?.icon] || Sparkles;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
@@ -118,21 +143,53 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Category Pills */}
-          <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-            {categories.map(c => (
-              <button
-                key={c.id}
-                onClick={() => setSelectedCategory(c.id)}
-                className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all ${
-                  selectedCategory === c.id
-                    ? 'bg-red-600 text-white shadow-2xs'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
+          {/* Filter Bar: 4 IELTS Skills & Categories */}
+          <div className="space-y-2">
+            {/* Skill Selector */}
+            <div className="flex items-center space-x-1.5 overflow-x-auto pb-0.5 no-scrollbar text-xs">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+                <GraduationCap className="w-3.5 h-3.5 text-slate-500" />
+                <span>Bổ Trợ Kỹ Năng:</span>
+              </span>
+              {skillFilters.map(sf => {
+                const isSelected = selectedSkill === sf.id;
+                const SkillIcon = sf.icon;
+                return (
+                  <button
+                    key={sf.id}
+                    onClick={() => setSelectedSkill(sf.id)}
+                    className={`px-2.5 py-1 rounded-lg font-bold flex items-center space-x-1.5 transition-all text-xs whitespace-nowrap ${
+                      isSelected
+                        ? 'bg-slate-900 text-white shadow-xs'
+                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <SkillIcon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : sf.color || 'text-slate-500'}`} />
+                    <span>{sf.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Category Pills */}
+            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1">
+                Phân Loại:
+              </span>
+              {categories.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCategory(c.id)}
+                  className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-all ${
+                    selectedCategory === c.id
+                      ? 'bg-red-600 text-white font-bold shadow-2xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -178,6 +235,25 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
                       <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5 leading-snug">
                         {feat.shortDesc}
                       </p>
+
+                      {/* Mini skill badges */}
+                      {feat.targetSkills && feat.targetSkills.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {feat.targetSkills.map(sk => {
+                            const def = SKILL_DEFINITIONS[sk];
+                            if (!def) return null;
+                            return (
+                              <span 
+                                key={sk} 
+                                className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border flex items-center gap-1 ${def.color}`}
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full ${def.dotColor}`}></span>
+                                <span>{def.name}</span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
 
                     <ChevronRight className={`w-4 h-4 self-center shrink-0 transition-transform ${
@@ -188,7 +264,7 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
               })
             ) : (
               <div className="p-8 text-center text-xs text-slate-400">
-                Không tìm thấy tính năng nào phù hợp với từ khóa.
+                Không tìm thấy tính năng nào phù hợp với bộ lọc hoặc từ khóa.
               </div>
             )}
           </div>
@@ -199,7 +275,7 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
               <div className="space-y-6 animate-in fade-in duration-150">
                 
                 {/* Feature Header */}
-                <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-100">
+                <div className="space-y-3 pb-4 border-b border-slate-100">
                   <div className="flex items-start space-x-3.5">
                     <div className="p-3 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white shadow-md shrink-0">
                       <ActiveIcon className="w-6 h-6" />
@@ -221,6 +297,42 @@ export default function FeaturesGuideModal({ isOpen, onClose }) {
                       </p>
                     </div>
                   </div>
+
+                  {/* 4 Skills Mapping Section */}
+                  {activeFeature.targetSkills && activeFeature.targetSkills.length > 0 && (
+                    <div className="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/80 space-y-2">
+                      <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                        <GraduationCap className="w-4 h-4 text-red-600" />
+                        <span>Bổ trợ cho các kỹ năng IELTS:</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {activeFeature.targetSkills.map(sk => {
+                          const def = SKILL_DEFINITIONS[sk];
+                          if (!def) return null;
+                          const SkillIcon = SKILL_ICONS[sk] || PenTool;
+                          return (
+                            <div 
+                              key={sk} 
+                              className="p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-start space-x-2.5"
+                            >
+                              <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${def.color}`}>
+                                <SkillIcon className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                  <span>{def.label}</span>
+                                  <span className={`w-1.5 h-1.5 rounded-full ${def.dotColor}`}></span>
+                                </div>
+                                <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                                  {def.desc}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Key Highlights */}
