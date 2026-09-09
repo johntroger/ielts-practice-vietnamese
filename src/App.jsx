@@ -28,7 +28,12 @@ import {
   deleteUserSubmission, 
   fetchUserVocab, 
   saveUserVocabItem, 
-  deleteUserVocabItem 
+  deleteUserVocabItem,
+  fetchUserCustomTasks,
+  fetchPublicTasks,
+  saveUserCustomTask,
+  toggleTaskPublicity,
+  deleteUserCustomTask
 } from './services/dataSyncService';
 
 import { INITIAL_TASKS } from './data/sampleTasks';
@@ -114,6 +119,7 @@ export default function App() {
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [communityTasks, setCommunityTasks] = useState([]);
   const [isDrillsOpen, setIsDrillsOpen] = useState(false);
   const [isVocabGrammarOpen, setIsVocabGrammarOpen] = useState(false);
   const [isWeeklyReportOpen, setIsWeeklyReportOpen] = useState(false);
@@ -194,6 +200,15 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Fetch Public Community Tasks on initial load
+  useEffect(() => {
+    fetchPublicTasks().then(tasks => {
+      if (tasks && tasks.length > 0) {
+        setCommunityTasks(tasks);
+      }
+    });
+  }, []);
+
   // Fetch from Cloud when user logs in
   useEffect(() => {
     if (currentUser) {
@@ -208,6 +223,17 @@ export default function App() {
       fetchUserVocab(currentUser.id).then(cloudVocab => {
         if (cloudVocab && cloudVocab.length > 0) {
           setVocabList(cloudVocab);
+        }
+      });
+
+      // 3. Fetch User's Cloud Custom & AI Tasks
+      fetchUserCustomTasks(currentUser.id).then(cloudTasks => {
+        if (cloudTasks && cloudTasks.length > 0) {
+          setAllTasks(prev => {
+            const existingIds = new Set(prev.map(t => t.id));
+            const newToAdd = cloudTasks.filter(t => !existingIds.has(t.id));
+            return [...newToAdd, ...prev];
+          });
         }
       });
     }
@@ -603,9 +629,17 @@ export default function App() {
         onClose={() => setIsGeneratorOpen(false)}
         apiKey={apiKey}
         model={model}
-        onTaskCreated={(newTask) => {
+        user={currentUser}
+        onTaskCreated={(newTask, isPub) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
+          // Sync to Cloud if logged in
+          if (currentUser) {
+            saveUserCustomTask(currentUser.id, newTask, isPub, currentUser.email);
+            if (isPub) {
+              setCommunityTasks(prev => [newTask, ...prev]);
+            }
+          }
         }}
         onOpenSettings={() => {
           setIsGeneratorOpen(false);
@@ -617,14 +651,37 @@ export default function App() {
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
         allTasks={allTasks}
+        communityTasks={communityTasks}
+        user={currentUser}
         currentTaskId={currentTaskId}
         onSelectTask={(t) => setCurrentTaskId(t.id)}
         onAddNewCustomTask={(newTask) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
+          if (currentUser) {
+            saveUserCustomTask(currentUser.id, newTask, false, currentUser.email);
+          }
+        }}
+        onTogglePublic={(taskId, isPub) => {
+          setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
+          if (currentUser) {
+            toggleTaskPublicity(currentUser.id, taskId, isPub);
+            if (isPub) {
+              const taskToShare = allTasks.find(t => t.id === taskId);
+              if (taskToShare) {
+                setCommunityTasks(prev => [{ ...taskToShare, isPublic: true, creatorEmail: currentUser.email, isCommunity: true }, ...prev]);
+              }
+            } else {
+              setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
+            }
+          }
         }}
         onDeleteTask={(id) => {
           setAllTasks(prev => prev.filter(t => t.id !== id));
+          setCommunityTasks(prev => prev.filter(t => t.id !== id));
+          if (currentUser) {
+            deleteUserCustomTask(currentUser.id, id);
+          }
           if (currentTaskId === id) {
             setCurrentTaskId(INITIAL_TASKS[0].id);
           }

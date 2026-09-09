@@ -7,10 +7,14 @@ import {
   Download, 
   Upload, 
   Sparkles, 
-  X,
-  FileText,
-  BarChart2,
-  CheckCircle2
+  X, 
+  FileText, 
+  BarChart2, 
+  CheckCircle2,
+  Globe,
+  Lock,
+  Share2,
+  Users
 } from 'lucide-react';
 import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
 
@@ -22,12 +26,15 @@ export default function TaskLibraryModal({
   onSelectTask,
   onAddNewCustomTask,
   onDeleteTask,
+  onTogglePublic,
+  user,
+  communityTasks = [],
   onExportAllData,
   onImportData
 }) {
   if (!isOpen) return null;
 
-  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'custom' | 'ai'
+  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'custom' | 'ai' | 'community'
   const [filterTaskNum, setFilterTaskNum] = useState('all'); // 'all' | 1 | 2
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddingManual, setIsAddingManual] = useState(false);
@@ -39,10 +46,14 @@ export default function TaskLibraryModal({
   const [manualPrompt, setManualPrompt] = useState('');
   const [manualModelAnswer, setManualModelAnswer] = useState('');
 
-  const filteredTasks = allTasks.filter(t => {
+  // Source list depending on activeTab
+  const taskSource = activeTab === 'community' ? communityTasks : allTasks;
+
+  const filteredTasks = taskSource.filter(t => {
     const matchesTab = 
       activeTab === 'all' || 
-      (activeTab === 'custom' && t.isCustom) || 
+      activeTab === 'community' ||
+      (activeTab === 'custom' && t.isCustom && !t.isAiGenerated) || 
       (activeTab === 'ai' && t.isAiGenerated);
 
     const matchesTaskNum = 
@@ -185,7 +196,16 @@ export default function TaskLibraryModal({
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Do AI sinh ra</span>
+                <span>AI của bạn</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('community')}
+                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors flex items-center space-x-1.5 ${
+                  activeTab === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5 text-blue-500" />
+                <span>Cộng Đồng Chia Sẻ ({communityTasks.length})</span>
               </button>
             </div>
 
@@ -332,6 +352,17 @@ export default function TaskLibraryModal({
                             Tự Nạp
                           </span>
                         )}
+                        {t.isPublic && (
+                          <span className="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-semibold flex items-center space-x-1">
+                            <Globe className="w-3 h-3" />
+                            <span>Công Khai</span>
+                          </span>
+                        )}
+                        {t.isCommunity && t.creatorEmail && (
+                          <span className="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200 font-medium">
+                            Từ: {t.creatorEmail.split('@')[0]}
+                          </span>
+                        )}
                       </div>
 
                       <h4 className="font-bold text-sm text-slate-900 truncate">
@@ -344,6 +375,22 @@ export default function TaskLibraryModal({
                     </div>
 
                     <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
+                      {/* Share / Unshare Toggle for own tasks */}
+                      {(t.isOwnTask || t.isAiGenerated || t.isCustom) && onTogglePublic && (
+                        <button
+                          onClick={() => onTogglePublic(t.id, !t.isPublic)}
+                          className={`p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors ${
+                            t.isPublic 
+                              ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' 
+                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                          }`}
+                          title={t.isPublic ? "Đang chia sẻ công khai cho mọi người. Bấm để chuyển về riêng tư" : "Bấm để chia sẻ đề này vào Thư viện Cộng đồng"}
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                          <span className="hidden md:inline">{t.isPublic ? 'Đang Chia Sẻ' : 'Chia Sẻ'}</span>
+                        </button>
+                      )}
+
                       {isActive ? (
                         <span className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold">
                           <CheckCircle2 className="w-3.5 h-3.5" />

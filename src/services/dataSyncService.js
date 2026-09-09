@@ -139,3 +139,107 @@ export async function deleteUserVocabItem(userId, vocabId) {
     console.error('Error deleting vocab from Supabase:', err);
   }
 }
+
+// --- CUSTOM & COMMUNITY TASKS SYNC ---
+
+export async function fetchUserCustomTasks(userId) {
+  if (!userId) return [];
+  try {
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || []).map(row => ({
+      ...row.task_data,
+      id: row.id,
+      isPublic: row.is_public,
+      creatorEmail: row.creator_email,
+      isOwnTask: true
+    }));
+  } catch (err) {
+    console.error('Error fetching user custom tasks from Supabase:', err);
+    return [];
+  }
+}
+
+export async function fetchPublicTasks() {
+  try {
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .select('*')
+      .eq('is_public', true)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    return (data || []).map(row => ({
+      ...row.task_data,
+      id: row.id,
+      isPublic: true,
+      creatorEmail: row.creator_email,
+      isCommunity: true
+    }));
+  } catch (err) {
+    console.error('Error fetching public community tasks:', err);
+    return [];
+  }
+}
+
+export async function saveUserCustomTask(userId, task, isPublic = false, creatorEmail = '') {
+  if (!userId || !task) return null;
+  try {
+    const row = {
+      id: task.id || `task-${Date.now()}`,
+      user_id: userId,
+      task_data: task,
+      is_public: isPublic,
+      creator_email: creatorEmail || 'Anonymous',
+      created_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .upsert(row);
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Error saving custom task to Supabase:', err);
+    return null;
+  }
+}
+
+export async function toggleTaskPublicity(userId, taskId, isPublic) {
+  if (!userId || !taskId) return;
+  try {
+    const { error } = await supabase
+      .from('user_custom_tasks')
+      .update({ is_public: isPublic })
+      .eq('id', taskId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  } catch (err) {
+    console.error('Error toggling task publicity:', err);
+  }
+}
+
+export async function deleteUserCustomTask(userId, taskId) {
+  if (!userId || !taskId) return;
+  try {
+    const { error } = await supabase
+      .from('user_custom_tasks')
+      .delete()
+      .eq('id', taskId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  } catch (err) {
+    console.error('Error deleting custom task from Supabase:', err);
+  }
+}
