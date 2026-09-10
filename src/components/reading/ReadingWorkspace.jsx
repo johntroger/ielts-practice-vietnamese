@@ -39,9 +39,17 @@ export default function ReadingWorkspace({
 
   // User state
   const [userAnswers, setUserAnswers] = useState({});
+  const [flaggedQuestions, setFlaggedQuestions] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showExplanationFor, setShowExplanationFor] = useState(null);
   const [activeEvidencePara, setActiveEvidencePara] = useState(null);
+
+  const handleToggleFlag = (order) => {
+    setFlaggedQuestions(prev => ({
+      ...prev,
+      [order]: !prev[order]
+    }));
+  };
 
   // Active Passage object
   const activePassage = useMemo(() => {
@@ -126,6 +134,7 @@ export default function ReadingWorkspace({
   const handleResetExam = () => {
     if (window.confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ được làm mới.')) {
       setUserAnswers({});
+      setFlaggedQuestions({});
       setIsSubmitted(false);
       setShowExplanationFor(null);
       setActiveEvidencePara(null);
@@ -267,6 +276,8 @@ export default function ReadingWorkspace({
           <QuestionPane
             questionGroups={activePassage?.questionGroups || []}
             userAnswers={userAnswers}
+            flaggedQuestions={flaggedQuestions}
+            onToggleFlag={handleToggleFlag}
             onAnswerChange={handleAnswerChange}
             isSubmitted={isSubmitted}
             showExplanationFor={showExplanationFor}
@@ -281,6 +292,7 @@ export default function ReadingWorkspace({
         totalQuestions={40}
         activePassageNum={selectedPassageNum}
         userAnswers={userAnswers}
+        flaggedQuestions={flaggedQuestions}
         isSubmitted={isSubmitted}
         questionsData={allQuestions}
         bandResult={bandResult}

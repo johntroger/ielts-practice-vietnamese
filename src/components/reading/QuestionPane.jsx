@@ -6,18 +6,38 @@ import {
   Sparkles, 
   ArrowRight,
   Eye,
-  Info
+  Info,
+  Flag
 } from 'lucide-react';
 
 export default function QuestionPane({
   questionGroups = [],
   userAnswers = {},
+  flaggedQuestions = {},
+  onToggleFlag,
   onAnswerChange,
   isSubmitted = false,
   showExplanationFor = null,
   onToggleExplanation,
   onLocateEvidence
 }) {
+  const renderFlagButton = (order) => {
+    if (isSubmitted) return null;
+    const isFlagged = !!flaggedQuestions[order];
+    return (
+      <button
+        onClick={() => onToggleFlag && onToggleFlag(order)}
+        title={isFlagged ? "Bỏ cắm cờ xem lại" : "Cắm cờ để xem lại sau (Review flag)"}
+        className={`p-1 rounded-md transition-colors ${
+          isFlagged 
+            ? 'text-amber-500 bg-amber-50 border border-amber-300 shadow-2xs' 
+            : 'text-slate-300 hover:text-slate-500 hover:bg-slate-100'
+        }`}
+      >
+        <Flag className={`w-3.5 h-3.5 ${isFlagged ? 'fill-amber-400' : ''}`} />
+      </button>
+    );
+  };
   const renderTFNGGroup = (group) => {
     const isYesNo = group.type === 'yes_no_not_given';
     const options = isYesNo ? ['YES', 'NO', 'NOT GIVEN'] : ['TRUE', 'FALSE', 'NOT GIVEN'];
@@ -42,9 +62,12 @@ export default function QuestionPane({
               }`}
             >
               <div className="flex items-start gap-3">
-                <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0">
-                  {q.order}
-                </span>
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
+                    {q.order}
+                  </span>
+                  {renderFlagButton(q.order)}
+                </div>
                 <div className="flex-1 space-y-3">
                   <p className="text-sm font-medium text-slate-900 leading-relaxed">
                     {q.questionText}
@@ -101,9 +124,12 @@ export default function QuestionPane({
               }`}
             >
               <div className="flex items-start gap-3">
-                <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0">
-                  {q.order}
-                </span>
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
+                    {q.order}
+                  </span>
+                  {renderFlagButton(q.order)}
+                </div>
                 <div className="flex-1 space-y-3">
                   <p className="text-sm font-semibold text-slate-900 leading-relaxed">
                     {q.questionText}
@@ -272,9 +298,12 @@ export default function QuestionPane({
               }`}
             >
               <div className="flex items-start gap-3">
-                <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0">
-                  {q.order}
-                </span>
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
+                    {q.order}
+                  </span>
+                  {renderFlagButton(q.order)}
+                </div>
                 <div className="flex-1 space-y-2">
                   <p className="text-sm font-medium text-slate-800 leading-relaxed">
                     {q.questionText}
@@ -350,9 +379,12 @@ export default function QuestionPane({
               }`}
             >
               <div className="flex items-start gap-3">
-                <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0">
-                  {q.order}
-                </span>
+                <div className="flex flex-col items-center gap-1 shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
+                    {q.order}
+                  </span>
+                  {renderFlagButton(q.order)}
+                </div>
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold text-slate-900 leading-relaxed">
