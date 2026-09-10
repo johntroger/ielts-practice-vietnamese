@@ -1,25 +1,25 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 /**
- * useAudioEngine - HTML5 Audio Engine & State Machine with Web Audio DynamicsCompressor
+ * useAudioEngine - HTML5 Audio Engine & State Machine
  * Features:
  * - Robust state machine: 'idle' | 'loading' | 'ready' | 'playing' | 'paused' | 'ended' | 'error'
- * - Web Audio API DynamicsCompressorNode for automatic volume normalization (chống chói tai)
- * - Autoplay policy unlocking mechanism
+ * - Clean browser autoplay unlock without play/pause race conditions
+ * - Automatic fallback source recovery on 404 / network errors
  * - Safe memory management & auto-cleanup on unmount / skill change
  * - Strict vs Practice seek controls
  * - Time tracking, duration, buffering progress, speed rate controls
  */
 export function useAudioEngine({
   initialSrc = '',
-  examMode = 'practice', // 'strict' (khóa tua) | 'practice' (tự do tua)
+  fallbackSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  examMode = 'practice', // 'strict' | 'practice'
   onTimeUpdate = null,
   onEnded = null,
   onError = null
 } = {}) {
   const audioRef = useRef(null);
   const audioContextRef = useRef(null);
-  const compressorRef = useRef(null);
   
   const [audioState, setAudioState] = useState('idle'); // 'idle' | 'loading' | 'ready' | 'playing' | 'paused' | 'ended' | 'error'
   const [currentTime, setCurrentTime] = useState(0);
@@ -30,40 +30,13 @@ export function useAudioEngine({
   const [bufferedPercent, setBufferedPercent] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [currentActiveSrc, setCurrentActiveSrc] = useState(initialSrc);
 
-  // Initialize HTML5 Audio instance & Web Audio DynamicsCompressor
+  // Initialize HTML5 Audio instance
   useEffect(() => {
     const audio = new Audio();
     audio.preload = 'auto';
-    audio.crossOrigin = 'anonymous';
     audioRef.current = audio;
-
-    // Optional Web Audio Compressor setup for audio leveling
-    const setupAudioCompressor = () => {
-      if (audioContextRef.current) return;
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-          const ctx = new AudioCtx();
-          audioContextRef.current = ctx;
-
-          // Connect audio element through DynamicsCompressorNode
-          const source = ctx.createMediaElementSource(audio);
-          const compressor = ctx.createDynamicsCompressor();
-          compressor.threshold.setValueAtTime(-24, ctx.currentTime);
-          compressor.knee.setValueAtTime(30, ctx.currentTime);
-          compressor.ratio.setValueAtTime(12, ctx.currentTime);
-          compressor.attack.setValueAtTime(0.003, ctx.currentTime);
-          compressor.release.setValueAtTime(0.25, ctx.currentTime);
-          compressorRef.current = compressor;
-
-          source.connect(compressor);
-          compressor.connect(ctx.destination);
-        }
-      } catch (err) {
-        console.warn('Web Audio DynamicsCompressor not initialized (fallback to direct playback):', err);
-      }
-    };
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration || 0);
@@ -71,8 +44,8 @@ export function useAudioEngine({
       setErrorMessage(null);
     };
 
-    const handleCanPlayThrough = () => {
-      if (audioState === 'loading') {
+    const handleCanPlay = () => {
+      if (audioState === 'loading' || audioState === 'idle') {
         setAudioState('ready');
       }
     };
@@ -95,8 +68,9 @@ export function useAudioEngine({
 
     const handlePlay = () => {
       setAudioState('playing');
+      setErrorMessage(null);
       if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-        audioContextRef.current.resume();
+        audioContextRef.current.resume().catch(() => {});
       }
     };
 
@@ -116,9 +90,17 @@ export function useAudioEngine({
     };
 
     const handleError = (e) => {
-      console.warn('useAudioEngine error:', e);
+      console.warn('Audio error on src:', audio.src, e);
+      // Auto fallback if initial source fails
+      if (fallbackSrc && audio.src !== fallbackSrc) {
+        console.log('Switching to fallback audio source:', fallbackSrc);
+        audio.src = fallbackSrc;
+        setCurrentActiveSrc(fallbackSrc);
+        audio.load();
+        return;
+      }
       setAudioState('error');
-      const err = audio.error ? `Lỗi âm thanh: code ${audio.error.code}` : 'Không thể tải tệp âm thanh';
+      const err = audio.error ? ('Lỗi âm thanh: code ' + audio.error.code) : 'Không thể tải tệp âm thanh';
       setErrorMessage(err);
       if (onError) {
         onError(err);
@@ -126,24 +108,23 @@ export function useAudioEngine({
     };
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('error', handleError);
 
-    // Initial source if provided
     if (initialSrc) {
       setAudioState('loading');
       audio.src = initialSrc;
+      setCurrentActiveSrc(initialSrc);
       audio.load();
     }
 
-    // Cleanup when component unmounts
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+      audio.removeEventListener('canplay', handleCanPlay);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
@@ -155,6 +136,7 @@ export function useAudioEngine({
         audio.src = '';
         audio.load();
       } catch (e) {}
+
       if (audioContextRef.current) {
         try {
           audioContextRef.current.close();
@@ -175,6 +157,7 @@ export function useAudioEngine({
       setCurrentTime(0);
       setBufferedPercent(0);
       audio.src = initialSrc;
+      setCurrentActiveSrc(initialSrc);
       audio.playbackRate = playbackRate;
       audio.load();
     }
@@ -182,24 +165,20 @@ export function useAudioEngine({
 
   // Unlock browser autoplay policy on user click
   const unlockAudio = useCallback(async () => {
-    const audio = audioRef.current;
-    if (!audio) return false;
-
     try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx && !audioContextRef.current) {
+        audioContextRef.current = new AudioCtx();
+      }
       if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
-      }
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        await playPromise;
-        audio.pause();
       }
       setIsUnlocked(true);
       return true;
     } catch (err) {
-      console.warn('Unlock audio note (normal before track chosen):', err);
+      console.warn('Unlock audio context note:', err);
       setIsUnlocked(true);
-      return false;
+      return true;
     }
   }, []);
 
@@ -210,24 +189,47 @@ export function useAudioEngine({
 
     try {
       if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
+        await audioContextRef.current.resume().catch(() => {});
       }
+      setErrorMessage(null);
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         await playPromise;
       }
       setIsUnlocked(true);
+      setAudioState('playing');
     } catch (err) {
-      console.error('Playback failed:', err);
-      setAudioState('error');
-      setErrorMessage('Trình duyệt chặn tự động phát âm thanh. Vui lòng bấm Bắt đầu làm bài.');
+      if (err.name === 'AbortError') {
+        // Interrupted play request (normal when seeking or quickly toggling), safe to ignore
+        return;
+      }
+      console.warn('Audio play caught error:', err);
+      if (err.name === 'NotAllowedError') {
+        setErrorMessage('Trình duyệt cần tương tác: Bạn vui lòng bấm nút Play để bắt đầu nghe.');
+      } else if (fallbackSrc && audio.src !== fallbackSrc) {
+        // Attempt fallback
+        audio.src = fallbackSrc;
+        setCurrentActiveSrc(fallbackSrc);
+        audio.load();
+        try {
+          await audio.play();
+          setErrorMessage(null);
+          setAudioState('playing');
+        } catch (e) {
+          setErrorMessage('Vui lòng kiểm tra kết nối mạng để phát âm thanh.');
+        }
+      } else {
+        setErrorMessage('Không thể phát âm thanh: ' + (err.message || 'Lỗi mạng'));
+      }
     }
-  }, []);
+  }, [fallbackSrc]);
 
   const pause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.pause();
+    try {
+      audio.pause();
+    } catch (e) {}
   }, []);
 
   const togglePlay = useCallback(() => {
@@ -241,69 +243,58 @@ export function useAudioEngine({
   // Seeking
   const seek = useCallback((targetSeconds) => {
     const audio = audioRef.current;
-    if (!audio || !audio.duration) return;
+    if (!audio) return;
 
     if (examMode === 'strict') {
       console.warn('Seeking is locked in Strict Exam Mode.');
       return;
     }
 
-    const clamped = Math.max(0, Math.min(targetSeconds, audio.duration));
-    audio.currentTime = clamped;
-    setCurrentTime(clamped);
+    const safeTime = Math.max(0, Math.min(Number(targetSeconds) || 0, audio.duration || 1800));
+    try {
+      audio.currentTime = safeTime;
+      setCurrentTime(safeTime);
+    } catch (e) {}
   }, [examMode]);
 
-  // Jump to specific evidence timestamp (used for review & diagnosis)
-  const jumpToEvidence = useCallback((timestampSeconds) => {
-    const audio = audioRef.current;
-    if (!audio || !audio.duration) return;
-    const clamped = Math.max(0, Math.min(timestampSeconds, audio.duration));
-    audio.currentTime = clamped;
-    setCurrentTime(clamped);
-    play();
-  }, [play]);
-
-  // Speed controls
-  const changePlaybackRate = useCallback((rate) => {
+  // Volume
+  const changeVolume = useCallback((newVol) => {
     const audio = audioRef.current;
     if (!audio) return;
-    const validRate = Math.max(0.5, Math.min(2.0, rate));
-    audio.playbackRate = validRate;
-    setPlaybackRate(validRate);
-  }, []);
-
-  // Volume controls
-  const changeVolume = useCallback((vol) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const clamped = Math.max(0, Math.min(1.0, vol));
-    audio.volume = clamped;
-    setVolume(clamped);
-    if (clamped === 0) {
-      setIsMuted(true);
-    } else if (isMuted) {
+    const safeVol = Math.max(0, Math.min(1, Number(newVol) || 0));
+    audio.volume = safeVol;
+    setVolume(safeVol);
+    if (safeVol > 0 && isMuted) {
       setIsMuted(false);
+      audio.muted = false;
     }
   }, [isMuted]);
 
+  // Toggle Mute
   const toggleMute = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (isMuted) {
-      audio.muted = false;
-      setIsMuted(false);
-    } else {
-      audio.muted = true;
-      setIsMuted(true);
-    }
+    const nextMuted = !isMuted;
+    audio.muted = nextMuted;
+    setIsMuted(nextMuted);
   }, [isMuted]);
+
+  // Speed rate (Practice only)
+  const changePlaybackRate = useCallback((rate) => {
+    if (examMode === 'strict') {
+      console.warn('Playback rate cannot be changed in Strict Exam Mode.');
+      return;
+    }
+    const audio = audioRef.current;
+    if (!audio) return;
+    const validRate = Number(rate) || 1.0;
+    audio.playbackRate = validRate;
+    setPlaybackRate(validRate);
+  }, [examMode]);
 
   return {
     audioRef,
     audioState,
-    isPlaying: audioState === 'playing',
-    isLoading: audioState === 'loading',
-    isEnded: audioState === 'ended',
     currentTime,
     duration,
     playbackRate,
@@ -312,14 +303,15 @@ export function useAudioEngine({
     bufferedPercent,
     errorMessage,
     isUnlocked,
+    currentActiveSrc,
+    unlockAudio,
     play,
     pause,
     togglePlay,
     seek,
-    jumpToEvidence,
-    changePlaybackRate,
     changeVolume,
     toggleMute,
-    unlockAudio
+    changePlaybackRate,
+    clearError: () => setErrorMessage(null)
   };
 }

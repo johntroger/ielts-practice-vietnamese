@@ -29,7 +29,7 @@ export const INITIAL_LISTENING_TESTS = [
     description: 'Bộ đề thi thử IELTS Listening chuẩn khảo thí Cambridge 18 gồm đầy đủ 4 phần (Part 1–4) với 40 câu hỏi, thời lượng audio 30 phút và 2 phút kiểm tra lại bài.',
     totalQuestions: 40,
     timeLimitMinutes: 32,
-    audioUrl: 'https://cdn.jsdelivr.net/gh/johntroger/ielts-audio-assets@main/cam18_test1_audio.mp3',
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     fallbackAudioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     parts: [
       {
