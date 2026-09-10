@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   BookOpen, 
   Search, 
@@ -15,7 +15,8 @@ import {
   Shuffle,
   PlusCircle,
   ArrowRight,
-  Check
+  Check,
+  Filter
 } from 'lucide-react';
 
 export default function ReadingLibraryModal({
@@ -32,6 +33,7 @@ export default function ReadingLibraryModal({
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'ingest' | 'public' | 'custom_builder'
+  const [passageFilter, setPassageFilter] = useState('all'); // 'all' | 'full' | 'p1' | 'p2' | 'p3'
   const [searchQuery, setSearchQuery] = useState('');
 
   // Builder state for selecting 3 passages
@@ -66,6 +68,32 @@ export default function ReadingLibraryModal({
   const p1Pool = useMemo(() => passageBank.filter(item => item.originalPassageNum === 1), [passageBank]);
   const p2Pool = useMemo(() => passageBank.filter(item => item.originalPassageNum === 2), [passageBank]);
   const p3Pool = useMemo(() => passageBank.filter(item => item.originalPassageNum === 3), [passageBank]);
+
+  // Clean title helper: removes prefixes
+  const cleanTitle = (rawTitle) => {
+    return (rawTitle || '')
+      .replace(/^(✨|📰|📚)s*/, '')
+      .replace(/^[(AI|Báo chí|Full Test)[^]]*]s*/i, '')
+      .replace(/^#d+s*:s*/, '')
+      .trim();
+  };
+
+  // Helper to generate full test standardized title
+  const generateFullTestTitle = (p1, p2, p3) => {
+    const fullTestCount = allReadingTests.filter(t => (t.passages?.length || 1) > 1).length + 1;
+    const seq = String(fullTestCount).padStart(2, '0');
+    const t1 = cleanTitle(p1?.passage?.title) || 'Passage 1';
+    const t2 = cleanTitle(p2?.passage?.title) || 'Passage 2';
+    const t3 = cleanTitle(p3?.passage?.title) || 'Passage 3';
+    return `📚 [Full Test #${seq}] ${t1} • ${t2} • ${t3}`;
+  };
+
+  // Update suggested title whenever 3 passages are chosen
+  useEffect(() => {
+    if (builderP1 && builderP2 && builderP3) {
+      setCustomTestTitle(generateFullTestTitle(builderP1, builderP2, builderP3));
+    }
+  }, [builderP1, builderP2, builderP3]);
 
   // Helper to re-index questions for a passage
   const reindexPassage = (originalPassage, targetPassageNum, startOrder) => {
@@ -130,7 +158,6 @@ export default function ReadingLibraryModal({
     setBuilderP1(chosen1);
     setBuilderP2(chosen2);
     setBuilderP3(chosen3);
-    setCustomTestTitle(`IELTS Full Reading Test: ${new Date().toLocaleDateString('vi-VN')} (Ngẫu Nhiên)`);
   };
 
   // Handler: Assemble and build the full test
@@ -153,11 +180,12 @@ export default function ReadingLibraryModal({
     const qCount3 = newP3.questionGroups.reduce((acc, g) => acc + g.questions.length, 0);
 
     const totalQ = qCount1 + qCount2 + qCount3;
+    const finalTitle = customTestTitle.trim() || generateFullTestTitle(builderP1, builderP2, builderP3);
 
     const fullTest = {
       id: `custom-test-full-${Date.now()}`,
-      title: customTestTitle.trim() || `IELTS Academic Reading Full Test (${totalQ} câu)`,
-      description: `Bộ đề thi thử 3 Passages tự lắp ghép từ ngân hàng đề (${builderP1.passage.title} + ${builderP2.passage.title} + ${builderP3.passage.title}). Chuẩn thi thật 60 phút.`,
+      title: finalTitle,
+      description: `Bộ đề thi thử 3 Passages tự lắp ghép từ ngân hàng đề (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). Chuẩn thi thật 60 phút.`,
       totalQuestions: totalQ,
       timeLimitMinutes: 60,
       isCustom: true,
@@ -173,33 +201,50 @@ export default function ReadingLibraryModal({
   };
 
   const filteredTests = allReadingTests.filter(test => {
+    // 1. Tab filter
     let matchesTab = true;
     if (activeTab === 'cambridge') {
       matchesTab = !test.isCustom;
     } else if (activeTab === 'ai') {
-      matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo'));
+      matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo') && !test.title?.includes('[Full Test'));
     } else if (activeTab === 'ingest') {
-      matchesTab = test.isCustom && (test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰'));
+      matchesTab = test.isCustom && (test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí'));
     } else if (activeTab === 'public') {
       matchesTab = Boolean(test.isPublic);
     }
 
+    // 2. Passage count/number filter
+    let matchesPassage = true;
+    const pCount = test.passages?.length || 1;
+    const pNum = test.passages?.[0]?.passageNumber || 1;
+    if (passageFilter === 'full') {
+      matchesPassage = pCount > 1;
+    } else if (passageFilter === 'p1') {
+      matchesPassage = pCount === 1 && pNum === 1;
+    } else if (passageFilter === 'p2') {
+      matchesPassage = pCount === 1 && pNum === 2;
+    } else if (passageFilter === 'p3') {
+      matchesPassage = pCount === 1 && pNum === 3;
+    }
+
+    // 3. Search query
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = !q ||
       test.title?.toLowerCase().includes(q) ||
       test.description?.toLowerCase().includes(q) ||
       test.passages?.some(p => p.title?.toLowerCase().includes(q));
 
-    return matchesTab && matchesSearch;
+    return matchesTab && matchesPassage && matchesSearch;
   });
 
   // Calculate statistics
   const stats = {
     total: allReadingTests.length,
     cambridge: allReadingTests.filter(t => !t.isCustom).length,
-    ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo')).length,
-    ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰'))).length,
+    ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test')).length,
+    ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰') || t.title?.includes('[Báo chí'))).length,
     public: allReadingTests.filter(t => t.isPublic).length,
+    fullTests: allReadingTests.filter(t => (t.passages?.length || 1) > 1).length,
     totalPassages: passageBank.length
   };
 
@@ -221,7 +266,7 @@ export default function ReadingLibraryModal({
                 </span>
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Quản lý thư viện đề chuẩn Cambridge, AI sinh & Lắp ghép đề thi 3 Passages hoàn chỉnh
+                Quản lý thư viện đề chuẩn hóa tên gọi, AI sinh & Lắp ghép đề thi 3 Passages chuẩn 60 phút
               </p>
             </div>
           </div>
@@ -234,83 +279,147 @@ export default function ReadingLibraryModal({
         </div>
 
         {/* Toolbar: Navigation Tabs & Actions */}
-        <div className="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between shrink-0">
-          {/* Tabs */}
-          <div className="flex items-center space-x-1 bg-slate-200/80 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                activeTab === 'all' 
-                  ? 'bg-white text-slate-900 shadow-xs' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Tất cả ({stats.total})
-            </button>
-            <button
-              onClick={() => setActiveTab('custom_builder')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                activeTab === 'custom_builder' 
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs' 
-                  : 'text-blue-700 hover:bg-blue-100/60 font-extrabold'
-              }`}
-            >
-              <Shuffle className="w-3.5 h-3.5" />
-              <span>🎲 Ghép Đề 3 Passages</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('cambridge')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                activeTab === 'cambridge' 
-                  ? 'bg-white text-blue-700 shadow-xs' 
-                  : 'text-slate-600 hover:text-blue-600'
-              }`}
-            >
-              Cambridge ({stats.cambridge})
-            </button>
-            <button
-              onClick={() => setActiveTab('ai')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                activeTab === 'ai' 
-                  ? 'bg-white text-purple-700 shadow-xs' 
-                  : 'text-slate-600 hover:text-purple-600'
-              }`}
-            >
-              ✨ AI Sinh ({stats.ai})
-            </button>
-            <button
-              onClick={() => setActiveTab('ingest')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                activeTab === 'ingest' 
-                  ? 'bg-white text-amber-700 shadow-xs' 
-                  : 'text-slate-600 hover:text-amber-600'
-              }`}
-            >
-              📰 Nạp Từ Báo ({stats.ingest})
-            </button>
-            <button
-              onClick={() => setActiveTab('public')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-                activeTab === 'public' 
-                  ? 'bg-white text-emerald-700 shadow-xs' 
-                  : 'text-slate-600 hover:text-emerald-600'
-              }`}
-            >
-              🌐 Cộng đồng ({stats.public})
-            </button>
+        <div className="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 flex flex-col gap-3 shrink-0">
+          {/* Main Category Tabs */}
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div className="flex items-center space-x-1 bg-slate-200/80 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                  activeTab === 'all' 
+                    ? 'bg-white text-slate-900 shadow-xs' 
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Tất cả ({stats.total})
+              </button>
+              <button
+                onClick={() => setActiveTab('custom_builder')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  activeTab === 'custom_builder' 
+                    ? 'bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-xs' 
+                    : 'text-blue-700 hover:bg-blue-100/60 font-extrabold'
+                }`}
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+                <span>🎲 Ghép Đề 3 Passages</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('cambridge')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                  activeTab === 'cambridge' 
+                    ? 'bg-white text-blue-700 shadow-xs' 
+                    : 'text-slate-600 hover:text-blue-600'
+                }`}
+              >
+                Cambridge ({stats.cambridge})
+              </button>
+              <button
+                onClick={() => setActiveTab('ai')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                  activeTab === 'ai' 
+                    ? 'bg-white text-purple-700 shadow-xs' 
+                    : 'text-slate-600 hover:text-purple-600'
+                }`}
+              >
+                ✨ AI Sinh ({stats.ai})
+              </button>
+              <button
+                onClick={() => setActiveTab('ingest')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                  activeTab === 'ingest' 
+                    ? 'bg-white text-amber-700 shadow-xs' 
+                    : 'text-slate-600 hover:text-amber-600'
+                }`}
+              >
+                📰 Nạp Từ Báo ({stats.ingest})
+              </button>
+              <button
+                onClick={() => setActiveTab('public')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                  activeTab === 'public' 
+                    ? 'bg-white text-emerald-700 shadow-xs' 
+                    : 'text-slate-600 hover:text-emerald-600'
+                }`}
+              >
+                🌐 Cộng đồng ({stats.public})
+              </button>
+            </div>
+
+            {/* Search Box */}
+            {activeTab !== 'custom_builder' && (
+              <div className="relative w-full sm:w-64">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Tìm theo tên, mã #01, chủ đề..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400 shadow-2xs"
+                />
+              </div>
+            )}
           </div>
 
-          {/* Search Box */}
+          {/* Secondary Filter: Filter by Passage Structure (Full Test, P1, P2, P3) */}
           {activeTab !== 'custom_builder' && (
-            <div className="relative w-full sm:w-64">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Tìm kiếm theo tiêu đề..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400 shadow-2xs"
-              />
+            <div className="flex items-center gap-2 pt-1 border-t border-slate-200/60 overflow-x-auto text-[11px]">
+              <span className="text-slate-500 font-bold flex items-center gap-1 shrink-0">
+                <Filter className="w-3 h-3 text-slate-400" />
+                Dạng bài:
+              </span>
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setPassageFilter('all')}
+                  className={`px-2.5 py-1 rounded-md transition-colors font-medium ${
+                    passageFilter === 'all'
+                      ? 'bg-slate-800 text-white font-bold'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  Tất cả dạng
+                </button>
+                <button
+                  onClick={() => setPassageFilter('full')}
+                  className={`px-2.5 py-1 rounded-md transition-colors font-medium ${
+                    passageFilter === 'full'
+                      ? 'bg-blue-600 text-white font-bold'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-blue-50 hover:text-blue-700'
+                  }`}
+                >
+                  📚 Full Test (3 Passages)
+                </button>
+                <button
+                  onClick={() => setPassageFilter('p1')}
+                  className={`px-2.5 py-1 rounded-md transition-colors font-medium ${
+                    passageFilter === 'p1'
+                      ? 'bg-emerald-600 text-white font-bold'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'
+                  }`}
+                >
+                  Passage 1 (Câu 1–13)
+                </button>
+                <button
+                  onClick={() => setPassageFilter('p2')}
+                  className={`px-2.5 py-1 rounded-md transition-colors font-medium ${
+                    passageFilter === 'p2'
+                      ? 'bg-amber-600 text-white font-bold'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-amber-50 hover:text-amber-700'
+                  }`}
+                >
+                  Passage 2 (Câu 14–26)
+                </button>
+                <button
+                  onClick={() => setPassageFilter('p3')}
+                  className={`px-2.5 py-1 rounded-md transition-colors font-medium ${
+                    passageFilter === 'p3'
+                      ? 'bg-rose-600 text-white font-bold'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-700'
+                  }`}
+                >
+                  Passage 3 (Câu 27–40)
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -319,7 +428,7 @@ export default function ReadingLibraryModal({
         {activeTab === 'custom_builder' ? (
           <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
             {/* Intro Banner with Random Button */}
-            <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
+            <div className="bg-linear-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
               <div className="space-y-1">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-indigo-600" />
@@ -334,7 +443,7 @@ export default function ReadingLibraryModal({
                 <button
                   type="button"
                   onClick={handleRandomize3Passages}
-                  className="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="px-4 py-2.5 bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
                   <Shuffle className="w-4 h-4" />
                   <span>🎲 Chọn Ngẫu Nhiên 3 Passages</span>
@@ -344,15 +453,18 @@ export default function ReadingLibraryModal({
 
             {/* Test Title Input */}
             <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 block">
-                Tên bài thi ghép (Tùy chọn):
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 block">
+                  Tên bài thi ghép (Chuẩn hóa tự động theo 3 Passages):
+                </label>
+                <span className="text-[10px] text-slate-400 font-mono">Định dạng chuẩn: [Full Test #STT] P1 • P2 • P3</span>
+              </div>
               <input
                 type="text"
-                placeholder="VD: Đề Luyện Tập Tổng Hợp 3 Passages - Cambridge & AI..."
+                placeholder="VD: 📚 [Full Test #02] Roman Shipwrecks • Neuroscience • Climate Crisis..."
                 value={customTestTitle}
                 onChange={(e) => setCustomTestTitle(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none focus:bg-white"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:bg-white"
               />
             </div>
 
@@ -394,7 +506,7 @@ export default function ReadingLibraryModal({
                       <option value="">-- Bấm chọn bài đọc --</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {item.passage.title} ({item.qCount} câu)
+                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} câu)
                         </option>
                       ))}
                     </select>
@@ -402,13 +514,13 @@ export default function ReadingLibraryModal({
 
                   {builderP1 ? (
                     <div className="bg-white p-3 rounded-xl border border-emerald-200 space-y-1 text-xs">
-                      <p className="font-bold text-slate-900 leading-snug">{builderP1.passage.title}</p>
+                      <p className="font-bold text-slate-900 leading-snug">{cleanTitle(builderP1.passage.title)}</p>
                       <p className="text-slate-500 text-[11px] line-clamp-2">
                         {builderP1.passage.paragraphs?.[0]?.text?.substring(0, 100)}...
                       </p>
                       <div className="pt-1 flex items-center justify-between text-[11px] text-emerald-700 font-semibold">
                         <span>{builderP1.qCount} câu hỏi</span>
-                        <span className="text-slate-400">Từ: {builderP1.testTitle}</span>
+                        <span className="text-slate-400 truncate max-w-[120px]">Từ: {cleanTitle(builderP1.testTitle)}</span>
                       </div>
                     </div>
                   ) : (
@@ -454,7 +566,7 @@ export default function ReadingLibraryModal({
                       <option value="">-- Bấm chọn bài đọc --</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {item.passage.title} ({item.qCount} câu)
+                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} câu)
                         </option>
                       ))}
                     </select>
@@ -462,13 +574,13 @@ export default function ReadingLibraryModal({
 
                   {builderP2 ? (
                     <div className="bg-white p-3 rounded-xl border border-amber-200 space-y-1 text-xs">
-                      <p className="font-bold text-slate-900 leading-snug">{builderP2.passage.title}</p>
+                      <p className="font-bold text-slate-900 leading-snug">{cleanTitle(builderP2.passage.title)}</p>
                       <p className="text-slate-500 text-[11px] line-clamp-2">
                         {builderP2.passage.paragraphs?.[0]?.text?.substring(0, 100)}...
                       </p>
                       <div className="pt-1 flex items-center justify-between text-[11px] text-amber-700 font-semibold">
                         <span>{builderP2.qCount} câu hỏi</span>
-                        <span className="text-slate-400">Từ: {builderP2.testTitle}</span>
+                        <span className="text-slate-400 truncate max-w-[120px]">Từ: {cleanTitle(builderP2.testTitle)}</span>
                       </div>
                     </div>
                   ) : (
@@ -514,7 +626,7 @@ export default function ReadingLibraryModal({
                       <option value="">-- Bấm chọn bài đọc --</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {item.passage.title} ({item.qCount} câu)
+                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} câu)
                         </option>
                       ))}
                     </select>
@@ -522,13 +634,13 @@ export default function ReadingLibraryModal({
 
                   {builderP3 ? (
                     <div className="bg-white p-3 rounded-xl border border-rose-200 space-y-1 text-xs">
-                      <p className="font-bold text-slate-900 leading-snug">{builderP3.passage.title}</p>
+                      <p className="font-bold text-slate-900 leading-snug">{cleanTitle(builderP3.passage.title)}</p>
                       <p className="text-slate-500 text-[11px] line-clamp-2">
                         {builderP3.passage.paragraphs?.[0]?.text?.substring(0, 100)}...
                       </p>
                       <div className="pt-1 flex items-center justify-between text-[11px] text-rose-700 font-semibold">
                         <span>{builderP3.qCount} câu hỏi</span>
-                        <span className="text-slate-400">Từ: {builderP3.testTitle}</span>
+                        <span className="text-slate-400 truncate max-w-[120px]">Từ: {cleanTitle(builderP3.testTitle)}</span>
                       </div>
                     </div>
                   ) : (
@@ -575,7 +687,7 @@ export default function ReadingLibraryModal({
               <div className="text-center py-16">
                 <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3 stroke-[1.5]" />
                 <p className="text-sm font-semibold text-slate-600">Không tìm thấy bài đọc nào phù hợp</p>
-                <p className="text-xs text-slate-400 mt-1">Hãy thử tìm từ khóa khác hoặc chuyển sang tab bộ lọc khác.</p>
+                <p className="text-xs text-slate-400 mt-1">Hãy thử tìm từ khóa khác hoặc chuyển sang tab/dạng bài khác.</p>
               </div>
             ) : (
               filteredTests.map((test) => {
@@ -600,14 +712,14 @@ export default function ReadingLibraryModal({
                         {/* Passage Tag */}
                         <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${
                           passageCount > 1 
-                            ? 'bg-slate-100 text-slate-700 border-slate-300'
+                            ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
                             : passageNum === 1
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : passageNum === 2
                             ? 'bg-amber-50 text-amber-700 border-amber-200'
                             : 'bg-rose-50 text-rose-700 border-rose-200'
                         }`}>
-                          {passageCount > 1 ? `Full Test (${passageCount} Passages)` : `Passage ${passageNum}`}
+                          {passageCount > 1 ? `Full Test (3 Passages)` : `Passage ${passageNum}`}
                         </span>
 
                         {/* Source Badge */}
@@ -615,7 +727,11 @@ export default function ReadingLibraryModal({
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
                             Cambridge Academic
                           </span>
-                        ) : test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') ? (
+                        ) : test.title?.includes('[Full Test') ? (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            📚 Đề Ghép 3 Passages
+                          </span>
+                        ) : test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí') ? (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
                             📰 Nạp bài báo
                           </span>

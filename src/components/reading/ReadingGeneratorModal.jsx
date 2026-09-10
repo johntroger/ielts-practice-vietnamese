@@ -89,7 +89,7 @@ export default function ReadingGeneratorModal({
       });
 
       if (onPassageGenerated) {
-        onPassageGenerated(generatedPassage, isPublic);
+        onPassageGenerated(generatedPassage, isPublic, { topicEn: selectedTopic, passageNum: selectedPassageNum });
       }
       onClose();
     } catch (err) {

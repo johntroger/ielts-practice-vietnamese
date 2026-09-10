@@ -78,11 +78,27 @@ export default function ReadingWorkspace({
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   // Callback when a new passage is generated or ingested
-  const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = false) => {
-    const targetPNum = newPassage.passageNumber || 1;
+  const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = false, extraMeta = {}) => {
+    const targetPNum = newPassage.passageNumber || extraMeta.passageNum || 1;
+    const cleanTitle = (newPassage.title || '').replace(/^(✨|📰)\s*/, '').trim() || `Bài Đọc IELTS Passage ${targetPNum}`;
+    
+    // Count existing AI / Ingest tests to generate sequence #01, #02...
+    const countSameType = allReadingTests.filter(t => 
+      source === 'ingest' ? (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰')) : (!t.description?.includes('trích xuất từ bài báo') && t.isCustom)
+    ).length + 1;
+    const seqStr = `#${String(countSameType).padStart(2, '0')}`;
+
+    let standardizedTitle = '';
+    if (source === 'ingest') {
+      standardizedTitle = `📰 [Báo chí - P${targetPNum}] ${seqStr}: ${cleanTitle}`;
+    } else {
+      const topicLabel = extraMeta.topicEn ? `${extraMeta.topicEn}: ` : '';
+      standardizedTitle = `✨ [AI - P${targetPNum}] ${seqStr} ${topicLabel}${cleanTitle}`;
+    }
+
     const newTest = {
       id: `custom-test-${Date.now()}`,
-      title: `${source === 'ingest' ? '📰' : '✨'} ${newPassage.title || `Bài Đọc IELTS Passage ${targetPNum}`}`,
+      title: standardizedTitle,
       description: `Đề thi Passage ${targetPNum} ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi Gemini AI'} theo chuẩn Cambridge Academic.`,
       totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 13,
       timeLimitMinutes: 20,
@@ -600,7 +616,7 @@ export default function ReadingWorkspace({
         onClose={() => setIsGeneratorOpen(false)}
         apiKey={apiKey}
         model={model}
-        onPassageGenerated={(p, isPub) => handleAddCustomPassage(p, 'generated', isPub)}
+        onPassageGenerated={(p, isPub, meta) => handleAddCustomPassage(p, 'generated', isPub, meta)}
         onOpenSettings={onOpenSettings}
       />
 
