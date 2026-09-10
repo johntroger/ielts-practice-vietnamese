@@ -29,6 +29,11 @@ export default function ListeningTranscriptModal({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSentenceIndex, setSelectedSentenceIndex] = useState(null);
 
+  // Sync selectedPartNum when activePart changes or modal reopens
+  useEffect(() => {
+    setSelectedPartNum(activePart);
+  }, [activePart, isOpen]);
+
   const activePartData = currentTest.parts?.find(p => p.partNumber === selectedPartNum) || currentTest.parts?.[0];
   const transcripts = activePartData?.transcripts || [];
 
@@ -142,8 +147,18 @@ export default function ListeningTranscriptModal({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 bg-slate-50/50">
           {filteredTranscripts.length === 0 ? (
             <div className="text-center py-12 text-slate-400">
-              <FileText className="w-8 h-8 mx-auto mb-2 opacity-40" />
-              <p className="text-xs">Không tìm thấy đoạn hội thoại nào phù hợp với từ khóa.</p>
+              <FileText className="w-10 h-10 mx-auto mb-3 text-slate-300" />
+              {searchTerm ? (
+                <>
+                  <p className="text-xs font-semibold text-slate-600">Không tìm thấy đoạn hội thoại nào phù hợp với từ khóa "{searchTerm}".</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Hãy thử xóa bộ lọc tìm kiếm để xem toàn bộ lời thoại.</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xs font-semibold text-slate-600">Lời thoại (Transcript) của Part {selectedPartNum} đang được hoàn thiện.</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Bạn có thể chuyển sang <strong>Part 1</strong> để trải nghiệm tính năng Karaoke Transcript đồng bộ âm thanh thời gian thực.</p>
+                </>
+              )}
             </div>
           ) : (
             filteredTranscripts.map((item, idx) => {
