@@ -1,0 +1,208 @@
+﻿import React, { useState } from 'react';
+import { 
+  Sparkles, 
+  BookMarked, 
+  X, 
+  RefreshCw, 
+  Layers, 
+  CheckCircle2, 
+  AlertCircle,
+  HelpCircle
+} from 'lucide-react';
+import { generateReadingPassage } from '../../services/geminiService';
+
+const READING_TOPICS = [
+  { id: 'tech', label: 'Công nghệ, AI & Tương lai kỹ thuật số', en: 'Technology & AI' },
+  { id: 'env', label: 'Môi trường, Sinh thái & Biến đổi khí hậu', en: 'Environment & Climate Change' },
+  { id: 'bio', label: 'Sinh học, Động vật hoang dã & Tiến hóa', en: 'Biology & Wildlife' },
+  { id: 'hist', label: 'Lịch sử, Khảo cổ & Nền văn minh cổ đại', en: 'History & Archaeology' },
+  { id: 'health', label: 'Y học, Sức khỏe cộng đồng & Dinh dưỡng', en: 'Medicine & Public Health' },
+  { id: 'econ', label: 'Kinh tế, Thương mại & Toàn cầu hóa', en: 'Economics & Globalization' },
+  { id: 'urban', label: 'Kiến trúc & Đô thị tương lai', en: 'Urban Planning & Architecture' },
+  { id: 'space', label: 'Thiên văn học & Thám hiểm vũ trụ', en: 'Astronomy & Space Exploration' },
+  { id: 'ling', label: 'Ngôn ngữ học & Giao tiếp nhân loại', en: 'Linguistics & Human Communication' }
+];
+
+const DIFFICULTY_LEVELS = [
+  { id: 'Easy', label: 'Passage 1 (Band 5.5 - 6.5)', desc: 'Từ vựng nền tảng, câu đơn & ghép, lập luận rõ ràng' },
+  { id: 'Medium', label: 'Passage 2 (Band 6.5 - 7.5)', desc: 'Văn phong học thuật, câu phức, cấu trúc paraphrase biến hóa' },
+  { id: 'Hard', label: 'Passage 3 (Band 7.5 - 9.0)', desc: 'Chủ đề trừu tượng, bẫy distractors tinh vi, thuật ngữ chuyên ngành' }
+];
+
+export default function ReadingGeneratorModal({
+  isOpen,
+  onClose,
+  apiKey,
+  model,
+  onPassageGenerated,
+  onOpenSettings
+}) {
+  if (!isOpen) return null;
+
+  const [selectedTopic, setSelectedTopic] = useState(READING_TOPICS[0].en);
+  const [selectedDifficulty, setSelectedDifficulty] = useState('Medium');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleGenerate = async () => {
+    if (!apiKey) {
+      setErrorMsg('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      return;
+    }
+
+    setIsGenerating(true);
+    setErrorMsg('');
+
+    try {
+      const generatedPassage = await generateReadingPassage({
+        topic: selectedTopic,
+        difficulty: selectedDifficulty,
+        apiKey,
+        model
+      });
+
+      if (onPassageGenerated) {
+        onPassageGenerated(generatedPassage);
+      }
+      onClose();
+    } catch (err) {
+      console.error('Lỗi khi sinh đề đọc:', err);
+      setErrorMsg(err.message || 'Lỗi khi sinh bài đọc bằng AI.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200 flex flex-col">
+        
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-blue-300" />
+            </div>
+            <div>
+              <h3 className="font-black text-base text-white">Sinh Đề Thi IELTS Reading Bằng AI</h3>
+              <p className="text-[11px] text-blue-200">Chuẩn hóa cấu trúc Cambridge Academic với bằng chứng & giải thích</p>
+            </div>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-1 rounded-lg text-slate-300 hover:text-white hover:bg-white/10"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-5 sm:p-6 space-y-5 overflow-y-auto max-h-[75vh] text-xs">
+          
+          {/* Topic Select */}
+          <div className="space-y-2">
+            <label className="font-bold text-slate-800 uppercase tracking-wider text-[11px] block">
+              1. Chọn Chủ Đề Học Thuật (12 IELTS Academic Domains):
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {READING_TOPICS.map(topic => (
+                <button
+                  key={topic.id}
+                  type="button"
+                  onClick={() => setSelectedTopic(topic.en)}
+                  className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                    selectedTopic === topic.en
+                      ? 'bg-blue-50 text-blue-900 border-blue-400 ring-2 ring-blue-100 font-bold'
+                      : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <span className="leading-snug">{topic.label}</span>
+                  <span className="text-[10px] text-slate-400 font-normal mt-1">{topic.en}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Difficulty Level */}
+          <div className="space-y-2">
+            <label className="font-bold text-slate-800 uppercase tracking-wider text-[11px] block">
+              2. Chọn Độ Khó & Dải Band Mục Tiêu:
+            </label>
+            <div className="space-y-2">
+              {DIFFICULTY_LEVELS.map(lvl => (
+                <button
+                  key={lvl.id}
+                  type="button"
+                  onClick={() => setSelectedDifficulty(lvl.id)}
+                  className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-start justify-between ${
+                    selectedDifficulty === lvl.id
+                      ? 'bg-indigo-50 text-indigo-900 border-indigo-400 ring-2 ring-indigo-100 font-bold'
+                      : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold text-xs">{lvl.label}</div>
+                    <div className="text-[11px] text-slate-500 font-normal mt-0.5">{lvl.desc}</div>
+                  </div>
+                  {selectedDifficulty === lvl.id && (
+                    <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {errorMsg && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p>{errorMsg}</p>
+                {!apiKey && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      if (onOpenSettings) onOpenSettings();
+                    }}
+                    className="text-blue-600 underline font-bold"
+                  >
+                    Mở Cài đặt để nhập API Key
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="bg-slate-50 border-t border-slate-200 px-5 py-3.5 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs"
+          >
+            Hủy bỏ
+          </button>
+          <button
+            type="button"
+            disabled={isGenerating}
+            onClick={handleGenerate}
+            className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center gap-2 disabled:opacity-60"
+          >
+            {isGenerating ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Gemini đang soạn bài đọc...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>Bắt Đầu Sinh Đề Thi</span>
+              </>
+            )}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}

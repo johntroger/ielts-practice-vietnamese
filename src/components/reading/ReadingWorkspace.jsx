@@ -27,6 +27,8 @@ import PassagePane from './PassagePane';
 import QuestionPane from './QuestionPane';
 import QuestionPaletteBar from './QuestionPaletteBar';
 import ReadingResultModal from './ReadingResultModal';
+import ReadingGeneratorModal from './ReadingGeneratorModal';
+import ReadingIngestModal from './ReadingIngestModal';
 
 export default function ReadingWorkspace({
   apiKey,
@@ -35,7 +37,24 @@ export default function ReadingWorkspace({
   user,
   onSaveToVocabNotebook
 }) {
-  const currentTest = INITIAL_READING_TESTS[0];
+  const [allReadingTests, setAllReadingTests] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_reading_custom_tests');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return [...INITIAL_READING_TESTS, ...parsed];
+        }
+      }
+    } catch (e) {}
+    return INITIAL_READING_TESTS;
+  });
+
+  const [currentTestId, setCurrentTestId] = useState(() => INITIAL_READING_TESTS[0].id);
+  const currentTest = useMemo(() => {
+    return allReadingTests.find(t => t.id === currentTestId) || allReadingTests[0];
+  }, [allReadingTests, currentTestId]);
+
   const [selectedPassageNum, setSelectedPassageNum] = useState(1);
   const [examMode, setExamMode] = useState('practice'); // 'exam' | 'practice'
   const [mobileTab, setMobileTab] = useState('passage'); // 'passage' | 'questions' (for mobile)
@@ -46,10 +65,42 @@ export default function ReadingWorkspace({
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef(null);
 
-  // Explanation and Evidence focus states
+  // Explanation, Evidence and Modals states
   const [showExplanationFor, setShowExplanationFor] = useState(null);
   const [activeEvidencePara, setActiveEvidencePara] = useState(null);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+  const [isIngestOpen, setIsIngestOpen] = useState(false);
+
+  // Callback when a new passage is generated or ingested
+  const handleAddCustomPassage = (newPassage, source = 'generated') => {
+    const newTest = {
+      id: `custom-test-${Date.now()}`,
+      title: `${source === 'ingest' ? '📰' : '✨'} ${newPassage.title || 'Bài Đọc IELTS Mới'}`,
+      description: `Đề thi ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi Gemini AI'} theo chuẩn Cambridge Academic.`,
+      totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 10,
+      timeLimitMinutes: 20,
+      passages: [
+        {
+          ...newPassage,
+          passageNumber: 1
+        }
+      ]
+    };
+
+    setAllReadingTests(prev => {
+      const updated = [newTest, ...prev];
+      try {
+        const customOnly = updated.filter(t => t.id.startsWith('custom-test-'));
+        localStorage.setItem('ielts_reading_custom_tests', JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+
+    setCurrentTestId(newTest.id);
+    setSelectedPassageNum(1);
+    alert(`Đã nạp thành công bài đọc mới: "${newTest.title}"! Bạn có thể bắt đầu làm bài ngay.`);
+  };
 
   // Active Passage object
   const activePassage = useMemo(() => {
@@ -190,27 +241,64 @@ export default function ReadingWorkspace({
           </div>
 
           <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg text-xs font-semibold text-slate-600">
-            {[1, 2, 3].map(num => (
+            {currentTest?.passages?.map(p => (
               <button
-                key={num}
+                key={p.passageNumber}
                 onClick={() => {
-                  setSelectedPassageNum(num);
+                  setSelectedPassageNum(p.passageNumber);
                   setActiveEvidencePara(null);
                 }}
                 className={`px-2.5 sm:px-3 py-1 rounded-md transition-all flex items-center gap-1.5 ${
-                  selectedPassageNum === num 
+                  selectedPassageNum === p.passageNumber 
                     ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                <span>Passage {num}</span>
-                {selectedPassageNum === num && (
+                <span>Passage {p.passageNumber}</span>
+                {selectedPassageNum === p.passageNumber && (
                   <span className="hidden md:inline text-[10px] text-blue-600 font-normal">
-                    ({passageTimeGuide[num]})
+                    ({passageTimeGuide[p.passageNumber] || '≤ 20 phút'})
                   </span>
                 )}
               </button>
             ))}
+          </div>
+
+          {/* Test Selector Dropdown if more than 1 test */}
+          {allReadingTests.length > 1 && (
+            <select
+              value={currentTestId}
+              onChange={(e) => {
+                setCurrentTestId(e.target.value);
+                setSelectedPassageNum(1);
+              }}
+              className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[150px] sm:max-w-[200px] truncate"
+            >
+              {allReadingTests.map(t => (
+                <option key={t.id} value={t.id}>{t.title}</option>
+              ))}
+            </select>
+          )}
+
+          {/* Generator and Ingest Quick Action Buttons */}
+          <div className="hidden lg:flex items-center space-x-1.5 border-l border-slate-200 pl-2">
+            <button
+              onClick={() => setIsGeneratorOpen(true)}
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 transition-colors shadow-2xs"
+              title="Sinh bài đọc IELTS mới bằng AI theo 12 chủ đề"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Sinh Đề Mới</span>
+            </button>
+
+            <button
+              onClick={() => setIsIngestOpen(true)}
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-colors shadow-2xs"
+              title="Nạp bài báo tiếng Anh (BBC, Nature...) chuyển thành đề thi"
+            >
+              <FileText className="w-3.5 h-3.5 text-purple-600" />
+              <span>Nạp Bài Báo</span>
+            </button>
           </div>
         </div>
 
@@ -377,6 +465,26 @@ export default function ReadingWorkspace({
         onResetExam={handleResetExam}
         onJumpToQuestion={handleJumpToQuestion}
         onSelectPassage={setSelectedPassageNum}
+      />
+
+      {/* 5. Reading AI Generator Modal */}
+      <ReadingGeneratorModal
+        isOpen={isGeneratorOpen}
+        onClose={() => setIsGeneratorOpen(false)}
+        apiKey={apiKey}
+        model={model}
+        onPassageGenerated={(p) => handleAddCustomPassage(p, 'generated')}
+        onOpenSettings={onOpenSettings}
+      />
+
+      {/* 6. Reading Ingest Article Modal */}
+      <ReadingIngestModal
+        isOpen={isIngestOpen}
+        onClose={() => setIsIngestOpen(false)}
+        apiKey={apiKey}
+        model={model}
+        onPassageIngested={(p) => handleAddCustomPassage(p, 'ingest')}
+        onOpenSettings={onOpenSettings}
       />
     </div>
   );

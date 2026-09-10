@@ -1209,5 +1209,238 @@ Return strictly JSON:
   return JSON.parse(clean);
 }
 
+/**
+ * Step 6: Generate a Brand-New Cambridge-Standard IELTS Reading Passage with Questions
+ */
+export async function generateReadingPassage({
+  topic = 'Technology & AI',
+  difficulty = 'Medium', // 'Easy' | 'Medium' | 'Hard'
+  questionType = 'mixed', // 'tfng' | 'mc' | 'completion' | 'mixed'
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+
+  const prompt = `ROLE:
+You are an expert Cambridge IELTS Academic Reading test writer.
+Generate an authentic, high-quality IELTS Reading passage (approx 650-800 words) strictly following official Cambridge Academic standards.
+
+SPECIFICATIONS:
+- Topic: ${topic}
+- Difficulty Level: ${difficulty} (Passage should have 4-5 paragraphs labeled A, B, C, D, E)
+- Include exactly 2 question groups with a total of 10-13 questions covering:
+  Group 1: True / False / Not Given (Questions 1-6)
+  Group 2: Multiple Choice or Summary Completion (Questions 7-13)
+
+JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
+{
+  "id": "gen-${Date.now()}",
+  "passageNumber": 1,
+  "title": "Compelling Academic Title",
+  "topic": "${topic}",
+  "difficulty": "${difficulty}",
+  "wordCount": 750,
+  "paragraphs": [
+    { "id": "A", "text": "Full text of paragraph A..." },
+    { "id": "B", "text": "Full text of paragraph B..." },
+    { "id": "C", "text": "Full text of paragraph C..." },
+    { "id": "D", "text": "Full text of paragraph D..." },
+    { "id": "E", "text": "Full text of paragraph E..." }
+  ],
+  "questionGroups": [
+    {
+      "id": "qg-1",
+      "type": "true_false_not_given",
+      "title": "Questions 1–6",
+      "instruction": "Do the following statements agree with the information given in Reading Passage?\\nIn boxes 1–6 choose TRUE, FALSE, or NOT GIVEN",
+      "questions": [
+        {
+          "id": 1,
+          "order": 1,
+          "questionText": "Statement 1...",
+          "answer": "TRUE",
+          "evidenceParagraph": "A",
+          "evidenceQuote": "exact quote from paragraph A",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt vì sao chọn TRUE."
+        },
+        {
+          "id": 2,
+          "order": 2,
+          "questionText": "Statement 2...",
+          "answer": "FALSE",
+          "evidenceParagraph": "B",
+          "evidenceQuote": "exact quote from paragraph B",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt vì sao chọn FALSE."
+        },
+        {
+          "id": 3,
+          "order": 3,
+          "questionText": "Statement 3...",
+          "answer": "NOT GIVEN",
+          "evidenceParagraph": "B",
+          "evidenceQuote": "",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt vì sao thông tin không có trong bài."
+        }
+      ]
+    },
+    {
+      "id": "qg-2",
+      "type": "multiple_choice_single",
+      "title": "Questions 4–6",
+      "instruction": "Choose the correct letter, A, B, C, or D.",
+      "questions": [
+        {
+          "id": 4,
+          "order": 4,
+          "questionText": "Question 4...",
+          "answer": "B",
+          "options": [
+            { "letter": "A", "text": "Option A..." },
+            { "letter": "B", "text": "Option B..." },
+            { "letter": "C", "text": "Option C..." },
+            { "letter": "D", "text": "Option D..." }
+          ],
+          "evidenceParagraph": "C",
+          "evidenceQuote": "exact quote from paragraph C",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt vì sao đáp án đúng là B."
+        }
+      ]
+    }
+  ]
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.3 }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh đề thi Reading (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+/**
+ * Step 6: Ingest Raw English Article into a Structured IELTS Reading Passage
+ */
+export async function ingestArticleToReadingPassage({
+  rawArticleText,
+  customTitle,
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!rawArticleText || rawArticleText.trim().length < 100) {
+    throw new Error('Nội dung bài báo quá ngắn để chuyển đổi thành bài đọc IELTS (tối thiểu 100 ký tự).');
+  }
+
+  const prompt = `ROLE:
+You are an expert Cambridge IELTS Academic Reading test developer.
+Convert the following raw English article into a standardized IELTS Academic Reading passage with paragraphs labeled A, B, C, D... and create authentic Cambridge-style reading comprehension questions with answers, evidence quotes, and Vietnamese explanations.
+
+RAW ARTICLE:
+"""
+${rawArticleText.slice(0, 5000)}
+"""
+
+CUSTOM TITLE REQUEST: "${customTitle || ''}"
+
+JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown):
+{
+  "id": "ingest-${Date.now()}",
+  "passageNumber": 1,
+  "title": "${customTitle || 'Ingested Academic Reading Article'}",
+  "topic": "General Academic",
+  "difficulty": "Band 6.5 - 7.5",
+  "wordCount": 700,
+  "paragraphs": [
+    { "id": "A", "text": "Paragraph A content..." },
+    { "id": "B", "text": "Paragraph B content..." },
+    { "id": "C", "text": "Paragraph C content..." },
+    { "id": "D", "text": "Paragraph D content..." }
+  ],
+  "questionGroups": [
+    {
+      "id": "qg-ingest-1",
+      "type": "true_false_not_given",
+      "title": "Questions 1–4",
+      "instruction": "Do the following statements agree with the information given in the reading passage?\\nIn boxes 1–4 choose TRUE, FALSE, or NOT GIVEN",
+      "questions": [
+        {
+          "id": 1,
+          "order": 1,
+          "questionText": "Statement 1 based on paragraph A...",
+          "answer": "TRUE",
+          "evidenceParagraph": "A",
+          "evidenceQuote": "exact quote from paragraph A",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt."
+        },
+        {
+          "id": 2,
+          "order": 2,
+          "questionText": "Statement 2 based on paragraph B...",
+          "answer": "FALSE",
+          "evidenceParagraph": "B",
+          "evidenceQuote": "exact quote from paragraph B",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt."
+        }
+      ]
+    },
+    {
+      "id": "qg-ingest-2",
+      "type": "multiple_choice_single",
+      "title": "Questions 3–5",
+      "instruction": "Choose the correct letter, A, B, C, or D.",
+      "questions": [
+        {
+          "id": 3,
+          "order": 3,
+          "questionText": "Multiple choice question about the text...",
+          "answer": "A",
+          "options": [
+            { "letter": "A", "text": "Option A..." },
+            { "letter": "B", "text": "Option B..." },
+            { "letter": "C", "text": "Option C..." },
+            { "letter": "D", "text": "Option D..." }
+          ],
+          "evidenceParagraph": "C",
+          "evidenceQuote": "quote from paragraph C",
+          "explanation": "Giải thích chi tiết bằng tiếng Việt."
+        }
+      ]
+    }
+  ]
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.2 }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi nạp bài báo (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+
 
 
