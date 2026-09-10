@@ -36,7 +36,7 @@ export default function ListeningWorkspace({
   const [currentTestId, setCurrentTestId] = useState(initialTestId);
   const [examMode, setExamMode] = useState(initialExamMode); // 'strict' | 'practice'
   const [activePart, setActivePart] = useState(1);
-  const [hasStartedExam, setHasStartedExam] = useState(false);
+  const [hasStartedExam, setHasStartedExam] = useState(true);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
@@ -375,8 +375,9 @@ export default function ListeningWorkspace({
       <AudioPlayerBar 
         audioEngine={audioEngine}
         examMode={examMode}
-        currentPart={activePart}
+        activePart={activePart}
         onSelectPart={setActivePart}
+        parts={currentTest.parts || []}
       />
 
       {/* 3. Crash Recovery / Resume Notification Banner */}
