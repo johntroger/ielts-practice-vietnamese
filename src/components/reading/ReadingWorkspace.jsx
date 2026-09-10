@@ -133,6 +133,22 @@ export default function ReadingWorkspace({
     }
   };
 
+  // Callback when a full 3-passages test is created from ReadingLibraryModal
+  const handleCreateFullTest = (newFullTest) => {
+    setAllReadingTests(prev => {
+      const updated = [newFullTest, ...prev];
+      try {
+        const customOnly = updated.filter(t => t.id.startsWith('custom-test-'));
+        localStorage.setItem('ielts_reading_custom_tests', JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+
+    setCurrentTestId(newFullTest.id);
+    setSelectedPassageNum(1);
+    alert(`Đã tạo thành công bộ đề thi 3 Passages: "${newFullTest.title}"! Bạn có thể bắt đầu thi ngay.`);
+  };
+
   // Toggle publicity for a custom reading test
   const handleToggleReadingPublic = (testId) => {
     setAllReadingTests(prev => {
@@ -611,6 +627,7 @@ export default function ReadingWorkspace({
         }}
         onDeleteTest={handleDeleteReadingTest}
         onTogglePublic={handleToggleReadingPublic}
+        onCreateFullTest={handleCreateFullTest}
         user={user}
       />
     </div>
