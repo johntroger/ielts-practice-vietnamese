@@ -102,7 +102,7 @@ export default function QuestionPaletteBar({
   };
 
   return (
-    <div className="bg-white border-t border-slate-200 px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow-lg shrink-0">
+    <div className="bg-white border-t border-slate-200 px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow-lg shrink-0 sticky bottom-0 z-20">
       {/* Left: Score or Progress summary */}
       <div className="flex items-center space-x-3 text-xs">
         {isSubmitted && bandResult ? (

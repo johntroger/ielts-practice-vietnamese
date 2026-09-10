@@ -450,7 +450,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900">
+    <div className={`${activeSkill === 'reading' ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900`}>
       
       {/* 1. Main Navigation Bar */}
       <Navbar
@@ -485,20 +485,22 @@ export default function App() {
 
       {/* 2. Workspace Conditional Rendering based on activeSkill */}
       {activeSkill === 'reading' ? (
-        <React.Suspense fallback={
-          <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
-            <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-full bg-blue-600 animate-ping" />
-              <span>Đang tải phân hệ IELTS Reading Studio...</span>
+        <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+          <React.Suspense fallback={
+            <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
+              <div className="flex items-center space-x-2">
+                <span className="w-3 h-3 rounded-full bg-blue-600 animate-ping" />
+                <span>Đang tải phân hệ IELTS Reading Studio...</span>
+              </div>
             </div>
-          </div>
-        }>
-          <ReadingWorkspace
-            apiKey={apiKey}
-            onOpenSettings={() => setIsSettingsOpen(true)}
-            user={currentUser}
-          />
-        </React.Suspense>
+          }>
+            <ReadingWorkspace
+              apiKey={apiKey}
+              onOpenSettings={() => setIsSettingsOpen(true)}
+              user={currentUser}
+            />
+          </React.Suspense>
+        </div>
       ) : (
         <>
           {/* Writing Workspace Secondary Sub-Bar */}
