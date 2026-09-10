@@ -35,7 +35,8 @@ export default function ReadingWorkspace({
   model = 'gemini-2.5-flash',
   onOpenSettings,
   user,
-  onSaveToVocabNotebook
+  onSaveToVocabNotebook,
+  onReadingSubmitted
 }) {
   const [allReadingTests, setAllReadingTests] = useState(() => {
     try {
@@ -153,6 +154,25 @@ export default function ReadingWorkspace({
   const handleSubmitExam = () => {
     submitExamHook();
     setIsResultModalOpen(true);
+    
+    // Save to reading history
+    setTimeout(() => {
+      if (bandResult) {
+        const record = {
+          id: `reading-sub-${Date.now()}`,
+          testId: currentTest.id,
+          testTitle: currentTest.title,
+          band: bandResult.band,
+          correctCount: bandResult.correctCount,
+          totalQuestions: bandResult.totalQuestions,
+          accuracyPercent: bandResult.accuracyPercent,
+          timeSpentSeconds: bandResult.timeSpentSeconds,
+          submittedAt: new Date().toLocaleDateString('vi-VN') + ' ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+          passageStats: bandResult.passageStats
+        };
+        if (onReadingSubmitted) onReadingSubmitted(record);
+      }
+    }, 200);
   };
 
   const handleResetExam = () => {

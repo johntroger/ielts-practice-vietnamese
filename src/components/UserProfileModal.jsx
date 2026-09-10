@@ -28,7 +28,8 @@ import {
   Settings,
   FolderKanban,
   HelpCircle,
-  LayoutDashboard
+  LayoutDashboard,
+  BookMarked
 } from 'lucide-react';
 
 export default function UserProfileModal({
@@ -36,6 +37,7 @@ export default function UserProfileModal({
   onClose,
   user,
   submissions = [],
+  readingHistory = [],
   vocabList = [],
   mistakes = [],
   streakCount = 3,
@@ -44,6 +46,8 @@ export default function UserProfileModal({
   onTogglePublic,
   onDeleteTask,
   onViewSubmission,
+  onDeleteReadingSubmission,
+  onClearReadingHistory,
   onSignOut,
   onOpenAuth,
   onOpenIngest,
@@ -52,7 +56,7 @@ export default function UserProfileModal({
   onExportAllData,
   onImportData
 }) {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'resources' | 'submissions' | 'vocab' | 'account'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'submissions' | 'reading' | 'resources' | 'vocab' | 'account'
   const [resourceFilter, setResourceFilter] = useState('all'); // 'all' | 'public' | 'private'
 
   const handleFileUpload = (e) => {
@@ -157,6 +161,42 @@ export default function UserProfileModal({
     return userCustomTasks;
   }, [userCustomTasks, resourceFilter]);
 
+  // 3. Calculate Reading Stats from readingHistory
+  const readingStats = useMemo(() => {
+    if (!readingHistory || readingHistory.length === 0) {
+      return {
+        totalTests: 0,
+        avgBand: 0,
+        totalCorrect: 0,
+        avgAccuracy: 0
+      };
+    }
+    let totalBand = 0;
+    let totalCorrect = 0;
+    let totalAcc = 0;
+    readingHistory.forEach(r => {
+      totalBand += Number(r.band || 0);
+      totalCorrect += Number(r.correctCount || 0);
+      totalAcc += Number(r.accuracyPercent || 0);
+    });
+    return {
+      totalTests: readingHistory.length,
+      avgBand: (totalBand / readingHistory.length).toFixed(1),
+      totalCorrect,
+      avgAccuracy: Math.round(totalAcc / readingHistory.length)
+    };
+  }, [readingHistory]);
+
+  // Overall Projected Band (Writing + Reading average)
+  const overallProjectedBand = useMemo(() => {
+    const wBand = Number(stats.avgBand) || 0;
+    const rBand = Number(readingStats.avgBand) || 0;
+    if (wBand > 0 && rBand > 0) {
+      return ((wBand + rBand) / 2).toFixed(1);
+    }
+    return wBand > 0 ? wBand.toFixed(1) : rBand > 0 ? rBand.toFixed(1) : 0;
+  }, [stats.avgBand, readingStats.avgBand]);
+
   // Academic Rank Badge based on Average Band
   const getScholarRank = (band) => {
     const num = Number(band);
@@ -167,13 +207,14 @@ export default function UserProfileModal({
     return { title: 'IELTS Trainee', color: 'bg-slate-700 text-slate-200 font-bold', badge: 'Khởi đầu lộ trình' };
   };
 
-  const rank = getScholarRank(stats.avgBand);
+  const rank = getScholarRank(overallProjectedBand || stats.avgBand);
 
   // Nav Items Definitions
   const navItems = [
-    { id: 'overview', label: 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: stats.totalEssays > 0 ? `Band ${stats.avgBand}` : null },
+    { id: 'overview', label: 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: overallProjectedBand > 0 ? `Overall ${overallProjectedBand}` : null },
+    { id: 'submissions', label: 'Lịch Sử IELTS Writing', icon: History, count: submissions.length },
+    { id: 'reading', label: 'Lịch Sử IELTS Reading', icon: BookMarked, count: readingHistory.length, badge: readingStats.totalTests > 0 ? `Band ${readingStats.avgBand}` : null },
     { id: 'resources', label: 'Kho Đề & Tài Nguyên', icon: FolderKanban, count: userCustomTasks.length },
-    { id: 'submissions', label: 'Lịch Sử Bài Viết', icon: History, count: submissions.length },
     { id: 'vocab', label: 'Sổ Tay Từ Vựng & Lỗi', icon: Bookmark, count: vocabList.length },
     { id: 'account', label: 'Cài Đặt & Dữ Liệu', icon: Settings, status: user ? 'Đã đăng nhập' : 'Chưa đăng nhập' }
   ];
@@ -329,9 +370,10 @@ export default function UserProfileModal({
                 </span>
               </div>
               <h1 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
-                {activeTab === 'overview' && 'Tổng Quan Năng Lực & Kết Quả Học Tập'}
+                {activeTab === 'overview' && 'Tổng Quan Năng Lực & Dự Phóng Điểm IELTS'}
+                {activeTab === 'submissions' && 'Lịch Sử Bài Viết IELTS Writing'}
+                {activeTab === 'reading' && 'Lịch Sử Làm Đề & Thống Kê IELTS Reading'}
                 {activeTab === 'resources' && 'Kho Đề Bài & Tài Nguyên Bạn Đã Tải Lên'}
-                {activeTab === 'submissions' && 'Lịch Sử Bài Làm & Nhận Xét Của Giám Khảo'}
                 {activeTab === 'vocab' && 'Sổ Tay Từ Vựng & Sổ Tay Lỗi Sai Cá Nhân'}
                 {activeTab === 'account' && 'Cài Đặt Tài Khoản & Quản Lý Dữ Liệu'}
               </h1>
@@ -366,29 +408,45 @@ export default function UserProfileModal({
                 
                 {/* PRE-DESIGNED KPI CARDS GRID (KHUNG CHỈ SỐ CỐ ĐỊNH) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                  {/* Card 1: Estimated Band */}
+                  {/* Card 1: Estimated Overall Band */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Điểm Ước Tính</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Dự Phóng Overall Band</span>
                     <div className="flex items-baseline justify-between">
                       <span className="text-2xl sm:text-3xl font-black text-red-600">
-                        {stats.avgBand > 0 ? `Band ${stats.avgBand}` : 'Band --'}
+                        {overallProjectedBand > 0 ? `Band ${overallProjectedBand}` : 'Band --'}
                       </span>
                       <Award className="w-5 h-5 text-red-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {stats.avgBand > 0 ? 'Dựa trên bài thi đã chấm' : 'Cần nộp 1 bài để tính'}
+                      {overallProjectedBand > 0 ? 'Trung bình Writing + Reading' : 'Cần nộp 1 bài để tính'}
                     </span>
                   </div>
 
-                  {/* Card 2: Total Essays */}
+                  {/* Card 2: Writing Band & Essays */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Bài Đã Hoàn Thành</span>
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Writing Studio</span>
                     <div className="flex items-baseline justify-between">
-                      <span className="text-2xl sm:text-3xl font-black text-slate-900">{stats.totalEssays}</span>
+                      <span className="text-2xl sm:text-3xl font-black text-blue-600">
+                        {stats.avgBand > 0 ? `Band ${stats.avgBand}` : '--'}
+                      </span>
                       <PenTool className="w-5 h-5 text-blue-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      Task 1: {stats.task1Count} • Task 2: {stats.task2Count}
+                      {stats.totalEssays} bài viết đã nộp
+                    </span>
+                  </div>
+
+                  {/* Card 3: Reading Studio */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Reading Studio</span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-2xl sm:text-3xl font-black text-emerald-600">
+                        {readingStats.avgBand > 0 ? `Band ${readingStats.avgBand}` : '--'}
+                      </span>
+                      <BookMarked className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <span className="text-[11px] text-slate-500 block">
+                      {readingStats.totalTests} đề thi • {readingStats.totalCorrect} câu đúng
                     </span>
                   </div>
 
@@ -880,6 +938,158 @@ export default function UserProfileModal({
                             <span>Xem Nhận Xét AI</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* TAB: READING SUBMISSIONS & STATS */}
+            {/* ========================================================================= */}
+            {activeTab === 'reading' && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Làm Đề & Phân Tích IELTS Reading</h3>
+                    <p className="text-xs text-slate-500">Kết quả làm đề 3 Passages 40 câu chuẩn Cambridge và dự phóng Band điểm Reading</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
+                      {readingHistory.length} bài thi đã làm
+                    </span>
+                    {readingHistory.length > 0 && onClearReadingHistory && (
+                      <button
+                        onClick={() => {
+                          if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử thi Reading?')) {
+                            onClearReadingHistory();
+                          }
+                        }}
+                        className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Xóa toàn bộ lịch sử Reading"
+                      >
+                        Xóa tất cả
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* KPI Summary Cards for Reading */}
+                {readingHistory.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Reading Band TB</span>
+                      <div className="text-xl font-black text-emerald-600 mt-0.5">
+                        Band {readingStats.avgBand}
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tổng Câu Đúng</span>
+                      <div className="text-xl font-black text-slate-800 mt-0.5">
+                        {readingStats.totalCorrect} <span className="text-xs font-normal text-slate-400">câu</span>
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Độ Chính Xác TB</span>
+                      <div className="text-xl font-black text-blue-600 mt-0.5">
+                        {readingStats.avgAccuracy}%
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Đề Đã Hoàn Thành</span>
+                      <div className="text-xl font-black text-purple-600 mt-0.5">
+                        {readingStats.totalTests} <span className="text-xs font-normal text-slate-400">đề thi</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {readingHistory.length === 0 ? (
+                  <div className="p-10 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+                    <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                      <BookMarked className="w-6 h-6" />
+                    </div>
+                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài thi Reading nào</h4>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto">
+                      Hãy chuyển sang phân hệ <strong>IELTS Reading Studio</strong> trên thanh điều hướng kỹ năng để bắt đầu luyện đề 3 bài đọc chuẩn thi thật 60 phút và nhận giải thích chi tiết AI!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {readingHistory.map((rec, idx) => (
+                      <div 
+                        key={rec.id || idx}
+                        className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-300 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
+                      >
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center space-x-2">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                              Reading Test
+                            </span>
+                            <span className="text-xs font-bold text-slate-800">
+                              {rec.testTitle || 'IELTS Reading Academic Test'}
+                            </span>
+                          </div>
+                          
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-1">
+                            <span className="flex items-center space-x-1">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              <span>{rec.submittedAt || 'Gần đây'}</span>
+                            </span>
+                            <span>•</span>
+                            <span className="font-medium">
+                              Số câu đúng: <strong className="text-slate-800">{rec.correctCount}/{rec.totalQuestions || 40}</strong>
+                            </span>
+                            <span>•</span>
+                            <span className="font-medium">
+                              Độ chính xác: <strong className="text-emerald-700">{rec.accuracyPercent}%</strong>
+                            </span>
+                            {rec.timeSpentSeconds > 0 && (
+                              <>
+                                <span>•</span>
+                                <span>
+                                  Thời gian: {Math.floor(rec.timeSpentSeconds / 60)} phút {rec.timeSpentSeconds % 60} giây
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Breakdown by Passage */}
+                          {rec.passageStats && (
+                            <div className="flex items-center space-x-2 pt-2">
+                              {rec.passageStats.map((p, pIdx) => (
+                                <span 
+                                  key={pIdx} 
+                                  className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200"
+                                >
+                                  Passage {p.passageNumber}: {p.correct}/{p.total}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center space-x-3 self-end sm:self-center shrink-0">
+                          <div className="text-center px-3.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <span className="text-[10px] text-emerald-600 block uppercase font-bold">Estimated</span>
+                            <span className="text-lg font-black text-emerald-700">Band {rec.band}</span>
+                          </div>
+
+                          {onDeleteReadingSubmission && (
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Bạn có chắc muốn xóa bài thi "${rec.testTitle || 'IELTS Reading'}" khỏi lịch sử?`)) {
+                                  onDeleteReadingSubmission(rec.id);
+                                }
+                              }}
+                              className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                              title="Xóa bài thi này"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}

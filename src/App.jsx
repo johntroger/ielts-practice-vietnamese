@@ -92,6 +92,14 @@ export default function App() {
     return [];
   });
 
+  const [readingHistory, setReadingHistory] = useState(() => {
+    const saved = localStorage.getItem('ielts_reading_submissions_history');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [];
+  });
+
   const [vocabList, setVocabList] = useState(() => {
     const saved = localStorage.getItem('ielts_vocab_notebook');
     if (saved) {
@@ -409,6 +417,7 @@ export default function App() {
       essays,
       outlines,
       submissions,
+      readingHistory,
       vocabList,
       mistakes,
       personalNotes,
@@ -419,7 +428,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `IELTS_Writing_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `IELTS_Mastery_Backup_${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -429,6 +438,12 @@ export default function App() {
     if (data.essays) setEssays(data.essays);
     if (data.outlines) setOutlines(data.outlines);
     if (data.submissions) setSubmissions(data.submissions);
+    if (data.readingHistory) {
+      setReadingHistory(data.readingHistory);
+      try {
+        localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(data.readingHistory));
+      } catch (e) {}
+    }
     if (data.vocabList) setVocabList(data.vocabList);
     if (data.mistakes) setMistakes(data.mistakes);
     if (data.personalNotes) setPersonalNotes(data.personalNotes);
@@ -500,6 +515,15 @@ export default function App() {
               onOpenSettings={() => setIsSettingsOpen(true)}
               user={currentUser}
               onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+              onReadingSubmitted={(sub) => {
+                setReadingHistory(prev => {
+                  const updated = [sub, ...prev];
+                  try {
+                    localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
+                  } catch (e) {}
+                  return updated;
+                });
+              }}
             />
           </React.Suspense>
         </div>
@@ -841,6 +865,7 @@ export default function App() {
         onClose={() => setIsProfileOpen(false)}
         user={currentUser}
         submissions={submissions}
+        readingHistory={readingHistory}
         vocabList={vocabList}
         mistakes={mistakes}
         streakCount={streakCount}
@@ -871,6 +896,21 @@ export default function App() {
           setCurrentTaskId(sub.task.id);
           setCurrentEvaluation(sub.evaluation);
           setIsFeedbackOpen(true);
+        }}
+        onDeleteReadingSubmission={(subId) => {
+          setReadingHistory(prev => {
+            const updated = prev.filter(r => r.id !== subId);
+            try {
+              localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+          });
+        }}
+        onClearReadingHistory={() => {
+          setReadingHistory([]);
+          try {
+            localStorage.removeItem('ielts_reading_submissions_history');
+          } catch (e) {}
         }}
         onSignOut={async () => {
           await supabase.auth.signOut();
