@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ShieldAlert, 
   Clock, 
@@ -9,24 +9,41 @@ import {
   BarChart2, 
   X,
   Sparkles,
-  Award
+  Award,
+  BookOpen,
+  Shuffle,
+  Play,
+  Layers,
+  CheckCircle2
 } from 'lucide-react';
 import { countWords } from '../utils/textAnalytics';
 import { evaluateEssay } from '../services/geminiService';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
+import { INITIAL_READING_TESTS } from '../data/readingTasks';
+import { createRandomFullTest, extractPassageBank } from '../utils/readingTestAssembler';
 
 export default function MockTestModal({
   isOpen,
   onClose,
-  allTasks,
+  allTasks = [],
   onSaveMockResult,
   apiKey,
-  model
+  model,
+  activeSkill = 'writing',
+  onStartReadingMockExam,
+  currentUser
 }) {
   if (!isOpen) return null;
 
-  // Pick one Task 1 and one Task 2
+  // Active Tab: 'writing' | 'reading'
+  const [activeMockTab, setActiveMockTab] = useState(() => {
+    return activeSkill === 'reading' ? 'reading' : 'writing';
+  });
+
+  // ----------------------------------------------------
+  // WRITING MOCK STATE
+  // ----------------------------------------------------
   const task1List = allTasks.filter(t => t.taskNumber === 1);
   const task2List = allTasks.filter(t => t.taskNumber === 2);
 
@@ -50,7 +67,34 @@ export default function MockTestModal({
   const t1Words = countWords(t1Text);
   const t2Words = countWords(t2Text);
 
-  // Timer countdown
+  // ----------------------------------------------------
+  // READING MOCK STATE
+  // ----------------------------------------------------
+  const [allReadingTests, setAllReadingTests] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_reading_custom_tests');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return [...INITIAL_READING_TESTS, ...parsed];
+        }
+      }
+    } catch (e) {}
+    return INITIAL_READING_TESTS;
+  });
+
+  // Filter 3-passage tests for Reading full mock
+  const availableFullReadingTests = useMemo(() => {
+    return allReadingTests.filter(t => (t.passages?.length || 1) >= 3);
+  }, [allReadingTests]);
+
+  const [selectedReadingTestId, setSelectedReadingTestId] = useState(() => {
+    return availableFullReadingTests[0]?.id || allReadingTests[0]?.id;
+  });
+
+  const [isCreatingRandomReading, setIsCreatingRandomReading] = useState(false);
+
+  // Writing Timer countdown
   useEffect(() => {
     let interval = null;
     if (isTestStarted && timeRemaining > 0 && !mockReport) {
@@ -58,7 +102,7 @@ export default function MockTestModal({
         setTimeRemaining(prev => {
           if (prev <= 1) {
             clearInterval(interval);
-            handleAutoSubmit();
+            handleAutoSubmitWriting();
             return 0;
           }
           return prev - 1;
@@ -68,13 +112,13 @@ export default function MockTestModal({
     return () => clearInterval(interval);
   }, [isTestStarted, timeRemaining, mockReport]);
 
-  const handleStartMock = () => {
+  const handleStartWritingMock = () => {
     setIsTestStarted(true);
     setTimeRemaining(3600);
     setMockReport(null);
   };
 
-  const handleAutoSubmit = async () => {
+  const handleAutoSubmitWriting = async () => {
     if (!apiKey) {
       alert('Vui lòng cấu hình Gemini API Key trước.');
       return;
@@ -121,11 +165,54 @@ export default function MockTestModal({
       };
 
       setMockReport(report);
-      onSaveMockResult(report);
+      if (onSaveMockResult) onSaveMockResult(report);
     } catch (err) {
       alert('Lỗi khi chấm điểm bài thi thử.');
     } finally {
       setIsGrading(false);
+    }
+  };
+
+  // Start Reading Mock Exam Handler
+  const handleLaunchReadingMock = (testId) => {
+    if (!testId) {
+      alert('Vui lòng chọn một đề thi 3 Passages.');
+      return;
+    }
+    if (onStartReadingMockExam) {
+      onStartReadingMockExam(testId);
+    }
+    onClose();
+  };
+
+  // Create Random 3-Passage Reading Test and start immediately
+  const handleRandomReadingExam = () => {
+    setIsCreatingRandomReading(true);
+    try {
+      const fullTest = createRandomFullTest({
+        allReadingTests,
+        userEmail: currentUser?.email || 'Thành viên'
+      });
+
+      if (!fullTest) {
+        alert('Chưa có đủ số lượng bài đọc trong ngân hàng đề để tạo Full Test 3 Passages.');
+        return;
+      }
+
+      // Persist to custom tests
+      const updated = [fullTest, ...allReadingTests];
+      setAllReadingTests(updated);
+      try {
+        const customOnly = updated.filter(t => t.id.startsWith('custom-test-'));
+        localStorage.setItem('ielts_reading_custom_tests', JSON.stringify(customOnly));
+      } catch (e) {}
+
+      // Launch exam
+      handleLaunchReadingMock(fullTest.id);
+    } catch (err) {
+      alert('Lỗi khi tạo đề thi ngẫu nhiên: ' + err.message);
+    } finally {
+      setIsCreatingRandomReading(false);
     }
   };
 
@@ -146,8 +233,15 @@ export default function MockTestModal({
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold">Phòng Thi Thử 60 Phút Áp Lực Cao (Mock Test Vault)</h2>
-              <span className="text-[11px] text-slate-400">Mô phỏng 100% quy trình thi thật: 60 phút liên tục cả Task 1 & Task 2</span>
+              <div className="flex items-center space-x-2">
+                <h2 className="text-base sm:text-lg font-bold">Phòng Thi Thử 60 Phút Áp Lực Cao (Mock Test Vault)</h2>
+                <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black uppercase">
+                  Áp Lực Phòng Thi
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400">
+                Mô phỏng 100% quy trình thi thật: 60 phút liên tục chuẩn Cambridge cho cả Writing và Reading
+              </span>
             </div>
           </div>
 
@@ -163,15 +257,162 @@ export default function MockTestModal({
           </button>
         </div>
 
-        {/* VIEW 1: TEST SETUP BEFORE START */}
-        {!isTestStarted ? (
-          <div className="flex-1 p-6 sm:p-10 flex flex-col items-center justify-center text-center space-y-6 max-w-xl mx-auto">
+        {/* Level 1: Skill Switcher Tab (Writing vs Reading) - Only visible before test starts */}
+        {!isTestStarted && (
+          <div className="bg-slate-900/95 border-b border-slate-800 px-5 py-2.5 flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs font-bold text-slate-400 mr-2 uppercase tracking-wider hidden sm:inline">
+                Kỹ Năng Thi Thử:
+              </span>
+              
+              <button
+                onClick={() => setActiveMockTab('writing')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  activeMockTab === 'writing'
+                    ? 'bg-red-600 text-white shadow-md ring-2 ring-red-500/30'
+                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                <span>✍️ Thi Thử IELTS Writing (Task 1 + Task 2)</span>
+              </button>
+
+              <button
+                onClick={() => setActiveMockTab('reading')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  activeMockTab === 'reading'
+                    ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-500/30'
+                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>📖 Thi Thử IELTS Reading (Full 3 Passages - 40 Câu)</span>
+                <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black">
+                  MỚI
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* READING MOCK SETUP VIEW                                      */}
+        {/* ============================================================ */}
+        {!isTestStarted && activeMockTab === 'reading' && (
+          <div className="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col items-center justify-center text-center space-y-6 max-w-2xl mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto shadow-sm">
+              <BookOpen className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Phòng Thi Thử IELTS Reading 60 Phút
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
+                Bạn sẽ làm trọn vẹn <strong>3 Bài đọc học thuật (Passage 1, 2, 3)</strong> với đầy đủ <strong>40 câu hỏi</strong> trong đúng <strong>60 phút</strong>. Toàn bộ giải thích, manh mối và từ điển sẽ bị khóa để mô phỏng 100% áp lực phòng thi thật trên máy tính.
+              </p>
+            </div>
+
+            {/* Exam Conditions Badges */}
+            <div className="grid grid-cols-3 gap-3 w-full text-left">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">Thời gian thi</span>
+                <div className="flex items-center space-x-1.5 text-blue-600 font-bold text-sm">
+                  <Clock className="w-4 h-4" />
+                  <span>60:00 Phút</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">Quy mô đề</span>
+                <div className="flex items-center space-x-1.5 text-emerald-600 font-bold text-sm">
+                  <Layers className="w-4 h-4" />
+                  <span>3 Passages / 40 Câu</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">Đánh giá</span>
+                <div className="flex items-center space-x-1.5 text-amber-600 font-bold text-sm">
+                  <Award className="w-4 h-4" />
+                  <span>Band 1.0 - 9.0</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Test Selection Form */}
+            <div className="w-full text-left space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <label className="font-bold text-slate-800 text-xs">
+                  Chọn Bộ Đề 3 Passages (40 câu) để thi:
+                </label>
+                <span className="text-slate-500 font-medium">
+                  {availableFullReadingTests.length} bộ đề sẵn sàng
+                </span>
+              </div>
+
+              {availableFullReadingTests.length > 0 ? (
+                <div className="space-y-2">
+                  <select
+                    value={selectedReadingTestId}
+                    onChange={(e) => setSelectedReadingTestId(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    {availableFullReadingTests.map(t => (
+                      <option key={t.id} value={t.id}>
+                        {t.title} ({t.passages?.length || 3} Passages - {t.totalQuestions || 40} câu)
+                      </option>
+                    ))}
+                  </select>
+
+                  <div className="p-2.5 rounded-lg bg-blue-50/70 border border-blue-100 text-[11px] text-blue-900">
+                    💡 Đề này bao gồm 3 bài đọc liên hoàn, câu hỏi được đánh số thứ tự từ 1 đến 40.
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1">
+                  <strong>Chưa có bộ đề 3 Passages sẵn:</strong>
+                  <p>Hãy bấm nút "🎲 Bốc Đề Thi Thử Ngẫu Nhiên" bên dưới, hệ thống sẽ tự động ghép 3 bài đọc Passage 1, 2, 3 thành 1 bài thi hoàn chỉnh cho bạn.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+              <button
+                onClick={handleRandomReadingExam}
+                disabled={isCreatingRandomReading}
+                className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
+              >
+                <Shuffle className="w-4 h-4" />
+                <span>🎲 Bốc Đề Thi Ngẫu Nhiên (Random 3 Passages)</span>
+              </button>
+
+              <button
+                onClick={() => handleLaunchReadingMock(selectedReadingTestId)}
+                disabled={!selectedReadingTestId}
+                className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                <span>Bắt Đầu Thi Đề Này (60:00)</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* WRITING MOCK SETUP VIEW                                      */}
+        {/* ============================================================ */}
+        {!isTestStarted && activeMockTab === 'writing' && (
+          <div className="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col items-center justify-center text-center space-y-6 max-w-xl mx-auto">
             <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto shadow-sm">
               <ShieldAlert className="w-8 h-8" />
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-900">Chuẩn Bị Vào Phòng Thi 60 Phút</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Phòng Thi Thử IELTS Writing 60 Phút
+              </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Bạn sẽ viết liên tục cả <strong>Task 1 (tối thiểu 150 từ)</strong> và <strong>Task 2 (tối thiểu 250 từ)</strong> trong vòng 60 phút. Toàn bộ tính năng hỗ trợ, từ điển và bài mẫu sẽ bị khóa để rèn bản lĩnh thi thật.
               </p>
@@ -203,14 +444,18 @@ export default function MockTestModal({
             </div>
 
             <button
-              onClick={handleStartMock}
+              onClick={handleStartWritingMock}
               className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 text-white font-bold text-sm shadow-lg transition-transform active:scale-95"
             >
-              BẮT ĐẦU TÍNH GIỜ 60 PHÚT
+              BẮT ĐẦU TÍNH GIỜ WRITING 60 PHÚT
             </button>
           </div>
-        ) : mockReport ? (
-          /* VIEW 3: COMBINED MOCK REPORT */
+        )}
+
+        {/* ============================================================ */}
+        {/* WRITING MOCK: VIEW 3: COMBINED MOCK REPORT                   */}
+        {/* ============================================================ */}
+        {isTestStarted && mockReport && (
           <div className="flex-1 p-6 overflow-y-auto space-y-6">
             <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 text-white flex flex-wrap items-center justify-between gap-4 shadow-lg">
               <div className="space-y-1">
@@ -251,8 +496,12 @@ export default function MockTestModal({
               </div>
             </div>
           </div>
-        ) : (
-          /* VIEW 2: LIVE 60-MINUTE WORKSPACE */
+        )}
+
+        {/* ============================================================ */}
+        {/* WRITING MOCK: VIEW 2: LIVE 60-MINUTE WORKSPACE               */}
+        {/* ============================================================ */}
+        {isTestStarted && !mockReport && (
           <div className="flex-1 flex flex-col overflow-hidden">
             
             {/* Task Switcher Bar */}
@@ -284,7 +533,7 @@ export default function MockTestModal({
               </div>
 
               <button
-                onClick={handleAutoSubmit}
+                onClick={handleAutoSubmitWriting}
                 disabled={isGrading}
                 className="flex items-center space-x-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all active:scale-95 disabled:opacity-50"
               >

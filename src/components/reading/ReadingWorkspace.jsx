@@ -39,7 +39,9 @@ export default function ReadingWorkspace({
   onOpenSettings,
   user,
   onSaveToVocabNotebook,
-  onReadingSubmitted
+  onReadingSubmitted,
+  initialTestId,
+  initialExamMode
 }) {
   const [allReadingTests, setAllReadingTests] = useState(() => {
     try {
@@ -54,13 +56,33 @@ export default function ReadingWorkspace({
     return INITIAL_READING_TESTS;
   });
 
-  const [currentTestId, setCurrentTestId] = useState(() => INITIAL_READING_TESTS[0].id);
+  const [currentTestId, setCurrentTestId] = useState(() => initialTestId || INITIAL_READING_TESTS[0].id);
   const currentTest = useMemo(() => {
     return allReadingTests.find(t => t.id === currentTestId) || allReadingTests[0];
   }, [allReadingTests, currentTestId]);
 
   const [selectedPassageNum, setSelectedPassageNum] = useState(1);
-  const [examMode, setExamMode] = useState('practice'); // 'exam' | 'practice'
+  const [examMode, setExamMode] = useState(() => initialExamMode || 'practice'); // 'exam' | 'practice'
+
+  // Sync when initialTestId or initialExamMode is updated externally (e.g. from MockTestModal)
+  useEffect(() => {
+    if (initialTestId) {
+      try {
+        const saved = localStorage.getItem('ielts_reading_custom_tests');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setAllReadingTests([...INITIAL_READING_TESTS, ...parsed]);
+          }
+        }
+      } catch (e) {}
+      setCurrentTestId(initialTestId);
+      setSelectedPassageNum(1);
+    }
+    if (initialExamMode) {
+      setExamMode(initialExamMode);
+    }
+  }, [initialTestId, initialExamMode]);
   const [mobileTab, setMobileTab] = useState('passage'); // 'passage' | 'questions' (for mobile)
   const [fontSize, setFontSize] = useState('base');
   

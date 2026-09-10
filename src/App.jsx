@@ -165,6 +165,17 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
+  // Reading Mock Test Exam State
+  const [readingMockTestId, setReadingMockTestId] = useState(null);
+  const [readingMockExamMode, setReadingMockExamMode] = useState(null);
+
+  const handleStartReadingMockExam = (testId) => {
+    setActiveSkill('reading');
+    setReadingMockTestId(testId);
+    setReadingMockExamMode('exam');
+    setIsMockTestOpen(false);
+  };
+
   // AI Operation States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
@@ -524,6 +535,8 @@ export default function App() {
                   return updated;
                 });
               }}
+              initialTestId={readingMockTestId}
+              initialExamMode={readingMockExamMode}
             />
           </React.Suspense>
         </div>
@@ -657,6 +670,9 @@ export default function App() {
         }}
         apiKey={apiKey}
         model={model}
+        activeSkill={activeSkill}
+        onStartReadingMockExam={handleStartReadingMockExam}
+        currentUser={currentUser}
       />
 
       <DocumentIngestModal

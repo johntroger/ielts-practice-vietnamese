@@ -247,8 +247,15 @@ export default function Navbar({
                         <ShieldAlert className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Thi Thử 60 Phút Thực Chiến</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Làm trọn vẹn Task 1 + Task 2 áp lực thời gian</div>
+                        <div className="font-bold flex items-center space-x-1.5">
+                          <span>Thi Thử 60 Phút Thực Chiến</span>
+                          <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-black">Writing & Reading</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">
+                          {activeSkill === 'reading' 
+                            ? 'Full Test 3 Passages 40 câu chuẩn áp lực 60 phút' 
+                            : 'Làm trọn vẹn Task 1 + Task 2 hoặc Full Reading 40 câu'}
+                        </div>
                       </div>
                     </button>
 
@@ -525,7 +532,7 @@ export default function Navbar({
                   className="flex items-center space-x-2 p-2.5 rounded-xl bg-rose-50/70 border border-rose-200 text-left text-xs font-bold text-rose-900 hover:bg-rose-100 transition-colors"
                 >
                   <ShieldAlert className="w-4 h-4 text-rose-600" />
-                  <span>Thi Thử 60 Phút</span>
+                  <span>Thi Thử 60 Phút (W & R)</span>
                 </button>
               </div>
             </div>
