@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Highlighter, 
   Trash2, 
@@ -169,9 +169,9 @@ export default function PassagePane({
   };
 
   const fontSizeClasses = {
-    sm: 'text-sm leading-relaxed',
-    base: 'text-base leading-relaxed',
-    lg: 'text-lg leading-loose'
+    sm: 'text-[14px] leading-relaxed',
+    base: 'text-[16px] leading-[1.8]',
+    lg: 'text-[19px] leading-[2.0]'
   };
 
   return (
@@ -219,22 +219,31 @@ export default function PassagePane({
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1 bg-white p-0.5 rounded-lg border border-slate-200">
             <button
+              type="button"
               onClick={() => onFontSizeChange && onFontSizeChange('sm')}
-              className={`px-2 py-0.5 rounded font-bold ${fontSize === 'sm' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-800'}`}
+              className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
+                fontSize === 'sm' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
               title="Cỡ chữ nhỏ (A-)"
             >
               A-
             </button>
             <button
+              type="button"
               onClick={() => onFontSizeChange && onFontSizeChange('base')}
-              className={`px-2 py-0.5 rounded font-bold ${fontSize === 'base' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-800'}`}
+              className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
+                fontSize === 'base' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
               title="Cỡ chữ chuẩn (A)"
             >
               A
             </button>
             <button
+              type="button"
               onClick={() => onFontSizeChange && onFontSizeChange('lg')}
-              className={`px-2 py-0.5 rounded font-bold ${fontSize === 'lg' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-800'}`}
+              className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
+                fontSize === 'lg' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
               title="Cỡ chữ lớn (A+)"
             >
               A+
@@ -264,7 +273,7 @@ export default function PassagePane({
         </div>
 
         {/* Paragraphs */}
-        <div className={`space-y-6 text-slate-800 ${fontSizeClasses[fontSize] || fontSizeClasses.base}`}>
+        <div className="space-y-6 text-slate-800">
           {passage?.paragraphs?.map(para => {
             const isTargetEvidence = activeEvidencePara === para.id;
             return (
@@ -292,7 +301,7 @@ export default function PassagePane({
                 </div>
 
                 {/* Paragraph Content */}
-                <p className="text-justify font-serif text-[15px] sm:text-[16px] leading-relaxed cursor-text">
+                <p className={`text-justify font-serif cursor-text transition-all duration-150 ${fontSizeClasses[fontSize] || fontSizeClasses.base}`}>
                   {renderParagraphContent(para)}
                 </p>
               </div>

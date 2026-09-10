@@ -27,6 +27,7 @@ export default function QuestionPane({
   showExplanationFor = null,
   onToggleExplanation,
   onLocateEvidence,
+  fontSize = 'base',
   apiKey,
   model,
   onOpenSettings,
@@ -691,8 +692,14 @@ export default function QuestionPane({
     );
   };
 
+  const questionFontSizeClasses = {
+    sm: 'text-[13px]',
+    base: 'text-[14px]',
+    lg: 'text-[16px]'
+  };
+
   return (
-    <div className="h-full flex flex-col bg-slate-50/50 overflow-y-auto px-4 sm:px-6 py-6 space-y-8">
+    <div className={`h-full flex flex-col bg-slate-50/50 overflow-y-auto px-4 sm:px-6 py-6 space-y-8 transition-all duration-150 ${questionFontSizeClasses[fontSize] || questionFontSizeClasses.base}`}>
       {questionGroups.map((group, idx) => (
         <div key={group.id || idx} className="space-y-4">
           {/* Group Header Card */}

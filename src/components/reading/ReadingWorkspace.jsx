@@ -495,6 +495,40 @@ export default function ReadingWorkspace({
             )}
           </div>
 
+          {/* Global Font Size Controller (A-, A, A+) */}
+          <div className="flex items-center space-x-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setFontSize('sm')}
+              className={`px-2 py-0.5 rounded font-bold text-xs transition-all cursor-pointer ${
+                fontSize === 'sm' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Cỡ chữ nhỏ (A-)"
+            >
+              A-
+            </button>
+            <button
+              type="button"
+              onClick={() => setFontSize('base')}
+              className={`px-2 py-0.5 rounded font-bold text-xs transition-all cursor-pointer ${
+                fontSize === 'base' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Cỡ chữ chuẩn (A)"
+            >
+              A
+            </button>
+            <button
+              type="button"
+              onClick={() => setFontSize('lg')}
+              className={`px-2 py-0.5 rounded font-bold text-xs transition-all cursor-pointer ${
+                fontSize === 'lg' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Cỡ chữ lớn (A+)"
+            >
+              A+
+            </button>
+          </div>
+
           {/* Mode Selector Button */}
           <button
             onClick={() => setExamMode(prev => prev === 'exam' ? 'practice' : 'exam')}
@@ -575,6 +609,7 @@ export default function ReadingWorkspace({
             showExplanationFor={showExplanationFor}
             onToggleExplanation={(qOrder) => setShowExplanationFor(prev => prev === qOrder ? null : qOrder)}
             onLocateEvidence={handleLocateEvidence}
+            fontSize={fontSize}
             apiKey={apiKey}
             model={model}
             onOpenSettings={onOpenSettings}
