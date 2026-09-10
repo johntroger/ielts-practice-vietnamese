@@ -14,12 +14,19 @@ import {
   ArrowRight,
   Split,
   Eye,
-  Award
+  Award,
+  Play,
+  Pause,
+  RotateCcw,
+  BarChart2,
+  AlertTriangle
 } from 'lucide-react';
-import { INITIAL_READING_TESTS, calculateReadingBandScore } from '../../data/readingTasks';
+import { INITIAL_READING_TESTS } from '../../data/readingTasks';
+import { useReadingExam } from '../../hooks/useReadingExam';
 import PassagePane from './PassagePane';
 import QuestionPane from './QuestionPane';
 import QuestionPaletteBar from './QuestionPaletteBar';
+import ReadingResultModal from './ReadingResultModal';
 
 export default function ReadingWorkspace({
   apiKey,
@@ -37,38 +44,70 @@ export default function ReadingWorkspace({
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef(null);
 
-  // User state
-  const [userAnswers, setUserAnswers] = useState({});
-  const [flaggedQuestions, setFlaggedQuestions] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // Explanation and Evidence focus states
   const [showExplanationFor, setShowExplanationFor] = useState(null);
   const [activeEvidencePara, setActiveEvidencePara] = useState(null);
-
-  const handleToggleFlag = (order) => {
-    setFlaggedQuestions(prev => ({
-      ...prev,
-      [order]: !prev[order]
-    }));
-  };
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
 
   // Active Passage object
   const activePassage = useMemo(() => {
     return currentTest?.passages.find(p => p.passageNumber === selectedPassageNum) || currentTest?.passages[0];
   }, [currentTest, selectedPassageNum]);
 
-  // Flatten all questions for palette checks
+  // Flatten all questions for palette checks and exam hook
   const allQuestions = useMemo(() => {
     if (!currentTest?.passages) return [];
     const list = [];
     currentTest.passages.forEach(p => {
       p.questionGroups.forEach(g => {
         g.questions.forEach(q => {
-          list.push({ ...q, passageNumber: p.passageNumber });
+          list.push({ ...q, passageNumber: p.passageNumber, type: g.type });
         });
       });
     });
     return list;
   }, [currentTest]);
+
+  // useReadingExam Hook
+  const {
+    userAnswers,
+    flaggedQuestions,
+    timeRemaining,
+    isRunning,
+    isSubmitted,
+    submittedAt,
+    bandResult,
+    toggleTimer,
+    handleAnswerChange,
+    handleToggleFlag,
+    handleSubmitExam: submitExamHook,
+    handleResetExam: resetExamHook,
+    setIsRunning
+  } = useReadingExam({
+    testId: currentTest.id,
+    totalTimeMinutes: currentTest.timeLimitMinutes || 60,
+    questionsData: allQuestions
+  });
+
+  // Automatically start timer in exam mode
+  useEffect(() => {
+    if (examMode === 'exam' && !isSubmitted && !isRunning) {
+      setIsRunning(true);
+    }
+  }, [examMode, isSubmitted, isRunning, setIsRunning]);
+
+  // Auto-open modal on submission
+  const handleSubmitExam = () => {
+    submitExamHook();
+    setIsResultModalOpen(true);
+  };
+
+  const handleResetExam = () => {
+    resetExamHook();
+    setIsResultModalOpen(false);
+    setShowExplanationFor(null);
+    setActiveEvidencePara(null);
+  };
 
   // Handle Dragging Splitter
   useEffect(() => {
@@ -95,13 +134,6 @@ export default function ReadingWorkspace({
     };
   }, [isDragging]);
 
-  const handleAnswerChange = (questionOrder, value) => {
-    setUserAnswers(prev => ({
-      ...prev,
-      [questionOrder]: value
-    }));
-  };
-
   const handleLocateEvidence = (paraId) => {
     setActiveEvidencePara(paraId);
     if (window.innerWidth < 1024) {
@@ -127,43 +159,22 @@ export default function ReadingWorkspace({
     }, 150);
   };
 
-  const handleSubmitExam = () => {
-    setIsSubmitted(true);
+  // Timer format (MM:SS)
+  const formatTimer = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleResetExam = () => {
-    if (window.confirm('Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ được làm mới.')) {
-      setUserAnswers({});
-      setFlaggedQuestions({});
-      setIsSubmitted(false);
-      setShowExplanationFor(null);
-      setActiveEvidencePara(null);
-    }
-  };
+  const isLowTime = timeRemaining <= 300 && timeRemaining > 0; // Less than 5 mins
+  const isCriticalTime = timeRemaining <= 60 && timeRemaining > 0; // Less than 1 min
 
-  // Calculate Band Score if submitted
-  const bandResult = useMemo(() => {
-    if (!isSubmitted) return null;
-    let correctCount = 0;
-    allQuestions.forEach(q => {
-      const uAns = userAnswers[q.order];
-      if (Array.isArray(uAns)) {
-        const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer];
-        if (uAns.length === correctArr.length && uAns.every(a => correctArr.includes(a))) {
-          correctCount++;
-        }
-      } else if (uAns) {
-        if (
-          String(uAns).trim().toLowerCase() === String(q.answer).trim().toLowerCase() ||
-          (q.acceptableAnswers && q.acceptableAnswers.some(a => a.toLowerCase() === String(uAns).trim().toLowerCase()))
-        ) {
-          correctCount++;
-        }
-      }
-    });
-    const band = calculateReadingBandScore(correctCount);
-    return { correctCount, band };
-  }, [isSubmitted, allQuestions, userAnswers]);
+  // Suggested time per passage: Passage 1 (17m), Passage 2 (20m), Passage 3 (23m)
+  const passageTimeGuide = {
+    1: 'Gợi ý: ≤ 17 phút',
+    2: 'Gợi ý: ≤ 20 phút',
+    3: 'Gợi ý: ≤ 23 phút'
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden h-full">
@@ -184,13 +195,18 @@ export default function ReadingWorkspace({
                   setSelectedPassageNum(num);
                   setActiveEvidencePara(null);
                 }}
-                className={`px-2.5 sm:px-3 py-1 rounded-md transition-all ${
+                className={`px-2.5 sm:px-3 py-1 rounded-md transition-all flex items-center gap-1.5 ${
                   selectedPassageNum === num 
                     ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                Passage {num}
+                <span>Passage {num}</span>
+                {selectedPassageNum === num && (
+                  <span className="hidden md:inline text-[10px] text-blue-600 font-normal">
+                    ({passageTimeGuide[num]})
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -216,24 +232,61 @@ export default function ReadingWorkspace({
           </button>
         </div>
 
-        {/* Right: Mode & Timer Indicators */}
+        {/* Right: Mode, Timer & Score Overview Button */}
         <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
-          <div className="flex items-center space-x-1 font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
-            <Clock className="w-3.5 h-3.5 text-blue-600" />
-            <span className="hidden sm:inline">Tổng thời gian:</span>
-            <span className="font-bold">60:00 (40 câu)</span>
+          
+          {/* Active Countdown Timer */}
+          <div className={`flex items-center space-x-2 px-2.5 sm:px-3 py-1 rounded-lg border font-mono transition-all ${
+            isCriticalTime
+              ? 'bg-red-500 text-white border-red-600 animate-pulse'
+              : isLowTime
+              ? 'bg-amber-50 text-amber-900 border-amber-300'
+              : isSubmitted
+              ? 'bg-slate-100 text-slate-600 border-slate-200'
+              : 'bg-slate-100 text-slate-800 border-slate-200'
+          }`}>
+            <Clock className={`w-3.5 h-3.5 ${isCriticalTime ? 'text-white' : isLowTime ? 'text-amber-600' : 'text-blue-600'}`} />
+            <span className="font-bold text-xs sm:text-sm tracking-wider">
+              {formatTimer(timeRemaining)}
+            </span>
+
+            {/* Play/Pause in Practice Mode */}
+            {examMode === 'practice' && !isSubmitted && (
+              <button
+                onClick={toggleTimer}
+                className="p-1 rounded hover:bg-slate-200/80 text-slate-600 transition-colors ml-0.5"
+                title={isRunning ? 'Tạm dừng đếm giờ' : 'Bấm tiếp tục đếm giờ'}
+              >
+                {isRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 text-emerald-600" />}
+              </button>
+            )}
           </div>
 
+          {/* Mode Selector Button */}
           <button
             onClick={() => setExamMode(prev => prev === 'exam' ? 'practice' : 'exam')}
             className={`px-2.5 py-1 rounded-lg font-bold border transition-all ${
               examMode === 'exam'
-                ? 'bg-red-50 text-red-700 border-red-200'
-                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
             }`}
+            title="Nhấp để đổi giữa Chế độ Thi Thử và Chế độ Luyện Tập"
           >
-            {examMode === 'exam' ? '🛡️ Chế độ Thi Thử' : '📗 Chế độ Luyện Tập'}
+            {examMode === 'exam' ? '🛡️ Thi Thử (Strict)' : '📗 Luyện Tập'}
           </button>
+
+          {/* If Submitted: Quick Button to Re-open Result Modal */}
+          {isSubmitted && bandResult && (
+            <button
+              onClick={() => setIsResultModalOpen(true)}
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs transition-colors"
+              title="Xem lại Báo cáo tổng kết Band Score"
+            >
+              <BarChart2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Báo Cáo Band</span>
+              <span>{bandResult.band.toFixed(1)}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -300,8 +353,19 @@ export default function ReadingWorkspace({
         onResetExam={handleResetExam}
         onJumpToQuestion={handleJumpToQuestion}
         onSelectPassage={setSelectedPassageNum}
+        onOpenResultModal={() => setIsResultModalOpen(true)}
+      />
+
+      {/* 4. Reading Result Modal */}
+      <ReadingResultModal
+        isOpen={isResultModalOpen}
+        onClose={() => setIsResultModalOpen(false)}
+        bandResult={bandResult}
+        testTitle={currentTest.title}
+        onResetExam={handleResetExam}
+        onJumpToQuestion={handleJumpToQuestion}
+        onSelectPassage={setSelectedPassageNum}
       />
     </div>
   );
 }
-

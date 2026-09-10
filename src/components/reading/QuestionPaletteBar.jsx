@@ -19,7 +19,8 @@ export default function QuestionPaletteBar({
   onSubmitExam,
   onResetExam,
   onJumpToQuestion,
-  onSelectPassage
+  onSelectPassage,
+  onOpenResultModal
 }) {
   const answeredCount = Object.keys(userAnswers).filter(k => {
     const val = userAnswers[k];
@@ -106,13 +107,17 @@ export default function QuestionPaletteBar({
       {/* Left: Score or Progress summary */}
       <div className="flex items-center space-x-3 text-xs">
         {isSubmitted && bandResult ? (
-          <div className="flex items-center space-x-2 bg-emerald-50 border border-emerald-300 px-3 py-1.5 rounded-xl text-emerald-950 font-bold shadow-2xs">
+          <button
+            onClick={() => onOpenResultModal && onOpenResultModal()}
+            className="flex items-center space-x-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-3 py-1.5 rounded-xl text-emerald-950 font-bold shadow-2xs transition-colors cursor-pointer"
+            title="Nhấp để xem Báo cáo phân tích chi tiết & Band Score"
+          >
             <Award className="w-4 h-4 text-emerald-600" />
-            <span>Kết quả: {bandResult.correctCount}/{totalQuestions} câu đúng</span>
+            <span>Kết quả: {bandResult.correctCount}/{totalQuestions} câu</span>
             <span className="bg-emerald-600 text-white px-2 py-0.5 rounded-md text-xs font-black">
               Band {bandResult.band.toFixed(1)}
             </span>
-          </div>
+          </button>
         ) : (
           <div className="flex items-center space-x-2 text-slate-600 font-semibold">
             <span className="hidden sm:inline">Tiến độ:</span>
