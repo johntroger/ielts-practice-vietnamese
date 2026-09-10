@@ -19,7 +19,9 @@ import {
   Pause,
   RotateCcw,
   BarChart2,
-  AlertTriangle
+  AlertTriangle,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { INITIAL_READING_TESTS } from '../../data/readingTasks';
 import { useReadingExam } from '../../hooks/useReadingExam';
@@ -74,13 +76,16 @@ export default function ReadingWorkspace({
   const [isIngestOpen, setIsIngestOpen] = useState(false);
 
   // Callback when a new passage is generated or ingested
-  const handleAddCustomPassage = (newPassage, source = 'generated') => {
+  const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = false) => {
     const newTest = {
       id: `custom-test-${Date.now()}`,
       title: `${source === 'ingest' ? '📰' : '✨'} ${newPassage.title || 'Bài Đọc IELTS Mới'}`,
       description: `Đề thi ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi Gemini AI'} theo chuẩn Cambridge Academic.`,
       totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 10,
       timeLimitMinutes: 20,
+      isCustom: true,
+      isPublic: Boolean(isPublic),
+      creatorEmail: user?.email || 'Thành viên',
       passages: [
         {
           ...newPassage,
@@ -100,7 +105,25 @@ export default function ReadingWorkspace({
 
     setCurrentTestId(newTest.id);
     setSelectedPassageNum(1);
-    alert(`Đã nạp thành công bài đọc mới: "${newTest.title}"! Bạn có thể bắt đầu làm bài ngay.`);
+    alert(`Đã nạp thành công bài đọc mới: "${newTest.title}" (${isPublic ? '🌐 Chia sẻ cộng đồng' : '🔒 Lưu riêng tư'})! Bạn có thể bắt đầu làm bài ngay.`);
+  };
+
+  // Toggle publicity for a custom reading test
+  const handleToggleReadingPublic = (testId) => {
+    setAllReadingTests(prev => {
+      const updated = prev.map(t => {
+        if (t.id === testId) {
+          const nextPub = !t.isPublic;
+          return { ...t, isPublic: nextPub };
+        }
+        return t;
+      });
+      try {
+        const customOnly = updated.filter(t => t.id.startsWith('custom-test-'));
+        localStorage.setItem('ielts_reading_custom_tests', JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
   };
 
   // Active Passage object
@@ -286,18 +309,49 @@ export default function ReadingWorkspace({
 
           {/* Test Selector Dropdown if more than 1 test */}
           {allReadingTests.length > 1 && (
-            <select
-              value={currentTestId}
-              onChange={(e) => {
-                setCurrentTestId(e.target.value);
-                setSelectedPassageNum(1);
-              }}
-              className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[150px] sm:max-w-[200px] truncate"
-            >
-              {allReadingTests.map(t => (
-                <option key={t.id} value={t.id}>{t.title}</option>
-              ))}
-            </select>
+            <div className="flex items-center space-x-1">
+              <select
+                value={currentTestId}
+                onChange={(e) => {
+                  setCurrentTestId(e.target.value);
+                  setSelectedPassageNum(1);
+                }}
+                className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px] sm:max-w-[220px] truncate"
+              >
+                {allReadingTests.map(t => (
+                  <option key={t.id} value={t.id}>
+                    {t.isCustom ? (t.isPublic ? '🌐 ' : '🔒 ') : '📚 '}
+                    {t.title}
+                  </option>
+                ))}
+              </select>
+
+              {/* Quick toggle public/private button if current test is custom */}
+              {currentTest?.isCustom && (
+                <button
+                  type="button"
+                  onClick={() => handleToggleReadingPublic(currentTest.id)}
+                  className={`p-1 rounded-lg border text-xs font-bold transition-all flex items-center gap-1 ${
+                    currentTest.isPublic 
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                  }`}
+                  title={currentTest.isPublic ? "Đang chia sẻ công khai! Bấm để chuyển về Riêng tư" : "Đang để riêng tư! Bấm để chia sẻ lên Thư viện Cộng đồng"}
+                >
+                  {currentTest.isPublic ? (
+                    <>
+                      <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="hidden sm:inline text-[10px]">Công khai</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="hidden sm:inline text-[10px]">Riêng tư</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           )}
 
           {/* Generator and Ingest Quick Action Buttons */}
@@ -493,7 +547,7 @@ export default function ReadingWorkspace({
         onClose={() => setIsGeneratorOpen(false)}
         apiKey={apiKey}
         model={model}
-        onPassageGenerated={(p) => handleAddCustomPassage(p, 'generated')}
+        onPassageGenerated={(p, isPub) => handleAddCustomPassage(p, 'generated', isPub)}
         onOpenSettings={onOpenSettings}
       />
 
@@ -503,7 +557,7 @@ export default function ReadingWorkspace({
         onClose={() => setIsIngestOpen(false)}
         apiKey={apiKey}
         model={model}
-        onPassageIngested={(p) => handleAddCustomPassage(p, 'ingest')}
+        onPassageIngested={(p, isPub) => handleAddCustomPassage(p, 'ingest', isPub)}
         onOpenSettings={onOpenSettings}
       />
     </div>

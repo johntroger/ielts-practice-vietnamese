@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   BookMarked, 
@@ -7,7 +7,9 @@ import {
   Layers, 
   CheckCircle2, 
   AlertCircle,
-  HelpCircle
+  HelpCircle,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { generateReadingPassage } from '../../services/geminiService';
 
@@ -41,6 +43,7 @@ export default function ReadingGeneratorModal({
 
   const [selectedTopic, setSelectedTopic] = useState(READING_TOPICS[0].en);
   const [selectedDifficulty, setSelectedDifficulty] = useState('Medium');
+  const [isPublic, setIsPublic] = useState(false); // Toggle chia sẻ cộng đồng
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -62,7 +65,7 @@ export default function ReadingGeneratorModal({
       });
 
       if (onPassageGenerated) {
-        onPassageGenerated(generatedPassage);
+        onPassageGenerated(generatedPassage, isPublic);
       }
       onClose();
     } catch (err) {
@@ -150,6 +153,33 @@ export default function ReadingGeneratorModal({
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Quyền riêng tư & Chia sẻ cộng đồng */}
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <div className="flex items-center space-x-2.5">
+              <div className={`p-2 rounded-lg ${isPublic ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-700'}`}>
+                {isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+              </div>
+              <div>
+                <div className="text-xs font-bold text-slate-800">
+                  {isPublic ? 'Chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản của bạn'}
+                </div>
+                <div className="text-[10px] text-slate-500">
+                  {isPublic ? 'Mọi người dùng trên web đều có thể xem và luyện tập đề này' : 'Chỉ có bạn mới thấy và làm bài thi này'}
+                </div>
+              </div>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={isPublic} 
+                onChange={(e) => setIsPublic(e.target.checked)} 
+                className="sr-only peer" 
+              />
+              <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
 
           {errorMsg && (
