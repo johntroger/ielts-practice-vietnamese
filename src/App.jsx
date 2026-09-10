@@ -25,6 +25,7 @@ import FeaturesGuideModal from './components/FeaturesGuideModal';
 import UserProfileModal from './components/UserProfileModal';
 import ContactModal from './components/ContactModal';
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
+const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -94,6 +95,14 @@ export default function App() {
 
   const [readingHistory, setReadingHistory] = useState(() => {
     const saved = localStorage.getItem('ielts_reading_submissions_history');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [];
+  });
+
+  const [listeningHistory, setListeningHistory] = useState(() => {
+    const saved = localStorage.getItem('ielts_listening_submissions_history');
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
@@ -537,6 +546,34 @@ export default function App() {
               }}
               initialTestId={readingMockTestId}
               initialExamMode={readingMockExamMode}
+            />
+          </React.Suspense>
+        </div>
+      ) : activeSkill === 'listening' ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+          <React.Suspense fallback={
+            <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
+              <div className="flex items-center space-x-2">
+                <span className="w-3 h-3 rounded-full bg-emerald-600 animate-ping" />
+                <span>Đang tải phân hệ IELTS Listening Studio...</span>
+              </div>
+            </div>
+          }>
+            <ListeningWorkspace
+              apiKey={apiKey}
+              model={model}
+              onOpenSettings={() => setIsSettingsOpen(true)}
+              user={currentUser}
+              onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+              onListeningSubmitted={(sub) => {
+                setListeningHistory(prev => {
+                  const updated = [sub, ...prev];
+                  try {
+                    localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(updated));
+                  } catch (e) {}
+                  return updated;
+                });
+              }}
             />
           </React.Suspense>
         </div>

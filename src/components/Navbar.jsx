@@ -64,7 +64,7 @@ export default function Navbar({
   const skills = [
     { id: 'writing', label: 'IELTS Writing', desc: 'Chấm điểm 4 tiêu chí & sửa lỗi', icon: PenTool, active: true },
     { id: 'reading', label: 'IELTS Reading', desc: 'Luyện đề 14 dạng & giải thích bằng chứng', icon: BookMarked, active: true },
-    { id: 'listening', label: 'IELTS Listening', desc: 'Nghe chép chính tả & Mock test', icon: Headphones, active: false, badge: 'Sắp ra mắt' },
+    { id: 'listening', label: 'IELTS Listening', desc: 'Luyện đề 8 dạng, audio evidence & dictation', icon: Headphones, active: true },
     { id: 'speaking', label: 'IELTS Speaking', desc: 'Luyện nói 1-on-1 với AI Audio', icon: Mic, active: false, badge: 'Sắp ra mắt' },
   ];
 
