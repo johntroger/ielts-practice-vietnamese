@@ -493,6 +493,146 @@ Return ONLY raw parseable JSON:
     { "term": "...", "match": "...", "meaning": "..." }
   ]
 }`;
+  } else if (drillType === 'reading-tfng') {
+    prompt = `Act as an expert Cambridge IELTS Reading coach. Generate 1 brand new "True / False / Not Given Trap Master" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Descriptive title (e.g. "Phân biệt bẫy Not Given vs False: [Chủ đề]")
+- "category": Topic category (e.g. "Science & Ecology", "History & Archaeology", "Technology")
+- "passage": A concise academic passage (3-4 sentences, approx 60-80 words).
+- "statement": 1 statement testing subtle understanding. Choose whether it should be TRUE, FALSE, or NOT GIVEN.
+  - If FALSE: ensure there is a clear direct contradiction in the passage.
+  - If NOT GIVEN: ensure it creates a plausible assumption/trap that people often assume, but is NOT stated or cannot be confirmed in the passage.
+  - If TRUE: ensure it is a faithful paraphrase of the passage's idea.
+- "answer": MUST be strictly "TRUE", "FALSE", or "NOT GIVEN"
+- "trapType": Name the trap (e.g. "Assumption Trap", "Direct Contradiction", "Comparative Trap", "Paraphrase Confirmation")
+- "explanation": In-depth Vietnamese explanation of why this answer is correct, and why other choices (especially the trap) are incorrect.
+- "evidence": Direct quote from the passage proving the answer (or note that info is missing for Not Given).
+
+Return ONLY raw parseable JSON:
+{
+  "type": "reading-tfng",
+  "title": "...",
+  "category": "...",
+  "passage": "...",
+  "statement": "...",
+  "answer": "TRUE",
+  "trapType": "...",
+  "explanation": "...",
+  "evidence": "..."
+}`;
+  } else if (drillType === 'reading-paraphrase') {
+    prompt = `Act as an expert Cambridge IELTS Reading coach. Generate 1 brand new "Reading Paraphrase Hunter" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Short title (e.g. "Truy tìm Paraphrase: [Chủ đề]")
+- "category": "Academic Reading Skills"
+- "questionText": 1 sentence representing an IELTS exam question (Band 7.0 style).
+- "passageExcerpt": 1 sentence from the reading text expressing the exact same meaning using sophisticated academic synonyms and restructured syntax.
+- "pairs": Array of 4-6 objects mapping synonymous chunks between question and passage:
+  [
+    { "questionWord": "...", "passageWord": "...", "meaning": "Vietnamese meaning of the pair" }
+  ]
+
+Return ONLY raw parseable JSON:
+{
+  "type": "reading-paraphrase",
+  "title": "...",
+  "category": "Academic Reading Skills",
+  "questionText": "...",
+  "passageExcerpt": "...",
+  "pairs": [
+    { "questionWord": "...", "passageWord": "...", "meaning": "..." }
+  ]
+}`;
+  } else if (drillType === 'reading-headings') {
+    prompt = `Act as an expert Cambridge IELTS Reading coach. Generate 1 brand new "Matching Headings Trap-Breaker" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Short title (e.g. "Phá bẫy Matching Headings: [Chủ đề]")
+- "category": "IELTS Reading Matching Headings"
+- "paragraph": A well-written academic paragraph (4-6 sentences, 80-110 words) with 1 clear central theme.
+- "correctHeadingIndex": Index (0, 1, 2, or 3) of the correct heading.
+- "headings": Array of 4 heading objects:
+  - 1 correct heading (accurate summary of the paragraph's main idea, marked with isCorrect: true, type: "CORRECT", and detailed Vietnamese analysis).
+  - 1 "DETAIL_TRAP": Heading focusing on a minor specific detail/keyword mentioned in the paragraph, isCorrect: false.
+  - 1 "TOO_GENERAL": Heading that is overly broad or beyond the scope, isCorrect: false.
+  - 1 "IRRELEVANT" or "DISTRACTOR": Heading with alluring keywords but misleading or distorted meaning, isCorrect: false.
+- "topicSentence": The exact sentence or key clause in the paragraph that conveys the main theme.
+
+Return ONLY raw parseable JSON:
+{
+  "type": "reading-headings",
+  "title": "...",
+  "category": "...",
+  "paragraph": "...",
+  "correctHeadingIndex": 0,
+  "headings": [
+    { "id": "h1", "text": "...", "isCorrect": true, "type": "CORRECT", "analysis": "..." },
+    { "id": "h2", "text": "...", "isCorrect": false, "type": "DETAIL_TRAP", "analysis": "..." },
+    { "id": "h3", "text": "...", "isCorrect": false, "type": "TOO_GENERAL", "analysis": "..." },
+    { "id": "h4", "text": "...", "isCorrect": false, "type": "IRRELEVANT", "analysis": "..." }
+  ],
+  "topicSentence": "..."
+}`;
+  } else if (drillType === 'context-vocab') {
+    prompt = `Act as an expert Cambridge IELTS coach. Generate 1 brand new "Contextual Vocabulary Decryption" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Title e.g. "Đoán nghĩa từ: [targetWord]"
+- "category": "Core Academic Vocabulary"
+- "sentence": An academic sentence containing one advanced C1-C2 word with rich contextual clues (contrast, cause-effect, definition, or examples).
+- "targetWord": The target word (e.g. "ephemeral", "paradoxical", "pernicious", "catalyst").
+- "clueType": Description of the clue mechanism (e.g. "Contrast Clue", "Definition by Example", "Cause & Effect Clue").
+- "options": Array of 4 options (1 correct definition, 3 plausible distractors).
+- "explanation": Detailed Vietnamese explanation of how the contextual clues reveal the meaning of the target word.
+
+Return ONLY raw parseable JSON:
+{
+  "type": "context-vocab",
+  "title": "...",
+  "category": "Core Academic Vocabulary",
+  "sentence": "...",
+  "targetWord": "...",
+  "clueType": "...",
+  "options": [
+    { "text": "...", "isCorrect": true },
+    { "text": "...", "isCorrect": false },
+    { "text": "...", "isCorrect": false },
+    { "text": "...", "isCorrect": false }
+  ],
+  "explanation": "..."
+}`;
+  } else if (drillType === 'sentence-chunking') {
+    prompt = `Act as an expert Cambridge IELTS coach. Generate 1 brand new "Complex Sentence Chunking & Deconstruction" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Title e.g. "Giải phẫu câu phức: [Chủ đề]"
+- "category": "Academic Sentence Mastery"
+- "fullSentence": A sophisticated, 35-45 word academic sentence with embedded relative clauses, participial phrases, or appositives.
+- "subject": The core Subject noun phrase.
+- "subModifier": The non-essential clauses/modifiers (relative clauses, prepositional phrases).
+- "coreVerb": The main finite verb/predicate.
+- "objectResult": The core Object or Result complement.
+- "takeawayVietnamese": A clear takeaway showing how stripping down to Subject-Verb-Object helps fast comprehension.
+
+Return ONLY raw parseable JSON:
+{
+  "type": "sentence-chunking",
+  "title": "...",
+  "category": "Academic Sentence Mastery",
+  "fullSentence": "...",
+  "subject": "...",
+  "subModifier": "...",
+  "coreVerb": "...",
+  "objectResult": "...",
+  "takeawayVietnamese": "..."
+}`;
   } else {
     // paraphrase
     prompt = `Act as an expert Cambridge IELTS coach. Generate 1 brand new "Single-Sentence Paraphrasing Drill" for IELTS Writing.

@@ -625,6 +625,7 @@ export default function App() {
         onClose={() => setIsDrillsOpen(false)}
         apiKey={apiKey}
         model={model}
+        activeSkill={activeSkill}
       />
 
       <WeeklyReportModal
