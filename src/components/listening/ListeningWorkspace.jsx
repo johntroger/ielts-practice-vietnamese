@@ -1,33 +1,24 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Headphones, 
   Volume2, 
   Play, 
   RotateCcw, 
   CheckCircle2, 
-  Sparkles, 
-  AlertCircle, 
   Clock, 
-  BookOpen, 
-  FileText, 
   ShieldCheck, 
-  Info,
-  ChevronRight,
-  Bookmark,
-  Share2,
-  X,
-  RefreshCw,
-  Sun,
-  Moon,
-  Type,
-  HelpCircle
+  X, 
+  BarChart2,
+  Award
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
 import ListeningPaletteBar from './ListeningPaletteBar';
+import ListeningResultModal from './ListeningResultModal';
 import { useAudioEngine } from '../../hooks/useAudioEngine';
 import { useListeningExam } from '../../hooks/useListeningExam';
-import { INITIAL_LISTENING_TESTS, calculateListeningBandScore } from '../../data/listeningTasks';
+import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
+import { scoreListeningExam } from '../../utils/listeningScorer';
 
 const SNAPSHOT_KEY_PREFIX = 'ielts_listening_snapshot_';
 
@@ -48,6 +39,17 @@ export default function ListeningWorkspace({
   const [hasStartedExam, setHasStartedExam] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+
+  // Band Score Result State
+  const [bandResult, setBandResult] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_listening_last_result_' + currentTestId);
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   
   // Accessibility State: Font Size & Contrast
   const [fontSizeMode, setFontSizeMode] = useState('normal'); // 'normal' | 'large' | 'xlarge'
@@ -96,7 +98,7 @@ export default function ListeningWorkspace({
   // Check for prior interrupted session on mount
   useEffect(() => {
     try {
-      const savedSnapshot = localStorage.getItem(`${SNAPSHOT_KEY_PREFIX}${currentTestId}`);
+      const savedSnapshot = localStorage.getItem(SNAPSHOT_KEY_PREFIX + currentTestId);
       if (savedSnapshot) {
         const parsed = JSON.parse(savedSnapshot);
         if (parsed && parsed.savedTime > 0 && !parsed.isCompleted) {
@@ -119,7 +121,7 @@ export default function ListeningWorkspace({
           timestamp: new Date().toISOString(),
           isCompleted: exam.isSubmitted
         };
-        localStorage.setItem(`${SNAPSHOT_KEY_PREFIX}${currentTestId}`, JSON.stringify(snapshot));
+        localStorage.setItem(SNAPSHOT_KEY_PREFIX + currentTestId, JSON.stringify(snapshot));
       } catch (e) {}
     }, 2000);
     return () => clearInterval(interval);
@@ -168,41 +170,40 @@ export default function ListeningWorkspace({
   // Discard saved exam
   const handleDiscardResume = () => {
     try {
-      localStorage.removeItem(`${SNAPSHOT_KEY_PREFIX}${currentTestId}`);
+      localStorage.removeItem(SNAPSHOT_KEY_PREFIX + currentTestId);
     } catch (e) {}
     setResumePrompt(null);
   };
 
-  // Handle Submit Exam
+  // Handle Submit Exam with 4-layer diagnostic scoring
   const handleConfirmSubmit = () => {
     exam.submitExam();
     setIsConfirmSubmitOpen(false);
     audioEngine.pause();
 
-    // Calculate score
-    let correctCount = 0;
-    const allQuestions = currentTest.parts.flatMap(p => p.questionGroups.flatMap(g => g.questions));
-    allQuestions.forEach(q => {
-      const uAns = (exam.userAnswers[q.order] || '').toString().trim().toLowerCase();
-      if (!uAns) return;
-      const cAns = (q.answer || '').toString().trim().toLowerCase();
-      const acceptable = (q.acceptableAnswers || []).map(a => a.toString().trim().toLowerCase());
-      if (uAns === cAns || acceptable.includes(uAns)) {
-        correctCount += 1;
-      }
+    const scored = scoreListeningExam({
+      testData: currentTest,
+      userAnswers: exam.userAnswers,
+      timeSpentSeconds: audioEngine.currentTime
     });
 
-    const band = calculateListeningBandScore(correctCount);
+    setBandResult(scored);
+    setIsResultModalOpen(true);
+
+    try {
+      localStorage.setItem('ielts_listening_last_result_' + currentTestId, JSON.stringify(scored));
+    } catch (e) {}
 
     if (onListeningSubmitted) {
       onListeningSubmitted({
         testId: currentTestId,
         testTitle: currentTest.title,
-        correctCount,
-        totalQuestions: currentTest.totalQuestions,
-        band,
+        correctCount: scored.correctCount,
+        totalQuestions: scored.totalQuestions,
+        band: scored.band,
         userAnswers: exam.userAnswers,
-        submittedAt: new Date().toISOString()
+        submittedAt: scored.submittedAt,
+        resultData: scored
       });
     }
   };
@@ -216,7 +217,7 @@ export default function ListeningWorkspace({
     : 'bg-slate-100 text-slate-900';
 
   return (
-    <div className={`flex-1 flex flex-col min-h-0 h-full overflow-hidden ${themeBg} ${fontClass}`}>
+    <div className={"flex-1 flex flex-col min-h-0 h-full overflow-hidden " + themeBg + " " + fontClass}>
       
       {/* 1. Header: Authentic CD-IELTS Bar in Strict Mode OR Standard Bar in Practice Mode */}
       {examMode === 'strict' ? (
@@ -246,8 +247,18 @@ export default function ListeningWorkspace({
             />
           </div>
 
-          {/* Right: Accessibility Controls & Countdown Timer */}
+          {/* Right: Accessibility Controls, Report & Countdown Timer */}
           <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            {exam.isSubmitted && bandResult && (
+              <button
+                onClick={() => setIsResultModalOpen(true)}
+                className="px-2.5 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center space-x-1 transition-colors cursor-pointer shadow-xs"
+              >
+                <Award className="w-3.5 h-3.5" />
+                <span>Band {bandResult.band.toFixed(1)}</span>
+              </button>
+            )}
+
             <button
               onClick={() => setContrastTheme(prev => prev === 'standard' ? 'dark' : prev === 'dark' ? 'yellowOnBlack' : 'standard')}
               className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
@@ -298,21 +309,29 @@ export default function ListeningWorkspace({
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
+            {/* If Submitted: Result Report Button */}
+            {exam.isSubmitted && bandResult && (
+              <button
+                onClick={() => setIsResultModalOpen(true)}
+                className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                title="Mở lại bảng báo cáo kết quả và chẩn đoán lỗi"
+              >
+                <BarChart2 className="w-3.5 h-3.5" />
+                <span>Báo Cáo Band {bandResult.band.toFixed(1)}</span>
+              </button>
+            )}
+
             {/* Mode Switcher */}
             <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
               <button
                 onClick={() => setExamMode('practice')}
-                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                  examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-                }`}
+                className={"px-2 sm:px-2.5 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
                 📗 Luyện Tập
               </button>
               <button
                 onClick={() => setExamMode('strict')}
-                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all cursor-pointer ${
-                  examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
-                }`}
+                className={"px-2 sm:px-2.5 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
                 🛡️ Thi Thử (CD-IELTS)
               </button>
@@ -336,6 +355,10 @@ export default function ListeningWorkspace({
                     exam.resetExam();
                     audioEngine.seek(0);
                     setHasStartedExam(false);
+                    setBandResult(null);
+                    try {
+                      localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
+                    } catch (e) {}
                   }
                 }}
                 className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
@@ -360,7 +383,7 @@ export default function ListeningWorkspace({
       {resumePrompt && !hasStartedExam && (
         <div className="bg-amber-500 text-slate-950 px-4 py-2 flex items-center justify-between text-xs font-semibold border-b border-amber-600 shrink-0">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-slate-950 shrink-0" />
+            <Clock className="w-4 h-4 text-slate-950 shrink-0" />
             <span>
               Phát hiện bài làm chưa hoàn tất tại thời điểm <strong>{Math.floor(resumePrompt.savedTime / 60)} phút {Math.floor(resumePrompt.savedTime % 60)} giây</strong> (Part {resumePrompt.activePart || 1}).
             </span>
@@ -482,10 +505,8 @@ export default function ListeningWorkspace({
             fontSizeMode={fontSizeMode}
             contrastTheme={contrastTheme}
             onSeekAudio={(timestamp) => {
-              if (examMode === 'practice' || exam.isSubmitted) {
-                audioEngine.seek(timestamp);
-                audioEngine.play();
-              }
+              audioEngine.seek(timestamp);
+              audioEngine.play();
             }}
           />
         )}
@@ -500,7 +521,6 @@ export default function ListeningWorkspace({
           activeQuestionOrder={exam.activeQuestionOrder}
           onSelectQuestion={(order) => {
             exam.setActiveQuestionOrder(order);
-            // Switch part if needed
             const pNum = Math.ceil(order / 10);
             if (pNum !== activePart) {
               setActivePart(pNum);
@@ -575,7 +595,7 @@ export default function ListeningWorkspace({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-600">Số câu chưa điền:</span>
-                <span className={`font-bold ${currentTest.totalQuestions - exam.answeredCount > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                <span className={"font-bold " + (currentTest.totalQuestions - exam.answeredCount > 0 ? 'text-amber-600' : 'text-emerald-600')}>
                   {currentTest.totalQuestions - exam.answeredCount} câu
                 </span>
               </div>
@@ -603,6 +623,34 @@ export default function ListeningWorkspace({
           </div>
         </div>
       )}
+
+      {/* 9. Comprehensive Cambridge Test Report Modal */}
+      <ListeningResultModal
+        isOpen={isResultModalOpen}
+        onClose={() => setIsResultModalOpen(false)}
+        bandResult={bandResult}
+        testTitle={currentTest.title}
+        onResetExam={() => {
+          exam.resetExam();
+          audioEngine.seek(0);
+          setHasStartedExam(false);
+          setBandResult(null);
+          try {
+            localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
+          } catch (e) {}
+        }}
+        onJumpToQuestion={(order) => {
+          exam.setActiveQuestionOrder(order);
+          const pNum = Math.ceil(order / 10);
+          if (pNum !== activePart) {
+            setActivePart(pNum);
+          }
+        }}
+        onSeekAudio={(timestamp) => {
+          audioEngine.seek(timestamp);
+          audioEngine.play();
+        }}
+      />
 
     </div>
   );
