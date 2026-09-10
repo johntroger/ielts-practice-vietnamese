@@ -829,6 +829,8 @@ export default function App() {
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
         submissions={submissions}
+        readingHistory={readingHistory}
+        activeSkill={activeSkill}
         onViewSubmission={(sub) => {
           setCurrentTaskId(sub.task.id);
           setCurrentEvaluation(sub.evaluation);
@@ -839,6 +841,22 @@ export default function App() {
           if (currentUser) deleteUserSubmission(currentUser.id, id);
         }}
         onClearHistory={() => setSubmissions([])}
+        onDeleteReadingSubmission={(subId) => {
+          setReadingHistory(prev => {
+            const updated = prev.filter(r => r.id !== subId);
+            try {
+              localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+          });
+        }}
+        onClearReadingHistory={() => {
+          if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Reading?')) return;
+          setReadingHistory([]);
+          try {
+            localStorage.removeItem('ielts_reading_submissions_history');
+          } catch (e) {}
+        }}
       />
 
       <TheoryHandbookModal

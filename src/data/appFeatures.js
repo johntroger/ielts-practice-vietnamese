@@ -181,35 +181,36 @@ export const APP_FEATURES = [
   },
   {
     id: 'feat-micro-drills-vocab',
-    version: 'v1.5',
-    badge: 'Luyện Bổ Trợ',
+    version: 'v2.0',
+    badge: 'Đa Kỹ Năng',
     category: 'practice',
-    targetSkills: ['writing', 'speaking', 'reading'],
-    title: 'Phòng Luyện Bổ Trợ: Micro-Drills, Vocab C1-C2 & Lỗi Sai Thường Gặp',
-    shortDesc: 'Hệ sinh thái bài tập nhỏ giúp tăng phản xạ viết câu phức, ghép từ nối học thuật và ghi nhớ lỗi ngữ pháp.',
+    targetSkills: ['writing', 'reading', 'speaking', 'listening'],
+    title: 'Tổ Hợp Phòng Luyện Bổ Trợ: Micro-Drills Studio Đa Phân Hệ',
+    shortDesc: 'Hệ sinh thái bài tập vi mô rèn luyện phản xạ ngữ pháp, phá bẫy tư duy kinh điển cho cả Writing, Reading và nền tảng cốt lõi.',
     icon: 'Puzzle',
     highlights: [
-      'Micro-Drills: Luyện viết câu đơn thành câu phức, paraphrase đề bài, nối ý bằng danh từ hóa.',
-      'Flashcard Vocab & Grammar: Hàng trăm cụm collocations đắt giá theo chủ đề cùng bẫy lỗi hay gặp (áp dụng mượt mà vào cả IELTS Speaking Part 3).',
-      'Sổ tay lỗi sai & Sổ tay từ vựng: Tự động gom các lỗi sai từ bài chấm của AI vào sổ để ôn tập lại.'
+      'Phòng Chung: Ghép Collocation C1-C2, Đoán nghĩa từ ngữ cảnh (Context Clues), Giải phẫu câu phức dài (S-V-O chunking).',
+      'Chuyên Writing: Giới từ số liệu Task 1, Từ nối Task 2, Paraphrase mở/thân bài chấm điểm AI, Soi sửa lỗi ngữ pháp.',
+      'Chuyên Reading: Bẫy True/False/Not Given Master, Săn Paraphrase câu hỏi & bài đọc, Phá bẫy Matching Headings (Topic Sentence vs Detail Trap).',
+      'Dự phòng Listening & Speaking: Lộ trình bài tập bẫy đổi ý người nói (Distractor Alert), chép chính tả số/tên, và công thức mở rộng A.R.E.A.'
     ],
-    usageGuide: 'Mở Menu -> Chọn mục trong phần "Học & Luyện Thi" (Micro-Drills, Vocab & Lỗi Sai, Sổ tay từ vựng).'
+    usageGuide: 'Nhấn nút "Phòng Luyện" trên Navbar để chọn phòng chuyên môn bạn muốn rèn luyện.'
   },
   {
     id: 'feat-mock-test-timer',
-    version: 'v1.0',
+    version: 'v2.0',
     badge: 'Thực Chiến',
     category: 'exam',
-    targetSkills: ['writing', 'reading'],
-    title: 'Thi Thử 60 Phút Thực Chiến (Full Mock Test)',
-    shortDesc: 'Mô phỏng 100% áp lực phòng thi IELTS trên máy tính với đồng hồ đếm ngược và kiểm soát số từ thời gian thực.',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    title: 'Phòng Thi Thử Áp Lực Cao (Mock Test Vault) & Đại Thi Thử 4 Kỹ Năng',
+    shortDesc: 'Mô phỏng 100% áp lực phòng thi IELTS trên máy tính chuẩn Cambridge với đồng hồ đếm ngược liên tục và chấm điểm Band quốc tế.',
     icon: 'Clock',
     highlights: [
-      'Làm trọn gói Task 1 (20 phút) + Task 2 (40 phút) liên tục không ngắt quãng.',
-      'Rèn luyện kỹ năng đọc - phân tích đề nhanh (Skimming/Scanning) và quản lý thời gian thi chuẩn Cambridge.',
-      'Bộ đếm từ và chỉ số TTR (Độ phong phú từ vựng), tốc độ gõ phím WPM thời gian thực.',
-      'Chế độ Practice vs Exam: Bật/tắt kiểm tra chính tả linh hoạt theo nhu cầu ôn luyện.'
+      'Thi Thử Writing 60 Phút: Viết liên hoàn Task 1 + Task 2, kiểm soát số từ và giám khảo AI chấm điểm theo 4 tiêu chí TR, CC, LR, GRA.',
+      'Thi Thử Reading 60 Phút: Làm bài thi chuẩn 3 Passages (40 câu), hỗ trợ bốc đề ngẫu nhiên (Random 3 Passages) hoặc chọn bộ đề có sẵn, khóa gợi ý.',
+      'Dự phòng Listening (40p) & Speaking (15p): Cấu trúc 4 Parts nghe và 3 Parts vấn đáp 1:1 với Giám khảo ảo AI.',
+      'Đại Thi Thử 4 Kỹ Năng (All-In-One Grand Mock ~2h45p): Quy trình thi liên hoàn chuẩn BC/IDP, tự động cấp Bảng Điểm Dự Phóng (Estimated TRF).'
     ],
-    usageGuide: 'Vào Menu -> Bấm "Thi Thử 60 Phút Thực Chiến" để bắt đầu bài thi trọn gói.'
+    usageGuide: 'Vào Menu Phòng Luyện -> Bấm "Thi Thử 60 Phút Thực Chiến" để chọn phân hệ thi.'
   }
 ];
