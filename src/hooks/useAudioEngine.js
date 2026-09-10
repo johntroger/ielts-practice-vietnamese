@@ -5,6 +5,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
  * Features:
  * - Robust state machine: 'idle' | 'loading' | 'ready' | 'playing' | 'paused' | 'ended' | 'error'
  * - Clean browser autoplay unlock without play/pause race conditions
+ * - Direct DOM element state checking to avoid asynchronous race conditions on fast clicks
+ * - Exposes boolean helpers: isPlaying, isLoading, isEnded
  * - Automatic fallback source recovery on 404 / network errors
  * - Safe memory management & auto-cleanup on unmount / skill change
  * - Strict vs Practice seek controls
@@ -12,7 +14,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
  */
 export function useAudioEngine({
   initialSrc = '',
-  fallbackSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  fallbackSrc = 'https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg',
   examMode = 'practice', // 'strict' | 'practice'
   onTimeUpdate = null,
   onEnded = null,
@@ -45,9 +47,16 @@ export function useAudioEngine({
     };
 
     const handleCanPlay = () => {
-      if (audioState === 'loading' || audioState === 'idle') {
-        setAudioState('ready');
-      }
+      setAudioState(prev => (prev === 'loading' || prev === 'idle' ? 'ready' : prev));
+    };
+
+    const handleWaiting = () => {
+      setAudioState('loading');
+    };
+
+    const handlePlaying = () => {
+      setAudioState('playing');
+      setErrorMessage(null);
     };
 
     const handleTimeUpdate = () => {
@@ -109,7 +118,8 @@ export function useAudioEngine({
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('waiting', handleWaiting);
+    audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
@@ -125,7 +135,8 @@ export function useAudioEngine({
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('waiting', handleWaiting);
+      audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
@@ -192,6 +203,7 @@ export function useAudioEngine({
         await audioContextRef.current.resume().catch(() => {});
       }
       setErrorMessage(null);
+      setAudioState('loading');
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         await playPromise;
@@ -200,12 +212,13 @@ export function useAudioEngine({
       setAudioState('playing');
     } catch (err) {
       if (err.name === 'AbortError') {
-        // Interrupted play request (normal when seeking or quickly toggling), safe to ignore
+        // Interrupted play request (rapid clicking or pause), safe to ignore
         return;
       }
       console.warn('Audio play caught error:', err);
       if (err.name === 'NotAllowedError') {
         setErrorMessage('Trình duyệt cần tương tác: Bạn vui lòng bấm nút Play để bắt đầu nghe.');
+        setAudioState('paused');
       } else if (fallbackSrc && audio.src !== fallbackSrc) {
         // Attempt fallback
         audio.src = fallbackSrc;
@@ -217,9 +230,11 @@ export function useAudioEngine({
           setAudioState('playing');
         } catch (e) {
           setErrorMessage('Vui lòng kiểm tra kết nối mạng để phát âm thanh.');
+          setAudioState('error');
         }
       } else {
         setErrorMessage('Không thể phát âm thanh: ' + (err.message || 'Lỗi mạng'));
+        setAudioState('error');
       }
     }
   }, [fallbackSrc]);
@@ -229,16 +244,20 @@ export function useAudioEngine({
     if (!audio) return;
     try {
       audio.pause();
+      setAudioState('paused');
     } catch (e) {}
   }, []);
 
+  // Direct element check to avoid state desync on fast clicking
   const togglePlay = useCallback(() => {
-    if (audioState === 'playing') {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!audio.paused && !audio.ended) {
       pause();
     } else {
       play();
     }
-  }, [audioState, pause, play]);
+  }, [pause, play]);
 
   // Seeking
   const seek = useCallback((targetSeconds) => {
@@ -292,9 +311,17 @@ export function useAudioEngine({
     setPlaybackRate(validRate);
   }, [examMode]);
 
+  // Calculated boolean status
+  const isPlaying = audioState === 'playing';
+  const isLoading = audioState === 'loading';
+  const isEnded = audioState === 'ended';
+
   return {
     audioRef,
     audioState,
+    isPlaying,
+    isLoading,
+    isEnded,
     currentTime,
     duration,
     playbackRate,
