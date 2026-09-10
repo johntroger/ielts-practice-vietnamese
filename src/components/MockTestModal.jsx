@@ -14,14 +14,23 @@ import {
   Shuffle,
   Play,
   Layers,
-  CheckCircle2
+  CheckCircle2,
+  Headphones,
+  Mic,
+  Trophy,
+  Volume2,
+  Radio,
+  Timer,
+  Check,
+  ChevronRight,
+  Sparkle
 } from 'lucide-react';
 import { countWords } from '../utils/textAnalytics';
 import { evaluateEssay } from '../services/geminiService';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
-import { createRandomFullTest, extractPassageBank } from '../utils/readingTestAssembler';
+import { createRandomFullTest } from '../utils/readingTestAssembler';
 
 export default function MockTestModal({
   isOpen,
@@ -36,7 +45,7 @@ export default function MockTestModal({
 }) {
   if (!isOpen) return null;
 
-  // Active Tab: 'writing' | 'reading'
+  // Active Tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'full4skills'
   const [activeMockTab, setActiveMockTab] = useState(() => {
     return activeSkill === 'reading' ? 'reading' : 'writing';
   });
@@ -227,20 +236,20 @@ export default function MockTestModal({
       <div className="bg-white rounded-2xl w-full max-w-6xl shadow-2xl overflow-hidden flex flex-col h-[94vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between border-b border-slate-800">
+        <div className="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between border-b border-slate-800 shrink-0">
           <div className="flex items-center space-x-3">
             <div className="p-2 rounded-lg bg-red-600/30 text-red-400 border border-red-500/30">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold">Phòng Thi Thử 60 Phút Áp Lực Cao (Mock Test Vault)</h2>
-                <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black uppercase">
-                  Áp Lực Phòng Thi
+                <h2 className="text-base sm:text-lg font-bold">Phòng Thi Thử IELTS Áp Lực Cao (Mock Test Vault)</h2>
+                <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black uppercase tracking-wide">
+                  Chuẩn Quốc Tế
                 </span>
               </div>
               <span className="text-[11px] text-slate-400">
-                Mô phỏng 100% quy trình thi thật: 60 phút liên tục chuẩn Cambridge cho cả Writing và Reading
+                Mô phỏng 100% quy trình thi thật: Writing (60p), Reading (60p), Listening (40p), Speaking (15p) & ĐẠI THI THỬ 4 KỸ NĂNG
               </span>
             </div>
           </div>
@@ -257,38 +266,88 @@ export default function MockTestModal({
           </button>
         </div>
 
-        {/* Level 1: Skill Switcher Tab (Writing vs Reading) - Only visible before test starts */}
+        {/* Level 1: Skill Switcher Tab - Only visible before test starts */}
         {!isTestStarted && (
-          <div className="bg-slate-900/95 border-b border-slate-800 px-5 py-2.5 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-slate-400 mr-2 uppercase tracking-wider hidden sm:inline">
-                Kỹ Năng Thi Thử:
+          <div className="bg-slate-900/95 border-b border-slate-800 px-4 sm:px-5 py-2.5 flex items-center justify-between gap-2 overflow-x-auto shrink-0">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+              <span className="text-[11px] font-bold text-slate-400 mr-1 uppercase tracking-wider hidden lg:inline">
+                Chế Độ Thi:
               </span>
               
+              {/* Tab 1: Writing */}
               <button
                 onClick={() => setActiveMockTab('writing')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                   activeMockTab === 'writing'
                     ? 'bg-red-600 text-white shadow-md ring-2 ring-red-500/30'
                     : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
                 }`}
               >
-                <FileText className="w-4 h-4" />
-                <span>✍️ Thi Thử IELTS Writing (Task 1 + Task 2)</span>
+                <FileText className="w-3.5 h-3.5" />
+                <span>✍️ Writing (60p)</span>
               </button>
 
+              {/* Tab 2: Reading */}
               <button
                 onClick={() => setActiveMockTab('reading')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                   activeMockTab === 'reading'
                     ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-500/30'
                     : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
                 }`}
               >
-                <BookOpen className="w-4 h-4" />
-                <span>📖 Thi Thử IELTS Reading (Full 3 Passages - 40 Câu)</span>
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>📖 Reading (60p)</span>
                 <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black">
                   MỚI
+                </span>
+              </button>
+
+              {/* Tab 3: Listening (Preview / Roadmap) */}
+              <button
+                onClick={() => setActiveMockTab('listening')}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                  activeMockTab === 'listening'
+                    ? 'bg-purple-600 text-white shadow-md ring-2 ring-purple-500/30'
+                    : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-300'
+                }`}
+              >
+                <Headphones className="w-3.5 h-3.5" />
+                <span>🎧 Listening (40p)</span>
+                <span className="px-1.5 py-0.2 rounded bg-slate-700 text-slate-300 text-[9px]">
+                  ⏳ Sắp có
+                </span>
+              </button>
+
+              {/* Tab 4: Speaking (Preview / Roadmap) */}
+              <button
+                onClick={() => setActiveMockTab('speaking')}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                  activeMockTab === 'speaking'
+                    ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-500/30'
+                    : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-300'
+                }`}
+              >
+                <Mic className="w-3.5 h-3.5" />
+                <span>🗣️ Speaking (15p)</span>
+                <span className="px-1.5 py-0.2 rounded bg-slate-700 text-slate-300 text-[9px]">
+                  ⏳ Sắp có
+                </span>
+              </button>
+
+              {/* Tab 5: Full 4 Skills (All-in-One Grand Mock) */}
+              <button
+                onClick={() => setActiveMockTab('full4skills')}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                  activeMockTab === 'full4skills'
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 shadow-md ring-2 ring-amber-400/40 font-black'
+                    : 'bg-gradient-to-r from-slate-800 to-slate-800/90 text-amber-300 hover:from-slate-700 hover:to-slate-700'
+                }`}
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                <span>🏆 Full 4 Kỹ Năng (~2h45p)</span>
+                <span className="px-1.5 py-0.2 rounded bg-amber-400/30 text-amber-300 text-[9px] font-bold">
+                  Dự Kiến
                 </span>
               </button>
             </div>
@@ -449,6 +508,294 @@ export default function MockTestModal({
             >
               BẮT ĐẦU TÍNH GIỜ WRITING 60 PHÚT
             </button>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* LISTENING MOCK PREVIEW (DỰ PHÒNG & BLUEPRINT)                */}
+        {/* ============================================================ */}
+        {!isTestStarted && activeMockTab === 'listening' && (
+          <div className="flex-1 p-6 sm:p-10 overflow-y-auto space-y-6 max-w-3xl mx-auto">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white space-y-3 text-center">
+              <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 text-purple-300">
+                <Headphones className="w-8 h-8" />
+              </div>
+              <div>
+                <span className="px-3 py-1 rounded-full bg-purple-500/30 text-purple-300 text-xs font-black uppercase tracking-wider border border-purple-400/30">
+                  Dự Phòng Kiến Trúc Thi Thử
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold mt-2">
+                  Phòng Thi Thử IELTS Listening (40 Phút - 40 Câu)
+                </h3>
+                <p className="text-xs sm:text-sm text-purple-200 max-w-xl mx-auto mt-1">
+                  Mô phỏng 100% bài thi nghe trên máy tính (Computer-delivered): Audio chỉ nghe 1 lần duy nhất, câu hỏi đồng bộ theo thời gian thực.
+                </p>
+              </div>
+            </div>
+
+            {/* Structure of IELTS Listening */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
+                <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 1</span>
+                <h5 className="font-bold text-xs text-slate-800">Hội Thoại Xã Hội</h5>
+                <p className="text-[11px] text-slate-500">2 người nói (Đặt phòng, đăng ký khoá học, hỏi đường...)</p>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
+                <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 2</span>
+                <h5 className="font-bold text-xs text-slate-800">Độc Thoại Thường Thức</h5>
+                <p className="text-[11px] text-slate-500">1 người nói (Hướng dẫn du lịch, giới thiệu bảo tàng...)</p>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
+                <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 3</span>
+                <h5 className="font-bold text-xs text-slate-800">Thảo Luận Học Thuật</h5>
+                <p className="text-[11px] text-slate-500">2–4 sinh viên / giáo sư thảo luận đề tài nghiên cứu</p>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
+                <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 4</span>
+                <h5 className="font-bold text-xs text-slate-800">Bài Giảng Chuyên Ngành</h5>
+                <p className="text-[11px] text-slate-500">Độc thoại đại học (Khoa học, Lịch sử, Sinh học...)</p>
+              </div>
+            </div>
+
+            {/* Test Simulation Mockup */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 text-left">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center space-x-2">
+                  <Volume2 className="w-5 h-5 text-purple-600 animate-pulse" />
+                  <span className="font-bold text-xs text-slate-800">Bộ Điều Khiển Âm Thanh Ca Thi (Soundcheck)</span>
+                </div>
+                <span className="text-xs text-slate-500 font-mono">30:00 audio + 2:00 review</span>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-slate-700">Audio Track: Section 1 - Hotel Reservation</span>
+                  <span className="text-purple-600 font-bold font-mono">02:14 / 06:45</span>
+                </div>
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-1/3 h-full bg-purple-600 rounded-full" />
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>⚠️ Quy chế: Audio không thể tua lại hoặc tạm dừng</span>
+                  <span className="text-emerald-600 font-bold">✓ Âm lượng chuẩn</span>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-200 text-xs text-purple-950 space-y-1">
+                <strong>Trạng thái phát triển:</strong> Đang hoàn thiện hệ thống nạp audio streaming và đồng bộ hiển thị câu hỏi theo timestamp. Sẽ tích hợp trực tiếp vào kho đề thi của bạn!
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* SPEAKING MOCK PREVIEW (DỰ PHÒNG & BLUEPRINT)                 */}
+        {/* ============================================================ */}
+        {!isTestStarted && activeMockTab === 'speaking' && (
+          <div className="flex-1 p-6 sm:p-10 overflow-y-auto space-y-6 max-w-3xl mx-auto">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 text-white space-y-3 text-center">
+              <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 text-emerald-300">
+                <Mic className="w-8 h-8" />
+              </div>
+              <div>
+                <span className="px-3 py-1 rounded-full bg-emerald-500/30 text-emerald-300 text-xs font-black uppercase tracking-wider border border-emerald-400/30">
+                  Dự Phòng Kiến Trúc Thi Thử
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold mt-2">
+                  Phòng Thi Thử IELTS Speaking Với Giám Khảo Ảo AI (11–14 Phút)
+                </h3>
+                <p className="text-xs sm:text-sm text-emerald-200 max-w-xl mx-auto mt-1">
+                  Mô phỏng 1:1 phòng thi vấn đáp trực tiếp với giám khảo bản xứ: Tự động ghi âm, nhận diện phát âm và chấm điểm 4 tiêu chí FC, LR, GRA, PR.
+                </p>
+              </div>
+            </div>
+
+            {/* Speaking 3 Parts Breakdown */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left">
+              <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
+                <span className="text-[11px] font-bold text-emerald-700 uppercase block">Part 1: Phỏng Vấn (4–5 phút)</span>
+                <h5 className="font-bold text-xs text-slate-800">Chủ đề quen thuộc</h5>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Hometown, Work/Study, Hobbies, Weather, Technology... Rèn phản xạ trả lời tự nhiên, trôi chảy.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
+                <span className="text-[11px] font-bold text-emerald-700 uppercase block">Part 2: Thuyết Trình (3–4 phút)</span>
+                <h5 className="font-bold text-xs text-slate-800">Thẻ bài nói (Cue Card)</h5>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  1:00 phút chuẩn bị ghi chú (Note-taking) và đúng 2:00 phút nói liên tục theo 4 gợi ý trên thẻ.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
+                <span className="text-[11px] font-bold text-emerald-700 uppercase block">Part 3: Thảo Luận (4–5 phút)</span>
+                <h5 className="font-bold text-xs text-slate-800">Tư duy phản biện</h5>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Các câu hỏi mở rộng mang tính trừu tượng, phân tích nguyên nhân - hậu quả và xu hướng tương lai.
+                </p>
+              </div>
+            </div>
+
+            {/* Virtual Examiner Demo Card */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-left">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                <div className="flex items-center space-x-2">
+                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                    AI
+                  </div>
+                  <span className="font-bold text-xs text-slate-800">IELTS Senior Examiner Simulation</span>
+                </div>
+                <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                  Voice Engine Ready
+                </span>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 space-y-1.5 font-serif italic">
+                "Good afternoon. My name is Dr. Harrison. Could you please state your full name for the record? ... Thank you. In this first part, I'd like to ask you some questions about your daily routine..."
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 space-y-1">
+                <strong>Trạng thái phát triển:</strong> Đang hoàn thiện mô-đun Speech Recognition và chấm phát âm theo thang chuẩn CEFR / IELTS Band.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================ */}
+        {/* GRAND FULL 4-SKILL MOCK MARATHON VIEW                        */}
+        {/* ============================================================ */}
+        {!isTestStarted && activeMockTab === 'full4skills' && (
+          <div className="flex-1 p-6 sm:p-10 overflow-y-auto space-y-6 max-w-4xl mx-auto text-left">
+            {/* Grand Banner */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-500 via-orange-600 to-red-600 text-white space-y-4 shadow-xl">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-white text-xs font-black uppercase tracking-wider border border-white/30">
+                  Dự Kiến Ra Mắt Độc Quyền
+                </span>
+                <span className="text-xs text-amber-100 font-mono">Thời lượng: ~2 Giờ 45 Phút</span>
+              </div>
+
+              <div className="space-y-1">
+                <h3 className="text-2xl sm:text-3xl font-black tracking-tight">
+                  Đại Thi Thử IELTS 4 Kỹ Năng (All-In-One Grand Mock)
+                </h3>
+                <p className="text-xs sm:text-sm text-amber-100 max-w-2xl leading-relaxed">
+                  Trải nghiệm thi thử liên hoàn trọn vẹn cả 4 kỹ năng trong một buổi thi duy nhất giống 100% ca thi máy tính tại Hội Đồng Anh (BC) hoặc IDP.
+                </p>
+              </div>
+            </div>
+
+            {/* 4-Skill Sequential Flow */}
+            <div className="space-y-2">
+              <h4 className="font-bold text-sm text-slate-900">
+                Quy Trình Bài Thi Liên Hoàn 4 Chặng:
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                {/* Stage 1 */}
+                <div className="p-4 rounded-2xl border-2 border-purple-200 bg-purple-50/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="w-6 h-6 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center">1</span>
+                    <span className="text-xs font-bold text-purple-700">40 Phút</span>
+                  </div>
+                  <h5 className="font-bold text-sm text-purple-950 flex items-center space-x-1.5">
+                    <Headphones className="w-4 h-4 text-purple-600" />
+                    <span>Listening</span>
+                  </h5>
+                  <p className="text-[11px] text-purple-900 leading-relaxed">
+                    4 Parts • 40 câu hỏi. Audio chạy tự động liên tục, không giải lao.
+                  </p>
+                </div>
+
+                {/* Stage 2 */}
+                <div className="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">2</span>
+                    <span className="text-xs font-bold text-blue-700">60 Phút</span>
+                  </div>
+                  <h5 className="font-bold text-sm text-blue-950 flex items-center space-x-1.5">
+                    <BookOpen className="w-4 h-4 text-blue-600" />
+                    <span>Reading</span>
+                  </h5>
+                  <p className="text-[11px] text-blue-900 leading-relaxed">
+                    3 Passages • 40 câu hỏi. Chuyển tiếp ngay lập tức sau khi hết giờ nghe.
+                  </p>
+                </div>
+
+                {/* Stage 3 */}
+                <div className="p-4 rounded-2xl border-2 border-red-200 bg-red-50/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="w-6 h-6 rounded-full bg-red-600 text-white text-xs font-black flex items-center justify-center">3</span>
+                    <span className="text-xs font-bold text-red-700">60 Phút</span>
+                  </div>
+                  <h5 className="font-bold text-sm text-red-950 flex items-center space-x-1.5">
+                    <FileText className="w-4 h-4 text-red-600" />
+                    <span>Writing</span>
+                  </h5>
+                  <p className="text-[11px] text-red-900 leading-relaxed">
+                    Task 1 (150 từ) + Task 2 (250 từ). Áp lực viết liên tục hoàn tất bài thi viết.
+                  </p>
+                </div>
+
+                {/* Stage 4 */}
+                <div className="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-black flex items-center justify-center">4</span>
+                    <span className="text-xs font-bold text-emerald-700">15 Phút</span>
+                  </div>
+                  <h5 className="font-bold text-sm text-emerald-950 flex items-center space-x-1.5">
+                    <Mic className="w-4 h-4 text-emerald-600" />
+                    <span>Speaking</span>
+                  </h5>
+                  <p className="text-[11px] text-emerald-900 leading-relaxed">
+                    3 Parts trực tiếp với Giám khảo ảo AI. Có thể thi ngay hoặc đặt lịch sau.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Test Report Form (TRF) Simulation */}
+            <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center space-x-2">
+                  <Trophy className="w-5 h-5 text-amber-400" />
+                  <span className="font-bold text-sm text-amber-300">Bảng Điểm Thi Thử Dự Phóng (Estimated TRF Certificate)</span>
+                </div>
+                <span className="text-xs text-slate-400">Công thức chuẩn Cambridge: Trung bình cộng 4 kỹ năng</span>
+              </div>
+
+              <div className="grid grid-cols-5 gap-2.5 text-center">
+                <div className="p-3 rounded-xl bg-slate-800/90 border border-slate-700">
+                  <span className="text-[10px] text-slate-400 block uppercase">Listening</span>
+                  <span className="text-lg font-black text-purple-400">--</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-800/90 border border-slate-700">
+                  <span className="text-[10px] text-slate-400 block uppercase">Reading</span>
+                  <span className="text-lg font-black text-blue-400">--</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-800/90 border border-slate-700">
+                  <span className="text-[10px] text-slate-400 block uppercase">Writing</span>
+                  <span className="text-lg font-black text-red-400">--</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-800/90 border border-slate-700">
+                  <span className="text-[10px] text-slate-400 block uppercase">Speaking</span>
+                  <span className="text-lg font-black text-emerald-400">--</span>
+                </div>
+                <div className="p-3 rounded-xl bg-amber-500 text-slate-950 font-bold border border-amber-400 shadow-md">
+                  <span className="text-[10px] text-slate-900 block uppercase font-extrabold">OVERALL</span>
+                  <span className="text-xl font-black text-slate-950">BAND ?</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 text-xs text-slate-400">
+                <span>💡 Điểm Overall được làm tròn theo quy tắc chuẩn: .25 lên .5, .75 lên 1.0</span>
+                <span className="text-amber-400 font-semibold">Tự động lưu vào Hồ Sơ Cá Nhân</span>
+              </div>
+            </div>
           </div>
         )}
 
