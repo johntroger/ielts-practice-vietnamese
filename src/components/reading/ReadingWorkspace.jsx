@@ -31,6 +31,7 @@ import QuestionPaletteBar from './QuestionPaletteBar';
 import ReadingResultModal from './ReadingResultModal';
 import ReadingGeneratorModal from './ReadingGeneratorModal';
 import ReadingIngestModal from './ReadingIngestModal';
+import ReadingLibraryModal from './ReadingLibraryModal';
 
 export default function ReadingWorkspace({
   apiKey,
@@ -74,14 +75,16 @@ export default function ReadingWorkspace({
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   // Callback when a new passage is generated or ingested
   const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = false) => {
+    const targetPNum = newPassage.passageNumber || 1;
     const newTest = {
       id: `custom-test-${Date.now()}`,
-      title: `${source === 'ingest' ? '📰' : '✨'} ${newPassage.title || 'Bài Đọc IELTS Mới'}`,
-      description: `Đề thi ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi Gemini AI'} theo chuẩn Cambridge Academic.`,
-      totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 10,
+      title: `${source === 'ingest' ? '📰' : '✨'} ${newPassage.title || `Bài Đọc IELTS Passage ${targetPNum}`}`,
+      description: `Đề thi Passage ${targetPNum} ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi Gemini AI'} theo chuẩn Cambridge Academic.`,
+      totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 13,
       timeLimitMinutes: 20,
       isCustom: true,
       isPublic: Boolean(isPublic),
@@ -89,7 +92,7 @@ export default function ReadingWorkspace({
       passages: [
         {
           ...newPassage,
-          passageNumber: 1
+          passageNumber: targetPNum
         }
       ]
     };
@@ -104,8 +107,30 @@ export default function ReadingWorkspace({
     });
 
     setCurrentTestId(newTest.id);
-    setSelectedPassageNum(1);
+    setSelectedPassageNum(targetPNum);
     alert(`Đã nạp thành công bài đọc mới: "${newTest.title}" (${isPublic ? '🌐 Chia sẻ cộng đồng' : '🔒 Lưu riêng tư'})! Bạn có thể bắt đầu làm bài ngay.`);
+  };
+
+  // Delete a custom reading test
+  const handleDeleteReadingTest = (testId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa bài đọc này khỏi danh sách?')) return;
+    setAllReadingTests(prev => {
+      const updated = prev.filter(t => t.id !== testId);
+      try {
+        const customOnly = updated.filter(t => t.id.startsWith('custom-test-'));
+        localStorage.setItem('ielts_reading_custom_tests', JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+
+    // If deleting current active test, fallback to first available
+    if (currentTestId === testId) {
+      const remaining = allReadingTests.filter(t => t.id !== testId);
+      if (remaining.length > 0) {
+        setCurrentTestId(remaining[0].id);
+        setSelectedPassageNum(remaining[0].passages[0]?.passageNumber || 1);
+      }
+    }
   };
 
   // Toggle publicity for a custom reading test
@@ -307,16 +332,28 @@ export default function ReadingWorkspace({
             ))}
           </div>
 
+          {/* Button Kho Đề Thi Reading */}
+          <button
+            onClick={() => setIsLibraryOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs"
+            title="Mở thư viện và thống kê toàn bộ đề thi IELTS Reading"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+            <span>📚 Kho Đề ({allReadingTests.length})</span>
+          </button>
+
           {/* Test Selector Dropdown if more than 1 test */}
           {allReadingTests.length > 1 && (
-            <div className="flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-1">
               <select
                 value={currentTestId}
                 onChange={(e) => {
-                  setCurrentTestId(e.target.value);
-                  setSelectedPassageNum(1);
+                  const targetId = e.target.value;
+                  const t = allReadingTests.find(item => item.id === targetId);
+                  setCurrentTestId(targetId);
+                  setSelectedPassageNum(t?.passages[0]?.passageNumber || 1);
                 }}
-                className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px] sm:max-w-[220px] truncate"
+                className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px] lg:max-w-[200px] truncate"
               >
                 {allReadingTests.map(t => (
                   <option key={t.id} value={t.id}>
@@ -559,6 +596,22 @@ export default function ReadingWorkspace({
         model={model}
         onPassageIngested={(p, isPub) => handleAddCustomPassage(p, 'ingest', isPub)}
         onOpenSettings={onOpenSettings}
+      />
+
+      {/* 7. Reading Library Modal */}
+      <ReadingLibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        allReadingTests={allReadingTests}
+        currentTestId={currentTestId}
+        onSelectTest={(testId) => {
+          const t = allReadingTests.find(item => item.id === testId);
+          setCurrentTestId(testId);
+          setSelectedPassageNum(t?.passages[0]?.passageNumber || 1);
+        }}
+        onDeleteTest={handleDeleteReadingTest}
+        onTogglePublic={handleToggleReadingPublic}
+        user={user}
       />
     </div>
   );

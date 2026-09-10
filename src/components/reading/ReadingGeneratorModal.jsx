@@ -25,10 +25,31 @@ const READING_TOPICS = [
   { id: 'ling', label: 'Ngôn ngữ học & Giao tiếp nhân loại', en: 'Linguistics & Human Communication' }
 ];
 
-const DIFFICULTY_LEVELS = [
-  { id: 'Easy', label: 'Passage 1 (Band 5.5 - 6.5)', desc: 'Từ vựng nền tảng, câu đơn & ghép, lập luận rõ ràng' },
-  { id: 'Medium', label: 'Passage 2 (Band 6.5 - 7.5)', desc: 'Văn phong học thuật, câu phức, cấu trúc paraphrase biến hóa' },
-  { id: 'Hard', label: 'Passage 3 (Band 7.5 - 9.0)', desc: 'Chủ đề trừu tượng, bẫy distractors tinh vi, thuật ngữ chuyên ngành' }
+const PASSAGE_OPTIONS = [
+  { 
+    passageNum: 1, 
+    difficulty: 'Easy', 
+    label: 'Passage 1 (Band 5.5 - 6.5)', 
+    qRange: 'Câu 1 – 13',
+    timeGuide: '17–20 phút',
+    desc: 'Từ vựng thực tế & khoa học thường thức, câu đơn/ghép, lập luận dễ nắm bắt' 
+  },
+  { 
+    passageNum: 2, 
+    difficulty: 'Medium', 
+    label: 'Passage 2 (Band 6.5 - 7.5)', 
+    qRange: 'Câu 14 – 26',
+    timeGuide: '20 phút',
+    desc: 'Văn phong học thuật xã hội & công nghệ, câu phức, cấu trúc paraphrase biến hóa' 
+  },
+  { 
+    passageNum: 3, 
+    difficulty: 'Hard', 
+    label: 'Passage 3 (Band 7.5 - 9.0)', 
+    qRange: 'Câu 27 – 40',
+    timeGuide: '23 phút',
+    desc: 'Chủ đề học thuật trừu tượng, bẫy distractors tinh vi, thuật ngữ chuyên sâu' 
+  }
 ];
 
 export default function ReadingGeneratorModal({
@@ -42,10 +63,12 @@ export default function ReadingGeneratorModal({
   if (!isOpen) return null;
 
   const [selectedTopic, setSelectedTopic] = useState(READING_TOPICS[0].en);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('Medium');
+  const [selectedPassageNum, setSelectedPassageNum] = useState(1);
   const [isPublic, setIsPublic] = useState(false); // Toggle chia sẻ cộng đồng
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const selectedOpt = PASSAGE_OPTIONS.find(p => p.passageNum === selectedPassageNum) || PASSAGE_OPTIONS[0];
 
   const handleGenerate = async () => {
     if (!apiKey) {
@@ -59,7 +82,8 @@ export default function ReadingGeneratorModal({
     try {
       const generatedPassage = await generateReadingPassage({
         topic: selectedTopic,
-        difficulty: selectedDifficulty,
+        difficulty: selectedOpt.difficulty,
+        targetPassageNum: selectedPassageNum,
         apiKey,
         model
       });
@@ -126,29 +150,46 @@ export default function ReadingGeneratorModal({
             </div>
           </div>
 
-          {/* Difficulty Level */}
+          {/* Passage & Difficulty Level Selection */}
           <div className="space-y-2">
-            <label className="font-bold text-slate-800 uppercase tracking-wider text-[11px] block">
-              2. Chọn Độ Khó & Dải Band Mục Tiêu:
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="font-bold text-slate-800 uppercase tracking-wider text-[11px] block">
+                2. Chọn Passage Mục Tiêu & Độ Khó (Cambridge Standards):
+              </label>
+              <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                Chuẩn thi thật 3 bài đọc
+              </span>
+            </div>
             <div className="space-y-2">
-              {DIFFICULTY_LEVELS.map(lvl => (
+              {PASSAGE_OPTIONS.map(opt => (
                 <button
-                  key={lvl.id}
+                  key={opt.passageNum}
                   type="button"
-                  onClick={() => setSelectedDifficulty(lvl.id)}
-                  className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-start justify-between ${
-                    selectedDifficulty === lvl.id
-                      ? 'bg-indigo-50 text-indigo-900 border-indigo-400 ring-2 ring-indigo-100 font-bold'
+                  onClick={() => setSelectedPassageNum(opt.passageNum)}
+                  className={`w-full p-3 rounded-xl border text-left transition-all flex items-start justify-between ${
+                    selectedPassageNum === opt.passageNum
+                      ? 'bg-blue-50 text-blue-900 border-blue-400 ring-2 ring-blue-100 font-bold shadow-xs'
                       : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                   }`}
                 >
-                  <div>
-                    <div className="font-bold text-xs">{lvl.label}</div>
-                    <div className="text-[11px] text-slate-500 font-normal mt-0.5">{lvl.desc}</div>
+                  <div className="space-y-1 flex-1 pr-2">
+                    <div className="flex items-center space-x-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                        selectedPassageNum === opt.passageNum ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
+                      }`}>
+                        Passage {opt.passageNum}
+                      </span>
+                      <span className="font-bold text-xs">{opt.label}</span>
+                      <span className="text-[10px] text-slate-500 font-normal">
+                        ({opt.qRange} • Gợi ý: {opt.timeGuide})
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      {opt.desc}
+                    </div>
                   </div>
-                  {selectedDifficulty === lvl.id && (
-                    <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                  {selectedPassageNum === opt.passageNum && (
+                    <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-1" />
                   )}
                 </button>
               ))}

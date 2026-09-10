@@ -1216,26 +1216,34 @@ export async function generateReadingPassage({
   topic = 'Technology & AI',
   difficulty = 'Medium', // 'Easy' | 'Medium' | 'Hard'
   questionType = 'mixed', // 'tfng' | 'mc' | 'completion' | 'mixed'
+  targetPassageNum = 1, // 1 | 2 | 3
   apiKey,
   model = DEFAULT_MODEL
 }) {
   if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
 
+  const pNum = Number(targetPassageNum) || 1;
+  const startOrder = pNum === 1 ? 1 : pNum === 2 ? 14 : 27;
+  const endOrder = pNum === 1 ? 13 : pNum === 2 ? 26 : 40;
+  const midOrder = startOrder + 6; // e.g. for P1: 1-7 and 8-13, P2: 14-20 and 21-26, P3: 27-33 and 34-40
+
   const prompt = `ROLE:
 You are an expert Cambridge IELTS Academic Reading test writer.
-Generate an authentic, high-quality IELTS Reading passage (approx 650-800 words) strictly following official Cambridge Academic standards.
+Generate an authentic, high-quality IELTS Reading passage (approx 650-800 words) strictly following official Cambridge Academic standards for PASSAGE ${pNum}.
 
 SPECIFICATIONS:
+- Target Passage Number: Passage ${pNum}
+- Question Numbers Range: Exactly from Question ${startOrder} to Question ${endOrder} (TOTAL ${endOrder - startOrder + 1} QUESTIONS).
 - Topic: ${topic}
 - Difficulty Level: ${difficulty} (Passage should have 4-5 paragraphs labeled A, B, C, D, E)
-- Include exactly 2 question groups with a total of 10-13 questions covering:
-  Group 1: True / False / Not Given (Questions 1-6)
-  Group 2: Multiple Choice or Summary Completion (Questions 7-13)
+- Include exactly 2 question groups covering:
+  Group 1: True / False / Not Given (Questions ${startOrder}–${midOrder})
+  Group 2: Multiple Choice (Single answer) or Summary Completion (Questions ${midOrder + 1}–${endOrder})
 
 JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
 {
   "id": "gen-${Date.now()}",
-  "passageNumber": 1,
+  "passageNumber": ${pNum},
   "title": "Compelling Academic Title",
   "topic": "${topic}",
   "difficulty": "${difficulty}",
@@ -1249,33 +1257,33 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
   ],
   "questionGroups": [
     {
-      "id": "qg-1",
+      "id": "qg-${pNum}-1",
       "type": "true_false_not_given",
-      "title": "Questions 1–6",
-      "instruction": "Do the following statements agree with the information given in Reading Passage?\\nIn boxes 1–6 choose TRUE, FALSE, or NOT GIVEN",
+      "title": "Questions ${startOrder}–${midOrder}",
+      "instruction": "Do the following statements agree with the information given in Reading Passage ${pNum}?\\nIn boxes ${startOrder}–${midOrder} choose TRUE, FALSE, or NOT GIVEN",
       "questions": [
         {
-          "id": 1,
-          "order": 1,
-          "questionText": "Statement 1...",
+          "id": ${startOrder},
+          "order": ${startOrder},
+          "questionText": "Statement for question ${startOrder}...",
           "answer": "TRUE",
           "evidenceParagraph": "A",
           "evidenceQuote": "exact quote from paragraph A",
           "explanation": "Giải thích chi tiết bằng tiếng Việt vì sao chọn TRUE."
         },
         {
-          "id": 2,
-          "order": 2,
-          "questionText": "Statement 2...",
+          "id": ${startOrder + 1},
+          "order": ${startOrder + 1},
+          "questionText": "Statement for question ${startOrder + 1}...",
           "answer": "FALSE",
           "evidenceParagraph": "B",
           "evidenceQuote": "exact quote from paragraph B",
           "explanation": "Giải thích chi tiết bằng tiếng Việt vì sao chọn FALSE."
         },
         {
-          "id": 3,
-          "order": 3,
-          "questionText": "Statement 3...",
+          "id": ${startOrder + 2},
+          "order": ${startOrder + 2},
+          "questionText": "Statement for question ${startOrder + 2}...",
           "answer": "NOT GIVEN",
           "evidenceParagraph": "B",
           "evidenceQuote": "",
@@ -1284,15 +1292,15 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
       ]
     },
     {
-      "id": "qg-2",
+      "id": "qg-${pNum}-2",
       "type": "multiple_choice_single",
-      "title": "Questions 4–6",
+      "title": "Questions ${midOrder + 1}–${endOrder}",
       "instruction": "Choose the correct letter, A, B, C, or D.",
       "questions": [
         {
-          "id": 4,
-          "order": 4,
-          "questionText": "Question 4...",
+          "id": ${midOrder + 1},
+          "order": ${midOrder + 1},
+          "questionText": "Multiple choice question ${midOrder + 1}...",
           "answer": "B",
           "options": [
             { "letter": "A", "text": "Option A..." },
@@ -1326,7 +1334,9 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  return JSON.parse(clean);
+  const parsed = JSON.parse(clean);
+  parsed.passageNumber = pNum;
+  return parsed;
 }
 
 /**

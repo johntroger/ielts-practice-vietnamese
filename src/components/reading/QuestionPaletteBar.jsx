@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   CheckCircle2, 
   Send, 
@@ -30,12 +30,35 @@ export default function QuestionPaletteBar({
 
   const flaggedCount = Object.keys(flaggedQuestions).filter(k => flaggedQuestions[k]).length;
 
-  // Split into 3 standard parts: Part 1 (1-13), Part 2 (14-26), Part 3 (27-40)
-  const parts = [
-    { partNum: 1, label: 'Part 1', start: 1, end: 13 },
-    { partNum: 2, label: 'Part 2', start: 14, end: 26 },
-    { partNum: 3, label: 'Part 3', start: 27, end: 40 }
-  ];
+  // Dynamically detect which passages exist in this exam test
+  const parts = useMemo(() => {
+    if (!questionsData || questionsData.length === 0) {
+      return [{ partNum: 1, label: 'Part 1', start: 1, end: 13, questions: [] }];
+    }
+
+    // Group questions by their passageNumber
+    const grouped = {};
+    questionsData.forEach(q => {
+      const pNum = q.passageNumber || 1;
+      if (!grouped[pNum]) grouped[pNum] = [];
+      grouped[pNum].push(q);
+    });
+
+    const passageNumbers = Object.keys(grouped).map(Number).sort((a, b) => a - b);
+    
+    // If only 1 passage exists, construct its exact question range
+    return passageNumbers.map(pNum => {
+      const qList = grouped[pNum].sort((a, b) => a.order - b.order);
+      const orders = qList.map(q => q.order);
+      return {
+        partNum: pNum,
+        label: `Passage ${pNum}`,
+        start: orders[0],
+        end: orders[orders.length - 1],
+        orders: orders
+      };
+    });
+  }, [questionsData]);
 
   const renderQuestionBtn = (num, targetPassage) => {
     const hasAns = !!userAnswers[num] && (
@@ -139,8 +162,9 @@ export default function QuestionPaletteBar({
         <div className="flex items-center gap-3 min-w-max">
           {parts.map(part => {
             const isCurrentPart = activePassageNum === part.partNum;
-            const range = [];
-            for (let i = part.start; i <= part.end; i++) range.push(i);
+            const qOrders = part.orders && part.orders.length > 0 
+              ? part.orders 
+              : Array.from({ length: part.end - part.start + 1 }, (_, i) => part.start + i);
 
             return (
               <div 
@@ -161,7 +185,7 @@ export default function QuestionPaletteBar({
                   {part.label}
                 </button>
                 <div className="flex items-center gap-1">
-                  {range.map(num => renderQuestionBtn(num, part.partNum))}
+                  {qOrders.map(num => renderQuestionBtn(num, part.partNum))}
                 </div>
               </div>
             );
