@@ -21,8 +21,10 @@ import {
   Compass,
   FileText,
   Target,
-  Search,
+  Search, 
   Split,
+  Volume2,
+  Play,
   Lightbulb,
   Clock,
   Flame,
@@ -30,6 +32,7 @@ import {
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
+import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
 import { evaluateParaphrase, generateMicroDrill } from '../services/geminiService';
 
 export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activeSkill = 'writing' }) {
@@ -37,15 +40,19 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
 
   // Active Room: 'general' | 'writing' | 'reading' | 'listening' | 'speaking'
   const [activeRoom, setActiveRoom] = useState(() => {
-    return activeSkill === 'reading' ? 'reading' : 'writing';
+    if (activeSkill === 'reading') return 'reading';
+    if (activeSkill === 'listening') return 'listening';
+    return 'writing';
   });
 
   // Active Tab within each room
   // General: 'collocation' | 'context-vocab' | 'sentence-chunking'
   // Writing: 'fill-blanks' | 'true-false' | 'paraphrase' | 'error-spotting'
   // Reading: 'reading-tfng' | 'reading-paraphrase' | 'reading-headings'
+  // Listening: 'listening-dictation' | 'listening-spelling' | 'listening-distractor' | 'listening-map'
   const [activeTab, setActiveTab] = useState(() => {
     if (activeSkill === 'reading') return 'reading-tfng';
+    if (activeSkill === 'listening') return 'listening-dictation';
     return 'fill-blanks';
   });
 
@@ -55,11 +62,12 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
     if (room === 'general') setActiveTab('collocation');
     else if (room === 'writing') setActiveTab('fill-blanks');
     else if (room === 'reading') setActiveTab('reading-tfng');
+    else if (room === 'listening') setActiveTab('listening-dictation');
   };
 
   // Drills stored in LocalStorage combined with defaults
   const [allDrills, setAllDrills] = useState(() => {
-    const combinedDefaults = [...INITIAL_MICRO_DRILLS, ...READING_MICRO_DRILLS];
+    const combinedDefaults = [...INITIAL_MICRO_DRILLS, ...READING_MICRO_DRILLS, ...LISTENING_MICRO_DRILLS];
     try {
       const saved = localStorage.getItem('ielts_custom_micro_drills');
       if (saved) {
@@ -134,6 +142,29 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const [userHeadingChoice, setUserHeadingChoice] = useState(null);
   const [showHeadingsResult, setShowHeadingsResult] = useState(false);
 
+  // ----------------------------------------------------
+  // LISTENING DRILLS STATE
+  // ----------------------------------------------------
+  const listeningDictationDrills = allDrills.filter(d => d.type === 'listening-dictation');
+  const [selectedDictationIndex, setSelectedDictationIndex] = useState(0);
+  const [userDictationInput, setUserDictationInput] = useState('');
+  const [showDictationFeedback, setShowDictationFeedback] = useState(false);
+
+  const listeningSpellingDrills = allDrills.filter(d => d.type === 'listening-spelling');
+  const [selectedSpellingIndex, setSelectedSpellingIndex] = useState(0);
+  const [userSpellingInput, setUserSpellingInput] = useState('');
+  const [showSpellingResult, setShowSpellingResult] = useState(false);
+
+  const listeningDistractorDrills = allDrills.filter(d => d.type === 'listening-distractor');
+  const [selectedDistractorIndex, setSelectedDistractorIndex] = useState(0);
+  const [userDistractorChoice, setUserDistractorChoice] = useState(null);
+  const [showDistractorResult, setShowDistractorResult] = useState(false);
+
+  const listeningMapDrills = allDrills.filter(d => d.type === 'listening-map');
+  const [selectedMapIndex, setSelectedMapIndex] = useState(0);
+  const [userMapChoice, setUserMapChoice] = useState(null);
+  const [showMapResult, setShowMapResult] = useState(false);
+
   // Current items
   const currentFill = fillDrills[selectedFillIndex] || fillDrills[0];
   const currentTf = tfDrills[selectedTfIndex] || tfDrills[0];
@@ -145,6 +176,10 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const currentTfng = readingTfngDrills[selectedTfngIndex] || readingTfngDrills[0];
   const currentReadingPara = readingParaDrills[selectedReadingParaIndex] || readingParaDrills[0];
   const currentHeadings = readingHeadingsDrills[selectedHeadingsIndex] || readingHeadingsDrills[0];
+  const currentDictation = listeningDictationDrills[selectedDictationIndex] || listeningDictationDrills[0];
+  const currentSpelling = listeningSpellingDrills[selectedSpellingIndex] || listeningSpellingDrills[0];
+  const currentDistractor = listeningDistractorDrills[selectedDistractorIndex] || listeningDistractorDrills[0];
+  const currentMap = listeningMapDrills[selectedMapIndex] || listeningMapDrills[0];
 
   // Current active drills list and active index based on activeTab
   const getActiveDrillInfo = () => {
@@ -172,6 +207,15 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         return { list: readingParaDrills, index: selectedReadingParaIndex, setIndex: setSelectedReadingParaIndex, onReset: () => { setShowReadingParaAnalysis(false); } };
       case 'reading-headings':
         return { list: readingHeadingsDrills, index: selectedHeadingsIndex, setIndex: setSelectedHeadingsIndex, onReset: () => { setUserHeadingChoice(null); setShowHeadingsResult(false); } };
+      // Listening
+      case 'listening-dictation':
+        return { list: listeningDictationDrills, index: selectedDictationIndex, setIndex: setSelectedDictationIndex, onReset: () => { setUserDictationInput(''); setShowDictationFeedback(false); } };
+      case 'listening-spelling':
+        return { list: listeningSpellingDrills, index: selectedSpellingIndex, setIndex: setSelectedSpellingIndex, onReset: () => { setUserSpellingInput(''); setShowSpellingResult(false); } };
+      case 'listening-distractor':
+        return { list: listeningDistractorDrills, index: selectedDistractorIndex, setIndex: setSelectedDistractorIndex, onReset: () => { setUserDistractorChoice(null); setShowDistractorResult(false); } };
+      case 'listening-map':
+        return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); } };
       default:
         return { list: [], index: 0, setIndex: () => {}, onReset: () => {} };
     }
@@ -398,19 +442,19 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               </span>
             </button>
 
-            {/* Room 4: Chuyên Listening (Roadmap) */}
+            {/* Room 4: Chuyên Listening */}
             <button
               onClick={() => handleRoomChange('listening')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                 activeRoom === 'listening'
                   ? 'bg-purple-600 text-white shadow-xs ring-2 ring-purple-500/30'
-                  : 'bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-slate-300'
+                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
               }`}
             >
               <Headphones className="w-3.5 h-3.5" />
-              <span>Listening</span>
-              <span className="px-1.5 py-0.2 rounded bg-slate-700 text-slate-300 text-[9px] font-medium">
-                ⏳ Sắp có
+              <span>Chuyên Listening</span>
+              <span className="px-1.5 py-0.2 rounded bg-purple-400 text-slate-900 text-[9px] font-black">
+                MỚI
               </span>
             </button>
 
@@ -433,7 +477,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         </div>
 
         {/* Level 2: Sub-tabs within Active Room & AI Generator Button */}
-        {activeRoom !== 'listening' && activeRoom !== 'speaking' && (
+        {activeRoom !== 'speaking' && (
           <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 sm:px-4 pt-2 gap-2 overflow-x-auto no-scrollbar touch-pan-x text-xs font-semibold text-slate-600 shrink-0">
             <div className="flex gap-2 overflow-x-auto no-scrollbar touch-pan-x">
               {/* SUB-TABS FOR GENERAL */}
@@ -537,6 +581,48 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   >
                     <BookOpen className="w-3.5 h-3.5 text-purple-600" />
                     <span>3. Phá Bẫy Matching Headings ({readingHeadingsDrills.length})</span>
+                  </button>
+                </>
+              )}
+
+              {/* SUB-TABS FOR LISTENING */}
+              {activeRoom === 'listening' && (
+                <>
+                  <button
+                    onClick={() => setActiveTab('listening-dictation')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'listening-dictation' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Headphones className="w-3.5 h-3.5 text-purple-600" />
+                    <span>1. Chép Chính Tả 3 Cấp ({listeningDictationDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('listening-spelling')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'listening-spelling' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>2. Đánh Vần & Con Số ({listeningSpellingDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('listening-distractor')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'listening-distractor' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-500" />
+                    <span>3. Phá Bẫy Đổi Ý ({listeningDistractorDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('listening-map')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'listening-map' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Compass className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>4. Bản Đồ & Hướng Đi ({listeningMapDrills.length})</span>
                   </button>
                 </>
               )}
@@ -1497,59 +1583,374 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
           )}
 
           {/* ============================================================ */}
-          {/* ROADMAP ROOM: LISTENING                                      */}
+          {/* ACTIVE ROOM: LISTENING (4 SPECIALIZED MICRO-LABS)            */}
           {/* ============================================================ */}
           {activeRoom === 'listening' && (
-            <div className="space-y-6 py-4">
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white space-y-4 text-center">
-                <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 text-purple-300 shadow-sm">
-                  <Headphones className="w-8 h-8" />
-                </div>
-                <div>
-                  <span className="px-3 py-1 rounded-full bg-purple-500/30 text-purple-300 text-xs font-black uppercase tracking-wider border border-purple-400/30">
-                    Đang Nghiên Cứu & Phát Triển
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-bold mt-2">
-                    Phòng Luyện Chuyên Listening (Listening Micro-Lab)
-                  </h3>
-                  <p className="text-xs sm:text-sm text-purple-200 max-w-xl mx-auto mt-1">
-                    Trang bị các bài tập phản xạ âm thanh siêu tốc nhằm trị dứt điểm các bẫy nghe phổ biến nhất trong bài thi Cambridge IELTS.
-                  </p>
-                </div>
-              </div>
+            <div className="space-y-4">
+              {renderPaginationBar()}
 
-              {/* Feature Preview Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-                    ⚡
-                  </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Bẫy Đổi Ý Người Nói</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Luyện phản xạ nhận diện các cấu trúc lật kèo của người nói như <em>"Actually, wait...", "No, on second thought...", "I used to, but now..."</em>.
-                  </p>
-                </div>
+              {/* 1. DICTATION CHÉP CHÍNH TẢ 3 CẤP ĐỘ */}
+              {activeTab === 'listening-dictation' && currentDictation && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
+                        {currentDictation.category} • {currentDictation.difficulty}
+                      </span>
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                        {currentDictation.title}
+                      </h3>
+                    </div>
 
-                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                    🔢
+                    <button
+                      onClick={() => {
+                        try {
+                          const utterance = new SpeechSynthesisUtterance(currentDictation.ttsText);
+                          utterance.lang = 'en-GB';
+                          utterance.rate = 0.9;
+                          window.speechSynthesis.speak(utterance);
+                        } catch (e) {}
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>Phát Audio Mẫu (Anh-Anh)</span>
+                    </button>
                   </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Chép Chính Tả Số & Tên</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Tốc ký số điện thoại, giá tiền, mã bưu điện, và đánh vần tên riêng nước ngoài theo tốc độ nói tự nhiên của người bản xứ.
-                  </p>
-                </div>
 
-                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                    📻
+                  <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-200/80 text-xs text-purple-900 space-y-1">
+                    <p className="font-bold flex items-center space-x-1">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                      <span>Quy tắc luyện tập:</span>
+                    </p>
+                    <p className="text-slate-600">
+                      Bấm nút phát âm thanh để nghe câu đọc. Hãy gõ chính xác từng từ bạn nghe được vào ô bên dưới. Hệ thống sẽ so sánh từng từ và phản hồi trực quan bằng màu sắc.
+                    </p>
+                    {currentDictation.audioClipTip && (
+                      <p className="text-purple-700 italic pt-1 border-t border-purple-200/50">
+                        💡 {currentDictation.audioClipTip}
+                      </p>
+                    )}
                   </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Nhận Diện Nối & Nuốt Âm</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Luyện nghe các hiện tượng âm thanh thực tế: Connected Speech, Weak forms, Flap T và Elision trong các bài độc thoại Section 4.
-                  </p>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-700">Câu bạn chép lại:</label>
+                    <textarea
+                      rows={3}
+                      value={userDictationInput}
+                      onChange={(e) => setUserDictationInput(e.target.value)}
+                      placeholder="Gõ lại toàn bộ câu tiếng Anh bạn vừa nghe..."
+                      className="w-full p-3 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => {
+                        setUserDictationInput('');
+                        setShowDictationFeedback(false);
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs text-slate-600 font-semibold"
+                    >
+                      Xóa làm lại
+                    </button>
+
+                    <button
+                      onClick={() => setShowDictationFeedback(true)}
+                      className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                    >
+                      Kiểm Tra Chính Tả Từng Từ
+                    </button>
+                  </div>
+
+                  {showDictationFeedback && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 animate-in fade-in duration-150">
+                      <div className="font-bold text-xs text-slate-800 flex items-center justify-between border-b border-slate-200 pb-2">
+                        <span>Phân tích đối chiếu trực quan:</span>
+                        <div className="flex items-center space-x-2 text-[10px]">
+                          <span className="text-emerald-700 font-bold">● Đúng</span>
+                          <span className="text-rose-700 font-bold">● Sai chính tả / thừa từ</span>
+                          <span className="text-slate-500">● Nghe sót</span>
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm leading-relaxed space-y-2 font-mono">
+                        <div>
+                          <span className="text-[11px] font-sans text-slate-500 block font-bold">Câu chuẩn Cambridge:</span>
+                          <span className="text-emerald-800 font-semibold">{currentDictation.targetTranscript}</span>
+                        </div>
+                        <div>
+                          <span className="text-[11px] font-sans text-slate-500 block font-bold">Bản chép của bạn:</span>
+                          <span className={userDictationInput.trim().toLowerCase() === currentDictation.targetTranscript.trim().toLowerCase() ? "text-emerald-600 font-bold" : "text-amber-800 font-medium"}>
+                            {userDictationInput || '(Chưa gõ câu nào)'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
+
+              {/* 2. ĐÁNH VẦN, TÊN RIÊNG & CON SỐ */}
+              {activeTab === 'listening-spelling' && currentSpelling && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
+                        {currentSpelling.category} • Dạng {currentSpelling.subType}
+                      </span>
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                        {currentSpelling.title}
+                      </h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        try {
+                          const utterance = new SpeechSynthesisUtterance(currentSpelling.promptAudioText);
+                          utterance.lang = 'en-GB';
+                          utterance.rate = 0.9;
+                          window.speechSynthesis.speak(utterance);
+                        } catch (e) {}
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>Nghe Phát Âm / Đánh Vần</span>
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
+                    <p className="font-bold">Đề bài yêu cầu:</p>
+                    <p className="text-slate-700">
+                      {currentSpelling.questionPrompt || 'Nghe người bản xứ đọc / đánh vần và gõ lại đúng từ khóa hoặc con số vào ô bên dưới.'}
+                    </p>
+                    {currentSpelling.trapNote && (
+                      <p className="text-indigo-700 font-medium pt-1 border-t border-indigo-200/60">
+                        ⚠️ Cảnh giác: {currentSpelling.trapNote}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-700">Đáp án bạn nghe được:</label>
+                    <input
+                      type="text"
+                      value={userSpellingInput}
+                      onChange={(e) => setUserSpellingInput(e.target.value)}
+                      placeholder="Gõ từ hoặc con số nghe được..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-white"
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => setShowSpellingResult(true)}
+                      className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                    >
+                      Kiểm Tra Đáp Án
+                    </button>
+                  </div>
+
+                  {showSpellingResult && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
+                      <div className="flex items-center space-x-2">
+                        {currentSpelling.acceptableAnswers.map(a => a.toLowerCase()).includes(userSpellingInput.trim().toLowerCase()) ? (
+                          <div className="flex items-center space-x-1.5 text-emerald-700 font-bold">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span>CHÍNH XÁC! Bạn đã bắt trúng từ vựng / con số chuẩn.</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-1.5 text-rose-700 font-bold">
+                            <XCircle className="w-4 h-4 text-rose-600" />
+                            <span>CHƯA CHÍNH XÁC! Đáp án chuẩn là: <strong className="font-mono text-slate-900 underline ml-1">{currentSpelling.correctAnswer}</strong></span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200/60">
+                        <strong>Giải thích chi tiết:</strong> {currentSpelling.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 3. PHÁ BẪY DISTRACTORS */}
+              {activeTab === 'listening-distractor' && currentDistractor && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
+                        {currentDistractor.category} • Bẫy Distractor
+                      </span>
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                        {currentDistractor.title}
+                      </h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        try {
+                          const utterance = new SpeechSynthesisUtterance(currentDistractor.audioSnippetText);
+                          utterance.lang = 'en-GB';
+                          utterance.rate = 0.9;
+                          window.speechSynthesis.speak(utterance);
+                        } catch (e) {}
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>Nghe Đoạn Hội Thoại Chứa Bẫy</span>
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-950 space-y-1">
+                    <p className="font-bold text-slate-800">Đoạn hội thoại đã gỡ băng:</p>
+                    <p className="text-slate-700 italic">
+                      "{currentDistractor.audioSnippetText}"
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold text-slate-900">{currentDistractor.question}</p>
+                    <div className="space-y-2">
+                      {currentDistractor.options.map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => {
+                            setUserDistractorChoice(opt.id);
+                            setShowDistractorResult(true);
+                          }}
+                          className={`w-full p-3 rounded-xl border text-left text-xs font-medium transition-all flex items-start space-x-2.5 cursor-pointer ${
+                            userDistractorChoice === opt.id 
+                              ? 'bg-amber-100/80 border-amber-400 text-amber-950 ring-2 ring-amber-400/30 font-bold' 
+                              : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center font-bold text-slate-800 shrink-0 mt-0.5">
+                            {opt.id}
+                          </span>
+                          <span className="flex-1">{opt.text}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {showDistractorResult && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
+                      <div className="font-bold">
+                        {userDistractorChoice === currentDistractor.correctOption ? (
+                          <span className="text-emerald-700 flex items-center space-x-1">
+                            <CheckCircle2 className="w-4 h-4 inline" />
+                            <span>CHÍNH XÁC! Bạn không bị dính bẫy lật kèo của người nói.</span>
+                          </span>
+                        ) : (
+                          <span className="text-rose-700 flex items-center space-x-1">
+                            <XCircle className="w-4 h-4 inline" />
+                            <span>BẠN ĐÃ DÍNH BẪY! Đáp án đúng cuối cùng là: <strong>{currentDistractor.correctOption}</strong></span>
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-1 text-slate-600 pt-1 border-t border-slate-200">
+                        <p><strong>Cơ chế bẫy của Cambridge:</strong> {currentDistractor.distractorMechanism}</p>
+                        <p><strong>Giải thích:</strong> {currentDistractor.explanation}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 4. BẢN ĐỒ & ĐỊNH HƯỚNG PHƯƠNG HƯỚNG */}
+              {activeTab === 'listening-map' && currentMap && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase">
+                        {currentMap.category} • Map Navigation Trainer
+                      </span>
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                        {currentMap.title}
+                      </h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        try {
+                          const utterance = new SpeechSynthesisUtterance(currentMap.audioDirectionsText);
+                          utterance.lang = 'en-GB';
+                          utterance.rate = 0.9;
+                          window.speechSynthesis.speak(utterance);
+                        } catch (e) {}
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>Nghe Chỉ Dẫn Phương Hướng</span>
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 space-y-1">
+                    <p className="font-bold text-slate-800">Lời chỉ dẫn không gian:</p>
+                    <p className="text-slate-700 italic">
+                      "{currentMap.audioDirectionsText}"
+                    </p>
+                    <div className="pt-2 border-t border-emerald-200/60 flex flex-wrap gap-1.5">
+                      {currentMap.spatialClues?.map((clue, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded-md bg-emerald-100/90 text-emerald-800 font-mono text-[10px] font-bold">
+                          📍 {clue}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold text-slate-900">{currentMap.question}</p>
+                    <div className="space-y-2">
+                      {currentMap.options.map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => {
+                            setUserMapChoice(opt.id);
+                            setShowMapResult(true);
+                          }}
+                          className={`w-full p-3 rounded-xl border text-left text-xs font-medium transition-all flex items-start space-x-2.5 cursor-pointer ${
+                            userMapChoice === opt.id 
+                              ? 'bg-emerald-100/80 border-emerald-400 text-emerald-950 ring-2 ring-emerald-400/30 font-bold' 
+                              : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center font-bold text-slate-800 shrink-0 mt-0.5">
+                            {opt.id}
+                          </span>
+                          <span className="flex-1">{opt.text}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {showMapResult && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
+                      <div className="font-bold">
+                        {userMapChoice === currentMap.correctOption ? (
+                          <span className="text-emerald-700 flex items-center space-x-1">
+                            <CheckCircle2 className="w-4 h-4 inline" />
+                            <span>XUẤT SẮC! Bạn đã xác định chính xác vị trí trên sơ đồ.</span>
+                          </span>
+                        ) : (
+                          <span className="text-rose-700 flex items-center space-x-1">
+                            <XCircle className="w-4 h-4 inline" />
+                            <span>CHƯA ĐÚNG! Vị trí chuẩn là: <strong>{currentMap.correctOption}</strong></span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
+                        <strong>Lộ trình chi tiết:</strong> {currentMap.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
             </div>
           )}
 

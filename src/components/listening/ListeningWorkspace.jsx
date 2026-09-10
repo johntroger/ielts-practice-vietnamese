@@ -9,12 +9,14 @@ import {
   ShieldCheck, 
   X, 
   BarChart2,
-  Award
+  Award,
+  FileText
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
 import ListeningPaletteBar from './ListeningPaletteBar';
 import ListeningResultModal from './ListeningResultModal';
+import ListeningTranscriptModal from './ListeningTranscriptModal';
 import { useAudioEngine } from '../../hooks/useAudioEngine';
 import { useListeningExam } from '../../hooks/useListeningExam';
 import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
@@ -40,6 +42,7 @@ export default function ListeningWorkspace({
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
 
   // Band Score Result State
   const [bandResult, setBandResult] = useState(() => {
@@ -336,6 +339,16 @@ export default function ListeningWorkspace({
                 🛡️ Thi Thử (CD-IELTS)
               </button>
             </div>
+
+            {/* Transcript Modal Button */}
+            <button
+              onClick={() => setIsTranscriptOpen(true)}
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+              title="Mở lời thoại gỡ băng đồng bộ thời gian thực (Karaoke Transcript)"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Lời Thoại</span>
+            </button>
 
             {/* Soundcheck Button */}
             <button
@@ -651,6 +664,17 @@ export default function ListeningWorkspace({
           audioEngine.seek(timestamp);
           audioEngine.play();
         }}
+      />
+
+      {/* 10. Karaoke Interactive Transcript Modal */}
+      <ListeningTranscriptModal
+        isOpen={isTranscriptOpen}
+        onClose={() => setIsTranscriptOpen(false)}
+        currentTest={currentTest}
+        audioEngine={audioEngine}
+        activePart={activePart}
+        onSelectPart={setActivePart}
+        onSaveToVocabNotebook={onSaveToVocabNotebook}
       />
 
     </div>

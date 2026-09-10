@@ -172,6 +172,27 @@ export const INITIAL_LISTENING_TESTS = [
               }
             ]
           }
+        ],
+        transcripts: [
+          { start: 0, end: 12, speaker: 'Narrator', text: 'Part 1. You will hear an officer conducting a transport survey with a resident.' },
+          { start: 13, end: 32, speaker: 'Officer', text: 'Good morning, sir. Excuse me, could you spare a few minutes to answer some questions for our municipal transport survey?' },
+          { start: 33, end: 48, speaker: 'Martin', text: 'Yes, certainly. I am waiting for my colleague anyway, so I am happy to assist.' },
+          { start: 49, end: 60, speaker: 'Officer', text: 'Thank you very much. First of all, could I take your full name please?' },
+          { start: 61, end: 78, speaker: 'Martin', text: 'My first name is Martin, and my surname is Clarke, that is C-L-A-R-K-E.', targetQuestion: 1, speechTip: 'Đánh vần từng chữ cái: C-L-A-R-K-E' },
+          { start: 79, end: 91, speaker: 'Officer', text: 'C-L-A-R-K-E. Right. And what is your current occupation, Mr. Clarke?' },
+          { start: 92, end: 115, speaker: 'Martin', text: 'Well, I used to be a teacher for several years, but now I work as a dentist at the local city hospital.', targetQuestion: 2, speechTip: 'Bẫy tự đính chính: "used to be a teacher" -> hiện tại là "dentist"' },
+          { start: 116, end: 126, speaker: 'Officer', text: 'Dentist, thank you. And how do you usually commute into town each morning?' },
+          { start: 127, end: 148, speaker: 'Martin', text: 'Usually I catch the morning train, although occasionally I cycle when the weather is fine.', targetQuestion: 3, speechTip: 'Phương tiện chính hàng ngày là train' },
+          { start: 149, end: 156, speaker: 'Officer', text: 'And how long does that daily journey take each way?' },
+          { start: 157, end: 172, speaker: 'Martin', text: 'Door-to-door, it takes just around 45 minutes.', targetQuestion: 4, speechTip: 'Số phút di chuyển: 45 minutes' },
+          { start: 173, end: 185, speaker: 'Officer', text: 'Now about community activities, are you involved in any local sports clubs?' },
+          { start: 186, end: 210, speaker: 'Martin', text: 'Yes, I belong to the Northbridge Cycling Club. Full individual membership is £120 annually.', targetQuestion: 5, speechTip: 'Chi phí thường niên: £120' },
+          { start: 211, end: 225, speaker: 'Officer', text: 'And when do the members usually get together for group rides?' },
+          { start: 226, end: 242, speaker: 'Martin', text: 'We hold regular group meetings every Thursday evening starting at 7:00 PM.', targetQuestion: 6, speechTip: 'Thời gian: Thursday evening' },
+          { start: 243, end: 265, speaker: 'Martin', text: 'We gather right by the steps of the old library in the central town square.', targetQuestion: 7, speechTip: 'Địa điểm tập hợp: near the old library' },
+          { start: 266, end: 295, speaker: 'Martin', text: 'Safety is paramount, so every member must wear a suitable helmet during all rides.', targetQuestion: 8, speechTip: 'Trang bị an toàn: helmet' },
+          { start: 296, end: 325, speaker: 'Martin', text: 'Once a month we organize a scenic long-distance weekend ride down to the coast.', targetQuestion: 9, speechTip: 'Chuyến đi đặc biệt cuối tuần: to the coast' },
+          { start: 326, end: 360, speaker: 'Martin', text: 'If anyone wants to register, you can reach our club coordinator on 07700 900358.', targetQuestion: 10, speechTip: 'Dãy số điện thoại: 07700 900358' }
         ]
       },
       {
