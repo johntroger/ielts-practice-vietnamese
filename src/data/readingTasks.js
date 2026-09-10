@@ -241,7 +241,17 @@ export const INITIAL_READING_TESTS = [
             id: 'qg-2-1',
             type: 'matching_headings',
             title: 'Questions 14–18',
-            instruction: 'Reading Passage 2 has five paragraphs, A–E.\nChoose the correct heading for each paragraph from the list of headings below.\nWrite the correct number, i–viii, in boxes 14–18 on your answer sheet.\n\nList of Headings:\ni. A physiological buffer against age-related degeneration\nii. The historical misconception of multilingual parenting\niii. Minor verbal retrieval delays and their underlying cause\niv. Structural damage caused by excessive linguistic processing\nv. Strengthening the brain’s mental control centre\nvi. The economic advantages of multilingual graduates\nvii. Enhanced interpersonal insight and empathy\nviii. Technological tools for infant language acquisition',
+            instruction: 'Reading Passage 2 has five paragraphs, A–E.\nChoose the correct heading for each paragraph from the list of headings below.\nWrite the correct number, i–viii, in boxes 14–18 on your answer sheet.',
+            headings: [
+              { id: 'i', text: 'A physiological buffer against age-related degeneration' },
+              { id: 'ii', text: 'The historical misconception of multilingual parenting' },
+              { id: 'iii', text: 'Minor verbal retrieval delays and their underlying cause' },
+              { id: 'iv', text: 'Structural damage caused by excessive linguistic processing' },
+              { id: 'v', text: 'Strengthening the brain’s mental control centre' },
+              { id: 'vi', text: 'The economic advantages of multilingual graduates' },
+              { id: 'vii', text: 'Enhanced interpersonal insight and empathy' },
+              { id: 'viii', text: 'Technological tools for infant language acquisition' }
+            ],
             questions: [
               {
                 id: 14,
@@ -294,7 +304,13 @@ export const INITIAL_READING_TESTS = [
             id: 'qg-2-2',
             type: 'matching_features',
             title: 'Questions 19–22',
-            instruction: 'Look at the following findings (Questions 19–22) and the list of researchers and concepts below.\nMatch each finding with the correct researcher or concept, A, B, C, or D.\n\nList of Concepts:\nA. Prefrontal Cortex & Executive Control\nB. Dr. Ellen Bialystok\nC. Theory of Mind\nD. Tip-of-the-tongue Phenomenon',
+            instruction: 'Look at the following findings (Questions 19–22) and the list of researchers and concepts below.\nMatch each finding with the correct researcher or concept, A, B, C, or D.',
+            features: [
+              { letter: 'A', name: 'Prefrontal Cortex & Executive Control' },
+              { letter: 'B', name: 'Dr. Ellen Bialystok' },
+              { letter: 'C', name: 'Theory of Mind' },
+              { letter: 'D', name: 'Tip-of-the-tongue Phenomenon' }
+            ],
             questions: [
               {
                 id: 19,
@@ -478,81 +494,73 @@ export const INITIAL_READING_TESTS = [
           },
           {
             id: 'qg-3-2',
-            type: 'multiple_choice_multiple',
+            type: 'multiple_choice_single',
             title: 'Questions 33–36',
-            instruction: 'Questions 33–34: Choose TWO letters, A–E.\nQuestions 35–36: Choose TWO letters, A–E.\nWrite the correct letters in boxes 33–36 on your answer sheet.',
+            instruction: 'Choose the correct letter, A, B, C, or D.\nWrite the correct letter in boxes 33–36 on your answer sheet.',
             questions: [
               {
                 id: 33,
                 order: 33,
-                groupKey: 'mc_multi_33_34',
-                questionText: 'According to Paragraph C, which TWO detrimental environmental outcomes could be triggered by stratospheric aerosol injection?',
+                questionText: 'According to Paragraph B, what was the primary climatic effect of Mount Pinatubo’s 1991 eruption?',
                 options: [
-                  { letter: 'A', text: 'Collapse of vital monsoon precipitation in Africa and South Asia' },
-                  { letter: 'B', text: 'Accelerated melting of polar ice caps due to localized warming' },
-                  { letter: 'C', text: 'Impairment of the recovery process of the stratospheric ozone layer' },
-                  { letter: 'D', text: 'Extreme radioactive contamination of global fresh water reservoirs' },
-                  { letter: 'E', text: 'Permanent cessation of all volcanic activity worldwide' }
+                  { letter: 'A', text: 'It created severe permanent droughts in equatorial regions.' },
+                  { letter: 'B', text: 'It released diamond dust that accelerated polar cooling.' },
+                  { letter: 'C', text: 'It temporarily lowered planetary surface temperatures via an aerosol veil.' },
+                  { letter: 'D', text: 'It permanently reversed global warming since the Industrial Revolution.' }
                 ],
-                answer: 'A,C',
-                acceptableAnswers: ['A', 'C'],
-                evidenceParagraph: 'C',
-                evidenceQuote: 'disruption of the South Asian and West African monsoon systems... delay the convalescence of the stratospheric ozone layer',
-                explanation: 'Đoạn C chỉ ra 2 hiểm họa môi trường: (A) làm gián đoạn gió mùa Nam Á và Tây Phi, và (C) làm chậm quá trình phục hồi của tầng ozone.'
+                answer: 'C',
+                acceptableAnswers: ['C'],
+                evidenceParagraph: 'B',
+                evidenceQuote: 'The resulting aerosol veil encircled the globe, reflecting solar radiation and cooling global surface temperatures by approximately 0.5 degrees Celsius for over eighteen months.',
+                explanation: 'Đoạn B nêu rõ lớp màn sol khí từ núi lửa Pinatubo đã phản xạ bức xạ mặt trời và làm mát bề mặt trái đất 0.5 độ C trong 18 tháng (C).'
               },
               {
                 id: 34,
                 order: 34,
-                groupKey: 'mc_multi_33_34',
-                questionText: 'According to Paragraph C, which TWO detrimental environmental outcomes could be triggered by stratospheric aerosol injection? (Part 2)',
+                questionText: 'In Paragraph C, why is the disruption of monsoon systems considered particularly alarming?',
                 options: [
-                  { letter: 'A', text: 'Collapse of vital monsoon precipitation in Africa and South Asia' },
-                  { letter: 'B', text: 'Accelerated melting of polar ice caps due to localized warming' },
-                  { letter: 'C', text: 'Impairment of the recovery process of the stratospheric ozone layer' },
-                  { letter: 'D', text: 'Extreme radioactive contamination of global fresh water reservoirs' },
-                  { letter: 'E', text: 'Permanent cessation of all volcanic activity worldwide' }
+                  { letter: 'A', text: 'It would cause sudden catastrophic cooling in high-altitude polar zones.' },
+                  { letter: 'B', text: 'Billions of subsistence farmers depend on monsoon rainfall for food cultivation.' },
+                  { letter: 'C', text: 'It would immediately destroy all maritime cargo transport across the Indian Ocean.' },
+                  { letter: 'D', text: 'It would accelerate carbon emissions from tropical rainforests.' }
                 ],
-                answer: 'C,A',
-                acceptableAnswers: ['A', 'C'],
+                answer: 'B',
+                acceptableAnswers: ['B'],
                 evidenceParagraph: 'C',
-                evidenceQuote: 'disruption of the South Asian and West African monsoon systems... delay the convalescence of the stratospheric ozone layer',
-                explanation: 'Phần 2 của câu hỏi đa chọn A và C.'
+                evidenceQuote: 'The most alarming projection involves the disruption of the South Asian and West African monsoon systems, upon which over two billion subsistence farmers depend for staple grain cultivation.',
+                explanation: 'Đoạn C khẳng định hiểm họa đáng báo động nhất là hơn 2 tỷ nông dân canh tác tự cung tự cấp phụ thuộc vào nguồn nước mưa gió mùa này để trồng ngũ cốc sinh tồn (B).'
               },
               {
                 id: 35,
                 order: 35,
-                groupKey: 'mc_multi_35_36',
-                questionText: 'According to Paragraph E, what are TWO severe geopolitical perils of the low financial barrier to SRM?',
+                questionText: 'According to Paragraph D, what danger is posed by the psychological concept of “moral hazard”?',
                 options: [
-                  { letter: 'A', text: 'A single wealthy individual or rogue state could initiate deployment unilaterally.' },
-                  { letter: 'B', text: 'Fossil fuel prices would instantly plummet, causing immediate stock market crashes.' },
-                  { letter: 'C', text: 'Unilateral deployment might be interpreted as weather warfare by rival nuclear powers.' },
-                  { letter: 'D', text: 'Developing countries would be prohibited from acquiring renewable technology.' },
-                  { letter: 'E', text: 'All space satellites would be destroyed by atmospheric friction.' }
+                  { letter: 'A', text: 'It causes scientists to abandon laboratory safety protocols.' },
+                  { letter: 'B', text: 'It prompts rapid species extinction pulses within a single decade.' },
+                  { letter: 'C', text: 'It weakens the political willpower needed to implement painful carbon cuts.' },
+                  { letter: 'D', text: 'It creates intense public panic regarding atmospheric chemistry.' }
                 ],
-                answer: 'A,C',
-                acceptableAnswers: ['A', 'C'],
-                evidenceParagraph: 'E',
-                evidenceQuote: 'a single rogue state, a billionaire technocrat... could execute it unilaterally. Such a unilateral deployment could be perceived by opposing superpowers as an act of climate warfare',
-                explanation: 'Đoạn E nêu rõ 2 hiểm họa địa chính trị: (A) cá nhân giàu có hoặc nhà nước đơn phương triển khai, và (C) các siêu cường coi đó là hành vi chiến tranh khí hậu gây bất ổn răn đe hạt nhân.'
+                answer: 'C',
+                acceptableAnswers: ['C'],
+                evidenceParagraph: 'D',
+                evidenceQuote: 'the seductive prospect of an inexpensive techno-fix risks enfeebling the political fortitude required to enact painful carbon emission cuts',
+                explanation: 'Đoạn D giải thích "moral hazard" làm suy yếu nhuệ khí/ý chí chính trị (enfeebling political fortitude) trong việc thực thi các biện pháp cắt giảm phát thải (C).'
               },
               {
                 id: 36,
                 order: 36,
-                groupKey: 'mc_multi_35_36',
-                questionText: 'According to Paragraph E, what are TWO severe geopolitical perils of the low financial barrier to SRM? (Part 2)',
+                questionText: 'What makes unilateral deployment of SRM a realistic possibility according to Paragraph E?',
                 options: [
-                  { letter: 'A', text: 'A single wealthy individual or rogue state could initiate deployment unilaterally.' },
-                  { letter: 'B', text: 'Fossil fuel prices would instantly plummet, causing immediate stock market crashes.' },
-                  { letter: 'C', text: 'Unilateral deployment might be interpreted as weather warfare by rival nuclear powers.' },
-                  { letter: 'D', text: 'Developing countries would be prohibited from acquiring renewable technology.' },
-                  { letter: 'E', text: 'All space satellites would be destroyed by atmospheric friction.' }
+                  { letter: 'A', text: 'The relatively low financial and technological barrier to entry.' },
+                  { letter: 'B', text: 'Widespread approval by the United Nations Security Council.' },
+                  { letter: 'C', text: 'The existence of comprehensive international regulatory frameworks.' },
+                  { letter: 'D', text: 'Guaranteed cooperation between competing nuclear superpowers.' }
                 ],
-                answer: 'C,A',
-                acceptableAnswers: ['A', 'C'],
+                answer: 'A',
+                acceptableAnswers: ['A'],
                 evidenceParagraph: 'E',
-                evidenceQuote: 'a single rogue state, a billionaire technocrat... could execute it unilaterally. Such a unilateral deployment could be perceived by opposing superpowers as an act of climate warfare',
-                explanation: 'Phần 2 của câu hỏi đa chọn A và C.'
+                evidenceQuote: 'The chilling reality is that the financial and technological threshold for SRM is so remarkably low that a single rogue state, a billionaire technocrat... could execute it unilaterally.',
+                explanation: 'Đoạn E nhấn mạnh ngưỡng chi phí tài chính và công nghệ thấp đến bất ngờ (remarkably low threshold) khiến một quốc gia cá biệt hoặc tỷ phú công nghệ có thể tự ý đơn phương triển khai (A).'
               }
             ]
           },

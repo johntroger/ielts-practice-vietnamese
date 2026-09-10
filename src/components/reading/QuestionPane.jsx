@@ -225,6 +225,18 @@ export default function QuestionPane({
   const renderCompletionGroup = (group) => {
     return (
       <div className="space-y-4">
+        {/* Summary Passage / Context Box if available */}
+        {group.summaryText && (
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 text-sm leading-relaxed font-serif">
+            <span className="text-xs font-bold font-sans text-blue-700 block mb-2 uppercase tracking-wide">
+              Đoạn tóm tắt (Summary Context):
+            </span>
+            <p className="whitespace-pre-line">
+              {group.summaryText}
+            </p>
+          </div>
+        )}
+
         {/* Word Bank if available */}
         {group.wordBank && (
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
@@ -452,8 +464,8 @@ export default function QuestionPane({
                 {group.questions.length} câu hỏi
               </span>
             </div>
-            <h4 className="text-sm font-bold text-slate-900">
-              {group.instructions}
+            <h4 className="text-sm font-bold text-slate-900 whitespace-pre-line leading-snug">
+              {group.instruction || group.instructions}
             </h4>
             {group.extraNotes && (
               <p className="text-xs text-slate-500 italic">
