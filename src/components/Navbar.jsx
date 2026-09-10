@@ -158,33 +158,35 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* 2. DESKTOP CENTER ZONE: Current Task Selector (hidden on mobile row 1) */}
-          <div className="hidden md:flex items-center space-x-2">
-            <button 
-              onClick={onOpenLibrary}
-              className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group"
-              title="Nhấn để đổi đề thi hoặc xem danh sách bài"
-            >
-              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${
-                currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-              }`}>
-                Task {currentTask.taskNumber}
-              </span>
-              <span className="text-xs font-semibold text-slate-800 max-w-[150px] lg:max-w-[220px] truncate">
-                {currentTask.title}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform" />
-            </button>
+          {/* 2. DESKTOP CENTER ZONE: Current Task Selector for Writing */}
+          {activeSkill === 'writing' && (
+            <div className="hidden md:flex items-center space-x-2">
+              <button 
+                onClick={onOpenLibrary}
+                className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer"
+                title="Nhấn để đổi đề thi hoặc xem danh sách bài"
+              >
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${
+                  currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  Task {currentTask.taskNumber}
+                </span>
+                <span className="text-xs font-semibold text-slate-800 max-w-[150px] lg:max-w-[220px] truncate">
+                  {currentTask.title}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform" />
+              </button>
 
-            {/* Streak Badge */}
-            <div 
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold"
-              title="Chuỗi ngày luyện tập liên tục!"
-            >
-              <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
-              <span>{streakCount}d</span>
+              {/* Streak Badge */}
+              <div 
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold"
+                title="Chuỗi ngày luyện tập liên tục!"
+              >
+                <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                <span>{streakCount}d</span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* 3. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
@@ -408,45 +410,47 @@ export default function Navbar({
 
         </div>
 
-        {/* ROW 2: Mobile Only Task & Action Bar (Clean 2nd line, no clipping) */}
-        <div className="md:hidden py-2 border-t border-slate-100 flex items-center justify-between gap-2">
-          {/* Mobile Task Selector - Expands flexibly */}
-          <button 
-            onClick={onOpenLibrary}
-            className="flex-1 flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all text-left shadow-2xs min-w-0"
-            title="Đổi đề bài hoặc chọn từ thư viện"
-          >
-            <div className="flex items-center space-x-2 truncate">
-              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shrink-0 ${
-                currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-              }`}>
-                Task {currentTask.taskNumber}
-              </span>
-              <span className="text-xs font-bold text-slate-800 truncate">
-                {currentTask.title}
-              </span>
+        {/* ROW 2: Mobile Only Task & Action Bar (Clean 2nd line, only in Writing) */}
+        {activeSkill === 'writing' && (
+          <div className="md:hidden py-2 border-t border-slate-100 flex items-center justify-between gap-2">
+            {/* Mobile Task Selector - Expands flexibly */}
+            <button 
+              onClick={onOpenLibrary}
+              className="flex-1 flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all text-left shadow-2xs min-w-0 cursor-pointer"
+              title="Đổi đề bài hoặc chọn từ thư viện"
+            >
+              <div className="flex items-center space-x-2 truncate">
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shrink-0 ${
+                  currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  Task {currentTask.taskNumber}
+                </span>
+                <span className="text-xs font-bold text-slate-800 truncate">
+                  {currentTask.title}
+                </span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" />
+            </button>
+
+            {/* Mobile Streak & Theory Fast Buttons */}
+            <button
+              onClick={onOpenTheory}
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold shrink-0 shadow-2xs cursor-pointer"
+              title="Xem cẩm nang lý thuyết"
+            >
+              <span className="text-sm">📖</span>
+              <span className="hidden xs:inline">Cẩm nang</span>
+            </button>
+
+            <div 
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold shrink-0 shadow-2xs"
+              title={`Chuỗi học tập liên tục: ${streakCount} ngày`}
+            >
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>{streakCount}d</span>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1" />
-          </button>
-
-          {/* Mobile Streak & Theory Fast Buttons */}
-          <button
-            onClick={onOpenTheory}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold shrink-0 shadow-2xs"
-            title="Xem cẩm nang lý thuyết"
-          >
-            <span className="text-sm">📖</span>
-            <span className="hidden xs:inline">Cẩm nang</span>
-          </button>
-
-          <div 
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold shrink-0 shadow-2xs"
-            title={`Chuỗi học tập liên tục: ${streakCount} ngày`}
-          >
-            <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span>{streakCount}d</span>
           </div>
-        </div>
+        )}
 
       </div>
 
