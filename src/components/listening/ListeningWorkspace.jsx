@@ -19,11 +19,15 @@ import {
   RefreshCw,
   Sun,
   Moon,
-  Type
+  Type,
+  HelpCircle
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
+import ListeningQuestionPane from './ListeningQuestionPane';
+import ListeningPaletteBar from './ListeningPaletteBar';
 import { useAudioEngine } from '../../hooks/useAudioEngine';
-import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
+import { useListeningExam } from '../../hooks/useListeningExam';
+import { INITIAL_LISTENING_TESTS, calculateListeningBandScore } from '../../data/listeningTasks';
 
 const SNAPSHOT_KEY_PREFIX = 'ielts_listening_snapshot_';
 
@@ -43,6 +47,7 @@ export default function ListeningWorkspace({
   const [activePart, setActivePart] = useState(1);
   const [hasStartedExam, setHasStartedExam] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
+  const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false);
   
   // Accessibility State: Font Size & Contrast
   const [fontSizeMode, setFontSizeMode] = useState('normal'); // 'normal' | 'large' | 'xlarge'
@@ -80,6 +85,14 @@ export default function ListeningWorkspace({
     }
   });
 
+  // 3. Exam State Hook (Answers, Flags, Submission, Shortcuts)
+  const exam = useListeningExam({
+    testId: currentTestId,
+    audioEngine,
+    examMode,
+    questionsData: currentTest.parts.flatMap(p => p.questionGroups.flatMap(g => g.questions))
+  });
+
   // Check for prior interrupted session on mount
   useEffect(() => {
     try {
@@ -104,13 +117,13 @@ export default function ListeningWorkspace({
           savedTime: audioEngine.currentTime,
           examMode,
           timestamp: new Date().toISOString(),
-          isCompleted: false
+          isCompleted: exam.isSubmitted
         };
         localStorage.setItem(`${SNAPSHOT_KEY_PREFIX}${currentTestId}`, JSON.stringify(snapshot));
       } catch (e) {}
     }, 2000);
     return () => clearInterval(interval);
-  }, [hasStartedExam, currentTestId, activePart, audioEngine.currentTime, examMode]);
+  }, [hasStartedExam, currentTestId, activePart, audioEngine.currentTime, examMode, exam.isSubmitted]);
 
   // 30s Prep Timer countdown
   useEffect(() => {
@@ -136,7 +149,6 @@ export default function ListeningWorkspace({
   const handleStartExam = async () => {
     await audioEngine.unlockAudio();
     setHasStartedExam(true);
-    // Start 30s prep visual countdown
     setIsPrepActive(true);
     setPrepTimeRemaining(30);
     audioEngine.play();
@@ -159,6 +171,40 @@ export default function ListeningWorkspace({
       localStorage.removeItem(`${SNAPSHOT_KEY_PREFIX}${currentTestId}`);
     } catch (e) {}
     setResumePrompt(null);
+  };
+
+  // Handle Submit Exam
+  const handleConfirmSubmit = () => {
+    exam.submitExam();
+    setIsConfirmSubmitOpen(false);
+    audioEngine.pause();
+
+    // Calculate score
+    let correctCount = 0;
+    const allQuestions = currentTest.parts.flatMap(p => p.questionGroups.flatMap(g => g.questions));
+    allQuestions.forEach(q => {
+      const uAns = (exam.userAnswers[q.order] || '').toString().trim().toLowerCase();
+      if (!uAns) return;
+      const cAns = (q.answer || '').toString().trim().toLowerCase();
+      const acceptable = (q.acceptableAnswers || []).map(a => a.toString().trim().toLowerCase());
+      if (uAns === cAns || acceptable.includes(uAns)) {
+        correctCount += 1;
+      }
+    });
+
+    const band = calculateListeningBandScore(correctCount);
+
+    if (onListeningSubmitted) {
+      onListeningSubmitted({
+        testId: currentTestId,
+        testTitle: currentTest.title,
+        correctCount,
+        totalQuestions: currentTest.totalQuestions,
+        band,
+        userAnswers: exam.userAnswers,
+        submittedAt: new Date().toISOString()
+      });
+    }
   };
 
   // Accessibility styling classes
@@ -202,28 +248,25 @@ export default function ListeningWorkspace({
 
           {/* Right: Accessibility Controls & Countdown Timer */}
           <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-            {/* Contrast theme toggle */}
             <button
               onClick={() => setContrastTheme(prev => prev === 'standard' ? 'dark' : prev === 'dark' ? 'yellowOnBlack' : 'standard')}
-              className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700"
+              className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
               title="Đổi độ tương phản màu"
             >
               Theme
             </button>
-            {/* Font Size toggle */}
             <button
               onClick={() => setFontSizeMode(prev => prev === 'normal' ? 'large' : prev === 'large' ? 'xlarge' : 'normal')}
-              className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700"
+              className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
               title="Đổi cỡ chữ"
             >
               Cỡ chữ
             </button>
-            {/* Countdown Clock */}
             <div className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm">
               <Clock className="w-3.5 h-3.5" />
               <span>
-                {Math.floor((audioEngine.duration - audioEngine.currentTime) / 60)}:
-                {Math.floor((audioEngine.duration - audioEngine.currentTime) % 60).toString().padStart(2, '0')}
+                {Math.max(0, Math.floor((audioEngine.duration - audioEngine.currentTime) / 60))}:
+                {Math.max(0, Math.floor((audioEngine.duration - audioEngine.currentTime) % 60)).toString().padStart(2, '0')}
               </span>
             </div>
           </div>
@@ -247,227 +290,231 @@ export default function ListeningWorkspace({
               <div className="flex items-center space-x-2 text-[11px] text-slate-500 truncate">
                 <span>{currentTest.totalQuestions} câu hỏi</span>
                 <span>•</span>
-                <span>Thời lượng 30 phút</span>
+                <span>Thời lượng ~32 phút</span>
                 <span>•</span>
-                <span className="hidden md:inline">Giọng Anh - Úc - Mỹ chuẩn</span>
+                <span className="text-indigo-600 font-semibold">Đã trả lời: {exam.answeredCount} / {currentTest.totalQuestions}</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
-            <div className="bg-slate-100 p-0.5 rounded-lg border border-slate-200 flex items-center text-xs font-semibold">
+            {/* Mode Switcher */}
+            <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
               <button
                 onClick={() => setExamMode('practice')}
-                className={`px-2.5 py-1 rounded-md transition-all ${
-                  examMode === 'practice'
-                    ? 'bg-white text-slate-800 shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                  examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Luyện Tập
+                📗 Luyện Tập
               </button>
               <button
                 onClick={() => setExamMode('strict')}
-                className={`px-2.5 py-1 rounded-md transition-all flex items-center space-x-1 ${
-                  examMode === 'strict'
-                    ? 'bg-red-600 text-white shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-800'
+                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                  examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <ShieldCheck className="w-3 h-3" />
-                <span>Thi Thử</span>
+                🛡️ Thi Thử (CD-IELTS)
               </button>
             </div>
 
+            {/* Soundcheck Button */}
             <button
               onClick={() => setIsSoundcheckOpen(true)}
-              className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-md bg-slate-50 hover:bg-slate-200/70 text-slate-700 text-xs font-medium border border-slate-200 transition-colors"
+              className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+              title="Kiểm tra âm lượng tai nghe trước khi làm bài"
             >
-              <Volume2 className="w-3.5 h-3.5 text-slate-500" />
+              <Volume2 className="w-3.5 h-3.5" />
               <span>Soundcheck</span>
             </button>
+
+            {/* Reset Exam Button */}
+            {exam.isSubmitted && (
+              <button
+                onClick={() => {
+                  if (window.confirm('Bạn có muốn làm lại đề thi này từ đầu không?')) {
+                    exam.resetExam();
+                    audioEngine.seek(0);
+                    setHasStartedExam(false);
+                  }
+                }}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Làm lại</span>
+              </button>
+            )}
           </div>
         </div>
       )}
 
-      {/* 2. Sticky Top Audio Player Bar */}
-      <AudioPlayerBar
+      {/* 2. Sticky Audio Player Bar */}
+      <AudioPlayerBar 
         audioEngine={audioEngine}
         examMode={examMode}
-        activePart={activePart}
-        onSelectPart={(p) => setActivePart(p)}
-        parts={currentTest.parts}
+        currentPart={activePart}
+        onSelectPart={setActivePart}
       />
 
-      {/* 3. Preparation Time Banner (30s countdown before each Part) */}
-      {isPrepActive && prepTimeRemaining > 0 && (
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 flex items-center justify-between text-xs sm:text-sm font-semibold shadow-inner animate-in fade-in slide-in-from-top-2 duration-300">
+      {/* 3. Crash Recovery / Resume Notification Banner */}
+      {resumePrompt && !hasStartedExam && (
+        <div className="bg-amber-500 text-slate-950 px-4 py-2 flex items-center justify-between text-xs font-semibold border-b border-amber-600 shrink-0">
           <div className="flex items-center space-x-2">
-            <Sparkles className="w-4 h-4 text-emerald-200 animate-spin" />
-            <span>Thời gian chuẩn bị Part {activePart}: Hãy đọc đề và gạch chân từ khóa!</span>
-          </div>
-          <div className="flex items-center space-x-1 bg-white/20 px-2.5 py-0.5 rounded-full font-mono font-bold">
-            <Clock className="w-3.5 h-3.5" />
-            <span>{prepTimeRemaining}s còn lại</span>
-          </div>
-        </div>
-      )}
-
-      {/* 4. Resume Prompt Modal (Crash Recovery) */}
-      {resumePrompt && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-between text-xs text-amber-900">
-          <div className="flex items-center space-x-2">
-            <RefreshCw className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>Phát hiện bài làm dở dang lúc {Math.floor(resumePrompt.savedTime / 60)}p {Math.floor(resumePrompt.savedTime % 60)}s. Bạn có muốn tiếp tục?</span>
+            <AlertCircle className="w-4 h-4 text-slate-950 shrink-0" />
+            <span>
+              Phát hiện bài làm chưa hoàn tất tại thời điểm <strong>{Math.floor(resumePrompt.savedTime / 60)} phút {Math.floor(resumePrompt.savedTime % 60)} giây</strong> (Part {resumePrompt.activePart || 1}).
+            </span>
           </div>
           <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={handleResumeExam}
-              className="px-2.5 py-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-bold transition-colors shadow-2xs"
+              className="px-2.5 py-1 rounded-md bg-slate-950 text-white hover:bg-slate-900 text-xs font-bold transition-colors cursor-pointer"
             >
-              Tiếp Tục
+              Tiếp Tục Làm Bài
             </button>
             <button
               onClick={handleDiscardResume}
-              className="px-2 py-1 rounded-md bg-white hover:bg-slate-100 text-slate-600 font-medium border border-slate-200 transition-colors"
+              className="p-1 hover:bg-amber-600 rounded-md transition-colors cursor-pointer"
+              title="Bỏ qua phiên làm bài cũ"
             >
-              Bỏ Qua
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
       )}
 
-      {/* 5. Main Content Container */}
-      <div className="flex-1 overflow-y-auto relative pb-28">
-        
-        {/* If exam has not started, show the Start Overlay / Ready Card */}
-        {!hasStartedExam ? (
-          <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/20">
-                <Headphones className="w-8 h-8" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-900 mb-2">
-                Sẵn Sàng Làm Bài Nghe IELTS Listening
+      {/* 4. 30s Preparation Countdown Banner */}
+      {isPrepActive && (
+        <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-2 flex items-center justify-between text-xs font-bold shadow-md shrink-0 animate-in fade-in">
+          <div className="flex items-center space-x-2">
+            <Clock className="w-4 h-4 animate-spin shrink-0" />
+            <span>
+              THỜI GIAN ĐỌC ĐỀ & CHUẨN BỊ (PART {activePart}): Bạn có {prepTimeRemaining}s để quét nhanh câu hỏi và gạch chân từ khóa.
+            </span>
+          </div>
+          <button
+            onClick={() => setIsPrepActive(false)}
+            className="px-2 py-0.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-[11px] font-normal transition-colors cursor-pointer"
+          >
+            Bỏ qua đếm ngược
+          </button>
+        </div>
+      )}
+
+      {/* 5. Main Content Area */}
+      <div className="flex-1 overflow-y-auto min-h-0 relative">
+        {!hasStartedExam && !exam.isSubmitted ? (
+          /* Welcome & Soundcheck Gate Screen */
+          <div className="max-w-3xl mx-auto px-4 py-8 sm:py-12 flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-xl mb-5">
+              <Headphones className="w-8 h-8 sm:w-10 sm:h-10" />
+            </div>
+
+            <span className="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wider mb-2">
+              CD-IELTS Simulation Engine
+            </span>
+
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
+              {currentTest.title}
+            </h1>
+
+            <p className="text-xs sm:text-sm text-slate-600 max-w-xl mb-6 leading-relaxed">
+              {currentTest.description}
+            </p>
+
+            {/* Instruction Checklist */}
+            <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 mb-6 text-left shadow-xs">
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center space-x-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Quy chế thi máy (CD-IELTS Guidelines)</span>
               </h3>
-              <p className="text-slate-600 text-xs sm:text-sm max-w-md mx-auto mb-6 leading-relaxed">
-                Đeo tai nghe và điều chỉnh âm lượng vừa phải. Khi bấm bắt đầu, âm thanh sẽ được tự động kích hoạt và phát liên tục theo đúng chuẩn thi thật.
-              </p>
-
-              {/* Sound Guidelines Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 text-left text-xs text-slate-700">
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start space-x-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                  <div>
-                    <strong className="block text-slate-900 font-semibold mb-0.5">Quy chế Cambridge</strong>
-                    <span>Audio chỉ phát một lần duy nhất trong chế độ Thi Thử (Strict).</span>
-                  </div>
+              <div className="space-y-2.5 text-xs text-slate-600">
+                <div className="flex items-start space-x-2">
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span>Audio sẽ chỉ phát <strong>01 lần duy nhất</strong> xuyên suốt 4 Part không tạm dừng (trong chế độ Thi Thử).</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start space-x-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                  <div>
-                    <strong className="block text-slate-900 font-semibold mb-0.5">Phím Tab thần tốc</strong>
-                    <span>Dùng phím Tab trên bàn phím để chuyển nhanh giữa các ô điền từ.</span>
-                  </div>
+                <div className="flex items-start space-x-2">
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span>Có 30 giây chuẩn bị trước mỗi phần và 2 phút kiểm tra lại đáp án ở cuối bài.</span>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span>Dùng phím <strong>Tab</strong> trên bàn phím để chuyển nhanh giữa các ô điền từ.</span>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span>Bôi đen chữ bất kỳ để mở thanh <strong>Tô màu (Highlight 3 màu)</strong> và <strong>Ghi chú</strong>.</span>
                 </div>
               </div>
+            </div>
 
-              {/* Start Button */}
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md justify-center">
+              <button
+                onClick={() => setIsSoundcheckOpen(true)}
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+              >
+                <Volume2 className="w-4 h-4 text-slate-500" />
+                <span>Kiểm Tra Loa / Tai Nghe</span>
+              </button>
+
               <button
                 onClick={handleStartExam}
-                className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 inline-flex items-center justify-center space-x-2"
+                className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>Bắt Đầu Làm Bài & Bật Âm Thanh</span>
+                <span>Bắt Đầu Làm Bài Ngay</span>
               </button>
             </div>
           </div>
         ) : (
-          /* Active Part Question Content Container */
-          <div className="max-w-4xl mx-auto px-3 py-4 sm:px-6 sm:py-6">
-            
-            {/* Part Header Card */}
-            <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 mb-4 shadow-2xs">
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="px-2.5 py-1 rounded-md bg-red-100 text-red-700 text-xs font-black uppercase tracking-wider">
-                  Part {currentPartData.partNumber} / 4
-                </span>
-                <span className="text-xs text-slate-500 font-mono">
-                  {currentPartData.audioTimestampStart}s – {currentPartData.audioTimestampEnd}s
-                </span>
-              </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
-                {currentPartData.title}
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 mb-3">
-                {currentPartData.context}
-              </p>
-
-              {/* Speaker tags */}
-              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100 text-xs">
-                <span className="text-slate-400 font-medium">Giọng đọc:</span>
-                {currentPartData.speakers?.map((s, idx) => (
-                  <span key={idx} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium text-[11px]">
-                    {s.name} ({s.accent} {s.gender})
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Questions Preview for Active Part */}
-            <div className="space-y-4">
-              {currentPartData.questionGroups?.map((group) => (
-                <div key={group.id} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-2xs">
-                  {/* Group Instruction */}
-                  <div className="mb-4 pb-3 border-b border-slate-100">
-                    <h4 className="font-bold text-slate-900 text-sm sm:text-base">
-                      {group.title}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-slate-600 mt-1 whitespace-pre-line font-serif italic">
-                      {group.instruction}
-                    </p>
-                    {group.headerTitle && (
-                      <div className="mt-2 text-xs font-bold text-red-700 tracking-wider uppercase">
-                        {group.headerTitle}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* List of Questions in Group */}
-                  <div className="space-y-3">
-                    {group.questions?.map((q) => (
-                      <div key={q.id} className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm">
-                        <div className="flex items-baseline space-x-2">
-                          <span className="font-bold text-red-600 shrink-0 w-6">
-                            #{q.order}
-                          </span>
-                          <span className="text-slate-800">
-                            {q.questionText}
-                          </span>
-                        </div>
-                        {/* Quick Answer Placeholder (Will be full interactive pane in Step 2) */}
-                        <div className="flex items-center space-x-2 shrink-0">
-                          <input
-                            type="text"
-                            placeholder="Nhập đáp án..."
-                            tabIndex={100 + q.order}
-                            className="px-3 py-1.5 rounded-md bg-white border border-slate-300 text-slate-800 text-xs font-medium focus:ring-2 focus:ring-red-500 focus:outline-hidden w-40"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                </div>
-              ))}
-            </div>
-
-          </div>
+          /* Active Question Pane Rendering */
+          <ListeningQuestionPane 
+            testId={currentTestId}
+            partData={currentPartData}
+            userAnswers={exam.userAnswers}
+            onAnswerChange={exam.setAnswer}
+            flaggedQuestions={exam.flaggedQuestions}
+            onToggleFlag={exam.toggleFlag}
+            activeQuestionOrder={exam.activeQuestionOrder}
+            onSelectQuestion={exam.setActiveQuestionOrder}
+            isSubmitted={exam.isSubmitted}
+            fontSizeMode={fontSizeMode}
+            contrastTheme={contrastTheme}
+            onSeekAudio={(timestamp) => {
+              if (examMode === 'practice' || exam.isSubmitted) {
+                audioEngine.seek(timestamp);
+                audioEngine.play();
+              }
+            }}
+          />
         )}
-
       </div>
 
-      {/* 6. Soundcheck Modal */}
+      {/* 6. CD-IELTS Bottom Palette Bar */}
+      {(hasStartedExam || exam.isSubmitted) && (
+        <ListeningPaletteBar 
+          totalQuestions={currentTest.totalQuestions}
+          activePart={activePart}
+          onSelectPart={setActivePart}
+          activeQuestionOrder={exam.activeQuestionOrder}
+          onSelectQuestion={(order) => {
+            exam.setActiveQuestionOrder(order);
+            // Switch part if needed
+            const pNum = Math.ceil(order / 10);
+            if (pNum !== activePart) {
+              setActivePart(pNum);
+            }
+          }}
+          userAnswers={exam.userAnswers}
+          flaggedQuestions={exam.flaggedQuestions}
+          onToggleFlag={exam.toggleFlag}
+          onSubmitExam={() => setIsConfirmSubmitOpen(true)}
+          isSubmitted={exam.isSubmitted}
+        />
+      )}
+
+      {/* 7. Soundcheck Modal */}
       {isSoundcheckOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
@@ -482,13 +529,13 @@ export default function ListeningWorkspace({
             </div>
 
             <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
-              Bạn có thể nghe thử một đoạn âm thanh ngắn để kiểm tra độ to rõ của tai nghe hoặc loa ngoài.
+              Bạn có thể nghe thử một đoạn âm thanh ngắn để kiểm tra độ to rõ của tai nghe hoặc loa ngoài. Hãy điều chỉnh thanh âm lượng cho vừa tai trước khi nhấn bắt đầu.
             </p>
 
             <div className="flex items-center justify-end space-x-2">
               <button
                 onClick={() => setIsSoundcheckOpen(false)}
-                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
               >
                 Đóng
               </button>
@@ -497,10 +544,60 @@ export default function ListeningWorkspace({
                   audioEngine.play();
                   setIsSoundcheckOpen(false);
                 }}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5"
+                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Phát Nghe Thử</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. Confirm Submit Modal */}
+      {isConfirmSubmitOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 text-base">Xác Nhận Nộp Bài Thi</h3>
+                <p className="text-xs text-slate-500">IELTS Listening Simulation Check</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 mb-4 text-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Số câu đã hoàn thành:</span>
+                <span className="font-bold text-slate-900">{exam.answeredCount} / {currentTest.totalQuestions} câu</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-600">Số câu chưa điền:</span>
+                <span className={`font-bold ${currentTest.totalQuestions - exam.answeredCount > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                  {currentTest.totalQuestions - exam.answeredCount} câu
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 mb-6 leading-relaxed">
+              Sau khi nộp bài, hệ thống sẽ tự động chấm điểm theo thang điểm Cambridge Official Band Score, mở khóa Audio Evidence Locator và bản dịch phân tích chi tiết.
+            </p>
+
+            <div className="flex items-center justify-end space-x-2">
+              <button
+                onClick={() => setIsConfirmSubmitOpen(false)}
+                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Tiếp Tục Làm Bài
+              </button>
+              <button
+                onClick={handleConfirmSubmit}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Xác Nhận Nộp Bài</span>
               </button>
             </div>
           </div>
