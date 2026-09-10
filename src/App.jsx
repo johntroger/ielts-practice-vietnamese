@@ -24,6 +24,7 @@ import AuthModal from './components/AuthModal';
 import FeaturesGuideModal from './components/FeaturesGuideModal';
 import UserProfileModal from './components/UserProfileModal';
 import ContactModal from './components/ContactModal';
+const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -123,8 +124,14 @@ export default function App() {
   });
 
   // 2. UI & Mode State
+  const [activeSkill, setActiveSkill] = useState(() => localStorage.getItem('ielts_active_skill') || 'writing');
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
   const [lastSaved, setLastSaved] = useState(new Date());
+
+  // Keep active skill in localStorage
+  useEffect(() => {
+    localStorage.setItem('ielts_active_skill', activeSkill);
+  }, [activeSkill]);
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -468,93 +475,115 @@ export default function App() {
         onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenContact={() => setIsContactOpen(true)}
+        activeSkill={activeSkill}
+        onSelectSkill={(skill) => setActiveSkill(skill)}
         mistakesCount={mistakes.length}
         apiKey={apiKey}
         user={currentUser}
         onOpenAuth={() => setIsAuthOpen(true)}
       />
 
-      {/* 2. Secondary Sub-Bar (Desktop Theory & Weekly Word Target Progress) */}
-      <div className="hidden sm:flex bg-slate-100 border-b border-slate-200 px-4 py-1.5 items-center justify-between text-xs gap-2">
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setIsTheoryOpen(true)}
-            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 text-red-700 font-bold border border-slate-200 shadow-2xs transition-colors"
-          >
-            <span>📖 Cẩm Nang Lý Thuyết</span>
-          </button>
-
-          <button
-            onClick={() => setIsMistakeLogOpen(true)}
-            className="flex items-center space-x-1 px-2 py-1 rounded-md hover:bg-slate-200 text-slate-700 font-medium transition-colors"
-          >
-            <span>⚠️ Sổ tay lỗi sai ({mistakes.length})</span>
-          </button>
-        </div>
-
-        {/* Weekly Word Target Progress Bar */}
-        <div className="flex items-center space-x-2 text-slate-600">
-          <span className="hidden md:inline font-medium">Mục tiêu tuần:</span>
-          <div className="w-28 sm:w-36 h-2 bg-slate-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-500"
-              style={{ width: `${weeklyWordProgress}%` }}
-            />
+      {/* 2. Workspace Conditional Rendering based on activeSkill */}
+      {activeSkill === 'reading' ? (
+        <React.Suspense fallback={
+          <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
+            <div className="flex items-center space-x-2">
+              <span className="w-3 h-3 rounded-full bg-blue-600 animate-ping" />
+              <span>Đang tải phân hệ IELTS Reading Studio...</span>
+            </div>
           </div>
-          <span className="font-bold text-slate-800">{currentWeekWords}/{weeklyWordTarget} từ ({weeklyWordProgress}%)</span>
-        </div>
-      </div>
+        }>
+          <ReadingWorkspace
+            apiKey={apiKey}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            user={currentUser}
+          />
+        </React.Suspense>
+      ) : (
+        <>
+          {/* Writing Workspace Secondary Sub-Bar */}
+          <div className="hidden sm:flex bg-slate-100 border-b border-slate-200 px-4 py-1.5 items-center justify-between text-xs gap-2">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setIsTheoryOpen(true)}
+                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 text-red-700 font-bold border border-slate-200 shadow-2xs transition-colors"
+              >
+                <span>📖 Cẩm Nang Lý Thuyết</span>
+              </button>
 
-      {/* 3. Central Dual Split-Pane Workspace */}
-      <SplitPane
-        defaultSplit={46}
-        leftPane={
-          <PromptPane
-            task={currentTask}
-            mode={mode}
-            onBrainstorm={handleBrainstorm}
-            isBrainstorming={isBrainstorming}
-            brainstormResult={brainstormResult}
-            onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
+              <button
+                onClick={() => setIsMistakeLogOpen(true)}
+                className="flex items-center space-x-1 px-2 py-1 rounded-md hover:bg-slate-200 text-slate-700 font-medium transition-colors"
+              >
+                <span>⚠️ Sổ tay lỗi sai ({mistakes.length})</span>
+              </button>
+            </div>
+
+            {/* Weekly Word Target Progress Bar */}
+            <div className="flex items-center space-x-2 text-slate-600">
+              <span className="hidden md:inline font-medium">Mục tiêu tuần:</span>
+              <div className="w-28 sm:w-36 h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-500"
+                  style={{ width: `${weeklyWordProgress}%` }}
+                />
+              </div>
+              <span className="font-bold text-slate-800">{currentWeekWords}/{weeklyWordTarget} từ ({weeklyWordProgress}%)</span>
+            </div>
+          </div>
+
+          {/* Writing SplitPane Workspace */}
+          <SplitPane
+            defaultSplit={46}
+            leftPane={
+              <PromptPane
+                task={currentTask}
+                mode={mode}
+                onBrainstorm={handleBrainstorm}
+                isBrainstorming={isBrainstorming}
+                brainstormResult={brainstormResult}
+                onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
+                apiKey={apiKey}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+              />
+            }
+            rightPane={
+              <EditorPane
+                essayText={currentEssay}
+                setEssayText={handleEssayChange}
+                outlineText={currentOutline}
+                setOutlineText={handleOutlineChange}
+                task={currentTask}
+                mode={mode}
+                timeElapsed={timeElapsed}
+                lastSaved={lastSaved}
+                onOpenParaphrase={() => setIsParaphraseOpen(true)}
+              />
+            }
+          />
+
+          {/* Writing TimerBar */}
+          <TimerBar
+            timeRemaining={timeRemaining}
+            totalTime={(currentTask?.timeLimit || 40) * 60}
+            isRunning={isTimerRunning}
+            onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
+            onResetTimer={() => {
+              setTimeRemaining((currentTask?.timeLimit || 40) * 60);
+              setTimeElapsed(0);
+              setIsTimerRunning(false);
+            }}
+            onSubmitEssay={handleSubmitEssay}
+            isSubmitting={isSubmitting}
+            wordCount={countWords(currentEssay)}
+            minWords={currentTask.minWords}
             apiKey={apiKey}
             onOpenSettings={() => setIsSettingsOpen(true)}
           />
-        }
-        rightPane={
-          <EditorPane
-            essayText={currentEssay}
-            setEssayText={handleEssayChange}
-            outlineText={currentOutline}
-            setOutlineText={handleOutlineChange}
-            task={currentTask}
-            mode={mode}
-            timeElapsed={timeElapsed}
-            lastSaved={lastSaved}
-            onOpenParaphrase={() => setIsParaphraseOpen(true)}
-          />
-        }
-      />
+        </>
+      )}
 
-      {/* 4. Bottom Timer & Submit Bar */}
-      <TimerBar
-        timeRemaining={timeRemaining}
-        totalTime={(currentTask?.timeLimit || 40) * 60}
-        isRunning={isTimerRunning}
-        onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
-        onResetTimer={() => {
-          setTimeRemaining((currentTask?.timeLimit || 40) * 60);
-          setTimeElapsed(0);
-          setIsTimerRunning(false);
-        }}
-        onSubmitEssay={handleSubmitEssay}
-        isSubmitting={isSubmitting}
-        wordCount={countWords(currentEssay)}
-        minWords={currentTask.minWords}
-        apiKey={apiKey}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
-
-      {/* 5. Modals System */}
+      {/* 3. Modals System */}
       <VocabGrammarSpellingModal
         isOpen={isVocabGrammarOpen}
         onClose={() => setIsVocabGrammarOpen(false)}

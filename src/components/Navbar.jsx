@@ -49,12 +49,13 @@ export default function Navbar({
   onOpenFeaturesGuide,
   onOpenProfile,
   onOpenContact,
+  activeSkill = 'writing',
+  onSelectSkill,
   mistakesCount = 0,
   apiKey,
   user,
   onOpenAuth
 }) {
-  const [activeSkill, setActiveSkill] = useState('writing');
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const [isPracticeMenuOpen, setIsPracticeMenuOpen] = useState(false);
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
@@ -62,7 +63,7 @@ export default function Navbar({
 
   const skills = [
     { id: 'writing', label: 'IELTS Writing', desc: 'Chấm điểm 4 tiêu chí & sửa lỗi', icon: PenTool, active: true },
-    { id: 'reading', label: 'IELTS Reading', desc: 'Luyện đề & giải thích từ khóa', icon: BookMarked, active: false, badge: 'Sắp ra mắt' },
+    { id: 'reading', label: 'IELTS Reading', desc: 'Luyện đề 14 dạng & giải thích bằng chứng', icon: BookMarked, active: true },
     { id: 'listening', label: 'IELTS Listening', desc: 'Nghe chép chính tả & Mock test', icon: Headphones, active: false, badge: 'Sắp ra mắt' },
     { id: 'speaking', label: 'IELTS Speaking', desc: 'Luyện nói 1-on-1 với AI Audio', icon: Mic, active: false, badge: 'Sắp ra mắt' },
   ];
@@ -120,7 +121,7 @@ export default function Navbar({
                           key={s.id}
                           onClick={() => {
                             if (s.active) {
-                              setActiveSkill(s.id);
+                              onSelectSkill?.(s.id);
                               setIsSkillMenuOpen(false);
                             } else {
                               alert(`Phân hệ ${s.label} đang được hoàn thiện và sẽ ra mắt trong bản cập nhật tới!`);
