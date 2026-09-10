@@ -40,6 +40,7 @@ export default function MockTestModal({
   apiKey,
   model,
   activeSkill = 'writing',
+  onSelectSkill,
   onStartReadingMockExam,
   currentUser
 }) {
@@ -585,8 +586,20 @@ export default function MockTestModal({
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-200 text-xs text-purple-950 space-y-1">
-                <strong>Trạng thái phát triển:</strong> Đang hoàn thiện hệ thống nạp audio streaming và đồng bộ hiển thị câu hỏi theo timestamp. Sẽ tích hợp trực tiếp vào kho đề thi của bạn!
+              <div className="p-4 rounded-xl bg-purple-50 border border-purple-200 text-xs text-purple-950 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div>
+                  <strong>Trạng thái:</strong> Đề Cambridge 18 Test 1 hoàn chỉnh 40 câu đã sẵn sàng!
+                </div>
+                <button
+                  onClick={() => {
+                    onClose();
+                    onSelectSkill?.('listening');
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 flex items-center space-x-2 shrink-0 cursor-pointer"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Vào Phòng Thi Listening Ngay</span>
+                </button>
               </div>
             </div>
           </div>

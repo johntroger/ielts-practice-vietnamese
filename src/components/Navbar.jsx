@@ -500,6 +500,42 @@ export default function Navbar({
                 </button>
               </div>
 
+              {/* Skill Switcher in Mobile Drawer */}
+              <div>
+                <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
+                  Chọn Kỹ Năng Luyện Thi
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {skills.map(s => {
+                    const Icon = s.icon;
+                    const isCurrent = activeSkill === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          if (s.active) {
+                            onSelectSkill?.(s.id);
+                            setIsMobileDrawerOpen(false);
+                          } else {
+                            alert(`Phân hệ ${s.label} đang được hoàn thiện và sẽ ra mắt trong bản cập nhật tới!`);
+                          }
+                        }}
+                        className={`flex items-center space-x-2 p-2 rounded-xl border text-left text-xs font-bold transition-all cursor-pointer ${
+                          isCurrent
+                            ? 'bg-red-50 text-red-700 border-red-300 shadow-2xs'
+                            : s.active
+                            ? 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                            : 'bg-slate-50/50 border-slate-200 text-slate-400 opacity-60'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 shrink-0" />
+                        <span className="truncate">{s.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
             {/* Quick Actions Grid */}
             <div>
               <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
