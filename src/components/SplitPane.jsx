@@ -45,7 +45,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
     <div className="flex flex-col flex-1 w-full min-h-0">
       
       {/* MOBILE ONLY: Segmented View Controller (Tiêu điểm làm bài trên mobile) */}
-      <div className="lg:hidden bg-slate-200/80 p-1.5 flex items-center justify-center border-b border-slate-300 gap-1 sticky top-[105px] z-20 backdrop-blur-md">
+      <div className="lg:hidden bg-slate-100 p-1.5 flex items-center justify-center border-b border-slate-200 gap-1 shadow-2xs z-10">
         <button
           onClick={() => setMobileTab('both')}
           className={`flex-1 flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${

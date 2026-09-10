@@ -699,7 +699,7 @@ export default function QuestionPane({
   };
 
   return (
-    <div className={`h-full flex flex-col bg-slate-50/50 overflow-y-auto px-4 sm:px-6 py-6 space-y-8 transition-all duration-150 ${questionFontSizeClasses[fontSize] || questionFontSizeClasses.base}`}>
+    <div className={`h-full flex flex-col bg-slate-50/50 overflow-y-auto px-3 sm:px-6 pt-4 pb-28 sm:pb-32 space-y-6 sm:space-y-8 transition-all duration-150 ${questionFontSizeClasses[fontSize] || questionFontSizeClasses.base}`}>
       {questionGroups.map((group, idx) => (
         <div key={group.id || idx} className="space-y-4">
           {/* Group Header Card */}

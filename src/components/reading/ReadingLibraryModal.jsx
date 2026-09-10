@@ -249,40 +249,40 @@ export default function ReadingLibraryModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col max-h-[94vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col h-[94dvh] max-h-[94dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-blue-600/30 text-blue-400 border border-blue-500/30">
-              <BookOpen className="w-6 h-6" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-blue-600/30 text-blue-400 border border-blue-500/30">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold flex items-center gap-2">
+              <h2 className="text-base sm:text-xl font-bold flex items-center gap-2">
                 Kho Đề Thi IELTS Reading
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-medium">
-                  {stats.total} Đề thi • {stats.totalPassages} Bài đọc
+                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-medium">
+                  {stats.total} Đề • {stats.totalPassages} Bài
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">
                 Quản lý thư viện đề chuẩn hóa tên gọi, AI sinh & Lắp ghép đề thi 3 Passages chuẩn 60 phút
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
+            className="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Toolbar: Navigation Tabs & Actions */}
-        <div className="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 flex flex-col gap-3 shrink-0">
+        <div className="p-2.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex flex-col gap-2.5 shrink-0">
           {/* Main Category Tabs */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div className="flex items-center space-x-1 bg-slate-200/80 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
+          <div className="flex flex-col sm:flex-row gap-2.5 items-center justify-between">
+            <div className="flex items-center space-x-1 bg-slate-200/80 p-1 rounded-xl w-full sm:w-auto overflow-x-auto no-scrollbar touch-pan-x">
               <button
                 onClick={() => setActiveTab('all')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${

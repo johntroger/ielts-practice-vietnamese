@@ -354,15 +354,42 @@ export default function ReadingWorkspace({
   return (
     <div className="flex-1 flex flex-col bg-slate-50 overflow-hidden h-full">
       {/* 1. Reading Sub-header Toolbar */}
-      <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 shadow-2xs shrink-0">
-        {/* Left: Skill Badge & Passage Selector */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold text-xs border border-blue-200">
+      <div className="bg-white border-b border-slate-200 px-2.5 sm:px-6 py-1.5 sm:py-2 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0">
+        
+        {/* MOBILE ROW 1 / DESKTOP LEFT: Passage Tabs & Navigation */}
+        <div className="flex items-center justify-between lg:justify-start gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
+          {/* Skill Badge (Desktop only) */}
+          <div className="hidden xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold text-xs border border-blue-200 shrink-0">
             <BookMarked className="w-3.5 h-3.5 text-blue-600" />
             <span>IELTS Academic Reading</span>
           </div>
 
-          <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg text-xs font-semibold text-slate-600">
+          {/* Mobile View Switcher (Passage vs Questions) - High Priority on Mobile */}
+          <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-lg text-xs font-bold shrink-0 border border-slate-200">
+            <button
+              onClick={() => setMobileTab('passage')}
+              className={`px-3 py-1 rounded-md transition-all ${
+                mobileTab === 'passage' 
+                  ? 'bg-blue-600 text-white shadow-xs font-black' 
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              📖 Bài Đọc
+            </button>
+            <button
+              onClick={() => setMobileTab('questions')}
+              className={`px-3 py-1 rounded-md transition-all ${
+                mobileTab === 'questions' 
+                  ? 'bg-blue-600 text-white shadow-xs font-black' 
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              📝 Câu Hỏi
+            </button>
+          </div>
+
+          {/* Passage Selector Buttons */}
+          <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg text-xs font-semibold text-slate-600 shrink-0">
             {currentTest?.passages?.map(p => (
               <button
                 key={p.passageNumber}
@@ -370,15 +397,17 @@ export default function ReadingWorkspace({
                   setSelectedPassageNum(p.passageNumber);
                   setActiveEvidencePara(null);
                 }}
-                className={`px-2.5 sm:px-3 py-1 rounded-md transition-all flex items-center gap-1.5 ${
+                className={`px-2 sm:px-3 py-1 rounded-md transition-all flex items-center gap-1 ${
                   selectedPassageNum === p.passageNumber 
                     ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
+                title={`Chuyển tới Passage ${p.passageNumber}`}
               >
-                <span>Passage {p.passageNumber}</span>
+                <span className="sm:hidden font-bold">P{p.passageNumber}</span>
+                <span className="hidden sm:inline">Passage {p.passageNumber}</span>
                 {selectedPassageNum === p.passageNumber && (
-                  <span className="hidden md:inline text-[10px] text-blue-600 font-normal">
+                  <span className="hidden xl:inline text-[10px] text-blue-600 font-normal">
                     ({passageTimeGuide[p.passageNumber] || '≤ 20 phút'})
                   </span>
                 )}
@@ -389,11 +418,12 @@ export default function ReadingWorkspace({
           {/* Button Kho Đề Thi Reading */}
           <button
             onClick={() => setIsLibraryOpen(true)}
-            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs"
+            className="flex items-center space-x-1 px-2.5 sm:px-3 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs shrink-0"
             title="Mở thư viện và thống kê toàn bộ đề thi IELTS Reading"
           >
             <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-            <span>📚 Kho Đề ({allReadingTests.length})</span>
+            <span className="sm:hidden">Kho Đề</span>
+            <span className="hidden sm:inline">📚 Kho Đề ({allReadingTests.length})</span>
           </button>
 
           {/* Test Selector Dropdown if more than 1 test */}
@@ -407,7 +437,7 @@ export default function ReadingWorkspace({
                   setCurrentTestId(targetId);
                   setSelectedPassageNum(t?.passages[0]?.passageNumber || 1);
                 }}
-                className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px] lg:max-w-[200px] truncate"
+                className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[140px] lg:max-w-[190px] truncate"
               >
                 {allReadingTests.map(t => (
                   <option key={t.id} value={t.id}>
@@ -467,31 +497,11 @@ export default function ReadingWorkspace({
           </div>
         </div>
 
-        {/* Center: Mobile View Switcher (Passage vs Questions) */}
-        <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
-          <button
-            onClick={() => setMobileTab('passage')}
-            className={`px-3 py-1 rounded-md transition-all ${
-              mobileTab === 'passage' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-600'
-            }`}
-          >
-            Bài Đọc
-          </button>
-          <button
-            onClick={() => setMobileTab('questions')}
-            className={`px-3 py-1 rounded-md transition-all ${
-              mobileTab === 'questions' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-600'
-            }`}
-          >
-            Câu Hỏi
-          </button>
-        </div>
-
-        {/* Right: Mode, Timer & Score Overview Button */}
-        <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
+        {/* MOBILE ROW 2 / DESKTOP RIGHT: Timer, Controls & Mode */}
+        <div className="flex items-center justify-between lg:justify-end gap-1.5 sm:gap-3 text-xs pt-1 lg:pt-0 border-t lg:border-t-0 border-slate-100">
           
           {/* Active Countdown Timer */}
-          <div className={`flex items-center space-x-2 px-2.5 sm:px-3 py-1 rounded-lg border font-mono transition-all ${
+          <div className={`flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1 rounded-lg border font-mono transition-all ${
             isCriticalTime
               ? 'bg-red-500 text-white border-red-600 animate-pulse'
               : isLowTime
@@ -517,8 +527,8 @@ export default function ReadingWorkspace({
             )}
           </div>
 
-          {/* Global Font Size Controller (A-, A, A+) */}
-          <div className="flex items-center space-x-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+          {/* Global Font Size Controller (Desktop only to prevent mobile clutter; mobile has it inside PassagePane) */}
+          <div className="hidden lg:flex items-center space-x-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             <button
               type="button"
               onClick={() => setFontSize('sm')}
@@ -554,26 +564,26 @@ export default function ReadingWorkspace({
           {/* Mode Selector Button */}
           <button
             onClick={() => setExamMode(prev => prev === 'exam' ? 'practice' : 'exam')}
-            className={`px-2.5 py-1 rounded-lg font-bold border transition-all ${
+            className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold border text-[11px] sm:text-xs transition-all ${
               examMode === 'exam'
                 ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
                 : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
             }`}
             title="Nhấp để đổi giữa Chế độ Thi Thử và Chế độ Luyện Tập"
           >
-            {examMode === 'exam' ? '🛡️ Thi Thử (Strict)' : '📗 Luyện Tập'}
+            {examMode === 'exam' ? '🛡️ Thi Thử' : '📗 Luyện Tập'}
           </button>
 
           {/* If Submitted: Quick Button to Re-open Result Modal */}
           {isSubmitted && bandResult && (
             <button
               onClick={() => setIsResultModalOpen(true)}
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs transition-colors"
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs transition-colors text-[11px] sm:text-xs"
               title="Xem lại Báo cáo tổng kết Band Score"
             >
               <BarChart2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Báo Cáo Band</span>
-              <span>{bandResult.band.toFixed(1)}</span>
+              <span className="hidden sm:inline">Báo Cáo</span>
+              <span>Band {bandResult.band.toFixed(1)}</span>
             </button>
           )}
         </div>

@@ -39,7 +39,7 @@ export default function EditorPane({
   const wordDiff = task.minWords - totalWords;
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full bg-slate-50 pb-20 sm:pb-8">
       
       {/* Top Editor Toolbar */}
       <div className="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">

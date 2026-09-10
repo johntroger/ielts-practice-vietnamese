@@ -64,6 +64,7 @@ export default function MockTestModal({
   const [t1Text, setT1Text] = useState('');
   const [t2Text, setT2Text] = useState('');
   const [activeTaskTab, setActiveTaskTab] = useState(1); // 1 or 2
+  const [mobileWritingView, setMobileWritingView] = useState('editor'); // 'prompt' | 'editor'
 
   // 60-minute continuous timer (3600 seconds)
   const [timeRemaining, setTimeRemaining] = useState(3600);
@@ -233,10 +234,10 @@ export default function MockTestModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-6xl shadow-2xl overflow-hidden flex flex-col h-[94vh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl w-full max-w-6xl shadow-2xl overflow-hidden flex flex-col h-[94dvh] max-h-[94dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div className="bg-slate-900 text-white px-4 sm:px-5 py-3 sm:py-3.5 flex items-center justify-between border-b border-slate-800 shrink-0">
           <div className="flex items-center space-x-3">
             <div className="p-2 rounded-lg bg-red-600/30 text-red-400 border border-red-500/30">
               <ShieldAlert className="w-5 h-5" />
@@ -248,7 +249,7 @@ export default function MockTestModal({
                   Chuẩn Quốc Tế
                 </span>
               </div>
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-slate-400 hidden sm:inline">
                 Mô phỏng 100% quy trình thi thật: Writing (60p), Reading (60p), Listening (40p), Speaking (15p) & ĐẠI THI THỬ 4 KỸ NĂNG
               </span>
             </div>
@@ -268,7 +269,7 @@ export default function MockTestModal({
 
         {/* Level 1: Skill Switcher Tab - Only visible before test starts */}
         {!isTestStarted && (
-          <div className="bg-slate-900/95 border-b border-slate-800 px-4 sm:px-5 py-2.5 flex items-center justify-between gap-2 overflow-x-auto shrink-0">
+          <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar touch-pan-x shrink-0">
             <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
               <span className="text-[11px] font-bold text-slate-400 mr-1 uppercase tracking-wider hidden lg:inline">
                 Chế Độ Thi:
@@ -851,49 +852,73 @@ export default function MockTestModal({
         {isTestStarted && !mockReport && (
           <div className="flex-1 flex flex-col overflow-hidden">
             
-            {/* Task Switcher Bar */}
-            <div className="bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center justify-between text-xs">
-              <div className="flex space-x-2">
+            {/* Task Switcher & Mobile View Toggle Bar */}
+            <div className="bg-slate-100 border-b border-slate-200 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center space-x-1.5 sm:space-x-2">
                 <button
                   onClick={() => setActiveTaskTab(1)}
-                  className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1.5 ${
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1 sm:space-x-1.5 ${
                     activeTaskTab === 1 
                       ? 'bg-blue-600 text-white shadow-2xs' 
                       : 'bg-white text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   <BarChart2 className="w-3.5 h-3.5" />
-                  <span>Task 1 ({t1Words}/150 từ)</span>
+                  <span className="sm:hidden">T1 ({t1Words}w)</span>
+                  <span className="hidden sm:inline">Task 1 ({t1Words}/150 từ)</span>
                 </button>
 
                 <button
                   onClick={() => setActiveTaskTab(2)}
-                  className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1.5 ${
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1 sm:space-x-1.5 ${
                     activeTaskTab === 2 
                       ? 'bg-red-600 text-white shadow-2xs' 
                       : 'bg-white text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Task 2 ({t2Words}/250 từ)</span>
+                  <span className="sm:hidden">T2 ({t2Words}w)</span>
+                  <span className="hidden sm:inline">Task 2 ({t2Words}/250 từ)</span>
+                </button>
+              </div>
+
+              {/* Mobile View Toggle: Prompt vs Editor */}
+              <div className="lg:hidden flex items-center bg-white p-0.5 rounded-lg border border-slate-200 text-xs font-bold">
+                <button
+                  onClick={() => setMobileWritingView('prompt')}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    mobileWritingView === 'prompt' ? 'bg-blue-100 text-blue-800' : 'text-slate-600'
+                  }`}
+                >
+                  Đề Bài
+                </button>
+                <button
+                  onClick={() => setMobileWritingView('editor')}
+                  className={`px-2.5 py-1 rounded-md transition-all ${
+                    mobileWritingView === 'editor' ? 'bg-red-100 text-red-800' : 'text-slate-600'
+                  }`}
+                >
+                  Soạn Bài
                 </button>
               </div>
 
               <button
                 onClick={handleAutoSubmitWriting}
                 disabled={isGrading}
-                className="flex items-center space-x-1.5 px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center space-x-1.5 px-3 sm:px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all active:scale-95 disabled:opacity-50 text-[11px] sm:text-xs"
               >
                 {isGrading ? <Sparkles className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                <span>{isGrading ? 'Giám Khảo Đang Chấm...' : 'Nộp Bài Thi Thử'}</span>
+                <span>{isGrading ? 'Đang Chấm...' : 'Nộp Bài Thi'}</span>
               </button>
             </div>
 
             {/* Split Screen Workspace for Current Active Task */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 overflow-hidden">
+            <div className="flex-1 flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-slate-200 overflow-hidden">
               
               {/* Left Column: Prompt & Visuals */}
-              <div className="p-5 overflow-y-auto space-y-4 bg-white">
+              <div className={`p-4 sm:p-5 overflow-y-auto space-y-4 bg-white flex-1 lg:max-w-[50%] ${
+                mobileWritingView === 'prompt' ? 'block' : 'hidden lg:block'
+              }`}>
                 {activeTaskTab === 1 ? (
                   <>
                     <div className="space-y-1">
@@ -916,7 +941,9 @@ export default function MockTestModal({
               </div>
 
               {/* Right Column: Editor */}
-              <div className="p-5 overflow-y-auto flex flex-col space-y-3 bg-slate-50/50">
+              <div className={`p-4 sm:p-5 overflow-y-auto flex flex-col space-y-3 bg-slate-50/50 flex-1 pb-16 sm:pb-5 ${
+                mobileWritingView === 'editor' ? 'flex' : 'hidden lg:flex'
+              }`}>
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>Số từ hiện tại: <strong>{activeTaskTab === 1 ? t1Words : t2Words} từ</strong></span>
                   <span>Tối thiểu: {activeTaskTab === 1 ? '150 từ' : '250 từ'}</span>
@@ -926,7 +953,7 @@ export default function MockTestModal({
                   value={activeTaskTab === 1 ? t1Text : t2Text}
                   onChange={(e) => activeTaskTab === 1 ? setT1Text(e.target.value) : setT2Text(e.target.value)}
                   placeholder={`Gõ bài viết cho Task ${activeTaskTab} tại đây...`}
-                  className="flex-1 w-full p-4 rounded-xl border border-slate-200 bg-white text-sm font-sans leading-relaxed focus:outline-none resize-none min-h-[350px]"
+                  className="flex-1 w-full p-4 rounded-xl border border-slate-200 bg-white text-sm font-sans leading-relaxed focus:outline-none resize-none min-h-[300px]"
                 />
               </div>
 

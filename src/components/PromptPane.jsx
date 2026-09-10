@@ -151,7 +151,7 @@ export default function PromptPane({
   const isProcessOrMap = task.taskNumber === 1 && (task.type === 'process' || task.type === 'map' || !!task.processSteps || !!task.mapChanges);
 
   return (
-    <div className="p-5 sm:p-6 max-w-3xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 pb-24 sm:pb-12 max-w-3xl mx-auto space-y-6">
       
       {/* Header Badges */}
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">

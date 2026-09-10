@@ -323,23 +323,23 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[94vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+      <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col h-[94dvh] max-h-[94dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Header */}
-        <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800">
+        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 text-white shadow-xs">
-              <Puzzle className="w-6 h-6" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 text-white shadow-xs">
+              <Puzzle className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-lg sm:text-xl font-bold">Phòng Luyện Bổ Trợ (Micro-Drills Studio)</h2>
+                <h2 className="text-base sm:text-xl font-bold">Phòng Luyện Bổ Trợ (Micro-Drills)</h2>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide">
                   Đa Kỹ Năng
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">
                 Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật
               </p>
             </div>
@@ -350,7 +350,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         </div>
 
         {/* Level 1: Room Selector Bar (Phòng Chuyên Môn) */}
-        <div className="bg-slate-900/95 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between gap-2 overflow-x-auto">
+        <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar touch-pan-x shrink-0">
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:inline">
               Phòng Luyện:
@@ -434,8 +434,8 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
 
         {/* Level 2: Sub-tabs within Active Room & AI Generator Button */}
         {activeRoom !== 'listening' && activeRoom !== 'speaking' && (
-          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 pt-2 gap-2 overflow-x-auto text-xs font-semibold text-slate-600">
-            <div className="flex gap-2 overflow-x-auto">
+          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 sm:px-4 pt-2 gap-2 overflow-x-auto no-scrollbar touch-pan-x text-xs font-semibold text-slate-600 shrink-0">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar touch-pan-x">
               {/* SUB-TABS FOR GENERAL */}
               {activeRoom === 'general' && (
                 <>
@@ -571,7 +571,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 pb-20 sm:pb-8 space-y-4">
           
           {/* Render Pagination Bar if not in Roadmap rooms */}
           {activeRoom !== 'listening' && activeRoom !== 'speaking' && renderPaginationBar()}

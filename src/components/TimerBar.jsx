@@ -97,8 +97,8 @@ export default function TimerBar({
 
       </div>
 
-      {/* 2. Bottom Note: AI Connection Reminder Footer */}
-      <div className="w-full bg-slate-950/95 border-t border-slate-800/90 px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-400 text-center leading-normal">
+      {/* 2. Bottom Note: Desktop full notice, Mobile slim notice only if no API key */}
+      <div className="hidden sm:flex w-full bg-slate-950/95 border-t border-slate-800/90 px-3 sm:px-4 py-1.5 flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-400 text-center leading-normal">
         <div className="flex items-center space-x-1.5">
           <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
           <span>
@@ -130,6 +130,22 @@ export default function TimerBar({
           </button>
         )}
       </div>
+
+      {/* Mobile Ultra-Slim Reminder (Only if unconfigured) */}
+      {!apiKey && (
+        <div className="sm:hidden w-full bg-amber-950/90 border-t border-amber-800/80 px-2.5 py-1 flex items-center justify-between text-[11px] text-amber-200">
+          <div className="flex items-center space-x-1.5 truncate">
+            <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+            <span className="truncate">Cần kết nối Gemini API để chấm bài</span>
+          </div>
+          <button
+            onClick={onOpenSettings}
+            className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 text-[10px] font-bold shrink-0 ml-1.5"
+          >
+            Kết nối
+          </button>
+        </div>
+      )}
     </footer>
   );
 }

@@ -257,7 +257,7 @@ export default function PassagePane({
       </div>
 
       {/* Passage Content Body */}
-      <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-4 pb-28 sm:pb-32 space-y-6">
         {/* Title Header */}
         <div className="border-b border-slate-100 pb-4 space-y-2">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">

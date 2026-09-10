@@ -476,7 +476,7 @@ export default function App() {
   };
 
   return (
-    <div className={`${activeSkill === 'reading' ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900`}>
+    <div className={`${activeSkill === 'reading' ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900`}>
       
       {/* 1. Main Navigation Bar */}
       <Navbar
