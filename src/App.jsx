@@ -496,8 +496,10 @@ export default function App() {
           }>
             <ReadingWorkspace
               apiKey={apiKey}
+              model={model}
               onOpenSettings={() => setIsSettingsOpen(true)}
               user={currentUser}
+              onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
             />
           </React.Suspense>
         </div>

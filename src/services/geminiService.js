@@ -1107,4 +1107,107 @@ OUTPUT FORMAT: Return ONLY valid JSON without markdown fences. Schema:
   return JSON.parse(clean);
 }
 
+/**
+ * AI On-Demand Explanation for IELTS Reading Question (Step 5)
+ * Analyzes trap, provides bilingual translation, paraphrase mapping, and evidence verification.
+ */
+export async function explainReadingQuestion({
+  passageTitle,
+  paragraphText,
+  question,
+  userAnswer,
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+
+  const prompt = `ROLE & OBJECTIVE:
+You are an elite Cambridge IELTS Reading Master and Bilingual English-Vietnamese Tutor.
+Analyze this IELTS Reading question with maximum clarity, uncovering Cambridge distractor traps, paraphrase transformations, and exact reasoning.
+
+PASSAGE TITLE: "${passageTitle}"
+EVIDENCE PARAGRAPH (${question.evidenceParagraph || 'Relevant paragraph'}):
+"${paragraphText || ''}"
+
+QUESTION DETAILS:
+- Order / Number: Question ${question.order}
+- Question Type: ${question.type || 'Standard'}
+- Question Statement: "${question.questionText}"
+- Student's Answer: "${userAnswer || '(Chưa làm / Bỏ trống)'}"
+- Correct Official Answer: "${question.answer}"
+${question.options ? `- Options: ${JSON.stringify(question.options)}` : ''}
+
+REQUIRED JSON OUTPUT FORMAT (strictly valid JSON, no backticks, no markdown):
+{
+  "verdict": "CHÍNH XÁC hoặc CHƯA CHÍNH XÁC",
+  "trapAnalysis": "Mổ xẻ vì sao học viên dễ chọn nhầm (bẫy True/False/Not Given hoặc bẫy từ đồng nghĩa)",
+  "stepByStepReasoning": "Giải thích từng bước vì sao đáp án đúng là '${question.answer}'",
+  "paraphraseMap": [
+    { "questionKeyword": "từ/cụm từ trong câu hỏi", "passageEquivalent": "từ/cụm từ tương đương trong bài đọc", "note": "Ghi chú ngữ cảnh" }
+  ],
+  "evidenceQuote": "Trích nguyên văn 1-2 câu tiếng Anh chứa manh mối",
+  "bilingualTranslation": "Bản dịch tiếng Việt chuẩn xác của câu bằng chứng và câu hỏi",
+  "keyVocabulary": [
+    { "word": "từ mới C1/C2 trong bài", "ipa": "/phiên âm/", "meaningVi": "nghĩa tiếng Việt học thuật", "collocation": "cụm từ đi kèm" }
+  ]
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.2 }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi phân tích câu hỏi (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+/**
+ * Instant Double-Click Dictionary Lookup for IELTS Reading
+ */
+export async function lookupReadingWord({ word, contextSentence, apiKey, model = DEFAULT_MODEL }) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+
+  const prompt = `Define this English word in the context of an IELTS Academic Reading text:
+WORD: "${word}"
+CONTEXT: "${contextSentence || ''}"
+
+Return strictly JSON:
+{
+  "word": "${word}",
+  "ipa": "/.../",
+  "partOfSpeech": "noun / verb / adj / adv",
+  "vietnameseMeaning": "Nghĩa tiếng Việt súc tích, chuẩn học thuật trong ngữ cảnh bài đọc",
+  "englishDefinition": "Short English definition",
+  "academicExample": "Example sentence using the word",
+  "synonyms": ["synonym1", "synonym2"]
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.1 }
+    }
+  });
+
+  if (!response.ok) throw new Error('Lỗi tra từ điển AI');
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+
 

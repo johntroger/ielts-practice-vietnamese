@@ -30,8 +30,10 @@ import ReadingResultModal from './ReadingResultModal';
 
 export default function ReadingWorkspace({
   apiKey,
+  model = 'gemini-2.5-flash',
   onOpenSettings,
-  user
+  user,
+  onSaveToVocabNotebook
 }) {
   const currentTest = INITIAL_READING_TESTS[0];
   const [selectedPassageNum, setSelectedPassageNum] = useState(1);
@@ -307,6 +309,10 @@ export default function ReadingWorkspace({
             activeEvidencePara={activeEvidencePara}
             fontSize={fontSize}
             onFontSizeChange={setFontSize}
+            apiKey={apiKey}
+            model={model}
+            onOpenSettings={onOpenSettings}
+            onSaveToVocabNotebook={onSaveToVocabNotebook}
           />
         </div>
 
@@ -327,6 +333,8 @@ export default function ReadingWorkspace({
           }`}
         >
           <QuestionPane
+            passageTitle={activePassage?.title || ''}
+            passageParagraphs={activePassage?.paragraphs || []}
             questionGroups={activePassage?.questionGroups || []}
             userAnswers={userAnswers}
             flaggedQuestions={flaggedQuestions}
@@ -336,6 +344,10 @@ export default function ReadingWorkspace({
             showExplanationFor={showExplanationFor}
             onToggleExplanation={(qOrder) => setShowExplanationFor(prev => prev === qOrder ? null : qOrder)}
             onLocateEvidence={handleLocateEvidence}
+            apiKey={apiKey}
+            model={model}
+            onOpenSettings={onOpenSettings}
+            onSaveToVocabNotebook={onSaveToVocabNotebook}
           />
         </div>
       </div>

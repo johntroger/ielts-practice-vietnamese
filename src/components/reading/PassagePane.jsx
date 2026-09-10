@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { 
   Highlighter, 
   Trash2, 
-  Check
+  Check, 
+  BookOpen, 
+  Bookmark, 
+  Sparkles, 
+  X, 
+  Volume2, 
+  Search,
+  RefreshCw
 } from 'lucide-react';
+import { lookupReadingWord } from '../../services/geminiService';
 
 const HIGHLIGHT_COLORS = [
   { id: 'yellow', bg: 'bg-yellow-200/90 text-yellow-950', label: 'Vàng' },
@@ -15,10 +23,18 @@ export default function PassagePane({
   passage,
   activeEvidencePara,
   fontSize = 'base',
-  onFontSizeChange
+  onFontSizeChange,
+  apiKey,
+  model = 'gemini-2.5-flash',
+  onOpenSettings,
+  onSaveToVocabNotebook
 }) {
   const [activeColor, setActiveColor] = useState('yellow');
   const [highlights, setHighlights] = useState({}); // { [paraId]: [ { text, color } ] }
+
+  // Double-Click / Selection Dictionary Tooltip State
+  const [tooltip, setTooltip] = useState(null); // { word, context, x, y, loading, data, error, saved }
+  const paneRef = useRef(null);
 
   const handleApplyHighlight = (paraId) => {
     const selection = window.getSelection();
@@ -34,12 +50,85 @@ export default function PassagePane({
         [paraId]: [...currentList, { text: selectedText, color: activeColor }]
       };
     });
-
-    selection.removeAllRanges();
   };
 
   const handleClearHighlights = () => {
     setHighlights({});
+  };
+
+  // Double-click word lookup handler
+  const handleDoubleClick = async (e, paraText) => {
+    const selection = window.getSelection();
+    if (!selection) return;
+    const rawWord = selection.toString().trim();
+    const cleanWord = rawWord.replace(/^[^\w]+|[^\w]+$/g, '');
+
+    if (!cleanWord || cleanWord.length < 2 || cleanWord.includes(' ')) {
+      return;
+    }
+
+    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    const paneRect = paneRef.current ? paneRef.current.getBoundingClientRect() : { top: 0, left: 0 };
+
+    const posX = Math.max(10, Math.min(window.innerWidth - 320, rect.left));
+    const posY = Math.max(10, rect.bottom + 8);
+
+    setTooltip({
+      word: cleanWord,
+      context: paraText,
+      x: posX,
+      y: posY,
+      loading: !!apiKey,
+      data: null,
+      error: apiKey ? null : 'Vui lòng cấu hình Gemini API Key để tra từ điển tự động.',
+      saved: false
+    });
+
+    if (!apiKey) return;
+
+    try {
+      const result = await lookupReadingWord({
+        word: cleanWord,
+        contextSentence: paraText,
+        apiKey,
+        model
+      });
+      setTooltip(prev => (prev && prev.word === cleanWord ? {
+        ...prev,
+        loading: false,
+        data: result
+      } : prev));
+    } catch (err) {
+      setTooltip(prev => (prev && prev.word === cleanWord ? {
+        ...prev,
+        loading: false,
+        error: 'Không thể tra từ lúc này.'
+      } : prev));
+    }
+  };
+
+  // Close tooltip on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (tooltip && !e.target.closest('#reading-dict-tooltip')) {
+        setTooltip(null);
+      }
+    };
+    window.addEventListener('mousedown', handleClickOutside);
+    return () => window.removeEventListener('mousedown', handleClickOutside);
+  }, [tooltip]);
+
+  const handleSaveToNotebookFromTooltip = () => {
+    if (!tooltip?.data || !onSaveToVocabNotebook) return;
+    onSaveToVocabNotebook({
+      id: `vocab-${Date.now()}-${Math.random()}`,
+      phrase: tooltip.data.word,
+      meaningVi: `${tooltip.data.vietnameseMeaning} (${tooltip.data.partOfSpeech || 'từ vựng'})`,
+      example: tooltip.data.academicExample || tooltip.context || '',
+      topic: 'general',
+      createdAt: new Date().toLocaleDateString('vi-VN')
+    });
+    setTooltip(prev => ({ ...prev, saved: true }));
   };
 
   const renderParagraphContent = (para) => {
@@ -86,7 +175,7 @@ export default function PassagePane({
   };
 
   return (
-    <div className="h-full flex flex-col bg-white overflow-hidden select-text">
+    <div ref={paneRef} className="h-full flex flex-col bg-white overflow-hidden select-text relative">
       {/* Passage Top Control Bar */}
       <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 text-xs shrink-0">
         {/* Highlighter Tool Palette */}
@@ -120,6 +209,10 @@ export default function PassagePane({
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}
+
+          <div className="hidden lg:flex items-center space-x-1 text-[11px] text-slate-400 border-l border-slate-200 pl-2">
+            <span>💡 Nhấp đúp vào từ để tra từ điển</span>
+          </div>
         </div>
 
         {/* Font Size & Meta */}
@@ -179,6 +272,7 @@ export default function PassagePane({
                 key={para.id}
                 id={`passage-para-${para.id}`}
                 onMouseUp={() => handleApplyHighlight(para.id)}
+                onDoubleClick={(e) => handleDoubleClick(e, para.text)}
                 className={`relative pl-7 sm:pl-9 transition-all rounded-xl p-3 ${
                   isTargetEvidence 
                     ? 'bg-amber-50/80 ring-2 ring-amber-400/80 shadow-md' 
@@ -198,7 +292,7 @@ export default function PassagePane({
                 </div>
 
                 {/* Paragraph Content */}
-                <p className="text-justify font-serif text-[15px] sm:text-[16px] leading-relaxed">
+                <p className="text-justify font-serif text-[15px] sm:text-[16px] leading-relaxed cursor-text">
                   {renderParagraphContent(para)}
                 </p>
               </div>
@@ -210,6 +304,98 @@ export default function PassagePane({
           --- HẾT BÀI ĐỌC PASSAGE {passage?.passageNumber || 1} ---
         </div>
       </div>
+
+      {/* Double Click Dictionary Tooltip Floating Popover */}
+      {tooltip && (
+        <div 
+          id="reading-dict-tooltip"
+          style={{ top: `${tooltip.y}px`, left: `${tooltip.x}px` }}
+          className="fixed z-50 w-72 sm:w-80 bg-slate-900 text-white rounded-xl shadow-2xl p-3.5 text-xs border border-slate-700 animate-in fade-in zoom-in-95 duration-150"
+        >
+          <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
+            <div>
+              <span className="font-bold text-sm text-blue-400">{tooltip.word}</span>
+              {tooltip.data?.ipa && (
+                <span className="text-slate-400 font-mono text-xs ml-2">[{tooltip.data.ipa}]</span>
+              )}
+              {tooltip.data?.partOfSpeech && (
+                <span className="text-[10px] text-amber-300 italic ml-1.5 font-semibold">({tooltip.data.partOfSpeech})</span>
+              )}
+            </div>
+            <button 
+              onClick={() => setTooltip(null)}
+              className="text-slate-400 hover:text-white p-0.5 rounded"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {tooltip.loading ? (
+            <div className="flex items-center space-x-2 text-slate-400 py-3 justify-center">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-400" />
+              <span>Đang tra cứu từ điển học thuật...</span>
+            </div>
+          ) : tooltip.error ? (
+            <div className="space-y-2 py-1">
+              <p className="text-rose-400 text-xs">{tooltip.error}</p>
+              {!apiKey && (
+                <button
+                  onClick={() => {
+                    setTooltip(null);
+                    if (onOpenSettings) onOpenSettings();
+                  }}
+                  className="w-full py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-[11px]"
+                >
+                  Cài đặt API Key
+                </button>
+              )}
+            </div>
+          ) : tooltip.data ? (
+            <div className="space-y-2">
+              <div className="text-emerald-300 font-semibold text-xs leading-snug">
+                {tooltip.data.vietnameseMeaning}
+              </div>
+
+              {tooltip.data.englishDefinition && (
+                <p className="text-slate-300 text-[11px] leading-relaxed italic border-l-2 border-slate-700 pl-2">
+                  "{tooltip.data.englishDefinition}"
+                </p>
+              )}
+
+              {tooltip.data.synonyms && tooltip.data.synonyms.length > 0 && (
+                <div className="text-[11px] text-slate-400">
+                  <span>Đồng nghĩa: </span>
+                  <span className="text-slate-200 font-medium">{tooltip.data.synonyms.join(', ')}</span>
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+                <button
+                  onClick={handleSaveToNotebookFromTooltip}
+                  disabled={tooltip.saved}
+                  className={`w-full py-1 px-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
+                    tooltip.saved
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-amber-500 hover:bg-amber-600 text-slate-900'
+                  }`}
+                >
+                  {tooltip.saved ? (
+                    <>
+                      <Check className="w-3 h-3" />
+                      <span>Đã lưu vào Sổ tay</span>
+                    </>
+                  ) : (
+                    <>
+                      <Bookmark className="w-3 h-3" />
+                      <span>Lưu vào Sổ tay từ vựng C1/C2</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

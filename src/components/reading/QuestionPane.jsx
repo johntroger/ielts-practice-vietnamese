@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   CheckCircle2, 
   XCircle, 
   HelpCircle, 
   Sparkles, 
-  ArrowRight,
-  Eye,
-  Info,
-  Flag
+  ArrowRight, 
+  Eye, 
+  Info, 
+  Flag,
+  Bookmark,
+  Check,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
+import { explainReadingQuestion } from '../../services/geminiService';
 
 export default function QuestionPane({
+  passageTitle = '',
+  passageParagraphs = [],
   questionGroups = [],
   userAnswers = {},
   flaggedQuestions = {},
@@ -19,8 +26,67 @@ export default function QuestionPane({
   isSubmitted = false,
   showExplanationFor = null,
   onToggleExplanation,
-  onLocateEvidence
+  onLocateEvidence,
+  apiKey,
+  model,
+  onOpenSettings,
+  onSaveToVocabNotebook
 }) {
+  const [aiExplanations, setAiExplanations] = useState({}); // { [order]: data }
+  const [loadingAiFor, setLoadingAiFor] = useState(null); // order
+  const [aiErrorFor, setAiErrorFor] = useState({}); // { [order]: string }
+  const [savedVocabIds, setSavedVocabIds] = useState({}); // { [word]: boolean }
+
+  const handleRequestAiExplanation = async (q) => {
+    if (!apiKey) {
+      if (onOpenSettings) onOpenSettings();
+      return;
+    }
+
+    setLoadingAiFor(q.order);
+    setAiErrorFor(prev => ({ ...prev, [q.order]: null }));
+
+    try {
+      // Find paragraph text
+      const paraObj = passageParagraphs.find(p => p.id === q.evidenceParagraph);
+      const paragraphText = paraObj ? paraObj.text : '';
+
+      const explanation = await explainReadingQuestion({
+        passageTitle,
+        paragraphText,
+        question: q,
+        userAnswer: userAnswers[q.order],
+        apiKey,
+        model
+      });
+
+      setAiExplanations(prev => ({
+        ...prev,
+        [q.order]: explanation
+      }));
+    } catch (err) {
+      console.error('Lỗi khi tải giải thích AI:', err);
+      setAiErrorFor(prev => ({
+        ...prev,
+        [q.order]: err.message || 'Không thể tạo giải thích AI vào lúc này.'
+      }));
+    } finally {
+      setLoadingAiFor(null);
+    }
+  };
+
+  const handleSaveWord = (vocab) => {
+    if (!onSaveToVocabNotebook) return;
+    onSaveToVocabNotebook({
+      id: `vocab-${Date.now()}-${Math.random()}`,
+      phrase: vocab.word,
+      meaningVi: `${vocab.meaningVi} ${vocab.collocation ? `(Cụm: ${vocab.collocation})` : ''}`,
+      example: vocab.collocation || `Từ vựng trong bài đọc ${passageTitle}`,
+      topic: 'general',
+      createdAt: new Date().toLocaleDateString('vi-VN')
+    });
+    setSavedVocabIds(prev => ({ ...prev, [vocab.word]: true }));
+  };
   const renderFlagButton = (order) => {
     if (isSubmitted) return null;
     const isFlagged = !!flaggedQuestions[order];
@@ -461,21 +527,164 @@ export default function QuestionPane({
         </div>
 
         {isExpanded && (
-          <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2 animate-fadeIn">
+          <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-3 animate-fadeIn">
             {q.evidenceQuote && (
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 <span className="font-bold text-amber-900 block text-[11px]">Trích dẫn bằng chứng trong bài:</span>
-                <p className="italic text-amber-950 font-serif bg-white/80 p-2 rounded-md border border-amber-200/60 leading-relaxed">
+                <p className="italic text-amber-950 font-serif bg-white/80 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed text-xs">
                   "{q.evidenceQuote}"
                 </p>
               </div>
             )}
-            <div className="space-y-0.5">
-              <span className="font-bold text-amber-900 block text-[11px]">Phân tích Paraphrasing & Lời giải:</span>
-              <p className="text-slate-700 leading-relaxed">
+            <div className="space-y-1">
+              <span className="font-bold text-amber-900 block text-[11px]">Phân tích Paraphrasing & Lời giải Cambridge:</span>
+              <p className="text-slate-700 leading-relaxed bg-white/60 p-2.5 rounded-lg border border-amber-100 text-xs">
                 {q.explanation}
               </p>
             </div>
+
+            {/* AI On-Demand Explanation Section */}
+            <div className="pt-2 border-t border-amber-200/80">
+              {!aiExplanations[q.order] ? (
+                <button
+                  disabled={loadingAiFor === q.order}
+                  onClick={() => handleRequestAiExplanation(q)}
+                  className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all disabled:opacity-70"
+                >
+                  {loadingAiFor === q.order ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Gemini đang mổ xẻ bẫy & lập bản đồ Paraphrase...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Mổ xẻ bẫy & Từ vựng chuyên sâu bằng Gemini AI</span>
+                    </>
+                  )}
+                </button>
+              ) : (
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-center justify-between pb-1 border-b border-amber-200">
+                    <span className="font-bold text-blue-900 flex items-center gap-1.5 text-xs">
+                      <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Phân Tích Chuyên Sâu Của Giám Khảo AI:</span>
+                    </span>
+                    <button
+                      onClick={() => handleRequestAiExplanation(q)}
+                      className="text-[11px] text-blue-600 hover:underline flex items-center gap-1 font-semibold"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Phân tích lại</span>
+                    </button>
+                  </div>
+
+                  {/* 1. Mổ xẻ bẫy đề thi (Trap Analysis) */}
+                  {aiExplanations[q.order].trapAnalysis && (
+                    <div className="bg-rose-50/80 border border-rose-200 p-2.5 rounded-lg space-y-1">
+                      <span className="font-bold text-rose-900 block text-[11px] flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 text-rose-600" />
+                        <span>Mổ xẻ bẫy đề thi (Trap Analysis):</span>
+                      </span>
+                      <p className="text-rose-950 text-xs leading-relaxed">
+                        {aiExplanations[q.order].trapAnalysis}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 2. Lập luận từng bước */}
+                  {aiExplanations[q.order].stepByStepReasoning && (
+                    <div className="bg-white/80 border border-amber-200 p-2.5 rounded-lg space-y-1">
+                      <span className="font-bold text-slate-800 block text-[11px]">Lập luận từng bước vì sao chọn đáp án này:</span>
+                      <p className="text-slate-700 text-xs leading-relaxed">
+                        {aiExplanations[q.order].stepByStepReasoning}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 3. Bản đồ Paraphrase Map */}
+                  {aiExplanations[q.order].paraphraseMap && aiExplanations[q.order].paraphraseMap.length > 0 && (
+                    <div className="space-y-1.5">
+                      <span className="font-bold text-amber-900 block text-[11px]">Bản đồ biến đổi từ khóa (Paraphrase Map):</span>
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {aiExplanations[q.order].paraphraseMap.map((pMap, idx) => (
+                          <div key={idx} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-xs gap-2">
+                            <span className="font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                              {pMap.questionKeyword}
+                            </span>
+                            <ArrowRight className="w-3 h-3 text-blue-500 shrink-0" />
+                            <span className="font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded">
+                              {pMap.passageEquivalent}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 4. Dịch song ngữ câu bằng chứng */}
+                  {aiExplanations[q.order].bilingualTranslation && (
+                    <div className="bg-blue-50/70 border border-blue-200 p-2.5 rounded-lg space-y-1">
+                      <span className="font-bold text-blue-900 block text-[11px]">Dịch nghĩa tiếng Việt câu bằng chứng:</span>
+                      <p className="text-blue-950 text-xs leading-relaxed italic">
+                        "{aiExplanations[q.order].bilingualTranslation}"
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 5. Từ vựng C1/C2 & Nút 1-chạm lưu Sổ tay */}
+                  {aiExplanations[q.order].keyVocabulary && aiExplanations[q.order].keyVocabulary.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <span className="font-bold text-amber-900 block text-[11px]">Từ vựng học thuật quan trọng:</span>
+                      <div className="space-y-1.5">
+                        {aiExplanations[q.order].keyVocabulary.map((vItem, vIdx) => {
+                          const isSaved = savedVocabIds[vItem.word];
+                          return (
+                            <div key={vIdx} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between gap-2 text-xs">
+                              <div>
+                                <span className="font-bold text-slate-900">{vItem.word}</span>
+                                {vItem.ipa && <span className="text-slate-400 font-mono text-[11px] ml-1.5">[{vItem.ipa}]</span>}
+                                <p className="text-slate-600 text-[11px] mt-0.5">{vItem.meaningVi}</p>
+                              </div>
+                              <button
+                                onClick={() => handleSaveWord(vItem)}
+                                disabled={isSaved}
+                                className={`shrink-0 p-1.5 rounded-md border text-[11px] font-bold flex items-center gap-1 transition-all ${
+                                  isSaved
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                    : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300 hover:scale-102'
+                                }`}
+                                title={isSaved ? "Đã lưu vào sổ tay" : "Lưu từ này vào Sổ tay từ vựng C1/C2"}
+                              >
+                                {isSaved ? (
+                                  <>
+                                    <Check className="w-3 h-3 text-emerald-600" />
+                                    <span>Đã lưu</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Bookmark className="w-3 h-3 text-amber-600" />
+                                    <span>Lưu từ</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              )}
+
+              {aiErrorFor[q.order] && (
+                <div className="mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+                  {aiErrorFor[q.order]}
+                </div>
+              )}
+            </div>
+
           </div>
         )}
       </div>
