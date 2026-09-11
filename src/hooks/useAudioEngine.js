@@ -114,6 +114,9 @@ export function useAudioEngine({
     const handleTimeUpdate = () => {
       const cur = audio.currentTime || 0;
       setCurrentTime(cur);
+      if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
+        setDuration(audio.duration);
+      }
       if (onTimeUpdate) {
         onTimeUpdate(cur);
       }
@@ -171,6 +174,7 @@ export function useAudioEngine({
     audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
+    audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('error', handleError);
 
@@ -191,6 +195,7 @@ export function useAudioEngine({
       audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
       
@@ -225,6 +230,30 @@ export function useAudioEngine({
       audio.load();
     }
   }, [initialSrc, playbackRate]);
+
+  // Real-time smooth timer ticker while playing (ensures ultra-responsive UI updates)
+  useEffect(() => {
+    let timerId = null;
+    if (audioState === 'playing') {
+      timerId = setInterval(() => {
+        const audio = audioRef.current;
+        if (audio && !audio.paused && !audio.ended) {
+          const cur = audio.currentTime || 0;
+          setCurrentTime(cur);
+          if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
+            setDuration(audio.duration);
+          }
+          if (onTimeUpdate) {
+            onTimeUpdate(cur);
+          }
+        }
+      }, 100);
+    }
+
+    return () => {
+      if (timerId) clearInterval(timerId);
+    };
+  }, [audioState, onTimeUpdate]);
 
   // Unlock browser autoplay policy on user click
   const unlockAudio = useCallback(async () => {
