@@ -280,6 +280,17 @@ export default function ListeningWorkspace({
             >
               Cỡ chữ
             </button>
+            <button
+              onClick={() => {
+                if (window.confirm('Bạn có muốn thoát khỏi Chế độ Thi Thử (Strict Mode) để quay về Chế độ Luyện Tập tự do không?')) {
+                  setExamMode('practice');
+                }
+              }}
+              className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700 cursor-pointer"
+              title="Quay về chế độ luyện tập"
+            >
+              Thoát Thi
+            </button>
             <div className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm">
               <Clock className="w-3.5 h-3.5" />
               <span>
@@ -393,7 +404,15 @@ export default function ListeningWorkspace({
         audioEngine={audioEngine}
         examMode={examMode}
         activePart={activePart}
-        onSelectPart={setActivePart}
+        onSelectPart={(pNum) => {
+          setActivePart(pNum);
+          if (examMode === 'practice') {
+            const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
+            if (targetPart && typeof targetPart.audioTimestampStart === 'number') {
+              audioEngine.seek(targetPart.audioTimestampStart);
+            }
+          }
+        }}
         parts={currentTest.parts || []}
       />
 

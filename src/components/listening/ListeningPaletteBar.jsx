@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Flag, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
 
 export default function ListeningPaletteBar({
@@ -13,6 +13,19 @@ export default function ListeningPaletteBar({
   onSubmitExam,
   isSubmitted = false
 }) {
+  const activePillRef = useRef(null);
+
+  // Auto scroll active pill into visible horizontal area on mobile
+  useEffect(() => {
+    if (activePillRef.current) {
+      activePillRef.current.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+    }
+  }, [activeQuestionOrder]);
+
   const parts = [
     { partNumber: 1, range: [1, 10] },
     { partNumber: 2, range: [11, 20] },
@@ -86,6 +99,7 @@ export default function ListeningPaletteBar({
               return (
                 <button
                   key={order}
+                  ref={isActive ? activePillRef : null}
                   onClick={() => {
                     onSelectQuestion(order);
                     const newPart = parts.find(p => order >= p.range[0] && order <= p.range[1]);
