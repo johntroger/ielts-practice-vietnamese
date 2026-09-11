@@ -380,6 +380,20 @@ export function useAudioEngine({
     } catch (e) {}
   }, [unlockAudio, audioState]);
 
+  // Dynamic load new audio URL
+  const loadAudio = useCallback((newSrc) => {
+    const audio = audioRef.current;
+    if (!audio || !newSrc) return;
+    setAudioState('loading');
+    setCurrentTime(0);
+    setErrorMessage(null);
+    setIsBufferReady(false);
+    setIsStalled(false);
+    audio.src = newSrc;
+    setCurrentActiveSrc(newSrc);
+    audio.load();
+  }, []);
+
   return {
     audioRef,
     audioState,
@@ -399,6 +413,7 @@ export function useAudioEngine({
     currentActiveSrc,
     unlockAudio,
     forcePreload,
+    loadAudio,
     play,
     pause,
     togglePlay,

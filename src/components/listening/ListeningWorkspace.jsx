@@ -8,21 +8,28 @@ import {
   Clock, 
   ShieldCheck, 
   X, 
-  BarChart2,
-  Award,
-  FileText
+  BarChart2, 
+  Award, 
+  FileText,
+  BookOpen,
+  Sparkles,
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
 import ListeningPaletteBar from './ListeningPaletteBar';
 import ListeningResultModal from './ListeningResultModal';
 import ListeningTranscriptModal from './ListeningTranscriptModal';
+import ListeningLibraryModal from './ListeningLibraryModal';
+import ListeningURLExerciseGeneratorModal from './ListeningURLExerciseGeneratorModal';
 import { useAudioEngine } from '../../hooks/useAudioEngine';
 import { useListeningExam } from '../../hooks/useListeningExam';
 import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
 import { scoreListeningExam } from '../../utils/listeningScorer';
 
 const SNAPSHOT_KEY_PREFIX = 'ielts_listening_snapshot_';
+const CUSTOM_TESTS_STORAGE_KEY = 'ielts_listening_custom_tests';
 
 export default function ListeningWorkspace({
   apiKey,
@@ -34,7 +41,20 @@ export default function ListeningWorkspace({
   initialTestId = 'cambridge-18-test-1',
   initialExamMode = 'practice'
 }) {
-  // 1. Test Selection & Exam Mode
+  // 1. All Listening Tests (Preloaded + Custom from URL)
+  const [allListeningTests, setAllListeningTests] = useState(() => {
+    try {
+      const saved = localStorage.getItem(CUSTOM_TESTS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return [...INITIAL_LISTENING_TESTS, ...parsed];
+        }
+      }
+    } catch (e) {}
+    return INITIAL_LISTENING_TESTS;
+  });
+
   const [currentTestId, setCurrentTestId] = useState(initialTestId);
   const [examMode, setExamMode] = useState(initialExamMode); // 'strict' | 'practice'
   const [activePart, setActivePart] = useState(1);
@@ -43,6 +63,8 @@ export default function ListeningWorkspace({
   const [isConfirmSubmitOpen, setIsConfirmSubmitOpen] = useState(false);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
 
   // Band Score Result State
   const [bandResult, setBandResult] = useState(() => {
@@ -67,13 +89,44 @@ export default function ListeningWorkspace({
 
   // Active Test Object
   const currentTest = useMemo(() => {
-    return INITIAL_LISTENING_TESTS.find(t => t.id === currentTestId) || INITIAL_LISTENING_TESTS[0];
-  }, [currentTestId]);
+    return allListeningTests.find(t => t.id === currentTestId) || allListeningTests[0] || INITIAL_LISTENING_TESTS[0];
+  }, [allListeningTests, currentTestId]);
 
   // Current Part Object
   const currentPartData = useMemo(() => {
-    return currentTest.parts.find(p => p.partNumber === activePart) || currentTest.parts[0];
+    return currentTest.parts?.find(p => p.partNumber === activePart) || currentTest.parts?.[0] || INITIAL_LISTENING_TESTS[0].parts[0];
   }, [currentTest, activePart]);
+
+  // Handler: Add newly generated listening test from URL
+  const handleAddCustomTest = (newTest) => {
+    setAllListeningTests(prev => {
+      const updated = [newTest, ...prev];
+      try {
+        const customOnly = updated.filter(t => t.isCustom);
+        localStorage.setItem(CUSTOM_TESTS_STORAGE_KEY, JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+    setCurrentTestId(newTest.id);
+    setActivePart(1);
+    setHasStartedExam(true);
+  };
+
+  // Handler: Delete custom listening test
+  const handleDeleteCustomTest = (testIdToDelete) => {
+    setAllListeningTests(prev => {
+      const updated = prev.filter(t => t.id !== testIdToDelete);
+      try {
+        const customOnly = updated.filter(t => t.isCustom);
+        localStorage.setItem(CUSTOM_TESTS_STORAGE_KEY, JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+    if (currentTestId === testIdToDelete) {
+      setCurrentTestId(INITIAL_LISTENING_TESTS[0].id);
+      setActivePart(1);
+    }
+  };
 
   // Candidate ID & Name for authentic CD-IELTS header
   const candidateName = user?.email ? user.email.split('@')[0].toUpperCase() : 'CANDIDATE';
@@ -327,6 +380,47 @@ export default function ListeningWorkspace({
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
+            {/* Quick Test Switcher Dropdown */}
+            {allListeningTests.length > 1 && (
+              <select
+                value={currentTestId}
+                onChange={(e) => {
+                  setCurrentTestId(e.target.value);
+                  setActivePart(1);
+                  setHasStartedExam(true);
+                }}
+                className="hidden md:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[160px] truncate cursor-pointer"
+                title="Chọn bộ đề nghe"
+              >
+                {allListeningTests.map(t => (
+                  <option key={t.id} value={t.id}>
+                    {t.isCustom ? '✨ ' : '📚 '}
+                    {t.title}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {/* Kho Đề Nghe Button */}
+            <button
+              onClick={() => setIsLibraryOpen(true)}
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer"
+              title="Mở thư viện toàn bộ đề thi IELTS Listening"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Kho Đề ({allListeningTests.length})</span>
+            </button>
+
+            {/* Sinh Đề AI Button */}
+            <button
+              onClick={() => setIsGeneratorOpen(true)}
+              className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-colors shadow-2xs cursor-pointer"
+              title="Sinh đề thi IELTS mới từ link âm thanh bất kỳ bằng AI"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+              <span>Sinh Đề (URL)</span>
+            </button>
+
             {/* If Submitted: Result Report Button */}
             {exam.isSubmitted && bandResult && (
               <button
@@ -439,6 +533,59 @@ export default function ListeningWorkspace({
             >
               <X className="w-3.5 h-3.5" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 3.1 Soft-Quarantine Safe-Box Banner (when audio fails or has CORS/network error) */}
+      {audioEngine.audioState === 'error' && (
+        <div className="bg-amber-50 border-b border-amber-300 px-4 py-3 shadow-xs shrink-0 animate-in fade-in">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-start space-x-3">
+              <div className="p-2 rounded-xl bg-amber-100 text-amber-700 shrink-0 mt-0.5 sm:mt-0">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h4 className="text-xs sm:text-sm font-bold text-amber-950">
+                    Cơ Chế Bảo Vệ Soft-Quarantine: Gián Đoạn Luồng Âm Thanh
+                  </h4>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 uppercase">
+                    An Toàn Dữ Liệu
+                  </span>
+                </div>
+                <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                  Link âm thanh gốc không phản hồi (CORS hoặc lỗi mạng). <strong>Tiến trình và câu trả lời của bạn được bảo toàn 100%.</strong> Bạn có thể thử kết nối lại, mở Lời Thoại để làm tiếp hoặc đổi đề khác.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 shrink-0 self-end sm:self-center">
+              <button
+                onClick={() => audioEngine.loadAudio(currentTest.audioUrl || currentTest.fallbackAudioUrl)}
+                className="px-3 py-1.5 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer shadow-2xs"
+                title="Thử tải lại âm thanh"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Thử Lại</span>
+              </button>
+              <button
+                onClick={() => setIsTranscriptOpen(true)}
+                className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer shadow-xs"
+                title="Mở gỡ băng lời thoại để làm bài"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Xem Lời Thoại</span>
+              </button>
+              <button
+                onClick={() => setIsLibraryOpen(true)}
+                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer shadow-xs"
+                title="Chọn bộ đề khác từ thư viện"
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Kho Đề</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -698,6 +845,41 @@ export default function ListeningWorkspace({
         activePart={activePart}
         onSelectPart={setActivePart}
         onSaveToVocabNotebook={onSaveToVocabNotebook}
+      />
+
+      {/* 11. Listening Library Modal (Browse Cambridge & AI generated tests) */}
+      <ListeningLibraryModal
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        allListeningTests={allListeningTests}
+        currentTestId={currentTestId}
+        onSelectTest={(test) => {
+          setCurrentTestId(test.id);
+          setIsLibraryOpen(false);
+          setActivePart(1);
+          setHasStartedExam(true);
+          exam.resetExam();
+          setBandResult(null);
+          if (test.audioUrl) {
+            audioEngine.loadAudio(test.audioUrl);
+          }
+        }}
+        onDeleteTest={handleDeleteCustomTest}
+        onOpenGenerator={() => {
+          setIsLibraryOpen(false);
+          setIsGeneratorOpen(true);
+        }}
+        user={user}
+      />
+
+      {/* 12. Listening AI Test Generator from Audio URL Modal */}
+      <ListeningURLExerciseGeneratorModal
+        isOpen={isGeneratorOpen}
+        onClose={() => setIsGeneratorOpen(false)}
+        apiKey={apiKey}
+        model={model}
+        onTestGenerated={handleAddCustomTest}
+        onOpenSettings={onOpenSettings}
       />
 
     </div>

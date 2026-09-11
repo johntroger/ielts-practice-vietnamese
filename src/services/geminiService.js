@@ -1591,6 +1591,131 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown):
   return JSON.parse(clean);
 }
 
+/**
+ * AI Listening Test Generator from Audio URL & Transcript
+ * Generates Cambridge standard 4-part IELTS Listening test with exact timestamps, evidence quotes and answer keys.
+ */
+export async function generateListeningTestFromAudio({
+  audioUrl,
+  fallbackAudioUrl = '',
+  testTitle = '',
+  topicDescription = '',
+  transcriptText = '',
+  partCount = 4, // 1 or 4
+  apiKey,
+  model = 'gemini-2.5-flash'
+}) {
+  const prompt = `You are an expert Cambridge Assessment English IELTS Chief Examiner.
+Your task is to create an authentic IELTS Listening Test based on the provided Audio URL and content context.
+
+AUDIO SOURCE URL: ${audioUrl}
+FALLBACK URL: ${fallbackAudioUrl}
+TEST TITLE SUGGESTION: ${testTitle || 'IELTS Listening Practice Test'}
+TOPIC CONTEXT: ${topicDescription || 'General Academic & Daily Conversation'}
+TRANSCRIPT / NOTES PROVIDED:
+${transcriptText || 'No full transcript provided. Create realistic dialogue and academic lecture transcripts that match the topic and fit the audio length.'}
+
+REQUIREMENTS:
+1. Create a complete IELTS Listening Test with ${partCount} Part(s).
+2. Each Part must have authentic IELTS context:
+   - Part 1: Daily life dialogue (e.g. hotel booking, survey, club inquiry) - 10 questions (Note completion).
+   - Part 2: Monologue on general topic or facility tour - 10 questions (Multiple choice / Map / Matching).
+   - Part 3: Academic discussion between 2-3 students/tutors - 10 questions (Multiple choice / Note completion).
+   - Part 4: University academic lecture monologue - 10 questions (Note completion, NO MORE THAN ONE WORD).
+3. Provide realistic audio timestamps:
+   - Part 1: ~0s to 360s
+   - Part 2: ~361s to 750s
+   - Part 3: ~751s to 1180s
+   - Part 4: ~1181s to 1750s
+4. For every single question:
+   - Include questionText, prefixText, suffixText (if completion).
+   - Include answer (exact target word).
+   - Include acceptableAnswers array (synonyms, singular/plural or numerical variants).
+   - Include evidenceQuote (exact sentence spoken in the audio).
+   - Include evidenceTimestamp in seconds.
+   - Include explanation in Vietnamese explaining why this is the answer and pointing out any distractor traps.
+5. Provide a "transcripts" array for each Part containing dialogue lines with:
+   - start (second), end (second), speaker, text, and targetQuestion (order number if it contains an answer).
+
+OUTPUT FORMAT:
+Return ONLY pure JSON (no markdown formatting, no code fence, no additional commentary) adhering strictly to this schema:
+{
+  "title": "IELTS Listening Test: ...",
+  "description": "...",
+  "audioUrl": "${audioUrl}",
+  "fallbackAudioUrl": "${fallbackAudioUrl || audioUrl}",
+  "totalQuestions": ${partCount * 10},
+  "timeLimitMinutes": ${partCount === 4 ? 32 : 10},
+  "parts": [
+    {
+      "partNumber": 1,
+      "title": "Part 1: ...",
+      "context": "A conversation between ...",
+      "audioTimestampStart": 0,
+      "audioTimestampEnd": 360,
+      "speakers": [
+        { "name": "...", "gender": "Female", "accent": "British" }
+      ],
+      "questionGroups": [
+        {
+          "id": "qg-ai-p1",
+          "type": "note_completion",
+          "title": "Questions 1–10",
+          "instruction": "Complete the notes below.\\nWrite ONE WORD AND/OR A NUMBER for each answer.",
+          "headerTitle": "...",
+          "questions": [
+            {
+              "id": 1,
+              "order": 1,
+              "questionText": "...",
+              "prefixText": "...",
+              "suffixText": "...",
+              "answer": "...",
+              "acceptableAnswers": ["..."],
+              "evidenceQuote": "...",
+              "evidenceTimestamp": 65,
+              "explanation": "Giải thích chi tiết bằng tiếng Việt..."
+            }
+          ]
+        }
+      ],
+      "transcripts": [
+        {
+          "start": 0,
+          "end": 15,
+          "speaker": "...",
+          "text": "...",
+          "targetQuestion": 1,
+          "speechTip": "..."
+        }
+      ]
+    }
+  ]
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { 
+        temperature: 0.2,
+        maxOutputTokens: 8192
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh bài nghe (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  return JSON.parse(clean);
+}
+
 
 
 
