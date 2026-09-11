@@ -30,6 +30,8 @@ export default function AudioPlayerBar({
     isPlaying,
     isLoading,
     isEnded,
+    isBufferReady,
+    isStalled,
     currentTime,
     duration,
     playbackRate,
@@ -55,6 +57,9 @@ export default function AudioPlayerBar({
     seek(fraction * duration);
   };
 
+  // Check if buffer is actively pre-loading or waiting on mobile
+  const isPreloadingBuffer = !isBufferReady && !isPlaying && duration > 0 && bufferedPercent < 3;
+
   return (
     <div className="sticky top-0 z-30 bg-slate-950 text-slate-100 border-b border-slate-800 shadow-md">
       {/* Top Banner if Error */}
@@ -73,30 +78,55 @@ export default function AudioPlayerBar({
         </div>
       )}
 
+      {/* Network Stalling Warning on Mobile */}
+      {isStalled && isPlaying && (
+        <div className="bg-indigo-600/95 text-white text-[11px] px-3 py-0.5 flex items-center justify-center space-x-1.5 font-medium animate-pulse">
+          <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+          <span>Mạng di động đang tải tiếp âm thanh ({bufferedPercent}% đã đệm)...</span>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-3 py-2 sm:px-4 sm:py-2.5 flex flex-col gap-1.5">
         {/* ROW 1: Controls & Status */}
         <div className="flex items-center justify-between gap-2">
           
           {/* Left: Play/Pause & Time & Wave */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <button
-              onClick={togglePlay}
-              disabled={isLoading}
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 shrink-0 ${
-                isPlaying 
-                  ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
-                  : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
-              }`}
-              title={isPlaying ? 'Tạm dừng' : 'Phát bài nghe'}
-            >
-              {isLoading ? (
-                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              ) : isPlaying ? (
-                <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-              ) : (
-                <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current translate-x-0.5" />
+            <div className="relative">
+              <button
+                onClick={togglePlay}
+                disabled={isLoading || isPreloadingBuffer}
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 shrink-0 ${
+                  isPreloadingBuffer
+                    ? 'bg-slate-700 cursor-wait ring-2 ring-amber-400/40 opacity-90'
+                    : isPlaying 
+                    ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
+                    : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
+                }`}
+                title={
+                  isPreloadingBuffer
+                    ? `Đang nạp trước bộ đệm (${bufferedPercent}%)... vui lòng chờ vài giây để nghe mượt mà`
+                    : isPlaying
+                    ? 'Tạm dừng'
+                    : 'Phát bài nghe'
+                }
+              >
+                {isLoading || isPreloadingBuffer ? (
+                  <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                ) : isPlaying ? (
+                  <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
+                ) : (
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current translate-x-0.5" />
+                )}
+              </button>
+
+              {/* Mobile Pre-flight buffer badge */}
+              {isPreloadingBuffer && (
+                <span className="absolute -top-1.5 -right-2 px-1 py-0.2 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full shadow-xs animate-pulse whitespace-nowrap">
+                  {bufferedPercent}%
+                </span>
               )}
-            </button>
+            </div>
 
             {/* Time Indicators */}
             <div className="flex items-baseline space-x-1 font-mono text-xs sm:text-sm">
@@ -113,6 +143,13 @@ export default function AudioPlayerBar({
               <div className={`w-0.5 bg-emerald-400 rounded-full transition-all duration-150 ${isPlaying ? 'h-3.5 animate-bounce' : 'h-1'}`} style={{ animationDelay: '300ms' }} />
               <div className={`w-0.5 bg-emerald-400 rounded-full transition-all duration-200 ${isPlaying ? 'h-2 animate-pulse' : 'h-1'}`} style={{ animationDelay: '150ms' }} />
             </div>
+
+            {/* Buffer percent indicator */}
+            {bufferedPercent > 0 && bufferedPercent < 100 && (
+              <span className="hidden lg:inline text-[10px] text-slate-400 font-mono" title="Dung lượng âm thanh đã tải sẵn vào bộ nhớ đệm">
+                Đệm: {bufferedPercent}%
+              </span>
+            )}
           </div>
 
           {/* Center: Exam Mode Badge & Part Quick Selector */}

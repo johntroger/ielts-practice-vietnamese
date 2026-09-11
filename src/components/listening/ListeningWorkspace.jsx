@@ -150,12 +150,16 @@ export default function ListeningWorkspace({
     };
   }, [isPrepActive, prepTimeRemaining]);
 
-  // Handle Autoplay unlock and begin exam
+  // Handle Autoplay unlock and begin exam with safe buffer pre-flight
   const handleStartExam = async () => {
     await audioEngine.unlockAudio();
     setHasStartedExam(true);
     setIsPrepActive(true);
     setPrepTimeRemaining(30);
+    // Trigger buffer preloading if not ready
+    if (!audioEngine.isBufferReady) {
+      audioEngine.forcePreload();
+    }
     audioEngine.play();
   };
 

@@ -30,9 +30,43 @@ export function useAudioEngine({
   const [volume, setVolume] = useState(1.0);
   const [isMuted, setIsMuted] = useState(false);
   const [bufferedPercent, setBufferedPercent] = useState(0);
+  const [isBufferReady, setIsBufferReady] = useState(false);
+  const [isStalled, setIsStalled] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [currentActiveSrc, setCurrentActiveSrc] = useState(initialSrc);
+
+  // Helper to compute buffered percent and check minimum buffer readiness
+  const updateBufferInfo = useCallback((audio) => {
+    if (!audio || !audio.duration || audio.duration <= 0) return;
+    try {
+      if (audio.buffered.length > 0) {
+        // Find buffer chunk covering currentTime or first chunk
+        let currentLoadedEnd = 0;
+        const cur = audio.currentTime || 0;
+        for (let i = 0; i < audio.buffered.length; i++) {
+          const start = audio.buffered.start(i);
+          const end = audio.buffered.end(i);
+          if (cur >= start && cur <= end) {
+            currentLoadedEnd = end;
+            break;
+          }
+        }
+        if (currentLoadedEnd === 0 && audio.buffered.length > 0) {
+          currentLoadedEnd = audio.buffered.end(audio.buffered.length - 1);
+        }
+
+        const pct = Math.min(100, Math.round((currentLoadedEnd / audio.duration) * 100));
+        setBufferedPercent(pct);
+
+        // Buffer is considered ready if either canplaythrough triggered, or at least 3% or 10 seconds loaded ahead
+        const secondsAhead = currentLoadedEnd - cur;
+        if (pct >= 3 || secondsAhead >= 10 || currentLoadedEnd >= audio.duration - 1) {
+          setIsBufferReady(true);
+        }
+      }
+    } catch (e) {}
+  }, []);
 
   // Initialize HTML5 Audio instance
   useEffect(() => {
@@ -44,18 +78,36 @@ export function useAudioEngine({
       setDuration(audio.duration || 0);
       setAudioState('ready');
       setErrorMessage(null);
+      updateBufferInfo(audio);
     };
 
     const handleCanPlay = () => {
       setAudioState(prev => (prev === 'loading' || prev === 'idle' ? 'ready' : prev));
+      updateBufferInfo(audio);
+    };
+
+    const handleCanPlayThrough = () => {
+      setIsBufferReady(true);
+      setIsStalled(false);
+      updateBufferInfo(audio);
+    };
+
+    const handleProgress = () => {
+      updateBufferInfo(audio);
     };
 
     const handleWaiting = () => {
+      setIsStalled(true);
       setAudioState('loading');
+    };
+
+    const handleStalled = () => {
+      setIsStalled(true);
     };
 
     const handlePlaying = () => {
       setAudioState('playing');
+      setIsStalled(false);
       setErrorMessage(null);
     };
 
@@ -65,18 +117,12 @@ export function useAudioEngine({
       if (onTimeUpdate) {
         onTimeUpdate(cur);
       }
-
-      // Track buffer progress
-      if (audio.buffered.length > 0 && audio.duration > 0) {
-        try {
-          const loaded = audio.buffered.end(audio.buffered.length - 1);
-          setBufferedPercent(Math.min(100, Math.round((loaded / audio.duration) * 100)));
-        } catch (e) {}
-      }
+      updateBufferInfo(audio);
     };
 
     const handlePlay = () => {
       setAudioState('playing');
+      setIsStalled(false);
       setErrorMessage(null);
       if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
         audioContextRef.current.resume().catch(() => {});
@@ -118,7 +164,10 @@ export function useAudioEngine({
 
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    audio.addEventListener('progress', handleProgress);
     audio.addEventListener('waiting', handleWaiting);
+    audio.addEventListener('stalled', handleStalled);
     audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
@@ -135,7 +184,10 @@ export function useAudioEngine({
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+      audio.removeEventListener('progress', handleProgress);
       audio.removeEventListener('waiting', handleWaiting);
+      audio.removeEventListener('stalled', handleStalled);
       audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
@@ -316,12 +368,26 @@ export function useAudioEngine({
   const isLoading = audioState === 'loading';
   const isEnded = audioState === 'ended';
 
+  // Force preload method (useful for mobile user touch / soundcheck)
+  const forcePreload = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    await unlockAudio();
+    try {
+      if (audioState === 'idle' || audioState === 'ready') {
+        audio.load();
+      }
+    } catch (e) {}
+  }, [unlockAudio, audioState]);
+
   return {
     audioRef,
     audioState,
     isPlaying,
     isLoading,
     isEnded,
+    isBufferReady,
+    isStalled,
     currentTime,
     duration,
     playbackRate,
@@ -332,6 +398,7 @@ export function useAudioEngine({
     isUnlocked,
     currentActiveSrc,
     unlockAudio,
+    forcePreload,
     play,
     pause,
     togglePlay,
