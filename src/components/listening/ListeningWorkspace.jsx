@@ -385,9 +385,16 @@ export default function ListeningWorkspace({
               <select
                 value={currentTestId}
                 onChange={(e) => {
-                  setCurrentTestId(e.target.value);
+                  const selectedId = e.target.value;
+                  const selectedTest = allListeningTests.find(t => t.id === selectedId);
+                  setCurrentTestId(selectedId);
                   setActivePart(1);
                   setHasStartedExam(true);
+                  exam.resetExam();
+                  setBandResult(null);
+                  if (selectedTest?.audioUrl) {
+                    audioEngine.loadAudio(selectedTest.audioUrl || selectedTest.fallbackAudioUrl);
+                  }
                 }}
                 className="hidden md:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[160px] truncate cursor-pointer"
                 title="Chọn bộ đề nghe"
