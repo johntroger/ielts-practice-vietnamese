@@ -61,7 +61,7 @@ export default function AudioPlayerBar({
   const isPreloadingBuffer = !isBufferReady && !isPlaying && duration > 0 && bufferedPercent < 3;
 
   return (
-    <div className="sticky top-0 z-30 bg-slate-950 text-slate-100 border-b border-slate-800 shadow-md">
+    <div className="sticky top-0 z-10 bg-slate-950 text-slate-100 border-b border-slate-800 shadow-md">
       {/* Top Banner if Error */}
       {errorMessage && (
         <div className="bg-amber-600/90 text-white text-xs px-3 py-1 flex items-center justify-between font-medium">
