@@ -5,7 +5,7 @@ export const cambridge18Test1 = {
     totalQuestions: 40,
     timeLimitMinutes: 32,
     audioUrl: 'https://dn720904.ca.archive.org/0/items/cambridge-15-ielts-listening-test-1/Cambridge%2015%20IELTS%20Listening%20Test%201.mp3',
-    fallbackAudioUrl: 'https://archive.org/download/cambridge-15-ielts-listening-test-1/Cambridge%2015%20IELTS%20Listening%20Test%201.mp3',
+    fallbackAudioUrl: '/audio/cam18_test1_audio.mp3',
     parts: [
       {
         partNumber: 1,

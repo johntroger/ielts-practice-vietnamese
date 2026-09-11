@@ -94,35 +94,25 @@ export default function AudioPlayerBar({
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="relative">
               <button
+                type="button"
                 onClick={togglePlay}
-                disabled={isLoading || isPreloadingBuffer}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 shrink-0 ${
-                  isPreloadingBuffer
-                    ? 'bg-slate-700 cursor-wait ring-2 ring-amber-400/40 opacity-90'
-                    : isPlaying 
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
+                  isPlaying 
                     ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
                     : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
                 }`}
-                title={
-                  isPreloadingBuffer
-                    ? `Đang nạp trước bộ đệm (${bufferedPercent}%)... vui lòng chờ vài giây để nghe mượt mà`
-                    : isPlaying
-                    ? 'Tạm dừng'
-                    : 'Phát bài nghe'
-                }
+                title={isPlaying ? 'Tạm dừng bài nghe' : 'Phát bài nghe'}
               >
-                {isLoading || isPreloadingBuffer ? (
-                  <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                ) : isPlaying ? (
+                {isPlaying ? (
                   <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                 ) : (
                   <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current translate-x-0.5" />
                 )}
               </button>
 
-              {/* Mobile Pre-flight buffer badge */}
-              {isPreloadingBuffer && (
-                <span className="absolute -top-1.5 -right-2 px-1 py-0.2 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full shadow-xs animate-pulse whitespace-nowrap">
+              {/* Buffer percent indicator badge if buffering */}
+              {bufferedPercent > 0 && bufferedPercent < 100 && !isPlaying && (
+                <span className="absolute -top-1.5 -right-2 px-1 py-0.2 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full shadow-xs whitespace-nowrap">
                   {bufferedPercent}%
                 </span>
               )}

@@ -231,28 +231,26 @@ export function useAudioEngine({
     }
   }, [initialSrc, playbackRate]);
 
-  // Real-time smooth timer ticker while playing (ensures ultra-responsive UI updates)
+  // Real-time smooth timer ticker (checks actual audio element state every 100ms)
   useEffect(() => {
-    let timerId = null;
-    if (audioState === 'playing') {
-      timerId = setInterval(() => {
-        const audio = audioRef.current;
-        if (audio && !audio.paused && !audio.ended) {
-          const cur = audio.currentTime || 0;
-          setCurrentTime(cur);
-          if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
-            setDuration(audio.duration);
-          }
-          if (onTimeUpdate) {
-            onTimeUpdate(cur);
-          }
+    const timerId = setInterval(() => {
+      const audio = audioRef.current;
+      if (audio && !audio.paused && !audio.ended) {
+        const cur = audio.currentTime || 0;
+        setCurrentTime(cur);
+        if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
+          setDuration(audio.duration);
         }
-      }, 100);
-    }
+        if (audioState !== 'playing') {
+          setAudioState('playing');
+        }
+        if (onTimeUpdate) {
+          onTimeUpdate(cur);
+        }
+      }
+    }, 100);
 
-    return () => {
-      if (timerId) clearInterval(timerId);
-    };
+    return () => clearInterval(timerId);
   }, [audioState, onTimeUpdate]);
 
   // Unlock browser autoplay policy on user click
@@ -284,13 +282,13 @@ export function useAudioEngine({
         await audioContextRef.current.resume().catch(() => {});
       }
       setErrorMessage(null);
-      setAudioState('loading');
+      setIsUnlocked(true);
+      setAudioState('playing');
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         await playPromise;
+        setAudioState('playing');
       }
-      setIsUnlocked(true);
-      setAudioState('playing');
     } catch (err) {
       if (err.name === 'AbortError') {
         // Interrupted play request (rapid clicking or pause), safe to ignore
