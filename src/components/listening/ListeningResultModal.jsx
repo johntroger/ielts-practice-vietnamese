@@ -19,22 +19,60 @@ import {
   FileText,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  Compass,
+  Target,
+  Flame,
+  ArrowUpRight,
+  RefreshCw,
+  Lightbulb,
+  CheckCheck
 } from 'lucide-react';
+import { generateListeningDiagnosticEvaluation } from '../../services/geminiService';
 
 export default function ListeningResultModal({
   isOpen,
   onClose,
   bandResult,
   testTitle = 'Cambridge Practice Test 18',
+  apiKey,
+  model = 'gemini-2.5-flash',
   onResetExam,
   onJumpToQuestion,
   onSeekAudio
 }) {
   if (!isOpen || !bandResult) return null;
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'parts' | 'questions' | 'types'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'parts' | 'questions' | 'types' | 'ai_review'
   const [filterType, setFilterType] = useState('all'); // 'all' | 'correct' | 'wrong' | 'plural' | 'spelling'
+
+  // AI Diagnostic & Practice Roadmap State
+  const [aiEvaluation, setAiEvaluation] = useState(null);
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  const handleFetchAiEvaluation = async () => {
+    if (!apiKey) {
+      setAiError('Vui lòng cấu hình Gemini API Key tại phần Cài đặt góc trên để kích hoạt Giám khảo AI.');
+      return;
+    }
+    setIsGeneratingAi(true);
+    setAiError('');
+    try {
+      const res = await generateListeningDiagnosticEvaluation({
+        bandResult,
+        testTitle,
+        apiKey,
+        model
+      });
+      setAiEvaluation(res);
+    } catch (err) {
+      console.error('Lỗi khi AI phân tích kết quả:', err);
+      setAiError(err.message || 'Không thể kết nối đến Gemini AI. Vui lòng kiểm tra lại kết nối và thử lại.');
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
 
   const {
     correctCount,
@@ -154,6 +192,19 @@ export default function ListeningResultModal({
             className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap cursor-pointer " + (activeTab === 'questions' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-600 hover:text-slate-900')}
           >
             Chi Tiết & Audio Bằng Chứng (40 Câu)
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('ai_review');
+              if (!aiEvaluation && !isGeneratingAi && apiKey) {
+                handleFetchAiEvaluation();
+              }
+            }}
+            className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap flex items-center space-x-1.5 cursor-pointer " + (activeTab === 'ai_review' ? 'border-purple-600 text-purple-700' : 'border-transparent text-purple-600 hover:text-purple-800')}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+            <span>AI Nhận Xét & Lộ Trình Luyện Tập</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold">NEW</span>
           </button>
         </div>
 
@@ -299,6 +350,38 @@ export default function ListeningResultModal({
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* AI Coaching Action Banner in Overview */}
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
+                      IELTS Listening Master Coach
+                    </span>
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold text-white">
+                    Nhận Phân Tích Chuyên Sâu & Lộ Trình Nâng Band Cùng AI
+                  </h4>
+                  <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+                    AI sẽ phân tích nguyên nhân các bẫy đề bạn gặp phải, chỉ ra bài tập bổ trợ chính xác và xây dựng lộ trình luyện tập 3 giai đoạn để bứt phá lên Band cao hơn.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('ai_review');
+                    if (!aiEvaluation && !isGeneratingAi && apiKey) {
+                      handleFetchAiEvaluation();
+                    }
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 flex items-center space-x-1.5 shrink-0 cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Xem Nhận Xét & Lộ Trình AI</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </button>
               </div>
 
             </div>
@@ -502,6 +585,235 @@ export default function ListeningResultModal({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* TAB 5: AI REVIEW & ACTIONABLE PRACTICE ROADMAP */}
+          {activeTab === 'ai_review' && (
+            <div className="space-y-6">
+              
+              {/* Header Box with Trigger Button */}
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-white border border-purple-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
+                      <span>Đánh Giá Giám Khảo & Lộ Trình Luyện Tập Cá Nhân Hóa</span>
+                      <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold">
+                        Band {band.toFixed(1)} Focus
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-2xl">
+                      Hệ thống kết hợp dữ liệu 40 câu hỏi, thời gian nghe và 4 tầng lỗi sai để đưa ra chẩn đoán nguyên nhân gốc rễ (phát âm nối âm, bẫy distractors, hay thiếu vốn từ học thuật) và các bài tập khắc phục tức thì.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleFetchAiEvaluation}
+                  disabled={isGeneratingAi}
+                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold text-xs shadow-sm transition-all flex items-center space-x-2 shrink-0 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingAi ? 'animate-spin' : ''}`} />
+                  <span>{isGeneratingAi ? 'AI Đang Phân Tích...' : aiEvaluation ? 'Phân Tích Lại' : 'Bắt Đầu Nhận Xét AI'}</span>
+                </button>
+              </div>
+
+              {/* Error Notification */}
+              {aiError && (
+                <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start space-x-2.5">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="flex-1 leading-relaxed">{aiError}</div>
+                </div>
+              )}
+
+              {/* Loading State */}
+              {isGeneratingAi && (
+                <div className="p-12 text-center space-y-4 rounded-2xl bg-white border border-purple-100 shadow-2xs">
+                  <div className="w-12 h-12 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto" />
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm">Giám khảo AI đang đối chiếu bài làm với chuẩn Cambridge...</h4>
+                    <p className="text-xs text-slate-500 mt-1">Đang phân tích các tầng lỗi phát âm nối âm, bẫy tự sửa và thiết kế bài tập bổ trợ (khoảng 3-5 giây)...</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state before trigger */}
+              {!isGeneratingAi && !aiEvaluation && !aiError && (
+                <div className="p-12 text-center rounded-2xl border-2 border-dashed border-purple-200 bg-purple-50/20 space-y-3">
+                  <Lightbulb className="w-10 h-10 text-purple-400 mx-auto" />
+                  <h4 className="font-bold text-slate-800 text-sm">Chưa có dữ liệu nhận xét AI cho bài thi này</h4>
+                  <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                    Bấm nút <strong>"Bắt Đầu Nhận Xét AI"</strong> ở trên để Gemini tổng hợp hiệu suất làm bài và đưa ra kế hoạch cải thiện điểm số chi tiết.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleFetchAiEvaluation}
+                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                  >
+                    Bắt Đầu Phân Tích Ngay
+                  </button>
+                </div>
+              )}
+
+              {/* AI Evaluation Content */}
+              {!isGeneratingAi && aiEvaluation && (
+                <div className="space-y-5 animate-in fade-in">
+                  
+                  {/* 1. Overall Summary Card */}
+                  <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-2xs">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-4 h-4 text-purple-600" />
+                      <h4 className="font-bold text-slate-900 text-sm">Đánh Giá Tổng Quan Năng Lực Phản Xạ Âm Thanh</h4>
+                    </div>
+                    <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line space-y-2">
+                      {aiEvaluation.overallSummary}
+                    </div>
+                  </div>
+
+                  {/* 2. Strengths & Critical Weaknesses Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {/* Strengths */}
+                    <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <CheckCheck className="w-4 h-4 text-emerald-700" />
+                        <h4 className="font-bold text-emerald-950 text-xs sm:text-sm">Điểm Mạnh Nổi Bật</h4>
+                      </div>
+                      <ul className="space-y-2">
+                        {aiEvaluation.strengths && aiEvaluation.strengths.map((str, idx) => (
+                          <li key={idx} className="text-xs text-emerald-900 flex items-start space-x-2 leading-relaxed">
+                            <span className="text-emerald-600 font-bold">•</span>
+                            <span>{str}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Critical Weaknesses */}
+                    <div className="p-5 rounded-2xl bg-rose-50/70 border border-rose-200 space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Flame className="w-4 h-4 text-rose-700" />
+                        <h4 className="font-bold text-rose-950 text-xs sm:text-sm">Lỗ Hổng Cốt Lõi Cần Khắc Phục</h4>
+                      </div>
+                      <div className="space-y-2.5">
+                        {aiEvaluation.criticalWeaknesses && aiEvaluation.criticalWeaknesses.map((w, idx) => (
+                          <div key={idx} className="p-2.5 rounded-xl bg-white border border-rose-200 text-xs space-y-1">
+                            <div className="font-bold text-rose-900">{w.issue}</div>
+                            {w.example && (
+                              <div className="text-[11px] text-slate-600 italic">
+                                Ví dụ bài làm: "{w.example}"
+                              </div>
+                            )}
+                            {w.solution && (
+                              <div className="text-[11px] text-slate-800 font-semibold">
+                                👉 Giải pháp: {w.solution}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* 3. Actionable 3-Phase Practice Roadmap */}
+                  <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <div className="flex items-center space-x-2">
+                        <Compass className="w-5 h-5 text-indigo-400" />
+                        <h4 className="font-black text-sm sm:text-base text-white">
+                          Lộ Trình Luyện Tập 3 Giai Đoạn Nâng Band (Actionable Practice Roadmap)
+                        </h4>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300 border border-indigo-400/40">
+                        Chiến Lược Tối Ưu
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                      
+                      {/* Phase 1 */}
+                      <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+                        <div className="flex items-center space-x-1.5 text-amber-400 text-xs font-black uppercase tracking-wider">
+                          <span>Giai đoạn 1 (48 Giờ Đầu)</span>
+                        </div>
+                        <div className="text-xs font-bold text-white">Khắc Phục Thói Quen Lỗi</div>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          {aiEvaluation.actionablePracticePlan?.phase1_ImmediateFix}
+                        </p>
+                      </div>
+
+                      {/* Phase 2 */}
+                      <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+                        <div className="flex items-center space-x-1.5 text-emerald-400 text-xs font-black uppercase tracking-wider">
+                          <span>Giai đoạn 2 (2–3 Tuần)</span>
+                        </div>
+                        <div className="text-xs font-bold text-white">Xây Dựng Phản Xạ Nghe Sâu</div>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          {aiEvaluation.actionablePracticePlan?.phase2_SkillBuilding}
+                        </p>
+                      </div>
+
+                      {/* Phase 3 */}
+                      <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+                        <div className="flex items-center space-x-1.5 text-purple-400 text-xs font-black uppercase tracking-wider">
+                          <span>Giai đoạn 3 (Bứt Phá Band)</span>
+                        </div>
+                        <div className="text-xs font-bold text-white">Làm Chủ Đề Thi Cambridge</div>
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                          {aiEvaluation.actionablePracticePlan?.phase3_ExamMastery}
+                        </p>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  {/* 4. Recommended Drills (Bài tập bổ trợ thiết thực) */}
+                  <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-2xs">
+                    <div className="flex items-center space-x-2">
+                      <Zap className="w-4 h-4 text-amber-500" />
+                      <h4 className="font-bold text-slate-900 text-sm">Bài Tập Bổ Trợ Khuyên Dùng Ngay Hôm Nay</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {aiEvaluation.recommendedDrills && aiEvaluation.recommendedDrills.map((drill, idx) => (
+                        <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                          <div className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
+                            <span className="w-4 h-4 rounded-full bg-purple-600 text-white text-[10px] flex items-center justify-center font-bold">
+                              {idx + 1}
+                            </span>
+                            <span>{drill.drillName}</span>
+                          </div>
+                          {drill.purpose && (
+                            <p className="text-[11px] text-purple-800 font-medium">
+                              🎯 <strong>Mục đích:</strong> {drill.purpose}
+                            </p>
+                          )}
+                          <p className="text-[11px] text-slate-600 leading-relaxed">
+                            📝 <strong>Cách thực hiện:</strong> {drill.stepByStep}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 5. Motivational Advice Footer Banner */}
+                  {aiEvaluation.motivationalAdvice && (
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-purple-100 via-pink-50 to-indigo-100 border border-purple-200 text-purple-950 text-xs flex items-center space-x-3">
+                      <Award className="w-5 h-5 text-purple-700 shrink-0" />
+                      <div className="leading-relaxed italic font-medium">
+                        "{aiEvaluation.motivationalAdvice}"
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              )}
+
             </div>
           )}
 

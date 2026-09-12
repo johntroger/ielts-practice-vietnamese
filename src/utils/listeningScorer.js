@@ -123,12 +123,12 @@ export function canonicalizeIELTSAnswer(str) {
 
   // 2. Normalize Currency (£, $, €, pounds, dollars)
   // £35, 35 pounds, 35 gbp -> 35 pounds
-  s = s.replace(/£s*(d+(?:[.,]d+)?)/g, '$1 pounds');
-  s = s.replace(/(d+(?:[.,]d+)?)s*(?:gbp|pound|pounds)/g, '$1 pounds');
-  s = s.replace(/$s*(d+(?:[.,]d+)?)/g, '$1 dollars');
-  s = s.replace(/(d+(?:[.,]d+)?)s*(?:usd|dollar|dollars)/g, '$1 dollars');
-  s = s.replace(/€s*(d+(?:[.,]d+)?)/g, '$1 euros');
-  s = s.replace(/(d+(?:[.,]d+)?)s*(?:eur|euro|euros)/g, '$1 euros');
+  s = s.replace(/£\s*(\d+(?:[.,]\d+)?)/g, '$1 pounds');
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*(?:gbp|pound|pounds)/g, '$1 pounds');
+  s = s.replace(/\$\s*(\d+(?:[.,]\d+)?)/g, '$1 dollars');
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*(?:usd|dollar|dollars)/g, '$1 dollars');
+  s = s.replace(/€\s*(\d+(?:[.,]\d+)?)/g, '$1 euros');
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*(?:eur|euro|euros)/g, '$1 euros');
 
   // 3. Normalize Date Formats: 30th May, 30 May, May 30, May 30th -> 30 may
   // Match "30th May" or "30 May"
@@ -208,8 +208,20 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
     };
   }
 
-  // 3. Plural / Singular Error (-s / -es)
-  const pluralCheck = checkPluralDiscrepancy(userNorm, targetNorm);
+  // 3. Plural / Singular Error (-s / -es) check across targetNorm & acceptableList
+  let pluralCheck = checkPluralDiscrepancy(userNorm, targetNorm);
+  let matchedTarget = question.answer;
+  if (!pluralCheck && acceptableList.length > 0) {
+    for (const acc of acceptableList) {
+      const p = checkPluralDiscrepancy(userNorm, acc);
+      if (p) {
+        pluralCheck = p;
+        matchedTarget = acc;
+        break;
+      }
+    }
+  }
+
   if (pluralCheck) {
     const isMissing = pluralCheck === 'missing_s';
     return {
@@ -223,8 +235,8 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
       badgeLabel: isMissing ? 'Thiếu đuôi -s' : 'Thừa đuôi -s',
       badgeColor: 'bg-amber-100 text-amber-900 border-amber-300',
       diagnosticMessage: isMissing
-        ? ("⚠️ Lỗi âm đuôi: Bạn viết \"" + rawUserAnswer + "\" nhưng đề bài yêu cầu số nhiều \"" + question.answer + "\".")
-        : ("⚠️ Lỗi âm đuôi: Bạn viết \"" + rawUserAnswer + "\" nhưng đề bài yêu cầu số ít \"" + question.answer + "\". "),
+        ? ("⚠️ Lỗi âm đuôi: Bạn viết \"" + rawUserAnswer + "\" nhưng đáp án yêu cầu số nhiều \"" + matchedTarget + "\".")
+        : ("⚠️ Lỗi âm đuôi: Bạn viết \"" + rawUserAnswer + "\" nhưng đáp án yêu cầu số ít \"" + matchedTarget + "\". "),
       evidenceQuote: question.evidenceQuote || '',
       evidenceTimestamp: question.evidenceTimestamp,
       explanation: question.explanation || ''
@@ -252,8 +264,19 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
   }
 
   // 5. Spelling Mistake Check (Levenshtein distance <= 2 for words >= 4 chars)
-  const dist = levenshtein(userNorm, targetNorm);
-  if (dist <= 2 && targetNorm.length >= 4) {
+  let bestDist = levenshtein(userNorm, targetNorm);
+  let bestTarget = question.answer;
+  if (acceptableList.length > 0) {
+    for (const acc of acceptableList) {
+      const d = levenshtein(userNorm, acc);
+      if (d < bestDist) {
+        bestDist = d;
+        bestTarget = acc;
+      }
+    }
+  }
+
+  if (bestDist <= 2 && bestTarget.length >= 4 && userNorm.length >= 3) {
     return {
       order: question.order,
       questionId: question.id,
@@ -264,7 +287,7 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
       status: 'SPELLING_ERROR',
       badgeLabel: 'Sai chính tả',
       badgeColor: 'bg-rose-100 text-rose-900 border-rose-300',
-      diagnosticMessage: "⚠️ Lỗi chính tả: Bạn viết \"" + rawUserAnswer + "\" (lệch " + dist + " ký tự so với \"" + question.answer + "\").",
+      diagnosticMessage: "⚠️ Lỗi chính tả: Bạn viết \"" + rawUserAnswer + "\" (lệch " + bestDist + " ký tự so với \"" + bestTarget + "\").",
       evidenceQuote: question.evidenceQuote || '',
       evidenceTimestamp: question.evidenceTimestamp,
       explanation: question.explanation || ''

@@ -2036,6 +2036,137 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no commentary) adh
   return parsed;
 }
 
+/**
+ * AI Listening Examiner: Comprehensive Diagnostic Evaluation & Actionable Practice Plan
+ * Evaluates candidate listening performance, diagnoses cognitive breakdown patterns, and generates custom drills.
+ */
+export async function generateListeningDiagnosticEvaluation({
+  bandResult,
+  testTitle,
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) {
+    throw new Error('Vui lòng cung cấp Gemini API Key để nhận nhận xét và kế hoạch luyện tập từ AI.');
+  }
+
+  const {
+    band = 6.0,
+    correctCount = 0,
+    totalQuestions = 40,
+    accuracyPercent = 0,
+    timeSpentSeconds = 0,
+    errorBreakdown = {},
+    partStats = [],
+    typeStats = [],
+    questionsBreakdown = []
+  } = bandResult;
+
+  // Extract errors for rich analysis
+  const incorrectQuestions = questionsBreakdown
+    .filter(q => !q.isCorrect)
+    .slice(0, 15) // Top 15 error samples to avoid token bloat
+    .map(q => ({
+      order: q.order,
+      partNumber: q.partNumber,
+      questionType: q.questionType,
+      userAnswer: q.userAnswer || '(Bỏ trống)',
+      correctAnswer: q.correctAnswer,
+      status: q.status,
+      evidenceQuote: q.evidenceQuote || ''
+    }));
+
+  const prompt = `You are a Senior Cambridge Assessment English IELTS Chief Examiner and Master Listening Coach.
+Provide an in-depth, encouraging, highly analytical, and actionable diagnostic evaluation and personalized practice roadmap for a candidate who just finished an IELTS Listening test.
+
+TEST INFORMATION:
+- Test Title: ${testTitle || 'IELTS Listening Practice'}
+- Estimated Band Score: ${Number(band).toFixed(1)} / 9.0
+- Accuracy: ${correctCount}/${totalQuestions} questions (${accuracyPercent}%)
+- Time Spent: ${Math.floor(timeSpentSeconds / 60)} minutes ${timeSpentSeconds % 60} seconds
+- Error Breakdown:
+  * Absolute Correct: ${errorBreakdown.CORRECT || 0}
+  * Plural/Singular (-s/-es) Mistakes: ${errorBreakdown.PLURAL_ERROR || 0}
+  * Stem Repetition Traps: ${errorBreakdown.STEM_REPETITION_ERROR || 0}
+  * Spelling Mistakes: ${errorBreakdown.SPELLING_ERROR || 0}
+  * Information / Distractor Errors: ${errorBreakdown.WRONG_ANSWER || 0}
+  * Unanswered / Skipped: ${errorBreakdown.UNANSWERED || 0}
+
+PERFORMANCE BY PART:
+${JSON.stringify(partStats, null, 2)}
+
+PERFORMANCE BY QUESTION TYPE:
+${JSON.stringify(typeStats, null, 2)}
+
+SAMPLE INCORRECT QUESTIONS:
+${JSON.stringify(incorrectQuestions, null, 2)}
+
+TASK REQUIREMENTS:
+1. "overallSummary": 2-3 inspiring yet professional paragraphs in Vietnamese evaluating the candidate's current listening reflexes, strengths, and primary bottlenecks (such as losing track during fast connected speech, distractors with self-correction, or missing word endings -s/-ed).
+2. "strengths": Array of 3-4 specific strengths demonstrated in the test (e.g. strong note completion in Part 1, good grasp of key numbers/dates, etc.).
+3. "criticalWeaknesses": Array of 3-4 specific root-cause weaknesses with concrete examples from their errors (e.g. spelling confusion, falling for speaker self-corrections, losing focus in academic monologues).
+4. "actionablePracticePlan": A structured 3-phase practice roadmap tailored to their exact score band:
+   - "phase1_ImmediateFix": Immediate habits for the next 48 hours (e.g., how to read ahead during the 30s prep time, checking word counts).
+   - "phase2_SkillBuilding": Targeted drills for the next 2-3 weeks (e.g., connected speech shadowing, dictation drills with BBC/TED, map labelling signposting).
+   - "phase3_ExamMastery": Strategy to push to the next Band milestone (+0.5 to +1.0 Band).
+5. "recommendedDrills": Array of 3-4 practical exercises with specific instructions:
+   - "drillName": Name of drill (e.g., "Kỹ thuật Shadowing 1.2x tốc độ", "Luyện nghe bắt từ nối Signposting Part 3/4", "Chép chính tả âm đuôi -s/số nhiều")
+   - "purpose": Purpose of the drill
+   - "stepByStep": Clear 2-3 sentence guide on how to do it.
+6. "motivationalAdvice": A closing encouraging motto from the examiner.
+
+OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO backticks. Schema:
+{
+  "overallSummary": "...",
+  "currentLevelComment": "...",
+  "strengths": ["...", "..."],
+  "criticalWeaknesses": [
+    { "issue": "...", "example": "...", "solution": "..." }
+  ],
+  "actionablePracticePlan": {
+    "phase1_ImmediateFix": "...",
+    "phase2_SkillBuilding": "...",
+    "phase3_ExamMastery": "..."
+  },
+  "recommendedDrills": [
+    {
+      "drillName": "...",
+      "purpose": "...",
+      "stepByStep": "..."
+    }
+  ],
+  "motivationalAdvice": "..."
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 3000,
+        responseMimeType: 'application/json'
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi phân tích kết quả bài nghe (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const parsed = robustJsonParse(text, null);
+
+  if (!parsed || !parsed.overallSummary) {
+    throw new Error('AI không thể sinh nhận xét chi tiết cho bài thi. Vui lòng bấm thử lại.');
+  }
+
+  return parsed;
+}
+
 
 
 

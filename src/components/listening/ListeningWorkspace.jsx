@@ -1009,6 +1009,8 @@ export default function ListeningWorkspace({
         }}
         bandResult={bandResult}
         testTitle={currentTest?.title || bandResult?.testTitle}
+        apiKey={apiKey}
+        model={model}
         onResetExam={() => {
           exam.resetExam();
           audioEngine.seek(0);
