@@ -633,6 +633,148 @@ Return ONLY raw parseable JSON:
   "objectResult": "...",
   "takeawayVietnamese": "..."
 }`;
+  } else if (drillType === 'listening-dictation') {
+    prompt = `Act as an expert Cambridge IELTS Listening examiner. Generate 1 brand new "Intensive Dictation" micro-drill for IELTS Listening.
+Topic: ${topic}
+
+Requirements:
+- "title": Title describing the context (e.g. "Dictation Thực Chiến: [Chủ đề]")
+- "category": Topic category (e.g. "Daily Life & Accommodation", "Campus Facilities", "Urban Ecology")
+- "difficulty": "Band 6.0 - 7.5"
+- "ttsText": A natural, authentic English spoken sentence (14 to 22 words) containing natural connected speech features (linking sounds, vowel reductions, or plural '-s' endings).
+- "targetTranscript": The identical exact transcript of the sentence.
+- "wordCount": Total word count of the sentence.
+- "audioClipTip": Clear Vietnamese advice on phonetics / connected speech to look out for (e.g. "Chú ý nối âm: 'confirm your' và âm đuôi 'reservation'").
+
+Return ONLY raw parseable JSON:
+{
+  "type": "listening-dictation",
+  "title": "...",
+  "category": "...",
+  "difficulty": "Band 6.5 - 7.5",
+  "ttsText": "...",
+  "targetTranscript": "...",
+  "wordCount": 16,
+  "audioClipTip": "..."
+}`;
+  } else if (drillType === 'listening-spelling') {
+    prompt = `Act as an expert Cambridge IELTS Listening examiner. Generate 1 brand new "Speed Spelling, Names & Numbers" reflex micro-drill (IELTS Listening Part 1 format).
+Topic: ${topic}
+
+Requirements:
+- "title": Short title (e.g. "Đánh vần tên riêng & Mã bưu chính UK")
+- "category": "Names, Postcodes & Numbers"
+- "subType": One of "spelling", "numbers", "currency-date"
+- "promptAudioText": The complete spoken sentence in British English. If spelling a name, include the spelled letters with hyphens (e.g. "The guest surname is MacIntyre, that is M-A-C-I-N-T-Y-R-E"). If numbers, include realistic distractors or reversals.
+- "questionPrompt": The exam question line with blanks (e.g. "Guest surname: ........." or "Booking reference code: .........")
+- "correctAnswer": The exact key (e.g. "MacIntyre", "SW19 4TL", "75")
+- "acceptableAnswers": Array of acceptable formats (e.g. ["SW19 4TL", "SW194TL", "sw19 4tl"])
+- "trapNote": Specific trap warning in Vietnamese (e.g. "Bẫy âm dễ nhầm: Chữ V vs B, số đảo ngược")
+- "explanation": Detailed Vietnamese explanation
+
+Return ONLY raw parseable JSON:
+{
+  "type": "listening-spelling",
+  "subType": "spelling",
+  "title": "...",
+  "category": "...",
+  "promptAudioText": "...",
+  "questionPrompt": "...",
+  "correctAnswer": "...",
+  "acceptableAnswers": ["..."],
+  "trapNote": "...",
+  "explanation": "..."
+}`;
+  } else if (drillType === 'listening-distractor') {
+    prompt = `Act as an expert Cambridge IELTS Listening examiner. Generate 1 brand new "Distractor Trap Buster" micro-drill testing self-correction and shifting conditions (Part 1 or Part 3 format).
+Topic: ${topic}
+
+Requirements:
+- "title": Short title e.g. "Bẫy tự đính chính: [Tình huống]"
+- "category": e.g. "Transport Schedule", "Course Enrollment", "Customer Service"
+- "audioSnippetText": A mini-dialogue (2-3 sentences) between two people where an initial piece of information is suggested, but then corrected or rejected with words like "Actually, make that...", "However, unlike last time...", or "I used to, but now...".
+- "question": Direct question asking about the final confirmed information
+- "options": Array of 3 options [{ "id": "A", "text": "..." }, { "id": "B", "text": "..." }, { "id": "C", "text": "..." }]
+- "correctOption": "A", "B", or "C"
+- "distractorMechanism": Detailed Vietnamese breakdown of how the speaker tricked the listener
+- "explanation": Clear Vietnamese summary of why the correct option is the final decision
+
+Return ONLY raw parseable JSON:
+{
+  "type": "listening-distractor",
+  "title": "...",
+  "category": "...",
+  "audioSnippetText": "...",
+  "question": "...",
+  "options": [
+    { "id": "A", "text": "..." },
+    { "id": "B", "text": "..." },
+    { "id": "C", "text": "..." }
+  ],
+  "correctOption": "C",
+  "distractorMechanism": "...",
+  "explanation": "..."
+}`;
+  } else if (drillType === 'listening-map') {
+    prompt = `Act as an expert Cambridge IELTS Listening examiner. Generate 1 brand new "Map Navigation & Spatial Directions" micro-drill (Part 2 format).
+Topic: ${topic}
+
+Requirements:
+- "title": Short title e.g. "Định hướng sơ đồ: [Địa điểm]"
+- "category": "Campus & Park Navigation"
+- "audioDirectionsText": A spoken directional guide (40-60 words) starting from a clear entrance/landmark, navigating through paths, junctions, ponds/fountains, and pinpointing a specific room/facility.
+- "question": "Where is the [Facility Name] located?"
+- "options": Array of 3 location descriptions [{ "id": "A", "text": "..." }, { "id": "B", "text": "..." }, { "id": "C", "text": "..." }]
+- "correctOption": "A", "B", or "C"
+- "spatialClues": Array of 3-4 sequential path clues (e.g. ["Main entrance -> walk straight", "Turn left at fountain", "Directly opposite bike shed"])
+- "explanation": Detailed step-by-step route explanation in Vietnamese
+
+Return ONLY raw parseable JSON:
+{
+  "type": "listening-map",
+  "title": "...",
+  "category": "...",
+  "audioDirectionsText": "...",
+  "question": "...",
+  "options": [
+    { "id": "A", "text": "..." },
+    { "id": "B", "text": "..." },
+    { "id": "C", "text": "..." }
+  ],
+  "correctOption": "B",
+  "spatialClues": ["...", "..."],
+  "explanation": "..."
+}`;
+  } else if (drillType === 'listening-signposting') {
+    prompt = `Act as an expert Cambridge IELTS Listening examiner. Generate 1 brand new "Academic Lecture Signposting Catcher" micro-drill (Part 4 format).
+Topic: ${topic}
+
+Requirements:
+- "title": Short title e.g. "Bắt tín hiệu chuyển ý: [Chủ đề học thuật]"
+- "category": "Academic Lecture (Part 4)"
+- "audioSnippetText": An excerpt from an academic monograph / university lecture (40-60 words) containing a prominent signposting cue (e.g. "Moving on to...", "Turning now to our second hypothesis...", "Surprisingly, however...").
+- "question": "Cụm từ nào báo hiệu người nói đang chuyển sang [mục đích cụ thể]?"
+- "options": Array of 3 excerpt options [{ "id": "A", "text": "..." }, { "id": "B", "text": "..." }, { "id": "C", "text": "..." }]
+- "correctOption": "A", "B", or "C"
+- "signpostType": e.g. "Transition to New Key Point" or "Contrast / Counter-intuitive Evidence"
+- "explanation": Detailed Vietnamese explanation of why this marker signals the transition
+
+Return ONLY raw parseable JSON:
+{
+  "type": "listening-signposting",
+  "title": "...",
+  "category": "...",
+  "audioSnippetText": "...",
+  "question": "...",
+  "options": [
+    { "id": "A", "text": "..." },
+    { "id": "B", "text": "..." },
+    { "id": "C", "text": "..." }
+  ],
+  "correctOption": "B",
+  "signpostType": "...",
+  "explanation": "..."
+}`;
   } else {
     // paraphrase
     prompt = `Act as an expert Cambridge IELTS coach. Generate 1 brand new "Single-Sentence Paraphrasing Drill" for IELTS Writing.
@@ -691,6 +833,77 @@ Return ONLY raw parseable JSON:
   } catch (err) {
     console.error('Failed to parse generated drill JSON:', text);
     throw new Error('Lỗi định dạng dữ liệu khi AI sinh bài tập. Vui lòng thử lại.');
+  }
+}
+
+/**
+ * AI Detailed Evaluator for Listening Micro-Drills
+ * Analyzes word-by-word phonetic drift, homophone traps, dropped plural endings, and distractor anatomy
+ */
+export async function evaluateListeningDrill({
+  drillType,
+  targetTranscript,
+  userInput,
+  questionPrompt,
+  correctOption,
+  userChoice,
+  options = [],
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+
+  const prompt = `Act as an expert Cambridge IELTS Listening examiner and phonetics specialist.
+Evaluate the student's submission for this IELTS Listening Micro-Drill:
+Drill Type: ${drillType}
+${targetTranscript ? `Target Reference Sentence / Key: "${targetTranscript}"` : ''}
+${userInput ? `Student's Dictation / Input: "${userInput}"` : ''}
+${questionPrompt ? `Question Context: "${questionPrompt}"` : ''}
+${correctOption ? `Correct Option Key: "${correctOption}"` : ''}
+${userChoice ? `Student's Chosen Option: "${userChoice}"` : ''}
+${options && options.length > 0 ? `Options: ${JSON.stringify(options)}` : ''}
+
+Evaluate and return ONLY valid JSON:
+{
+  "isFullyCorrect": true/false,
+  "accuracyScore": 85, // integer 0-100
+  "phoneticFeedback": "Detailed Vietnamese feedback on why they missed or got words right (e.g. dropped -s, misheard homophone, connected speech reduction)",
+  "trapAnalysis": "Detailed Vietnamese breakdown of the distractor or spelling trap in this exercise",
+  "recommendedReflex": "Short 1-sentence tip on how to catch this pattern in the real test"
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.3,
+        responseMimeType: 'application/json'
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi từ Gemini (${response.status}) khi chấm bài nghe.`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('Không nhận được nội dung phản hồi từ Gemini.');
+
+  try {
+    const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (e) {
+    return {
+      isFullyCorrect: false,
+      accuracyScore: 70,
+      phoneticFeedback: 'Đã hoàn thành bài nghe. Cần chú ý âm đuôi và hiện tượng nuốt âm.',
+      trapAnalysis: 'Hãy đối chiếu kỹ lưỡng với đáp án chuẩn.',
+      recommendedReflex: 'Luyện nghe chép chính tả 10 phút mỗi ngày.'
+    };
   }
 }
 

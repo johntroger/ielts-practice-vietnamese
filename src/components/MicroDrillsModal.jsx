@@ -33,7 +33,7 @@ import {
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
-import { evaluateParaphrase, generateMicroDrill } from '../services/geminiService';
+import { evaluateParaphrase, generateMicroDrill, evaluateListeningDrill } from '../services/geminiService';
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
 
@@ -172,6 +172,84 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const [userSignChoice, setUserSignChoice] = useState(null);
   const [showSignResult, setShowSignResult] = useState(false);
 
+  // AI Evaluation State for Listening Micro-Drills
+  const [isEvaluatingListening, setIsEvaluatingListening] = useState(false);
+  const [listeningEvaluation, setListeningEvaluation] = useState(null);
+
+  // Function to save lightweight learning history (Trap Diary) without audio files
+  const saveListeningHistory = (drillItem, isCorrect, note = '') => {
+    try {
+      const historyKey = 'ielts_listening_trap_diary';
+      const existing = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      const newEntry = {
+        id: `entry-${Date.now()}`,
+        drillId: drillItem.id,
+        drillType: drillItem.type,
+        title: drillItem.title,
+        isCorrect: isCorrect,
+        timestamp: new Date().toISOString(),
+        note: note || drillItem.trapNote || drillItem.distractorMechanism || ''
+      };
+      // Keep latest 50 entries
+      const updated = [newEntry, ...existing.slice(0, 49)];
+      localStorage.setItem(historyKey, JSON.stringify(updated));
+    } catch (e) {
+      console.warn('Failed to save trap diary:', e);
+    }
+  };
+
+  const handleEvaluateCurrentListening = async () => {
+    if (!apiKey) {
+      alert('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      return;
+    }
+
+    setIsEvaluatingListening(true);
+    setListeningEvaluation(null);
+
+    try {
+      let payload = { drillType: activeTab, apiKey, model };
+      if (activeTab === 'listening-dictation') {
+        payload.targetTranscript = currentDictation.targetTranscript;
+        payload.userInput = userDictationInput;
+      } else if (activeTab === 'listening-spelling') {
+        payload.targetTranscript = currentSpelling.correctAnswer;
+        payload.userInput = userSpellingInput;
+        payload.questionPrompt = currentSpelling.questionPrompt;
+      } else if (activeTab === 'listening-distractor') {
+        payload.questionPrompt = currentDistractor.question;
+        payload.correctOption = currentDistractor.correctOption;
+        payload.userChoice = userDistractorChoice;
+        payload.options = currentDistractor.options;
+      } else if (activeTab === 'listening-map') {
+        payload.questionPrompt = currentMap.question;
+        payload.correctOption = currentMap.correctOption;
+        payload.userChoice = userMapChoice;
+        payload.options = currentMap.options;
+      } else if (activeTab === 'listening-signposting') {
+        payload.questionPrompt = currentSign.question;
+        payload.correctOption = currentSign.correctOption;
+        payload.userChoice = userSignChoice;
+        payload.options = currentSign.options;
+      }
+
+      const res = await evaluateListeningDrill(payload);
+      setListeningEvaluation(res);
+      saveListeningHistory(
+        activeTab === 'listening-dictation' ? currentDictation :
+        activeTab === 'listening-spelling' ? currentSpelling :
+        activeTab === 'listening-distractor' ? currentDistractor :
+        activeTab === 'listening-map' ? currentMap : currentSign,
+        res.isFullyCorrect,
+        res.trapAnalysis
+      );
+    } catch (err) {
+      alert(err.message || 'Lỗi khi AI phân tích kết quả.');
+    } finally {
+      setIsEvaluatingListening(false);
+    }
+  };
+
   // Audio Speech State for Micro-Drills
   const [playingDrillAudioId, setPlayingDrillAudioId] = useState(null);
   const [dictationSpeed, setDictationSpeed] = useState(0.95);
@@ -250,15 +328,15 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         return { list: readingHeadingsDrills, index: selectedHeadingsIndex, setIndex: setSelectedHeadingsIndex, onReset: () => { setUserHeadingChoice(null); setShowHeadingsResult(false); } };
       // Listening
       case 'listening-dictation':
-        return { list: listeningDictationDrills, index: selectedDictationIndex, setIndex: setSelectedDictationIndex, onReset: () => { setUserDictationInput(''); setShowDictationFeedback(false); } };
+        return { list: listeningDictationDrills, index: selectedDictationIndex, setIndex: setSelectedDictationIndex, onReset: () => { setUserDictationInput(''); setShowDictationFeedback(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-spelling':
-        return { list: listeningSpellingDrills, index: selectedSpellingIndex, setIndex: setSelectedSpellingIndex, onReset: () => { setUserSpellingInput(''); setShowSpellingResult(false); } };
+        return { list: listeningSpellingDrills, index: selectedSpellingIndex, setIndex: setSelectedSpellingIndex, onReset: () => { setUserSpellingInput(''); setShowSpellingResult(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-distractor':
-        return { list: listeningDistractorDrills, index: selectedDistractorIndex, setIndex: setSelectedDistractorIndex, onReset: () => { setUserDistractorChoice(null); setShowDistractorResult(false); } };
+        return { list: listeningDistractorDrills, index: selectedDistractorIndex, setIndex: setSelectedDistractorIndex, onReset: () => { setUserDistractorChoice(null); setShowDistractorResult(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-map':
-        return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); } };
+        return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-signposting':
-        return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); } };
+        return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); setListeningEvaluation(null); stopSpeech(); } };
       default:
         return { list: [], index: 0, setIndex: () => {}, onReset: () => {} };
     }
@@ -1698,13 +1776,64 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                       Xóa làm lại
                     </button>
 
-                    <button
-                      onClick={() => setShowDictationFeedback(true)}
-                      className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
-                    >
-                      Kiểm Tra Chính Tả Từng Từ
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={handleEvaluateCurrentListening}
+                        disabled={isEvaluatingListening || !userDictationInput.trim()}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5"
+                        title="Nhờ AI phân tích lỗi nuốt âm, phát âm và nối từ"
+                      >
+                        {isEvaluatingListening ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>AI đang phân tích...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>AI Chẩn Đoán Lỗi Nghe</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => setShowDictationFeedback(true)}
+                        className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                      >
+                        Kiểm Tra Chính Tả Từng Từ
+                      </button>
+                    </div>
                   </div>
+
+                  {/* AI Evaluation Card if available */}
+                  {listeningEvaluation && (
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 text-xs space-y-2 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="text-purple-950 flex items-center space-x-1.5">
+                          <Sparkles className="w-4 h-4 text-purple-600" />
+                          <span>AI Chẩn Đoán Âm Học Cambridge:</span>
+                        </span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                          listeningEvaluation.accuracyScore >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          Độ chính xác: {listeningEvaluation.accuracyScore}%
+                        </span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed">
+                        <strong>Phân tích ngữ âm & lỗi nghe:</strong> {listeningEvaluation.phoneticFeedback}
+                      </p>
+                      {listeningEvaluation.trapAnalysis && (
+                        <p className="text-purple-900 bg-white/80 p-2.5 rounded-lg border border-purple-100">
+                          <strong>Bẫy nhận diện:</strong> {listeningEvaluation.trapAnalysis}
+                        </p>
+                      )}
+                      {listeningEvaluation.recommendedReflex && (
+                        <p className="text-emerald-800 font-medium italic">
+                          💡 <strong>Mẹo phản xạ phòng thi:</strong> {listeningEvaluation.recommendedReflex}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {showDictationFeedback && (
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 animate-in fade-in duration-150">
@@ -1777,14 +1906,79 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                     />
                   </div>
 
-                  <div className="flex justify-end">
+                  <div className="flex items-center justify-between">
                     <button
-                      onClick={() => setShowSpellingResult(true)}
-                      className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                      onClick={() => {
+                        setUserSpellingInput('');
+                        setShowSpellingResult(false);
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs text-slate-600 font-semibold"
                     >
-                      Kiểm Tra Đáp Án
+                      Xóa làm lại
                     </button>
+
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={handleEvaluateCurrentListening}
+                        disabled={isEvaluatingListening || !userSpellingInput.trim()}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-700 to-purple-700 hover:from-indigo-600 hover:to-purple-600 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5"
+                        title="Nhờ AI phân tích lỗi sai chính tả và bẫy phát âm chữ cái"
+                      >
+                        {isEvaluatingListening ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>AI đang phân tích...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>AI Chẩn Đoán Lỗi Đánh Vần</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setShowSpellingResult(true);
+                          const isCorrect = currentSpelling.acceptableAnswers.map(a => a.toLowerCase()).includes(userSpellingInput.trim().toLowerCase());
+                          saveListeningHistory(currentSpelling, isCorrect);
+                        }}
+                        className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition-all active:scale-95"
+                      >
+                        Kiểm Tra Đáp Án
+                      </button>
+                    </div>
                   </div>
+
+                  {/* AI Evaluation Card if available */}
+                  {listeningEvaluation && (
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 text-xs space-y-2 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="text-indigo-950 flex items-center space-x-1.5">
+                          <Sparkles className="w-4 h-4 text-indigo-600" />
+                          <span>AI Chẩn Đoán Chính Tả & Đánh Vần:</span>
+                        </span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                          listeningEvaluation.accuracyScore >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          Độ chính xác: {listeningEvaluation.accuracyScore}%
+                        </span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed">
+                        <strong>Phân tích ký tự & âm thanh:</strong> {listeningEvaluation.phoneticFeedback}
+                      </p>
+                      {listeningEvaluation.trapAnalysis && (
+                        <p className="text-indigo-900 bg-white/80 p-2.5 rounded-lg border border-indigo-100">
+                          <strong>Bẫy âm thanh dễ nhầm:</strong> {listeningEvaluation.trapAnalysis}
+                        </p>
+                      )}
+                      {listeningEvaluation.recommendedReflex && (
+                        <p className="text-emerald-800 font-medium italic">
+                          💡 <strong>Chiến thuật phản xạ:</strong> {listeningEvaluation.recommendedReflex}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {showSpellingResult && (
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
@@ -1862,23 +2056,75 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   </div>
 
                   {showDistractorResult && (
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
-                      <div className="font-bold">
-                        {userDistractorChoice === currentDistractor.correctOption ? (
-                          <span className="text-emerald-700 flex items-center space-x-1">
-                            <CheckCircle2 className="w-4 h-4 inline" />
-                            <span>CHÍNH XÁC! Bạn không bị dính bẫy lật kèo của người nói.</span>
-                          </span>
-                        ) : (
-                          <span className="text-rose-700 flex items-center space-x-1">
-                            <XCircle className="w-4 h-4 inline" />
-                            <span>BẠN ĐÃ DÍNH BẪY! Đáp án đúng cuối cùng là: <strong>{currentDistractor.correctOption}</strong></span>
-                          </span>
-                        )}
+                    <div className="space-y-3 animate-in fade-in duration-150">
+                      <div className="flex justify-end">
+                        <button
+                          onClick={handleEvaluateCurrentListening}
+                          disabled={isEvaluatingListening}
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5"
+                          title="Nhờ AI mổ xẻ bẫy tâm lý và cách người nói thay đổi quyết định"
+                        >
+                          {isEvaluatingListening ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>AI đang phân tích bẫy...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>AI Mổ Xẻ Bẫy Distractor</span>
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <div className="space-y-1 text-slate-600 pt-1 border-t border-slate-200">
-                        <p><strong>Cơ chế bẫy của Cambridge:</strong> {currentDistractor.distractorMechanism}</p>
-                        <p><strong>Giải thích:</strong> {currentDistractor.explanation}</p>
+
+                      {listeningEvaluation && (
+                        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 text-xs space-y-2 animate-in fade-in duration-200">
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="text-amber-950 flex items-center space-x-1.5">
+                              <Sparkles className="w-4 h-4 text-amber-600" />
+                              <span>AI Phân Tích Bẫy Đổi Ý & Gây Nhiễu:</span>
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                              listeningEvaluation.accuracyScore >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                            }`}>
+                              {listeningEvaluation.accuracyScore >= 85 ? '✓ Vượt bẫy thành công' : '✕ Dính bẫy ngụy trang'}
+                            </span>
+                          </div>
+                          <p className="text-slate-700 leading-relaxed">
+                            <strong>Phân tích ngữ cảnh hội thoại:</strong> {listeningEvaluation.phoneticFeedback}
+                          </p>
+                          {listeningEvaluation.trapAnalysis && (
+                            <p className="text-amber-900 bg-white/80 p-2.5 rounded-lg border border-amber-200">
+                              <strong>Cơ chế gài bẫy Cambridge:</strong> {listeningEvaluation.trapAnalysis}
+                            </p>
+                          )}
+                          {listeningEvaluation.recommendedReflex && (
+                            <p className="text-emerald-800 font-medium italic">
+                              💡 <strong>Mẹo cảnh giác phòng thi:</strong> {listeningEvaluation.recommendedReflex}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                        <div className="font-bold">
+                          {userDistractorChoice === currentDistractor.correctOption ? (
+                            <span className="text-emerald-700 flex items-center space-x-1">
+                              <CheckCircle2 className="w-4 h-4 inline" />
+                              <span>CHÍNH XÁC! Bạn không bị dính bẫy lật kèo của người nói.</span>
+                            </span>
+                          ) : (
+                            <span className="text-rose-700 flex items-center space-x-1">
+                              <XCircle className="w-4 h-4 inline" />
+                              <span>BẠN ĐÃ DÍNH BẪY! Đáp án đúng cuối cùng là: <strong>{currentDistractor.correctOption}</strong></span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="space-y-1 text-slate-600 pt-1 border-t border-slate-200">
+                          <p><strong>Cơ chế bẫy của Cambridge:</strong> {currentDistractor.distractorMechanism}</p>
+                          <p><strong>Giải thích:</strong> {currentDistractor.explanation}</p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1945,23 +2191,75 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   </div>
 
                   {showMapResult && (
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
-                      <div className="font-bold">
-                        {userMapChoice === currentMap.correctOption ? (
-                          <span className="text-emerald-700 flex items-center space-x-1">
-                            <CheckCircle2 className="w-4 h-4 inline" />
-                            <span>XUẤT SẮC! Bạn đã xác định chính xác vị trí trên sơ đồ.</span>
-                          </span>
-                        ) : (
-                          <span className="text-rose-700 flex items-center space-x-1">
-                            <XCircle className="w-4 h-4 inline" />
-                            <span>CHƯA ĐÚNG! Vị trí chuẩn là: <strong>{currentMap.correctOption}</strong></span>
-                          </span>
-                        )}
+                    <div className="space-y-3 animate-in fade-in duration-150">
+                      <div className="flex justify-end">
+                        <button
+                          onClick={handleEvaluateCurrentListening}
+                          disabled={isEvaluatingListening}
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5"
+                          title="Nhờ AI giải thích chi tiết mốc tọa độ và bẫy phương hướng"
+                        >
+                          {isEvaluatingListening ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>AI đang phân tích sơ đồ...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>AI Chẩn Đoán Lỗi Bản Đồ</span>
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
-                        <strong>Lộ trình chi tiết:</strong> {currentMap.explanation}
-                      </p>
+
+                      {listeningEvaluation && (
+                        <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 text-xs space-y-2 animate-in fade-in duration-200">
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="text-emerald-950 flex items-center space-x-1.5">
+                              <Sparkles className="w-4 h-4 text-emerald-600" />
+                              <span>AI Phân Tích Định Vị & Lộ Trình Sơ Đồ:</span>
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                              listeningEvaluation.accuracyScore >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                            }`}>
+                              {listeningEvaluation.accuracyScore >= 85 ? '✓ Định vị chính xác' : '✕ Nhầm mốc tọa độ'}
+                            </span>
+                          </div>
+                          <p className="text-slate-700 leading-relaxed">
+                            <strong>Phân tích chỉ dẫn không gian:</strong> {listeningEvaluation.phoneticFeedback}
+                          </p>
+                          {listeningEvaluation.trapAnalysis && (
+                            <p className="text-emerald-900 bg-white/80 p-2.5 rounded-lg border border-emerald-200">
+                              <strong>Mốc bẫy phương hướng:</strong> {listeningEvaluation.trapAnalysis}
+                            </p>
+                          )}
+                          {listeningEvaluation.recommendedReflex && (
+                            <p className="text-teal-800 font-medium italic">
+                              💡 <strong>Mẹo di chuyển bút trên sơ đồ:</strong> {listeningEvaluation.recommendedReflex}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                        <div className="font-bold">
+                          {userMapChoice === currentMap.correctOption ? (
+                            <span className="text-emerald-700 flex items-center space-x-1">
+                              <CheckCircle2 className="w-4 h-4 inline" />
+                              <span>XUẤT SẮC! Bạn đã xác định chính xác vị trí trên sơ đồ.</span>
+                            </span>
+                          ) : (
+                            <span className="text-rose-700 flex items-center space-x-1">
+                              <XCircle className="w-4 h-4 inline" />
+                              <span>CHƯA ĐÚNG! Vị trí chuẩn là: <strong>{currentMap.correctOption}</strong></span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
+                          <strong>Lộ trình chi tiết:</strong> {currentMap.explanation}
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -2027,23 +2325,75 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   </div>
 
                   {showSignResult && (
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
-                      <div className="font-bold">
-                        {userSignChoice === currentSign.correctOption ? (
-                          <span className="text-emerald-700 flex items-center space-x-1">
-                            <CheckCircle2 className="w-4 h-4 inline" />
-                            <span>BẮT TRÚNG TÍN HIỆU! Bạn đã nhận diện chính xác mốc chuyển ý của bài giảng.</span>
-                          </span>
-                        ) : (
-                          <span className="text-rose-700 flex items-center space-x-1">
-                            <XCircle className="w-4 h-4 inline" />
-                            <span>CHƯA CHÍNH XÁC! Tín hiệu chuyển ý chuẩn xác là: <strong>{currentSign.correctOption}</strong></span>
-                          </span>
-                        )}
+                    <div className="space-y-3 animate-in fade-in duration-150">
+                      <div className="flex justify-end">
+                        <button
+                          onClick={handleEvaluateCurrentListening}
+                          disabled={isEvaluatingListening}
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5"
+                          title="Nhờ AI mổ xẻ cấu trúc bài giảng học thuật và tín hiệu chuyển mạch logic"
+                        >
+                          {isEvaluatingListening ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>AI đang phân tích tín hiệu...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>AI Chẩn Đoán Tín Hiệu Part 4</span>
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
-                        <strong>Phân tích chiến thuật:</strong> {currentSign.explanation}
-                      </p>
+
+                      {listeningEvaluation && (
+                        <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 text-xs space-y-2 animate-in fade-in duration-200">
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="text-indigo-950 flex items-center space-x-1.5">
+                              <Sparkles className="w-4 h-4 text-indigo-600" />
+                              <span>AI Phân Tích Mốc Chuyển Ý & Cấu Trúc Diễn Ngôn:</span>
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                              listeningEvaluation.accuracyScore >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                            }`}>
+                              {listeningEvaluation.accuracyScore >= 85 ? '✓ Nhận diện chuẩn xác' : '✕ Bỏ lỡ tín hiệu'}
+                            </span>
+                          </div>
+                          <p className="text-slate-700 leading-relaxed">
+                            <strong>Phân tích văn cảnh bài giảng:</strong> {listeningEvaluation.phoneticFeedback}
+                          </p>
+                          {listeningEvaluation.trapAnalysis && (
+                            <p className="text-indigo-900 bg-white/80 p-2.5 rounded-lg border border-indigo-200">
+                              <strong>Dấu mốc định hướng:</strong> {listeningEvaluation.trapAnalysis}
+                            </p>
+                          )}
+                          {listeningEvaluation.recommendedReflex && (
+                            <p className="text-emerald-800 font-medium italic">
+                              💡 <strong>Phản xạ bắt bài giảng Part 4:</strong> {listeningEvaluation.recommendedReflex}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                        <div className="font-bold">
+                          {userSignChoice === currentSign.correctOption ? (
+                            <span className="text-emerald-700 flex items-center space-x-1">
+                              <CheckCircle2 className="w-4 h-4 inline" />
+                              <span>BẮT TRÚNG TÍN HIỆU! Bạn đã nhận diện chính xác mốc chuyển ý của bài giảng.</span>
+                            </span>
+                          ) : (
+                            <span className="text-rose-700 flex items-center space-x-1">
+                              <XCircle className="w-4 h-4 inline" />
+                              <span>CHƯA CHÍNH XÁC! Tín hiệu chuyển ý chuẩn xác là: <strong>{currentSign.correctOption}</strong></span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
+                          <strong>Phân tích chiến thuật:</strong> {currentSign.explanation}
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
