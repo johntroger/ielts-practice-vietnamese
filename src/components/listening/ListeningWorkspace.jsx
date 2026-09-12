@@ -29,7 +29,9 @@ import { playIELTSSoundcheck, stopIELTSSoundcheck } from '../../utils/soundcheck
 import { useAudioEngine } from '../../hooks/useAudioEngine';
 import { useListeningExam } from '../../hooks/useListeningExam';
 import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
+import { calculateListeningBandScore } from '../../data/listeningTasks';
 import { scoreListeningExam } from '../../utils/listeningScorer';
+import { deleteAudioBlob } from '../../utils/audioStorage';
 
 const SNAPSHOT_KEY_PREFIX = 'ielts_listening_snapshot_';
 const CUSTOM_TESTS_STORAGE_KEY = 'ielts_listening_custom_tests';
@@ -133,12 +135,13 @@ export default function ListeningWorkspace({
     return currentTest.parts?.find(p => p.partNumber === activePart) || currentTest.parts?.[0] || INITIAL_LISTENING_TESTS[0].parts[0];
   }, [currentTest, activePart]);
 
-  // Handler: Add newly generated listening test from URL
+  // Handler: Add newly generated listening test from URL or Upload
   const handleAddCustomTest = (newTest) => {
     setAllListeningTests(prev => {
       const updated = [newTest, ...prev];
       try {
-        const customOnly = updated.filter(t => t.isCustom);
+        // Only persist non-ephemeral tests to localStorage (ephemeral tests are cleaned up after exam)
+        const customOnly = updated.filter(t => t.isCustom && !t.isEphemeral);
         localStorage.setItem(CUSTOM_TESTS_STORAGE_KEY, JSON.stringify(customOnly));
       } catch (e) {}
       return updated;
@@ -307,6 +310,28 @@ export default function ListeningWorkspace({
         submittedAt: scored.submittedAt,
         resultData: scored
       });
+    }
+
+    // AUTO-CLEANUP: If test was generated from local uploaded audio, delete audio blob and test definition to save website storage
+    if (currentTest.isEphemeral || currentTest.isUploadedFile) {
+      const storageIdToDelete = currentTest.audioStorageId;
+      if (storageIdToDelete) {
+        deleteAudioBlob(storageIdToDelete).catch(() => {});
+      }
+      if (currentTest.audioUrl && currentTest.audioUrl.startsWith('blob:')) {
+        try { URL.revokeObjectURL(currentTest.audioUrl); } catch (e) {}
+      }
+      setAllListeningTests(prev => {
+        const updated = prev.filter(t => t.id !== currentTest.id);
+        try {
+          const customOnly = updated.filter(t => t.isCustom && !t.isEphemeral);
+          localStorage.setItem(CUSTOM_TESTS_STORAGE_KEY, JSON.stringify(customOnly));
+        } catch (e) {}
+        return updated;
+      });
+      try {
+        localStorage.removeItem(SNAPSHOT_KEY_PREFIX + currentTest.id);
+      } catch (e) {}
     }
   };
 
@@ -974,9 +999,16 @@ export default function ListeningWorkspace({
       {/* 9. Comprehensive Cambridge Test Report Modal */}
       <ListeningResultModal
         isOpen={isResultModalOpen}
-        onClose={() => setIsResultModalOpen(false)}
+        onClose={() => {
+          setIsResultModalOpen(false);
+          if (!allListeningTests.some(t => t.id === currentTestId)) {
+            const fallbackId = allListeningTests[0]?.id || INITIAL_LISTENING_TESTS[0].id;
+            setCurrentTestId(fallbackId);
+            setActivePart(1);
+          }
+        }}
         bandResult={bandResult}
-        testTitle={currentTest.title}
+        testTitle={currentTest?.title || bandResult?.testTitle}
         onResetExam={() => {
           exam.resetExam();
           audioEngine.seek(0);

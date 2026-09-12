@@ -470,12 +470,17 @@ export default function ListeningURLExerciseGeneratorModal({
         model
       });
 
+      const isFromUploadedFile = Boolean(uploadedAudioInfo);
+
       const fullCustomTest = {
         ...generated,
         id: `custom-listening-${Date.now()}`,
         isCustom: true,
         isSinglePart: true,
         targetPart: selectedPart,
+        isEphemeral: isFromUploadedFile, // Auto-deleted after exam submission to save website storage
+        isUploadedFile: isFromUploadedFile,
+        audioStorageId: uploadedAudioInfo?.storageId || null,
         createdAt: new Date().toISOString()
       };
 
@@ -944,6 +949,14 @@ export default function ListeningURLExerciseGeneratorModal({
                   </button>
                 </div>
               )}
+
+              {/* Storage Saver Notice */}
+              <div className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-[11px] flex items-center space-x-2">
+                <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>
+                  <strong>Chế độ tiết kiệm dung lượng</strong>: Tệp âm thanh và đề thi sẽ tự động được giải phóng bộ nhớ ngay sau khi bạn làm bài xong. Báo cáo kết quả và đánh giá chi tiết vẫn được lưu giữ an toàn.
+                </span>
+              </div>
             </div>
           )}
 
