@@ -35,6 +35,7 @@ import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
 import { evaluateParaphrase, generateMicroDrill } from '../services/geminiService';
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
+import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
 
 export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activeSkill = 'writing' }) {
   if (!isOpen) return null;
@@ -1643,60 +1644,22 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               {/* 1. DICTATION CHÉP CHÍNH TẢ 3 CẤP ĐỘ */}
               {activeTab === 'listening-dictation' && currentDictation && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
-                        {currentDictation.category} • {currentDictation.difficulty}
-                      </span>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                        {currentDictation.title}
-                      </h3>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      {/* Speed selector */}
-                      <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-[11px] font-bold text-slate-600">
-                        <button
-                          type="button"
-                          onClick={() => setDictationSpeed(0.8)}
-                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${dictationSpeed === 0.8 ? 'bg-white text-purple-700 shadow-2xs font-bold' : 'hover:text-slate-900'}`}
-                          title="Tốc độ 0.8x (Chậm)"
-                        >
-                          0.8x
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDictationSpeed(0.95)}
-                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${dictationSpeed === 0.95 ? 'bg-white text-purple-700 shadow-2xs font-bold' : 'hover:text-slate-900'}`}
-                          title="Tốc độ 1.0x (Chuẩn)"
-                        >
-                          1.0x
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDictationSpeed(1.15)}
-                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${dictationSpeed === 1.15 ? 'bg-white text-purple-700 shadow-2xs font-bold' : 'hover:text-slate-900'}`}
-                          title="Tốc độ 1.2x (Nhanh)"
-                        >
-                          1.2x
-                        </button>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handlePlayDrillSpeech(currentDictation.id, currentDictation.ttsText, { rate: dictationSpeed })}
-                        className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
-                          playingDrillAudioId === currentDictation.id
-                            ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
-                            : 'bg-purple-600 hover:bg-purple-500'
-                        }`}
-                        title="Nghe câu tiếng Anh mẫu để chép chính tả"
-                      >
-                        <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentDictation.id ? 'animate-bounce' : ''}`} />
-                        <span>{playingDrillAudioId === currentDictation.id ? 'Đang đọc... (Bấm để dừng)' : 'Phát Audio Mẫu (Anh-Anh)'}</span>
-                      </button>
-                    </div>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
+                      {currentDictation.category} • {currentDictation.difficulty}
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentDictation.title}
+                    </h3>
                   </div>
+
+                  {/* Authentic CD-IELTS Style Audio Player Bar */}
+                  <MicroDrillAudioBar
+                    drillId={currentDictation.id}
+                    audioText={currentDictation.ttsText}
+                    title={`Dictation: ${currentDictation.title}`}
+                    accent="en-GB"
+                  />
 
                   <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-200/80 text-xs text-purple-900 space-y-1">
                     <p className="font-bold flex items-center space-x-1">
@@ -1774,30 +1737,22 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               {/* 2. ĐÁNH VẦN, TÊN RIÊNG & CON SỐ */}
               {activeTab === 'listening-spelling' && currentSpelling && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
-                        {currentSpelling.category} • Dạng {currentSpelling.subType}
-                      </span>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                        {currentSpelling.title}
-                      </h3>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handlePlayDrillSpeech(currentSpelling.id, currentSpelling.promptAudioText, { rate: 0.85 })}
-                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
-                        playingDrillAudioId === currentSpelling.id
-                          ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
-                          : 'bg-indigo-600 hover:bg-indigo-500'
-                      }`}
-                      title="Nghe phát âm hoặc đánh vần từng ký tự/con số"
-                    >
-                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentSpelling.id ? 'animate-bounce' : ''}`} />
-                      <span>{playingDrillAudioId === currentSpelling.id ? 'Đang đọc... (Bấm để dừng)' : 'Nghe Phát Âm / Đánh Vần'}</span>
-                    </button>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
+                      {currentSpelling.category} • Dạng {currentSpelling.subType}
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentSpelling.title}
+                    </h3>
                   </div>
+
+                  {/* Authentic CD-IELTS Style Audio Player Bar */}
+                  <MicroDrillAudioBar
+                    drillId={currentSpelling.id}
+                    audioText={currentSpelling.promptAudioText}
+                    title={`Đánh vần / Số: ${currentSpelling.title}`}
+                    accent="en-GB"
+                  />
 
                   <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
                     <p className="font-bold">Đề bài yêu cầu:</p>
@@ -1857,30 +1812,22 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               {/* 3. PHÁ BẪY DISTRACTORS */}
               {activeTab === 'listening-distractor' && currentDistractor && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
-                        {currentDistractor.category} • Bẫy Distractor
-                      </span>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                        {currentDistractor.title}
-                      </h3>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handlePlayDrillSpeech(currentDistractor.id, currentDistractor.audioSnippetText, { rate: 0.9 })}
-                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
-                        playingDrillAudioId === currentDistractor.id
-                          ? 'bg-red-600 hover:bg-red-500 ring-2 ring-red-400/40 animate-pulse'
-                          : 'bg-amber-600 hover:bg-amber-500'
-                      }`}
-                      title="Nghe đoạn hội thoại mô phỏng bẫy Cambridge"
-                    >
-                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentDistractor.id ? 'animate-bounce' : ''}`} />
-                      <span>{playingDrillAudioId === currentDistractor.id ? 'Đang phát hội thoại... (Dừng)' : 'Nghe Đoạn Hội Thoại Chứa Bẫy'}</span>
-                    </button>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
+                      {currentDistractor.category} • Bẫy Distractor
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentDistractor.title}
+                    </h3>
                   </div>
+
+                  {/* Authentic CD-IELTS Style Audio Player Bar */}
+                  <MicroDrillAudioBar
+                    drillId={currentDistractor.id}
+                    audioText={currentDistractor.audioSnippetText}
+                    title={`Hội thoại bẫy: ${currentDistractor.title}`}
+                    accent="en-GB"
+                  />
 
                   <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-950 space-y-1">
                     <p className="font-bold text-slate-800">Đoạn hội thoại đã gỡ băng:</p>
@@ -1941,30 +1888,22 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               {/* 4. BẢN ĐỒ & ĐỊNH HƯỚNG PHƯƠNG HƯỚNG */}
               {activeTab === 'listening-map' && currentMap && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase">
-                        {currentMap.category} • Map Navigation Trainer
-                      </span>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                        {currentMap.title}
-                      </h3>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handlePlayDrillSpeech(currentMap.id, currentMap.audioDirectionsText, { rate: 0.85 })}
-                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
-                        playingDrillAudioId === currentMap.id
-                          ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
-                          : 'bg-emerald-600 hover:bg-emerald-500'
-                      }`}
-                      title="Nghe chỉ dẫn phương hướng trên sơ đồ"
-                    >
-                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentMap.id ? 'animate-bounce' : ''}`} />
-                      <span>{playingDrillAudioId === currentMap.id ? 'Đang chỉ dẫn... (Bấm để dừng)' : 'Nghe Chỉ Dẫn Phương Hướng'}</span>
-                    </button>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase">
+                      {currentMap.category} • Map Navigation Trainer
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentMap.title}
+                    </h3>
                   </div>
+
+                  {/* Authentic CD-IELTS Style Audio Player Bar */}
+                  <MicroDrillAudioBar
+                    drillId={currentMap.id}
+                    audioText={currentMap.audioDirectionsText}
+                    title={`Chỉ dẫn bản đồ: ${currentMap.title}`}
+                    accent="en-GB"
+                  />
 
                   <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 space-y-1">
                     <p className="font-bold text-slate-800">Lời chỉ dẫn không gian:</p>
@@ -2031,30 +1970,22 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               {/* 5. BẮT TÍN HIỆU CHUYỂN Ý HỌC THUẬT PART 4 */}
               {activeTab === 'listening-signposting' && currentSign && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[11px] font-bold uppercase">
-                        {currentSign.category} • Signposting Catcher
-                      </span>
-                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                        {currentSign.title}
-                      </h3>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handlePlayDrillSpeech(currentSign.id, currentSign.audioSnippetText, { rate: 0.85 })}
-                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
-                        playingDrillAudioId === currentSign.id
-                          ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
-                          : 'bg-indigo-600 hover:bg-indigo-500'
-                      }`}
-                      title="Nghe đoạn bài giảng học thuật để bắt từ nối chuyển ý"
-                    >
-                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentSign.id ? 'animate-bounce' : ''}`} />
-                      <span>{playingDrillAudioId === currentSign.id ? 'Đang đọc bài giảng... (Dừng)' : 'Nghe Bài Giảng Học Thuật'}</span>
-                    </button>
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[11px] font-bold uppercase">
+                      {currentSign.category} • Signposting Catcher
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentSign.title}
+                    </h3>
                   </div>
+
+                  {/* Authentic CD-IELTS Style Audio Player Bar */}
+                  <MicroDrillAudioBar
+                    drillId={currentSign.id}
+                    audioText={currentSign.audioSnippetText}
+                    title={`Bài giảng Part 4: ${currentSign.title}`}
+                    accent="en-GB"
+                  />
 
                   <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
                     <div className="flex items-center justify-between">

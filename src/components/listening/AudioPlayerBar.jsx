@@ -10,7 +10,8 @@ import {
   Sparkles, 
   Headphones,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  CheckCircle2
 } from 'lucide-react';
 
 function formatTime(seconds) {
@@ -137,12 +138,18 @@ export default function AudioPlayerBar({
               <div className={`w-0.5 bg-emerald-400 rounded-full transition-all duration-200 ${isPlaying ? 'h-2 animate-pulse' : 'h-1'}`} style={{ animationDelay: '150ms' }} />
             </div>
 
-            {/* Buffer percent indicator */}
-            {bufferedPercent > 0 && bufferedPercent < 100 && (
-              <span className="hidden lg:inline text-[10px] text-slate-400 font-mono" title="Dung lượng âm thanh đã tải sẵn vào bộ nhớ đệm">
-                Đệm: {bufferedPercent}%
+            {/* Buffer load status indicator */}
+            {isLoading || (bufferedPercent > 0 && bufferedPercent < 90) ? (
+              <span className="px-2 py-0.5 rounded-full bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold flex items-center space-x-1 animate-pulse" title="Đang tải tệp âm thanh vào bộ nhớ đệm">
+                <RefreshCw className="w-2.5 h-2.5 animate-spin" />
+                <span>Đệm: {bufferedPercent}%</span>
               </span>
-            )}
+            ) : duration > 0 ? (
+              <span className="hidden sm:inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] font-bold" title="Tệp âm thanh đã tải xong và sẵn sàng phát">
+                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                <span>Đã load xong</span>
+              </span>
+            ) : null}
           </div>
 
           {/* Center: Exam Mode Badge & Part Quick Selector */}
