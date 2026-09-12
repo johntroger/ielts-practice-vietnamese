@@ -565,6 +565,7 @@ export default function App() {
               onOpenSettings={() => setIsSettingsOpen(true)}
               user={currentUser}
               onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+              onOpenDrills={() => setIsDrillsOpen(true)}
               onListeningSubmitted={(sub) => {
                 setListeningHistory(prev => {
                   const updated = [sub, ...prev];

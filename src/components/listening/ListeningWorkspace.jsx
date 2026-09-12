@@ -16,7 +16,8 @@ import {
   BookOpen,
   Sparkles,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  Puzzle
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
@@ -43,6 +44,7 @@ export default function ListeningWorkspace({
   user,
   onSaveToVocabNotebook,
   onListeningSubmitted,
+  onOpenDrills,
   initialTestId = 'cambridge-18-test-1',
   initialExamMode = 'practice'
 }) {
@@ -494,6 +496,18 @@ export default function ListeningWorkspace({
               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
               <span>Sinh Đề (AI)</span>
             </button>
+
+            {/* Luyện Bổ Trợ Micro-Drills Button */}
+            {onOpenDrills && (
+              <button
+                onClick={onOpenDrills}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs cursor-pointer"
+                title="Mở 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills: Số/Đánh vần, Bẫy nhiễu, Bản đồ, Signposting, Dictation)"
+              >
+                <Puzzle className="w-3.5 h-3.5 text-amber-600" />
+                <span>Luyện Bổ Trợ</span>
+              </button>
+            )}
 
             {/* If Submitted: Result Report Button */}
             {exam.isSubmitted && bandResult && (
@@ -1031,6 +1045,7 @@ export default function ListeningWorkspace({
           audioEngine.seek(timestamp);
           audioEngine.play();
         }}
+        onOpenDrills={onOpenDrills}
       />
 
       {/* 10. Karaoke Interactive Transcript Modal */}

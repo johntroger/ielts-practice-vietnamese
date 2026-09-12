@@ -235,7 +235,13 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="font-bold">Micro-Drills (Luyện Bổ Trợ)</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Tập viết câu đơn, ghép ý, từ nối</div>
+                        <div className="text-[10px] text-slate-400 font-normal">
+                          {activeSkill === 'listening' 
+                            ? 'Dictation, Số & Đánh vần, Bẫy nhiễu, Bản đồ, Signpost' 
+                            : activeSkill === 'reading' 
+                            ? 'Skimming, Scanning, Keyword Matching' 
+                            : 'Tập viết câu đơn, ghép ý, từ nối'}
+                        </div>
                       </div>
                     </button>
 

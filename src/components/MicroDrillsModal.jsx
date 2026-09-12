@@ -49,7 +49,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   // General: 'collocation' | 'context-vocab' | 'sentence-chunking'
   // Writing: 'fill-blanks' | 'true-false' | 'paraphrase' | 'error-spotting'
   // Reading: 'reading-tfng' | 'reading-paraphrase' | 'reading-headings'
-  // Listening: 'listening-dictation' | 'listening-spelling' | 'listening-distractor' | 'listening-map'
+  // Listening: 'listening-dictation' | 'listening-spelling' | 'listening-distractor' | 'listening-map' | 'listening-signposting'
   const [activeTab, setActiveTab] = useState(() => {
     if (activeSkill === 'reading') return 'reading-tfng';
     if (activeSkill === 'listening') return 'listening-dictation';
@@ -165,6 +165,11 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const [userMapChoice, setUserMapChoice] = useState(null);
   const [showMapResult, setShowMapResult] = useState(false);
 
+  const listeningSignDrills = allDrills.filter(d => d.type === 'listening-signposting');
+  const [selectedSignIndex, setSelectedSignIndex] = useState(0);
+  const [userSignChoice, setUserSignChoice] = useState(null);
+  const [showSignResult, setShowSignResult] = useState(false);
+
   // Current items
   const currentFill = fillDrills[selectedFillIndex] || fillDrills[0];
   const currentTf = tfDrills[selectedTfIndex] || tfDrills[0];
@@ -180,6 +185,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const currentSpelling = listeningSpellingDrills[selectedSpellingIndex] || listeningSpellingDrills[0];
   const currentDistractor = listeningDistractorDrills[selectedDistractorIndex] || listeningDistractorDrills[0];
   const currentMap = listeningMapDrills[selectedMapIndex] || listeningMapDrills[0];
+  const currentSign = listeningSignDrills[selectedSignIndex] || listeningSignDrills[0];
 
   // Current active drills list and active index based on activeTab
   const getActiveDrillInfo = () => {
@@ -216,6 +222,8 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         return { list: listeningDistractorDrills, index: selectedDistractorIndex, setIndex: setSelectedDistractorIndex, onReset: () => { setUserDistractorChoice(null); setShowDistractorResult(false); } };
       case 'listening-map':
         return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); } };
+      case 'listening-signposting':
+        return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); } };
       default:
         return { list: [], index: 0, setIndex: () => {}, onReset: () => {} };
     }
@@ -623,6 +631,15 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   >
                     <Compass className="w-3.5 h-3.5 text-emerald-600" />
                     <span>4. Bản Đồ & Hướng Đi ({listeningMapDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('listening-signposting')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'listening-signposting' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Target className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>5. Bắt Tín Hiệu Part 4 ({listeningSignDrills.length})</span>
                   </button>
                 </>
               )}
@@ -1945,6 +1962,97 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                       </div>
                       <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
                         <strong>Lộ trình chi tiết:</strong> {currentMap.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 5. BẮT TÍN HIỆU CHUYỂN Ý HỌC THUẬT PART 4 */}
+              {activeTab === 'listening-signposting' && currentSign && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[11px] font-bold uppercase">
+                        {currentSign.category} • Signposting Catcher
+                      </span>
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                        {currentSign.title}
+                      </h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        try {
+                          const utterance = new SpeechSynthesisUtterance(currentSign.audioSnippetText);
+                          utterance.lang = 'en-GB';
+                          utterance.rate = 0.9;
+                          window.speechSynthesis.speak(utterance);
+                        } catch (e) {}
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      <span>Nghe Bài Giảng Học Thuật</span>
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-800">Trích đoạn bài giảng Part 4:</span>
+                      {currentSign.signpostType && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-200/80 text-indigo-900">
+                          🎯 {currentSign.signpostType}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-slate-700 italic leading-relaxed pt-1">
+                      "{currentSign.audioSnippetText}"
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold text-slate-900">{currentSign.question}</p>
+                    <div className="space-y-2">
+                      {currentSign.options.map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => {
+                            setUserSignChoice(opt.id);
+                            setShowSignResult(true);
+                          }}
+                          className={`w-full p-3 rounded-xl border text-left text-xs font-medium transition-all flex items-start space-x-2.5 cursor-pointer ${
+                            userSignChoice === opt.id 
+                              ? 'bg-indigo-100/80 border-indigo-400 text-indigo-950 ring-2 ring-indigo-400/30 font-bold' 
+                              : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center font-bold text-slate-800 shrink-0 mt-0.5">
+                            {opt.id}
+                          </span>
+                          <span className="flex-1">{opt.text}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {showSignResult && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
+                      <div className="font-bold">
+                        {userSignChoice === currentSign.correctOption ? (
+                          <span className="text-emerald-700 flex items-center space-x-1">
+                            <CheckCircle2 className="w-4 h-4 inline" />
+                            <span>BẮT TRÚNG TÍN HIỆU! Bạn đã nhận diện chính xác mốc chuyển ý của bài giảng.</span>
+                          </span>
+                        ) : (
+                          <span className="text-rose-700 flex items-center space-x-1">
+                            <XCircle className="w-4 h-4 inline" />
+                            <span>CHƯA CHÍNH XÁC! Tín hiệu chuyển ý chuẩn xác là: <strong>{currentSign.correctOption}</strong></span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
+                        <strong>Phân tích chiến thuật:</strong> {currentSign.explanation}
                       </p>
                     </div>
                   )}

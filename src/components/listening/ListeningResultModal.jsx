@@ -39,7 +39,8 @@ export default function ListeningResultModal({
   model = 'gemini-2.5-flash',
   onResetExam,
   onJumpToQuestion,
-  onSeekAudio
+  onSeekAudio,
+  onOpenDrills
 }) {
   if (!isOpen || !bandResult) return null;
 
@@ -774,9 +775,23 @@ export default function ListeningResultModal({
 
                   {/* 4. Recommended Drills (Bài tập bổ trợ thiết thực) */}
                   <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-2xs">
-                    <div className="flex items-center space-x-2">
-                      <Zap className="w-4 h-4 text-amber-500" />
-                      <h4 className="font-bold text-slate-900 text-sm">Bài Tập Bổ Trợ Khuyên Dùng Ngay Hôm Nay</h4>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center space-x-2">
+                        <Zap className="w-4 h-4 text-amber-500" />
+                        <h4 className="font-bold text-slate-900 text-sm">Bài Tập Bổ Trợ Khuyên Dùng Ngay Hôm Nay</h4>
+                      </div>
+                      {onOpenDrills && (
+                        <button
+                          onClick={() => {
+                            onClose();
+                            onOpenDrills();
+                          }}
+                          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
+                          title="Chuyển đến 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills)"
+                        >
+                          <span>🎯 Mở Phòng Micro-Drills Ngay</span>
+                        </button>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
