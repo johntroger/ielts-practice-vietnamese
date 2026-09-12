@@ -1592,6 +1592,77 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown):
 }
 
 /**
+ * Robust JSON Extractor & Sanitizer for Gemini Responses
+ * Prevents "Unterminated string in JSON" by stripping code fences,
+ * fixing unescaped newlines/tabs inside strings, and extracting JSON block.
+ */
+export function robustJsonParse(rawText, fallback = null) {
+  if (!rawText || typeof rawText !== 'string') return fallback;
+
+  // 1. Remove markdown code fences and extraneous leading/trailing whitespace
+  let clean = rawText
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  // 2. Extract JSON boundary if model returned chat commentary before or after
+  const firstBrace = clean.indexOf('{');
+  const firstBracket = clean.indexOf('[');
+  let startIdx = -1;
+  let isArray = false;
+
+  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+    startIdx = firstBrace;
+    isArray = false;
+  } else if (firstBracket !== -1) {
+    startIdx = firstBracket;
+    isArray = true;
+  }
+
+  if (startIdx !== -1) {
+    const endChar = isArray ? ']' : '}';
+    const lastIdx = clean.lastIndexOf(endChar);
+    if (lastIdx > startIdx) {
+      clean = clean.substring(startIdx, lastIdx + 1);
+    }
+  }
+
+  // 3. First attempt direct parse
+  try {
+    return JSON.parse(clean);
+  } catch (err1) {
+    // 4. Try sanitizing unescaped newlines and control characters inside double quotes
+    try {
+      let inString = false;
+      let escaped = false;
+      let fixed = '';
+      for (let i = 0; i < clean.length; i++) {
+        const ch = clean[i];
+        if (ch === '"' && !escaped) {
+          inString = !inString;
+          fixed += ch;
+        } else if (inString && ch === '\n') {
+          fixed += '\\n';
+        } else if (inString && ch === '\r') {
+          fixed += '\\r';
+        } else if (inString && ch === '\t') {
+          fixed += '\\t';
+        } else {
+          fixed += ch;
+        }
+        escaped = (ch === '\\' && !escaped);
+      }
+      return JSON.parse(fixed);
+    } catch (err2) {
+      console.warn('robustJsonParse fallback parsing due to error:', err2.message);
+      if (fallback !== null) return fallback;
+      throw new Error('Dữ liệu AI trả về bị ngắt quãng hoặc không đúng định dạng JSON. Vui lòng thử lại.');
+    }
+  }
+}
+
+/**
  * AI Audio & Part Suitability Analyzer
  * Analyzes audio context/URL and suggests the best matching IELTS Listening Part(s)
  */
@@ -1642,7 +1713,8 @@ Return ONLY pure JSON (no markdown formatting, no code fence):
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.2,
-        maxOutputTokens: 1024
+        maxOutputTokens: 1024,
+        responseMimeType: 'application/json'
       }
     }
   });
@@ -1654,8 +1726,7 @@ Return ONLY pure JSON (no markdown formatting, no code fence):
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  return JSON.parse(clean);
+  return robustJsonParse(text, { primaryPart: 1, suggestedParts: [1], reasoning: '' });
 }
 
 /**
@@ -1730,7 +1801,8 @@ Return ONLY pure JSON (no markdown formatting, no backticks, no wrapping text) w
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2500
+        maxOutputTokens: 2500,
+        responseMimeType: 'application/json'
       }
     }
   });
@@ -1742,9 +1814,8 @@ Return ONLY pure JSON (no markdown formatting, no backticks, no wrapping text) w
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{"sources":[]}';
-  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  const parsed = JSON.parse(clean);
-  const rawSources = Array.isArray(parsed.sources) ? parsed.sources : [];
+  const parsed = robustJsonParse(text, { sources: [] });
+  const rawSources = Array.isArray(parsed?.sources) ? parsed.sources : [];
 
   return rawSources.map((s, idx) => ({
     ...s,
@@ -1908,7 +1979,8 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no commentary) adh
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { 
         temperature: 0.2,
-        maxOutputTokens: 5000
+        maxOutputTokens: 5000,
+        responseMimeType: 'application/json'
       }
     }
   });
@@ -1920,8 +1992,10 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no commentary) adh
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  const parsed = JSON.parse(clean);
+  const parsed = robustJsonParse(text, null);
+  if (!parsed || !parsed.parts) {
+    throw new Error('Dữ liệu bài thi AI trả về bị ngắt quãng hoặc không đúng định dạng. Vui lòng thử lại một lần nữa.');
+  }
 
   // Enforce consistent metadata
   parsed.isSinglePart = true;
