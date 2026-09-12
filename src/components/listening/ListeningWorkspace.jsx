@@ -2,7 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Headphones, 
   Volume2, 
+  VolumeX,
   Play, 
+  Square,
   RotateCcw, 
   CheckCircle2, 
   Clock, 
@@ -23,6 +25,7 @@ import ListeningResultModal from './ListeningResultModal';
 import ListeningTranscriptModal from './ListeningTranscriptModal';
 import ListeningLibraryModal from './ListeningLibraryModal';
 import ListeningURLExerciseGeneratorModal from './ListeningURLExerciseGeneratorModal';
+import { playIELTSSoundcheck, stopIELTSSoundcheck } from '../../utils/soundcheckAudio';
 import { useAudioEngine } from '../../hooks/useAudioEngine';
 import { useListeningExam } from '../../hooks/useListeningExam';
 import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
@@ -65,6 +68,39 @@ export default function ListeningWorkspace({
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+
+  // Soundcheck State & Controls
+  const [isSoundchecking, setIsSoundchecking] = useState(false);
+  const [soundcheckVolume, setSoundcheckVolume] = useState(1.0);
+
+  // Stop soundcheck if modal closes
+  useEffect(() => {
+    if (!isSoundcheckOpen) {
+      stopIELTSSoundcheck();
+      setIsSoundchecking(false);
+    }
+  }, [isSoundcheckOpen]);
+
+  // Soundcheck Handlers
+  const handlePlaySoundcheck = () => {
+    setIsSoundchecking(true);
+    playIELTSSoundcheck({
+      volume: soundcheckVolume,
+      onStart: () => setIsSoundchecking(true),
+      onEnd: () => setIsSoundchecking(false)
+    });
+  };
+
+  const handleStopSoundcheck = () => {
+    stopIELTSSoundcheck();
+    setIsSoundchecking(false);
+  };
+
+  const handleSoundcheckVolumeChange = (newVol) => {
+    const vol = parseFloat(newVol);
+    setSoundcheckVolume(vol);
+    audioEngine.changeVolume(vol);
+  };
 
   // Band Score Result State
   const [bandResult, setBandResult] = useState(() => {
@@ -725,41 +761,152 @@ export default function ListeningWorkspace({
         />
       )}
 
-      {/* 7. Soundcheck Modal */}
+      {/* 7. Enhanced CD-IELTS Soundcheck Modal */}
       {isSoundcheckOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <Volume2 className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-xs">
+                  <Volume2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="font-black text-slate-900 text-base">Kiểm Tra Âm Thanh (Soundcheck)</h3>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                      CD-IELTS
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">Kiểm tra tai nghe & độ to rõ trước khi bắt đầu bài thi</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-base">Kiểm Tra Âm Thanh (Soundcheck)</h3>
-                <p className="text-xs text-slate-500">Đảm bảo bạn nghe rõ tiếng trước khi làm bài</p>
+              <button
+                type="button"
+                onClick={() => {
+                  handleStopSoundcheck();
+                  setIsSoundcheckOpen(false);
+                }}
+                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                title="Đóng cửa sổ"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Sound Wave Indicator & State Banner */}
+            <div className={`p-4 rounded-xl border mb-4 text-center transition-all ${
+              isSoundchecking 
+                ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-200 shadow-inner' 
+                : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center justify-center space-x-1 mb-2">
+                <div className={`w-1 rounded-full transition-all ${isSoundchecking ? 'bg-emerald-500 h-5 animate-pulse' : 'bg-slate-300 h-2'}`} />
+                <div className={`w-1 rounded-full transition-all ${isSoundchecking ? 'bg-emerald-500 h-7 animate-bounce' : 'bg-slate-300 h-2'}`} style={{ animationDelay: '100ms' }} />
+                <div className={`w-1 rounded-full transition-all ${isSoundchecking ? 'bg-emerald-500 h-4 animate-pulse' : 'bg-slate-300 h-2'}`} style={{ animationDelay: '200ms' }} />
+                <div className={`w-1 rounded-full transition-all ${isSoundchecking ? 'bg-emerald-500 h-6 animate-bounce' : 'bg-slate-300 h-2'}`} style={{ animationDelay: '300ms' }} />
+                <div className={`w-1 rounded-full transition-all ${isSoundchecking ? 'bg-emerald-500 h-3 animate-pulse' : 'bg-slate-300 h-2'}`} style={{ animationDelay: '150ms' }} />
+              </div>
+              <p className={`text-xs font-bold ${isSoundchecking ? 'text-emerald-800' : 'text-slate-700'}`}>
+                {isSoundchecking 
+                  ? '🔔 Đang phát chuông Harmonic Chime & Giọng đọc kiểm tra IELTS...' 
+                  : 'Bấm nút "Phát Chuông & Giọng Mẫu" bên dưới để kiểm tra loa / tai nghe.'}
+              </p>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Âm thanh được phát tức thì qua Web Audio API 100% không lo lỗi mạng.
+              </p>
+            </div>
+
+            {/* Volume Slider Section */}
+            <div className="bg-white rounded-xl border border-slate-200 p-3.5 mb-4 shadow-xs">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-2">
+                <span className="flex items-center space-x-1.5">
+                  {soundcheckVolume === 0 ? (
+                    <VolumeX className="w-4 h-4 text-rose-500" />
+                  ) : (
+                    <Volume2 className="w-4 h-4 text-emerald-600" />
+                  )}
+                  <span>Điều chỉnh âm lượng tai nghe:</span>
+                </span>
+                <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-xs">
+                  {Math.round(soundcheckVolume * 100)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={soundcheckVolume}
+                onChange={(e) => handleSoundcheckVolumeChange(e.target.value)}
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+              />
+              <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                <span>0% (Tắt tiếng)</span>
+                <span>50% (Vừa)</span>
+                <span>100% (Tối đa)</span>
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
-              Bạn có thể nghe thử một đoạn âm thanh ngắn để kiểm tra độ to rõ của tai nghe hoặc loa ngoài. Hãy điều chỉnh thanh âm lượng cho vừa tai trước khi nhấn bắt đầu.
-            </p>
+            {/* Checklist */}
+            <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 mb-5 text-[11px] text-slate-600 space-y-1.5">
+              <div className="flex items-start space-x-2">
+                <span className="text-emerald-600 font-bold">✓</span>
+                <span>Hãy đeo tai nghe và kiểm tra xem cả hai bên tai có nghe rõ và đều nhau không.</span>
+              </div>
+              <div className="flex items-start space-x-2">
+                <span className="text-emerald-600 font-bold">✓</span>
+                <span>Sau khi bắt đầu bài thi thật, âm thanh sẽ phát liên tục suốt 4 Parts.</span>
+              </div>
+            </div>
 
-            <div className="flex items-center justify-end space-x-2">
-              <button
-                onClick={() => setIsSoundcheckOpen(false)}
-                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Đóng
-              </button>
-              <button
-                onClick={() => {
-                  audioEngine.play();
-                  setIsSoundcheckOpen(false);
-                }}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
-              >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Phát Nghe Thử</span>
-              </button>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5">
+              {/* Play / Stop Soundcheck Button */}
+              {isSoundchecking ? (
+                <button
+                  type="button"
+                  onClick={handleStopSoundcheck}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <Square className="w-3.5 h-3.5 fill-current" />
+                  <span>Dừng Âm Thanh</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handlePlaySoundcheck}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-95"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  <span>Phát Chuông & Giọng Mẫu</span>
+                </button>
+              )}
+
+              {/* Confirm / Ready Button */}
+              <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleStopSoundcheck();
+                    setIsSoundcheckOpen(false);
+                  }}
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  Đóng
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleStopSoundcheck();
+                    setIsSoundcheckOpen(false);
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Tôi Đã Nghe Rõ</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
