@@ -226,8 +226,21 @@ export default function ListeningURLExerciseGeneratorModal({
     }
   };
 
-  // Select a source
+  // Select or Deselect a source (Toggle)
   const handleApplySource = (src, forcedPart = null) => {
+    if (audioUrl === src.audioUrl) {
+      // User clicked the already selected source -> Deselect and clear!
+      setAudioUrl('');
+      setFallbackAudioUrl('');
+      setTestTitle('');
+      setTopicDescription('');
+      setTranscriptText('');
+      setAudioTestStatus(null);
+      setAnalysisResult(null);
+      setErrorMessage('');
+      return;
+    }
+
     setAudioUrl(src.audioUrl);
     setFallbackAudioUrl(src.fallbackAudioUrl || '');
     setTestTitle(src.title);
@@ -769,20 +782,23 @@ export default function ListeningURLExerciseGeneratorModal({
                             )}
                           </button>
 
-                          {/* Select & Apply Button */}
+                          {/* Select & Apply Button (Toggle Select / Deselect) */}
                           <button
                             type="button"
                             onClick={() => handleApplySource(src)}
-                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
+                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer group/btn ${
                               isSelectedSource
-                                ? 'bg-purple-600 text-white shadow-xs'
+                                ? 'bg-purple-600 hover:bg-rose-600 text-white shadow-xs'
                                 : 'bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200'
                             }`}
+                            title={isSelectedSource ? 'Nhấn để BỎ CHỌN nguồn này' : 'Nhấn để CHỌN nguồn này'}
                           >
                             {isSelectedSource ? (
                               <>
-                                <Check className="w-3.5 h-3.5" />
-                                <span>Đã Chọn Nguồn Này</span>
+                                <Check className="w-3.5 h-3.5 group-hover/btn:hidden" />
+                                <X className="w-3.5 h-3.5 hidden group-hover/btn:inline" />
+                                <span className="group-hover/btn:hidden">Đã Chọn Nguồn Này</span>
+                                <span className="hidden group-hover/btn:inline">Bỏ Chọn</span>
                               </>
                             ) : (
                               <>
