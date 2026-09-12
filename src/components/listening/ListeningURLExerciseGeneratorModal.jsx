@@ -19,8 +19,11 @@ import {
   Radio,
   SlidersHorizontal,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  UploadCloud,
+  FolderOpen
 } from 'lucide-react';
+import { saveAudioBlob } from '../../utils/audioStorage';
 import { 
   generateListeningTestFromAudio, 
   analyzeAudioAndSuggestParts,
@@ -68,6 +71,10 @@ export default function ListeningURLExerciseGeneratorModal({
   const [previewingId, setPreviewingId] = useState(null);
   const previewAudioRef = useRef(null);
   const cardsGridRef = useRef(null);
+
+  // Uploaded Local File State
+  const [uploadedAudioInfo, setUploadedAudioInfo] = useState(null); // { name, sizeMB, objectUrl, base64, mimeType, storageId }
+  const fileInputRef = useRef(null);
 
   // Custom URL AI Analysis state
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -280,6 +287,80 @@ export default function ListeningURLExerciseGeneratorModal({
     });
   };
 
+  // Handle Uploading Local Audio File (.mp3, .m4a, .wav)
+  const handleAudioFileUpload = async (file) => {
+    if (!file) return;
+    setErrorMessage('');
+
+    const validTypes = ['audio/mp3', 'audio/mpeg', 'audio/m4a', 'audio/x-m4a', 'audio/wav', 'audio/ogg'];
+    const ext = file.name.split('.').pop().toLowerCase();
+    const isValidExt = ['mp3', 'm4a', 'wav', 'ogg'].includes(ext);
+
+    if (!validTypes.includes(file.type) && !isValidExt) {
+      setErrorMessage('Định dạng tệp không được hỗ trợ. Vui lòng chọn tệp .mp3, .m4a, .wav hoặc .ogg.');
+      return;
+    }
+
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    if (file.size > 30 * 1024 * 1024) {
+      setErrorMessage('Tệp âm thanh quá lớn (tối đa 30MB). Vui lòng nén hoặc chọn file nhẹ hơn.');
+      return;
+    }
+
+    try {
+      const storageId = `local-audio-${Date.now()}`;
+      await saveAudioBlob(storageId, file, { name: file.name });
+      const objUrl = URL.createObjectURL(file);
+
+      // Convert to base64 if <= 20MB for Gemini direct multimodal audio input
+      let base64 = null;
+      if (file.size <= 20 * 1024 * 1024) {
+        base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const res = reader.result;
+            const base64Data = typeof res === 'string' ? res.split(',')[1] : null;
+            resolve(base64Data);
+          };
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      setUploadedAudioInfo({
+        name: file.name,
+        sizeMB,
+        objectUrl: objUrl,
+        base64,
+        mimeType: file.type || 'audio/mpeg',
+        storageId
+      });
+
+      setAudioUrl(objUrl);
+      setSelectedSource(null);
+      setAudioTestStatus('valid');
+
+      // Auto-set title from filename
+      const rawName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+      setTestTitle(`${rawName} (Part ${selectedPart})`);
+      setTopicDescription(`File ghi âm bản xứ: ${file.name}`);
+    } catch (err) {
+      console.error('Error handling local audio upload:', err);
+      setErrorMessage('Không thể đọc file âm thanh từ máy tính. Vui lòng thử lại.');
+    }
+  };
+
+  const handleClearUploadedAudio = () => {
+    if (uploadedAudioInfo?.objectUrl) {
+      try { URL.revokeObjectURL(uploadedAudioInfo.objectUrl); } catch (e) {}
+    }
+    setUploadedAudioInfo(null);
+    setAudioUrl('');
+    setTestTitle('');
+    setTopicDescription('');
+    setAudioTestStatus(null);
+  };
+
   // Switch part selection for current source
   const handleSwitchPart = (pNum) => {
     setSelectedPart(pNum);
@@ -379,6 +460,8 @@ export default function ListeningURLExerciseGeneratorModal({
       const generated = await generateListeningTestFromAudio({
         audioUrl: audioUrl.trim(),
         fallbackAudioUrl: fallbackAudioUrl.trim(),
+        audioBase64: uploadedAudioInfo?.base64 || null,
+        audioMimeType: uploadedAudioInfo?.mimeType || 'audio/mp3',
         testTitle: testTitle.trim() || `IELTS Listening Part ${selectedPart} Practice`,
         topicDescription: topicDescription.trim(),
         transcriptText: transcriptText.trim(),
@@ -500,7 +583,18 @@ export default function ListeningURLExerciseGeneratorModal({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🔗 Nhập Link URL Tự Có
+                🔗 Nhập Link URL
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('upload')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'upload'
+                    ? 'bg-white text-purple-800 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                📁 Tải File Từ Máy Tính
               </button>
             </div>
 
@@ -771,6 +865,85 @@ export default function ListeningURLExerciseGeneratorModal({
                   <span>AI Phân Tích Part</span>
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* TAB CONTENT 3: UPLOAD AUDIO FILE FROM COMPUTER */}
+          {activeTab === 'upload' && (
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+              <div
+                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const file = e.dataTransfer.files?.[0];
+                  if (file) handleAudioFileUpload(file);
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed border-purple-300 hover:border-purple-500 bg-white rounded-xl p-5 text-center cursor-pointer transition-all hover:bg-purple-50/20 flex flex-col items-center justify-center space-y-2"
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleAudioFileUpload(file);
+                  }}
+                  accept="audio/mp3,audio/mpeg,audio/m4a,audio/x-m4a,audio/wav,audio/ogg"
+                  className="hidden"
+                />
+
+                <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-xs">
+                  <UploadCloud className="w-5 h-5" />
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold text-slate-800">
+                    Kéo thả file âm thanh vào đây hoặc <span className="text-purple-600 underline font-extrabold">chọn từ máy tính</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    Hỗ trợ file .mp3, .m4a, .wav, .ogg (Tối đa 25MB). AI tự động nghe trực tiếp file!
+                  </p>
+                </div>
+              </div>
+
+              {/* Uploaded File Indicator Card */}
+              {uploadedAudioInfo && (
+                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center justify-between gap-2.5 animate-in fade-in">
+                  <div className="flex items-center space-x-2 min-w-0 flex-1">
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePreview('local-upload', uploadedAudioInfo.objectUrl)}
+                      className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 cursor-pointer shadow-xs"
+                      title={previewingId === 'local-upload' ? 'Dừng nghe thử' : 'Nghe thử âm thanh'}
+                    >
+                      {previewingId === 'local-upload' ? <Pause className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="font-bold text-slate-900 text-xs truncate max-w-[280px]">
+                          {uploadedAudioInfo.name}
+                        </span>
+                        <span className="text-[10px] text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded font-mono font-bold">
+                          {uploadedAudioInfo.sizeMB} MB
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-emerald-700 font-semibold">
+                        ✓ Đã lưu trữ an toàn • AI sẽ nghe trực tiếp file này để sinh đề
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleClearUploadedAudio}
+                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 cursor-pointer"
+                    title="Xóa tệp này"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

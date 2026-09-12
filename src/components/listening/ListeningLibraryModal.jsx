@@ -14,8 +14,16 @@ import {
   Globe,
   Lock,
   Volume2,
-  Bookmark
+  Bookmark,
+  Puzzle,
+  Dices,
+  ChevronRight
 } from 'lucide-react';
+import { 
+  extractListeningPartBank, 
+  assembleFullListeningTest, 
+  createRandomFullListeningTest 
+} from '../../utils/listeningTestAssembler';
 
 export default function ListeningLibraryModal({
   isOpen,
@@ -24,13 +32,87 @@ export default function ListeningLibraryModal({
   currentTestId,
   onSelectTest,
   onDeleteTest,
+  onAddCustomTest,
   onOpenGenerator,
   user
 }) {
   if (!isOpen) return null;
 
-  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'community'
+  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'assembled' | 'part1' | 'part2' | 'part3' | 'part4'
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Exam Assembler States
+  const [isAssemblerOpen, setIsAssemblerOpen] = useState(false);
+  const [selectedP1Key, setSelectedP1Key] = useState('');
+  const [selectedP2Key, setSelectedP2Key] = useState('');
+  const [selectedP3Key, setSelectedP3Key] = useState('');
+  const [selectedP4Key, setSelectedP4Key] = useState('');
+  const [assembledTitle, setAssembledTitle] = useState('');
+  const [assemblerError, setAssemblerError] = useState('');
+
+  // Bank of available Parts across all tests
+  const partBank = useMemo(() => {
+    return extractListeningPartBank(allListeningTests);
+  }, [allListeningTests]);
+
+  const p1List = useMemo(() => partBank.filter(p => p.partNumber === 1), [partBank]);
+  const p2List = useMemo(() => partBank.filter(p => p.partNumber === 2), [partBank]);
+  const p3List = useMemo(() => partBank.filter(p => p.partNumber === 3), [partBank]);
+  const p4List = useMemo(() => partBank.filter(p => p.partNumber === 4), [partBank]);
+
+  // Handlers for Assembler
+  const handleManualAssemble = () => {
+    setAssemblerError('');
+    if (!selectedP1Key || !selectedP2Key || !selectedP3Key || !selectedP4Key) {
+      setAssemblerError('Vui lòng chọn đủ 4 phần (Part 1, Part 2, Part 3, Part 4) để ghép đề hoàn chỉnh.');
+      return;
+    }
+
+    const b1 = partBank.find(p => p.partKey === selectedP1Key);
+    const b2 = partBank.find(p => p.partKey === selectedP2Key);
+    const b3 = partBank.find(p => p.partKey === selectedP3Key);
+    const b4 = partBank.find(p => p.partKey === selectedP4Key);
+
+    const assembled = assembleFullListeningTest({
+      builderP1: b1,
+      builderP2: b2,
+      builderP3: b3,
+      builderP4: b4,
+      customTitle: assembledTitle,
+      userEmail: user?.email
+    });
+
+    if (assembled) {
+      if (onAddCustomTest) {
+        onAddCustomTest(assembled);
+      } else {
+        onSelectTest(assembled);
+      }
+      setIsAssemblerOpen(false);
+      onClose();
+    }
+  };
+
+  const handleRandomAssemble = () => {
+    setAssemblerError('');
+    const randomTest = createRandomFullListeningTest({
+      allListeningTests,
+      userEmail: user?.email
+    });
+
+    if (!randomTest) {
+      setAssemblerError('Không đủ dữ liệu Part để ghép ngẫu nhiên. Cần tối thiểu ít nhất 1 bài cho mỗi Part (1, 2, 3, 4).');
+      return;
+    }
+
+    if (onAddCustomTest) {
+      onAddCustomTest(randomTest);
+    } else {
+      onSelectTest(randomTest);
+    }
+    setIsAssemblerOpen(false);
+    onClose();
+  };
 
   const filteredTests = useMemo(() => {
     return allListeningTests.filter(test => {
@@ -39,7 +121,9 @@ export default function ListeningLibraryModal({
       if (activeTab === 'cambridge') {
         matchesTab = !test.isCustom;
       } else if (activeTab === 'ai') {
-        matchesTab = Boolean(test.isCustom);
+        matchesTab = Boolean(test.isCustom) && !test.isAssembled;
+      } else if (activeTab === 'assembled') {
+        matchesTab = Boolean(test.isAssembled);
       } else if (activeTab === 'part1') {
         matchesTab = test.targetPart === 1 || test.parts?.[0]?.partNumber === 1;
       } else if (activeTab === 'part2') {
@@ -68,7 +152,8 @@ export default function ListeningLibraryModal({
   const stats = {
     total: allListeningTests.length,
     cambridge: allListeningTests.filter(t => !t.isCustom).length,
-    ai: allListeningTests.filter(t => t.isCustom).length,
+    ai: allListeningTests.filter(t => t.isCustom && !t.isAssembled).length,
+    assembled: allListeningTests.filter(t => t.isAssembled).length,
     p1: allListeningTests.filter(t => t.targetPart === 1 || t.parts?.[0]?.partNumber === 1).length,
     p2: allListeningTests.filter(t => t.targetPart === 2 || t.parts?.[0]?.partNumber === 2).length,
     p3: allListeningTests.filter(t => t.targetPart === 3 || t.parts?.[0]?.partNumber === 3).length,
@@ -130,6 +215,14 @@ export default function ListeningLibraryModal({
               📚 Cambridge ({stats.cambridge})
             </button>
             <button
+              onClick={() => setActiveTab('assembled')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'assembled' ? 'bg-white text-purple-900 shadow-2xs font-black' : 'hover:text-slate-900'
+              }`}
+            >
+              🧩 Đã Ghép ({stats.assembled})
+            </button>
+            <button
               onClick={() => setActiveTab('part1')}
               className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
                 activeTab === 'part1' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'hover:text-slate-900'
@@ -176,6 +269,30 @@ export default function ListeningLibraryModal({
               />
             </div>
 
+            {/* 1-Click Auto Random Mix */}
+            <button
+              onClick={handleRandomAssemble}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs transition-all cursor-pointer shrink-0 shadow-2xs"
+              title="Tự động chọn ngẫu nhiên 4 Part để tạo 1 đề thi thử Full 40 câu hoàn chỉnh"
+            >
+              <Dices className="w-3.5 h-3.5 text-amber-600" />
+              <span className="hidden sm:inline">🎲 Ghép Nhanh 1 Đề</span>
+            </button>
+
+            {/* Manual Assembler Toggle */}
+            <button
+              onClick={() => setIsAssemblerOpen(!isAssemblerOpen)}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer shrink-0 shadow-2xs ${
+                isAssemblerOpen 
+                  ? 'bg-purple-700 text-white' 
+                  : 'bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200'
+              }`}
+              title="Tự chọn 4 Part từ ngân hàng đề để lắp ráp thành 1 đề thi 40 câu"
+            >
+              <Puzzle className="w-3.5 h-3.5 text-purple-600" />
+              <span>🧩 Ghép Đề 4 Part</span>
+            </button>
+
             {onOpenGenerator && (
               <button
                 onClick={() => {
@@ -185,13 +302,146 @@ export default function ListeningLibraryModal({
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Sinh Đề Từ URL</span>
+                <span className="hidden sm:inline">Sinh Đề Mới</span>
                 <span className="sm:hidden">Tạo Đề</span>
               </button>
             )}
           </div>
 
         </div>
+
+        {/* EXAM ASSEMBLER PANEL IF OPEN */}
+        {isAssemblerOpen && (
+          <div className="px-5 py-3.5 bg-gradient-to-r from-purple-50/90 to-indigo-50/90 border-b border-purple-200 animate-in fade-in space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Puzzle className="w-4 h-4 text-purple-700" />
+                <h4 className="text-xs font-black text-purple-950 uppercase tracking-wide">
+                  Lắp Ghép Đề Thi Full 4 Parts (40 Câu • ~32 Phút)
+                </h4>
+              </div>
+              <span className="text-[11px] text-purple-700 font-medium">
+                Chọn 1 bài cho mỗi Part từ ngân hàng đề của bạn:
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              {/* Part 1 Selector */}
+              <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                  <span>Part 1 (Hội thoại)</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p1List.length} bài</span>
+                </label>
+                <select
+                  value={selectedP1Key}
+                  onChange={(e) => setSelectedP1Key(e.target.value)}
+                  className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
+                >
+                  <option value="">-- Chọn bài Part 1 --</option>
+                  {p1List.map(p => (
+                    <option key={p.partKey} value={p.partKey}>
+                      {p.part.title || p.testTitle}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Part 2 Selector */}
+              <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                  <span>Part 2 (Độc thoại)</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p2List.length} bài</span>
+                </label>
+                <select
+                  value={selectedP2Key}
+                  onChange={(e) => setSelectedP2Key(e.target.value)}
+                  className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
+                >
+                  <option value="">-- Chọn bài Part 2 --</option>
+                  {p2List.map(p => (
+                    <option key={p.partKey} value={p.partKey}>
+                      {p.part.title || p.testTitle}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Part 3 Selector */}
+              <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                  <span>Part 3 (Thảo luận)</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p3List.length} bài</span>
+                </label>
+                <select
+                  value={selectedP3Key}
+                  onChange={(e) => setSelectedP3Key(e.target.value)}
+                  className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
+                >
+                  <option value="">-- Chọn bài Part 3 --</option>
+                  {p3List.map(p => (
+                    <option key={p.partKey} value={p.partKey}>
+                      {p.part.title || p.testTitle}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Part 4 Selector */}
+              <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
+                <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                  <span>Part 4 (Bài giảng)</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p4List.length} bài</span>
+                </label>
+                <select
+                  value={selectedP4Key}
+                  onChange={(e) => setSelectedP4Key(e.target.value)}
+                  className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
+                >
+                  <option value="">-- Chọn bài Part 4 --</option>
+                  {p4List.map(p => (
+                    <option key={p.partKey} value={p.partKey}>
+                      {p.part.title || p.testTitle}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Custom title & Confirm Button */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
+              <input
+                type="text"
+                placeholder="Tên đề thi tùy chỉnh (Ví dụ: Cambridge Practice Full Test 01)..."
+                value={assembledTitle}
+                onChange={(e) => setAssembledTitle(e.target.value)}
+                className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-purple-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-500"
+              />
+
+              <div className="flex items-center space-x-2 shrink-0">
+                <button
+                  onClick={() => setIsAssemblerOpen(false)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={handleManualAssemble}
+                  disabled={!selectedP1Key || !selectedP2Key || !selectedP3Key || !selectedP4Key}
+                  className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center space-x-1"
+                >
+                  <span>Hoàn Tất Ghép Đề (40 Câu)</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {assemblerError && (
+              <p className="text-[11px] font-bold text-rose-600 animate-in fade-in">
+                ⚠️ {assemblerError}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Tests List Grid */}
         <div className="flex-1 overflow-y-auto p-5 bg-slate-50/50">

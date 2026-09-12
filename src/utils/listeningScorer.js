@@ -82,6 +82,81 @@ function checkStemRepetition(userNorm, targetNorm, prefixText = '', suffixText =
 /**
  * Detailed diagnostic per question
  */
+
+/**
+ * Month mappings for flexible date normalization
+ */
+const MONTH_MAP = {
+  jan: 'january', 'jan.': 'january', january: 'january',
+  feb: 'february', 'feb.': 'february', february: 'february',
+  mar: 'march', 'mar.': 'march', march: 'march',
+  apr: 'april', 'apr.': 'april', april: 'april',
+  may: 'may',
+  jun: 'june', 'jun.': 'june', june: 'june',
+  jul: 'july', 'jul.': 'july', july: 'july',
+  aug: 'august', 'aug.': 'august', august: 'august',
+  sep: 'september', sept: 'september', 'sept.': 'september', september: 'september',
+  oct: 'october', 'oct.': 'october', october: 'october',
+  nov: 'november', 'nov.': 'november', november: 'november',
+  dec: 'december', 'dec.': 'december', december: 'december'
+};
+
+const NUMBER_WORDS_MAP = {
+  zero: '0', one: '1', two: '2', three: '3', four: '4', five: '5',
+  six: '6', seven: '7', eight: '8', nine: '9', ten: '10',
+  eleven: '11', twelve: '12', thirteen: '13', fourteen: '14', fifteen: '15',
+  sixteen: '16', seventeen: '17', eighteen: '18', nineteen: '19', twenty: '20',
+  thirty: '30', forty: '40', fifty: '50', sixty: '60', seventy: '70',
+  eighty: '80', ninety: '90', hundred: '100', thousand: '1000'
+};
+
+/**
+ * Flexible Semantic Canonicalizer
+ * Standardizes currencies, dates, times, and numbers to prevent unfair penalties
+ */
+export function canonicalizeIELTSAnswer(str) {
+  if (!str) return '';
+  let s = str.toString().trim().toLowerCase();
+
+  // 1. Remove outer non-alphanumerics except currency symbols
+  s = s.replace(/^[^a-z0-9£$€]+|[^a-z0-9£$€]+$/gi, '').trim();
+
+  // 2. Normalize Currency (£, $, €, pounds, dollars)
+  // £35, 35 pounds, 35 gbp -> 35 pounds
+  s = s.replace(/£s*(d+(?:[.,]d+)?)/g, '$1 pounds');
+  s = s.replace(/(d+(?:[.,]d+)?)s*(?:gbp|pound|pounds)/g, '$1 pounds');
+  s = s.replace(/$s*(d+(?:[.,]d+)?)/g, '$1 dollars');
+  s = s.replace(/(d+(?:[.,]d+)?)s*(?:usd|dollar|dollars)/g, '$1 dollars');
+  s = s.replace(/€s*(d+(?:[.,]d+)?)/g, '$1 euros');
+  s = s.replace(/(d+(?:[.,]d+)?)s*(?:eur|euro|euros)/g, '$1 euros');
+
+  // 3. Normalize Date Formats: 30th May, 30 May, May 30, May 30th -> 30 may
+  // Match "30th May" or "30 May"
+  const datePattern1 = /^(\d{1,2})(?:st|nd|rd|th)?\s+([a-z]+)$/i;
+  const match1 = s.match(datePattern1);
+  if (match1 && MONTH_MAP[match1[2].toLowerCase()]) {
+    return `${parseInt(match1[1], 10)} ${MONTH_MAP[match1[2].toLowerCase()]}`;
+  }
+  // Match "May 30th" or "May 30"
+  const datePattern2 = /^([a-z]+)\s+(\d{1,2})(?:st|nd|rd|th)?$/i;
+  const match2 = s.match(datePattern2);
+  if (match2 && MONTH_MAP[match2[1].toLowerCase()]) {
+    return `${parseInt(match2[2], 10)} ${MONTH_MAP[match2[1].toLowerCase()]}`;
+  }
+
+  // 4. Normalize Time: 9:30 am, 9.30 a.m., 09:30 -> 9:30 am
+  s = s.replace(/(\d{1,2})[.:](\d{2})\s*(?:am|a\.m\.)/gi, '$1:$2 am');
+  s = s.replace(/(\d{1,2})[.:](\d{2})\s*(?:pm|p\.m\.)/gi, '$1:$2 pm');
+
+  // 5. Replace simple number words if single word (e.g. "two" -> "2")
+  if (NUMBER_WORDS_MAP[s]) {
+    s = NUMBER_WORDS_MAP[s];
+  }
+
+  // Final cleanup of extra whitespace
+  return s.replace(/\s+/g, ' ').trim();
+}
+
 export function diagnoseQuestionAnswer(question, rawUserAnswer) {
   const userNorm = normalizeAnswer(rawUserAnswer);
   const targetNorm = normalizeAnswer(question.answer);
@@ -107,7 +182,15 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
   }
 
   // 2. Exact or Acceptable Match (CORRECT)
-  if (userNorm === targetNorm || acceptableList.includes(userNorm)) {
+  const userCanon = canonicalizeIELTSAnswer(rawUserAnswer);
+  const targetCanon = canonicalizeIELTSAnswer(question.answer);
+  const acceptableCanonList = (question.acceptableAnswers || [question.answer]).map(canonicalizeIELTSAnswer);
+
+  if (
+    userNorm === targetNorm || 
+    acceptableList.includes(userNorm) ||
+    (userCanon && (userCanon === targetCanon || acceptableCanonList.includes(userCanon)))
+  ) {
     return {
       order: question.order,
       questionId: question.id,
@@ -118,7 +201,7 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
       status: 'CORRECT',
       badgeLabel: 'Đúng',
       badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      diagnosticMessage: 'Chúc mừng! Đáp án chuẩn xác tuyệt đối.',
+      diagnosticMessage: 'Chúc mừng! Đáp án chuẩn xác tuyệt đối (hỗ trợ quy đổi định dạng chuẩn).',
       evidenceQuote: question.evidenceQuote || '',
       evidenceTimestamp: question.evidenceTimestamp,
       explanation: question.explanation || ''

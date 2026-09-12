@@ -1835,6 +1835,8 @@ Return ONLY pure JSON (no markdown formatting, no backticks, no wrapping text) w
 export async function generateListeningTestFromAudio({
   audioUrl,
   fallbackAudioUrl = '',
+  audioBase64 = null,
+  audioMimeType = 'audio/mp3',
   testTitle = '',
   topicDescription = '',
   transcriptText = '',
@@ -1907,7 +1909,7 @@ EXAM SPECIFICATIONS FOR PART ${partNum}:
   * prefixText & suffixText: for note completion blanks
   * options: array of 3 options [A, B, C] if multiple_choice
   * answer: the exact correct answer (concise word/number or option letter)
-  * acceptableAnswers: array of valid alternatives (e.g., ["35", "thirty-five", "£35"])
+  * acceptableAnswers: comprehensive array of all valid alternative spellings and formats (e.g. for numbers/prices: ["£35", "35 pounds", "thirty-five pounds", "35 gbp"]; for dates: ["30th May", "30 May", "May 30", "May 30th"]; for times: ["9:30 am", "9.30 am", "9:30am"])
   * evidenceQuote: exact spoken sentence from the audio containing the clue
   * evidenceTimestamp: timestamp in seconds when the answer is revealed
   * explanation: clear, pedagogic explanation in Vietnamese highlighting the key clues and why distractors are incorrect.
@@ -1972,11 +1974,22 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no commentary) adh
   ]
 }`;
 
+  const contentParts = [];
+  if (audioBase64) {
+    contentParts.push({
+      inlineData: {
+        mimeType: audioMimeType || 'audio/mp3',
+        data: audioBase64
+      }
+    });
+  }
+  contentParts.push({ text: prompt });
+
   const response = await callGeminiApi({
     model,
     apiKey,
     body: {
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [{ parts: contentParts }],
       generationConfig: { 
         temperature: 0.2,
         maxOutputTokens: 5000,

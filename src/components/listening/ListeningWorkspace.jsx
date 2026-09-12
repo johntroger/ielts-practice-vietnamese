@@ -549,11 +549,11 @@ export default function ListeningWorkspace({
         activePart={activePart}
         onSelectPart={(pNum) => {
           setActivePart(pNum);
-          if (examMode === 'practice') {
-            const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
-            if (targetPart && typeof targetPart.audioTimestampStart === 'number') {
-              audioEngine.seek(targetPart.audioTimestampStart);
-            }
+          const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
+          if (targetPart?.audioUrl && targetPart.audioUrl !== currentTest.audioUrl && audioEngine.src !== targetPart.audioUrl) {
+            audioEngine.loadAudio(targetPart.audioUrl);
+          } else if (examMode === 'practice' && targetPart && typeof targetPart.audioTimestampStart === 'number') {
+            audioEngine.seek(targetPart.audioTimestampStart);
           }
         }}
         parts={currentTest.parts || []}
@@ -1031,6 +1031,7 @@ export default function ListeningWorkspace({
           }
         }}
         onDeleteTest={handleDeleteCustomTest}
+        onAddCustomTest={handleAddCustomTest}
         onOpenGenerator={() => {
           setIsLibraryOpen(false);
           setIsGeneratorOpen(true);
