@@ -1592,8 +1592,76 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown):
 }
 
 /**
- * AI Listening Test Generator from Audio URL & Transcript
- * Generates Cambridge standard 4-part IELTS Listening test with exact timestamps, evidence quotes and answer keys.
+ * AI Audio & Part Suitability Analyzer
+ * Analyzes audio context/URL and suggests the best matching IELTS Listening Part(s)
+ */
+export async function analyzeAudioAndSuggestParts({
+  audioUrl = '',
+  topicOrTitle = '',
+  transcriptSnippet = '',
+  apiKey,
+  model = 'gemini-2.5-flash'
+}) {
+  const prompt = `You are an expert Cambridge Assessment English IELTS Chief Examiner.
+Analyze this audio source and topic context to determine which IELTS Listening Part (Part 1, Part 2, Part 3, or Part 4) it is most suitable for.
+
+AUDIO URL: ${audioUrl || 'N/A'}
+TOPIC / TITLE: ${topicOrTitle || 'N/A'}
+TRANSCRIPT / CONTEXT: ${transcriptSnippet || 'N/A'}
+
+IELTS LISTENING 4 PARTS CHARACTERISTICS:
+- Part 1: Everyday social/transactional dialogue between 2 people (booking, inquiring, ordering, applying). Question format: Note/Form completion (names, numbers, dates, addresses).
+- Part 2: Everyday social monologue by 1 speaker (guided tour, facilities overview, local event introduction, map directions). Question format: Multiple choice, Map/Plan labelling, Matching.
+- Part 3: Educational/academic discussion between 2-4 speakers (students & tutor discussing research, assignments, projects, field trips). Question format: Academic Multiple choice, Matching opinions, Summary.
+- Part 4: University academic lecture monologue by 1 speaker (deep dive into scientific, historical, or environmental topics). Question format: Note/Summary completion strictly ONE WORD ONLY.
+
+Task:
+1. Identify "primaryPart": the single best Part (1, 2, 3, or 4).
+2. Identify "suggestedParts": an array of all viable Parts (e.g. [1] or [3, 4]).
+3. Provide "confidence": "high" | "medium".
+4. Provide "reasoning": 2-3 concise sentences in Vietnamese explaining why this audio fits that Part (based on number of speakers, conversational style vs academic tone, vocabulary level).
+5. Provide "recommendedQuestionTypes": array of 2-3 question types in Vietnamese/English.
+6. Provide "detectedContext": short Vietnamese summary of the situation.
+7. Provide "detectedSpeakers": estimated speaker count and roles (e.g., "2 người (Khách hàng & Nhân viên tiếp tân)").
+
+Return ONLY pure JSON (no markdown formatting, no code fence):
+{
+  "primaryPart": 1,
+  "suggestedParts": [1],
+  "confidence": "high",
+  "reasoning": "...",
+  "recommendedQuestionTypes": ["Note Completion (Điền thông tin)", "Multiple Choice ngắn"],
+  "detectedContext": "...",
+  "detectedSpeakers": "..."
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 1024
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi phân tích âm thanh (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+/**
+ * AI Listening Test Generator from Audio URL & Transcript (Single Part Mode)
+ * Generates Cambridge standard 1-Part IELTS Listening test (Part 1, 2, 3, or 4) with exactly 10 questions.
+ * Ensures fast generation (<8s), perfect token economy, accurate timestamps, evidence quotes and answer keys.
  */
 export async function generateListeningTestFromAudio({
   audioUrl,
@@ -1601,56 +1669,97 @@ export async function generateListeningTestFromAudio({
   testTitle = '',
   topicDescription = '',
   transcriptText = '',
-  partCount = 4, // 1 or 4
+  targetPart = 1, // 1, 2, 3, or 4
+  partCount, // fallback for legacy calls
   apiKey,
   model = 'gemini-2.5-flash'
 }) {
+  const partNum = Number(targetPart) || (Number(partCount) === 4 ? 1 : Number(partCount)) || 1;
+
+  const partProfiles = {
+    1: {
+      partName: 'Part 1',
+      genre: 'Daily Social Conversation (2 Speakers)',
+      contextDesc: 'An authentic everyday transactional conversation between 2 people (e.g., telephone inquiry, festival ticket booking, shipping insurance claim, flat rental application).',
+      standardQuestionType: 'note_completion',
+      instruction: 'Complete the notes below.\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.',
+      specifics: 'Questions 1 to 10. Focus on specific factual details: names (with spelling if applicable), phone numbers, dates, prices, addresses, and short noun phrases. Include realistic distractors where speakers correct themselves.'
+    },
+    2: {
+      partName: 'Part 2',
+      genre: 'Everyday Social Monologue (1 Speaker)',
+      contextDesc: 'An informative monologue delivered by 1 speaker in a general community or social context (e.g., guide introducing a dinosaur museum tour, nature reserve layout, community center facilities, volunteer program).',
+      standardQuestionType: 'multiple_choice',
+      instruction: 'Choose the correct letter, A, B, or C.',
+      specifics: 'Questions 1 to 10. Focus on event regulations, visiting guidelines, facility descriptions, opening hours, and safety tips with carefully placed distractors.'
+    },
+    3: {
+      partName: 'Part 3',
+      genre: 'Academic Discussion (2-4 Speakers)',
+      contextDesc: 'A rich academic conversation between university students and/or a tutor/professor (e.g., discussing a research paper proposal, fieldwork methodology, project presentation feedback, analyzing findings).',
+      standardQuestionType: 'multiple_choice',
+      instruction: 'Choose the correct letter, A, B, or C.',
+      specifics: 'Questions 1 to 10. Focus on analyzing student opinions, academic consensus, disagreements, methodology justifications, and research conclusions.'
+    },
+    4: {
+      partName: 'Part 4',
+      genre: 'University Academic Lecture Monologue (1 Speaker)',
+      contextDesc: 'A university academic lecture delivered continuously by 1 lecturer on an academic topic (e.g., physical geography & urban microclimates, history of personal hygiene & medicine, wildlife adaptation to cities).',
+      standardQuestionType: 'note_completion',
+      instruction: 'Complete the notes below.\nWrite ONE WORD ONLY for each answer.',
+      specifics: 'Questions 1 to 10. Structured lecture outline with headings and bullet points. Strict ONE WORD ONLY constraint for every blank. Advanced academic vocabulary.'
+    }
+  };
+
+  const profile = partProfiles[partNum] || partProfiles[1];
+
   const prompt = `You are an expert Cambridge Assessment English IELTS Chief Examiner.
-Your task is to create an authentic IELTS Listening Test based on the provided Audio URL and content context.
+Your task is to create an authentic, high-caliber IELTS Listening Single-Part Practice Test (Part ${partNum}) based on the provided Audio URL and content context.
 
 AUDIO SOURCE URL: ${audioUrl}
 FALLBACK URL: ${fallbackAudioUrl}
-TEST TITLE SUGGESTION: ${testTitle || 'IELTS Listening Practice Test'}
-TOPIC CONTEXT: ${topicDescription || 'General Academic & Daily Conversation'}
-TRANSCRIPT / NOTES PROVIDED:
-${transcriptText || 'No full transcript provided. Create realistic dialogue and academic lecture transcripts that match the topic and fit the audio length.'}
+TEST TITLE SUGGESTION: ${testTitle || `IELTS Listening Part ${partNum} Practice`}
+TOPIC CONTEXT: ${topicDescription || profile.contextDesc}
+TARGET PART: Part ${partNum} (${profile.genre})
+TRANSCRIPT / NOTES:
+${transcriptText || 'No full transcript provided. Synthesize a realistic, high-fidelity IELTS transcript that faithfully reflects the topic and audio flow.'}
 
-REQUIREMENTS:
-1. Create a complete IELTS Listening Test with ${partCount} Part(s).
-2. Each Part must have authentic IELTS context:
-   - Part 1: Daily life dialogue (e.g. hotel booking, survey, club inquiry) - 10 questions (Note completion).
-   - Part 2: Monologue on general topic or facility tour - 10 questions (Multiple choice / Map / Matching).
-   - Part 3: Academic discussion between 2-3 students/tutors - 10 questions (Multiple choice / Note completion).
-   - Part 4: University academic lecture monologue - 10 questions (Note completion, NO MORE THAN ONE WORD).
-3. Provide realistic audio timestamps:
-   - Part 1: ~0s to 360s
-   - Part 2: ~361s to 750s
-   - Part 3: ~751s to 1180s
-   - Part 4: ~1181s to 1750s
-4. For every single question:
-   - Include questionText, prefixText, suffixText (if completion).
-   - Include answer (exact target word).
-   - Include acceptableAnswers array (synonyms, singular/plural or numerical variants).
-   - Include evidenceQuote (exact sentence spoken in the audio).
-   - Include evidenceTimestamp in seconds.
-   - Include explanation in Vietnamese explaining why this is the answer and pointing out any distractor traps.
-5. Provide a "transcripts" array for each Part containing dialogue lines with:
-   - start (second), end (second), speaker, text, and targetQuestion (order number if it contains an answer).
+EXAM SPECIFICATIONS FOR PART ${partNum}:
+- Standard format: ${profile.contextDesc}
+- Question type: ${profile.standardQuestionType} (${profile.instruction})
+- Detailed guidelines: ${profile.specifics}
+- Total Questions: Exactly 10 questions (Numbered 1 to 10).
+- Time Limit: 10 minutes.
+- Timestamps: Spanning from ~0s to ~360s (or match audio duration). Each question must have a precise evidenceTimestamp (in seconds).
+- For EACH of the 10 questions, provide:
+  * id: 1 to 10
+  * order: 1 to 10
+  * questionText: for multiple choice or prompt
+  * prefixText & suffixText: for note completion blanks
+  * options: array of 3 options [A, B, C] if multiple_choice
+  * answer: the exact correct answer (concise word/number or option letter)
+  * acceptableAnswers: array of valid alternatives (e.g., ["35", "thirty-five", "£35"])
+  * evidenceQuote: exact spoken sentence from the audio containing the clue
+  * evidenceTimestamp: timestamp in seconds when the answer is revealed
+  * explanation: clear, pedagogic explanation in Vietnamese highlighting the key clues and why distractors are incorrect.
+- Provide a "transcripts" array containing continuous dialogue/monologue segments with start (sec), end (sec), speaker, text, and targetQuestion (order number if it contains an answer).
 
 OUTPUT FORMAT:
-Return ONLY pure JSON (no markdown formatting, no code fence, no additional commentary) adhering strictly to this schema:
+Return ONLY pure JSON (no markdown formatting, no code fence, no commentary) adhering strictly to this schema:
 {
-  "title": "IELTS Listening Test: ...",
+  "title": "IELTS Listening Part ${partNum}: ...",
   "description": "...",
   "audioUrl": "${audioUrl}",
   "fallbackAudioUrl": "${fallbackAudioUrl || audioUrl}",
-  "totalQuestions": ${partCount * 10},
-  "timeLimitMinutes": ${partCount === 4 ? 32 : 10},
+  "isSinglePart": true,
+  "targetPart": ${partNum},
+  "totalQuestions": 10,
+  "timeLimitMinutes": 10,
   "parts": [
     {
-      "partNumber": 1,
-      "title": "Part 1: ...",
-      "context": "A conversation between ...",
+      "partNumber": ${partNum},
+      "title": "Part ${partNum}: ${profile.genre}",
+      "context": "...",
       "audioTimestampStart": 0,
       "audioTimestampEnd": 360,
       "speakers": [
@@ -1658,10 +1767,10 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no additional comm
       ],
       "questionGroups": [
         {
-          "id": "qg-ai-p1",
-          "type": "note_completion",
+          "id": "qg-ai-p${partNum}",
+          "type": "${profile.standardQuestionType}",
           "title": "Questions 1–10",
-          "instruction": "Complete the notes below.\\nWrite ONE WORD AND/OR A NUMBER for each answer.",
+          "instruction": "${profile.instruction.replace(/\n/g, '\\n')}",
           "headerTitle": "...",
           "questions": [
             {
@@ -1670,10 +1779,11 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no additional comm
               "questionText": "...",
               "prefixText": "...",
               "suffixText": "...",
+              "options": ["A. ...", "B. ...", "C. ..."],
               "answer": "...",
               "acceptableAnswers": ["..."],
               "evidenceQuote": "...",
-              "evidenceTimestamp": 65,
+              "evidenceTimestamp": 35,
               "explanation": "Giải thích chi tiết bằng tiếng Việt..."
             }
           ]
@@ -1700,7 +1810,7 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no additional comm
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { 
         temperature: 0.2,
-        maxOutputTokens: 8192
+        maxOutputTokens: 5000
       }
     }
   });
@@ -1713,8 +1823,20 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no additional comm
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  return JSON.parse(clean);
+  const parsed = JSON.parse(clean);
+
+  // Enforce consistent metadata
+  parsed.isSinglePart = true;
+  parsed.targetPart = partNum;
+  parsed.totalQuestions = 10;
+  parsed.timeLimitMinutes = 10;
+  if (parsed.parts && parsed.parts[0]) {
+    parsed.parts[0].partNumber = partNum;
+  }
+
+  return parsed;
 }
+
 
 
 

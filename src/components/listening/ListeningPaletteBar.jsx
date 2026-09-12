@@ -11,7 +11,8 @@ export default function ListeningPaletteBar({
   flaggedQuestions = {},
   onToggleFlag,
   onSubmitExam,
-  isSubmitted = false
+  isSubmitted = false,
+  availableParts = null
 }) {
   const activePillRef = useRef(null);
 
@@ -26,12 +27,18 @@ export default function ListeningPaletteBar({
     }
   }, [activeQuestionOrder]);
 
-  const parts = [
+  const defaultParts = [
     { partNumber: 1, range: [1, 10] },
     { partNumber: 2, range: [11, 20] },
     { partNumber: 3, range: [21, 30] },
     { partNumber: 4, range: [31, 40] }
   ];
+
+  const parts = (Array.isArray(availableParts) && availableParts.length > 0)
+    ? (availableParts.length === 1
+        ? [{ partNumber: availableParts[0], range: [1, totalQuestions] }]
+        : defaultParts.filter(p => availableParts.includes(p.partNumber)))
+    : defaultParts;
 
   const currentPartObj = parts.find(p => p.partNumber === activePart) || parts[0];
   const isCurrentFlagged = !!flaggedQuestions[activeQuestionOrder];
@@ -40,10 +47,12 @@ export default function ListeningPaletteBar({
     if (activeQuestionOrder > 1) {
       const prev = activeQuestionOrder - 1;
       onSelectQuestion(prev);
-      // Change part if crossing border
-      const newPart = parts.find(p => prev >= p.range[0] && prev <= p.range[1]);
-      if (newPart && newPart.partNumber !== activePart && onSelectPart) {
-        onSelectPart(newPart.partNumber);
+      // Change part if crossing border and more than 1 part exists
+      if (parts.length > 1) {
+        const newPart = parts.find(p => prev >= p.range[0] && prev <= p.range[1]);
+        if (newPart && newPart.partNumber !== activePart && onSelectPart) {
+          onSelectPart(newPart.partNumber);
+        }
       }
     }
   };
@@ -52,10 +61,12 @@ export default function ListeningPaletteBar({
     if (activeQuestionOrder < totalQuestions) {
       const next = activeQuestionOrder + 1;
       onSelectQuestion(next);
-      // Change part if crossing border
-      const newPart = parts.find(p => next >= p.range[0] && next <= p.range[1]);
-      if (newPart && newPart.partNumber !== activePart && onSelectPart) {
-        onSelectPart(newPart.partNumber);
+      // Change part if crossing border and more than 1 part exists
+      if (parts.length > 1) {
+        const newPart = parts.find(p => next >= p.range[0] && next <= p.range[1]);
+        if (newPart && newPart.partNumber !== activePart && onSelectPart) {
+          onSelectPart(newPart.partNumber);
+        }
       }
     }
   };
@@ -102,9 +113,11 @@ export default function ListeningPaletteBar({
                   ref={isActive ? activePillRef : null}
                   onClick={() => {
                     onSelectQuestion(order);
-                    const newPart = parts.find(p => order >= p.range[0] && order <= p.range[1]);
-                    if (newPart && newPart.partNumber !== activePart && onSelectPart) {
-                      onSelectPart(newPart.partNumber);
+                    if (parts.length > 1) {
+                      const newPart = parts.find(p => order >= p.range[0] && order <= p.range[1]);
+                      if (newPart && newPart.partNumber !== activePart && onSelectPart) {
+                        onSelectPart(newPart.partNumber);
+                      }
                     }
                   }}
                   className={`relative min-w-[28px] sm:min-w-[32px] h-7 sm:h-8 px-1 rounded-md text-xs font-mono font-bold transition-all shrink-0 flex items-center justify-center ${

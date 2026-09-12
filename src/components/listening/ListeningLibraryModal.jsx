@@ -259,7 +259,7 @@ export default function ListeningLibraryModal({
                         <button
                           type="button"
                           onClick={() => {
-                            onSelectTest(test.id);
+                            onSelectTest(test);
                             onClose();
                           }}
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${

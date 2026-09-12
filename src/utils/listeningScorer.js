@@ -274,7 +274,10 @@ export function scoreListeningExam({
   });
 
   const totalQuestions = allQuestions.length || 40;
-  const band = calculateListeningBandScore(correctCount);
+  const rawScore = totalQuestions <= 10 && totalQuestions > 0
+    ? Math.round((correctCount / totalQuestions) * 40)
+    : correctCount;
+  const band = calculateListeningBandScore(rawScore);
   const accuracyPercent = Math.round((correctCount / totalQuestions) * 100);
 
   const typeStats = Object.values(typeStatsMap).map(item => ({

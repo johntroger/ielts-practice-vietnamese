@@ -144,8 +144,14 @@ export default function ListeningWorkspace({
       return updated;
     });
     setCurrentTestId(newTest.id);
-    setActivePart(1);
+    const startPart = newTest.targetPart || newTest.parts?.[0]?.partNumber || 1;
+    setActivePart(startPart);
     setHasStartedExam(true);
+    exam.resetExam();
+    setBandResult(null);
+    if (newTest.audioUrl) {
+      audioEngine.loadAudio(newTest.audioUrl);
+    }
   };
 
   // Handler: Delete custom listening test
@@ -742,15 +748,18 @@ export default function ListeningWorkspace({
       {/* 6. CD-IELTS Bottom Palette Bar */}
       {(hasStartedExam || exam.isSubmitted) && (
         <ListeningPaletteBar 
-          totalQuestions={currentTest.totalQuestions}
+          totalQuestions={currentTest.totalQuestions || 40}
           activePart={activePart}
+          availableParts={currentTest.parts?.map(p => p.partNumber) || [1]}
           onSelectPart={setActivePart}
           activeQuestionOrder={exam.activeQuestionOrder}
           onSelectQuestion={(order) => {
             exam.setActiveQuestionOrder(order);
-            const pNum = Math.ceil(order / 10);
-            if (pNum !== activePart) {
-              setActivePart(pNum);
+            if (currentTest.parts && currentTest.parts.length > 1) {
+              const pNum = Math.ceil(order / 10);
+              if (pNum !== activePart) {
+                setActivePart(pNum);
+              }
             }
           }}
           userAnswers={exam.userAnswers}
@@ -1007,15 +1016,18 @@ export default function ListeningWorkspace({
         onClose={() => setIsLibraryOpen(false)}
         allListeningTests={allListeningTests}
         currentTestId={currentTestId}
-        onSelectTest={(test) => {
-          setCurrentTestId(test.id);
+        onSelectTest={(selected) => {
+          const testObj = typeof selected === 'object' ? selected : allListeningTests.find(t => t.id === selected);
+          if (!testObj) return;
+          setCurrentTestId(testObj.id);
           setIsLibraryOpen(false);
-          setActivePart(1);
+          const startPart = testObj.targetPart || testObj.parts?.[0]?.partNumber || 1;
+          setActivePart(startPart);
           setHasStartedExam(true);
           exam.resetExam();
           setBandResult(null);
-          if (test.audioUrl) {
-            audioEngine.loadAudio(test.audioUrl);
+          if (testObj.audioUrl) {
+            audioEngine.loadAudio(testObj.audioUrl);
           }
         }}
         onDeleteTest={handleDeleteCustomTest}
