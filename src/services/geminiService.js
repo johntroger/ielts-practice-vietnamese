@@ -1659,6 +1659,104 @@ Return ONLY pure JSON (no markdown formatting, no code fence):
 }
 
 /**
+ * AI Audio Source Explorer & Suggester
+ * Dynamically discovers / searches for authentic listening audio sources suitable for IELTS Listening parts.
+ * Suggests real audio URLs, speakers, accent, context, recommended Part(s), and pedagogical reasoning.
+ */
+export async function discoverListeningAudioSources({
+  topicKeyword = '',
+  targetPartPreference = null, // null or 1, 2, 3, 4
+  apiKey,
+  model = 'gemini-2.5-flash'
+}) {
+  const partFocusText = targetPartPreference 
+    ? `Prioritize authentic audio sources that are highly suitable for IELTS Listening Part ${targetPartPreference}.`
+    : 'Provide a balanced mix across Part 1 (social dialogue), Part 2 (social monologue), Part 3 (academic discussion), and Part 4 (university lecture).';
+
+  const topicText = topicKeyword.trim() 
+    ? `The user requested audio topics related to: "${topicKeyword.trim()}".` 
+    : 'Select diverse, authentic IELTS themes (e.g., student accommodation, travel inquiry, nature reserves, volunteer orientation, research paper methodology, urban ecology, history of science).';
+
+  const prompt = `You are an expert Cambridge Assessment English IELTS Chief Examiner & Audio Material Curator.
+Your task is to search, identify, and recommend 3 to 4 NEW authentic listening audio sources suitable for IELTS Listening practice.
+${topicText}
+${partFocusText}
+
+AUDIO REPOSITORY GUIDELINES:
+- Provide direct, publicly streamable, CORS-accessible MP3 audio links from well-known open educational archives.
+  Examples of reliable archives:
+  * Internet Archive Cambridge / IELTS audio archives (e.g. https://archive.org/download/.../....mp3 or https://dn711100.ca.archive.org/0/items/.../....mp3)
+  * BBC Learning English audio podcasts / 6-Minute English archive CDN streams
+  * LibriVox educational dialogues / lectures (archive.org streaming mp3)
+  * Wikimedia Commons open speech / lecture audio
+  * Open courseware educational mp3s
+
+EVALUATE EACH AUDIO SOURCE:
+1. "title": Engaging English title describing the dialogue/lecture.
+2. "audioUrl": Direct, valid streamable MP3 URL.
+3. "fallbackAudioUrl": Optional fallback URL.
+4. "durationText": Estimated length, e.g. '~5.5 phút'.
+5. "accent": e.g. 'British (Anh - Anh)', 'Australian', 'American', 'Canadian', etc.
+6. "speakers": Speaker count and roles, e.g. '2 người (Lễ tân khách sạn & Khách du lịch)'.
+7. "context": 2-3 sentences in Vietnamese describing the scenario and topics discussed.
+8. "suggestedParts": Array of numbers (e.g. [1] or [1, 2] or [3] or [4]) indicating which IELTS Listening Part(s) this audio fits best.
+9. "aiReasoning": 2-3 sentences in Vietnamese explaining WHY this audio fits the suggested Part (speech tempo, speaker interaction, vocabulary level, question types it can generate).
+10. "recommendedQuestionTypes": Array of 2-3 question types (e.g. ["Form Completion", "Multiple Choice"]).
+11. "sampleTranscriptSnippet": Short 1-2 sentence dialogue snippet from the audio.
+
+Return ONLY pure JSON (no markdown formatting, no backticks, no wrapping text) with this schema:
+{
+  "sources": [
+    {
+      "title": "...",
+      "audioUrl": "...",
+      "fallbackAudioUrl": "...",
+      "durationText": "...",
+      "accent": "...",
+      "speakers": "...",
+      "context": "...",
+      "suggestedParts": [1],
+      "aiReasoning": "...",
+      "recommendedQuestionTypes": ["Note Completion", "Multiple Choice"],
+      "sampleTranscriptSnippet": "..."
+    }
+  ]
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 2500
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi tìm nguồn audio (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{"sources":[]}';
+  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  const parsed = JSON.parse(clean);
+  const rawSources = Array.isArray(parsed.sources) ? parsed.sources : [];
+
+  return rawSources.map((s, idx) => ({
+    ...s,
+    id: s.id || `ai-discovered-${Date.now()}-${idx}`,
+    isAIDiscovered: true,
+    suggestedParts: Array.isArray(s.suggestedParts) && s.suggestedParts.length > 0 
+      ? s.suggestedParts.map(Number) 
+      : [1]
+  }));
+}
+
+/**
  * AI Listening Test Generator from Audio URL & Transcript (Single Part Mode)
  * Generates Cambridge standard 1-Part IELTS Listening test (Part 1, 2, 3, or 4) with exactly 10 questions.
  * Ensures fast generation (<8s), perfect token economy, accurate timestamps, evidence quotes and answer keys.

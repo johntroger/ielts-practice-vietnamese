@@ -8,7 +8,7 @@ import {
   HelpCircle, 
   AlertCircle, 
   Play, 
-  Pause,
+  Pause, 
   CheckCircle2, 
   Layers,
   Globe,
@@ -23,9 +23,15 @@ import {
   ArrowRight,
   Wand2,
   Compass,
-  BookOpen
+  BookOpen,
+  RefreshCw,
+  PlusCircle
 } from 'lucide-react';
-import { generateListeningTestFromAudio, analyzeAudioAndSuggestParts } from '../../services/geminiService';
+import { 
+  generateListeningTestFromAudio, 
+  analyzeAudioAndSuggestParts,
+  discoverListeningAudioSources 
+} from '../../services/geminiService';
 import { CURATED_LISTENING_AUDIO_SOURCES } from '../../data/listening/curatedAudioSources';
 
 export default function ListeningURLExerciseGeneratorModal({
@@ -47,6 +53,13 @@ export default function ListeningURLExerciseGeneratorModal({
   
   // Single-Part Selection: strictly 1, 2, 3, or 4
   const [selectedPart, setSelectedPart] = useState(1);
+
+  // Curated & Dynamic AI Sources
+  const [discoveredSources, setDiscoveredSources] = useState([]);
+  const [isDiscovering, setIsDiscovering] = useState(false);
+  const [discoveryTopic, setDiscoveryTopic] = useState('');
+  const [discoveryPartPref, setDiscoveryPartPref] = useState('all'); // 'all' | '1' | '2' | '3' | '4'
+  const [discoveryNotification, setDiscoveryNotification] = useState('');
 
   // Curated & AI Suggestion Drawer States
   const [isSuggestDrawerOpen, setIsSuggestDrawerOpen] = useState(true);
@@ -76,9 +89,14 @@ export default function ListeningURLExerciseGeneratorModal({
     };
   }, []);
 
-  // Filter curated sources
-  const filteredCuratedSources = useMemo(() => {
-    return CURATED_LISTENING_AUDIO_SOURCES.filter(src => {
+  // Combined sources: dynamically discovered by AI first, followed by curated
+  const allSources = useMemo(() => {
+    return [...discoveredSources, ...CURATED_LISTENING_AUDIO_SOURCES];
+  }, [discoveredSources]);
+
+  // Filter curated and discovered sources
+  const filteredSources = useMemo(() => {
+    return allSources.filter(src => {
       if (partFilter !== 'all' && !src.suggestedParts.includes(Number(partFilter))) {
         return false;
       }
@@ -93,7 +111,7 @@ export default function ListeningURLExerciseGeneratorModal({
       }
       return true;
     });
-  }, [partFilter, curatedSearch]);
+  }, [allSources, partFilter, curatedSearch]);
 
   // Audio preview handler
   const handleTogglePreview = (sourceId, url) => {
@@ -118,8 +136,52 @@ export default function ListeningURLExerciseGeneratorModal({
     }
   };
 
-  // Select a curated source
-  const handleApplyCuratedSource = (src, forcedPart = null) => {
+  // Dynamically trigger AI to search & discover new audio sources
+  const handleDiscoverMoreSources = async (prefPart = null, topicOverride = null) => {
+    if (!apiKey) {
+      setErrorMessage('Vui lòng cấu hình Gemini API Key trước khi sử dụng AI tìm kiếm nguồn.');
+      return;
+    }
+
+    setIsDiscovering(true);
+    setErrorMessage('');
+    setDiscoveryNotification('');
+
+    try {
+      const effectivePart = prefPart !== null 
+        ? (prefPart === 'all' ? null : Number(prefPart))
+        : (discoveryPartPref === 'all' ? null : Number(discoveryPartPref));
+
+      const effectiveTopic = topicOverride !== null ? topicOverride : discoveryTopic;
+
+      const newSources = await discoverListeningAudioSources({
+        topicKeyword: effectiveTopic,
+        targetPartPreference: effectivePart,
+        apiKey,
+        model
+      });
+
+      if (newSources.length === 0) {
+        setDiscoveryNotification('Không tìm thấy thêm nguồn mới phù hợp. Bạn hãy thử nhập từ khóa chủ đề khác.');
+      } else {
+        setDiscoveredSources(prev => [...newSources, ...prev]);
+        setDiscoveryNotification(`🎉 AI đã tìm thấy ${newSources.length} nguồn âm thanh hội thoại mới phù hợp!`);
+        if (effectivePart) {
+          setPartFilter(effectivePart);
+        } else {
+          setPartFilter('all');
+        }
+      }
+    } catch (err) {
+      console.error('Lỗi khi AI tìm nguồn âm thanh:', err);
+      setErrorMessage(err.message || 'Lỗi khi AI tìm kiếm nguồn âm thanh. Vui lòng thử lại.');
+    } finally {
+      setIsDiscovering(false);
+    }
+  };
+
+  // Select a source
+  const handleApplySource = (src, forcedPart = null) => {
     setAudioUrl(src.audioUrl);
     setFallbackAudioUrl(src.fallbackAudioUrl || '');
     setTestTitle(src.title);
@@ -318,7 +380,7 @@ export default function ListeningURLExerciseGeneratorModal({
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                AI tự động gợi ý Part phù hợp • Sinh 1 Part độc lập 10 câu hỏi để ghép bộ đề sau này
+                AI tự động tìm kiếm & đề xuất nguồn audio • Sinh 1 Part độc lập 10 câu hỏi để ghép bộ đề sau này
               </p>
             </div>
           </div>
@@ -334,7 +396,7 @@ export default function ListeningURLExerciseGeneratorModal({
         {/* Modal Body */}
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
           
-          {/* SECTION 1: AI SUGGESTION & CURATED SOURCES DRAWER */}
+          {/* SECTION 1: AI SUGGESTION & DYNAMIC AUDIO DISCOVERY DRAWER */}
           <div className="rounded-2xl border border-purple-200 bg-gradient-to-b from-purple-50/70 to-indigo-50/40 p-4 transition-all">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-2">
@@ -345,11 +407,16 @@ export default function ListeningURLExerciseGeneratorModal({
                   <h4 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
                     <span>AI Gợi Ý & Tìm Nguồn Audio Bản Xứ Phù Hợp</span>
                     <span className="px-2 py-0.5 rounded-full bg-purple-200 text-purple-900 text-[10px] font-bold">
-                      {CURATED_LISTENING_AUDIO_SOURCES.length} Nguồn Chuẩn Cambridge
+                      {allSources.length} Nguồn Sẵn Sàng
                     </span>
+                    {discoveredSources.length > 0 && (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                        +{discoveredSources.length} Nguồn AI Mới Tìm
+                      </span>
+                    )}
                   </h4>
                   <p className="text-[11px] text-slate-500">
-                    AI phân tích sẵn giọng điệu, số người nói và gợi ý rõ Part phù hợp nhất để bạn chọn 1-chạm
+                    Nhấn nút bên dưới để AI tự động đi tìm thêm các nguồn audio hội thoại bản xứ mới trên Internet
                   </p>
                 </div>
               </div>
@@ -365,9 +432,106 @@ export default function ListeningURLExerciseGeneratorModal({
             </div>
 
             {isSuggestDrawerOpen && (
-              <div className="space-y-3 pt-2">
-                {/* Search & Part Filter Tabs */}
-                <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between">
+              <div className="space-y-3 pt-1">
+                
+                {/* DYNAMIC AI DISCOVERY SEARCH & ACTION BAR */}
+                <div className="p-3 rounded-xl bg-white border border-purple-200/80 shadow-xs space-y-2.5">
+                  <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between">
+                    
+                    {/* Topic input (optional) */}
+                    <div className="flex-1 relative">
+                      <Search className="w-3.5 h-3.5 text-purple-600 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={discoveryTopic}
+                        onChange={(e) => setDiscoveryTopic(e.target.value)}
+                        placeholder="Nhập chủ đề muốn AI tìm (vd: Du lịch, Khách sạn, Sinh học, AI, Khoa học... - để trống nếu muốn AI tự do tìm)"
+                        className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-purple-50/40 border border-purple-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:bg-white"
+                      />
+                    </div>
+
+                    {/* Part preference selector */}
+                    <select
+                      value={discoveryPartPref}
+                      onChange={(e) => setDiscoveryPartPref(e.target.value)}
+                      className="px-2.5 py-1.5 rounded-xl border border-purple-200 text-xs font-bold text-purple-900 bg-purple-50/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    >
+                      <option value="all">Tất cả các Part</option>
+                      <option value="1">Ưu tiên Part 1 (Hội thoại)</option>
+                      <option value="2">Ưu tiên Part 2 (Độc thoại HD)</option>
+                      <option value="3">Ưu tiên Part 3 (Thảo luận SV)</option>
+                      <option value="4">Ưu tiên Part 4 (Bài giảng ĐH)</option>
+                    </select>
+
+                    {/* Main AI Discovery Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleDiscoverMoreSources()}
+                      disabled={isDiscovering}
+                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 text-white text-xs font-bold shadow-sm transition-all active:scale-95 flex items-center justify-center space-x-1.5 shrink-0 cursor-pointer"
+                    >
+                      {isDiscovering ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                          <span>AI Đang Đi Tìm Nguồn Audio...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 text-amber-300" />
+                          <span>✨ AI Tìm & Gợi Ý Thêm Nguồn Mới</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Quick 1-Click Topic Chips */}
+                  <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none pt-0.5 text-[11px]">
+                    <span className="text-slate-400 font-medium shrink-0">Tìm nhanh theo Part:</span>
+                    <button
+                      type="button"
+                      disabled={isDiscovering}
+                      onClick={() => handleDiscoverMoreSources('1', 'Everyday conversation booking reservation inquiry')}
+                      className="px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold shrink-0 transition-colors border border-blue-200/60 cursor-pointer"
+                    >
+                      + Tìm Hội Thoại Part 1
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDiscovering}
+                      onClick={() => handleDiscoverMoreSources('2', 'Museum tour guide facilities orientation')}
+                      className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold shrink-0 transition-colors border border-emerald-200/60 cursor-pointer"
+                    >
+                      + Tìm Độc Thoại Part 2
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDiscovering}
+                      onClick={() => handleDiscoverMoreSources('3', 'Academic research tutorial students discussion')}
+                      className="px-2 py-0.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold shrink-0 transition-colors border border-purple-200/60 cursor-pointer"
+                    >
+                      + Tìm Thảo Luận Part 3
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDiscovering}
+                      onClick={() => handleDiscoverMoreSources('4', 'University academic lecture scientific history')}
+                      className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 font-semibold shrink-0 transition-colors border border-amber-200/60 cursor-pointer"
+                    >
+                      + Tìm Bài Giảng Part 4
+                    </button>
+                  </div>
+
+                  {/* Discovery Notification Toast */}
+                  {discoveryNotification && (
+                    <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold flex items-center space-x-1.5 animate-in fade-in">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>{discoveryNotification}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Filter Tabs & Real-time Search in list */}
+                <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between pt-1">
                   {/* Filter Pills */}
                   <div className="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5">
                     {[
@@ -399,24 +563,26 @@ export default function ListeningURLExerciseGeneratorModal({
                       type="text"
                       value={curatedSearch}
                       onChange={(e) => setCuratedSearch(e.target.value)}
-                      placeholder="Tìm chủ đề, giọng nói, từ khóa..."
+                      placeholder="Lọc trong danh sách..."
                       className="w-full pl-8 pr-3 py-1 rounded-xl bg-white border border-purple-200/80 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                     />
                   </div>
                 </div>
 
-                {/* Curated Source Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-1">
-                  {filteredCuratedSources.map(src => {
+                {/* Audio Source Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-1">
+                  {filteredSources.map(src => {
                     const isPreviewing = previewingId === src.id;
                     const isSelectedSource = audioUrl === src.audioUrl;
 
                     return (
                       <div
                         key={src.id}
-                        className={`p-3 rounded-xl border bg-white transition-all flex flex-col justify-between ${
+                        className={`p-3 rounded-xl border bg-white transition-all flex flex-col justify-between relative ${
                           isSelectedSource 
                             ? 'border-purple-500 ring-2 ring-purple-400/20 shadow-sm' 
+                            : src.isAIDiscovered
+                            ? 'border-indigo-300 ring-1 ring-indigo-200/60 shadow-xs'
                             : 'border-slate-200 hover:border-purple-300 hover:shadow-xs'
                         }`}
                       >
@@ -424,6 +590,12 @@ export default function ListeningURLExerciseGeneratorModal({
                           {/* Card Header: Part Badges & Accent */}
                           <div className="flex items-center justify-between gap-1 mb-1.5">
                             <div className="flex items-center space-x-1 flex-wrap gap-y-1">
+                              {src.isAIDiscovered && (
+                                <span className="px-2 py-0.5 rounded-md bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-xs">
+                                  <Sparkles className="w-2.5 h-2.5" />
+                                  <span>AI Mới Khám Phá</span>
+                                </span>
+                              )}
                               {src.suggestedParts.map(p => (
                                 <span
                                   key={p}
@@ -493,7 +665,7 @@ export default function ListeningURLExerciseGeneratorModal({
                           {/* Select & Apply Button */}
                           <button
                             type="button"
-                            onClick={() => handleApplyCuratedSource(src)}
+                            onClick={() => handleApplySource(src)}
                             className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
                               isSelectedSource
                                 ? 'bg-purple-600 text-white shadow-xs'
