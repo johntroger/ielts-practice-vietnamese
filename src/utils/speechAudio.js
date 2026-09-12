@@ -173,20 +173,17 @@ export function speakText(text, {
       onEnd?.();
     };
 
-    // Small delay allows cancel() to properly flush Chromium's internal speech pipeline
-    setTimeout(() => {
-      try {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-        window.speechSynthesis.speak(utterance);
-      } catch (err) {
-        console.error('Failed to execute speak:', err);
-        onError?.(err);
-        onEnd?.();
+    // Directly speak without asynchronous setTimeout to preserve transient user activation in Chrome
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
       }
-    }, 60);
-
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.error('Failed to execute speak:', err);
+      onError?.(err);
+      onEnd?.();
+    }
   } catch (err) {
     console.error('speakText initialization failed:', err);
     activeUtterance = null;

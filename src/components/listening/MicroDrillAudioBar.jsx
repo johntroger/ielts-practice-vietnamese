@@ -189,12 +189,11 @@ export default function MicroDrillAudioBar({
   }, []);
 
   // Play / Pause toggle
-  const togglePlay = async () => {
-    // Immediate audio chime feedback
+  const togglePlay = () => {
+    // 1. Immediate audio chime feedback so user knows sound hardware is active
     playChimeTone({ freq: 659.25, duration: 0.15, volume: 0.25 });
 
     if (fallbackMode) {
-      // Fallback via Web Speech API with simulated timer
       if (isPlaying) {
         stopSpeech();
         if (tickerRef.current) clearInterval(tickerRef.current);
@@ -207,7 +206,7 @@ export default function MicroDrillAudioBar({
 
         if (tickerRef.current) clearInterval(tickerRef.current);
         tickerRef.current = setInterval(() => {
-          const elapsed = (Date.now() - startTime) / 1000 * playbackRate;
+          const elapsed = ((Date.now() - startTime) / 1000) * playbackRate;
           if (elapsed >= dur) {
             clearInterval(tickerRef.current);
             setIsPlaying(false);
@@ -221,6 +220,7 @@ export default function MicroDrillAudioBar({
           rate: playbackRate,
           lang: accent,
           playChimeFirst: false,
+          onStart: () => setIsPlaying(true),
           onEnd: () => {
             if (tickerRef.current) clearInterval(tickerRef.current);
             setIsPlaying(false);
@@ -244,23 +244,50 @@ export default function MicroDrillAudioBar({
       setIsPlaying(false);
     } else {
       setIsLoading(true);
-      try {
-        await audio.play();
-        setIsPlaying(true);
-        setIsLoading(false);
-      } catch (err) {
-        console.warn('Audio play catch, attempting fallback:', err);
-        // Fallback to speech synthesis
-        setFallbackMode(true);
-        setIsLoading(false);
-        setIsPlaying(true);
-        speakText(audioText, {
-          rate: playbackRate,
-          lang: accent,
-          playChimeFirst: false,
-          onEnd: () => setIsPlaying(false),
-          onError: () => setIsPlaying(false)
-        });
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.warn('Audio play failed, switching synchronously to Speech Synthesizer fallback:', err);
+            setFallbackMode(true);
+            setIsLoading(false);
+            setIsPlaying(true);
+            setCurrentTime(0);
+            
+            const startTime = Date.now();
+            const dur = duration || estimatedSeconds;
+            if (tickerRef.current) clearInterval(tickerRef.current);
+            tickerRef.current = setInterval(() => {
+              const elapsed = ((Date.now() - startTime) / 1000) * playbackRate;
+              if (elapsed >= dur) {
+                clearInterval(tickerRef.current);
+                setIsPlaying(false);
+                setCurrentTime(0);
+              } else {
+                setCurrentTime(elapsed);
+              }
+            }, 100);
+
+            speakText(audioText, {
+              rate: playbackRate,
+              lang: accent,
+              playChimeFirst: false,
+              onStart: () => setIsPlaying(true),
+              onEnd: () => {
+                if (tickerRef.current) clearInterval(tickerRef.current);
+                setIsPlaying(false);
+                setCurrentTime(0);
+              },
+              onError: () => {
+                if (tickerRef.current) clearInterval(tickerRef.current);
+                setIsPlaying(false);
+              }
+            });
+          });
       }
     }
   };
@@ -317,10 +344,12 @@ export default function MicroDrillAudioBar({
 
   return (
     <div className="p-3 sm:p-4 rounded-2xl bg-slate-950 text-slate-100 border border-slate-800 shadow-lg space-y-2.5">
-      {/* Hidden HTML5 Audio Element */}
+      {/* Hidden HTML5 Audio Element with no-referrer to prevent Google TTS 404 block */}
       <audio 
         ref={audioRef} 
         preload="auto" 
+        referrerPolicy="no-referrer"
+        crossOrigin="anonymous"
         src={streamUrl} 
       />
 
