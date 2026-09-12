@@ -184,6 +184,7 @@ export default function ListeningWorkspace({
   // 2. Audio Engine Hook
   const audioEngine = useAudioEngine({
     initialSrc: currentTest.audioUrl || currentTest.fallbackAudioUrl,
+    fallbackSrc: currentTest.fallbackAudioUrl || '/audio/cam18_test1_audio.mp3',
     examMode,
     onEnded: () => {
       console.log('Audio track finished playing.');

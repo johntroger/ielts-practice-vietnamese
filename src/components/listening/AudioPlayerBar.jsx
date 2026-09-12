@@ -9,7 +9,8 @@ import {
   Lock, 
   Sparkles, 
   Headphones,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 
 function formatTime(seconds) {
@@ -101,9 +102,11 @@ export default function AudioPlayerBar({
                     ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
                     : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
                 }`}
-                title={isPlaying ? 'Tạm dừng bài nghe' : 'Phát bài nghe'}
+                title={isLoading ? 'Đang tải tệp âm thanh...' : isPlaying ? 'Tạm dừng bài nghe' : 'Phát bài nghe'}
               >
-                {isPlaying ? (
+                {isLoading ? (
+                  <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                ) : isPlaying ? (
                   <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                 ) : (
                   <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current translate-x-0.5" />

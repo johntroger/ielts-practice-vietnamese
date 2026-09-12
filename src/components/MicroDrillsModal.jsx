@@ -34,6 +34,7 @@ import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
 import { evaluateParaphrase, generateMicroDrill } from '../services/geminiService';
+import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 
 export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activeSkill = 'writing' }) {
   if (!isOpen) return null;
@@ -169,6 +170,39 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const [selectedSignIndex, setSelectedSignIndex] = useState(0);
   const [userSignChoice, setUserSignChoice] = useState(null);
   const [showSignResult, setShowSignResult] = useState(false);
+
+  // Audio Speech State for Micro-Drills
+  const [playingDrillAudioId, setPlayingDrillAudioId] = useState(null);
+  const [dictationSpeed, setDictationSpeed] = useState(0.95);
+
+  const handlePlayDrillSpeech = (drillId, text, options = {}) => {
+    if (playingDrillAudioId === drillId) {
+      stopSpeech();
+      setPlayingDrillAudioId(null);
+      return;
+    }
+    setPlayingDrillAudioId(drillId);
+    speakText(text, {
+      rate: options.rate || 0.9,
+      lang: options.lang || 'en-GB',
+      onStart: () => setPlayingDrillAudioId(drillId),
+      onEnd: () => setPlayingDrillAudioId(null),
+      onError: () => setPlayingDrillAudioId(null)
+    });
+  };
+
+  // Stop any active speech on tab change or room change
+  useEffect(() => {
+    stopSpeech();
+    setPlayingDrillAudioId(null);
+  }, [activeTab, activeRoom]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
 
   // Current items
   const currentFill = fillDrills[selectedFillIndex] || fillDrills[0];
@@ -1619,20 +1653,49 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                       </h3>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        try {
-                          const utterance = new SpeechSynthesisUtterance(currentDictation.ttsText);
-                          utterance.lang = 'en-GB';
-                          utterance.rate = 0.9;
-                          window.speechSynthesis.speak(utterance);
-                        } catch (e) {}
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                      <span>Phát Audio Mẫu (Anh-Anh)</span>
-                    </button>
+                    <div className="flex items-center space-x-2">
+                      {/* Speed selector */}
+                      <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-[11px] font-bold text-slate-600">
+                        <button
+                          type="button"
+                          onClick={() => setDictationSpeed(0.8)}
+                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${dictationSpeed === 0.8 ? 'bg-white text-purple-700 shadow-2xs font-bold' : 'hover:text-slate-900'}`}
+                          title="Tốc độ 0.8x (Chậm)"
+                        >
+                          0.8x
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDictationSpeed(0.95)}
+                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${dictationSpeed === 0.95 ? 'bg-white text-purple-700 shadow-2xs font-bold' : 'hover:text-slate-900'}`}
+                          title="Tốc độ 1.0x (Chuẩn)"
+                        >
+                          1.0x
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDictationSpeed(1.15)}
+                          className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${dictationSpeed === 1.15 ? 'bg-white text-purple-700 shadow-2xs font-bold' : 'hover:text-slate-900'}`}
+                          title="Tốc độ 1.2x (Nhanh)"
+                        >
+                          1.2x
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handlePlayDrillSpeech(currentDictation.id, currentDictation.ttsText, { rate: dictationSpeed })}
+                        className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
+                          playingDrillAudioId === currentDictation.id
+                            ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
+                            : 'bg-purple-600 hover:bg-purple-500'
+                        }`}
+                        title="Nghe câu tiếng Anh mẫu để chép chính tả"
+                      >
+                        <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentDictation.id ? 'animate-bounce' : ''}`} />
+                        <span>{playingDrillAudioId === currentDictation.id ? 'Đang đọc... (Bấm để dừng)' : 'Phát Audio Mẫu (Anh-Anh)'}</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-200/80 text-xs text-purple-900 space-y-1">
@@ -1722,18 +1785,17 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                     </div>
 
                     <button
-                      onClick={() => {
-                        try {
-                          const utterance = new SpeechSynthesisUtterance(currentSpelling.promptAudioText);
-                          utterance.lang = 'en-GB';
-                          utterance.rate = 0.9;
-                          window.speechSynthesis.speak(utterance);
-                        } catch (e) {}
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                      type="button"
+                      onClick={() => handlePlayDrillSpeech(currentSpelling.id, currentSpelling.promptAudioText, { rate: 0.85 })}
+                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
+                        playingDrillAudioId === currentSpelling.id
+                          ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
+                          : 'bg-indigo-600 hover:bg-indigo-500'
+                      }`}
+                      title="Nghe phát âm hoặc đánh vần từng ký tự/con số"
                     >
-                      <Volume2 className="w-4 h-4" />
-                      <span>Nghe Phát Âm / Đánh Vần</span>
+                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentSpelling.id ? 'animate-bounce' : ''}`} />
+                      <span>{playingDrillAudioId === currentSpelling.id ? 'Đang đọc... (Bấm để dừng)' : 'Nghe Phát Âm / Đánh Vần'}</span>
                     </button>
                   </div>
 
@@ -1806,18 +1868,17 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                     </div>
 
                     <button
-                      onClick={() => {
-                        try {
-                          const utterance = new SpeechSynthesisUtterance(currentDistractor.audioSnippetText);
-                          utterance.lang = 'en-GB';
-                          utterance.rate = 0.9;
-                          window.speechSynthesis.speak(utterance);
-                        } catch (e) {}
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                      type="button"
+                      onClick={() => handlePlayDrillSpeech(currentDistractor.id, currentDistractor.audioSnippetText, { rate: 0.9 })}
+                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
+                        playingDrillAudioId === currentDistractor.id
+                          ? 'bg-red-600 hover:bg-red-500 ring-2 ring-red-400/40 animate-pulse'
+                          : 'bg-amber-600 hover:bg-amber-500'
+                      }`}
+                      title="Nghe đoạn hội thoại mô phỏng bẫy Cambridge"
                     >
-                      <Volume2 className="w-4 h-4" />
-                      <span>Nghe Đoạn Hội Thoại Chứa Bẫy</span>
+                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentDistractor.id ? 'animate-bounce' : ''}`} />
+                      <span>{playingDrillAudioId === currentDistractor.id ? 'Đang phát hội thoại... (Dừng)' : 'Nghe Đoạn Hội Thoại Chứa Bẫy'}</span>
                     </button>
                   </div>
 
@@ -1891,18 +1952,17 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                     </div>
 
                     <button
-                      onClick={() => {
-                        try {
-                          const utterance = new SpeechSynthesisUtterance(currentMap.audioDirectionsText);
-                          utterance.lang = 'en-GB';
-                          utterance.rate = 0.9;
-                          window.speechSynthesis.speak(utterance);
-                        } catch (e) {}
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                      type="button"
+                      onClick={() => handlePlayDrillSpeech(currentMap.id, currentMap.audioDirectionsText, { rate: 0.85 })}
+                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
+                        playingDrillAudioId === currentMap.id
+                          ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
+                          : 'bg-emerald-600 hover:bg-emerald-500'
+                      }`}
+                      title="Nghe chỉ dẫn phương hướng trên sơ đồ"
                     >
-                      <Volume2 className="w-4 h-4" />
-                      <span>Nghe Chỉ Dẫn Phương Hướng</span>
+                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentMap.id ? 'animate-bounce' : ''}`} />
+                      <span>{playingDrillAudioId === currentMap.id ? 'Đang chỉ dẫn... (Bấm để dừng)' : 'Nghe Chỉ Dẫn Phương Hướng'}</span>
                     </button>
                   </div>
 
@@ -1982,18 +2042,17 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                     </div>
 
                     <button
-                      onClick={() => {
-                        try {
-                          const utterance = new SpeechSynthesisUtterance(currentSign.audioSnippetText);
-                          utterance.lang = 'en-GB';
-                          utterance.rate = 0.9;
-                          window.speechSynthesis.speak(utterance);
-                        } catch (e) {}
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                      type="button"
+                      onClick={() => handlePlayDrillSpeech(currentSign.id, currentSign.audioSnippetText, { rate: 0.85 })}
+                      className={`px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-xs flex items-center space-x-1.5 transition-all active:scale-95 cursor-pointer ${
+                        playingDrillAudioId === currentSign.id
+                          ? 'bg-amber-600 hover:bg-amber-500 ring-2 ring-amber-400/40 animate-pulse'
+                          : 'bg-indigo-600 hover:bg-indigo-500'
+                      }`}
+                      title="Nghe đoạn bài giảng học thuật để bắt từ nối chuyển ý"
                     >
-                      <Volume2 className="w-4 h-4" />
-                      <span>Nghe Bài Giảng Học Thuật</span>
+                      <Volume2 className={`w-4 h-4 ${playingDrillAudioId === currentSign.id ? 'animate-bounce' : ''}`} />
+                      <span>{playingDrillAudioId === currentSign.id ? 'Đang đọc bài giảng... (Dừng)' : 'Nghe Bài Giảng Học Thuật'}</span>
                     </button>
                   </div>
 

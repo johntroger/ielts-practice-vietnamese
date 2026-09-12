@@ -35,6 +35,8 @@ export function useAudioEngine({
   const [errorMessage, setErrorMessage] = useState(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [currentActiveSrc, setCurrentActiveSrc] = useState(initialSrc);
+  const lastLoadedSrcRef = useRef('');
+  const fallbackTriedRef = useRef(false);
 
   // Helper to compute buffered percent and check minimum buffer readiness
   const updateBufferInfo = useCallback((audio) => {
@@ -150,15 +152,18 @@ export function useAudioEngine({
     const handleError = (e) => {
       console.warn('Audio error on src:', audio.src, e);
       // Auto fallback if initial source fails
-      if (fallbackSrc && audio.src !== fallbackSrc) {
+      if (fallbackSrc && !fallbackTriedRef.current && lastLoadedSrcRef.current !== fallbackSrc) {
         console.log('Switching to fallback audio source:', fallbackSrc);
-        audio.src = fallbackSrc;
+        fallbackTriedRef.current = true;
+        lastLoadedSrcRef.current = fallbackSrc;
         setCurrentActiveSrc(fallbackSrc);
+        audio.src = fallbackSrc;
         audio.load();
+        audio.play().catch(() => {});
         return;
       }
       setAudioState('error');
-      const err = audio.error ? ('Lỗi âm thanh: code ' + audio.error.code) : 'Không thể tải tệp âm thanh';
+      const err = audio.error ? ('Lỗi âm thanh: code ' + audio.error.code) : 'Không thể tải tệp âm thanh. Vui lòng kiểm tra kết nối mạng.';
       setErrorMessage(err);
       if (onError) {
         onError(err);
@@ -179,6 +184,8 @@ export function useAudioEngine({
     audio.addEventListener('error', handleError);
 
     if (initialSrc) {
+      lastLoadedSrcRef.current = initialSrc;
+      fallbackTriedRef.current = false;
       setAudioState('loading');
       audio.src = initialSrc;
       setCurrentActiveSrc(initialSrc);
@@ -218,12 +225,17 @@ export function useAudioEngine({
   // Update source when initialSrc changes
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !initialSrc) return;
 
-    if (initialSrc && audio.src !== initialSrc) {
+    if (lastLoadedSrcRef.current !== initialSrc) {
+      lastLoadedSrcRef.current = initialSrc;
+      fallbackTriedRef.current = false;
       setAudioState('loading');
       setCurrentTime(0);
       setBufferedPercent(0);
+      setIsBufferReady(false);
+      setIsStalled(false);
+      setErrorMessage(null);
       audio.src = initialSrc;
       setCurrentActiveSrc(initialSrc);
       audio.playbackRate = playbackRate;
@@ -298,8 +310,10 @@ export function useAudioEngine({
       if (err.name === 'NotAllowedError') {
         setErrorMessage('Trình duyệt cần tương tác: Bạn vui lòng bấm nút Play để bắt đầu nghe.');
         setAudioState('paused');
-      } else if (fallbackSrc && audio.src !== fallbackSrc) {
+      } else if (fallbackSrc && !fallbackTriedRef.current && lastLoadedSrcRef.current !== fallbackSrc) {
         // Attempt fallback
+        fallbackTriedRef.current = true;
+        lastLoadedSrcRef.current = fallbackSrc;
         audio.src = fallbackSrc;
         setCurrentActiveSrc(fallbackSrc);
         audio.load();
@@ -308,11 +322,11 @@ export function useAudioEngine({
           setErrorMessage(null);
           setAudioState('playing');
         } catch (e) {
-          setErrorMessage('Vui lòng kiểm tra kết nối mạng để phát âm thanh.');
+          setErrorMessage('Vui lòng kiểm tra kết nối mạng hoặc nguồn tệp âm thanh.');
           setAudioState('error');
         }
       } else {
-        setErrorMessage('Không thể phát âm thanh: ' + (err.message || 'Lỗi mạng'));
+        setErrorMessage('Không thể phát âm thanh: ' + (err.message || 'Lỗi mạng hoặc tệp không phản hồi'));
         setAudioState('error');
       }
     }
@@ -411,6 +425,8 @@ export function useAudioEngine({
   const loadAudio = useCallback((newSrc) => {
     const audio = audioRef.current;
     if (!audio || !newSrc) return;
+    lastLoadedSrcRef.current = newSrc;
+    fallbackTriedRef.current = false;
     setAudioState('loading');
     setCurrentTime(0);
     setErrorMessage(null);
@@ -438,6 +454,7 @@ export function useAudioEngine({
     errorMessage,
     isUnlocked,
     currentActiveSrc,
+    src: currentActiveSrc,
     unlockAudio,
     forcePreload,
     loadAudio,

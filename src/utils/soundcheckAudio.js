@@ -7,6 +7,8 @@
  * - Safe browser audio unlock
  */
 
+import { speakText, stopSpeech } from './speechAudio';
+
 let activeAudioCtx = null;
 
 export function playIELTSSoundcheck({ volume = 1.0, onStart, onEnd } = {}) {
@@ -58,38 +60,18 @@ export function playIELTSSoundcheck({ volume = 1.0, onStart, onEnd } = {}) {
     });
 
     // 2. CD-IELTS Official Announcement Speech Check
-    const speechDelayMs = 1200;
+    const speechDelayMs = 1100;
     const speechTimeout = setTimeout(() => {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(
-          'This is an IELTS listening soundcheck. If you can hear this sound clearly, please put on your headphones and adjust the volume.'
-        );
-        utterance.volume = clampedVol;
-        utterance.rate = 0.95;
-        utterance.pitch = 1.0;
-
-        // Try to pick authentic British or English voice
-        const voices = window.speechSynthesis.getVoices();
-        const enVoice = voices.find(v => v.lang === 'en-GB' || v.name.includes('UK') || v.name.includes('British') || v.lang.startsWith('en'));
-        if (enVoice) {
-          utterance.voice = enVoice;
+      speakText(
+        'This is an IELTS listening soundcheck. If you can hear this sound clearly, please put on your headphones and adjust the volume.',
+        {
+          volume: clampedVol,
+          rate: 0.95,
+          playChimeFirst: false,
+          onEnd: () => onEnd?.(),
+          onError: () => onEnd?.()
         }
-
-        utterance.onend = () => {
-          onEnd?.();
-        };
-        utterance.onerror = () => {
-          onEnd?.();
-        };
-
-        window.speechSynthesis.speak(utterance);
-      } else {
-        // Fallback timer if speech synthesis is not supported
-        setTimeout(() => {
-          onEnd?.();
-        }, 1500);
-      }
+      );
     }, speechDelayMs);
 
     return () => {
@@ -105,11 +87,7 @@ export function playIELTSSoundcheck({ volume = 1.0, onStart, onEnd } = {}) {
 }
 
 export function stopIELTSSoundcheck() {
-  if ('speechSynthesis' in window) {
-    try {
-      window.speechSynthesis.cancel();
-    } catch (e) {}
-  }
+  stopSpeech();
   if (activeAudioCtx) {
     try {
       activeAudioCtx.close();
