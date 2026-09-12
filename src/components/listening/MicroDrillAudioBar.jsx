@@ -188,6 +188,47 @@ export default function MicroDrillAudioBar({
     };
   }, []);
 
+  // Speech Synthesizer fallback runner
+  const playSpeechSynthesizer = () => {
+    setFallbackMode(true);
+    setIsLoading(false);
+    setIsPlaying(true);
+    setCurrentTime(0);
+
+    const dur = duration || estimatedSeconds;
+    const startTime = Date.now();
+    if (tickerRef.current) clearInterval(tickerRef.current);
+    tickerRef.current = setInterval(() => {
+      const elapsed = ((Date.now() - startTime) / 1000) * playbackRate;
+      if (elapsed >= dur) {
+        clearInterval(tickerRef.current);
+        setIsPlaying(false);
+        setCurrentTime(0);
+      } else {
+        setCurrentTime(elapsed);
+      }
+    }, 100);
+
+    speakText(audioText, {
+      rate: playbackRate,
+      lang: accent,
+      playChimeFirst: false,
+      onStart: () => {
+        setIsPlaying(true);
+        setIsLoading(false);
+      },
+      onEnd: () => {
+        if (tickerRef.current) clearInterval(tickerRef.current);
+        setIsPlaying(false);
+        setCurrentTime(0);
+      },
+      onError: () => {
+        if (tickerRef.current) clearInterval(tickerRef.current);
+        setIsPlaying(false);
+      }
+    });
+  };
+
   // Play / Pause toggle
   const togglePlay = () => {
     // 1. Immediate audio chime feedback so user knows sound hardware is active
@@ -199,45 +240,17 @@ export default function MicroDrillAudioBar({
         if (tickerRef.current) clearInterval(tickerRef.current);
         setIsPlaying(false);
       } else {
-        setIsPlaying(true);
-        setCurrentTime(0);
-        const startTime = Date.now();
-        const dur = duration || estimatedSeconds;
-
-        if (tickerRef.current) clearInterval(tickerRef.current);
-        tickerRef.current = setInterval(() => {
-          const elapsed = ((Date.now() - startTime) / 1000) * playbackRate;
-          if (elapsed >= dur) {
-            clearInterval(tickerRef.current);
-            setIsPlaying(false);
-            setCurrentTime(0);
-          } else {
-            setCurrentTime(elapsed);
-          }
-        }, 100);
-
-        speakText(audioText, {
-          rate: playbackRate,
-          lang: accent,
-          playChimeFirst: false,
-          onStart: () => setIsPlaying(true),
-          onEnd: () => {
-            if (tickerRef.current) clearInterval(tickerRef.current);
-            setIsPlaying(false);
-            setCurrentTime(0);
-          },
-          onError: () => {
-            if (tickerRef.current) clearInterval(tickerRef.current);
-            setIsPlaying(false);
-          }
-        });
+        playSpeechSynthesizer();
       }
       return;
     }
 
     // Standard HTML5 Audio
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) {
+      playSpeechSynthesizer();
+      return;
+    }
 
     if (isPlaying) {
       audio.pause();
@@ -252,41 +265,8 @@ export default function MicroDrillAudioBar({
             setIsLoading(false);
           })
           .catch((err) => {
-            console.warn('Audio play failed, switching synchronously to Speech Synthesizer fallback:', err);
-            setFallbackMode(true);
-            setIsLoading(false);
-            setIsPlaying(true);
-            setCurrentTime(0);
-            
-            const startTime = Date.now();
-            const dur = duration || estimatedSeconds;
-            if (tickerRef.current) clearInterval(tickerRef.current);
-            tickerRef.current = setInterval(() => {
-              const elapsed = ((Date.now() - startTime) / 1000) * playbackRate;
-              if (elapsed >= dur) {
-                clearInterval(tickerRef.current);
-                setIsPlaying(false);
-                setCurrentTime(0);
-              } else {
-                setCurrentTime(elapsed);
-              }
-            }, 100);
-
-            speakText(audioText, {
-              rate: playbackRate,
-              lang: accent,
-              playChimeFirst: false,
-              onStart: () => setIsPlaying(true),
-              onEnd: () => {
-                if (tickerRef.current) clearInterval(tickerRef.current);
-                setIsPlaying(false);
-                setCurrentTime(0);
-              },
-              onError: () => {
-                if (tickerRef.current) clearInterval(tickerRef.current);
-                setIsPlaying(false);
-              }
-            });
+            console.warn('Audio play stream stalled, switching smoothly to Speech Synthesizer:', err);
+            playSpeechSynthesizer();
           });
       }
     }

@@ -250,30 +250,25 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
     }
   };
 
-  // Audio Speech State for Micro-Drills
-  const [playingDrillAudioId, setPlayingDrillAudioId] = useState(null);
-  const [dictationSpeed, setDictationSpeed] = useState(0.95);
-
-  const handlePlayDrillSpeech = (drillId, text, options = {}) => {
-    if (playingDrillAudioId === drillId) {
-      stopSpeech();
-      setPlayingDrillAudioId(null);
-      return;
+  // Sync room and tab when modal opens or activeSkill prop changes
+  useEffect(() => {
+    if (isOpen) {
+      if (activeSkill === 'reading') {
+        setActiveRoom('reading');
+        setActiveTab('reading-tfng');
+      } else if (activeSkill === 'listening') {
+        setActiveRoom('listening');
+        setActiveTab('listening-dictation');
+      } else {
+        setActiveRoom('writing');
+        setActiveTab('fill-blanks');
+      }
     }
-    setPlayingDrillAudioId(drillId);
-    speakText(text, {
-      rate: options.rate || 0.9,
-      lang: options.lang || 'en-GB',
-      onStart: () => setPlayingDrillAudioId(drillId),
-      onEnd: () => setPlayingDrillAudioId(null),
-      onError: () => setPlayingDrillAudioId(null)
-    });
-  };
+  }, [isOpen, activeSkill]);
 
   // Stop any active speech on tab change or room change
   useEffect(() => {
     stopSpeech();
-    setPlayingDrillAudioId(null);
   }, [activeTab, activeRoom]);
 
   // Cleanup on unmount
