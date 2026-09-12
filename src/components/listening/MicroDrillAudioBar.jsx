@@ -22,12 +22,13 @@ function formatTime(seconds) {
 /**
  * MicroDrillAudioBar - Authentic CD-IELTS Style Audio Player Bar for Practice Rooms
  * Provides:
+ * - Instant, reliable speech playback with Web Speech API (Cambridge UK accent)
  * - Real-time seconds counter (00:00 / 00:15)
- * - Visual buffering and loaded completion indicator (khi nào thì load xong)
+ * - Visual buffering and loaded completion indicator (Đã sẵn sàng 100%)
  * - Clickable progress scrubbing bar
- * - Dual-engine playback (Google UK TTS stream + Web Speech API fallback)
  * - Speed control (0.8x, 1.0x, 1.2x)
- * - Sound wave animation
+ * - Dynamic sound wave animation
+ * - Built-in sound test button
  */
 export default function MicroDrillAudioBar({
   drillId,
@@ -40,24 +41,26 @@ export default function MicroDrillAudioBar({
   const tickerRef = useRef(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [bufferedPercent, setBufferedPercent] = useState(0);
-  const [isBufferReady, setIsBufferReady] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(1.0);
-  const [fallbackMode, setFallbackMode] = useState(false);
-  const [loadError, setLoadError] = useState(null);
+  const [bufferedPercent, setBufferedPercent] = useState(100);
+  const [isBufferReady, setIsBufferReady] = useState(true);
 
-  // Compute estimate duration from text length (~140 words per minute => ~2.3 words/sec)
-  const estimatedSeconds = Math.max(3, Math.ceil((audioText ? audioText.split(/\s+/).length : 6) / 2.2));
+  // Check if we have a valid direct audio file (mp3, wav, blob, etc.)
+  const hasDirectAudioFile = Boolean(
+    directAudioUrl && 
+    (directAudioUrl.startsWith('blob:') || directAudioUrl.startsWith('data:') || directAudioUrl.endsWith('.mp3') || directAudioUrl.endsWith('.wav') || directAudioUrl.endsWith('.ogg')) &&
+    !directAudioUrl.includes('translate.google.com')
+  );
 
-  // Construct Google Native TTS stream URL
-  const streamUrl = directAudioUrl || (audioText ? `https://translate.google.com/translate_tts?ie=UTF-8&tl=${accent}&client=tw-ob&q=${encodeURIComponent(audioText.slice(0, 350))}` : '');
+  // Compute estimate duration from text length (~135 words per minute => ~2.25 words/sec)
+  const wordCount = audioText ? audioText.trim().split(/\s+/).length : 6;
+  const baseDuration = Math.max(3, Math.ceil(wordCount / 2.2));
+  const effectiveDuration = Math.max(3, Math.ceil(baseDuration / playbackRate));
+  const [audioDuration, setAudioDuration] = useState(effectiveDuration);
 
-  // Reset states when drillId changes
+  // When drillId, audioText, or playbackRate changes: stop previous speech and reset state
   useEffect(() => {
     stopSpeech();
     if (audioRef.current) {
@@ -68,118 +71,30 @@ export default function MicroDrillAudioBar({
     }
     if (tickerRef.current) {
       clearInterval(tickerRef.current);
+      tickerRef.current = null;
     }
 
     setIsPlaying(false);
-    setIsLoading(true);
     setCurrentTime(0);
-    setDuration(estimatedSeconds);
-    setBufferedPercent(0);
-    setIsBufferReady(false);
-    setFallbackMode(false);
-    setLoadError(null);
+    setAudioDuration(effectiveDuration);
+    setBufferedPercent(100);
+    setIsBufferReady(true);
 
-    const audio = audioRef.current;
-    if (audio && streamUrl) {
-      audio.src = streamUrl;
-      audio.playbackRate = playbackRate;
-      audio.load();
+    if (hasDirectAudioFile && audioRef.current) {
+      audioRef.current.src = directAudioUrl;
+      audioRef.current.playbackRate = playbackRate;
+      audioRef.current.load();
     }
-  }, [drillId, streamUrl]);
+  }, [drillId, audioText, playbackRate, directAudioUrl]);
 
-  // Handle audio element events
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onLoadedMetadata = () => {
-      if (audio.duration && !isNaN(audio.duration) && audio.duration > 0 && isFinite(audio.duration)) {
-        setDuration(audio.duration);
-      }
-      setIsLoading(false);
-      setIsBufferReady(true);
-      setBufferedPercent(100);
-      setLoadError(null);
-    };
-
-    const onCanPlay = () => {
-      setIsLoading(false);
-      setIsBufferReady(true);
-      if (bufferedPercent < 50) setBufferedPercent(100);
-    };
-
-    const onProgress = () => {
-      try {
-        if (audio.buffered.length > 0 && audio.duration > 0) {
-          const loaded = audio.buffered.end(audio.buffered.length - 1);
-          const pct = Math.min(100, Math.round((loaded / audio.duration) * 100));
-          setBufferedPercent(pct);
-          if (pct >= 90) setIsBufferReady(true);
-        }
-      } catch (e) {}
-    };
-
-    const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime || 0);
-      if (audio.duration && !isNaN(audio.duration) && audio.duration > 0 && isFinite(audio.duration)) {
-        setDuration(audio.duration);
-      }
-    };
-
-    const onWaiting = () => {
-      setIsLoading(true);
-    };
-
-    const onPlaying = () => {
-      setIsLoading(false);
-      setIsPlaying(true);
-    };
-
-    const onPause = () => {
-      setIsPlaying(false);
-    };
-
-    const onEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    };
-
-    const onError = () => {
-      console.warn('MicroDrillAudioBar stream note: switching to Web Speech synthesizer fallback.');
-      setFallbackMode(true);
-      setIsLoading(false);
-      setIsBufferReady(true);
-      setBufferedPercent(100);
-    };
-
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('canplay', onCanPlay);
-    audio.addEventListener('progress', onProgress);
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('waiting', onWaiting);
-    audio.addEventListener('playing', onPlaying);
-    audio.addEventListener('pause', onPause);
-    audio.addEventListener('ended', onEnded);
-    audio.addEventListener('error', onError);
-
-    return () => {
-      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-      audio.removeEventListener('canplay', onCanPlay);
-      audio.removeEventListener('progress', onProgress);
-      audio.removeEventListener('timeupdate', onTimeUpdate);
-      audio.removeEventListener('waiting', onWaiting);
-      audio.removeEventListener('playing', onPlaying);
-      audio.removeEventListener('pause', onPause);
-      audio.removeEventListener('ended', onEnded);
-      audio.removeEventListener('error', onError);
-    };
-  }, [bufferedPercent]);
-
-  // Clean up on unmount
+  // Clean up on component unmount
   useEffect(() => {
     return () => {
       stopSpeech();
-      if (tickerRef.current) clearInterval(tickerRef.current);
+      if (tickerRef.current) {
+        clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
       if (audioRef.current) {
         try {
           audioRef.current.pause();
@@ -188,105 +103,126 @@ export default function MicroDrillAudioBar({
     };
   }, []);
 
-  // Speech Synthesizer fallback runner
-  const playSpeechSynthesizer = () => {
-    setFallbackMode(true);
-    setIsLoading(false);
-    setIsPlaying(true);
-    setCurrentTime(0);
+  // HTML5 audio event handlers (only if direct audio file is present)
+  useEffect(() => {
+    if (!hasDirectAudioFile || !audioRef.current) return;
+    const audio = audioRef.current;
 
-    const dur = duration || estimatedSeconds;
-    const startTime = Date.now();
+    const onLoadedMetadata = () => {
+      if (audio.duration && !isNaN(audio.duration) && audio.duration > 0 && isFinite(audio.duration)) {
+        setAudioDuration(Math.ceil(audio.duration));
+      }
+    };
+    const onTimeUpdate = () => {
+      setCurrentTime(audio.currentTime || 0);
+    };
+    const onEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+
+    audio.addEventListener('loadedmetadata', onLoadedMetadata);
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('ended', onEnded);
+
+    return () => {
+      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+      audio.removeEventListener('timeupdate', onTimeUpdate);
+      audio.removeEventListener('ended', onEnded);
+    };
+  }, [hasDirectAudioFile]);
+
+  // Play / Pause toggle
+  const togglePlay = () => {
+    if (isPlaying) {
+      // STOP PLAYBACK
+      if (hasDirectAudioFile && audioRef.current) {
+        audioRef.current.pause();
+      } else {
+        stopSpeech();
+      }
+      if (tickerRef.current) {
+        clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
+      setIsPlaying(false);
+      return;
+    }
+
+    // START PLAYBACK
+    // 1. Play immediate pleasant IELTS chime
+    playChimeTone({ freq: 659.25, duration: 0.15, volume: 0.25 });
+
+    if (hasDirectAudioFile && audioRef.current) {
+      // Direct audio file playback
+      audioRef.current.currentTime = currentTime;
+      audioRef.current.play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => console.warn('Direct audio play error:', err));
+      return;
+    }
+
+    // Web Speech API Playback (Instant, local, zero-network lag)
+    setIsPlaying(true);
+    const startTime = Date.now() - (currentTime / playbackRate) * 1000;
+    
     if (tickerRef.current) clearInterval(tickerRef.current);
     tickerRef.current = setInterval(() => {
       const elapsed = ((Date.now() - startTime) / 1000) * playbackRate;
-      if (elapsed >= dur) {
-        clearInterval(tickerRef.current);
-        setIsPlaying(false);
-        setCurrentTime(0);
-      } else {
-        setCurrentTime(elapsed);
-      }
+      setCurrentTime((prev) => {
+        if (elapsed >= effectiveDuration) {
+          return effectiveDuration;
+        }
+        return Number(elapsed.toFixed(1));
+      });
     }, 100);
 
     speakText(audioText, {
       rate: playbackRate,
+      volume: isMuted ? 0 : 1.0,
       lang: accent,
       playChimeFirst: false,
       onStart: () => {
         setIsPlaying(true);
-        setIsLoading(false);
       },
       onEnd: () => {
-        if (tickerRef.current) clearInterval(tickerRef.current);
+        if (tickerRef.current) {
+          clearInterval(tickerRef.current);
+          tickerRef.current = null;
+        }
         setIsPlaying(false);
         setCurrentTime(0);
       },
-      onError: () => {
-        if (tickerRef.current) clearInterval(tickerRef.current);
+      onError: (err) => {
+        console.warn('Speech playback ended or interrupted:', err);
+        if (tickerRef.current) {
+          clearInterval(tickerRef.current);
+          tickerRef.current = null;
+        }
         setIsPlaying(false);
       }
     });
   };
 
-  // Play / Pause toggle
-  const togglePlay = () => {
-    // 1. Immediate audio chime feedback so user knows sound hardware is active
-    playChimeTone({ freq: 659.25, duration: 0.15, volume: 0.25 });
-
-    if (fallbackMode) {
-      if (isPlaying) {
-        stopSpeech();
-        if (tickerRef.current) clearInterval(tickerRef.current);
-        setIsPlaying(false);
-      } else {
-        playSpeechSynthesizer();
-      }
-      return;
-    }
-
-    // Standard HTML5 Audio
-    const audio = audioRef.current;
-    if (!audio) {
-      playSpeechSynthesizer();
-      return;
-    }
-
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      setIsLoading(true);
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.warn('Audio play stream stalled, switching smoothly to Speech Synthesizer:', err);
-            playSpeechSynthesizer();
-          });
-      }
-    }
-  };
-
-  // Replay from beginning
+  // Replay from start
   const handleReplay = () => {
-    if (audioRef.current) {
+    stopSpeech();
+    if (tickerRef.current) {
+      clearInterval(tickerRef.current);
+      tickerRef.current = null;
+    }
+    if (hasDirectAudioFile && audioRef.current) {
       try {
         audioRef.current.currentTime = 0;
-        setCurrentTime(0);
       } catch (e) {}
     }
-    if (fallbackMode) {
-      stopSpeech();
-      if (tickerRef.current) clearInterval(tickerRef.current);
-      setCurrentTime(0);
-      setIsPlaying(false);
-    }
-    togglePlay();
+    setCurrentTime(0);
+    setIsPlaying(false);
+
+    // Short timeout before playing again to reset browser utterance cleanly
+    setTimeout(() => {
+      togglePlay();
+    }, 50);
   };
 
   // Seek bar click
@@ -294,75 +230,90 @@ export default function MicroDrillAudioBar({
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const fraction = Math.max(0, Math.min(1, clickX / rect.width));
-    const targetSec = fraction * (duration || estimatedSeconds);
+    const targetSec = fraction * effectiveDuration;
     setCurrentTime(targetSec);
 
-    if (audioRef.current && !fallbackMode) {
+    if (hasDirectAudioFile && audioRef.current) {
       try {
         audioRef.current.currentTime = targetSec;
       } catch (e) {}
     }
   };
 
-  // Speed change
+  // Change playback speed
   const handleSpeedChange = (newRate) => {
+    const wasPlaying = isPlaying;
+    if (wasPlaying) {
+      stopSpeech();
+      if (tickerRef.current) {
+        clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
+      setIsPlaying(false);
+    }
     setPlaybackRate(newRate);
-    if (audioRef.current) {
+    if (hasDirectAudioFile && audioRef.current) {
       audioRef.current.playbackRate = newRate;
+    }
+    if (wasPlaying) {
+      setTimeout(() => {
+        togglePlay();
+      }, 60);
     }
   };
 
-  // Volume toggle
+  // Toggle Mute
   const toggleMute = () => {
-    if (audioRef.current) {
+    if (hasDirectAudioFile && audioRef.current) {
       audioRef.current.muted = !isMuted;
     }
     setIsMuted(!isMuted);
   };
 
-  const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
+  // Sound check test button
+  const handleSoundTest = () => {
+    playChimeTone({ freq: 523.25, duration: 0.2, volume: 0.35 });
+    setTimeout(() => {
+      speakText('Microphone and audio check ready.', {
+        rate: 1.0,
+        lang: 'en-GB',
+        playChimeFirst: false
+      });
+    }, 250);
+  };
+
+  const progressPercent = effectiveDuration > 0 ? Math.min(100, (currentTime / effectiveDuration) * 100) : 0;
 
   return (
     <div className="p-3 sm:p-4 rounded-2xl bg-slate-950 text-slate-100 border border-slate-800 shadow-lg space-y-2.5">
-      {/* Hidden HTML5 Audio Element with no-referrer to prevent Google TTS 404 block */}
-      <audio 
-        ref={audioRef} 
-        preload="auto" 
-        referrerPolicy="no-referrer"
-        crossOrigin="anonymous"
-        src={streamUrl} 
-      />
+      {/* Hidden HTML5 Audio Element for custom uploaded audio files */}
+      {hasDirectAudioFile && (
+        <audio 
+          ref={audioRef} 
+          preload="auto" 
+          src={directAudioUrl} 
+        />
+      )}
 
-      {/* HEADER: Title & Buffer Status (Khi nào thì load xong) */}
+      {/* HEADER: Title & Buffer Status (Hiển thị rõ ràng khi nào load xong) */}
       <div className="flex items-center justify-between text-xs gap-2">
         <div className="flex items-center space-x-2 font-bold text-slate-200 truncate">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-indigo-400'}`} />
           <span className="truncate">{title}</span>
         </div>
 
         {/* Load status badge */}
         <div className="flex items-center space-x-1.5 shrink-0">
-          {isLoading ? (
-            <span className="px-2 py-0.5 rounded-full bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold flex items-center space-x-1 animate-pulse">
-              <RefreshCw className="w-2.5 h-2.5 animate-spin" />
-              <span>Đang đệm: {bufferedPercent}%...</span>
-            </span>
-          ) : isBufferReady || bufferedPercent >= 90 ? (
-            <span className="px-2 py-0.5 rounded-full bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] font-bold flex items-center space-x-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-              <span>Đã tải xong 100% ({Math.round(duration || estimatedSeconds)}s)</span>
-            </span>
-          ) : (
-            <span className="px-2 py-0.5 rounded-full bg-amber-900/60 border border-amber-500/40 text-amber-300 font-mono text-[10px] font-bold">
-              Đệm: {bufferedPercent}%
-            </span>
-          )}
+          <span className="px-2.5 py-0.5 rounded-full bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] font-bold flex items-center space-x-1 shadow-sm">
+            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <span>Đã sẵn sàng 100% ({effectiveDuration}s)</span>
+          </span>
         </div>
       </div>
 
       {/* MAIN CONTROLS ROW */}
       <div className="flex items-center justify-between gap-3">
-        {/* Play/Pause Button + Time + Wave */}
+        {/* Play/Pause Button + Replay + Time + Wave */}
         <div className="flex items-center space-x-3">
           <button
             type="button"
@@ -370,13 +321,11 @@ export default function MicroDrillAudioBar({
             className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
               isPlaying 
                 ? 'bg-emerald-600 hover:bg-emerald-500 ring-2 ring-emerald-400/40 shadow-emerald-900/50' 
-                : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/40'
+                : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/40 ring-2 ring-rose-500/20'
             }`}
-            title={isPlaying ? 'Tạm dừng' : 'Bắt đầu nghe'}
+            title={isPlaying ? 'Tạm dừng nghe' : 'Bắt đầu nghe lời thoại'}
           >
-            {isLoading ? (
-              <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-            ) : isPlaying ? (
+            {isPlaying ? (
               <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
             ) : (
               <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current translate-x-0.5" />
@@ -393,14 +342,14 @@ export default function MicroDrillAudioBar({
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
 
-          {/* Time Counter (Bao nhiêu s) */}
+          {/* Time Counter (Bao nhiêu giây thực tế) */}
           <div className="flex items-baseline space-x-1 font-mono text-xs sm:text-sm">
             <span className="font-black text-emerald-400">{formatTime(currentTime)}</span>
             <span className="text-slate-600">/</span>
-            <span className="text-slate-400 font-bold">{formatTime(duration || estimatedSeconds)}</span>
+            <span className="text-slate-400 font-bold">{formatTime(effectiveDuration)}</span>
           </div>
 
-          {/* Sound wave bars */}
+          {/* Sound wave animated visualizer */}
           <div className="hidden sm:flex items-center space-x-0.5 h-4 px-2 bg-slate-900 rounded-md border border-slate-800">
             <div className={`w-0.5 bg-emerald-400 rounded-full transition-all duration-200 ${isPlaying ? 'h-3 animate-pulse' : 'h-1'}`} />
             <div className={`w-0.5 bg-emerald-400 rounded-full transition-all duration-150 ${isPlaying ? 'h-4 animate-bounce' : 'h-1'}`} style={{ animationDelay: '100ms' }} />
@@ -410,38 +359,14 @@ export default function MicroDrillAudioBar({
           </div>
         </div>
 
-        {/* Speed, Test & Engine Switch Controls */}
+        {/* Speed, Test & Mute Controls */}
         <div className="flex items-center space-x-2 shrink-0">
-          {/* Engine Mode Toggle (Online vs Offline/System) */}
-          <button
-            type="button"
-            onClick={() => {
-              if (isPlaying) {
-                stopSpeech();
-                if (tickerRef.current) clearInterval(tickerRef.current);
-                if (audioRef.current) {
-                  try { audioRef.current.pause(); } catch (e) {}
-                }
-                setIsPlaying(false);
-              }
-              setFallbackMode(!fallbackMode);
-            }}
-            className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all border cursor-pointer ${
-              fallbackMode
-                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
-                : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 hover:bg-indigo-500/30'
-            }`}
-            title="Bấm để đổi nguồn phát giữa Giọng Cloud Online và Giọng Trình Duyệt Offline"
-          >
-            {fallbackMode ? '🎤 Giọng Offline' : '☁️ Giọng Online'}
-          </button>
-
           {/* Sound Test Button */}
           <button
             type="button"
-            onClick={() => playChimeTone({ freq: 523.25, duration: 0.25, volume: 0.4 })}
+            onClick={handleSoundTest}
             className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-300 text-[10px] font-bold border border-slate-700 transition-colors cursor-pointer"
-            title="Thử chuông kiểm tra loa / tai nghe"
+            title="Thử loa và kiểm tra giọng phát âm"
           >
             🔔 Test loa
           </button>
@@ -460,7 +385,7 @@ export default function MicroDrillAudioBar({
               type="button"
               onClick={() => handleSpeedChange(1.0)}
               className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${playbackRate === 1.0 ? 'bg-emerald-600 text-white shadow-2xs font-black' : 'text-slate-400 hover:text-white'}`}
-              title="Tốc độ 1.0x (Chuẩn)"
+              title="Tốc độ 1.0x (Chuẩn Cambridge)"
             >
               1.0x
             </button>
@@ -492,9 +417,8 @@ export default function MicroDrillAudioBar({
         <div className="w-full h-2 sm:h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
           {/* Buffer Bar (Khi nào load xong) */}
           <div 
-            className="absolute top-0 left-0 bottom-0 bg-slate-700/80 transition-all duration-300 rounded-full"
-            style={{ width: `${Math.max(bufferedPercent, isBufferReady ? 100 : 0)}%` }}
-            title={`Bộ đệm đã tải: ${bufferedPercent}%`}
+            className="absolute top-0 left-0 bottom-0 bg-slate-700/80 transition-all duration-300 rounded-full w-full"
+            title="Đã tải xong toàn bộ âm thanh"
           />
           {/* Played Bar */}
           <div 
@@ -511,9 +435,9 @@ export default function MicroDrillAudioBar({
       </div>
 
       {/* FOOTER HELPER HINT */}
-      <div className="flex items-center justify-between text-[10px] text-slate-500 px-0.5">
-        <span>Bấm vào bất kỳ điểm nào trên thanh để tua đến số giây tương ứng</span>
-        <span>{accent === 'en-GB' ? 'Giọng đọc chuẩn Cambridge (Anh-Anh)' : 'Giọng đọc quốc tế'}</span>
+      <div className="flex items-center justify-between text-[10px] text-slate-400 px-0.5">
+        <span>Bấm vào thanh để tua • Bấm Play để nghe câu đọc</span>
+        <span className="text-emerald-400 font-semibold">{accent === 'en-GB' ? '🇬🇧 Giọng chuẩn Cambridge (Anh-Anh)' : '🌐 Giọng đọc chuẩn'}</span>
       </div>
     </div>
   );
