@@ -40,8 +40,14 @@ export default function ListeningLibraryModal({
         matchesTab = !test.isCustom;
       } else if (activeTab === 'ai') {
         matchesTab = Boolean(test.isCustom);
-      } else if (activeTab === 'community') {
-        matchesTab = Boolean(test.isPublic);
+      } else if (activeTab === 'part1') {
+        matchesTab = test.targetPart === 1 || test.parts?.[0]?.partNumber === 1;
+      } else if (activeTab === 'part2') {
+        matchesTab = test.targetPart === 2 || test.parts?.[0]?.partNumber === 2;
+      } else if (activeTab === 'part3') {
+        matchesTab = test.targetPart === 3 || test.parts?.[0]?.partNumber === 3;
+      } else if (activeTab === 'part4') {
+        matchesTab = test.targetPart === 4 || test.parts?.[0]?.partNumber === 4;
       }
 
       // 2. Search query
@@ -62,7 +68,11 @@ export default function ListeningLibraryModal({
   const stats = {
     total: allListeningTests.length,
     cambridge: allListeningTests.filter(t => !t.isCustom).length,
-    ai: allListeningTests.filter(t => t.isCustom).length
+    ai: allListeningTests.filter(t => t.isCustom).length,
+    p1: allListeningTests.filter(t => t.targetPart === 1 || t.parts?.[0]?.partNumber === 1).length,
+    p2: allListeningTests.filter(t => t.targetPart === 2 || t.parts?.[0]?.partNumber === 2).length,
+    p3: allListeningTests.filter(t => t.targetPart === 3 || t.parts?.[0]?.partNumber === 3).length,
+    p4: allListeningTests.filter(t => t.targetPart === 4 || t.parts?.[0]?.partNumber === 4).length,
   };
 
   return (
@@ -102,10 +112,10 @@ export default function ListeningLibraryModal({
         <div className="px-5 py-3 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
           
           {/* Tabs */}
-          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
+          <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600 overflow-x-auto scrollbar-none max-w-full">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
                 activeTab === 'all' ? 'bg-white text-slate-900 shadow-2xs font-black' : 'hover:text-slate-900'
               }`}
             >
@@ -113,19 +123,43 @@ export default function ListeningLibraryModal({
             </button>
             <button
               onClick={() => setActiveTab('cambridge')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                activeTab === 'cambridge' ? 'bg-white text-slate-900 shadow-2xs font-black' : 'hover:text-slate-900'
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'cambridge' ? 'bg-white text-emerald-800 shadow-2xs font-black' : 'hover:text-slate-900'
               }`}
             >
               📚 Cambridge ({stats.cambridge})
             </button>
             <button
-              onClick={() => setActiveTab('ai')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                activeTab === 'ai' ? 'bg-white text-purple-700 shadow-2xs font-black' : 'hover:text-slate-900'
+              onClick={() => setActiveTab('part1')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'part1' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'hover:text-slate-900'
               }`}
             >
-              ✨ AI & URL ({stats.ai})
+              Part 1 ({stats.p1})
+            </button>
+            <button
+              onClick={() => setActiveTab('part2')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'part2' ? 'bg-white text-emerald-700 shadow-2xs font-black' : 'hover:text-slate-900'
+              }`}
+            >
+              Part 2 ({stats.p2})
+            </button>
+            <button
+              onClick={() => setActiveTab('part3')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'part3' ? 'bg-white text-purple-700 shadow-2xs font-black' : 'hover:text-slate-900'
+              }`}
+            >
+              Part 3 ({stats.p3})
+            </button>
+            <button
+              onClick={() => setActiveTab('part4')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'part4' ? 'bg-white text-amber-800 shadow-2xs font-black' : 'hover:text-slate-900'
+              }`}
+            >
+              Part 4 ({stats.p4})
             </button>
           </div>
 
