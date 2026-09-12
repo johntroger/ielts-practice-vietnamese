@@ -32,18 +32,35 @@ if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
   }
 }
 
+// Shared persistent AudioContext to prevent garbage collection and browser suspension
+let sharedAudioCtx = null;
+
+function getAudioContext() {
+  if (typeof window === 'undefined') return null;
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return null;
+  if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
+    sharedAudioCtx = new AudioCtx();
+  }
+  if (sharedAudioCtx.state === 'suspended') {
+    sharedAudioCtx.resume().catch(() => {});
+  }
+  return sharedAudioCtx;
+}
+
 /**
  * Play a short, pleasant Web Audio API cue chime
  * This guarantees the user hears immediate sound feedback upon clicking
  */
 export function playChimeTone({ freq = 587.33, type = 'sine', duration = 0.22, volume = 0.35 } = {}) {
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    
     if (ctx.state === 'suspended') {
       ctx.resume().catch(() => {});
     }
+    
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -60,12 +77,6 @@ export function playChimeTone({ freq = 587.33, type = 'sine', duration = 0.22, v
 
     osc.start(now);
     osc.stop(now + duration);
-
-    setTimeout(() => {
-      try {
-        ctx.close();
-      } catch (e) {}
-    }, (duration + 0.1) * 1000);
   } catch (e) {
     console.warn('playChimeTone error:', e);
   }

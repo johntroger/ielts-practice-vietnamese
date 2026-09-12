@@ -430,8 +430,42 @@ export default function MicroDrillAudioBar({
           </div>
         </div>
 
-        {/* Speed & Volume Controls */}
+        {/* Speed, Test & Engine Switch Controls */}
         <div className="flex items-center space-x-2 shrink-0">
+          {/* Engine Mode Toggle (Online vs Offline/System) */}
+          <button
+            type="button"
+            onClick={() => {
+              if (isPlaying) {
+                stopSpeech();
+                if (tickerRef.current) clearInterval(tickerRef.current);
+                if (audioRef.current) {
+                  try { audioRef.current.pause(); } catch (e) {}
+                }
+                setIsPlaying(false);
+              }
+              setFallbackMode(!fallbackMode);
+            }}
+            className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all border cursor-pointer ${
+              fallbackMode
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
+                : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 hover:bg-indigo-500/30'
+            }`}
+            title="Bấm để đổi nguồn phát giữa Giọng Cloud Online và Giọng Trình Duyệt Offline"
+          >
+            {fallbackMode ? '🎤 Giọng Offline' : '☁️ Giọng Online'}
+          </button>
+
+          {/* Sound Test Button */}
+          <button
+            type="button"
+            onClick={() => playChimeTone({ freq: 523.25, duration: 0.25, volume: 0.4 })}
+            className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-300 text-[10px] font-bold border border-slate-700 transition-colors cursor-pointer"
+            title="Thử chuông kiểm tra loa / tai nghe"
+          >
+            🔔 Test loa
+          </button>
+
           {/* Speed Buttons */}
           <div className="flex items-center bg-slate-900 border border-slate-800 p-0.5 rounded-lg text-[11px] font-bold">
             <button
