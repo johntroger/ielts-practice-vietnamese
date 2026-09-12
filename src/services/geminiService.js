@@ -1668,6 +1668,8 @@ export function robustJsonParse(rawText, fallback = null) {
  */
 export async function analyzeAudioAndSuggestParts({
   audioUrl = '',
+  audioBase64 = null,
+  audioMimeType = 'audio/mp3',
   topicOrTitle = '',
   transcriptSnippet = '',
   apiKey,
@@ -1675,6 +1677,7 @@ export async function analyzeAudioAndSuggestParts({
 }) {
   const prompt = `You are an expert Cambridge Assessment English IELTS Chief Examiner.
 Analyze this audio source and topic context to determine which IELTS Listening Part (Part 1, Part 2, Part 3, or Part 4) it is most suitable for.
+${audioBase64 ? 'LISTEN CAREFULLY TO THE ATTACHED SPOKEN AUDIO to identify speaker interactions, acoustic setting, conversational vs academic tone, and vocabulary.' : ''}
 
 AUDIO URL: ${audioUrl || 'N/A'}
 TOPIC / TITLE: ${topicOrTitle || 'N/A'}
@@ -1688,7 +1691,7 @@ IELTS LISTENING 4 PARTS CHARACTERISTICS:
 
 Task:
 1. Identify "primaryPart": the single best Part (1, 2, 3, or 4).
-2. Identify "suggestedParts": an array of all viable Parts (e.g. [1] or [3, 4]).
+2. Identify "suggestedParts": an array of all viable Parts (e.g. [1] or [1, 2] or [3, 4]). Multiple parts can be viable if the audio has broad educational/conversational value.
 3. Provide "confidence": "high" | "medium".
 4. Provide "reasoning": 2-3 concise sentences in Vietnamese explaining why this audio fits that Part (based on number of speakers, conversational style vs academic tone, vocabulary level).
 5. Provide "recommendedQuestionTypes": array of 2-3 question types in Vietnamese/English.
@@ -1706,11 +1709,22 @@ Return ONLY pure JSON (no markdown formatting, no code fence):
   "detectedSpeakers": "..."
 }`;
 
+  const contentParts = [];
+  if (audioBase64) {
+    contentParts.push({
+      inlineData: {
+        mimeType: audioMimeType || 'audio/mp3',
+        data: audioBase64
+      }
+    });
+  }
+  contentParts.push({ text: prompt });
+
   const response = await callGeminiApi({
     model,
     apiKey,
     body: {
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [{ parts: contentParts }],
       generationConfig: {
         temperature: 0.2,
         maxOutputTokens: 1024,

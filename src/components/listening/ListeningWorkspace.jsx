@@ -489,10 +489,10 @@ export default function ListeningWorkspace({
             <button
               onClick={() => setIsGeneratorOpen(true)}
               className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-colors shadow-2xs cursor-pointer"
-              title="Sinh đề thi IELTS mới từ link âm thanh bất kỳ bằng AI"
+              title="Sinh đề thi IELTS mới bằng AI từ file ghi âm máy tính hoặc audio bản xứ"
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>Sinh Đề (URL)</span>
+              <span>Sinh Đề (AI)</span>
             </button>
 
             {/* If Submitted: Result Report Button */}

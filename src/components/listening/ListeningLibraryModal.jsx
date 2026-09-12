@@ -449,7 +449,7 @@ export default function ListeningLibraryModal({
             <div className="text-center py-16 text-slate-400 space-y-2">
               <Headphones className="w-10 h-10 mx-auto opacity-30 text-slate-500" />
               <p className="text-sm font-semibold text-slate-600">Không tìm thấy bộ đề nghe nào phù hợp.</p>
-              <p className="text-xs text-slate-400">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Sinh Đề Từ URL" để tạo đề mới.</p>
+              <p className="text-xs text-slate-400">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Sinh Đề Bằng AI" để tạo đề mới.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

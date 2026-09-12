@@ -42,7 +42,7 @@ export default function ListeningURLExerciseGeneratorModal({
   if (!isOpen) return null;
 
   // Active Tab: 'curated' (browse & AI discover) | 'custom' (enter URL manually)
-  const [activeTab, setActiveTab] = useState('curated');
+  const [activeTab, setActiveTab] = useState('upload');
 
   // Form Fields
   const [audioUrl, setAudioUrl] = useState('');
@@ -327,12 +327,14 @@ export default function ListeningURLExerciseGeneratorModal({
         });
       }
 
+      const mime = file.type || 'audio/mpeg';
+
       setUploadedAudioInfo({
         name: file.name,
         sizeMB,
         objectUrl: objUrl,
         base64,
-        mimeType: file.type || 'audio/mpeg',
+        mimeType: mime,
         storageId
       });
 
@@ -343,7 +345,33 @@ export default function ListeningURLExerciseGeneratorModal({
       // Auto-set title from filename
       const rawName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
       setTestTitle(`${rawName} (Part ${selectedPart})`);
-      setTopicDescription(`File ghi âm bản xứ: ${file.name}`);
+      setTopicDescription(`File ghi âm: ${file.name}`);
+
+      // If Gemini API Key is available, automatically trigger AI to listen & analyze suitable Parts
+      if (apiKey) {
+        setIsAnalyzing(true);
+        try {
+          const analysis = await analyzeAudioAndSuggestParts({
+            audioUrl: objUrl,
+            audioBase64: base64,
+            audioMimeType: mime,
+            topicOrTitle: file.name,
+            transcriptSnippet: '',
+            apiKey,
+            model
+          });
+          setAnalysisResult(analysis);
+          if (analysis.primaryPart) {
+            handleSwitchPart(Number(analysis.primaryPart));
+          } else if (Array.isArray(analysis.suggestedParts) && analysis.suggestedParts.length > 0) {
+            handleSwitchPart(Number(analysis.suggestedParts[0]));
+          }
+        } catch (analysisErr) {
+          console.warn('AI analysis on uploaded file non-fatal error:', analysisErr);
+        } finally {
+          setIsAnalyzing(false);
+        }
+      }
     } catch (err) {
       console.error('Error handling local audio upload:', err);
       setErrorMessage('Không thể đọc file âm thanh từ máy tính. Vui lòng thử lại.');
@@ -570,28 +598,6 @@ export default function ListeningURLExerciseGeneratorModal({
             <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl">
               <button
                 type="button"
-                onClick={() => setActiveTab('curated')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'curated'
-                    ? 'bg-white text-purple-800 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                📚 Kho Audio & AI Gợi Ý ({allSources.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('custom')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'custom'
-                    ? 'bg-white text-purple-800 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                🔗 Nhập Link URL
-              </button>
-              <button
-                type="button"
                 onClick={() => setActiveTab('upload')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'upload'
@@ -599,7 +605,18 @@ export default function ListeningURLExerciseGeneratorModal({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                📁 Tải File Từ Máy Tính
+                📁 Tải File Từ Máy Tính (AI Phân Tích & Gợi Ý Part)
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('curated')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'curated'
+                    ? 'bg-white text-purple-800 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                📚 Kho Audio Bản Xứ Tuyển Chọn ({allSources.length})
               </button>
             </div>
 
@@ -817,63 +834,7 @@ export default function ListeningURLExerciseGeneratorModal({
             </div>
           )}
 
-          {/* TAB CONTENT 2: CUSTOM URL INPUT */}
-          {activeTab === 'custom' && (
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
-                <span className="flex items-center space-x-1.5">
-                  <LinkIcon className="w-3.5 h-3.5 text-purple-600" />
-                  <span>Dán đường dẫn URL tệp âm thanh (MP3, M4A, OGG):</span>
-                </span>
-                {audioTestStatus === 'valid' && (
-                  <span className="text-emerald-600 font-bold flex items-center space-x-1 text-[11px]">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> <span>Link nghe tốt!</span>
-                  </span>
-                )}
-              </label>
-
-              <div className="flex gap-1.5">
-                <input
-                  type="url"
-                  value={audioUrl}
-                  onChange={(e) => {
-                    setAudioUrl(e.target.value);
-                    setSelectedSource(null);
-                    setAudioTestStatus(null);
-                  }}
-                  placeholder="https://example.com/audio/conversation_or_lecture.mp3"
-                  className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-purple-500"
-                />
-
-                <button
-                  type="button"
-                  onClick={handleTestAudioUrl}
-                  disabled={audioTestStatus === 'testing' || !audioUrl.trim()}
-                  className="px-2.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs shrink-0 flex items-center space-x-1 transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  <Play className="w-3 h-3 fill-current" />
-                  <span>Test link</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAnalyzeCustomInput}
-                  disabled={isAnalyzing || !audioUrl.trim()}
-                  className="px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-800 font-bold text-xs shrink-0 flex items-center space-x-1 transition-colors cursor-pointer disabled:opacity-50"
-                  title="AI phân tích URL này phù hợp nhất với Part nào"
-                >
-                  {isAnalyzing ? (
-                    <div className="w-3 h-3 border-2 border-purple-800/40 border-t-purple-800 rounded-full animate-spin" />
-                  ) : (
-                    <Wand2 className="w-3.5 h-3.5 text-purple-700" />
-                  )}
-                  <span>AI Phân Tích Part</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB CONTENT 3: UPLOAD AUDIO FILE FROM COMPUTER */}
+          {/* TAB CONTENT 2: UPLOAD AUDIO FILE FROM COMPUTER */}
           {activeTab === 'upload' && (
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
               <div
@@ -914,39 +875,114 @@ export default function ListeningURLExerciseGeneratorModal({
 
               {/* Uploaded File Indicator Card */}
               {uploadedAudioInfo && (
-                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center justify-between gap-2.5 animate-in fade-in">
-                  <div className="flex items-center space-x-2 min-w-0 flex-1">
-                    <button
-                      type="button"
-                      onClick={() => handleTogglePreview('local-upload', uploadedAudioInfo.objectUrl)}
-                      className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 cursor-pointer shadow-xs"
-                      title={previewingId === 'local-upload' ? 'Dừng nghe thử' : 'Nghe thử âm thanh'}
-                    >
-                      {previewingId === 'local-upload' ? <Pause className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
-                    </button>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-1.5">
-                        <span className="font-bold text-slate-900 text-xs truncate max-w-[280px]">
-                          {uploadedAudioInfo.name}
-                        </span>
-                        <span className="text-[10px] text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded font-mono font-bold">
-                          {uploadedAudioInfo.sizeMB} MB
-                        </span>
+                <div className="space-y-2 animate-in fade-in">
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 flex items-center justify-between gap-2.5">
+                    <div className="flex items-center space-x-2 min-w-0 flex-1">
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePreview('local-upload', uploadedAudioInfo.objectUrl)}
+                        className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 cursor-pointer shadow-xs"
+                        title={previewingId === 'local-upload' ? 'Dừng nghe thử' : 'Nghe thử âm thanh'}
+                      >
+                        {previewingId === 'local-upload' ? <Pause className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
+                      </button>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-1.5">
+                          <span className="font-bold text-slate-900 text-xs truncate max-w-[280px]">
+                            {uploadedAudioInfo.name}
+                          </span>
+                          <span className="text-[10px] text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded font-mono font-bold">
+                            {uploadedAudioInfo.sizeMB} MB
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-emerald-700 font-semibold">
+                          ✓ Đã nạp thành công • AI đang nghe trực tiếp file để đề xuất Part phù hợp bên dưới
+                        </p>
                       </div>
-                      <p className="text-[10px] text-emerald-700 font-semibold">
-                        ✓ Đã lưu trữ an toàn • AI sẽ nghe trực tiếp file này để sinh đề
-                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (apiKey && uploadedAudioInfo) {
+                            setIsAnalyzing(true);
+                            analyzeAudioAndSuggestParts({
+                              audioUrl: uploadedAudioInfo.objectUrl,
+                              audioBase64: uploadedAudioInfo.base64,
+                              audioMimeType: uploadedAudioInfo.mimeType,
+                              topicOrTitle: uploadedAudioInfo.name,
+                              transcriptSnippet: '',
+                              apiKey,
+                              model
+                            }).then(res => {
+                              setAnalysisResult(res);
+                              if (res.primaryPart) handleSwitchPart(Number(res.primaryPart));
+                            }).catch(e => console.warn(e))
+                            .finally(() => setIsAnalyzing(false));
+                          }
+                        }}
+                        disabled={isAnalyzing}
+                        className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center space-x-1 cursor-pointer disabled:opacity-50"
+                      >
+                        <Wand2 className="w-3 h-3" />
+                        <span>{isAnalyzing ? 'Đang phân tích...' : 'Phân tích lại'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleClearUploadedAudio}
+                        className="p-1 rounded-lg text-slate-400 hover:text-rose-600 cursor-pointer"
+                        title="Xóa tệp này"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleClearUploadedAudio}
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 cursor-pointer"
-                    title="Xóa tệp này"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+                  {/* AI Analysis Result Banner for Uploaded File */}
+                  {isAnalyzing && (
+                    <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-purple-700/40 border-t-purple-700 rounded-full animate-spin shrink-0" />
+                      <span>Gemini đang nghe và phân tích nội dung audio để gợi ý Part phù hợp nhất...</span>
+                    </div>
+                  )}
+
+                  {!isAnalyzing && analysisResult && (
+                    <div className="p-3 rounded-xl bg-purple-50/80 border border-purple-200 text-purple-950 text-xs space-y-1.5 animate-in fade-in">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold flex items-center space-x-1.5 text-purple-900">
+                          <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                          <span>AI Gợi Ý Part Phù Hợp:</span>
+                        </span>
+                        <div className="flex items-center space-x-1">
+                          {analysisResult.suggestedParts && analysisResult.suggestedParts.map(p => (
+                            <button
+                              key={p}
+                              type="button"
+                              onClick={() => handleSwitchPart(p)}
+                              className={`px-2 py-0.5 rounded-md font-extrabold text-[11px] transition-all cursor-pointer ${
+                                selectedPart === p
+                                  ? 'bg-purple-700 text-white shadow-xs'
+                                  : 'bg-white text-purple-800 border border-purple-300 hover:bg-purple-100'
+                              }`}
+                            >
+                              Part {p} {selectedPart === p ? '✓ Đang chọn' : ''}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      {analysisResult.reasoning && (
+                        <p className="text-[11px] text-purple-800 leading-relaxed">
+                          <strong>Lý do:</strong> {analysisResult.reasoning}
+                        </p>
+                      )}
+                      {analysisResult.detectedSpeakers && (
+                        <p className="text-[10px] text-slate-600">
+                          <strong>Người nói nhận diện được:</strong> {analysisResult.detectedSpeakers}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -976,7 +1012,10 @@ export default function ListeningURLExerciseGeneratorModal({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PART_SPECS.map(p => {
                 const isSelected = selectedPart === p.num;
-                const isRecommendedForAudio = selectedSource?.suggestedParts?.includes(p.num);
+                const isRecommendedForAudio = 
+                  analysisResult?.suggestedParts?.includes(p.num) || 
+                  analysisResult?.primaryPart === p.num || 
+                  selectedSource?.suggestedParts?.includes(p.num);
 
                 return (
                   <button
