@@ -93,6 +93,19 @@ export default function ListeningURLExerciseGeneratorModal({
     return [...discoveredSources, ...CURATED_LISTENING_AUDIO_SOURCES];
   }, [discoveredSources]);
 
+  // Counts per part for quick filter badges
+  const partCounts = useMemo(() => {
+    const counts = { all: allSources.length, 1: 0, 2: 0, 3: 0, 4: 0 };
+    allSources.forEach(src => {
+      if (Array.isArray(src.suggestedParts)) {
+        src.suggestedParts.forEach(p => {
+          if (counts[p] !== undefined) counts[p]++;
+        });
+      }
+    });
+    return counts;
+  }, [allSources]);
+
   // Filter curated and discovered sources
   const filteredSources = useMemo(() => {
     return allSources.filter(src => {
@@ -221,10 +234,10 @@ export default function ListeningURLExerciseGeneratorModal({
     }
   };
 
-  // Select source and optionally select target part directly
-  const handleSelectSourceAndPart = (src, partNum = null) => {
-    // If user clicked same source and same part -> Toggle Deselect!
-    if (audioUrl === src.audioUrl && (partNum === null || partNum === selectedPart)) {
+  // Select audio source (toggles deselect if clicked again)
+  const handleSelectSource = (src) => {
+    // If user clicked the already selected source -> Toggle Deselect!
+    if (selectedSource?.id === src.id || (audioUrl === src.audioUrl && selectedSource)) {
       setSelectedSource(null);
       setAudioUrl('');
       setFallbackAudioUrl('');
@@ -237,7 +250,14 @@ export default function ListeningURLExerciseGeneratorModal({
       return;
     }
 
-    const targetP = partNum !== null ? partNum : (src.suggestedParts?.[0] || 1);
+    // Keep current selectedPart if suitable, or adapt to source's primary suggestion
+    let targetP = selectedPart;
+    if (src.suggestedParts && src.suggestedParts.length > 0) {
+      if (!src.suggestedParts.includes(selectedPart)) {
+        targetP = src.suggestedParts[0];
+      }
+    }
+
     setSelectedSource(src);
     setAudioUrl(src.audioUrl);
     setFallbackAudioUrl(src.fallbackAudioUrl || '');
@@ -529,14 +549,14 @@ export default function ListeningURLExerciseGeneratorModal({
                   />
                 </div>
 
-                {/* Filter Part Pills */}
+                {/* Filter Part Pills with Counts */}
                 <div className="flex items-center space-x-1 shrink-0 overflow-x-auto scrollbar-none py-0.5">
                   {[
-                    { key: 'all', label: 'Tất cả' },
-                    { key: 1, label: 'P1' },
-                    { key: 2, label: 'P2' },
-                    { key: 3, label: 'P3' },
-                    { key: 4, label: 'P4' }
+                    { key: 'all', label: `Tất cả (${partCounts.all})` },
+                    { key: 1, label: `P1 (${partCounts[1]})` },
+                    { key: 2, label: `P2 (${partCounts[2]})` },
+                    { key: 3, label: `P3 (${partCounts[3]})` },
+                    { key: 4, label: `P4 (${partCounts[4]})` }
                   ].map(tab => (
                     <button
                       key={tab.key}
@@ -607,20 +627,24 @@ export default function ListeningURLExerciseGeneratorModal({
                   return (
                     <div
                       key={src.id}
-                      className={`p-2.5 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
+                      onClick={() => handleSelectSource(src)}
+                      className={`p-2.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
                         isSelectedSource 
-                          ? 'border-purple-500 bg-purple-50/40 ring-1 ring-purple-400 shadow-xs' 
+                          ? 'border-purple-500 bg-purple-50/60 ring-2 ring-purple-400/80 shadow-xs' 
                           : isNewlyDiscovered
-                          ? 'border-emerald-300 bg-emerald-50/20 hover:border-emerald-400'
-                          : 'border-slate-200 bg-white hover:border-purple-200 hover:bg-slate-50/50'
+                          ? 'border-emerald-300 bg-emerald-50/20 hover:border-emerald-400 hover:bg-emerald-50/40'
+                          : 'border-slate-200 bg-white hover:border-purple-300 hover:bg-slate-50/80'
                       }`}
                     >
-                      {/* Left: Play button, Title, Accent, Duration */}
-                      <div className="flex items-start space-x-2 min-w-0 flex-1">
+                      {/* Left: Play button, Title, Accent, Duration, Context */}
+                      <div className="flex items-start space-x-2.5 min-w-0 flex-1">
                         {/* Mini Audio Preview Play Button */}
                         <button
                           type="button"
-                          onClick={() => handleTogglePreview(src.id, src.audioUrl)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTogglePreview(src.id, src.audioUrl);
+                          }}
                           className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs transition-colors cursor-pointer mt-0.5 ${
                             isPreviewing
                               ? 'bg-emerald-600 text-white animate-pulse'
@@ -633,11 +657,14 @@ export default function ListeningURLExerciseGeneratorModal({
 
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center space-x-1.5 flex-wrap gap-y-0.5">
-                            <h5 className="font-bold text-slate-900 text-xs truncate max-w-[280px] sm:max-w-[340px]" title={src.title}>
+                            <h5 className="font-bold text-slate-900 text-xs truncate max-w-[260px] sm:max-w-[360px]" title={src.title}>
                               {src.title}
                             </h5>
                             <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded shrink-0">
                               {src.durationText}
+                            </span>
+                            <span className="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded font-medium shrink-0">
+                              {src.accent}
                             </span>
                             {isNewlyDiscovered && (
                               <span className="px-1.5 py-0.2 rounded bg-emerald-600 text-white text-[9px] font-black uppercase shrink-0">
@@ -647,42 +674,41 @@ export default function ListeningURLExerciseGeneratorModal({
                           </div>
                           
                           <div className="text-[11px] text-slate-500 truncate mt-0.5" title={src.context}>
-                            <span className="font-medium text-purple-700">{src.accent}</span> • {src.context}
+                            {src.context}
                           </div>
                         </div>
                       </div>
 
-                      {/* Right: DIRECT PART BUTTONS (1-CLICK SELECT ANY PART FOR THIS SOURCE) */}
-                      <div className="flex items-center space-x-1 shrink-0 self-end sm:self-center">
-                        <span className="text-[10px] text-slate-400 font-medium hidden md:inline mr-1">
-                          Sinh:
-                        </span>
-                        {[1, 2, 3, 4].map(pNum => {
-                          const isCurrentActivePart = isSelectedSource && selectedPart === pNum;
-                          const isSuggested = src.suggestedParts.includes(pNum);
+                      {/* Right: AI Recommendation tag & Clean Single Select Button */}
+                      <div className="flex items-center space-x-2 shrink-0">
+                        {src.suggestedParts && src.suggestedParts.length > 0 && (
+                          <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-bold">
+                            Gợi ý: Part {src.suggestedParts.join(', ')}
+                          </span>
+                        )}
 
-                          return (
-                            <button
-                              key={pNum}
-                              type="button"
-                              onClick={() => handleSelectSourceAndPart(src, pNum)}
-                              className={`px-2 py-1 rounded-md text-xs font-bold transition-all flex items-center space-x-0.5 cursor-pointer ${
-                                isCurrentActivePart
-                                  ? 'bg-purple-600 text-white shadow-xs scale-105 ring-1 ring-purple-400'
-                                  : isSuggested
-                                  ? 'bg-purple-100 hover:bg-purple-200 text-purple-800'
-                                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
-                              }`}
-                              title={`Chọn nguồn này và sinh Part ${pNum}${isSuggested ? ' (AI Đề Xuất)' : ''}`}
-                            >
-                              {isCurrentActivePart && <Check className="w-3 h-3 stroke-[3]" />}
-                              <span>Part {pNum}</span>
-                              {isSuggested && !isCurrentActivePart && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                              )}
-                            </button>
-                          );
-                        })}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectSource(src);
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer shrink-0 ${
+                            isSelectedSource
+                              ? 'bg-purple-600 text-white shadow-xs hover:bg-purple-700 ring-1 ring-purple-400'
+                              : 'bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-800 border border-slate-200 hover:border-purple-300'
+                          }`}
+                          title={isSelectedSource ? 'Nhấn để bỏ chọn nguồn này' : 'Chọn nguồn âm thanh này'}
+                        >
+                          {isSelectedSource ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                              <span>Đang chọn</span>
+                            </>
+                          ) : (
+                            <span>Chọn nguồn</span>
+                          )}
+                        </button>
                       </div>
 
                     </div>
@@ -760,36 +786,50 @@ export default function ListeningURLExerciseGeneratorModal({
               </span>
             </div>
 
-            {/* 4 Segmented Part Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+            {/* 4 Segmented Part Tabs with Radio Indicators */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PART_SPECS.map(p => {
                 const isSelected = selectedPart === p.num;
+                const isRecommendedForAudio = selectedSource?.suggestedParts?.includes(p.num);
 
                 return (
                   <button
                     key={p.num}
                     type="button"
                     onClick={() => handleSwitchPart(p.num)}
-                    className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer relative flex flex-col justify-between ${
                       isSelected
-                        ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-500 shadow-xs'
+                        ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-500 shadow-xs'
                         : 'border-slate-200 bg-white hover:border-purple-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className={`text-xs font-extrabold flex items-center space-x-1 ${
-                        isSelected ? 'text-purple-900' : 'text-slate-800'
-                      }`}>
-                        <span className={`w-4 h-4 rounded text-[10px] font-black flex items-center justify-center ${
-                          isSelected ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-700'
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center space-x-1.5">
+                        {/* Radio Circle Indicator */}
+                        <span className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                          isSelected 
+                            ? 'border-purple-600 bg-purple-600 text-white' 
+                            : 'border-slate-300 bg-white'
                         }`}>
-                          {p.num}
+                          {isSelected ? <Check className="w-2.5 h-2.5 stroke-[3]" /> : null}
                         </span>
-                        <span>Part {p.num}</span>
-                      </span>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-purple-600 stroke-[3]" />}
+                        <span className={`text-xs font-black ${
+                          isSelected ? 'text-purple-900' : 'text-slate-800'
+                        }`}>
+                          Part {p.num}
+                        </span>
+                      </div>
+
+                      {/* Small subtle badge - purely informative, unselected parts stay neutral */}
+                      {isRecommendedForAudio && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                          AI khuyên dùng
+                        </span>
+                      )}
                     </div>
-                    <div className="text-[10px] text-slate-500 truncate">
+                    <div className={`text-[10px] truncate ${
+                      isSelected ? 'text-purple-700 font-semibold' : 'text-slate-500'
+                    }`}>
                       {p.tag}
                     </div>
                   </button>
