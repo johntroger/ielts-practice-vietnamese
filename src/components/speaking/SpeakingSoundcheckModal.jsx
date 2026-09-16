@@ -479,8 +479,7 @@ export default function SpeakingSoundcheckModal({
               }
               onPassedSoundcheck();
             }}
-            disabled={!canProceed}
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/40 flex items-center space-x-2 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/40 flex items-center space-x-2 transition-all cursor-pointer"
           >
             <span>Tôi Đã Sẵn Sàng Vào Phòng Thi</span>
             <ArrowRight className="w-4 h-4" />
