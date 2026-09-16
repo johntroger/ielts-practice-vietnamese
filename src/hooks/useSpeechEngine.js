@@ -106,8 +106,12 @@ export function useSpeechEngine({
       return;
     }
 
-    // Cancel any previous speech
-    window.speechSynthesis.cancel();
+    // Always resume SpeechSynthesis if paused
+    try {
+      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+
     if (ttsKeepAliveTimerRef.current) {
       clearInterval(ttsKeepAliveTimerRef.current);
       ttsKeepAliveTimerRef.current = null;
@@ -127,41 +131,49 @@ export function useSpeechEngine({
       utterance.lang = 'en-GB';
     }
 
-    utterance.rate = options.rate || 0.95; // Steady examiner pace
+    utterance.rate = options.rate || 0.95;
     utterance.pitch = options.pitch || 1.0;
+
+    let hasEnded = false;
+    const finishSpeech = () => {
+      if (hasEnded) return;
+      hasEnded = true;
+      setIsSpeaking(false);
+      if (ttsKeepAliveTimerRef.current) {
+        clearInterval(ttsKeepAliveTimerRef.current);
+        ttsKeepAliveTimerRef.current = null;
+      }
+      if (onEndCallback) onEndCallback();
+    };
 
     utterance.onstart = () => {
       setIsSpeaking(true);
       // Chromium Keep-Alive Interval: Pause & Resume every 9s to prevent frozen speech
       ttsKeepAliveTimerRef.current = setInterval(() => {
-        if (window.speechSynthesis.speaking) {
+        if (window.speechSynthesis && window.speechSynthesis.speaking) {
           window.speechSynthesis.pause();
           window.speechSynthesis.resume();
         }
       }, 9000);
     };
 
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      if (ttsKeepAliveTimerRef.current) {
-        clearInterval(ttsKeepAliveTimerRef.current);
-        ttsKeepAliveTimerRef.current = null;
-      }
-      if (onEndCallback) onEndCallback();
-    };
-
+    utterance.onend = finishSpeech;
     utterance.onerror = (e) => {
       console.warn('Speech synthesis error:', e);
-      setIsSpeaking(false);
-      if (ttsKeepAliveTimerRef.current) {
-        clearInterval(ttsKeepAliveTimerRef.current);
-        ttsKeepAliveTimerRef.current = null;
-      }
-      if (onEndCallback) onEndCallback();
+      finishSpeech();
     };
 
     currentUtteranceRef.current = utterance;
+    setIsSpeaking(true);
     window.speechSynthesis.speak(utterance);
+
+    // Failsafe timeout in case browser drops onend
+    const estimatedDurationMs = Math.max(2500, Math.ceil((text.split(' ').length / 2.5) * 1000) + 1500);
+    setTimeout(() => {
+      if (!hasEnded && window.speechSynthesis && !window.speechSynthesis.speaking) {
+        finishSpeech();
+      }
+    }, estimatedDurationMs);
   }, [examinerId, getExaminerVoice]);
 
   const stopSpeaking = useCallback(() => {
@@ -225,7 +237,10 @@ export function useSpeechEngine({
       } else if (event.error === 'no-speech') {
         // Normal silence timeout in Chrome, watchdog will auto-restart if still intentional
       } else if (event.error === 'network') {
-        setSpeechError('network');
+        // Network drop in cloud STT - do not crash audio recording
+        console.warn('Speech recognition network warning');
+      } else if (event.error === 'aborted') {
+        // User stopped
       }
     };
 
@@ -258,6 +273,9 @@ export function useSpeechEngine({
 
     // 1. Setup AudioContext & Volume Analyser Node
     try {
+      if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+        try { await audioContextRef.current.resume(); } catch (e) {}
+      }
       if (!mediaStreamRef.current) {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -271,6 +289,9 @@ export function useSpeechEngine({
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (AudioContextClass) {
           const actx = new AudioContextClass();
+          if (actx.state === 'suspended') {
+            await actx.resume();
+          }
           audioContextRef.current = actx;
           const source = actx.createMediaStreamSource(stream);
           const analyser = actx.createAnalyser();
@@ -300,6 +321,10 @@ export function useSpeechEngine({
 
     // 2. Setup MediaRecorder for RAM-only audio clip
     try {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        try { mediaRecorderRef.current.stop(); } catch (e) {}
+      }
+
       if (window.MediaRecorder && mediaStreamRef.current) {
         recordedChunksRef.current = [];
         const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
@@ -354,7 +379,15 @@ export function useSpeechEngine({
         recognitionRef.current.start();
         setIsListening(true);
       } catch (e) {
-        // Already started
+        // Already started or busy - abort and restart cleanly
+        try {
+          recognitionRef.current.abort();
+          setTimeout(() => {
+            if (isIntentionalListeningRef.current && recognitionRef.current) {
+              try { recognitionRef.current.start(); } catch (err) {}
+            }
+          }, 50);
+        } catch (abortErr) {}
         setIsListening(true);
       }
     }
