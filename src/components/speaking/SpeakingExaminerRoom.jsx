@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  Mic, MicOff, Volume2, Square, Play, RotateCcw, ArrowRight, 
+import { Mic, MicOff, AlertTriangle, Volume2, Square, Play, RotateCcw, ArrowRight, 
   Clock, ShieldCheck, AlertCircle, Sparkles, CheckCircle2, 
   HelpCircle, ChevronRight, MessageSquare, X, Pause, LogOut
 } from 'lucide-react';
@@ -60,6 +59,27 @@ export default function SpeakingExaminerRoom({
   });
 
   // Current prompt displayed in center stage
+  // Local Mic Active state synchronized with speechEngine for instant, glitch-free UI response
+  const [isMicActive, setIsMicActive] = useState(speechEngine.isListening);
+  useEffect(() => {
+    setIsMicActive(speechEngine.isListening);
+  }, [speechEngine.isListening]);
+
+  const handleToggleMic = useCallback(async () => {
+    if (isMicActive || speechEngine.isListening) {
+      setIsMicActive(false);
+      speechEngine.stopListening();
+    } else {
+      setIsMicActive(true);
+      try {
+        await speechEngine.startListening('turn_' + Date.now());
+      } catch (err) {
+        console.warn('Mic toggle error:', err);
+        setIsMicActive(false);
+      }
+    }
+  }, [isMicActive, speechEngine]);
+
   const [activePromptText, setActivePromptText] = useState('');
   const [candidateResponseBuffer, setCandidateResponseBuffer] = useState('');
   const [hasInterruptedCandidate, setHasInterruptedCandidate] = useState(false);
@@ -380,11 +400,7 @@ export default function SpeakingExaminerRoom({
       // [ Spacebar ]: Toggle Mic
       if (e.code === 'Space') {
         e.preventDefault();
-        if (speechEngine.isListening) {
-          speechEngine.stopListening();
-        } else {
-          speechEngine.startListening(`speech_${Date.now()}`);
-        }
+        handleToggleMic();
       }
 
       // [ P ]: Could you please repeat that?
@@ -412,7 +428,7 @@ export default function SpeakingExaminerRoom({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentStage, p1Index, p3Index, speechEngine]);
+  }, [currentStage, p1Index, p3Index, speechEngine, handleToggleMic]);
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950 text-slate-100 flex flex-col justify-between overflow-hidden select-none font-sans">
@@ -571,7 +587,7 @@ export default function SpeakingExaminerRoom({
               <p className="text-xs sm:text-sm text-emerald-300 font-medium italic">
                 "{speechEngine.transcript} {speechEngine.interimTranscript}"
               </p>
-            ) : speechEngine.isListening ? (
+            ) : isMicActive ? (
               <p className="text-xs text-slate-400 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 <span>Đang lắng nghe câu trả lời của bạn... Hãy nói tự nhiên vào micro</span>
@@ -604,38 +620,49 @@ export default function SpeakingExaminerRoom({
         <div className="w-36 sm:w-56 h-12 flex items-center">
           <SpeechWaveVisualizer 
             analyserNode={speechEngine.analyserNode}
-            isListening={speechEngine.isListening}
-            isSpeaking={speechEngine.isSpeaking}
-            height={46}
+            mode={isMicActive ? 'candidate_speaking' : speechEngine.isSpeaking ? 'examiner_speaking' : 'idle'}
+            className="w-full h-12"
           />
         </div>
 
-        {/* Center: Push-to-Talk Mic Master Button */}
-        <div className="flex flex-col items-center">
+        {/* Center: Push-to-Talk Mic Master Button (High Contrast Crimson Red REC vs Dark Slate) */}
+        <div className="flex flex-col items-center relative">
+          {/* Permission warning banner if microphone blocked */}
+          {speechEngine.speechError === 'not-allowed' && (
+            <div className="absolute -top-12 bg-rose-950/95 text-rose-300 border border-rose-600/80 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center space-x-1.5 shadow-xl animate-bounce z-40 whitespace-nowrap">
+              <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              <span>Trình duyệt đang chặn Micro! Bấm biểu tượng 🔒 trên thanh URL để BẬT</span>
+            </div>
+          )}
+
           <button
-            onClick={() => {
-              if (speechEngine.isListening) {
-                speechEngine.stopListening();
-              } else {
-                speechEngine.startListening(`turn_${Date.now()}`);
-              }
-            }}
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-xl ${
-              speechEngine.isListening
-                ? 'bg-emerald-500 text-slate-950 scale-105 shadow-emerald-500/30 ring-4 ring-emerald-500/20'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+            type="button"
+            onClick={handleToggleMic}
+            className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-2xl font-bold active:scale-95 ${
+              isMicActive
+                ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/60 ring-4 ring-rose-500/40 animate-pulse scale-105 border-2 border-rose-400'
+                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-2 border-slate-700 shadow-slate-950/50'
             }`}
-            title="Bật/Tắt Micro (Spacebar)"
+            title="Bật/Tắt Micro (Phím Spacebar)"
+            aria-label="Bật hoặc tắt micro"
           >
-            {speechEngine.isListening ? (
-              <Mic className="w-6 h-6" />
+            {isMicActive ? (
+              <div className="relative flex items-center justify-center">
+                <Mic className="w-7 h-7 text-white animate-bounce" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full ring-2 ring-rose-600" />
+              </div>
             ) : (
-              <MicOff className="w-6 h-6 text-slate-400" />
+              <MicOff className="w-7 h-7 text-slate-400" />
             )}
           </button>
-          <span className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-wider">
-            {speechEngine.isListening ? 'Đang Thu Âm' : 'Micro Tắt [Space]'}
-          </span>
+          <div className="flex items-center space-x-1.5 mt-1.5">
+            <span className={`w-2 h-2 rounded-full ${isMicActive ? 'bg-rose-500 animate-ping' : 'bg-slate-600'}`} />
+            <span className={`text-[11px] font-black uppercase tracking-wider ${
+              isMicActive ? 'text-rose-400' : 'text-slate-400'
+            }`}>
+              {isMicActive ? 'ĐANG THU ÂM [SPACE]' : 'MICRO TẮT [SPACE]'}
+            </span>
+          </div>
         </div>
 
         {/* Right: Next / Submit Step Button */}
