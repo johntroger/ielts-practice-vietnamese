@@ -3,7 +3,7 @@ import {
   BookOpen, Search, Bookmark, Plus, Trash2, X, Sparkles, 
   Layers, BarChart2, FileText, AlertTriangle, Edit3, Calendar,
   ChevronRight, Lightbulb, CheckCircle2, Copy, Check, Headphones,
-  BookMarked, PenTool, Volume2, Compass, HelpCircle, CheckCheck
+  BookMarked, PenTool, Volume2, Mic, Compass, HelpCircle, CheckCheck
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 
@@ -81,6 +81,7 @@ function MarkdownRenderer({ content, accentColor = 'red' }) {
     switch (accentColor) {
       case 'blue': return 'bg-blue-600';
       case 'emerald': return 'bg-emerald-600';
+      case 'purple': return 'bg-purple-600';
       default: return 'bg-red-600';
     }
   };
@@ -89,6 +90,7 @@ function MarkdownRenderer({ content, accentColor = 'red' }) {
     switch (accentColor) {
       case 'blue': return 'bg-blue-100 text-blue-700';
       case 'emerald': return 'bg-emerald-100 text-emerald-700';
+      case 'purple': return 'bg-purple-100 text-purple-700';
       default: return 'bg-red-100 text-red-700';
     }
   };
@@ -97,6 +99,7 @@ function MarkdownRenderer({ content, accentColor = 'red' }) {
     switch (accentColor) {
       case 'blue': return 'bg-blue-500';
       case 'emerald': return 'bg-emerald-500';
+      case 'purple': return 'bg-purple-500';
       default: return 'bg-red-500';
     }
   };
@@ -318,6 +321,13 @@ export default function TheoryHandbookModal({
       color: 'emerald'
     },
     { 
+      id: 'speaking', 
+      label: 'IELTS Speaking', 
+      count: THEORY_HANDBOOK.filter(i => i.skill === 'speaking').length, 
+      icon: Mic,
+      color: 'purple'
+    },
+    { 
       id: 'personal', 
       label: 'Ghi Chú Của Bạn', 
       count: personalNotes.length, 
@@ -347,10 +357,21 @@ export default function TheoryHandbookModal({
     { id: 'listening-parts', label: 'Chiến Thuật 4 Parts', icon: Headphones },
   ];
 
+  const speakingCategories = [
+    { id: 'all', label: 'Tất Cả Speaking', icon: Layers },
+    { id: 'general', label: 'Tiêu Chí & Tâm Lý', icon: BookOpen },
+    { id: 'part1', label: 'Chiến Thuật Part 1', icon: Mic },
+    { id: 'part2', label: 'Part 2 & Pacing', icon: FileText },
+    { id: 'part3', label: 'Part 3 & Phản Biện', icon: Compass },
+    { id: 'pronunciation-strategy', label: 'Phát Âm & Ngữ Điệu', icon: Volume2 },
+  ];
+
   const currentCategories = selectedSkill === 'reading' 
     ? readingCategories 
     : selectedSkill === 'listening' 
     ? listeningCategories 
+    : selectedSkill === 'speaking'
+    ? speakingCategories
     : writingCategories;
 
   // Subtype filters
@@ -485,6 +506,16 @@ export default function TheoryHandbookModal({
           headerBg: 'from-emerald-950 via-slate-900 to-slate-900',
           iconBg: 'bg-emerald-600/30 text-emerald-400 border-emerald-500/30'
         };
+      case 'speaking':
+        return {
+          title: 'Cẩm Nang Chiến Lược & Phản Xạ IELTS Speaking',
+          subtitle: 'Công thức A.R.E.A Part 1, kể chuyện PPF Part 2, tư duy phản biện PEEL Part 3 & 50+ cụm từ câu giờ',
+          badge: 'Speaking Studio',
+          icon: Mic,
+          accent: 'purple',
+          headerBg: 'from-purple-950 via-slate-900 to-slate-900',
+          iconBg: 'bg-purple-600/30 text-purple-400 border-purple-500/30'
+        };
       case 'personal':
         return {
           title: 'Sổ Tay Ghi Chú & Mẹo Học Riêng Của Bạn',
@@ -559,6 +590,8 @@ export default function TheoryHandbookModal({
                         ? 'bg-blue-600 text-white shadow-md'
                         : tab.color === 'emerald'
                         ? 'bg-emerald-600 text-white shadow-md'
+                        : tab.color === 'purple'
+                        ? 'bg-purple-600 text-white shadow-md'
                         : 'bg-amber-600 text-white shadow-md'
                       : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-700/50'
                   }`}
@@ -590,6 +623,8 @@ export default function TheoryHandbookModal({
                     ? "Tìm kiếm lý thuyết Reading (vd: T/F/NG, headings, scanning, 15-20-25m, paraphrase...)"
                     : selectedSkill === 'listening'
                     ? "Tìm kiếm lý thuyết Listening (vd: part 1, số điện thoại, bản đồ, signpost, nối âm, schwa...)"
+                    : selectedSkill === 'speaking'
+                    ? "Tìm kiếm lý thuyết Speaking (vd: A.R.E.A, PPF storytelling, PEEL, buying time, phát âm...)"
                     : selectedSkill === 'personal'
                     ? "Tìm kiếm trong sổ tay ghi chú của bạn..."
                     : "Tìm kiếm lý thuyết Writing (vd: line graph, overview, PEEL, opinion, map, bị động...)"
@@ -621,6 +656,8 @@ export default function TheoryHandbookModal({
                       ? 'bg-blue-600 text-white'
                       : selectedSkill === 'listening'
                       ? 'bg-emerald-600 text-white'
+                      : selectedSkill === 'speaking'
+                      ? 'bg-purple-600 text-white'
                       : 'bg-red-600 text-white';
 
                   return (
@@ -765,6 +802,7 @@ export default function TheoryHandbookModal({
                       <option value="Writing">IELTS Writing</option>
                       <option value="Reading">IELTS Reading</option>
                       <option value="Listening">IELTS Listening</option>
+                      <option value="Speaking">IELTS Speaking</option>
                       <option value="Vocabulary">Từ Vựng & Collocation</option>
                       <option value="Grammar">Cấu Trúc Ngữ Pháp</option>
                       <option value="General">Mẹo Chung & Chiến Thuật</option>
@@ -916,6 +954,8 @@ export default function TheoryHandbookModal({
                       ? 'blue' 
                       : item.skill === 'listening' 
                       ? 'emerald' 
+                      : item.skill === 'speaking'
+                      ? 'purple'
                       : 'red';
 
                   return (
@@ -926,6 +966,8 @@ export default function TheoryHandbookModal({
                           ? 'border-blue-100 hover:border-blue-200' 
                           : itemColor === 'emerald'
                           ? 'border-emerald-100 hover:border-emerald-200'
+                          : itemColor === 'purple'
+                          ? 'border-purple-100 hover:border-purple-200'
                           : 'border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -937,12 +979,16 @@ export default function TheoryHandbookModal({
                                 ? 'bg-blue-50 text-blue-700 border-blue-200'
                                 : itemColor === 'emerald'
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : itemColor === 'purple'
+                                ? 'bg-purple-50 text-purple-700 border-purple-200'
                                 : 'bg-red-50 text-red-700 border-red-200'
                             }`}>
                               {item.skill === 'reading' 
                                 ? 'IELTS Reading' 
                                 : item.skill === 'listening' 
                                 ? 'IELTS Listening' 
+                                : item.skill === 'speaking'
+                                ? 'IELTS Speaking'
                                 : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : 'Chiến Lược & Tiêu Chí')}
                             </span>
                             {item.subType && item.subType !== 'overview' && (
