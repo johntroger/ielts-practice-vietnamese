@@ -63,6 +63,13 @@ export default function SpeakingSoundcheckModal({
   const handleTestSpeaker = () => {
     setAudioErrorHint(null);
     try {
+      // Warm up and wake up any audio contexts in case Edge user gesture suspended it
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+      }
+
       speechEngine.speak(
         `Hello! Can you hear me clearly? I am ${examiner.name}, and this is your equipment soundcheck before we enter the examination room.`,
         { examinerId: examiner.id },
@@ -71,7 +78,7 @@ export default function SpeakingSoundcheckModal({
         }
       );
       // Auto enable pass after 2 seconds as user hears the prompt
-      setTimeout(() => setTestedSpeaker(true), 2000);
+      setTimeout(() => setTestedSpeaker(true), 1500);
     } catch (err) {
       console.warn('Speaker test error:', err);
       setAudioErrorHint('Trình duyệt chưa cho phép phát âm. Hãy bấm lại hoặc kiểm tra âm lượng máy tính.');

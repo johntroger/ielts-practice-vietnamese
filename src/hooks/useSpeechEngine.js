@@ -78,27 +78,41 @@ export function useSpeechEngine({
 
   // Helper: Pick best matched native voice for examiner profile
   const getExaminerVoice = useCallback((targetExaminerId) => {
-    if (!availableVoices || availableVoices.length === 0) return null;
+    // If state availableVoices is empty, query live voices from window.speechSynthesis
+    let voices = availableVoices;
+    if ((!voices || voices.length === 0) && typeof window !== 'undefined' && window.speechSynthesis) {
+      voices = window.speechSynthesis.getVoices() || [];
+    }
+    if (!voices || voices.length === 0) return null;
 
     if (targetExaminerId === 'examiner-oliver') {
-      // US Male / Natural
-      const usVoices = availableVoices.filter(v => v.lang && (v.lang === 'en-US' || v.lang.startsWith('en_US')));
-      return usVoices.find(v => /male|david|alex|guy|aaron|george/i.test(v.name)) || usVoices[0] || availableVoices[0];
+      // US Male / Natural (Supports Edge Microsoft Natural + Chrome Google + Standard US)
+      const usVoices = voices.filter(v => v.lang && (v.lang === 'en-US' || v.lang.startsWith('en_US') || v.lang.startsWith('en-US')));
+      return usVoices.find(v => /ryan|guy|christopher|eric|natural.*us|male|david|alex|aaron/i.test(v.name)) 
+        || usVoices[0] 
+        || voices.find(v => v.lang && v.lang.startsWith('en'))
+        || voices[0];
     }
 
     if (targetExaminerId === 'examiner-eleanor') {
-      // UK Female
-      const ukVoices = availableVoices.filter(v => v.lang && (v.lang === 'en-GB' || v.lang.startsWith('en_GB')));
-      return ukVoices.find(v => /female|hazel|susan|victoria|sonia/i.test(v.name)) || ukVoices[0] || availableVoices[0];
+      // UK Female (Supports Edge Microsoft Natural + Chrome Google UK + Standard UK)
+      const ukVoices = voices.filter(v => v.lang && (v.lang === 'en-GB' || v.lang.startsWith('en_GB') || v.lang.startsWith('en-GB')));
+      return ukVoices.find(v => /libby|sonia|hazel|susan|victoria|natural.*uk|female/i.test(v.name)) 
+        || ukVoices[0] 
+        || voices.find(v => v.lang && v.lang.startsWith('en'))
+        || voices[0];
     }
 
-    // Default Arthur: UK Male / Natural RP
-    const ukVoices = availableVoices.filter(v => v.lang && (v.lang === 'en-GB' || v.lang.startsWith('en_GB')));
-    return ukVoices.find(v => /male|george|daniel|oliver/i.test(v.name)) || ukVoices[0] || availableVoices[0];
+    // Default Arthur: UK Male / Natural RP (Supports Edge Microsoft Ryan / George + Chrome Google UK)
+    const ukVoices = voices.filter(v => v.lang && (v.lang === 'en-GB' || v.lang.startsWith('en_GB') || v.lang.startsWith('en-GB')));
+    return ukVoices.find(v => /ryan|george|arthur|daniel|oliver|natural.*uk|male/i.test(v.name)) 
+      || ukVoices[0] 
+      || voices.find(v => v.lang && v.lang.startsWith('en'))
+      || voices[0];
   }, [availableVoices]);
 
   // =========================================================================
-  // 2. TTS: SPEAK METHOD WITH CHROMIUM ANTI-FREEZE
+  // 2. TTS: SPEAK METHOD WITH CHROMIUM / EDGE ANTI-FREEZE & GC PROTECTION
   // =========================================================================
   const speak = useCallback((text, options = {}, onEndCallback = null) => {
     if (typeof window === 'undefined' || !window.speechSynthesis || !text) {
@@ -108,8 +122,14 @@ export function useSpeechEngine({
 
     // Always resume SpeechSynthesis if paused
     try {
-      if (window.speechSynthesis.paused) window.speechSynthesis.resume();
-      window.speechSynthesis.cancel();
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      // CRITICAL FOR EDGE: Do NOT call cancel() synchronously before speak if not speaking!
+      // In Edge, synchronous cancel() immediately aborts the next speak call.
+      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
+      }
     } catch (e) {}
 
     if (ttsKeepAliveTimerRef.current) {
@@ -131,6 +151,7 @@ export function useSpeechEngine({
       utterance.lang = 'en-GB';
     }
 
+    utterance.volume = 1.0;
     utterance.rate = options.rate || 0.95;
     utterance.pitch = options.pitch || 1.0;
 
@@ -143,18 +164,23 @@ export function useSpeechEngine({
         clearInterval(ttsKeepAliveTimerRef.current);
         ttsKeepAliveTimerRef.current = null;
       }
+      // Release reference
+      if (window.__ielts_active_utterance === utterance) {
+        window.__ielts_active_utterance = null;
+      }
+      currentUtteranceRef.current = null;
       if (onEndCallback) onEndCallback();
     };
 
     utterance.onstart = () => {
       setIsSpeaking(true);
-      // Chromium Keep-Alive Interval: Pause & Resume every 9s to prevent frozen speech
+      // Chromium/Edge Keep-Alive Interval: Pause & Resume every 8s to prevent frozen speech
       ttsKeepAliveTimerRef.current = setInterval(() => {
         if (window.speechSynthesis && window.speechSynthesis.speaking) {
           window.speechSynthesis.pause();
           window.speechSynthesis.resume();
         }
-      }, 9000);
+      }, 8000);
     };
 
     utterance.onend = finishSpeech;
@@ -163,12 +189,27 @@ export function useSpeechEngine({
       finishSpeech();
     };
 
+    // Prevent V8 Garbage Collection in Edge/Chrome
     currentUtteranceRef.current = utterance;
+    window.__ielts_active_utterance = utterance;
+
     setIsSpeaking(true);
-    window.speechSynthesis.speak(utterance);
+
+    // Edge requires a tiny delay (20ms) if cancel was called to avoid race condition
+    setTimeout(() => {
+      try {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.warn('SpeechSynthesis speak failed:', err);
+        finishSpeech();
+      }
+    }, 25);
 
     // Failsafe timeout in case browser drops onend
-    const estimatedDurationMs = Math.max(2500, Math.ceil((text.split(' ').length / 2.5) * 1000) + 1500);
+    const estimatedDurationMs = Math.max(3000, Math.ceil((text.split(' ').length / 2.5) * 1000) + 2000);
     setTimeout(() => {
       if (!hasEnded && window.speechSynthesis && !window.speechSynthesis.speaking) {
         finishSpeech();
