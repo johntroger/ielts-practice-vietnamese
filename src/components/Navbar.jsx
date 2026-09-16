@@ -191,6 +191,16 @@ export default function Navbar({
           {/* 3. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
+            {/* Desktop Only: Cẩm Nang Lý Thuyết & Chiến Thuật (Writing, Reading, Listening) */}
+            <button
+              onClick={onOpenTheory}
+              className="hidden lg:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              title="Cẩm nang lý thuyết & chiến thuật làm bài (Writing, Reading, Listening)"
+            >
+              <BookOpen className="w-4 h-4 text-amber-600" />
+              <span>Cẩm Nang</span>
+            </button>
+
             {/* Desktop Only: Phòng Luyện Bổ Trợ */}
             <div className="relative hidden md:block">
               <button
@@ -213,6 +223,18 @@ export default function Navbar({
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Phòng Thực Hành Kỹ Năng
                     </div>
+                    <button
+                      onClick={() => { onOpenTheory(); setIsPracticeMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-amber-50 text-left text-xs font-semibold text-slate-700 hover:text-amber-900 transition-colors"
+                    >
+                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold">Cẩm Nang Chiến Thuật</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Writing, Reading & Listening Cambridge</div>
+                      </div>
+                    </button>
                     <button
                       onClick={() => { onOpenVocabGrammar(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-emerald-50 text-left text-xs font-semibold text-slate-700 hover:text-emerald-900 transition-colors"

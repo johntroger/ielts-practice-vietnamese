@@ -901,6 +901,7 @@ export default function App() {
       <TheoryHandbookModal
         isOpen={isTheoryOpen}
         onClose={() => setIsTheoryOpen(false)}
+        activeSkill={activeSkill}
         personalNotes={personalNotes}
         onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
         onDeletePersonalNote={(id) => setPersonalNotes(prev => prev.filter(n => n.id !== id))}

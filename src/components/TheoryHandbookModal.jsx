@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, Search, Bookmark, Plus, Trash2, X, Sparkles, 
   Layers, BarChart2, FileText, AlertTriangle, Edit3, Calendar,
-  ChevronRight, Lightbulb, CheckCircle2, Copy, Check
+  ChevronRight, Lightbulb, CheckCircle2, Copy, Check, Headphones,
+  BookMarked, PenTool, Volume2, Compass, HelpCircle, CheckCheck
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 
-// Helper to render bold, italic, code and arrow highlights inline
+// Helper to render bold, italic, code and inline highlights
 function renderInlineText(text) {
   if (!text) return null;
   const parts = [];
@@ -16,7 +17,7 @@ function renderInlineText(text) {
 
   while (remaining.length > 0 && safety++ < 2000) {
     // Check for inline code `...`
-    const codeMatch = remaining.match(/^`([^`]+)`/);
+    const codeMatch = remaining.match(/^\`([^\`]+)\`/);
     if (codeMatch) {
       parts.push(
         <code key={key++} className="px-1.5 py-0.5 rounded bg-slate-100 text-red-600 font-mono text-[12px] font-semibold border border-slate-200">
@@ -57,7 +58,6 @@ function renderInlineText(text) {
       parts.push(remaining);
       break;
     } else if (nextSpecial === 0) {
-      // Unmatched single ` or * -> consume 1 character to avoid infinite loop
       parts.push(remaining[0]);
       remaining = remaining.slice(1);
     } else {
@@ -70,12 +70,36 @@ function renderInlineText(text) {
 }
 
 // MarkdownRenderer component parses headings, tables, blockquotes, lists, and paragraphs
-function MarkdownRenderer({ content }) {
+function MarkdownRenderer({ content, accentColor = 'red' }) {
   if (!content) return null;
 
   const lines = content.split('\n');
   const elements = [];
   let i = 0;
+
+  const getAccentBarClass = () => {
+    switch (accentColor) {
+      case 'blue': return 'bg-blue-600';
+      case 'emerald': return 'bg-emerald-600';
+      default: return 'bg-red-600';
+    }
+  };
+
+  const getNumberBadgeClass = () => {
+    switch (accentColor) {
+      case 'blue': return 'bg-blue-100 text-blue-700';
+      case 'emerald': return 'bg-emerald-100 text-emerald-700';
+      default: return 'bg-red-100 text-red-700';
+    }
+  };
+
+  const getBulletClass = () => {
+    switch (accentColor) {
+      case 'blue': return 'bg-blue-500';
+      case 'emerald': return 'bg-emerald-500';
+      default: return 'bg-red-500';
+    }
+  };
 
   while (i < lines.length) {
     const rawLine = lines[i];
@@ -90,7 +114,7 @@ function MarkdownRenderer({ content }) {
     if (line.startsWith('### ')) {
       elements.push(
         <div key={`h3-${i}`} className="pt-3 pb-1 border-b border-slate-100 flex items-center gap-2">
-          <div className="w-1.5 h-4 rounded-full bg-red-600"></div>
+          <div className={`w-1.5 h-4 rounded-full ${getAccentBarClass()}`}></div>
           <h4 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
             {renderInlineText(line.replace('### ', ''))}
           </h4>
@@ -155,7 +179,7 @@ function MarkdownRenderer({ content }) {
         <ol key={`ol-${i}`} className="space-y-2 my-2.5 pl-1 text-xs sm:text-sm text-slate-700 font-sans">
           {listItems.map((item, idx) => (
             <li key={idx} className="flex items-start gap-2.5">
-              <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100 text-red-700 text-[11px] font-bold shrink-0 mt-0.5 shadow-2xs">
+              <span className={`flex items-center justify-center w-5 h-5 rounded-full ${getNumberBadgeClass()} text-[11px] font-bold shrink-0 mt-0.5 shadow-2xs`}>
                 {idx + 1}
               </span>
               <span className="leading-relaxed flex-1">{renderInlineText(item)}</span>
@@ -166,7 +190,7 @@ function MarkdownRenderer({ content }) {
       continue;
     }
 
-    // Bullet list: - ...
+    // Bullet list: - ... or * ...
     if (line.startsWith('- ') || line.startsWith('* ')) {
       const listItems = [];
       while (i < lines.length && (lines[i].trim().startsWith('- ') || lines[i].trim().startsWith('* '))) {
@@ -177,7 +201,7 @@ function MarkdownRenderer({ content }) {
         <ul key={`ul-${i}`} className="space-y-2 my-2.5 text-xs sm:text-sm text-slate-700 font-sans">
           {listItems.map((item, idx) => (
             <li key={idx} className="flex items-start gap-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-2"></span>
+              <span className={`w-1.5 h-1.5 rounded-full ${getBulletClass()} shrink-0 mt-2`}></span>
               <span className="leading-relaxed flex-1">{renderInlineText(item)}</span>
             </li>
           ))}
@@ -186,7 +210,7 @@ function MarkdownRenderer({ content }) {
       continue;
     }
 
-    // Quote or tip block if starts with > or Note
+    // Quote or tip block if starts with >
     if (line.startsWith('>')) {
       elements.push(
         <div key={`quote-${i}`} className="my-2 p-3 rounded-xl bg-amber-50/80 border-l-4 border-amber-500 text-xs sm:text-sm text-amber-900 flex items-start gap-2.5">
@@ -210,33 +234,127 @@ function MarkdownRenderer({ content }) {
   return <div className="space-y-3">{elements}</div>;
 }
 
-export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [], onSavePersonalNote, onDeletePersonalNote }) {
+export default function TheoryHandbookModal({ 
+  isOpen, 
+  onClose, 
+  activeSkill = 'writing',
+  personalNotes = [], 
+  onSavePersonalNote, 
+  onDeletePersonalNote 
+}) {
   if (!isOpen) return null;
+
+  // Selected skill tab: 'writing' | 'reading' | 'listening' | 'personal'
+  const [selectedSkill, setSelectedSkill] = useState(() => {
+    if (activeSkill === 'reading' || activeSkill === 'listening') return activeSkill;
+    return 'writing';
+  });
+
+  // When opening or prop changes, sync selectedSkill if user hasn't explicitly picked one
+  useEffect(() => {
+    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'writing') {
+      setSelectedSkill(activeSkill);
+    }
+  }, [activeSkill, isOpen]);
 
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubType, setActiveSubType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [copiedId, setCopiedId] = useState(null);
+
   // Note creation & editing state
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState('');
   const [newNoteContent, setNewNoteContent] = useState('');
-  const [newNoteTag, setNewNoteTag] = useState('Task 1');
+  const [newNoteTag, setNewNoteTag] = useState('Writing');
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
-  const [editTag, setEditTag] = useState('Task 1');
+  const [editTag, setEditTag] = useState('Writing');
 
-  const categories = [
-    { id: 'all', label: 'Tất Cả', icon: Layers },
+  // Handle skill tab change
+  const handleSkillTabChange = (skillKey) => {
+    setSelectedSkill(skillKey);
+    setActiveCategory('all');
+    setActiveSubType('all');
+    setSearchQuery('');
+  };
+
+  const handleCategoryChange = (catId) => {
+    setActiveCategory(catId);
+    setActiveSubType('all');
+  };
+
+  const handleCopy = (item) => {
+    const textToCopy = `${item.title}\n${item.summary}\n\n${item.content}`;
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedId(item.id);
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 2000);
+  };
+
+  // Skill tabs configuration
+  const skillTabs = [
+    { 
+      id: 'writing', 
+      label: 'IELTS Writing', 
+      count: THEORY_HANDBOOK.filter(i => i.skill === 'writing').length, 
+      icon: PenTool,
+      color: 'red'
+    },
+    { 
+      id: 'reading', 
+      label: 'IELTS Reading', 
+      count: THEORY_HANDBOOK.filter(i => i.skill === 'reading').length, 
+      icon: BookMarked,
+      color: 'blue'
+    },
+    { 
+      id: 'listening', 
+      label: 'IELTS Listening', 
+      count: THEORY_HANDBOOK.filter(i => i.skill === 'listening').length, 
+      icon: Headphones,
+      color: 'emerald'
+    },
+    { 
+      id: 'personal', 
+      label: 'Ghi Chú Của Bạn', 
+      count: personalNotes.length, 
+      icon: Bookmark,
+      color: 'amber'
+    },
+  ];
+
+  // Dynamic categories per skill
+  const writingCategories = [
+    { id: 'all', label: 'Tất Cả Writing', icon: Layers },
     { id: 'general', label: 'Tiêu Chí & Điểm Số', icon: BookOpen },
     { id: 'task1', label: 'Cẩm Nang Task 1', icon: BarChart2 },
     { id: 'task2', label: 'Cẩm Nang Task 2', icon: FileText },
     { id: 'mistakes', label: 'Lỗi Sai Cần Tránh', icon: AlertTriangle },
-    { id: 'personal', label: `Ghi Chú Của Bạn (${personalNotes.length})`, icon: Bookmark },
   ];
 
-  const task1SubTypes = [
+  const readingCategories = [
+    { id: 'all', label: 'Tất Cả Reading', icon: Layers },
+    { id: 'reading-strategy', label: 'Chiến Thuật & Paraphrase', icon: Compass },
+    { id: 'reading-types', label: '14 Dạng Câu Hỏi Thường Gặp', icon: BookMarked },
+  ];
+
+  const listeningCategories = [
+    { id: 'all', label: 'Tất Cả Listening', icon: Layers },
+    { id: 'listening-strategy', label: 'Format, Điểm & Âm Học', icon: Volume2 },
+    { id: 'listening-parts', label: 'Chiến Thuật 4 Parts', icon: Headphones },
+  ];
+
+  const currentCategories = selectedSkill === 'reading' 
+    ? readingCategories 
+    : selectedSkill === 'listening' 
+    ? listeningCategories 
+    : writingCategories;
+
+  // Subtype filters
+  const writingTask1SubTypes = [
     { id: 'all', label: 'Tất cả Task 1' },
     { id: 'line', label: 'Line Graph (Đường)' },
     { id: 'bar', label: 'Bar Chart (Cột)' },
@@ -247,7 +365,7 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
     { id: 'mixed', label: 'Mixed (Kết hợp)' },
   ];
 
-  const task2SubTypes = [
+  const writingTask2SubTypes = [
     { id: 'all', label: 'Tất cả Task 2' },
     { id: 'opinion', label: 'Agree / Disagree' },
     { id: 'discussion', label: 'Discuss Both Views' },
@@ -256,12 +374,30 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
     { id: 'two-part', label: 'Two-Part Question' },
   ];
 
-  const handleCategoryChange = (catId) => {
-    setActiveCategory(catId);
-    setActiveSubType('all');
-  };
+  const readingSubTypes = [
+    { id: 'all', label: 'Tất cả dạng bài' },
+    { id: 'overview', label: '15-20-25m & Thang Điểm' },
+    { id: 'tfng', label: 'True / False / Not Given' },
+    { id: 'headings', label: 'Matching Headings' },
+    { id: 'mcq', label: 'Multiple Choice' },
+    { id: 'matching', label: 'Matching Info / Features' },
+    { id: 'completion', label: 'Điền từ / Summary' },
+    { id: 'paraphrase', label: '5 Quy Tắc Paraphrase' },
+  ];
 
+  const listeningSubTypes = [
+    { id: 'all', label: 'Tất cả dạng bài' },
+    { id: 'overview', label: 'Format & CD-IELTS' },
+    { id: 'part1', label: 'Part 1: Đánh Vần, Số & Postcode' },
+    { id: 'part2', label: 'Part 2: Bản Đồ & Định Hướng' },
+    { id: 'part3', label: 'Part 3: Trắc Nghiệm Học Thuật' },
+    { id: 'part4', label: 'Part 4: Dàn Bài & Signposting' },
+    { id: 'phonetics', label: 'Nối Âm, Nuốt Âm & Schwa' },
+  ];
+
+  // Filter handbook by selected skill, category, subtype, and search query
   const filteredHandbook = THEORY_HANDBOOK.filter(item => {
+    if (selectedSkill !== 'personal' && item.skill !== selectedSkill) return false;
     const matchesCat = activeCategory === 'all' || item.category === activeCategory;
     const matchesSubType = activeSubType === 'all' || item.subType === activeSubType;
     const matchesSearch = !searchQuery || 
@@ -290,7 +426,7 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
     setEditingNoteId(n.id);
     setEditTitle(n.title);
     setEditContent(n.content);
-    setEditTag(n.tag || 'Task 1');
+    setEditTag(n.tag || 'Writing');
   };
 
   const handleSaveEdit = (id) => {
@@ -307,27 +443,121 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
     setEditingNoteId(null);
   };
 
+  // Header meta configuration based on selected skill
+  const getHeaderMeta = () => {
+    switch (selectedSkill) {
+      case 'reading':
+        return {
+          title: 'Cẩm Nang Chiến Lược & Kỹ Thuật IELTS Reading',
+          subtitle: 'Phân bổ thời gian 15-20-25 phút, phá bẫy True/False/Not Given, Matching Headings & 5 quy tắc Paraphrasing',
+          badge: 'Reading Studio',
+          icon: BookMarked,
+          accent: 'blue',
+          headerBg: 'from-blue-900 via-slate-900 to-slate-900',
+          iconBg: 'bg-blue-600/30 text-blue-400 border-blue-500/30'
+        };
+      case 'listening':
+        return {
+          title: 'Cẩm Nang Chiến Thuật & Âm Học IELTS Listening',
+          subtitle: 'Quy tắc 4 Parts, bẫy đánh vần, số điện thoại, bản đồ không gian, signposting và nối/nuốt âm tự nhiên',
+          badge: 'Listening Studio',
+          icon: Headphones,
+          accent: 'emerald',
+          headerBg: 'from-emerald-950 via-slate-900 to-slate-900',
+          iconBg: 'bg-emerald-600/30 text-emerald-400 border-emerald-500/30'
+        };
+      case 'personal':
+        return {
+          title: 'Sổ Tay Ghi Chú & Mẹo Học Riêng Của Bạn',
+          subtitle: 'Lưu trữ các câu mẫu, từ vựng đắt giá, template và checklist cá nhân hoá cho kỳ thi IELTS',
+          badge: 'Personal Notes',
+          icon: Bookmark,
+          accent: 'amber',
+          headerBg: 'from-amber-950 via-slate-900 to-slate-900',
+          iconBg: 'bg-amber-600/30 text-amber-400 border-amber-500/30'
+        };
+      default:
+        return {
+          title: 'Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Writing',
+          subtitle: 'Tra cứu công thức câu Overview Task 1, mô hình PEEL Task 2, từ nối liên kết và checklist tránh mất điểm',
+          badge: 'Writing Studio',
+          icon: PenTool,
+          accent: 'red',
+          headerBg: 'from-red-950 via-slate-900 to-slate-900',
+          iconBg: 'bg-red-600/30 text-red-400 border-red-500/30'
+        };
+    }
+  };
+
+  const headerMeta = getHeaderMeta();
+  const HeaderIcon = headerMeta.icon;
+
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
         
-        {/* Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
+        {/* Top Header */}
+        <div className={`bg-gradient-to-r ${headerMeta.headerBg} text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800`}>
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-red-600/30 text-red-400 border border-red-500/30">
-              <BookOpen className="w-6 h-6" />
+            <div className={`p-2.5 rounded-xl ${headerMeta.iconBg} border shrink-0`}>
+              <HeaderIcon className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold">Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Writing</h2>
-              <p className="text-xs text-slate-400">Tra cứu nhanh công thức câu Overview, quy tắc PEEL, từ nối và bí quyết Band 8.0+</p>
+              <div className="flex items-center space-x-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-white/10 text-slate-200 border border-white/10">
+                  {headerMeta.badge}
+                </span>
+                <span className="text-xs text-slate-400 hidden sm:inline">• Thư viện chiến thuật chuẩn khảo thí Cambridge</span>
+              </div>
+              <h2 className="text-base sm:text-lg lg:text-xl font-bold mt-0.5">{headerMeta.title}</h2>
+              <p className="text-xs text-slate-400 line-clamp-1">{headerMeta.subtitle}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <button 
+            onClick={onClose} 
+            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-2"
+            aria-label="Đóng cẩm nang"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Search & Category Filter */}
+        {/* Level 1 Navigation: Skill Switcher Bar */}
+        <div className="bg-slate-900/95 px-4 pt-2.5 pb-0 border-b border-slate-800">
+          <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+            {skillTabs.map(tab => {
+              const TabIcon = tab.icon;
+              const isSelected = selectedSkill === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleSkillTabChange(tab.id)}
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    isSelected
+                      ? tab.color === 'red'
+                        ? 'bg-red-600 text-white shadow-md'
+                        : tab.color === 'blue'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : tab.color === 'emerald'
+                        ? 'bg-emerald-600 text-white shadow-md'
+                        : 'bg-amber-600 text-white shadow-md'
+                      : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-700/50'
+                  }`}
+                >
+                  <TabIcon className="w-4 h-4 shrink-0" />
+                  <span>{tab.label}</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                    isSelected ? 'bg-white/20 text-white' : 'bg-slate-700 text-slate-300'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Level 2 Navigation: Search & Category Filter */}
         <div className="p-4 bg-slate-50 border-b border-slate-200 space-y-3">
           <div className="flex flex-col sm:flex-row gap-2.5">
             <div className="relative flex-1">
@@ -336,14 +566,23 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm kiếm lý thuyết (vd: line graph, overview, PEEL, opinion, map, table, bị động...)"
-                className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white"
+                placeholder={
+                  selectedSkill === 'reading'
+                    ? "Tìm kiếm lý thuyết Reading (vd: T/F/NG, headings, scanning, 15-20-25m, paraphrase...)"
+                    : selectedSkill === 'listening'
+                    ? "Tìm kiếm lý thuyết Listening (vd: part 1, số điện thoại, bản đồ, signpost, nối âm, schwa...)"
+                    : selectedSkill === 'personal'
+                    ? "Tìm kiếm trong sổ tay ghi chú của bạn..."
+                    : "Tìm kiếm lý thuyết Writing (vd: line graph, overview, PEEL, opinion, map, bị động...)"
+                }
+                className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/20 bg-white"
               />
             </div>
-            {activeCategory === 'personal' && (
+
+            {selectedSkill === 'personal' && (
               <button
                 onClick={() => setIsAddingNote(!isAddingNote)}
-                className="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-2xs transition-colors shrink-0"
+                className="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-2xs transition-colors shrink-0 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>{isAddingNote ? 'Đóng Trình Tạo' : 'Tạo Ghi Chú Mới'}</span>
@@ -351,64 +590,116 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
             )}
           </div>
 
-          {/* Main Category Tabs */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1 text-xs">
-            {categories.map(c => {
-              const Icon = c.icon;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => handleCategoryChange(c.id)}
-                  className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl font-semibold whitespace-nowrap transition-colors ${
-                    activeCategory === c.id 
-                      ? 'bg-red-600 text-white shadow-2xs' 
-                      : 'bg-white hover:bg-slate-200 text-slate-600 border border-slate-200'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{c.label}</span>
-                </button>
-              );
-            })}
-          </div>
+          {/* Categories for Handbook Skills */}
+          {selectedSkill !== 'personal' && (
+            <div className="space-y-2">
+              <div className="flex gap-1.5 overflow-x-auto pb-1 text-xs">
+                {currentCategories.map(c => {
+                  const Icon = c.icon;
+                  const isActive = activeCategory === c.id;
+                  const activeColorClass = 
+                    selectedSkill === 'reading'
+                      ? 'bg-blue-600 text-white'
+                      : selectedSkill === 'listening'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-red-600 text-white';
 
-          {/* Sub-Filters for Task 1 */}
-          {activeCategory === 'task1' && (
-            <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-              <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng biểu đồ:</span>
-              {task1SubTypes.map(st => (
-                <button
-                  key={st.id}
-                  onClick={() => setActiveSubType(st.id)}
-                  className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                    activeSubType === st.id
-                      ? 'bg-red-100 text-red-800 border border-red-300 font-semibold'
-                      : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
-                  }`}
-                >
-                  {st.label}
-                </button>
-              ))}
-            </div>
-          )}
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => handleCategoryChange(c.id)}
+                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                        isActive 
+                          ? `${activeColorClass} shadow-2xs` 
+                          : 'bg-white hover:bg-slate-200 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{c.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
 
-          {/* Sub-Filters for Task 2 */}
-          {activeCategory === 'task2' && (
-            <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-              <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng câu hỏi:</span>
-              {task2SubTypes.map(st => (
-                <button
-                  key={st.id}
-                  onClick={() => setActiveSubType(st.id)}
-                  className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors ${
-                    activeSubType === st.id
-                      ? 'bg-red-100 text-red-800 border border-red-300 font-semibold'
-                      : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
-                  }`}
-                >
-                  {st.label}
-                </button>
-              ))}
+              {/* Sub-Filters for Writing Task 1 */}
+              {selectedSkill === 'writing' && activeCategory === 'task1' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng biểu đồ:</span>
+                  {writingTask1SubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-red-100 text-red-800 border border-red-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Sub-Filters for Writing Task 2 */}
+              {selectedSkill === 'writing' && activeCategory === 'task2' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng câu hỏi:</span>
+                  {writingTask2SubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-red-100 text-red-800 border border-red-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Sub-Filters for Reading */}
+              {selectedSkill === 'reading' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-blue-500 font-semibold whitespace-nowrap mr-1">Dạng bài:</span>
+                  {readingSubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-blue-100 text-blue-800 border border-blue-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Sub-Filters for Listening */}
+              {selectedSkill === 'listening' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-emerald-600 font-semibold whitespace-nowrap mr-1">Phần thi & Âm học:</span>
+                  {listeningSubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -417,23 +708,24 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           
           {/* PERSONAL NOTES VIEW */}
-          {activeCategory === 'personal' ? (
+          {selectedSkill === 'personal' ? (
             <div className="space-y-4">
               {/* Add Note Form */}
               {isAddingNote && (
-                <form onSubmit={handleAddNoteSubmit} className="p-5 rounded-2xl border-2 border-red-200 bg-red-50/40 space-y-3.5 animate-in fade-in duration-150">
-                  <div className="flex items-center justify-between border-b border-red-200/60 pb-2">
-                    <span className="text-xs font-bold text-red-800 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-red-600" />
+                <form onSubmit={handleAddNoteSubmit} className="p-5 rounded-2xl border-2 border-amber-200 bg-amber-50/40 space-y-3.5 animate-in fade-in duration-150">
+                  <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
+                    <span className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                       Biên soạn mẹo / ghi chú mới
                     </span>
                     <select
                       value={newNoteTag}
                       onChange={(e) => setNewNoteTag(e.target.value)}
-                      className="text-xs px-2.5 py-1 rounded-lg bg-white border border-red-200 font-medium text-slate-700 focus:outline-none"
+                      className="text-xs px-2.5 py-1 rounded-lg bg-white border border-amber-200 font-medium text-slate-700 focus:outline-none"
                     >
-                      <option value="Task 1">Dạng Task 1</option>
-                      <option value="Task 2">Dạng Task 2</option>
+                      <option value="Writing">IELTS Writing</option>
+                      <option value="Reading">IELTS Reading</option>
+                      <option value="Listening">IELTS Listening</option>
                       <option value="Vocabulary">Từ Vựng & Collocation</option>
                       <option value="Grammar">Cấu Trúc Ngữ Pháp</option>
                       <option value="General">Mẹo Chung & Chiến Thuật</option>
@@ -444,27 +736,27 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                     type="text"
                     value={newNoteTitle}
                     onChange={(e) => setNewNoteTitle(e.target.value)}
-                    placeholder="Tiêu đề ghi chú (vd: Công thức câu Overview của thầy Simon)"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 bg-white font-semibold"
+                    placeholder="Tiêu đề ghi chú (vd: Công thức câu Overview của thầy Simon hoặc bẫy T/F/NG cần nhớ)"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white font-semibold"
                   />
                   <textarea
                     value={newNoteContent}
                     onChange={(e) => setNewNoteContent(e.target.value)}
                     placeholder="Nội dung ghi chú chi tiết... (hỗ trợ dán template, cấu trúc câu, từ vựng hoặc checklist của riêng bạn)"
                     rows={5}
-                    className="w-full p-3.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 bg-white resize-none font-sans"
+                    className="w-full p-3.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white resize-none font-sans"
                   />
                   <div className="flex justify-end space-x-2 pt-1">
                     <button
                       type="button"
                       onClick={() => setIsAddingNote(false)}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
                     >
                       Hủy
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 shadow-2xs"
+                      className="px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 shadow-2xs cursor-pointer"
                     >
                       Lưu Ghi Chú
                     </button>
@@ -497,8 +789,9 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                               onChange={(e) => setEditTag(e.target.value)}
                               className="text-[11px] px-2 py-1 rounded bg-slate-100 border border-slate-200 text-slate-600"
                             >
-                              <option value="Task 1">Task 1</option>
-                              <option value="Task 2">Task 2</option>
+                              <option value="Writing">Writing</option>
+                              <option value="Reading">Reading</option>
+                              <option value="Listening">Listening</option>
                               <option value="Vocabulary">Vocabulary</option>
                               <option value="Grammar">Grammar</option>
                               <option value="General">General</option>
@@ -506,13 +799,13 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                             <div className="flex space-x-1.5">
                               <button
                                 onClick={() => setEditingNoteId(null)}
-                                className="px-2.5 py-1 rounded text-xs text-slate-500 hover:bg-slate-100"
+                                className="px-2.5 py-1 rounded text-xs text-slate-500 hover:bg-slate-100 cursor-pointer"
                               >
                                 Hủy
                               </button>
                               <button
                                 onClick={() => handleSaveEdit(n.id)}
-                                className="px-3 py-1 rounded bg-red-600 text-white text-xs font-semibold hover:bg-red-700"
+                                className="px-3 py-1 rounded bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 cursor-pointer"
                               >
                                 Lưu
                               </button>
@@ -524,7 +817,7 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                           <div className="space-y-2">
                             <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
                               <div>
-                                <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 mb-1">
+                                <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200 mb-1">
                                   {n.tag || 'Ghi Chú'}
                                 </span>
                                 <h4 className="font-bold text-sm text-slate-900 leading-snug">{n.title}</h4>
@@ -532,14 +825,14 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                               <div className="flex items-center space-x-1 shrink-0">
                                 <button
                                   onClick={() => startEditNote(n)}
-                                  className="p-1 text-slate-400 hover:text-slate-700 transition-colors"
+                                  className="p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                                   title="Chỉnh sửa ghi chú"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => onDeletePersonalNote(n.id)}
-                                  className="p-1 text-slate-400 hover:text-red-600 transition-colors"
+                                  className="p-1 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                                   title="Xóa ghi chú này"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -547,7 +840,7 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                               </div>
                             </div>
                             <div className="pt-1">
-                              <MarkdownRenderer content={n.content} />
+                              <MarkdownRenderer content={n.content} accentColor="amber" />
                             </div>
                           </div>
                           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
@@ -563,12 +856,12 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
                 </div>
               ) : (
                 <div className="text-center py-16 px-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 space-y-3">
-                  <div className="w-12 h-12 mx-auto rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
                     <Bookmark className="w-6 h-6" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-700">Chưa có ghi chú cá nhân nào</h3>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    Hãy bấm nút <strong className="text-red-600">"Tạo Ghi Chú Mới"</strong> ở góc trên để ghi lại các câu mẫu, từ vựng đắt giá hoặc mẹo học riêng của bạn! Dữ liệu được lưu an toàn trong trình duyệt.
+                    Hãy bấm nút <strong className="text-amber-600">"Tạo Ghi Chú Mới"</strong> ở góc trên để ghi lại các câu mẫu, từ vựng đắt giá hoặc mẹo học riêng của bạn! Dữ liệu được lưu an toàn trong trình duyệt.
                   </p>
                 </div>
               )}
@@ -577,30 +870,102 @@ export default function TheoryHandbookModal({ isOpen, onClose, personalNotes = [
             /* STANDARD HANDBOOK VIEW */
             <div className="space-y-6">
               {filteredHandbook.length > 0 ? (
-                filteredHandbook.map(item => (
-                  <div key={item.id} className="p-6 rounded-2xl border border-slate-200 bg-white shadow-2xs hover:shadow-xs transition-shadow space-y-4">
-                    <div className="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-200">
-                            {item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : 'Chiến Lược & Tiêu Chí'}
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-base sm:text-lg text-slate-900 leading-snug text-red-700">
-                          {item.title}
-                        </h3>
-                      </div>
-                      <p className="text-xs text-slate-500 sm:text-right max-w-sm">{item.summary}</p>
-                    </div>
+                filteredHandbook.map(item => {
+                  const isCopied = copiedId === item.id;
+                  const itemColor = 
+                    item.skill === 'reading' 
+                      ? 'blue' 
+                      : item.skill === 'listening' 
+                      ? 'emerald' 
+                      : 'red';
 
-                    <div className="pt-1">
-                      <MarkdownRenderer content={item.content} />
+                  return (
+                    <div 
+                      key={item.id} 
+                      className={`p-6 rounded-2xl border bg-white shadow-2xs hover:shadow-xs transition-shadow space-y-4 ${
+                        itemColor === 'blue' 
+                          ? 'border-blue-100 hover:border-blue-200' 
+                          : itemColor === 'emerald'
+                          ? 'border-emerald-100 hover:border-emerald-200'
+                          : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                              itemColor === 'blue'
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : itemColor === 'emerald'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-red-50 text-red-700 border-red-200'
+                            }`}>
+                              {item.skill === 'reading' 
+                                ? 'IELTS Reading' 
+                                : item.skill === 'listening' 
+                                ? 'IELTS Listening' 
+                                : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : 'Chiến Lược & Tiêu Chí')}
+                            </span>
+                            {item.subType && item.subType !== 'overview' && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                {item.subType}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className={`font-bold text-base sm:text-lg leading-snug ${
+                            itemColor === 'blue'
+                              ? 'text-blue-900'
+                              : itemColor === 'emerald'
+                              ? 'text-emerald-900'
+                              : 'text-slate-900'
+                          }`}>
+                            {item.title}
+                          </h3>
+                          <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.summary}</p>
+                        </div>
+
+                        {/* Copy Button */}
+                        <div className="shrink-0">
+                          <button
+                            onClick={() => handleCopy(item)}
+                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                              isCopied
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                            title="Sao chép toàn bộ bài viết này"
+                          >
+                            {isCopied ? (
+                              <>
+                                <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>Đã chép!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5 text-slate-400" />
+                                <span>Sao chép</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="pt-1">
+                        <MarkdownRenderer content={item.content} accentColor={itemColor} />
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
-                <div className="text-center py-12 text-slate-400 text-xs">
-                  Không tìm thấy kết quả phù hợp với từ khóa "{searchQuery}".
+                <div className="text-center py-16 text-slate-400 text-xs space-y-2">
+                  <HelpCircle className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p>Không tìm thấy bài cẩm nang nào phù hợp với bộ lọc hoặc từ khóa "${searchQuery}".</p>
+                  <button 
+                    onClick={() => { setActiveCategory('all'); setActiveSubType('all'); setSearchQuery(''); }}
+                    className="text-xs text-blue-600 hover:underline font-semibold cursor-pointer"
+                  >
+                    Xóa bộ lọc để xem tất cả
+                  </button>
                 </div>
               )}
             </div>
