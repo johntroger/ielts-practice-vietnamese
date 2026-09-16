@@ -22,8 +22,12 @@ export default function SpeakingSoundcheckModal({
 
   const soundcheckClip = speechEngine.audioClips['soundcheck_clip'];
 
-  const isChromium = typeof window !== 'undefined' && 
-    (!!window.chrome || navigator.userAgent.indexOf('Edg') !== -1);
+  const [showEdgeGuide, setShowEdgeGuide] = useState(false);
+
+  // Accurate browser detection
+  const isEdge = typeof window !== 'undefined' && /Edg\//i.test(navigator.userAgent);
+  const isChrome = typeof window !== 'undefined' && /Chrome\//i.test(navigator.userAgent) && !isEdge;
+  const isSafariOrFirefox = typeof window !== 'undefined' && !isChrome && !isEdge;
 
   // Auto-detect mic activity when micLevel > 12
   useEffect(() => {
@@ -54,6 +58,7 @@ export default function SpeakingSoundcheckModal({
       setTestedMic(false);
       setHasDetectedAudioWave(false);
       setAudioErrorHint(null);
+      setShowEdgeGuide(false);
     }
   }, [isOpen, speechEngine]);
 
@@ -180,17 +185,61 @@ export default function SpeakingSoundcheckModal({
         <div className="p-6 space-y-5">
           
           {/* Browser check indicator */}
-          <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 flex items-center justify-between text-xs">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-semibold text-slate-300">
-                {isChromium ? 'Trình duyệt tối ưu (Chrome / Edge)' : 'Khuyên dùng Chrome/Edge để có STT tốt nhất'}
+          {isChrome ? (
+            <div className="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-semibold text-emerald-200">
+                  Trình duyệt tối ưu: Google Chrome (Khuyên Dùng 100%)
+                </span>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-300 uppercase bg-emerald-900/60 px-2 py-0.5 rounded border border-emerald-700/50">
+                Chuẩn Nhất
               </span>
             </div>
-            <span className="text-[10px] font-bold text-emerald-400 uppercase bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/50">
-              Sẵn sàng
-            </span>
-          </div>
+          ) : isEdge ? (
+            <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="flex items-start sm:items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
+                <span className="font-semibold text-amber-200 leading-snug">
+                  Đang dùng Edge: Khuyên dùng <strong>Google Chrome</strong> để có giọng đọc & micro mượt nhất
+                </span>
+              </div>
+              <button
+                onClick={() => setShowEdgeGuide(!showEdgeGuide)}
+                className="self-end sm:self-auto text-[11px] font-bold text-amber-300 hover:text-white underline cursor-pointer shrink-0"
+              >
+                {showEdgeGuide ? 'Đóng mẹo' : 'Mẹo xử lý âm thanh Edge'}
+              </button>
+            </div>
+          ) : (
+            <div className="p-3 rounded-2xl bg-rose-950/40 border border-rose-800/60 flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                <span className="font-semibold text-rose-200">
+                  Khuyên dùng <strong>Google Chrome</strong> để hỗ trợ nhận diện giọng nói Speaking đầy đủ
+                </span>
+              </div>
+              <span className="text-[10px] font-bold text-rose-300 uppercase bg-rose-900/60 px-2 py-0.5 rounded border border-rose-700/50">
+                Chú ý
+              </span>
+            </div>
+          )}
+
+          {/* Collapsible Edge Troubleshooting Box */}
+          {showEdgeGuide && isEdge && (
+            <div className="p-3.5 rounded-xl bg-slate-950 border border-amber-500/40 text-xs space-y-2 animate-in fade-in duration-150">
+              <div className="font-bold text-amber-300 flex items-center space-x-1.5">
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span>Hướng dẫn nếu Microsoft Edge không phát ra tiếng:</span>
+              </div>
+              <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px] leading-relaxed pl-1">
+                <li>Bấm vào biểu tượng <strong>Khóa (Bảo mật)</strong> trên thanh địa chỉ Edge $\rightarrow$ Chọn <strong>Quyền trang web</strong> $\rightarrow$ Bật <strong>Âm thanh (Sound)</strong> sang <em>Cho phép</em>.</li>
+                <li>Vào Cài đặt Windows: <em>Settings $\rightarrow$ Privacy & Security $\rightarrow$ Speech</em> $\rightarrow$ Bật <strong>Online speech recognition</strong>.</li>
+                <li><span className="text-emerald-400 font-semibold">Khuyến nghị nhanh nhất:</span> Mở đường dẫn này bằng trình duyệt <strong>Google Chrome</strong> để thi ngay mà không cần chỉnh cài đặt.</li>
+              </ol>
+            </div>
+          )}
 
           {/* STEP 1: Test Speaker (TTS) */}
           <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-3">

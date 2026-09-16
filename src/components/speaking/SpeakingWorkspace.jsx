@@ -4,7 +4,7 @@ import {
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
-  RotateCcw
+  RotateCcw, X
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -50,6 +50,13 @@ export default function SpeakingWorkspace({
   const [showSampleAnswer, setShowSampleAnswer] = useState(false);
   const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
   const practiceAudioRef = React.useRef(null);
+
+  const [isDismissedBrowserBanner, setIsDismissedBrowserBanner] = useState(false);
+
+  // Accurate browser detection
+  const isEdge = typeof window !== 'undefined' && /Edg\//i.test(navigator.userAgent);
+  const isChrome = typeof window !== 'undefined' && /Chrome\//i.test(navigator.userAgent) && !isEdge;
+  const isSafariOrFirefox = typeof window !== 'undefined' && !isChrome && !isEdge;
 
   // Sync Examiner preference
   useEffect(() => {
@@ -198,6 +205,39 @@ export default function SpeakingWorkspace({
           )}
         </div>
       </div>
+
+      {/* Browser Notification Banner (Pre-flight notice) */}
+      {!isChrome && !isDismissedBrowserBanner && (
+        <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-amber-950/80 border-b border-amber-500/30 px-4 py-2.5 flex items-center justify-between text-xs text-amber-200 shrink-0">
+          <div className="flex items-center space-x-2.5 max-w-3xl">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>
+              {isEdge ? (
+                <>
+                  Bạn đang dùng <strong>Microsoft Edge</strong>. Để đảm bảo giọng đọc Giám khảo và Micro hoạt động 100% ổn định (không bị Windows ngắt tiếng), <strong>khuyến khích mở web bằng Google Chrome</strong>.
+                </>
+              ) : (
+                <>
+                  Trình duyệt này có thể bị hạn chế tính năng Nhận diện giọng nói. <strong>Khuyến khích sử dụng Google Chrome</strong> để có trải nghiệm luyện thi tốt nhất.
+                </>
+              )}
+            </span>
+            <button
+              onClick={() => setIsSoundcheckOpen(true)}
+              className="text-[11px] font-bold text-amber-300 hover:text-white underline ml-1 cursor-pointer shrink-0"
+            >
+              Kiểm tra thiết bị ngay
+            </button>
+          </div>
+          <button
+            onClick={() => setIsDismissedBrowserBanner(true)}
+            className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/60 transition-colors cursor-pointer ml-2 shrink-0"
+            title="Đóng thông báo"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* 2. MAIN CONTENT STAGE */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-start">
