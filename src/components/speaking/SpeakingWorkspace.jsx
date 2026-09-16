@@ -307,24 +307,39 @@ export default function SpeakingWorkspace({
                   </div>
                 </div>
 
-                {/* Examiner Card with Voice Test */}
-                <div className="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 flex items-center space-x-3 shrink-0 shadow-md">
-                  <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-700/50 flex items-center justify-center text-2xl">
-                    {activeExaminer.avatar}
+                {/* Examiner Card with Voice Test & Instant Enter Button */}
+                <div className="flex flex-col gap-2.5 shrink-0">
+                  <div className="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 flex items-center space-x-3 shadow-md">
+                    <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-700/50 flex items-center justify-center text-2xl">
+                      {activeExaminer.avatar}
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">
+                        Giám Khảo Khảo Thí
+                      </span>
+                      <span className="font-extrabold text-sm text-white block">{activeExaminer.name}</span>
+                      <button
+                        onClick={() => handleReadQuestion(`Good morning. I am ${activeExaminer.name}. Welcome to your IELTS Speaking test.`)}
+                        className="text-[11px] text-purple-300 hover:text-purple-200 font-bold flex items-center space-x-1 mt-0.5 cursor-pointer"
+                      >
+                        <Volume2 className="w-3 h-3" />
+                        <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe giọng đọc'}</span>
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">
-                      Giám Khảo Khảo Thí
-                    </span>
-                    <span className="font-extrabold text-sm text-white block">{activeExaminer.name}</span>
-                    <button
-                      onClick={() => handleReadQuestion(`Good morning. I am ${activeExaminer.name}. Welcome to your IELTS Speaking test.`)}
-                      className="text-[11px] text-purple-300 hover:text-purple-200 font-bold flex items-center space-x-1 mt-0.5 cursor-pointer"
-                    >
-                      <Volume2 className="w-3 h-3" />
-                      <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe giọng đọc'}</span>
-                    </button>
-                  </div>
+
+                  {/* GIANT TOP ENTER BUTTON */}
+                  <button
+                    onClick={() => {
+                      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+                      if (speechEngine.isListening) speechEngine.stopListening();
+                      setIsInMockExamRoom(true);
+                    }}
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm shadow-xl shadow-purple-950/80 flex items-center justify-center space-x-2 transition-all cursor-pointer ring-2 ring-purple-400/50 hover:scale-102"
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>VÀO PHÒNG THI NGAY (1 CLICK)</span>
+                  </button>
                 </div>
               </div>
             </div>
