@@ -158,6 +158,20 @@ export default function SpeakingWorkspace({
         {/* Right: Examiner Profile Picker & Quick Tools */}
         <div className="flex items-center space-x-2 shrink-0">
           
+          {/* Direct Enter Exam Room Button on Top Toolbar */}
+          <button
+            onClick={() => {
+              if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+              if (speechEngine.isListening) speechEngine.stopListening();
+              setIsInMockExamRoom(true);
+            }}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-purple-900/40 transition-all cursor-pointer shrink-0 animate-pulse hover:animate-none"
+            title="Bấm để vào phòng thi mô phỏng với Giám khảo AI ngay lập tức"
+          >
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>VÀO PHÒNG THI</span>
+          </button>
+
           {/* Soundcheck Quick Button */}
           <button
             onClick={() => setIsSoundcheckOpen(true)}
