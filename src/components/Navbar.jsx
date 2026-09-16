@@ -373,6 +373,16 @@ export default function Navbar({
                       Khám Phá & Học Tập
                     </div>
                     <button
+                      onClick={() => { onOpenTheory(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2 p-2 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70 transition-colors"
+                    >
+                      <BookOpen className="w-4 h-4 text-amber-600" />
+                      <div className="flex-1">
+                        <div className="font-bold">Cẩm Nang Lý Thuyết</div>
+                        <div className="text-[10px] text-slate-500 font-normal">Writing, Reading & Listening</div>
+                      </div>
+                    </button>
+                    <button
                       onClick={() => { onOpenFeaturesGuide(); setIsToolsMenuOpen(false); }}
                       className="w-full flex items-center space-x-2 p-2 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 hover:from-red-100 hover:to-rose-100 transition-colors"
                     >
@@ -607,6 +617,17 @@ export default function Navbar({
                 Công Cụ AI & Dữ Liệu
               </div>
               <div className="space-y-1">
+                <button
+                  onClick={() => { onOpenTheory(); setIsMobileDrawerOpen(false); }}
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70"
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <BookOpen className="w-4 h-4 text-amber-600" />
+                    <span>Cẩm Nang Lý Thuyết & Chiến Thuật</span>
+                  </div>
+                  <span className="text-[10px] text-amber-700 font-bold bg-amber-100 px-1.5 py-0.5 rounded">W/R/L</span>
+                </button>
+
                 <button
                   onClick={() => { onOpenGenerator(); setIsMobileDrawerOpen(false); }}
                   className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
