@@ -206,38 +206,42 @@ export default function SpeakingWorkspace({
         </div>
       </div>
 
-      {/* Browser Notification Banner (Pre-flight notice) */}
-      {!isChrome && !isDismissedBrowserBanner && (
-        <div className="bg-gradient-to-r from-amber-950/80 via-slate-900 to-amber-950/80 border-b border-amber-500/30 px-4 py-2.5 flex items-center justify-between text-xs text-amber-200 shrink-0">
-          <div className="flex items-center space-x-2.5 max-w-3xl">
-            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>
-              {isEdge ? (
-                <>
-                  Bạn đang dùng <strong>Microsoft Edge</strong>. Để đảm bảo giọng đọc Giám khảo và Micro hoạt động 100% ổn định (không bị Windows ngắt tiếng), <strong>khuyến khích mở web bằng Google Chrome</strong>.
-                </>
-              ) : (
-                <>
-                  Trình duyệt này có thể bị hạn chế tính năng Nhận diện giọng nói. <strong>Khuyến khích sử dụng Google Chrome</strong> để có trải nghiệm luyện thi tốt nhất.
-                </>
-              )}
+      {/* 1. BROWSER PRE-FLIGHT NOTICE BANNER */}
+      {isEdge ? (
+        <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 border-b border-amber-500/50 px-4 py-2.5 flex items-center justify-between text-xs text-amber-100 shrink-0 shadow-md">
+          <div className="flex items-center space-x-2.5 max-w-4xl">
+            <span className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-[10px] uppercase shrink-0">
+              Khuyên dùng Chrome
             </span>
-            <button
-              onClick={() => setIsSoundcheckOpen(true)}
-              className="text-[11px] font-bold text-amber-300 hover:text-white underline ml-1 cursor-pointer shrink-0"
-            >
-              Kiểm tra thiết bị ngay
-            </button>
+            <span className="leading-snug">
+              Bạn đang duyệt bằng <strong>Microsoft Edge</strong>. Trình duyệt Edge có thể gặp lỗi ngắt tiếng (không nghe thấy giám khảo). <strong>Khuyến nghị mở website bằng Google Chrome</strong> để có trải nghiệm giọng đọc và micro ổn định nhất!
+            </span>
           </div>
           <button
-            onClick={() => setIsDismissedBrowserBanner(true)}
-            className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/60 transition-colors cursor-pointer ml-2 shrink-0"
-            title="Đóng thông báo"
+            onClick={() => setIsSoundcheckOpen(true)}
+            className="ml-3 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-white border border-amber-500/40 font-bold text-[11px] whitespace-nowrap cursor-pointer transition-colors shrink-0"
           >
-            <X className="w-3.5 h-3.5" />
+            Kiểm tra âm thanh ngay
           </button>
         </div>
-      )}
+      ) : !isChrome ? (
+        <div className="bg-gradient-to-r from-rose-950 via-slate-900 to-rose-950 border-b border-rose-500/50 px-4 py-2.5 flex items-center justify-between text-xs text-rose-100 shrink-0 shadow-md">
+          <div className="flex items-center space-x-2.5 max-w-4xl">
+            <span className="px-2 py-0.5 rounded bg-rose-500 text-white font-black text-[10px] uppercase shrink-0">
+              Khuyên dùng Chrome
+            </span>
+            <span>
+              Trình duyệt này có thể không hỗ trợ ghi âm trực tiếp. <strong>Vui lòng sử dụng Google Chrome</strong> để đảm bảo thi Speaking mượt mà.
+            </span>
+          </div>
+          <button
+            onClick={() => setIsSoundcheckOpen(true)}
+            className="ml-3 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 hover:text-white border border-rose-500/40 font-bold text-[11px] whitespace-nowrap cursor-pointer transition-colors shrink-0"
+          >
+            Kiểm tra thiết bị
+          </button>
+        </div>
+      ) : null}
 
       {/* 2. MAIN CONTENT STAGE */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-start">
@@ -266,6 +270,24 @@ export default function SpeakingWorkspace({
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                     Trải nghiệm tương tác giọng nói 1-on-1 trực tiếp với Giám khảo AI: hỏi đáp Part 1, 60s nháp ghi chú Part 2, và câu hỏi follow-up phản biện chuyên sâu ở Part 3.
                   </p>
+
+                  {/* Persistent Browser Advice Box */}
+                  <div className={`mt-3 p-2.5 rounded-xl border text-xs flex items-center space-x-2.5 ${
+                    isChrome 
+                      ? 'bg-emerald-950/40 border-emerald-600/40 text-emerald-200' 
+                      : 'bg-amber-950/60 border-amber-500/50 text-amber-200'
+                  }`}>
+                    <span className="text-base">{isChrome ? '🚀' : '💡'}</span>
+                    <div className="leading-snug">
+                      {isChrome ? (
+                        <span><strong>Trình duyệt tối ưu:</strong> Bạn đang dùng Google Chrome chuẩn 100% cho Web Speech & Audio.</span>
+                      ) : (
+                        <span>
+                          <strong>Khuyên dùng Google Chrome:</strong> Nếu bạn đang dùng {isEdge ? 'Microsoft Edge' : 'trình duyệt khác'} và không nghe thấy tiếng Giám khảo đọc, vui lòng mở trang này trên <strong>Google Chrome</strong> để chạy ổn định nhất.
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Examiner Card with Voice Test */}
