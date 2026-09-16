@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mic, MicOff, AlertTriangle, Volume2, Square, Play, RotateCcw, ArrowRight, 
+import { Mic, MicOff, AlertTriangle, Radio, Volume2, Square, Play, RotateCcw, ArrowRight, 
   Clock, ShieldCheck, AlertCircle, Sparkles, CheckCircle2, 
   HelpCircle, ChevronRight, MessageSquare, X, Pause, LogOut
 } from 'lucide-react';
@@ -71,14 +71,26 @@ export default function SpeakingExaminerRoom({
       speechEngine.stopListening();
     } else {
       setIsMicActive(true);
+      setIsAwaitingCandidateMic(false);
       try {
-        await speechEngine.startListening('turn_' + Date.now());
+        const clipToStart = nextClipIdRef.current || ('turn_' + Date.now());
+        await speechEngine.startListening(clipToStart);
       } catch (err) {
         console.warn('Mic toggle error:', err);
         setIsMicActive(false);
       }
     }
   }, [isMicActive, speechEngine]);
+
+    // Intermission State: Examiner has finished asking -> Prompt candidate to open mic
+  const [isAwaitingCandidateMic, setIsAwaitingCandidateMic] = useState(false);
+  const nextClipIdRef = useRef('p1_q0');
+
+  const triggerCandidateTurn = useCallback((clipId) => {
+    nextClipIdRef.current = clipId;
+    setIsAwaitingCandidateMic(true);
+    speakingSoundEffects.playReadyToSpeakChime();
+  }, []);
 
   const [activePromptText, setActivePromptText] = useState('');
   const [candidateResponseBuffer, setCandidateResponseBuffer] = useState('');
@@ -118,11 +130,11 @@ export default function SpeakingExaminerRoom({
       
       const timer = setTimeout(() => {
         speechEngine.speak(greetingPrompt, { examinerId: examiner.id }, () => {
-          // Push examiner greeting to history
           setDialogueHistory(prev => [
             ...prev,
             { speaker: 'examiner', stage: 'greeting', text: greetingPrompt, timestamp: new Date().toISOString() }
           ]);
+          triggerCandidateTurn('greeting_candidate');
         });
       }, 500);
 
@@ -204,9 +216,8 @@ export default function SpeakingExaminerRoom({
           ...prev,
           { speaker: 'examiner', stage: 'part1', text: firstQ, timestamp: new Date().toISOString() }
         ]);
-        // Auto listen for candidate answer
         speechEngine.resetTranscript();
-        speechEngine.startListening('p1_q0');
+        triggerCandidateTurn('p1_q0');
       });
     }, 400);
   };
@@ -238,7 +249,8 @@ export default function SpeakingExaminerRoom({
           ...prev,
           { speaker: 'examiner', stage: 'part1', text: nextQ, timestamp: new Date().toISOString() }
         ]);
-        speechEngine.startListening(`p1_q${nextIndex}`);
+        speechEngine.resetTranscript();
+        triggerCandidateTurn(`p1_q${nextIndex}`);
       });
     } else {
       // Transition to Part 2
@@ -282,7 +294,7 @@ export default function SpeakingExaminerRoom({
         { speaker: 'examiner', stage: 'part2_speak', text: startPrompt, timestamp: new Date().toISOString() }
       ]);
       speechEngine.resetTranscript();
-      speechEngine.startListening('p2_monologue');
+      triggerCandidateTurn('p2_monologue');
     });
   };
 
@@ -320,7 +332,7 @@ export default function SpeakingExaminerRoom({
           { speaker: 'examiner', stage: 'part3', text: firstP3Q, timestamp: new Date().toISOString() }
         ]);
         speechEngine.resetTranscript();
-        speechEngine.startListening('p3_q0');
+        triggerCandidateTurn('p3_q0');
       });
     }, 400);
   };
@@ -351,7 +363,8 @@ export default function SpeakingExaminerRoom({
           ...prev,
           { speaker: 'examiner', stage: 'part3', text: nextQ, timestamp: new Date().toISOString() }
         ]);
-        speechEngine.startListening(`p3_q${nextIndex}`);
+        speechEngine.resetTranscript();
+        triggerCandidateTurn(`p3_q${nextIndex}`);
       });
     } else {
       // Conclude Entire Exam
@@ -580,17 +593,51 @@ export default function SpeakingExaminerRoom({
 
         </div>
 
-        {/* Live Candidate Speech Recognition Feedback */}
-        <div className="w-full max-w-xl mt-4 z-10">
+        {/* Live Candidate Speech Recognition Feedback & Intermission Notice */}
+        <div className="w-full max-w-xl mt-3 z-10 space-y-2">
+          {/* INTERMISSION CALLOUT: Ready to Answer Notice */}
+          {isAwaitingCandidateMic && !isMicActive && !speechEngine.isSpeaking && (
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900/90 to-emerald-950/90 border-2 border-emerald-500 shadow-2xl shadow-emerald-500/20 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                    <Radio className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div className="text-left">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-emerald-400">
+                        Giám khảo đã hỏi xong • Đến lượt bạn
+                      </span>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    </div>
+                    <p className="text-xs text-slate-200 font-medium leading-snug">
+                      Nhấn <strong>[ Phím Spacebar ]</strong> hoặc nút Micro đỏ bên dưới để bắt đầu trả lời. Hệ thống sẽ ghi âm & chấm điểm trực tiếp.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleToggleMic}
+                  className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shrink-0 transition-all cursor-pointer shadow-lg shadow-emerald-900/40 flex items-center space-x-1.5 hover:scale-105"
+                >
+                  <Mic className="w-4 h-4" />
+                  <span>BẬT MIC NGAY</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Transcript / Listening Bubble */}
           <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-center min-h-12 flex flex-col items-center justify-center">
             {speechEngine.transcript || speechEngine.interimTranscript ? (
               <p className="text-xs sm:text-sm text-emerald-300 font-medium italic">
                 "{speechEngine.transcript} {speechEngine.interimTranscript}"
               </p>
             ) : isMicActive ? (
-              <p className="text-xs text-slate-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span>Đang lắng nghe câu trả lời của bạn... Hãy nói tự nhiên vào micro</span>
+              <p className="text-xs text-rose-300 flex items-center gap-1.5 font-semibold animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                <span>Đang thu âm & tạo transcript cho bài thi... Hãy trả lời tự nhiên</span>
               </p>
             ) : (
               <p className="text-xs text-slate-500">

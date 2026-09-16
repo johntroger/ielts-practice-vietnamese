@@ -53,6 +53,43 @@ class SpeakingSoundEffects {
   }
 
   /**
+   * Pleasant ascending double-tone when Examiner finishes asking, prompting candidate to open mic
+   */
+  playReadyToSpeakChime() {
+    try {
+      const ctx = this.getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      // Tone 1: F#5 (739.99 Hz)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(739.99, now);
+      gain1.gain.setValueAtTime(0.001, now);
+      gain1.gain.linearRampToValueAtTime(0.12, now + 0.04);
+      gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.22);
+
+      // Tone 2: B5 (987.77 Hz)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(987.77, now + 0.12);
+      gain2.gain.setValueAtTime(0.001, now + 0.12);
+      gain2.gain.linearRampToValueAtTime(0.15, now + 0.16);
+      gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.12);
+      osc2.stop(now + 0.45);
+    } catch (e) {}
+  }
+
+  /**
    * Gentle double chime when 60 seconds preparation ends in Part 2
    */
   playPrepTimeEndChime() {
