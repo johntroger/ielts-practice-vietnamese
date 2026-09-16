@@ -372,6 +372,9 @@ export default function TheoryHandbookModal({
     { id: 'advantages', label: 'Advantages vs Disadvantages' },
     { id: 'problem-solution', label: 'Problem & Solution' },
     { id: 'two-part', label: 'Two-Part Question' },
+    { id: 'counter-argument', label: 'Phản Biện & Bác Bỏ (8.0+)' },
+    { id: 'grammar-8', label: 'Ngữ Pháp 8.0+ Đắt Giá' },
+    { id: 'collocations', label: 'Academic Collocations' },
   ];
 
   const readingSubTypes = [
@@ -383,6 +386,9 @@ export default function TheoryHandbookModal({
     { id: 'matching', label: 'Matching Info / Features' },
     { id: 'completion', label: 'Điền từ / Summary' },
     { id: 'paraphrase', label: '5 Quy Tắc Paraphrase' },
+    { id: 'guessing', label: 'Đoán Nghĩa & Gốc Từ' },
+    { id: 'synonyms', label: '50 Cặp Paraphrase Cam' },
+    { id: 'emergency', label: 'Cấp Cứu 5 Phút Cuối' },
   ];
 
   const listeningSubTypes = [
@@ -393,6 +399,9 @@ export default function TheoryHandbookModal({
     { id: 'part3', label: 'Part 3: Trắc Nghiệm Học Thuật' },
     { id: 'part4', label: 'Part 4: Dàn Bài & Signposting' },
     { id: 'phonetics', label: 'Nối Âm, Nuốt Âm & Schwa' },
+    { id: 'spelling', label: '80 Từ Dễ Sai Chính Tả' },
+    { id: 'plurals', label: 'Phán Đoán Đuôi -s' },
+    { id: 'cd-hacks', label: 'Phím Tắt & Mẹo Thi Máy' },
   ];
 
   // Filter handbook by selected skill, category, subtype, and search query
