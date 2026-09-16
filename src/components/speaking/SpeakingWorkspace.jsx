@@ -19,6 +19,7 @@ import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import SpeakingPracticePane from './SpeakingPracticePane';
 import SpeakingIdeaMatrixModal from './SpeakingIdeaMatrixModal';
 import SpeakingShadowingModal from './SpeakingShadowingModal';
+import SpeakingExaminerRoom from './SpeakingExaminerRoom';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -40,6 +41,8 @@ export default function SpeakingWorkspace({
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
   const [isShadowingOpen, setIsShadowingOpen] = useState(false);
+  const [isInMockExamRoom, setIsInMockExamRoom] = useState(false);
+  const [completedExamData, setCompletedExamData] = useState(null);
 
   // Practice Mode State
   const [practicePart, setPracticePart] = useState(1); // 1 | 2 | 3
@@ -484,9 +487,35 @@ export default function SpeakingWorkspace({
         speechEngine={speechEngine}
         onPassedSoundcheck={() => {
           setIsSoundcheckOpen(false);
-          alert('Kiểm tra thiết bị thành công! Sang Bước 3 & Bước 4 chúng ta sẽ đưa bạn trực tiếp vào Buồng thi ảo (Virtual Exam Room).');
+          setIsInMockExamRoom(true);
         }}
       />
+
+      {/* 4. STEP 4: AI VIRTUAL EXAM ROOM (THEATER MODE 100dvh) */}
+      {isInMockExamRoom && (
+        <SpeakingExaminerRoom
+          examiner={activeExaminer}
+          mockPack={activeMockPack}
+          part1Topic={mockP1}
+          part2Card={mockP2}
+          part3Set={mockP3}
+          speechEngine={speechEngine}
+          onExitRoom={() => {
+            setIsInMockExamRoom(false);
+            if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+            if (speechEngine.isListening) speechEngine.stopListening();
+          }}
+          onFinishExam={(finalTranscript, meta) => {
+            setIsInMockExamRoom(false);
+            setCompletedExamData({ finalTranscript, meta });
+            if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+            if (speechEngine.isListening) speechEngine.stopListening();
+            if (onSpeakingSubmitted) {
+              onSpeakingSubmitted(finalTranscript, meta);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
