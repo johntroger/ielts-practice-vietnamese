@@ -3,7 +3,8 @@ import {
   Mic, Volume2, Headphones, Play, Square, Sparkles, BookOpen, 
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
-  FileText, Compass, MessageSquare, ArrowRight, Info
+  FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
+  RotateCcw
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -12,6 +13,9 @@ import {
   SPEAKING_PART3_QUESTIONS, 
   SPEAKING_MOCK_TEST_PACKS 
 } from '../../data/speakingTopics';
+import { useSpeechEngine } from '../../hooks/useSpeechEngine';
+import SpeakingSoundcheckModal from './SpeakingSoundcheckModal';
+import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -29,6 +33,9 @@ export default function SpeakingWorkspace({
   });
   const [selectedMockId, setSelectedMockId] = useState(SPEAKING_MOCK_TEST_PACKS[0]?.id || 'mock-spk-tech-future');
   
+  // Soundcheck modal state
+  const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
+
   // Practice Mode State
   const [practicePart, setPracticePart] = useState(1); // 1 | 2 | 3
   const [selectedP1TopicId, setSelectedP1TopicId] = useState(SPEAKING_PART1_TOPICS[0]?.id || 'p1-work-study');
@@ -54,6 +61,30 @@ export default function SpeakingWorkspace({
   const activeP1Topic = SPEAKING_PART1_TOPICS.find(p => p.id === selectedP1TopicId) || SPEAKING_PART1_TOPICS[0];
   const activeP2Card = SPEAKING_PART2_CUECARDS.find(p => p.id === selectedP2CueCardId) || SPEAKING_PART2_CUECARDS[0];
   const activeP3Set = SPEAKING_PART3_QUESTIONS.find(p => p.linkedPart2Id === selectedP2CueCardId) || SPEAKING_PART3_QUESTIONS[0];
+
+  // 2. Hook up Speech Engine Core
+  const speechEngine = useSpeechEngine({
+    examinerId: selectedExaminerId
+  });
+
+  // Handle Listen to Question (TTS)
+  const handleReadQuestion = (questionText) => {
+    if (speechEngine.isSpeaking) {
+      speechEngine.stopSpeaking();
+    } else {
+      speechEngine.speak(questionText, { examinerId: selectedExaminerId });
+    }
+  };
+
+  // Handle Candidate Practice Answer (Mic toggle)
+  const handleTogglePracticeRecord = (questionId) => {
+    if (speechEngine.isListening) {
+      speechEngine.stopListening();
+    } else {
+      speechEngine.resetTranscript();
+      speechEngine.startListening(questionId);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-slate-950 text-slate-100 overflow-hidden select-none">
@@ -110,6 +141,16 @@ export default function SpeakingWorkspace({
         {/* Right: Examiner Profile Picker & Quick Tools */}
         <div className="flex items-center space-x-2 shrink-0">
           
+          {/* Soundcheck Quick Button */}
+          <button
+            onClick={() => setIsSoundcheckOpen(true)}
+            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all cursor-pointer"
+            title="Kiểm tra Micro và Âm lượng loa"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Kiểm Tra Thiết Bị</span>
+          </button>
+
           {/* Examiner Picker */}
           <div className="relative flex items-center bg-slate-800/60 border border-slate-700/60 rounded-xl px-2.5 py-1 text-xs">
             <span className="text-base mr-1.5">{activeExaminer.avatar}</span>
@@ -180,7 +221,7 @@ export default function SpeakingWorkspace({
                   </p>
                 </div>
 
-                {/* Examiner Card */}
+                {/* Examiner Card with Voice Test */}
                 <div className="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 flex items-center space-x-3 shrink-0 shadow-md">
                   <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-700/50 flex items-center justify-center text-2xl">
                     {activeExaminer.avatar}
@@ -190,7 +231,13 @@ export default function SpeakingWorkspace({
                       Giám Khảo Khảo Thí
                     </span>
                     <span className="font-extrabold text-sm text-white block">{activeExaminer.name}</span>
-                    <span className="text-[11px] text-slate-400 block">{activeExaminer.accent}</span>
+                    <button
+                      onClick={() => handleReadQuestion(`Good morning. I am ${activeExaminer.name}. Welcome to your IELTS Speaking test.`)}
+                      className="text-[11px] text-purple-300 hover:text-purple-200 font-bold flex items-center space-x-1 mt-0.5 cursor-pointer"
+                    >
+                      <Volume2 className="w-3 h-3" />
+                      <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe giọng đọc'}</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -292,13 +339,11 @@ export default function SpeakingWorkspace({
                   <span className="text-slate-400">Hệ thống sẽ kiểm tra micro và âm lượng trước khi vào thi.</span>
                 </div>
                 <button
-                  onClick={() => {
-                    alert('Bước 1 (Dữ liệu đề thi & Cẩm nang lý thuyết) đã sẵn sàng! Sang Bước 2 chúng ta sẽ kích hoạt Buồng thi ảo (Soundcheck & Mic Recording).');
-                  }}
+                  onClick={() => setIsSoundcheckOpen(true)}
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-purple-900/40 flex items-center space-x-2 transition-all cursor-pointer shrink-0"
                 >
-                  <Play className="w-4 h-4 fill-white" />
-                  <span>Vào Phòng Thi Thử Ngay</span>
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Kiểm Tra Thiết Bị & Vào Thi</span>
                 </button>
               </div>
             </div>
@@ -356,6 +401,7 @@ export default function SpeakingWorkspace({
                         setSelectedP1TopicId(topic.id);
                         setActiveP1QuestionIndex(0);
                         setShowSampleAnswer(false);
+                        speechEngine.resetTranscript();
                       }}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                         selectedP1TopicId === topic.id
@@ -381,28 +427,101 @@ export default function SpeakingWorkspace({
                       <div className="flex items-center space-x-1.5">
                         <button
                           onClick={() => setShowVocabHints(!showVocabHints)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
                         >
                           {showVocabHints ? 'Ẩn Gợi Ý Từ Vựng' : 'Hiện Từ Vựng Band 7+'}
                         </button>
                         <button
                           onClick={() => setShowSampleAnswer(!showSampleAnswer)}
-                          className="px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 transition-colors cursor-pointer"
                         >
                           {showSampleAnswer ? 'Ẩn Bài Mẫu' : 'Xem Bài Mẫu 8.5'}
                         </button>
                       </div>
                     </div>
 
-                    {/* The Question Text */}
+                    {/* The Question Text with TTS play button */}
                     <div className="space-y-2">
-                      <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Câu hỏi khảo thí:</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Câu hỏi khảo thí:</span>
+                        <button
+                          onClick={() => handleReadQuestion(activeP1Topic.questions[activeP1QuestionIndex].question)}
+                          className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
+                        >
+                          <Volume2 className="w-3.5 h-3.5" />
+                          <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe Giám khảo đọc câu hỏi'}</span>
+                        </button>
+                      </div>
                       <h2 className="text-lg sm:text-xl font-bold text-white leading-relaxed">
                         "{activeP1Topic.questions[activeP1QuestionIndex].question}"
                       </h2>
                       <p className="text-xs text-slate-400 italic">
                         💡 {activeP1Topic.questions[activeP1QuestionIndex].strategy}
                       </p>
+                    </div>
+
+                    {/* LIVE INTERACTIVE PRACTICE RECORDER BOX */}
+                    <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-3 h-3 rounded-full ${speechEngine.isListening ? 'bg-emerald-500 animate-ping' : 'bg-slate-700'}`} />
+                          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                            {speechEngine.isListening ? 'Đang thu âm câu trả lời của bạn...' : 'Luyện Nói Cho Câu Này'}
+                          </span>
+                        </div>
+                        {speechEngine.isListening && (
+                          <span className="text-[11px] text-emerald-400 font-bold animate-pulse">
+                            Micro Level: {speechEngine.micLevel}%
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Organic Waveform visualizer */}
+                      <div className="h-16 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden">
+                        <SpeechWaveVisualizer
+                          mode={speechEngine.isListening ? 'candidate_speaking' : speechEngine.isSpeaking ? 'examiner_speaking' : 'idle'}
+                          analyserNode={speechEngine.analyserNode}
+                          className="w-full h-full"
+                        />
+                      </div>
+
+                      {/* Realtime Live Transcript Preview */}
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 min-h-[48px] flex items-center justify-between">
+                        <p className="italic">
+                          {speechEngine.transcript || speechEngine.interimTranscript ? (
+                            <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic">{speechEngine.interimTranscript}</strong>"</span>
+                          ) : (
+                            <span className="text-slate-500">Bấm nút "Bật Micro Luyện Nói" bên dưới và bắt đầu trả lời bằng tiếng Anh...</span>
+                          )}
+                        </p>
+                        {speechEngine.transcript && (
+                          <button
+                            onClick={speechEngine.resetTranscript}
+                            className="p-1 rounded text-slate-400 hover:text-white transition-colors ml-2 shrink-0"
+                            title="Xóa làm lại"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Controls */}
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-[11px] text-slate-500">
+                          {speechEngine.transcript ? `Đã nói: ${speechEngine.transcript.split(' ').filter(Boolean).length} từ` : 'Phím tắt: [Space] bật/tắt mic'}
+                        </span>
+                        <button
+                          onClick={() => handleTogglePracticeRecord(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer ${
+                            speechEngine.isListening 
+                              ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-md' 
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md'
+                          }`}
+                        >
+                          <Mic className="w-3.5 h-3.5" />
+                          <span>{speechEngine.isListening ? 'Dừng Luyện Nói' : 'Bật Micro Luyện Nói'}</span>
+                        </button>
+                      </div>
                     </div>
 
                     {/* Vocab Hints Box */}
@@ -413,9 +532,24 @@ export default function SpeakingWorkspace({
                         </span>
                         <div className="flex flex-wrap gap-2">
                           {activeP1Topic.questions[activeP1QuestionIndex].vocabHints?.map((v, idx) => (
-                            <div key={idx} className="px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs">
+                            <div key={idx} className="px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs flex items-center space-x-1">
                               <span className="font-bold text-purple-300">{v.phrase}</span>
-                              <span className="text-slate-400 text-[11px] ml-1.5">({v.meaningVi})</span>
+                              <span className="text-slate-400 text-[11px]">({v.meaningVi})</span>
+                              {onSaveToVocabNotebook && (
+                                <button
+                                  onClick={() => onSaveToVocabNotebook({
+                                    id: `v-spk-${Date.now()}-${idx}`,
+                                    phrase: v.phrase,
+                                    meaningVi: v.meaningVi,
+                                    example: activeP1Topic.questions[activeP1QuestionIndex].sampleAnswer,
+                                    topic: 'speaking'
+                                  })}
+                                  className="ml-1 text-[10px] text-purple-400 hover:text-purple-200 cursor-pointer font-bold"
+                                  title="Lưu vào Sổ tay từ vựng"
+                                >
+                                  +Lưu
+                                </button>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -425,9 +559,18 @@ export default function SpeakingWorkspace({
                     {/* Sample Answer Box */}
                     {showSampleAnswer && (
                       <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-800/40 space-y-2 animate-in fade-in duration-150">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400 block">
-                          Câu trả lời mẫu Band 8.5+ (Theo công thức A.R.E.A):
-                        </span>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">
+                            Câu trả lời mẫu Band 8.5+ (Theo công thức A.R.E.A):
+                          </span>
+                          <button
+                            onClick={() => handleReadQuestion(activeP1Topic.questions[activeP1QuestionIndex].sampleAnswer)}
+                            className="text-xs text-purple-300 hover:text-white font-bold flex items-center space-x-1"
+                          >
+                            <Volume2 className="w-3 h-3" />
+                            <span>Nghe đọc mẫu</span>
+                          </button>
+                        </div>
                         <p className="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
                           "{activeP1Topic.questions[activeP1QuestionIndex].sampleAnswer}"
                         </p>
@@ -439,20 +582,24 @@ export default function SpeakingWorkspace({
                       <button
                         disabled={activeP1QuestionIndex === 0}
                         onClick={() => {
+                          if (speechEngine.isListening) speechEngine.stopListening();
                           setActiveP1QuestionIndex(prev => prev - 1);
                           setShowSampleAnswer(false);
+                          speechEngine.resetTranscript();
                         }}
-                        className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                       >
                         ← Câu Trước
                       </button>
                       <button
                         disabled={activeP1QuestionIndex >= activeP1Topic.questions.length - 1}
                         onClick={() => {
+                          if (speechEngine.isListening) speechEngine.stopListening();
                           setActiveP1QuestionIndex(prev => prev + 1);
                           setShowSampleAnswer(false);
+                          speechEngine.resetTranscript();
                         }}
-                        className="px-4 py-1.5 rounded-xl bg-purple-600 text-xs font-bold text-white hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1"
+                        className="px-4 py-1.5 rounded-xl bg-purple-600 text-xs font-bold text-white hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1 cursor-pointer"
                       >
                         <span>Câu Tiếp Theo</span>
                         <span>→</span>
@@ -531,6 +678,13 @@ export default function SpeakingWorkspace({
                     <div key={q.qId || idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold text-purple-400 uppercase">Câu hỏi {idx + 1} ({q.analysisType})</span>
+                        <button
+                          onClick={() => handleReadQuestion(q.question)}
+                          className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200"
+                        >
+                          <Volume2 className="w-3 h-3" />
+                          <span>Nghe đọc</span>
+                        </button>
                       </div>
                       <h4 className="text-sm font-bold text-white">"{q.question}"</h4>
                       <p className="text-xs text-slate-400 italic">💡 Chiến lược PEEL: {q.strategy}</p>
@@ -544,6 +698,18 @@ export default function SpeakingWorkspace({
         )}
 
       </div>
+
+      {/* 3. SOUNDCHECK DEVICE CALIBRATION MODAL */}
+      <SpeakingSoundcheckModal
+        isOpen={isSoundcheckOpen}
+        onClose={() => setIsSoundcheckOpen(false)}
+        examiner={activeExaminer}
+        speechEngine={speechEngine}
+        onPassedSoundcheck={() => {
+          setIsSoundcheckOpen(false);
+          alert('Kiểm tra thiết bị thành công! Sang Bước 3 & Bước 4 chúng ta sẽ đưa bạn trực tiếp vào Buồng thi ảo (Virtual Exam Room).');
+        }}
+      />
     </div>
   );
 }
