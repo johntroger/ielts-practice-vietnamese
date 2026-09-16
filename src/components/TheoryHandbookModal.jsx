@@ -363,6 +363,7 @@ export default function TheoryHandbookModal({
     { id: 'process', label: 'Process (Quy trình)' },
     { id: 'map', label: 'Map (Bản đồ)' },
     { id: 'mixed', label: 'Mixed (Kết hợp)' },
+    { id: 'proportions', label: 'Tỷ Lệ Xấp Xỉ & Biến Động' },
   ];
 
   const writingTask2SubTypes = [
@@ -377,6 +378,12 @@ export default function TheoryHandbookModal({
     { id: 'collocations', label: 'Academic Collocations' },
   ];
 
+  const writingMistakesSubTypes = [
+    { id: 'all', label: 'Tất cả lỗi sai' },
+    { id: 'checklist', label: '10 Lỗi Mất Điểm' },
+    { id: 'punctuation', label: 'Dấu Câu & Comma Splice' },
+  ];
+
   const readingSubTypes = [
     { id: 'all', label: 'Tất cả dạng bài' },
     { id: 'overview', label: '15-20-25m & Thang Điểm' },
@@ -385,6 +392,7 @@ export default function TheoryHandbookModal({
     { id: 'mcq', label: 'Multiple Choice' },
     { id: 'matching', label: 'Matching Info / Features' },
     { id: 'completion', label: 'Điền từ / Summary' },
+    { id: 'summary-box', label: 'Summary Điền Từ Khung' },
     { id: 'paraphrase', label: '5 Quy Tắc Paraphrase' },
     { id: 'guessing', label: 'Đoán Nghĩa & Gốc Từ' },
     { id: 'synonyms', label: '50 Cặp Paraphrase Cam' },
@@ -401,6 +409,8 @@ export default function TheoryHandbookModal({
     { id: 'phonetics', label: 'Nối Âm, Nuốt Âm & Schwa' },
     { id: 'spelling', label: '80 Từ Dễ Sai Chính Tả' },
     { id: 'plurals', label: 'Phán Đoán Đuôi -s' },
+    { id: 'units', label: 'Bẫy Đơn Vị & Tiền Tệ' },
+    { id: 'accents', label: 'Accent Vùng Miền' },
     { id: 'cd-hacks', label: 'Phím Tắt & Mẹo Thi Máy' },
   ];
 
@@ -655,6 +665,26 @@ export default function TheoryHandbookModal({
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
                   <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng câu hỏi:</span>
                   {writingTask2SubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-red-100 text-red-800 border border-red-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Sub-Filters for Writing Mistakes */}
+              {selectedSkill === 'writing' && activeCategory === 'mistakes' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Phân loại lỗi:</span>
+                  {writingMistakesSubTypes.map(st => (
                     <button
                       key={st.id}
                       onClick={() => setActiveSubType(st.id)}
