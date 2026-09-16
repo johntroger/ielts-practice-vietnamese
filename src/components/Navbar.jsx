@@ -156,6 +156,34 @@ export default function Navbar({
                 </>
               )}
             </div>
+
+            {/* Direct 4-Skill Switcher Tabs on Desktop (Writing / Reading / Listening / Speaking) */}
+            <div className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1">
+              {skills.map(s => {
+                const Icon = s.icon;
+                const isCurrent = activeSkill === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => onSelectSkill?.(s.id)}
+                    className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      isCurrent
+                        ? s.id === 'speaking'
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : s.id === 'listening'
+                          ? 'bg-emerald-600 text-white shadow-xs'
+                          : s.id === 'reading'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-red-600 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{s.label.replace('IELTS ', '')}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* 2. DESKTOP CENTER ZONE: Current Task Selector for Writing */}
