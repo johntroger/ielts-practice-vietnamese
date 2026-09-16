@@ -161,6 +161,15 @@ export function useAudioEngine({
         audio.load();
         audio.play().catch(() => {});
         return;
+      } else if (audio.src && !audio.src.includes('/audio/cam18_test1_audio.mp3')) {
+        console.log('Switching to local offline fallback audio source');
+        fallbackTriedRef.current = true;
+        lastLoadedSrcRef.current = '/audio/cam18_test1_audio.mp3';
+        setCurrentActiveSrc('/audio/cam18_test1_audio.mp3');
+        audio.src = '/audio/cam18_test1_audio.mp3';
+        audio.load();
+        audio.play().catch(() => {});
+        return;
       }
       setAudioState('error');
       const err = audio.error ? ('Lỗi âm thanh: code ' + audio.error.code) : 'Không thể tải tệp âm thanh. Vui lòng kiểm tra kết nối mạng.';
