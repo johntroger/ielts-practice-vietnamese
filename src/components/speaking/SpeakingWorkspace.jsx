@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Mic, Volume2, Headphones, Play, Square, Sparkles, BookOpen, 
+  Mic, MicOff, Volume2, Headphones, Play, Pause, Square, Sparkles, BookOpen, 
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
@@ -43,6 +43,8 @@ export default function SpeakingWorkspace({
   const [activeP1QuestionIndex, setActiveP1QuestionIndex] = useState(0);
   const [showVocabHints, setShowVocabHints] = useState(true);
   const [showSampleAnswer, setShowSampleAnswer] = useState(false);
+  const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
+  const practiceAudioRef = React.useRef(null);
 
   // Sync Examiner preference
   useEffect(() => {
@@ -460,24 +462,57 @@ export default function SpeakingWorkspace({
                       </p>
                     </div>
 
-                    {/* LIVE INTERACTIVE PRACTICE RECORDER BOX */}
-                    <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-3">
+                    {/* LIVE INTERACTIVE PRACTICE RECORDER BOX WITH HIGH CONTRAST & PLAYBACK */}
+                    <div className={`p-4 rounded-2xl border space-y-3 transition-all ${
+                      speechEngine.isListening 
+                        ? 'bg-slate-950 border-emerald-500/60 shadow-xl shadow-emerald-950/40 ring-1 ring-emerald-500/30' 
+                        : 'bg-slate-950 border-slate-800/90'
+                    }`}>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-3 h-3 rounded-full ${speechEngine.isListening ? 'bg-emerald-500 animate-ping' : 'bg-slate-700'}`} />
-                          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                            {speechEngine.isListening ? 'Đang thu âm câu trả lời của bạn...' : 'Luyện Nói Cho Câu Này'}
-                          </span>
+                        <div className="flex items-center space-x-2.5">
+                          <div className={`p-1.5 rounded-lg border transition-colors ${
+                            speechEngine.isListening 
+                              ? 'bg-emerald-950 text-emerald-400 border-emerald-500/50' 
+                              : 'bg-slate-800 text-slate-400 border-slate-700'
+                          }`}>
+                            {speechEngine.isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+                          </div>
+                          <div>
+                            <span className="text-xs font-black uppercase tracking-wider block text-white">
+                              {speechEngine.isListening ? 'Đang Thu Âm Trả Lời' : 'Luyện Nói Cho Câu Này'}
+                            </span>
+                            <span className="text-[11px] text-slate-400">
+                              {speechEngine.isListening ? 'Giọng bạn đang được phân tích trực tiếp' : 'Mic hiện đang tắt'}
+                            </span>
+                          </div>
                         </div>
-                        {speechEngine.isListening && (
-                          <span className="text-[11px] text-emerald-400 font-bold animate-pulse">
-                            Micro Level: {speechEngine.micLevel}%
-                          </span>
-                        )}
+
+                        {/* High Contrast Mic Badge */}
+                        <div className="flex items-center space-x-2">
+                          {speechEngine.isListening ? (
+                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-black animate-pulse">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                              <span>REC • MICRO ĐANG BẬT</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-[11px] font-bold">
+                              <span>ĐÃ TẮT MIC</span>
+                            </span>
+                          )}
+                          {speechEngine.isListening && (
+                            <span className="text-[11px] text-emerald-400 font-mono font-bold">
+                              {speechEngine.micLevel}%
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Organic Waveform visualizer */}
-                      <div className="h-16 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden">
+                      <div className={`h-16 rounded-xl border overflow-hidden transition-all ${
+                        speechEngine.isListening 
+                          ? 'bg-slate-900 border-emerald-500/40 ring-2 ring-emerald-500/20' 
+                          : 'bg-slate-900 border-slate-800'
+                      }`}>
                         <SpeechWaveVisualizer
                           mode={speechEngine.isListening ? 'candidate_speaking' : speechEngine.isSpeaking ? 'examiner_speaking' : 'idle'}
                           analyserNode={speechEngine.analyserNode}
@@ -486,42 +521,156 @@ export default function SpeakingWorkspace({
                       </div>
 
                       {/* Realtime Live Transcript Preview */}
-                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 min-h-[48px] flex items-center justify-between">
-                        <p className="italic">
+                      <div className={`p-3 rounded-xl border text-xs min-h-[50px] flex items-center justify-between transition-colors ${
+                        speechEngine.isListening 
+                          ? 'bg-slate-900 border-emerald-500/40 text-slate-100' 
+                          : 'bg-slate-900 border-slate-800 text-slate-200'
+                      }`}>
+                        <p className="italic leading-relaxed">
                           {speechEngine.transcript || speechEngine.interimTranscript ? (
-                            <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic">{speechEngine.interimTranscript}</strong>"</span>
+                            <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic font-semibold">{speechEngine.interimTranscript}</strong>"</span>
                           ) : (
                             <span className="text-slate-500">Bấm nút "Bật Micro Luyện Nói" bên dưới và bắt đầu trả lời bằng tiếng Anh...</span>
                           )}
                         </p>
-                        {speechEngine.transcript && (
+                        {speechEngine.transcript && !speechEngine.isListening && (
                           <button
-                            onClick={speechEngine.resetTranscript}
-                            className="p-1 rounded text-slate-400 hover:text-white transition-colors ml-2 shrink-0"
-                            title="Xóa làm lại"
+                            onClick={() => {
+                              speechEngine.resetTranscript();
+                              const currentClipKey = `p1_${activeP1Topic.id}_${activeP1QuestionIndex}`;
+                              if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(currentClipKey);
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors ml-2 shrink-0 cursor-pointer"
+                            title="Xóa làm lại câu này"
                           >
                             <RotateCcw className="w-3.5 h-3.5" />
                           </button>
                         )}
                       </div>
 
-                      {/* Controls */}
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="text-[11px] text-slate-500">
-                          {speechEngine.transcript ? `Đã nói: ${speechEngine.transcript.split(' ').filter(Boolean).length} từ` : 'Phím tắt: [Space] bật/tắt mic'}
+                      {/* Controls & High Contrast Action Button */}
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">
+                        <span className="text-[11px] text-slate-400">
+                          {speechEngine.transcript ? (
+                            <span className="text-purple-300 font-semibold">Đã nói: {speechEngine.transcript.split(' ').filter(Boolean).length} từ</span>
+                          ) : (
+                            '💡 Mẹo: Bấm Space để bật/tắt mic nhanh'
+                          )}
                         </span>
+
                         <button
-                          onClick={() => handleTogglePracticeRecord(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
-                          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer ${
+                          onClick={() => {
+                            if (practiceAudioRef.current) {
+                              practiceAudioRef.current.pause();
+                              setIsPlayingPracticeAudio(false);
+                            }
+                            handleTogglePracticeRecord(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`);
+                          }}
+                          className={`px-5 py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg ${
                             speechEngine.isListening 
-                              ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-md' 
-                              : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md'
+                              ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/40 ring-2 ring-rose-400 animate-pulse' 
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40'
                           }`}
                         >
-                          <Mic className="w-3.5 h-3.5" />
-                          <span>{speechEngine.isListening ? 'Dừng Luyện Nói' : 'Bật Micro Luyện Nói'}</span>
+                          {speechEngine.isListening ? (
+                            <>
+                              <Square className="w-3.5 h-3.5 fill-current" />
+                              <span>DỪNG THU ÂM (HOÀN TẤT)</span>
+                            </>
+                          ) : (
+                            <>
+                              <Mic className="w-3.5 h-3.5" />
+                              <span>BẬT MICRO LUYỆN NÓI</span>
+                            </>
+                          )}
                         </button>
                       </div>
+
+                      {/* Playback Voice Clip for Practice Answer */}
+                      {(() => {
+                        const clipKey = `p1_${activeP1Topic.id}_${activeP1QuestionIndex}`;
+                        const activeClip = speechEngine.audioClips[clipKey];
+                        if (!activeClip || speechEngine.isListening) return null;
+
+                        const handleTogglePlayPractice = () => {
+                          if (!activeClip?.url) return;
+                          if (!practiceAudioRef.current) {
+                            practiceAudioRef.current = new Audio(activeClip.url);
+                            practiceAudioRef.current.onended = () => setIsPlayingPracticeAudio(false);
+                            practiceAudioRef.current.onerror = () => setIsPlayingPracticeAudio(false);
+                          } else if (practiceAudioRef.current.src !== activeClip.url) {
+                            practiceAudioRef.current.src = activeClip.url;
+                            practiceAudioRef.current.onended = () => setIsPlayingPracticeAudio(false);
+                            practiceAudioRef.current.onerror = () => setIsPlayingPracticeAudio(false);
+                          }
+
+                          if (isPlayingPracticeAudio) {
+                            practiceAudioRef.current.pause();
+                            practiceAudioRef.current.currentTime = 0;
+                            setIsPlayingPracticeAudio(false);
+                          } else {
+                            practiceAudioRef.current.play().then(() => {
+                              setIsPlayingPracticeAudio(true);
+                            }).catch(() => setIsPlayingPracticeAudio(false));
+                          }
+                        };
+
+                        const handleConfirmPracticeClip = () => {
+                          if (practiceAudioRef.current) {
+                            practiceAudioRef.current.pause();
+                            setIsPlayingPracticeAudio(false);
+                          }
+                          if (speechEngine.deleteAudioClip) {
+                            speechEngine.deleteAudioClip(clipKey);
+                          }
+                        };
+
+                        return (
+                          <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-800/50 space-y-2 animate-in fade-in duration-150">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-bold text-white flex items-center space-x-1.5">
+                                <Volume2 className="w-3.5 h-3.5 text-purple-400" />
+                                <span>Nghe lại câu trả lời vừa thu ({activeClip.duration || 1}s):</span>
+                              </span>
+                              <span className="text-[10px] text-purple-300 font-semibold bg-purple-900/50 px-2 py-0.5 rounded border border-purple-700/40">
+                                RAM-Only
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={handleTogglePlayPractice}
+                                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
+                                  isPlayingPracticeAudio
+                                    ? 'bg-amber-600 hover:bg-amber-500 text-white'
+                                    : 'bg-purple-600 hover:bg-purple-500 text-white shadow-sm'
+                                }`}
+                              >
+                                {isPlayingPracticeAudio ? (
+                                  <>
+                                    <Pause className="w-3.5 h-3.5 fill-current" />
+                                    <span>Tạm Dừng</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="w-3.5 h-3.5 fill-current" />
+                                    <span>🔊 Nghe Lại Giọng Của Bạn</span>
+                                  </>
+                                )}
+                              </button>
+
+                              <button
+                                onClick={handleConfirmPracticeClip}
+                                className="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 text-xs font-bold border border-emerald-500/30 flex items-center space-x-1 cursor-pointer transition-colors"
+                                title="Xóa file âm thanh tạm để giải phóng RAM"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>OK & Xóa File Tạm (Tiết Kiệm Bộ Nhớ)</span>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     {/* Vocab Hints Box */}

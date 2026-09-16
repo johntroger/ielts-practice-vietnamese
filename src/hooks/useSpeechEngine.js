@@ -389,6 +389,18 @@ export function useSpeechEngine({
   // =========================================================================
   // 4. ZERO PERMANENT VOICE STORAGE CLEANUP
   // =========================================================================
+  const deleteAudioClip = useCallback((clipId) => {
+    setAudioClips(prev => {
+      const target = prev[clipId];
+      if (target && target.url) {
+        try { URL.revokeObjectURL(target.url); } catch (e) {}
+      }
+      const updated = { ...prev };
+      delete updated[clipId];
+      return updated;
+    });
+  }, []);
+
   const clearAudioClips = useCallback(() => {
     // Revoke all in-memory Blob URLs immediately to free browser RAM
     Object.values(audioClips).forEach(clip => {
@@ -464,6 +476,7 @@ export function useSpeechEngine({
 
     // Audio Clips (RAM-only)
     audioClips,
+    deleteAudioClip,
     clearAudioClips,
 
     // Volume Meter & Visualizer
