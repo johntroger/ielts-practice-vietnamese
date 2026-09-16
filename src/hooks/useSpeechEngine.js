@@ -281,7 +281,7 @@ export function useSpeechEngine({
         // Network drop in cloud STT - do not crash audio recording
         console.warn('Speech recognition network warning');
       } else if (event.error === 'aborted') {
-        // User stopped
+        // Normal abort
       }
     };
 
@@ -295,7 +295,7 @@ export function useSpeechEngine({
             if (isIntentionalListeningRef.current) {
               try { recognition.start(); } catch (e) {}
             }
-          }, 80);
+          }, 60);
         }
       } else {
         setIsListening(false);
@@ -306,11 +306,13 @@ export function useSpeechEngine({
     return recognition;
   }, [isSpeechRecognitionSupported]);
 
-  // Start candidate microphone listening + media recorder
+  // Start candidate microphone listening + media recorder (Optimistic Instant Response)
   const startListening = useCallback(async (clipId = 'clip_current') => {
     setSpeechError(null);
     currentClipIdRef.current = clipId;
     isIntentionalListeningRef.current = true;
+    // OPTIMISTIC UI: Instant visual feedback to user (0ms lag)
+    setIsListening(true);
 
     // 1. Setup AudioContext & Volume Analyser Node
     try {
@@ -349,7 +351,7 @@ export function useSpeechEngine({
             for (let i = 0; i < 8; i++) sum += dataArray[i];
             const level = Math.min(100, Math.round((sum / 8) * (100 / 128)));
             setMicLevel(level);
-          }, 100);
+          }, 80);
         }
       }
     } catch (err) {
@@ -418,31 +420,33 @@ export function useSpeechEngine({
     if (recognitionRef.current) {
       try {
         recognitionRef.current.start();
-        setIsListening(true);
       } catch (e) {
-        // Already started or busy - abort and restart cleanly
+        // If already active, abort first and start clean
         try {
           recognitionRef.current.abort();
           setTimeout(() => {
             if (isIntentionalListeningRef.current && recognitionRef.current) {
               try { recognitionRef.current.start(); } catch (err) {}
             }
-          }, 50);
+          }, 30);
         } catch (abortErr) {}
-        setIsListening(true);
       }
     }
   }, [initSpeechRecognition]);
 
-  // Stop listening and finalize audio clip
+  // Stop listening instantly and finalize audio clip
   const stopListening = useCallback(() => {
     isIntentionalListeningRef.current = false;
+    // OPTIMISTIC UI: Instant visual feedback to user (0ms lag)
     setIsListening(false);
+    setInterimTranscript('');
 
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-      } catch (e) {}
+      } catch (e) {
+        try { recognitionRef.current.abort(); } catch (err) {}
+      }
     }
 
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
@@ -450,8 +454,6 @@ export function useSpeechEngine({
         mediaRecorderRef.current.stop();
       } catch (e) {}
     }
-
-    setInterimTranscript('');
   }, []);
 
   const resetTranscript = useCallback(() => {
