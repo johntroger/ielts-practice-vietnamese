@@ -26,6 +26,7 @@ import UserProfileModal from './components/UserProfileModal';
 import ContactModal from './components/ContactModal';
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
+const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -103,6 +104,14 @@ export default function App() {
 
   const [listeningHistory, setListeningHistory] = useState(() => {
     const saved = localStorage.getItem('ielts_listening_submissions_history');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [];
+  });
+
+  const [speakingHistory, setSpeakingHistory] = useState(() => {
+    const saved = localStorage.getItem('ielts_speaking_submissions_history');
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
@@ -571,6 +580,35 @@ export default function App() {
                   const updated = [sub, ...prev];
                   try {
                     localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(updated));
+                  } catch (e) {}
+                  return updated;
+                });
+              }}
+            />
+          </React.Suspense>
+        </div>
+      ) : activeSkill === 'speaking' ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+          <React.Suspense fallback={
+            <div className="flex-1 flex items-center justify-center p-12 text-slate-400 font-bold text-sm bg-slate-950">
+              <div className="flex items-center space-x-2">
+                <span className="w-3 h-3 rounded-full bg-purple-600 animate-ping" />
+                <span>Đang tải phân hệ IELTS Speaking Studio...</span>
+              </div>
+            </div>
+          }>
+            <SpeakingWorkspace
+              apiKey={apiKey}
+              model={model}
+              onOpenSettings={() => setIsSettingsOpen(true)}
+              user={currentUser}
+              onOpenTheory={() => setIsTheoryOpen(true)}
+              onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+              onSpeakingSubmitted={(sub) => {
+                setSpeakingHistory(prev => {
+                  const updated = [sub, ...prev];
+                  try {
+                    localStorage.setItem('ielts_speaking_submissions_history', JSON.stringify(updated));
                   } catch (e) {}
                   return updated;
                 });

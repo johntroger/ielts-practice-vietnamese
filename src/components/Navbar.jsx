@@ -65,7 +65,7 @@ export default function Navbar({
     { id: 'writing', label: 'IELTS Writing', desc: 'Chấm điểm 4 tiêu chí & sửa lỗi', icon: PenTool, active: true },
     { id: 'reading', label: 'IELTS Reading', desc: 'Luyện đề 14 dạng & giải thích bằng chứng', icon: BookMarked, active: true },
     { id: 'listening', label: 'IELTS Listening', desc: 'Luyện đề 8 dạng, audio evidence & dictation', icon: Headphones, active: true },
-    { id: 'speaking', label: 'IELTS Speaking', desc: 'Luyện nói 1-on-1 với AI Audio', icon: Mic, active: false, badge: 'Sắp ra mắt' },
+    { id: 'speaking', label: 'IELTS Speaking', desc: 'Luyện nói 1-on-1 với AI Audio', icon: Mic, active: true },
   ];
 
   const currentSkillObj = skills.find(s => s.id === activeSkill) || skills[0];
