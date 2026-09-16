@@ -379,10 +379,11 @@ export default function ListeningWorkspace({
 
           {/* Right: Accessibility Controls, Report & Countdown Timer */}
           <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-            {exam.isSubmitted && bandResult && (
+            {bandResult && (
               <button
                 onClick={() => setIsResultModalOpen(true)}
                 className="px-2.5 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center space-x-1 transition-colors cursor-pointer shadow-xs"
+                title="Xem lại kết quả bài thi lần gần nhất"
               >
                 <Award className="w-3.5 h-3.5" />
                 <span>Band {bandResult.band.toFixed(1)}</span>
@@ -510,12 +511,12 @@ export default function ListeningWorkspace({
               </button>
             )}
 
-            {/* If Submitted: Result Report Button */}
-            {exam.isSubmitted && bandResult && (
+            {/* Previous or Current Result Report Button */}
+            {bandResult && (
               <button
                 onClick={() => setIsResultModalOpen(true)}
                 className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
-                title="Mở lại bảng báo cáo kết quả và chẩn đoán lỗi"
+                title="Mở lại bảng báo cáo kết quả lần thi gần nhất"
               >
                 <BarChart2 className="w-3.5 h-3.5" />
                 <span>Báo Cáo Band {bandResult.band.toFixed(1)}</span>
@@ -765,23 +766,59 @@ export default function ListeningWorkspace({
           </div>
         ) : (
           /* Active Question Pane Rendering */
-          <ListeningQuestionPane 
-            testId={currentTestId}
-            partData={currentPartData}
-            userAnswers={exam.userAnswers}
-            onAnswerChange={exam.setAnswer}
-            flaggedQuestions={exam.flaggedQuestions}
-            onToggleFlag={exam.toggleFlag}
-            activeQuestionOrder={exam.activeQuestionOrder}
-            onSelectQuestion={exam.setActiveQuestionOrder}
-            isSubmitted={exam.isSubmitted}
-            fontSizeMode={fontSizeMode}
-            contrastTheme={contrastTheme}
-            onSeekAudio={(timestamp) => {
-              audioEngine.seek(timestamp);
-              audioEngine.play();
-            }}
-          />
+          <div className="flex-1 overflow-y-auto">
+            {exam.isSubmitted && (
+              <div className="max-w-4xl mx-auto px-3 sm:px-6 pt-3 pb-0">
+                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-2xs">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="text-xs font-bold text-emerald-950">
+                      Bạn đang xem lại bài chấm {bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} câu đúng)` : ''}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <button
+                      onClick={() => setIsResultModalOpen(true)}
+                      className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                    >
+                      Bảng Điểm Chi Tiết
+                    </button>
+                    <button
+                      onClick={() => {
+                        exam.resetExam();
+                        audioEngine.seek(0);
+                        setBandResult(null);
+                        try {
+                          localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
+                        } catch (e) {}
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Làm Lại Đề Này</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <ListeningQuestionPane 
+              testId={currentTestId}
+              partData={currentPartData}
+              userAnswers={exam.userAnswers}
+              onAnswerChange={exam.setAnswer}
+              flaggedQuestions={exam.flaggedQuestions}
+              onToggleFlag={exam.toggleFlag}
+              activeQuestionOrder={exam.activeQuestionOrder}
+              onSelectQuestion={exam.setActiveQuestionOrder}
+              isSubmitted={exam.isSubmitted}
+              fontSizeMode={fontSizeMode}
+              contrastTheme={contrastTheme}
+              onSeekAudio={(timestamp) => {
+                audioEngine.seek(timestamp);
+                audioEngine.play();
+              }}
+            />
+          </div>
         )}
       </div>
 

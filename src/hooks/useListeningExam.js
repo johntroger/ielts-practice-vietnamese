@@ -17,6 +17,10 @@ export function useListeningExam({
       const saved = localStorage.getItem(storageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
+        // If previous session was already submitted, start with a fresh sheet on reload
+        if (parsed.isSubmitted) {
+          return {};
+        }
         return parsed.userAnswers || {};
       }
     } catch (e) {
@@ -30,6 +34,9 @@ export function useListeningExam({
       const saved = localStorage.getItem(storageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (parsed.isSubmitted) {
+          return {};
+        }
         return parsed.flaggedQuestions || {};
       }
     } catch (e) {}
@@ -37,27 +44,9 @@ export function useListeningExam({
   });
 
   const [activeQuestionOrder, setActiveQuestionOrder] = useState(1);
-  const [isSubmitted, setIsSubmitted] = useState(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return !!parsed.isSubmitted;
-      }
-    } catch (e) {}
-    return false;
-  });
-
-  const [submittedAt, setSubmittedAt] = useState(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return parsed.submittedAt || null;
-      }
-    } catch (e) {}
-    return null;
-  });
+  // Default isSubmitted to false on fresh load so user is not stuck in the review/check state
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedAt, setSubmittedAt] = useState(null);
 
   // 2. Persist State to LocalStorage
   useEffect(() => {
