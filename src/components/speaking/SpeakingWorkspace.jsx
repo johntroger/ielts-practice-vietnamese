@@ -220,6 +220,16 @@ export default function SpeakingWorkspace({
 
         {/* Right: Examiner Profile Picker & Quick Tools */}
         <div className="flex items-center space-x-2 shrink-0">
+          {/* AI Generator Quick Button */}
+          <button
+            onClick={() => setIsGeneratorOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer"
+            title="Dùng Gemini AI để tạo bộ đề thi Speaking mới"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Sinh Đề (AI)</span>
+          </button>
+
           {/* Soundcheck Quick Button */}
           <button
             onClick={() => setIsSoundcheckOpen(true)}
