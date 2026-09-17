@@ -35,33 +35,118 @@ function cleanModelName(model) {
 }
 
 /**
- * Universal Gemini API caller with automatic v1beta <-> v1 version fallback
+ * Smart Fallback Chain when Quota (429 / RESOURCE_EXHAUSTED) or model availability error occurs.
+ */
+const MODEL_FALLBACK_CHAIN = [
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-3.6-flash',
+  'gemini-2.5-pro'
+];
+
+/**
+ * Parses raw Gemini error response into friendly Vietnamese message with guidance.
+ */
+export function formatFriendlyGeminiError(errorData, statusCode) {
+  const rawMsg = errorData?.error?.message || '';
+  const status = errorData?.error?.status || '';
+
+  if (statusCode === 429 || status === 'RESOURCE_EXHAUSTED' || /quota|exhausted|rate limit/i.test(rawMsg)) {
+    return 'Hạn ngạch Google Gemini API tạm thời bị giới hạn (Quá nhiều yêu cầu cùng lúc - Quota 429). Hệ thống đã thử chuyển sang mô hình dự phòng nhưng tất cả đều đang bận. Vui lòng đợi 30 - 60 giây và thử lại!';
+  }
+
+  if (statusCode === 400 && /API_KEY_INVALID|invalid api key/i.test(rawMsg)) {
+    return 'Google Gemini API Key không hợp lệ hoặc đã bị vô hiệu hóa. Vui lòng kiểm tra lại Key trong mục Cài đặt.';
+  }
+
+  if (statusCode === 403 || /permission|unregistered/i.test(rawMsg)) {
+    return 'API Key không có quyền truy cập mô hình này hoặc quốc gia của bạn bị hạn chế. Vui lòng kiểm tra lại tài khoản Google AI Studio.';
+  }
+
+  if (statusCode === 503 || statusCode === 500 || /overloaded/i.test(rawMsg)) {
+    return 'Máy chủ Google Gemini đang quá tải tạm thời (503 Service Unavailable). Vui lòng thử lại sau giây lát.';
+  }
+
+  return rawMsg || `Lỗi từ máy chủ Google Gemini (${statusCode || 'Mạng'})`;
+}
+
+/**
+ * Universal Gemini API caller with automatic fallback across models & API versions:
+ * 1. Automatic version switch (v1beta <-> v1) on 404/400
+ * 2. Automatic model fallback on 429 Quota Exceeded (RESOURCE_EXHAUSTED) or 503 Overloaded
+ * 3. Short backoff pause before retrying
  */
 export async function callGeminiApi({ model, apiKey, body, apiVersion = 'v1beta' }) {
-  const modelName = cleanModelName(model);
-  const primaryUrl = `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent?key=${apiKey}`;
-  
-  let response = await fetch(primaryUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  const initialModel = cleanModelName(model);
 
-  // If model is not found in v1beta, automatically fallback to v1 (or vice versa)
-  if (!response.ok && (response.status === 404 || response.status === 400)) {
-    const fallbackVersion = apiVersion === 'v1beta' ? 'v1' : 'v1beta';
-    const fallbackUrl = `https://generativelanguage.googleapis.com/${fallbackVersion}/models/${modelName}:generateContent?key=${apiKey}`;
-    const fallbackResponse = await fetch(fallbackUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (fallbackResponse.ok) {
-      return fallbackResponse;
+  // Build candidate model order starting with the requested model
+  const modelsToTry = [
+    initialModel,
+    ...MODEL_FALLBACK_CHAIN.filter(m => m !== initialModel)
+  ];
+
+  let lastResponse = null;
+
+  for (let i = 0; i < modelsToTry.length; i++) {
+    const currentModel = modelsToTry[i];
+    const isFallback = i > 0;
+
+    if (isFallback) {
+      console.warn(`[Gemini API] Tự động fallback sang mô hình dự phòng: ${currentModel} do mô hình trước bị giới hạn ngạch.`);
+      // Short backoff before retry
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
+
+    const primaryUrl = `https://generativelanguage.googleapis.com/${apiVersion}/models/${currentModel}:generateContent?key=${apiKey}`;
+    
+    try {
+      let response = await fetch(primaryUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      // If model is not found in v1beta, automatically fallback to v1 (or vice versa)
+      if (!response.ok && (response.status === 404 || response.status === 400)) {
+        const fallbackVersion = apiVersion === 'v1beta' ? 'v1' : 'v1beta';
+        const fallbackUrl = `https://generativelanguage.googleapis.com/${fallbackVersion}/models/${currentModel}:generateContent?key=${apiKey}`;
+        const fallbackResponse = await fetch(fallbackUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (fallbackResponse.ok) {
+          return fallbackResponse;
+        }
+        response = fallbackResponse;
+      }
+
+      // If call succeeds, return immediately
+      if (response.ok) {
+        return response;
+      }
+
+      lastResponse = response;
+
+      // Check if it's a quota / rate limit (429) or overload (503), try next model in fallback chain
+      if (response.status === 429 || response.status === 503) {
+        continue;
+      }
+
+      // For client configuration errors like invalid key (400 / 403), do not burn through fallbacks
+      if (response.status === 400 || response.status === 403) {
+        break;
+      }
+
+    } catch (networkErr) {
+      console.error(`[Gemini API] Network error on model ${currentModel}:`, networkErr);
+      if (i === modelsToTry.length - 1) {
+        throw networkErr;
+      }
     }
   }
 
-  return response;
+  return lastResponse;
 }
 
 /**
@@ -188,9 +273,9 @@ export async function testApiKey(apiKey, model = DEFAULT_MODEL) {
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi kết nối API (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
   return true;
 }
@@ -324,9 +409,9 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi từ Gemini (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -397,7 +482,10 @@ Return ONLY raw parseable JSON in this schema:
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi trích xuất tài liệu từ Gemini.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
   const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -460,7 +548,10 @@ Return ONLY raw JSON with this format:
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi chấm câu Paraphrase.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
   const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -883,9 +974,9 @@ Return ONLY raw parseable JSON:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi từ Gemini (${response.status}) khi sinh bài tập.`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -955,9 +1046,9 @@ Evaluate and return ONLY valid JSON:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi từ Gemini (${response.status}) khi chấm bài nghe.`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -1278,9 +1369,9 @@ Return ONLY raw parseable JSON with this structure:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi từ Gemini (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -1334,7 +1425,10 @@ Format output cleanly in Vietnamese with clear bullet points. Keep it punchy and
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi gợi ý ý tưởng từ Gemini.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   return result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
@@ -1367,7 +1461,10 @@ Return ONLY raw valid JSON without markdown fences.`;
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi gọi Gemini để tạo bẫy chính tả.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -1410,7 +1507,10 @@ Return ONLY raw valid JSON without markdown fences.`;
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi gọi Gemini để tạo bài tập ngữ pháp.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -1446,7 +1546,10 @@ Return ONLY raw valid JSON array without markdown fences.`;
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi gọi Gemini để tạo thẻ từ vựng.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -1526,7 +1629,10 @@ OUTPUT FORMAT: Return ONLY valid JSON without markdown fences. Schema:
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi khi chấm điểm so sánh v1 và v2.');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -1587,9 +1693,9 @@ REQUIRED JSON OUTPUT FORMAT (strictly valid JSON, no backticks, no markdown):
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi phân tích câu hỏi (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -1628,7 +1734,10 @@ Return strictly JSON:
     }
   });
 
-  if (!response.ok) throw new Error('Lỗi tra từ điển AI');
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -1752,9 +1861,9 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh đề thi Reading (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -1868,9 +1977,9 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown):
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi nạp bài báo (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -1949,9 +2058,9 @@ Return ONLY pure JSON (no markdown formatting, no code fence):
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi phân tích âm thanh (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -2037,9 +2146,9 @@ Return ONLY pure JSON (no markdown formatting, no backticks, no wrapping text) w
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi tìm nguồn audio (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -2228,9 +2337,9 @@ Return ONLY pure JSON (no markdown formatting, no code fence, no commentary) adh
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh bài nghe (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -2367,9 +2476,9 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi phân tích kết quả bài nghe (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -2798,9 +2907,9 @@ OUTPUT FORMAT: Return ONLY valid raw JSON with NO markdown fences:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh đề thi Speaking (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -2937,9 +3046,9 @@ OUTPUT FORMAT: Return ONLY valid raw JSON with NO markdown fences:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi chấm câu trả lời Speaking (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -3071,9 +3180,9 @@ Output valid raw JSON:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh chủ đề luyện tập (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
@@ -3158,9 +3267,9 @@ Rules:
     }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData?.error?.message || `Lỗi AI khi nhận diện âm thanh (${response.status})`);
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
   }
 
   const result = await response.json();
