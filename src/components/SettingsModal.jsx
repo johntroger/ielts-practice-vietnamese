@@ -19,8 +19,8 @@ export default function SettingsModal({
   const [inputKey, setInputKey] = useState(apiKey || '');
   const [showKey, setShowKey] = useState(false);
   const [selectedModel, setSelectedModel] = useState(() => {
-    const deprecated = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.0-pro', 'gemini-pro'];
-    if (!model || deprecated.includes(model) || model.startsWith('gemini-1.') || model.startsWith('gemini-2.0')) {
+    const valid25 = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'];
+    if (!model || !valid25.includes(model)) {
       return 'gemini-2.5-flash';
     }
     return model;

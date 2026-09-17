@@ -18,29 +18,29 @@ export const DEPRECATED_GEMINI_MODELS = [
 ];
 
 export const POPULAR_GEMINI_MODELS = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Khuyên dùng - Phản hồi siêu tốc, chấm bài chuẩn)' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Chuyên sâu - Chấm điểm & phân tích chi tiết Band 8.5+)' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite (Siêu nhẹ - Tiết kiệm hạn ngạch API)' },
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (Thế hệ mới 3.x - Phản hồi thông minh)' },
-  { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro (Thế hệ mới 3.x - Lập luận logic & tư duy phản biện)' }
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Khuyên dùng - Cân bằng tốc độ, chi phí & độ chính xác Cambridge)' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite (Siêu nhẹ - Tiết kiệm tối đa hạn ngạch API 15 RPM)' },
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Chuyên sâu - Khảo thí nâng cao, phân tích bài viết phức tạp)' }
 ];
 
 function cleanModelName(model) {
   if (!model) return DEFAULT_MODEL;
   const cleaned = model.replace(/^models\//, '').trim();
-  if (DEPRECATED_GEMINI_MODELS.includes(cleaned) || cleaned.startsWith('gemini-1.') || cleaned.startsWith('gemini-2.0')) {
+  // Ensure only valid 2.5 models or custom models are kept, default to gemini-2.5-flash for deprecated/unsupported
+  const validSupported = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'];
+  if (DEPRECATED_GEMINI_MODELS.includes(cleaned) || cleaned.startsWith('gemini-1.') || cleaned.startsWith('gemini-2.0') || cleaned.startsWith('gemini-3.')) {
     return DEFAULT_MODEL;
   }
-  return cleaned;
+  return validSupported.includes(cleaned) ? cleaned : DEFAULT_MODEL;
 }
 
 /**
  * Smart Fallback Chain when Quota (429 / RESOURCE_EXHAUSTED) or model availability error occurs.
+ * Strictly uses official, active, highly available Gemini 2.5 family models.
  */
 const MODEL_FALLBACK_CHAIN = [
   'gemini-2.5-flash',
   'gemini-2.5-flash-lite',
-  'gemini-3.6-flash',
   'gemini-2.5-pro'
 ];
 
@@ -232,28 +232,17 @@ export async function fetchAvailableModels(apiKey) {
     if (!response.ok) return POPULAR_GEMINI_MODELS;
     const data = await response.json();
     if (data.models && Array.isArray(data.models)) {
-      const deprecatedOrNonChatPattern = /(1\.0|1\.5|2\.0|embedding|aqa|imagen|tts|whisper|chirp|nano)/i;
-      
       const supported = data.models
         .filter(m => {
           const rawId = m.name.replace('models/', '');
           const canGenerate = m.supportedGenerationMethods?.includes('generateContent');
-          const isNotDeprecated = !deprecatedOrNonChatPattern.test(rawId) && !DEPRECATED_GEMINI_MODELS.includes(rawId);
-          return canGenerate && isNotDeprecated;
+          // Only permit the official, fast, high-quality 2.5 models
+          return canGenerate && ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'].includes(rawId);
         })
         .map(m => {
           const rawId = m.name.replace('models/', '');
-          let label = rawId;
-          if (rawId === 'gemini-2.5-flash') label = 'Gemini 2.5 Flash (Khuyên dùng - Phản hồi siêu tốc)';
-          else if (rawId === 'gemini-2.5-pro') label = 'Gemini 2.5 Pro (Chuyên sâu - Chuẩn Band 8.5+)';
-          else if (rawId === 'gemini-2.5-flash-lite') label = 'Gemini 2.5 Flash-Lite (Siêu nhẹ)';
-          else if (rawId === 'gemini-3.6-flash') label = 'Gemini 3.6 Flash (Thế hệ mới nhất 3.x)';
-          else if (rawId === 'gemini-3.1-pro') label = 'Gemini 3.1 Pro (Thế hệ mới 3.x)';
-          else if (m.displayName) label = `${m.displayName} (${rawId})`;
-          return {
-            id: rawId,
-            name: label
-          };
+          const matched = POPULAR_GEMINI_MODELS.find(p => p.id === rawId);
+          return matched || { id: rawId, name: rawId };
         });
       return supported.length > 0 ? supported : POPULAR_GEMINI_MODELS;
     }
