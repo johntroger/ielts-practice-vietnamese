@@ -385,6 +385,7 @@ export default function TheoryHandbookModal({
     { id: 'map', label: 'Map (Bản đồ)' },
     { id: 'mixed', label: 'Mixed (Kết hợp)' },
     { id: 'proportions', label: 'Tỷ Lệ Xấp Xỉ & Biến Động' },
+    { id: 'future-projections', label: 'Dự Báo Tương Lai (2030-2050)' },
   ];
 
   const writingTask2SubTypes = [
@@ -397,6 +398,9 @@ export default function TheoryHandbookModal({
     { id: 'counter-argument', label: 'Phản Biện & Bác Bỏ (8.0+)' },
     { id: 'grammar-8', label: 'Ngữ Pháp 8.0+ Đắt Giá' },
     { id: 'collocations', label: 'Academic Collocations' },
+    { id: 'ideation', label: 'Tìm Ý Tưởng (PESTLE)' },
+    { id: 'coherence-8', label: 'Liên Kết Ẩn CC (8.0+)' },
+    { id: 'intro-thesis', label: 'Paraphrase Mở Bài & Thesis' },
   ];
 
   const writingMistakesSubTypes = [
@@ -414,6 +418,10 @@ export default function TheoryHandbookModal({
     { id: 'matching', label: 'Matching Info / Features' },
     { id: 'completion', label: 'Điền từ / Summary' },
     { id: 'summary-box', label: 'Summary Điền Từ Khung' },
+    { id: 'diagram-flow', label: 'Diagram & Flow-Chart' },
+    { id: 'passage3-stance', label: 'Passage 3: Quan Điểm Tác Giả' },
+    { id: 'chunking-speed', label: 'Đọc Cụm Nghĩa (300+ WPM)' },
+    { id: 'time-management', label: 'Quy Tắc 90s & Bỏ Cuộc' },
     { id: 'paraphrase', label: '5 Quy Tắc Paraphrase' },
     { id: 'guessing', label: 'Đoán Nghĩa & Gốc Từ' },
     { id: 'synonyms', label: '50 Cặp Paraphrase Cam' },
@@ -426,13 +434,30 @@ export default function TheoryHandbookModal({
     { id: 'part1', label: 'Part 1: Đánh Vần, Số & Postcode' },
     { id: 'part2', label: 'Part 2: Bản Đồ & Định Hướng' },
     { id: 'part3', label: 'Part 3: Trắc Nghiệm Học Thuật' },
+    { id: 'tone-attitude', label: 'Thái Độ & Ngữ Điệu Part 3' },
     { id: 'part4', label: 'Part 4: Dàn Bài & Signposting' },
+    { id: 'prediction', label: '30s Đọc Trước Đề Thi' },
+    { id: 'dictation-shadowing', label: 'Chép Chính Tả & Shadowing' },
     { id: 'phonetics', label: 'Nối Âm, Nuốt Âm & Schwa' },
     { id: 'spelling', label: '80 Từ Dễ Sai Chính Tả' },
     { id: 'plurals', label: 'Phán Đoán Đuôi -s' },
     { id: 'units', label: 'Bẫy Đơn Vị & Tiền Tệ' },
     { id: 'accents', label: 'Accent Vùng Miền' },
     { id: 'cd-hacks', label: 'Phím Tắt & Mẹo Thi Máy' },
+  ];
+
+  const speakingSubTypes = [
+    { id: 'all', label: 'Tất cả chủ đề' },
+    { id: 'criteria', label: '4 Tiêu Chí & Làm Tròn' },
+    { id: 'strategy', label: 'Công Thức A.R.E.A & PPF' },
+    { id: 'pacing', label: 'Căn Giờ 2 Phút Part 2' },
+    { id: 'archetypes', label: '5 Cốt Truyện Vạn Năng Part 2' },
+    { id: 'comparisons', label: 'Ma Trận So Sánh Part 3' },
+    { id: 'fluency', label: '50+ Câu Đệm Câu Giờ' },
+    { id: 'naturalness', label: 'Né Bẫy Học Thuộc Lòng' },
+    { id: 'idioms', label: '35+ Thành Ngữ Band 8.0+' },
+    { id: 'pronunciation', label: 'Âm Đuôi, Trọng Âm & Ngữ Điệu' },
+    { id: 'mindset', label: 'Tâm Lý & Giám Khảo Ngắt Lời' },
   ];
 
   // Filter handbook by selected skill, category, subtype, and search query
@@ -768,6 +793,26 @@ export default function TheoryHandbookModal({
                       className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                         activeSubType === st.id
                           ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Sub-Filters for Speaking */}
+              {selectedSkill === 'speaking' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-purple-600 font-semibold whitespace-nowrap mr-1">Chủ đề & Kỹ thuật:</span>
+                  {speakingSubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-purple-100 text-purple-800 border border-purple-300 font-semibold'
                           : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
                       }`}
                     >
