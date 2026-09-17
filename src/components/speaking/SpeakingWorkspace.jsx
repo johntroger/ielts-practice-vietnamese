@@ -103,6 +103,13 @@ export default function SpeakingWorkspace({
     }
   };
 
+  // Enter mock exam room
+  const handleEnterExamRoom = () => {
+    if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
+    if (speechEngine.isListening) speechEngine.stopListening();
+    setIsInMockExamRoom(true);
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-slate-950 text-slate-100 overflow-hidden select-none">
       
@@ -140,7 +147,7 @@ export default function SpeakingWorkspace({
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Phòng Thi Thử
+              Thi Thử Full Test
             </button>
             <button
               onClick={() => setActiveMode('practice')}
@@ -157,21 +164,6 @@ export default function SpeakingWorkspace({
 
         {/* Right: Examiner Profile Picker & Quick Tools */}
         <div className="flex items-center space-x-2 shrink-0">
-          
-          {/* Direct Enter Exam Room Button on Top Toolbar */}
-          <button
-            onClick={() => {
-              if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
-              if (speechEngine.isListening) speechEngine.stopListening();
-              setIsInMockExamRoom(true);
-            }}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-purple-900/40 transition-all cursor-pointer shrink-0 animate-pulse hover:animate-none"
-            title="Bấm để vào phòng thi mô phỏng với Giám khảo AI ngay lập tức"
-          >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span>VÀO PHÒNG THI</span>
-          </button>
-
           {/* Soundcheck Quick Button */}
           <button
             onClick={() => setIsSoundcheckOpen(true)}
@@ -328,17 +320,14 @@ export default function SpeakingWorkspace({
                     </div>
                   </div>
 
-                  {/* GIANT TOP ENTER BUTTON */}
+                  {/* Primary Enter Mock Test CTA */}
                   <button
-                    onClick={() => {
-                      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
-                      if (speechEngine.isListening) speechEngine.stopListening();
-                      setIsInMockExamRoom(true);
-                    }}
-                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm shadow-xl shadow-purple-950/80 flex items-center justify-center space-x-2 transition-all cursor-pointer ring-2 ring-purple-400/50 hover:scale-102"
+                    onClick={handleEnterExamRoom}
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-xl shadow-purple-950/70 flex items-center justify-center space-x-2 transition-all cursor-pointer hover:scale-[1.02]"
+                    title="Bắt đầu buổi thi thử trực tiếp với Giám khảo AI"
                   >
                     <Play className="w-4 h-4 fill-current" />
-                    <span>VÀO PHÒNG THI NGAY (1 CLICK)</span>
+                    <span>Bắt Đầu Thi Thử</span>
                   </button>
                 </div>
               </div>
@@ -436,30 +425,30 @@ export default function SpeakingWorkspace({
               {/* Ready Action Box */}
               <div className="p-4 rounded-xl bg-purple-950/40 border border-purple-800/40 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4">
                 <div className="text-xs text-slate-300 text-center sm:text-left">
-                  <span className="font-bold text-white block">Sẵn sàng bước vào phòng thi?</span>
-                  <span className="text-slate-400">Bạn có thể kiểm tra thiết bị hoặc vào phòng thi ảo với Giám khảo AI ngay lập tức.</span>
+                  <span className="font-bold text-white block">
+                    Sẵn sàng thi với gói: <span className="text-purple-300 font-extrabold">{activeMockPack.title}</span>?
+                  </span>
+                  <span className="text-slate-400">
+                    Giám khảo {activeExaminer.name} ({activeExaminer.accent}) • 11 – 14 phút • Đầy đủ 3 Parts chuẩn Cambridge
+                  </span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => setIsSoundcheckOpen(true)}
                     className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white font-bold text-xs border border-purple-500/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
-                    title="Kiểm tra loa và mic trước"
+                    title="Kiểm tra loa và mic trước khi vào thi"
                   >
                     <ShieldCheck className="w-4 h-4" />
                     <span>Kiểm Tra Thiết Bị</span>
                   </button>
 
                   <button
-                    onClick={() => {
-                      if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
-                      if (speechEngine.isListening) speechEngine.stopListening();
-                      setIsInMockExamRoom(true);
-                    }}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-purple-900/40 flex items-center space-x-2 transition-all cursor-pointer shrink-0 animate-pulse hover:animate-none"
-                    title="Vào thẳng phòng thi trực tiếp với Giám khảo"
+                    onClick={handleEnterExamRoom}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
+                    title="Bắt đầu làm gói đề thi đang chọn"
                   >
-                    <Play className="w-4 h-4 fill-current" />
-                    <span>VÀO PHÒNG THI NGAY</span>
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Vào Thi Đề Này</span>
                   </button>
                 </div>
               </div>
