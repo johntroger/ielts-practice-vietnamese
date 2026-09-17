@@ -628,20 +628,44 @@ export default function SpeakingExaminerRoom({
             </div>
           )}
 
-          {/* Transcript / Listening Bubble */}
-          <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-center min-h-12 flex flex-col items-center justify-center">
+          {/* Live Automatic Speech-to-Text Transcript Display */}
+          <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 text-center min-h-16 flex flex-col items-center justify-center shadow-lg backdrop-blur-sm transition-all">
             {speechEngine.transcript || speechEngine.interimTranscript ? (
-              <p className="text-xs sm:text-sm text-emerald-300 font-medium italic">
-                "{speechEngine.transcript} {speechEngine.interimTranscript}"
-              </p>
+              <div className="space-y-1 w-full text-left sm:text-center px-1">
+                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider pb-1 border-b border-slate-800/60 mb-1">
+                  <span className="flex items-center space-x-1.5 text-emerald-400">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Transcript Tự Động (AI Nhận Diện)</span>
+                  </span>
+                  {isMicActive && (
+                    <span className="text-rose-400 font-mono text-[10px] flex items-center space-x-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                      <span>Live REC</span>
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs sm:text-sm leading-relaxed">
+                  <span className="text-slate-100 font-medium">{speechEngine.transcript} </span>
+                  {speechEngine.interimTranscript && (
+                    <span className="text-emerald-400 italic opacity-85">{speechEngine.interimTranscript}</span>
+                  )}
+                </p>
+              </div>
             ) : isMicActive ? (
-              <p className="text-xs text-rose-300 flex items-center gap-1.5 font-semibold animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                <span>Đang thu âm & tạo transcript cho bài thi... Hãy trả lời tự nhiên</span>
-              </p>
+              <div className="flex flex-col items-center space-y-1">
+                <p className="text-xs text-rose-300 flex items-center gap-1.5 font-bold animate-pulse">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                  <span>Đang thu âm trực tiếp... Hãy bắt đầu nói câu trả lời của bạn</span>
+                </p>
+                <span className="text-[10px] text-slate-400 font-medium">
+                  Hệ thống tự động chuyển đổi giọng nói thành văn bản (STT) và lưu vào hồ sơ bài thi
+                </span>
+              </div>
             ) : (
-              <p className="text-xs text-slate-500">
-                Nhấn <strong>[ Phím Spacebar ]</strong> hoặc biểu tượng Micro bên dưới để bắt đầu nói
+              <p className="text-xs text-slate-500 flex items-center space-x-1.5">
+                <span>Nhấn</span>
+                <strong className="text-slate-300 font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px]">[ Phím Spacebar ]</strong>
+                <span>hoặc nút Micro bên dưới để bắt đầu nói</span>
               </p>
             )}
           </div>

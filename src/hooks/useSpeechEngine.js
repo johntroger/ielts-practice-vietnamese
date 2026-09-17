@@ -256,16 +256,19 @@ export function useSpeechEngine({
 
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         const item = event.results[i];
-        if (item.isFinal) {
-          newlyFinalized += item[0].transcript + ' ';
-        } else {
-          liveInterim += item[0].transcript;
+        if (item && item[0]) {
+          const piece = item[0].transcript || '';
+          if (item.isFinal) {
+            newlyFinalized += piece.trim() + ' ';
+          } else {
+            liveInterim += piece;
+          }
         }
       }
 
       if (newlyFinalized) {
-        accumulatedTranscriptRef.current += newlyFinalized;
-        setTranscript(accumulatedTranscriptRef.current.trim());
+        accumulatedTranscriptRef.current = (accumulatedTranscriptRef.current + ' ' + newlyFinalized).replace(/\s+/g, ' ').trim();
+        setTranscript(accumulatedTranscriptRef.current);
       }
       setInterimTranscript(liveInterim.trim());
     };
