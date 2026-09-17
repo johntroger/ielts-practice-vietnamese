@@ -322,7 +322,7 @@ export function useSpeechEngine({
       if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
         try { await audioContextRef.current.resume(); } catch (e) {}
       }
-      if (!mediaStreamRef.current) {
+      if (!mediaStreamRef.current || !mediaStreamRef.current.active || mediaStreamRef.current.getAudioTracks().every(t => t.readyState === 'ended')) {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,

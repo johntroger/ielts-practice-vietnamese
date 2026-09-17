@@ -60,6 +60,7 @@ export default function SpeakingPracticePane({
   const [evaluationContext, setEvaluationContext] = useState(null);
   const [isRefiningTranscript, setIsRefiningTranscript] = useState(false);
   const [refiningClipKey, setRefiningClipKey] = useState('');
+  const [activeRecordClipKey, setActiveRecordClipKey] = useState('');
 
   // Quick Add Question modal/prompt state
   const [isQuickAddQOpen, setIsQuickAddQOpen] = useState(false);
@@ -101,15 +102,37 @@ export default function SpeakingPracticePane({
   };
 
   // Toggle generic practice recording
-  const handleTogglePracticeRecord = (clipKey) => {
+  const handleTogglePracticeRecord = async (clipKey) => {
+    // If currently recording this specific question, stop it cleanly
+    if (speechEngine.isListening && activeRecordClipKey === clipKey) {
+      speechEngine.stopListening();
+      setActiveRecordClipKey('');
+      return;
+    }
+
+    // If currently recording another question, stop previous first
     if (speechEngine.isListening) {
       speechEngine.stopListening();
-    } else {
-      speechEngine.resetTranscript();
-      if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
-      speechEngine.startListening(clipKey);
+    }
+
+    setActiveRecordClipKey(clipKey);
+    speechEngine.resetTranscript();
+    if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
+
+    try {
+      await speechEngine.startListening(clipKey);
+    } catch (err) {
+      console.warn('Microphone start error:', err);
+      setActiveRecordClipKey('');
     }
   };
+
+  // Keep activeRecordClipKey in sync if speech engine stops from outside
+  useEffect(() => {
+    if (!speechEngine.isListening) {
+      setActiveRecordClipKey('');
+    }
+  }, [speechEngine.isListening]);
 
   // -------------------------------------------------------------
   // PART 2 PREP TIMER & PACING LOGIC
@@ -144,12 +167,22 @@ export default function SpeakingPracticePane({
       clearInterval(speakTimerRef.current);
       setIsPart2Speaking(false);
       speechEngine.stopListening();
+      setActiveRecordClipKey('');
     } else {
+      setActiveRecordClipKey(clipKey);
       setSpeakSecondsElapsed(0);
       setIsPart2Speaking(true);
       speechEngine.resetTranscript();
       if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
-      await speechEngine.startListening(clipKey);
+
+      try {
+        await speechEngine.startListening(clipKey);
+      } catch (err) {
+        console.warn('Part 2 mic error:', err);
+        setIsPart2Speaking(false);
+        setActiveRecordClipKey('');
+        return;
+      }
 
       if (speakTimerRef.current) clearInterval(speakTimerRef.current);
       speakTimerRef.current = setInterval(() => {
@@ -158,6 +191,7 @@ export default function SpeakingPracticePane({
             clearInterval(speakTimerRef.current);
             setIsPart2Speaking(false);
             speechEngine.stopListening();
+            setActiveRecordClipKey('');
             return 120;
           }
           return prev + 1;
@@ -634,6 +668,19 @@ export default function SpeakingPracticePane({
         </div>
       </div>
 
+      {/* Permission Warning Banner if Microphone is blocked */}
+      {speechEngine.speechError === 'not-allowed' && (
+        <div className="p-4 rounded-2xl bg-rose-950/90 border-2 border-rose-500/70 text-rose-200 flex items-start space-x-3 shadow-xl animate-in fade-in duration-200">
+          <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+          <div className="text-xs space-y-1">
+            <h4 className="font-bold text-white text-sm">Trình duyệt chưa cho phép truy cập Micro!</h4>
+            <p className="text-rose-200 leading-relaxed">
+              Để luyện nói và chấm điểm, bạn vui lòng nhấp vào biểu tượng <strong>Ổ khóa (🔒)</strong> hoặc <strong>Cài đặt trang web</strong> trên thanh địa chỉ URL của trình duyệt, chọn <strong>Cho phép (Allow)</strong> Microphone, sau đó bấm nút Bật Micro lại.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Practice Welcome & Quick AI Generator Banner */}
       <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border border-purple-800/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
         <div className="space-y-1">
@@ -907,12 +954,12 @@ export default function SpeakingPracticePane({
                   <button
                     onClick={() => handleTogglePracticeRecord(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
                     className={`px-5 py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg ${
-                      speechEngine.isListening 
+                      speechEngine.isListening && (activeRecordClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` || !activeRecordClipKey)
                         ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/40 ring-2 ring-rose-400 animate-pulse' 
                         : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40'
                     }`}
                   >
-                    {speechEngine.isListening ? (
+                    {speechEngine.isListening && (activeRecordClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` || !activeRecordClipKey) ? (
                       <>
                         <Square className="w-3.5 h-3.5 fill-current" />
                         <span>DỪNG THU ÂM (HOÀN TẤT)</span>
@@ -1405,16 +1452,45 @@ export default function SpeakingPracticePane({
                     </span>
                     <button
                       onClick={() => handleTogglePracticeRecord(clipKey)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer ${
-                        speechEngine.isListening 
-                          ? 'bg-rose-600 text-white animate-pulse' 
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer shadow-md ${
+                        speechEngine.isListening && activeRecordClipKey === clipKey
+                          ? 'bg-rose-600 text-white animate-pulse ring-2 ring-rose-400 shadow-rose-900/40' 
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40'
                       }`}
                     >
-                      <Mic className="w-3.5 h-3.5" />
-                      <span>{speechEngine.isListening ? 'Dừng Thu Âm' : 'Luyện Nói Câu Này'}</span>
+                      {speechEngine.isListening && activeRecordClipKey === clipKey ? (
+                        <>
+                          <Square className="w-3.5 h-3.5 fill-current" />
+                          <span>Dừng Thu Âm Câu Này</span>
+                        </>
+                      ) : (
+                        <>
+                          <Mic className="w-3.5 h-3.5" />
+                          <span>Luyện Nói Câu Này</span>
+                        </>
+                      )}
                     </button>
                   </div>
+
+                  {/* Realtime Live Wave & Transcript when recording this specific question */}
+                  {speechEngine.isListening && activeRecordClipKey === clipKey && (
+                    <div className="space-y-2 p-3 rounded-xl bg-slate-900 border border-emerald-500/40 ring-1 ring-emerald-500/30 animate-in fade-in duration-150">
+                      <div className="h-10 rounded-lg bg-slate-950 overflow-hidden">
+                        <SpeechWaveVisualizer
+                          mode="candidate_speaking"
+                          analyserNode={speechEngine.analyserNode}
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <p className="text-xs italic text-slate-200">
+                        {speechEngine.transcript || speechEngine.interimTranscript ? (
+                          <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic font-semibold">{speechEngine.interimTranscript}</strong>"</span>
+                        ) : (
+                          <span className="text-emerald-400 animate-pulse">🎤 Đang nghe giọng bạn... Hãy trả lời bằng tiếng Anh</span>
+                        )}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Audio Playback & AI Evaluation for this question */}
                   {renderAudioPlayback(clipKey, q.question, currentP3Set.topic, 3)}
