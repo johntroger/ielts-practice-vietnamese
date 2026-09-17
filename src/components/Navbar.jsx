@@ -284,7 +284,7 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="font-bold">Cẩm Nang Chiến Thuật</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Writing, Reading & Listening Cambridge</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Writing, Reading, Listening & Speaking (Cambridge)</div>
                       </div>
                     </button>
                     <button
@@ -431,7 +431,7 @@ export default function Navbar({
                       <BookOpen className="w-4 h-4 text-amber-600" />
                       <div className="flex-1">
                         <div className="font-bold">Cẩm Nang Lý Thuyết</div>
-                        <div className="text-[10px] text-slate-500 font-normal">Writing, Reading & Listening</div>
+                        <div className="text-[10px] text-slate-500 font-normal">Writing, Reading, Listening & Speaking</div>
                       </div>
                     </button>
                     <button
@@ -677,7 +677,7 @@ export default function Navbar({
                     <BookOpen className="w-4 h-4 text-amber-600" />
                     <span>Cẩm Nang Lý Thuyết & Chiến Thuật</span>
                   </div>
-                  <span className="text-[10px] text-amber-700 font-bold bg-amber-100 px-1.5 py-0.5 rounded">W/R/L</span>
+                  <span className="text-[10px] text-amber-700 font-bold bg-amber-100 px-1.5 py-0.5 rounded">4 Kỹ Năng</span>
                 </button>
 
                 <button

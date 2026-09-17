@@ -41,6 +41,7 @@ export default function ListeningWorkspace({
   apiKey,
   model,
   onOpenSettings,
+  onOpenTheory,
   user,
   onSaveToVocabNotebook,
   onListeningSubmitted,
@@ -405,6 +406,16 @@ export default function ListeningWorkspace({
             >
               Cỡ chữ
             </button>
+            {onOpenTheory && (
+              <button
+                onClick={onOpenTheory}
+                className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-emerald-400 text-[11px] font-semibold border border-slate-700 cursor-pointer flex items-center space-x-1 shrink-0"
+                title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật Listening"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden xs:inline">Cẩm Nang</span>
+              </button>
+            )}
             <button
               onClick={() => {
                 if (window.confirm('Bạn có muốn thoát khỏi Chế độ Thi Thử (Strict Mode) để quay về Chế độ Luyện Tập tự do không?')) {
@@ -509,6 +520,19 @@ export default function ListeningWorkspace({
               <span>Kho Đề</span>
               <span className="hidden sm:inline">({allListeningTests.length})</span>
             </button>
+
+            {/* Cẩm Nang Lý Thuyết Listening Button */}
+            {onOpenTheory && (
+              <button
+                type="button"
+                onClick={onOpenTheory}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition-colors shadow-2xs cursor-pointer shrink-0"
+                title="Mở Cẩm Nang Lý Thuyết & Kỹ Năng Nghe IELTS (Format, Âm học, 4 Parts, Chép chính tả, Shadowing)"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
+                <span>📖 Cẩm Nang</span>
+              </button>
+            )}
 
             {/* Sinh Đề AI Button */}
             <button

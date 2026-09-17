@@ -352,11 +352,11 @@ export default function SpeakingWorkspace({
           {onOpenTheory && (
             <button
               onClick={onOpenTheory}
-              className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-bold transition-all cursor-pointer shrink-0"
-              title="Mở Cẩm Nang Lý Thuyết Speaking"
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-bold transition-all cursor-pointer shrink-0"
+              title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật Speaking"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>Cẩm Nang</span>
+              <span>📖 Cẩm Nang</span>
             </button>
           )}
 

@@ -628,6 +628,7 @@ export default function App() {
               apiKey={apiKey}
               model={model}
               onOpenSettings={() => setIsSettingsOpen(true)}
+              onOpenTheory={() => setIsTheoryOpen(true)}
               user={currentUser}
               onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
               onReadingSubmitted={(sub) => {
@@ -658,6 +659,7 @@ export default function App() {
               apiKey={apiKey}
               model={model}
               onOpenSettings={() => setIsSettingsOpen(true)}
+              onOpenTheory={() => setIsTheoryOpen(true)}
               user={currentUser}
               onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
               onOpenDrills={() => setIsDrillsOpen(true)}

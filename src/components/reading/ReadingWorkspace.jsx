@@ -37,6 +37,7 @@ export default function ReadingWorkspace({
   apiKey,
   model = 'gemini-2.5-flash',
   onOpenSettings,
+  onOpenTheory,
   user,
   onSaveToVocabNotebook,
   onReadingSubmitted,
@@ -425,6 +426,19 @@ export default function ReadingWorkspace({
             <span className="sm:hidden">Kho Đề</span>
             <span className="hidden sm:inline">📚 Kho Đề ({allReadingTests.length})</span>
           </button>
+
+          {/* Button Cẩm Nang Reading */}
+          {onOpenTheory && (
+            <button
+              type="button"
+              onClick={onOpenTheory}
+              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+              title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Reading (14 dạng bài, Passage 3, Chunking, Quản lý thời gian)"
+            >
+              <BookMarked className="w-3.5 h-3.5 text-blue-600" />
+              <span>📖 Cẩm Nang</span>
+            </button>
+          )}
 
           {/* Test Selector Dropdown if more than 1 test */}
           {allReadingTests.length > 1 && (
