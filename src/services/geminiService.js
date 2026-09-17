@@ -6,6 +6,7 @@
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 export const DEPRECATED_GEMINI_MODELS = [
+  'gemini-2.5-pro',
   'gemini-1.5-flash',
   'gemini-1.5-flash-8b',
   'gemini-1.5-pro',
@@ -18,17 +19,16 @@ export const DEPRECATED_GEMINI_MODELS = [
 ];
 
 export const POPULAR_GEMINI_MODELS = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Khuyên dùng - Cân bằng tốc độ, chi phí & độ chính xác Cambridge)' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Khuyên dùng - Phản hồi siêu tốc, chấm điểm Cambridge chuẩn xác)' },
   { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite (Siêu nhẹ - Tiết kiệm tối đa hạn ngạch API 15 RPM)' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Chuyên sâu - Khảo thí nâng cao, phân tích bài viết phức tạp)' }
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview (Mới nhất Google - Khảo thí chuyên sâu, lập luận Band 8.5+)' }
 ];
 
 function cleanModelName(model) {
   if (!model) return DEFAULT_MODEL;
   const cleaned = model.replace(/^models\//, '').trim();
-  // Ensure only valid 2.5 models or custom models are kept, default to gemini-2.5-flash for deprecated/unsupported
-  const validSupported = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'];
-  if (DEPRECATED_GEMINI_MODELS.includes(cleaned) || cleaned.startsWith('gemini-1.') || cleaned.startsWith('gemini-2.0') || cleaned.startsWith('gemini-3.')) {
+  const validSupported = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
+  if (DEPRECATED_GEMINI_MODELS.includes(cleaned) || cleaned.startsWith('gemini-1.') || cleaned.startsWith('gemini-2.0')) {
     return DEFAULT_MODEL;
   }
   return validSupported.includes(cleaned) ? cleaned : DEFAULT_MODEL;
@@ -36,12 +36,11 @@ function cleanModelName(model) {
 
 /**
  * Smart Fallback Chain when Quota (429 / RESOURCE_EXHAUSTED) or model availability error occurs.
- * Strictly uses official, active, highly available Gemini 2.5 family models.
  */
 const MODEL_FALLBACK_CHAIN = [
   'gemini-2.5-flash',
   'gemini-2.5-flash-lite',
-  'gemini-2.5-pro'
+  'gemini-3.1-pro-preview'
 ];
 
 /**
@@ -236,8 +235,7 @@ export async function fetchAvailableModels(apiKey) {
         .filter(m => {
           const rawId = m.name.replace('models/', '');
           const canGenerate = m.supportedGenerationMethods?.includes('generateContent');
-          // Only permit the official, fast, high-quality 2.5 models
-          return canGenerate && ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'].includes(rawId);
+          return canGenerate && ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'].includes(rawId);
         })
         .map(m => {
           const rawId = m.name.replace('models/', '');
