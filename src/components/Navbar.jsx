@@ -6,25 +6,26 @@ import {
   Bookmark, 
   Settings, 
   ChevronDown, 
-  PenTool,
-  Headphones,
-  BookMarked,
-  Mic,
+  PenTool, 
+  Headphones, 
+  BookMarked, 
+  Mic, 
   FileText, 
   Clock, 
   Puzzle, 
   TrendingUp, 
   Flame, 
   ShieldAlert, 
-  FileUp,
-  SpellCheck2,
-  FolderKanban,
-  GraduationCap,
-  User,
-  Menu,
-  X,
-  Compass,
-  Mail
+  FileUp, 
+  SpellCheck2, 
+  FolderKanban, 
+  GraduationCap, 
+  User, 
+  Menu, 
+  X, 
+  Compass, 
+  Mail,
+  Target
 } from 'lucide-react';
 
 export default function Navbar({
@@ -34,6 +35,8 @@ export default function Navbar({
   mode,
   setMode,
   streakCount = 3,
+  targetBand = '6.5',
+  onOpenOnboarding,
   onOpenVocabGrammar,
   onOpenDrills,
   onOpenWeeklyReport,
@@ -247,6 +250,17 @@ export default function Navbar({
                 <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500 shrink-0" />
                 <span>{streakCount}d</span>
               </div>
+
+              {/* Target Band Badge (Clickable to open Onboarding/Goal setting) */}
+              <button
+                onClick={onOpenOnboarding}
+                className="flex items-center space-x-1.5 px-2 lg:px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/80 text-red-700 hover:bg-red-100/80 text-xs font-black shrink-0 transition-all cursor-pointer shadow-2xs group"
+                title="Mục tiêu điểm IELTS của bạn. Nhấn để thay đổi hoặc xem lại cẩm nang hướng dẫn"
+              >
+                <Target className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
+                <span className="hidden xl:inline">Band</span>
+                <span>{targetBand}</span>
+              </button>
             </div>
           )}
 
@@ -531,8 +545,17 @@ export default function Navbar({
 
             {/* Mobile Streak & Theory Fast Buttons */}
             <button
+              onClick={onOpenOnboarding}
+              className="flex items-center space-x-1 px-2 py-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-black shrink-0 shadow-2xs cursor-pointer"
+              title="Mục tiêu điểm số. Nhấn để đổi"
+            >
+              <Target className="w-3.5 h-3.5 text-red-600" />
+              <span>{targetBand}</span>
+            </button>
+
+            <button
               onClick={onOpenTheory}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold shrink-0 shadow-2xs cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold shrink-0 shadow-2xs cursor-pointer"
               title="Xem cẩm nang lý thuyết"
             >
               <span className="text-sm">📖</span>
@@ -587,6 +610,28 @@ export default function Navbar({
                   className="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800"
                 >
                   <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Target Band Goal in Mobile Drawer */}
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-red-50 via-rose-50 to-amber-50 border border-red-200 flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <div className="p-2 rounded-xl bg-red-600 text-white shadow-xs">
+                    <Target className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black text-slate-900">Mục Tiêu: Band {targetBand}</div>
+                    <div className="text-[10px] text-slate-500">Cá nhân hóa độ khó & chấm điểm AI</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    onOpenOnboarding?.();
+                    setIsMobileDrawerOpen(false);
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-700 text-xs font-bold hover:bg-red-50 shadow-2xs cursor-pointer"
+                >
+                  Đổi
                 </button>
               </div>
 

@@ -26,6 +26,7 @@ import FeaturesGuideModal from './components/FeaturesGuideModal';
 import UserProfileModal from './components/UserProfileModal';
 import ContactModal from './components/ContactModal';
 import AIEvaluationProgressModal from './components/AIEvaluationProgressModal';
+import OnboardingModal from './components/OnboardingModal';
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
@@ -52,6 +53,8 @@ import { countWords } from './utils/textAnalytics';
 export default function App() {
   // 1. Persistent Storage State
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('ielts_gemini_api_key') || '');
+  const [targetBand, setTargetBand] = useState(() => localStorage.getItem('ielts_target_band') || '6.5');
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !localStorage.getItem('ielts_user_onboarded'));
   const [model, setModel] = useState(() => {
     const saved = localStorage.getItem('ielts_gemini_model');
     const deprecated = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.0-pro', 'gemini-pro'];
@@ -579,6 +582,8 @@ export default function App() {
         activeSkill={activeSkill}
         onSelectSkill={(skill) => setActiveSkill(skill)}
         mistakesCount={mistakes.length}
+        targetBand={targetBand}
+        onOpenOnboarding={() => setIsOnboardingOpen(true)}
         apiKey={apiKey}
         user={currentUser}
         onOpenAuth={() => setIsAuthOpen(true)}
@@ -1168,6 +1173,18 @@ export default function App() {
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
+      />
+
+      {/* Onboarding 3-Step Tour & Target Band Selector */}
+      <OnboardingModal
+        isOpen={isOnboardingOpen}
+        onClose={() => setIsOnboardingOpen(false)}
+        initialTargetBand={targetBand}
+        currentApiKey={apiKey}
+        onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
+          if (newBand) setTargetBand(newBand);
+          if (newKey) setApiKey(newKey);
+        }}
       />
 
     </div>
