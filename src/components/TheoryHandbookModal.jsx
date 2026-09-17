@@ -375,6 +375,13 @@ export default function TheoryHandbookModal({
     : writingCategories;
 
   // Subtype filters
+  const writingGeneralSubTypes = [
+    { id: 'all', label: 'Tất cả tiêu chí' },
+    { id: 'progression-5-75', label: '⭐ Lộ Trình Nâng Band 5.0 -> 7.5' },
+    { id: 'descriptors', label: 'Band Descriptors 2026' },
+    { id: 'strategy', label: 'Bí Quyết 5.5 - 6.0 & 7.5+' },
+  ];
+
   const writingTask1SubTypes = [
     { id: 'all', label: 'Tất cả Task 1' },
     { id: 'line', label: 'Line Graph (Đường)' },
@@ -390,6 +397,7 @@ export default function TheoryHandbookModal({
 
   const writingTask2SubTypes = [
     { id: 'all', label: 'Tất cả Task 2' },
+    { id: 'progression-5-75', label: '⭐ Lộ Trình Nâng Band 5.0 -> 7.5' },
     { id: 'opinion', label: 'Agree / Disagree' },
     { id: 'discussion', label: 'Discuss Both Views' },
     { id: 'advantages', label: 'Advantages vs Disadvantages' },
@@ -411,6 +419,7 @@ export default function TheoryHandbookModal({
 
   const readingSubTypes = [
     { id: 'all', label: 'Tất cả dạng bài' },
+    { id: 'progression-5-75', label: '⭐ Lộ Trình 5.0 -> 7.5 (Số Câu Đúng)' },
     { id: 'overview', label: '15-20-25m & Thang Điểm' },
     { id: 'tfng', label: 'True / False / Not Given' },
     { id: 'headings', label: 'Matching Headings' },
@@ -430,6 +439,7 @@ export default function TheoryHandbookModal({
 
   const listeningSubTypes = [
     { id: 'all', label: 'Tất cả dạng bài' },
+    { id: 'progression-5-75', label: '⭐ Lộ Trình 5.0 -> 7.5 (Part 1-4)' },
     { id: 'overview', label: 'Format & CD-IELTS' },
     { id: 'part1', label: 'Part 1: Đánh Vần, Số & Postcode' },
     { id: 'part2', label: 'Part 2: Bản Đồ & Định Hướng' },
@@ -448,6 +458,7 @@ export default function TheoryHandbookModal({
 
   const speakingSubTypes = [
     { id: 'all', label: 'Tất cả chủ đề' },
+    { id: 'progression-5-75', label: '⭐ Lộ Trình 5.0 -> 7.5 (Makeover Câu)' },
     { id: 'criteria', label: '4 Tiêu Chí & Làm Tròn' },
     { id: 'strategy', label: 'Công Thức A.R.E.A & PPF' },
     { id: 'pacing', label: 'Căn Giờ 2 Phút Part 2' },
@@ -701,6 +712,26 @@ export default function TheoryHandbookModal({
                   );
                 })}
               </div>
+
+              {/* Sub-Filters for Writing General */}
+              {selectedSkill === 'writing' && activeCategory === 'general' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Tiêu chí & Lộ trình:</span>
+                  {writingGeneralSubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-red-100 text-red-800 border border-red-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Sub-Filters for Writing Task 1 */}
               {selectedSkill === 'writing' && activeCategory === 'task1' && (
@@ -1036,7 +1067,12 @@ export default function TheoryHandbookModal({
                                 ? 'IELTS Speaking'
                                 : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : 'Chiến Lược & Tiêu Chí')}
                             </span>
-                            {item.subType && item.subType !== 'overview' && (
+                            {item.subType === 'progression-5-75' ? (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 text-white shadow-2xs flex items-center gap-1">
+                                <Sparkles className="w-3 h-3 text-amber-200" />
+                                <span>Lộ Trình Band 5.0 - 7.5</span>
+                              </span>
+                            ) : item.subType && item.subType !== 'overview' && (
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
                                 {item.subType}
                               </span>
