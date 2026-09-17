@@ -4,7 +4,7 @@ import {
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
-  RotateCcw, X
+  RotateCcw, X, Loader2
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -14,12 +14,14 @@ import {
   SPEAKING_MOCK_TEST_PACKS 
 } from '../../data/speakingTopics';
 import { useSpeechEngine } from '../../hooks/useSpeechEngine';
+import { evaluateSpeakingMockExam } from '../../services/geminiService';
 import SpeakingSoundcheckModal from './SpeakingSoundcheckModal';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import SpeakingPracticePane from './SpeakingPracticePane';
 import SpeakingIdeaMatrixModal from './SpeakingIdeaMatrixModal';
 import SpeakingShadowingModal from './SpeakingShadowingModal';
 import SpeakingExaminerRoom from './SpeakingExaminerRoom';
+import SpeakingResultModal from './SpeakingResultModal';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -43,6 +45,9 @@ export default function SpeakingWorkspace({
   const [isShadowingOpen, setIsShadowingOpen] = useState(false);
   const [isInMockExamRoom, setIsInMockExamRoom] = useState(false);
   const [completedExamData, setCompletedExamData] = useState(null);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [currentEvaluation, setCurrentEvaluation] = useState(null);
 
   // Practice Mode State
   const [practicePart, setPracticePart] = useState(1); // 1 | 2 | 3
@@ -539,17 +544,90 @@ export default function SpeakingWorkspace({
             if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
             if (speechEngine.isListening) speechEngine.stopListening();
           }}
-          onFinishExam={(finalTranscript, meta) => {
+          onFinishExam={async (finalTranscript, meta) => {
             setIsInMockExamRoom(false);
-            setCompletedExamData({ finalTranscript, meta });
             if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
             if (speechEngine.isListening) speechEngine.stopListening();
-            if (onSpeakingSubmitted) {
-              onSpeakingSubmitted(finalTranscript, meta);
+
+            setIsEvaluating(true);
+            setIsResultModalOpen(true);
+
+            try {
+              const evalResult = await evaluateSpeakingMockExam({
+                dialogueHistory: finalTranscript,
+                mockPack: activeMockPack,
+                examiner: activeExaminer,
+                totalDurationSec: meta?.totalDurationSec || 600,
+                apiKey,
+                model
+              });
+
+              setCurrentEvaluation(evalResult);
+              setCompletedExamData({ finalTranscript, meta, evaluation: evalResult });
+
+              const submissionRecord = {
+                id: `spk-${Date.now()}`,
+                submittedAt: new Date().toISOString(),
+                mockPack: {
+                  id: activeMockPack.id,
+                  title: activeMockPack.title,
+                  targetBand: activeMockPack.targetBand
+                },
+                examiner: {
+                  name: activeExaminer.name,
+                  accent: activeExaminer.accent
+                },
+                durationSec: meta?.totalDurationSec || 600,
+                evaluation: evalResult,
+                dialogueHistory: finalTranscript
+              };
+
+              if (onSpeakingSubmitted) {
+                onSpeakingSubmitted(submissionRecord);
+              }
+            } catch (err) {
+              console.error('Error during speaking exam evaluation:', err);
+            } finally {
+              setIsEvaluating(false);
             }
           }}
         />
       )}
+
+      {/* 5. STEP 5: EVALUATION LOADING OVERLAY */}
+      {isEvaluating && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-200">
+          <div className="w-16 h-16 rounded-3xl bg-purple-600/20 border-2 border-purple-500/60 flex items-center justify-center text-purple-400 mb-4 shadow-xl shadow-purple-900/40 animate-pulse">
+            <Sparkles className="w-8 h-8 animate-spin" />
+          </div>
+          <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            Giám Khảo AI Đang Chấm Điểm 4 Tiêu Chí...
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-md mt-2 leading-relaxed">
+            Hệ thống đang phân tích chi tiết Fluency & Coherence, Lexical Resource, Grammatical Range & Accuracy và Pronunciation theo chuẩn khảo thí Cambridge IDP / BC.
+          </p>
+          <div className="mt-6 flex items-center space-x-2 text-xs text-purple-300 font-bold bg-purple-950/60 px-4 py-2 rounded-full border border-purple-800/60">
+            <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
+            <span>Đang tạo báo cáo chẩn đoán & câu mẫu Band 8.5+...</span>
+          </div>
+        </div>
+      )}
+
+      {/* 6. STEP 5: COMPREHENSIVE SPEAKING RESULT MODAL */}
+      <SpeakingResultModal
+        isOpen={isResultModalOpen && !isEvaluating}
+        onClose={() => setIsResultModalOpen(false)}
+        evaluation={currentEvaluation}
+        dialogueHistory={completedExamData?.finalTranscript || []}
+        mockPack={activeMockPack}
+        examiner={activeExaminer}
+        totalDurationSec={completedExamData?.meta?.totalDurationSec || 600}
+        onRetryExam={() => {
+          setIsResultModalOpen(false);
+          setIsInMockExamRoom(true);
+        }}
+        onSaveToVocabNotebook={onSaveToVocabNotebook}
+      />
     </div>
   );
 }
