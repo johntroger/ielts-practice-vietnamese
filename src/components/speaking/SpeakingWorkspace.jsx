@@ -22,6 +22,7 @@ import SpeakingIdeaMatrixModal from './SpeakingIdeaMatrixModal';
 import SpeakingShadowingModal from './SpeakingShadowingModal';
 import SpeakingExaminerRoom from './SpeakingExaminerRoom';
 import SpeakingResultModal from './SpeakingResultModal';
+import SpeakingGeneratorModal from './SpeakingGeneratorModal';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -37,9 +38,25 @@ export default function SpeakingWorkspace({
   const [selectedExaminerId, setSelectedExaminerId] = useState(() => {
     return localStorage.getItem('ielts_speaking_examiner') || 'examiner-arthur';
   });
+
+  // Mock packs state (preloaded + user generated with AI)
+  const [allMockPacks, setAllMockPacks] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_packs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return [...SPEAKING_MOCK_TEST_PACKS, ...parsed];
+        }
+      }
+    } catch (e) {}
+    return SPEAKING_MOCK_TEST_PACKS;
+  });
+
   const [selectedMockId, setSelectedMockId] = useState(SPEAKING_MOCK_TEST_PACKS[0]?.id || 'mock-spk-tech-future');
   
   // Modals state
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
   const [isShadowingOpen, setIsShadowingOpen] = useState(false);
@@ -72,12 +89,46 @@ export default function SpeakingWorkspace({
   }, [selectedExaminerId]);
 
   const activeExaminer = SPEAKING_EXAMINER_PROFILES.find(e => e.id === selectedExaminerId) || SPEAKING_EXAMINER_PROFILES[0];
-  const activeMockPack = SPEAKING_MOCK_TEST_PACKS.find(m => m.id === selectedMockId) || SPEAKING_MOCK_TEST_PACKS[0];
+  const activeMockPack = allMockPacks.find(m => m.id === selectedMockId) || allMockPacks[0];
 
-  // Derive active items for Mock Pack
-  const mockP1 = SPEAKING_PART1_TOPICS.find(p => p.id === activeMockPack.part1TopicId) || SPEAKING_PART1_TOPICS[0];
-  const mockP2 = SPEAKING_PART2_CUECARDS.find(p => p.id === activeMockPack.part2CueCardId) || SPEAKING_PART2_CUECARDS[0];
-  const mockP3 = SPEAKING_PART3_QUESTIONS.find(p => p.linkedPart2Id === activeMockPack.part3DiscussionId) || SPEAKING_PART3_QUESTIONS[0];
+  // Derive active items for Mock Pack (support both preset IDs and custom inline items)
+  const mockP1 = activeMockPack.customPart1 
+    || SPEAKING_PART1_TOPICS.find(p => p.id === activeMockPack.part1TopicId) 
+    || SPEAKING_PART1_TOPICS[0];
+  const mockP2 = activeMockPack.customPart2 
+    || SPEAKING_PART2_CUECARDS.find(p => p.id === activeMockPack.part2CueCardId) 
+    || SPEAKING_PART2_CUECARDS[0];
+  const mockP3 = activeMockPack.customPart3 
+    || SPEAKING_PART3_QUESTIONS.find(p => p.linkedPart2Id === activeMockPack.part3DiscussionId) 
+    || SPEAKING_PART3_QUESTIONS[0];
+
+  const handlePackGenerated = (newPack) => {
+    setAllMockPacks(prev => {
+      const updated = [newPack, ...prev];
+      try {
+        const customOnly = updated.filter(p => p.isCustom);
+        localStorage.setItem('ielts_speaking_custom_packs', JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+    setSelectedMockId(newPack.id);
+  };
+
+  const handleDeleteCustomPack = (packId, e) => {
+    e.stopPropagation();
+    if (!window.confirm('Bạn có chắc chắn muốn xóa bộ đề thi Speaking tự sinh này?')) return;
+    setAllMockPacks(prev => {
+      const updated = prev.filter(p => p.id !== packId);
+      try {
+        const customOnly = updated.filter(p => p.isCustom);
+        localStorage.setItem('ielts_speaking_custom_packs', JSON.stringify(customOnly));
+      } catch (err) {}
+      return updated;
+    });
+    if (selectedMockId === packId) {
+      setSelectedMockId(SPEAKING_MOCK_TEST_PACKS[0]?.id || 'mock-spk-tech-future');
+    }
+  };
 
   // Practice items
   const activeP1Topic = SPEAKING_PART1_TOPICS.find(p => p.id === selectedP1TopicId) || SPEAKING_PART1_TOPICS[0];
@@ -340,16 +391,30 @@ export default function SpeakingWorkspace({
 
             {/* Select Mock Test Pack */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                  <Layers className="w-4 h-4 text-purple-400" />
-                  <span>Chọn Bộ Đề Thi Thử (Mock Test Pack)</span>
-                </h3>
-                <span className="text-xs text-slate-400 font-medium">4 Gói đề chuẩn hóa Cambridge</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
+                    <Layers className="w-4 h-4 text-purple-400" />
+                    <span>Chọn Bộ Đề Thi Thử (Mock Test Pack)</span>
+                  </h3>
+                  <span className="text-xs text-slate-400 font-medium">
+                    {allMockPacks.length} Gói đề thi (Chuẩn Cambridge & AI Tự Sinh)
+                  </span>
+                </div>
+
+                {/* AI GENERATOR TRIGGER BUTTON */}
+                <button
+                  onClick={() => setIsGeneratorOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                  title="Dùng Gemini AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Sinh Bộ Đề Mới (AI)</span>
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {SPEAKING_MOCK_TEST_PACKS.map(pack => {
+                {allMockPacks.map(pack => {
                   const isSelected = selectedMockId === pack.id;
                   return (
                     <div
@@ -363,9 +428,16 @@ export default function SpeakingWorkspace({
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700">
-                            {pack.difficulty} • Target {pack.targetBand}
-                          </span>
+                          <div className="flex items-center space-x-1.5">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700">
+                              {pack.difficulty} • Target {pack.targetBand}
+                            </span>
+                            {pack.isCustom && (
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                AI Custom
+                              </span>
+                            )}
+                          </div>
                           <span className="text-xs text-slate-400 font-bold flex items-center space-x-1">
                             <Clock className="w-3.5 h-3.5" />
                             <span>{pack.estTime}</span>
@@ -377,9 +449,20 @@ export default function SpeakingWorkspace({
 
                       <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
                         <span>Đủ Part 1, 2, 3</span>
-                        <div className="flex items-center space-x-1 text-purple-400 font-bold">
-                          <span>{isSelected ? 'Đang chọn đề này' : 'Bấm để chọn'}</span>
-                          <ChevronRight className="w-3.5 h-3.5" />
+                        <div className="flex items-center space-x-2">
+                          {pack.isCustom && (
+                            <button
+                              onClick={(e) => handleDeleteCustomPack(pack.id, e)}
+                              className="text-slate-500 hover:text-rose-400 px-1.5 py-0.5 rounded transition-colors text-[10px] font-bold"
+                              title="Xóa bộ đề tự sinh này"
+                            >
+                              Xóa đề
+                            </button>
+                          )}
+                          <div className="flex items-center space-x-1 text-purple-400 font-bold">
+                            <span>{isSelected ? 'Đang chọn đề này' : 'Bấm để chọn'}</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -627,6 +710,16 @@ export default function SpeakingWorkspace({
           setIsInMockExamRoom(true);
         }}
         onSaveToVocabNotebook={onSaveToVocabNotebook}
+      />
+
+      {/* 7. STEP 6: AI SPEAKING MOCK TEST GENERATOR MODAL */}
+      <SpeakingGeneratorModal
+        isOpen={isGeneratorOpen}
+        onClose={() => setIsGeneratorOpen(false)}
+        apiKey={apiKey}
+        model={model}
+        onOpenSettings={onOpenSettings}
+        onPackGenerated={handlePackGenerated}
       />
     </div>
   );

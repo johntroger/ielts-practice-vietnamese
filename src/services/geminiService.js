@@ -64,6 +64,77 @@ export async function callGeminiApi({ model, apiKey, body, apiVersion = 'v1beta'
   return response;
 }
 
+/**
+ * Robust JSON Extractor & Sanitizer for Gemini Responses
+ * Prevents "Unterminated string in JSON" by stripping code fences,
+ * fixing unescaped newlines/tabs inside strings, and extracting JSON block.
+ */
+export function robustJsonParse(rawText, fallback = null) {
+  if (!rawText || typeof rawText !== 'string') return fallback;
+
+  // 1. Remove markdown code fences and extraneous leading/trailing whitespace
+  let clean = rawText
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  // 2. Extract JSON boundary if model returned chat commentary before or after
+  const firstBrace = clean.indexOf('{');
+  const firstBracket = clean.indexOf('[');
+  let startIdx = -1;
+  let isArray = false;
+
+  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+    startIdx = firstBrace;
+    isArray = false;
+  } else if (firstBracket !== -1) {
+    startIdx = firstBracket;
+    isArray = true;
+  }
+
+  if (startIdx !== -1) {
+    const endChar = isArray ? ']' : '}';
+    const lastIdx = clean.lastIndexOf(endChar);
+    if (lastIdx > startIdx) {
+      clean = clean.substring(startIdx, lastIdx + 1);
+    }
+  }
+
+  // 3. First attempt direct parse
+  try {
+    return JSON.parse(clean);
+  } catch (err1) {
+    // 4. Try sanitizing unescaped newlines and control characters inside double quotes
+    try {
+      let inString = false;
+      let escaped = false;
+      let fixed = '';
+      for (let i = 0; i < clean.length; i++) {
+        const ch = clean[i];
+        if (ch === '"' && !escaped) {
+          inString = !inString;
+          fixed += ch;
+        } else if (inString && ch === '\n') {
+          fixed += '\\n';
+        } else if (inString && ch === '\r') {
+          fixed += '\\r';
+        } else if (inString && ch === '\t') {
+          fixed += '\\t';
+        } else {
+          fixed += ch;
+        }
+        escaped = (ch === '\\' && !escaped);
+      }
+      return JSON.parse(fixed);
+    } catch (err2) {
+      console.warn('robustJsonParse fallback parsing due to error:', err2.message);
+      if (fallback !== null) return fallback;
+      throw new Error('Dữ liệu AI trả về bị ngắt quãng hoặc không đúng định dạng JSON. Vui lòng thử lại.');
+    }
+  }
+}
+
 export async function fetchAvailableModels(apiKey) {
   if (!apiKey) return POPULAR_GEMINI_MODELS;
   try {
@@ -1217,8 +1288,10 @@ Return ONLY raw parseable JSON with this structure:
   if (!text) throw new Error('Không nhận được phản hồi từ Gemini.');
 
   try {
-    const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-    const taskObj = JSON.parse(cleaned);
+    const taskObj = robustJsonParse(text, null);
+    if (!taskObj || !taskObj.prompt) {
+      throw new Error('Dữ liệu bài tập AI không đầy đủ.');
+    }
     return {
       id: `ai-gen-${Date.now()}`,
       taskNumber: Number(taskNumber),
@@ -1686,8 +1759,10 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown formatting):
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  const parsed = JSON.parse(clean);
+  const parsed = robustJsonParse(text, null);
+  if (!parsed || !parsed.paragraphs) {
+    throw new Error('Dữ liệu bài đọc do AI sinh ra không đúng định dạng. Vui lòng thử lại.');
+  }
   parsed.passageNumber = pNum;
   return parsed;
 }
@@ -1800,79 +1875,7 @@ JSON OUTPUT STRUCTURE (Return ONLY valid raw JSON without markdown):
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  return JSON.parse(clean);
-}
-
-/**
- * Robust JSON Extractor & Sanitizer for Gemini Responses
- * Prevents "Unterminated string in JSON" by stripping code fences,
- * fixing unescaped newlines/tabs inside strings, and extracting JSON block.
- */
-export function robustJsonParse(rawText, fallback = null) {
-  if (!rawText || typeof rawText !== 'string') return fallback;
-
-  // 1. Remove markdown code fences and extraneous leading/trailing whitespace
-  let clean = rawText
-    .replace(/^```json\s*/i, '')
-    .replace(/^```\s*/i, '')
-    .replace(/\s*```$/i, '')
-    .trim();
-
-  // 2. Extract JSON boundary if model returned chat commentary before or after
-  const firstBrace = clean.indexOf('{');
-  const firstBracket = clean.indexOf('[');
-  let startIdx = -1;
-  let isArray = false;
-
-  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-    startIdx = firstBrace;
-    isArray = false;
-  } else if (firstBracket !== -1) {
-    startIdx = firstBracket;
-    isArray = true;
-  }
-
-  if (startIdx !== -1) {
-    const endChar = isArray ? ']' : '}';
-    const lastIdx = clean.lastIndexOf(endChar);
-    if (lastIdx > startIdx) {
-      clean = clean.substring(startIdx, lastIdx + 1);
-    }
-  }
-
-  // 3. First attempt direct parse
-  try {
-    return JSON.parse(clean);
-  } catch (err1) {
-    // 4. Try sanitizing unescaped newlines and control characters inside double quotes
-    try {
-      let inString = false;
-      let escaped = false;
-      let fixed = '';
-      for (let i = 0; i < clean.length; i++) {
-        const ch = clean[i];
-        if (ch === '"' && !escaped) {
-          inString = !inString;
-          fixed += ch;
-        } else if (inString && ch === '\n') {
-          fixed += '\\n';
-        } else if (inString && ch === '\r') {
-          fixed += '\\r';
-        } else if (inString && ch === '\t') {
-          fixed += '\\t';
-        } else {
-          fixed += ch;
-        }
-        escaped = (ch === '\\' && !escaped);
-      }
-      return JSON.parse(fixed);
-    } catch (err2) {
-      console.warn('robustJsonParse fallback parsing due to error:', err2.message);
-      if (fallback !== null) return fallback;
-      throw new Error('Dữ liệu AI trả về bị ngắt quãng hoặc không đúng định dạng JSON. Vui lòng thử lại.');
-    }
-  }
+  return robustJsonParse(text, {});
 }
 
 /**
@@ -2681,6 +2684,135 @@ OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
     });
   }
 }
+
+/**
+ * AI Speaking Mock Test Pack Generator
+ * Generates an authentic full IELTS Speaking mock pack (Part 1, 2, 3) on any topic.
+ */
+export async function generateSpeakingMockPack({
+  topic = 'Công nghệ, Trí tuệ Nhân tạo & Tương lai Nghề nghiệp',
+  difficulty = 'Medium - Hard',
+  targetBand = '7.0 - 8.5',
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+
+  const prompt = `You are an expert Cambridge IELTS Chief Examiner and Speaking Test Author.
+Generate a brand-new, highly authentic, comprehensive IELTS Speaking Mock Test Pack covering full Part 1, Part 2, and Part 3 strictly aligned with official Cambridge and IDP/British Council assessment standards.
+
+TOPIC / THEME: "${topic}"
+DIFFICULTY: "${difficulty}" (Target Band: "${targetBand}")
+
+REQUIREMENTS:
+1. "title": Engaging title in Vietnamese & English (e.g. "Full Mock Test: ${topic}")
+2. "summary": Concise 2-sentence Vietnamese overview describing what competencies this test evaluates.
+3. "difficulty": "${difficulty}"
+4. "targetBand": "${targetBand}"
+5. "estTime": "11 - 14 phút"
+6. PART 1 ("part1Topic"):
+   - "title": Concise topic title in English
+   - "category": Category name
+   - "tag": "AI Forecast"
+   - "questions": Array of 3 progressive interview questions, each with:
+     * "qId": "p1-ai-1", "p1-ai-2", "p1-ai-3"
+     * "question": Authentic spoken question
+     * "focus": What skill or response angle this tests
+     * "strategy": Vietnamese coaching tip for candidate
+     * "vocabHints": Array of 3-4 collocations [{ "phrase": "...", "meaningVi": "..." }]
+     * "sampleAnswer": Exemplary Band 8.5 model response (35-50 words)
+7. PART 2 ("part2Card"):
+   - "title": Cue Card title in English
+   - "category": Category name
+   - "prompt": Standard prompt (e.g. "Describe a ... You should say: ...")
+   - "cueBullets": Array of 4 bullet points guiding the candidate
+   - "prepGuide4Quadrants": { "q1": "Who/What cue", "q2": "When/Where cue", "q3": "How/Why cue", "q4": "Feelings & Epiphany" }
+   - "vocabHints": Array of 4-5 C1-C2 collocations [{ "phrase": "...", "meaningVi": "..." }]
+   - "sampleAnswer": Complete Band 8.5 model monologue (150-180 words)
+8. PART 3 ("part3Set"):
+   - "topic": Abstract societal theme connected to Part 2
+   - "questions": Array of 3 in-depth discussion questions, each with:
+     * "qId": "p3-ai-1", "p3-ai-2", "p3-ai-3"
+     * "question": Analytical question demanding critical evaluation
+     * "analysisType": Conceptual angle (e.g. "Societal Trend", "Ethical Dilemma", "Future Projection")
+     * "strategy": Vietnamese coaching tip
+     * "vocabHints": Array of 3-4 advanced phrases [{ "phrase": "...", "meaningVi": "..." }]
+     * "sampleAnswer": Band 8.5 academic response with hedging and nuanced reasoning (50-70 words)
+
+OUTPUT FORMAT: Return ONLY valid raw JSON with NO markdown fences:
+{
+  "title": "Full Mock Test: ...",
+  "summary": "...",
+  "difficulty": "${difficulty}",
+  "targetBand": "${targetBand}",
+  "estTime": "11 - 14 phút",
+  "part1Topic": {
+    "title": "...",
+    "category": "...",
+    "tag": "AI Forecast",
+    "questions": [
+      {
+        "qId": "p1-ai-1",
+        "question": "...",
+        "focus": "...",
+        "strategy": "...",
+        "vocabHints": [{ "phrase": "...", "meaningVi": "..." }],
+        "sampleAnswer": "..."
+      }
+    ]
+  },
+  "part2Card": {
+    "title": "...",
+    "category": "...",
+    "prompt": "...",
+    "cueBullets": ["...", "...", "...", "..."],
+    "prepGuide4Quadrants": { "q1": "...", "q2": "...", "q3": "...", "q4": "..." },
+    "vocabHints": [{ "phrase": "...", "meaningVi": "..." }],
+    "sampleAnswer": "..."
+  },
+  "part3Set": {
+    "topic": "...",
+    "questions": [
+      {
+        "qId": "p3-ai-1",
+        "question": "...",
+        "analysisType": "...",
+        "strategy": "...",
+        "vocabHints": [{ "phrase": "...", "meaningVi": "..." }],
+        "sampleAnswer": "..."
+      }
+    ]
+  }
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 3500,
+        responseMimeType: 'application/json'
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi sinh đề thi Speaking (${response.status})`);
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const parsed = robustJsonParse(text, null);
+  if (!parsed || !parsed.part1Topic || !parsed.part2Card || !parsed.part3Set) {
+    throw new Error('Dữ liệu bộ đề Speaking do AI sinh ra không đầy đủ. Vui lòng thử lại.');
+  }
+
+  return parsed;
+}
+
 
 
 
