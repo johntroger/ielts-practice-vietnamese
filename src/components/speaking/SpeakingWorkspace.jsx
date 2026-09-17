@@ -698,32 +698,36 @@ export default function SpeakingWorkspace({
       />
 
       {/* SHADOWING STUDIO MODAL */}
-      <SpeakingShadowingModal
-        isOpen={isShadowingOpen}
-        onClose={() => setIsShadowingOpen(false)}
-        sampleText={
-          practicePart === 1 
-            ? (activeP1Topic?.questions?.[activeP1QuestionIndex]?.sampleAnswer || '')
-            : practicePart === 2 
-            ? (activeP2Card?.sampleAnswer || '')
-            : (activeP3Set?.questions?.[0]?.sampleAnswer || '')
-        }
-        topicTitle={practicePart === 1 ? activeP1Topic?.title : practicePart === 2 ? activeP2Card?.title : activeP3Set?.topic}
-        examiner={activeExaminer}
-        speechEngine={speechEngine}
-      />
+      {isShadowingOpen && (
+        <SpeakingShadowingModal
+          isOpen={isShadowingOpen}
+          onClose={() => setIsShadowingOpen(false)}
+          sampleText={
+            practicePart === 1 
+              ? (activeP1Topic?.questions?.[activeP1QuestionIndex]?.sampleAnswer || '')
+              : practicePart === 2 
+              ? (activeP2Card?.sampleAnswer || '')
+              : (activeP3Set?.questions?.[0]?.sampleAnswer || '')
+          }
+          topicTitle={practicePart === 1 ? activeP1Topic?.title : practicePart === 2 ? activeP2Card?.title : activeP3Set?.topic}
+          examiner={activeExaminer}
+          speechEngine={speechEngine}
+        />
+      )}
 
       {/* 3. SOUNDCHECK DEVICE CALIBRATION MODAL */}
-      <SpeakingSoundcheckModal
-        isOpen={isSoundcheckOpen}
-        onClose={() => setIsSoundcheckOpen(false)}
-        examiner={activeExaminer}
-        speechEngine={speechEngine}
-        onPassedSoundcheck={() => {
-          setIsSoundcheckOpen(false);
-          setIsInMockExamRoom(true);
-        }}
-      />
+      {isSoundcheckOpen && (
+        <SpeakingSoundcheckModal
+          isOpen={isSoundcheckOpen}
+          onClose={() => setIsSoundcheckOpen(false)}
+          examiner={activeExaminer}
+          speechEngine={speechEngine}
+          onPassedSoundcheck={() => {
+            setIsSoundcheckOpen(false);
+            setIsInMockExamRoom(true);
+          }}
+        />
+      )}
 
       {/* 4. STEP 4: AI VIRTUAL EXAM ROOM (THEATER MODE 100dvh) */}
       {isInMockExamRoom && (

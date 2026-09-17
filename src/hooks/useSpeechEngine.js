@@ -27,6 +27,7 @@ export function useSpeechEngine({
 
   // 3. Audio Recorder & RAM-only storage
   const [audioClips, setAudioClips] = useState({}); // { [clipId]: { blob, url, duration } }
+  const audioClipsRef = useRef({});
   const currentClipIdRef = useRef('clip_current');
   const mediaRecorderRef = useRef(null);
   const recordedChunksRef = useRef([]);
@@ -274,20 +275,15 @@ export function useSpeechEngine({
     };
 
     recognition.onerror = (event) => {
-      console.warn('Speech recognition status:', event.error);
+      console.warn('Speech recognition status notice:', event.error);
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        // If STT cloud service is blocked, do NOT kill audio recording!
+        // If STT cloud service is restricted, do NOT kill audio recording!
         // We have direct Gemini Multimodal Audio STT fallback.
         setSpeechError('stt-service-unavailable');
-        // Only stop if MediaRecorder is not available or inactive
-        if (!mediaRecorderRef.current || mediaRecorderRef.current.state === 'inactive') {
-          isIntentionalListeningRef.current = false;
-          setIsListening(false);
-        }
       } else if (event.error === 'no-speech') {
-        // Normal silence timeout in Chrome, watchdog will auto-restart if still intentional
+        // Silence pause detected in Chrome, watchdog will auto-restart if still intentional
       } else if (event.error === 'network') {
-        // Network drop in cloud STT - do not crash audio recording
+        // Network drop in cloud STT - do not crash candidate audio recording
         console.warn('Speech recognition network warning');
       } else if (event.error === 'aborted') {
         // Normal abort
@@ -295,19 +291,25 @@ export function useSpeechEngine({
     };
 
     recognition.onend = () => {
-      // Watchdog Auto-Reconnect: if user hasn't explicitly clicked stop, restart immediately
+      // Watchdog Auto-Reconnect: if candidate is still actively recording, restart STT cleanly
       if (isIntentionalListeningRef.current) {
-        try {
-          recognition.start();
-        } catch (err) {
-          setTimeout(() => {
-            if (isIntentionalListeningRef.current) {
-              try { recognition.start(); } catch (e) {}
+        setTimeout(() => {
+          if (isIntentionalListeningRef.current) {
+            try {
+              recognition.start();
+            } catch (err) {
+              // If current recognition instance is in invalid state, recreate fresh instance
+              try {
+                const fresh = initSpeechRecognition();
+                recognitionRef.current = fresh;
+                if (fresh) fresh.start();
+              } catch (e) {
+                console.warn('Watchdog STT restart warning:', e);
+              }
             }
-          }, 60);
-        }
+          }
+        }, 120);
       } else {
-        setIsListening(false);
         setInterimTranscript('');
       }
     };
@@ -333,7 +335,12 @@ export function useSpeechEngine({
     // 2. Request microphone stream
     let stream = null;
     try {
-      if (!mediaStreamRef.current || !mediaStreamRef.current.active || mediaStreamRef.current.getAudioTracks().every(t => t.readyState === 'ended')) {
+      if (
+        !mediaStreamRef.current || 
+        !mediaStreamRef.current.active || 
+        mediaStreamRef.current.getAudioTracks().length === 0 || 
+        mediaStreamRef.current.getAudioTracks().some(t => t.readyState === 'ended')
+      ) {
         stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,
@@ -426,15 +433,19 @@ export function useSpeechEngine({
           const blob = new Blob(recordedChunksRef.current, { type: recorder.mimeType || 'audio/webm' });
           const url = URL.createObjectURL(blob);
 
-          setAudioClips(prev => ({
-            ...prev,
-            [currentClipIdRef.current]: {
-              blob,
-              url,
-              duration,
-              createdAt: Date.now()
-            }
-          }));
+          setAudioClips(prev => {
+            const updated = {
+              ...prev,
+              [currentClipIdRef.current]: {
+                blob,
+                url,
+                duration,
+                createdAt: Date.now()
+              }
+            };
+            audioClipsRef.current = updated;
+            return updated;
+          });
         };
 
         recordingStartTimeRef.current = Date.now();
@@ -445,24 +456,21 @@ export function useSpeechEngine({
       console.warn('MediaRecorder error:', mrErr);
     }
 
-    // 5. Start Speech Recognition (Safely isolated so failure does NOT break audio recording)
+    // 5. Start Speech Recognition (Safely isolated so STT issues do NOT break audio recording)
     try {
-      if (!recognitionRef.current) {
-        recognitionRef.current = initSpeechRecognition();
+      if (recognitionRef.current) {
+        try { recognitionRef.current.abort(); } catch (e) {}
+        recognitionRef.current = null;
       }
 
-      if (recognitionRef.current) {
+      const recognition = initSpeechRecognition();
+      recognitionRef.current = recognition;
+
+      if (recognition) {
         try {
-          recognitionRef.current.start();
+          recognition.start();
         } catch (sttErr) {
-          try {
-            recognitionRef.current.abort();
-            setTimeout(() => {
-              if (isIntentionalListeningRef.current && recognitionRef.current) {
-                try { recognitionRef.current.start(); } catch (err) {}
-              }
-            }, 50);
-          } catch (abortErr) {}
+          console.warn('Speech recognition immediate start notice:', sttErr);
         }
       }
     } catch (recErr) {
@@ -515,23 +523,25 @@ export function useSpeechEngine({
       }
       const updated = { ...prev };
       delete updated[clipId];
+      audioClipsRef.current = updated;
       return updated;
     });
   }, []);
 
   const clearAudioClips = useCallback(() => {
     // Revoke all in-memory Blob URLs immediately to free browser RAM
-    Object.values(audioClips).forEach(clip => {
+    Object.values(audioClipsRef.current).forEach(clip => {
       if (clip && clip.url) {
         try {
           URL.revokeObjectURL(clip.url);
         } catch (e) {}
       }
     });
+    audioClipsRef.current = {};
     setAudioClips({});
-  }, [audioClips]);
+  }, []);
 
-  // Full Unmount Cleanup
+  // Full Unmount Cleanup (Strictly executes ONCE on component unmount)
   useEffect(() => {
     return () => {
       // 1. Stop Speech Synthesis
@@ -540,17 +550,20 @@ export function useSpeechEngine({
       }
       if (ttsKeepAliveTimerRef.current) {
         clearInterval(ttsKeepAliveTimerRef.current);
+        ttsKeepAliveTimerRef.current = null;
       }
 
       // 2. Stop Recognition
       isIntentionalListeningRef.current = false;
       if (recognitionRef.current) {
         try { recognitionRef.current.abort(); } catch (e) {}
+        recognitionRef.current = null;
       }
 
       // 3. Stop MediaRecorder
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         try { mediaRecorderRef.current.stop(); } catch (e) {}
+        mediaRecorderRef.current = null;
       }
 
       // 4. Stop Hardware Audio Tracks
@@ -564,15 +577,22 @@ export function useSpeechEngine({
       // 5. Close Audio Context & clear interval
       if (volumeIntervalRef.current) {
         clearInterval(volumeIntervalRef.current);
+        volumeIntervalRef.current = null;
       }
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         try { audioContextRef.current.close(); } catch (e) {}
+        audioContextRef.current = null;
       }
 
       // 6. Revoke memory Blobs
-      clearAudioClips();
+      Object.values(audioClipsRef.current).forEach(clip => {
+        if (clip && clip.url) {
+          try { URL.revokeObjectURL(clip.url); } catch (e) {}
+        }
+      });
+      audioClipsRef.current = {};
     };
-  }, [clearAudioClips]);
+  }, []);
 
   return {
     // STT State & Methods

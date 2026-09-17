@@ -32,14 +32,18 @@ export default function SpeakingShadowingModal({
   const shadowClipKey = `shadow_${activeSentenceIndex}`;
   const shadowClip = speechEngine.audioClips[shadowClipKey];
 
+  const wasOpenRef = useRef(isOpen);
+
   useEffect(() => {
-    if (!isOpen) {
+    if (wasOpenRef.current && !isOpen) {
+      // Only clean up when user specifically CLOSES this modal
       if (speechEngine.isListening) speechEngine.stopListening();
       if (userAudioRef.current) userAudioRef.current.pause();
       setIsPlayingUserAudio(false);
       setIsRecordingShadow(false);
       setActiveSentenceIndex(0);
     }
+    wasOpenRef.current = isOpen;
     return () => {
       if (userAudioRef.current) {
         try {
@@ -48,7 +52,7 @@ export default function SpeakingShadowingModal({
         } catch (e) {}
       }
     };
-  }, [isOpen, speechEngine]);
+  }, [isOpen]);
 
   if (!isOpen || !sentences.length) return null;
 

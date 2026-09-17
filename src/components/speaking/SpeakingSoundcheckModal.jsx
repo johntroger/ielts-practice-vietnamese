@@ -44,9 +44,11 @@ export default function SpeakingSoundcheckModal({
     }
   }, [speechEngine.transcript, speechEngine.interimTranscript]);
 
-  // Clean mic & test audio on modal close
+  const wasOpenRef = useRef(isOpen);
+
+  // Clean mic & test audio ONLY when this soundcheck modal transitions from open -> closed
   useEffect(() => {
-    if (!isOpen) {
+    if (wasOpenRef.current && !isOpen) {
       if (speechEngine.isListening) {
         speechEngine.stopListening();
       }
@@ -60,7 +62,8 @@ export default function SpeakingSoundcheckModal({
       setAudioErrorHint(null);
       setShowEdgeGuide(false);
     }
-  }, [isOpen, speechEngine]);
+    wasOpenRef.current = isOpen;
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
