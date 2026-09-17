@@ -25,6 +25,7 @@ import AuthModal from './components/AuthModal';
 import FeaturesGuideModal from './components/FeaturesGuideModal';
 import UserProfileModal from './components/UserProfileModal';
 import ContactModal from './components/ContactModal';
+import AIEvaluationProgressModal from './components/AIEvaluationProgressModal';
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
@@ -789,6 +790,12 @@ export default function App() {
       )}
 
       {/* 3. Modals System */}
+      <AIEvaluationProgressModal
+        isOpen={isSubmitting}
+        taskNumber={currentTask?.taskNumber || 2}
+        skill="writing"
+      />
+
       <VocabGrammarSpellingModal
         isOpen={isVocabGrammarOpen}
         onClose={() => setIsVocabGrammarOpen(false)}
