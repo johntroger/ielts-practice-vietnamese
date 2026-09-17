@@ -39,7 +39,7 @@ export default function EditorPane({
   const wordDiff = task.minWords - totalWords;
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 pb-20 sm:pb-8">
+    <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
       
       {/* Top Editor Toolbar */}
       <div className="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
@@ -142,15 +142,15 @@ export default function EditorPane({
       </div>
 
       {/* Main Textarea Area */}
-      <div className="flex-1 p-3 sm:p-5 lg:p-6 flex flex-col min-h-[520px] sm:min-h-[600px] lg:min-h-[660px] xl:min-h-[740px] relative">
+      <div className="flex-1 p-3 sm:p-5 lg:p-6 flex flex-col min-h-[380px] sm:min-h-[600px] lg:min-h-[660px] xl:min-h-[740px] relative">
         {activeTab === 'essay' ? (
-          <div className="flex-1 flex flex-col h-full min-h-[480px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative focus-within:border-slate-300 transition-colors">
+          <div className="flex-1 flex flex-col h-full min-h-[350px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative focus-within:border-slate-300 transition-colors">
             <textarea
               value={essayText}
               onChange={(e) => setEssayText(e.target.value)}
               spellCheck={spellcheckEnabled}
               placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới)"
-              className="flex-1 w-full min-h-[480px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] p-4 sm:p-6 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15.5px] sm:text-[16.5px] leading-[1.8] tracking-wide selection:bg-red-100 selection:text-red-900 placeholder:text-slate-400 placeholder:font-normal"
+              className="flex-1 w-full min-h-[350px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] p-3.5 sm:p-6 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16.5px] leading-[1.8] tracking-wide selection:bg-red-100 selection:text-red-900 placeholder:text-slate-400 placeholder:font-normal"
             />
           </div>
         ) : (

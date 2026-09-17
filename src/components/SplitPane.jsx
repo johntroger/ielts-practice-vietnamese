@@ -44,45 +44,42 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
   return (
     <div className="flex flex-col flex-1 w-full min-h-0">
       
-      {/* MOBILE ONLY: Segmented View Controller (Tiêu điểm làm bài trên mobile) */}
-      <div className="lg:hidden bg-slate-100 p-1.5 flex items-center justify-center border-b border-slate-200 gap-1 shadow-2xs z-10">
-        <button
-          onClick={() => setMobileTab('both')}
-          className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-            mobileTab === 'both' 
-              ? 'bg-white text-slate-900 shadow-sm' 
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-        >
-          <Columns className="w-3.5 h-3.5" />
-          <span className="xs:hidden">Đề & Bài</span>
-          <span className="hidden xs:inline">Đề & Bài Viết</span>
-        </button>
-
+      {/* MOBILE ONLY: Sticky Segmented View Controller (Tiêu điểm làm bài trên mobile) */}
+      <div className="lg:hidden sticky top-14 sm:top-16 bg-white/95 backdrop-blur-md p-1.5 flex items-center justify-center border-b border-slate-200 gap-1.5 shadow-xs z-30">
         <button
           onClick={() => setMobileTab('editor')}
-          className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             mobileTab === 'editor' 
-              ? 'bg-white text-red-700 shadow-sm ring-1 ring-red-200' 
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-red-50 text-red-700 shadow-xs border border-red-200 ring-1 ring-red-300' 
+              : 'text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200'
           }`}
         >
           <PenLine className="w-3.5 h-3.5 text-red-600" />
-          <span className="xs:hidden">Soạn Bài</span>
-          <span className="hidden xs:inline">Soạn Bài Rộng Rãi</span>
+          <span>Soạn Bài</span>
         </button>
 
         <button
           onClick={() => setMobileTab('prompt')}
-          className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             mobileTab === 'prompt' 
-              ? 'bg-white text-blue-700 shadow-sm ring-1 ring-blue-200' 
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-blue-50 text-blue-700 shadow-xs border border-blue-200 ring-1 ring-blue-300' 
+              : 'text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200'
           }`}
         >
           <BookOpen className="w-3.5 h-3.5 text-blue-600" />
-          <span className="xs:hidden">Đề Bài</span>
-          <span className="hidden xs:inline">Xem Đề Bài</span>
+          <span>Xem Đề Bài</span>
+        </button>
+
+        <button
+          onClick={() => setMobileTab('both')}
+          className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            mobileTab === 'both' 
+              ? 'bg-slate-900 text-white shadow-xs' 
+              : 'text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200'
+          }`}
+        >
+          <Columns className="w-3.5 h-3.5" />
+          <span>Chia Đôi</span>
         </button>
       </div>
 
@@ -95,7 +92,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
         <div 
           className={`w-full lg:min-h-[740px] xl:min-h-[840px] shrink-0 lg:shrink overflow-y-auto bg-white border-b lg:border-b-0 lg:border-r border-slate-200 transition-all ${
             mobileTab === 'editor' ? 'hidden lg:block' : 'block'
-          }`}
+          } ${mobileTab === 'both' ? 'max-h-[48vh] lg:max-h-none' : ''}`}
           style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${splitRatio}%` : '100%' }}
         >
           {leftPane}
@@ -114,7 +111,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
         <div 
           className={`w-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1 transition-all ${
             mobileTab === 'prompt' ? 'hidden lg:flex' : 'flex'
-          } ${mobileTab === 'editor' ? 'min-h-[75vh]' : 'min-h-[620px]'} lg:min-h-[740px] xl:min-h-[840px]`}
+          } ${mobileTab === 'editor' ? 'min-h-[calc(100vh-140px)]' : mobileTab === 'both' ? 'min-h-[50vh]' : 'min-h-[620px]'} lg:min-h-[740px] xl:min-h-[840px]`}
           style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${100 - splitRatio}%` : '100%' }}
         >
           {rightPane}
