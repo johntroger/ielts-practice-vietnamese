@@ -833,6 +833,10 @@ export default function App() {
         isOpen={isMockTestOpen}
         onClose={() => setIsMockTestOpen(false)}
         allTasks={allTasks}
+        submissions={submissions}
+        readingHistory={readingHistory}
+        listeningHistory={listeningHistory}
+        speakingHistory={speakingHistory}
         onSaveMockResult={(res) => {
           setStreakCount(prev => prev + 1);
           setSubmissions(prev => [
