@@ -123,19 +123,20 @@ export default function Navbar({
             </div>
 
             {/* Compact Skills Dropdown (Mobile / Tablet only - hidden on Desktop to avoid repetition) */}
-            <div className="relative lg:hidden">
+            <div className="relative xl:hidden shrink-0">
               <button
                 onClick={() => {
                   setIsSkillMenuOpen(!isSkillMenuOpen);
                   setIsPracticeMenuOpen(false);
                   setIsToolsMenuOpen(false);
                 }}
-                className={`flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs group ${activeColor.btn}`}
+                className={`flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs group cursor-pointer shrink-0 ${activeColor.btn}`}
                 title="Chuyển đổi kỹ năng IELTS"
               >
-                <CurrentSkillIcon className={`w-3.5 h-3.5 ${activeColor.icon}`} />
-                <span className="font-bold">{currentSkillObj.label}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform duration-150 ${activeColor.chevron} ${isSkillMenuOpen ? 'rotate-180' : ''}`} />
+                <CurrentSkillIcon className={`w-3.5 h-3.5 shrink-0 ${activeColor.icon}`} />
+                <span className="font-bold sm:hidden">{currentSkillObj.label.replace('IELTS ', '')}</span>
+                <span className="font-bold hidden sm:inline">{currentSkillObj.label}</span>
+                <ChevronDown className={`w-3 h-3 shrink-0 transition-transform duration-150 ${activeColor.chevron} ${isSkillMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isSkillMenuOpen && (
@@ -190,8 +191,8 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Direct 4-Skill Switcher Tabs on Desktop (Writing / Reading / Listening / Speaking) */}
-            <div className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1">
+            {/* Direct 4-Skill Switcher Tabs on Large Desktop (Writing / Reading / Listening / Speaking) */}
+            <div className="hidden xl:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1 shrink-0">
               {skills.map(s => {
                 const Icon = s.icon;
                 const isCurrent = activeSkill === s.id;
@@ -221,55 +222,45 @@ export default function Navbar({
 
           {/* 2. DESKTOP CENTER ZONE: Current Task Selector for Writing */}
           {activeSkill === 'writing' && (
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden lg:flex items-center space-x-2 min-w-0">
               <button 
                 onClick={onOpenLibrary}
-                className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer"
+                className="flex items-center space-x-2 px-2.5 lg:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0"
                 title="Nhấn để đổi đề thi hoặc xem danh sách bài"
               >
-                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${
+                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] lg:text-[11px] font-black uppercase tracking-wider shrink-0 ${
                   currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
                 }`}>
                   Task {currentTask.taskNumber}
                 </span>
-                <span className="text-xs font-semibold text-slate-800 max-w-[150px] lg:max-w-[220px] truncate">
+                <span className="text-xs font-semibold text-slate-800 max-w-[130px] xl:max-w-[200px] truncate">
                   {currentTask.title}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
               </button>
 
               {/* Streak Badge */}
               <div 
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold"
+                className="flex items-center space-x-1 px-2 lg:px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold shrink-0"
                 title="Chuỗi ngày luyện tập liên tục!"
               >
-                <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500 shrink-0" />
                 <span>{streakCount}d</span>
               </div>
             </div>
           )}
 
           {/* 3. RIGHT ZONE: Actions & Mobile Hamburger */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 pr-0.5">
             
-            {/* Desktop Only: Cẩm Nang Lý Thuyết & Chiến Thuật (Writing, Reading, Listening) */}
-            <button
-              onClick={onOpenTheory}
-              className="hidden lg:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
-              title="Cẩm nang lý thuyết & chiến thuật làm bài (Writing, Reading, Listening)"
-            >
-              <BookOpen className="w-4 h-4 text-amber-600" />
-              <span>Cẩm Nang</span>
-            </button>
-
             {/* Desktop Only: Phòng Luyện Bổ Trợ */}
-            <div className="relative hidden md:block">
+            <div className="relative hidden lg:block">
               <button
                 onClick={() => {
                   setIsPracticeMenuOpen(!isPracticeMenuOpen);
                   setIsToolsMenuOpen(false);
                 }}
-                className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-all shadow-2xs"
+                className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
                 title="Các chế độ luyện tập"
               >
                 <GraduationCap className="w-4 h-4 text-emerald-600" />
@@ -366,13 +357,13 @@ export default function Navbar({
             </div>
 
             {/* Desktop Only: Công Cụ AI & Dữ Liệu */}
-            <div className="relative hidden md:block">
+            <div className="relative hidden lg:block">
               <button
                 onClick={() => {
                   setIsToolsMenuOpen(!isToolsMenuOpen);
                   setIsPracticeMenuOpen(false);
                 }}
-                className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold transition-all shadow-2xs"
+                className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
                 title="Công cụ AI & Quản lý bài"
               >
                 <FolderKanban className="w-4 h-4 text-purple-600" />
@@ -465,16 +456,16 @@ export default function Navbar({
             {/* API Key Indicator */}
             <button
               onClick={onOpenSettings}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 apiKey 
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
                   : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 animate-pulse'
               }`}
               title={apiKey ? "Cài đặt hệ thống & Gemini API (Đã có Key)" : "Chưa cài đặt Gemini API Key! Bấm vào để nhập key"}
             >
-              <Settings className="w-3.5 h-3.5 text-slate-600" />
+              <Settings className="w-3.5 h-3.5 text-slate-600 shrink-0" />
               <div className="flex items-center space-x-1">
-                <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
                 <span className="hidden sm:inline text-[11px] font-semibold">
                   {apiKey ? 'API Key' : 'Nhập Key'}
                 </span>
@@ -490,23 +481,23 @@ export default function Navbar({
                   onOpenAuth();
                 }
               }}
-              className={`hidden sm:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs ${
+              className={`hidden lg:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 user 
                   ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' 
                   : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-800'
               }`}
               title={user ? `Xem trang cá nhân: ${user.email}` : "Đăng nhập hoặc đăng ký tài khoản"}
             >
-              <User className={`w-3.5 h-3.5 ${user ? 'text-red-600' : 'text-slate-300'}`} />
-              <span className="max-w-[100px] truncate text-[11px]">
+              <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
+              <span className="max-w-[90px] xl:max-w-[120px] truncate text-[11px]">
                 {user ? (user.email.split('@')[0]) : 'Tài Khoản'}
               </span>
             </button>
 
-            {/* Mobile Hamburger Menu Button */}
+            {/* Mobile & Tablet Hamburger Menu Button */}
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs"
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
               aria-label="Mở menu đầy đủ"
             >
               {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5" />}
@@ -516,16 +507,16 @@ export default function Navbar({
 
         </div>
 
-        {/* ROW 2: Mobile Only Task & Action Bar (Clean 2nd line, only in Writing) */}
+        {/* ROW 2: Mobile & Tablet Task & Action Bar (Clean 2nd line, only in Writing) */}
         {activeSkill === 'writing' && (
-          <div className="md:hidden py-2 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div className="lg:hidden py-2 border-t border-slate-100 flex items-center justify-between gap-2">
             {/* Mobile Task Selector - Expands flexibly */}
             <button 
               onClick={onOpenLibrary}
               className="flex-1 flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all text-left shadow-2xs min-w-0 cursor-pointer"
               title="Đổi đề bài hoặc chọn từ thư viện"
             >
-              <div className="flex items-center space-x-2 truncate">
+              <div className="flex items-center space-x-2 truncate min-w-0">
                 <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shrink-0 ${
                   currentTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
                 }`}>
@@ -545,7 +536,7 @@ export default function Navbar({
               title="Xem cẩm nang lý thuyết"
             >
               <span className="text-sm">📖</span>
-              <span className="hidden xs:inline">Cẩm nang</span>
+              <span className="hidden sm:inline">Cẩm nang</span>
             </button>
 
             <div 
@@ -562,7 +553,7 @@ export default function Navbar({
 
       {/* MOBILE DRAWER */}
       {isMobileDrawerOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end">
+        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end">
           <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto flex flex-col justify-between">
             <div className="space-y-4">
               
