@@ -62,6 +62,7 @@ export default function SpeakingPracticePane({
   const [refiningClipKey, setRefiningClipKey] = useState('');
   const [activeRecordClipKey, setActiveRecordClipKey] = useState('');
   const [isMicConnecting, setIsMicConnecting] = useState(false);
+  const [micErrorDetail, setMicErrorDetail] = useState(null);
 
   // Quick Add Question modal/prompt state
   const [isQuickAddQOpen, setIsQuickAddQOpen] = useState(false);
@@ -102,8 +103,28 @@ export default function SpeakingPracticePane({
     speechEngine.speak(text, { examinerId: activeExaminer.id });
   };
 
-  // Toggle generic practice recording with explicit user feedback
+  // Explicit Mic Permission Requester (forces browser popup if not yet prompted)
+  const handleRequestMicPermissionDirectly = async () => {
+    setMicErrorDetail(null);
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Trình duyệt không hỗ trợ getUserMedia.');
+      }
+      const testStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Acquired! Keep in engine
+      testStream.getTracks().forEach(track => track.stop());
+      alert('✅ Micro đã sẵn sàng! Bạn có thể nhấn nút "BẬT MICRO LUYỆN NÓI" để bắt đầu trả lời.');
+    } catch (err) {
+      console.warn('Direct mic permission test error:', err);
+      setMicErrorDetail(err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError'
+        ? 'Trình duyệt đang CHẶN Microphone! Hãy nhấp vào biểu tượng Ổ khóa (🔒) bên trái thanh URL để Cho phép Micro.'
+        : (err.message || 'Không thể kết nối Micro. Hãy kiểm tra thiết bị của bạn.'));
+    }
+  };
+
+  // Toggle generic practice recording with visible feedback
   const handleTogglePracticeRecord = async (clipKey) => {
+    setMicErrorDetail(null);
     if (isMicConnecting) return;
 
     // If currently listening, stop it cleanly
@@ -121,10 +142,11 @@ export default function SpeakingPracticePane({
 
     try {
       await speechEngine.startListening(clipKey);
+      setMicErrorDetail(null);
     } catch (err) {
-      console.warn('Microphone start error:', err);
+      console.error('Microphone start error:', err);
       setActiveRecordClipKey('');
-      alert('⚠️ Trình duyệt chưa cấp quyền truy cập Micro!\n\nVui lòng bấm vào biểu tượng Ổ khóa (🔒) trên thanh địa chỉ URL của trình duyệt và chọn "Cho phép (Allow)" Micro, sau đó bấm lại nút Bật Micro.');
+      setMicErrorDetail(err.message || 'Trình duyệt chưa cho phép truy cập Micro. Hãy bấm vào biểu tượng Ổ khóa (🔒) trên thanh URL để Cho phép Micro.');
     } finally {
       setIsMicConnecting(false);
     }
@@ -999,6 +1021,35 @@ export default function SpeakingPracticePane({
                   </button>
                 </div>
 
+                {/* Microphone Error / Permission Alert Banner */}
+                {micErrorDetail && (
+                  <div className="p-3.5 rounded-xl bg-rose-950/95 border-2 border-rose-500/80 text-rose-200 text-xs flex items-start space-x-2.5 shadow-xl animate-in fade-in duration-200">
+                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <div className="flex-1 space-y-1.5">
+                      <p className="font-bold text-white text-xs leading-snug">{micErrorDetail}</p>
+                      <div className="text-[11px] text-rose-300 leading-relaxed bg-rose-900/40 p-2 rounded-lg border border-rose-800/50 space-y-1">
+                        <p><strong>👉 Cách cấp quyền Micro trên trình duyệt:</strong></p>
+                        <p>1. Bấm vào biểu tượng <strong>Ổ khóa (🔒)</strong> hoặc <strong>Cài đặt trang web</strong> ở đầu thanh địa chỉ URL.</p>
+                        <p>2. Chuyển mục <strong>Microphone</strong> sang <strong>Cho phép (Allow)</strong>.</p>
+                        <p>3. Bấm nút <strong>"Kích Hoạt Lại Micro"</strong> bên dưới hoặc tải lại trang (F5).</p>
+                      </div>
+                      <button
+                        onClick={handleRequestMicPermissionDirectly}
+                        className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] flex items-center space-x-1.5 cursor-pointer shadow-md transition-all"
+                      >
+                        <Mic className="w-3.5 h-3.5" />
+                        <span>Kích Hoạt Lại Micro Ngay</span>
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setMicErrorDetail(null)}
+                      className="text-rose-400 hover:text-white text-xs font-bold p-1 rounded bg-rose-900/60 cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+
                 {/* Playback Box & AI Evaluation */}
                 {renderAudioPlayback(
                   `p1_${activeP1Topic.id}_${activeP1QuestionIndex}`,
@@ -1356,6 +1407,29 @@ export default function SpeakingPracticePane({
               </button>
             </div>
 
+            {/* Part 2 Microphone Error / Permission Alert Banner */}
+            {micErrorDetail && (
+              <div className="p-3.5 rounded-xl bg-rose-950/95 border-2 border-rose-500/80 text-rose-200 text-xs flex items-start space-x-2.5 shadow-xl animate-in fade-in duration-200">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-1.5">
+                  <p className="font-bold text-white text-xs leading-snug">{micErrorDetail}</p>
+                  <button
+                    onClick={handleRequestMicPermissionDirectly}
+                    className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] flex items-center space-x-1.5 cursor-pointer shadow-md transition-all"
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                    <span>Cấp Lại Quyền Micro</span>
+                  </button>
+                </div>
+                <button
+                  onClick={() => setMicErrorDetail(null)}
+                  className="text-rose-400 hover:text-white text-xs font-bold p-1 rounded bg-rose-900/60 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             {/* Playback Box & AI Evaluation */}
             {renderAudioPlayback(
               `p2_${activeP2Card.id}`,
@@ -1513,6 +1587,19 @@ export default function SpeakingPracticePane({
                       )}
                     </button>
                   </div>
+
+                  {/* Part 3 Mic Error Banner */}
+                  {micErrorDetail && activeRecordClipKey === clipKey && (
+                    <div className="p-3 rounded-xl bg-rose-950/95 border border-rose-500 text-rose-200 text-xs flex items-center justify-between shadow-lg">
+                      <span className="font-bold">{micErrorDetail}</span>
+                      <button
+                        onClick={handleRequestMicPermissionDirectly}
+                        className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] shrink-0 ml-2"
+                      >
+                        Cấp Lại Quyền
+                      </button>
+                    </div>
+                  )}
 
                   {/* Realtime Live Wave & Transcript when recording this specific question */}
                   {speechEngine.isListening && (activeRecordClipKey === clipKey || !activeRecordClipKey) && (

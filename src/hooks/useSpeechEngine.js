@@ -315,21 +315,26 @@ export function useSpeechEngine({
     return recognition;
   }, [isSpeechRecognitionSupported]);
 
-  // Start candidate microphone listening + media recorder (Optimistic Instant Response)
+  // Start candidate microphone listening + media recorder (Fault-Tolerant & Reliable)
   const startListening = useCallback(async (clipId = 'clip_current') => {
     setSpeechError(null);
     currentClipIdRef.current = clipId;
     isIntentionalListeningRef.current = true;
-    // OPTIMISTIC UI: Instant visual feedback to user (0ms lag)
-    setIsListening(true);
 
-    // 1. Setup AudioContext & Volume Analyser Node
+    // 1. Check browser mediaDevices support
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      const errMsg = 'Trình duyệt của bạn không hỗ trợ tính năng ghi âm qua Micro (navigator.mediaDevices.getUserMedia). Vui lòng sử dụng Google Chrome, Edge hoặc Safari và truy cập qua HTTPS.';
+      setSpeechError('unsupported');
+      isIntentionalListeningRef.current = false;
+      setIsListening(false);
+      throw new Error(errMsg);
+    }
+
+    // 2. Request microphone stream
+    let stream = null;
     try {
-      if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-        try { await audioContextRef.current.resume(); } catch (e) {}
-      }
       if (!mediaStreamRef.current || !mediaStreamRef.current.active || mediaStreamRef.current.getAudioTracks().every(t => t.readyState === 'ended')) {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
@@ -337,47 +342,66 @@ export function useSpeechEngine({
           }
         });
         mediaStreamRef.current = stream;
-
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioContextClass) {
-          const actx = new AudioContextClass();
-          if (actx.state === 'suspended') {
-            await actx.resume();
-          }
-          audioContextRef.current = actx;
-          const source = actx.createMediaStreamSource(stream);
-          const analyser = actx.createAnalyser();
-          analyser.fftSize = 64;
-          source.connect(analyser);
-          setAnalyserNode(analyser);
-
-          // Volume Level Polling
-          const dataArray = new Uint8Array(analyser.frequencyBinCount);
-          if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
-          volumeIntervalRef.current = setInterval(() => {
-            analyser.getByteFrequencyData(dataArray);
-            let sum = 0;
-            for (let i = 0; i < 8; i++) sum += dataArray[i];
-            const level = Math.min(100, Math.round((sum / 8) * (100 / 128)));
-            setMicLevel(level);
-          }, 80);
-        }
+      } else {
+        stream = mediaStreamRef.current;
       }
     } catch (err) {
       console.warn('Microphone permission error:', err);
       setSpeechError('not-allowed');
       isIntentionalListeningRef.current = false;
       setIsListening(false);
-      throw err;
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        throw new Error('Trình duyệt đang CHẶN quyền truy cập Microphone! Hãy nhấp vào biểu tượng Ổ khóa (🔒) bên trái thanh địa chỉ URL, chọn Micro và chuyển sang "Cho phép (Allow)".');
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        throw new Error('Không tìm thấy thiết bị Microphone nào được cắm vào máy tính/điện thoại của bạn.');
+      } else {
+        throw new Error('Không thể kết nối Micro: ' + (err.message || err.name));
+      }
     }
 
-    // 2. Setup MediaRecorder for RAM-only audio clip
+    // Microphone acquired! Turn UI to listening immediately
+    setIsListening(true);
+
+    // 3. Setup AudioContext & Volume Analyser Node (Safely isolated)
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass && stream) {
+        let actx = audioContextRef.current;
+        if (!actx || actx.state === 'closed') {
+          actx = new AudioContextClass();
+          audioContextRef.current = actx;
+        }
+        if (actx.state === 'suspended') {
+          await actx.resume();
+        }
+        const source = actx.createMediaStreamSource(stream);
+        const analyser = actx.createAnalyser();
+        analyser.fftSize = 64;
+        source.connect(analyser);
+        setAnalyserNode(analyser);
+
+        // Volume Level Polling
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        if (volumeIntervalRef.current) clearInterval(volumeIntervalRef.current);
+        volumeIntervalRef.current = setInterval(() => {
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < 8; i++) sum += dataArray[i];
+          const level = Math.min(100, Math.round((sum / 8) * (100 / 128)));
+          setMicLevel(level);
+        }, 80);
+      }
+    } catch (actxErr) {
+      console.warn('AudioContext visualizer warning (recording continues):', actxErr);
+    }
+
+    // 4. Setup MediaRecorder for RAM-only audio clip (Safely isolated)
     try {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         try { mediaRecorderRef.current.stop(); } catch (e) {}
       }
 
-      if (window.MediaRecorder && mediaStreamRef.current) {
+      if (window.MediaRecorder && stream) {
         recordedChunksRef.current = [];
         const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
           ? 'audio/webm;codecs=opus'
@@ -386,8 +410,8 @@ export function useSpeechEngine({
           : '';
 
         const recorder = mimeType 
-          ? new MediaRecorder(mediaStreamRef.current, { mimeType })
-          : new MediaRecorder(mediaStreamRef.current);
+          ? new MediaRecorder(stream, { mimeType })
+          : new MediaRecorder(stream);
 
         recorder.ondataavailable = (e) => {
           if (e.data && e.data.size > 0) {
@@ -417,29 +441,32 @@ export function useSpeechEngine({
         recorder.start(250); // Slice chunks every 250ms
         mediaRecorderRef.current = recorder;
       }
-    } catch (err) {
-      console.warn('MediaRecorder error:', err);
+    } catch (mrErr) {
+      console.warn('MediaRecorder error:', mrErr);
     }
 
-    // 3. Start Speech Recognition
-    if (!recognitionRef.current) {
-      recognitionRef.current = initSpeechRecognition();
-    }
-
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.start();
-      } catch (e) {
-        // If already active, abort first and start clean
-        try {
-          recognitionRef.current.abort();
-          setTimeout(() => {
-            if (isIntentionalListeningRef.current && recognitionRef.current) {
-              try { recognitionRef.current.start(); } catch (err) {}
-            }
-          }, 30);
-        } catch (abortErr) {}
+    // 5. Start Speech Recognition (Safely isolated so failure does NOT break audio recording)
+    try {
+      if (!recognitionRef.current) {
+        recognitionRef.current = initSpeechRecognition();
       }
+
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch (sttErr) {
+          try {
+            recognitionRef.current.abort();
+            setTimeout(() => {
+              if (isIntentionalListeningRef.current && recognitionRef.current) {
+                try { recognitionRef.current.start(); } catch (err) {}
+              }
+            }, 50);
+          } catch (abortErr) {}
+        }
+      }
+    } catch (recErr) {
+      console.warn('Speech recognition setup warning:', recErr);
     }
   }, [initSpeechRecognition]);
 
