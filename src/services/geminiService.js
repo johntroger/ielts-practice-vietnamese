@@ -3086,6 +3086,88 @@ Output valid raw JSON:
   return parsed;
 }
 
+/**
+ * Direct Multimodal Audio Transcription with Google Gemini AI
+ * Converts in-RAM audio blob to base64 and invokes Gemini's native audio understanding.
+ * Accurately extracts English spoken words, fixes STT errors, and adds punctuation.
+ */
+export async function transcribeAudioWithGemini({
+  audioBlob,
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!audioBlob) throw new Error('Không tìm thấy tệp âm thanh ghi âm.');
+
+  // Convert Blob to Base64 in browser
+  const base64Audio = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      try {
+        const res = reader.result;
+        const base64 = typeof res === 'string' ? res.split(',')[1] : '';
+        resolve(base64);
+      } catch (e) {
+        reject(e);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(audioBlob);
+  });
+
+  if (!base64Audio) throw new Error('Không thể đọc dữ liệu âm thanh từ bộ nhớ RAM.');
+
+  // Determine standard audio mimeType (e.g. audio/webm, audio/mp4, audio/ogg)
+  let mimeType = audioBlob.type || 'audio/webm';
+  if (mimeType.includes(';')) {
+    mimeType = mimeType.split(';')[0];
+  }
+
+  const prompt = `You are a Cambridge IELTS Senior Speech-to-Text Examiner.
+Listen to this audio recording of a candidate practicing for the IELTS Speaking test.
+Transcribe every word spoken in English verbatim with extreme precision.
+Rules:
+1. Output ONLY the English transcript.
+2. Fix any minor acoustic ambiguities while strictly preserving the candidate's actual words, grammar, and pronunciation choices.
+3. Include natural punctuation (commas, full stops, question marks) and capitalization.
+4. Do NOT add notes, headers, markdown fences, timestamps, or translations. Output ONLY the plain transcription text.`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [
+        {
+          parts: [
+            {
+              inlineData: {
+                mimeType,
+                data: base64Audio
+              }
+            },
+            {
+              text: prompt
+            }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 2500
+      }
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData?.error?.message || `Lỗi AI khi nhận diện âm thanh (${response.status})`);
+  }
+
+  const result = await response.json();
+  const transcribedText = result?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+  return transcribedText.replace(/^["']|["']$/g, '').trim();
+}
+
 
 
 

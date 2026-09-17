@@ -465,6 +465,12 @@ export function useSpeechEngine({
     setInterimTranscript('');
   }, []);
 
+  const setCustomTranscript = useCallback((text) => {
+    accumulatedTranscriptRef.current = text || '';
+    setTranscript(text || '');
+    setInterimTranscript('');
+  }, []);
+
   // =========================================================================
   // 4. ZERO PERMANENT VOICE STORAGE CLEANUP
   // =========================================================================
@@ -545,6 +551,7 @@ export function useSpeechEngine({
     startListening,
     stopListening,
     resetTranscript,
+    setCustomTranscript,
 
     // TTS State & Methods
     isSpeaking,
