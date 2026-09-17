@@ -616,7 +616,7 @@ export default function MockTestModal({
               </div>
               <div>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/30 text-emerald-300 text-xs font-black uppercase tracking-wider border border-emerald-400/30">
-                  Dự Phòng Kiến Trúc Thi Thử
+                  Đã Kích Hoạt Hoạt Động • Live AI Examiner
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold mt-2">
                   Phòng Thi Thử IELTS Speaking Với Giám Khảo Ảo AI (11–14 Phút)
@@ -672,8 +672,20 @@ export default function MockTestModal({
                 "Good afternoon. My name is Dr. Harrison. Could you please state your full name for the record? ... Thank you. In this first part, I'd like to ask you some questions about your daily routine..."
               </div>
 
-              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 space-y-1">
-                <strong>Trạng thái phát triển:</strong> Đang hoàn thiện mô-đun Speech Recognition và chấm phát âm theo thang chuẩn CEFR / IELTS Band.
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div>
+                  <strong>Trạng thái:</strong> Phòng thi 3 Parts với Giám khảo AI bản xứ & chấm điểm 4 tiêu chí đã sẵn sàng!
+                </div>
+                <button
+                  onClick={() => {
+                    onClose();
+                    onSelectSkill?.('speaking');
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 flex items-center space-x-2 shrink-0 cursor-pointer"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Vào Phòng Thi Speaking Ngay</span>
+                </button>
               </div>
             </div>
           </div>

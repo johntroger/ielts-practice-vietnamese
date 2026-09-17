@@ -247,15 +247,15 @@ export default function TheoryHandbookModal({
 }) {
   if (!isOpen) return null;
 
-  // Selected skill tab: 'writing' | 'reading' | 'listening' | 'personal'
+  // Selected skill tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'personal'
   const [selectedSkill, setSelectedSkill] = useState(() => {
-    if (activeSkill === 'reading' || activeSkill === 'listening') return activeSkill;
+    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking') return activeSkill;
     return 'writing';
   });
 
   // When opening or prop changes, sync selectedSkill if user hasn't explicitly picked one
   useEffect(() => {
-    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'writing') {
+    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || activeSkill === 'writing') {
       setSelectedSkill(activeSkill);
     }
   }, [activeSkill, isOpen]);
