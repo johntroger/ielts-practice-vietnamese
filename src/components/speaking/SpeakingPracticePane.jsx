@@ -61,6 +61,7 @@ export default function SpeakingPracticePane({
   const [isRefiningTranscript, setIsRefiningTranscript] = useState(false);
   const [refiningClipKey, setRefiningClipKey] = useState('');
   const [activeRecordClipKey, setActiveRecordClipKey] = useState('');
+  const [isMicConnecting, setIsMicConnecting] = useState(false);
 
   // Quick Add Question modal/prompt state
   const [isQuickAddQOpen, setIsQuickAddQOpen] = useState(false);
@@ -101,20 +102,19 @@ export default function SpeakingPracticePane({
     speechEngine.speak(text, { examinerId: activeExaminer.id });
   };
 
-  // Toggle generic practice recording
+  // Toggle generic practice recording with explicit user feedback
   const handleTogglePracticeRecord = async (clipKey) => {
-    // If currently recording this specific question, stop it cleanly
-    if (speechEngine.isListening && activeRecordClipKey === clipKey) {
+    if (isMicConnecting) return;
+
+    // If currently listening, stop it cleanly
+    if (speechEngine.isListening) {
       speechEngine.stopListening();
       setActiveRecordClipKey('');
+      setIsMicConnecting(false);
       return;
     }
 
-    // If currently recording another question, stop previous first
-    if (speechEngine.isListening) {
-      speechEngine.stopListening();
-    }
-
+    setIsMicConnecting(true);
     setActiveRecordClipKey(clipKey);
     speechEngine.resetTranscript();
     if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
@@ -124,15 +124,11 @@ export default function SpeakingPracticePane({
     } catch (err) {
       console.warn('Microphone start error:', err);
       setActiveRecordClipKey('');
+      alert('⚠️ Trình duyệt chưa cấp quyền truy cập Micro!\n\nVui lòng bấm vào biểu tượng Ổ khóa (🔒) trên thanh địa chỉ URL của trình duyệt và chọn "Cho phép (Allow)" Micro, sau đó bấm lại nút Bật Micro.');
+    } finally {
+      setIsMicConnecting(false);
     }
   };
-
-  // Keep activeRecordClipKey in sync if speech engine stops from outside
-  useEffect(() => {
-    if (!speechEngine.isListening) {
-      setActiveRecordClipKey('');
-    }
-  }, [speechEngine.isListening]);
 
   // -------------------------------------------------------------
   // PART 2 PREP TIMER & PACING LOGIC
@@ -162,41 +158,46 @@ export default function SpeakingPracticePane({
   };
 
   const handleTogglePart2Speaking = async () => {
+    if (isMicConnecting) return;
     const clipKey = `p2_${activeP2Card.id}`;
+
     if (isPart2Speaking || speechEngine.isListening) {
       clearInterval(speakTimerRef.current);
       setIsPart2Speaking(false);
       speechEngine.stopListening();
       setActiveRecordClipKey('');
+      setIsMicConnecting(false);
     } else {
+      setIsMicConnecting(true);
       setActiveRecordClipKey(clipKey);
       setSpeakSecondsElapsed(0);
-      setIsPart2Speaking(true);
       speechEngine.resetTranscript();
       if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
 
       try {
         await speechEngine.startListening(clipKey);
+        setIsPart2Speaking(true);
+        if (speakTimerRef.current) clearInterval(speakTimerRef.current);
+        speakTimerRef.current = setInterval(() => {
+          setSpeakSecondsElapsed(prev => {
+            if (prev >= 120) {
+              clearInterval(speakTimerRef.current);
+              setIsPart2Speaking(false);
+              speechEngine.stopListening();
+              setActiveRecordClipKey('');
+              return 120;
+            }
+            return prev + 1;
+          });
+        }, 1000);
       } catch (err) {
         console.warn('Part 2 mic error:', err);
         setIsPart2Speaking(false);
         setActiveRecordClipKey('');
-        return;
+        alert('⚠️ Trình duyệt chưa cấp quyền truy cập Micro!\n\nVui lòng bấm vào biểu tượng Ổ khóa (🔒) trên thanh địa chỉ URL của trình duyệt và chọn "Cho phép (Allow)" Micro.');
+      } finally {
+        setIsMicConnecting(false);
       }
-
-      if (speakTimerRef.current) clearInterval(speakTimerRef.current);
-      speakTimerRef.current = setInterval(() => {
-        setSpeakSecondsElapsed(prev => {
-          if (prev >= 120) {
-            clearInterval(speakTimerRef.current);
-            setIsPart2Speaking(false);
-            speechEngine.stopListening();
-            setActiveRecordClipKey('');
-            return 120;
-          }
-          return prev + 1;
-        });
-      }, 1000);
     }
   };
 
@@ -847,33 +848,46 @@ export default function SpeakingPracticePane({
               {/* Interactive Recorder Box */}
               <div className={`p-4 rounded-2xl border space-y-3 transition-all ${
                 speechEngine.isListening 
-                  ? 'bg-slate-950 border-emerald-500/60 shadow-xl shadow-emerald-950/40 ring-1 ring-emerald-500/30' 
+                  ? 'bg-slate-950 border-rose-500/60 shadow-xl shadow-rose-950/40 ring-2 ring-rose-500/30' 
+                  : isMicConnecting
+                  ? 'bg-slate-950 border-amber-500/60 shadow-xl shadow-amber-950/40 ring-2 ring-amber-500/30'
                   : 'bg-slate-950 border-slate-800/90'
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <div className={`p-1.5 rounded-lg border transition-colors ${
                       speechEngine.isListening 
-                        ? 'bg-emerald-950 text-emerald-400 border-emerald-500/50' 
+                        ? 'bg-rose-950 text-rose-400 border-rose-500/50 animate-pulse' 
+                        : isMicConnecting
+                        ? 'bg-amber-950 text-amber-400 border-amber-500/50 animate-spin'
                         : 'bg-slate-800 text-slate-400 border-slate-700'
                     }`}>
-                      {speechEngine.isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+                      {speechEngine.isListening ? <Mic className="w-4 h-4" /> : isMicConnecting ? <Loader2 className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
                     </div>
                     <div>
                       <span className="text-xs font-black uppercase tracking-wider block text-white">
-                        {speechEngine.isListening ? 'Đang Thu Âm Trả Lời' : 'Luyện Nói Cho Câu Này'}
+                        {speechEngine.isListening ? '🔴 Đang Thu Âm Trả Lời' : isMicConnecting ? '⏳ Đang Kích Hoạt Micro...' : 'Luyện Nói Cho Câu Này'}
                       </span>
                       <span className="text-[11px] text-slate-400">
-                        {speechEngine.isListening ? 'Giọng bạn đang được phân tích trực tiếp' : 'Mic hiện đang tắt'}
+                        {speechEngine.isListening 
+                          ? 'Giọng bạn đang được phân tích trực tiếp' 
+                          : isMicConnecting
+                          ? 'Vui lòng bấm Cho Phép nếu trình duyệt yêu cầu'
+                          : 'Bấm nút "Bật Micro Luyện Nói" bên dưới để trả lời'}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     {speechEngine.isListening ? (
-                      <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-black animate-pulse">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[11px] font-black animate-pulse">
+                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                         <span>REC • MICRO ĐANG BẬT</span>
+                      </span>
+                    ) : isMicConnecting ? (
+                      <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[11px] font-bold">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <span>ĐANG KẾT NỐI</span>
                       </span>
                     ) : (
                       <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-[11px] font-bold">
@@ -890,7 +904,9 @@ export default function SpeakingPracticePane({
 
                 <div className={`h-16 rounded-xl border overflow-hidden transition-all ${
                   speechEngine.isListening 
-                    ? 'bg-slate-900 border-emerald-500/40 ring-2 ring-emerald-500/20' 
+                    ? 'bg-slate-900 border-rose-500/40 ring-2 ring-rose-500/20' 
+                    : isMicConnecting
+                    ? 'bg-slate-900 border-amber-500/40 ring-2 ring-amber-500/20'
                     : 'bg-slate-900 border-slate-800'
                 }`}>
                   <SpeechWaveVisualizer
@@ -905,6 +921,8 @@ export default function SpeakingPracticePane({
                   <p className="italic leading-relaxed text-slate-200">
                     {speechEngine.transcript || speechEngine.interimTranscript ? (
                       <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic font-semibold">{speechEngine.interimTranscript}</strong>"</span>
+                    ) : isMicConnecting ? (
+                      <span className="text-amber-400">Đang bật micro... Vui lòng chuẩn bị nói.</span>
                     ) : (
                       <span className="text-slate-500">Bấm nút "Bật Micro Luyện Nói" bên dưới và bắt đầu trả lời bằng tiếng Anh...</span>
                     )}
@@ -953,16 +971,24 @@ export default function SpeakingPracticePane({
 
                   <button
                     onClick={() => handleTogglePracticeRecord(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
-                    className={`px-5 py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg ${
-                      speechEngine.isListening && (activeRecordClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` || !activeRecordClipKey)
-                        ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/40 ring-2 ring-rose-400 animate-pulse' 
+                    disabled={isMicConnecting}
+                    className={`px-5 py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg active:scale-95 ${
+                      isMicConnecting
+                        ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-900/40 ring-4 ring-amber-400/40 animate-pulse cursor-wait'
+                        : speechEngine.isListening
+                        ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/40 ring-4 ring-rose-500/40 animate-pulse' 
                         : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40'
                     }`}
                   >
-                    {speechEngine.isListening && (activeRecordClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` || !activeRecordClipKey) ? (
+                    {isMicConnecting ? (
                       <>
-                        <Square className="w-3.5 h-3.5 fill-current" />
-                        <span>DỪNG THU ÂM (HOÀN TẤT)</span>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>ĐANG KẾT NỐI MICRO...</span>
+                      </>
+                    ) : speechEngine.isListening ? (
+                      <>
+                        <Square className="w-3.5 h-3.5 fill-current text-white" />
+                        <span>🔴 DỪNG THU ÂM (HOÀN TẤT)</span>
                       </>
                     ) : (
                       <>
@@ -1302,16 +1328,24 @@ export default function SpeakingPracticePane({
 
               <button
                 onClick={handleTogglePart2Speaking}
-                className={`px-6 py-3 rounded-xl text-xs font-black flex items-center space-x-2 transition-all cursor-pointer shadow-lg ${
-                  isPart2Speaking || speechEngine.isListening
-                    ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/40 ring-2 ring-rose-400 animate-pulse'
+                disabled={isMicConnecting}
+                className={`px-6 py-3 rounded-xl text-xs font-black flex items-center space-x-2 transition-all cursor-pointer shadow-lg active:scale-95 ${
+                  isMicConnecting
+                    ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-900/40 ring-4 ring-amber-400/40 animate-pulse cursor-wait'
+                    : isPart2Speaking || speechEngine.isListening
+                    ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/40 ring-4 ring-rose-500/40 animate-pulse'
                     : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40'
                 }`}
               >
-                {isPart2Speaking || speechEngine.isListening ? (
+                {isMicConnecting ? (
                   <>
-                    <Square className="w-4 h-4 fill-current" />
-                    <span>DỪNG NÓI PART 2</span>
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                    <span>ĐANG KẾT NỐI MICRO...</span>
+                  </>
+                ) : isPart2Speaking || speechEngine.isListening ? (
+                  <>
+                    <Square className="w-4 h-4 fill-current text-white" />
+                    <span>🔴 DỪNG NÓI PART 2</span>
                   </>
                 ) : (
                   <>
@@ -1452,16 +1486,24 @@ export default function SpeakingPracticePane({
                     </span>
                     <button
                       onClick={() => handleTogglePracticeRecord(clipKey)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer shadow-md ${
-                        speechEngine.isListening && activeRecordClipKey === clipKey
-                          ? 'bg-rose-600 text-white animate-pulse ring-2 ring-rose-400 shadow-rose-900/40' 
+                      disabled={isMicConnecting}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer shadow-md active:scale-95 ${
+                        isMicConnecting && activeRecordClipKey === clipKey
+                          ? 'bg-amber-600 text-white animate-pulse cursor-wait ring-2 ring-amber-400'
+                          : speechEngine.isListening && (activeRecordClipKey === clipKey || !activeRecordClipKey)
+                          ? 'bg-rose-600 text-white animate-pulse ring-4 ring-rose-500/30 shadow-rose-900/40' 
                           : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40'
                       }`}
                     >
-                      {speechEngine.isListening && activeRecordClipKey === clipKey ? (
+                      {isMicConnecting && activeRecordClipKey === clipKey ? (
                         <>
-                          <Square className="w-3.5 h-3.5 fill-current" />
-                          <span>Dừng Thu Âm Câu Này</span>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                          <span>Đang Kết Nối Micro...</span>
+                        </>
+                      ) : speechEngine.isListening && (activeRecordClipKey === clipKey || !activeRecordClipKey) ? (
+                        <>
+                          <Square className="w-3.5 h-3.5 fill-current text-white" />
+                          <span>🔴 Dừng Thu Âm Câu Này</span>
                         </>
                       ) : (
                         <>
@@ -1473,8 +1515,8 @@ export default function SpeakingPracticePane({
                   </div>
 
                   {/* Realtime Live Wave & Transcript when recording this specific question */}
-                  {speechEngine.isListening && activeRecordClipKey === clipKey && (
-                    <div className="space-y-2 p-3 rounded-xl bg-slate-900 border border-emerald-500/40 ring-1 ring-emerald-500/30 animate-in fade-in duration-150">
+                  {speechEngine.isListening && (activeRecordClipKey === clipKey || !activeRecordClipKey) && (
+                    <div className="space-y-2 p-3 rounded-xl bg-slate-900 border border-rose-500/40 ring-1 ring-rose-500/30 animate-in fade-in duration-150">
                       <div className="h-10 rounded-lg bg-slate-950 overflow-hidden">
                         <SpeechWaveVisualizer
                           mode="candidate_speaking"

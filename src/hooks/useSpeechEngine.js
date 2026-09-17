@@ -274,10 +274,16 @@ export function useSpeechEngine({
     };
 
     recognition.onerror = (event) => {
+      console.warn('Speech recognition status:', event.error);
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setSpeechError('not-allowed');
-        isIntentionalListeningRef.current = false;
-        setIsListening(false);
+        // If STT cloud service is blocked, do NOT kill audio recording!
+        // We have direct Gemini Multimodal Audio STT fallback.
+        setSpeechError('stt-service-unavailable');
+        // Only stop if MediaRecorder is not available or inactive
+        if (!mediaRecorderRef.current || mediaRecorderRef.current.state === 'inactive') {
+          isIntentionalListeningRef.current = false;
+          setIsListening(false);
+        }
       } else if (event.error === 'no-speech') {
         // Normal silence timeout in Chrome, watchdog will auto-restart if still intentional
       } else if (event.error === 'network') {
@@ -362,7 +368,7 @@ export function useSpeechEngine({
       setSpeechError('not-allowed');
       isIntentionalListeningRef.current = false;
       setIsListening(false);
-      return;
+      throw err;
     }
 
     // 2. Setup MediaRecorder for RAM-only audio clip
