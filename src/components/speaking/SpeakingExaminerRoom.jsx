@@ -447,40 +447,40 @@ export default function SpeakingExaminerRoom({
     <div className="fixed inset-0 z-50 bg-slate-950 text-slate-100 flex flex-col justify-between overflow-hidden select-none font-sans">
       
       {/* 1. TOP STATUS BAR (Exam Stage, Timer, Controls) */}
-      <div className="h-14 px-4 sm:px-6 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between shrink-0 backdrop-blur-md">
+      <div className="h-14 px-2.5 sm:px-6 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between shrink-0 backdrop-blur-md gap-2">
         
         {/* Left: Exam Mode & Stage Indicator */}
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-xs font-black uppercase tracking-wider text-rose-400">
-              Phòng Thi Trực Tiếp
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+          <div className="flex items-center space-x-1.5 shrink-0">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
+            <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-rose-400 shrink-0">
+              <span className="hidden sm:inline">Phòng Thi </span>Live
             </span>
           </div>
-          <div className="h-4 w-px bg-slate-800" />
-          <span className="text-xs font-bold text-slate-300">
-            {currentStage === 'greeting' && 'Thủ tục: Chào hỏi & ID Check'}
-            {currentStage === 'part1' && `Part 1: Phỏng vấn (${p1Index + 1}/${part1Topic.questions.length})`}
-            {currentStage === 'part2_prep' && 'Part 2: Chuẩn bị nháp (60 giây)'}
-            {currentStage === 'part2_speak' && 'Part 2: Thuyết trình độc thoại (2 phút)'}
-            {currentStage === 'part3' && `Part 3: Thảo luận phản biện (${p3Index + 1}/${part3Set.questions.length})`}
-            {currentStage === 'finishing' && 'Hoàn thành bài thi'}
+          <div className="h-4 w-px bg-slate-800 shrink-0" />
+          <span className="text-xs font-bold text-slate-300 truncate max-w-[130px] sm:max-w-none">
+            {currentStage === 'greeting' && 'Thủ tục: Chào hỏi & ID'}
+            {currentStage === 'part1' && `Part 1 (${p1Index + 1}/${part1Topic.questions.length})`}
+            {currentStage === 'part2_prep' && 'Part 2: Nháp (60s)'}
+            {currentStage === 'part2_speak' && 'Part 2: Nói (2 phút)'}
+            {currentStage === 'part3' && `Part 3 (${p3Index + 1}/${part3Set.questions.length})`}
+            {currentStage === 'finishing' && 'Hoàn thành'}
           </span>
         </div>
 
         {/* Center: Stage Duration Clock */}
-        <div className="flex items-center space-x-2 px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
-          <Clock className="w-3.5 h-3.5 text-purple-400" />
-          <span>Thời gian thi: {formatTime(totalSeconds)}</span>
+        <div className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 shrink-0">
+          <Clock className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+          <span><span className="hidden sm:inline">Thời gian: </span>{formatTime(totalSeconds)}</span>
         </div>
 
         {/* Right: Exit / Conclude */}
         <button
           onClick={onExitRoom}
-          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer"
+          className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
           title="Thoát phòng thi"
         >
-          <LogOut className="w-3.5 h-3.5" />
+          <LogOut className="w-3.5 h-3.5 shrink-0" />
           <span className="hidden sm:inline">Rời phòng</span>
         </button>
       </div>
@@ -685,10 +685,10 @@ export default function SpeakingExaminerRoom({
       )}
 
       {/* 4. BOTTOM INTERACTION BAR (Microphone, Waveform, Next Question) */}
-      <div className="h-24 px-4 sm:px-8 bg-slate-900 border-t border-slate-800 flex items-center justify-between shrink-0 z-30">
+      <div className="h-24 px-2.5 sm:px-8 bg-slate-900 border-t border-slate-800 flex items-center justify-between shrink-0 z-30 gap-2">
         
         {/* Left: Waveform Visualizer */}
-        <div className="w-36 sm:w-56 h-12 flex items-center">
+        <div className="w-16 xs:w-28 sm:w-56 h-12 flex items-center shrink-0">
           <SpeechWaveVisualizer 
             analyserNode={speechEngine.analyserNode}
             mode={isMicActive ? 'candidate_speaking' : speechEngine.isSpeaking ? 'examiner_speaking' : 'idle'}
@@ -697,7 +697,7 @@ export default function SpeakingExaminerRoom({
         </div>
 
         {/* Center: Push-to-Talk Mic Master Button (High Contrast Crimson Red REC vs Dark Slate) */}
-        <div className="flex flex-col items-center relative">
+        <div className="flex flex-col items-center relative shrink-0">
           {/* Permission warning banner if microphone blocked */}
           {speechEngine.speechError === 'not-allowed' && (
             <div className="absolute -top-12 bg-rose-950/95 text-rose-300 border border-rose-600/80 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center space-x-1.5 shadow-xl animate-bounce z-40 whitespace-nowrap">
@@ -709,29 +709,29 @@ export default function SpeakingExaminerRoom({
           <button
             type="button"
             onClick={handleToggleMic}
-            className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-2xl font-bold active:scale-95 ${
+            className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-2xl font-bold active:scale-95 ${
               isMicActive
                 ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/60 ring-4 ring-rose-500/40 animate-pulse scale-105 border-2 border-rose-400'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-2 border-slate-700 shadow-slate-950/50'
             }`}
-            title="Bật/Tắt Micro (Phím Spacebar)"
+            title="Bật/Tắt Micro"
             aria-label="Bật hoặc tắt micro"
           >
             {isMicActive ? (
               <div className="relative flex items-center justify-center">
-                <Mic className="w-7 h-7 text-white animate-bounce" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full ring-2 ring-rose-600" />
+                <Mic className="w-6 h-6 sm:w-7 sm:h-7 text-white animate-bounce" />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white rounded-full ring-2 ring-rose-600" />
               </div>
             ) : (
-              <MicOff className="w-7 h-7 text-slate-400" />
+              <MicOff className="w-6 h-6 sm:w-7 sm:h-7 text-slate-400" />
             )}
           </button>
-          <div className="flex items-center space-x-1.5 mt-1.5">
+          <div className="flex items-center space-x-1 sm:space-x-1.5 mt-1.5">
             <span className={`w-2 h-2 rounded-full ${isMicActive ? 'bg-rose-500 animate-ping' : 'bg-slate-600'}`} />
-            <span className={`text-[11px] font-black uppercase tracking-wider ${
+            <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider ${
               isMicActive ? 'text-rose-400' : 'text-slate-400'
             }`}>
-              {isMicActive ? 'ĐANG THU ÂM [SPACE]' : 'MICRO TẮT [SPACE]'}
+              {isMicActive ? 'ĐANG THU ÂM' : 'MICRO TẮT'}<span className="hidden sm:inline"> [SPACE]</span>
             </span>
           </div>
         </div>

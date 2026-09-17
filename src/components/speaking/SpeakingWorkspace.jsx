@@ -255,23 +255,23 @@ export default function SpeakingWorkspace({
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-slate-950 text-slate-100 overflow-hidden select-none">
       
-      {/* 1. TOP HEADER TOOLBAR (Theater Mode) */}
-      <div className="bg-slate-900 border-b border-slate-800/80 px-3 sm:px-6 py-2.5 flex items-center justify-between gap-3 shrink-0">
+      {/* 1. TOP HEADER TOOLBAR (Theater Mode & Mobile-Optimized) */}
+      <div className="bg-slate-900 border-b border-slate-800/80 px-2.5 sm:px-6 py-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 sm:gap-3 shrink-0">
         
-        {/* Left: Branding & Mode Switcher */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-sm shrink-0">
-              <Mic className="w-4 h-4" />
+        {/* Left / Row 1 on Mobile: Branding & Mode Switcher */}
+        <div className="flex items-center justify-between sm:justify-start space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-2 shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-sm shrink-0">
+              <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-sm text-white tracking-tight">Speaking Studio</span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  AI Examiner
+                <span className="font-extrabold text-xs sm:text-sm text-white tracking-tight">Speaking Studio</span>
+                <span className="px-1 py-0.2 sm:px-1.5 sm:py-0.5 rounded text-[8px] sm:text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  AI
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400 font-medium hidden sm:block">
+              <span className="text-[10px] text-slate-400 font-medium hidden lg:block">
                 Khảo thí 1-on-1 • 4 Tiêu chí Cambridge
               </span>
             </div>
@@ -280,32 +280,32 @@ export default function SpeakingWorkspace({
           <div className="h-5 w-px bg-slate-800 hidden sm:block" />
 
           {/* Mode Pill Switcher */}
-          <div className="flex bg-slate-800/80 p-0.5 rounded-xl border border-slate-700/60">
+          <div className="flex bg-slate-800/80 p-0.5 rounded-xl border border-slate-700/60 shrink-0">
             <button
               onClick={() => setActiveMode('mock')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                 activeMode === 'mock' 
                   ? 'bg-purple-600 text-white shadow-xs' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Thi Thử Full Test
+              <span>Thi Thử<span className="hidden sm:inline"> Full Test</span></span>
             </button>
             <button
               onClick={() => setActiveMode('practice')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                 activeMode === 'practice' 
                   ? 'bg-purple-600 text-white shadow-xs' 
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              Luyện Tập Tự Do
+              <span>Luyện Tự Do</span>
             </button>
           </div>
         </div>
 
-        {/* Right: Examiner Profile Picker & Quick Tools */}
-        <div className="flex items-center space-x-2 shrink-0">
+        {/* Right / Row 2 on Mobile: Examiner Profile Picker & Quick Tools */}
+        <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 shrink-0 overflow-x-auto no-scrollbar">
           {/* AI Generator Quick Button */}
           <button
             onClick={() => {
@@ -315,30 +315,30 @@ export default function SpeakingWorkspace({
                 setIsGeneratorOpen(true);
               }
             }}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer shrink-0"
             title={activeMode === 'practice' ? "Dùng Gemini AI để sinh chủ đề luyện tập mới" : "Dùng Gemini AI để tạo bộ đề thi Speaking mới"}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span>{activeMode === 'practice' ? 'Sinh Chủ Đề (AI)' : 'Sinh Đề (AI)'}</span>
           </button>
 
           {/* Soundcheck Quick Button */}
           <button
             onClick={() => setIsSoundcheckOpen(true)}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all cursor-pointer"
+            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0"
             title="Kiểm tra Micro và Âm lượng loa"
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
             <span className="hidden sm:inline">Kiểm Tra Thiết Bị</span>
           </button>
 
           {/* Examiner Picker */}
-          <div className="relative flex items-center bg-slate-800/60 border border-slate-700/60 rounded-xl px-2.5 py-1 text-xs">
-            <span className="text-base mr-1.5">{activeExaminer.avatar}</span>
+          <div className="relative flex items-center bg-slate-800/60 border border-slate-700/60 rounded-xl px-2 py-1 text-[11px] sm:text-xs shrink-0">
+            <span className="text-sm sm:text-base mr-1">{activeExaminer.avatar}</span>
             <select
               value={selectedExaminerId}
               onChange={(e) => setSelectedExaminerId(e.target.value)}
-              className="bg-transparent text-slate-200 text-xs font-bold focus:outline-none cursor-pointer pr-1"
+              className="bg-transparent text-slate-200 text-[11px] sm:text-xs font-bold focus:outline-none cursor-pointer pr-1"
             >
               {SPEAKING_EXAMINER_PROFILES.map(ex => (
                 <option key={ex.id} value={ex.id} className="bg-slate-900 text-slate-200">
@@ -352,11 +352,11 @@ export default function SpeakingWorkspace({
           {onOpenTheory && (
             <button
               onClick={onOpenTheory}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-bold transition-all cursor-pointer"
+              className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-bold transition-all cursor-pointer shrink-0"
               title="Mở Cẩm Nang Lý Thuyết Speaking"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Cẩm Nang Speaking</span>
+              <span>Cẩm Nang</span>
             </button>
           )}
 
@@ -364,10 +364,10 @@ export default function SpeakingWorkspace({
           {onOpenSettings && (
             <button
               onClick={onOpenSettings}
-              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer shrink-0"
               title="Cài đặt API & Âm thanh"
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
         </div>
@@ -411,7 +411,7 @@ export default function SpeakingWorkspace({
       ) : null}
 
       {/* 2. MAIN CONTENT STAGE */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-start">
+      <div className="flex-1 overflow-y-auto p-2.5 sm:p-6 flex flex-col items-center justify-start">
         
         {activeMode === 'mock' ? (
           /* ========================================================= */

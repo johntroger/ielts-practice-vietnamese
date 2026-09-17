@@ -531,7 +531,7 @@ export default function SpeakingPracticePane({
           {clip && (
             <button
               onClick={handleTogglePlay}
-              className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-none py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
                 isPlayingPracticeAudio
                   ? 'bg-amber-600 hover:bg-amber-500 text-white'
                   : 'bg-slate-800 hover:bg-slate-700 text-purple-200 border border-purple-600/40'
@@ -556,7 +556,7 @@ export default function SpeakingPracticePane({
             <button
               onClick={() => handleRefineTranscriptWithAI(clipKey)}
               disabled={isRefiningTranscript}
-              className="py-2 px-3 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 hover:text-white border border-indigo-700/60 text-xs font-bold flex items-center space-x-1.5 cursor-pointer disabled:opacity-50 transition-colors"
+              className="flex-1 sm:flex-none py-2 px-3 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 hover:text-white border border-indigo-700/60 text-xs font-bold flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-50 transition-colors"
               title="Dùng Gemini Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 99.5%"
             >
               {isRefiningTranscript && refiningClipKey === clipKey ? (
@@ -567,7 +567,7 @@ export default function SpeakingPracticePane({
               ) : (
                 <>
                   <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>✨ AI Nhận Diện Lại Audio</span>
+                  <span>✨ AI Nhận Diện Lại</span>
                 </>
               )}
             </button>
@@ -577,7 +577,7 @@ export default function SpeakingPracticePane({
           <button
             onClick={() => handleEvaluateAnswer(clipKey, questionText, topicTitle, partNum)}
             disabled={isEvaluatingSingle}
-            className="flex-1 py-2 px-3.5 rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-purple-950/50 flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-60 transition-all hover:scale-[1.01]"
+            className="w-full sm:flex-1 py-2.5 px-3.5 rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-purple-950/50 flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-60 transition-all hover:scale-[1.01]"
           >
             {isEvaluatingSingle && evaluatingClipKey === clipKey ? (
               <>
@@ -594,11 +594,11 @@ export default function SpeakingPracticePane({
 
           <button
             onClick={handleClearClip}
-            className="py-2 px-3 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-rose-300 text-xs font-bold border border-slate-700 flex items-center space-x-1 cursor-pointer transition-colors"
+            className="py-2 px-2.5 sm:px-3 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-rose-300 text-xs font-bold border border-slate-700 flex items-center justify-center space-x-1 cursor-pointer transition-colors"
             title="Xóa âm thanh ngay khỏi bộ nhớ RAM để tiết kiệm tài nguyên"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Xóa File Tạm</span>
+            <span className="hidden sm:inline">Xóa File Tạm</span>
           </button>
         </div>
       </div>
@@ -609,21 +609,21 @@ export default function SpeakingPracticePane({
     <div className="w-full max-w-4xl space-y-6 animate-in fade-in duration-200">
       
       {/* 1. Header Navigation & Part Switcher */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/90 border border-slate-800 p-2.5 rounded-2xl">
-        <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 bg-slate-900/90 border border-slate-800 p-2 sm:p-2.5 rounded-2xl">
+        <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800 overflow-x-auto no-scrollbar max-w-full">
           <button
             onClick={() => {
               setPracticePart(1);
               setShowSampleAnswer(false);
               speechEngine.resetTranscript();
             }}
-            className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center space-x-1 sm:space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               practicePart === 1 
                 ? 'bg-purple-600 text-white shadow-md' 
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>Part 1: Phỏng Vấn (A.R.E.A)</span>
+            <span>Part 1<span className="hidden sm:inline">: Phỏng Vấn (A.R.E.A)</span></span>
           </button>
 
           <button
@@ -632,13 +632,13 @@ export default function SpeakingPracticePane({
               setShowSampleAnswer(false);
               speechEngine.resetTranscript();
             }}
-            className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center space-x-1 sm:space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               practicePart === 2 
                 ? 'bg-purple-600 text-white shadow-md' 
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>Part 2: Cue Card & Pacing</span>
+            <span>Part 2<span className="hidden sm:inline">: Cue Card & Pacing</span></span>
           </button>
 
           <button
@@ -647,45 +647,45 @@ export default function SpeakingPracticePane({
               setShowSampleAnswer(false);
               speechEngine.resetTranscript();
             }}
-            className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none flex items-center justify-center space-x-1 sm:space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               practicePart === 3 
                 ? 'bg-purple-600 text-white shadow-md' 
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>Part 3: Thảo Luận (PEEL)</span>
+            <span>Part 3<span className="hidden sm:inline">: Thảo Luận (PEEL)</span></span>
           </button>
         </div>
 
         {/* Action Tools: AI Generator, Idea Matrix & Shadowing Studio */}
-        <div className="flex items-center space-x-2 shrink-0">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 overflow-x-auto no-scrollbar max-w-full pb-0.5 sm:pb-0">
           <button
             onClick={() => {
               setTopicModalPart(practicePart);
               setIsTopicModalOpen(true);
             }}
-            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40 shrink-0 whitespace-nowrap"
             title="Dùng Gemini AI để tạo chủ đề và câu hỏi mới cho Part này"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span>✨ Sinh Chủ Đề (AI)</span>
           </button>
 
           <button
             onClick={onOpenIdeaMatrix}
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 hover:text-purple-200 border border-purple-700/50 text-xs font-bold transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 hover:text-purple-200 border border-purple-700/50 text-[11px] sm:text-xs font-bold transition-all cursor-pointer shadow-sm shrink-0 whitespace-nowrap"
             title="Mở bảng ma trận gợi ý ý tưởng 5W1H & Đa góc nhìn"
           >
-            <Compass className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5 shrink-0" />
             <span>Idea Matrix</span>
           </button>
 
           <button
             onClick={onOpenShadowing}
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white border border-slate-700 text-xs font-bold transition-all cursor-pointer"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white border border-slate-700 text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap"
             title="Luyện nghe và nhại lại giọng đọc chuẩn Band 8.5+"
           >
-            <Headphones className="w-3.5 h-3.5" />
+            <Headphones className="w-3.5 h-3.5 shrink-0" />
             <span>Shadowing 8.5</span>
           </button>
         </div>
@@ -875,7 +875,7 @@ export default function SpeakingPracticePane({
                   ? 'bg-slate-950 border-amber-500/60 shadow-xl shadow-amber-950/40 ring-2 ring-amber-500/30'
                   : 'bg-slate-950 border-slate-800/90'
               }`}>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
                   <div className="flex items-center space-x-2.5">
                     <div className={`p-1.5 rounded-lg border transition-colors ${
                       speechEngine.isListening 
@@ -904,7 +904,7 @@ export default function SpeakingPracticePane({
                     {speechEngine.isListening ? (
                       <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[11px] font-black animate-pulse">
                         <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                        <span>REC • MICRO ĐANG BẬT</span>
+                        <span>REC<span className="hidden sm:inline"> • MICRO ĐANG BẬT</span></span>
                       </span>
                     ) : isMicConnecting ? (
                       <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[11px] font-bold">
@@ -962,7 +962,7 @@ export default function SpeakingPracticePane({
                         ) : (
                           <Sparkles className="w-3 h-3 text-indigo-400" />
                         )}
-                        <span>AI Chuẩn Hóa</span>
+                        <span className="hidden sm:inline">AI Chuẩn Hóa</span>
                       </button>
                     )}
                     {speechEngine.transcript && !speechEngine.isListening && (
@@ -987,14 +987,17 @@ export default function SpeakingPracticePane({
                     {speechEngine.transcript ? (
                       <span className="text-purple-300 font-semibold">Đã nói: {speechEngine.transcript.split(' ').filter(Boolean).length} từ</span>
                     ) : (
-                      '💡 Mẹo: Nhấn phím Space để bật/tắt mic nhanh'
+                      <span>
+                        <span className="hidden sm:inline">💡 Mẹo: Nhấn phím Space để bật/tắt mic nhanh</span>
+                        <span className="sm:hidden">💡 Chạm nút bên dưới để bật/tắt micro luyện nói</span>
+                      </span>
                     )}
                   </span>
 
                   <button
                     onClick={() => handleTogglePracticeRecord(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
                     disabled={isMicConnecting}
-                    className={`px-5 py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg active:scale-95 ${
+                    className={`px-5 py-3 sm:py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg active:scale-95 w-full sm:w-auto ${
                       isMicConnecting
                         ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-900/40 ring-4 ring-amber-400/40 animate-pulse cursor-wait'
                         : speechEngine.isListening
@@ -1314,10 +1317,10 @@ export default function SpeakingPracticePane({
               </div>
 
               <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
-                <span>0s (Bắt đầu)</span>
-                <span className="text-emerald-400">60s (Đã đủ bối cảnh)</span>
-                <span className="text-amber-400">90s (Vùng an toàn 7.0+)</span>
-                <span className="text-rose-400">120s (Chuẩn Cambridge)</span>
+                <span>0s<span className="hidden sm:inline"> (Bắt đầu)</span></span>
+                <span className="text-emerald-400">60s<span className="hidden sm:inline"> (Đã đủ bối cảnh)</span></span>
+                <span className="text-amber-400">90s<span className="hidden sm:inline"> (Vùng an toàn 7.0+)</span></span>
+                <span className="text-rose-400">120s<span className="hidden sm:inline"> (Chuẩn Cambridge)</span></span>
               </div>
             </div>
 
@@ -1352,7 +1355,7 @@ export default function SpeakingPracticePane({
                     ) : (
                       <Sparkles className="w-3 h-3 text-indigo-400" />
                     )}
-                    <span>AI Chuẩn Hóa</span>
+                    <span className="hidden sm:inline">AI Chuẩn Hóa</span>
                   </button>
                 )}
                 {speechEngine.transcript && !speechEngine.isListening && (
@@ -1372,15 +1375,22 @@ export default function SpeakingPracticePane({
             </div>
 
             {/* Action Button */}
-            <div className="flex items-center justify-between pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">
               <span className="text-[11px] text-slate-400">
-                {speechEngine.transcript ? `Đã nói: ${speechEngine.transcript.split(' ').filter(Boolean).length} từ` : 'Phím tắt: [Space] bật/tắt'}
+                {speechEngine.transcript ? (
+                  <span className="text-purple-300 font-semibold">Đã nói: {speechEngine.transcript.split(' ').filter(Boolean).length} từ</span>
+                ) : (
+                  <span>
+                    <span className="hidden sm:inline">Phím tắt: [Space] bật/tắt</span>
+                    <span className="sm:hidden">💡 Chạm nút bên dưới để bắt đầu nói 2 phút</span>
+                  </span>
+                )}
               </span>
 
               <button
                 onClick={handleTogglePart2Speaking}
                 disabled={isMicConnecting}
-                className={`px-6 py-3 rounded-xl text-xs font-black flex items-center space-x-2 transition-all cursor-pointer shadow-lg active:scale-95 ${
+                className={`px-6 py-3 sm:py-2.5 rounded-xl text-xs font-black flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-lg active:scale-95 w-full sm:w-auto ${
                   isMicConnecting
                     ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-900/40 ring-4 ring-amber-400/40 animate-pulse cursor-wait'
                     : isPart2Speaking || speechEngine.isListening
@@ -1500,7 +1510,7 @@ export default function SpeakingPracticePane({
               )}
             </div>
 
-            <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <select
                 value={selectedP3Id}
                 onChange={(e) => setSelectedP3Id(e.target.value)}
@@ -1519,11 +1529,11 @@ export default function SpeakingPracticePane({
                   setTopicModalPart(3);
                   setIsTopicModalOpen(true);
                 }}
-                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0"
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0"
                 title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI (Gemini)"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>✨ Sinh Bộ Thảo Luận Bằng AI (Gemini)</span>
+                <span>✨ Sinh Bộ Thảo Luận<span className="hidden sm:inline"> Bằng AI (Gemini)</span></span>
               </button>
             </div>
           </div>
@@ -1532,7 +1542,7 @@ export default function SpeakingPracticePane({
             {currentP3Set.questions?.map((q, idx) => {
               const clipKey = `p3_${q.qId || idx}`;
               return (
-                <div key={q.qId || idx} className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                <div key={q.qId || idx} className="p-3.5 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-purple-400 uppercase tracking-wider">
                       Câu hỏi {idx + 1} ({q.analysisType})
@@ -1554,14 +1564,14 @@ export default function SpeakingPracticePane({
                   </p>
 
                   {/* Micro recorder for this Part 3 question */}
-                  <div className="flex items-center justify-between pt-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2">
                     <span className="text-[11px] text-slate-500">
                       Cấu trúc PEEL: Point $\rightarrow$ Explanation $\rightarrow$ Example $\rightarrow$ Link
                     </span>
                     <button
                       onClick={() => handleTogglePracticeRecord(clipKey)}
                       disabled={isMicConnecting}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer shadow-md active:scale-95 ${
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md active:scale-95 w-full sm:w-auto ${
                         isMicConnecting && activeRecordClipKey === clipKey
                           ? 'bg-amber-600 text-white animate-pulse cursor-wait ring-2 ring-amber-400'
                           : speechEngine.isListening && (activeRecordClipKey === clipKey || !activeRecordClipKey)
