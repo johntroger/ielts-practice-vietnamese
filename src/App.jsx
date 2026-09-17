@@ -776,6 +776,9 @@ export default function App() {
         isOpen={isWeeklyReportOpen}
         onClose={() => setIsWeeklyReportOpen(false)}
         submissions={submissions}
+        readingHistory={readingHistory}
+        listeningHistory={listeningHistory}
+        speakingHistory={speakingHistory}
         mistakes={mistakes}
         apiKey={apiKey}
         model={model}
