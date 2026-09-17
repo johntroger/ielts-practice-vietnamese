@@ -40,6 +40,14 @@ export default function SpeakingShadowingModal({
       setIsRecordingShadow(false);
       setActiveSentenceIndex(0);
     }
+    return () => {
+      if (userAudioRef.current) {
+        try {
+          userAudioRef.current.pause();
+          userAudioRef.current.src = '';
+        } catch (e) {}
+      }
+    };
   }, [isOpen, speechEngine]);
 
   if (!isOpen || !sentences.length) return null;

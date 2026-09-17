@@ -49,14 +49,17 @@ export default function SpeakingPracticePane({
   const activeP2Card = part2Cards.find(c => c.id === selectedP2CueCardId) || part2Cards[0] || {};
   const currentP1Question = activeP1Topic.questions?.[activeP1QuestionIndex] || null;
 
-  // Cleanup on unmount or tab switch
+  // Cleanup on unmount or tab/topic/question switch
   useEffect(() => {
     return () => {
       if (prepTimerRef.current) clearInterval(prepTimerRef.current);
       if (speakTimerRef.current) clearInterval(speakTimerRef.current);
-      if (practiceAudioRef.current) practiceAudioRef.current.pause();
+      if (practiceAudioRef.current) {
+        practiceAudioRef.current.pause();
+        setIsPlayingPracticeAudio(false);
+      }
     };
-  }, [practicePart]);
+  }, [practicePart, selectedP1TopicId, activeP1QuestionIndex, selectedP2CueCardId]);
 
   // Read examiner text
   const handleReadText = (text) => {
