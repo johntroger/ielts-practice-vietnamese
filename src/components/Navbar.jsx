@@ -71,13 +71,45 @@ export default function Navbar({
   const currentSkillObj = skills.find(s => s.id === activeSkill) || skills[0];
   const CurrentSkillIcon = currentSkillObj.icon;
 
+  const skillColorConfig = {
+    writing: {
+      btn: 'border-red-200 bg-red-50/80 hover:bg-red-100 text-red-700',
+      icon: 'text-red-600',
+      chevron: 'text-red-500',
+      activeItem: 'bg-red-50 text-red-700',
+      activeItemIcon: 'bg-red-100 text-red-700'
+    },
+    reading: {
+      btn: 'border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-700',
+      icon: 'text-blue-600',
+      chevron: 'text-blue-500',
+      activeItem: 'bg-blue-50 text-blue-700',
+      activeItemIcon: 'bg-blue-100 text-blue-700'
+    },
+    listening: {
+      btn: 'border-emerald-200 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-700',
+      icon: 'text-emerald-600',
+      chevron: 'text-emerald-500',
+      activeItem: 'bg-emerald-50 text-emerald-700',
+      activeItemIcon: 'bg-emerald-100 text-emerald-700'
+    },
+    speaking: {
+      btn: 'border-purple-200 bg-purple-50/80 hover:bg-purple-100 text-purple-700',
+      icon: 'text-purple-600',
+      chevron: 'text-purple-500',
+      activeItem: 'bg-purple-50 text-purple-700',
+      activeItemIcon: 'bg-purple-100 text-purple-700'
+    }
+  };
+  const activeColor = skillColorConfig[activeSkill] || skillColorConfig.writing;
+
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs shrink-0">
       <div className="max-w-7xl mx-auto px-3 sm:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
           
-          {/* 1. LEFT ZONE: Brand & Skills Dropdown */}
+          {/* 1. LEFT ZONE: Brand & Skills Switcher */}
           <div className="flex items-center space-x-2 sm:space-x-3.5">
             {/* Logo */}
             <div className="flex items-center space-x-2 shrink-0">
@@ -90,20 +122,20 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Compact Skills Dropdown */}
-            <div className="relative">
+            {/* Compact Skills Dropdown (Mobile / Tablet only - hidden on Desktop to avoid repetition) */}
+            <div className="relative lg:hidden">
               <button
                 onClick={() => {
                   setIsSkillMenuOpen(!isSkillMenuOpen);
                   setIsPracticeMenuOpen(false);
                   setIsToolsMenuOpen(false);
                 }}
-                className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/70 hover:bg-red-100/80 text-red-700 text-xs font-bold transition-all shadow-2xs group"
+                className={`flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs group ${activeColor.btn}`}
                 title="Chuyển đổi kỹ năng IELTS"
               >
-                <CurrentSkillIcon className="w-3.5 h-3.5 text-red-600" />
+                <CurrentSkillIcon className={`w-3.5 h-3.5 ${activeColor.icon}`} />
                 <span className="font-bold">{currentSkillObj.label}</span>
-                <ChevronDown className={`w-3 h-3 text-red-500 transition-transform duration-150 ${isSkillMenuOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3 h-3 transition-transform duration-150 ${activeColor.chevron} ${isSkillMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isSkillMenuOpen && (
@@ -116,6 +148,7 @@ export default function Navbar({
                     {skills.map(s => {
                       const Icon = s.icon;
                       const isCurrent = activeSkill === s.id;
+                      const sColor = skillColorConfig[s.id] || skillColorConfig.writing;
                       return (
                         <button
                           key={s.id}
@@ -129,14 +162,14 @@ export default function Navbar({
                           }}
                           className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors ${
                             isCurrent 
-                              ? 'bg-red-50 text-red-700' 
+                              ? sColor.activeItem 
                               : s.active 
                                 ? 'hover:bg-slate-50 text-slate-700' 
                                 : 'opacity-60 hover:bg-slate-50 text-slate-500 cursor-not-allowed'
                           }`}
                         >
                           <div className="flex items-center space-x-2.5">
-                            <div className={`p-1.5 rounded-lg ${isCurrent ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+                            <div className={`p-1.5 rounded-lg ${isCurrent ? sColor.activeItemIcon : 'bg-slate-100 text-slate-600'}`}>
                               <Icon className="w-4 h-4" />
                             </div>
                             <div>
