@@ -19,9 +19,9 @@ export default function SettingsModal({
   const [inputKey, setInputKey] = useState(apiKey || '');
   const [showKey, setShowKey] = useState(false);
   const [selectedModel, setSelectedModel] = useState(() => {
-    const validModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
+    const validModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
     if (!model || !validModels.includes(model)) {
-      return 'gemini-2.5-flash';
+      return 'gemini-3.6-flash';
     }
     return model;
   });

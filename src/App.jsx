@@ -57,9 +57,9 @@ export default function App() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !localStorage.getItem('ielts_user_onboarded'));
   const [model, setModel] = useState(() => {
     const saved = localStorage.getItem('ielts_gemini_model');
-    const validModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
+    const validModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
     if (!saved || !validModels.includes(saved)) {
-      return 'gemini-2.5-flash';
+      return 'gemini-3.6-flash';
     }
     return saved;
   });
