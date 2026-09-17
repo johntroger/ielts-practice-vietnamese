@@ -23,6 +23,7 @@ import SpeakingShadowingModal from './SpeakingShadowingModal';
 import SpeakingExaminerRoom from './SpeakingExaminerRoom';
 import SpeakingResultModal from './SpeakingResultModal';
 import SpeakingGeneratorModal from './SpeakingGeneratorModal';
+import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -57,6 +58,7 @@ export default function SpeakingWorkspace({
   
   // Modals state
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+  const [isPracticeTopicModalOpen, setIsPracticeTopicModalOpen] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
   const [isShadowingOpen, setIsShadowingOpen] = useState(false);
@@ -306,12 +308,18 @@ export default function SpeakingWorkspace({
         <div className="flex items-center space-x-2 shrink-0">
           {/* AI Generator Quick Button */}
           <button
-            onClick={() => setIsGeneratorOpen(true)}
+            onClick={() => {
+              if (activeMode === 'practice') {
+                setIsPracticeTopicModalOpen(true);
+              } else {
+                setIsGeneratorOpen(true);
+              }
+            }}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer"
-            title="Dùng Gemini AI để tạo bộ đề thi Speaking mới"
+            title={activeMode === 'practice' ? "Dùng Gemini AI để sinh chủ đề luyện tập mới" : "Dùng Gemini AI để tạo bộ đề thi Speaking mới"}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Sinh Đề (AI)</span>
+            <span>{activeMode === 'practice' ? 'Sinh Chủ Đề (AI)' : 'Sinh Đề (AI)'}</span>
           </button>
 
           {/* Soundcheck Quick Button */}
@@ -824,6 +832,24 @@ export default function SpeakingWorkspace({
         model={model}
         onOpenSettings={onOpenSettings}
         onPackGenerated={handlePackGenerated}
+      />
+
+      {/* 8. STEP 7: AI PRACTICE TOPIC & QUESTION GENERATOR MODAL */}
+      <SpeakingPracticeTopicModal
+        isOpen={isPracticeTopicModalOpen}
+        onClose={() => setIsPracticeTopicModalOpen(false)}
+        part={practicePart}
+        apiKey={apiKey}
+        model={model}
+        onTopicCreated={(newTopic) => {
+          if (practicePart === 1) {
+            handleAddP1Topic(newTopic);
+          } else if (practicePart === 2) {
+            handleAddP2Card(newTopic);
+          } else if (practicePart === 3) {
+            handleAddP3Set(newTopic);
+          }
+        }}
       />
     </div>
   );

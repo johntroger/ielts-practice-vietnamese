@@ -460,8 +460,20 @@ export default function SpeakingPracticePane({
           </button>
         </div>
 
-        {/* Action Tools: Idea Matrix & Shadowing Studio */}
-        <div className="flex items-center space-x-2">
+        {/* Action Tools: AI Generator, Idea Matrix & Shadowing Studio */}
+        <div className="flex items-center space-x-2 shrink-0">
+          <button
+            onClick={() => {
+              setTopicModalPart(practicePart);
+              setIsTopicModalOpen(true);
+            }}
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40"
+            title="Dùng Gemini AI để tạo chủ đề và câu hỏi mới cho Part này"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>✨ Sinh Chủ Đề (AI)</span>
+          </button>
+
           <button
             onClick={onOpenIdeaMatrix}
             className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 hover:text-purple-200 border border-purple-700/50 text-xs font-bold transition-all cursor-pointer shadow-sm"
@@ -482,14 +494,74 @@ export default function SpeakingPracticePane({
         </div>
       </div>
 
+      {/* Practice Welcome & Quick AI Generator Banner */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border border-purple-800/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              Luyện Tập Tự Do Không Giới Hạn
+            </span>
+            <span className="text-xs text-slate-400 font-semibold">• Tích hợp chấm điểm AI Cambridge</span>
+          </div>
+          <p className="text-xs text-slate-300">
+            Luyện từng câu hỏi độc lập, nhận ngay nhận xét 4 tiêu chí khảo thí & bản nâng cấp Band 8.5+. Bạn có thể sinh thêm bất kỳ chủ đề/câu hỏi nào bằng Gemini AI!
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            setTopicModalPart(practicePart);
+            setIsTopicModalOpen(true);
+          }}
+          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-lg shadow-purple-950/60 flex items-center space-x-2 cursor-pointer transition-all hover:scale-[1.02] shrink-0"
+        >
+          <Sparkles className="w-4 h-4 text-purple-200" />
+          <span>✨ Sinh Chủ Đề Bằng AI (Gemini)</span>
+        </button>
+      </div>
+
       {/* ========================================================= */}
       {/* 2. PART 1 PRACTICE VIEW                                    */}
       {/* ========================================================= */}
       {practicePart === 1 && (
         <div className="space-y-4 animate-in fade-in duration-150">
           
-          {/* Topic Selector Pills & Add Topic Button */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+          {/* Part 1 Topic Control Bar with AI Button */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-900 p-3 rounded-2xl border border-slate-800">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs font-bold text-slate-200">Chủ đề phỏng vấn:</span>
+              <span className="text-[11px] text-purple-300 font-semibold bg-purple-950/80 px-2.5 py-0.5 rounded-full border border-purple-800/40">
+                {part1Topics.length} chủ đề
+              </span>
+            </div>
+
+            <button
+              onClick={() => {
+                setTopicModalPart(1);
+                setIsTopicModalOpen(true);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/40 cursor-pointer transition-all hover:scale-[1.01]"
+            >
+              <Sparkles className="w-4 h-4 text-purple-200" />
+              <span>+ Sinh Chủ Đề & Câu Hỏi Part 1 Bằng AI (Gemini)</span>
+            </button>
+          </div>
+
+          {/* Topic Selector Pills */}
+          <div className="flex items-center space-x-2 overflow-x-auto pb-2">
+            {/* Front AI button */}
+            <button
+              onClick={() => {
+                setTopicModalPart(1);
+                setIsTopicModalOpen(true);
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-purple-300 hover:text-white border border-purple-600/50 text-xs font-bold whitespace-nowrap flex items-center space-x-1 cursor-pointer shrink-0"
+              title="Sinh chủ đề luyện tập Part 1 mới bằng Gemini AI"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <span>+ Tạo Mới (AI)</span>
+            </button>
+
             {part1Topics.map(topic => (
               <div key={topic.id} className="relative group shrink-0">
                 <button
@@ -514,19 +586,6 @@ export default function SpeakingPracticePane({
                 </button>
               </div>
             ))}
-
-            {/* ADD TOPIC BUTTON (AI GENERATOR / MANUAL) */}
-            <button
-              onClick={() => {
-                setTopicModalPart(1);
-                setIsTopicModalOpen(true);
-              }}
-              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold whitespace-nowrap flex items-center space-x-1 shadow-sm cursor-pointer shrink-0"
-              title="Thêm chủ đề luyện tập Part 1 mới (bằng AI hoặc thủ công)"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>+ Thêm Chủ Đề Mới (AI)</span>
-            </button>
           </div>
 
           {/* Question Card */}
@@ -862,12 +921,11 @@ export default function SpeakingPracticePane({
                   setTopicModalPart(2);
                   setIsTopicModalOpen(true);
                 }}
-                className="px-3 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm cursor-pointer shrink-0"
-                title="Thêm Cue Card luyện tập Part 2 mới (bằng AI hoặc thủ công)"
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0"
+                title="Thêm Cue Card luyện tập Part 2 mới bằng AI (Gemini)"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">+ Thêm Cue Card (AI)</span>
-                <span className="sm:hidden">+ Đề Mới</span>
+                <span>✨ Sinh Cue Card Bằng AI (Gemini)</span>
               </button>
             </div>
           </div>
@@ -1119,12 +1177,11 @@ export default function SpeakingPracticePane({
                   setTopicModalPart(3);
                   setIsTopicModalOpen(true);
                 }}
-                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm cursor-pointer shrink-0"
-                title="Thêm bộ câu hỏi thảo luận Part 3 mới (bằng AI hoặc thủ công)"
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0"
+                title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI (Gemini)"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">+ Thêm Chủ Đề Mới (AI)</span>
-                <span className="sm:hidden">+ Đề Mới</span>
+                <span>✨ Sinh Bộ Thảo Luận Bằng AI (Gemini)</span>
               </button>
             </div>
           </div>
