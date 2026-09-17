@@ -29,8 +29,12 @@ import {
   FolderKanban,
   HelpCircle,
   LayoutDashboard,
-  BookMarked
+  BookMarked,
+  Headphones,
+  Mic,
+  Volume2
 } from 'lucide-react';
+import SpeakingResultModal from './speaking/SpeakingResultModal';
 
 export default function UserProfileModal({
   isOpen,
@@ -38,6 +42,8 @@ export default function UserProfileModal({
   user,
   submissions = [],
   readingHistory = [],
+  listeningHistory = [],
+  speakingHistory = [],
   vocabList = [],
   mistakes = [],
   streakCount = 3,
@@ -48,16 +54,23 @@ export default function UserProfileModal({
   onViewSubmission,
   onDeleteReadingSubmission,
   onClearReadingHistory,
+  onDeleteListeningSubmission,
+  onClearListeningHistory,
+  onDeleteSpeakingSubmission,
+  onClearSpeakingHistory,
   onSignOut,
   onOpenAuth,
   onOpenIngest,
   onOpenGenerator,
   onOpenLibrary,
   onExportAllData,
-  onImportData
+  onImportData,
+  onSaveToVocabNotebook,
+  onSaveMistake
 }) {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'submissions' | 'reading' | 'resources' | 'vocab' | 'account'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'submissions' | 'reading' | 'listening' | 'speaking' | 'resources' | 'vocab' | 'account'
   const [resourceFilter, setResourceFilter] = useState('all'); // 'all' | 'public' | 'private'
+  const [selectedSpeakingSub, setSelectedSpeakingSub] = useState(null);
 
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
@@ -187,15 +200,72 @@ export default function UserProfileModal({
     };
   }, [readingHistory]);
 
-  // Overall Projected Band (Writing + Reading average)
-  const overallProjectedBand = useMemo(() => {
-    const wBand = Number(stats.avgBand) || 0;
-    const rBand = Number(readingStats.avgBand) || 0;
-    if (wBand > 0 && rBand > 0) {
-      return ((wBand + rBand) / 2).toFixed(1);
+  // 4. Calculate Listening Stats from listeningHistory
+  const listeningStats = useMemo(() => {
+    if (!listeningHistory || listeningHistory.length === 0) {
+      return { totalTests: 0, avgBand: 0, totalCorrect: 0, avgAccuracy: 0 };
     }
-    return wBand > 0 ? wBand.toFixed(1) : rBand > 0 ? rBand.toFixed(1) : 0;
-  }, [stats.avgBand, readingStats.avgBand]);
+    let totalBand = 0;
+    let totalCorrect = 0;
+    let totalAcc = 0;
+    listeningHistory.forEach(l => {
+      totalBand += Number(l.band || 0);
+      totalCorrect += Number(l.correctCount || 0);
+      const acc = l.resultData?.accuracyPercent ?? Math.round(((l.correctCount || 0) / (l.totalQuestions || 40)) * 100);
+      totalAcc += Number(acc || 0);
+    });
+    return {
+      totalTests: listeningHistory.length,
+      avgBand: (totalBand / listeningHistory.length).toFixed(1),
+      totalCorrect,
+      avgAccuracy: Math.round(totalAcc / listeningHistory.length)
+    };
+  }, [listeningHistory]);
+
+  // 5. Calculate Speaking Stats from speakingHistory
+  const speakingStats = useMemo(() => {
+    if (!speakingHistory || speakingHistory.length === 0) {
+      return { totalTests: 0, avgBand: 0, avgFC: 0, avgLR: 0, avgGRA: 0, avgPR: 0 };
+    }
+    let totalBand = 0, totalFC = 0, totalLR = 0, totalGRA = 0, totalPR = 0;
+    speakingHistory.forEach(s => {
+      const evalData = s.evaluation || {};
+      const crit = evalData.criteria || {};
+      totalBand += Number(evalData.overallBand || s.band || 6.0);
+      totalFC += Number(crit.fc?.band || 6.0);
+      totalLR += Number(crit.lr?.band || 6.0);
+      totalGRA += Number(crit.gra?.band || 6.0);
+      totalPR += Number(crit.pr?.band || 6.0);
+    });
+    const len = speakingHistory.length;
+    return {
+      totalTests: len,
+      avgBand: (totalBand / len).toFixed(1),
+      avgFC: (totalFC / len).toFixed(1),
+      avgLR: (totalLR / len).toFixed(1),
+      avgGRA: (totalGRA / len).toFixed(1),
+      avgPR: (totalPR / len).toFixed(1)
+    };
+  }, [speakingHistory]);
+
+  // Overall Projected Band across available skills (Writing, Reading, Listening, Speaking)
+  const overallProjectedBand = useMemo(() => {
+    const validBands = [];
+    if (Number(stats.avgBand) > 0) validBands.push(Number(stats.avgBand));
+    if (Number(readingStats.avgBand) > 0) validBands.push(Number(readingStats.avgBand));
+    if (Number(listeningStats.avgBand) > 0) validBands.push(Number(listeningStats.avgBand));
+    if (Number(speakingStats.avgBand) > 0) validBands.push(Number(speakingStats.avgBand));
+
+    if (validBands.length === 0) return 0;
+    const rawAvg = validBands.reduce((a, b) => a + b, 0) / validBands.length;
+    const intPart = Math.floor(rawAvg);
+    const fraction = rawAvg - intPart;
+    let rounded = intPart;
+    if (fraction < 0.25) rounded = intPart;
+    else if (fraction < 0.75) rounded = intPart + 0.5;
+    else rounded = intPart + 1.0;
+    return rounded.toFixed(1);
+  }, [stats.avgBand, readingStats.avgBand, listeningStats.avgBand, speakingStats.avgBand]);
 
   // Academic Rank Badge based on Average Band
   const getScholarRank = (band) => {
@@ -209,11 +279,13 @@ export default function UserProfileModal({
 
   const rank = getScholarRank(overallProjectedBand || stats.avgBand);
 
-  // Nav Items Definitions
+  // Nav Items Definitions (All 4 Skills)
   const navItems = [
     { id: 'overview', label: 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: overallProjectedBand > 0 ? `Overall ${overallProjectedBand}` : null },
-    { id: 'submissions', label: 'Lịch Sử IELTS Writing', icon: History, count: submissions.length },
+    { id: 'submissions', label: 'Lịch Sử IELTS Writing', icon: History, count: submissions.length, badge: stats.avgBand > 0 ? `Band ${stats.avgBand}` : null },
     { id: 'reading', label: 'Lịch Sử IELTS Reading', icon: BookMarked, count: readingHistory.length, badge: readingStats.totalTests > 0 ? `Band ${readingStats.avgBand}` : null },
+    { id: 'listening', label: 'Lịch Sử IELTS Listening', icon: Headphones, count: listeningHistory.length, badge: listeningStats.totalTests > 0 ? `Band ${listeningStats.avgBand}` : null },
+    { id: 'speaking', label: 'Lịch Sử IELTS Speaking', icon: Mic, count: speakingHistory.length, badge: speakingStats.totalTests > 0 ? `Band ${speakingStats.avgBand}` : null },
     { id: 'resources', label: 'Kho Đề & Tài Nguyên', icon: FolderKanban, count: userCustomTasks.length },
     { id: 'vocab', label: 'Sổ Tay Từ Vựng & Lỗi', icon: Bookmark, count: vocabList.length },
     { id: 'account', label: 'Cài Đặt & Dữ Liệu', icon: Settings, status: user ? 'Đã đăng nhập' : 'Chưa đăng nhập' }
@@ -373,6 +445,8 @@ export default function UserProfileModal({
                 {activeTab === 'overview' && 'Tổng Quan Năng Lực & Dự Phóng Điểm IELTS'}
                 {activeTab === 'submissions' && 'Lịch Sử Bài Viết IELTS Writing'}
                 {activeTab === 'reading' && 'Lịch Sử Làm Đề & Thống Kê IELTS Reading'}
+                {activeTab === 'listening' && 'Lịch Sử Làm Đề & Thống Kê IELTS Listening'}
+                {activeTab === 'speaking' && 'Lịch Sử Thi Thử IELTS Speaking'}
                 {activeTab === 'resources' && 'Kho Đề Bài & Tài Nguyên Bạn Đã Tải Lên'}
                 {activeTab === 'vocab' && 'Sổ Tay Từ Vựng & Sổ Tay Lỗi Sai Cá Nhân'}
                 {activeTab === 'account' && 'Cài Đặt Tài Khoản & Quản Lý Dữ Liệu'}
@@ -407,10 +481,11 @@ export default function UserProfileModal({
               <div className="space-y-6">
                 
                 {/* PRE-DESIGNED KPI CARDS GRID (KHUNG CHỈ SỐ CỐ ĐỊNH) */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                {/* PRE-DESIGNED KPI CARDS GRID (KHUNG CHỈ SỐ CỐ ĐỊNH 4 KỸ NĂNG) */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                   {/* Card 1: Estimated Overall Band */}
-                  <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Dự Phóng Overall Band</span>
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-red-50 to-rose-50/60 border border-red-200 shadow-2xs space-y-1">
+                    <span className="text-[11px] font-bold text-red-700 uppercase tracking-wider block">Overall Band (Cambridge)</span>
                     <div className="flex items-baseline justify-between">
                       <span className="text-2xl sm:text-3xl font-black text-red-600">
                         {overallProjectedBand > 0 ? `Band ${overallProjectedBand}` : 'Band --'}
@@ -418,13 +493,13 @@ export default function UserProfileModal({
                       <Award className="w-5 h-5 text-red-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {overallProjectedBand > 0 ? 'Trung bình Writing + Reading' : 'Cần nộp 1 bài để tính'}
+                      {overallProjectedBand > 0 ? 'Quy tròn chuẩn 4 kỹ năng' : 'Cần hoàn thành bài thi để tính'}
                     </span>
                   </div>
 
                   {/* Card 2: Writing Band & Essays */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Writing Studio</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Writing Studio</span>
                     <div className="flex items-baseline justify-between">
                       <span className="text-2xl sm:text-3xl font-black text-blue-600">
                         {stats.avgBand > 0 ? `Band ${stats.avgBand}` : '--'}
@@ -438,7 +513,7 @@ export default function UserProfileModal({
 
                   {/* Card 3: Reading Studio */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Reading Studio</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Reading Studio</span>
                     <div className="flex items-baseline justify-between">
                       <span className="text-2xl sm:text-3xl font-black text-emerald-600">
                         {readingStats.avgBand > 0 ? `Band ${readingStats.avgBand}` : '--'}
@@ -450,28 +525,72 @@ export default function UserProfileModal({
                     </span>
                   </div>
 
-                  {/* Card 3: Custom Tasks */}
+                  {/* Card 4: Listening Studio */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Đề Tự Nạp / AI Sinh</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Listening Studio</span>
                     <div className="flex items-baseline justify-between">
-                      <span className="text-2xl sm:text-3xl font-black text-purple-600">{userCustomTasks.length}</span>
-                      <FolderKanban className="w-5 h-5 text-purple-500" />
+                      <span className="text-2xl sm:text-3xl font-black text-amber-600">
+                        {listeningStats.avgBand > 0 ? `Band ${listeningStats.avgBand}` : '--'}
+                      </span>
+                      <Headphones className="w-5 h-5 text-amber-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {userCustomTasks.filter(t => t.isPublic).length} đề đang công khai
+                      {listeningStats.totalTests} đề thi • {listeningStats.totalCorrect} câu đúng
                     </span>
                   </div>
 
-                  {/* Card 4: Vocab Vault */}
+                  {/* Card 5: Speaking Studio */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Sổ Từ Vựng & Collocs</span>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Speaking Studio</span>
                     <div className="flex items-baseline justify-between">
-                      <span className="text-2xl sm:text-3xl font-black text-amber-600">{vocabList.length}</span>
-                      <Bookmark className="w-5 h-5 text-amber-500" />
+                      <span className="text-2xl sm:text-3xl font-black text-purple-600">
+                        {speakingStats.avgBand > 0 ? `Band ${speakingStats.avgBand}` : '--'}
+                      </span>
+                      <Mic className="w-5 h-5 text-purple-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {mistakes.length} lỗi sai đã lưu
+                      {speakingStats.totalTests} lượt thi • {speakingStats.avgWpm > 0 ? `${speakingStats.avgWpm} wpm` : 'Chưa có'}
                     </span>
+                  </div>
+                </div>
+
+                {/* SECONDARY ROW: CUSTOM TASKS & VOCAB */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {/* Card: Custom Tasks */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Kho Đề Bài Tự Tải Lên & AI Sinh</span>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="text-2xl font-black text-purple-600">{userCustomTasks.length}</span>
+                        <span className="text-xs text-slate-500">đề bài cá nhân</span>
+                      </div>
+                      <span className="text-[11px] text-slate-400 block">
+                        {userCustomTasks.filter(t => t.isPublic).length} đề đang chia sẻ cộng đồng
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-purple-50 text-purple-600">
+                      <FolderKanban className="w-6 h-6" />
+                    </div>
+                  </div>
+
+                  {/* Card: Vocab Vault */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Sổ Tay Từ Vựng & Sổ Lỗi Sai</span>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="text-2xl font-black text-amber-600">{vocabList.length}</span>
+                        <span className="text-xs text-slate-500">từ vựng C1/C2</span>
+                        <span className="text-slate-300">•</span>
+                        <span className="text-2xl font-black text-red-600">{mistakes.length}</span>
+                        <span className="text-xs text-slate-500">lỗi ngữ pháp</span>
+                      </div>
+                      <span className="text-[11px] text-slate-400 block">
+                        Được tự động đồng bộ khi viết bài & thi thử
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
+                      <Bookmark className="w-6 h-6" />
+                    </div>
                   </div>
                 </div>
 
@@ -1099,6 +1218,313 @@ export default function UserProfileModal({
             )}
 
             {/* ========================================================================= */}
+            {/* TAB: LISTENING STUDIO HISTORY */}
+            {/* ========================================================================= */}
+            {activeTab === 'listening' && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Làm Đề & Thống Kê IELTS Listening</h3>
+                    <p className="text-xs text-slate-500">Các bài thi nghe mô phỏng 4 Sections thi thật với audio giọng bản xứ & transcript chi tiết</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
+                      {listeningHistory.length} Bài thi
+                    </span>
+                    {listeningHistory.length > 0 && onClearListeningHistory && (
+                      <button
+                        onClick={onClearListeningHistory}
+                        className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                        title="Xóa toàn bộ lịch sử Listening"
+                      >
+                        Xóa tất cả
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* KPI Summary Cards for Listening */}
+                {listeningHistory.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Listening Band TB</span>
+                      <div className="text-xl font-black text-amber-600 mt-0.5">
+                        {listeningStats.avgBand > 0 ? `Band ${listeningStats.avgBand}` : '--'}
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tổng Câu Đúng</span>
+                      <div className="text-xl font-black text-slate-800 mt-0.5">
+                        {listeningStats.totalCorrect} <span className="text-xs font-normal text-slate-400">câu</span>
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Độ Chính Xác TB</span>
+                      <div className="text-xl font-black text-blue-600 mt-0.5">
+                        {listeningStats.avgAccuracy}%
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Đề Đã Hoàn Thành</span>
+                      <div className="text-xl font-black text-purple-600 mt-0.5">
+                        {listeningStats.totalTests} <span className="text-xs font-normal text-slate-400">đề thi</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {listeningHistory.length === 0 ? (
+                  <div className="p-10 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+                    <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                      <Headphones className="w-6 h-6" />
+                    </div>
+                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài thi Listening nào</h4>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto">
+                      Hãy chuyển sang phân hệ <strong>IELTS Listening Studio</strong> trên thanh điều hướng kỹ năng để bắt đầu luyện đề 4 Sections với audio chuẩn thi thật và giải thích chi tiết AI!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {listeningHistory.map((rec, idx) => (
+                      <div 
+                        key={rec.id || idx}
+                        className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-amber-300 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
+                      >
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center space-x-2">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-100 text-amber-800">
+                              Listening Test
+                            </span>
+                            <span className="text-xs font-bold text-slate-800">
+                              {rec.testTitle || 'IELTS Listening Practice Test'}
+                            </span>
+                          </div>
+                          
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-1">
+                            <span className="flex items-center space-x-1">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              <span>{rec.submittedAt ? new Date(rec.submittedAt).toLocaleDateString('vi-VN') : 'Gần đây'}</span>
+                            </span>
+                            <span>•</span>
+                            <span className="font-medium">
+                              Số câu đúng: <strong className="text-slate-800">{rec.correctCount}/{rec.totalQuestions || 40}</strong>
+                            </span>
+                            <span>•</span>
+                            <span className="font-medium">
+                              Độ chính xác: <strong className="text-amber-700">{rec.accuracyPercent}%</strong>
+                            </span>
+                            {rec.timeSpentSeconds > 0 && (
+                              <>
+                                <span>•</span>
+                                <span>
+                                  Thời gian: {Math.floor(rec.timeSpentSeconds / 60)} phút {rec.timeSpentSeconds % 60} giây
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Breakdown by Section if present */}
+                          {rec.sectionStats && (
+                            <div className="flex flex-wrap items-center gap-1.5 pt-2">
+                              {rec.sectionStats.map((s, sIdx) => (
+                                <span 
+                                  key={sIdx} 
+                                  className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200"
+                                >
+                                  Part {s.sectionNumber || s.partNumber || sIdx + 1}: {s.correct}/{s.total}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center space-x-3 self-end sm:self-center shrink-0">
+                          <div className="text-center px-3.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200">
+                            <span className="text-[10px] text-amber-600 block uppercase font-bold">Estimated</span>
+                            <span className="text-lg font-black text-amber-700">Band {rec.band}</span>
+                          </div>
+
+                          {onDeleteListeningSubmission && (
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Bạn có chắc muốn xóa bài thi "${rec.testTitle || 'IELTS Listening'}" khỏi lịch sử?`)) {
+                                  onDeleteListeningSubmission(rec.id);
+                                }
+                              }}
+                              className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                              title="Xóa bài thi này"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* TAB: SPEAKING STUDIO HISTORY */}
+            {/* ========================================================================= */}
+            {activeTab === 'speaking' && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Thi Thử IELTS Speaking & Báo Cáo Chẩn Đoán</h3>
+                    <p className="text-xs text-slate-500">Các buổi thi phỏng vấn 1-1 với Giám khảo AI bản ngữ chuẩn Cambridge 3 Parts kèm phân tích 4 tiêu chí</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-lg">
+                      {speakingHistory.length} Buổi thi
+                    </span>
+                    {speakingHistory.length > 0 && onClearSpeakingHistory && (
+                      <button
+                        onClick={onClearSpeakingHistory}
+                        className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                        title="Xóa toàn bộ lịch sử Speaking"
+                      >
+                        Xóa tất cả
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* KPI Summary Cards for Speaking */}
+                {speakingHistory.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Speaking Band TB</span>
+                      <div className="text-xl font-black text-purple-600 mt-0.5">
+                        {speakingStats.avgBand > 0 ? `Band ${speakingStats.avgBand}` : '--'}
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tổng Số Lượt Thi</span>
+                      <div className="text-xl font-black text-slate-800 mt-0.5">
+                        {speakingStats.totalTests} <span className="text-xs font-normal text-slate-400">buổi</span>
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tốc Độ Nói (WPM)</span>
+                      <div className="text-xl font-black text-blue-600 mt-0.5">
+                        {speakingStats.avgWpm > 0 ? `${speakingStats.avgWpm}` : '--'} <span className="text-xs font-normal text-slate-400">wpm</span>
+                      </div>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">Từ Đệm TB (Filler)</span>
+                      <div className="text-xl font-black text-amber-600 mt-0.5">
+                        {speakingStats.avgFillerCount !== undefined ? `${speakingStats.avgFillerCount}` : '--'} <span className="text-xs font-normal text-slate-400">từ/buổi</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {speakingHistory.length === 0 ? (
+                  <div className="p-10 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+                    <div className="w-12 h-12 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                      <Mic className="w-6 h-6" />
+                    </div>
+                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài thi Speaking nào</h4>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto">
+                      Hãy chuyển sang phân hệ <strong>IELTS Speaking Studio</strong> trên thanh điều hướng kỹ năng để bước vào phòng thi ảo đối thoại trực tiếp cùng Giám khảo AI chuẩn khảo thí!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {speakingHistory.map((rec, idx) => {
+                      const evalData = rec.evaluation || {};
+                      const criteriaData = evalData.criteria || {};
+                      return (
+                        <div 
+                          key={rec.id || idx}
+                          className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-300 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
+                        >
+                          <div className="space-y-1.5 flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-purple-100 text-purple-800">
+                                BAND {evalData.overallBand ? Number(evalData.overallBand).toFixed(1) : '6.0'}
+                              </span>
+                              <span className="text-xs font-bold text-slate-800">
+                                {rec.mockPack?.title || 'Buổi thi thử IELTS Speaking'}
+                              </span>
+                            </div>
+                            
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-0.5">
+                              <span className="flex items-center space-x-1">
+                                <Clock className="w-3 h-3 text-slate-400" />
+                                <span>{rec.submittedAt ? new Date(rec.submittedAt).toLocaleDateString('vi-VN') : 'Gần đây'}</span>
+                              </span>
+                              {rec.durationSec && (
+                                <>
+                                  <span>•</span>
+                                  <span>Thời gian: {Math.round(rec.durationSec / 60)} phút</span>
+                                </>
+                              )}
+                              {rec.examiner?.name && (
+                                <>
+                                  <span>•</span>
+                                  <span className="font-medium text-slate-700">Giám khảo: {rec.examiner.name} ({rec.examiner.accent})</span>
+                                </>
+                              )}
+                            </div>
+
+                            {/* 4 Criteria Chips */}
+                            <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+                              <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-bold text-[10px] border border-purple-100">
+                                FC: {criteriaData.fc?.band || '6.0'}
+                              </span>
+                              <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-100">
+                                LR: {criteriaData.lr?.band || '6.0'}
+                              </span>
+                              <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px] border border-amber-100">
+                                GRA: {criteriaData.gra?.band || '6.0'}
+                              </span>
+                              <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-100">
+                                PR: {criteriaData.pr?.band || '6.0'}
+                              </span>
+                              {evalData.wpm > 0 && (
+                                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium text-[10px]">
+                                  {evalData.wpm} WPM
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-2 self-end sm:self-center shrink-0">
+                            <button
+                              onClick={() => setSelectedSpeakingSub(rec)}
+                              className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs flex items-center space-x-1.5 transition-colors cursor-pointer border border-purple-200"
+                              title="Xem lại báo cáo chẩn đoán điểm chi tiết"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Xem Báo Cáo</span>
+                            </button>
+
+                            {onDeleteSpeakingSubmission && (
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`Bạn có chắc muốn xóa bài thi Speaking này khỏi lịch sử?`)) {
+                                    onDeleteSpeakingSubmission(rec.id);
+                                  }
+                                }}
+                                className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                                title="Xóa bài thi này"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ========================================================================= */}
             {/* TAB 4: VOCABULARY & MISTAKES NOTEBOOK */}
             {/* ========================================================================= */}
             {activeTab === 'vocab' && (
@@ -1239,6 +1665,21 @@ export default function UserProfileModal({
           </div>
 
         </main>
+
+      {/* Speaking Evaluation Result Modal */}
+      {selectedSpeakingSub && (
+        <SpeakingResultModal
+          isOpen={!!selectedSpeakingSub}
+          onClose={() => setSelectedSpeakingSub(null)}
+          evaluation={selectedSpeakingSub.evaluation}
+          dialogueHistory={selectedSpeakingSub.dialogueHistory}
+          mockPack={selectedSpeakingSub.mockPack}
+          examiner={selectedSpeakingSub.examiner}
+          totalDurationSec={selectedSpeakingSub.durationSec}
+          onSaveToVocabNotebook={onSaveToVocabNotebook}
+          onSaveMistake={onSaveMistake}
+        />
+      )}
 
       </div>
     </div>

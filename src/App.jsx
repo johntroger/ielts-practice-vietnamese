@@ -27,6 +27,7 @@ import ContactModal from './components/ContactModal';
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
+import SpeakingResultModal from './components/speaking/SpeakingResultModal';
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -182,6 +183,7 @@ export default function App() {
   const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [selectedHistorySpeakingSub, setSelectedHistorySpeakingSub] = useState(null);
 
   // Reading Mock Test Exam State
   const [readingMockTestId, setReadingMockTestId] = useState(null);
@@ -447,6 +449,8 @@ export default function App() {
       outlines,
       submissions,
       readingHistory,
+      listeningHistory,
+      speakingHistory,
       vocabList,
       mistakes,
       personalNotes,
@@ -473,6 +477,18 @@ export default function App() {
         localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(data.readingHistory));
       } catch (e) {}
     }
+    if (data.listeningHistory) {
+      setListeningHistory(data.listeningHistory);
+      try {
+        localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(data.listeningHistory));
+      } catch (e) {}
+    }
+    if (data.speakingHistory) {
+      setSpeakingHistory(data.speakingHistory);
+      try {
+        localStorage.setItem('ielts_speaking_submissions_history', JSON.stringify(data.speakingHistory));
+      } catch (e) {}
+    }
     if (data.vocabList) setVocabList(data.vocabList);
     if (data.mistakes) setMistakes(data.mistakes);
     if (data.personalNotes) setPersonalNotes(data.personalNotes);
@@ -486,11 +502,50 @@ export default function App() {
     setEssays({});
     setOutlines({});
     setSubmissions([]);
+    setReadingHistory([]);
+    setListeningHistory([]);
+    setSpeakingHistory([]);
     setVocabList([]);
     setMistakes([]);
     setPersonalNotes([]);
     setApiKey('');
     alert('Đã khôi phục toàn bộ cài đặt gốc.');
+  };
+
+  const handleDeleteListeningSubmission = (subId) => {
+    setListeningHistory(prev => {
+      const updated = prev.filter(r => r.id !== subId);
+      try {
+        localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleClearListeningHistory = () => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Listening?')) return;
+    setListeningHistory([]);
+    try {
+      localStorage.removeItem('ielts_listening_submissions_history');
+    } catch (e) {}
+  };
+
+  const handleDeleteSpeakingSubmission = (subId) => {
+    setSpeakingHistory(prev => {
+      const updated = prev.filter(r => r.id !== subId);
+      try {
+        localStorage.setItem('ielts_speaking_submissions_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleClearSpeakingHistory = () => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Speaking?')) return;
+    setSpeakingHistory([]);
+    try {
+      localStorage.removeItem('ielts_speaking_submissions_history');
+    } catch (e) {}
   };
 
   return (
@@ -907,6 +962,8 @@ export default function App() {
         onClose={() => setIsHistoryOpen(false)}
         submissions={submissions}
         readingHistory={readingHistory}
+        listeningHistory={listeningHistory}
+        speakingHistory={speakingHistory}
         activeSkill={activeSkill}
         onViewSubmission={(sub) => {
           setCurrentTaskId(sub.task.id);
@@ -934,6 +991,11 @@ export default function App() {
             localStorage.removeItem('ielts_reading_submissions_history');
           } catch (e) {}
         }}
+        onDeleteListeningSubmission={handleDeleteListeningSubmission}
+        onClearListeningHistory={handleClearListeningHistory}
+        onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
+        onClearSpeakingHistory={handleClearSpeakingHistory}
+        onViewSpeakingSubmission={(sub) => setSelectedHistorySpeakingSub(sub)}
       />
 
       <TheoryHandbookModal
@@ -979,6 +1041,8 @@ export default function App() {
         user={currentUser}
         submissions={submissions}
         readingHistory={readingHistory}
+        listeningHistory={listeningHistory}
+        speakingHistory={speakingHistory}
         vocabList={vocabList}
         mistakes={mistakes}
         streakCount={streakCount}
@@ -1025,6 +1089,12 @@ export default function App() {
             localStorage.removeItem('ielts_reading_submissions_history');
           } catch (e) {}
         }}
+        onDeleteListeningSubmission={handleDeleteListeningSubmission}
+        onClearListeningHistory={handleClearListeningHistory}
+        onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
+        onClearSpeakingHistory={handleClearSpeakingHistory}
+        onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+        onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
         onSignOut={async () => {
           await supabase.auth.signOut();
           setIsProfileOpen(false);
@@ -1036,6 +1106,21 @@ export default function App() {
         onExportAllData={handleExportAllData}
         onImportData={handleImportData}
       />
+
+      {/* Speaking Evaluation Result Modal (opened from HistoryModal) */}
+      {selectedHistorySpeakingSub && (
+        <SpeakingResultModal
+          isOpen={!!selectedHistorySpeakingSub}
+          onClose={() => setSelectedHistorySpeakingSub(null)}
+          evaluation={selectedHistorySpeakingSub.evaluation}
+          dialogueHistory={selectedHistorySpeakingSub.dialogueHistory}
+          mockPack={selectedHistorySpeakingSub.mockPack}
+          examiner={selectedHistorySpeakingSub.examiner}
+          totalDurationSec={selectedHistorySpeakingSub.durationSec}
+          onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+          onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
+        />
+      )}
 
       <ContactModal
         isOpen={isContactOpen}
