@@ -93,12 +93,12 @@ export default function AudioPlayerBar({
         <div className="flex items-center justify-between gap-2">
           
           {/* Left: Play/Pause & Time & Wave */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
             <div className="relative">
               <button
                 type="button"
                 onClick={togglePlay}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
                   isPlaying 
                     ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
                     : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
@@ -123,7 +123,7 @@ export default function AudioPlayerBar({
             </div>
 
             {/* Time Indicators */}
-            <div className="flex items-baseline space-x-1 font-mono text-xs sm:text-sm">
+            <div className="flex items-baseline space-x-1 font-mono text-[11px] sm:text-sm">
               <span className="font-bold text-emerald-400">{formatTime(currentTime)}</span>
               <span className="text-slate-500">/</span>
               <span className="text-slate-400">{formatTime(duration)}</span>
@@ -140,7 +140,7 @@ export default function AudioPlayerBar({
 
             {/* Buffer load status indicator */}
             {isLoading || (bufferedPercent > 0 && bufferedPercent < 90) ? (
-              <span className="px-2 py-0.5 rounded-full bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold flex items-center space-x-1 animate-pulse" title="Đang tải tệp âm thanh vào bộ nhớ đệm">
+              <span className="hidden xs:flex px-2 py-0.5 rounded-full bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold items-center space-x-1 animate-pulse" title="Đang tải tệp âm thanh vào bộ nhớ đệm">
                 <RefreshCw className="w-2.5 h-2.5 animate-spin" />
                 <span>Đệm: {bufferedPercent}%</span>
               </span>
@@ -164,7 +164,9 @@ export default function AudioPlayerBar({
                     : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'
                 }`}
               >
-                Part {p.partNumber}
+                <span className="hidden sm:inline">Part </span>
+                <span className="sm:hidden">P</span>
+                {p.partNumber}
               </button>
             ))}
           </div>

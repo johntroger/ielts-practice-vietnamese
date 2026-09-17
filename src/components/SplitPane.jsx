@@ -48,38 +48,41 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
       <div className="lg:hidden bg-slate-100 p-1.5 flex items-center justify-center border-b border-slate-200 gap-1 shadow-2xs z-10">
         <button
           onClick={() => setMobileTab('both')}
-          className={`flex-1 flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             mobileTab === 'both' 
               ? 'bg-white text-slate-900 shadow-sm' 
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <Columns className="w-3.5 h-3.5" />
-          <span>Đề & Bài Viết</span>
+          <span className="xs:hidden">Đề & Bài</span>
+          <span className="hidden xs:inline">Đề & Bài Viết</span>
         </button>
 
         <button
           onClick={() => setMobileTab('editor')}
-          className={`flex-1 flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             mobileTab === 'editor' 
               ? 'bg-white text-red-700 shadow-sm ring-1 ring-red-200' 
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <PenLine className="w-3.5 h-3.5 text-red-600" />
-          <span>Soạn Bài Rộng Rãi</span>
+          <span className="xs:hidden">Soạn Bài</span>
+          <span className="hidden xs:inline">Soạn Bài Rộng Rãi</span>
         </button>
 
         <button
           onClick={() => setMobileTab('prompt')}
-          className={`flex-1 flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center space-x-1 sm:space-x-1.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
             mobileTab === 'prompt' 
               ? 'bg-white text-blue-700 shadow-sm ring-1 ring-blue-200' 
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           <BookOpen className="w-3.5 h-3.5 text-blue-600" />
-          <span>Xem Đề Bài</span>
+          <span className="xs:hidden">Đề Bài</span>
+          <span className="hidden xs:inline">Xem Đề Bài</span>
         </button>
       </div>
 

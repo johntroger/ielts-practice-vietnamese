@@ -51,27 +51,27 @@ export default function HistoryModal({
       <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-xs">
-              <History className="w-6 h-6" />
+        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 border-b border-slate-800">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 w-full sm:w-auto min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-xs shrink-0">
+              <History className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
-                <h2 className="text-lg sm:text-xl font-bold">Lịch Sử Bài Làm 4 Kỹ Năng</h2>
-                <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold uppercase">
-                  Tiến Độ Học Tập
+                <h2 className="text-sm sm:text-lg lg:text-xl font-bold truncate">Lịch Sử Bài Làm 4 Kỹ Năng</h2>
+                <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold uppercase shrink-0">
+                  Tiến Độ
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Xem lại các bài thi Writing, Reading, Listening và Speaking đã hoàn thành</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate mt-0.5">Writing, Reading, Listening & Speaking</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800">
             {activeTab === 'writing' && submissions.length > 0 && (
               <button
                 onClick={onClearHistory}
-                className="text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
               >
                 Xóa lịch sử Writing
               </button>
@@ -79,7 +79,7 @@ export default function HistoryModal({
             {activeTab === 'reading' && readingHistory.length > 0 && (
               <button
                 onClick={onClearReadingHistory}
-                className="text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
               >
                 Xóa lịch sử Reading
               </button>
@@ -87,7 +87,7 @@ export default function HistoryModal({
             {activeTab === 'listening' && listeningHistory.length > 0 && (
               <button
                 onClick={onClearListeningHistory}
-                className="text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
               >
                 Xóa lịch sử Listening
               </button>
@@ -95,12 +95,12 @@ export default function HistoryModal({
             {activeTab === 'speaking' && speakingHistory.length > 0 && (
               <button
                 onClick={onClearSpeakingHistory}
-                className="text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
               >
                 Xóa lịch sử Speaking
               </button>
             )}
-            <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+            <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 shrink-0">
               <X className="w-5 h-5" />
             </button>
           </div>

@@ -48,25 +48,27 @@ export default function EditorPane({
         <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
           <button
             onClick={() => setActiveTab('essay')}
-            className={`flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition-all ${
               activeTab === 'essay' 
-                ? 'bg-white text-slate-900 shadow-2xs' 
+                ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <FileText className="w-3.5 h-3.5 text-red-600" />
-            <span>Bài Viết Chính</span>
+            <span className="sm:hidden">Bài Viết</span>
+            <span className="hidden sm:inline">Bài Viết Chính</span>
           </button>
           <button
             onClick={() => setActiveTab('outline')}
-            className={`flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition-all ${
               activeTab === 'outline' 
-                ? 'bg-white text-slate-900 shadow-2xs' 
+                ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-blue-600" />
-            <span>Bản Nháp / Dàn Ý</span>
+            <span className="sm:hidden">Dàn Ý</span>
+            <span className="hidden sm:inline">Bản Nháp / Dàn Ý</span>
           </button>
         </div>
 

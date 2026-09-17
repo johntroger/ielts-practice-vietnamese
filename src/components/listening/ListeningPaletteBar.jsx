@@ -84,13 +84,15 @@ export default function ListeningPaletteBar({
               <button
                 key={p.partNumber}
                 onClick={() => onSelectPart && onSelectPart(p.partNumber)}
-                className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all shrink-0 ${
+                className={`px-2 sm:px-2.5 py-1 rounded-md text-xs font-bold transition-all shrink-0 ${
                   activePart === p.partNumber
                     ? 'bg-red-600 text-white shadow-xs'
                     : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                 }`}
               >
-                Part {p.partNumber}
+                <span className="hidden sm:inline">Part </span>
+                <span className="sm:hidden">P</span>
+                {p.partNumber}
               </button>
             ))}
           </div>
@@ -142,10 +144,10 @@ export default function ListeningPaletteBar({
         </div>
 
         {/* ROW 2: CD-IELTS Action Controls (Review Checkbox, Back / Next, Submit) */}
-        <div className="flex items-center justify-between gap-2 border-t border-slate-800/80 pt-1.5 text-xs">
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2 border-t border-slate-800/80 pt-1.5 text-xs">
           
           {/* Left: Review Flag Checkbox */}
-          <label className="flex items-center space-x-1.5 cursor-pointer select-none text-slate-300 hover:text-amber-300 transition-colors">
+          <label className="flex items-center space-x-1 sm:space-x-1.5 cursor-pointer select-none text-slate-300 hover:text-amber-300 transition-colors shrink-0">
             <input
               type="checkbox"
               checked={isCurrentFlagged}
@@ -153,16 +155,20 @@ export default function ListeningPaletteBar({
               className="w-3.5 h-3.5 rounded-sm border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-400 cursor-pointer"
             />
             <Flag className={`w-3.5 h-3.5 ${isCurrentFlagged ? 'text-amber-400 fill-current' : 'text-slate-400'}`} />
-            <span className="font-semibold text-[11px] sm:text-xs">⚑ Đánh dấu xem lại (Review)</span>
+            <span className="font-semibold text-[11px] sm:text-xs">
+              <span className="hidden xs:inline">⚑ Đánh dấu </span>
+              <span>Xem lại</span>
+            </span>
           </label>
 
           {/* Right: Navigation Arrows & Submit Button */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <div className="flex items-center space-x-1">
               <button
                 onClick={handlePrevQuestion}
                 disabled={activeQuestionOrder <= 1}
-                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 text-xs font-semibold flex items-center space-x-1 transition-colors border border-slate-700"
+                className="px-2 sm:px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 text-xs font-semibold flex items-center space-x-1 transition-colors border border-slate-700"
+                title="Câu trước"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Câu trước</span>
@@ -171,7 +177,8 @@ export default function ListeningPaletteBar({
               <button
                 onClick={handleNextQuestion}
                 disabled={activeQuestionOrder >= totalQuestions}
-                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 text-xs font-semibold flex items-center space-x-1 transition-colors border border-slate-700"
+                className="px-2 sm:px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 text-xs font-semibold flex items-center space-x-1 transition-colors border border-slate-700"
+                title="Câu sau"
               >
                 <span className="hidden sm:inline">Câu sau</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -182,7 +189,7 @@ export default function ListeningPaletteBar({
             {!isSubmitted && (
               <button
                 onClick={onSubmitExam}
-                className="px-3.5 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95 flex items-center space-x-1.5 ml-2"
+                className="px-2.5 sm:px-3.5 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95 flex items-center space-x-1 ml-1 sm:ml-2 shrink-0"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Nộp Bài</span>

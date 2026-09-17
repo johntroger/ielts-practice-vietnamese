@@ -124,25 +124,28 @@ export default function FeedbackModal({
       <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header Bar */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-red-600/30 border border-red-500/40 text-red-400">
-              <Award className="w-6 h-6" />
+        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 w-full sm:w-auto min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-red-600/30 border border-red-500/40 text-red-400 shrink-0">
+              <Award className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
-                <h2 className="text-lg sm:text-xl font-bold">Báo Cáo Đánh Giá Bài Thi (Strict Cambridge Rubric)</h2>
-                <span className="px-2 py-0.5 rounded-md bg-red-600 text-white font-extrabold text-sm tracking-wide">
+                <h2 className="text-sm sm:text-lg lg:text-xl font-bold truncate">
+                  Báo Cáo Đánh Giá Bài Thi
+                  <span className="hidden sm:inline font-normal text-slate-400 text-xs ml-1.5">(Cambridge Rubric)</span>
+                </h2>
+                <span className="px-2 py-0.5 rounded-md bg-red-600 text-white font-extrabold text-xs sm:text-sm tracking-wide shrink-0">
                   BAND {evaluation.overallBand ? evaluation.overallBand.toFixed(1) : '7.0'}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate mt-0.5">
                 Task {task.taskNumber}: {task.title} • {stats?.wordCount || 0} từ • Thời gian: {stats?.timeSpent || 'N/A'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 w-full sm:w-auto justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800">
             {/* Version 2 Rewrite Trigger Button */}
             {onOpenRevision && (
               <button
@@ -150,17 +153,17 @@ export default function FeedbackModal({
                   onClose();
                   onOpenRevision();
                 }}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold transition-all shadow-xs"
+                className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold transition-all shadow-xs shrink-0"
                 title="Luyện viết lại lần 2 để nâng band"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Viết Lại Bản v2</span>
+                <span>Viết Lại v2</span>
               </button>
             )}
 
             <button
               onClick={() => exportToWord({ task, essayText, evaluation, stats })}
-              className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+              className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors shrink-0"
               title="Xuất bài ra file Word .doc"
             >
               <FileDown className="w-4 h-4 text-blue-400" />
@@ -168,14 +171,14 @@ export default function FeedbackModal({
             </button>
             <button
               onClick={printFormattedReport}
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors"
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors shrink-0"
               title="In / Lưu thành PDF"
             >
               <Printer className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
