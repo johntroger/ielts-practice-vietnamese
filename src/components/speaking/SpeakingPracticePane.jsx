@@ -2,39 +2,67 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, MicOff, Volume2, Play, Pause, Square, RotateCcw, CheckCircle2, 
   Sparkles, BookOpen, Layers, Clock, Award, Shield, Compass, Headphones, 
-  ChevronRight, ArrowRight, Lightbulb, Copy, Info, AlertCircle 
+  ChevronRight, ArrowRight, Lightbulb, Copy, Info, AlertCircle, Plus,
+  Trash2, Loader2
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
+import { evaluateSpeakingPracticeAnswer } from '../../services/geminiService';
+import SpeakingSingleEvaluationModal from './SpeakingSingleEvaluationModal';
+import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
 
 export default function SpeakingPracticePane({
   practicePart = 1,
   setPracticePart,
   // Part 1 data & state
   part1Topics = [],
+  onAddP1Topic,
+  onDeleteP1Topic,
   selectedP1TopicId,
   setSelectedP1TopicId,
   activeP1QuestionIndex,
   setActiveP1QuestionIndex,
   // Part 2 data & state
   part2Cards = [],
+  onAddP2Card,
+  onDeleteP2Card,
   selectedP2CueCardId,
   setSelectedP2CueCardId,
   // Part 3 data & state
   part3Sets = [],
+  onAddP3Set,
+  onDeleteP3Set,
   activeP3Set,
   // Engine & callbacks
   speechEngine,
   activeExaminer,
+  apiKey,
+  model,
+  onOpenSettings,
   onOpenIdeaMatrix,
   onOpenShadowing,
-  onSaveToVocabNotebook
+  onSaveToVocabNotebook,
+  onPracticeAnswerSubmitted
 }) {
   // Common state
   const [showVocabHints, setShowVocabHints] = useState(true);
   const [showSampleAnswer, setShowSampleAnswer] = useState(false);
   const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
   const practiceAudioRef = useRef(null);
+
+  // Modals state
+  const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
+  const [topicModalPart, setTopicModalPart] = useState(1);
+  const [isEvaluationModalOpen, setIsEvaluationModalOpen] = useState(false);
+  const [isEvaluatingSingle, setIsEvaluatingSingle] = useState(false);
+  const [evaluatingClipKey, setEvaluatingClipKey] = useState('');
+  const [singleEvaluationResult, setSingleEvaluationResult] = useState(null);
+  const [evaluationContext, setEvaluationContext] = useState(null);
+
+  // Quick Add Question modal/prompt state
+  const [isQuickAddQOpen, setIsQuickAddQOpen] = useState(false);
+  const [quickQText, setQuickQText] = useState('');
+  const [quickQStrategy, setQuickQStrategy] = useState('');
 
   // Part 2 Specific Timers & Pacing State
   const [prepSecondsRemaining, setPrepSecondsRemaining] = useState(60);
@@ -44,9 +72,13 @@ export default function SpeakingPracticePane({
   const prepTimerRef = useRef(null);
   const speakTimerRef = useRef(null);
 
+  // Part 3 Selector State
+  const [selectedP3Id, setSelectedP3Id] = useState(activeP3Set?.linkedPart2Id || part3Sets[0]?.linkedPart2Id || 'p3-tech-society');
+
   // Active items
   const activeP1Topic = part1Topics.find(t => t.id === selectedP1TopicId) || part1Topics[0] || {};
   const activeP2Card = part2Cards.find(c => c.id === selectedP2CueCardId) || part2Cards[0] || {};
+  const currentP3Set = part3Sets.find(s => (s.linkedPart2Id || s.id) === selectedP3Id) || activeP3Set || part3Sets[0] || {};
   const currentP1Question = activeP1Topic.questions?.[activeP1QuestionIndex] || null;
 
   // Cleanup on unmount or tab/topic/question switch
@@ -132,10 +164,147 @@ export default function SpeakingPracticePane({
     }
   };
 
-  // Render Playback Voice Box
-  const renderAudioPlayback = (clipKey) => {
+  // -------------------------------------------------------------
+  // AI EVALUATION HANDLERS & ZERO VOICE RETENTION
+  // -------------------------------------------------------------
+  const handleEvaluateAnswer = async (clipKey, questionText, topicTitle, partNum) => {
+    if (!apiKey) {
+      if (onOpenSettings) {
+        if (window.confirm('Vui lòng nhập Google Gemini API Key trong phần Cài đặt để sử dụng tính năng Chấm điểm bằng AI. Mở Cài đặt ngay?')) {
+          onOpenSettings();
+        }
+      } else {
+        alert('Vui lòng cấu hình Gemini API Key trong Cài đặt để chấm điểm bài nói.');
+      }
+      return;
+    }
+
+    const currentTranscript = speechEngine.transcript?.trim();
+    if (!currentTranscript || currentTranscript.split(/\s+/).filter(Boolean).length < 3) {
+      alert('Câu trả lời của bạn quá ngắn hoặc mic chưa nhận diện được từ ngữ. Vui lòng bấm "Bật Micro Luyện Nói" và trả lời ít nhất vài câu trước khi yêu cầu AI chấm điểm.');
+      return;
+    }
+
+    const clip = speechEngine.audioClips?.[clipKey];
+    const durationSec = clip?.duration || (partNum === 2 ? speakSecondsElapsed : 35);
+
+    setIsEvaluatingSingle(true);
+    setEvaluatingClipKey(clipKey);
+
+    try {
+      const result = await evaluateSpeakingPracticeAnswer({
+        part: partNum,
+        topicTitle: topicTitle || `IELTS Speaking Part ${partNum}`,
+        questionText: questionText || topicTitle,
+        cueBullets: partNum === 2 ? (activeP2Card.cueCard?.bullets || []) : null,
+        candidateTranscript: currentTranscript,
+        durationSec,
+        apiKey,
+        model
+      });
+
+      setEvaluationContext({
+        clipKey,
+        questionText,
+        topicTitle,
+        candidateTranscript: currentTranscript,
+        durationSec,
+        part: partNum
+      });
+      setSingleEvaluationResult(result);
+      setIsEvaluationModalOpen(true);
+    } catch (err) {
+      console.error('Error evaluating practice answer:', err);
+      alert(err.message || 'Lỗi khi chấm bài nói. Vui lòng thử lại.');
+    } finally {
+      setIsEvaluatingSingle(false);
+      setEvaluatingClipKey('');
+    }
+  };
+
+  const handleSaveEvaluationAndCleanVoice = () => {
+    if (!singleEvaluationResult || !evaluationContext) return;
+
+    // 1. Build persistent submission record (ONLY text evaluation report, NO audio binary)
+    const subRecord = {
+      id: `spk-prac-${Date.now()}`,
+      submittedAt: new Date().toISOString(),
+      mockPack: {
+        id: `practice-p${evaluationContext.part}`,
+        title: `Luyện tập Part ${evaluationContext.part}: ${evaluationContext.topicTitle}`,
+        targetBand: 'Luyện tập Tự Do'
+      },
+      examiner: {
+        name: activeExaminer?.name || 'Giám Khảo AI Cambridge',
+        accent: activeExaminer?.accent || 'Cambridge Standard'
+      },
+      durationSec: evaluationContext.durationSec || 30,
+      evaluation: singleEvaluationResult,
+      dialogueHistory: [
+        { speaker: 'examiner', text: evaluationContext.questionText },
+        { speaker: 'candidate', text: evaluationContext.candidateTranscript }
+      ]
+    };
+
+    if (onPracticeAnswerSubmitted) {
+      onPracticeAnswerSubmitted(subRecord);
+    }
+
+    // 2. CRITICAL ZERO VOICE RETENTION: Purge audio clip & revoke RAM Blob URL immediately!
+    if (evaluationContext.clipKey && speechEngine.deleteAudioClip) {
+      speechEngine.deleteAudioClip(evaluationContext.clipKey);
+    }
+    if (practiceAudioRef.current) {
+      practiceAudioRef.current.pause();
+      setIsPlayingPracticeAudio(false);
+    }
+  };
+
+  // Quick Add Question to Current Topic
+  const handleQuickAddQuestion = () => {
+    if (!quickQText.trim()) return;
+
+    if (practicePart === 1 && activeP1Topic) {
+      const newQ = {
+        qId: `p1-q-user-${Date.now()}`,
+        question: quickQText.trim(),
+        focus: 'Câu hỏi bổ sung',
+        strategy: quickQStrategy.trim() || 'A.R.E.A Framework: Answer -> Reason -> Example -> Alternative',
+        vocabHints: [],
+        sampleAnswer: ''
+      };
+      if (activeP1Topic.questions) {
+        activeP1Topic.questions.push(newQ);
+      } else {
+        activeP1Topic.questions = [newQ];
+      }
+      setActiveP1QuestionIndex(activeP1Topic.questions.length - 1);
+    } else if (practicePart === 3 && currentP3Set) {
+      const newQ = {
+        qId: `p3-q-user-${Date.now()}`,
+        question: quickQText.trim(),
+        analysisType: 'Thảo luận sâu',
+        strategy: quickQStrategy.trim() || 'PEEL Framework: Point -> Explanation -> Example -> Link',
+        sampleAnswer: ''
+      };
+      if (currentP3Set.questions) {
+        currentP3Set.questions.push(newQ);
+      } else {
+        currentP3Set.questions = [newQ];
+      }
+    }
+
+    setQuickQText('');
+    setQuickQStrategy('');
+    setIsQuickAddQOpen(false);
+  };
+
+  // Render Playback Voice Box & AI Evaluation
+  const renderAudioPlayback = (clipKey, questionText, topicTitle, partNum) => {
     const clip = speechEngine.audioClips[clipKey];
-    if (!clip || speechEngine.isListening) return null;
+    const hasTranscript = !!speechEngine.transcript?.trim();
+    if (!clip && !hasTranscript) return null;
+    if (speechEngine.isListening) return null;
 
     const handleTogglePlay = () => {
       if (!clip?.url) return;
@@ -168,49 +337,71 @@ export default function SpeakingPracticePane({
       if (speechEngine.deleteAudioClip) {
         speechEngine.deleteAudioClip(clipKey);
       }
+      speechEngine.resetTranscript();
     };
 
     return (
-      <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/50 space-y-2 animate-in fade-in duration-150">
+      <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/50 space-y-2.5 animate-in fade-in duration-150">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-white flex items-center space-x-1.5">
             <Volume2 className="w-3.5 h-3.5 text-purple-400" />
-            <span>Nghe lại câu trả lời vừa thu ({clip.duration || 1}s):</span>
+            <span>Nghe lại & Đánh giá câu trả lời ({clip?.duration || 1}s):</span>
           </span>
           <span className="text-[10px] text-purple-300 font-semibold bg-purple-900/50 px-2 py-0.5 rounded border border-purple-700/40">
-            RAM-Only
+            RAM-Only (Tự hủy khi lưu)
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {clip && (
+            <button
+              onClick={handleTogglePlay}
+              className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer ${
+                isPlayingPracticeAudio
+                  ? 'bg-amber-600 hover:bg-amber-500 text-white'
+                  : 'bg-slate-800 hover:bg-slate-700 text-purple-200 border border-purple-600/40'
+              }`}
+            >
+              {isPlayingPracticeAudio ? (
+                <>
+                  <Pause className="w-3.5 h-3.5 fill-current" />
+                  <span>Tạm Dừng</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>🔊 Nghe Lại Giọng</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {/* AI EVALUATION BUTTON */}
           <button
-            onClick={handleTogglePlay}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer ${
-              isPlayingPracticeAudio
-                ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                : 'bg-purple-600 hover:bg-purple-500 text-white shadow-sm'
-            }`}
+            onClick={() => handleEvaluateAnswer(clipKey, questionText, topicTitle, partNum)}
+            disabled={isEvaluatingSingle}
+            className="flex-1 py-2 px-3.5 rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-purple-950/50 flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-60 transition-all hover:scale-[1.01]"
           >
-            {isPlayingPracticeAudio ? (
+            {isEvaluatingSingle && evaluatingClipKey === clipKey ? (
               <>
-                <Pause className="w-3.5 h-3.5 fill-current" />
-                <span>Tạm Dừng</span>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Giám Khảo AI Đang Chấm...</span>
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>🔊 Nghe Lại Giọng Của Bạn</span>
+                <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+                <span>✨ Chấm Điểm Bằng AI (Cambridge)</span>
               </>
             )}
           </button>
 
           <button
             onClick={handleClearClip}
-            className="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 text-xs font-bold border border-emerald-500/30 flex items-center space-x-1 cursor-pointer transition-colors"
-            title="Xóa file âm thanh tạm để giải phóng RAM"
+            className="py-2 px-3 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-rose-300 text-xs font-bold border border-slate-700 flex items-center space-x-1 cursor-pointer transition-colors"
+            title="Xóa âm thanh ngay khỏi bộ nhớ RAM để tiết kiệm tài nguyên"
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>OK & Xóa File Tạm (Tiết Kiệm RAM)</span>
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Xóa File Tạm</span>
           </button>
         </div>
       </div>
@@ -297,26 +488,45 @@ export default function SpeakingPracticePane({
       {practicePart === 1 && (
         <div className="space-y-4 animate-in fade-in duration-150">
           
-          {/* Topic Selector Pills */}
+          {/* Topic Selector Pills & Add Topic Button */}
           <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
             {part1Topics.map(topic => (
-              <button
-                key={topic.id}
-                onClick={() => {
-                  setSelectedP1TopicId(topic.id);
-                  setActiveP1QuestionIndex(0);
-                  setShowSampleAnswer(false);
-                  speechEngine.resetTranscript();
-                }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  selectedP1TopicId === topic.id
-                    ? 'bg-purple-600 text-white border border-purple-400 shadow-sm'
-                    : 'bg-slate-900 text-slate-400 hover:bg-slate-800 border border-slate-800'
-                }`}
-              >
-                {topic.title}
-              </button>
+              <div key={topic.id} className="relative group shrink-0">
+                <button
+                  onClick={() => {
+                    setSelectedP1TopicId(topic.id);
+                    setActiveP1QuestionIndex(0);
+                    setShowSampleAnswer(false);
+                    speechEngine.resetTranscript();
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-1.5 ${
+                    selectedP1TopicId === topic.id
+                      ? 'bg-purple-600 text-white border border-purple-400 shadow-sm'
+                      : 'bg-slate-900 text-slate-400 hover:bg-slate-800 border border-slate-800'
+                  }`}
+                >
+                  <span>{topic.title}</span>
+                  {topic.isCustom && (
+                    <span className="text-[9px] px-1 py-0.2 bg-purple-900/60 rounded text-purple-200 border border-purple-500/30">
+                      AI
+                    </span>
+                  )}
+                </button>
+              </div>
             ))}
+
+            {/* ADD TOPIC BUTTON (AI GENERATOR / MANUAL) */}
+            <button
+              onClick={() => {
+                setTopicModalPart(1);
+                setIsTopicModalOpen(true);
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold whitespace-nowrap flex items-center space-x-1 shadow-sm cursor-pointer shrink-0"
+              title="Thêm chủ đề luyện tập Part 1 mới (bằng AI hoặc thủ công)"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>+ Thêm Chủ Đề Mới (AI)</span>
+            </button>
           </div>
 
           {/* Question Card */}
@@ -329,8 +539,30 @@ export default function SpeakingPracticePane({
                     Câu {activeP1QuestionIndex + 1} / {activeP1Topic.questions.length}
                   </span>
                   <span className="text-xs text-slate-400 font-semibold">{activeP1Topic.title}</span>
+                  {activeP1Topic.isCustom && onDeleteP1Topic && (
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Bạn có chắc muốn xóa chủ đề "${activeP1Topic.title}"?`)) {
+                          onDeleteP1Topic(activeP1Topic.id);
+                        }
+                      }}
+                      className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer ml-1"
+                      title="Xóa chủ đề tự tạo này"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
+
                 <div className="flex items-center space-x-1.5">
+                  <button
+                    onClick={() => setIsQuickAddQOpen(true)}
+                    className="px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 transition-colors cursor-pointer flex items-center space-x-1"
+                    title="Thêm câu hỏi mới vào chủ đề hiện tại"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>+ Thêm Câu Hỏi</span>
+                  </button>
                   <button
                     onClick={() => setShowVocabHints(!showVocabHints)}
                     className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
@@ -478,8 +710,13 @@ export default function SpeakingPracticePane({
                   </button>
                 </div>
 
-                {/* Playback Box */}
-                {renderAudioPlayback(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
+                {/* Playback Box & AI Evaluation */}
+                {renderAudioPlayback(
+                  `p1_${activeP1Topic.id}_${activeP1QuestionIndex}`,
+                  currentP1Question.question,
+                  activeP1Topic.title,
+                  1
+                )}
               </div>
 
               {/* Vocab Hints */}
@@ -582,26 +819,57 @@ export default function SpeakingPracticePane({
                   Part 2 Long Turn (2 Phút Nói)
                 </span>
                 <span className="text-xs text-slate-400 font-semibold">{activeP2Card.category}</span>
+                {activeP2Card.isCustom && onDeleteP2Card && (
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Bạn có chắc muốn xóa Cue Card "${activeP2Card.title}"?`)) {
+                        onDeleteP2Card(activeP2Card.id);
+                      }
+                    }}
+                    className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
+                    title="Xóa Cue Card tự tạo này"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
               <h3 className="text-base sm:text-lg font-black text-white mt-1">{activeP2Card.title}</h3>
             </div>
 
-            <select
-              value={selectedP2CueCardId}
-              onChange={(e) => {
-                setSelectedP2CueCardId(e.target.value);
-                setShowSampleAnswer(false);
-                setSpeakSecondsElapsed(0);
-                setIsPart2Speaking(false);
-                setIsPrepping(false);
-                speechEngine.resetTranscript();
-              }}
-              className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 font-bold focus:outline-none cursor-pointer shrink-0"
-            >
-              {part2Cards.map(c => (
-                <option key={c.id} value={c.id}>{c.title}</option>
-              ))}
-            </select>
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
+              <select
+                value={selectedP2CueCardId}
+                onChange={(e) => {
+                  setSelectedP2CueCardId(e.target.value);
+                  setShowSampleAnswer(false);
+                  setSpeakSecondsElapsed(0);
+                  setIsPart2Speaking(false);
+                  setIsPrepping(false);
+                  speechEngine.resetTranscript();
+                }}
+                className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 font-bold focus:outline-none cursor-pointer flex-1 sm:flex-initial"
+              >
+                {part2Cards.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.title} {c.isCustom ? '(AI Custom)' : ''}
+                  </option>
+                ))}
+              </select>
+
+              {/* ADD CUE CARD BUTTON (AI / MANUAL) */}
+              <button
+                onClick={() => {
+                  setTopicModalPart(2);
+                  setIsTopicModalOpen(true);
+                }}
+                className="px-3 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm cursor-pointer shrink-0"
+                title="Thêm Cue Card luyện tập Part 2 mới (bằng AI hoặc thủ công)"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">+ Thêm Cue Card (AI)</span>
+                <span className="sm:hidden">+ Đề Mới</span>
+              </button>
+            </div>
           </div>
 
           {/* Cue Card Frame */}
@@ -762,8 +1030,13 @@ export default function SpeakingPracticePane({
               </button>
             </div>
 
-            {/* Playback Box */}
-            {renderAudioPlayback(`p2_${activeP2Card.id}`)}
+            {/* Playback Box & AI Evaluation */}
+            {renderAudioPlayback(
+              `p2_${activeP2Card.id}`,
+              activeP2Card.cueCard?.intro || activeP2Card.title,
+              activeP2Card.title,
+              2
+            )}
 
           </div>
 
@@ -803,18 +1076,61 @@ export default function SpeakingPracticePane({
       {/* ========================================================= */}
       {/* 4. PART 3 PRACTICE VIEW (PEEL FRAMEWORK)                   */}
       {/* ========================================================= */}
-      {practicePart === 3 && activeP3Set && (
+      {practicePart === 3 && currentP3Set && (
         <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5 animate-in fade-in duration-150 shadow-xl">
           
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Part 3: Thảo Luận Hai Chiều (Chuyên Sâu)
-            </span>
-            <span className="text-xs font-bold text-slate-300">{activeP3Set.topic}</span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div className="flex items-center space-x-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                Part 3: Thảo Luận Hai Chiều (Chuyên Sâu)
+              </span>
+              <span className="text-xs font-bold text-slate-300">{currentP3Set.topic}</span>
+              {currentP3Set.isCustom && onDeleteP3Set && (
+                <button
+                  onClick={() => {
+                    if (window.confirm(`Bạn có chắc muốn xóa bộ thảo luận "${currentP3Set.topic}"?`)) {
+                      onDeleteP3Set(currentP3Set.linkedPart2Id || currentP3Set.id);
+                    }
+                  }}
+                  className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
+                  title="Xóa bộ thảo luận tự tạo này"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
+              <select
+                value={selectedP3Id}
+                onChange={(e) => setSelectedP3Id(e.target.value)}
+                className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-none cursor-pointer flex-1 sm:flex-initial"
+              >
+                {part3Sets.map((s, idx) => (
+                  <option key={s.linkedPart2Id || s.id || idx} value={s.linkedPart2Id || s.id || idx}>
+                    {s.topic} {s.isCustom ? '(AI Custom)' : ''}
+                  </option>
+                ))}
+              </select>
+
+              {/* ADD PART 3 TOPIC BUTTON */}
+              <button
+                onClick={() => {
+                  setTopicModalPart(3);
+                  setIsTopicModalOpen(true);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm cursor-pointer shrink-0"
+                title="Thêm bộ câu hỏi thảo luận Part 3 mới (bằng AI hoặc thủ công)"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">+ Thêm Chủ Đề Mới (AI)</span>
+                <span className="sm:hidden">+ Đề Mới</span>
+              </button>
+            </div>
           </div>
 
           <div className="space-y-4">
-            {activeP3Set.questions?.map((q, idx) => {
+            {currentP3Set.questions?.map((q, idx) => {
               const clipKey = `p3_${q.qId || idx}`;
               return (
                 <div key={q.qId || idx} className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
@@ -856,14 +1172,123 @@ export default function SpeakingPracticePane({
                     </button>
                   </div>
 
-                  {renderAudioPlayback(clipKey)}
+                  {/* Audio Playback & AI Evaluation for this question */}
+                  {renderAudioPlayback(clipKey, q.question, currentP3Set.topic, 3)}
                 </div>
               );
             })}
           </div>
 
+          {/* Quick Add Question to Part 3 set */}
+          <div className="pt-2 flex justify-end">
+            <button
+              onClick={() => setIsQuickAddQOpen(true)}
+              className="px-3.5 py-2 rounded-xl bg-purple-950/70 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 flex items-center space-x-1.5 transition-colors cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Thêm Câu Hỏi Vào Bộ Thảo Luận Này</span>
+            </button>
+          </div>
+
         </div>
       )}
+
+      {/* ========================================================= */}
+      {/* 5. TOPIC & QUESTION CREATION MODAL (AI + MANUAL)          */}
+      {/* ========================================================= */}
+      <SpeakingPracticeTopicModal
+        isOpen={isTopicModalOpen}
+        onClose={() => setIsTopicModalOpen(false)}
+        part={topicModalPart}
+        apiKey={apiKey}
+        model={model}
+        onTopicCreated={(newTopic) => {
+          if (topicModalPart === 1 && onAddP1Topic) {
+            onAddP1Topic(newTopic);
+          } else if (topicModalPart === 2 && onAddP2Card) {
+            onAddP2Card(newTopic);
+          } else if (topicModalPart === 3 && onAddP3Set) {
+            onAddP3Set(newTopic);
+            setSelectedP3Id(newTopic.linkedPart2Id || newTopic.id);
+          }
+        }}
+      />
+
+      {/* ========================================================= */}
+      {/* 6. QUICK ADD QUESTION MODAL (FOR CURRENT TOPIC)           */}
+      {/* ========================================================= */}
+      {isQuickAddQOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-5 space-y-4 shadow-2xl text-slate-200">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-sm text-white flex items-center space-x-2">
+                <Plus className="w-4 h-4 text-purple-400" />
+                <span>Thêm Câu Hỏi Mới Vào Chủ Đề: {practicePart === 1 ? activeP1Topic?.title : currentP3Set?.topic}</span>
+              </h3>
+              <button
+                onClick={() => setIsQuickAddQOpen(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-300">Nội Dung Câu Hỏi Tiếng Anh:</label>
+                <textarea
+                  rows={3}
+                  value={quickQText}
+                  onChange={(e) => setQuickQText(e.target.value)}
+                  placeholder="Ví dụ: How do you think artificial intelligence will change the way people work in the next ten years?"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-300">Mẹo / Chiến Lược Trả Lời (Tùy chọn):</label>
+                <input
+                  type="text"
+                  value={quickQStrategy}
+                  onChange={(e) => setQuickQStrategy(e.target.value)}
+                  placeholder="Ví dụ: Áp dụng công thức PEEL, nêu tác động tích cực và rủi ro..."
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-800">
+              <button
+                onClick={() => setIsQuickAddQOpen(false)}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleQuickAddQuestion}
+                disabled={!quickQText.trim()}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md cursor-pointer disabled:opacity-50"
+              >
+                + Thêm Câu Hỏi Này
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* 7. SINGLE ANSWER AI EVALUATION MODAL                      */}
+      {/* ========================================================= */}
+      <SpeakingSingleEvaluationModal
+        isOpen={isEvaluationModalOpen}
+        onClose={() => setIsEvaluationModalOpen(false)}
+        evaluation={singleEvaluationResult}
+        questionText={evaluationContext?.questionText || ''}
+        topicTitle={evaluationContext?.topicTitle || ''}
+        candidateTranscript={evaluationContext?.candidateTranscript || ''}
+        part={evaluationContext?.part || 1}
+        onSaveToHistoryAndCleanVoice={handleSaveEvaluationAndCleanVoice}
+      />
 
     </div>
   );

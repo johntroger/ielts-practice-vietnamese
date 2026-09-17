@@ -76,6 +76,90 @@ export default function SpeakingWorkspace({
   const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
   const practiceAudioRef = React.useRef(null);
 
+  // Custom practice topics, cards & discussion sets
+  const [customP1Topics, setCustomP1Topics] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_p1_topics');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) { return []; }
+  });
+
+  const [customP2Cards, setCustomP2Cards] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_p2_cards');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) { return []; }
+  });
+
+  const [customP3Sets, setCustomP3Sets] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_p3_sets');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) { return []; }
+  });
+
+  const allP1Topics = [...SPEAKING_PART1_TOPICS, ...customP1Topics];
+  const allP2Cards = [...SPEAKING_PART2_CUECARDS, ...customP2Cards];
+  const allP3Sets = [...SPEAKING_PART3_QUESTIONS, ...customP3Sets];
+
+  const handleAddP1Topic = (newTopic) => {
+    setCustomP1Topics(prev => {
+      const updated = [newTopic, ...prev];
+      try { localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+    setSelectedP1TopicId(newTopic.id);
+    setActiveP1QuestionIndex(0);
+  };
+
+  const handleDeleteP1Topic = (topicId) => {
+    setCustomP1Topics(prev => {
+      const updated = prev.filter(t => t.id !== topicId);
+      try { localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+    if (selectedP1TopicId === topicId) {
+      setSelectedP1TopicId(SPEAKING_PART1_TOPICS[0]?.id || 'p1-work-study');
+      setActiveP1QuestionIndex(0);
+    }
+  };
+
+  const handleAddP2Card = (newCard) => {
+    setCustomP2Cards(prev => {
+      const updated = [newCard, ...prev];
+      try { localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+    setSelectedP2CueCardId(newCard.id);
+  };
+
+  const handleDeleteP2Card = (cardId) => {
+    setCustomP2Cards(prev => {
+      const updated = prev.filter(c => c.id !== cardId);
+      try { localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+    if (selectedP2CueCardId === cardId) {
+      setSelectedP2CueCardId(SPEAKING_PART2_CUECARDS[0]?.id || 'p2-tech-device');
+    }
+  };
+
+  const handleAddP3Set = (newSet) => {
+    setCustomP3Sets(prev => {
+      const updated = [newSet, ...prev];
+      try { localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleDeleteP3Set = (setId) => {
+    setCustomP3Sets(prev => {
+      const updated = prev.filter(s => (s.linkedPart2Id || s.id) !== setId);
+      try { localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+  };
+
   const [isDismissedBrowserBanner, setIsDismissedBrowserBanner] = useState(false);
 
   // Accurate browser detection
@@ -131,9 +215,9 @@ export default function SpeakingWorkspace({
   };
 
   // Practice items
-  const activeP1Topic = SPEAKING_PART1_TOPICS.find(p => p.id === selectedP1TopicId) || SPEAKING_PART1_TOPICS[0];
-  const activeP2Card = SPEAKING_PART2_CUECARDS.find(p => p.id === selectedP2CueCardId) || SPEAKING_PART2_CUECARDS[0];
-  const activeP3Set = SPEAKING_PART3_QUESTIONS.find(p => p.linkedPart2Id === selectedP2CueCardId) || SPEAKING_PART3_QUESTIONS[0];
+  const activeP1Topic = allP1Topics.find(p => p.id === selectedP1TopicId) || allP1Topics[0];
+  const activeP2Card = allP2Cards.find(p => p.id === selectedP2CueCardId) || allP2Cards[0];
+  const activeP3Set = allP3Sets.find(p => p.linkedPart2Id === selectedP2CueCardId) || allP3Sets[0];
 
   // 2. Hook up Speech Engine Core
   const speechEngine = useSpeechEngine({
@@ -560,21 +644,31 @@ export default function SpeakingWorkspace({
           <SpeakingPracticePane
             practicePart={practicePart}
             setPracticePart={setPracticePart}
-            part1Topics={SPEAKING_PART1_TOPICS}
+            part1Topics={allP1Topics}
+            onAddP1Topic={handleAddP1Topic}
+            onDeleteP1Topic={handleDeleteP1Topic}
             selectedP1TopicId={selectedP1TopicId}
             setSelectedP1TopicId={setSelectedP1TopicId}
             activeP1QuestionIndex={activeP1QuestionIndex}
             setActiveP1QuestionIndex={setActiveP1QuestionIndex}
-            part2Cards={SPEAKING_PART2_CUECARDS}
+            part2Cards={allP2Cards}
+            onAddP2Card={handleAddP2Card}
+            onDeleteP2Card={handleDeleteP2Card}
             selectedP2CueCardId={selectedP2CueCardId}
             setSelectedP2CueCardId={setSelectedP2CueCardId}
-            part3Sets={SPEAKING_PART3_QUESTIONS}
+            part3Sets={allP3Sets}
+            onAddP3Set={handleAddP3Set}
+            onDeleteP3Set={handleDeleteP3Set}
             activeP3Set={activeP3Set}
             speechEngine={speechEngine}
             activeExaminer={activeExaminer}
+            apiKey={apiKey}
+            model={model}
+            onOpenSettings={onOpenSettings}
             onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
             onOpenShadowing={() => setIsShadowingOpen(true)}
             onSaveToVocabNotebook={onSaveToVocabNotebook}
+            onPracticeAnswerSubmitted={onSpeakingSubmitted}
           />
         )}
 
