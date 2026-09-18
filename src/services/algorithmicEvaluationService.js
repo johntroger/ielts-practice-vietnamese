@@ -182,12 +182,12 @@ const COHESIVE_DEVICES = {
 
 // Referencing & Anaphoric Substitution Markers (Cambridge Band 7-8 CC Indicators)
 const REFERENCING_PATTERNS = [
-  /\b(this|these|such)\s+(trend|phenomenon|issue|problem|tendency|pattern|shift|disparity|measure|approach|dilemma|finding|outcome|consequence|initiative)\b/i,
-  /\bthe\s+former\b/i,
-  /\bthe\s+latter\b/i,
-  /\bin\s+doing\s+so\b/i,
-  /\bby\s+doing\s+so\b/i,
-  /\bwhich\s+(in\s+turn|subsequently|consequently)\b/i
+  /\b(this|these|such)\s+(trend|phenomenon|issue|problem|tendency|pattern|shift|disparity|measure|approach|dilemma|finding|outcome|consequence|initiative|transition|transformation|strategy|policy|alternative|development|paradigm)\b/gi,
+  /\bthe\s+former\b/gi,
+  /\bthe\s+latter\b/gi,
+  /\bin\s+doing\s+so\b/gi,
+  /\bby\s+doing\s+so\b/gi,
+  /\bwhich\s+(in\s+turn|subsequently|consequently)\b/gi
 ];
 
 // Overview Indicators for IELTS Task 1 (Mandatory Cambridge Hard Cap)
@@ -196,6 +196,63 @@ const OVERVIEW_INDICATORS = [
   'it is clear that', 'it is evident that', 'as can be seen from the chart',
   'the most prominent feature', 'the general trend', 'looking at the overall picture',
   'as an overall trend', 'it is apparent that', 'broadly speaking'
+];
+
+// Subject-Verb Agreement Traps (Cambridge Band 5-6 Red Flags)
+const SUBJECT_VERB_TRAPS = [
+  // 3rd person singular pronoun / noun + base verb (missing -s/-es)
+  {
+    regex: /\b(he|she|it|this|that|everyone|everybody|someone|somebody|each)\s+(have|make|do|take|help|lead|show|provide|give|cause|play|bring|need|want|seem|tend|like|prefer|think|believe|create)\b/gi,
+    fix: "Lỗi hòa hợp Chủ ngữ - Động từ: Chủ ngữ ngôi thứ 3 số ít (he/she/it/this/that/everyone...) phải đi với động từ số ít (has, makes, does, helps, likes, brings...)."
+  },
+  // Gerund subject (V-ing) + plural verb
+  {
+    regex: /\b([a-z]+ing)\s+([a-z]+\s+)?(have|are|were)\b/gi,
+    filter: (match, p1) => ['wearing', 'studying', 'learning', 'using', 'working', 'living', 'reading', 'doing', 'getting', 'spending', 'providing', 'implementing'].includes(p1.toLowerCase()),
+    fix: "Lỗi hòa hợp: Danh động từ làm chủ ngữ (V-ing) luôn tương đương với ngôi thứ 3 số ít, phải dùng động từ số ít (has / is / was)."
+  },
+  // Plural subject pronoun + singular verb
+  {
+    regex: /\b(they|we|these|those)\s+(has|is|was|makes|does|leads|shows|provides|gives|causes|needs|wants|likes)\b/gi,
+    fix: "Lỗi hòa hợp: Chủ ngữ số nhiều (they/we/these/those) phải đi với động từ số nhiều (have, are, were, make, lead...)."
+  }
+];
+
+// Quantifier & Noun Number Traps
+const NOUN_AGREEMENT_TRAPS = [
+  // Quantifier + singular countable noun (missing -s/-es)
+  {
+    regex: /\b(many|numerous|various|several|different|a lot of|lots of|two|three|four|both)\s+(student|child|person|reason|problem|factor|advantage|disadvantage|country|job|skill|school|way|benefit|individual|year|opinion|measure)\b/gi,
+    fix: "Lỗi danh từ số nhiều: Sau các từ chỉ số lượng nhiều (many, several, various, both...), danh từ đếm được bắt buộc phải ở dạng số nhiều (-s / -es)."
+  },
+  // each/every + plural noun
+  {
+    regex: /\b(every|each)\s+(students|children|persons|reasons|problems|factors|advantages|disadvantages|countries|jobs|skills|schools|ways|benefits|individuals|years|opinions|measures)\b/gi,
+    fix: "Lỗi danh từ số ít: Sau 'each' và 'every', danh từ đếm được luôn ở dạng số ít."
+  }
+];
+
+// Preposition & Collocation Errors
+const PREPOSITION_COLLOCATION_TRAPS = [
+  { regex: /\bdepend\s+of\b/gi, fix: "Sai giới từ: Dùng 'depend on' (thay vì 'depend of')." },
+  { regex: /\bin\s+the\s+other\s+hand\b/gi, fix: "Sai cụm liên kết: Dùng 'on the other hand' (thay vì 'in the other hand')." },
+  { regex: /\bpay\s+attention\s+for\b/gi, fix: "Sai giới từ: Dùng 'pay attention to' (thay vì 'pay attention for')." },
+  { regex: /\bfocus\s+in\b/gi, fix: "Sai giới từ: Dùng 'focus on' (thay vì 'focus in')." },
+  { regex: /\bcontribute\s+in\b/gi, fix: "Sai giới từ: Dùng 'contribute to' (thay vì 'contribute in')." },
+  { regex: /\bresponsible\s+of\b/gi, fix: "Sai giới từ: Dùng 'responsible for' (thay vì 'responsible of')." },
+  { regex: /\bdiscuss\s+about\b/gi, fix: "Sai ngữ pháp: 'discuss' là ngoại động từ trực tiếp, không đi cùng 'about' (ví dụ: 'discuss this matter')." },
+  { regex: /\bmention\s+about\b/gi, fix: "Sai ngữ pháp: 'mention' là ngoại động từ trực tiếp, không đi cùng 'about' (ví dụ: 'mention the benefits')." },
+  { regex: /\bexplain\s+about\b/gi, fix: "Sai ngữ pháp: Dùng 'explain something' (thay vì 'explain about something')." },
+  { regex: /\bmarry\s+with\b/gi, fix: "Sai giới từ: Dùng 'marry someone' hoặc 'be married to someone'." },
+  { regex: /\bplay\s+an\s+important\s+role\s+to\b/gi, fix: "Sai giới từ: Dùng 'play an important role in' (thay vì 'role to')." }
+];
+
+// Double Comparative & Word Form Traps
+const COMPARATIVE_AND_WORD_FORM_TRAPS = [
+  { regex: /\bmore\s+(better|easier|faster|harder|cheaper|stronger|higher|lower|clearer)\b/gi, fix: "Lỗi so sánh kép (Double comparative): Không dùng 'more' trước tính từ ngắn đã có đuôi -er." },
+  { regex: /\bcan\s+easy\b/gi, fix: "Sai từ loại: Sau trợ động từ 'can' dùng phó từ 'can easily'." },
+  { regex: /\bcan\s+quick\b/gi, fix: "Sai từ loại: Dùng phó từ 'can quickly'." },
+  { regex: /\bis\s+danger\b/gi, fix: "Sai từ loại: Sau to be dùng tính từ 'is dangerous' (thay vì danh từ 'danger')." }
 ];
 
 // Uncountable Noun Plural Traps (Strict Cambridge Grammar Deductions)
@@ -435,44 +492,77 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const corrections = [];
 
   // ===========================================================
-  // A. TASK RESPONSE / TASK ACHIEVEMENT (TR/TA) v2
+  // A. TASK RESPONSE / TASK ACHIEVEMENT (TR/TA) v3 (CALIBRATED)
   // ===========================================================
-  let trScore = 6.5;
+  // Realistic base for standard structure: 5.5
+  let trScore = 5.5;
   const trStrengths = [];
   const trImprovements = [];
 
-  // 1. Word Count Assessment with Cambridge Underlength Penalty
-  if (wordCount >= targetMinWords + 50) {
-    trScore += 0.5;
-    trStrengths.push(`Dung lượng bài viết lý tưởng (${wordCount} từ), vượt qua mốc yêu cầu tối thiểu ${targetMinWords} từ.`);
-  } else if (wordCount >= targetMinWords) {
-    trStrengths.push(`Đạt yêu cầu tối thiểu về dung lượng bài viết (${wordCount}/${targetMinWords} từ).`);
-  } else {
-    const deficit = targetMinWords - wordCount;
-    if (deficit >= 80) {
-      trScore -= 2.0; // Severe underlength
-      trImprovements.push(`Bài viết quá ngắn (${wordCount}/${targetMinWords} từ, thiếu ${deficit} từ). Giám khảo Cambridge trừ điểm nặng ở tiêu chí Task Response.`);
+  // 1. Strict Underlength Penalties (Cambridge Exam Regulations)
+  if (isTask1) {
+    if (wordCount < 100) {
+      trScore = Math.min(trScore, 4.0);
+      trImprovements.push(`Bài viết quá ngắn (${wordCount}/150 từ, thiếu ${150 - wordCount} từ). Theo quy chế Cambridge, Task Achievement bị giới hạn ở Band 4.0.`);
+    } else if (wordCount < 130) {
+      trScore = Math.min(trScore, 4.5);
+      trImprovements.push(`Bài viết thiếu từ nghiêm trọng (${wordCount}/150 từ). Điểm Task Achievement bị giới hạn tối đa Band 4.5.`);
+    } else if (wordCount < 150) {
+      trScore = Math.min(trScore, 5.0);
+      trImprovements.push(`Bài viết chưa đạt dung lượng tối thiểu (${wordCount}/150 từ). Bạn bị trừ điểm do không hoàn thành yêu cầu cơ bản.`);
+    } else if (wordCount >= 170 && paragraphs.length >= 3) {
+      trScore += 0.5;
+      trStrengths.push(`Dung lượng bài viết đạt chuẩn và phát triển tốt (${wordCount}/150 từ).`);
     } else {
-      trScore -= 1.0;
-      trImprovements.push(`Bài viết thiếu từ (${wordCount}/${targetMinWords} từ). Bạn cần viết ít nhất ${targetMinWords} từ để tránh bị trừ điểm.`);
+      trStrengths.push(`Đạt yêu cầu tối thiểu về dung lượng bài viết (${wordCount}/150 từ).`);
+    }
+  } else {
+    // Task 2: Minimum 250 words
+    if (wordCount < 160) {
+      trScore = Math.min(trScore, 4.5);
+      trImprovements.push(`CẢNH BÁO THIẾU TỪ NGHIÊM TRỌNG: Bài viết chỉ có ${wordCount}/250 từ (thiếu ${250 - wordCount} từ). Ý tưởng chưa được giải thích và minh chứng đầy đủ, điểm Task Response bị khống chế tối đa Band 4.5.`);
+    } else if (wordCount < 200) {
+      trScore = Math.min(trScore, 5.0);
+      trImprovements.push(`Bài viết thiếu từ đáng kể (${wordCount}/250 từ). Luận điểm còn sơ sài, điểm Task Response bị giới hạn tối đa Band 5.0.`);
+    } else if (wordCount < 240) {
+      trScore = Math.min(trScore, 5.5);
+      trImprovements.push(`Bài viết hơi ngắn (${wordCount}/250 từ). Cần mở rộng thêm luận cứ và ví dụ minh họa để chạm mốc tối thiểu 250 từ.`);
+    } else if (wordCount >= 250 && paragraphs.length >= 4) {
+      trScore = 6.0; // Meets baseline standard
+      if (wordCount >= 280) {
+        trScore = 6.5;
+        trStrengths.push(`Dung lượng bài viết lý tưởng (${wordCount} từ), phát triển ý sâu sắc.`);
+      } else {
+        trStrengths.push(`Đạt yêu cầu tối thiểu về dung lượng bài viết (${wordCount}/250 từ).`);
+      }
     }
   }
 
-  // 2. Paragraph Structure Assessment
+  // 2. Paragraph Structure & Body Development Depth
   const minParagraphs = isTask1 ? 3 : 4;
   if (paragraphs.length >= minParagraphs) {
     trStrengths.push(`Bố cục bài viết gồm ${paragraphs.length} đoạn phân định rõ ràng (Mở bài, Thân bài, ${isTask1 ? 'Tổng quan' : 'Kết luận'}).`);
+    
+    // Check body paragraphs depth (undeveloped paragraphs penalty)
+    const bodyParagraphs = paragraphs.slice(1, isTask1 ? undefined : -1);
+    if (bodyParagraphs.length > 0) {
+      const avgBodyWords = bodyParagraphs.reduce((acc, p) => acc + sanitizeWords(p).length, 0) / bodyParagraphs.length;
+      if (avgBodyWords < 35 && wordCount < 220) {
+        trScore = Math.min(trScore, 5.0);
+        trImprovements.push(`Các đoạn thân bài quá ngắn (trung bình chỉ ${Math.round(avgBodyWords)} từ/đoạn). Bạn cần giải thích cơ chế 'Vì sao' và đưa ví dụ cụ thể thay vì chỉ liệt kê ý.`);
+      }
+    }
   } else {
-    trScore -= 0.5;
-    trImprovements.push(`Cấu trúc bài viết chưa tối ưu (${paragraphs.length} đoạn). Nên phân chia thành ít nhất ${minParagraphs} đoạn độc lập.`);
+    trScore = Math.min(trScore, 5.0);
+    trImprovements.push(`Cấu trúc bài viết chưa tối ưu (${paragraphs.length} đoạn). Bạn cần chia tối thiểu ${minParagraphs} đoạn độc lập để đạt cấu trúc chuẩn.`);
   }
 
   // 3. Prompt-Essay Semantic Relevance (PESR) & Off-Topic Check
   const relevance = analyzePromptSemanticRelevance(task?.prompt, essayText);
   if (relevance.isOffTopic) {
-    trScore = Math.min(trScore, 4.5); // Hard cap for off-topic response
-    trImprovements.push(`CẢNH BÁO LỆCH ĐỀ (Off-Topic): Bài viết chỉ đề cập ${relevance.matchedKeywords.length}/${relevance.totalKeywords} từ khóa trọng tâm của đề bài. Giám khảo khảo thí Cambridge sẽ giới hạn điểm Task Response tối đa Band 4.5 - 5.0.`);
-  } else if (relevance.score >= 0.5) {
+    trScore = Math.min(trScore, 4.5); // Strict Cambridge off-topic penalty
+    trImprovements.push(`CẢNH BÁO LỆCH ĐỀ (Off-Topic): Bài viết chỉ đề cập ${relevance.matchedKeywords.length}/${relevance.totalKeywords} từ khóa trọng tâm của đề bài. Giám khảo khảo thí Cambridge sẽ giới hạn điểm Task Response tối đa Band 4.5.`);
+  } else if (relevance.score >= 0.55 && wordCount >= 250) {
     trScore += 0.5;
     trStrengths.push("Bài viết bám sát các từ khóa trọng tâm của đề thi, thể hiện sự hiểu đề thấu đáo.");
   }
@@ -482,15 +572,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     const textLower = essayText.toLowerCase();
     const hasOverview = OVERVIEW_INDICATORS.some(ind => textLower.includes(ind));
     if (hasOverview) {
-      trScore += 0.5;
+      if (wordCount >= 150) trScore += 0.5;
       trStrengths.push("Có đoạn Tổng quan (Overview) nêu bật các xu hướng và đặc điểm quan trọng nhất của biểu đồ.");
     } else {
-      // Hard cap at Band 5.0
       trScore = Math.min(trScore, 5.0);
       trImprovements.push("QUAN TRỌNG: Bài viết Task 1 thiếu đoạn Tổng quan (Overview). Barem Cambridge quy định điểm Task Achievement KHÔNG ĐƯỢC VƯỢT QUÁ Band 5.0.");
     }
 
-    // Body Data Density Check
     const dataCheck = analyzeTask1DataDensity(paragraphs);
     if (!dataCheck.hasAdequateData) {
       trScore = Math.min(trScore, 5.0);
@@ -503,10 +591,11 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     const lastPara = paragraphs[paragraphs.length - 1]?.toLowerCase() || '';
     const hasConclusion = OVERVIEW_INDICATORS.slice(0, 4).some(ind => lastPara.includes(ind)) || lastPara.includes('conclu');
     if (hasConclusion) {
-      trScore += 0.5;
+      if (wordCount >= 250) trScore += 0.5;
       trStrengths.push("Có đoạn Kết luận rõ ràng, khẳng định lại lập trường xuyên suốt bài viết.");
     } else {
-      trImprovements.push("Thiếu đoạn Kết luận độc lập. Nên kết bài bằng 'In conclusion' để tóm tắt quan điểm của bạn.");
+      trScore = Math.min(trScore, 5.5);
+      trImprovements.push("Thiếu đoạn Kết luận độc lập. Nên kết bài bằng 'In conclusion' để tóm tắt quan điểm của bạn. Điểm TR bị giới hạn tối đa Band 5.5.");
     }
 
     const task2Fulfillment = analyzeTask2Fulfillment(task?.prompt, paragraphs);
@@ -519,20 +608,23 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const trBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, trScore)));
 
   // ===========================================================
-  // B. COHERENCE & COHESION (CC) v2
+  // B. COHERENCE & COHESION (CC) v3 (CALIBRATED)
   // ===========================================================
-  let ccScore = 6.0;
+  let ccScore = 5.5;
   const ccStrengths = [];
   const ccImprovements = [];
+  const essayLower = essayText.toLowerCase();
 
-  // 1. Paragraph Logical Organization
-  if (paragraphs.length >= 4) {
-    ccScore += 0.5;
-    ccStrengths.push(`Bố cục gồm ${paragraphs.length} đoạn văn chuẩn mực, phát triển ý tưởng theo trình tự logic.`);
+  // 1. Structural Coherence Baseline
+  if (paragraphs.length < 3 || wordCount < 160) {
+    ccScore = 4.5;
+    ccImprovements.push("Đoạn văn quá ngắn hoặc chưa phân chia đoạn rõ ràng, ảnh hưởng nghiêm trọng đến tính mạch lạc.");
+  } else if (paragraphs.length === 3 && !isTask1) {
+    ccScore = 5.0;
+    ccImprovements.push("Bài viết Task 2 nên chia tối thiểu 4 đoạn (Mở bài, 2 Thân bài, Kết bài) để tạo mạch ý cân đối.");
   }
 
   // 2. Cohesive Devices Count & Category Diversity
-  const essayLower = essayText.toLowerCase();
   let totalCohesiveHits = 0;
   let categoriesUsedCount = 0;
 
@@ -551,50 +643,48 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   const cohesiveDensityPer100 = (totalCohesiveHits / wordCount) * 100;
 
-  // 3. Referencing & Anaphoric Cohesion Analysis (Band 7-8 Cambridge Hallmark)
+  // 3. Referencing & Anaphoric Cohesion Analysis (Cambridge Band 7-8 Hallmark)
   let referencingCount = 0;
   REFERENCING_PATTERNS.forEach(pat => {
     const matches = essayText.match(pat);
     if (matches) referencingCount += matches.length;
   });
 
-  if (referencingCount >= 2) {
-    ccScore += 0.5;
-    ccStrengths.push(`Sử dụng đại từ tham chiếu và liên kết ngữ nghĩa xuất sắc (${referencingCount} cụm 'this/such + Noun', 'the former/the latter'). Đây là dấu ấn của thí sinh Band 7.5+ CC.`);
-  }
+  // Check Mechanical Linking Device frequency
+  const mechanicalCount = (essayLower.match(/\b(firstly|secondly|thirdly|first|second|moreover|furthermore|in addition|in conclusion|on the one hand|on the other hand)\b/gi) || []).length;
 
-  // 4. Balance vs Overuse Evaluation
-  if (cohesiveDensityPer100 >= 2.0 && cohesiveDensityPer100 <= 6.5 && categoriesUsedCount >= 3) {
-    ccScore += 0.5;
-    ccStrengths.push(`Mật độ liên từ học thuật tự nhiên (${totalCohesiveHits} vị trí), trải đều 5 nhóm chức năng (nhân quả, tương phản, bổ sung, dẫn chứng).`);
-  } else if (cohesiveDensityPer100 < 1.5 && referencingCount < 2) {
-    ccScore -= 0.5;
-    ccImprovements.push("Mạch văn còn rời rạc. Hãy bổ sung thêm các liên từ (However, Furthermore, Consequently) hoặc cụm tham chiếu (this trend, such measures) để kết nối các câu.");
-  } else if (cohesiveDensityPer100 > 7.5 && referencingCount < 1) {
-    ccScore -= 0.5;
-    ccImprovements.push("Có dấu hiệu lạm dụng từ nối cơ học (Overuse of mechanical linkers). Thay vì câu nào cũng dùng từ nối đầu câu, hãy kết nối qua đại từ thay thế (this, such) và mệnh đề quan hệ.");
+  // 4. Calibrated Cambridge CC Grading Matrix
+  if (referencingCount >= 2 && paragraphs.length >= 4 && wordCount >= 240 && categoriesUsedCount >= 3) {
+    ccScore = 7.0; // True Band 7 CC (Clear progression, natural referencing)
+    if (referencingCount >= 3 && mechanicalCount <= 5 && wordCount >= 260) {
+      ccScore = 7.5;
+    }
+    ccStrengths.push(`Sử dụng đại từ tham chiếu và liên kết ngữ nghĩa xuất sắc (${referencingCount} cụm 'this/such + Noun', 'the former/the latter'). Mạch văn chuyển ý tự nhiên.`);
+  } else if (paragraphs.length >= 4 && mechanicalCount >= 2 && wordCount >= 200) {
+    // Mechanical cohesion without referencing = standard Band 6.0
+    ccScore = 6.0;
+    ccStrengths.push(`Bố cục gồm ${paragraphs.length} đoạn văn, có sử dụng liên từ nối cơ bản.`);
+    ccImprovements.push("Có dấu hiệu sử dụng từ nối cơ học (Mechanical linkers: First, Second, Moreover). Để đạt Band 7.0+ CC, hãy kết hợp thêm đại từ thay thế (this problem, such measures) và mệnh đề quan hệ.");
+  } else if (cohesiveDensityPer100 < 1.5 && referencingCount < 1) {
+    ccScore = 5.0;
+    ccImprovements.push("Mạch văn rời rạc, thiếu các phương tiện liên kết giữa các câu. Hãy bổ sung liên từ chuyển ý phù hợp.");
+  } else if (cohesiveDensityPer100 > 8.0 && referencingCount < 1) {
+    ccScore = 5.5;
+    ccImprovements.push("Lạm dụng từ nối cơ học ở đầu mọi câu khiến bài viết thiếu tự nhiên.");
   }
 
   const ccBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, ccScore)));
 
   // ===========================================================
-  // C. LEXICAL RESOURCE (LR) v2
+  // C. LEXICAL RESOURCE (LR) v3 (CALIBRATED)
   // ===========================================================
-  let lrScore = 6.0;
+  let lrScore = 5.0;
   const lrStrengths = [];
   const lrImprovements = [];
 
-  // 1. Type-Token Ratio (Vocabulary Variety)
+  // 1. Type-Token Ratio (Normalized: only awarded if essay has adequate length)
   const uniqueWords = new Set(rawWords);
   const ttr = uniqueWords.size / wordCount;
-
-  if (ttr >= 0.52) {
-    lrScore += 0.5;
-    lrStrengths.push(`Vốn từ vựng phong phú, tỷ lệ từ đơn nhất đạt ${Math.round(ttr * 100)}%, không bị lặp từ đơn điệu.`);
-  } else if (ttr < 0.38) {
-    lrScore -= 0.5;
-    lrImprovements.push("Tỷ lệ lặp từ khá cao. Hãy tận dụng từ đồng nghĩa (Thesaurus) và kỹ thuật danh từ hóa (Nominalization) để làm giàu văn phong.");
-  }
 
   // 2. Academic Word List (AWL) Density
   let awlCount = 0;
@@ -603,16 +693,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   });
   const awlPercentage = (awlCount / wordCount) * 100;
 
-  if (awlPercentage >= 8.5) {
-    lrScore += 0.5;
-    lrStrengths.push(`Mật độ từ vựng học thuật C1/C2 xuất sắc (${awlPercentage.toFixed(1)}% dung lượng bài).`);
-  } else if (awlPercentage >= 5.0) {
-    lrStrengths.push(`Có ý thức sử dụng các thuật ngữ trang trọng (${awlPercentage.toFixed(1)}% từ vựng học thuật AWL).`);
-  } else {
-    lrImprovements.push("Bài viết còn nhiều từ vựng cơ bản. Cần nâng cấp các từ phổ thông lên chuẩn Academic Word List (AWL).");
-  }
-
-  // 3. Academic Collocations Multi-gram Scanner (800+ Corpus)
+  // 3. Academic Collocations Scanner (800+ Corpus)
   let collocationHits = 0;
   const matchedCollocations = [];
   ACADEMIC_COLLOCATIONS.forEach(col => {
@@ -624,15 +705,6 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     }
   });
 
-  if (collocationHits >= 4) {
-    lrScore += 0.5;
-    lrStrengths.push(`Sở hữu nhiều cụm Collocations học thuật tự nhiên (${collocationHits} cụm như: '${matchedCollocations.slice(0, 3).join("', '")}'). Đây là chìa khóa vàng chạm Band 7.5+ LR.`);
-  } else if (collocationHits >= 2) {
-    lrStrengths.push(`Có sử dụng một số cụm Collocations chuẩn xác (${matchedCollocations.join(', ')}).`);
-  } else {
-    lrImprovements.push("Bài viết chủ yếu ghép từ đơn lẻ, còn thiếu các cụm Collocation học thuật chuẩn (như: 'exert a profound impact', 'viable alternative', 'pressing issue').");
-  }
-
   // 4. Informal Words Detection
   let informalCount = 0;
   INFORMAL_WORDS.forEach(item => {
@@ -640,24 +712,107 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     if (matches) informalCount += matches.length;
   });
 
-  if (informalCount > 2) {
-    lrScore -= 0.5;
-    lrImprovements.push(`Phát hiện ${informalCount} từ/cụm từ mang văn phong giao tiếp/văn nói (như 'a lot of', 'kids', 'stuff'). Cần thay bằng thuật ngữ trang trọng.`);
+  // 5. Calibrated Cambridge LR Matrix
+  if (awlPercentage >= 8.5 && collocationHits >= 4 && wordCount >= 240 && informalCount === 0) {
+    lrScore = 8.0;
+    lrStrengths.push(`Vốn từ vựng học thuật C1/C2 đỉnh cao (${awlPercentage.toFixed(1)}% AWL, ${collocationHits} cụm collocations tự nhiên như: '${matchedCollocations.slice(0, 3).join("', '")}').`);
+  } else if (awlPercentage >= 7.0 && collocationHits >= 2 && wordCount >= 220 && informalCount <= 1) {
+    lrScore = 7.0;
+    lrStrengths.push(`Sở hữu vốn từ học thuật phong phú (${awlPercentage.toFixed(1)}% AWL) và có ý thức dùng collocations chuẩn xác (${matchedCollocations.slice(0, 2).join(', ')}).`);
+  } else if (awlPercentage >= 5.5 && (collocationHits >= 1 || (ttr >= 0.50 && wordCount >= 220))) {
+    lrScore = 6.5;
+    lrStrengths.push(`Vốn từ vựng tương đối đa dạng (${awlPercentage.toFixed(1)}% AWL), đáp ứng tốt yêu cầu bài thi.`);
+  } else if (awlPercentage >= 4.5 || collocationHits >= 1) {
+    lrScore = 6.0;
+    lrStrengths.push("Vốn từ vựng ở mức vừa đủ hoàn thành bài viết, có sử dụng một số thuật ngữ liên quan đến chủ đề.");
+    lrImprovements.push("Cần bổ sung thêm các cụm từ học thuật C1/C2 và Collocations nâng cao để vượt ngưỡng Band 6.0.");
+  } else {
+    // Basic A2/B1 vocabulary
+    lrScore = 5.0;
+    lrImprovements.push("Vốn từ vựng còn khá cơ bản (chỉ đạt " + awlPercentage.toFixed(1) + "% từ vựng học thuật AWL, thiếu các cụm Collocations chuẩn). Bạn cần tích lũy thêm từ vựng chuyên sâu theo chủ đề.");
+  }
+
+  if (informalCount >= 2) {
+    lrScore = Math.max(4.5, lrScore - 0.5);
+    lrImprovements.push(`Phát hiện ${informalCount} từ/cụm từ mang văn phong giao tiếp thường ngày (như 'a lot of', 'kids', 'stuff'). Hãy đổi sang văn phong học thuật trang trọng.`);
   }
 
   const lrBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, lrScore)));
 
   // ===========================================================
-  // D. SPECIFIC ERROR GENERATOR (SENTENCE-LEVEL)
+  // D. SPECIFIC ERROR GENERATOR (SENTENCE-LEVEL) v3
   // ===========================================================
-
-  // Map to track sentence error indices for EFSR (Error-Free Sentence Ratio)
   const erroneousSentenceIndices = new Set();
+  let svErrorCount = 0;
 
-  // 1. Uncountable Noun Traps
+  // 1. Subject-Verb Agreement Traps (S-V errors)
+  SUBJECT_VERB_TRAPS.forEach(trap => {
+    sentences.forEach((s, sIdx) => {
+      if (trap.regex.test(s) && corrections.length < 12) {
+        if (!trap.filter || trap.filter(s, s)) {
+          erroneousSentenceIndices.add(sIdx);
+          svErrorCount++;
+          corrections.push({
+            original: s,
+            corrected: `${s} (Xem lưu ý chia động từ)`,
+            type: 'grammar',
+            explanation: trap.fix
+          });
+        }
+      }
+    });
+  });
+
+  // 2. Quantifier & Noun Number Traps
+  NOUN_AGREEMENT_TRAPS.forEach(trap => {
+    sentences.forEach((s, sIdx) => {
+      if (trap.regex.test(s) && corrections.length < 12) {
+        erroneousSentenceIndices.add(sIdx);
+        svErrorCount++;
+        corrections.push({
+          original: s,
+          corrected: `${s} (Kiểm tra lại số ít / số nhiều)`,
+          type: 'grammar',
+          explanation: trap.fix
+        });
+      }
+    });
+  });
+
+  // 3. Preposition & Collocation Traps
+  PREPOSITION_COLLOCATION_TRAPS.forEach(trap => {
+    sentences.forEach((s, sIdx) => {
+      if (trap.regex.test(s) && corrections.length < 12) {
+        erroneousSentenceIndices.add(sIdx);
+        corrections.push({
+          original: s,
+          corrected: `${s} (Sửa giới từ)`,
+          type: 'vocabulary',
+          explanation: trap.fix
+        });
+      }
+    });
+  });
+
+  // 4. Double Comparative & Word Form Traps
+  COMPARATIVE_AND_WORD_FORM_TRAPS.forEach(trap => {
+    sentences.forEach((s, sIdx) => {
+      if (trap.regex.test(s) && corrections.length < 12) {
+        erroneousSentenceIndices.add(sIdx);
+        corrections.push({
+          original: s,
+          corrected: `${s} (Sửa dạng từ)`,
+          type: 'grammar',
+          explanation: trap.fix
+        });
+      }
+    });
+  });
+
+  // 5. Uncountable Noun Traps
   UNCOUNTABLE_NOUN_TRAPS.forEach(trap => {
     sentences.forEach((s, sIdx) => {
-      if (trap.wrong.test(s) && corrections.length < 10) {
+      if (trap.wrong.test(s) && corrections.length < 12) {
         erroneousSentenceIndices.add(sIdx);
         const fixed = s.replace(trap.wrong, trap.correct);
         corrections.push({
@@ -670,14 +825,14 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     });
   });
 
-  // 2. Spelling Traps from IELTS_SPELLING_TRAPS
+  // 6. Spelling Traps from IELTS_SPELLING_TRAPS
   if (Array.isArray(IELTS_SPELLING_TRAPS)) {
     IELTS_SPELLING_TRAPS.forEach(trap => {
       if (trap?.distractors && Array.isArray(trap.distractors)) {
         trap.distractors.forEach(dist => {
           const reg = new RegExp(`\\b${dist}\\b`, 'gi');
           sentences.forEach((s, sIdx) => {
-            if (reg.test(s) && corrections.length < 10) {
+            if (reg.test(s) && corrections.length < 12) {
               erroneousSentenceIndices.add(sIdx);
               const fixed = s.replace(reg, trap.correct);
               corrections.push({
@@ -693,10 +848,10 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     });
   }
 
-  // 3. Informal Words Replacement
+  // 7. Informal Words Replacement
   INFORMAL_WORDS.forEach(inf => {
     sentences.forEach((s, sIdx) => {
-      if (inf.match.test(s) && corrections.length < 10) {
+      if (inf.match.test(s) && corrections.length < 12) {
         erroneousSentenceIndices.add(sIdx);
         const primaryRepl = inf.replace.split('/')[0].trim();
         const fixed = s.replace(inf.match, primaryRepl);
@@ -710,11 +865,12 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     });
   });
 
-  // 4. Grammar Patterns (Because... so, Although... but, S-V agreement)
+  // 8. Grammar Patterns (Because... so, Although... but, S-V agreement)
   COMMON_GRAMMAR_PATTERNS.forEach(pat => {
     sentences.forEach((s, sIdx) => {
-      if (pat.regex.test(s) && corrections.length < 10) {
+      if (pat.regex.test(s) && corrections.length < 12) {
         erroneousSentenceIndices.add(sIdx);
+        svErrorCount++;
         corrections.push({
           original: s,
           corrected: `${s.replace(pat.regex, '$1')} (Đã tinh chỉnh liên từ)`,
@@ -726,32 +882,18 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   });
 
   // ===========================================================
-  // E. GRAMMATICAL RANGE & ACCURACY (GRA) v2
+  // E. GRAMMATICAL RANGE & ACCURACY (GRA) v3 (CALIBRATED)
   // ===========================================================
-  let graScore = 6.0;
+  let graScore = 5.0;
   const graStrengths = [];
   const graImprovements = [];
 
-  // 1. Error-Free Sentence Ratio (EFSR) - Official Cambridge Benchmark
+  // 1. Error-Free Sentence Ratio (EFSR)
   const totalSentences = Math.max(1, sentences.length);
   const errorFreeCount = totalSentences - erroneousSentenceIndices.size;
   const efsrRatio = (errorFreeCount / totalSentences) * 100;
 
-  if (efsrRatio >= 80) {
-    graScore = 7.5;
-    graStrengths.push(`Tỷ lệ câu hoàn toàn không có lỗi ngữ pháp đạt mức xuất sắc (${Math.round(efsrRatio)}% - ${errorFreeCount}/${totalSentences} câu). Đây là tiêu chuẩn vàng của Band 8.0 GRA.`);
-  } else if (efsrRatio >= 65) {
-    graScore = 7.0;
-    graStrengths.push(`Tỷ lệ câu không lỗi ở mức tốt (${Math.round(efsrRatio)}% - ${errorFreeCount}/${totalSentences} câu), đạt chuẩn Cambridge Band 7.0 ('produces frequent error-free sentences').`);
-  } else if (efsrRatio >= 45) {
-    graScore = 6.0;
-    graStrengths.push(`Cấu trúc câu đa dạng, dù vẫn còn một số câu mắc lỗi diễn đạt (${Math.round(efsrRatio)}% câu không lỗi).`);
-  } else {
-    graScore = 5.0;
-    graImprovements.push(`Mật độ câu có lỗi ngữ pháp hoặc chính tả khá dày (${Math.round(100 - efsrRatio)}% số câu mắc lỗi). Bạn cần rà soát kỹ lỗi chia động từ, mạo từ và danh từ.`);
-  }
-
-  // 2. Syntactic Variety & Complex Structures
+  // 2. Syntactic Variety & Complex Structures (Range Check)
   let complexCount = 0;
   const complexMarkers = [
     /\b(although|even though|though|whereas|while)\b/i,
@@ -768,20 +910,39 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   });
 
   const complexRatio = complexCount / totalSentences;
-  if (complexRatio >= 0.50) {
-    graScore += 0.5;
-    graStrengths.push(`Khả năng sử dụng câu phức, mệnh đề phân từ và câu điều kiện đa dạng (${Math.round(complexRatio * 100)}% tổng số câu).`);
-  } else if (complexRatio < 0.25) {
-    graScore -= 0.5;
-    graImprovements.push("Bài viết chủ yếu dựa vào các câu đơn giản. Cần lồng ghép thêm mệnh đề quan hệ (which/who), mệnh đề nhượng bộ (Although/While) hoặc câu bị động học thuật.");
+
+  // 3. Calibrated Cambridge GRA Matrix (Accuracy + Range Dual Gate)
+  if (svErrorCount === 0 && efsrRatio >= 80 && complexRatio >= 0.45 && totalSentences >= 8) {
+    graScore = 8.0;
+    graStrengths.push(`Khả năng kiểm soát ngữ pháp xuất sắc: ${Math.round(efsrRatio)}% câu hoàn toàn không lỗi, kết hợp nhuần nhuyễn câu phức và mệnh đề nâng cao (${Math.round(complexRatio * 100)}%).`);
+  } else if (svErrorCount <= 1 && efsrRatio >= 65 && complexRatio >= 0.30) {
+    graScore = 7.0;
+    graStrengths.push(`Tỷ lệ câu không lỗi đạt mức tốt (${Math.round(efsrRatio)}%), sử dụng thành thạo nhiều dạng câu phức.`);
+  } else if (svErrorCount <= 2 && efsrRatio >= 40) {
+    graScore = 6.0;
+    graStrengths.push(`Có sự kết hợp giữa câu đơn và câu phức, truyền tải được thông điệp dù còn một số lỗi ngữ pháp.`);
+    if (complexRatio < 0.25) {
+      graImprovements.push("Cấu trúc câu còn đơn điệu (chủ yếu là câu đơn). Cần bổ sung thêm mệnh đề quan hệ (which/who) và mệnh đề nhượng bộ (Although/While).");
+    }
+  } else {
+    // Systematic errors or very low EFSR
+    graScore = 5.0;
+    graImprovements.push(`Mắc lỗi ngữ pháp cơ bản lặp đi lặp lại (${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều). Theo tiêu chí Cambridge, lỗi hệ thống giới hạn điểm GRA ở Band 5.0.`);
   }
 
-  // 3. Sentence Length Diagnostics (Run-on detection)
+  // Hard Cap: Systematic elementary S-V errors >= 3 cannot exceed Band 5.0
+  if (svErrorCount >= 3) {
+    graScore = Math.min(graScore, 5.0);
+  } else if (svErrorCount >= 2) {
+    graScore = Math.min(graScore, 5.5);
+  }
+
+  // Sentence Length Diagnostics (Run-on detection)
   const sentenceWordCounts = sentences.map(s => s.split(/\s+/).length);
   const runOnSentences = sentenceWordCounts.filter(cnt => cnt > 42).length;
   if (runOnSentences > 1) {
-    graScore -= 0.5;
-    graImprovements.push(`Có ${runOnSentences} câu quá dài (>42 từ) dễ gây rối nghĩa hoặc lỗi ngắt câu (run-on). Nên tách thành 2 câu rõ ràng.`);
+    graScore = Math.max(4.5, graScore - 0.5);
+    graImprovements.push(`Có ${runOnSentences} câu quá dài (>42 từ) dễ gây rối nghĩa hoặc lỗi ngắt câu (run-on). Nên tách thành các câu mạch lạc.`);
   }
 
   const graBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, graScore)));
