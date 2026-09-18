@@ -614,6 +614,99 @@ function analyzeTask1DataDensity(paragraphs, overviewIndex = -1) {
 }
 
 /**
+ * IELTS Task 1 Comparative & Contrasting Language Patterns
+ * Required by Cambridge Task 1: "make comparisons where relevant".
+ */
+export const TASK1_COMPARATIVE_PATTERNS = [
+  // 1. Multiplicative & Proportional
+  { regex: /\b(?:twice|three\s+times|four\s+times|five\s+times)\s+(?:as\s+\w+\s+as|higher\s+than|lower\s+than|more\s+than|less\s+than)\b/gi, name: 'so sánh bội số (twice as...as)' },
+  { regex: /\b(?:double|doubled|triple|tripled|treble|trebled|halve|halved|quadruple|quadrupled)\b/gi, name: 'động từ nhân bội / giảm nửa' },
+  { regex: /\b(?:double|triple|half|one-third|two-thirds|a\s+quarter)\s+(?:that\s+of|the\s+figure\s+for|the\s+proportion\s+of|the\s+number\s+of)\b/gi, name: 'so sánh tỷ lệ phân số' },
+  
+  // 2. Comparative forms with 'than' or 'as ... as'
+  { regex: /\b(?:higher|lower|greater|smaller|larger|fewer|more|less)\s+than\b/gi, name: 'so sánh hơn kém (than)' },
+  { regex: /\b(?:significantly|substantially|considerably|far|much|slightly|marginally|somewhat)\s+(?:higher|lower|greater|smaller|larger|fewer|more|less)\b/gi, name: 'so sánh mức độ chênh lệch' },
+  { regex: /\bas\s+(?:high|low|much|many|popular|prevalent|widespread)\s+as\b/gi, name: 'so sánh ngang bằng (as...as)' },
+  { regex: /\b(?:nearly|almost|approximately)\s+as\s+\w+\s+as\b/gi, name: 'so sánh xấp xỉ ngang bằng' },
+
+  // 3. Superlative forms with data reference
+  { regex: /\bthe\s+(?:highest|lowest|greatest|smallest|largest|most\s+popular|least\s+popular|predominant|dominant)\b/gi, name: 'so sánh nhất (superlative)' },
+  { regex: /\bby\s+far\s+the\s+(?:highest|lowest|most|least|greatest)\b/gi, name: 'so sánh nhất tuyệt đối' },
+
+  // 4. Contrasting connectives between figures
+  { regex: /\b(?:in\s+stark\s+contrast\s+to|in\s+contrast\s+to|in\s+comparison\s+with|in\s+comparison\s+to|compared\s+(?:to|with)|as\s+opposed\s+to)\b/gi, name: 'cụm từ đối chiếu (compared to / in contrast to)' },
+  { regex: /\b(?:whereas|whilst|while)\b/gi, name: 'liên từ đối lập số liệu (whereas / while)' },
+  { regex: /\b(?:conversely|on\s+the\s+contrary|at\s+the\s+opposite\s+end\s+of\s+the\s+spectrum)\b/gi, name: 'từ nối chuyển ý đối lập' },
+
+  // 5. Overtaking & Exceeding
+  { regex: /\b(?:outstripped|surpassed|overtook|overtaken|exceeded|eclipsed)\b/gi, name: 'động từ vượt mặt (outstripped / overtook)' },
+  { regex: /\b(?:lagged\s+behind|fell\s+behind|trailed\s+behind)\b/gi, name: 'tụt lại phía sau (lagged behind)' },
+
+  // 6. Disparity & Gap vocabulary
+  { regex: /\b(?:the\s+gap\s+between|the\s+disparity\s+between|a\s+disparity\s+of|a\s+difference\s+of)\b/gi, name: 'từ vựng chênh lệch khoảng cách (gap / disparity)' },
+  { regex: /\bthe\s+gap\s+(?:widened|narrowed|remained\s+constant)\b/gi, name: 'xu hướng mở rộng / thu hẹp khoảng cách' },
+
+  // 7. Ranking & Sequencing
+  { regex: /\b(?:closely\s+followed\s+by|followed\s+by)\b/gi, name: 'xếp hạng theo sau (followed by)' },
+  { regex: /\b(?:ranked\s+(?:first|second|third|last)|in\s+(?:first|second|third|last)\s+place|occupied\s+the\s+(?:first|top|bottom)\s+spot)\b/gi, name: 'thứ hạng (ranked second / top spot)' },
+  { regex: /\brespectively\b/gi, name: 'tương ứng (respectively)' }
+];
+
+/**
+ * Task 1 Comparative Language & Data Contrasting Analyzer
+ * Evaluates compliance with the explicit instruction: "make comparisons where relevant".
+ * Detects whether the candidate makes meaningful comparisons between figures/categories
+ * or falls into the "Mechanical Data Listing" trap (listing figures without comparison).
+ */
+export function analyzeTask1Comparisons(paragraphs, overviewIndex = -1) {
+  if (!paragraphs || paragraphs.length === 0) {
+    return {
+      totalComparisons: 0,
+      uniqueComparisonsCount: 0,
+      matchedComparisons: [],
+      comparisonsByParagraph: []
+    };
+  }
+
+  // Focus primarily on body paragraphs (excluding Introduction and Overview)
+  const bodyParas = paragraphs.filter((_, idx) => idx !== 0 && idx !== overviewIndex);
+  const matchedComparisons = [];
+  const comparisonsByParagraph = [];
+
+  bodyParas.forEach((pText, idx) => {
+    const paraMatches = [];
+    TASK1_COMPARATIVE_PATTERNS.forEach(patternObj => {
+      patternObj.regex.lastIndex = 0;
+      const matches = pText.match(patternObj.regex);
+      if (matches) {
+        matches.forEach(m => {
+          paraMatches.push({
+            patternName: patternObj.name,
+            text: m.trim()
+          });
+          matchedComparisons.push(m.trim());
+        });
+      }
+    });
+
+    comparisonsByParagraph.push({
+      bodyIndex: idx + 1,
+      count: paraMatches.length,
+      matches: paraMatches
+    });
+  });
+
+  const uniqueMatched = Array.from(new Set(matchedComparisons.map(m => m.toLowerCase())));
+
+  return {
+    totalComparisons: matchedComparisons.length,
+    uniqueComparisonsCount: uniqueMatched.length,
+    matchedComparisons: uniqueMatched,
+    comparisonsByParagraph
+  };
+}
+
+/**
  * Task 2 Question Classifier & Fulfillment
  * Checks if question type (Discuss both views, Problems & Solutions) was fully addressed.
  */
@@ -776,7 +869,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -789,6 +882,8 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Khắc phục dung lượng khẩn cấp: Bài viết hiện thiếu ${targetMinWords - wordCount} từ. Bắt buộc phải viết đủ tối thiểu ${targetMinWords} từ để thoát khỏi khung điểm liệt Task Response.`;
   } else if (isTask1 && task1OverviewCheck?.hasRawData) {
     plan.priority1 = `Khắc phục bẫy số liệu đoạn Overview: Phát hiện ${task1OverviewCheck.rawDataList.length} số liệu chi tiết (${task1OverviewCheck.rawDataList.slice(0, 3).join(', ')}) trong Overview. Đoạn Tổng quan chỉ được khái quát xu hướng lớn (tăng/giảm, biến động), tuyệt đối không đưa số liệu cụ thể để thoát khỏi mức khống chế Band 5.5 Task Achievement.`;
+  } else if (isTask1 && task1ComparisonCheck && task1ComparisonCheck.totalComparisons === 0) {
+    plan.priority1 = `Thoát khỏi bẫy liệt kê số liệu cơ học (Mechanical Listing): Thân bài có đưa ra số liệu nhưng thiếu hẳn các cấu trúc so sánh đối chiếu. Hãy sử dụng tối thiểu 3 cấu trúc so sánh tương quan (như: 'twice as high as', 'whereas', 'outstripped', 'compared with') để mở khóa Band 7.0+ Task Achievement.`;
   } else if (svErrorCount >= 3) {
     plan.priority1 = `Chấm dứt lỗi chia động từ cơ bản: Phát hiện ${svErrorCount} lỗi hòa hợp Chủ ngữ - Động từ và Danh từ số nhiều. Hãy dành 3 phút cuối giờ rà soát lại thì và đuôi -s/-es của mọi động từ.`;
   } else if (trBand < 6.0) {
@@ -1023,10 +1118,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     trStrengths.push("Bài viết bám sát các từ khóa trọng tâm của đề thi, thể hiện sự hiểu đề thấu đáo.");
   }
 
-  // 4. Task 1 Specific Checks (Overview + Raw Data Check + Body Data Density)
+  // 4. Task 1 Specific Checks (Overview + Raw Data Check + Body Data Density + Comparative Language)
   let task1OverviewCheck = null;
+  let task1ComparisonCheck = null;
   if (isTask1) {
     task1OverviewCheck = analyzeTask1Overview(paragraphs);
+    task1ComparisonCheck = analyzeTask1Comparisons(paragraphs, task1OverviewCheck?.overviewIndex);
+
     if (task1OverviewCheck.hasOverview) {
       if (task1OverviewCheck.hasRawData) {
         trScore = Math.min(trScore, 5.5);
@@ -1048,6 +1146,26 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       trImprovements.push("QUAN TRỌNG: Các đoạn thân bài Task 1 thiếu số liệu hoặc dẫn chứng cụ thể (phát hiện chỉ có " + dataCheck.bodyDataCount + " số liệu). Theo chuẩn Cambridge, bài phân tích không có số liệu dẫn chứng bị giới hạn ở Band 5.0.");
     } else {
       trStrengths.push(`Dẫn chứng số liệu trong thân bài đầy đủ (${dataCheck.bodyDataCount} mốc số liệu/thời gian cụ thể).`);
+    }
+
+    // 4c. Comparative & Contrasting Language Check (Mandatory "make comparisons where relevant")
+    if (dataCheck.bodyDataCount >= 2) {
+      if (task1ComparisonCheck.totalComparisons === 0) {
+        trScore = Math.min(trScore, 5.5);
+        trImprovements.push(
+          "BẪY LIỆT KÊ SỐ LIỆU CƠ HỌC (Mechanical Data Listing): Thân bài có đưa số liệu nhưng hoàn toàn KHÔNG có cấu trúc so sánh đối chiếu giữa các đối tượng hoặc các mốc thời gian. Yêu cầu bắt buộc của Cambridge IELTS Task 1 là 'make comparisons where relevant'. Việc chỉ mô tả số liệu đơn lẻ từng năm/từng đối tượng khiến Task Achievement bị khống chế tối đa Band 5.5. Hãy bổ sung các cấu trúc so sánh: hơn/kém ('significantly higher than', 'outstripped'), so sánh bội số ('twice as high as', 'doubled'), hoặc liên từ đối chiếu ('whereas', 'in stark contrast to', 'compared with')."
+        );
+      } else if (task1ComparisonCheck.totalComparisons < 3) {
+        trScore = Math.min(trScore, 6.0);
+        trImprovements.push(
+          `CẦN ĐA DẠNG HÓA SO SÁNH: Thân bài mới chỉ có ${task1ComparisonCheck.totalComparisons} cấu trúc so sánh đối chiếu (${task1ComparisonCheck.matchedComparisons.slice(0, 2).join(', ')}). Barem Cambridge Band 7.0+ Task Achievement yêu cầu liên tục lồng ghép so sánh tương quan giữa các nhóm số liệu thay vì chỉ mô tả xu hướng một chiều.`
+        );
+      } else {
+        if (wordCount >= 150 && trScore >= 6.0) trScore += 0.5;
+        trStrengths.push(
+          `Kỹ năng so sánh đối chiếu số liệu phong phú (${task1ComparisonCheck.totalComparisons} cấu trúc: ${task1ComparisonCheck.matchedComparisons.slice(0, 4).join(', ')}), đáp ứng xuất sắc tiêu chí 'make comparisons where relevant' của đề thi.`
+        );
+      }
     }
   } else {
     // 5. Task 2 Specific Checks (Conclusion + Question Type Balance)
@@ -1462,7 +1580,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
   const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck);
 
   // Key Academic Collocations Recommendation
   const keyVocabulary = [
@@ -1561,6 +1679,12 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       hasRawData: task1OverviewCheck?.hasRawData || false,
       rawDataList: task1OverviewCheck?.rawDataList || [],
       overviewIndex: task1OverviewCheck?.overviewIndex ?? -1
+    } : null,
+    task1ComparisonStats: isTask1 ? {
+      totalComparisons: task1ComparisonCheck?.totalComparisons || 0,
+      uniqueComparisonsCount: task1ComparisonCheck?.uniqueComparisonsCount || 0,
+      matchedComparisons: task1ComparisonCheck?.matchedComparisons || [],
+      isMechanicalListing: (task1ComparisonCheck?.totalComparisons === 0)
     } : null
   };
 }
