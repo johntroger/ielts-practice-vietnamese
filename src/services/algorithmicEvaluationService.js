@@ -347,11 +347,12 @@ function getParagraphs(text) {
  * - Remainder >= 0.75 -> Round UP to next whole band (e.g. 6.75 -> 7.0)
  */
 export function roundToCambridgeBand(score) {
-  const floor = Math.floor(score);
-  const diff = score - floor;
-  if (diff < 0.25) return floor;
+  const clamped = Math.max(1.0, Math.min(9.0, score));
+  const floor = Math.floor(clamped);
+  const diff = clamped - floor;
+  if (diff < 0.25) return Math.max(1.0, floor);
   if (diff < 0.75) return floor + 0.5;
-  return floor + 1.0;
+  return Math.min(9.0, floor + 1.0);
 }
 
 // -------------------------------------------------------------
@@ -460,12 +461,138 @@ function analyzeTask2Fulfillment(prompt, paragraphs) {
   return { type: 'OPINION', isBalanced: true };
 }
 
+/**
+ * Deep Paragraph-by-Paragraph Examiner Diagnostics
+ * Analyzes Introduction, Body Paragraphs, and Conclusion structure according to P.E.E.L and Cambridge standards.
+ */
+function analyzeParagraphsDeeply(paragraphs, isTask1, task) {
+  if (!paragraphs || paragraphs.length === 0) return [];
+  
+  const results = [];
+  
+  // 1. Introduction Analysis
+  if (paragraphs.length >= 1) {
+    const introText = paragraphs[0];
+    const introLower = introText.toLowerCase();
+    const hasCliché = /\b(in this modern (era|world|society)|in today s (world|society)|nowadays|since the dawn of (time|humanity)|a hot debate|a controversial issue|every coin has two sides|a double-edged sword)\b/i.test(introLower);
+    const hasThesis = /\b(i firmly (believe|agree|disagree|argue|contend)|in my (opinion|view)|this essay will (examine|discuss|argue)|i will discuss|my view is that|i completely agree|i completely disagree)\b/i.test(introLower);
+    const introWords = sanitizeWords(introText).length;
+
+    results.push({
+      paragraphIndex: 1,
+      name: 'Đoạn 1: Mở Bài (Introduction)',
+      wordCount: introWords,
+      verdict: isTask1 
+        ? 'Mở bài cần giới thiệu lại ngắn gọn biểu đồ (Paraphrase đề bài) trong 1-2 câu súc tích.'
+        : (hasThesis 
+            ? 'Rất tốt: Mở bài đã nêu rõ quan điểm cá nhân (Thesis statement rõ ràng, không nước đôi).' 
+            : 'CẢNH BÁO GIÁM KHẢO: Mở bài chưa nêu rõ lập trường cá nhân (Missing Thesis Statement). Barem Cambridge yêu cầu lập trường rõ ràng ngay từ Mở bài để mở khóa Band 7.0+ TR.'),
+      clicheWarning: hasCliché ? 'Phát hiện câu mở đầu sáo rỗng/rập khuôn ("In this modern era / Nowadays / Every coin has two sides"). Hãy bỏ những mẫu câu khuôn sáo này để mở bài trang trọng, tự nhiên.' : null,
+      recommendation: isTask1
+        ? 'Công thức mở bài Task 1 chuẩn: "The provided visual data delineates [Đối tượng] in [Địa điểm] across the [Thời gian]."'
+        : 'Công thức mở bài 2 câu chuẩn 8.0: Câu 1 - Paraphrase đề bài khách quan. Câu 2 - Khẳng định lập trường dứt khoát ("While some argue that [View A], I firmly adhere to the view that [View B] due to [Lý do]").'
+    });
+  }
+
+  // 2. Body Paragraphs Analysis (P.E.E.L Model)
+  const bodyParas = paragraphs.slice(1, isTask1 ? undefined : -1);
+  bodyParas.forEach((bodyText, idx) => {
+    const bodyWords = sanitizeWords(bodyText).length;
+    const bodyLower = bodyText.toLowerCase();
+    const hasAnecdote = /\b(my friend|my father|my mother|my family|my brother|my sister|when i was|in my country)\b/i.test(bodyLower);
+    const hasExplanation = /\b(because|since|as a consequence|this is because|in other words|leads to|results in|owing to|due to)\b/i.test(bodyLower);
+    const hasExample = /\b(for example|for instance|such as|to illustrate|a prime example|evidence shows|studies show|empirical data)\b/i.test(bodyLower);
+
+    results.push({
+      paragraphIndex: idx + 2,
+      name: `Đoạn ${idx + 2}: Thân Bài ${idx + 1} (Body Paragraph ${idx + 1})`,
+      wordCount: bodyWords,
+      verdict: bodyWords < 40 
+        ? `Đoạn thân bài quá ngắn (${bodyWords} từ). Luận điểm chỉ mới nêu ra dạng gạch đầu dòng mà chưa có câu giải thích 'Vì sao' hoặc dẫn chứng cụ thể.`
+        : (hasExplanation && hasExample 
+            ? 'Đoạn văn phát triển cân đối và chặt chẽ theo mô hình chuẩn P.E.E.L (Luận điểm - Giải thích cơ chế - Dẫn chứng).'
+            : 'Cần củng cố chiều sâu: Hãy bổ sung thêm câu giải thích cơ chế nguyên nhân - hệ quả hoặc số liệu/dẫn chứng cụ thể.'),
+      anecdoteWarning: hasAnecdote ? 'CẢNH BÁO BẪY VÍ DỤ CÁ NHÂN: Phát hiện dẫn chứng dựa trên trải nghiệm cá nhân ("my friend / my family / when I was"). Văn phong IELTS Academic đòi hỏi ví dụ mang tính quy luật chung của xã hội, số liệu nghiên cứu hoặc chính sách chính phủ.' : null,
+      recommendation: 'Áp dụng công thức P.E.E.L: (1) Point - Câu chủ đề định hướng ý; (2) Explanation - Phân tích cơ chế tác động; (3) Evidence - Dẫn chứng thực tế xã hội; (4) Link - Câu chốt liên kết ngược lại đề bài.'
+    });
+  });
+
+  // 3. Conclusion Analysis
+  if (!isTask1 && paragraphs.length >= 2) {
+    const lastText = paragraphs[paragraphs.length - 1];
+    const lastLower = lastText.toLowerCase();
+    const hasConcluMarker = /\b(in conclusion|to conclude|to summarize|in summary)\b/i.test(lastLower);
+    const concluWords = sanitizeWords(lastText).length;
+
+    results.push({
+      paragraphIndex: paragraphs.length,
+      name: `Đoạn ${paragraphs.length}: Kết Bài (Conclusion)`,
+      wordCount: concluWords,
+      verdict: hasConcluMarker 
+        ? 'Kết bài chuẩn mực: Có từ nối quy ước ("In conclusion"), tóm lược lại quan điểm xuyên suốt.'
+        : 'CẢNH BÁO: Kết bài thiếu từ nối quy ước ("In conclusion"). Giám khảo cần thấy rõ tín hiệu kết thúc bài thi.',
+      clicheWarning: concluWords < 20 ? `Đoạn kết bài hơi vội vã (${concluWords} từ), chưa tóm lược đầy đủ các góc nhìn đã trình bày ở thân bài.` : null,
+      recommendation: 'Kết bài chuẩn 1-2 câu: Tóm lược lại các luận điểm cốt lõi và tái khẳng định lập trường cuối cùng mà tuyệt đối không đưa thêm ý tưởng mới nào.'
+    });
+  }
+
+  return results;
+}
+
+/**
+ * Generates an Actionable Prescription Roadmap to boost candidate's band score.
+ */
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1) {
+  const plan = {
+    priority1: '',
+    priority2: '',
+    priority3: '',
+    estimatedBandTarget: ''
+  };
+
+  // Priority 1: Most Fatal Barrier
+  if (wordCount < targetMinWords) {
+    plan.priority1 = `Khắc phục dung lượng khẩn cấp: Bài viết hiện thiếu ${targetMinWords - wordCount} từ. Bắt buộc phải viết đủ tối thiểu ${targetMinWords} từ để thoát khỏi khung điểm liệt Task Response.`;
+  } else if (svErrorCount >= 3) {
+    plan.priority1 = `Chấm dứt lỗi chia động từ cơ bản: Phát hiện ${svErrorCount} lỗi hòa hợp Chủ ngữ - Động từ và Danh từ số nhiều. Hãy dành 3 phút cuối giờ rà soát lại thì và đuôi -s/-es của mọi động từ.`;
+  } else if (trBand < 6.0) {
+    plan.priority1 = isTask1 
+      ? 'Bắt buộc phải có đoạn Overview nêu bật 2 đặc điểm lớn nhất của biểu đồ (không đưa số liệu chi tiết vào Overview).' 
+      : 'Phát triển luận điểm đa chiều: Dành riêng 1 đoạn cho mỗi góc nhìn trong đề bài, trả lời trọn vẹn câu hỏi.';
+  } else {
+    plan.priority1 = 'Phát triển chiều sâu lập luận: Đào sâu cơ chế "Vì sao dẫn đến kết quả đó" thay vì chỉ liệt kê ý tưởng bề mặt.';
+  }
+
+  // Priority 2: Cohesion & Range
+  if (ccBand < 6.0) {
+    plan.priority2 = 'Cải thiện mạch văn: Chia bài viết thành 4 đoạn cân đối. Hạn chế nhồi nhét "First, Second, Moreover", hãy luyện tập dùng đại từ thay thế (This trend, Such measures) và liên kết ẩn.';
+  } else if (graBand < 6.5) {
+    plan.priority2 = 'Bổ sung câu phức nâng cao: Lồng ghép tối thiểu 3 câu có mệnh đề quan hệ (which/who), mệnh đề nhượng bộ (Although/While) hoặc câu điều kiện (If).';
+  } else {
+    plan.priority2 = 'Tăng cường tính liên kết ẩn (Thematic progression): Kết nối các câu bằng mạch ý liền mạch, tránh để giám khảo cảm thấy câu văn bị ngắt quãng.';
+  }
+
+  // Priority 3: Lexical Precision
+  if (lrBand < 6.0) {
+    plan.priority3 = 'Nâng cấp từ vựng học thuật: Thay thế các từ văn nói thông thường (a lot of, kids, good, bad, things) bằng thuật ngữ C1/C2 (substantial proportion, youth, beneficial, detrimental).';
+  } else {
+    plan.priority3 = 'Tích lũy các cụm Collocations đắt giá theo chủ đề (như: exert a profound impact, viable alternative, pressing issue) để chạm mốc Band 7.5+ LR.';
+  }
+
+  const currentOverall = (trBand + ccBand + lrBand + graBand) / 4.0;
+  const currentBand = roundToCambridgeBand(currentOverall);
+  const nextTarget = Math.min(9.0, currentBand + 0.5);
+  plan.estimatedBandTarget = `Lộ trình mục tiêu: Nâng từ Band ${currentBand.toFixed(1)} lên Band ${nextTarget.toFixed(1)} khi bạn thực hiện triệt để 3 ưu tiên trên.`;
+
+  return plan;
+}
+
 // -------------------------------------------------------------
-// 4. CORE ALGORITHM EVALUATOR ENGINE (v2)
+// 4. CORE ALGORITHM EVALUATOR ENGINE (v4 CHIEF EXAMINER STRICT STANDARD)
 // -------------------------------------------------------------
 
 /**
- * Evaluates essay algorithmically following official Cambridge IELTS Band Descriptors.
+ * Evaluates essay algorithmically following official Cambridge IELTS Band Descriptors (Band 1.0 to 9.0).
  * 
  * @param {Object} params
  * @param {Object} params.task - IELTS Task object (taskNumber, type, prompt, minWords, topic)
@@ -473,40 +600,105 @@ function analyzeTask2Fulfillment(prompt, paragraphs) {
  * @returns {Object} Full structured evaluation matching Gemini Data Contract
  */
 export function evaluateEssayAlgorithmically({ task, essayText }) {
-  if (!essayText || typeof essayText !== 'string') {
-    throw new Error('Bài viết không hợp lệ.');
+  if (!essayText || typeof essayText !== 'string' || essayText.trim().length === 0) {
+    throw new Error('Vui lòng nhập bài viết để giám khảo chấm điểm.');
   }
 
   const rawWords = sanitizeWords(essayText);
   const wordCount = rawWords.length;
-  if (wordCount < 20) {
-    throw new Error('Bài viết quá ngắn để giám khảo chấm điểm (tối thiểu 20 từ).');
-  }
-
   const isTask1 = task?.taskNumber === 1;
   const targetMinWords = task?.minWords || (isTask1 ? 150 : 250);
   const sentences = getSentences(essayText);
   const paragraphs = getParagraphs(essayText);
 
+  // Band 1.0 Non-user Immediate Handling (< 35 words)
+  if (wordCount < 35) {
+    const feedbackMsg = `Theo khung chuẩn khảo thí Cambridge IELTS Band Descriptors, bài viết dưới 35 từ (đạt ${wordCount}/${targetMinWords} từ) thuộc khung "Band 1.0 - Non-user" (Không thể sử dụng ngôn ngữ ngoài một vài từ đơn lẻ). Thí sinh không cung cấp đủ ngữ liệu để giám khảo đánh giá các tiêu chí ngữ pháp và lập luận.`;
+    return {
+      overallBand: 1.0,
+      evaluationMethod: 'algorithmic',
+      engineName: 'Cambridge Deep Linguistic Evaluator v4 (Chief Examiner Strict Standard)',
+      dateGraded: new Date().toISOString(),
+      criteria: {
+        tr: {
+          band: 1.0,
+          feedback: feedbackMsg,
+          strengths: [],
+          improvements: [`Bài viết quá ngắn (${wordCount}/${targetMinWords} từ). Bắt buộc phải viết đủ tối thiểu ${targetMinWords} từ để bài thi có thể được đánh giá theo barem chuẩn Cambridge.`]
+        },
+        cc: {
+          band: 1.0,
+          feedback: 'Không thể đánh giá tính mạch lạc do văn bản chưa đủ dung lượng cấu thành đoạn văn hoàn chỉnh.',
+          strengths: [],
+          improvements: ['Cần viết thành các câu hoàn chỉnh và chia thành tối thiểu 4 đoạn văn (Mở bài - 2 Thân bài - Kết bài).']
+        },
+        lr: {
+          band: 1.0,
+          feedback: 'Vốn từ vựng chỉ gồm vài từ đơn lẻ, không thể hiện được khả năng diễn đạt học thuật.',
+          strengths: [],
+          improvements: ['Tích lũy từ vựng cơ bản và các mẫu câu thông dụng trước khi làm bài.']
+        },
+        gra: {
+          band: 1.0,
+          feedback: 'Chưa đủ cấu trúc câu để đánh giá độ chính xác ngữ pháp.',
+          strengths: [],
+          improvements: ['Luyện tập viết các câu đơn đúng ngữ pháp (S + V + O) trước khi bước vào luyện viết luận.']
+        }
+      },
+      corrections: [],
+      band8Rewrite: isTask1
+        ? `The provided visual illustration delineates notable patterns and fluctuations pertinent to ${task?.title || 'the subject matter'} over the surveyed timeframe.\n\nOverall, it is immediately discernible that significant shifts transpired throughout the period. While certain figures exhibited an upward trajectory, others experienced marked declines or plateaued after initial volatility.\n\nIn terms of the predominant categories, initial figures commenced at moderate levels before undergoing consistent expansion, ultimately culminating in peak metrics. Conversely, alternative components demonstrated a steady descent, reflecting clear divergence across segments.\n\nRegarding the remaining parameters, comparative analysis underscores a high degree of correlation with general trends, with the disparity narrowing considerably towards the end of the recording timeline.`
+        : `It is widely argued that ${task?.prompt?.slice(0, 100) || 'this topic'} has ignited profound debate in contemporary society. While some individuals contend that traditional perspectives remain paramount, I firmly adhere to the view that progressive methodologies offer far superior societal advantages.\n\nOn the one hand, proponents of conventional approaches frequently cite proven reliability as their core justification. From this standpoint, established paradigms mitigate unforeseen socioeconomic hazards and preserve foundational stability. For instance, empirical evidence highlights how standardized frameworks cultivate structural discipline across institutions.\n\nOn the other hand, the compelling benefits of embracing modernization are indisputable. Firstly, adapting to technological and sociological evolutions fosters unprecedented productivity and unlocks innovative solutions to pressing issues. Furthermore, prioritizing contemporary strategies empowers future generations to navigate increasingly complex global challenges effectively.\n\nIn conclusion, although conventional practices provide undeniable initial safeguards, the multifaceted benefits of forward-looking alternatives are far more substantial. Consequently, proactive adoption should be championed across all societal sectors.`,
+      keyVocabulary: [
+        { phrase: 'exert a profound impact on', meaningVi: 'tạo ra tác động sâu sắc lên đối tượng nào đó', example: 'Technological advancements exert a profound impact on contemporary communication.' },
+        { phrase: 'play an indispensable role in', meaningVi: 'đóng một vai trò không thể thiếu trong', example: 'Early childhood education plays an indispensable role in cognitive development.' },
+        { phrase: 'a viable alternative to', meaningVi: 'một giải pháp thay thế khả thi cho', example: 'Solar power is increasingly seen as a viable alternative to fossil fuels.' }
+      ],
+      paragraphAnalysis: [
+        {
+          paragraphIndex: 1,
+          name: 'Toàn bài (Chưa phân đoạn)',
+          wordCount,
+          verdict: `Bài viết chỉ có ${wordCount} từ, quá ngắn để tạo thành một đoạn văn hoàn chỉnh.`,
+          clicheWarning: null,
+          anecdoteWarning: null,
+          recommendation: `Bắt buộc phải mở rộng dung lượng lên tối thiểu ${targetMinWords} từ theo mô hình chuẩn 4 đoạn (Mở bài - 2 Thân bài - Kết bài).`
+        }
+      ],
+      actionPlan: {
+        priority1: `Khắc phục dung lượng khẩn cấp: Bài viết chỉ có ${wordCount}/${targetMinWords} từ. Bắt buộc phải viết đủ tối thiểu ${targetMinWords} từ để thoát khỏi điểm liệt Band 1.0.`,
+        priority2: 'Xây dựng cấu trúc bài viết chuẩn: Học cấu trúc 4 đoạn (Mở bài - Thân bài 1 - Thân bài 2 - Kết bài).',
+        priority3: 'Luyện câu đơn cơ bản: Rèn luyện viết câu chuẩn ngữ pháp (Chủ ngữ + Động từ + Tân ngữ) không sai thì.',
+        estimatedBandTarget: `Lộ trình mục tiêu: Nâng từ Band 1.0 lên Band 3.5 - 4.0 khi bạn viết đủ ${targetMinWords} từ và chia đoạn rõ ràng.`
+      }
+    };
+  }
+
   // Corrections array initialized early for cross-referencing
   const corrections = [];
 
   // ===========================================================
-  // A. TASK RESPONSE / TASK ACHIEVEMENT (TR/TA) v3 (CALIBRATED)
+  // A. TASK RESPONSE / TASK ACHIEVEMENT (TR/TA) v4 (STRICT EXAMINER)
   // ===========================================================
-  // Realistic base for standard structure: 5.5
+  // Base score for standard structure: 5.5
   let trScore = 5.5;
   const trStrengths = [];
   const trImprovements = [];
 
   // 1. Strict Underlength Penalties (Cambridge Exam Regulations)
   if (isTask1) {
-    if (wordCount < 100) {
+    if (wordCount < 50) {
+      trScore = Math.min(trScore, 2.0);
+      trImprovements.push(`Bài viết quá ngắn (${wordCount}/150 từ). Theo quy chế Cambridge, bài viết dưới 50 từ thuộc Band 2.0 (Intermittent user).`);
+    } else if (wordCount < 80) {
+      trScore = Math.min(trScore, 3.0);
+      trImprovements.push(`Bài viết thiếu từ nghiêm trọng (${wordCount}/150 từ). Điểm Task Achievement bị giới hạn ở Band 3.0.`);
+    } else if (wordCount < 110) {
       trScore = Math.min(trScore, 4.0);
-      trImprovements.push(`Bài viết quá ngắn (${wordCount}/150 từ, thiếu ${150 - wordCount} từ). Theo quy chế Cambridge, Task Achievement bị giới hạn ở Band 4.0.`);
-    } else if (wordCount < 130) {
+      trImprovements.push(`Bài viết quá ngắn (${wordCount}/150 từ, thiếu ${150 - wordCount} từ). Task Achievement bị giới hạn ở Band 4.0.`);
+    } else if (wordCount < 135) {
       trScore = Math.min(trScore, 4.5);
-      trImprovements.push(`Bài viết thiếu từ nghiêm trọng (${wordCount}/150 từ). Điểm Task Achievement bị giới hạn tối đa Band 4.5.`);
+      trImprovements.push(`Bài viết thiếu từ đáng kể (${wordCount}/150 từ). Điểm Task Achievement bị giới hạn tối đa Band 4.5.`);
     } else if (wordCount < 150) {
       trScore = Math.min(trScore, 5.0);
       trImprovements.push(`Bài viết chưa đạt dung lượng tối thiểu (${wordCount}/150 từ). Bạn bị trừ điểm do không hoàn thành yêu cầu cơ bản.`);
@@ -518,9 +710,15 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     }
   } else {
     // Task 2: Minimum 250 words
-    if (wordCount < 160) {
-      trScore = Math.min(trScore, 4.5);
-      trImprovements.push(`CẢNH BÁO THIẾU TỪ NGHIÊM TRỌNG: Bài viết chỉ có ${wordCount}/250 từ (thiếu ${250 - wordCount} từ). Ý tưởng chưa được giải thích và minh chứng đầy đủ, điểm Task Response bị khống chế tối đa Band 4.5.`);
+    if (wordCount < 75) {
+      trScore = Math.min(trScore, 2.0);
+      trImprovements.push(`CẢNH BÁO THIẾU TỪ TRẦM TRỌNG: Bài viết chỉ có ${wordCount}/250 từ. Theo Cambridge Band Descriptors, thí sinh thuộc khung Band 2.0 (Intermittent user) do không diễn đạt được thông điệp hoàn chỉnh.`);
+    } else if (wordCount < 120) {
+      trScore = Math.min(trScore, 3.0);
+      trImprovements.push(`CẢNH BÁO THIẾU TỪ NGHIÊM TRỌNG: Bài viết chỉ có ${wordCount}/250 từ (thiếu ${250 - wordCount} từ). Theo Cambridge, bài viết dưới 120 từ bị khống chế tối đa Band 3.0.`);
+    } else if (wordCount < 160) {
+      trScore = Math.min(trScore, 4.0);
+      trImprovements.push(`CẢNH BÁO THIẾU TỪ ĐÁNG KỂ: Bài viết chỉ có ${wordCount}/250 từ (thiếu ${250 - wordCount} từ). Ý tưởng chưa được giải thích và minh chứng đầy đủ, điểm Task Response bị khống chế tối đa Band 4.0.`);
     } else if (wordCount < 200) {
       trScore = Math.min(trScore, 5.0);
       trImprovements.push(`Bài viết thiếu từ đáng kể (${wordCount}/250 từ). Luận điểm còn sơ sài, điểm Task Response bị giới hạn tối đa Band 5.0.`);
@@ -559,7 +757,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // 3. Prompt-Essay Semantic Relevance (PESR) & Off-Topic Check
   const relevance = analyzePromptSemanticRelevance(task?.prompt, essayText);
-  if (relevance.isOffTopic) {
+  if (relevance.score < 0.15 && wordCount >= 80) {
+    trScore = Math.min(trScore, 2.5);
+    trImprovements.push(`LẠC ĐỀ HOÀN TOÀN: Bài viết hầu như không đề cập đến các từ khóa hay chủ đề trọng tâm của đề thi (điểm tương đồng PESR chỉ đạt ${Math.round(relevance.score * 100)}%). Theo Cambridge Band Descriptors, bài lạc đề hoàn toàn bị khống chế tối đa Band 2.0 - 2.5.`);
+  } else if (relevance.score < 0.28 && wordCount >= 100) {
+    trScore = Math.min(trScore, 3.5);
+    trImprovements.push(`LỆCH ĐỀ NGHIÊM TRỌNG: Bài viết đi chệch khỏi yêu cầu cốt lõi của đề thi (chỉ khớp ${relevance.matchedKeywords.length}/${relevance.totalKeywords} từ khóa). Điểm Task Response bị giới hạn tối đa Band 3.5.`);
+  } else if (relevance.isOffTopic) {
     trScore = Math.min(trScore, 4.5); // Strict Cambridge off-topic penalty
     trImprovements.push(`CẢNH BÁO LỆCH ĐỀ (Off-Topic): Bài viết chỉ đề cập ${relevance.matchedKeywords.length}/${relevance.totalKeywords} từ khóa trọng tâm của đề bài. Giám khảo khảo thí Cambridge sẽ giới hạn điểm Task Response tối đa Band 4.5.`);
   } else if (relevance.score >= 0.55 && wordCount >= 250) {
@@ -605,10 +809,10 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     }
   }
 
-  const trBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, trScore)));
+  const trBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, trScore)));
 
   // ===========================================================
-  // B. COHERENCE & COHESION (CC) v3 (CALIBRATED)
+  // B. COHERENCE & COHESION (CC) v4 (STRICT EXAMINER)
   // ===========================================================
   let ccScore = 5.5;
   const ccStrengths = [];
@@ -616,8 +820,17 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const essayLower = essayText.toLowerCase();
 
   // 1. Structural Coherence Baseline
-  if (paragraphs.length < 3 || wordCount < 160) {
-    ccScore = 4.5;
+  if (paragraphs.length === 1 && wordCount >= 60) {
+    ccScore = Math.min(ccScore, 3.5);
+    ccImprovements.push("VI PHẠM BỐ CỤC ĐOẠN VĂN: Toàn bộ bài viết là một khối duy nhất không xuống dòng phân chia đoạn. Barem Cambridge quy định bài không chia đoạn văn bị khống chế Coherence & Cohesion tối đa Band 3.5.");
+  } else if (wordCount < 75) {
+    ccScore = Math.min(ccScore, 2.0);
+    ccImprovements.push("Bài viết quá ngắn để tổ chức tính liên kết đoạn văn, giới hạn tối đa ở Band 2.0.");
+  } else if (wordCount < 120) {
+    ccScore = Math.min(ccScore, 3.0);
+    ccImprovements.push("Đoạn văn quá ngắn và thiếu liên kết logic giữa các ý, giới hạn ở Band 3.0.");
+  } else if (paragraphs.length < 3 || wordCount < 160) {
+    ccScore = Math.min(ccScore, 4.0);
     ccImprovements.push("Đoạn văn quá ngắn hoặc chưa phân chia đoạn rõ ràng, ảnh hưởng nghiêm trọng đến tính mạch lạc.");
   } else if (paragraphs.length === 3 && !isTask1) {
     ccScore = 5.0;
@@ -673,10 +886,10 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     ccImprovements.push("Lạm dụng từ nối cơ học ở đầu mọi câu khiến bài viết thiếu tự nhiên.");
   }
 
-  const ccBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, ccScore)));
+  const ccBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, ccScore)));
 
   // ===========================================================
-  // C. LEXICAL RESOURCE (LR) v3 (CALIBRATED)
+  // C. LEXICAL RESOURCE (LR) v4 (STRICT EXAMINER)
   // ===========================================================
   let lrScore = 5.0;
   const lrStrengths = [];
@@ -712,7 +925,16 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     if (matches) informalCount += matches.length;
   });
 
-  // 5. Calibrated Cambridge LR Matrix
+  // 5. Underlength hard caps for LR
+  if (wordCount < 75) {
+    lrScore = Math.min(lrScore, 2.0);
+  } else if (wordCount < 120) {
+    lrScore = Math.min(lrScore, 3.0);
+  } else if (wordCount < 160) {
+    lrScore = Math.min(lrScore, 4.0);
+  }
+
+  // 6. Calibrated Cambridge LR Matrix
   if (awlPercentage >= 8.5 && collocationHits >= 4 && wordCount >= 240 && informalCount === 0) {
     lrScore = 8.0;
     lrStrengths.push(`Vốn từ vựng học thuật C1/C2 đỉnh cao (${awlPercentage.toFixed(1)}% AWL, ${collocationHits} cụm collocations tự nhiên như: '${matchedCollocations.slice(0, 3).join("', '")}').`);
@@ -726,18 +948,18 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     lrScore = 6.0;
     lrStrengths.push("Vốn từ vựng ở mức vừa đủ hoàn thành bài viết, có sử dụng một số thuật ngữ liên quan đến chủ đề.");
     lrImprovements.push("Cần bổ sung thêm các cụm từ học thuật C1/C2 và Collocations nâng cao để vượt ngưỡng Band 6.0.");
-  } else {
+  } else if (wordCount >= 160) {
     // Basic A2/B1 vocabulary
     lrScore = 5.0;
     lrImprovements.push("Vốn từ vựng còn khá cơ bản (chỉ đạt " + awlPercentage.toFixed(1) + "% từ vựng học thuật AWL, thiếu các cụm Collocations chuẩn). Bạn cần tích lũy thêm từ vựng chuyên sâu theo chủ đề.");
   }
 
   if (informalCount >= 2) {
-    lrScore = Math.max(4.5, lrScore - 0.5);
+    lrScore = Math.max(1.0, lrScore - 0.5);
     lrImprovements.push(`Phát hiện ${informalCount} từ/cụm từ mang văn phong giao tiếp thường ngày (như 'a lot of', 'kids', 'stuff'). Hãy đổi sang văn phong học thuật trang trọng.`);
   }
 
-  const lrBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, lrScore)));
+  const lrBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, lrScore)));
 
   // ===========================================================
   // D. SPECIFIC ERROR GENERATOR (SENTENCE-LEVEL) v3
@@ -930,9 +1152,25 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     graImprovements.push(`Mắc lỗi ngữ pháp cơ bản lặp đi lặp lại (${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều). Theo tiêu chí Cambridge, lỗi hệ thống giới hạn điểm GRA ở Band 5.0.`);
   }
 
-  // Hard Cap: Systematic elementary S-V errors >= 3 cannot exceed Band 5.0
-  if (svErrorCount >= 3) {
-    graScore = Math.min(graScore, 5.0);
+  // Underlength hard caps for GRA
+  if (wordCount < 75) {
+    graScore = Math.min(graScore, 2.0);
+  } else if (wordCount < 120) {
+    graScore = Math.min(graScore, 3.0);
+  } else if (wordCount < 160) {
+    graScore = Math.min(graScore, 4.0);
+  }
+
+  // Hard Cap: Systematic elementary S-V errors
+  if (svErrorCount >= 6) {
+    graScore = Math.min(graScore, 3.0);
+    graImprovements.push(`Mắc lỗi ngữ pháp cơ bản dày đặc (${svErrorCount} lỗi hòa hợp chủ vị / số nhiều / liên từ). Theo tiêu chí Cambridge, điểm GRA bị khống chế tối đa Band 3.0.`);
+  } else if (svErrorCount >= 4) {
+    graScore = Math.min(graScore, 4.0);
+    graImprovements.push(`Lỗi ngữ pháp cơ bản xảy ra thường xuyên (${svErrorCount} lỗi). Theo tiêu chí Cambridge, lỗi hệ thống cơ bản giới hạn GRA tối đa Band 4.0.`);
+  } else if (svErrorCount >= 3) {
+    graScore = Math.min(graScore, 4.5);
+    graImprovements.push(`Phát hiện ${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều. GRA bị khống chế ở Band 4.5.`);
   } else if (svErrorCount >= 2) {
     graScore = Math.min(graScore, 5.5);
   }
@@ -941,17 +1179,21 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const sentenceWordCounts = sentences.map(s => s.split(/\s+/).length);
   const runOnSentences = sentenceWordCounts.filter(cnt => cnt > 42).length;
   if (runOnSentences > 1) {
-    graScore = Math.max(4.5, graScore - 0.5);
+    graScore = Math.max(1.0, graScore - 0.5);
     graImprovements.push(`Có ${runOnSentences} câu quá dài (>42 từ) dễ gây rối nghĩa hoặc lỗi ngắt câu (run-on). Nên tách thành các câu mạch lạc.`);
   }
 
-  const graBand = roundToCambridgeBand(Math.max(4.0, Math.min(8.5, graScore)));
+  const graBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, graScore)));
 
   // ===========================================================
-  // F. OVERALL BAND COMPUTATION & MODEL REWRITE
+  // F. OVERALL BAND COMPUTATION & DEEP EXAMINER DIAGNOSTICS
   // ===========================================================
   const rawAverage = (trBand + ccBand + lrBand + graBand) / 4.0;
   const overallBand = roundToCambridgeBand(rawAverage);
+
+  // Generate In-Depth Paragraph Analysis & Examiner Action Plan
+  const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1);
 
   // Key Academic Collocations Recommendation
   const keyVocabulary = [
@@ -1006,36 +1248,38 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   return {
     overallBand,
     evaluationMethod: 'algorithmic',
-    engineName: 'Cambridge Deep Linguistic Evaluator v2 (Offline High-Accuracy Engine)',
+    engineName: 'Cambridge Deep Linguistic Evaluator v4 (Chief Examiner Strict Standard)',
     dateGraded: new Date().toISOString(),
     criteria: {
       tr: {
         band: trBand,
-        feedback: `Đánh giá mức độ hoàn thành nhiệm vụ (Task ${isTask1 ? 'Achievement' : 'Response'}): ${trBand >= 7.0 ? 'Ý tưởng phát triển toàn diện, lập luận chặt chẽ và bám sát đề thi.' : 'Cần chú ý mở rộng chiều sâu luận điểm, dẫn chứng và dung lượng từ.'}`,
-        strengths: trStrengths.length > 0 ? trStrengths : ['Bài viết bám sát yêu cầu đề bài.'],
+        feedback: `Đánh giá mức độ hoàn thành nhiệm vụ (Task ${isTask1 ? 'Achievement' : 'Response'}): ${trBand >= 7.0 ? 'Ý tưởng phát triển toàn diện, lập luận chặt chẽ và bám sát đề thi.' : trBand <= 3.5 ? 'Chưa đáp ứng yêu cầu cơ bản của đề thi, dung lượng thiếu hụt nghiêm trọng hoặc chưa phát triển được luận điểm rõ ràng.' : 'Cần chú ý mở rộng chiều sâu luận điểm, dẫn chứng và dung lượng từ.'}`,
+        strengths: trStrengths.length > 0 ? trStrengths : ['Bài viết thể hiện nỗ lực trả lời câu hỏi đề thi.'],
         improvements: trImprovements.length > 0 ? trImprovements : ['Tiếp tục duy trì tính nhất quán và dẫn chứng cụ thể.']
       },
       cc: {
         band: ccBand,
-        feedback: `Đánh giá tính mạch lạc và liên kết (Coherence & Cohesion): ${ccBand >= 7.0 ? 'Mạch bài trôi chảy, sử dụng liên từ và đại từ thay thế tự nhiên.' : 'Cần củng cố sự liên kết giữa các câu và phân đoạn ý rõ ràng hơn.'}`,
-        strengths: ccStrengths.length > 0 ? ccStrengths : ['Bố cục các đoạn văn tương đối rõ ràng.'],
+        feedback: `Đánh giá tính mạch lạc và liên kết (Coherence & Cohesion): ${ccBand >= 7.0 ? 'Mạch bài trôi chảy, sử dụng liên từ và đại từ thay thế tự nhiên.' : ccBand <= 3.5 ? 'Bố cục chưa phân đoạn hoặc các câu rời rạc, thiếu tính liên kết logic giữa các ý.' : 'Cần củng cố sự liên kết giữa các câu và phân đoạn ý rõ ràng hơn.'}`,
+        strengths: ccStrengths.length > 0 ? ccStrengths : ['Có cố gắng sắp xếp trật tự các câu.'],
         improvements: ccImprovements.length > 0 ? ccImprovements : ['Bổ sung thêm các phương tiện liên kết logic giữa các câu.']
       },
       lr: {
         band: lrBand,
-        feedback: `Đánh giá vốn từ vựng (Lexical Resource): ${lrBand >= 7.0 ? 'Vốn từ học thuật phong phú, sử dụng đúng ngữ cảnh và collocations chuẩn xác.' : 'Cần nâng cấp từ vựng cơ bản lên chuẩn học thuật Academic Word List (AWL).'}`,
-        strengths: lrStrengths.length > 0 ? lrStrengths : ['Có sử dụng một số từ vựng đúng chủ đề.'],
+        feedback: `Đánh giá vốn từ vựng (Lexical Resource): ${lrBand >= 7.0 ? 'Vốn từ học thuật phong phú, sử dụng đúng ngữ cảnh và collocations chuẩn xác.' : lrBand <= 3.5 ? 'Vốn từ rất hạn chế, phụ thuộc vào các từ ngữ giao tiếp đơn giản và lặp từ nhiều.' : 'Cần nâng cấp từ vựng cơ bản lên chuẩn học thuật Academic Word List (AWL).'}`,
+        strengths: lrStrengths.length > 0 ? lrStrengths : ['Sử dụng được một số từ vựng đúng chủ đề.'],
         improvements: lrImprovements.length > 0 ? lrImprovements : ['Hạn chế dùng từ lặp lại hoặc từ ngữ văn nói thông thường.']
       },
       gra: {
         band: graBand,
-        feedback: `Đánh giá ngữ pháp và độ chính xác (Grammar Range & Accuracy): ${graBand >= 7.0 ? `Cấu trúc câu phong phú, tỷ lệ câu không lỗi (EFSR) đạt ${Math.round(efsrRatio)}%.` : `Cần kiểm soát lỗi sai cơ bản để nâng tỷ lệ câu không lỗi (EFSR hiện tại: ${Math.round(efsrRatio)}%).`}`,
+        feedback: `Đánh giá ngữ pháp và độ chính xác (Grammar Range & Accuracy): ${graBand >= 7.0 ? `Cấu trúc câu phong phú, tỷ lệ câu không lỗi (EFSR) đạt ${Math.round(efsrRatio)}%.` : graBand <= 3.5 ? `Nhiều lỗi ngữ pháp cơ bản (chia động từ, mạo từ, danh từ số nhiều), tỷ lệ câu không lỗi rất thấp (${Math.round(efsrRatio)}%).` : `Cần kiểm soát lỗi sai cơ bản để nâng tỷ lệ câu không lỗi (EFSR hiện tại: ${Math.round(efsrRatio)}%).`}`,
         strengths: graStrengths.length > 0 ? graStrengths : ['Cấu trúc câu đảm bảo người đọc hiểu được thông điệp.'],
         improvements: graImprovements.length > 0 ? graImprovements : ['Đa dạng hóa các dạng câu phức và kiểm tra kỹ lỗi ngữ pháp.']
       }
     },
     corrections,
     band8Rewrite,
-    keyVocabulary
+    keyVocabulary,
+    paragraphAnalysis,
+    actionPlan
   };
 }

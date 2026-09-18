@@ -12,7 +12,9 @@ import {
   Layers,
   Check,
   RefreshCw,
-  Zap
+  Zap,
+  Target,
+  ShieldAlert
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -238,7 +240,20 @@ export default function FeedbackModal({
               activeTab === 'criteria' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
             }`}
           >
-            4 Tiêu Chí Chấm Điểm
+            4 Tiêu Chí & Lộ Trình
+          </button>
+          <button
+            onClick={() => setActiveTab('paragraphs')}
+            className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+              activeTab === 'paragraphs' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
+            }`}
+          >
+            <span>Mổ Xẻ Từng Đoạn</span>
+            {evaluation.paragraphAnalysis && evaluation.paragraphAnalysis.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold">
+                {evaluation.paragraphAnalysis.length}
+              </span>
+            )}
           </button>
           <button
             onClick={() => setActiveTab('corrections')}
@@ -309,6 +324,65 @@ export default function FeedbackModal({
                 </div>
               </div>
 
+              {/* Examiner Action Plan (Đơn thuốc cải thiện điểm số) */}
+              {evaluation.actionPlan && (
+                <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white border border-indigo-800/60 shadow-md space-y-3">
+                  <div className="flex items-center justify-between border-b border-indigo-800/80 pb-2.5">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-5 h-5 text-red-400" />
+                      <h4 className="font-bold text-sm sm:text-base tracking-wide">
+                        Đơn Thuốc Cải Thiện Điểm Số (Action Plan)
+                      </h4>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] sm:text-[11px] font-semibold">
+                      Chief Examiner Strategy
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    {evaluation.actionPlan.priority1 && (
+                      <div className="flex items-start space-x-2.5 p-2.5 rounded-lg bg-red-950/40 border border-red-800/40">
+                        <span className="px-2 py-0.5 rounded bg-red-600 text-white font-extrabold text-[10px] shrink-0 mt-0.5">
+                          ƯU TIÊN 1
+                        </span>
+                        <p className="text-slate-200 leading-relaxed">
+                          {evaluation.actionPlan.priority1}
+                        </p>
+                      </div>
+                    )}
+
+                    {evaluation.actionPlan.priority2 && (
+                      <div className="flex items-start space-x-2.5 p-2.5 rounded-lg bg-blue-950/40 border border-blue-800/40">
+                        <span className="px-2 py-0.5 rounded bg-blue-600 text-white font-extrabold text-[10px] shrink-0 mt-0.5">
+                          ƯU TIÊN 2
+                        </span>
+                        <p className="text-slate-200 leading-relaxed">
+                          {evaluation.actionPlan.priority2}
+                        </p>
+                      </div>
+                    )}
+
+                    {evaluation.actionPlan.priority3 && (
+                      <div className="flex items-start space-x-2.5 p-2.5 rounded-lg bg-purple-950/40 border border-purple-800/40">
+                        <span className="px-2 py-0.5 rounded bg-purple-600 text-white font-extrabold text-[10px] shrink-0 mt-0.5">
+                          ƯU TIÊN 3
+                        </span>
+                        <p className="text-slate-200 leading-relaxed">
+                          {evaluation.actionPlan.priority3}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {evaluation.actionPlan.estimatedBandTarget && (
+                    <div className="pt-2 border-t border-indigo-800/80 flex items-center space-x-2 text-xs font-semibold text-emerald-400">
+                      <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>{evaluation.actionPlan.estimatedBandTarget}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* 4 Detail Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {Object.entries(evaluation.criteria || {}).map(([key, data]) => (
@@ -342,6 +416,81 @@ export default function FeedbackModal({
                 ))}
               </div>
 
+            </div>
+          )}
+
+          {/* TAB: PARAGRAPH-BY-PARAGRAPH ANALYSIS */}
+          {activeTab === 'paragraphs' && (
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white border border-indigo-900 shadow-xs">
+                <div className="flex items-center space-x-2 mb-1">
+                  <Layers className="w-4 h-4 text-indigo-400" />
+                  <h4 className="font-bold text-sm">Chẩn Đoán Cấu Trúc Khảo Thí Cambridge</h4>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Mổ xẻ từng đoạn văn theo tiêu chuẩn khảo thí Cambridge: Rà soát phát hiện câu mở bài sáo rỗng (Cliche), bẫy dẫn chứng trải nghiệm cá nhân (Anecdotes) và đánh giá độ sâu phát triển ý theo mô hình chuẩn P.E.E.L.
+                </p>
+              </div>
+
+              {evaluation.paragraphAnalysis && evaluation.paragraphAnalysis.length > 0 ? (
+                evaluation.paragraphAnalysis.map((p, idx) => (
+                  <div key={idx} className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                      <div className="flex items-center space-x-2">
+                        <span className="w-6 h-6 rounded-full bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-200">
+                          {p.paragraphIndex || idx + 1}
+                        </span>
+                        <span className="font-bold text-sm text-slate-900">
+                          {p.name}
+                        </span>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                        {p.wordCount} từ
+                      </span>
+                    </div>
+
+                    {/* Verdict */}
+                    <div className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200/80">
+                      <strong className="text-slate-900 font-semibold block mb-1">Đánh giá của Giám khảo:</strong>
+                      {p.verdict}
+                    </div>
+
+                    {/* Cliche Warning */}
+                    {p.clicheWarning && (
+                      <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-900 flex items-start space-x-2">
+                        <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="font-bold text-red-700 block">CẢNH BÁO BẪY CÂU SÁO RỖNG:</strong>
+                          <span>{p.clicheWarning}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Anecdote Warning */}
+                    {p.anecdoteWarning && (
+                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start space-x-2">
+                        <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="font-bold text-amber-800 block">CẢNH BÁO DẪN CHỨNG CÁ NHÂN:</strong>
+                          <span>{p.anecdoteWarning}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recommendation */}
+                    {p.recommendation && (
+                      <div className="text-xs text-indigo-900 bg-indigo-50/60 p-3 rounded-lg border border-indigo-100">
+                        <strong className="font-semibold text-indigo-950 block mb-0.5">Khuyến nghị phát triển:</strong>
+                        {p.recommendation}
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-10 text-slate-400 text-xs">
+                  Chưa có dữ liệu phân tích từng đoạn văn.
+                </div>
+              )}
             </div>
           )}
 
