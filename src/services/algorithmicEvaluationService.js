@@ -360,6 +360,86 @@ export function roundToCambridgeBand(score) {
 // -------------------------------------------------------------
 
 /**
+ * Prompt Verbatim Copying Deduction (Cambridge Regulation)
+ * Identifies chunks of >= 4 consecutive words copied directly from the prompt.
+ * Words from prompt copying are subtracted from total word count (Effective Word Count)
+ * and penalized in Task Response and Lexical Resource.
+ */
+function analyzePromptVerbatimCopying(prompt, essayText) {
+  if (!prompt || !essayText || typeof prompt !== 'string' || typeof essayText !== 'string') {
+    return { totalCopiedWords: 0, copiedChunks: [] };
+  }
+
+  // Filter standard IELTS meta-instructions so they are not treated as topic prompt
+  const cleanPrompt = prompt
+    .replace(/You should spend about \d+ minutes on this task\.?/gi, '')
+    .replace(/Write at least \d+ words\.?/gi, '')
+    .replace(/Give reasons for your answer and include any relevant examples from your own knowledge or experience\.?/gi, '')
+    .replace(/Summarise the information by selecting and reporting the main features.*?where relevant\.?/gi, '');
+
+  const promptWords = cleanPrompt.toLowerCase().replace(/[^a-z0-9\s'-]/g, ' ').split(/\s+/).filter(Boolean);
+  const essayWords = essayText.toLowerCase().replace(/[^a-z0-9\s'-]/g, ' ').split(/\s+/).filter(Boolean);
+
+  if (promptWords.length < 4 || essayWords.length < 4) {
+    return { totalCopiedWords: 0, copiedChunks: [] };
+  }
+
+  const minChunkLen = 4;
+  const copiedRangesInEssay = [];
+
+  for (let i = 0; i <= essayWords.length - minChunkLen; i++) {
+    let maxLen = 0;
+    for (let j = 0; j <= promptWords.length - minChunkLen; j++) {
+      let matchLen = 0;
+      while (
+        i + matchLen < essayWords.length &&
+        j + matchLen < promptWords.length &&
+        essayWords[i + matchLen] === promptWords[j + matchLen]
+      ) {
+        matchLen++;
+      }
+      if (matchLen >= minChunkLen && matchLen > maxLen) {
+        maxLen = matchLen;
+      }
+    }
+
+    if (maxLen >= minChunkLen) {
+      copiedRangesInEssay.push({ start: i, end: i + maxLen, length: maxLen });
+      i += maxLen - 1; // skip ahead to avoid overlapping sub-chunks
+    }
+  }
+
+  // Merge any overlapping or adjacent ranges
+  const mergedRanges = [];
+  copiedRangesInEssay.forEach(range => {
+    if (mergedRanges.length === 0) {
+      mergedRanges.push(range);
+    } else {
+      const last = mergedRanges[mergedRanges.length - 1];
+      if (range.start <= last.end) {
+        last.end = Math.max(last.end, range.end);
+        last.length = last.end - last.start;
+      } else {
+        mergedRanges.push(range);
+      }
+    }
+  });
+
+  const copiedChunks = mergedRanges.map(r => ({
+    phrase: essayWords.slice(r.start, r.end).join(' '),
+    wordCount: r.length,
+    startIndex: r.start
+  }));
+
+  const totalCopiedWords = copiedChunks.reduce((acc, c) => acc + c.wordCount, 0);
+
+  return {
+    totalCopiedWords,
+    copiedChunks
+  };
+}
+
+/**
  * Prompt-Essay Semantic Relevance (PESR)
  * Detects whether the candidate actually answers the topic or writes off-topic.
  */
@@ -605,15 +685,20 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   }
 
   const rawWords = sanitizeWords(essayText);
-  const wordCount = rawWords.length;
+  const rawWordCount = rawWords.length;
   const isTask1 = task?.taskNumber === 1;
   const targetMinWords = task?.minWords || (isTask1 ? 150 : 250);
   const sentences = getSentences(essayText);
   const paragraphs = getParagraphs(essayText);
 
-  // Band 1.0 Non-user Immediate Handling (< 35 words)
+  // 1. Prompt Verbatim Copying Deduction (Official Cambridge Regulation)
+  const promptCopying = analyzePromptVerbatimCopying(task?.prompt, essayText);
+  const copiedWordCount = promptCopying.totalCopiedWords;
+  const wordCount = Math.max(0, rawWordCount - copiedWordCount); // Effective Word Count
+
+  // Band 1.0 Non-user Immediate Handling (< 35 effective words)
   if (wordCount < 35) {
-    const feedbackMsg = `Theo khung chuẩn khảo thí Cambridge IELTS Band Descriptors, bài viết dưới 35 từ (đạt ${wordCount}/${targetMinWords} từ) thuộc khung "Band 1.0 - Non-user" (Không thể sử dụng ngôn ngữ ngoài một vài từ đơn lẻ). Thí sinh không cung cấp đủ ngữ liệu để giám khảo đánh giá các tiêu chí ngữ pháp và lập luận.`;
+    const feedbackMsg = `Theo khung chuẩn khảo thí Cambridge IELTS Band Descriptors, bài viết dưới 35 từ hợp lệ (đạt ${wordCount}/${targetMinWords} từ${copiedWordCount > 0 ? `, đã trừ ${copiedWordCount} từ sao chép đề bài` : ''}) thuộc khung "Band 1.0 - Non-user" (Không thể sử dụng ngôn ngữ ngoài một vài từ đơn lẻ). Thí sinh không cung cấp đủ ngữ liệu để giám khảo đánh giá các tiêu chí ngữ pháp và lập luận.`;
     return {
       overallBand: 1.0,
       evaluationMethod: 'algorithmic',
@@ -684,6 +769,17 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   let trScore = 5.5;
   const trStrengths = [];
   const trImprovements = [];
+
+  // Prompt Verbatim Copying Penalty (Cambridge Regulation: Copied words receive zero credit)
+  if (copiedWordCount >= 4) {
+    if (copiedWordCount >= 15) {
+      trScore = Math.max(1.0, trScore - 1.0);
+    } else {
+      trScore = Math.max(1.0, trScore - 0.5);
+    }
+    const sampleChunks = promptCopying.copiedChunks.map(c => `"${c.phrase}" (${c.wordCount} từ)`).slice(0, 2).join(', ');
+    trImprovements.push(`CẢNH BÁO SAO CHÉP ĐỀ BÀI: Phát hiện ${copiedWordCount} từ sao chép nguyên văn từ câu hỏi đề bài mà không paraphrase (${sampleChunks}). Theo quy chế khảo thí chính thức của Cambridge IELTS, các từ sao chép nguyên văn sẽ bị GẠCH BỎ KHỎI TỔNG SỐ TỪ TÍNH ĐIỂM (Dung lượng thực tế hợp lệ: ${wordCount}/${targetMinWords} từ).`);
+  }
 
   // 1. Strict Underlength Penalties (Cambridge Exam Regulations)
   if (isTask1) {
@@ -957,6 +1053,16 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   if (informalCount >= 2) {
     lrScore = Math.max(1.0, lrScore - 0.5);
     lrImprovements.push(`Phát hiện ${informalCount} từ/cụm từ mang văn phong giao tiếp thường ngày (như 'a lot of', 'kids', 'stuff'). Hãy đổi sang văn phong học thuật trang trọng.`);
+  }
+
+  // Prompt Copying Penalty for LR (Candidate lacks vocabulary to paraphrase)
+  if (copiedWordCount >= 4) {
+    if (copiedWordCount >= 15) {
+      lrScore = Math.max(1.0, lrScore - 1.0);
+    } else {
+      lrScore = Math.max(1.0, lrScore - 0.5);
+    }
+    lrImprovements.push(`CẢNH BÁO TỪ VỰNG (Prompt Copying): Bài viết sao chép ${copiedWordCount} từ nguyên xi từ đề bài. Để đạt điểm cao ở tiêu chí Lexical Resource, thí sinh bắt buộc phải thể hiện khả năng Paraphrase (dùng từ đồng nghĩa, chuyển đổi từ loại hoặc cấu trúc câu) ngay từ câu mở đầu.`);
   }
 
   const lrBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, lrScore)));
@@ -1280,6 +1386,12 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     band8Rewrite,
     keyVocabulary,
     paragraphAnalysis,
-    actionPlan
+    actionPlan,
+    wordStats: {
+      rawWordCount,
+      copiedWordCount,
+      effectiveWordCount: wordCount,
+      copiedChunks: promptCopying.copiedChunks
+    }
   };
 }
