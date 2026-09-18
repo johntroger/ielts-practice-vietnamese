@@ -249,7 +249,7 @@ export const cambridge18Test1 = {
             type: 'map_labelling',
             title: 'Questions 15–20',
             instruction: 'Label the map below.\nWrite the correct letter, A–H, next to Questions 15–20.',
-            mapImageUrl: 'https://images.unsplash.com/photo-1524813686514-a57563d77d66?w=900&auto=format&fit=crop&q=80',
+            mapImageUrl: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=900&auto=format&fit=crop&q=80',
             questions: [
               {
                 id: 15,

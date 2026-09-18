@@ -457,13 +457,10 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         model
       });
 
-      // Enrich listening drills with production-tested audio parameters if missing
+      // Enrich listening drills with clean audioText parameter
       const enrichedDrill = {
         ...newDrill,
-        audioUrl: newDrill.audioUrl || '/audio/cam18_test1_audio.mp3',
-        fallbackAudioUrl: newDrill.fallbackAudioUrl || 'https://dn720904.ca.archive.org/0/items/cambridge-15-ielts-listening-test-1/Cambridge%2015%20IELTS%20Listening%20Test%201.mp3',
-        clipStart: Number(newDrill.clipStart) || 25,
-        clipEnd: Number(newDrill.clipEnd) || 50
+        audioText: newDrill.audioText || newDrill.ttsText || newDrill.promptAudioText || newDrill.audioSnippetText || newDrill.audioDirectionsText || ''
       };
 
       // Update state and persist to LocalStorage
@@ -1738,11 +1735,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   {/* Authentic CD-IELTS Style Audio Player Bar */}
                   <MicroDrillAudioBar
                     drillId={currentDictation.id}
-                    audioText={currentDictation.ttsText}
-                    audioUrl={currentDictation.audioUrl}
-                    fallbackAudioUrl={currentDictation.fallbackAudioUrl}
-                    clipStart={currentDictation.clipStart}
-                    clipEnd={currentDictation.clipEnd}
+                    audioText={currentDictation.audioText || currentDictation.ttsText}
                     title={`Dictation: ${currentDictation.title}`}
                     accent="en-GB"
                   />
@@ -1886,11 +1879,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   {/* Authentic CD-IELTS Style Audio Player Bar */}
                   <MicroDrillAudioBar
                     drillId={currentSpelling.id}
-                    audioText={currentSpelling.promptAudioText}
-                    audioUrl={currentSpelling.audioUrl}
-                    fallbackAudioUrl={currentSpelling.fallbackAudioUrl}
-                    clipStart={currentSpelling.clipStart}
-                    clipEnd={currentSpelling.clipEnd}
+                    audioText={currentSpelling.audioText || currentSpelling.promptAudioText}
                     title={`Đánh vần / Số: ${currentSpelling.title}`}
                     accent="en-GB"
                   />
@@ -2030,11 +2019,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   {/* Authentic CD-IELTS Style Audio Player Bar */}
                   <MicroDrillAudioBar
                     drillId={currentDistractor.id}
-                    audioText={currentDistractor.audioSnippetText}
-                    audioUrl={currentDistractor.audioUrl}
-                    fallbackAudioUrl={currentDistractor.fallbackAudioUrl}
-                    clipStart={currentDistractor.clipStart}
-                    clipEnd={currentDistractor.clipEnd}
+                    audioText={currentDistractor.audioText || currentDistractor.audioSnippetText}
                     title={`Hội thoại bẫy: ${currentDistractor.title}`}
                     accent="en-GB"
                   />
@@ -2162,11 +2147,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   {/* Authentic CD-IELTS Style Audio Player Bar */}
                   <MicroDrillAudioBar
                     drillId={currentMap.id}
-                    audioText={currentMap.audioDirectionsText}
-                    audioUrl={currentMap.audioUrl}
-                    fallbackAudioUrl={currentMap.fallbackAudioUrl}
-                    clipStart={currentMap.clipStart}
-                    clipEnd={currentMap.clipEnd}
+                    audioText={currentMap.audioText || currentMap.audioDirectionsText}
                     title={`Chỉ dẫn bản đồ: ${currentMap.title}`}
                     accent="en-GB"
                   />
@@ -2300,11 +2281,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                   {/* Authentic CD-IELTS Style Audio Player Bar */}
                   <MicroDrillAudioBar
                     drillId={currentSign.id}
-                    audioText={currentSign.audioSnippetText}
-                    audioUrl={currentSign.audioUrl}
-                    fallbackAudioUrl={currentSign.fallbackAudioUrl}
-                    clipStart={currentSign.clipStart}
-                    clipEnd={currentSign.clipEnd}
+                    audioText={currentSign.audioText || currentSign.audioSnippetText}
                     title={`Bài giảng Part 4: ${currentSign.title}`}
                     accent="en-GB"
                   />
