@@ -543,6 +543,45 @@ export default function App() {
     alert('Đã khôi phục toàn bộ cài đặt gốc.');
   };
 
+  const handleDeleteWritingSubmission = (subId) => {
+    setSubmissions(prev => {
+      const updated = prev.filter(s => s.id !== subId);
+      try {
+        localStorage.setItem('ielts_submissions_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    if (currentUser) {
+      deleteUserSubmission(currentUser.id, subId);
+    }
+  };
+
+  const handleClearWritingHistory = () => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài nộp Writing? Thao tác này sẽ dọn dẹp sạch danh sách bài viết.')) return;
+    setSubmissions([]);
+    try {
+      localStorage.removeItem('ielts_submissions_history');
+    } catch (e) {}
+  };
+
+  const handleDeleteReadingSubmission = (subId) => {
+    setReadingHistory(prev => {
+      const updated = prev.filter(r => r.id !== subId);
+      try {
+        localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleClearReadingHistory = () => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Reading? Thao tác này sẽ dọn dẹp sạch danh sách bài đọc.')) return;
+    setReadingHistory([]);
+    try {
+      localStorage.removeItem('ielts_reading_submissions_history');
+    } catch (e) {}
+  };
+
   const handleDeleteListeningSubmission = (subId) => {
     setListeningHistory(prev => {
       const updated = prev.filter(r => r.id !== subId);
@@ -554,7 +593,7 @@ export default function App() {
   };
 
   const handleClearListeningHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Listening?')) return;
+    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Listening? Thao tác này sẽ dọn dẹp sạch danh sách bài nghe.')) return;
     setListeningHistory([]);
     try {
       localStorage.removeItem('ielts_listening_submissions_history');
@@ -572,9 +611,23 @@ export default function App() {
   };
 
   const handleClearSpeakingHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Speaking?')) return;
+    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Speaking? Thao tác này sẽ dọn dẹp sạch danh sách bài nói.')) return;
     setSpeakingHistory([]);
     try {
+      localStorage.removeItem('ielts_speaking_submissions_history');
+    } catch (e) {}
+  };
+
+  const handleClearAllHistory = () => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa TOÀN BỘ lịch sử của cả 4 kỹ năng (Writing, Reading, Listening, Speaking)? Thao tác này sẽ dọn dẹp sạch sẽ toàn bộ bài làm.')) return;
+    setSubmissions([]);
+    setReadingHistory([]);
+    setListeningHistory([]);
+    setSpeakingHistory([]);
+    try {
+      localStorage.removeItem('ielts_submissions_history');
+      localStorage.removeItem('ielts_reading_submissions_history');
+      localStorage.removeItem('ielts_listening_submissions_history');
       localStorage.removeItem('ielts_speaking_submissions_history');
     } catch (e) {}
   };
@@ -1052,31 +1105,15 @@ export default function App() {
           setCurrentEvaluation(sub.evaluation);
           setIsFeedbackOpen(true);
         }}
-        onDeleteSubmission={(id) => {
-          setSubmissions(prev => prev.filter(s => s.id !== id));
-          if (currentUser) deleteUserSubmission(currentUser.id, id);
-        }}
-        onClearHistory={() => setSubmissions([])}
-        onDeleteReadingSubmission={(subId) => {
-          setReadingHistory(prev => {
-            const updated = prev.filter(r => r.id !== subId);
-            try {
-              localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
-            } catch (e) {}
-            return updated;
-          });
-        }}
-        onClearReadingHistory={() => {
-          if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Reading?')) return;
-          setReadingHistory([]);
-          try {
-            localStorage.removeItem('ielts_reading_submissions_history');
-          } catch (e) {}
-        }}
+        onDeleteSubmission={handleDeleteWritingSubmission}
+        onClearHistory={handleClearWritingHistory}
+        onDeleteReadingSubmission={handleDeleteReadingSubmission}
+        onClearReadingHistory={handleClearReadingHistory}
         onDeleteListeningSubmission={handleDeleteListeningSubmission}
         onClearListeningHistory={handleClearListeningHistory}
         onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
         onClearSpeakingHistory={handleClearSpeakingHistory}
+        onClearAllHistory={handleClearAllHistory}
         onViewSpeakingSubmission={(sub) => setSelectedHistorySpeakingSub(sub)}
       />
 
@@ -1156,25 +1193,15 @@ export default function App() {
           setCurrentEvaluation(sub.evaluation);
           setIsFeedbackOpen(true);
         }}
-        onDeleteReadingSubmission={(subId) => {
-          setReadingHistory(prev => {
-            const updated = prev.filter(r => r.id !== subId);
-            try {
-              localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
-            } catch (e) {}
-            return updated;
-          });
-        }}
-        onClearReadingHistory={() => {
-          setReadingHistory([]);
-          try {
-            localStorage.removeItem('ielts_reading_submissions_history');
-          } catch (e) {}
-        }}
+        onDeleteSubmission={handleDeleteWritingSubmission}
+        onClearHistory={handleClearWritingHistory}
+        onDeleteReadingSubmission={handleDeleteReadingSubmission}
+        onClearReadingHistory={handleClearReadingHistory}
         onDeleteListeningSubmission={handleDeleteListeningSubmission}
         onClearListeningHistory={handleClearListeningHistory}
         onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
         onClearSpeakingHistory={handleClearSpeakingHistory}
+        onClearAllHistory={handleClearAllHistory}
         onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
         onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
         onSignOut={async () => {

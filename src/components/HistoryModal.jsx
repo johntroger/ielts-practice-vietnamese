@@ -34,6 +34,7 @@ export default function HistoryModal({
   onClearListeningHistory,
   onDeleteSpeakingSubmission,
   onClearSpeakingHistory,
+  onClearAllHistory,
   onViewSpeakingSubmission,
   activeSkill = 'writing'
 }) {
@@ -45,6 +46,8 @@ export default function HistoryModal({
     if (activeSkill === 'speaking') return 'speaking';
     return 'writing';
   });
+
+  const totalAllHistoryCount = submissions.length + readingHistory.length + listeningHistory.length + speakingHistory.length;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
@@ -60,47 +63,64 @@ export default function HistoryModal({
               <div className="flex items-center space-x-2">
                 <h2 className="text-sm sm:text-lg lg:text-xl font-bold truncate">Lịch Sử Bài Làm 4 Kỹ Năng</h2>
                 <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold uppercase shrink-0">
-                  Tiến Độ
+                  {totalAllHistoryCount} bài đã lưu
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-400 truncate mt-0.5">Writing, Reading, Listening & Speaking</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+          <div className="flex flex-wrap items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800">
             {activeTab === 'writing' && submissions.length > 0 && (
               <button
                 onClick={onClearHistory}
-                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                title="Xóa toàn bộ bài nộp Writing"
               >
-                Xóa lịch sử Writing
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Xóa Writing ({submissions.length})</span>
               </button>
             )}
             {activeTab === 'reading' && readingHistory.length > 0 && (
               <button
                 onClick={onClearReadingHistory}
-                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                title="Xóa toàn bộ bài thi Reading"
               >
-                Xóa lịch sử Reading
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Xóa Reading ({readingHistory.length})</span>
               </button>
             )}
             {activeTab === 'listening' && listeningHistory.length > 0 && (
               <button
                 onClick={onClearListeningHistory}
-                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                title="Xóa toàn bộ bài thi Listening"
               >
-                Xóa lịch sử Listening
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Xóa Listening ({listeningHistory.length})</span>
               </button>
             )}
             {activeTab === 'speaking' && speakingHistory.length > 0 && (
               <button
                 onClick={onClearSpeakingHistory}
-                className="text-[11px] sm:text-xs text-slate-400 hover:text-red-400 font-medium px-2 py-1 rounded transition-colors"
+                className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                title="Xóa toàn bộ bài thi Speaking"
               >
-                Xóa lịch sử Speaking
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Xóa Speaking ({speakingHistory.length})</span>
               </button>
             )}
-            <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 shrink-0">
+            {totalAllHistoryCount > 0 && onClearAllHistory && (
+              <button
+                onClick={onClearAllHistory}
+                className="hidden lg:flex items-center space-x-1 text-[11px] sm:text-xs text-slate-400 hover:text-rose-300 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 font-medium px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                title="Xóa sạch toàn bộ lịch sử của cả 4 kỹ năng"
+              >
+                <span>Xóa sạch 4 kỹ năng ({totalAllHistoryCount})</span>
+              </button>
+            )}
+            <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white shrink-0 cursor-pointer">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -227,8 +247,12 @@ export default function HistoryModal({
                     </button>
 
                     <button
-                      onClick={() => onDeleteSubmission(sub.id)}
-                      className="p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition-colors"
+                      onClick={() => {
+                        if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này khỏi lịch sử?')) {
+                          onDeleteSubmission?.(sub.id);
+                        }
+                      }}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Xóa bài này"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -284,8 +308,12 @@ export default function HistoryModal({
 
                   <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
                     <button
-                      onClick={() => onDeleteReadingSubmission?.(rec.id)}
-                      className="p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition-colors"
+                      onClick={() => {
+                        if (window.confirm('Bạn có chắc chắn muốn xóa kết quả bài thi Reading này khỏi lịch sử?')) {
+                          onDeleteReadingSubmission?.(rec.id);
+                        }
+                      }}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Xóa bài thi này"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -335,8 +363,12 @@ export default function HistoryModal({
 
                   <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
                     <button
-                      onClick={() => onDeleteListeningSubmission?.(rec.id)}
-                      className="p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition-colors"
+                      onClick={() => {
+                        if (window.confirm('Bạn có chắc chắn muốn xóa kết quả bài thi Listening này khỏi lịch sử?')) {
+                          onDeleteListeningSubmission?.(rec.id);
+                        }
+                      }}
+                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Xóa bài thi này"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -417,8 +449,12 @@ export default function HistoryModal({
                         </button>
                       )}
                       <button
-                        onClick={() => onDeleteSpeakingSubmission?.(rec.id)}
-                        className="p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition-colors"
+                        onClick={() => {
+                          if (window.confirm('Bạn có chắc chắn muốn xóa kết quả bài thi Speaking này khỏi lịch sử?')) {
+                            onDeleteSpeakingSubmission?.(rec.id);
+                          }
+                        }}
+                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                         title="Xóa bài thi này"
                       >
                         <Trash2 className="w-4 h-4" />

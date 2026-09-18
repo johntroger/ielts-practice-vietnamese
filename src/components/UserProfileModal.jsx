@@ -52,6 +52,9 @@ export default function UserProfileModal({
   onTogglePublic,
   onDeleteTask,
   onViewSubmission,
+  onDeleteSubmission,
+  onClearHistory,
+  onClearAllHistory,
   onDeleteReadingSubmission,
   onClearReadingHistory,
   onDeleteListeningSubmission,
@@ -986,14 +989,25 @@ export default function UserProfileModal({
             {/* ========================================================================= */}
             {activeTab === 'submissions' && (
               <div className="space-y-4">
-                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Bài Viết & Chấm Điểm AI</h3>
                     <p className="text-xs text-slate-500">Tất cả bài viết đã nộp và các phiên bản viết lại Band 8.0+ Re-write</p>
                   </div>
-                  <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-xl">
-                    {submissions.length} bài đã lưu
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-xl">
+                      {submissions.length} bài đã lưu
+                    </span>
+                    {submissions.length > 0 && onClearHistory && (
+                      <button
+                        onClick={onClearHistory}
+                        className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                        title="Xóa toàn bộ lịch sử Writing"
+                      >
+                        Xóa tất cả
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {submissions.length === 0 ? (
@@ -1039,7 +1053,7 @@ export default function UserProfileModal({
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-3 self-end sm:self-center shrink-0">
+                        <div className="flex items-center space-x-2 self-end sm:self-center shrink-0">
                           {sub.evaluation?.overallBand && (
                             <div className="text-center px-3 py-1.5 rounded-xl bg-red-50 border border-red-200">
                               <span className="text-[10px] text-red-600 block uppercase font-bold">Overall</span>
@@ -1052,11 +1066,25 @@ export default function UserProfileModal({
                               onViewSubmission?.(sub);
                               onClose();
                             }}
-                            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1 shadow-xs"
+                            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1 shadow-xs cursor-pointer"
                           >
                             <span>Xem Nhận Xét AI</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
+
+                          {onDeleteSubmission && (
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Bạn có chắc muốn xóa bài viết "${sub.task?.title || 'IELTS Writing'}" khỏi lịch sử?`)) {
+                                  onDeleteSubmission(sub.id);
+                                }
+                              }}
+                              className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                              title="Xóa bài viết này"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
