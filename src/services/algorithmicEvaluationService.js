@@ -481,14 +481,124 @@ function analyzePromptSemanticRelevance(prompt, essayText) {
 }
 
 /**
+ * Extract raw numerical data points from text (Task 1 Overview check)
+ * Distinguishes true data figures (percentages, units, statistical values) from structural counts & timeframes.
+ */
+export function extractTask1RawDataPoints(text) {
+  if (!text) return [];
+  const found = [];
+
+  // 1. Percentages: e.g. 50%, 25.5%, 30 percent, 5 percentage points
+  const percentRegex = /(?:\b\d+(?:\.\d+)?\s*%(?!\w)|\b\d+(?:\.\d+)?\s*percent(?:age\s+points?)?\b)/gi;
+  const pMatches = text.match(percentRegex);
+  if (pMatches) found.push(...pMatches);
+
+  // 2. Units / Currency / Volume: e.g. $500, 10 million, 25 kg, 100 people, 45 euros, 30 liters
+  const unitRegex = /(?:\$\s*\d+(?:\.\d+)?|\b\d+(?:\.\d+)?\s*(?:million|billion|thousand|hundred|meters?|metres?|liters?|litres?|dollars?|pounds?|euros?|units?|people|students?|tons?|tonnes?|kg|km|degrees?|celsius|g|mg|ml)\b)/gi;
+  const uMatches = text.match(unitRegex);
+  if (uMatches) found.push(...uMatches);
+
+  // 3. Statistical verb/preposition + number: e.g. peaked at 85, peaking at 80, stood at 40, dropped to 15, was 50
+  const statMarkerRegex = /\b(?:peak(?:ed|ing)?\s+at|st(?:ood|anding)\s+at|bottom(?:ed|ing)?\s+at|reach(?:ed|ing)?|plummet(?:ed|ing)?\s+to|r(?:ose|ising)\s+to|f(?:ell|alling)\s+to|drop(?:ped|ping)?\s+to|climb(?:ed|ing)?\s+to|hover(?:ed|ing)?\s+around|was\s+at|were\s+at|recorded\s+at|amount(?:ed|ing)?\s+to)\s+(\$?\d+(?:\.\d+)?%?)/gi;
+  let match;
+  while ((match = statMarkerRegex.exec(text)) !== null) {
+    const rawVal = match[1].trim();
+    if (!/^(19\d\d|20\d\d)$/.test(rawVal)) {
+      found.push(match[0]);
+    }
+  }
+
+  // 4. Specific data assignments: e.g., "was 50", "were 65", "at 45" (not duration/count of categories)
+  const valRegex = /\b(?:was|were|at|approximately|around|nearly|about)\s+(\d+(?:\.\d+)?)\b(?!\s*(?:years?|months?|weeks?|days?|decades?|centuries?|stages?|steps?|phases?|categories?|types?|groups?|countries?|nations?|charts?|graphs?|tables?|lines?|bars?))/gi;
+  while ((match = valRegex.exec(text)) !== null) {
+    const num = match[1].trim();
+    if (!/^(19\d\d|20\d\d)$/.test(num)) {
+      found.push(match[0]);
+    }
+  }
+
+  // Deduplicate case-insensitively
+  const unique = [];
+  const seen = new Set();
+  for (const item of found) {
+    const clean = item.trim();
+    const lower = clean.toLowerCase();
+    if (!seen.has(lower)) {
+      seen.add(lower);
+      unique.push(clean);
+    }
+  }
+
+  return unique;
+}
+
+/**
+ * Task 1 Overview Examiner Diagnostics & Raw Data Penalty
+ * In IELTS Writing Task 1, the Overview MUST present key trends, differences, or stages WITHOUT raw numbers/data.
+ * Any raw data (e.g. 50%, 10 million, 25 meters, peaked at 80) in the Overview paragraph caps Task Achievement at Band 5.5 max.
+ */
+export function analyzeTask1Overview(paragraphs) {
+  if (!paragraphs || paragraphs.length === 0) {
+    return {
+      hasOverview: false,
+      overviewIndex: -1,
+      overviewText: '',
+      hasRawData: false,
+      rawDataList: []
+    };
+  }
+
+  let overviewIndex = -1;
+  let overviewText = '';
+
+  // Look for overview indicators across paragraphs
+  for (let i = 0; i < paragraphs.length; i++) {
+    const p = paragraphs[i];
+    const pLower = p.toLowerCase();
+    const matchesIndicator = OVERVIEW_INDICATORS.some(ind => pLower.includes(ind)) || 
+      /\b(overall|in\s+summary|to\s+summarize|in\s+general|the\s+overall\s+trend|overall\s+trend|broadly\s+speaking)\b/i.test(pLower);
+    if (matchesIndicator) {
+      overviewIndex = i;
+      overviewText = p;
+      break;
+    }
+  }
+
+  // If candidate wrote 3 or 4 paragraphs and paragraph 2 (index 1) has general trend words, check if intended as overview
+  if (overviewIndex === -1 && paragraphs.length >= 3) {
+    const p2Lower = paragraphs[1].toLowerCase();
+    if (/\b(trend|highest|lowest|upward|downward|fluctuat|increase|decrease|predominant)\b/i.test(p2Lower) &&
+        !/\b(firstly|first of all|to begin with|on the one hand)\b/i.test(p2Lower)) {
+      const p2Data = extractTask1RawDataPoints(paragraphs[1]);
+      if (p2Data.length <= 2) {
+        overviewIndex = 1;
+        overviewText = paragraphs[1];
+      }
+    }
+  }
+
+  const hasOverview = overviewIndex !== -1;
+  const rawDataList = hasOverview ? extractTask1RawDataPoints(overviewText) : [];
+
+  return {
+    hasOverview,
+    overviewIndex, // 0-indexed
+    overviewText,
+    hasRawData: rawDataList.length > 0,
+    rawDataList
+  };
+}
+
+/**
  * Task 1 Numerical & Statistical Data Extractor
  * Verifies that body paragraphs contain specific figures, percentages, dates, or units.
+ * Excludes Overview paragraph from body data calculations.
  */
-function analyzeTask1DataDensity(paragraphs) {
+function analyzeTask1DataDensity(paragraphs, overviewIndex = -1) {
   if (paragraphs.length <= 1) return { bodyDataCount: 0, hasAdequateData: false };
 
-  // Body paragraphs are those after Intro/Overview and before final (if any)
-  const bodyParas = paragraphs.slice(1);
+  // Body paragraphs exclude Introduction (index 0) and Overview paragraph (if any)
+  const bodyParas = paragraphs.filter((_, idx) => idx !== 0 && idx !== overviewIndex);
   const dataRegex = /\b(\d+(\.\d+)?%?|\d+\s*(percent|million|billion|thousand|meters|liters|dollars|pounds|euros|units|people|students)|(19\d\d|20\d\d))\b/gi;
 
   let totalDataPoints = 0;
@@ -545,7 +655,7 @@ function analyzeTask2Fulfillment(prompt, paragraphs) {
  * Deep Paragraph-by-Paragraph Examiner Diagnostics
  * Analyzes Introduction, Body Paragraphs, and Conclusion structure according to P.E.E.L and Cambridge standards.
  */
-function analyzeParagraphsDeeply(paragraphs, isTask1, task) {
+function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck = null) {
   if (!paragraphs || paragraphs.length === 0) return [];
   
   const results = [];
@@ -574,46 +684,90 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task) {
     });
   }
 
-  // 2. Body Paragraphs Analysis (P.E.E.L Model)
-  const bodyParas = paragraphs.slice(1, isTask1 ? undefined : -1);
-  bodyParas.forEach((bodyText, idx) => {
-    const bodyWords = sanitizeWords(bodyText).length;
-    const bodyLower = bodyText.toLowerCase();
-    const hasAnecdote = /\b(my friend|my father|my mother|my family|my brother|my sister|when i was|in my country)\b/i.test(bodyLower);
-    const hasExplanation = /\b(because|since|as a consequence|this is because|in other words|leads to|results in|owing to|due to)\b/i.test(bodyLower);
-    const hasExample = /\b(for example|for instance|such as|to illustrate|a prime example|evidence shows|studies show|empirical data)\b/i.test(bodyLower);
+  // 2. Paragraph Analysis (Task 1 Overview vs Detailed Body / Task 2 P.E.E.L)
+  if (isTask1) {
+    let detailBodyCounter = 1;
+    for (let i = 1; i < paragraphs.length; i++) {
+      const pText = paragraphs[i];
+      const pWords = sanitizeWords(pText).length;
+      const isOverviewPara = task1OverviewCheck && task1OverviewCheck.overviewIndex === i;
 
-    results.push({
-      paragraphIndex: idx + 2,
-      name: `Đoạn ${idx + 2}: Thân Bài ${idx + 1} (Body Paragraph ${idx + 1})`,
-      wordCount: bodyWords,
-      verdict: bodyWords < 40 
-        ? `Đoạn thân bài quá ngắn (${bodyWords} từ). Luận điểm chỉ mới nêu ra dạng gạch đầu dòng mà chưa có câu giải thích 'Vì sao' hoặc dẫn chứng cụ thể.`
-        : (hasExplanation && hasExample 
-            ? 'Đoạn văn phát triển cân đối và chặt chẽ theo mô hình chuẩn P.E.E.L (Luận điểm - Giải thích cơ chế - Dẫn chứng).'
-            : 'Cần củng cố chiều sâu: Hãy bổ sung thêm câu giải thích cơ chế nguyên nhân - hệ quả hoặc số liệu/dẫn chứng cụ thể.'),
-      anecdoteWarning: hasAnecdote ? 'CẢNH BÁO BẪY VÍ DỤ CÁ NHÂN: Phát hiện dẫn chứng dựa trên trải nghiệm cá nhân ("my friend / my family / when I was"). Văn phong IELTS Academic đòi hỏi ví dụ mang tính quy luật chung của xã hội, số liệu nghiên cứu hoặc chính sách chính phủ.' : null,
-      recommendation: 'Áp dụng công thức P.E.E.L: (1) Point - Câu chủ đề định hướng ý; (2) Explanation - Phân tích cơ chế tác động; (3) Evidence - Dẫn chứng thực tế xã hội; (4) Link - Câu chốt liên kết ngược lại đề bài.'
+      if (isOverviewPara) {
+        results.push({
+          paragraphIndex: i + 1,
+          name: `Đoạn ${i + 1}: Tổng Quan (Overview)`,
+          wordCount: pWords,
+          verdict: task1OverviewCheck.hasRawData
+            ? `CẢNH BÁO BẪY SỐ LIỆU ĐOẠN TỔNG QUAN: Phát hiện đoạn Overview chứa số liệu chi tiết cụ thể (${task1OverviewCheck.rawDataList.join(', ')}). Theo tiêu chuẩn giám khảo Cambridge IELTS Task 1, Overview chỉ được khái quát xu hướng lớn (tăng/giảm, biến động, phân kỳ), TUYỆT ĐỐI KHÔNG đưa số liệu chi tiết. Lỗi này khiến điểm Task Achievement bị khống chế tối đa Band 5.5.`
+            : 'Rất tốt: Đoạn Overview đạt chuẩn giám khảo Cambridge — khái quát rõ ràng các xu hướng và đặc điểm nổi bật mà không bị sa đà vào số liệu chi tiết.',
+          clicheWarning: task1OverviewCheck.hasRawData
+            ? `Bẫy số liệu: Các số liệu (${task1OverviewCheck.rawDataList.join(', ')}) cần được chuyển xuống các đoạn Thân bài chi tiết bên dưới.`
+            : null,
+          recommendation: 'Quy tắc vàng viết Overview Task 1: 1-2 câu tóm tắt 2 đặc điểm nổi bật nhất (Ví dụ: Đại lượng nào luôn cao nhất/thấp nhất? Xu hướng chung qua các năm là tăng hay giảm?). Tuyệt đối không đưa bất kỳ con số cụ thể nào.'
+        });
+      } else {
+        const pData = extractTask1RawDataPoints(pText);
+        const hasComparison = /\b(higher|lower|more|less|fewer|than|as\s+\w+\s+as|compared\s+(?:to|with)|in\s+comparison\s+(?:to|with)|whereas|while|whilst|conversely|in\s+contrast)\b/i.test(pText);
+
+        results.push({
+          paragraphIndex: i + 1,
+          name: `Đoạn ${i + 1}: Thân Bài Chi Tiết ${detailBodyCounter} (Detailed Body Paragraph ${detailBodyCounter})`,
+          wordCount: pWords,
+          verdict: pWords < 35
+            ? `Đoạn thân bài quá ngắn (${pWords} từ), chưa mô tả đầy đủ các nhóm số liệu của biểu đồ.`
+            : (pData.length >= 2
+                ? `Đoạn thân bài chi tiết phát triển tốt, có dẫn chứng số liệu cụ thể (${pData.join(', ')})${hasComparison ? ' và có cấu trúc so sánh đối chiếu.' : '.'}`
+                : `CẢNH BÁO THIẾU DẪN CHỨNG: Đoạn thân bài chi tiết này chỉ có ${pData.length} số liệu. Thân bài Task 1 cần lựa chọn và đưa ra số liệu/mốc thời gian cụ thể để làm dẫn chứng.`),
+          anecdoteWarning: null,
+          recommendation: hasComparison 
+            ? 'Duy trì kết hợp nêu số liệu đi kèm cấu trúc so sánh đối chiếu để làm nổi bật sự khác biệt giữa các nhóm đối tượng.'
+            : 'Bổ sung các cấu trúc so sánh đối chiếu (ví dụ: "...was twice as high as...", "in contrast to...", "followed by...") để đạt tiêu chí Task Achievement Band 7+.'
+        });
+        detailBodyCounter++;
+      }
+    }
+  } else {
+    // Task 2 Body Paragraphs Analysis (P.E.E.L Model)
+    const bodyParas = paragraphs.slice(1, -1);
+    bodyParas.forEach((bodyText, idx) => {
+      const bodyWords = sanitizeWords(bodyText).length;
+      const bodyLower = bodyText.toLowerCase();
+      const hasAnecdote = /\b(my friend|my father|my mother|my family|my brother|my sister|when i was|in my country)\b/i.test(bodyLower);
+      const hasExplanation = /\b(because|since|as a consequence|this is because|in other words|leads to|results in|owing to|due to)\b/i.test(bodyLower);
+      const hasExample = /\b(for example|for instance|such as|to illustrate|a prime example|evidence shows|studies show|empirical data)\b/i.test(bodyLower);
+
+      results.push({
+        paragraphIndex: idx + 2,
+        name: `Đoạn ${idx + 2}: Thân Bài ${idx + 1} (Body Paragraph ${idx + 1})`,
+        wordCount: bodyWords,
+        verdict: bodyWords < 40 
+          ? `Đoạn thân bài quá ngắn (${bodyWords} từ). Luận điểm chỉ mới nêu ra dạng gạch đầu dòng mà chưa có câu giải thích 'Vì sao' hoặc dẫn chứng cụ thể.`
+          : (hasExplanation && hasExample 
+              ? 'Đoạn văn phát triển cân đối và chặt chẽ theo mô hình chuẩn P.E.E.L (Luận điểm - Giải thích cơ chế - Dẫn chứng).'
+              : 'Cần củng cố chiều sâu: Hãy bổ sung thêm câu giải thích cơ chế nguyên nhân - hệ quả hoặc số liệu/dẫn chứng cụ thể.'),
+        anecdoteWarning: hasAnecdote ? 'CẢNH BÁO BẪY VÍ DỤ CÁ NHÂN: Phát hiện dẫn chứng dựa trên trải nghiệm cá nhân ("my friend / my family / when I was"). Văn phong IELTS Academic đòi hỏi ví dụ mang tính quy luật chung của xã hội, số liệu nghiên cứu hoặc chính sách chính phủ.' : null,
+        recommendation: 'Áp dụng công thức P.E.E.L: (1) Point - Câu chủ đề định hướng ý; (2) Explanation - Phân tích cơ chế tác động; (3) Evidence - Dẫn chứng thực tế xã hội; (4) Link - Câu chốt liên kết ngược lại đề bài.'
+      });
     });
-  });
 
-  // 3. Conclusion Analysis
-  if (!isTask1 && paragraphs.length >= 2) {
-    const lastText = paragraphs[paragraphs.length - 1];
-    const lastLower = lastText.toLowerCase();
-    const hasConcluMarker = /\b(in conclusion|to conclude|to summarize|in summary)\b/i.test(lastLower);
-    const concluWords = sanitizeWords(lastText).length;
+    // Task 2 Conclusion Analysis
+    if (paragraphs.length >= 2) {
+      const lastText = paragraphs[paragraphs.length - 1];
+      const lastLower = lastText.toLowerCase();
+      const hasConcluMarker = /\b(in conclusion|to conclude|to summarize|in summary)\b/i.test(lastLower);
+      const concluWords = sanitizeWords(lastText).length;
 
-    results.push({
-      paragraphIndex: paragraphs.length,
-      name: `Đoạn ${paragraphs.length}: Kết Bài (Conclusion)`,
-      wordCount: concluWords,
-      verdict: hasConcluMarker 
-        ? 'Kết bài chuẩn mực: Có từ nối quy ước ("In conclusion"), tóm lược lại quan điểm xuyên suốt.'
-        : 'CẢNH BÁO: Kết bài thiếu từ nối quy ước ("In conclusion"). Giám khảo cần thấy rõ tín hiệu kết thúc bài thi.',
-      clicheWarning: concluWords < 20 ? `Đoạn kết bài hơi vội vã (${concluWords} từ), chưa tóm lược đầy đủ các góc nhìn đã trình bày ở thân bài.` : null,
-      recommendation: 'Kết bài chuẩn 1-2 câu: Tóm lược lại các luận điểm cốt lõi và tái khẳng định lập trường cuối cùng mà tuyệt đối không đưa thêm ý tưởng mới nào.'
-    });
+      results.push({
+        paragraphIndex: paragraphs.length,
+        name: `Đoạn ${paragraphs.length}: Kết Bài (Conclusion)`,
+        wordCount: concluWords,
+        verdict: hasConcluMarker 
+          ? 'Kết bài chuẩn mực: Có từ nối quy ước ("In conclusion"), tóm lược lại quan điểm xuyên suốt.'
+          : 'CẢNH BÁO: Kết bài thiếu từ nối quy ước ("In conclusion"). Giám khảo cần thấy rõ tín hiệu kết thúc bài thi.',
+        clicheWarning: concluWords < 20 ? `Đoạn kết bài hơi vội vã (${concluWords} từ), chưa tóm lược đầy đủ các góc nhìn đã trình bày ở thân bài.` : null,
+        recommendation: 'Kết bài chuẩn 1-2 câu: Tóm lược lại các luận điểm cốt lõi và tái khẳng định lập trường cuối cùng mà tuyệt đối không đưa thêm ý tưởng mới nào.'
+      });
+    }
   }
 
   return results;
@@ -622,7 +776,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task) {
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -633,6 +787,8 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
   // Priority 1: Most Fatal Barrier
   if (wordCount < targetMinWords) {
     plan.priority1 = `Khắc phục dung lượng khẩn cấp: Bài viết hiện thiếu ${targetMinWords - wordCount} từ. Bắt buộc phải viết đủ tối thiểu ${targetMinWords} từ để thoát khỏi khung điểm liệt Task Response.`;
+  } else if (isTask1 && task1OverviewCheck?.hasRawData) {
+    plan.priority1 = `Khắc phục bẫy số liệu đoạn Overview: Phát hiện ${task1OverviewCheck.rawDataList.length} số liệu chi tiết (${task1OverviewCheck.rawDataList.slice(0, 3).join(', ')}) trong Overview. Đoạn Tổng quan chỉ được khái quát xu hướng lớn (tăng/giảm, biến động), tuyệt đối không đưa số liệu cụ thể để thoát khỏi mức khống chế Band 5.5 Task Achievement.`;
   } else if (svErrorCount >= 3) {
     plan.priority1 = `Chấm dứt lỗi chia động từ cơ bản: Phát hiện ${svErrorCount} lỗi hòa hợp Chủ ngữ - Động từ và Danh từ số nhiều. Hãy dành 3 phút cuối giờ rà soát lại thì và đuôi -s/-es của mọi động từ.`;
   } else if (trBand < 6.0) {
@@ -645,7 +801,7 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
 
   // Priority 2: Cohesion & Range
   if (ccBand < 6.0) {
-    plan.priority2 = 'Cải thiện mạch văn: Chia bài viết thành 4 đoạn cân đối. Hạn chế nhồi nhét "First, Second, Moreover", hãy luyện tập dùng đại từ thay thế (This trend, Such measures) và liên kết ẩn.';
+    plan.priority2 = 'Cải thiện mạch văn: Chia bài viết thành các đoạn cân đối. Hạn chế nhồi nhét "First, Second, Moreover", hãy luyện tập dùng đại từ thay thế (This trend, Such measures) và liên kết ẩn.';
   } else if (graBand < 6.5) {
     plan.priority2 = 'Bổ sung câu phức nâng cao: Lồng ghép tối thiểu 3 câu có mệnh đề quan hệ (which/who), mệnh đề nhượng bộ (Although/While) hoặc câu điều kiện (If).';
   } else {
@@ -867,19 +1023,26 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     trStrengths.push("Bài viết bám sát các từ khóa trọng tâm của đề thi, thể hiện sự hiểu đề thấu đáo.");
   }
 
-  // 4. Task 1 Specific Checks (Overview + Body Data Density)
+  // 4. Task 1 Specific Checks (Overview + Raw Data Check + Body Data Density)
+  let task1OverviewCheck = null;
   if (isTask1) {
-    const textLower = essayText.toLowerCase();
-    const hasOverview = OVERVIEW_INDICATORS.some(ind => textLower.includes(ind));
-    if (hasOverview) {
-      if (wordCount >= 150) trScore += 0.5;
-      trStrengths.push("Có đoạn Tổng quan (Overview) nêu bật các xu hướng và đặc điểm quan trọng nhất của biểu đồ.");
+    task1OverviewCheck = analyzeTask1Overview(paragraphs);
+    if (task1OverviewCheck.hasOverview) {
+      if (task1OverviewCheck.hasRawData) {
+        trScore = Math.min(trScore, 5.5);
+        trImprovements.push(
+          `BẪY SỐ LIỆU ĐOẠN TỔNG QUAN (Task 1): Phát hiện đoạn Overview chứa số liệu chi tiết cụ thể (${task1OverviewCheck.rawDataList.join(', ')}). Theo tiêu chuẩn giám khảo khảo thí Cambridge IELTS Task 1, đoạn Overview CHỈ ĐƯỢC NÊU XU HƯỚNG TỔNG THỂ (tăng/giảm, biến động, phân kỳ), TUYỆT ĐỐI KHÔNG ĐƯỢC ĐƯA SỐ LIỆU CHI TIẾT. Việc đưa số liệu vào Overview khiến điểm Task Achievement bị khống chế tối đa Band 5.5.`
+        );
+      } else {
+        if (wordCount >= 150) trScore += 0.5;
+        trStrengths.push("Đoạn Tổng quan (Overview) chuẩn mực: Nêu bật các xu hướng chính và đặc điểm nổi bật mà không bị vướng bẫy đưa số liệu chi tiết.");
+      }
     } else {
       trScore = Math.min(trScore, 5.0);
       trImprovements.push("QUAN TRỌNG: Bài viết Task 1 thiếu đoạn Tổng quan (Overview). Barem Cambridge quy định điểm Task Achievement KHÔNG ĐƯỢC VƯỢT QUÁ Band 5.0.");
     }
 
-    const dataCheck = analyzeTask1DataDensity(paragraphs);
+    const dataCheck = analyzeTask1DataDensity(paragraphs, task1OverviewCheck.overviewIndex);
     if (!dataCheck.hasAdequateData) {
       trScore = Math.min(trScore, 5.0);
       trImprovements.push("QUAN TRỌNG: Các đoạn thân bài Task 1 thiếu số liệu hoặc dẫn chứng cụ thể (phát hiện chỉ có " + dataCheck.bodyDataCount + " số liệu). Theo chuẩn Cambridge, bài phân tích không có số liệu dẫn chứng bị giới hạn ở Band 5.0.");
@@ -1298,8 +1461,8 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const overallBand = roundToCambridgeBand(rawAverage);
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
-  const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1);
+  const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck);
 
   // Key Academic Collocations Recommendation
   const keyVocabulary = [
@@ -1392,6 +1555,12 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       copiedWordCount,
       effectiveWordCount: wordCount,
       copiedChunks: promptCopying.copiedChunks
-    }
+    },
+    task1OverviewStats: isTask1 ? {
+      hasOverview: task1OverviewCheck?.hasOverview || false,
+      hasRawData: task1OverviewCheck?.hasRawData || false,
+      rawDataList: task1OverviewCheck?.rawDataList || [],
+      overviewIndex: task1OverviewCheck?.overviewIndex ?? -1
+    } : null
   };
 }
