@@ -48,6 +48,7 @@ import {
 
 import { INITIAL_TASKS } from './data/sampleTasks';
 import { evaluateEssay, brainstormIdeas } from './services/geminiService';
+import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationService';
 import { countWords } from './utils/textAnalytics';
 
 export default function App() {
@@ -391,15 +392,16 @@ export default function App() {
     }
   };
 
-  const handleSubmitEssay = async () => {
-    if (!apiKey) {
-      setIsSettingsOpen(true);
+  const handleSubmitEssay = async (method = 'ai') => {
+    const wordCount = countWords(currentEssay);
+    if (wordCount < 20) {
+      alert('Vui lòng viết ít nhất 20 từ trước khi nộp bài để giám khảo chấm điểm.');
       return;
     }
 
-    const wordCount = countWords(currentEssay);
-    if (wordCount < 20) {
-      alert('Vui lòng viết ít nhất 20 từ trước khi nộp bài để giám khảo AI chấm điểm.');
+    // If requesting AI grading but no API Key is configured, guide user to Settings
+    if (method === 'ai' && !apiKey) {
+      setIsSettingsOpen(true);
       return;
     }
 
@@ -407,12 +409,36 @@ export default function App() {
     setIsTimerRunning(false);
 
     try {
-      const evaluation = await evaluateEssay({
-        task: currentTask,
-        essayText: currentEssay,
-        apiKey,
-        model
-      });
+      let evaluation = null;
+
+      if (method === 'algorithmic') {
+        // Fast offline deterministic Cambridge grading
+        await new Promise(resolve => setTimeout(resolve, 350));
+        evaluation = evaluateEssayAlgorithmically({
+          task: currentTask,
+          essayText: currentEssay
+        });
+      } else {
+        // AI In-depth Grading with Gemini
+        try {
+          evaluation = await evaluateEssay({
+            task: currentTask,
+            essayText: currentEssay,
+            apiKey,
+            model
+          });
+          evaluation.evaluationMethod = 'ai';
+          evaluation.engineName = `Google Gemini (${model})`;
+        } catch (aiErr) {
+          console.warn('[Evaluation Fallback] Gemini API encountered error, switching to Algorithmic Evaluator:', aiErr);
+          // Graceful fallback to algorithmic evaluator
+          evaluation = evaluateEssayAlgorithmically({
+            task: currentTask,
+            essayText: currentEssay
+          });
+          evaluation.fallbackNotice = 'Máy chủ Google Gemini tạm thời quá tải hoặc chạm hạn ngạch (Quota 429). Hệ thống đã tự động chuyển sang Chế độ Chấm Bằng Máy để bạn nhận kết quả ngay tức thì!';
+        }
+      }
 
       setCurrentEvaluation(evaluation);
       setIsFeedbackOpen(true);
@@ -440,7 +466,7 @@ export default function App() {
       }
 
     } catch (err) {
-      alert(err.message || 'Lỗi khi chấm bài với Gemini. Vui lòng kiểm tra lại API Key.');
+      alert(err.message || 'Lỗi khi chấm bài. Vui lòng thử lại.');
     } finally {
       setIsSubmitting(false);
     }
@@ -918,6 +944,10 @@ export default function App() {
         onSaveToMistakeLog={(m) => setMistakes(prev => [m, ...prev])}
         onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
         onOpenRevision={() => setIsRevisionOpen(true)}
+        onReEvaluateWithAI={() => {
+          setIsFeedbackOpen(false);
+          handleSubmitEssay('ai');
+        }}
       />
 
       <TaskGeneratorModal

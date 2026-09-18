@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { countWords } from '../utils/textAnalytics';
 import { evaluateEssay } from '../services/geminiService';
+import { evaluateEssayAlgorithmically } from '../services/algorithmicEvaluationService';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
@@ -192,28 +193,49 @@ export default function MockTestModal({
   };
 
   const handleAutoSubmitWriting = async () => {
-    if (!apiKey) {
-      alert('Vui lòng cấu hình Gemini API Key trước.');
-      return;
-    }
-
     setIsGrading(true);
     try {
-      // Evaluate Task 1
-      const eval1 = await evaluateEssay({
-        task: currentTask1,
-        essayText: t1Text || 'No text submitted for Task 1.',
-        apiKey,
-        model
-      });
+      // 1. Evaluate Task 1 (AI with Algorithmic Fallback)
+      let eval1 = null;
+      if (apiKey) {
+        try {
+          eval1 = await evaluateEssay({
+            task: currentTask1,
+            essayText: t1Text || 'No text submitted for Task 1.',
+            apiKey,
+            model
+          });
+        } catch (e1) {
+          console.warn('[Mock Test] Task 1 AI grading error, switching to Algorithmic Evaluator:', e1);
+        }
+      }
+      if (!eval1) {
+        eval1 = evaluateEssayAlgorithmically({
+          task: currentTask1,
+          essayText: t1Text || 'No text submitted for Task 1.'
+        });
+      }
 
-      // Evaluate Task 2
-      const eval2 = await evaluateEssay({
-        task: currentTask2,
-        essayText: t2Text || 'No text submitted for Task 2.',
-        apiKey,
-        model
-      });
+      // 2. Evaluate Task 2 (AI with Algorithmic Fallback)
+      let eval2 = null;
+      if (apiKey) {
+        try {
+          eval2 = await evaluateEssay({
+            task: currentTask2,
+            essayText: t2Text || 'No text submitted for Task 2.',
+            apiKey,
+            model
+          });
+        } catch (e2) {
+          console.warn('[Mock Test] Task 2 AI grading error, switching to Algorithmic Evaluator:', e2);
+        }
+      }
+      if (!eval2) {
+        eval2 = evaluateEssayAlgorithmically({
+          task: currentTask2,
+          essayText: t2Text || 'No text submitted for Task 2.'
+        });
+      }
 
       const b1 = eval1.overallBand || 5.0;
       const b2 = eval2.overallBand || 5.0;
@@ -240,7 +262,7 @@ export default function MockTestModal({
       setMockReport(report);
       if (onSaveMockResult) onSaveMockResult(report);
     } catch (err) {
-      alert('Lỗi khi chấm điểm bài thi thử.');
+      alert('Lỗi khi chấm điểm bài thi thử: ' + (err?.message || 'Vui lòng thử lại.'));
     } finally {
       setIsGrading(false);
     }
