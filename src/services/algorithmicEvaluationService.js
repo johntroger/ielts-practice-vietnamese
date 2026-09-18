@@ -39,7 +39,7 @@ const STOPWORDS = new Set([
   'others', 'people', 'allowed', 'solutions', 'solution', 'problems', 'problem', 'causes', 'cause',
   'effects', 'effect', 'advantages', 'disadvantages', 'outweigh', 'statement', 'question', 'following',
   'factor', 'factors', 'true', 'false', 'whether', 'argue', 'argued', 'considered', 'many', 'much',
-  'like', 'whatever'
+  'like', 'whatever', 'positive', 'negative', 'development', 'developments', 'case', 'choosing', 'choose'
 ]);
 
 // Academic Word List (AWL) & C1/C2 IELTS Academic Lexis
@@ -707,41 +707,229 @@ export function analyzeTask1Comparisons(paragraphs, overviewIndex = -1) {
 }
 
 /**
- * Task 2 Question Classifier & Fulfillment
- * Checks if question type (Discuss both views, Problems & Solutions) was fully addressed.
+ * Advanced Task 2 Question Classifier & Task Fulfillment Engine
+ * Strictly enforces Cambridge Band Descriptors for Task Response:
+ * - Omits one part of a multi-part prompt -> Hard cap TR Band 5.0
+ * - Covers both parts unequally/superficially -> Cap TR Band 6.0
+ * - Fully addresses both parts in balanced body paragraphs -> TR Band 7.0+
  */
-function analyzeTask2Fulfillment(prompt, paragraphs) {
-  if (!prompt) return { type: 'GENERAL', isBalanced: true };
+export function analyzeTask2Fulfillment(prompt, paragraphs) {
+  if (!prompt || typeof prompt !== 'string') {
+    return { type: 'GENERAL', isBalanced: true, severity: 'none', warning: null, taskDescription: '' };
+  }
 
   const promptLower = prompt.toLowerCase();
-  const fullTextLower = paragraphs.join(' ').toLowerCase();
+  const bodyParas = paragraphs.length > 2 ? paragraphs.slice(1, -1) : paragraphs.slice(1);
+  const bodyText = bodyParas.join(' ').toLowerCase();
 
-  // 1. Discuss Both Views
-  if (/discuss\s+both\s+(views|sides)|both\s+views/i.test(promptLower)) {
-    // Look for opposing perspective markers across body paragraphs
-    const hasViewA = /\b(on the one hand|some people (argue|believe|contend)|proponents|first view|supporters|one perspective)\b/i.test(fullTextLower);
-    const hasViewB = /\b(on the other hand|other people (argue|believe|contend)|opponents|conversely|in contrast|second view|alternative perspective|other side|detractors|others argue|others believe)\b/i.test(fullTextLower);
-    const isBalanced = hasViewA && hasViewB;
+  // -------------------------------------------------------------
+  // 1. TWO-PART: WHY + POSITIVE/NEGATIVE
+  // e.g. "Why is this the case? Is this a positive or negative development?"
+  // -------------------------------------------------------------
+  const isWhyPosNeg = /why\s+(?:is|do|does|are).*?\?.*?(?:positive\s+or\s+negative|negative\s+or\s+positive|a\s+good\s+or\s+bad|benefit\s+or\s+drawback)/i.test(promptLower) ||
+    (/\bwhy\b/i.test(promptLower) && /\b(positive\s+or\s+negative|advantage\s+or\s+disadvantage)\b/i.test(promptLower));
+
+  if (isWhyPosNeg) {
+    const reasonRegex = /\b(reason(?:s)?|cause(?:s|d)?|factor(?:s)?|stem(?:s|med)?\s+from|due\s+to|because|arise(?:s|n)?|lead(?:s)?\s+to|attribute(?:d)?|result\s+of|catalyst(?:s)?|driver(?:s)?|driv(?:e|en|ing)|propel(?:led|s)?|motivat(?:e|ed|ing|ion)|originate(?:s|d)?|root(?:s)?\s+in)\b/i;
+    const posNegRegex = /\b(positive(?:ly)?|negative(?:ly)?|benefit(?:s|ed|ing|ial)?|advantage(?:s|ous)?|drawback(?:s)?|disadvantage(?:s|ous)?|merit(?:s)?|detriment(?:al)?|favor(?:able)?|harmful|upside(?:s)?|downside(?:s)?|constructive|destructive)\b/i;
+
+    const hasReasonsInBody = reasonRegex.test(bodyText);
+    const hasPosNegInBody = posNegRegex.test(bodyText);
+
+    if (!hasReasonsInBody && !hasPosNegInBody) {
+      return {
+        type: 'TWO_PART_WHY_POS_NEG',
+        isBalanced: false,
+        severity: 'fatal',
+        taskDescription: '1. Giải thích nguyên nhân (Why) & 2. Đánh giá Tích cực/Tiêu cực (Positive or Negative)',
+        missingPartDescription: 'cả 2 câu hỏi của đề bài',
+        warning: 'LỖI BỎ SÓT CẢ 2 YÊU CẦU ĐỀ BÀI: Đề bài yêu cầu giải thích nguyên nhân và đánh giá tính tích cực/tiêu cực, nhưng thân bài chưa phát triển rõ ràng các luận điểm này.'
+      };
+    }
+
+    if (!hasReasonsInBody || !hasPosNegInBody) {
+      const missingPart = !hasReasonsInBody ? 'Câu hỏi 1: Giải thích nguyên nhân (Why)' : 'Câu hỏi 2: Đánh giá Tích cực hay Tiêu cực (Is this positive or negative)';
+      return {
+        type: 'TWO_PART_WHY_POS_NEG',
+        isBalanced: false,
+        severity: 'fatal',
+        taskDescription: '1. Giải thích nguyên nhân (Why) & 2. Đánh giá Tích cực/Tiêu cực (Positive or Negative)',
+        missingPartDescription: missingPart,
+        warning: `LỖI BỎ SÓT YÊU CẦU ĐỀ BÀI (Unaddressed Task): Đề bài gồm 2 câu hỏi độc lập, nhưng bài viết hoàn toàn BỎ SÓT ${missingPart}. Barem Cambridge quy định bài viết chỉ trả lời 1 phần của đề thi (addresses the task only partially) bị KHỐNG CHẾ Task Response tối đa Band 5.0.`
+      };
+    }
+
     return {
-      type: 'DISCUSS_BOTH',
-      isBalanced,
-      warning: !isBalanced ? 'Đề bài yêu cầu bàn luận cả 2 quan điểm (Discuss both views). Bạn cần dành riêng ít nhất 1 đoạn thân bài cho mỗi góc nhìn trước khi nêu kết luận.' : null
+      type: 'TWO_PART_WHY_POS_NEG',
+      isBalanced: true,
+      severity: 'none',
+      taskDescription: '1. Giải thích nguyên nhân (Why) & 2. Đánh giá Tích cực/Tiêu cực',
+      warning: null
     };
   }
 
-  // 2. Causes & Solutions / Problems & Solutions
-  if (/causes?\s+(and|&)\s+solutions?|problems?\s+(and|&)\s+solutions?|what\s+(causes|measures|steps)/i.test(promptLower)) {
-    const hasCause = /\b(cause|reason|stem from|due to|originate|factor)\b/i.test(fullTextLower);
-    const hasSolution = /\b(solution|measure|remedy|tackle|mitigate|government should|step|policy)\b/i.test(fullTextLower);
-    const isBalanced = hasCause && hasSolution;
+  // -------------------------------------------------------------
+  // 2. TWO-PART: WHY + EFFECTS/PROBLEMS
+  // e.g. "Why is this happening? What problems does this cause / What are the effects?"
+  // -------------------------------------------------------------
+  const isWhyEffects = /\bwhy\b.*?\?.*?\b(what\s+effects?|what\s+problems?|what\s+consequences?|how\s+does\s+this\s+affect)\b/i.test(promptLower);
+
+  if (isWhyEffects) {
+    const reasonRegex = /\b(reason(?:s)?|cause(?:s|d)?|factor(?:s)?|stem(?:s|med)?\s+from|due\s+to|because|arise(?:s|n)?|contribute(?:s|d)?|catalyst(?:s)?|driver(?:s)?|driv(?:e|en|ing)|propel(?:led|s)?|motivat(?:e|ed|ing|ion))\b/i;
+    const effectRegex = /\b(effect(?:s)?|problem(?:s)?|consequence(?:s)?|impact(?:s)?|influence(?:s)?|harm|damage|affect(?:s|ed|ing)?|repercussion(?:s)?|result(?:s)?)\b/i;
+
+    const hasReasons = reasonRegex.test(bodyText);
+    const hasEffects = effectRegex.test(bodyText);
+
+    if (!hasReasons || !hasEffects) {
+      const missingPart = !hasReasons ? 'Câu hỏi 1 (Nguyên nhân - Why)' : 'Câu hỏi 2 (Tác động / Vấn đề - Effects/Problems)';
+      return {
+        type: 'TWO_PART_WHY_EFFECTS',
+        isBalanced: false,
+        severity: 'fatal',
+        taskDescription: '1. Nguyên nhân (Why) & 2. Tác động / Vấn đề (Effects/Problems)',
+        missingPartDescription: missingPart,
+        warning: `LỖI BỎ SÓT YÊU CẦU ĐỀ BÀI: Bài viết hoàn toàn bỏ sót ${missingPart}. Barem Cambridge khống chế Task Response tối đa Band 5.0 khi thí sinh không trả lời đầy đủ các câu hỏi của đề.`
+      };
+    }
+
+    return {
+      type: 'TWO_PART_WHY_EFFECTS',
+      isBalanced: true,
+      severity: 'none',
+      taskDescription: '1. Nguyên nhân & 2. Tác động',
+      warning: null
+    };
+  }
+
+  // -------------------------------------------------------------
+  // 3. PROBLEMS & SOLUTIONS / CAUSES & SOLUTIONS
+  // e.g. "What are the causes? How can this problem be solved?"
+  // -------------------------------------------------------------
+  const isProblemSolution = /causes?\s+(?:and|&)\s+solutions?|problems?\s+(?:and|&)\s+solutions?|what\s+(?:causes|measures|steps)|how\s+can\s+(?:this|we)\s+(?:solve|tackle|deal)/i.test(promptLower);
+
+  if (isProblemSolution) {
+    const causeRegex = /\b(cause(?:s|d)?|reason(?:s)?|stem(?:s|med)?\s+from|due\s+to|originate(?:s|d)?|factor(?:s)?|problem(?:s)?|issue(?:s)?|challenge(?:s)?|difficulty|difficulties|catalyst(?:s)?|driver(?:s)?|root(?:s)?\s+in)\b/i;
+    const solutionRegex = /\b(solution(?:s)?|measure(?:s)?|remedy|remedies|tackle|mitigate|address|resolve|government\s+should|step(?:s)?|policy|policies|implement(?:ed|ing)?|action(?:s)?)\b/i;
+
+    const hasCause = causeRegex.test(bodyText);
+    const hasSolution = solutionRegex.test(bodyText);
+
+    if (!hasCause || !hasSolution) {
+      const missingPart = !hasCause ? 'Phần 1: Nguyên nhân / Vấn đề (Causes / Problems)' : 'Phần 2: Giải pháp / Biện pháp (Solutions / Measures)';
+      return {
+        type: 'PROBLEM_SOLUTION',
+        isBalanced: false,
+        severity: 'fatal',
+        taskDescription: '1. Nguyên nhân & 2. Giải pháp',
+        missingPartDescription: missingPart,
+        warning: `LỖI BỎ SÓT YÊU CẦU ĐỀ BÀI: Bài viết thiếu hẳn ${missingPart}. Đề bài dạng Problem & Solution đòi hỏi sự cân bằng tuyệt đối giữa 2 phần trong thân bài. Điểm Task Response bị giới hạn tối đa Band 5.0.`
+      };
+    }
+
     return {
       type: 'PROBLEM_SOLUTION',
-      isBalanced,
-      warning: !isBalanced ? 'Đề bài yêu cầu phân tích cả Nguyên nhân và Giải pháp. Bạn cần đảm bảo trình bày đầy đủ cả 2 phần trong thân bài.' : null
+      isBalanced: true,
+      severity: 'none',
+      taskDescription: 'Nguyên nhân & Giải pháp',
+      warning: null
     };
   }
 
-  return { type: 'OPINION', isBalanced: true };
+  // -------------------------------------------------------------
+  // 4. DISCUSS BOTH VIEWS (& GIVE YOUR OPINION)
+  // e.g. "Discuss both views and give your opinion."
+  // -------------------------------------------------------------
+  const isDiscussBoth = /discuss\s+both\s+(?:views|sides)|both\s+views/i.test(promptLower);
+
+  if (isDiscussBoth) {
+    const viewARegex = /\b(on the one hand|some people (?:argue|believe|contend|assert|maintain)|proponents|first view|supporters|one perspective|one school of thought)\b/i;
+    const viewBRegex = /\b(on the other hand|other people (?:argue|believe|contend|assert|maintain)|opponents|conversely|in contrast|second view|alternative perspective|other side|detractors|others argue|others believe)\b/i;
+
+    const hasViewA = viewARegex.test(bodyText);
+    const hasViewB = viewBRegex.test(bodyText);
+
+    if (!hasViewA || !hasViewB) {
+      const missingPart = !hasViewA ? 'Quan điểm thứ nhất (View 1)' : 'Quan điểm thứ hai (View 2)';
+      return {
+        type: 'DISCUSS_BOTH',
+        isBalanced: false,
+        severity: 'fatal',
+        taskDescription: 'Bàn luận cả 2 quan điểm (Discuss Both Views)',
+        missingPartDescription: missingPart,
+        warning: 'LỖI BỎ SÓT QUAN ĐIỂM: Đề bài yêu cầu bàn luận cả 2 quan điểm (Discuss both views), nhưng thân bài chỉ tập trung vào 1 phía. Barem Cambridge quy định bài không bàn luận đủ 2 góc nhìn bị khống chế Task Response tối đa Band 5.0.'
+      };
+    }
+
+    return {
+      type: 'DISCUSS_BOTH',
+      isBalanced: true,
+      severity: 'none',
+      taskDescription: 'Bàn luận 2 quan điểm cân đối',
+      warning: null
+    };
+  }
+
+  // -------------------------------------------------------------
+  // 5. ADVANTAGES OUTWEIGH DISADVANTAGES
+  // e.g. "Do the advantages outweigh the disadvantages?"
+  // -------------------------------------------------------------
+  const isAdvDisadv = /(?:advantages?\s+(?:and|or|outweigh)\s+disadvantages?|pros?\s+(?:and|&)\s+cons?|benefits?\s+outweigh)/i.test(promptLower);
+
+  if (isAdvDisadv) {
+    const advRegex = /\b(advantage(?:s|ous)?|benefit(?:s|ial)?|merit(?:s)?|positive\s+aspect(?:s)?|upside(?:s)?|pros|favor(?:able)?)\b/i;
+    const disadvRegex = /\b(disadvantage(?:s|ous)?|drawback(?:s)?|demerit(?:s)?|negative\s+aspect(?:s)?|downside(?:s)?|cons|shortcoming(?:s)?|pitfall(?:s)?)\b/i;
+
+    const hasAdv = advRegex.test(bodyText);
+    const hasDisadv = disadvRegex.test(bodyText);
+
+    if (!hasAdv || !hasDisadv) {
+      const missingPart = !hasAdv ? 'Mặt thuận lợi / Lợi ích (Advantages / Benefits)' : 'Mặt bất lợi / Tác hại (Disadvantages / Drawbacks)';
+      return {
+        type: 'ADVANTAGES_OUTWEIGH',
+        isBalanced: false,
+        severity: 'fatal',
+        taskDescription: 'Phân tích cả Mặt Lợi và Mặt Hại',
+        missingPartDescription: missingPart,
+        warning: `LỖI BỎ SÓT YÊU CẦU ĐỀ BÀI: Dạng đề so sánh Lợi và Hại yêu cầu phân tích cả 2 mặt trước khi kết luận bên nào vượt trội hơn, nhưng bài viết hoàn toàn thiếu ${missingPart}. Điểm Task Response bị khống chế tối đa Band 5.0.`
+      };
+    }
+
+    return {
+      type: 'ADVANTAGES_OUTWEIGH',
+      isBalanced: true,
+      severity: 'none',
+      taskDescription: 'Phân tích hai mặt Lợi và Hại',
+      warning: null
+    };
+  }
+
+  // -------------------------------------------------------------
+  // 6. GENERIC DOUBLE DIRECT QUESTIONS (Any prompt with 2 question marks '?')
+  // -------------------------------------------------------------
+  const questionMarksCount = (prompt.match(/\?/g) || []).length;
+  if (questionMarksCount >= 2) {
+    if (bodyParas.length < 2) {
+      return {
+        type: 'DOUBLE_DIRECT_QUESTIONS',
+        isBalanced: false,
+        severity: 'warning',
+        taskDescription: 'Trả lời 2 câu hỏi trực tiếp của đề bài',
+        missingPartDescription: 'Chưa tách thành 2 đoạn thân bài độc lập',
+        warning: 'Đề bài gồm 2 câu hỏi riêng biệt. Bạn cần dành riêng ít nhất 1 đoạn thân bài cho mỗi câu hỏi để đảm bảo bài viết phát triển cân đối (Band 7.0+ TR).'
+      };
+    }
+
+    return {
+      type: 'DOUBLE_DIRECT_QUESTIONS',
+      isBalanced: true,
+      severity: 'none',
+      taskDescription: 'Trả lời 2 câu hỏi trực tiếp trong 2 đoạn thân bài',
+      warning: null
+    };
+  }
+
+  return { type: 'OPINION', isBalanced: true, severity: 'none', warning: null, taskDescription: 'Nêu quan điểm cá nhân' };
 }
 
 /**
@@ -869,7 +1057,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -884,6 +1072,8 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Khắc phục bẫy số liệu đoạn Overview: Phát hiện ${task1OverviewCheck.rawDataList.length} số liệu chi tiết (${task1OverviewCheck.rawDataList.slice(0, 3).join(', ')}) trong Overview. Đoạn Tổng quan chỉ được khái quát xu hướng lớn (tăng/giảm, biến động), tuyệt đối không đưa số liệu cụ thể để thoát khỏi mức khống chế Band 5.5 Task Achievement.`;
   } else if (isTask1 && task1ComparisonCheck && task1ComparisonCheck.totalComparisons === 0) {
     plan.priority1 = `Thoát khỏi bẫy liệt kê số liệu cơ học (Mechanical Listing): Thân bài có đưa ra số liệu nhưng thiếu hẳn các cấu trúc so sánh đối chiếu. Hãy sử dụng tối thiểu 3 cấu trúc so sánh tương quan (như: 'twice as high as', 'whereas', 'outstripped', 'compared with') để mở khóa Band 7.0+ Task Achievement.`;
+  } else if (!isTask1 && task2Fulfillment && !task2Fulfillment.isBalanced) {
+    plan.priority1 = `Khắc phục lỗi bỏ sót yêu cầu đề bài: ${task2Fulfillment.missingPartDescription ? 'Bạn chưa trả lời ' + task2Fulfillment.missingPartDescription + '.' : ''} Dành riêng 1 đoạn thân bài độc lập cho mỗi câu hỏi của đề bài để thoát khỏi mức khống chế Band 5.0 Task Response.`;
   } else if (svErrorCount >= 3) {
     plan.priority1 = `Chấm dứt lỗi chia động từ cơ bản: Phát hiện ${svErrorCount} lỗi hòa hợp Chủ ngữ - Động từ và Danh từ số nhiều. Hãy dành 3 phút cuối giờ rà soát lại thì và đuôi -s/-es của mọi động từ.`;
   } else if (trBand < 6.0) {
@@ -1118,9 +1308,10 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     trStrengths.push("Bài viết bám sát các từ khóa trọng tâm của đề thi, thể hiện sự hiểu đề thấu đáo.");
   }
 
-  // 4. Task 1 Specific Checks (Overview + Raw Data Check + Body Data Density + Comparative Language)
+  // 4. Task 1 & Task 2 Specific Checks
   let task1OverviewCheck = null;
   let task1ComparisonCheck = null;
+  let task2Fulfillment = null;
   if (isTask1) {
     task1OverviewCheck = analyzeTask1Overview(paragraphs);
     task1ComparisonCheck = analyzeTask1Comparisons(paragraphs, task1OverviewCheck?.overviewIndex);
@@ -1179,10 +1370,14 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       trImprovements.push("Thiếu đoạn Kết luận độc lập. Nên kết bài bằng 'In conclusion' để tóm tắt quan điểm của bạn. Điểm TR bị giới hạn tối đa Band 5.5.");
     }
 
-    const task2Fulfillment = analyzeTask2Fulfillment(task?.prompt, paragraphs);
+    task2Fulfillment = analyzeTask2Fulfillment(task?.prompt, paragraphs);
     if (!task2Fulfillment.isBalanced) {
-      trScore = Math.min(trScore, 5.5);
-      trImprovements.push(`QUAN TRỌNG: ${task2Fulfillment.warning} Điểm Task Response bị giới hạn ở Band 5.5.`);
+      // Hard cap Band 5.0 for omitting a question/part of task per Cambridge Band Descriptors
+      trScore = Math.min(trScore, 5.0);
+      trImprovements.push(`QUAN TRỌNG: ${task2Fulfillment.warning}`);
+    } else if (task2Fulfillment.type !== 'OPINION' && task2Fulfillment.type !== 'GENERAL') {
+      if (wordCount >= 250 && trScore >= 6.0) trScore += 0.5;
+      trStrengths.push(`Phát triển luận điểm đa chiều và cân xứng: Đáp ứng trọn vẹn yêu cầu dạng đề (${task2Fulfillment.taskDescription}) qua các đoạn thân bài riêng biệt.`);
     }
   }
 
@@ -1580,7 +1775,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
   const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment);
 
   // Key Academic Collocations Recommendation
   const keyVocabulary = [
@@ -1685,6 +1880,14 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       uniqueComparisonsCount: task1ComparisonCheck?.uniqueComparisonsCount || 0,
       matchedComparisons: task1ComparisonCheck?.matchedComparisons || [],
       isMechanicalListing: (task1ComparisonCheck?.totalComparisons === 0)
+    } : null,
+    task2FulfillmentStats: !isTask1 ? {
+      type: task2Fulfillment?.type || 'OPINION',
+      isBalanced: task2Fulfillment?.isBalanced ?? true,
+      severity: task2Fulfillment?.severity || 'none',
+      taskDescription: task2Fulfillment?.taskDescription || '',
+      missingPartDescription: task2Fulfillment?.missingPartDescription || null,
+      warning: task2Fulfillment?.warning || null
     } : null
   };
 }
