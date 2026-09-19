@@ -489,6 +489,44 @@ export function roundToCambridgeBand(score) {
   return Math.min(9.0, floor + 1.0);
 }
 
+/**
+ * Official Cambridge IELTS Writing Overall Band Calculation
+ * According to Cambridge Assessment English & British Council regulations:
+ * - Task 2 carries twice as much weight as Task 1:
+ *     Raw Score = (Task 1 Band * 1 + Task 2 Band * 2) / 3
+ * - Cambridge Rounding Rule:
+ *     - If decimal < 0.25 -> Round down to previous whole/half band (e.g. 6.125 -> 6.0)
+ *     - If 0.25 <= decimal < 0.75 -> Round to nearest 0.5 (e.g. 6.25 -> 6.5, 6.625 -> 6.5)
+ *     - If decimal >= 0.75 -> Round up to next whole band (e.g. 6.75 -> 7.0)
+ * Clamped between 1.0 and 9.0.
+ *
+ * @param {number|string} task1Band - Band score for Task 1 (1.0 - 9.0)
+ * @param {number|string} task2Band - Band score for Task 2 (1.0 - 9.0)
+ * @returns {{ t1Band: number, t2Band: number, rawWeighted: number, overallBand: number, cefrLevel: string, weightingFormula: string }}
+ */
+export function calculateOverallWritingBand(task1Band, task2Band) {
+  const t1 = Math.max(1.0, Math.min(9.0, Number(task1Band) || 1.0));
+  const t2 = Math.max(1.0, Math.min(9.0, Number(task2Band) || 1.0));
+  const rawWeighted = (t1 * 1 + t2 * 2) / 3;
+  const overallBand = roundToCambridgeBand(rawWeighted);
+
+  let cefrLevel = 'B1';
+  if (overallBand >= 8.5) cefrLevel = 'C2';
+  else if (overallBand >= 7.0) cefrLevel = 'C1';
+  else if (overallBand >= 5.5) cefrLevel = 'B2';
+  else if (overallBand >= 4.0) cefrLevel = 'B1';
+  else cefrLevel = 'A2';
+
+  return {
+    t1Band: t1,
+    t2Band: t2,
+    rawWeighted: Number(rawWeighted.toFixed(3)),
+    overallBand,
+    cefrLevel,
+    weightingFormula: '((Task 1 × 1) + (Task 2 × 2)) / 3'
+  };
+}
+
 // -------------------------------------------------------------
 // 3. SPECIALIZED LINGUISTIC ANALYZERS (v2)
 // -------------------------------------------------------------
@@ -1978,6 +2016,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const rawWords = sanitizeWords(essayText);
   const rawWordCount = rawWords.length;
   const isTask1 = task?.taskNumber === 1;
+  const task1Subtype = isTask1 ? detectTask1Subtype(task, essayText) : null;
   const targetMinWords = task?.minWords || (isTask1 ? 150 : 250);
   const sentences = getSentences(essayText);
   const paragraphs = getParagraphs(essayText);
@@ -2046,7 +2085,14 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
         priority2: 'Xây dựng cấu trúc bài viết chuẩn: Học cấu trúc 4 đoạn (Mở bài - Thân bài 1 - Thân bài 2 - Kết bài).',
         priority3: 'Luyện câu đơn cơ bản: Rèn luyện viết câu chuẩn ngữ pháp (Chủ ngữ + Động từ + Tân ngữ) không sai thì.',
         estimatedBandTarget: `Lộ trình mục tiêu: Nâng từ Band 1.0 lên Band 3.5 - 4.0 khi bạn viết đủ ${targetMinWords} từ và chia đoạn rõ ràng.`
-      }
+      },
+      wordStats: {
+        rawWordCount,
+        copiedWordCount,
+        effectiveWordCount: wordCount,
+        copiedChunks: promptCopying.copiedChunks
+      },
+      task1Subtype
     };
   }
 
@@ -2164,7 +2210,6 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   let task1MapCheck = null;
   let task1ProcessCheck = null;
   let task2Fulfillment = null;
-  const task1Subtype = isTask1 ? detectTask1Subtype(task, essayText) : null;
 
   if (isTask1) {
     task1OverviewCheck = analyzeTask1Overview(paragraphs);
@@ -2919,3 +2964,95 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     }
   };
 }
+
+/**
+ * Evaluates a complete 60-minute IELTS Writing Mock Exam (Task 1 + Task 2)
+ * Produces comprehensive Cambridge diagnostic reports for both tasks
+ * and calculates the official Cambridge weighted Overall Writing Band.
+ *
+ * @param {Object} params
+ * @param {Object} params.task1 - Task 1 prompt metadata
+ * @param {string} params.task1Text - Candidate response for Task 1
+ * @param {Object} params.task2 - Task 2 prompt metadata
+ * @param {string} params.task2Text - Candidate response for Task 2
+ * @param {number} [params.timeSpentSeconds=3600] - Total time taken in seconds
+ * @returns {Object} Mock exam evaluation report
+ */
+export function evaluateWritingMockExam({
+  task1,
+  task1Text = '',
+  task2,
+  task2Text = '',
+  timeSpentSeconds = 3600
+}) {
+  const cleanT1Text = typeof task1Text === 'string' ? task1Text.trim() : '';
+  const cleanT2Text = typeof task2Text === 'string' ? task2Text.trim() : '';
+
+  const eval1 = evaluateEssayAlgorithmically({
+    task: task1,
+    essayText: cleanT1Text || 'No response provided for Task 1.'
+  });
+
+  const eval2 = evaluateEssayAlgorithmically({
+    task: task2,
+    essayText: cleanT2Text || 'No response provided for Task 2.'
+  });
+
+  // Calculate official Cambridge weighted Overall Band
+  const overall = calculateOverallWritingBand(eval1.overallBand, eval2.overallBand);
+
+  const countWordsSafe = (txt) => {
+    if (!txt || typeof txt !== 'string') return 0;
+    return (txt.trim().match(/\S+/g) || []).length;
+  };
+
+  const t1Words = eval1.wordStats?.rawWordCount ?? eval1.wordStats?.effectiveWordCount ?? countWordsSafe(cleanT1Text);
+  const t2Words = eval2.wordStats?.rawWordCount ?? eval2.wordStats?.effectiveWordCount ?? countWordsSafe(cleanT2Text);
+  const totalWords = t1Words + t2Words;
+
+  // Pacing Diagnostics
+  const minutesSpent = Math.round(timeSpentSeconds / 60);
+  let pacingFeedback = '';
+  if (minutesSpent < 35 && totalWords < 350) {
+    pacingFeedback = 'Thời gian nộp bài quá sớm so với tiêu chuẩn 60 phút và dung lượng chưa đạt chuẩn. Trong kỳ thi thật, hãy tận dụng trọn vẹn 60 phút để phát triển ý và rà soát bài.';
+  } else if (t1Words < 150 && t2Words >= 250) {
+    pacingFeedback = 'Bạn đã phân bổ thời gian quá nhiều cho Task 2 dẫn đến Task 1 bị thiếu từ (<150 từ). Tỷ lệ lý tưởng là 20 phút cho Task 1 và 40 phút cho Task 2.';
+  } else if (t1Words >= 150 && t2Words < 250) {
+    pacingFeedback = 'Bạn đã dành quá nhiều thời gian cho Task 1 dẫn đến Task 2 thiếu từ (<250 từ). Lưu ý Task 2 chiếm 2/3 tổng số điểm Writing!';
+  } else if (t1Words >= 150 && t2Words >= 250) {
+    pacingFeedback = 'Quản lý thời gian và dung lượng xuất sắc! Cả Task 1 và Task 2 đều vượt ngưỡng số từ tối thiểu quy định.';
+  } else {
+    pacingFeedback = 'Cả hai bài viết đều chưa đạt dung lượng tối thiểu (Task 1: 150 từ, Task 2: 250 từ). Cần rèn luyện tốc độ gõ phím và phản xạ lập dàn ý.';
+  }
+
+  // Executive summary
+  const strongerTask = eval1.overallBand > eval2.overallBand ? 'Task 1' : eval2.overallBand > eval1.overallBand ? 'Task 2' : 'Cả hai đồng đều';
+  const executiveSummary = {
+    strongerTask,
+    t1LengthStatus: t1Words >= 150 ? 'Đạt chuẩn (150+ từ)' : `Thiếu ${150 - t1Words} từ`,
+    t2LengthStatus: t2Words >= 250 ? 'Đạt chuẩn (250+ từ)' : `Thiếu ${250 - t2Words} từ`,
+    combinedAdvice: eval2.overallBand < eval1.overallBand
+      ? 'Task 2 là trọng số quyết định (chiếm 66.7% điểm). Hãy tập trung nâng cao cấu trúc lập luận và tính cân bằng của Task 2 để kéo điểm Overall lên mạnh mẽ.'
+      : 'Task 1 hoàn thành tốt vai trò. Duy trì phong độ Task 2 và tiếp tục đa dạng hóa liên từ so sánh cho Task 1.'
+  };
+
+  return {
+    date: new Date().toLocaleDateString('vi-VN'),
+    t1Band: overall.t1Band,
+    t2Band: overall.t2Band,
+    rawWeighted: overall.rawWeighted,
+    finalOverall: overall.overallBand,
+    cefrLevel: overall.cefrLevel,
+    weightingFormula: overall.weightingFormula,
+    timeSpentSeconds,
+    minutesSpent,
+    t1Words,
+    t2Words,
+    totalWords,
+    pacingFeedback,
+    executiveSummary,
+    eval1,
+    eval2
+  };
+}
+

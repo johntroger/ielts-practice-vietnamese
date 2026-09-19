@@ -31,11 +31,22 @@ import {
   User,
   Calendar,
   Flame,
-  CheckCheck
+  CheckCheck,
+  RotateCcw,
+  Info,
+  HelpCircle,
+  Lightbulb,
+  Eye,
+  BookMarked,
+  Zap
 } from 'lucide-react';
 import { countWords } from '../utils/textAnalytics';
 import { evaluateEssay } from '../services/geminiService';
-import { evaluateEssayAlgorithmically } from '../services/algorithmicEvaluationService';
+import { 
+  evaluateEssayAlgorithmically,
+  calculateOverallWritingBand,
+  evaluateWritingMockExam
+} from '../services/algorithmicEvaluationService';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
@@ -84,6 +95,71 @@ export default function MockTestModal({
   const [timeRemaining, setTimeRemaining] = useState(3600);
   const [isGrading, setIsGrading] = useState(false);
   const [mockReport, setMockReport] = useState(null);
+  const [reportTab, setReportTab] = useState('overview'); // 'overview' | 'task1' | 'task2' | 'essays'
+  const [writingGradingEngine, setWritingGradingEngine] = useState('algorithmic'); // 'algorithmic' | 'ai'
+  const [showSubmitSafeguard, setShowSubmitSafeguard] = useState(false);
+
+  // Check for saved in-progress session
+  const [savedSession, setSavedSession] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_mock_writing_in_progress');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.timestamp && Date.now() - parsed.timestamp < 3 * 3600 * 1000 && parsed.timeRemaining > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return null;
+  });
+
+  const handleRestoreWritingSession = () => {
+    if (!savedSession) return;
+    setT1Id(savedSession.t1Id || task1List[0]?.id || '');
+    setT2Id(savedSession.t2Id || task2List[0]?.id || '');
+    setT1Text(savedSession.t1Text || '');
+    setT2Text(savedSession.t2Text || '');
+    setTimeRemaining(savedSession.timeRemaining || 3600);
+    setActiveTaskTab(savedSession.activeTaskTab || 1);
+    setIsTestStarted(true);
+    setMockReport(null);
+    setSavedSession(null);
+  };
+
+  const handleDiscardWritingSession = () => {
+    try {
+      localStorage.removeItem('ielts_mock_writing_in_progress');
+    } catch (e) {}
+    setSavedSession(null);
+  };
+
+  const handleRandomizeWritingTasks = () => {
+    if (task1List.length > 0) {
+      const rand1 = task1List[Math.floor(Math.random() * task1List.length)];
+      setT1Id(rand1.id);
+    }
+    if (task2List.length > 0) {
+      const rand2 = task2List[Math.floor(Math.random() * task2List.length)];
+      setT2Id(rand2.id);
+    }
+  };
+
+  // Autosave in-progress session
+  useEffect(() => {
+    if (isTestStarted && !mockReport && timeRemaining > 0) {
+      try {
+        localStorage.setItem('ielts_mock_writing_in_progress', JSON.stringify({
+          t1Id,
+          t2Id,
+          t1Text,
+          t2Text,
+          timeRemaining,
+          activeTaskTab,
+          timestamp: Date.now()
+        }));
+      } catch (e) {}
+    }
+  }, [isTestStarted, mockReport, timeRemaining, t1Id, t2Id, t1Text, t2Text, activeTaskTab]);
 
   const currentTask1 = allTasks.find(t => t.id === t1Id) || task1List[0];
   const currentTask2 = allTasks.find(t => t.id === t2Id) || task2List[0];
@@ -190,14 +266,47 @@ export default function MockTestModal({
     setIsTestStarted(true);
     setTimeRemaining(3600);
     setMockReport(null);
+    setReportTab('overview');
+    try {
+      localStorage.removeItem('ielts_mock_writing_in_progress');
+    } catch (e) {}
+  };
+
+  const handleResetWritingMock = () => {
+    setIsTestStarted(false);
+    setMockReport(null);
+    setT1Text('');
+    setT2Text('');
+    setTimeRemaining(3600);
+    setActiveTaskTab(1);
+    setReportTab('overview');
+    setShowSubmitSafeguard(false);
+    try {
+      localStorage.removeItem('ielts_mock_writing_in_progress');
+    } catch (e) {}
+  };
+
+  const confirmSubmitWriting = () => {
+    const t1W = countWords(t1Text);
+    const t2W = countWords(t2Text);
+    // If underlength and more than 5 minutes remaining, prompt safeguard
+    if (timeRemaining > 300 && (t1W < 150 || t2W < 250)) {
+      setShowSubmitSafeguard(true);
+    } else {
+      handleAutoSubmitWriting();
+    }
   };
 
   const handleAutoSubmitWriting = async () => {
+    setShowSubmitSafeguard(false);
     setIsGrading(true);
     try {
-      // 1. Evaluate Task 1 (AI with Algorithmic Fallback)
-      let eval1 = null;
-      if (apiKey) {
+      const timeSpentSeconds = 3600 - timeRemaining;
+      let report = null;
+
+      if (writingGradingEngine === 'ai' && apiKey) {
+        // AI with Algorithmic Fallback
+        let eval1 = null;
         try {
           eval1 = await evaluateEssay({
             task: currentTask1,
@@ -208,17 +317,14 @@ export default function MockTestModal({
         } catch (e1) {
           console.warn('[Mock Test] Task 1 AI grading error, switching to Algorithmic Evaluator:', e1);
         }
-      }
-      if (!eval1) {
-        eval1 = evaluateEssayAlgorithmically({
-          task: currentTask1,
-          essayText: t1Text || 'No text submitted for Task 1.'
-        });
-      }
+        if (!eval1) {
+          eval1 = evaluateEssayAlgorithmically({
+            task: currentTask1,
+            essayText: t1Text || 'No text submitted for Task 1.'
+          });
+        }
 
-      // 2. Evaluate Task 2 (AI with Algorithmic Fallback)
-      let eval2 = null;
-      if (apiKey) {
+        let eval2 = null;
         try {
           eval2 = await evaluateEssay({
             task: currentTask2,
@@ -229,37 +335,64 @@ export default function MockTestModal({
         } catch (e2) {
           console.warn('[Mock Test] Task 2 AI grading error, switching to Algorithmic Evaluator:', e2);
         }
-      }
-      if (!eval2) {
-        eval2 = evaluateEssayAlgorithmically({
-          task: currentTask2,
-          essayText: t2Text || 'No text submitted for Task 2.'
+        if (!eval2) {
+          eval2 = evaluateEssayAlgorithmically({
+            task: currentTask2,
+            essayText: t2Text || 'No text submitted for Task 2.'
+          });
+        }
+
+        const b1 = eval1.overallBand || 5.0;
+        const b2 = eval2.overallBand || 5.0;
+        const combined = calculateOverallWritingBand(b1, b2);
+
+        const currentT1Words = countWords(t1Text);
+        const currentT2Words = countWords(t2Text);
+
+        report = {
+          date: new Date().toLocaleDateString('vi-VN'),
+          t1Band: combined.t1Band,
+          t2Band: combined.t2Band,
+          rawWeighted: combined.rawWeighted,
+          finalOverall: combined.overallBand,
+          cefrLevel: combined.cefrLevel,
+          weightingFormula: combined.weightingFormula,
+          timeSpentSeconds,
+          minutesSpent: Math.round(timeSpentSeconds / 60),
+          t1Words: currentT1Words,
+          t2Words: currentT2Words,
+          totalWords: currentT1Words + currentT2Words,
+          eval1,
+          eval2,
+          pacingFeedback: currentT1Words >= 150 && currentT2Words >= 250
+            ? 'Quản lý thời gian và dung lượng xuất sắc! Cả Task 1 và Task 2 đều vượt ngưỡng số từ tối thiểu quy định.'
+            : 'Cần phân bổ thời gian hợp lý hơn: Tỷ lệ chuẩn là 20 phút cho Task 1 (tối thiểu 150 từ) và 40 phút cho Task 2 (tối thiểu 250 từ).',
+          executiveSummary: {
+            strongerTask: b1 > b2 ? 'Task 1' : b2 > b1 ? 'Task 2' : 'Cả hai đồng đều',
+            t1LengthStatus: currentT1Words >= 150 ? 'Đạt chuẩn (150+ từ)' : `Thiếu ${150 - currentT1Words} từ`,
+            t2LengthStatus: currentT2Words >= 250 ? 'Đạt chuẩn (250+ từ)' : `Thiếu ${250 - currentT2Words} từ`,
+            combinedAdvice: b2 < b1
+              ? 'Task 2 là trọng số quyết định (chiếm 66.7% điểm). Hãy tập trung nâng cao cấu trúc lập luận và tính cân bằng của Task 2 để kéo điểm Overall lên mạnh mẽ.'
+              : 'Task 1 hoàn thành tốt vai trò hỗ trợ. Duy trì phong độ Task 2 và tiếp tục đa dạng hóa liên từ so sánh cho Task 1.'
+          }
+        };
+      } else {
+        // Pure 100% Offline Algorithmic Evaluation
+        report = evaluateWritingMockExam({
+          task1: currentTask1,
+          task1Text: t1Text,
+          task2: currentTask2,
+          task2Text: t2Text,
+          timeSpentSeconds
         });
       }
 
-      const b1 = eval1.overallBand || 5.0;
-      const b2 = eval2.overallBand || 5.0;
-
-      // Official IELTS Weighted Formula: (Task 1 + Task 2 * 2) / 3
-      const rawCombined = (b1 + b2 * 2) / 3;
-      // Standard IELTS Rounding
-      const decimal = rawCombined - Math.floor(rawCombined);
-      let roundedCombined = Math.floor(rawCombined);
-      if (decimal >= 0.75) roundedCombined += 1.0;
-      else if (decimal >= 0.25) roundedCombined += 0.5;
-
-      const report = {
-        date: new Date().toLocaleDateString('vi-VN'),
-        t1Band: b1,
-        t2Band: b2,
-        finalOverall: roundedCombined,
-        eval1,
-        eval2,
-        t1Words,
-        t2Words
-      };
-
       setMockReport(report);
+      setReportTab('overview');
+      try {
+        localStorage.removeItem('ielts_mock_writing_in_progress');
+      } catch (e) {}
+
       if (onSaveMockResult) onSaveMockResult(report);
     } catch (err) {
       alert('Lỗi khi chấm điểm bài thi thử: ' + (err?.message || 'Vui lòng thử lại.'));
@@ -549,50 +682,153 @@ export default function MockTestModal({
         {/* WRITING MOCK SETUP VIEW                                      */}
         {/* ============================================================ */}
         {!isTestStarted && activeMockTab === 'writing' && (
-          <div className="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col items-center justify-center text-center space-y-6 max-w-xl mx-auto">
+          <div className="flex-1 p-6 sm:p-10 overflow-y-auto flex flex-col items-center justify-center text-center space-y-5 max-w-2xl mx-auto">
             <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto shadow-sm">
               <ShieldAlert className="w-8 h-8" />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
                 Phòng Thi Thử IELTS Writing 60 Phút
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Bạn sẽ viết liên tục cả <strong>Task 1 (tối thiểu 150 từ)</strong> và <strong>Task 2 (tối thiểu 250 từ)</strong> trong vòng 60 phút. Toàn bộ tính năng hỗ trợ, từ điển và bài mẫu sẽ bị khóa để rèn bản lĩnh thi thật.
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl mx-auto">
+                Mô phỏng 100% ca thi viết chính thức: Làm liên tục cả <strong>Task 1 (tối thiểu 150 từ)</strong> và <strong>Task 2 (tối thiểu 250 từ)</strong> trong vòng 60 phút. Điểm tổng kết tính theo đúng <strong>công thức trọng số chuẩn Cambridge</strong>: <span className="font-semibold text-slate-800">[(Task 1 × 1) + (Task 2 × 2)] / 3</span>.
               </p>
             </div>
 
+            {/* Saved in-progress session prompt */}
+            {savedSession && (
+              <div className="w-full text-left p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 space-y-2.5 shadow-sm animate-in fade-in duration-200">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                  <span className="font-bold text-xs sm:text-sm">Phát hiện ca thi Writing chưa nộp trước đó!</span>
+                </div>
+                <p className="text-xs text-amber-900">
+                  Thời gian còn lại: <strong>{formatTimer(savedSession.timeRemaining)}</strong> • Task 1: <strong>{countWords(savedSession.t1Text)}/150 từ</strong> • Task 2: <strong>{countWords(savedSession.t2Text)}/250 từ</strong>.
+                </p>
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={handleRestoreWritingSession}
+                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center space-x-1.5 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Khôi Phục Bài Làm & Thi Tiếp</span>
+                  </button>
+                  <button
+                    onClick={handleDiscardWritingSession}
+                    className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-amber-300 font-bold text-xs transition-all active:scale-95 cursor-pointer"
+                  >
+                    Bỏ qua & thi đề mới
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Exam Conditions Badges */}
+            <div className="grid grid-cols-3 gap-3 w-full text-left">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">Thời gian thi</span>
+                <div className="flex items-center space-x-1.5 text-red-600 font-bold text-xs sm:text-sm">
+                  <Clock className="w-4 h-4 shrink-0" />
+                  <span>60:00 Phút</span>
+                </div>
+                <span className="text-[10px] text-slate-400 block">T1: ~20p | T2: ~40p</span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">Dung lượng chuẩn</span>
+                <div className="flex items-center space-x-1.5 text-blue-600 font-bold text-xs sm:text-sm">
+                  <FileText className="w-4 h-4 shrink-0" />
+                  <span>150w + 250w</span>
+                </div>
+                <span className="text-[10px] text-slate-400 block">Thiếu từ bị trừ điểm</span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">Trọng số tính điểm</span>
+                <div className="flex items-center space-x-1.5 text-emerald-600 font-bold text-xs sm:text-sm">
+                  <Award className="w-4 h-4 shrink-0" />
+                  <span>T1: 1/3 | T2: 2/3</span>
+                </div>
+                <span className="text-[10px] text-slate-400 block">Chuẩn Cambridge</span>
+              </div>
+            </div>
+
             {/* Task selector */}
-            <div className="w-full text-left space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+            <div className="w-full text-left space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-xs">
+              <div className="flex items-center justify-between pb-1 border-b border-slate-200">
+                <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Cặp đề thi Writing:</span>
+                <button
+                  onClick={handleRandomizeWritingTasks}
+                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-[11px] flex items-center space-x-1 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                >
+                  <Shuffle className="w-3 h-3 text-red-600" />
+                  <span>🎲 Ghép Đề Ngẫu Nhiên</span>
+                </button>
+              </div>
+
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Đề Task 1 cho ca thi này:</label>
+                <label className="font-bold text-slate-700 block mb-1">
+                  Đề Task 1 cho ca thi này (Report - Biểu đồ / Bản đồ / Quy trình):
+                </label>
                 <select 
                   value={t1Id} 
                   onChange={(e) => setT1Id(e.target.value)}
-                  className="w-full p-2 rounded-lg border border-slate-200 bg-white"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500/20"
                 >
-                  {task1List.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                  {task1List.map(t => <option key={t.id} value={t.id}>{t.title} ({t.type || 'chart'})</option>)}
                 </select>
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Đề Task 2 cho ca thi này:</label>
+                <label className="font-bold text-slate-700 block mb-1">
+                  Đề Task 2 cho ca thi này (Discursive Essay - Tối thiểu 250 từ):
+                </label>
                 <select 
                   value={t2Id} 
                   onChange={(e) => setT2Id(e.target.value)}
-                  className="w-full p-2 rounded-lg border border-slate-200 bg-white"
+                  className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500/20"
                 >
                   {task2List.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
                 </select>
+              </div>
+
+              {/* Grading Engine Option */}
+              <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <span className="font-bold text-slate-700 text-[11px]">Động cơ chấm điểm sau khi thi:</span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setWritingGradingEngine('algorithmic')}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                      writingGradingEngine === 'algorithmic'
+                        ? 'bg-red-600 text-white shadow-2xs'
+                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    ⚡ Thuật toán Cambridge (Tức thì, 0s)
+                  </button>
+                  {apiKey && (
+                    <button
+                      onClick={() => setWritingGradingEngine('ai')}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                        writingGradingEngine === 'ai'
+                          ? 'bg-red-600 text-white shadow-2xs'
+                          : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      🤖 AI Gemini
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
             <button
               onClick={handleStartWritingMock}
-              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 text-white font-bold text-sm shadow-lg transition-transform active:scale-95"
+              className="w-full sm:w-auto px-10 py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 text-white font-bold text-xs sm:text-sm shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
             >
-              BẮT ĐẦU TÍNH GIỜ WRITING 60 PHÚT
+              <Play className="w-4 h-4 fill-current" />
+              <span>BẮT ĐẦU TÍNH GIỜ WRITING 60 PHÚT</span>
             </button>
           </div>
         )}
@@ -1214,45 +1450,416 @@ export default function MockTestModal({
         {/* ============================================================ */}
         {/* WRITING MOCK: VIEW 3: COMBINED MOCK REPORT                   */}
         {/* ============================================================ */}
+        {/* ============================================================ */}
+        {/* WRITING MOCK: VIEW 3: COMBINED CAMBRIDGE DUAL REPORT CARD     */}
+        {/* ============================================================ */}
         {isTestStarted && mockReport && (
-          <div className="flex-1 p-6 overflow-y-auto space-y-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 text-white flex flex-wrap items-center justify-between gap-4 shadow-lg">
-              <div className="space-y-1">
-                <span className="text-xs text-slate-400 uppercase font-semibold">Kết quả thi thử trọn gói 60 phút:</span>
-                <h3 className="text-2xl font-bold flex items-center space-x-2">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-5">
+            {/* Grand Header Banner */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl border border-slate-800">
+              <div className="space-y-1.5">
+                <div className="flex items-center space-x-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-red-600/30 text-red-400 border border-red-500/30 text-[10px] font-black uppercase tracking-wider">
+                    Kết Quả Khảo Thí Cambridge
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    Thời gian: {mockReport.minutesSpent || Math.round((3600 - timeRemaining) / 60)}/60 phút • Tổng {mockReport.totalWords} từ
+                  </span>
+                </div>
+                
+                <h3 className="text-2xl sm:text-3xl font-black flex items-center space-x-3">
                   <span>OVERALL WRITING:</span>
-                  <span className="px-3 py-1 rounded-lg bg-red-600 text-white font-extrabold text-xl">
+                  <span className="px-3.5 py-1 rounded-xl bg-red-600 text-white font-black text-2xl sm:text-3xl shadow-md ring-2 ring-red-500/30">
                     BAND {mockReport.finalOverall.toFixed(1)}
                   </span>
+                  <span className="text-xs font-bold px-2 py-1 rounded-lg bg-slate-800 text-amber-400 border border-slate-700">
+                    {mockReport.cefrLevel || 'B2'}
+                  </span>
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Công thức trọng số Cambridge: (Task 1 × 1/3) + (Task 2 × 2/3)
-                </p>
+
+                {/* Cambridge Weighting formula demonstration */}
+                <div className="text-xs text-slate-300 font-mono bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-800 inline-block">
+                  Công thức Cambridge: (Task 1 × 1 + Task 2 × 2) / 3 = ({mockReport.t1Band.toFixed(1)} × 1 + {mockReport.t2Band.toFixed(1)} × 2) / 3 = {mockReport.rawWeighted?.toFixed(2) || ((mockReport.t1Band + mockReport.t2Band * 2) / 3).toFixed(2)} → <span className="text-amber-400 font-bold">Band {mockReport.finalOverall.toFixed(1)}</span>
+                </div>
               </div>
 
-              <div className="flex space-x-3 text-xs">
-                <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-center">
-                  <span className="text-slate-400 block">Task 1 (Report)</span>
-                  <strong className="text-base text-blue-400 font-bold">Band {mockReport.t1Band.toFixed(1)}</strong>
-                  <span className="text-[10px] text-slate-400 block">{mockReport.t1Words} từ</span>
+              {/* Task 1 & Task 2 Quick Band Pills */}
+              <div className="flex items-center gap-3">
+                <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 text-center min-w-[110px]">
+                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">Task 1 (1/3)</span>
+                  <strong className="text-xl text-blue-400 font-black block">Band {mockReport.t1Band.toFixed(1)}</strong>
+                  <span className="text-[10px] text-slate-400 block">{mockReport.t1Words} từ {mockReport.t1Words >= 150 ? '✓' : '⚠️'}</span>
                 </div>
-                <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-center">
-                  <span className="text-slate-400 block">Task 2 (Essay)</span>
-                  <strong className="text-base text-red-400 font-bold">Band {mockReport.t2Band.toFixed(1)}</strong>
-                  <span className="text-[10px] text-slate-400 block">{mockReport.t2Words} từ</span>
+                <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 text-center min-w-[110px]">
+                  <span className="text-[11px] text-slate-400 font-semibold block uppercase">Task 2 (2/3)</span>
+                  <strong className="text-xl text-red-400 font-black block">Band {mockReport.t2Band.toFixed(1)}</strong>
+                  <span className="text-[10px] text-slate-400 block">{mockReport.t2Words} từ {mockReport.t2Words >= 250 ? '✓' : '⚠️'}</span>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-                <h4 className="font-bold text-slate-900 text-sm">Nhận xét Task 1:</h4>
-                <p className="text-slate-600 leading-relaxed font-sans">{mockReport.eval1?.criteria?.tr?.feedback}</p>
+            {/* Diagnostic Sub-tabs */}
+            <div className="flex items-center space-x-1.5 border-b border-slate-200 pb-2 text-xs overflow-x-auto no-scrollbar">
+              <button
+                onClick={() => setReportTab('overview')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all shrink-0 flex items-center space-x-1.5 cursor-pointer ${
+                  reportTab === 'overview'
+                    ? 'bg-slate-900 text-white shadow-2xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                <BarChart2 className="w-3.5 h-3.5" />
+                <span>📊 Tổng Quan & Phân Tích Chiến Lược</span>
+              </button>
+
+              <button
+                onClick={() => setReportTab('task1')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all shrink-0 flex items-center space-x-1.5 cursor-pointer ${
+                  reportTab === 'task1'
+                    ? 'bg-blue-600 text-white shadow-2xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>📈 Chi Tiết Task 1 (Band {mockReport.t1Band.toFixed(1)})</span>
+              </button>
+
+              <button
+                onClick={() => setReportTab('task2')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all shrink-0 flex items-center space-x-1.5 cursor-pointer ${
+                  reportTab === 'task2'
+                    ? 'bg-red-600 text-white shadow-2xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>📝 Chi Tiết Task 2 (Band {mockReport.t2Band.toFixed(1)})</span>
+              </button>
+
+              <button
+                onClick={() => setReportTab('essays')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all shrink-0 flex items-center space-x-1.5 cursor-pointer ${
+                  reportTab === 'essays'
+                    ? 'bg-emerald-600 text-white shadow-2xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>📄 Xem Lại Cả 2 Bài Viết Đã Nộp</span>
+              </button>
+            </div>
+
+            {/* TAB 1: OVERVIEW & STRATEGIC ADVICE */}
+            {reportTab === 'overview' && (
+              <div className="space-y-4 text-xs">
+                {/* Executive Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block">Kỹ Năng Dẫn Điểm</span>
+                    <strong className="text-sm font-bold text-slate-900 block">
+                      {mockReport.executiveSummary?.strongerTask || (mockReport.t1Band > mockReport.t2Band ? 'Task 1' : 'Task 2')}
+                    </strong>
+                    <p className="text-[11px] text-slate-500">
+                      {mockReport.t1Band !== mockReport.t2Band
+                        ? `Chênh lệch ${Math.abs(mockReport.t1Band - mockReport.t2Band).toFixed(1)} band giữa 2 phần thi.`
+                        : 'Điểm số cả hai task cân bằng tuyệt đối.'}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block">Kiểm Soát Dung Lượng</span>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center justify-between">
+                        <span>Task 1 (150w):</span>
+                        <span className={`font-bold ${mockReport.t1Words >= 150 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {mockReport.t1Words} từ ({mockReport.t1Words >= 150 ? 'Đạt' : 'Thiếu ' + (150 - mockReport.t1Words)})
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Task 2 (250w):</span>
+                        <span className={`font-bold ${mockReport.t2Words >= 250 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {mockReport.t2Words} từ ({mockReport.t2Words >= 250 ? 'Đạt' : 'Thiếu ' + (250 - mockReport.t2Words)})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block">Nhịp Độ Thời Gian (Pacing)</span>
+                    <p className="text-[11px] text-slate-700 leading-relaxed">
+                      {mockReport.pacingFeedback || 'Đã phân bổ thời gian hợp lý cho cả 2 phần thi.'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Cambridge Weighting Strategy Callout */}
+                <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-950 space-y-1.5">
+                  <div className="flex items-center space-x-2 font-bold text-xs text-amber-900">
+                    <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>Chiến Lược Tối Ưu TRF từ Giám Khảo Khảo Thí:</span>
+                  </div>
+                  <p className="text-xs text-amber-900/90 leading-relaxed">
+                    {mockReport.executiveSummary?.combinedAdvice || 'Task 2 quyết định 66.7% kết quả cuối cùng. Khi luyện đề, hãy ưu tiên hoàn thiện cấu trúc lập luận Task 2 trước, sau đó rèn luyện tốc độ hoàn thành Task 1 dưới 20 phút.'}
+                  </p>
+                </div>
+
+                {/* Comparative Criteria Table */}
+                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
+                  <h4 className="font-bold text-slate-900 text-sm flex items-center space-x-1.5">
+                    <Award className="w-4 h-4 text-red-600" />
+                    <span>Đối Chiếu 4 Tiêu Chí Chấm Điểm Cambridge (Task 1 vs Task 2)</span>
+                  </h4>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 text-slate-500 text-[11px]">
+                          <th className="py-2 px-3 font-semibold">Tiêu Chí Khảo Thí</th>
+                          <th className="py-2 px-3 font-semibold text-blue-700">Task 1: Report</th>
+                          <th className="py-2 px-3 font-semibold text-red-700">Task 2: Essay</th>
+                          <th className="py-2 px-3 font-semibold">Tác Động Lên Điểm Overall</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        <tr>
+                          <td className="py-2.5 px-3 font-bold text-slate-800">Task Achievement / Response (TA/TR)</td>
+                          <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.tr?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.tr?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 text-slate-600">Overview chuẩn vs Luận điểm cân bằng</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2.5 px-3 font-bold text-slate-800">Coherence & Cohesion (CC)</td>
+                          <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.cc?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.cc?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 text-slate-600">Mạch văn logic & liên kết đoạn</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2.5 px-3 font-bold text-slate-800">Lexical Resource (LR)</td>
+                          <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.lr?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.lr?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 text-slate-600">Từ vựng học thuật & cụm collocations</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2.5 px-3 font-bold text-slate-800">Grammatical Range & Accuracy (GRA)</td>
+                          <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.gra?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.gra?.band?.toFixed(1) || '--'}</td>
+                          <td className="py-2.5 px-3 text-slate-600">Độ chuẩn xác ngữ pháp & câu phức</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-              <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-                <h4 className="font-bold text-slate-900 text-sm">Nhận xét Task 2:</h4>
-                <p className="text-slate-600 leading-relaxed font-sans">{mockReport.eval2?.criteria?.tr?.feedback}</p>
+            )}
+
+            {/* TAB 2: TASK 1 DEEP DIVE */}
+            {reportTab === 'task1' && (
+              <div className="space-y-4 text-xs">
+                <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-blue-700 uppercase block">Đề thi Task 1:</span>
+                    <h4 className="font-bold text-sm text-blue-950">{currentTask1.title}</h4>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xl font-black text-blue-700 block">Band {mockReport.t1Band.toFixed(1)}</span>
+                    <span className="text-[10px] text-blue-600 font-medium">{mockReport.t1Words} từ ({mockReport.t1Words >= 150 ? 'Đạt chuẩn' : 'Dưới chuẩn'})</span>
+                  </div>
+                </div>
+
+                {/* 4 Criteria Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {/* TA */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Task Achievement (TA)</span>
+                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">
+                        Band {mockReport.eval1?.criteria?.tr?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval1?.criteria?.tr?.feedback}</p>
+                  </div>
+
+                  {/* CC */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Coherence & Cohesion (CC)</span>
+                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">
+                        Band {mockReport.eval1?.criteria?.cc?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval1?.criteria?.cc?.feedback}</p>
+                  </div>
+
+                  {/* LR */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Lexical Resource (LR)</span>
+                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">
+                        Band {mockReport.eval1?.criteria?.lr?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval1?.criteria?.lr?.feedback}</p>
+                  </div>
+
+                  {/* GRA */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Grammatical Range (GRA)</span>
+                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">
+                        Band {mockReport.eval1?.criteria?.gra?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval1?.criteria?.gra?.feedback}</p>
+                  </div>
+                </div>
+
+                {/* Top 3 Action Plan */}
+                {mockReport.eval1?.actionPlan && (
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <h5 className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
+                      <Target className="w-4 h-4 text-blue-600" />
+                      <span>Top 3 Hành Động Cải Thiện Cho Task 1:</span>
+                    </h5>
+                    <ul className="space-y-1.5 text-slate-700 text-[11px]">
+                      {mockReport.eval1.actionPlan.priority1 && <li>• <strong>Ưu tiên 1:</strong> {mockReport.eval1.actionPlan.priority1}</li>}
+                      {mockReport.eval1.actionPlan.priority2 && <li>• <strong>Ưu tiên 2:</strong> {mockReport.eval1.actionPlan.priority2}</li>}
+                      {mockReport.eval1.actionPlan.priority3 && <li>• <strong>Ưu tiên 3:</strong> {mockReport.eval1.actionPlan.priority3}</li>}
+                    </ul>
+                  </div>
+                )}
               </div>
+            )}
+
+            {/* TAB 3: TASK 2 DEEP DIVE */}
+            {reportTab === 'task2' && (
+              <div className="space-y-4 text-xs">
+                <div className="p-4 rounded-xl bg-red-50/70 border border-red-200 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold text-red-700 uppercase block">Đề thi Task 2:</span>
+                    <h4 className="font-bold text-sm text-red-950">{currentTask2.title}</h4>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xl font-black text-red-700 block">Band {mockReport.t2Band.toFixed(1)}</span>
+                    <span className="text-[10px] text-red-600 font-medium">{mockReport.t2Words} từ ({mockReport.t2Words >= 250 ? 'Đạt chuẩn' : 'Dưới chuẩn'})</span>
+                  </div>
+                </div>
+
+                {/* 4 Criteria Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {/* TR */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Task Response (TR)</span>
+                      <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[11px]">
+                        Band {mockReport.eval2?.criteria?.tr?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval2?.criteria?.tr?.feedback}</p>
+                  </div>
+
+                  {/* CC */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Coherence & Cohesion (CC)</span>
+                      <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[11px]">
+                        Band {mockReport.eval2?.criteria?.cc?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval2?.criteria?.cc?.feedback}</p>
+                  </div>
+
+                  {/* LR */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Lexical Resource (LR)</span>
+                      <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[11px]">
+                        Band {mockReport.eval2?.criteria?.lr?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval2?.criteria?.lr?.feedback}</p>
+                  </div>
+
+                  {/* GRA */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                      <span className="font-bold text-slate-800">Grammatical Range (GRA)</span>
+                      <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[11px]">
+                        Band {mockReport.eval2?.criteria?.gra?.band?.toFixed(1) || '--'}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{mockReport.eval2?.criteria?.gra?.feedback}</p>
+                  </div>
+                </div>
+
+                {/* Top 3 Action Plan */}
+                {mockReport.eval2?.actionPlan && (
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <h5 className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
+                      <Target className="w-4 h-4 text-red-600" />
+                      <span>Top 3 Hành Động Cải Thiện Cho Task 2:</span>
+                    </h5>
+                    <ul className="space-y-1.5 text-slate-700 text-[11px]">
+                      {mockReport.eval2.actionPlan.priority1 && <li>• <strong>Ưu tiên 1:</strong> {mockReport.eval2.actionPlan.priority1}</li>}
+                      {mockReport.eval2.actionPlan.priority2 && <li>• <strong>Ưu tiên 2:</strong> {mockReport.eval2.actionPlan.priority2}</li>}
+                      {mockReport.eval2.actionPlan.priority3 && <li>• <strong>Ưu tiên 3:</strong> {mockReport.eval2.actionPlan.priority3}</li>}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 4: FULL ESSAYS REVIEW */}
+            {reportTab === 'essays' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                {/* Task 1 Review */}
+                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2.5 flex flex-col">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div>
+                      <span className="text-[10px] font-bold text-blue-600 uppercase">Bài Làm Task 1</span>
+                      <h5 className="font-bold text-slate-900">{currentTask1.title}</h5>
+                    </div>
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-bold">
+                      {mockReport.t1Words} từ
+                    </span>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg text-slate-700 whitespace-pre-wrap leading-relaxed font-sans flex-1 max-h-96 overflow-y-auto">
+                    {t1Text || 'Không có bài làm nào được nộp cho Task 1.'}
+                  </div>
+                </div>
+
+                {/* Task 2 Review */}
+                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2.5 flex flex-col">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div>
+                      <span className="text-[10px] font-bold text-red-600 uppercase">Bài Làm Task 2</span>
+                      <h5 className="font-bold text-slate-900">{currentTask2.title}</h5>
+                    </div>
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-bold">
+                      {mockReport.t2Words} từ
+                    </span>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg text-slate-700 whitespace-pre-wrap leading-relaxed font-sans flex-1 max-h-96 overflow-y-auto">
+                    {t2Text || 'Không có bài làm nào được nộp cho Task 2.'}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-200">
+              <button
+                onClick={handleResetWritingMock}
+                className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all active:scale-95 cursor-pointer flex items-center space-x-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Làm Ca Thi Thử Mới (Reset)</span>
+              </button>
+              <button
+                onClick={onClose}
+                className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+              >
+                Đóng Phòng Thi
+              </button>
             </div>
           </div>
         )}
@@ -1261,35 +1868,116 @@ export default function MockTestModal({
         {/* WRITING MOCK: VIEW 2: LIVE 60-MINUTE WORKSPACE               */}
         {/* ============================================================ */}
         {isTestStarted && !mockReport && (
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden relative">
             
+            {/* Early Submit Safeguard Modal Overlay */}
+            {showSubmitSafeguard && (
+              <div className="absolute inset-0 z-40 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl border border-red-200 space-y-4 animate-in fade-in zoom-in-95 duration-150 text-left">
+                  <div className="flex items-center space-x-2.5 text-red-600">
+                    <AlertCircle className="w-6 h-6 shrink-0" />
+                    <h4 className="font-bold text-base text-slate-900">Cảnh Báo Nộp Bài Khi Chưa Đủ Từ!</h4>
+                  </div>
+                  
+                  <div className="space-y-2 text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <div>
+                      Thời gian ca thi còn lại: <strong className="text-red-600 font-mono font-bold">{formatTimer(timeRemaining)}</strong>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Task 1 ({t1Words}/150 từ):</span>
+                      <span className={`font-bold ${t1Words >= 150 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {t1Words >= 150 ? '✓ Đạt chuẩn' : `⚠️ Thiếu ${150 - t1Words} từ`}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Task 2 ({t2Words}/250 từ):</span>
+                      <span className={`font-bold ${t2Words >= 250 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {t2Words >= 250 ? '✓ Đạt chuẩn' : `⚠️ Thiếu ${250 - t2Words} từ`}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-red-700 pt-1 border-t border-slate-200">
+                      Theo quy chế khảo thí Cambridge, bài viết thiếu dung lượng tối thiểu sẽ bị trừ điểm rất nặng ở tiêu chí Task Response / Achievement (khống chế Band 2.0 - 5.0).
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-1">
+                    <button
+                      onClick={() => setShowSubmitSafeguard(false)}
+                      className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
+                    >
+                      Tiếp Tục Viết Thêm (Khuyên dùng)
+                    </button>
+                    <button
+                      onClick={handleAutoSubmitWriting}
+                      className="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition-all active:scale-95 cursor-pointer"
+                    >
+                      Vẫn Nộp Bài
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pacing Advice Bar */}
+            <div className="bg-slate-900 text-slate-300 px-4 py-1.5 text-[11px] flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center space-x-2">
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
+                <span>
+                  {timeRemaining > 2400
+                    ? '⏱️ Chặng 1 (20 phút đầu): Khuyến nghị tập trung hoàn thành Task 1 (tối thiểu 150 từ)'
+                    : timeRemaining > 300
+                    ? '⏱️ Chặng 2 (35-40 phút tiếp theo): Tập trung dồn sức cho Task 2 (tối thiểu 250 từ, chiếm 2/3 tổng điểm)'
+                    : '⏱️ Chặng 3 (5 phút cuối): Dành thời gian rà soát chính tả, mạo từ và tính liên kết câu'}
+                </span>
+              </div>
+              <span className="text-[10px] text-emerald-400 font-semibold hidden sm:inline">
+                💾 Tự động lưu tiến độ
+              </span>
+            </div>
+
             {/* Task Switcher & Mobile View Toggle Bar */}
             <div className="bg-slate-100 border-b border-slate-200 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center space-x-1.5 sm:space-x-2">
                 <button
                   onClick={() => setActiveTaskTab(1)}
-                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1 sm:space-x-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                     activeTaskTab === 1 
                       ? 'bg-blue-600 text-white shadow-2xs' 
                       : 'bg-white text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   <BarChart2 className="w-3.5 h-3.5" />
-                  <span className="sm:hidden">T1 ({t1Words}w)</span>
-                  <span className="hidden sm:inline">Task 1 ({t1Words}/150 từ)</span>
+                  <span>Task 1</span>
+                  <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-bold ${
+                    t1Words >= 150 
+                      ? (activeTaskTab === 1 ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-800')
+                      : t1Words >= 120
+                      ? (activeTaskTab === 1 ? 'bg-amber-400 text-slate-900' : 'bg-amber-100 text-amber-800')
+                      : (activeTaskTab === 1 ? 'bg-blue-700 text-white' : 'bg-slate-200 text-slate-700')
+                  }`}>
+                    {t1Words}/150w {t1Words >= 150 ? '✓' : ''}
+                  </span>
                 </button>
 
                 <button
                   onClick={() => setActiveTaskTab(2)}
-                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1 sm:space-x-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                     activeTaskTab === 2 
                       ? 'bg-red-600 text-white shadow-2xs' 
                       : 'bg-white text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span className="sm:hidden">T2 ({t2Words}w)</span>
-                  <span className="hidden sm:inline">Task 2 ({t2Words}/250 từ)</span>
+                  <span>Task 2</span>
+                  <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono font-bold ${
+                    t2Words >= 250 
+                      ? (activeTaskTab === 2 ? 'bg-emerald-500 text-white' : 'bg-emerald-100 text-emerald-800')
+                      : t2Words >= 200
+                      ? (activeTaskTab === 2 ? 'bg-amber-400 text-slate-900' : 'bg-amber-100 text-amber-800')
+                      : (activeTaskTab === 2 ? 'bg-red-700 text-white' : 'bg-slate-200 text-slate-700')
+                  }`}>
+                    {t2Words}/250w {t2Words >= 250 ? '✓' : ''}
+                  </span>
                 </button>
               </div>
 
@@ -1314,9 +2002,9 @@ export default function MockTestModal({
               </div>
 
               <button
-                onClick={handleAutoSubmitWriting}
+                onClick={confirmSubmitWriting}
                 disabled={isGrading}
-                className="flex items-center space-x-1.5 px-3 sm:px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all active:scale-95 disabled:opacity-50 text-[11px] sm:text-xs"
+                className="flex items-center space-x-1.5 px-3.5 sm:px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all active:scale-95 disabled:opacity-50 text-[11px] sm:text-xs cursor-pointer"
               >
                 {isGrading ? <Sparkles className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                 <span>{isGrading ? 'Đang Chấm...' : 'Nộp Bài Thi'}</span>
@@ -1333,7 +2021,12 @@ export default function MockTestModal({
                 {activeTaskTab === 1 ? (
                   <>
                     <div className="space-y-1">
-                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">IELTS Task 1</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">IELTS Task 1</span>
+                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold uppercase">
+                          Trọng số 1/3 điểm
+                        </span>
+                      </div>
                       <h3 className="font-bold text-base text-slate-900">{currentTask1.title}</h3>
                       <p className="text-xs text-slate-700 whitespace-pre-line leading-relaxed">{currentTask1.prompt}</p>
                     </div>
@@ -1343,7 +2036,12 @@ export default function MockTestModal({
                 ) : (
                   <>
                     <div className="space-y-1">
-                      <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 text-xs font-bold">IELTS Task 2</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 text-xs font-bold">IELTS Task 2</span>
+                        <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-black uppercase">
+                          Trọng số 2/3 điểm (Gấp đôi)
+                        </span>
+                      </div>
                       <h3 className="font-bold text-base text-slate-900">{currentTask2.title}</h3>
                       <p className="text-xs text-slate-700 whitespace-pre-line leading-relaxed">{currentTask2.prompt}</p>
                     </div>
@@ -1356,15 +2054,24 @@ export default function MockTestModal({
                 mobileWritingView === 'editor' ? 'flex' : 'hidden lg:flex'
               }`}>
                 <div className="flex items-center justify-between text-xs text-slate-500">
-                  <span>Số từ hiện tại: <strong>{activeTaskTab === 1 ? t1Words : t2Words} từ</strong></span>
-                  <span>Tối thiểu: {activeTaskTab === 1 ? '150 từ' : '250 từ'}</span>
+                  <div className="flex items-center space-x-2">
+                    <span>Số từ hiện tại:</span>
+                    <strong className={`font-mono text-sm ${
+                      (activeTaskTab === 1 ? t1Words >= 150 : t2Words >= 250) ? 'text-emerald-600' : 'text-slate-800'
+                    }`}>
+                      {activeTaskTab === 1 ? t1Words : t2Words} từ
+                    </strong>
+                  </div>
+                  <span className="text-[11px] text-slate-400">
+                    Mục tiêu: {activeTaskTab === 1 ? '150+ từ (khoảng 20p)' : '250+ từ (khoảng 40p)'}
+                  </span>
                 </div>
 
                 <textarea
                   value={activeTaskTab === 1 ? t1Text : t2Text}
                   onChange={(e) => activeTaskTab === 1 ? setT1Text(e.target.value) : setT2Text(e.target.value)}
-                  placeholder={`Gõ bài viết cho Task ${activeTaskTab} tại đây...`}
-                  className="flex-1 w-full p-4 rounded-xl border border-slate-200 bg-white text-sm font-sans leading-relaxed focus:outline-none resize-none min-h-[300px]"
+                  placeholder={`Gõ bài viết cho Task ${activeTaskTab} tại đây... Toàn bộ tiến độ sẽ được tự động sao lưu an toàn.`}
+                  className="flex-1 w-full p-4 rounded-xl border border-slate-200 bg-white text-sm font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-500/20 resize-none min-h-[300px]"
                 />
               </div>
 
