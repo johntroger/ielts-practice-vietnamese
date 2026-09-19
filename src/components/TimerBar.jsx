@@ -25,7 +25,7 @@ export default function TimerBar({
   return (
     <footer className="sticky bottom-0 z-30 shadow-xl flex flex-col">
       {/* 1. Main Timer & Submit Bar */}
-      <div className="bg-slate-900 text-white px-3 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
+      <div className="bg-slate-900 text-white px-3 sm:px-4 pt-2 sm:pt-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
         
         {/* Timer Controls */}
         <div className="flex items-center space-x-2 sm:space-x-3">

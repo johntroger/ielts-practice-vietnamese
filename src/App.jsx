@@ -620,7 +620,7 @@ export default function App() {
 
       {/* 1.5 Global Gemini API Key Reminder Banner (Active across ALL 4 Skills: Writing, Reading, Listening, Speaking) */}
       {!apiKey && (
-        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-slate-950 px-3 sm:px-6 py-2 flex items-center justify-between gap-2 shadow-xs shrink-0 z-30">
+        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-slate-950 px-3 sm:px-6 py-2 flex items-center justify-between gap-2 shadow-xs shrink-0 z-20">
           <div className="flex items-center space-x-2 min-w-0">
             <div className="p-1 rounded-md bg-white/20 text-white shrink-0">
               <Sparkles className="w-4 h-4" />

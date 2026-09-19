@@ -561,7 +561,7 @@ export default function Navbar({
       {/* MOBILE DRAWER */}
       {isMobileDrawerOpen && (
         <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end">
-          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto flex flex-col justify-between">
+          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto overscroll-contain flex flex-col justify-between pb-[max(2rem,env(safe-area-inset-bottom))]">
             <div className="space-y-4">
               
               {/* User Bar in Drawer */}

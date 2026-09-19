@@ -126,7 +126,7 @@ export default function QuestionPaletteBar({
   };
 
   return (
-    <div className="bg-white border-t border-slate-200 px-2.5 sm:px-6 py-1.5 sm:py-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-1.5 sm:gap-3 shadow-lg shrink-0 sticky bottom-0 z-20">
+    <div className="bg-white/95 backdrop-blur-xs border-t border-slate-200 px-2.5 sm:px-6 pt-1.5 sm:pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-1.5 sm:gap-3 shadow-lg shrink-0 sticky bottom-0 z-20">
       
       {/* Mobile Top Row / Desktop Left: Progress and Quick Mobile Action */}
       <div className="flex items-center justify-between gap-2 shrink-0">
