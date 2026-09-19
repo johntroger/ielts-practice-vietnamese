@@ -11,7 +11,12 @@ import {
   BarChart2, 
   ChevronDown,
   Info,
-  Bookmark
+  Bookmark,
+  ArrowRight,
+  Plus,
+  Check,
+  RotateCcw,
+  ListOrdered
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 
@@ -30,6 +35,44 @@ export default function EditorPane({
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
   const [activeTab, setActiveTab] = useState('essay'); // 'essay' | 'outline'
   const [showParagraphDetails, setShowParagraphDetails] = useState(false);
+  const [outlineMode, setOutlineMode] = useState('scaffold'); // 'scaffold' | 'raw'
+  const isTask1 = task?.taskNumber === 1 || task?.isTask1;
+  const [scaffold, setScaffold] = useState({
+    intro: '',
+    overviewOrThesis: '',
+    body1: '',
+    body2: '',
+    conclusion: ''
+  });
+  const [scaffoldInserted, setScaffoldInserted] = useState(false);
+
+  const handleScaffoldChange = (field, val) => {
+    setScaffold(prev => ({ ...prev, [field]: val }));
+  };
+
+  const handleInsertOutlineIntoEssay = () => {
+    const parts = [];
+    if (scaffold.intro.trim()) parts.push(scaffold.intro.trim());
+    if (scaffold.overviewOrThesis.trim()) parts.push(scaffold.overviewOrThesis.trim());
+    if (scaffold.body1.trim()) parts.push(scaffold.body1.trim());
+    if (scaffold.body2.trim()) parts.push(scaffold.body2.trim());
+    if (!isTask1 && scaffold.conclusion.trim()) parts.push(scaffold.conclusion.trim());
+
+    if (parts.length === 0) {
+      alert('Vui lòng nhập ít nhất 1 ý trong khung dàn ý trước khi chèn vào bài viết.');
+      return;
+    }
+
+    const generatedText = parts.join('\n\n');
+    if (!essayText.trim()) {
+      setEssayText(generatedText);
+    } else {
+      setEssayText(prev => prev + '\n\n' + generatedText);
+    }
+    setScaffoldInserted(true);
+    setTimeout(() => setScaffoldInserted(false), 2500);
+    setActiveTab('essay');
+  };
 
   // Compute live analytics
   const paragraphs = analyzeParagraphs(essayText, task.taskNumber);
@@ -165,22 +208,196 @@ export default function EditorPane({
             />
           </div>
         ) : (
-          <div className="flex-1 flex flex-col h-full min-h-[480px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-blue-200 shadow-2xs overflow-hidden p-4 space-y-2">
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="text-xs font-bold text-blue-900 flex items-center space-x-1">
-                <Layers className="w-4 h-4 text-blue-600" />
-                <span>Bản Nháp & Dàn Ý Cá Nhân (Scratchpad)</span>
-              </span>
-              <span className="text-[11px] text-slate-400">
-                Ghi chú không tính vào bài nộp chính thức
-              </span>
+          <div className="flex-1 flex flex-col h-full min-h-[480px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-indigo-200 shadow-2xs overflow-hidden p-3.5 sm:p-5 space-y-3">
+            {/* Header & Mode Switcher */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+              <div className="flex items-center space-x-2">
+                <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900">
+                    Khung Dàn Ý Tương Tác & Bản Nháp
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {isTask1 ? 'Dàn ý Task 1: Mở bài, Overview xu hướng & Thân bài đối chiếu' : 'Dàn ý Task 2: Mô hình P.E.E.L & Thesis Statement chuẩn Cambridge'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Mode Toggle */}
+              <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg text-xs self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setOutlineMode('scaffold')}
+                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-md font-semibold transition-all ${
+                    outlineMode === 'scaffold'
+                      ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ListOrdered className="w-3.5 h-3.5" />
+                  <span>Khung PEEL chuẩn</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOutlineMode('raw')}
+                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-md font-semibold transition-all ${
+                    outlineMode === 'raw'
+                      ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span>Ghi chú tự do</span>
+                </button>
+              </div>
             </div>
-            <textarea
-              value={outlineText}
-              onChange={(e) => setOutlineText(e.target.value)}
-              placeholder="Ghi nhanh các ý tưởng, từ vựng hay hoặc dàn ý PEEL trước khi viết bài chính..."
-              className="flex-1 w-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] p-3 resize-none focus:outline-none text-slate-700 font-mono text-sm leading-relaxed"
-            />
+
+            {outlineMode === 'scaffold' ? (
+              <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                {/* 1. Introduction */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-800">
+                      1. Mở bài (Introduction)
+                    </label>
+                    <span className="text-[10px] text-slate-400">Paraphrase đề bài</span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={scaffold.intro}
+                    onChange={(e) => handleScaffoldChange('intro', e.target.value)}
+                    placeholder={isTask1 ? "Ví dụ: The provided line graph illustrates the consumption of three types of fast food in the UK from 1990 to 2010..." : "Ví dụ: It is often argued that universities should focus on practical career skills rather than theoretical knowledge..."}
+                    className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
+                  />
+                </div>
+
+                {/* 2. Overview (Task 1) or Thesis Statement (Task 2) */}
+                <div className="p-3 rounded-xl bg-indigo-50/40 border border-indigo-100 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-indigo-950">
+                      {isTask1 ? '2. Đoạn Tổng Quan (Overview - Bắt buộc Band 7.0+)' : '2. Luận Điểm Cốt Lõi (Thesis Statement)'}
+                    </label>
+                    <span className="text-[10px] text-indigo-600 font-medium">
+                      {isTask1 ? 'Không đưa số liệu chi tiết' : 'Lập trường xuyên suốt'}
+                    </span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={scaffold.overviewOrThesis}
+                    onChange={(e) => handleScaffoldChange('overviewOrThesis', e.target.value)}
+                    placeholder={isTask1 ? "Bắt đầu bằng: 'Overall, it is clear that pizza experienced a marked upward trend, whereas fish and chips saw a dramatic decline...'" : "Ví dụ: While academic theory has certain merits, I firmly agree that modern education must prioritize vocational readiness..."}
+                    className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-indigo-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
+                  />
+                </div>
+
+                {/* 3. Body 1 */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-800">
+                      {isTask1 ? '3. Thân bài 1: Nhóm đối tượng / số liệu thứ nhất' : '3. Thân bài 1 (Mô hình P.E.E.L)'}
+                    </label>
+                    <span className="text-[10px] text-slate-400">
+                      {isTask1 ? 'Chọn lọc đặc điểm & so sánh' : 'Point -> Explain -> Example'}
+                    </span>
+                  </div>
+                  <textarea
+                    rows={3}
+                    value={scaffold.body1}
+                    onChange={(e) => handleScaffoldChange('body1', e.target.value)}
+                    placeholder={isTask1 ? "Tập trung phân tích các số liệu cao nhất, mốc khởi đầu, đỉnh điểm và lồng ghép so sánh tương quan..." : "P: Luận điểm thứ nhất...\nE: Giải thích cơ chế vì sao...\nE: Dẫn chứng hoặc ví dụ cụ thể..."}
+                    className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
+                  />
+                </div>
+
+                {/* 4. Body 2 */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-800">
+                      {isTask1 ? '4. Thân bài 2: Nhóm đối tượng / số liệu thứ hai' : '4. Thân bài 2 (Mô hình P.E.E.L)'}
+                    </label>
+                    <span className="text-[10px] text-slate-400">
+                      {isTask1 ? 'Phân tích các đối tượng còn lại' : 'Point -> Explain -> Example'}
+                    </span>
+                  </div>
+                  <textarea
+                    rows={3}
+                    value={scaffold.body2}
+                    onChange={(e) => handleScaffoldChange('body2', e.target.value)}
+                    placeholder={isTask1 ? "Phân tích các xu hướng đối lập hoặc các nhóm số liệu còn lại với liên từ so sánh (in contrast, conversely)..." : "P: Luận điểm phản biện hoặc khía cạnh thứ hai...\nE: Giải thích sâu hơn...\nE: Dẫn chứng hoặc hệ quả..."}
+                    className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
+                  />
+                </div>
+
+                {/* 5. Conclusion (Task 2 only) */}
+                {!isTask1 && (
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-slate-800">
+                        5. Kết bài (Conclusion)
+                      </label>
+                      <span className="text-[10px] text-slate-400">Đúc kết lập trường</span>
+                    </div>
+                    <textarea
+                      rows={2}
+                      value={scaffold.conclusion}
+                      onChange={(e) => handleScaffoldChange('conclusion', e.target.value)}
+                      placeholder="Bắt đầu bằng: 'In conclusion, although theoretical studies maintain importance, practical training ultimately provides greater societal benefits...'"
+                      className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
+                    />
+                  </div>
+                )}
+
+                {/* Scaffold Action Bar */}
+                <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-[11px] text-slate-500">
+                    💡 Dàn ý rõ ràng giúp đạt tối thiểu <strong>Band 7.0 Task Response</strong>.
+                  </span>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={handleInsertOutlineIntoEssay}
+                      className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-xs transition-colors cursor-pointer"
+                    >
+                      {scaffoldInserted ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-300" />
+                          <span>Đã chèn vào bài!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Chèn dàn ý vào Bài Viết</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-1 flex flex-col space-y-2">
+                <textarea
+                  value={outlineText}
+                  onChange={(e) => setOutlineText(e.target.value)}
+                  placeholder="Ghi nhanh các ý tưởng, từ vựng hay hoặc dàn ý tự do trước khi viết bài chính..."
+                  className="flex-1 w-full min-h-[380px] p-3 resize-none focus:outline-none text-slate-700 font-mono text-sm leading-relaxed rounded-lg border border-slate-200"
+                />
+                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t">
+                  <span>Ghi chú tự do không tính vào bài nộp chính thức</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!outlineText.trim()) return;
+                      setEssayText(prev => prev ? prev + '\n\n' + outlineText : outlineText);
+                      setActiveTab('essay');
+                    }}
+                    className="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer"
+                  >
+                    Chèn nội dung nháp vào bài viết →
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

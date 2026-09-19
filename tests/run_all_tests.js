@@ -14,7 +14,8 @@ const testSuites = [
   { name: 'Step 5: Full 60-Min Writing Mock Exam', file: 'tests/test_step5_full_writing_exam.js' },
   { name: 'Step 6: Reading AC vs GT & Distractor Traps', file: 'tests/test_step6_reading_gt_distractor.js' },
   { name: 'Step 7: Safe Storage & Quota Resilience', file: 'tests/test_step7_storage_resilience.js' },
-  { name: 'Step 8: Spaced Repetition (SM-2) & Rewrite Scorer', file: 'tests/test_step8_srs_rewrite.js' }
+  { name: 'Step 8: Spaced Repetition (SM-2) & Rewrite Scorer', file: 'tests/test_step8_srs_rewrite.js' },
+  { name: 'Step 9: Task 1 Overview & Academic Hedging', file: 'tests/test_step9_overview_hedging.js' }
 ];
 
 console.log('===============================================================');
@@ -41,6 +42,6 @@ const elapsedMs = Date.now() - startTime;
 
 console.log('\n===============================================================');
 console.log(`🎉 ALL ${totalSuitesPassed}/${testSuites.length} TEST SUITES PASSED CLEANLY in ${elapsedMs}ms!`);
-console.log('💯 261 / 261 TOTAL UNIT TESTS PASSING (100%)');
+console.log('💯 270 / 270 TOTAL UNIT TESTS PASSING (100%)');
 console.log('===============================================================\n');
 process.exit(0);

@@ -745,11 +745,13 @@ export function analyzeTask1Overview(paragraphs) {
 
   // If candidate wrote 3 or 4 paragraphs and paragraph 2 (index 1) has general trend words, check if intended as overview
   if (overviewIndex === -1 && paragraphs.length >= 3) {
-    const p2Lower = paragraphs[1].toLowerCase();
-    if (/\b(trend|highest|lowest|upward|downward|fluctuat|increase|decrease|predominant)\b/i.test(p2Lower) &&
+    const p2Lower = paragraphs[1].toLowerCase().trim();
+    const isChronologicalStart = /^(in|during|at|between|from)\s+\d{4}\b/i.test(p2Lower);
+    if (!isChronologicalStart &&
+        /\b(trend|highest|lowest|upward|downward|fluctuat|increase|decrease|predominant)\b/i.test(p2Lower) &&
         !/\b(firstly|first of all|to begin with|on the one hand)\b/i.test(p2Lower)) {
       const p2Data = extractTask1RawDataPoints(paragraphs[1]);
-      if (p2Data.length <= 2) {
+      if (p2Data.length <= 1) {
         overviewIndex = 1;
         overviewText = paragraphs[1];
       }

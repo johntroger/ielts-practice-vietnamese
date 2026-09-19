@@ -15,7 +15,8 @@ import {
   Zap,
   Target,
   ShieldAlert,
-  Edit3
+  Edit3,
+  AlertCircle
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -406,6 +407,104 @@ export default function FeedbackModal({
                       <span>{evaluation.actionPlan.estimatedBandTarget}</span>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Task 1: Cambridge Overview Gatekeeper Inspector */}
+              {task?.taskNumber === 1 && evaluation.task1OverviewStats && (
+                <div className={`p-4 rounded-xl border transition-all ${
+                  !evaluation.task1OverviewStats.hasOverview
+                    ? 'bg-red-50 border-red-200 text-red-950'
+                    : evaluation.task1OverviewStats.hasRawData
+                    ? 'bg-amber-50 border-amber-200 text-amber-950'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-200/60 pb-2 mb-2">
+                    <div className="flex items-center space-x-2">
+                      {!evaluation.task1OverviewStats.hasOverview ? (
+                        <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+                      ) : evaluation.task1OverviewStats.hasRawData ? (
+                        <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                      ) : (
+                        <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                      )}
+                      <span className="font-bold text-sm">
+                        {!evaluation.task1OverviewStats.hasOverview
+                          ? 'CẢNH BÁO BAREM CAMBRIDGE: THIẾU ĐOẠN TỔNG QUAN (OVERVIEW)'
+                          : evaluation.task1OverviewStats.hasRawData
+                          ? 'BẪY SỐ LIỆU ĐOẠN OVERVIEW: KHỐNG CHẾ TRẦN BAND 5.5 - 6.0'
+                          : 'ĐOẠN TỔNG QUAN (OVERVIEW) ĐẠT CHUẨN KHẢO THÍ (BAND 7.0+)'}
+                      </span>
+                    </div>
+                    <span className={`px-2.5 py-0.5 rounded text-[11px] font-extrabold ${
+                      !evaluation.task1OverviewStats.hasOverview
+                        ? 'bg-red-200 text-red-900'
+                        : evaluation.task1OverviewStats.hasRawData
+                        ? 'bg-amber-200 text-amber-900'
+                        : 'bg-emerald-200 text-emerald-900'
+                    }`}>
+                      {!evaluation.task1OverviewStats.hasOverview ? 'Tối đa Band 5.0' : evaluation.task1OverviewStats.hasRawData ? 'Tối đa Band 6.0' : 'Band 7.0+'}
+                    </span>
+                  </div>
+                  <p className="text-xs leading-relaxed">
+                    {!evaluation.task1OverviewStats.hasOverview
+                      ? 'Theo quy định chính thức của Cambridge IELTS Task 1, bài viết không có câu hoặc đoạn Overview rõ ràng sẽ bị khống chế điểm Task Achievement ở mức tối đa Band 5.0 (Presents no overview). Hãy luôn mở đầu đoạn tổng quan bằng "Overall, it is clear that..." và nêu 2 đặc điểm cốt lõi nhất.'
+                      : evaluation.task1OverviewStats.hasRawData
+                      ? `Đoạn Overview đã được nhận diện nhưng có chứa số liệu chi tiết cụ thể (${evaluation.task1OverviewStats.rawDataList?.slice(0, 3).join(', ')}). Barem Cambridge quy định Overview chỉ được khái quát xu hướng/điểm đối lập, TUYỆT ĐỐI KHÔNG ĐƯA SỐ LIỆU VỤN VẶT khiến điểm Task Achievement bị chặn ở Band 5.5 - 6.0.`
+                      : 'Đoạn Overview được viết chuẩn mực: Khái quát thành công các xu hướng và đặc điểm chủ đạo của biểu đồ mà không bị sa đà vào số liệu vụn vặt, đáp ứng hoàn hảo tiêu chí Task Achievement Band 7.0+.'}
+                  </p>
+                </div>
+              )}
+
+              {/* Task 2: Academic Hedging & Tentative Language Inspector */}
+              {task?.taskNumber === 2 && evaluation.hedgingStats && (
+                <div className={`p-4 rounded-xl border transition-all ${
+                  evaluation.hedgingStats.hasOvergeneralisation
+                    ? 'bg-red-50/80 border-red-200 text-red-950'
+                    : evaluation.hedgingStats.hedgingCount >= 3
+                    ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
+                    : 'bg-indigo-50/80 border-indigo-200 text-indigo-950'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-200/60 pb-2 mb-2">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-5 h-5 text-indigo-600 shrink-0" />
+                      <span className="font-bold text-sm">
+                        Thước Đo Văn Phong Cẩn Trọng Học Thuật (Academic Hedging)
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-[11px] font-semibold">
+                      <span className="px-2 py-0.5 rounded bg-white/80 border border-slate-200 text-slate-800">
+                        Ngôn ngữ dè dặt: <strong>{evaluation.hedgingStats.hedgingCount}</strong>
+                      </span>
+                      <span className={`px-2 py-0.5 rounded border ${
+                        evaluation.hedgingStats.hasOvergeneralisation 
+                          ? 'bg-red-100 border-red-300 text-red-800' 
+                          : 'bg-emerald-100 border-emerald-300 text-emerald-800'
+                      }`}>
+                        Quy chụp tuyệt đối: <strong>{evaluation.hedgingStats.overgeneralisationCount}</strong>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-xs space-y-1.5 leading-relaxed">
+                    {evaluation.hedgingStats.hasOvergeneralisation ? (
+                      <div>
+                        <p className="font-semibold text-red-900">
+                          ⚠️ Cảnh báo bẫy quy chụp cực đoan (Overgeneralisation - Band 6.0 Ceiling):
+                        </p>
+                        <p className="text-red-800">
+                          Bài viết có phát ngôn khẳng định tuyệt đối (ví dụ: {evaluation.hedgingStats.overgeneralisedStatements?.slice(0, 2).map(s => `'${s}'`).join(', ')}). Trong văn cảnh học thuật quốc tế, giám khảo đánh giá cao tư duy đa chiều và ngôn ngữ dè dặt. Thay vì dùng <em>always, never, undeniable</em>, hãy chuyển sang cấu trúc <em>tends to, appears to, is arguably the case that</em>.
+                        </p>
+                      </div>
+                    ) : evaluation.hedgingStats.hedgingCount >= 3 ? (
+                      <p className="text-emerald-900">
+                        ✨ <strong>Văn phong học thuật chín chắn (Band 7.5+):</strong> Bạn đã sử dụng thành thạo ngôn ngữ dè dặt khách quan ({evaluation.hedgingStats.matchedHedging?.slice(0, 3).map(h => `'${h}'`).join(', ')}), tránh được bẫy khẳng định chủ quan của Band 6.0.
+                      </p>
+                    ) : (
+                      <p className="text-indigo-900">
+                        💡 <strong>Khuyến nghị nâng cấp Band 7.5+:</strong> Các câu lập luận còn hơi trực diện. Hãy lồng ghép thêm 2-3 cấu trúc cẩn trọng như <em>"evidence suggests that"</em>, <em>"is likely to result in"</em> hoặc <em>"tend to be"</em> để tăng sức thuyết phục học thuật.
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
 
