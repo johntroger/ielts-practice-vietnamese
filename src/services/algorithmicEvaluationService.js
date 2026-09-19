@@ -13,7 +13,7 @@
  * 7. Prompt Copying Deduction (Subtracts verbatim phrases >= 5 words).
  */
 
-import { ACADEMIC_THESAURUS } from '../data/academicThesaurus.js';
+import { ACADEMIC_THESAURUS, lookupTopicCollocations, lookupSynonyms } from '../data/academicThesaurus.js';
 import { IELTS_SPELLING_TRAPS } from '../data/vocabGrammarSpellingData.js';
 
 // -------------------------------------------------------------
@@ -933,6 +933,67 @@ export function analyzeTask2Fulfillment(prompt, paragraphs) {
 }
 
 /**
+ * Word Overuse & Repetition Analyzer
+ * Detects frequent, repetitive use of non-stopword academic & everyday terms (>= 4 times)
+ * and provides C1/C2 academic alternative suggestions from ACADEMIC_THESAURUS.
+ * 
+ * @param {string[]} rawWords - Array of lowercase words from the essay
+ * @param {Set<string>} stopwords - Stopwords to ignore
+ * @returns {Object} Overuse diagnostics
+ */
+export function analyzeWordOveruse(rawWords, stopwords = STOPWORDS) {
+  if (!Array.isArray(rawWords) || rawWords.length === 0) {
+    return {
+      hasOveruse: false,
+      overusedWords: [],
+      overuseCount: 0,
+      suggestions: []
+    };
+  }
+
+  const frequencyMap = {};
+  rawWords.forEach(word => {
+    const clean = word.toLowerCase().replace(/[^a-z]/g, '');
+    const isThesaurusWord = Boolean(ACADEMIC_THESAURUS[clean]);
+    if (clean.length >= 4 && (!stopwords.has(clean) || isThesaurusWord)) {
+      frequencyMap[clean] = (frequencyMap[clean] || 0) + 1;
+    }
+  });
+
+  const overusedWords = [];
+  const suggestions = [];
+
+  // Sort by frequency descending
+  const sortedWords = Object.entries(frequencyMap)
+    .filter(([_, count]) => count >= 4)
+    .sort((a, b) => b[1] - a[1]);
+
+  for (const [word, count] of sortedWords) {
+    const thesaurusMatches = lookupSynonyms(word);
+    overusedWords.push({
+      word,
+      count,
+      hasThesaurus: thesaurusMatches.length > 0
+    });
+
+    if (thesaurusMatches.length > 0 && suggestions.length < 5) {
+      suggestions.push({
+        word,
+        count,
+        alternatives: thesaurusMatches.slice(0, 4)
+      });
+    }
+  }
+
+  return {
+    hasOveruse: overusedWords.length > 0,
+    overusedWords,
+    overuseCount: overusedWords.length,
+    suggestions
+  };
+}
+
+/**
  * Deep Paragraph-by-Paragraph Examiner Diagnostics
  * Analyzes Introduction, Body Paragraphs, and Conclusion structure according to P.E.E.L and Cambridge standards.
  */
@@ -1057,7 +1118,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -1093,11 +1154,18 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority2 = 'Tăng cường tính liên kết ẩn (Thematic progression): Kết nối các câu bằng mạch ý liền mạch, tránh để giám khảo cảm thấy câu văn bị ngắt quãng.';
   }
 
-  // Priority 3: Lexical Precision
-  if (lrBand < 6.0) {
-    plan.priority3 = 'Nâng cấp từ vựng học thuật: Thay thế các từ văn nói thông thường (a lot of, kids, good, bad, things) bằng thuật ngữ C1/C2 (substantial proportion, youth, beneficial, detrimental).';
+  // Priority 3: Lexical Precision & Dynamic Topic Collocations
+  const topicName = topicData?.topicNameVi || 'học thuật';
+  const topicCollocations = topicData?.collocations || [];
+  const collocationsSample = topicCollocations.slice(0, 2).map(v => `'${v.phrase}'`).join(', ');
+
+  if (wordOveruse?.hasOveruse && wordOveruse.overusedWords.some(w => w.count >= 5)) {
+    const topOverused = wordOveruse.overusedWords.filter(w => w.count >= 5).slice(0, 2).map(w => `'${w.word}' (${w.count} lần)`).join(', ');
+    plan.priority3 = `Khắc phục lỗi lặp từ nghiêm trọng: Đa dạng hóa các từ đang bị lặp lại quá nhiều (${topOverused}) bằng các từ đồng nghĩa học thuật C1/C2 theo chủ đề '${topicName}'.`;
+  } else if (lrBand < 6.0) {
+    plan.priority3 = `Nâng cấp từ vựng học thuật: Thay thế các từ giao tiếp cơ bản bằng thuật ngữ C1/C2 theo chủ đề '${topicName}'. Tích lũy các cụm từ đắt giá để nâng điểm Lexical Resource.`;
   } else {
-    plan.priority3 = 'Tích lũy các cụm Collocations đắt giá theo chủ đề (như: exert a profound impact, viable alternative, pressing issue) để chạm mốc Band 7.5+ LR.';
+    plan.priority3 = `Tích lũy các cụm Collocations đắt giá theo chủ đề '${topicName}'${collocationsSample ? ` (như: ${collocationsSample})` : ''} để chạm mốc Band 7.5+ LR.`;
   }
 
   const currentOverall = (trBand + ccBand + lrBand + graBand) / 4.0;
@@ -1541,6 +1609,23 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     lrImprovements.push(`CẢNH BÁO TỪ VỰNG (Prompt Copying): Bài viết sao chép ${copiedWordCount} từ nguyên xi từ đề bài. Để đạt điểm cao ở tiêu chí Lexical Resource, thí sinh bắt buộc phải thể hiện khả năng Paraphrase (dùng từ đồng nghĩa, chuyển đổi từ loại hoặc cấu trúc câu) ngay từ câu mở đầu.`);
   }
 
+  // 7. Word Overuse & Repetition Diagnostics (Band 6.0 cap for severe overuse)
+  const wordOveruse = analyzeWordOveruse(rawWords);
+  if (wordOveruse.hasOveruse) {
+    const severeOveruse = wordOveruse.overusedWords.filter(w => w.count >= 5);
+    if (severeOveruse.length >= 2) {
+      if (lrScore > 6.0) lrScore = 6.0;
+      lrImprovements.push(
+        `LỖI LẶP TỪ NGHIÊM TRỌNG (Word Overuse): Bài viết lặp lại quá nhiều lần các từ đơn điệu (${severeOveruse.map(o => `'${o.word}' (${o.count} lần)`).join(', ')}). Barem Cambridge Band 7.0+ Lexical Resource đòi hỏi tính linh hoạt và đa dạng từ vựng. Điểm LR bị khống chế tối đa Band 6.0. Hãy tham khảo mục 'Gợi ý từ vựng thay thế' bên dưới để đa dạng hóa văn phong.`
+      );
+    } else if (wordOveruse.overusedWords.length >= 2 || severeOveruse.length >= 1) {
+      const topWords = wordOveruse.overusedWords.slice(0, 3).map(o => `'${o.word}' (${o.count} lần)`).join(', ');
+      lrImprovements.push(
+        `CẢNH BÁO LẶP TỪ: Phát hiện các từ lặp lại nhiều lần trong bài: ${topWords}. Hãy sử dụng các từ đồng nghĩa học thuật C1/C2 để nâng cao tiêu chí Lexical Resource.`
+      );
+    }
+  }
+
   const lrBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, lrScore)));
 
   // ===========================================================
@@ -1773,43 +1858,14 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const rawAverage = (trBand + ccBand + lrBand + graBand) / 4.0;
   const overallBand = roundToCambridgeBand(rawAverage);
 
+  // Dynamic Topic Collocations Recommendation
+  const contextForTopic = `${task?.title || ''} ${task?.prompt || ''} ${essayText.slice(0, 600)}`;
+  const topicData = lookupTopicCollocations(contextForTopic);
+  const keyVocabulary = topicData.collocations;
+
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
   const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment);
-
-  // Key Academic Collocations Recommendation
-  const keyVocabulary = [
-    {
-      phrase: 'exert a profound impact on',
-      meaningVi: 'tạo ra tác động sâu sắc lên đối tượng nào đó',
-      example: 'Technological advancements exert a profound impact on contemporary communication.'
-    },
-    {
-      phrase: 'play an indispensable role in',
-      meaningVi: 'đóng một vai trò không thể thiếu trong',
-      example: 'Early childhood education plays an indispensable role in cognitive development.'
-    },
-    {
-      phrase: 'a viable alternative to',
-      meaningVi: 'một giải pháp thay thế khả thi cho',
-      example: 'Solar power is increasingly seen as a viable alternative to fossil fuels.'
-    },
-    {
-      phrase: 'take into consideration',
-      meaningVi: 'cân nhắc kỹ lưỡng, tính đến yếu tố nào',
-      example: 'Policymakers must take socioeconomic factors into consideration.'
-    },
-    {
-      phrase: 'shed light on',
-      meaningVi: 'làm sáng tỏ một vấn đề hoặc hiện tượng phức tạp',
-      example: 'Recent scientific discoveries have shed light on the mechanisms of climate change.'
-    },
-    {
-      phrase: 'a precipitous drop in',
-      meaningVi: 'sự sụt giảm mạnh và đột ngột về số liệu',
-      example: 'The region witnessed a precipitous drop in manufacturing output during the recession.'
-    }
-  ];
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse);
 
   // Band 8 Model Rewrite
   let band8Rewrite = '';
@@ -1888,6 +1944,16 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       taskDescription: task2Fulfillment?.taskDescription || '',
       missingPartDescription: task2Fulfillment?.missingPartDescription || null,
       warning: task2Fulfillment?.warning || null
-    } : null
+    } : null,
+    detectedTopic: {
+      topicKey: topicData.topicKey,
+      topicNameVi: topicData.topicNameVi
+    },
+    wordOveruseStats: {
+      hasOveruse: wordOveruse.hasOveruse,
+      overuseCount: wordOveruse.overuseCount,
+      overusedWords: wordOveruse.overusedWords,
+      suggestions: wordOveruse.suggestions
+    }
   };
 }

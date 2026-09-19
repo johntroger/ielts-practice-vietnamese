@@ -578,8 +578,59 @@ export default function FeedbackModal({
           {/* TAB 4: EXTRACTED KEY VOCABULARY */}
           {activeTab === 'vocab' && (
             <div className="space-y-4">
+              {evaluation.detectedTopic && (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-indigo-50/80 border border-indigo-200 gap-2">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <span className="text-xs font-semibold text-indigo-950">Chủ đề bài thi nhận diện:</span>
+                    <span className="text-xs font-bold text-indigo-700">{evaluation.detectedTopic.topicNameVi}</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 w-fit">
+                    Cambridge C1/C2 Collocations
+                  </span>
+                </div>
+              )}
+
+              {/* Word Overuse & Thesaurus Replacement Suggestions */}
+              {evaluation.wordOveruseStats?.hasOveruse && evaluation.wordOveruseStats.suggestions?.length > 0 && (
+                <div className="p-4 rounded-xl bg-amber-50/90 border border-amber-200 shadow-2xs space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <h5 className="text-xs font-bold text-amber-950">
+                      Cảnh Báo Lặp Từ & Gợi Ý Thay Thế Học Thuật (Academic Thesaurus)
+                    </h5>
+                  </div>
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    Bài viết lặp lại nhiều lần các từ dưới đây. Tiêu chuẩn Cambridge Lexical Resource đòi hỏi sự linh hoạt và biến hóa từ vựng. Bạn hãy thay thế bằng các từ đồng nghĩa học thuật C1/C2:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {evaluation.wordOveruseStats.suggestions.map((sug, sIdx) => (
+                      <div key={sIdx} className="p-3 rounded-lg bg-white border border-amber-200/80 shadow-2xs space-y-2">
+                        <div className="flex items-center justify-between border-b border-amber-100 pb-1.5">
+                          <span className="text-xs font-bold text-red-700">
+                            Từ gốc: <span className="underline font-mono">'{sug.word}'</span> ({sug.count} lần)
+                          </span>
+                          <span className="text-[10px] text-amber-700 font-semibold">Gợi ý C1/C2:</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {sug.alternatives.map((alt, aIdx) => (
+                            <span
+                              key={aIdx}
+                              className="px-2 py-1 rounded bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-medium leading-tight"
+                              title={`${alt.meaningVi} (${alt.type || 'adj/verb/noun'})${alt.example ? ' | VD: ' + alt.example : ''}`}
+                            >
+                              <strong>{alt.word}</strong> <span className="text-[10px] text-slate-500 font-normal">({alt.meaningVi})</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <span className="text-xs text-slate-500 block">
-                Các cụm từ vựng học thuật (Collocations) xuất hiện trong bản nâng cấp:
+                Các cụm từ vựng học thuật (Collocations) trọng điểm theo chủ đề:
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
