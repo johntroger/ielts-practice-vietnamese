@@ -111,8 +111,8 @@ export default function TaskLibraryModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
@@ -353,21 +353,21 @@ export default function TaskLibraryModal({
           )}
 
           {/* TASK CARDS LIST */}
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
             {filteredTasks.length > 0 ? (
               filteredTasks.map(t => {
                 const isActive = t.id === currentTaskId;
                 return (
                   <div
                     key={t.id}
-                    className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+                    className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
                       isActive 
                         ? 'border-red-500 bg-red-50/30 ring-2 ring-red-500/20' 
-                        : 'border-slate-200 bg-white hover:border-slate-300'
+                        : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs hover:shadow-xs'
                     }`}
                   >
                     <div className="space-y-1.5 flex-1 min-w-0">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                           t.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
                         }`}>
@@ -405,34 +405,45 @@ export default function TaskLibraryModal({
                         )}
                       </div>
 
-                      <h4 className="font-bold text-sm text-slate-900 truncate">
+                      <h4 className="font-bold text-sm text-slate-900 line-clamp-2">
                         {t.title}
                       </h4>
 
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
                         {t.prompt}
                       </p>
                     </div>
 
-                    <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
-                      {/* Share / Unshare Toggle for own tasks */}
-                      {(t.isOwnTask || t.isAiGenerated || t.isCustom) && onTogglePublic && (
-                        <button
-                          onClick={() => onTogglePublic(t.id, !t.isPublic)}
-                          className={`p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors ${
-                            t.isPublic 
-                              ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' 
-                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                          }`}
-                          title={t.isPublic ? "Đang chia sẻ công khai cho mọi người. Bấm để chuyển về riêng tư" : "Bấm để chia sẻ đề này vào Thư viện Cộng đồng"}
-                        >
-                          <Share2 className="w-3.5 h-3.5" />
-                          <span className="hidden md:inline">{t.isPublic ? 'Đang Chia Sẻ' : 'Chia Sẻ'}</span>
-                        </button>
-                      )}
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                      <div className="flex items-center space-x-1">
+                        {/* Share / Unshare Toggle for own tasks */}
+                        {(t.isOwnTask || t.isAiGenerated || t.isCustom) && onTogglePublic && (
+                          <button
+                            onClick={() => onTogglePublic(t.id, !t.isPublic)}
+                            className={`p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors ${
+                              t.isPublic 
+                                ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' 
+                                : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                            }`}
+                            title={t.isPublic ? "Đang chia sẻ công khai cho mọi người. Bấm để chuyển về riêng tư" : "Bấm để chia sẻ đề này vào Thư viện Cộng đồng"}
+                          >
+                            <Share2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+
+                        {(t.isCustom || t.isAiGenerated) && (
+                          <button
+                            onClick={() => onDeleteTask(t.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition-colors cursor-pointer"
+                            title="Xóa đề này"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
 
                       {isActive ? (
-                        <span className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold">
+                        <span className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold shrink-0">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Đang Chọn</span>
                         </span>
@@ -442,19 +453,9 @@ export default function TaskLibraryModal({
                             onSelectTask(t);
                             onClose();
                           }}
-                          className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                          className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
                         >
-                          Chọn Làm Bài
-                        </button>
-                      )}
-
-                      {(t.isCustom || t.isAiGenerated) && (
-                        <button
-                          onClick={() => onDeleteTask(t.id)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
-                          title="Xóa đề này"
-                        >
-                          <Trash2 className="w-4 h-4" />
+                          Làm Bài
                         </button>
                       )}
                     </div>

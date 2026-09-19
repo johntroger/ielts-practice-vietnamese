@@ -579,8 +579,8 @@ export default function TheoryHandbookModal({
   const HeaderIcon = headerMeta.icon;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Header */}
         <div className={`bg-gradient-to-r ${headerMeta.headerBg} text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800`}>
@@ -857,7 +857,7 @@ export default function TheoryHandbookModal({
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
           
           {/* PERSONAL NOTES VIEW */}
           {selectedSkill === 'personal' ? (

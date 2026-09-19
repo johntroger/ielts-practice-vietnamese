@@ -17,8 +17,8 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
@@ -74,9 +74,10 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
         </div>
 
         {/* Mistake Cards */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-3">
+        <div className="flex-1 overflow-y-auto p-5">
           {filteredMistakes.length > 0 ? (
-            filteredMistakes.map((m, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+              {filteredMistakes.map((m, idx) => (
               <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2 group">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
@@ -112,8 +113,9 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
                     <em>Giải thích:</em> {m.explanation}
                   </p>
                 )}
-              </div>
-            ))
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="text-center py-12 text-slate-400 text-xs">
               Chưa có lỗi sai nào được lưu. Khi giám khảo AI chấm bài, bấm "Lưu vào Sổ tay lỗi sai" ở mỗi câu cần sửa để ghi nhớ!

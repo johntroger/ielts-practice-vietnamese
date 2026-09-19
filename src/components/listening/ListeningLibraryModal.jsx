@@ -161,8 +161,8 @@ export default function ListeningLibraryModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
-      <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 animate-in fade-in duration-150 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden overscroll-contain">
         
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-purple-50 via-indigo-50 to-slate-50">
@@ -452,7 +452,7 @@ export default function ListeningLibraryModal({
               <p className="text-xs text-slate-400">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Sinh Đề Bằng AI" để tạo đề mới.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
               {filteredTests.map((test) => {
                 const isCurrent = currentTestId === test.id;
                 const partCount = test.parts?.length || 4;

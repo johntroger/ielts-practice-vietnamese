@@ -298,9 +298,9 @@ export default function UserProfileModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 lg:p-3 bg-slate-950/80 backdrop-blur-md animate-fadeIn overflow-hidden">
       {/* FRAME CHÍNH CỦA TRANG CÁ NHÂN (PORTAL FRAME) */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-6xl h-[94vh] max-h-[880px] flex flex-col md:flex-row overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-[98vw] 2xl:max-w-[1620px] h-[96dvh] max-h-[96dvh] flex flex-col md:flex-row overflow-hidden overscroll-contain">
         
         {/* ========================================================================= */}
         {/* 1. KHUNG NAVIGATION CỐ ĐỊNH BÊN TRÁI (SIDEBAR NAVIGATION) */}

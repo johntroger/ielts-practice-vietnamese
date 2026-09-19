@@ -194,8 +194,8 @@ export default function DiagnosticPlacementModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 lg:p-3 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-200 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh] flex flex-col overflow-hidden overscroll-contain">
         
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-3.5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-purple-50/70 shrink-0">
@@ -247,7 +247,7 @@ export default function DiagnosticPlacementModal({
           {/* MODE 1: TEST TAKING VIEW                                        */}
           {/* =============================================================== */}
           {!isTestSubmitted ? (
-            <div className="space-y-4 max-w-3xl mx-auto">
+            <div className="space-y-4 max-w-5xl mx-auto">
               {/* Question Navigation & Progress Bar */}
               <div className="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-2xs space-y-2.5">
                 <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
@@ -399,7 +399,7 @@ export default function DiagnosticPlacementModal({
             /* =============================================================== */
             /* MODE 2: DIAGNOSTIC RESULTS & 30-DAY ADAPTIVE STUDY PLAN         */
             /* =============================================================== */
-            <div className="space-y-6 max-w-4xl mx-auto">
+            <div className="space-y-6 max-w-6xl mx-auto">
               
               {/* 1. Score Summary Banner */}
               <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-5 sm:p-6 rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
@@ -523,7 +523,7 @@ export default function DiagnosticPlacementModal({
                 </div>
 
                 {/* Daily Task List for Selected Week */}
-                <div className="space-y-2.5 pt-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                   {weekPlan.map(item => {
                     const isDone = !!completedDays[item.day];
                     return (
@@ -580,7 +580,7 @@ export default function DiagnosticPlacementModal({
                   <BarChart2 className="w-4 h-4 text-purple-600" />
                   <span>Xem Lại Chi Tiết 16 Câu Hỏi Định Vị & Giải Thích Barem</span>
                 </h4>
-                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-96 overflow-y-auto pr-1">
                   {evaluationResult?.detailedQuestions?.map((dq, idx) => (
                     <div 
                       key={dq.id} 

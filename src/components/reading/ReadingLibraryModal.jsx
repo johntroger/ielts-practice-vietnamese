@@ -249,8 +249,8 @@ export default function ReadingLibraryModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col h-[94dvh] max-h-[94dvh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
         <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
@@ -682,7 +682,7 @@ export default function ReadingLibraryModal({
           </div>
         ) : (
           /* REGULAR TEST LIST */
-          <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-3.5 divide-y divide-slate-100">
+          <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-50/40">
             {filteredTests.length === 0 ? (
               <div className="text-center py-16">
                 <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3 stroke-[1.5]" />
@@ -690,147 +690,140 @@ export default function ReadingLibraryModal({
                 <p className="text-xs text-slate-400 mt-1">Hãy thử tìm từ khóa khác hoặc chuyển sang tab/dạng bài khác.</p>
               </div>
             ) : (
-              filteredTests.map((test) => {
-                const isSelected = test.id === currentTestId;
-                const passageCount = test.passages?.length || 1;
-                const passageNum = test.passages?.[0]?.passageNumber || 1;
-                const totalQ = test.totalQuestions || test.passages?.reduce((acc, p) => 
-                  acc + (p.questionGroups?.reduce((gAcc, g) => gAcc + (g.questions?.length || 0), 0) || 0), 0) || 0;
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
+                {filteredTests.map((test) => {
+                  const isSelected = test.id === currentTestId;
+                  const passageCount = test.passages?.length || 1;
+                  const passageNum = test.passages?.[0]?.passageNumber || 1;
+                  const totalQ = test.totalQuestions || test.passages?.reduce((acc, p) => 
+                    acc + (p.questionGroups?.reduce((gAcc, g) => gAcc + (g.questions?.length || 0), 0) || 0), 0) || 0;
 
-                return (
-                  <div
-                    key={test.id}
-                    className={`pt-3.5 first:pt-0 rounded-xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border ${
-                      isSelected 
-                        ? 'bg-blue-50/50 border-blue-300 shadow-2xs' 
-                        : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-2xs'
-                    }`}
-                  >
-                    {/* Test Info */}
-                    <div className="space-y-1.5 flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {/* Passage Tag */}
-                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${
-                          passageCount > 1 
-                            ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                            : passageNum === 1
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : passageNum === 2
-                            ? 'bg-amber-50 text-amber-700 border-amber-200'
-                            : 'bg-rose-50 text-rose-700 border-rose-200'
-                        }`}>
-                          {passageCount > 1 ? `Full Test (3 Passages)` : `Passage ${passageNum}`}
-                        </span>
+                  return (
+                    <div
+                      key={test.id}
+                      className={`rounded-2xl transition-all flex flex-col justify-between gap-3 p-4 border bg-white ${
+                        isSelected 
+                          ? 'border-blue-500 ring-2 ring-blue-400/30 shadow-md bg-blue-50/20' 
+                          : 'border-slate-200 hover:border-slate-300 shadow-2xs hover:shadow-xs'
+                      }`}
+                    >
+                      {/* Test Info */}
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {/* Passage Tag */}
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                            passageCount > 1 
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                              : passageNum === 1
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : passageNum === 2
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-rose-50 text-rose-700 border-rose-200'
+                          }`}>
+                            {passageCount > 1 ? `Full Test (3 Passages)` : `Passage ${passageNum}`}
+                          </span>
 
-                        {/* Source Badge */}
-                        {!test.isCustom ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
-                            Cambridge Academic
-                          </span>
-                        ) : test.title?.includes('[Full Test') ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            📚 Đề Ghép 3 Passages
-                          </span>
-                        ) : test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí') ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
-                            📰 Nạp bài báo
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200">
-                            ✨ AI Sinh
-                          </span>
-                        )}
+                          {/* Source Badge */}
+                          {!test.isCustom ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+                              Cambridge Academic
+                            </span>
+                          ) : test.title?.includes('[Full Test') ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                              📚 Đề Ghép 3 Passages
+                            </span>
+                          ) : test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí') ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
+                              📰 Nạp bài báo
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200">
+                              ✨ AI Sinh
+                            </span>
+                          )}
 
-                        {/* Public/Private Badge for Custom */}
-                        {test.isCustom && (
-                          <button
-                            type="button"
-                            onClick={() => onTogglePublic && onTogglePublic(test.id)}
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 transition-colors ${
-                              test.isPublic 
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
-                                : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                            }`}
-                            title="Bấm để chuyển đổi trạng thái Công khai / Riêng tư"
-                          >
-                            {test.isPublic ? (
-                              <>
-                                <Globe className="w-3 h-3 text-emerald-600" />
-                                <span>Cộng đồng</span>
-                              </>
-                            ) : (
-                              <>
-                                <Lock className="w-3 h-3 text-slate-500" />
-                                <span>Riêng tư</span>
-                              </>
-                            )}
-                          </button>
-                        )}
+                          {/* Public/Private Badge for Custom */}
+                          {test.isCustom && (
+                            <button
+                              type="button"
+                              onClick={() => onTogglePublic && onTogglePublic(test.id)}
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 transition-colors ${
+                                test.isPublic 
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                                  : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                              }`}
+                              title="Bấm để chuyển đổi trạng thái Công khai / Riêng tư"
+                            >
+                              {test.isPublic ? (
+                                <>
+                                  <Globe className="w-3 h-3 text-emerald-600" />
+                                  <span>Cộng đồng</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Lock className="w-3 h-3 text-slate-500" />
+                                  <span>Riêng tư</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
 
-                        {/* Current Active Badge */}
-                        {isSelected && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-600 text-white flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Đang chọn
+                        <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
+                          {test.title}
+                        </h3>
+                        
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                          {test.description || 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.'}
+                        </p>
+
+                        {/* Metadata: Questions & Time */}
+                        <div className="flex items-center gap-3 text-[11px] text-slate-500 pt-1">
+                          <span className="flex items-center gap-1">
+                            <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+                            {totalQ} câu
                           </span>
-                        )}
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                            {test.timeLimitMinutes || (passageCount > 1 ? 60 : 20)}p
+                          </span>
+                        </div>
                       </div>
 
-                      <h3 className="text-sm font-bold text-slate-900 leading-snug">
-                        {test.title}
-                      </h3>
-                      
-                      <p className="text-xs text-slate-500 line-clamp-1">
-                        {test.description || 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.'}
-                      </p>
+                      {/* Actions Buttons */}
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <div>
+                          {test.isCustom && onDeleteTest ? (
+                            <button
+                              onClick={() => onDeleteTest(test.id)}
+                              className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                              title="Xóa đề thi này khỏi danh sách cá nhân"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 font-medium">Cambridge</span>
+                          )}
+                        </div>
 
-                      {/* Metadata: Questions & Time */}
-                      <div className="flex items-center gap-4 text-[11px] text-slate-500 pt-0.5">
-                        <span className="flex items-center gap-1">
-                          <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                          {totalQ} câu hỏi
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-slate-400" />
-                          {test.timeLimitMinutes || (passageCount > 1 ? 60 : 20)} phút
-                        </span>
-                        {test.creatorEmail && (
-                          <span className="text-slate-400">
-                            Tạo bởi: <span className="text-slate-600">{test.creatorEmail}</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Actions Buttons */}
-                    <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
-                      {test.isCustom && onDeleteTest && (
                         <button
-                          onClick={() => onDeleteTest(test.id)}
-                          className="p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
-                          title="Xóa đề thi này khỏi danh sách cá nhân"
+                          onClick={() => {
+                            onSelectTest(test.id);
+                            onClose();
+                          }}
+                          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                            isSelected 
+                              ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                              : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white'
+                          }`}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          {isSelected ? 'Đang Luyện' : 'Luyện Đề Này'}
                         </button>
-                      )}
-
-                      <button
-                        onClick={() => {
-                          onSelectTest(test.id);
-                          onClose();
-                        }}
-                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                          isSelected 
-                            ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                            : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-blue-700'
-                        }`}
-                      >
-                        {isSelected ? 'Đang làm bài' : 'Làm đề này'}
-                      </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })}
+              </div>
             )}
           </div>
         )}

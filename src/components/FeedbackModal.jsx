@@ -150,8 +150,8 @@ export default function FeedbackModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header Bar */}
         <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800">
@@ -759,17 +759,71 @@ export default function FeedbackModal({
           {/* TAB 3: BAND 8.5+ REWRITE */}
           {activeTab === 'rewrite' && (
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950">
-                <span className="font-bold block text-emerald-900 mb-1">
-                  Đặc điểm của bản viết lại Band 8.5+:
-                </span>
-                <p>
-                  Giữ nguyên 100% quan điểm và hướng lập luận ban đầu của bạn, nhưng nâng tầm cấu trúc câu phức, mệnh đề quan hệ và các collocations học thuật đắt giá theo chuẩn C1/C2.
-                </p>
+              <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span className="font-bold block text-emerald-900 mb-0.5">
+                    Đặc điểm của bản viết lại Band 8.5+ (Side-by-Side Comparison):
+                  </span>
+                  <p>
+                    Giữ nguyên 100% quan điểm và hướng lập luận ban đầu của bạn, nhưng nâng tầm cấu trúc câu phức, mệnh đề quan hệ và các collocations học thuật đắt giá theo chuẩn C1/C2.
+                  </p>
+                </div>
+                {onOpenRevision && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenRevision();
+                    }}
+                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 flex items-center space-x-1 shadow-2xs cursor-pointer transition-colors"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Mở Phòng Viết Lại (v1 ➔ v2)</span>
+                  </button>
+                )}
               </div>
 
-              <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 whitespace-pre-line leading-relaxed font-sans shadow-2xs">
-                {evaluation.band8Rewrite || 'Đang cập nhật bài viết lại...'}
+              {/* Side-by-side 2-column view */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                {/* Original Essay */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+                      Bài viết gốc của bạn ({stats?.wordCount || 0} từ)
+                    </span>
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                      Band {evaluation.overallBand ? evaluation.overallBand.toFixed(1) : '6.5'}
+                    </span>
+                  </div>
+                  <div className="p-4 sm:p-5 rounded-xl bg-slate-50/80 border border-slate-200 text-xs sm:text-sm text-slate-700 whitespace-pre-line leading-relaxed font-sans shadow-2xs h-full max-h-[60vh] overflow-y-auto">
+                    {essayText || 'Không có bài làm.'}
+                  </div>
+                </div>
+
+                {/* Band 8.5+ Rewrite */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                      Bản Nâng Cấp Band 8.5+
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (evaluation.band8Rewrite) {
+                          navigator.clipboard.writeText(evaluation.band8Rewrite);
+                          alert('Đã sao chép bản nâng cấp Band 8.5+ vào clipboard!');
+                        }
+                      }}
+                      className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      <Check className="w-3 h-3 text-emerald-600" />
+                      <span>Sao chép</span>
+                    </button>
+                  </div>
+                  <div className="p-4 sm:p-5 rounded-xl bg-emerald-50/30 border border-emerald-200 text-xs sm:text-sm text-slate-900 whitespace-pre-line leading-relaxed font-sans shadow-2xs h-full max-h-[60vh] overflow-y-auto">
+                    {evaluation.band8Rewrite || 'Đang cập nhật bài viết lại...'}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -832,7 +886,7 @@ export default function FeedbackModal({
                 Các cụm từ vựng học thuật (Collocations) trọng điểm theo chủ đề:
               </span>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {evaluation.keyVocabulary && evaluation.keyVocabulary.length > 0 ? (
                   evaluation.keyVocabulary.map((v, idx) => (
                     <div key={idx} className="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1">
