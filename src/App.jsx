@@ -382,10 +382,15 @@ export default function App() {
       setCurrentEvaluation(evaluation);
       setIsFeedbackOpen(true);
 
-      // Save to submissions history
+      // Save to submissions history (strictly preserve scores, evaluation, text; drop heavy ephemeral media)
+      const cleanTask = {
+        ...currentTask,
+        imageUrl: (currentTask?.imageUrl && currentTask.imageUrl.startsWith('data:')) ? '' : (currentTask?.imageUrl || '')
+      };
+
       const newSubmission = {
         id: `sub-${Date.now()}`,
-        task: currentTask,
+        task: cleanTask,
         essayText: currentEssay,
         evaluation,
         stats: {
@@ -398,6 +403,11 @@ export default function App() {
       };
 
       setSubmissions(prev => [newSubmission, ...prev]);
+
+      // Ephemeral media cleanup: Once task is finished/submitted, wipe any base64 image from active task to reclaim RAM & storage
+      if (currentTask?.imageUrl && currentTask.imageUrl.startsWith('data:')) {
+        setAllTasks(prev => prev.map(t => t.id === currentTask.id ? { ...t, imageUrl: '' } : t));
+      }
 
       // Cloud Sync if logged in
       if (currentUser) {

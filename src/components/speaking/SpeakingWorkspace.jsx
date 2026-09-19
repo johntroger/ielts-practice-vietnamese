@@ -773,11 +773,13 @@ export default function SpeakingWorkspace({
             setIsInMockExamRoom(false);
             if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
             if (speechEngine.isListening) speechEngine.stopListening();
+            if (speechEngine.clearAudioClips) speechEngine.clearAudioClips();
           }}
           onFinishExam={async (finalTranscript, meta) => {
             setIsInMockExamRoom(false);
             if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
             if (speechEngine.isListening) speechEngine.stopListening();
+            if (speechEngine.clearAudioClips) speechEngine.clearAudioClips();
 
             setIsEvaluating(true);
             setIsResultModalOpen(true);

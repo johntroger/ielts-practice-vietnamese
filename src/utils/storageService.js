@@ -144,13 +144,52 @@ export function safeGet(key, defaultValue = null) {
 }
 
 /**
+ * Strips user-uploaded ephemeral media (base64 images, audio data URLs, temporary blobs)
+ * to strictly enforce the zero-media-persistence policy.
+ * Only saves test results, evaluation history, and text.
+ */
+export function stripEphemeralMedia(obj) {
+  if (!obj || typeof obj !== 'object') {
+    if (typeof obj === 'string' && (obj.startsWith('data:image/') || obj.startsWith('data:audio/') || obj.startsWith('blob:'))) {
+      return '';
+    }
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => stripEphemeralMedia(item));
+  }
+
+  const cleaned = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === 'imageUrl' || k === 'audioUrl' || k === 'audioBlob' || k === 'blob') {
+      // If it's a data URI or blob URL, drop it
+      if (typeof v === 'string' && (v.startsWith('data:') || v.startsWith('blob:'))) {
+        cleaned[k] = '';
+      } else {
+        cleaned[k] = v;
+      }
+    } else if (typeof v === 'string' && (v.startsWith('data:image/') || v.startsWith('data:audio/') || v.startsWith('blob:'))) {
+      cleaned[k] = '';
+    } else if (typeof v === 'object' && v !== null) {
+      cleaned[k] = stripEphemeralMedia(v);
+    } else {
+      cleaned[k] = v;
+    }
+  }
+  return cleaned;
+}
+
+/**
  * Safely saves an item to storage with automatic QuotaExceeded recovery.
- * Serializes objects to JSON automatically.
+ * Serializes objects to JSON automatically after stripping ephemeral media.
  */
 export function safeSet(key, value) {
   if (!key) return false;
 
-  const serialized = JSON.stringify(value);
+  // Strict Policy: Strip heavy ephemeral media (user uploaded images/audio) before persisting
+  const sanitizedValue = stripEphemeralMedia(value);
+  const serialized = JSON.stringify(sanitizedValue);
 
   if (!isLocalStorageAvailable()) {
     memoryStore.set(key, serialized);

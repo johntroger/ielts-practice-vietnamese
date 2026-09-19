@@ -19,7 +19,7 @@ import {
   evaluateDiagnosticTest, 
   generate30DayStudyPlan 
 } from '../src/utils/diagnosticPlacementEngine.js';
-import { exportBackupData } from '../src/utils/storageService.js';
+import { exportBackupData, stripEphemeralMedia, safeSet, safeGet } from '../src/utils/storageService.js';
 
 console.log('--- TEST STEP 11: DIAGNOSTIC PLACEMENT & INDEXEDDB ADAPTER ---');
 
@@ -215,6 +215,49 @@ async function runTests() {
     const backupStr = exportBackupData();
     const parsed = JSON.parse(backupStr);
     assert.ok(parsed && parsed.data !== undefined);
+  });
+
+  // ============================================================================
+  // 6. ZERO PERMANENT MEDIA PERSISTENCE (EPHEMERAL IMAGE & AUDIO STRIPPING)
+  // ============================================================================
+  await it('stripEphemeralMedia should strip base64 image data URIs and blob URLs while preserving scores and text', () => {
+    const dirtySubmission = {
+      id: 'sub_test_123',
+      task: {
+        title: 'Line Graph Fast Food',
+        prompt: 'The chart below shows...',
+        imageUrl: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP...'
+      },
+      evaluation: {
+        overallBand: 7.0,
+        feedback: 'Good overview and clear trends.'
+      },
+      userAudioClip: 'data:audio/webm;base64,GkXfo59ChoEBQveBAULygQ8...'
+    };
+
+    const cleaned = stripEphemeralMedia(dirtySubmission);
+    assert.strictEqual(cleaned.task.imageUrl, '', 'Base64 imageUrl must be stripped to empty string');
+    assert.strictEqual(cleaned.userAudioClip, '', 'Base64 audio must be stripped to empty string');
+    assert.strictEqual(cleaned.task.title, 'Line Graph Fast Food');
+    assert.strictEqual(cleaned.evaluation.overallBand, 7.0);
+    assert.strictEqual(cleaned.evaluation.feedback, 'Good overview and clear trends.');
+  });
+
+  await it('safeSet should never write base64 image or audio payloads to persistent storage', () => {
+    const payloadWithMedia = {
+      testId: 't-1',
+      title: 'Practice with Map',
+      imageUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+      audioBlob: 'blob:http://localhost:5173/b4d667c2-9bb0-47b2-bb52',
+      normalWebUrl: 'https://images.unsplash.com/photo-1526778548025'
+    };
+
+    safeSet('test_ephemeral_media_key', payloadWithMedia);
+    const saved = safeGet('test_ephemeral_media_key');
+
+    assert.strictEqual(saved.imageUrl, '', 'imageUrl base64 must be sanitized to empty string');
+    assert.strictEqual(saved.audioBlob, '', 'audio blob URL must be sanitized to empty string');
+    assert.strictEqual(saved.normalWebUrl, 'https://images.unsplash.com/photo-1526778548025', 'Ordinary web URLs must be preserved');
   });
 
   console.log(`\n🎉 Step 11 Unit Tests Passed: ${testsPassed}/${testsPassed} tests passed cleanly.`);

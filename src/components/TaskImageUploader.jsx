@@ -196,6 +196,12 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
         </div>
       )}
 
+      {/* Zero Permanent Media Persistence Notice */}
+      <div className="text-[10px] text-slate-400 flex items-center space-x-1 pt-0.5">
+        <span className="text-emerald-600 font-bold">🔒 Tiết kiệm dung lượng:</span>
+        <span>Hình ảnh chỉ lưu tạm trong phiên làm bài này để hỗ trợ bạn viết. Khi nộp bài hoặc chuyển đề, ảnh sẽ tự động giải phóng hoàn toàn.</span>
+      </div>
+
       {/* Modal Zoom Preview */}
       {isZoomModalOpen && imageUrl && (
         <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4">

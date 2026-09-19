@@ -71,8 +71,11 @@ export function openIeltsDb() {
   });
 }
 
+import { stripEphemeralMedia } from './storageService.js';
+
 /**
  * Sets a value in the specified store.
+ * Sanitizes and strips heavy user-uploaded ephemeral media before persisting.
  * @param {string} storeName - Store name from STORES
  * @param {string} key - Primary key
  * @param {*} value - Value to store
@@ -81,9 +84,11 @@ export function openIeltsDb() {
 export async function idbSet(storeName = STORES.KEYVAL, key, value) {
   if (!key && key !== 0) return false;
 
+  const sanitizedValue = stripEphemeralMedia(value);
+
   if (!isIndexedDbSupported()) {
     if (!memoryStores[storeName]) memoryStores[storeName] = new Map();
-    memoryStores[storeName].set(key, value);
+    memoryStores[storeName].set(key, sanitizedValue);
     return true;
   }
 
@@ -96,12 +101,12 @@ export async function idbSet(storeName = STORES.KEYVAL, key, value) {
       // If store has keyPath (e.g. 'id') and value is an object, ensure id matches
       let request;
       if (store.keyPath) {
-        const itemToSave = (typeof value === 'object' && value !== null) 
-          ? { ...value, [store.keyPath]: key }
-          : { [store.keyPath]: key, value };
+        const itemToSave = (typeof sanitizedValue === 'object' && sanitizedValue !== null) 
+          ? { ...sanitizedValue, [store.keyPath]: key }
+          : { [store.keyPath]: key, value: sanitizedValue };
         request = store.put(itemToSave);
       } else {
-        request = store.put(value, key);
+        request = store.put(sanitizedValue, key);
       }
 
       request.onsuccess = () => resolve(true);
@@ -110,7 +115,7 @@ export async function idbSet(storeName = STORES.KEYVAL, key, value) {
   } catch (err) {
     console.warn(`[IndexedDB] Fallback to memory store for '${key}':`, err);
     if (!memoryStores[storeName]) memoryStores[storeName] = new Map();
-    memoryStores[storeName].set(key, value);
+    memoryStores[storeName].set(key, sanitizedValue);
     return true;
   }
 }
