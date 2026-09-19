@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Settings, Key, CheckCircle, AlertCircle, ExternalLink, X, Shield, 
-  RefreshCw, Cpu, Eye, EyeOff, Trash2, HelpCircle, Check, Copy
+  RefreshCw, Cpu, Eye, EyeOff, Trash2, HelpCircle, Check, Copy,
+  HardDrive, Download, Upload
 } from 'lucide-react';
 import { testApiKey, fetchAvailableModels, POPULAR_GEMINI_MODELS } from '../services/geminiService';
+import { 
+  getStorageMetrics, 
+  pruneVolatileData, 
+  exportBackupData, 
+  importBackupData 
+} from '../utils/storageService';
 
 export default function SettingsModal({
   isOpen,
@@ -34,11 +41,63 @@ export default function SettingsModal({
   const [showGuide, setShowGuide] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  // Storage resilience state
+  const [storageMetrics, setStorageMetrics] = useState(() => getStorageMetrics());
+  const [storageMessage, setStorageMessage] = useState('');
+
   useEffect(() => {
     setInputKey(apiKey || '');
     setTestStatus(null);
     setTestMessage('');
+    setStorageMetrics(getStorageMetrics());
+    setStorageMessage('');
   }, [apiKey, isOpen]);
+
+  const handleExportBackup = () => {
+    try {
+      const dataStr = exportBackupData();
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ielts_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      setStorageMessage('✅ Đã xuất bản sao lưu thành công!');
+    } catch (e) {
+      setStorageMessage(`❌ Lỗi xuất dữ liệu: ${e.message}`);
+    }
+  };
+
+  const handleImportBackup = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const content = evt.target?.result;
+      if (typeof content === 'string') {
+        const res = importBackupData(content);
+        if (res.success) {
+          setStorageMessage(`✅ ${res.message}`);
+          setStorageMetrics(getStorageMetrics());
+          setTimeout(() => window.location.reload(), 1200);
+        } else {
+          setStorageMessage(`❌ ${res.message}`);
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handlePruneStorage = () => {
+    pruneVolatileData();
+    const metrics = getStorageMetrics();
+    setStorageMetrics(metrics);
+    setStorageMessage('✅ Đã dọn dẹp các cache và lịch sử cũ để tối ưu bộ nhớ!');
+  };
 
   useEffect(() => {
     if (inputKey.trim()) {
@@ -293,6 +352,68 @@ export default function SettingsModal({
                 />
               </div>
             )}
+          </div>
+
+          {/* Section: Storage Resilience & Backup */}
+          <div className="pt-2 border-t border-slate-100 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+                <HardDrive className="w-3.5 h-3.5 text-blue-600" />
+                <span>Bộ Nhớ Trình Duyệt & Sao Lưu</span>
+              </label>
+              <span className="text-[10px] font-mono text-slate-400">
+                {storageMetrics.usedBytes ? `${(storageMetrics.usedBytes / 1024).toFixed(0)} KB` : '0 KB'} / 5 MB ({storageMetrics.usagePercent}%)
+              </span>
+            </div>
+
+            {/* Storage Progress Bar */}
+            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${
+                  storageMetrics.usagePercent > 80 ? 'bg-rose-500' : storageMetrics.usagePercent > 50 ? 'bg-amber-500' : 'bg-blue-600'
+                }`}
+                style={{ width: `${Math.max(2, storageMetrics.usagePercent)}%` }}
+              />
+            </div>
+
+            {storageMessage && (
+              <div className="text-[11px] p-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 font-medium">
+                {storageMessage}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleExportBackup}
+                className="flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors"
+                title="Tải toàn bộ bài viết, lịch sử thi và ghi chú về máy"
+              >
+                <Download className="w-3.5 h-3.5 text-blue-600" />
+                <span>Xuất Bản Sao Lưu</span>
+              </button>
+
+              <label className="flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer">
+                <Upload className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Nhập Bản Sao Lưu</span>
+                <input
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={handleImportBackup}
+                />
+              </label>
+
+              <button
+                type="button"
+                onClick={handlePruneStorage}
+                className="flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-amber-100/60 text-slate-700 hover:text-amber-800 font-bold text-xs transition-colors"
+                title="Giải phóng bộ nhớ bằng cách dọn dẹp các cache tạm thời"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-amber-600" />
+                <span>Dọn Dẹp Cache</span>
+              </button>
+            </div>
           </div>
         </div>
 

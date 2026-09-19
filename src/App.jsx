@@ -31,6 +31,8 @@ const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWo
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
 import SpeakingResultModal from './components/speaking/SpeakingResultModal';
+import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
+import { safeGet, safeSet, safeRemove } from './utils/storageService';
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -52,118 +54,43 @@ import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationSe
 import { countWords } from './utils/textAnalytics';
 
 export default function App() {
-  // 1. Persistent Storage State
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('ielts_gemini_api_key') || '');
-  const [targetBand, setTargetBand] = useState(() => localStorage.getItem('ielts_target_band') || '6.5');
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !localStorage.getItem('ielts_user_onboarded'));
+  // 1. Persistent Storage State with Quota-Resilient Storage Service
+  const [apiKey, setApiKey] = useState(() => safeGet('ielts_gemini_api_key', ''));
+  const [targetBand, setTargetBand] = useState(() => safeGet('ielts_target_band', '6.5'));
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !safeGet('ielts_user_onboarded', false));
   const [model, setModel] = useState(() => {
-    const saved = localStorage.getItem('ielts_gemini_model');
+    const saved = safeGet('ielts_gemini_model', '');
     const validModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
-    if (!saved || !validModels.includes(saved)) {
-      return 'gemini-3.6-flash';
-    }
-    return saved;
+    return (saved && validModels.includes(saved)) ? saved : 'gemini-3.6-flash';
   });
   
-  const [allTasks, setAllTasks] = useState(() => {
-    const saved = localStorage.getItem('ielts_all_tasks');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return INITIAL_TASKS;
-  });
-
+  const [allTasks, setAllTasks] = useState(() => safeGet('ielts_all_tasks', INITIAL_TASKS));
   const [currentTaskId, setCurrentTaskId] = useState(() => {
-    return localStorage.getItem('ielts_current_task_id') || allTasks[0]?.id || 't2-ai-workplace-2025';
+    return safeGet('ielts_current_task_id', allTasks[0]?.id || 't2-ai-workplace-2025');
   });
 
-  const [essays, setEssays] = useState(() => {
-    const saved = localStorage.getItem('ielts_essays_drafts');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return {};
-  });
-
-  const [outlines, setOutlines] = useState(() => {
-    const saved = localStorage.getItem('ielts_outlines_drafts');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return {};
-  });
-
-  const [submissions, setSubmissions] = useState(() => {
-    const saved = localStorage.getItem('ielts_submissions_history');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [];
-  });
-
-  const [readingHistory, setReadingHistory] = useState(() => {
-    const saved = localStorage.getItem('ielts_reading_submissions_history');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [];
-  });
-
-  const [listeningHistory, setListeningHistory] = useState(() => {
-    const saved = localStorage.getItem('ielts_listening_submissions_history');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [];
-  });
-
-  const [speakingHistory, setSpeakingHistory] = useState(() => {
-    const saved = localStorage.getItem('ielts_speaking_submissions_history');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [];
-  });
-
-  const [vocabList, setVocabList] = useState(() => {
-    const saved = localStorage.getItem('ielts_vocab_notebook');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [
-      { id: 'v1', phrase: 'catalyze novel industries', meaningVi: 'thúc đẩy các ngành mới', example: 'AI will catalyze novel industries.', topic: 'tech' },
-      { id: 'v2', phrase: 'pivotal element', meaningVi: 'yếu tố then chốt', example: 'Education is a pivotal element.', topic: 'edu' },
-    ];
-  });
-
-  const [mistakes, setMistakes] = useState(() => {
-    const saved = localStorage.getItem('ielts_mistakes_log');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [];
-  });
-
-  const [personalNotes, setPersonalNotes] = useState(() => {
-    const saved = localStorage.getItem('ielts_theory_notes');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return [];
-  });
-
-  const [streakCount, setStreakCount] = useState(() => {
-    return Number(localStorage.getItem('ielts_streak_count')) || 3;
-  });
+  const [essays, setEssays] = useState(() => safeGet('ielts_essays_drafts', {}));
+  const [outlines, setOutlines] = useState(() => safeGet('ielts_outlines_drafts', {}));
+  const [submissions, setSubmissions] = useState(() => safeGet('ielts_submissions_history', []));
+  const [readingHistory, setReadingHistory] = useState(() => safeGet('ielts_reading_submissions_history', []));
+  const [listeningHistory, setListeningHistory] = useState(() => safeGet('ielts_listening_submissions_history', []));
+  const [speakingHistory, setSpeakingHistory] = useState(() => safeGet('ielts_speaking_submissions_history', []));
+  const [vocabList, setVocabList] = useState(() => safeGet('ielts_vocab_notebook', [
+    { id: 'v1', phrase: 'catalyze novel industries', meaningVi: 'thúc đẩy các ngành mới', example: 'AI will catalyze novel industries.', topic: 'tech' },
+    { id: 'v2', phrase: 'pivotal element', meaningVi: 'yếu tố then chốt', example: 'Education is a pivotal element.', topic: 'edu' },
+  ]));
+  const [mistakes, setMistakes] = useState(() => safeGet('ielts_mistakes_log', []));
+  const [personalNotes, setPersonalNotes] = useState(() => safeGet('ielts_theory_notes', []));
+  const [streakCount, setStreakCount] = useState(() => Number(safeGet('ielts_streak_count', 3)) || 3);
 
   // 2. UI & Mode State
-  const [activeSkill, setActiveSkill] = useState(() => localStorage.getItem('ielts_active_skill') || 'writing');
+  const [activeSkill, setActiveSkill] = useState(() => safeGet('ielts_active_skill', 'writing'));
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
   const [lastSaved, setLastSaved] = useState(new Date());
 
-  // Keep active skill in localStorage
+  // Keep active skill in localStorage safely
   useEffect(() => {
-    localStorage.setItem('ielts_active_skill', activeSkill);
+    safeSet('ielts_active_skill', activeSkill);
   }, [activeSkill]);
 
   // Modals
@@ -314,50 +241,50 @@ export default function App() {
     }
   }, [currentUser]);
 
-  // 5. Auto-save Effects
+  // 5. Auto-save Effects with Quota-Resilient Storage Manager
   useEffect(() => {
-    localStorage.setItem('ielts_gemini_api_key', apiKey);
+    safeSet('ielts_gemini_api_key', apiKey);
   }, [apiKey]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_gemini_model', model);
+    safeSet('ielts_gemini_model', model);
   }, [model]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_all_tasks', JSON.stringify(allTasks));
+    safeSet('ielts_all_tasks', allTasks);
   }, [allTasks]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_current_task_id', currentTaskId);
+    safeSet('ielts_current_task_id', currentTaskId);
   }, [currentTaskId]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_essays_drafts', JSON.stringify(essays));
+    safeSet('ielts_essays_drafts', essays);
     setLastSaved(new Date());
   }, [essays]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_outlines_drafts', JSON.stringify(outlines));
+    safeSet('ielts_outlines_drafts', outlines);
   }, [outlines]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_submissions_history', JSON.stringify(submissions));
+    safeSet('ielts_submissions_history', submissions);
   }, [submissions]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_vocab_notebook', JSON.stringify(vocabList));
+    safeSet('ielts_vocab_notebook', vocabList);
   }, [vocabList]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_mistakes_log', JSON.stringify(mistakes));
+    safeSet('ielts_mistakes_log', mistakes);
   }, [mistakes]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_theory_notes', JSON.stringify(personalNotes));
+    safeSet('ielts_theory_notes', personalNotes);
   }, [personalNotes]);
 
   useEffect(() => {
-    localStorage.setItem('ielts_streak_count', streakCount.toString());
+    safeSet('ielts_streak_count', streakCount.toString());
   }, [streakCount]);
 
   // Handlers
@@ -701,97 +628,98 @@ export default function App() {
       {/* 2. Workspace Conditional Rendering based on activeSkill */}
       {activeSkill === 'reading' ? (
         <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-          <React.Suspense fallback={
-            <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
-              <div className="flex items-center space-x-2">
-                <span className="w-3 h-3 rounded-full bg-blue-600 animate-ping" />
-                <span>Đang tải phân hệ IELTS Reading Studio...</span>
+          <WorkspaceErrorBoundary skillName="IELTS Reading">
+            <React.Suspense fallback={
+              <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded-full bg-blue-600 animate-ping" />
+                  <span>Đang tải phân hệ IELTS Reading Studio...</span>
+                </div>
               </div>
-            </div>
-          }>
-            <ReadingWorkspace
-              apiKey={apiKey}
-              model={model}
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              onOpenTheory={() => setIsTheoryOpen(true)}
-              user={currentUser}
-              onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-              onReadingSubmitted={(sub) => {
-                setReadingHistory(prev => {
-                  const updated = [sub, ...prev];
-                  try {
-                    localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
-                  } catch (e) {}
-                  return updated;
-                });
-              }}
-              initialTestId={readingMockTestId}
-              initialExamMode={readingMockExamMode}
-            />
-          </React.Suspense>
+            }>
+              <ReadingWorkspace
+                apiKey={apiKey}
+                model={model}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+                onOpenTheory={() => setIsTheoryOpen(true)}
+                user={currentUser}
+                onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+                onReadingSubmitted={(sub) => {
+                  setReadingHistory(prev => {
+                    const updated = [sub, ...prev];
+                    safeSet('ielts_reading_submissions_history', updated);
+                    return updated;
+                  });
+                }}
+                initialTestId={readingMockTestId}
+                initialExamMode={readingMockExamMode}
+              />
+            </React.Suspense>
+          </WorkspaceErrorBoundary>
         </div>
       ) : activeSkill === 'listening' ? (
         <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-          <React.Suspense fallback={
-            <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
-              <div className="flex items-center space-x-2">
-                <span className="w-3 h-3 rounded-full bg-emerald-600 animate-ping" />
-                <span>Đang tải phân hệ IELTS Listening Studio...</span>
+          <WorkspaceErrorBoundary skillName="IELTS Listening">
+            <React.Suspense fallback={
+              <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded-full bg-emerald-600 animate-ping" />
+                  <span>Đang tải phân hệ IELTS Listening Studio...</span>
+                </div>
               </div>
-            </div>
-          }>
-            <ListeningWorkspace
-              apiKey={apiKey}
-              model={model}
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              onOpenTheory={() => setIsTheoryOpen(true)}
-              user={currentUser}
-              onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-              onOpenDrills={() => setIsDrillsOpen(true)}
-              onListeningSubmitted={(sub) => {
-                setListeningHistory(prev => {
-                  const updated = [sub, ...prev];
-                  try {
-                    localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(updated));
-                  } catch (e) {}
-                  return updated;
-                });
-              }}
-            />
-          </React.Suspense>
+            }>
+              <ListeningWorkspace
+                apiKey={apiKey}
+                model={model}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+                onOpenTheory={() => setIsTheoryOpen(true)}
+                user={currentUser}
+                onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+                onOpenDrills={() => setIsDrillsOpen(true)}
+                onListeningSubmitted={(sub) => {
+                  setListeningHistory(prev => {
+                    const updated = [sub, ...prev];
+                    safeSet('ielts_listening_submissions_history', updated);
+                    return updated;
+                  });
+                }}
+              />
+            </React.Suspense>
+          </WorkspaceErrorBoundary>
         </div>
       ) : activeSkill === 'speaking' ? (
         <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-          <React.Suspense fallback={
-            <div className="flex-1 flex items-center justify-center p-12 text-slate-400 font-bold text-sm bg-slate-950">
-              <div className="flex items-center space-x-2">
-                <span className="w-3 h-3 rounded-full bg-purple-600 animate-ping" />
-                <span>Đang tải phân hệ IELTS Speaking Studio...</span>
+          <WorkspaceErrorBoundary skillName="IELTS Speaking">
+            <React.Suspense fallback={
+              <div className="flex-1 flex items-center justify-center p-12 text-slate-400 font-bold text-sm bg-slate-950">
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded-full bg-purple-600 animate-ping" />
+                  <span>Đang tải phân hệ IELTS Speaking Studio...</span>
+                </div>
               </div>
-            </div>
-          }>
-            <SpeakingWorkspace
-              apiKey={apiKey}
-              model={model}
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              user={currentUser}
-              onOpenTheory={() => setIsTheoryOpen(true)}
-              onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-              onSpeakingSubmitted={(sub) => {
-                setSpeakingHistory(prev => {
-                  const updated = [sub, ...prev];
-                  try {
-                    localStorage.setItem('ielts_speaking_submissions_history', JSON.stringify(updated));
-                  } catch (e) {}
-                  return updated;
-                });
-              }}
-            />
-          </React.Suspense>
+            }>
+              <SpeakingWorkspace
+                apiKey={apiKey}
+                model={model}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+                user={currentUser}
+                onOpenTheory={() => setIsTheoryOpen(true)}
+                onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
+                onSpeakingSubmitted={(sub) => {
+                  setSpeakingHistory(prev => {
+                    const updated = [sub, ...prev];
+                    safeSet('ielts_speaking_submissions_history', updated);
+                    return updated;
+                  });
+                }}
+              />
+            </React.Suspense>
+          </WorkspaceErrorBoundary>
         </div>
       ) : (
-        <>
-          {/* Writing Workspace Sub-Header Toolbar (Responsive, Clean & Zero-Overlap) */}
+        <WorkspaceErrorBoundary skillName="IELTS Writing" emergencyData={essays[currentTaskId] || ''}>
+          <>
+            {/* Writing Workspace Sub-Header Toolbar (Responsive, Clean & Zero-Overlap) */}
           <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-2xs shrink-0 z-20">
             {/* Row 1 / Left: Task Selector & Target Badges */}
             <div className="flex items-center space-x-2 min-w-0">
@@ -916,6 +844,7 @@ export default function App() {
             onOpenSettings={() => setIsSettingsOpen(true)}
           />
         </>
+        </WorkspaceErrorBoundary>
       )}
 
       {/* 3. Modals System */}
@@ -953,35 +882,41 @@ export default function App() {
         model={model}
       />
 
-      <MockTestModal
-        isOpen={isMockTestOpen}
-        onClose={() => setIsMockTestOpen(false)}
-        allTasks={allTasks}
-        submissions={submissions}
-        readingHistory={readingHistory}
-        listeningHistory={listeningHistory}
-        speakingHistory={speakingHistory}
-        onSaveMockResult={(res) => {
-          setStreakCount(prev => prev + 1);
-          setSubmissions(prev => [
-            {
-              id: `mock-${Date.now()}`,
-              task: { title: 'Full Mock Test 60 phút', taskNumber: '1 & 2' },
-              essayText: 'Completed both Task 1 and Task 2',
-              evaluation: { overallBand: res.finalOverall },
-              stats: { wordCount: res.t1Words + res.t2Words, timeSpent: '60 phút' },
-              date: res.date
-            },
-            ...prev
-          ]);
-        }}
-        apiKey={apiKey}
-        model={model}
-        activeSkill={activeSkill}
-        onSelectSkill={(skill) => setActiveSkill(skill)}
-        onStartReadingMockExam={handleStartReadingMockExam}
-        currentUser={currentUser}
-      />
+      <WorkspaceErrorBoundary skillName="IELTS Mock Exam">
+        <MockTestModal
+          isOpen={isMockTestOpen}
+          onClose={() => setIsMockTestOpen(false)}
+          allTasks={allTasks}
+          submissions={submissions}
+          readingHistory={readingHistory}
+          listeningHistory={listeningHistory}
+          speakingHistory={speakingHistory}
+          onSaveMockResult={(res) => {
+            setStreakCount(prev => prev + 1);
+            setSubmissions(prev => {
+              const updated = [
+                {
+                  id: `mock-${Date.now()}`,
+                  task: { title: 'Full Mock Test 60 phút', taskNumber: '1 & 2' },
+                  essayText: 'Completed both Task 1 and Task 2',
+                  evaluation: { overallBand: res.finalOverall },
+                  stats: { wordCount: res.t1Words + res.t2Words, timeSpent: '60 phút' },
+                  date: res.date
+                },
+                ...prev
+              ];
+              safeSet('ielts_submissions_history', updated);
+              return updated;
+            });
+          }}
+          apiKey={apiKey}
+          model={model}
+          activeSkill={activeSkill}
+          onSelectSkill={(skill) => setActiveSkill(skill)}
+          onStartReadingMockExam={handleStartReadingMockExam}
+          currentUser={currentUser}
+        />
+      </WorkspaceErrorBoundary>
 
       <DocumentIngestModal
         isOpen={isIngestOpen}
