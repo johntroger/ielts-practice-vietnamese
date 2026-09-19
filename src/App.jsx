@@ -34,6 +34,7 @@ const AIEvaluationProgressModal = React.lazy(() => import('./components/AIEvalua
 const OnboardingModal = React.lazy(() => import('./components/OnboardingModal'));
 const SpeakingResultModal = React.lazy(() => import('./components/speaking/SpeakingResultModal'));
 const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPanel'));
+const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
 import { supabase } from './services/supabaseClient';
@@ -116,6 +117,7 @@ export default function App() {
   const [isRevisionOpen, setIsRevisionOpen] = useState(false);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [isMockTestOpen, setIsMockTestOpen] = useState(false);
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
   const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -584,6 +586,7 @@ export default function App() {
         onOpenDrills={() => setIsDrillsOpen(true)}
         onOpenWeeklyReport={() => setIsWeeklyReportOpen(true)}
         onOpenMockTest={() => setIsMockTestOpen(true)}
+        onOpenDiagnostic={() => setIsDiagnosticOpen(true)}
         onOpenIngest={() => setIsIngestOpen(true)}
         onOpenGenerator={() => setIsGeneratorOpen(true)}
         onOpenLibrary={() => setIsLibraryOpen(true)}
@@ -1226,6 +1229,14 @@ export default function App() {
       <ContactModal
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
+      />
+
+      <DiagnosticPlacementModal
+        isOpen={isDiagnosticOpen}
+        onClose={() => setIsDiagnosticOpen(false)}
+        targetBand={targetBand}
+        onApplyTargetBand={(newBand) => setTargetBand(newBand)}
+        onOpenSkill={(skill) => setActiveSkill(skill)}
       />
 
         {/* Onboarding 3-Step Tour & Target Band Selector */}

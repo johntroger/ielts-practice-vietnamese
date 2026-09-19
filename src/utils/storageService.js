@@ -223,7 +223,10 @@ export function exportBackupData() {
     'ielts_vocab_notebook',
     'ielts_mistakes_log',
     'ielts_theory_notes',
-    'ielts_streak_count'
+    'ielts_streak_count',
+    'ielts_latest_diagnostic_result',
+    'ielts_30_day_study_plan',
+    'ielts_study_plan_completed_days'
   ];
 
   primaryKeys.forEach(k => {

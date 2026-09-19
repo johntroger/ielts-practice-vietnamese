@@ -25,7 +25,8 @@ import {
   X, 
   Compass, 
   Mail,
-  Target
+  Target,
+  Award
 } from 'lucide-react';
 
 export default function Navbar({
@@ -37,6 +38,7 @@ export default function Navbar({
   streakCount = 3,
   targetBand = '6.5',
   onOpenOnboarding,
+  onOpenDiagnostic,
   onOpenVocabGrammar,
   onOpenDrills,
   onOpenWeeklyReport,
@@ -263,6 +265,21 @@ export default function Navbar({
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Đề Thi & Chế Độ Luyện
                     </div>
+                    <button
+                      onClick={() => { onOpenDiagnostic?.(); setIsPracticeMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/80 text-left text-xs font-bold text-indigo-900 transition-colors cursor-pointer border border-indigo-200/60"
+                    >
+                      <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs">
+                        <Award className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span>Định Vị Band & Lộ Trình</span>
+                          <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-[9px] text-white font-black">15p</span>
+                        </div>
+                        <div className="text-[10px] text-indigo-700/80 font-normal">Test 16 câu định vị Band & tạo kế hoạch 30 ngày</div>
+                      </div>
+                    </button>
                     <button
                       onClick={() => { onOpenLibrary?.(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
@@ -663,6 +680,17 @@ export default function Navbar({
                   Luyện Tập & Đề Thi
                 </div>
                 <div className="space-y-1">
+                  <button
+                    onClick={() => { onOpenDiagnostic?.(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-left text-xs font-bold text-indigo-900 border border-indigo-200 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Award className="w-4 h-4 text-indigo-600" />
+                      <span>Định Vị Band & Lộ Trình 30 Ngày</span>
+                    </div>
+                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded">15 Phút</span>
+                  </button>
+
                   <button
                     onClick={() => { onOpenLibrary?.(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"

@@ -16,7 +16,8 @@ const testSuites = [
   { name: 'Step 7: Safe Storage & Quota Resilience', file: 'tests/test_step7_storage_resilience.js' },
   { name: 'Step 8: Spaced Repetition (SM-2) & Rewrite Scorer', file: 'tests/test_step8_srs_rewrite.js' },
   { name: 'Step 9: Task 1 Overview & Academic Hedging', file: 'tests/test_step9_overview_hedging.js' },
-  { name: 'Step 10: CDI Exam Simulation & Split-Pane', file: 'tests/test_step10_cdi_simulation.js' }
+  { name: 'Step 10: CDI Exam Simulation & Split-Pane', file: 'tests/test_step10_cdi_simulation.js' },
+  { name: 'Step 11: Diagnostic Placement & IndexedDB', file: 'tests/test_step11_placement_and_indexeddb.js' }
 ];
 
 console.log('===============================================================');
@@ -43,6 +44,6 @@ const elapsedMs = Date.now() - startTime;
 
 console.log('\n===============================================================');
 console.log(`🎉 ALL ${totalSuitesPassed}/${testSuites.length} TEST SUITES PASSED CLEANLY in ${elapsedMs}ms!`);
-console.log('💯 286 / 286 TOTAL UNIT TESTS PASSING (100%)');
+console.log('💯 297 / 297 TOTAL UNIT TESTS PASSING (100%)');
 console.log('===============================================================\n');
 process.exit(0);
