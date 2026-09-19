@@ -182,8 +182,8 @@ export default function QuestionPaletteBar({
         </div>
       </div>
 
-      {/* Center: 3-Part Question Palette Matrix (Exact IELTS on Computer format) */}
-      <div className="flex-1 max-w-full sm:max-w-2xl overflow-x-auto py-0.5 px-0.5 scrollbar-thin touch-pan-x">
+      {/* Center: 3-Part Question Palette Matrix (Exact IELTS on Computer format) - min-w-0 ensures submit button is never pushed off screen */}
+      <div className="flex-1 min-w-0 max-w-full xl:max-w-3xl overflow-x-auto py-0.5 px-0.5 scrollbar-thin touch-pan-x">
         <div className="flex items-center gap-2 sm:gap-3 min-w-max">
           {parts.map(part => {
             const isCurrentPart = activePassageNum === part.partNum;
