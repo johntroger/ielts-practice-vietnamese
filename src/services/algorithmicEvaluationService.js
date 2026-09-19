@@ -289,6 +289,134 @@ const INFORMAL_WORDS = [
   { match: /\bkinda\b/gi, replace: 'somewhat / to some extent', note: "Tuyệt đối không dùng dạng viết tắt văn nói trong bài thi IELTS." }
 ];
 
+// Bare Singular Countable Nouns & Missing Article Traps (Cambridge GRA Band 5-6 Red Flags)
+const BARE_NOUN_AND_ARTICLE_TRAPS = [
+  // 1. Missing 'a'/'an' in Predicate Nominals & Common Collocations
+  {
+    regex: /\b(play|plays|played)\s+(important\s+role|pivotal\s+role|vital\s+role|crucial\s+role|key\s+role|significant\s+role|indispensable\s+role|fundamental\s+role)\b/gi,
+    fix: "Thiếu mạo từ 'a/an': Cụm chuẩn là 'play an important / a vital / a key role in' (thay vì thiếu mạo từ).",
+    suggest: (match) => {
+      const lower = match.toLowerCase();
+      if (lower.includes('important') || lower.includes('indispensable')) {
+        return match.replace(/^(play|plays|played)\s+/i, '$1 an ');
+      }
+      return match.replace(/^(play|plays|played)\s+/i, '$1 a ');
+    }
+  },
+  {
+    regex: /\b(is|are|was|were|become|becomes|became)\s+(serious\s+problem|major\s+problem|big\s+problem|pressing\s+issue|difficult\s+task|common\s+phenomenon|viable\s+alternative)\b/gi,
+    fix: "Thiếu mạo từ 'a': Danh từ đếm được số ít đi kèm tính từ sau to be bắt buộc phải có mạo từ (ví dụ: 'is a serious problem', 'is a pressing issue').",
+    suggest: (match) => match.replace(/^(is|are|was|were|become|becomes|became)\s+/i, '$1 a ')
+  },
+  {
+    regex: /\b(have|has|had|lead|leads|led)\s+(better\s+life|good\s+life|healthy\s+life|normal\s+life|luxurious\s+life)\b/gi,
+    fix: "Thiếu mạo từ 'a': Dùng 'have a better life / lead a healthy life' (danh từ 'life' ở đây là danh từ đếm được chỉ hoàn cảnh sống cụ thể).",
+    suggest: (match) => match.replace(/^(have|has|had|lead|leads|led)\s+/i, '$1 a ')
+  },
+  {
+    regex: /\b(have|has|had)\s+(profound\s+impact|significant\s+impact|detrimental\s+impact|negative\s+impact|positive\s+impact|huge\s+impact|direct\s+impact)\b/gi,
+    fix: "Thiếu mạo từ 'a': Dùng 'have a profound / significant / detrimental impact on'.",
+    suggest: (match) => match.replace(/^(have|has|had)\s+/i, '$1 a ')
+  },
+  {
+    regex: /\b(make|makes|made)\s+(big\s+difference|significant\s+difference|huge\s+difference|remarkable\s+difference|difference)\b/gi,
+    fix: "Thiếu mạo từ 'a': Dùng 'make a difference / make a significant difference'.",
+    suggest: (match) => match.replace(/^(make|makes|made)\s+/i, '$1 a ')
+  },
+  {
+    regex: /\b(pose|poses|posed)\s+(serious\s+threat|grave\s+threat|significant\s+threat|major\s+threat)\b/gi,
+    fix: "Thiếu mạo từ 'a': Dùng 'pose a serious / grave threat to'.",
+    suggest: (match) => match.replace(/^(pose|poses|posed)\s+/i, '$1 a ')
+  },
+  {
+    regex: /\b(provide|provides|provided|give|gives|gave)\s+(viable\s+alternative|better\s+solution|clear\s+example|good\s+example|concrete\s+example)\b/gi,
+    fix: "Thiếu mạo từ 'a': Dùng 'provide a viable alternative' hoặc 'give a clear example'.",
+    suggest: (match) => match.replace(/^(provide|provides|provided|give|gives|gave)\s+/i, '$1 a ')
+  },
+
+  // 2. Fixed Expressions Missing 'the' / 'a'
+  {
+    regex: /\b(in|for)\s+(long\s+run|short\s+run)\b/gi,
+    fix: "Thiếu mạo từ 'the': Dùng cụm cố định 'in the long run' hoặc 'in the short run'.",
+    suggest: (match) => match.replace(/^(in|for)\s+/i, '$1 the ')
+  },
+  {
+    regex: /\b(on)\s+(daily\s+basis|regular\s+basis)\b/gi,
+    fix: "Thiếu mạo từ 'a': Dùng cụm cố định 'on a daily basis' hoặc 'on a regular basis'.",
+    suggest: (match) => match.replace(/^on\s+/i, 'on a ')
+  },
+  {
+    regex: /\b(all\s+over|around)\s+(world)\b/gi,
+    fix: "Thiếu mạo từ 'the': Dùng 'around the world' hoặc 'all over the world'.",
+    suggest: (match) => match.replace(/\bworld\b/i, 'the world')
+  },
+  {
+    regex: /\b(at)\s+(global\s+level|national\s+level|local\s+level)\b/gi,
+    fix: "Thiếu mạo từ: Dùng 'at the global level' hoặc 'at a national/local level'.",
+    suggest: (match) => match.replace(/^at\s+/i, 'at the ')
+  },
+  {
+    regex: /\b(as)\s+(result),/gi,
+    fix: "Thiếu mạo từ 'a': Cụm liên từ nguyên nhân - kết quả chuẩn là 'As a result,'.",
+    suggest: () => 'as a result,'
+  },
+  {
+    regex: /\bin\s+(future|near\s+future)\b/gi,
+    fix: "Thiếu mạo từ 'the': Dùng 'in the future' hoặc 'in the near future'.",
+    suggest: (match) => match.replace(/^in\s+/i, 'in the ')
+  },
+
+  // 3. Bare Singular Countable Nouns in Subject Position (People & Roles)
+  {
+    regex: /(^|[.;,!?]\s*)(student|teacher|parent|child|doctor|nurse|worker|employee|employer|consumer|citizen|individual)\s+(should|must|can|could|will|would|need\s+to|needs\s+to|has\s+to|have\s+to|ought\s+to|is|was|plays|faces|creates)\b/gi,
+    fix: "Lỗi danh từ đếm được số ít đứng trơ trọi (Bare Singular Countable Noun): Danh từ đếm được số ít ('student', 'teacher', 'parent', 'individual'...) không được đứng độc lập mà bắt buộc phải có mạo từ (a/an/the) hoặc chuyển sang dạng số nhiều (-s/-es). Ví dụ: 'Students should...' hoặc 'A student should...'.",
+    suggest: (match) => {
+      return match.replace(/\b(student|teacher|parent|child|doctor|nurse|worker|employee|employer|consumer|citizen|individual)\b/i, (m) => {
+        if (m.toLowerCase() === 'child') return m[0] === 'C' ? 'Children' : 'children';
+        return m + 's';
+      });
+    }
+  },
+
+  // 4. Bare Singular Countable Nouns in Subject Position (Institutions / Entities)
+  {
+    regex: /(^|[.;,!?]\s*)(government|company|university|hospital|country|nation)\s+(should|must|can|could|will|would|need\s+to|needs\s+to|has\s+to|have\s+to|ought\s+to)\b/gi,
+    fix: "Lỗi thiếu mạo từ/từ hạn định trước danh từ tổ chức/thể chế: 'government/company/university' là danh từ đếm được, phải dùng 'the government / governments' hoặc 'a company / companies'.",
+    suggest: (match) => {
+      return match.replace(/\b(government|company|university|hospital|country|nation)\b/i, (m) => {
+        const isCapital = m[0] === m[0].toUpperCase();
+        return isCapital ? `The ${m.toLowerCase()}` : `the ${m}`;
+      });
+    }
+  },
+
+  // 5. Institutional Noun following that / belief verbs
+  {
+    regex: /\b(that|think|thinks|believe|believes|argue|argues)\s+(government|company|university)\s+(should|must|can|could|will|would|needs?\s+to|has\s+to)\b/gi,
+    fix: "Thiếu mạo từ trước danh từ thể chế: Dùng 'the government should' hoặc 'governments should'.",
+    suggest: (match) => match.replace(/\b(government|company|university)\b/i, 'the $1')
+  },
+
+  // 6. Bare Singular Nouns following Prepositions
+  {
+    regex: /\b(for|with|to|against)\s+(student|teacher|parent|child|worker|employee|consumer|citizen|individual)\s+(who|which|that|in|to)\b/gi,
+    fix: "Lỗi danh từ đếm được số ít sau giới từ: Dùng danh từ số nhiều ('for students who') hoặc có mạo từ ('for a student who').",
+    suggest: (match) => {
+      return match.replace(/\b(student|teacher|parent|child|worker|employee|consumer|citizen|individual)\b/i, (m) => {
+        if (m.toLowerCase() === 'child') return 'children';
+        return m + 's';
+      });
+    }
+  },
+
+  // 7. Bare Countable Noun in Location / Environment
+  {
+    regex: /\b(in|into|from)\s+(big\s+city|modern\s+city|large\s+city|rural\s+area|urban\s+area)\b/gi,
+    fix: "Thiếu mạo từ trước danh từ chỉ nơi chốn đếm được: Dùng 'in a big city' hoặc 'in big cities' (thay vì 'in big city').",
+    suggest: (match) => match.replace(/^(in|into|from)\s+/i, '$1 a ')
+  }
+];
+
 // Grammar & Mechanical Error Patterns
 const COMMON_GRAMMAR_PATTERNS = [
   {
@@ -1118,7 +1246,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -1137,6 +1265,8 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Khắc phục lỗi bỏ sót yêu cầu đề bài: ${task2Fulfillment.missingPartDescription ? 'Bạn chưa trả lời ' + task2Fulfillment.missingPartDescription + '.' : ''} Dành riêng 1 đoạn thân bài độc lập cho mỗi câu hỏi của đề bài để thoát khỏi mức khống chế Band 5.0 Task Response.`;
   } else if (svErrorCount >= 3) {
     plan.priority1 = `Chấm dứt lỗi chia động từ cơ bản: Phát hiện ${svErrorCount} lỗi hòa hợp Chủ ngữ - Động từ và Danh từ số nhiều. Hãy dành 3 phút cuối giờ rà soát lại thì và đuôi -s/-es của mọi động từ.`;
+  } else if (bareNounErrorCount >= 4) {
+    plan.priority1 = `Chấm dứt lỗi danh từ trơ trọi & mạo từ: Phát hiện ${bareNounErrorCount} lỗi danh từ đếm được số ít đứng một mình hoặc thiếu mạo từ (a/an/the) (như: 'student should', 'plays important role'). Quy tắc bắt buộc: Danh từ đếm được số ít không bao giờ đứng độc lập. Hãy thêm mạo từ hoặc chuyển sang số nhiều (-s/-es) để mở khóa Band 7.0+ GRA.`;
   } else if (trBand < 6.0) {
     plan.priority1 = isTask1 
       ? 'Bắt buộc phải có đoạn Overview nêu bật 2 đặc điểm lớn nhất của biểu đồ (không đưa số liệu chi tiết vào Overview).' 
@@ -1145,8 +1275,10 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = 'Phát triển chiều sâu lập luận: Đào sâu cơ chế "Vì sao dẫn đến kết quả đó" thay vì chỉ liệt kê ý tưởng bề mặt.';
   }
 
-  // Priority 2: Cohesion & Range
-  if (ccBand < 6.0) {
+  // Priority 2: Cohesion, Grammar & Article/Noun Control
+  if (bareNounErrorCount >= 2) {
+    plan.priority2 = `Khắc phục triệt để lỗi mạo từ & danh từ trơ trọi: Phát hiện ${bareNounErrorCount} lỗi thiếu mạo từ (a/an/the) hoặc dùng danh từ đếm được số ít đứng một mình. Hãy luôn chuyển sang danh từ số nhiều (-s/-es) hoặc thêm 'a/an/the'.`;
+  } else if (ccBand < 6.0) {
     plan.priority2 = 'Cải thiện mạch văn: Chia bài viết thành các đoạn cân đối. Hạn chế nhồi nhét "First, Second, Moreover", hãy luyện tập dùng đại từ thay thế (This trend, Such measures) và liên kết ẩn.';
   } else if (graBand < 6.5) {
     plan.priority2 = 'Bổ sung câu phức nâng cao: Lồng ghép tối thiểu 3 câu có mệnh đề quan hệ (which/who), mệnh đề nhượng bộ (Although/While) hoặc câu điều kiện (If).';
@@ -1770,6 +1902,28 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     });
   });
 
+  // 9. Bare Singular Countable Nouns & Article Traps (Cambridge Band 5-6 Red Flags)
+  let bareNounErrorCount = 0;
+  BARE_NOUN_AND_ARTICLE_TRAPS.forEach(trap => {
+    sentences.forEach((s, sIdx) => {
+      trap.regex.lastIndex = 0;
+      if (trap.regex.test(s) && corrections.length < 15) {
+        erroneousSentenceIndices.add(sIdx);
+        bareNounErrorCount++;
+        trap.regex.lastIndex = 0;
+        const correctedSentence = trap.suggest
+          ? s.replace(trap.regex, trap.suggest)
+          : `${s} (Kiểm tra lại mạo từ/danh từ số nhiều)`;
+        corrections.push({
+          original: s,
+          corrected: correctedSentence,
+          type: 'grammar',
+          explanation: trap.fix
+        });
+      }
+    });
+  });
+
   // ===========================================================
   // E. GRAMMATICAL RANGE & ACCURACY (GRA) v3 (CALIBRATED)
   // ===========================================================
@@ -1801,13 +1955,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const complexRatio = complexCount / totalSentences;
 
   // 3. Calibrated Cambridge GRA Matrix (Accuracy + Range Dual Gate)
-  if (svErrorCount === 0 && efsrRatio >= 80 && complexRatio >= 0.45 && totalSentences >= 8) {
+  if (svErrorCount === 0 && bareNounErrorCount === 0 && efsrRatio >= 80 && complexRatio >= 0.45 && totalSentences >= 8) {
     graScore = 8.0;
     graStrengths.push(`Khả năng kiểm soát ngữ pháp xuất sắc: ${Math.round(efsrRatio)}% câu hoàn toàn không lỗi, kết hợp nhuần nhuyễn câu phức và mệnh đề nâng cao (${Math.round(complexRatio * 100)}%).`);
-  } else if (svErrorCount <= 1 && efsrRatio >= 65 && complexRatio >= 0.30) {
+  } else if (svErrorCount <= 1 && bareNounErrorCount <= 1 && efsrRatio >= 65 && complexRatio >= 0.30) {
     graScore = 7.0;
     graStrengths.push(`Tỷ lệ câu không lỗi đạt mức tốt (${Math.round(efsrRatio)}%), sử dụng thành thạo nhiều dạng câu phức.`);
-  } else if (svErrorCount <= 2 && efsrRatio >= 40) {
+  } else if (svErrorCount <= 2 && bareNounErrorCount <= 2 && efsrRatio >= 40) {
     graScore = 6.0;
     graStrengths.push(`Có sự kết hợp giữa câu đơn và câu phức, truyền tải được thông điệp dù còn một số lỗi ngữ pháp.`);
     if (complexRatio < 0.25) {
@@ -1816,7 +1970,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   } else {
     // Systematic errors or very low EFSR
     graScore = 5.0;
-    graImprovements.push(`Mắc lỗi ngữ pháp cơ bản lặp đi lặp lại (${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều). Theo tiêu chí Cambridge, lỗi hệ thống giới hạn điểm GRA ở Band 5.0.`);
+    graImprovements.push(`Mắc lỗi ngữ pháp cơ bản lặp đi lặp lại (${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều, ${bareNounErrorCount} lỗi danh từ trơ trọi/mạo từ). Theo tiêu chí Cambridge, lỗi hệ thống giới hạn điểm GRA ở Band 5.0.`);
   }
 
   // Underlength hard caps for GRA
@@ -1842,6 +1996,15 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     graScore = Math.min(graScore, 5.5);
   }
 
+  // Hard Cap: Bare Singular Countable Nouns & Systematic Article Omission
+  if (bareNounErrorCount >= 5) {
+    if (graScore > 5.0) graScore = 5.0;
+    graImprovements.push(`LỖI NGỮ PHÁP HỆ THỐNG NGHIÊM TRỌNG (Bare Noun / Article Trap): Phát hiện ${bareNounErrorCount} lỗi danh từ đếm được số ít đứng trơ trọi hoặc thiếu mạo từ (a/an/the) lặp lại liên tục. Barem Cambridge Band 5.0 GRA quy định các lỗi ngữ pháp hệ thống khống chế điểm tối đa Band 5.0.`);
+  } else if (bareNounErrorCount >= 3) {
+    if (graScore > 6.0) graScore = 6.0;
+    graImprovements.push(`LỖI HỆ THỐNG DANH TỪ & MẠO TỪ (Bare Nouns / Articles): Phát hiện ${bareNounErrorCount} lỗi danh từ đếm được số ít đứng trơ trọi hoặc thiếu mạo từ (như: 'student should', 'plays important role', 'in big city'). Barem Cambridge Band 7.0+ GRA đòi hỏi tỷ lệ câu không lỗi cao và kiểm soát tốt hình thái danh từ. Lỗi này khống chế điểm Ngữ pháp tối đa Band 6.0. Hãy xem bảng Lỗi sai để sửa triệt để.`);
+  }
+
   // Sentence Length Diagnostics (Run-on detection)
   const sentenceWordCounts = sentences.map(s => s.split(/\s+/).length);
   const runOnSentences = sentenceWordCounts.filter(cnt => cnt > 42).length;
@@ -1865,7 +2028,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
   const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount);
 
   // Band 8 Model Rewrite
   let band8Rewrite = '';
@@ -1954,6 +2117,10 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       overuseCount: wordOveruse.overuseCount,
       overusedWords: wordOveruse.overusedWords,
       suggestions: wordOveruse.suggestions
+    },
+    bareNounStats: {
+      hasBareNounErrors: bareNounErrorCount > 0,
+      bareNounErrorCount
     }
   };
 }
