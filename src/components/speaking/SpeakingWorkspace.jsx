@@ -14,7 +14,7 @@ import {
   SPEAKING_MOCK_TEST_PACKS 
 } from '../../data/speakingTopics';
 import { useSpeechEngine } from '../../hooks/useSpeechEngine';
-import { evaluateSpeakingMockExam } from '../../services/geminiService';
+import { evaluateSpeakingMockExam, evaluateSpeakingAlgorithmically } from '../../services/geminiService';
 import SpeakingSoundcheckModal from './SpeakingSoundcheckModal';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import SpeakingPracticePane from './SpeakingPracticePane';
@@ -252,10 +252,41 @@ export default function SpeakingWorkspace({
     setIsInMockExamRoom(true);
   };
 
+  const handleReEvaluateWithAI = async () => {
+    if (!completedExamData?.finalTranscript) return;
+    setIsEvaluating(true);
+    try {
+      const evalResult = await evaluateSpeakingMockExam({
+        dialogueHistory: completedExamData.finalTranscript,
+        mockPack: activeMockPack,
+        examiner: activeExaminer,
+        totalDurationSec: completedExamData.meta?.totalDurationSec || 600,
+        apiKey,
+        model
+      });
+      setCurrentEvaluation(evalResult);
+    } catch (err) {
+      console.error('Error re-evaluating speaking exam with AI:', err);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
+  const handleReEvaluateAlgorithmically = () => {
+    if (!completedExamData?.finalTranscript) return;
+    const evalResult = evaluateSpeakingAlgorithmically({
+      dialogueHistory: completedExamData.finalTranscript,
+      mockPack: activeMockPack,
+      examiner: activeExaminer,
+      totalDurationSec: completedExamData.meta?.totalDurationSec || 600
+    });
+    setCurrentEvaluation(evalResult);
+  };
+
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-slate-950 text-slate-100 overflow-hidden select-none">
+    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 min-h-[calc(100vh-64px)] overflow-x-hidden">
       
-      {/* 1. TOP HEADER TOOLBAR (Theater Mode & Mobile-Optimized) */}
+      {/* 1. TOP HEADER & METRICS BAR (Theater Mode & Mobile-Optimized) */}
       <div className="bg-slate-900 border-b border-slate-800/80 px-2.5 sm:px-6 py-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 sm:gap-3 shrink-0">
         
         {/* Left / Row 1 on Mobile: Branding & Mode Switcher */}
@@ -826,6 +857,9 @@ export default function SpeakingWorkspace({
           setIsInMockExamRoom(true);
         }}
         onSaveToVocabNotebook={onSaveToVocabNotebook}
+        onReEvaluateWithAI={handleReEvaluateWithAI}
+        onReEvaluateAlgorithmically={handleReEvaluateAlgorithmically}
+        apiKey={apiKey}
       />
 
       {/* 7. STEP 6: AI SPEAKING MOCK TEST GENERATOR MODAL */}

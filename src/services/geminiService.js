@@ -3,6 +3,8 @@
  * Directly communicates with Google Gemini API using structured JSON prompts.
  */
 
+import { evaluateSpeakingAlgorithmically } from './algorithmicSpeakingService.js';
+
 const DEFAULT_MODEL = 'gemini-3.6-flash';
 
 export const DEPRECATED_GEMINI_MODELS = [
@@ -2628,15 +2630,13 @@ export async function evaluateSpeakingMockExam({
   const fillersFound = allSpokenText.match(fillerRegex) || [];
   const fillerCount = fillersFound.length;
 
-  // If no API key or no candidate answers, use rich fallback
+  // If no API key or no candidate answers, use standalone Cambridge algorithmic engine
   if (!apiKey || candidateTurns.length === 0) {
-    return generateFallbackSpeakingEvaluation({
+    return evaluateSpeakingAlgorithmically({
       dialogueHistory,
       mockPack,
       examiner,
-      wordCount,
-      wordsPerMinute,
-      fillerCount
+      totalDurationSec
     });
   }
 
@@ -2742,14 +2742,12 @@ OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
     });
 
     if (!response.ok) {
-      console.warn('Gemini API call returned non-ok, falling back to local evaluation');
-      return generateFallbackSpeakingEvaluation({
+      console.warn('Gemini API call returned non-ok, falling back to local algorithmic evaluation');
+      return evaluateSpeakingAlgorithmically({
         dialogueHistory,
         mockPack,
         examiner,
-        wordCount,
-        wordsPerMinute,
-        fillerCount
+        totalDurationSec
       });
     }
 
@@ -2758,30 +2756,31 @@ OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
     const parsed = robustJsonParse(text, null);
 
     if (!parsed || !parsed.overallBand) {
-      console.warn('Failed to parse JSON, using fallback evaluation');
-      return generateFallbackSpeakingEvaluation({
+      console.warn('Failed to parse JSON, using algorithmic evaluation');
+      return evaluateSpeakingAlgorithmically({
         dialogueHistory,
         mockPack,
         examiner,
-        wordCount,
-        wordsPerMinute,
-        fillerCount
+        totalDurationSec
       });
     }
 
-    return parsed;
+    return {
+      ...parsed,
+      evaluationMethod: 'ai'
+    };
   } catch (err) {
-    console.error('Error in evaluateSpeakingMockExam, using fallback:', err);
-    return generateFallbackSpeakingEvaluation({
+    console.error('Error in evaluateSpeakingMockExam, using algorithmic evaluation:', err);
+    return evaluateSpeakingAlgorithmically({
       dialogueHistory,
       mockPack,
       examiner,
-      wordCount,
-      wordsPerMinute,
-      fillerCount
+      totalDurationSec
     });
   }
 }
+
+export { evaluateSpeakingAlgorithmically };
 
 /**
  * AI Speaking Mock Test Pack Generator
