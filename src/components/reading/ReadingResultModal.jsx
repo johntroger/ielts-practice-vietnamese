@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Award, 
   CheckCircle2, 
@@ -15,7 +15,9 @@ import {
   Sparkles,
   BookOpen,
   Layers,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function ReadingResultModal({
@@ -39,7 +41,8 @@ export default function ReadingResultModal({
     accuracyPercent,
     timeSpentSeconds,
     passageStats = [],
-    questionsBreakdown = []
+    questionsBreakdown = [],
+    errorBreakdown = {}
   } = bandResult;
 
   // Format time spent (MM:SS)
@@ -218,6 +221,49 @@ export default function ReadingResultModal({
                 </div>
               </div>
 
+              {/* 6-Layer Diagnostic System Highlights */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
+                    <ShieldCheck className="w-4 h-4 text-blue-600" />
+                    <span>Chẩn Đoán 6 Tầng Lỗi Khảo Thí (Diagnostic Breakdown)</span>
+                  </h3>
+                  <span className="text-xs text-slate-500 font-semibold">Chuẩn Cambridge Official</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-1">
+                  <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-300 text-center">
+                    <div className="text-lg font-black text-emerald-800">{errorBreakdown.CORRECT || 0}</div>
+                    <div className="text-[11px] font-semibold text-emerald-700">Đúng Tuyệt Đối</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-amber-100/70 border border-amber-300 text-center">
+                    <div className="text-lg font-black text-amber-800">{errorBreakdown.WORD_LIMIT_ERROR || 0}</div>
+                    <div className="text-[11px] font-semibold text-amber-700">Lỗi Vượt Từ</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-orange-100/70 border border-orange-300 text-center">
+                    <div className="text-lg font-black text-orange-800">{errorBreakdown.PLURAL_ERROR || 0}</div>
+                    <div className="text-[11px] font-semibold text-orange-700">Lỗi Âm Đuôi (-s)</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-rose-100/70 border border-rose-300 text-center">
+                    <div className="text-lg font-black text-rose-800">{errorBreakdown.SPELLING_ERROR || 0}</div>
+                    <div className="text-[11px] font-semibold text-rose-700">Sai Chính Tả</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-red-100/70 border border-red-300 text-center">
+                    <div className="text-lg font-black text-red-800">{errorBreakdown.WRONG_ANSWER || 0}</div>
+                    <div className="text-[11px] font-semibold text-red-700">Trả Lời Sai</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-slate-200/80 border border-slate-300 text-center">
+                    <div className="text-lg font-black text-slate-800">{errorBreakdown.UNANSWERED || 0}</div>
+                    <div className="text-[11px] font-semibold text-slate-600">Chưa Điền</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Passage Quick Breakdown Cards */}
               <div>
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center space-x-1.5">
@@ -389,6 +435,41 @@ export default function ReadingResultModal({
                           <span className="text-slate-400">•</span>
                           <span>Đáp án chuẩn: <strong className="text-emerald-700 font-bold">{String(q.correctAnswer)}</strong></span>
                         </div>
+
+                        {/* Diagnostic badge and message */}
+                        {q.status && q.status !== 'CORRECT' && (
+                          <div className="mt-1.5 flex items-start space-x-1.5 text-[11px] font-medium text-slate-700 bg-white/80 p-2 rounded-lg border border-slate-200/80">
+                            {q.status === 'WORD_LIMIT_ERROR' && (
+                              <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold shrink-0 text-[10px]">
+                                LỖI VƯỢT TỪ
+                              </span>
+                            )}
+                            {q.status === 'PLURAL_ERROR' && (
+                              <span className="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 font-bold shrink-0 text-[10px]">
+                                LỖI SỐ NHIỀU -S
+                              </span>
+                            )}
+                            {q.status === 'SPELLING_ERROR' && (
+                              <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0 text-[10px]">
+                                SAI CHÍNH TẢ
+                              </span>
+                            )}
+                            {q.status === 'UNANSWERED' && (
+                              <span className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-bold shrink-0 text-[10px]">
+                                CHƯA ĐIỀN
+                              </span>
+                            )}
+                            <span className="text-slate-600 leading-snug">
+                              {q.diagnosticMessage || (q.explanation || 'Chưa chính xác')}
+                            </span>
+                          </div>
+                        )}
+                        {q.isCorrect && q.diagnosticMessage && q.diagnosticMessage.includes('Lưu ý') && (
+                          <div className="mt-1.5 flex items-start space-x-1.5 text-[11px] font-medium text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200">
+                            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                            <span className="leading-snug">{q.diagnosticMessage}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

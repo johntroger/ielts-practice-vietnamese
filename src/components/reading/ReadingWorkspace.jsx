@@ -243,7 +243,8 @@ export default function ReadingWorkspace({
   } = useReadingExam({
     testId: currentTest.id,
     totalTimeMinutes: currentTest.timeLimitMinutes || 60,
-    questionsData: allQuestions
+    questionsData: allQuestions,
+    testData: currentTest
   });
 
   // Automatically start timer in exam mode

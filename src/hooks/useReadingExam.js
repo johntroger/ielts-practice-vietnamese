@@ -1,12 +1,14 @@
-﻿import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { calculateReadingBandScore } from '../data/readingTasks';
+import { scoreReadingExam } from '../utils/readingScorer';
 
 const STORAGE_PREFIX = 'ielts_reading_session_';
 
 export function useReadingExam({
   testId = 'cambridge-academic-test-1',
   totalTimeMinutes = 60,
-  questionsData = []
+  questionsData = [],
+  testData = null
 }) {
   const storageKey = `${STORAGE_PREFIX}${testId}`;
 
@@ -152,69 +154,21 @@ export function useReadingExam({
     }
   }, [totalTimeMinutes, storageKey]);
 
-  // Band Score Calculation
+  // Band Score Calculation via Standardized Cambridge Reading Scoring Engine
   const bandResult = useMemo(() => {
-    if (!isSubmitted || !questionsData || questionsData.length === 0) return null;
+    if (!isSubmitted || (!questionsData?.length && !testData?.passages?.length)) return null;
 
-    let correctCount = 0;
-    const questionsBreakdown = questionsData.map(q => {
-      const uAns = userAnswers[q.order];
-      let isCorrect = false;
-
-      if (Array.isArray(uAns)) {
-        const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer];
-        isCorrect = uAns.length === correctArr.length && uAns.every(a => correctArr.includes(a));
-      } else if (uAns) {
-        isCorrect = (
-          String(uAns).trim().toLowerCase() === String(q.answer).trim().toLowerCase() ||
-          (q.acceptableAnswers && q.acceptableAnswers.some(a => a.toLowerCase() === String(uAns).trim().toLowerCase()))
-        );
-      }
-
-      if (isCorrect) correctCount++;
-
-      return {
-        order: q.order,
-        questionId: q.id,
-        passageNumber: q.passageNumber || 1,
-        questionType: q.type || 'standard',
-        questionText: q.questionText,
-        userAnswer: uAns || null,
-        correctAnswer: q.answer,
-        isCorrect,
-        explanation: q.explanation || '',
-        evidenceParagraph: q.evidenceParagraph || ''
-      };
-    });
-
-    const totalQuestions = questionsData.length;
-    const band = calculateReadingBandScore(correctCount);
-    const accuracyPercent = Math.round((correctCount / totalQuestions) * 100);
     const totalTimeSeconds = totalTimeMinutes * 60;
-    const timeSpentSeconds = totalTimeSeconds - timeRemaining;
+    const timeSpentSeconds = Math.max(0, totalTimeSeconds - timeRemaining);
 
-    // Breakdown per Passage (Passage 1, 2, 3)
-    const passageStats = [1, 2, 3].map(pNum => {
-      const pQuestions = questionsBreakdown.filter(q => q.passageNumber === pNum);
-      const pCorrect = pQuestions.filter(q => q.isCorrect).length;
-      return {
-        passageNumber: pNum,
-        total: pQuestions.length,
-        correct: pCorrect,
-        accuracy: pQuestions.length > 0 ? Math.round((pCorrect / pQuestions.length) * 100) : 0
-      };
-    });
-
-    return {
-      correctCount,
-      totalQuestions,
-      band,
-      accuracyPercent,
+    return scoreReadingExam({
+      testData,
+      questionsData,
+      userAnswers,
       timeSpentSeconds,
-      passageStats,
-      questionsBreakdown
-    };
-  }, [isSubmitted, questionsData, userAnswers, totalTimeMinutes, timeRemaining]);
+      totalTimeMinutes
+    });
+  }, [isSubmitted, testData, questionsData, userAnswers, totalTimeMinutes, timeRemaining]);
 
   return {
     userAnswers,
