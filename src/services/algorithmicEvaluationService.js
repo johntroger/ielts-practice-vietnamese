@@ -1259,6 +1259,115 @@ export function analyzeCommaSplices(sentences) {
   };
 }
 
+// Academic Hedging & Overgeneralisation Constants (Cambridge Task 2 Band 6 vs 7-9 Standard)
+export const HEDGING_PATTERNS = [
+  { regex: /\b(may|might|could)\s+(?:well\s+)?(be|lead|contribute|cause|result|stem|play|affect|impact|enhance|provide|offer|help|induce|foster|mitigate|diminish|disrupt)\b/gi, label: 'tentative modal' },
+  { regex: /\b(tends?|tended|tendency)\s+to\b/gi, label: 'tendency verb' },
+  { regex: /\b(appears?|appeared|seems?|seemed)\s+to\b/gi, label: 'appearance verb' },
+  { regex: /\b(is|are|was|were|become|becomes)\s+(?:more\s+|less\s+)?(likely|unlikely|inclined|prone|susceptible)\s+to\b/gi, label: 'probability adjective' },
+  { regex: /\b(arguably|potentially|conceivably|plausibly|predominantly|largely|frequently)\b/gi, label: 'epistemic adverb' },
+  { regex: /\b(evidence|research|studies|empirical\s+data)\s+(suggests?|indicates?|demonstrates?|implies?)\s+that\b/gi, label: 'evidentiary framing' },
+  { regex: /\b(it\s+can\s+be\s+argued\s+that|it\s+is\s+often\s+asserted\s+that|to\s+a\s+certain\s+extent|in\s+many\s+instances|in\s+numerous\s+cases|under\s+certain\s+circumstances)\b/gi, label: 'impersonal qualification' }
+];
+
+export const OVERGENERALISATION_PATTERNS = [
+  { regex: /\b(everyone|everybody)\s+(always|never|knows\s+that|believes\s+that|must|will)\b/gi, fix: 'many individuals tend to', label: 'Quy chụp toàn thể (everyone)' },
+  { regex: /\b(all\s+people|all\s+citizens|all\s+students|all\s+children|all\s+parents|all\s+governments)\s+(always|never|will\s+definitely|must\s+always|are\s+all)\b/gi, fix: 'a significant proportion of individuals often', label: 'Quy chụp nhóm đối tượng (all people)' },
+  { regex: /\b(no\s+one|nobody)\s+(can\s+deny\s+that|ever\s+thinks|can\s+ever|will\s+ever)\b/gi, fix: 'few observers would dispute that', label: 'Quy chụp phủ định tuyệt đối (no one)' },
+  { regex: /\b(will\s+definitely|will\s+certainly|is\s+definitely|is\s+certainly)\s+(destroy|ruin|fail|succeed|lead\s+to|cause|eliminate|solve)\b/gi, fix: 'is likely to severely impact', label: 'Khẳng định tương lai tuyệt đối (definitely/certainly)' },
+  { regex: /\b(100%|one\s+hundred\s+percent)\b/gi, fix: 'the overwhelming majority of', label: 'Số liệu tuyệt đối hóa (100%)' },
+  { regex: /\b(always\s+leads?\s+to|always\s+causes?|always\s+results?\s+in)\b/gi, fix: 'frequently contributes to', label: 'Quy luật nhân quả tuyệt đối (always leads to)' },
+  { regex: /\b(never\s+leads?\s+to|never\s+causes?|never\s+results?\s+in)\b/gi, fix: 'is unlikely to result in', label: 'Nhân quả phủ định tuyệt đối (never leads to)' },
+  { regex: /\b(an\s+absolute\s+truth|without\s+any\s+doubt|there\s+is\s+no\s+doubt\s+whatsoever)\b/gi, fix: 'it is widely acknowledged that', label: 'Khẳng định chân lý tuyệt đối' },
+  { regex: /\bthe\s+only\s+(?:solution|way|measure|method)\s+(?:(?:to|for)\s+[^,\.]{1,40}?\s+)?(?:is|would\s+be)\b|\bthe\s+only\s+way\s+to\s+(?:solve|tackle|address|eliminate|reduce|curb|stop|prevent)\b/gi, fix: 'one of the most viable solutions is', label: 'Khẳng định giải pháp duy nhất' }
+];
+
+/**
+ * Analyzes academic hedging (tentative language) and penalizes dogmatic overgeneralisations.
+ * Cambridge Standard:
+ * - Band 7.0+ Task Response requires balanced, tentative, and well-supported ideas.
+ * - Band 6.0 Task Response: "may tend to overgeneralise".
+ * - >= 2 Overgeneralisations: Cap Task Response at Band 6.0 max.
+ * - >= 3 Hedging structures + 0 Overgeneralisations: Reward academic maturity (+0.5 TR nuance).
+ */
+export function analyzeHedgingAndOvergeneralisation(paragraphs, sentences, isTask1 = false) {
+  if (isTask1 || !Array.isArray(sentences) || sentences.length === 0) {
+    return {
+      hedgingCount: 0,
+      matchedHedging: [],
+      overgeneralisationCount: 0,
+      overgeneralisedStatements: []
+    };
+  }
+
+  const isNegativelyQualified = (sentence, matchIndex) => {
+    const preceding = sentence.substring(Math.max(0, matchIndex - 35), matchIndex).toLowerCase().trim();
+    if (/\b(not|never|hardly|scarcely|does\s+not\s+mean\s+that|cannot\s+say\s+that)\b/i.test(preceding)) return true;
+    const surrounding = sentence.substring(Math.max(0, matchIndex - 10), matchIndex + 15);
+    if (/\bnot\s+all\b/i.test(surrounding)) return true;
+    return false;
+  };
+
+  const matchedHedging = [];
+  const overgeneralisedStatements = [];
+  const seenHedgeFragments = new Set();
+  const seenOvergenFragments = new Set();
+
+  sentences.forEach((sentence, sIdx) => {
+    const s = sentence.trim();
+    if (!s || s.length < 15) return;
+
+    // Check Hedging
+    HEDGING_PATTERNS.forEach(pat => {
+      pat.regex.lastIndex = 0;
+      let hMatch;
+      while ((hMatch = pat.regex.exec(s)) !== null) {
+        const text = hMatch[0].trim();
+        const key = `${sIdx}-${text.toLowerCase()}`;
+        if (!seenHedgeFragments.has(key)) {
+          seenHedgeFragments.add(key);
+          matchedHedging.push({
+            pattern: pat.label,
+            match: text,
+            sentenceIndex: sIdx,
+            sentence: s
+          });
+        }
+      }
+    });
+
+    // Check Overgeneralisation
+    OVERGENERALISATION_PATTERNS.forEach(pat => {
+      pat.regex.lastIndex = 0;
+      let oMatch;
+      while ((oMatch = pat.regex.exec(s)) !== null) {
+        if (isNegativelyQualified(s, oMatch.index)) continue;
+        const text = oMatch[0].trim();
+        const key = `${sIdx}-${text.toLowerCase()}`;
+        if (!seenOvergenFragments.has(key)) {
+          seenOvergenFragments.add(key);
+          const suggestion = s.replace(oMatch[0], pat.fix);
+          overgeneralisedStatements.push({
+            label: pat.label,
+            match: text,
+            sentenceIndex: sIdx,
+            sentence: s,
+            suggestion: `${suggestion} (Thay bằng ngôn ngữ cẩn trọng Hedging)`,
+            explanation: `Lỗi Quy chụp tuyệt đối (Overgeneralisation): Cụm từ '${text}' mang tính khẳng định tuyệt đối hóa, thiếu tính khách quan khoa học. Tiêu chí Cambridge Band 6.0 Task Response chỉ rõ 'may tend to overgeneralise'. Barem Band 7.0+ đòi hỏi ngôn ngữ cẩn trọng (Hedging) như '${pat.fix}' để thể hiện lập luận chín chắn, đa chiều.`
+          });
+        }
+      }
+    });
+  });
+
+  return {
+    hedgingCount: matchedHedging.length,
+    matchedHedging,
+    overgeneralisationCount: overgeneralisedStatements.length,
+    overgeneralisedStatements
+  };
+}
+
 /**
  * Deep Paragraph-by-Paragraph Examiner Diagnostics
  * Analyzes Introduction, Body Paragraphs, and Conclusion structure according to P.E.E.L and Cambridge standards.
@@ -1384,7 +1493,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0, commaSpliceCount = 0) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0, commaSpliceCount = 0, overgeneralisationCount = 0) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -1407,6 +1516,8 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Chấm dứt lỗi danh từ trơ trọi & mạo từ: Phát hiện ${bareNounErrorCount} lỗi danh từ đếm được số ít đứng một mình hoặc thiếu mạo từ (a/an/the) (như: 'student should', 'plays important role'). Quy tắc bắt buộc: Danh từ đếm được số ít không bao giờ đứng độc lập. Hãy thêm mạo từ hoặc chuyển sang số nhiều (-s/-es) để mở khóa Band 7.0+ GRA.`;
   } else if (commaSpliceCount >= 4) {
     plan.priority1 = `Chấm dứt lỗi ngắt câu Comma Splice nghiêm trọng: Phát hiện ${commaSpliceCount} câu nối hai mệnh đề độc lập chỉ bằng dấu phẩy. Đây là lỗi hệ thống ranh giới câu khống chế GRA ở Band 5.0. Hãy tách thành 2 câu riêng biệt bằng dấu chấm hoặc dùng liên từ kết hợp (', and / but...') hoặc đại từ quan hệ (', which...').`;
+  } else if (overgeneralisationCount >= 4) {
+    plan.priority1 = `Chấm dứt lối hành văn quy chụp tuyệt đối: Phát hiện ${overgeneralisationCount} khẳng định cực đoan (như: 'everyone always...', '100%...', 'will definitely destroy...'). Đây là bẫy Overgeneralisation khống chế Task Response ở Band 6.0. Hãy áp dụng ngôn ngữ cẩn trọng Hedging ('is likely to', 'tends to', 'evidence suggests that') để bài thi đạt chuẩn lập luận Band 7.0+.`;
   } else if (trBand < 6.0) {
     plan.priority1 = isTask1 
       ? 'Bắt buộc phải có đoạn Overview nêu bật 2 đặc điểm lớn nhất của biểu đồ (không đưa số liệu chi tiết vào Overview).' 
@@ -1415,8 +1526,10 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = 'Phát triển chiều sâu lập luận: Đào sâu cơ chế "Vì sao dẫn đến kết quả đó" thay vì chỉ liệt kê ý tưởng bề mặt.';
   }
 
-  // Priority 2: Cohesion, Grammar & Article/Noun/Splice Control
-  if (commaSpliceCount >= 1) {
+  // Priority 2: Cohesion, Grammar, Hedging & Article/Noun/Splice Control
+  if (overgeneralisationCount >= 2) {
+    plan.priority2 = `Khắc phục bẫy quy chụp tuyệt đối (Overgeneralisation): Phát hiện ${overgeneralisationCount} khẳng định mang tính phán xét cực đoan. Hãy thay thế bằng ngôn ngữ cẩn trọng (Hedging) như 'is likely to', 'tends to', 'in many instances' để mở khóa Band 7.0+ Task Response.`;
+  } else if (commaSpliceCount >= 1) {
     plan.priority2 = `Khắc phục lỗi Comma Splice (nối câu bằng dấu phẩy): Phát hiện ${commaSpliceCount} câu ghép hai mệnh đề độc lập S+V bằng dấu phẩy mà không có liên từ kết hợp. Hãy chuyển mệnh đề phụ thành mệnh đề quan hệ (', which...'), thêm liên từ (', and / but'), hoặc dùng dấu chấm phẩy để đạt chuẩn Band 7.0+ GRA.`;
   } else if (bareNounErrorCount >= 2) {
     plan.priority2 = `Khắc phục triệt để lỗi mạo từ & danh từ trơ trọi: Phát hiện ${bareNounErrorCount} lỗi thiếu mạo từ (a/an/the) hoặc dùng danh từ đếm được số ít đứng một mình. Hãy luôn chuyển sang danh từ số nhiều (-s/-es) hoặc thêm 'a/an/the'.`;
@@ -1722,6 +1835,38 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       trStrengths.push(`Phát triển luận điểm đa chiều và cân xứng: Đáp ứng trọn vẹn yêu cầu dạng đề (${task2Fulfillment.taskDescription}) qua các đoạn thân bài riêng biệt.`);
     }
   }
+
+  // 6. Academic Hedging & Overgeneralisation Engine (Task 2 Cambridge Band 6 vs 7+ Criteria)
+  const hedgingAnalysis = analyzeHedgingAndOvergeneralisation(paragraphs, sentences, isTask1);
+  const { hedgingCount, overgeneralisationCount, overgeneralisedStatements, matchedHedging } = hedgingAnalysis;
+
+  if (overgeneralisationCount >= 2) {
+    trScore = Math.min(trScore, 6.0);
+    trImprovements.push(
+      `BẪY QUY CHỤP TUYỆT ĐỐI / KHÁI QUÁT HÓA THÁI QUÁ (Overgeneralisation Trap): Phát hiện ${overgeneralisationCount} phát ngôn mang tính khẳng định tuyệt đối hoặc quy chụp cực đoan (ví dụ: ${overgeneralisedStatements.slice(0, 2).map(s => `'${s.match}'`).join(', ')}). Tiêu chí Cambridge Band 7.0+ Task Response đòi hỏi tư duy học thuật đa chiều và ngôn ngữ cẩn trọng (Hedging/Tentative language). Việc quy chụp thái quá khiến điểm Task Response bị khống chế tối đa Band 6.0.`
+    );
+  } else if (hedgingCount >= 3 && overgeneralisationCount === 0 && wordCount >= 250) {
+    if (trScore >= 6.5) trScore = Math.min(9.0, trScore + 0.5);
+    trStrengths.push(
+      `Văn phong học thuật cẩn trọng và chín chắn (Academic Hedging): Sử dụng thành thạo ngôn ngữ dè dặt khách quan (${hedgingCount} cấu trúc: ${matchedHedging.slice(0, 3).map(h => `'${h.match}'`).join(', ')}), tránh được bẫy quy chụp cực đoan của Band 6.0.`
+    );
+  } else if (hedgingCount === 0 && wordCount >= 250 && trScore >= 7.0 && !isTask1) {
+    trImprovements.push(
+      "Cần bổ sung ngôn ngữ cẩn trọng (Hedging): Lập luận còn hơi trực diện. Hãy sử dụng các cụm từ như 'tends to', 'is likely to', 'evidence suggests that' để nâng tầm văn phong học thuật lên Band 7.5+."
+    );
+  }
+
+  // Push overgeneralisation corrections into corrections table
+  overgeneralisedStatements.forEach(item => {
+    if (corrections.length < 20) {
+      corrections.push({
+        original: item.sentence,
+        corrected: item.suggestion,
+        type: 'style',
+        explanation: item.explanation
+      });
+    }
+  });
 
   const trBand = roundToCambridgeBand(Math.max(1.0, Math.min(9.0, trScore)));
 
@@ -2194,7 +2339,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
   const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount, commaSpliceCount);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount, commaSpliceCount, overgeneralisationCount);
 
   // Band 8 Model Rewrite
   let band8Rewrite = '';
@@ -2292,6 +2437,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       hasCommaSplices: commaSpliceCount > 0,
       commaSpliceCount,
       details: commaSpliceAnalysis.commaSpliceDetails
+    },
+    hedgingStats: {
+      hasOvergeneralisation: overgeneralisationCount > 0,
+      overgeneralisationCount,
+      hedgingCount,
+      matchedHedging: matchedHedging.map(h => h.match),
+      overgeneralisedStatements: overgeneralisedStatements.map(s => s.match)
     }
   };
 }
