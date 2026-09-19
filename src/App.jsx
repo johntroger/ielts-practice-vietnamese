@@ -33,6 +33,7 @@ const ContactModal = React.lazy(() => import('./components/ContactModal'));
 const AIEvaluationProgressModal = React.lazy(() => import('./components/AIEvaluationProgressModal'));
 const OnboardingModal = React.lazy(() => import('./components/OnboardingModal'));
 const SpeakingResultModal = React.lazy(() => import('./components/speaking/SpeakingResultModal'));
+const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPanel'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
 import { supabase } from './services/supabaseClient';
@@ -119,6 +120,7 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [selectedHistorySpeakingSub, setSelectedHistorySpeakingSub] = useState(null);
+  const [slideOverConfig, setSlideOverConfig] = useState({ isOpen: false, tab: 'paraphrase' });
 
   // Reading Mock Test Exam State
   const [readingMockTestId, setReadingMockTestId] = useState(null);
@@ -295,6 +297,12 @@ export default function App() {
     if (!isTimerRunning && timeElapsed === 0 && text.trim().length > 0) {
       setIsTimerRunning(true);
     }
+  };
+
+  const handleInsertSlideOverText = (text) => {
+    const current = essays[currentTaskId] || '';
+    const updated = current ? `${current.trim()} ${text} ` : `${text} `;
+    handleEssayChange(updated);
   };
 
   const handleOutlineChange = (text) => {
@@ -822,7 +830,8 @@ export default function App() {
                 mode={mode}
                 timeElapsed={timeElapsed}
                 lastSaved={lastSaved}
-                onOpenParaphrase={() => setIsParaphraseOpen(true)}
+                onOpenParaphrase={() => setSlideOverConfig({ isOpen: true, tab: 'paraphrase' })}
+                onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
               />
             }
           />
@@ -1229,6 +1238,20 @@ export default function App() {
             if (newBand) setTargetBand(newBand);
             if (newKey) setApiKey(newKey);
           }}
+        />
+
+        {/* Side Panel Tool for Paraphrase & Vocab */}
+        <SlideOverToolPanel
+          isOpen={slideOverConfig.isOpen}
+          onClose={() => setSlideOverConfig(prev => ({ ...prev, isOpen: false }))}
+          initialTab={slideOverConfig.tab}
+          vocabList={vocabList}
+          onInsertText={handleInsertSlideOverText}
+          onAddVocab={(v) => {
+            setVocabList(prev => [v, ...prev]);
+            if (currentUser) saveUserVocabItem(currentUser.id, v);
+          }}
+          promptText={currentTask?.prompt}
         />
       </React.Suspense>
 

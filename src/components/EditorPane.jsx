@@ -10,7 +10,8 @@ import {
   Save, 
   BarChart2, 
   ChevronDown,
-  Info
+  Info,
+  Bookmark
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 
@@ -23,7 +24,8 @@ export default function EditorPane({
   mode,
   timeElapsed,
   lastSaved,
-  onOpenParaphrase
+  onOpenParaphrase,
+  onOpenSlideOver
 }) {
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
   const [activeTab, setActiveTab] = useState('essay'); // 'essay' | 'outline'
@@ -114,14 +116,23 @@ export default function EditorPane({
             <span>{currentWpm} WPM</span>
           </div>
 
-          {/* Quick Paraphrase */}
+          {/* Quick Paraphrase & Side Panel Helper */}
           <button
-            onClick={onOpenParaphrase}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors"
-            title="Mở từ điển Paraphrase nhanh"
+            onClick={() => onOpenSlideOver ? onOpenSlideOver('paraphrase') : onOpenParaphrase?.()}
+            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer"
+            title="Mở bảng tra cứu Paraphrase cạnh bài viết"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span className="hidden lg:inline">Tra Paraphrase</span>
+            <span className="hidden sm:inline">Tra Paraphrase</span>
+          </button>
+
+          <button
+            onClick={() => onOpenSlideOver ? onOpenSlideOver('vocab') : null}
+            className="hidden md:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer"
+            title="Mở Sổ từ vựng cạnh bài viết"
+          >
+            <Bookmark className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden lg:inline">Sổ Từ Vựng</span>
           </button>
 
           {/* Spellcheck Toggle */}
