@@ -177,12 +177,18 @@ const COHESIVE_DEVICES = {
     'firstly', 'secondly', 'thirdly', 'finally', 'initially', 'subsequently',
     'to begin with', 'in the first place', 'in conclusion', 'to conclude',
     'in summary', 'to summarize', 'lastly', 'subsequent to'
+  ],
+  transition: [
+    'overall', 'turning to', 'regarding', 'in terms of', 'concurrently',
+    'simultaneously', 'meanwhile', 'with regard to', 'with respect to',
+    'as for', 'as regards', 'at the same time'
   ]
 };
 
 // Referencing & Anaphoric Substitution Markers (Cambridge Band 7-8 CC Indicators)
 const REFERENCING_PATTERNS = [
-  /\b(this|these|such)\s+(trend|phenomenon|issue|problem|tendency|pattern|shift|disparity|measure|approach|dilemma|finding|outcome|consequence|initiative|transition|transformation|strategy|policy|alternative|development|paradigm)\b/gi,
+  /\b(this|these|such)\s+(?:[a-z]+\s+)?(trend|phenomenon|issue|problem|tendency|pattern|shift|disparity|measure|approach|dilemma|finding|outcome|consequence|initiative|transition|transformation|strategy|policy|alternative|development|paradigm|space|area|zone|material|compound|cylinder|mixture|product|facility|structure|step|phase|stage|process|constituent|equipment)\b/gi,
+  /\b(these|those)\s+(?:\w+\s+)?(features|changes|developments|materials|constituents|stages|steps|phases|facilities|amenities|measures|factors)\b/gi,
   /\bthe\s+former\b/gi,
   /\bthe\s+latter\b/gi,
   /\bin\s+doing\s+so\b/gi,
@@ -553,11 +559,18 @@ function analyzePromptVerbatimCopying(prompt, essayText) {
     }
   });
 
-  const copiedChunks = mergedRanges.map(r => ({
-    phrase: essayWords.slice(r.start, r.end).join(' '),
-    wordCount: r.length,
-    startIndex: r.start
-  }));
+  const copiedChunks = mergedRanges
+    .map(r => ({
+      phrase: essayWords.slice(r.start, r.end).join(' '),
+      wordCount: r.length,
+      startIndex: r.start
+    }))
+    .filter(c => {
+      // Exclude timeframe / year ranges like "between 1995 and 2025" or "from 2000 to 2010"
+      const hasYears = (c.phrase.match(/\b(19\d\d|20\d\d)\b/g) || []).length >= 2;
+      if (hasYears && c.wordCount <= 6) return false;
+      return true;
+    });
 
   const totalCopiedWords = copiedChunks.reduce((acc, c) => acc + c.wordCount, 0);
 
@@ -831,6 +844,316 @@ export function analyzeTask1Comparisons(paragraphs, overviewIndex = -1) {
     uniqueComparisonsCount: uniqueMatched.length,
     matchedComparisons: uniqueMatched,
     comparisonsByParagraph
+  };
+}
+
+/**
+ * Detect Task 1 Subtype: 'map' | 'process' | 'chart_graph'
+ * Dynamically infers the visual format from task metadata, prompt keywords, or essay vocabulary.
+ */
+export function detectTask1Subtype(task = {}, essayText = '') {
+  // 1. Explicit task configuration
+  if (task?.type === 'map') return 'map';
+  if (task?.type === 'process') return 'process';
+  if (task?.taskType === 'map') return 'map';
+  if (task?.taskType === 'process') return 'process';
+  if (Array.isArray(task?.mapChanges) && task.mapChanges.length > 0) return 'map';
+  if (Array.isArray(task?.processSteps) && task.processSteps.length > 0) return 'process';
+
+  // 2. Prompt and Title linguistic markers
+  const context = `${task?.title || ''} ${task?.prompt || ''}`.toLowerCase();
+  if (/\b(?:map|maps|plan|plans|layout|urban\s+change|urban\s+transformation|redevelopment|village\s+of|island\s+of|floor\s+plan|site\s+plan|campus\s+plan|infrastructure\s+changes?)\b/i.test(context)) {
+    return 'map';
+  }
+  if (/\b(?:process|stages?|procedure|diagram|diagrams|life\s+cycle|manufacturing|production\s+of|how\s+.*?\s+is\s+(?:made|produced|processed|manufactured|generated|recycled)|flowchart)\b/i.test(context)) {
+    return 'process';
+  }
+
+  // 3. Fallback: Essay body vocabulary scan
+  if (essayText && typeof essayText === 'string') {
+    const mapMatches = essayText.match(/\b(?:to\s+the\s+(?:north|south|east|west)|northern|southern|eastern|western|northwest|northeast|southwest|southeast|demolished|knocked\s+down|converted\s+into|made\s+way\s+for|erected|constructed|relocated|adjacent\s+to|flanked\s+by|pedestrianized|dual\s+carriageway|roundabout)\b/gi) || [];
+    const processMatches = essayText.match(/\b(?:in\s+the\s+(?:first|initial)\s+stage|subsequently|followed\s+by|culminates\s+in|the\s+process\s+begins|raw\s+materials?|undergoes|is\s+heated|is\s+cooled|is\s+crushed|is\s+filtered|is\s+packaged|the\s+final\s+step|the\s+cycle\s+repeats)\b/gi) || [];
+
+    if (mapMatches.length >= 3 && mapMatches.length > processMatches.length) {
+      return 'map';
+    }
+    if (processMatches.length >= 3 && processMatches.length > mapMatches.length) {
+      return 'process';
+    }
+  }
+
+  return 'chart_graph';
+}
+
+/**
+ * Task 1 Map Specialized Linguistic Patterns
+ * Essential for describing spatial orientation, layouts, and urban/infrastructural transformations.
+ */
+export const MAP_SPATIAL_PATTERNS = [
+  // 1. Cardinal Directions & Compass Quadrants
+  {
+    category: 'compass',
+    name: 'phương hướng la bàn (cardinal directions)',
+    regex: /\b(?:north|south|east|west|north-?east(?:ern)?|north-?west(?:ern)?|south-?east(?:ern)?|south-?west(?:ern)?|northern|southern|eastern|western|northward|southward|eastward|westward)\b/gi
+  },
+  {
+    category: 'compass',
+    name: 'định vị góc phần tư / khu vực (directional quadrant/section)',
+    regex: /\b(?:to\s+the\s+(?:north|south|east|west|north-?east|north-?west|south-?east|south-?west)\s+of|(?:in\s+)?the\s+(?:northern|southern|eastern|western|north-?eastern|north-?western|south-?eastern|south-?western)\s+(?:part|region|section|quadrant|area|corner|perimeter))\b/gi
+  },
+
+  // 2. Spatial Relations & Adjacency Prepositions
+  {
+    category: 'spatialRelation',
+    name: 'giới từ vị trí tương quan (spatial prepositions & adjacency)',
+    regex: /\b(?:adjacent\s+to|opposite(?:\s+to)?|across\s+from|parallel\s+to|bordered\s+by|surrounding|surrounded\s+by|in\s+close\s+proximity\s+to|in\s+the\s+vicinity\s+of|flanked\s+by|positioned\s+(?:at|in|near)|situated\s+(?:in|at|along|near|on)|located\s+(?:in|at|along|near|on)|nestled\s+between|alongside)\b/gi
+  },
+
+  // 3. Demolition, Removal & Clearance
+  {
+    category: 'demolition',
+    name: 'dỡ bỏ / xóa bỏ (demolition & clearance)',
+    regex: /\b(?:demolished|knocked\s+down|flattened|pulled\s+down|razed(?:\s+to\s+the\s+ground)?|torn\s+down|cleared|eradicated|dismantled|removed|chopped\s+down|cut\s+down)\b/gi
+  },
+
+  // 4. Replacement & Succession
+  {
+    category: 'replacement',
+    name: 'thay thế mặt bằng (replacement & succession)',
+    regex: /\b(?:replaced\s+by|(?:made|make)\s+way\s+for|(?:gave|give)\s+way\s+to|supplanted\s+by|succeeded\s+by)\b/gi
+  },
+
+  // 5. Transformation & Repurposing
+  {
+    category: 'transformation',
+    name: 'chuyển đổi công năng (transformation & repurposing)',
+    regex: /\b(?:converted\s+into|transformed\s+into|repurposed\s+(?:into|as)|turned\s+into|modernised|modernized|redeveloped\s+into|metamorphosed\s+into|evolved\s+into)\b/gi
+  },
+
+  // 6. Construction & Addition
+  {
+    category: 'construction',
+    name: 'xây mới / bổ sung (construction & erection)',
+    regex: /\b(?:erected|constructed|built|installed|introduced|established|added|set\s+up)\b/gi
+  },
+
+  // 7. Expansion, Lengthening & Widening
+  {
+    category: 'expansion',
+    name: 'mở rộng quy mô hạ tầng (expansion & widening)',
+    regex: /\b(?:extended|expanded|widened|enlarged|stretched|broadened|lengthened|pedestrianized|dual\s+carriageway|roundabout)\b/gi
+  },
+
+  // 8. Relocation & Preservation
+  {
+    category: 'preservation',
+    name: 'di dời / giữ nguyên (relocation & preservation)',
+    regex: /\b(?:relocated\s+to|moved\s+to|shifted\s+to|remained\s+(?:unchanged|intact|the\s+same)|witnessed\s+no\s+alteration|left\s+intact)\b/gi
+  }
+];
+
+/**
+ * Task 1 Process Specialized Sequential Patterns
+ * Essential for describing linear/cyclical manufacturing, natural life cycles, and mechanical operations.
+ */
+export const PROCESS_SEQUENTIAL_PATTERNS = [
+  // 1. Initial Stage Linkers
+  {
+    category: 'initial',
+    name: 'giai đoạn khởi đầu (initial stage)',
+    regex: /\b(?:in\s+the\s+(?:initial|first)\s+(?:stage|step|phase)|the\s+(?:first|initial)\s+(?:step|stage|phase)\s+(?:is|involves)|the\s+process\s+(?:begins|starts|commences)\s+(?:with|by)|at\s+the\s+outset|initially|first\s+of\s+all|firstly)\b/gi
+  },
+
+  // 2. Subsequent / Chronological Transitions
+  {
+    category: 'subsequent',
+    name: 'chuyển tiếp giai đoạn tiếp theo (subsequent stages)',
+    regex: /\b(?:subsequently|following\s+(?:this|that)|after\s+(?:this|that|which)|in\s+the\s+(?:following|subsequent|next)\s+(?:stage|step|phase)|at\s+the\s+next\s+stage|then|next|thereafter|in\s+the\s+course\s+of\s+the\s+next\s+stage)\b/gi
+  },
+
+  // 3. Simultaneous / Concurrent Steps
+  {
+    category: 'simultaneous',
+    name: 'giai đoạn đồng thời (simultaneous operations)',
+    regex: /\b(?:simultaneously|concurrently|at\s+the\s+same\s+time|in\s+tandem|meanwhile|while\s+this\s+is\s+taking\s+place)\b/gi
+  },
+
+  // 4. Prerequisite & Conditional State Transitions
+  {
+    category: 'conditional',
+    name: 'liên kết điều kiện thời điểm (prior to / once)',
+    regex: /\b(?:prior\s+to\s+(?:being|\w+ing)|before\s+(?:being|\w+ing)|once\s+(?:this\s+is\s+(?:completed|done)|heated|cooled|filtered|crushed|purified)|having\s+been\s+\w+ed)\b/gi
+  },
+
+  // 5. Final / Concluding Stage Markers
+  {
+    category: 'final',
+    name: 'giai đoạn hoàn tất (final / culmination)',
+    regex: /\b(?:finally|ultimately|in\s+the\s+final\s+(?:stage|step|phase)|the\s+process\s+(?:concludes|culminates|ends)\s+(?:with|by|in)|the\s+last\s+(?:step|stage)\s+(?:is|involves)|the\s+finished\s+product\s+is)\b/gi
+  },
+
+  // 6. Cyclical / Recurring Process Indicators
+  {
+    category: 'cyclical',
+    name: 'tính chất chu kỳ (cyclical repetition)',
+    regex: /\b(?:the\s+cycle\s+(?:repeats|starts\s+again|is\s+repeated)|in\s+a\s+cyclical\s+(?:manner|process|way)|recurring\s+loop|repeats\s+indefinitely)\b/gi
+  },
+
+  // 7. Process Operational Passive Voice Constructions
+  {
+    category: 'passiveOps',
+    name: 'thao tác thể bị động (passive voice process operations)',
+    regex: /\b(?:is|are|was|were|being|been)\s+(?:crushed|pulverised|pulverized|mixed|blended|heated|cooled|filtered|purified|extracted|transported|delivered|transferred|fed\s+into|poured\s+into|passed\s+through|stored|packaged|distributed|melted|moulded|molded|separated|collected|condensed|evaporated|harvested|refined|treated|dried|submerged|baked|assembled|combined)\b/gi
+  }
+];
+
+/**
+ * Task 1 Map Features Analyzer
+ * Analyzes body paragraphs for spatial prepositions, cardinal directions, and transformation verbs.
+ */
+export function analyzeTask1MapFeatures(paragraphs, overviewIndex = -1) {
+  if (!paragraphs || paragraphs.length === 0) {
+    return {
+      totalSpatialCount: 0,
+      cardinalCount: 0,
+      prepositionCount: 0,
+      transformationCount: 0,
+      uniquePatternsCount: 0,
+      matchedFeatures: [],
+      categories: {
+        compass: [],
+        spatialRelation: [],
+        demolition: [],
+        replacement: [],
+        transformation: [],
+        construction: [],
+        expansion: [],
+        preservation: []
+      }
+    };
+  }
+
+  const bodyParas = paragraphs.filter((_, idx) => idx !== 0 && idx !== overviewIndex);
+  const matchedFeatures = [];
+  const categories = {
+    compass: [],
+    spatialRelation: [],
+    demolition: [],
+    replacement: [],
+    transformation: [],
+    construction: [],
+    expansion: [],
+    preservation: []
+  };
+
+  bodyParas.forEach(pText => {
+    MAP_SPATIAL_PATTERNS.forEach(pat => {
+      pat.regex.lastIndex = 0;
+      const matches = pText.match(pat.regex);
+      if (matches) {
+        matches.forEach(m => {
+          const item = m.trim();
+          matchedFeatures.push(item);
+          if (categories[pat.category]) {
+            categories[pat.category].push(item);
+          }
+        });
+      }
+    });
+  });
+
+  const uniqueMatched = Array.from(new Set(matchedFeatures.map(m => m.toLowerCase())));
+  const cardinalCount = categories.compass.length;
+  const prepositionCount = categories.spatialRelation.length;
+  const transformationCount = categories.demolition.length +
+    categories.replacement.length +
+    categories.transformation.length +
+    categories.construction.length +
+    categories.expansion.length +
+    categories.preservation.length;
+
+  return {
+    totalSpatialCount: matchedFeatures.length,
+    cardinalCount,
+    prepositionCount,
+    transformationCount,
+    uniquePatternsCount: uniqueMatched.length,
+    matchedFeatures: uniqueMatched,
+    categories
+  };
+}
+
+/**
+ * Task 1 Process Features Analyzer
+ * Analyzes body paragraphs for stage sequencing linkers and passive voice operational verbs.
+ */
+export function analyzeTask1ProcessFeatures(paragraphs, overviewIndex = -1) {
+  if (!paragraphs || paragraphs.length === 0) {
+    return {
+      totalSequentialCount: 0,
+      passiveVoiceCount: 0,
+      hasInitialStage: false,
+      hasConcludingStage: false,
+      uniquePatternsCount: 0,
+      matchedStages: [],
+      matchedPassives: [],
+      categories: {
+        initial: [],
+        subsequent: [],
+        simultaneous: [],
+        conditional: [],
+        final: [],
+        cyclical: [],
+        passiveOps: []
+      }
+    };
+  }
+
+  const bodyParas = paragraphs.filter((_, idx) => idx !== 0 && idx !== overviewIndex);
+  const matchedStages = [];
+  const matchedPassives = [];
+  const categories = {
+    initial: [],
+    subsequent: [],
+    simultaneous: [],
+    conditional: [],
+    final: [],
+    cyclical: [],
+    passiveOps: []
+  };
+
+  bodyParas.forEach(pText => {
+    PROCESS_SEQUENTIAL_PATTERNS.forEach(pat => {
+      pat.regex.lastIndex = 0;
+      const matches = pText.match(pat.regex);
+      if (matches) {
+        matches.forEach(m => {
+          const item = m.trim();
+          if (pat.category === 'passiveOps') {
+            matchedPassives.push(item);
+          } else {
+            matchedStages.push(item);
+          }
+          if (categories[pat.category]) {
+            categories[pat.category].push(item);
+          }
+        });
+      }
+    });
+  });
+
+  const uniqueStages = Array.from(new Set(matchedStages.map(m => m.toLowerCase())));
+  const uniquePassives = Array.from(new Set(matchedPassives.map(m => m.toLowerCase())));
+
+  return {
+    totalSequentialCount: matchedStages.length,
+    passiveVoiceCount: matchedPassives.length,
+    hasInitialStage: categories.initial.length > 0,
+    hasConcludingStage: categories.final.length > 0,
+    uniquePatternsCount: uniqueStages.length + uniquePassives.length,
+    matchedStages: uniqueStages,
+    matchedPassives: uniquePassives,
+    categories
   };
 }
 
@@ -1372,7 +1695,7 @@ export function analyzeHedgingAndOvergeneralisation(paragraphs, sentences, isTas
  * Deep Paragraph-by-Paragraph Examiner Diagnostics
  * Analyzes Introduction, Body Paragraphs, and Conclusion structure according to P.E.E.L and Cambridge standards.
  */
-function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck = null) {
+function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck = null, task1Subtype = 'chart_graph') {
   if (!paragraphs || paragraphs.length === 0) return [];
   
   const results = [];
@@ -1390,13 +1713,21 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
       name: 'Đoạn 1: Mở Bài (Introduction)',
       wordCount: introWords,
       verdict: isTask1 
-        ? 'Mở bài cần giới thiệu lại ngắn gọn biểu đồ (Paraphrase đề bài) trong 1-2 câu súc tích.'
+        ? (task1Subtype === 'map'
+            ? 'Mở bài cần giới thiệu ngắn gọn các bản đồ và khung thời gian so sánh (Paraphrase đề bài) trong 1-2 câu súc tích.'
+            : task1Subtype === 'process'
+            ? 'Mở bài cần giới thiệu ngắn gọn quy trình sản xuất hoặc vòng đời tự nhiên (Paraphrase đề bài) trong 1-2 câu súc tích.'
+            : 'Mở bài cần giới thiệu lại ngắn gọn biểu đồ (Paraphrase đề bài) trong 1-2 câu súc tích.')
         : (hasThesis 
             ? 'Rất tốt: Mở bài đã nêu rõ quan điểm cá nhân (Thesis statement rõ ràng, không nước đôi).' 
             : 'CẢNH BÁO GIÁM KHẢO: Mở bài chưa nêu rõ lập trường cá nhân (Missing Thesis Statement). Barem Cambridge yêu cầu lập trường rõ ràng ngay từ Mở bài để mở khóa Band 7.0+ TR.'),
       clicheWarning: hasCliché ? 'Phát hiện câu mở đầu sáo rỗng/rập khuôn ("In this modern era / Nowadays / Every coin has two sides"). Hãy bỏ những mẫu câu khuôn sáo này để mở bài trang trọng, tự nhiên.' : null,
       recommendation: isTask1
-        ? 'Công thức mở bài Task 1 chuẩn: "The provided visual data delineates [Đối tượng] in [Địa điểm] across the [Thời gian]."'
+        ? (task1Subtype === 'map'
+            ? 'Công thức mở bài Map chuẩn: "The provided maps illustrate the urban and infrastructural transformations that occurred in [Địa điểm] between [Năm 1] and [Năm 2]."'
+            : task1Subtype === 'process'
+            ? 'Công thức mở bài Process chuẩn: "The diagram delineates the sequential stages involved in the production of [Sản phẩm] from raw constituents."'
+            : 'Công thức mở bài Task 1 chuẩn: "The provided visual data delineates [Đối tượng] in [Địa điểm] across the [Thời gian]."')
         : 'Công thức mở bài 2 câu chuẩn 8.0: Câu 1 - Paraphrase đề bài khách quan. Câu 2 - Khẳng định lập trường dứt khoát ("While some argue that [View A], I firmly adhere to the view that [View B] due to [Lý do]").'
     });
   }
@@ -1410,37 +1741,93 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
       const isOverviewPara = task1OverviewCheck && task1OverviewCheck.overviewIndex === i;
 
       if (isOverviewPara) {
+        let overviewVerdict = 'Rất tốt: Đoạn Overview đạt chuẩn giám khảo Cambridge — khái quát rõ ràng các xu hướng và đặc điểm nổi bật mà không bị sa đà vào số liệu chi tiết.';
+        let overviewRec = 'Quy tắc vàng viết Overview Task 1: 1-2 câu tóm tắt 2 đặc điểm nổi bật nhất. Tuyệt đối không đưa bất kỳ con số cụ thể nào.';
+        if (task1Subtype === 'map') {
+          overviewVerdict = task1OverviewCheck.hasRawData
+            ? `CẢNH BÁO BẪY SỐ LIỆU ĐOẠN TỔNG QUAN: Phát hiện đoạn Overview chứa số liệu chi tiết (${task1OverviewCheck.rawDataList.join(', ')}). Đoạn Overview của bài Map chỉ nên khái quát sự thay đổi diện mạo/quy hoạch tổng thể.`
+            : 'Rất tốt: Đoạn Overview đạt chuẩn giám khảo Cambridge cho bài Map — nêu bật xu hướng chuyển đổi không gian và hiện đại hóa tổng thể mà không vướng bẫy liệt kê chi tiết.';
+          overviewRec = 'Quy tắc vàng viết Overview dạng Map: Tóm tắt 1-2 sự thay đổi diện mạo lớn nhất (ví dụ: chuyển đổi từ khu nông nghiệp sang đô thị hiện đại, mở rộng giao thông).';
+        } else if (task1Subtype === 'process') {
+          overviewVerdict = task1OverviewCheck.hasRawData
+            ? `CẢNH BÁO BẪY SỐ LIỆU ĐOẠN TỔNG QUAN: Phát hiện đoạn Overview chứa số liệu chi tiết (${task1OverviewCheck.rawDataList.join(', ')}). Đoạn Overview của bài Process chỉ nên nêu tổng số bước và hai điểm đầu - cuối.`
+            : 'Rất tốt: Đoạn Overview đạt chuẩn giám khảo Cambridge cho bài Process — tóm tắt rõ ràng tổng số giai đoạn và hai điểm bắt đầu - kết thúc.';
+          overviewRec = 'Quy tắc vàng viết Overview dạng Process: Tóm tắt tổng số bước từ khâu nguyên liệu đầu tiên đến sản phẩm hoàn thiện cuối cùng (hoặc tính chất chu kỳ lặp lại).';
+        } else if (task1OverviewCheck.hasRawData) {
+          overviewVerdict = `CẢNH BÁO BẪY SỐ LIỆU ĐOẠN TỔNG QUAN: Phát hiện đoạn Overview chứa số liệu chi tiết cụ thể (${task1OverviewCheck.rawDataList.join(', ')}). Theo tiêu chuẩn giám khảo Cambridge IELTS Task 1, Overview chỉ được khái quát xu hướng lớn (tăng/giảm, biến động, phân kỳ), TUYỆT ĐỐI KHÔNG đưa số liệu chi tiết. Lỗi này khiến điểm Task Achievement bị khống chế tối đa Band 5.5.`;
+        }
+
         results.push({
           paragraphIndex: i + 1,
           name: `Đoạn ${i + 1}: Tổng Quan (Overview)`,
           wordCount: pWords,
-          verdict: task1OverviewCheck.hasRawData
-            ? `CẢNH BÁO BẪY SỐ LIỆU ĐOẠN TỔNG QUAN: Phát hiện đoạn Overview chứa số liệu chi tiết cụ thể (${task1OverviewCheck.rawDataList.join(', ')}). Theo tiêu chuẩn giám khảo Cambridge IELTS Task 1, Overview chỉ được khái quát xu hướng lớn (tăng/giảm, biến động, phân kỳ), TUYỆT ĐỐI KHÔNG đưa số liệu chi tiết. Lỗi này khiến điểm Task Achievement bị khống chế tối đa Band 5.5.`
-            : 'Rất tốt: Đoạn Overview đạt chuẩn giám khảo Cambridge — khái quát rõ ràng các xu hướng và đặc điểm nổi bật mà không bị sa đà vào số liệu chi tiết.',
+          verdict: overviewVerdict,
           clicheWarning: task1OverviewCheck.hasRawData
             ? `Bẫy số liệu: Các số liệu (${task1OverviewCheck.rawDataList.join(', ')}) cần được chuyển xuống các đoạn Thân bài chi tiết bên dưới.`
             : null,
-          recommendation: 'Quy tắc vàng viết Overview Task 1: 1-2 câu tóm tắt 2 đặc điểm nổi bật nhất (Ví dụ: Đại lượng nào luôn cao nhất/thấp nhất? Xu hướng chung qua các năm là tăng hay giảm?). Tuyệt đối không đưa bất kỳ con số cụ thể nào.'
+          recommendation: overviewRec
         });
       } else {
-        const pData = extractTask1RawDataPoints(pText);
-        const hasComparison = /\b(higher|lower|more|less|fewer|than|as\s+\w+\s+as|compared\s+(?:to|with)|in\s+comparison\s+(?:to|with)|whereas|while|whilst|conversely|in\s+contrast)\b/i.test(pText);
+        if (task1Subtype === 'map') {
+          const compassMatches = pText.match(/\b(north|south|east|west|north-?west|north-?east|south-?west|south-?east|northern|southern|eastern|western|northward|southward)\b/gi) || [];
+          const transformMatches = pText.match(/\b(demolished|knocked\s+down|converted\s+into|transformed\s+into|replaced\s+by|made\s+way\s+for|erected|constructed|built|widened|expanded|relocated|redeveloped|eradicated|dismantled)\b/gi) || [];
+          const prepMatches = pText.match(/\b(adjacent\s+to|opposite(?:\s+to)?|across\s+from|parallel\s+to|bordered\s+by|surrounding|in\s+close\s+proximity\s+to|flanked\s+by|situated|located)\b/gi) || [];
+          const spatialTotal = compassMatches.length + prepMatches.length;
 
-        results.push({
-          paragraphIndex: i + 1,
-          name: `Đoạn ${i + 1}: Thân Bài Chi Tiết ${detailBodyCounter} (Detailed Body Paragraph ${detailBodyCounter})`,
-          wordCount: pWords,
-          verdict: pWords < 35
-            ? `Đoạn thân bài quá ngắn (${pWords} từ), chưa mô tả đầy đủ các nhóm số liệu của biểu đồ.`
-            : (pData.length >= 2
-                ? `Đoạn thân bài chi tiết phát triển tốt, có dẫn chứng số liệu cụ thể (${pData.join(', ')})${hasComparison ? ' và có cấu trúc so sánh đối chiếu.' : '.'}`
-                : `CẢNH BÁO THIẾU DẪN CHỨNG: Đoạn thân bài chi tiết này chỉ có ${pData.length} số liệu. Thân bài Task 1 cần lựa chọn và đưa ra số liệu/mốc thời gian cụ thể để làm dẫn chứng.`),
-          anecdoteWarning: null,
-          recommendation: hasComparison 
-            ? 'Duy trì kết hợp nêu số liệu đi kèm cấu trúc so sánh đối chiếu để làm nổi bật sự khác biệt giữa các nhóm đối tượng.'
-            : 'Bổ sung các cấu trúc so sánh đối chiếu (ví dụ: "...was twice as high as...", "in contrast to...", "followed by...") để đạt tiêu chí Task Achievement Band 7+.'
-        });
-        detailBodyCounter++;
+          results.push({
+            paragraphIndex: i + 1,
+            name: `Đoạn ${i + 1}: Thân Bài Miêu Tả Bản Đồ ${detailBodyCounter} (Map Body Paragraph ${detailBodyCounter})`,
+            wordCount: pWords,
+            verdict: pWords < 35
+              ? `Đoạn thân bài quá ngắn (${pWords} từ), chưa mô tả đầy đủ các biến đổi không gian.`
+              : (transformMatches.length >= 2 && spatialTotal >= 1
+                  ? `Đoạn thân bài phát triển rất tốt: Kết hợp chuẩn xác động từ quy hoạch (${transformMatches.slice(0, 2).join(', ')}) và định vị vị trí không gian (${[...compassMatches, ...prepMatches].slice(0, 2).join(', ')}).`
+                  : (transformMatches.length === 0
+                      ? 'CẢNH BÁO THIẾU ĐỘNG TỪ BIẾN ĐỔI: Đoạn thân bài thiếu các động từ chuyển đổi hạ tầng (như \'demolished\', \'converted into\', \'replaced by\').'
+                      : 'CẢNH BÁO THIẾU ĐỊNH VỊ: Đoạn thân bài cần bổ sung thêm phương hướng la bàn (North, South...) hoặc giới từ vị trí (adjacent to, opposite).')),
+            anecdoteWarning: null,
+            recommendation: 'Áp dụng ngôn ngữ Map Band 7+: [Công trình cũ] was demolished to make way for [Công trình mới], situated to the [Phương hướng] of [Địa điểm lân cận].'
+          });
+          detailBodyCounter++;
+        } else if (task1Subtype === 'process') {
+          const seqMatches = pText.match(/\b(initially|firstly|first\s+stage|initial\s+stage|subsequently|following\s+(?:this|that)|after\s+that|then|next|finally|culminates|concludes)\b/gi) || [];
+          const passiveMatches = pText.match(/\b(?:is|are|was|were|being|been)\s+(?:crushed|mixed|heated|cooled|filtered|purified|extracted|transported|fed|poured|stored|packaged|distributed|pulverised|pulverized|melted|moulded)\b/gi) || [];
+
+          results.push({
+            paragraphIndex: i + 1,
+            name: `Đoạn ${i + 1}: Thân Bài Miêu Tả Quy Trình ${detailBodyCounter} (Process Body Paragraph ${detailBodyCounter})`,
+            wordCount: pWords,
+            verdict: pWords < 35
+              ? `Đoạn thân bài quá ngắn (${pWords} từ), chưa miêu tả trọn vẹn các bước của quy trình.`
+              : (seqMatches.length >= 1 && passiveMatches.length >= 1
+                  ? `Đoạn thân bài đạt chuẩn: Liên kết mạch lạc các bước (${seqMatches.slice(0, 2).join(', ')}) và vận dụng chính xác thể bị động (${passiveMatches.slice(0, 2).join(', ')}).`
+                  : (seqMatches.length === 0
+                      ? 'CẢNH BÁO THIẾU LIÊN TỪ: Đoạn thân bài thiếu các liên từ chỉ thứ tự các bước (như \'subsequently\', \'following this\', \'after that\').'
+                      : 'CẢNH BÁO THIẾU THỂ BỊ ĐỘNG: Cần chuyển các thao tác kỹ thuật sang thể bị động (\'is heated\', \'are transported\') để duy trì tính khách quan học thuật.')),
+            anecdoteWarning: null,
+            recommendation: 'Áp dụng công thức miêu tả bước chuẩn Band 7+: In the subsequent phase, [nguyên liệu] is [quá trình bị động], prior to being transferred to [bước kế tiếp].'
+          });
+          detailBodyCounter++;
+        } else {
+          const pData = extractTask1RawDataPoints(pText);
+          const hasComparison = /\b(higher|lower|more|less|fewer|than|as\s+\w+\s+as|compared\s+(?:to|with)|in\s+comparison\s+(?:to|with)|whereas|while|whilst|conversely|in\s+contrast)\b/i.test(pText);
+
+          results.push({
+            paragraphIndex: i + 1,
+            name: `Đoạn ${i + 1}: Thân Bài Chi Tiết ${detailBodyCounter} (Detailed Body Paragraph ${detailBodyCounter})`,
+            wordCount: pWords,
+            verdict: pWords < 35
+              ? `Đoạn thân bài quá ngắn (${pWords} từ), chưa mô tả đầy đủ các nhóm số liệu của biểu đồ.`
+              : (pData.length >= 2
+                  ? `Đoạn thân bài chi tiết phát triển tốt, có dẫn chứng số liệu cụ thể (${pData.join(', ')})${hasComparison ? ' và có cấu trúc so sánh đối chiếu.' : '.'}`
+                  : `CẢNH BÁO THIẾU DẪN CHỨNG: Đoạn thân bài chi tiết này chỉ có ${pData.length} số liệu. Thân bài Task 1 cần lựa chọn và đưa ra số liệu/mốc thời gian cụ thể để làm dẫn chứng.`),
+            anecdoteWarning: null,
+            recommendation: hasComparison 
+              ? 'Duy trì kết hợp nêu số liệu đi kèm cấu trúc so sánh đối chiếu để làm nổi bật sự khác biệt giữa các nhóm đối tượng.'
+              : 'Bổ sung các cấu trúc so sánh đối chiếu (ví dụ: "...was twice as high as...", "in contrast to...", "followed by...") để đạt tiêu chí Task Achievement Band 7+.'
+          });
+          detailBodyCounter++;
+        }
       }
     }
   } else {
@@ -1493,7 +1880,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0, commaSpliceCount = 0, overgeneralisationCount = 0) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0, commaSpliceCount = 0, overgeneralisationCount = 0, task1Subtype = 'chart_graph', task1MapCheck = null, task1ProcessCheck = null) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -1506,8 +1893,12 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Khắc phục dung lượng khẩn cấp: Bài viết hiện thiếu ${targetMinWords - wordCount} từ. Bắt buộc phải viết đủ tối thiểu ${targetMinWords} từ để thoát khỏi khung điểm liệt Task Response.`;
   } else if (isTask1 && task1OverviewCheck?.hasRawData) {
     plan.priority1 = `Khắc phục bẫy số liệu đoạn Overview: Phát hiện ${task1OverviewCheck.rawDataList.length} số liệu chi tiết (${task1OverviewCheck.rawDataList.slice(0, 3).join(', ')}) trong Overview. Đoạn Tổng quan chỉ được khái quát xu hướng lớn (tăng/giảm, biến động), tuyệt đối không đưa số liệu cụ thể để thoát khỏi mức khống chế Band 5.5 Task Achievement.`;
-  } else if (isTask1 && task1ComparisonCheck && task1ComparisonCheck.totalComparisons === 0) {
-    plan.priority1 = `Thoát khỏi bẫy liệt kê số liệu cơ học (Mechanical Listing): Thân bài có đưa ra số liệu nhưng thiếu hẳn các cấu trúc so sánh đối chiếu. Hãy sử dụng tối thiểu 3 cấu trúc so sánh tương quan (như: 'twice as high as', 'whereas', 'outstripped', 'compared with') để mở khóa Band 7.0+ Task Achievement.`;
+  } else if (isTask1 && task1Subtype === 'map' && task1MapCheck && (task1MapCheck.transformationCount === 0 || task1MapCheck.cardinalCount + task1MapCheck.prepositionCount === 0)) {
+    plan.priority1 = 'Bổ sung động từ quy hoạch và phương hướng la bàn (Map): Thân bài bài Map cần tối thiểu 3 động từ chuyển đổi hạ tầng (như: demolished, converted into, replaced by) và từ định vị không gian (như: in the northern quadrant, adjacent to) để mở khóa Band 7.0+ Task Achievement.';
+  } else if (isTask1 && task1Subtype === 'process' && task1ProcessCheck && (task1ProcessCheck.totalSequentialCount === 0 || task1ProcessCheck.passiveVoiceCount === 0)) {
+    plan.priority1 = 'Làm chủ liên từ chỉ thứ tự và thể bị động (Process): Thân bài bài Process cần tối thiểu 3 liên từ chuyển bước (như: subsequently, following this, prior to) và các động từ ở thể bị động (như: is crushed, are transported) để mở khóa Band 7.0+ Task Achievement.';
+  } else if (isTask1 && (!task1Subtype || task1Subtype === 'chart_graph') && task1ComparisonCheck && task1ComparisonCheck.totalComparisons === 0) {
+    plan.priority1 = 'Thoát khỏi bẫy liệt kê số liệu cơ học (Mechanical Listing): Thân bài có đưa ra số liệu nhưng thiếu hẳn các cấu trúc so sánh đối chiếu. Hãy sử dụng tối thiểu 3 cấu trúc so sánh tương quan (như: \'twice as high as\', \'whereas\', \'outstripped\', \'compared with\') để mở khóa Band 7.0+ Task Achievement.';
   } else if (!isTask1 && task2Fulfillment && !task2Fulfillment.isBalanced) {
     plan.priority1 = `Khắc phục lỗi bỏ sót yêu cầu đề bài: ${task2Fulfillment.missingPartDescription ? 'Bạn chưa trả lời ' + task2Fulfillment.missingPartDescription + '.' : ''} Dành riêng 1 đoạn thân bài độc lập cho mỗi câu hỏi của đề bài để thoát khỏi mức khống chế Band 5.0 Task Response.`;
   } else if (svErrorCount >= 3) {
@@ -1520,7 +1911,11 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Chấm dứt lối hành văn quy chụp tuyệt đối: Phát hiện ${overgeneralisationCount} khẳng định cực đoan (như: 'everyone always...', '100%...', 'will definitely destroy...'). Đây là bẫy Overgeneralisation khống chế Task Response ở Band 6.0. Hãy áp dụng ngôn ngữ cẩn trọng Hedging ('is likely to', 'tends to', 'evidence suggests that') để bài thi đạt chuẩn lập luận Band 7.0+.`;
   } else if (trBand < 6.0) {
     plan.priority1 = isTask1 
-      ? 'Bắt buộc phải có đoạn Overview nêu bật 2 đặc điểm lớn nhất của biểu đồ (không đưa số liệu chi tiết vào Overview).' 
+      ? (task1Subtype === 'map'
+          ? 'Bắt buộc phải có đoạn Overview nêu bật 1-2 biến đổi không gian lớn nhất (ví dụ: chuyển từ vùng nông nghiệp sang đô thị/dịch vụ thương mại).'
+          : task1Subtype === 'process'
+          ? 'Bắt buộc phải có đoạn Overview nêu rõ tổng số bước và giai đoạn bắt đầu - kết thúc của quy trình.'
+          : 'Bắt buộc phải có đoạn Overview nêu bật 2 đặc điểm lớn nhất của biểu đồ (không đưa số liệu chi tiết vào Overview).')
       : 'Phát triển luận điểm đa chiều: Dành riêng 1 đoạn cho mỗi góc nhìn trong đề bài, trả lời trọn vẹn câu hỏi.';
   } else {
     plan.priority1 = 'Phát triển chiều sâu lập luận: Đào sâu cơ chế "Vì sao dẫn đến kết quả đó" thay vì chỉ liệt kê ý tưởng bề mặt.';
@@ -1668,9 +2063,9 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Prompt Verbatim Copying Penalty (Cambridge Regulation: Copied words receive zero credit)
   if (copiedWordCount >= 4) {
-    if (copiedWordCount >= 15) {
+    if (copiedWordCount >= 16) {
       trScore = Math.max(1.0, trScore - 1.0);
-    } else {
+    } else if (copiedWordCount >= 8) {
       trScore = Math.max(1.0, trScore - 0.5);
     }
     const sampleChunks = promptCopying.copiedChunks.map(c => `"${c.phrase}" (${c.wordCount} từ)`).slice(0, 2).join(', ');
@@ -1758,7 +2153,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   } else if (relevance.isOffTopic) {
     trScore = Math.min(trScore, 4.5); // Strict Cambridge off-topic penalty
     trImprovements.push(`CẢNH BÁO LỆCH ĐỀ (Off-Topic): Bài viết chỉ đề cập ${relevance.matchedKeywords.length}/${relevance.totalKeywords} từ khóa trọng tâm của đề bài. Giám khảo khảo thí Cambridge sẽ giới hạn điểm Task Response tối đa Band 4.5.`);
-  } else if (relevance.score >= 0.55 && wordCount >= 250) {
+  } else if (relevance.score >= 0.55 && wordCount >= (isTask1 ? 150 : 250)) {
     trScore += 0.5;
     trStrengths.push("Bài viết bám sát các từ khóa trọng tâm của đề thi, thể hiện sự hiểu đề thấu đáo.");
   }
@@ -1766,10 +2161,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   // 4. Task 1 & Task 2 Specific Checks
   let task1OverviewCheck = null;
   let task1ComparisonCheck = null;
+  let task1MapCheck = null;
+  let task1ProcessCheck = null;
   let task2Fulfillment = null;
+  const task1Subtype = isTask1 ? detectTask1Subtype(task, essayText) : null;
+
   if (isTask1) {
     task1OverviewCheck = analyzeTask1Overview(paragraphs);
-    task1ComparisonCheck = analyzeTask1Comparisons(paragraphs, task1OverviewCheck?.overviewIndex);
 
     if (task1OverviewCheck.hasOverview) {
       if (task1OverviewCheck.hasRawData) {
@@ -1779,38 +2177,96 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
         );
       } else {
         if (wordCount >= 150) trScore += 0.5;
-        trStrengths.push("Đoạn Tổng quan (Overview) chuẩn mực: Nêu bật các xu hướng chính và đặc điểm nổi bật mà không bị vướng bẫy đưa số liệu chi tiết.");
+        if (task1Subtype === 'map') {
+          trStrengths.push("Đoạn Tổng quan (Overview) dạng Bản đồ chuẩn mực: Nêu bật sự biến đổi không gian và hiện đại hóa tổng thể mà không bị sa đà vào chi tiết lẻ tẻ.");
+        } else if (task1Subtype === 'process') {
+          trStrengths.push("Đoạn Tổng quan (Overview) dạng Quy trình chuẩn mực: Khái quát trọn vẹn số lượng các giai đoạn và điểm bắt đầu - kết thúc rõ ràng.");
+        } else {
+          trStrengths.push("Đoạn Tổng quan (Overview) chuẩn mực: Nêu bật các xu hướng chính và đặc điểm nổi bật mà không bị vướng bẫy đưa số liệu chi tiết.");
+        }
       }
     } else {
       trScore = Math.min(trScore, 5.0);
       trImprovements.push("QUAN TRỌNG: Bài viết Task 1 thiếu đoạn Tổng quan (Overview). Barem Cambridge quy định điểm Task Achievement KHÔNG ĐƯỢC VƯỢT QUÁ Band 5.0.");
     }
 
-    const dataCheck = analyzeTask1DataDensity(paragraphs, task1OverviewCheck.overviewIndex);
-    if (!dataCheck.hasAdequateData) {
-      trScore = Math.min(trScore, 5.0);
-      trImprovements.push("QUAN TRỌNG: Các đoạn thân bài Task 1 thiếu số liệu hoặc dẫn chứng cụ thể (phát hiện chỉ có " + dataCheck.bodyDataCount + " số liệu). Theo chuẩn Cambridge, bài phân tích không có số liệu dẫn chứng bị giới hạn ở Band 5.0.");
-    } else {
-      trStrengths.push(`Dẫn chứng số liệu trong thân bài đầy đủ (${dataCheck.bodyDataCount} mốc số liệu/thời gian cụ thể).`);
-    }
-
-    // 4c. Comparative & Contrasting Language Check (Mandatory "make comparisons where relevant")
-    if (dataCheck.bodyDataCount >= 2) {
-      if (task1ComparisonCheck.totalComparisons === 0) {
-        trScore = Math.min(trScore, 5.5);
-        trImprovements.push(
-          "BẪY LIỆT KÊ SỐ LIỆU CƠ HỌC (Mechanical Data Listing): Thân bài có đưa số liệu nhưng hoàn toàn KHÔNG có cấu trúc so sánh đối chiếu giữa các đối tượng hoặc các mốc thời gian. Yêu cầu bắt buộc của Cambridge IELTS Task 1 là 'make comparisons where relevant'. Việc chỉ mô tả số liệu đơn lẻ từng năm/từng đối tượng khiến Task Achievement bị khống chế tối đa Band 5.5. Hãy bổ sung các cấu trúc so sánh: hơn/kém ('significantly higher than', 'outstripped'), so sánh bội số ('twice as high as', 'doubled'), hoặc liên từ đối chiếu ('whereas', 'in stark contrast to', 'compared with')."
-        );
-      } else if (task1ComparisonCheck.totalComparisons < 3) {
+    if (task1Subtype === 'map') {
+      task1MapCheck = analyzeTask1MapFeatures(paragraphs, task1OverviewCheck?.overviewIndex);
+      
+      if (task1MapCheck.transformationCount === 0) {
+        trScore = Math.min(trScore, 5.0);
+        trImprovements.push("QUAN TRỌNG (Dạng bài Map): Thân bài hoàn toàn thiếu các động từ biến đổi hạ tầng / quy hoạch (như: 'demolished', 'erected', 'converted into', 'replaced by'). Tiêu chuẩn Cambridge Task 1 Map đòi hỏi miêu tả rõ sự chuyển đổi giữa các mốc thời gian.");
+      } else if (task1MapCheck.transformationCount < 3) {
         trScore = Math.min(trScore, 6.0);
-        trImprovements.push(
-          `CẦN ĐA DẠNG HÓA SO SÁNH: Thân bài mới chỉ có ${task1ComparisonCheck.totalComparisons} cấu trúc so sánh đối chiếu (${task1ComparisonCheck.matchedComparisons.slice(0, 2).join(', ')}). Barem Cambridge Band 7.0+ Task Achievement yêu cầu liên tục lồng ghép so sánh tương quan giữa các nhóm số liệu thay vì chỉ mô tả xu hướng một chiều.`
-        );
-      } else {
+        trImprovements.push(`CẦN MỞ RỘNG TỪ VỰNG QUY HOẠCH: Thân bài mới có ${task1MapCheck.transformationCount} động từ chuyển đổi. Hãy sử dụng đa dạng các cấu trúc như 'made way for', 'was converted into', 'was erected' để nâng điểm Task Achievement lên Band 7.0+.`);
+      }
+
+      if (task1MapCheck.cardinalCount + task1MapCheck.prepositionCount === 0) {
+        trScore = Math.min(trScore, 5.0);
+        trImprovements.push("QUAN TRỌNG (Dạng bài Map): Thân bài hoàn toàn thiếu phương hướng la bàn (North, South, East, West) và giới từ định vị không gian (adjacent to, opposite to, situated in). Người đọc không thể xác định vị trí các công trình trên bản đồ.");
+      } else if (task1MapCheck.cardinalCount + task1MapCheck.prepositionCount < 3) {
+        trScore = Math.min(trScore, 6.0);
+        trImprovements.push(`CẦN BỔ SUNG ĐỊNH VỊ KHÔNG GIAN: Thân bài mới có ${task1MapCheck.cardinalCount + task1MapCheck.prepositionCount} cụm từ chỉ vị trí/phương hướng. Tiêu chí Band 7.0+ đòi hỏi xác định chính xác góc phần tư ('in the northwestern quadrant', 'to the south of') và vị trí tương quan.`);
+      } else if (task1MapCheck.transformationCount >= 3 && (task1MapCheck.cardinalCount + task1MapCheck.prepositionCount) >= 3) {
         if (wordCount >= 150 && trScore >= 6.0) trScore += 0.5;
-        trStrengths.push(
-          `Kỹ năng so sánh đối chiếu số liệu phong phú (${task1ComparisonCheck.totalComparisons} cấu trúc: ${task1ComparisonCheck.matchedComparisons.slice(0, 4).join(', ')}), đáp ứng xuất sắc tiêu chí 'make comparisons where relevant' của đề thi.`
-        );
+        if (task1MapCheck.transformationCount >= 5 && (task1MapCheck.cardinalCount + task1MapCheck.prepositionCount) >= 4) {
+          trScore = Math.min(9.0, trScore + 0.5);
+        }
+        trStrengths.push(`Sử dụng ngôn ngữ miêu tả bản đồ (Map) xuất sắc: Kết hợp nhuần nhuyễn phương hướng địa lý (${task1MapCheck.cardinalCount} lần), vị trí không gian (${task1MapCheck.prepositionCount} lần) và động từ chuyển đổi hạ tầng (${task1MapCheck.transformationCount} lần).`);
+      }
+    } else if (task1Subtype === 'process') {
+      task1ProcessCheck = analyzeTask1ProcessFeatures(paragraphs, task1OverviewCheck?.overviewIndex);
+
+      if (task1ProcessCheck.totalSequentialCount === 0) {
+        trScore = Math.min(trScore, 5.0);
+        trImprovements.push("QUAN TRỌNG (Dạng bài Process): Thân bài hoàn toàn thiếu các liên từ chỉ thứ tự các bước (như: 'initially', 'subsequently', 'following this', 'finally'). Bài quy trình bắt buộc phải dẫn dắt người đọc qua từng giai đoạn logic.");
+      } else if (task1ProcessCheck.totalSequentialCount < 3) {
+        trScore = Math.min(trScore, 6.0);
+        trImprovements.push(`CẦN BỔ SUNG LIÊN TỪ CHUYỂN BƯỚC: Thân bài mới có ${task1ProcessCheck.totalSequentialCount} từ nối các bước. Cần bổ sung thêm các liên từ đa dạng như 'subsequently', 'prior to entering', 'after which' để đạt Band 7.0+ Task Achievement.`);
+      }
+
+      if (task1ProcessCheck.passiveVoiceCount === 0) {
+        trScore = Math.min(trScore, 5.0);
+        trImprovements.push("QUAN TRỌNG (Dạng bài Process): Thân bài hoàn toàn thiếu cấu trúc thể bị động (passive voice - ví dụ: 'is crushed', 'is heated', 'are transported'). Trong văn phong học thuật IELTS, quy trình sản xuất bắt buộc phải dùng thể bị động để duy trì tính khách quan.");
+      } else if (task1ProcessCheck.passiveVoiceCount < 2) {
+        trScore = Math.min(trScore, 6.0);
+        trImprovements.push(`CẦN TĂNG CƯỜNG THỂ BỊ ĐỘNG: Thân bài mới có ${task1ProcessCheck.passiveVoiceCount} động từ bị động. Hãy chuyển các thao tác kỹ thuật sang thể bị động (như: 'is poured into', 'is filtered') thay vì dùng câu chủ động.`);
+      } else if (task1ProcessCheck.totalSequentialCount >= 3 && task1ProcessCheck.passiveVoiceCount >= 2) {
+        if (wordCount >= 150 && trScore >= 6.0) trScore += 0.5;
+        if (task1ProcessCheck.totalSequentialCount >= 4 && task1ProcessCheck.passiveVoiceCount >= 2) {
+          trScore = Math.min(9.0, trScore + 0.5);
+        }
+        trStrengths.push(`Miêu tả quy trình (Process) xuất sắc: Dẫn dắt trình tự các giai đoạn mượt mà (${task1ProcessCheck.totalSequentialCount} từ nối) và vận dụng chính xác các cấu trúc bị động học thuật (${task1ProcessCheck.passiveVoiceCount} động từ).`);
+      }
+    } else {
+      // Standard Chart/Graph
+      task1ComparisonCheck = analyzeTask1Comparisons(paragraphs, task1OverviewCheck?.overviewIndex);
+      const dataCheck = analyzeTask1DataDensity(paragraphs, task1OverviewCheck.overviewIndex);
+      if (!dataCheck.hasAdequateData) {
+        trScore = Math.min(trScore, 5.0);
+        trImprovements.push("QUAN TRỌNG: Các đoạn thân bài Task 1 thiếu số liệu hoặc dẫn chứng cụ thể (phát hiện chỉ có " + dataCheck.bodyDataCount + " số liệu). Theo chuẩn Cambridge, bài phân tích không có số liệu dẫn chứng bị giới hạn ở Band 5.0.");
+      } else {
+        trStrengths.push(`Dẫn chứng số liệu trong thân bài đầy đủ (${dataCheck.bodyDataCount} mốc số liệu/thời gian cụ thể).`);
+      }
+
+      // 4c. Comparative & Contrasting Language Check (Mandatory "make comparisons where relevant")
+      if (dataCheck.bodyDataCount >= 2) {
+        if (task1ComparisonCheck.totalComparisons === 0) {
+          trScore = Math.min(trScore, 5.5);
+          trImprovements.push(
+            "BẪY LIỆT KÊ SỐ LIỆU CƠ HỌC (Mechanical Data Listing): Thân bài có đưa số liệu nhưng hoàn toàn KHÔNG có cấu trúc so sánh đối chiếu giữa các đối tượng hoặc các mốc thời gian. Yêu cầu bắt buộc của Cambridge IELTS Task 1 là 'make comparisons where relevant'. Việc chỉ mô tả số liệu đơn lẻ từng năm/từng đối tượng khiến Task Achievement bị khống chế tối đa Band 5.5. Hãy bổ sung các cấu trúc so sánh: hơn/kém ('significantly higher than', 'outstripped'), so sánh bội số ('twice as high as', 'doubled'), hoặc liên từ đối chiếu ('whereas', 'in stark contrast to', 'compared with')."
+          );
+        } else if (task1ComparisonCheck.totalComparisons < 3) {
+          trScore = Math.min(trScore, 6.0);
+          trImprovements.push(
+            `CẦN ĐA DẠNG HÓA SO SÁNH: Thân bài mới chỉ có ${task1ComparisonCheck.totalComparisons} cấu trúc so sánh đối chiếu (${task1ComparisonCheck.matchedComparisons.slice(0, 2).join(', ')}). Barem Cambridge Band 7.0+ Task Achievement yêu cầu liên tục lồng ghép so sánh tương quan giữa các nhóm số liệu thay vì chỉ mô tả xu hướng một chiều.`
+          );
+        } else {
+          if (wordCount >= 150 && trScore >= 6.0) trScore += 0.5;
+          trStrengths.push(
+            `Kỹ năng so sánh đối chiếu số liệu phong phú (${task1ComparisonCheck.totalComparisons} cấu trúc: ${task1ComparisonCheck.matchedComparisons.slice(0, 4).join(', ')}), đáp ứng xuất sắc tiêu chí 'make comparisons where relevant' của đề thi.`
+          );
+        }
       }
     }
   } else {
@@ -1879,16 +2335,17 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const essayLower = essayText.toLowerCase();
 
   // 1. Structural Coherence Baseline
+  const underlength40 = isTask1 ? (wordCount < 110 || paragraphs.length < 3) : (wordCount < 160 || paragraphs.length < 3);
   if (paragraphs.length === 1 && wordCount >= 60) {
     ccScore = Math.min(ccScore, 3.5);
     ccImprovements.push("VI PHẠM BỐ CỤC ĐOẠN VĂN: Toàn bộ bài viết là một khối duy nhất không xuống dòng phân chia đoạn. Barem Cambridge quy định bài không chia đoạn văn bị khống chế Coherence & Cohesion tối đa Band 3.5.");
-  } else if (wordCount < 75) {
+  } else if (wordCount < (isTask1 ? 50 : 75)) {
     ccScore = Math.min(ccScore, 2.0);
     ccImprovements.push("Bài viết quá ngắn để tổ chức tính liên kết đoạn văn, giới hạn tối đa ở Band 2.0.");
-  } else if (wordCount < 120) {
+  } else if (wordCount < (isTask1 ? 80 : 120)) {
     ccScore = Math.min(ccScore, 3.0);
     ccImprovements.push("Đoạn văn quá ngắn và thiếu liên kết logic giữa các ý, giới hạn ở Band 3.0.");
-  } else if (paragraphs.length < 3 || wordCount < 160) {
+  } else if (underlength40) {
     ccScore = Math.min(ccScore, 4.0);
     ccImprovements.push("Đoạn văn quá ngắn hoặc chưa phân chia đoạn rõ ràng, ảnh hưởng nghiêm trọng đến tính mạch lạc.");
   } else if (paragraphs.length === 3 && !isTask1) {
@@ -1926,17 +2383,23 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const mechanicalCount = (essayLower.match(/\b(firstly|secondly|thirdly|first|second|moreover|furthermore|in addition|in conclusion|on the one hand|on the other hand)\b/gi) || []).length;
 
   // 4. Calibrated Cambridge CC Grading Matrix
-  if (referencingCount >= 2 && paragraphs.length >= 4 && wordCount >= 240 && categoriesUsedCount >= 3) {
+  const minWordsForHighCC = isTask1 ? 150 : 240;
+  const minWordsForMidCC = isTask1 ? 135 : 200;
+  const minReferencingForHighCC = isTask1 ? 1 : 2;
+
+  if (referencingCount >= minReferencingForHighCC && paragraphs.length >= (isTask1 ? 3 : 4) && wordCount >= minWordsForHighCC && (categoriesUsedCount >= 3 || (isTask1 && totalCohesiveHits >= 3))) {
     ccScore = 7.0; // True Band 7 CC (Clear progression, natural referencing)
-    if (referencingCount >= 3 && mechanicalCount <= 5 && wordCount >= 260) {
+    if ((referencingCount >= 2 || (isTask1 && referencingCount >= 1)) && mechanicalCount <= 5 && wordCount >= (isTask1 ? 160 : 260)) {
       ccScore = 7.5;
     }
     ccStrengths.push(`Sử dụng đại từ tham chiếu và liên kết ngữ nghĩa xuất sắc (${referencingCount} cụm 'this/such + Noun', 'the former/the latter'). Mạch văn chuyển ý tự nhiên.`);
-  } else if (paragraphs.length >= 4 && mechanicalCount >= 2 && wordCount >= 200) {
-    // Mechanical cohesion without referencing = standard Band 6.0
+  } else if (paragraphs.length >= (isTask1 ? 3 : 4) && (mechanicalCount >= 2 || totalCohesiveHits >= 3) && wordCount >= minWordsForMidCC) {
+    // Standard Band 6.0
     ccScore = 6.0;
     ccStrengths.push(`Bố cục gồm ${paragraphs.length} đoạn văn, có sử dụng liên từ nối cơ bản.`);
-    ccImprovements.push("Có dấu hiệu sử dụng từ nối cơ học (Mechanical linkers: First, Second, Moreover). Để đạt Band 7.0+ CC, hãy kết hợp thêm đại từ thay thế (this problem, such measures) và mệnh đề quan hệ.");
+    if (mechanicalCount >= 3) {
+      ccImprovements.push("Có dấu hiệu sử dụng từ nối cơ học (Mechanical linkers: First, Second, Moreover). Để đạt Band 7.0+ CC, hãy kết hợp thêm đại từ thay thế (this problem, such measures) và mệnh đề quan hệ.");
+    }
   } else if (cohesiveDensityPer100 < 1.5 && referencingCount < 1) {
     ccScore = 5.0;
     ccImprovements.push("Mạch văn rời rạc, thiếu các phương tiện liên kết giữa các câu. Hãy bổ sung liên từ chuyển ý phù hợp.");
@@ -1985,29 +2448,35 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   });
 
   // 5. Underlength hard caps for LR
-  if (wordCount < 75) {
+  if (wordCount < (isTask1 ? 50 : 75)) {
     lrScore = Math.min(lrScore, 2.0);
-  } else if (wordCount < 120) {
+  } else if (wordCount < (isTask1 ? 80 : 120)) {
     lrScore = Math.min(lrScore, 3.0);
-  } else if (wordCount < 160) {
+  } else if (wordCount < (isTask1 ? 110 : 160)) {
     lrScore = Math.min(lrScore, 4.0);
   }
 
   // 6. Calibrated Cambridge LR Matrix
-  if (awlPercentage >= 8.5 && collocationHits >= 4 && wordCount >= 240 && informalCount === 0) {
+  const minWordsForHighLR = isTask1 ? 150 : 240;
+  const minWordsForMidLR = isTask1 ? 135 : 220;
+  const domainBonus = (isTask1 && (task1Subtype === 'map' || task1Subtype === 'process')) 
+    ? ((task1MapCheck?.uniquePatternsCount || 0) + (task1ProcessCheck?.uniquePatternsCount || 0))
+    : 0;
+
+  if ((awlPercentage >= 7.5 || (awlPercentage >= 4.0 && domainBonus >= 4)) && (collocationHits >= 3 || domainBonus >= 3) && wordCount >= minWordsForHighLR && informalCount === 0) {
     lrScore = 8.0;
-    lrStrengths.push(`Vốn từ vựng học thuật C1/C2 đỉnh cao (${awlPercentage.toFixed(1)}% AWL, ${collocationHits} cụm collocations tự nhiên như: '${matchedCollocations.slice(0, 3).join("', '")}').`);
-  } else if (awlPercentage >= 7.0 && collocationHits >= 2 && wordCount >= 220 && informalCount <= 1) {
+    lrStrengths.push(`Vốn từ vựng học thuật C1/C2 đỉnh cao (${awlPercentage.toFixed(1)}% AWL, ${collocationHits} cụm collocations tự nhiên${domainBonus > 0 ? `, ${domainBonus} thuật ngữ chuyên biệt dạng bài` : ''}).`);
+  } else if ((awlPercentage >= 6.0 || (awlPercentage >= 3.0 && domainBonus >= 3)) && (collocationHits >= 2 || domainBonus >= 2) && wordCount >= minWordsForMidLR && informalCount <= 1) {
     lrScore = 7.0;
     lrStrengths.push(`Sở hữu vốn từ học thuật phong phú (${awlPercentage.toFixed(1)}% AWL) và có ý thức dùng collocations chuẩn xác (${matchedCollocations.slice(0, 2).join(', ')}).`);
-  } else if (awlPercentage >= 5.5 && (collocationHits >= 1 || (ttr >= 0.50 && wordCount >= 220))) {
+  } else if (awlPercentage >= 5.0 || (awlPercentage >= 2.5 && domainBonus >= 2) || (ttr >= 0.50 && wordCount >= minWordsForMidLR)) {
     lrScore = 6.5;
     lrStrengths.push(`Vốn từ vựng tương đối đa dạng (${awlPercentage.toFixed(1)}% AWL), đáp ứng tốt yêu cầu bài thi.`);
-  } else if (awlPercentage >= 4.5 || collocationHits >= 1) {
+  } else if (awlPercentage >= 4.0 || collocationHits >= 1 || domainBonus >= 1) {
     lrScore = 6.0;
     lrStrengths.push("Vốn từ vựng ở mức vừa đủ hoàn thành bài viết, có sử dụng một số thuật ngữ liên quan đến chủ đề.");
     lrImprovements.push("Cần bổ sung thêm các cụm từ học thuật C1/C2 và Collocations nâng cao để vượt ngưỡng Band 6.0.");
-  } else if (wordCount >= 160) {
+  } else if (wordCount >= (isTask1 ? 140 : 160)) {
     // Basic A2/B1 vocabulary
     lrScore = 5.0;
     lrImprovements.push("Vốn từ vựng còn khá cơ bản (chỉ đạt " + awlPercentage.toFixed(1) + "% từ vựng học thuật AWL, thiếu các cụm Collocations chuẩn). Bạn cần tích lũy thêm từ vựng chuyên sâu theo chủ đề.");
@@ -2020,12 +2489,12 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Prompt Copying Penalty for LR (Candidate lacks vocabulary to paraphrase)
   if (copiedWordCount >= 4) {
-    if (copiedWordCount >= 15) {
+    if (copiedWordCount >= 16) {
       lrScore = Math.max(1.0, lrScore - 1.0);
-    } else {
+    } else if (copiedWordCount >= 8) {
       lrScore = Math.max(1.0, lrScore - 0.5);
     }
-    lrImprovements.push(`CẢNH BÁO TỪ VỰNG (Prompt Copying): Bài viết sao chép ${copiedWordCount} từ nguyên xi từ đề bài. Để đạt điểm cao ở tiêu chí Lexical Resource, thí sinh bắt buộc phải thể hiện khả năng Paraphrase (dùng từ đồng nghĩa, chuyển đổi từ loại hoặc cấu trúc câu) ngay từ câu mở đầu.`);
+    trImprovements.push(`CẢNH BÁO TỪ VỰNG (Prompt Copying): Bài viết sao chép ${copiedWordCount} từ nguyên xi từ đề bài. Để đạt điểm cao ở tiêu chí Lexical Resource, thí sinh bắt buộc phải thể hiện khả năng Paraphrase (dùng từ đồng nghĩa, chuyển đổi từ loại hoặc cấu trúc câu) ngay từ câu mở đầu.`);
   }
 
   // 7. Word Overuse & Repetition Diagnostics (Band 6.0 cap for severe overuse)
@@ -2241,12 +2710,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   // 2. Syntactic Variety & Complex Structures (Range Check)
   let complexCount = 0;
   const complexMarkers = [
-    /\b(although|even though|though|whereas|while)\b/i,
+    /\b(although|even though|though|whereas|while|whilst)\b/i,
     /\b(which|who|whom|whose|that|whereby|in which)\b/i,
     /\b(because|since|as long as|provided that|in order that)\b/i,
     /\b(if|unless|had [a-z]+ [a-z]+ed|were [a-z]+ to)\b/i, // Conditionals & Inversions
     /\b(not only\s+(did|does|do|can|is|are|have|has))\b/i, // Negative Inversions
-    /\b(having\s+[a-z]+ed|compared\s+to|given\s+that)\b/i   // Participle Clauses
+    /\b(having\s+[a-z]+ed|compared\s+to|given\s+that|accompanied\s+by|flanked\s+by|followed\s+by|complemented\s+by|surrounded\s+by)\b/i,   // Participle Clauses
+    /\b(?:prior\s+to|before|after|once)\s+[a-z]+ing\b/i // Gerundial time clauses
   ];
 
   sentences.forEach(s => {
@@ -2255,9 +2725,10 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   });
 
   const complexRatio = complexCount / totalSentences;
+  const minSentencesForBand8 = isTask1 ? 5 : 8;
 
   // 3. Calibrated Cambridge GRA Matrix (Accuracy + Range Dual Gate)
-  if (svErrorCount === 0 && bareNounErrorCount === 0 && commaSpliceCount === 0 && efsrRatio >= 80 && complexRatio >= 0.45 && totalSentences >= 8) {
+  if (svErrorCount === 0 && bareNounErrorCount === 0 && commaSpliceCount === 0 && efsrRatio >= 80 && complexRatio >= 0.40 && totalSentences >= minSentencesForBand8) {
     graScore = 8.0;
     graStrengths.push(`Khả năng kiểm soát ngữ pháp xuất sắc: ${Math.round(efsrRatio)}% câu hoàn toàn không lỗi, kết hợp nhuần nhuyễn câu phức và mệnh đề nâng cao (${Math.round(complexRatio * 100)}%).`);
   } else if (svErrorCount <= 1 && bareNounErrorCount <= 1 && commaSpliceCount <= 1 && efsrRatio >= 65 && complexRatio >= 0.30) {
@@ -2276,11 +2747,11 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   }
 
   // Underlength hard caps for GRA
-  if (wordCount < 75) {
+  if (wordCount < (isTask1 ? 50 : 75)) {
     graScore = Math.min(graScore, 2.0);
-  } else if (wordCount < 120) {
+  } else if (wordCount < (isTask1 ? 80 : 120)) {
     graScore = Math.min(graScore, 3.0);
-  } else if (wordCount < 160) {
+  } else if (wordCount < (isTask1 ? 110 : 160)) {
     graScore = Math.min(graScore, 4.0);
   }
 
@@ -2338,8 +2809,8 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const keyVocabulary = topicData.collocations;
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
-  const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount, commaSpliceCount, overgeneralisationCount);
+  const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck, task1Subtype);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount, commaSpliceCount, overgeneralisationCount, task1Subtype, task1MapCheck, task1ProcessCheck);
 
   // Band 8 Model Rewrite
   let band8Rewrite = '';
@@ -2347,14 +2818,12 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     band8Rewrite = task.modelAnswer;
   } else {
     band8Rewrite = isTask1
-      ? `The provided visual illustration delineates notable patterns and fluctuations pertinent to ${task?.title || 'the subject matter'} over the surveyed timeframe.\n\n` +
-        `Overall, it is immediately discernible that significant shifts transpired throughout the period. While certain figures exhibited an upward trajectory, others experienced marked declines or plateaued after initial volatility.\n\n` +
-        `In terms of the predominant categories, initial figures commenced at moderate levels before undergoing consistent expansion, ultimately culminating in peak metrics. Conversely, alternative components demonstrated a steady descent, reflecting clear divergence across segments.\n\n` +
-        `Regarding the remaining parameters, comparative analysis underscores a high degree of correlation with general trends, with the disparity narrowing considerably towards the end of the recording timeline.`
-      : `It is widely argued that ${task?.prompt?.slice(0, 100) || 'this topic'} has ignited profound debate in contemporary society. While some individuals contend that traditional perspectives remain paramount, I firmly adhere to the view that progressive methodologies offer far superior societal advantages.\n\n` +
-        `On the one hand, proponents of conventional approaches frequently cite proven reliability as their core justification. From this standpoint, established paradigms mitigate unforeseen socioeconomic hazards and preserve foundational stability. For instance, empirical evidence highlights how standardized frameworks cultivate structural discipline across institutions.\n\n` +
-        `On the other hand, the compelling benefits of embracing modernization are indisputable. Firstly, adapting to technological and sociological evolutions fosters unprecedented productivity and unlocks innovative solutions to pressing issues. Furthermore, prioritizing contemporary strategies empowers future generations to navigate increasingly complex global challenges effectively.\n\n` +
-        `In conclusion, although conventional practices provide undeniable initial safeguards, the multifaceted benefits of forward-looking alternatives are far more substantial. Consequently, proactive adoption should be championed across all societal sectors.`;
+      ? (task1Subtype === 'map'
+          ? `The two maps illustrate the urban and infrastructural transformations that transpired in ${task?.title || 'the area'} over the surveyed timeframe.\n\nOverall, it is readily observable that the vicinity underwent extensive modernization, evolving from a largely rural settlement into a developed commercial and residential zone, with key agricultural features being eradicated to accommodate modern amenities.\n\nIn the northern and western quadrants, earlier green spaces and farmland were completely replaced by residential housing complexes and newly constructed transport links. Concurrently, the central thoroughfare was substantially widened to facilitate increased traffic flow.\n\nRegarding the southern perimeter, traditional industrial facilities were dismantled to make way for recreational venues and maritime infrastructure, with pedestrian walkways established along the waterfront.`
+          : task1Subtype === 'process'
+          ? `The diagram delineates the sequential stages involved in the production and manufacturing cycle of ${task?.title || 'the specified commodity'}.\n\nOverall, the entire procedure comprises several distinct phases, commencing with the collection and preparation of raw materials, progressing through mechanical and thermal treatment, and culminating in the packaging and distribution of the finished product.\n\nIn the initial stage, raw constituents are gathered and fed into specialized processing equipment where they are crushed and thoroughly blended. Subsequently, the mixture undergoes intense heating within a temperature-controlled chamber before being filtered to remove residual impurities.\n\nFollowing this purification phase, the refined compound is cooled and molded into standard dimensions. Finally, the end products are packaged into containers and transported to commercial distribution centers.`
+          : `The provided visual illustration delineates notable patterns and fluctuations pertinent to ${task?.title || 'the subject matter'} over the surveyed timeframe.\n\nOverall, it is immediately discernible that significant shifts transpired throughout the period. While certain figures exhibited an upward trajectory, others experienced marked declines or plateaued after initial volatility.\n\nIn terms of the predominant categories, initial figures commenced at moderate levels before undergoing consistent expansion, ultimately culminating in peak metrics. Conversely, alternative components demonstrated a steady descent, reflecting clear divergence across segments.\n\nRegarding the remaining parameters, comparative analysis underscores a high degree of correlation with general trends, with the disparity narrowing considerably towards the end of the recording timeline.`)
+      : `It is widely argued that ${task?.prompt?.slice(0, 100) || 'this topic'} has ignited profound debate in contemporary society. While some individuals contend that traditional perspectives remain paramount, I firmly adhere to the view that progressive methodologies offer far superior societal advantages.\n\nOn the one hand, proponents of conventional approaches frequently cite proven reliability as their core justification. From this standpoint, established paradigms mitigate unforeseen socioeconomic hazards and preserve foundational stability. For instance, empirical evidence highlights how standardized frameworks cultivate structural discipline across institutions.\n\nOn the other hand, the compelling benefits of embracing modernization are indisputable. Firstly, adapting to technological and sociological evolutions fosters unprecedented productivity and unlocks innovative solutions to pressing issues. Furthermore, prioritizing contemporary strategies empowers future generations to navigate increasingly complex global challenges effectively.\n\nIn conclusion, although conventional practices provide undeniable initial safeguards, the multifaceted benefits of forward-looking alternatives are far more substantial. Consequently, proactive adoption should be championed across all societal sectors.`;
   }
 
   return {
@@ -2399,18 +2868,21 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       effectiveWordCount: wordCount,
       copiedChunks: promptCopying.copiedChunks
     },
+    task1Subtype: isTask1 ? task1Subtype : null,
     task1OverviewStats: isTask1 ? {
       hasOverview: task1OverviewCheck?.hasOverview || false,
       hasRawData: task1OverviewCheck?.hasRawData || false,
       rawDataList: task1OverviewCheck?.rawDataList || [],
       overviewIndex: task1OverviewCheck?.overviewIndex ?? -1
     } : null,
-    task1ComparisonStats: isTask1 ? {
+    task1ComparisonStats: (isTask1 && task1Subtype === 'chart_graph') ? {
       totalComparisons: task1ComparisonCheck?.totalComparisons || 0,
       uniqueComparisonsCount: task1ComparisonCheck?.uniqueComparisonsCount || 0,
       matchedComparisons: task1ComparisonCheck?.matchedComparisons || [],
       isMechanicalListing: (task1ComparisonCheck?.totalComparisons === 0)
     } : null,
+    task1MapStats: (isTask1 && task1Subtype === 'map') ? task1MapCheck : null,
+    task1ProcessStats: (isTask1 && task1Subtype === 'process') ? task1ProcessCheck : null,
     task2FulfillmentStats: !isTask1 ? {
       type: task2Fulfillment?.type || 'OPINION',
       isBalanced: task2Fulfillment?.isBalanced ?? true,
