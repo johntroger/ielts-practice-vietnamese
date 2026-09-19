@@ -114,8 +114,9 @@ export default function ReadingResultModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
             title="Đóng bảng kết quả"
+            aria-label="Đóng bảng kết quả"
           >
             <X className="w-5 h-5" />
           </button>

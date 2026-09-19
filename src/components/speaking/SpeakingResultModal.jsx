@@ -150,8 +150,9 @@ export default function SpeakingResultModal({
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
               title="Đóng báo cáo"
+              aria-label="Đóng báo cáo"
             >
               <X className="w-5 h-5" />
             </button>

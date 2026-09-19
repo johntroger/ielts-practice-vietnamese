@@ -467,10 +467,10 @@ export default function Navbar({
               </span>
             </button>
 
-            {/* Mobile & Tablet Hamburger Menu Button */}
+            {/* Mobile & Tablet Hamburger Menu Button (44px touch target) */}
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+              className="lg:hidden flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
               aria-label="Mở menu đầy đủ"
             >
               {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5" />}
@@ -499,7 +499,7 @@ export default function Navbar({
                     }
                     setIsMobileDrawerOpen(false);
                   }}
-                  className="flex items-center space-x-2.5 text-left truncate flex-1 mr-2"
+                  className="flex items-center space-x-2.5 text-left truncate flex-1 mr-2 min-h-[44px]"
                 >
                   <div className={`p-2 rounded-lg ${user ? 'bg-red-100 text-red-700' : 'bg-slate-800 text-white'}`}>
                     <User className="w-4 h-4" />
@@ -515,14 +515,15 @@ export default function Navbar({
                 </button>
                 <button 
                   onClick={() => setIsMobileDrawerOpen(false)}
-                  className="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800"
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer shrink-0"
+                  aria-label="Đóng menu"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Target Band Goal in Mobile Drawer */}
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-red-50 via-rose-50 to-amber-50 border border-red-200 flex items-center justify-between">
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-red-50 via-rose-50 to-amber-50 border border-red-200 flex items-center justify-between min-h-[44px]">
                 <div className="flex items-center space-x-2.5">
                   <div className="p-2 rounded-xl bg-red-600 text-white shadow-xs">
                     <Target className="w-4 h-4" />
@@ -587,28 +588,28 @@ export default function Navbar({
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => { onOpenTheory(); setIsMobileDrawerOpen(false); }}
-                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-red-50/70 border border-red-200 text-left text-xs font-bold text-red-900 hover:bg-red-100 transition-colors"
+                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-red-50/70 border border-red-200 text-left text-xs font-bold text-red-900 hover:bg-red-100 transition-colors min-h-[44px]"
                 >
                   <span className="text-base">📖</span>
                   <span>Cẩm Nang Lý Thuyết</span>
                 </button>
                 <button
                   onClick={() => { onOpenVocabGrammar(); setIsMobileDrawerOpen(false); }}
-                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-left text-xs font-bold text-emerald-900 hover:bg-emerald-100 transition-colors"
+                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-left text-xs font-bold text-emerald-900 hover:bg-emerald-100 transition-colors min-h-[44px]"
                 >
                   <SpellCheck2 className="w-4 h-4 text-emerald-600" />
                   <span>Vocab & Lỗi Sai</span>
                 </button>
                 <button
                   onClick={() => { onOpenDrills(); setIsMobileDrawerOpen(false); }}
-                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200 text-left text-xs font-bold text-amber-900 hover:bg-amber-100 transition-colors"
+                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200 text-left text-xs font-bold text-amber-900 hover:bg-amber-100 transition-colors min-h-[44px]"
                 >
                   <Puzzle className="w-4 h-4 text-amber-600" />
                   <span>Micro-Drills</span>
                 </button>
                 <button
                   onClick={() => { onOpenMockTest(); setIsMobileDrawerOpen(false); }}
-                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-rose-50/70 border border-rose-200 text-left text-xs font-bold text-rose-900 hover:bg-rose-100 transition-colors"
+                  className="flex items-center space-x-2 p-2.5 rounded-xl bg-rose-50/70 border border-rose-200 text-left text-xs font-bold text-rose-900 hover:bg-rose-100 transition-colors min-h-[44px]"
                 >
                   <ShieldAlert className="w-4 h-4 text-rose-600" />
                   <span>Thi Thử 60 Phút (W & R)</span>
@@ -624,7 +625,7 @@ export default function Navbar({
               <div className="space-y-1">
                 <button
                   onClick={() => { onOpenTheory(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <BookOpen className="w-4 h-4 text-amber-600" />
@@ -635,7 +636,7 @@ export default function Navbar({
 
                 <button
                   onClick={() => { onOpenGenerator(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <Sparkles className="w-4 h-4 text-red-600" />
@@ -646,7 +647,7 @@ export default function Navbar({
 
                 <button
                   onClick={() => { onOpenNotebook(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <Bookmark className="w-4 h-4 text-amber-600" />
@@ -656,7 +657,7 @@ export default function Navbar({
 
                 <button
                   onClick={() => { onOpenHistory(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <History className="w-4 h-4 text-blue-600" />
@@ -666,7 +667,7 @@ export default function Navbar({
 
                 <button
                   onClick={() => { onOpenMistakeLog(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <span className="text-base">⚠️</span>
@@ -681,7 +682,7 @@ export default function Navbar({
 
                 <button
                   onClick={() => { onOpenWeeklyReport(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <TrendingUp className="w-4 h-4 text-blue-600" />
@@ -691,7 +692,7 @@ export default function Navbar({
 
                 <button
                   onClick={() => { onOpenSettings(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <Settings className="w-4 h-4 text-slate-600" />
@@ -703,7 +704,7 @@ export default function Navbar({
                 {/* Mobile Features Guide Button */}
                 <button
                   onClick={() => { onOpenFeaturesGuide(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white text-left text-xs font-bold shadow-md active:scale-95 transition-all mt-2"
+                  className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white text-left text-xs font-bold shadow-md active:scale-95 transition-all mt-2 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <Compass className="w-4 h-4 text-white" />
@@ -717,7 +718,7 @@ export default function Navbar({
                 {/* Mobile Contact Button */}
                 <button
                   onClick={() => { onOpenContact?.(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 mt-2"
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 mt-2 min-h-[44px]"
                 >
                   <div className="flex items-center space-x-2.5">
                     <Mail className="w-4 h-4 text-rose-600" />

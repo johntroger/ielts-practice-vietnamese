@@ -480,7 +480,12 @@ export default function MockTestModal({
             </div>
           )}
 
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <button
+            onClick={onClose}
+            className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            title="Đóng phòng thi thử"
+            aria-label="Đóng phòng thi thử"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
