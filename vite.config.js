@@ -8,14 +8,34 @@ export default defineConfig({
     open: true,
   },
   build: {
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-charts': ['chart.js', 'react-chartjs-2'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-supabase': ['@supabase/supabase-js'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('chart.js') || id.includes('react-chartjs-2')) {
+              return 'vendor-charts';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
+            }
+            return 'vendor-libs';
+          }
+          if (
+            id.includes('algorithmicEvaluationService') ||
+            id.includes('algorithmicSpeakingService')
+          ) {
+            return 'engine-algorithmic';
+          }
+          if (id.includes('geminiService')) {
+            return 'engine-gemini';
+          }
         },
       },
     },

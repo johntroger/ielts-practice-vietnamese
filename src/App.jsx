@@ -5,32 +5,34 @@ import SplitPane from './components/SplitPane';
 import PromptPane from './components/PromptPane';
 import EditorPane from './components/EditorPane';
 import TimerBar from './components/TimerBar';
-import FeedbackModal from './components/FeedbackModal';
-import TaskGeneratorModal from './components/TaskGeneratorModal';
-import TaskLibraryModal from './components/TaskLibraryModal';
-import VocabNotebookModal from './components/VocabNotebookModal';
-import MistakeLogModal from './components/MistakeLogModal';
-import HistoryModal from './components/HistoryModal';
-import TheoryHandbookModal from './components/TheoryHandbookModal';
-import QuickParaphraseModal from './components/QuickParaphraseModal';
-import SettingsModal from './components/SettingsModal';
-import MicroDrillsModal from './components/MicroDrillsModal';
-import IdeaMatrixModal from './components/IdeaMatrixModal';
-import RevisionModal from './components/RevisionModal';
-import WeeklyReportModal from './components/WeeklyReportModal';
-import DocumentIngestModal from './components/DocumentIngestModal';
-import MockTestModal from './components/MockTestModal';
-import VocabGrammarSpellingModal from './components/VocabGrammarSpellingModal';
-import AuthModal from './components/AuthModal';
-import FeaturesGuideModal from './components/FeaturesGuideModal';
-import UserProfileModal from './components/UserProfileModal';
-import ContactModal from './components/ContactModal';
-import AIEvaluationProgressModal from './components/AIEvaluationProgressModal';
-import OnboardingModal from './components/OnboardingModal';
+// Lazy-loaded workspaces and modals for optimal initial bundle performance
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
-import SpeakingResultModal from './components/speaking/SpeakingResultModal';
+
+const FeedbackModal = React.lazy(() => import('./components/FeedbackModal'));
+const TaskGeneratorModal = React.lazy(() => import('./components/TaskGeneratorModal'));
+const TaskLibraryModal = React.lazy(() => import('./components/TaskLibraryModal'));
+const VocabNotebookModal = React.lazy(() => import('./components/VocabNotebookModal'));
+const MistakeLogModal = React.lazy(() => import('./components/MistakeLogModal'));
+const HistoryModal = React.lazy(() => import('./components/HistoryModal'));
+const TheoryHandbookModal = React.lazy(() => import('./components/TheoryHandbookModal'));
+const QuickParaphraseModal = React.lazy(() => import('./components/QuickParaphraseModal'));
+const SettingsModal = React.lazy(() => import('./components/SettingsModal'));
+const MicroDrillsModal = React.lazy(() => import('./components/MicroDrillsModal'));
+const IdeaMatrixModal = React.lazy(() => import('./components/IdeaMatrixModal'));
+const RevisionModal = React.lazy(() => import('./components/RevisionModal'));
+const WeeklyReportModal = React.lazy(() => import('./components/WeeklyReportModal'));
+const DocumentIngestModal = React.lazy(() => import('./components/DocumentIngestModal'));
+const MockTestModal = React.lazy(() => import('./components/MockTestModal'));
+const VocabGrammarSpellingModal = React.lazy(() => import('./components/VocabGrammarSpellingModal'));
+const AuthModal = React.lazy(() => import('./components/AuthModal'));
+const FeaturesGuideModal = React.lazy(() => import('./components/FeaturesGuideModal'));
+const UserProfileModal = React.lazy(() => import('./components/UserProfileModal'));
+const ContactModal = React.lazy(() => import('./components/ContactModal'));
+const AIEvaluationProgressModal = React.lazy(() => import('./components/AIEvaluationProgressModal'));
+const OnboardingModal = React.lazy(() => import('./components/OnboardingModal'));
+const SpeakingResultModal = React.lazy(() => import('./components/speaking/SpeakingResultModal'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
 import { supabase } from './services/supabaseClient';
@@ -848,11 +850,12 @@ export default function App() {
       )}
 
       {/* 3. Modals System */}
-      <AIEvaluationProgressModal
-        isOpen={isSubmitting}
-        taskNumber={currentTask?.taskNumber || 2}
-        skill="writing"
-      />
+      <React.Suspense fallback={null}>
+        <AIEvaluationProgressModal
+          isOpen={isSubmitting}
+          taskNumber={currentTask?.taskNumber || 2}
+          skill="writing"
+        />
 
       <VocabGrammarSpellingModal
         isOpen={isVocabGrammarOpen}
@@ -1216,17 +1219,18 @@ export default function App() {
         onClose={() => setIsContactOpen(false)}
       />
 
-      {/* Onboarding 3-Step Tour & Target Band Selector */}
-      <OnboardingModal
-        isOpen={isOnboardingOpen}
-        onClose={() => setIsOnboardingOpen(false)}
-        initialTargetBand={targetBand}
-        currentApiKey={apiKey}
-        onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
-          if (newBand) setTargetBand(newBand);
-          if (newKey) setApiKey(newKey);
-        }}
-      />
+        {/* Onboarding 3-Step Tour & Target Band Selector */}
+        <OnboardingModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
+          initialTargetBand={targetBand}
+          currentApiKey={apiKey}
+          onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
+            if (newBand) setTargetBand(newBand);
+            if (newKey) setApiKey(newKey);
+          }}
+        />
+      </React.Suspense>
 
     </div>
   );
