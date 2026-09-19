@@ -14,7 +14,8 @@ import {
   RefreshCw,
   Zap,
   Target,
-  ShieldAlert
+  ShieldAlert,
+  Edit3
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -27,6 +28,7 @@ import {
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
 import { exportToWord, printFormattedReport } from '../services/exportService';
+import { scoreUserRewrite } from '../utils/rewriteScorer';
 
 ChartJS.register(
   RadialLinearScale,
@@ -54,6 +56,9 @@ export default function FeedbackModal({
   const [activeTab, setActiveTab] = useState('criteria'); // 'criteria' | 'corrections' | 'rewrite' | 'vocab'
   const [savedVocabs, setSavedVocabs] = useState({});
   const [savedMistakes, setSavedMistakes] = useState({});
+  const [expandedRewrites, setExpandedRewrites] = useState({});
+  const [userRewrites, setUserRewrites] = useState({});
+  const [rewriteResults, setRewriteResults] = useState({});
 
   const trBand = evaluation.criteria?.tr?.band || 6.0;
   const ccBand = evaluation.criteria?.cc?.band || 6.0;
@@ -121,6 +126,26 @@ export default function FeedbackModal({
       date: new Date().toISOString()
     });
     setSavedMistakes(prev => ({ ...prev, [idx]: true }));
+  };
+
+  const handleToggleRewrite = (idx) => {
+    setExpandedRewrites(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  const handleRewriteChange = (idx, text) => {
+    setUserRewrites(prev => ({ ...prev, [idx]: text }));
+  };
+
+  const handleCheckRewrite = (c, idx) => {
+    const text = userRewrites[idx] || '';
+    const res = scoreUserRewrite(text, c.original, c.corrected);
+    setRewriteResults(prev => ({ ...prev, [idx]: res }));
+  };
+
+  const handleCopySuggestion = (c, idx) => {
+    setUserRewrites(prev => ({ ...prev, [idx]: c.corrected }));
+    const res = scoreUserRewrite(c.corrected, c.original, c.corrected);
+    setRewriteResults(prev => ({ ...prev, [idx]: res }));
   };
 
   return (
@@ -548,6 +573,80 @@ export default function FeedbackModal({
                     <p className="text-xs text-slate-600 italic bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                       <strong>Giải thích:</strong> {c.explanation}
                     </p>
+
+                    {/* Interactive Inline Rewrite & Instant Re-score */}
+                    <div className="pt-2 border-t border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleRewrite(idx)}
+                          className="flex items-center space-x-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>{expandedRewrites[idx] ? 'Đóng hộp thử viết lại' : '✍️ Thử viết lại câu này (Chấm điểm ngay)'}</span>
+                        </button>
+                      </div>
+
+                      {expandedRewrites[idx] && (
+                        <div className="mt-2.5 p-3 rounded-xl bg-indigo-50/40 border border-indigo-100 space-y-2.5 text-xs">
+                          <label className="block text-slate-700 font-medium">
+                            Viết lại câu của bạn để hệ thống tự động kiểm tra và chấm điểm tức thì:
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={userRewrites[idx] || ''}
+                            onChange={(e) => handleRewriteChange(idx, e.target.value)}
+                            placeholder="Nhập phiên bản viết lại của bạn vào đây..."
+                            className="w-full px-3 py-2 text-xs text-slate-800 bg-white rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-hidden resize-y"
+                          />
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                type="button"
+                                onClick={() => handleCheckRewrite(c, idx)}
+                                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors flex items-center space-x-1"
+                              >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Kiểm tra viết lại</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleCopySuggestion(c, idx)}
+                                className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition-colors"
+                              >
+                                Điền gợi ý mẫu
+                              </button>
+                            </div>
+                            {rewriteResults[idx] && rewriteResults[idx].score > 0 && (
+                              <span className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+                                rewriteResults[idx].score >= 9 ? 'bg-emerald-100 text-emerald-800' :
+                                rewriteResults[idx].score >= 7 ? 'bg-blue-100 text-blue-800' :
+                                'bg-amber-100 text-amber-800'
+                              }`}>
+                                Điểm: {rewriteResults[idx].score}/10
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Result Feedback Alert */}
+                          {rewriteResults[idx] && (
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed border ${
+                              rewriteResults[idx].color === 'emerald' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' :
+                              rewriteResults[idx].color === 'blue' ? 'bg-blue-50 border-blue-200 text-blue-900' :
+                              rewriteResults[idx].color === 'red' ? 'bg-red-50 border-red-200 text-red-900' :
+                              'bg-amber-50 border-amber-200 text-amber-900'
+                            }`}>
+                              <p className="font-semibold">{rewriteResults[idx].message}</p>
+                              {rewriteResults[idx].similarity > 0 && (
+                                <p className="text-[11px] text-slate-500 mt-1">
+                                  Độ tương đồng cấu trúc học thuật: {rewriteResults[idx].similarity}%
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))
               ) : (

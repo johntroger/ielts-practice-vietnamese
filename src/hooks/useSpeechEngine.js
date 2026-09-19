@@ -19,6 +19,12 @@ export function useSpeechEngine({
   const [transcript, setTranscript] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechError, setSpeechError] = useState(null); // null | 'not-allowed' | 'no-speech' | 'network' | 'unsupported'
+  const [speechConfidenceStats, setSpeechConfidenceStats] = useState({
+    averageConfidence: 1.0,
+    confidenceHistory: [],
+    lowConfidenceCount: 0
+  });
+  const confidenceHistoryRef = useRef([]);
 
   // 2. TTS State
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -261,6 +267,10 @@ export function useSpeechEngine({
           const piece = item[0].transcript || '';
           if (item.isFinal) {
             newlyFinalized += piece.trim() + ' ';
+            const conf = typeof item[0].confidence === 'number' && item[0].confidence > 0
+              ? item[0].confidence
+              : 0.88;
+            confidenceHistoryRef.current.push(conf);
           } else {
             liveInterim += piece;
           }
@@ -270,6 +280,18 @@ export function useSpeechEngine({
       if (newlyFinalized) {
         accumulatedTranscriptRef.current = (accumulatedTranscriptRef.current + ' ' + newlyFinalized).replace(/\s+/g, ' ').trim();
         setTranscript(accumulatedTranscriptRef.current);
+
+        const history = confidenceHistoryRef.current;
+        if (history.length > 0) {
+          const sum = history.reduce((a, b) => a + b, 0);
+          const avg = Math.round((sum / history.length) * 100) / 100;
+          const lowCount = history.filter(c => c < 0.70).length;
+          setSpeechConfidenceStats({
+            averageConfidence: avg,
+            confidenceHistory: [...history],
+            lowConfidenceCount: lowCount
+          });
+        }
       }
       setInterimTranscript(liveInterim.trim());
     };
@@ -502,8 +524,14 @@ export function useSpeechEngine({
 
   const resetTranscript = useCallback(() => {
     accumulatedTranscriptRef.current = '';
+    confidenceHistoryRef.current = [];
     setTranscript('');
     setInterimTranscript('');
+    setSpeechConfidenceStats({
+      averageConfidence: 1.0,
+      confidenceHistory: [],
+      lowConfidenceCount: 0
+    });
   }, []);
 
   const setCustomTranscript = useCallback((text) => {
@@ -600,6 +628,7 @@ export function useSpeechEngine({
     transcript,
     interimTranscript,
     speechError,
+    speechConfidenceStats,
     isSpeechRecognitionSupported,
     startListening,
     stopListening,
