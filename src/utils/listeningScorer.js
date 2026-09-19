@@ -2,7 +2,7 @@
  * IELTS Listening Official Scoring Engine & 4-Layer Diagnostic System
  * Compliant with Cambridge Assessment English standards.
  */
-import { calculateListeningBandScore } from '../data/listeningTasks';
+import { calculateListeningBandScore } from '../data/listeningTasks.js';
 
 /**
  * Standardize text for scoring: lowercase, strip extra whitespace and common punctuation
@@ -157,10 +157,120 @@ export function canonicalizeIELTSAnswer(str) {
   return s.replace(/\s+/g, ' ').trim();
 }
 
-export function diagnoseQuestionAnswer(question, rawUserAnswer) {
+/**
+ * Counts IELTS words according to Cambridge rules:
+ * - "Hyphenated words count as single words" (e.g. 'state-of-the-art' = 1 word, 'twenty-one' = 1 word)
+ * - Compound numbers count as a single number/word
+ */
+export function countIeltsWords(text) {
+  if (!text) return 0;
+  const cleaned = text.trim();
+  if (!cleaned) return 0;
+  const tokens = cleaned.split(/\s+/).filter(Boolean);
+  return tokens.length;
+}
+
+/**
+ * Extracts Word Limit instruction from Question Group or Question header:
+ * Returns { maxWords: number | null, allowNumber: boolean, rawInstruction: string }
+ */
+export function extractWordLimit(instruction = '') {
+  if (!instruction || typeof instruction !== 'string') {
+    return { maxWords: null, allowNumber: false, rawInstruction: '' };
+  }
+
+  const upper = instruction.toUpperCase();
+  let maxWords = null;
+  let allowNumber = upper.includes('AND/OR A NUMBER') || upper.includes('AND/OR NUMBER') || upper.includes('OR A NUMBER');
+
+  if (upper.includes('NO MORE THAN THREE WORDS')) {
+    maxWords = 3;
+  } else if (upper.includes('NO MORE THAN TWO WORDS')) {
+    maxWords = 2;
+  } else if (upper.includes('NO MORE THAN ONE WORD') || upper.includes('ONE WORD ONLY')) {
+    maxWords = 1;
+  } else if (upper.includes('TWO WORDS ONLY')) {
+    maxWords = 2;
+  } else if (upper.includes('THREE WORDS ONLY')) {
+    maxWords = 3;
+  } else {
+    const match = upper.match(/NO MORE THAN (\d+) WORDS?/i);
+    if (match) {
+      maxWords = parseInt(match[1], 10);
+    }
+  }
+
+  return { maxWords, allowNumber, rawInstruction: instruction };
+}
+
+/**
+ * Validates whether user answer adheres to word limit constraint
+ */
+export function validateWordLimit(userAnswer, instruction = '') {
+  const limit = extractWordLimit(instruction);
+  if (!limit.maxWords) {
+    return { isValid: true, userWordCount: countIeltsWords(userAnswer), maxWords: null, limitText: '' };
+  }
+
+  const userWordCount = countIeltsWords(userAnswer);
+  const isValid = userWordCount <= limit.maxWords;
+  const limitText = limit.maxWords === 1 ? 'MỘT TỪ DUY NHẤT' : `TỐI ĐA ${limit.maxWords} TỪ`;
+
+  return {
+    isValid,
+    userWordCount,
+    maxWords: limit.maxWords,
+    allowNumber: limit.allowNumber,
+    limitText
+  };
+}
+
+/**
+ * Expands Cambridge optional words in brackets in target answer keys:
+ * E.g.:
+ * - "(a) library" -> ["a library", "library"]
+ * - "water (drop)" -> ["water drop", "water"]
+ * - "car(s)" -> ["car", "cars"]
+ * - "(in) July" -> ["in july", "july"]
+ * - "twenty(-)one" -> ["twenty-one", "twenty one", "twentyone"]
+ */
+export function expandOptionalBrackets(targetAnswer) {
+  if (!targetAnswer) return [];
+  const str = String(targetAnswer).trim();
+  const results = new Set([normalizeAnswer(str)]);
+
+  // Pattern 1: Leading/trailing or internal word in brackets e.g. "(a) library" or "water (drop)"
+  const wordBracketRegex = /\(([a-zA-Z0-9\s]+)\)/g;
+  if (wordBracketRegex.test(str)) {
+    const withContent = str.replace(/\(([^)]+)\)/g, '$1');
+    results.add(normalizeAnswer(withContent));
+
+    const withoutContent = str.replace(/\(([^)]+)\)/g, '');
+    results.add(normalizeAnswer(withoutContent));
+  }
+
+  // Pattern 2: Plural bracket e.g. "car(s)" or "fox(es)"
+  const pluralBracketRegex = /([a-zA-Z]+)\((s|es)\)/gi;
+  if (pluralBracketRegex.test(str)) {
+    const singular = str.replace(pluralBracketRegex, '$1');
+    const plural = str.replace(pluralBracketRegex, '$1$2');
+    results.add(normalizeAnswer(singular));
+    results.add(normalizeAnswer(plural));
+  }
+
+  // Pattern 3: Optional hyphen e.g. "twenty(-)one"
+  if (str.includes('(-)')) {
+    results.add(normalizeAnswer(str.replace(/\(-\)/g, '-')));
+    results.add(normalizeAnswer(str.replace(/\(-\)/g, ' ')));
+    results.add(normalizeAnswer(str.replace(/\(-\)/g, '')));
+  }
+
+  return Array.from(results).filter(Boolean);
+}
+
+export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction = '') {
   const userNorm = normalizeAnswer(rawUserAnswer);
   const targetNorm = normalizeAnswer(question.answer);
-  const acceptableList = (question.acceptableAnswers || [question.answer]).map(normalizeAnswer);
 
   // 1. Unanswered check
   if (!userNorm) {
@@ -181,10 +291,40 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer) {
     };
   }
 
-  // 2. Exact or Acceptable Match (CORRECT)
+  // 2. Word Limit Violation Check (Zero points according to Cambridge Assessment rules)
+  const activeInstruction = question.instruction || groupInstruction || '';
+  const limitCheck = validateWordLimit(rawUserAnswer, activeInstruction);
+  if (!limitCheck.isValid) {
+    return {
+      order: question.order,
+      questionId: question.id,
+      userAnswer: rawUserAnswer,
+      correctAnswer: question.answer,
+      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      isCorrect: false,
+      status: 'WORD_LIMIT_ERROR',
+      badgeLabel: 'Quá số từ (0đ)',
+      badgeColor: 'bg-orange-100 text-orange-900 border-orange-300',
+      diagnosticMessage: `⚠️ Lỗi quá số từ: Đề bài yêu cầu ${limitCheck.limitText}, nhưng bạn đã điền ${limitCheck.userWordCount} từ ("${rawUserAnswer}"). Theo quy chế khảo thí Cambridge, câu này bị tính 0 điểm dù đúng từ khóa.`,
+      evidenceQuote: question.evidenceQuote || '',
+      evidenceTimestamp: question.evidenceTimestamp,
+      explanation: question.explanation || ''
+    };
+  }
+
+  // 3. Exact or Acceptable Match (CORRECT with Optional Bracket Expansion)
+  const rawAcceptable = [question.answer, ...(question.acceptableAnswers || [])];
+  const allAcceptableExpanded = [];
+  rawAcceptable.forEach(ans => {
+    expandOptionalBrackets(ans).forEach(exp => {
+      allAcceptableExpanded.push(exp);
+    });
+  });
+  const acceptableList = Array.from(new Set(allAcceptableExpanded.map(normalizeAnswer)));
+
   const userCanon = canonicalizeIELTSAnswer(rawUserAnswer);
   const targetCanon = canonicalizeIELTSAnswer(question.answer);
-  const acceptableCanonList = (question.acceptableAnswers || [question.answer]).map(canonicalizeIELTSAnswer);
+  const acceptableCanonList = allAcceptableExpanded.map(canonicalizeIELTSAnswer);
 
   if (
     userNorm === targetNorm || 
@@ -328,6 +468,7 @@ export function scoreListeningExam({
   let correctCount = 0;
   let errorBreakdown = {
     CORRECT: 0,
+    WORD_LIMIT_ERROR: 0,
     PLURAL_ERROR: 0,
     STEM_REPETITION_ERROR: 0,
     SPELLING_ERROR: 0,
@@ -343,7 +484,7 @@ export function scoreListeningExam({
       group.questions?.forEach(q => {
         partTotal++;
         const rawAns = userAnswers[q.order] || '';
-        const diag = diagnoseQuestionAnswer(q, rawAns);
+        const diag = diagnoseQuestionAnswer(q, rawAns, group.instruction);
         
         diag.partNumber = part.partNumber;
         diag.questionType = group.type;

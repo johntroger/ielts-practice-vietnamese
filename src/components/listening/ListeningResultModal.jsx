@@ -45,7 +45,7 @@ export default function ListeningResultModal({
   if (!isOpen || !bandResult) return null;
 
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'parts' | 'questions' | 'types' | 'ai_review'
-  const [filterType, setFilterType] = useState('all'); // 'all' | 'correct' | 'wrong' | 'plural' | 'spelling'
+  const [filterType, setFilterType] = useState('all'); // 'all' | 'correct' | 'wrong' | 'word_limit' | 'plural' | 'spelling'
 
   // AI Diagnostic & Practice Roadmap State
   const [aiEvaluation, setAiEvaluation] = useState(null);
@@ -103,6 +103,7 @@ export default function ListeningResultModal({
   const filteredQuestions = useMemo(() => {
     if (filterType === 'correct') return questionsBreakdown.filter(q => q.isCorrect);
     if (filterType === 'wrong') return questionsBreakdown.filter(q => !q.isCorrect);
+    if (filterType === 'word_limit') return questionsBreakdown.filter(q => q.status === 'WORD_LIMIT_ERROR');
     if (filterType === 'plural') return questionsBreakdown.filter(q => q.status === 'PLURAL_ERROR');
     if (filterType === 'spelling') return questionsBreakdown.filter(q => q.status === 'SPELLING_ERROR');
     return questionsBreakdown;
@@ -285,20 +286,25 @@ export default function ListeningResultModal({
                 </div>
               </div>
 
-              {/* 4-Layer Diagnostic System Highlights */}
+              {/* Multi-Layer Diagnostic System Highlights */}
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
                     <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                    <span>Chẩn Đoán 4 Tầng Lỗi Sai Khảo Thí (Diagnostic Breakdown)</span>
+                    <span>Chẩn Đoán Đa Tầng Lỗi Sai Khảo Thí (Diagnostic Breakdown)</span>
                   </h3>
                   <span className="text-xs text-slate-500 font-semibold">Chuẩn Cambridge Official</span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-1">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 pt-1">
                   <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-300 text-center">
                     <div className="text-lg font-black text-emerald-800">{errorBreakdown.CORRECT || 0}</div>
                     <div className="text-[11px] font-semibold text-emerald-700">Đúng Tuyệt Đối</div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-orange-100/70 border border-orange-300 text-center">
+                    <div className="text-lg font-black text-orange-800">{errorBreakdown.WORD_LIMIT_ERROR || 0}</div>
+                    <div className="text-[11px] font-semibold text-orange-700">Quá Số Từ</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-amber-100/70 border border-amber-300 text-center">
@@ -475,6 +481,12 @@ export default function ListeningResultModal({
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'wrong' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100')}
                 >
                   ✗ Sai ({totalQuestions - (errorBreakdown.CORRECT || 0)})
+                </button>
+                <button
+                  onClick={() => setFilterType('word_limit')}
+                  className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'word_limit' ? 'bg-orange-600 text-white' : 'bg-orange-50 text-orange-800 hover:bg-orange-100')}
+                >
+                  ⚠️ Quá số từ ({errorBreakdown.WORD_LIMIT_ERROR || 0})
                 </button>
                 <button
                   onClick={() => setFilterType('plural')}

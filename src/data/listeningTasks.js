@@ -3,10 +3,10 @@
  * Full 4 Parts, 40 Questions, Exact Answer Keys, Evidence Locators & Audio Timestamps.
  */
 
-import { cambridge18Test1 } from './listening/cambridge18Test1';
-import { cambridge8Test1 } from './listening/cambridge8Test1';
-import { cambridge8Test2 } from './listening/cambridge8Test2';
-import { cambridge8Test3 } from './listening/cambridge8Test3';
+import { cambridge18Test1 } from './listening/cambridge18Test1.js';
+import { cambridge8Test1 } from './listening/cambridge8Test1.js';
+import { cambridge8Test2 } from './listening/cambridge8Test2.js';
+import { cambridge8Test3 } from './listening/cambridge8Test3.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
