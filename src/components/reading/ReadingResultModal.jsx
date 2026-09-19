@@ -17,7 +17,9 @@ import {
   Layers,
   ChevronRight,
   ShieldCheck,
-  AlertTriangle
+  AlertTriangle,
+  BookMarked,
+  Target
 } from 'lucide-react';
 
 export default function ReadingResultModal({
@@ -31,18 +33,21 @@ export default function ReadingResultModal({
 }) {
   if (!isOpen || !bandResult) return null;
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'passages' | 'questions' | 'types'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'passages' | 'questions' | 'types' | 'distractors'
   const [filterType, setFilterType] = useState('all'); // 'all' | 'correct' | 'wrong'
 
   const {
     correctCount,
     totalQuestions,
     band,
+    moduleType = 'academic',
+    bandComparison,
     accuracyPercent,
     timeSpentSeconds,
     passageStats = [],
     questionsBreakdown = [],
-    errorBreakdown = {}
+    errorBreakdown = {},
+    distractorSummary = {}
   } = bandResult;
 
   // Format time spent (MM:SS)
@@ -163,7 +168,19 @@ export default function ReadingResultModal({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Phân Tích Dạng Câu Hỏi</span>
+            <span>Phân Tích Dạng Bài</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('distractors')}
+            className={`py-3 px-2 border-b-2 transition-all flex items-center space-x-1.5 ${
+              activeTab === 'distractors'
+                ? 'border-purple-600 text-purple-700 font-black'
+                : 'border-transparent hover:text-slate-900'
+            }`}
+          >
+            <AlertTriangle className="w-3.5 h-3.5 text-purple-600" />
+            <span>Bẫy Đề Thi & Distractors {distractorSummary?.totalTrapsIdentified > 0 ? `(${distractorSummary.totalTrapsIdentified})` : ''}</span>
           </button>
         </div>
 
@@ -219,6 +236,43 @@ export default function ReadingResultModal({
                     Tốc độ trung bình: <strong className="text-slate-800 font-bold">{Math.round((timeSpentSeconds / 40))}s / câu</strong>
                   </div>
                 </div>
+              </div>
+
+              {/* Cambridge Module Scale Comparison Banner */}
+              <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0">
+                    <BookMarked className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-indigo-300">Barem Khảo Thí Cambridge</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/30 text-indigo-200 border border-indigo-400/40">
+                        {moduleType === 'academic' ? 'Module: Academic' : 'Module: General Training'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 mt-1">
+                      Thang điểm IELTS Reading có barem chuyển đổi riêng biệt giữa <strong>Academic</strong> và <strong>General Training</strong> do đặc thù độ dài & độ phức tạp bài đọc.
+                    </p>
+                  </div>
+                </div>
+
+                {bandComparison && (
+                  <div className="flex items-center space-x-3 shrink-0 bg-white/10 px-4 py-2.5 rounded-xl border border-white/10">
+                    <div className="text-center pr-3 border-r border-white/20">
+                      <div className="text-[10px] uppercase font-bold text-slate-300">Academic</div>
+                      <div className={`text-xl font-black ${moduleType === 'academic' ? 'text-amber-300' : 'text-white'}`}>
+                        Band {bandComparison.academicBand?.toFixed(1)}
+                      </div>
+                    </div>
+                    <div className="text-center pl-1">
+                      <div className="text-[10px] uppercase font-bold text-slate-300">General Training</div>
+                      <div className={`text-xl font-black ${moduleType !== 'academic' ? 'text-amber-300' : 'text-white'}`}>
+                        Band {bandComparison.generalBand?.toFixed(1)}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* 6-Layer Diagnostic System Highlights */}
@@ -464,6 +518,17 @@ export default function ReadingResultModal({
                             </span>
                           </div>
                         )}
+                        {q.distractorAnalysis && (
+                          <div className="mt-1.5 p-2 rounded-lg bg-purple-50/90 border border-purple-200 text-[11px] text-purple-900 space-y-1">
+                            <div className="flex items-center space-x-1.5 font-bold">
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] font-extrabold ${q.distractorAnalysis.badgeColor}`}>
+                                🎯 {q.distractorAnalysis.trapName}
+                              </span>
+                            </div>
+                            <p className="text-purple-800 leading-snug">{q.distractorAnalysis.analysis}</p>
+                            <p className="text-purple-700 italic">💡 Mẹo Cambridge: {q.distractorAnalysis.tip}</p>
+                          </div>
+                        )}
                         {q.isCorrect && q.diagnosticMessage && q.diagnosticMessage.includes('Lưu ý') && (
                           <div className="mt-1.5 flex items-start space-x-1.5 text-[11px] font-medium text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200">
                             <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
@@ -521,6 +586,136 @@ export default function ReadingResultModal({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* TAB 5: DISTRACTORS & EXAM TRAPS */}
+          {activeTab === 'distractors' && (
+            <div className="space-y-5">
+              <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-5 shadow-xs">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center">
+                    <Target className="w-5 h-5 text-purple-300" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-sm sm:text-base text-white">Chẩn Đoán Bẫy Đề Thi & Phương Án Nhiễu (Distractor Analysis)</h3>
+                    <p className="text-xs text-purple-200 mt-0.5">
+                      Hệ thống tự động phát hiện 5 nhóm bẫy kinh điển của đề thi Cambridge: Phủ định ngầm, Mốc thời gian, Tuyệt đối hóa, Suy diễn Not Given, và Trùng từ khóa bề mặt.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4 pt-4 border-t border-white/10 text-center">
+                  <div className="p-2 rounded-xl bg-white/10 border border-white/10">
+                    <div className="text-lg font-black text-rose-300">{distractorSummary?.TRAP_IMPLICIT_NEGATION || 0}</div>
+                    <div className="text-[10px] font-bold text-slate-300">Phủ Định Ngầm</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/10 border border-white/10">
+                    <div className="text-lg font-black text-amber-300">{distractorSummary?.TRAP_TEMPORAL_SHIFT || 0}</div>
+                    <div className="text-[10px] font-bold text-slate-300">Lệch Thì/Thời Gian</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/10 border border-white/10">
+                    <div className="text-lg font-black text-purple-300">{distractorSummary?.TRAP_ABSOLUTE_VS_QUALIFIED || 0}</div>
+                    <div className="text-[10px] font-bold text-slate-300">Tuyệt Đối Hóa</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/10 border border-white/10">
+                    <div className="text-lg font-black text-blue-300">{distractorSummary?.TRAP_EXTRAPOLATION_NOT_GIVEN || 0}</div>
+                    <div className="text-[10px] font-bold text-slate-300">Suy Diễn Not Given</div>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/10 border border-white/10">
+                    <div className="text-lg font-black text-orange-300">{distractorSummary?.TRAP_SURFACE_KEYWORD_MATCH || 0}</div>
+                    <div className="text-[10px] font-bold text-slate-300">Trùng Từ Khóa</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trapped Questions List */}
+              {questionsBreakdown.filter(q => q.distractorAnalysis).length === 0 ? (
+                <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+                  <h4 className="font-bold text-slate-900 text-sm">Tuyệt vời! Không phát hiện bẫy đề thi nào</h4>
+                  <p className="text-xs text-slate-600 max-w-md mx-auto">
+                    Bạn đã kiểm soát xuất sắc các phương án gây nhiễu và không vướng phải bất kỳ bẫy kinh điển nào của Cambridge trong bài thi này.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                    Danh sách các câu hỏi vướng bẫy ({questionsBreakdown.filter(q => q.distractorAnalysis).length} câu):
+                  </div>
+
+                  {questionsBreakdown
+                    .filter(q => q.distractorAnalysis)
+                    .map(q => (
+                      <div
+                        key={q.order}
+                        className="p-4 rounded-2xl border border-purple-200 bg-purple-50/30 hover:bg-purple-50/60 transition-all space-y-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start space-x-3">
+                            <div className="w-7 h-7 rounded-lg bg-purple-700 text-white font-black flex items-center justify-center shrink-0 text-xs">
+                              {q.order}
+                            </div>
+                            <div>
+                              <div className="font-bold text-slate-900 text-xs sm:text-sm">
+                                {q.questionText}
+                              </div>
+                              <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
+                                <span className="text-slate-500">Passage {q.passageNumber} (Đoạn {q.evidenceParagraph || 'N/A'})</span>
+                                <span className="text-slate-400">•</span>
+                                <span>Bạn chọn: <strong className="text-rose-700">{q.userAnswer ? String(q.userAnswer) : '(Chưa điền)'}</strong></span>
+                                <span className="text-slate-400">•</span>
+                                <span>Đáp án chuẩn: <strong className="text-emerald-700 font-bold">{String(q.correctAnswer)}</strong></span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold border shrink-0 ${q.distractorAnalysis.badgeColor}`}>
+                            {q.distractorAnalysis.trapName}
+                          </span>
+                        </div>
+
+                        {/* Analysis Box */}
+                        <div className="p-3 rounded-xl bg-white border border-purple-200/80 text-xs space-y-2">
+                          <div>
+                            <div className="font-bold text-slate-800 flex items-center space-x-1 mb-1">
+                              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                              <span>Phân Tích Của Giám Khảo Khảo Thí:</span>
+                            </div>
+                            <p className="text-slate-700 leading-relaxed pl-4">
+                              {q.distractorAnalysis.analysis}
+                            </p>
+                          </div>
+
+                          {q.evidenceQuote && (
+                            <div className="text-[11px] bg-slate-50 p-2 rounded-lg border border-slate-200 text-slate-700">
+                              <strong className="text-slate-900">Bằng chứng trong bài (Evidence):</strong> "{q.evidenceQuote}"
+                            </div>
+                          )}
+
+                          <div className="text-[11px] text-indigo-900 bg-indigo-50/80 p-2 rounded-lg border border-indigo-100 flex items-start space-x-1.5">
+                            <span className="font-bold shrink-0">💡 Chiến thuật hóa giải:</span>
+                            <span>{q.distractorAnalysis.tip}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => {
+                              if (onSelectPassage) onSelectPassage(q.passageNumber);
+                              if (onJumpToQuestion) onJumpToQuestion(q.order);
+                              onClose();
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-white hover:bg-purple-100/60 text-purple-700 font-bold text-xs border border-purple-300 flex items-center gap-1.5 transition-colors shadow-2xs"
+                          >
+                            <span>Mở câu hỏi này trong bài đọc</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           )}
 

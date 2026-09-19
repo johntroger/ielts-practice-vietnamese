@@ -619,7 +619,7 @@ export const INITIAL_READING_TESTS = [
   }
 ];
 
-export const IELTS_READING_BAND_SCORE_TABLE = [
+export const IELTS_ACADEMIC_READING_BAND_TABLE = [
   { minCorrect: 39, maxCorrect: 40, band: 9.0 },
   { minCorrect: 37, maxCorrect: 38, band: 8.5 },
   { minCorrect: 35, maxCorrect: 36, band: 8.0 },
@@ -637,11 +637,56 @@ export const IELTS_READING_BAND_SCORE_TABLE = [
   { minCorrect: 0,  maxCorrect: 3,  band: 2.0 },
 ];
 
-export function calculateReadingBandScore(correctCount) {
+// Preserved for backward compatibility
+export const IELTS_READING_BAND_SCORE_TABLE = IELTS_ACADEMIC_READING_BAND_TABLE;
+
+export const IELTS_GENERAL_READING_BAND_TABLE = [
+  { minCorrect: 40, maxCorrect: 40, band: 9.0 },
+  { minCorrect: 39, maxCorrect: 39, band: 8.5 },
+  { minCorrect: 37, maxCorrect: 38, band: 8.0 },
+  { minCorrect: 36, maxCorrect: 36, band: 7.5 },
+  { minCorrect: 34, maxCorrect: 35, band: 7.0 },
+  { minCorrect: 32, maxCorrect: 33, band: 6.5 },
+  { minCorrect: 30, maxCorrect: 31, band: 6.0 },
+  { minCorrect: 27, maxCorrect: 29, band: 5.5 },
+  { minCorrect: 23, maxCorrect: 26, band: 5.0 },
+  { minCorrect: 19, maxCorrect: 22, band: 4.5 },
+  { minCorrect: 15, maxCorrect: 18, band: 4.0 },
+  { minCorrect: 12, maxCorrect: 14, band: 3.5 },
+  { minCorrect: 9,  maxCorrect: 11, band: 3.0 },
+  { minCorrect: 6,  maxCorrect: 8,  band: 2.5 },
+  { minCorrect: 0,  maxCorrect: 5,  band: 2.0 },
+];
+
+/**
+ * Calculates IELTS Reading Band Score for Academic or General Training
+ * @param {number} correctCount - Number of correct answers (0-40)
+ * @param {string} moduleType - 'academic' | 'general_training' | 'gt'
+ * @returns {number} Band score (2.0 - 9.0)
+ */
+export function calculateReadingBandScore(correctCount, moduleType = 'academic') {
   const score = Math.max(0, Math.min(40, Number(correctCount) || 0));
-  const matched = IELTS_READING_BAND_SCORE_TABLE.find(
+  const isGT = moduleType && ['general_training', 'gt', 'general'].includes(String(moduleType).toLowerCase());
+  const table = isGT ? IELTS_GENERAL_READING_BAND_TABLE : IELTS_ACADEMIC_READING_BAND_TABLE;
+  
+  const matched = table.find(
     row => score >= row.minCorrect && score <= row.maxCorrect
   );
   return matched ? matched.band : 2.0;
+}
+
+/**
+ * Provides side-by-side Cambridge conversion comparison between Academic and General Training
+ */
+export function getReadingBandComparison(correctCount) {
+  const score = Math.max(0, Math.min(40, Number(correctCount) || 0));
+  const academicBand = calculateReadingBandScore(score, 'academic');
+  const generalBand = calculateReadingBandScore(score, 'general_training');
+  return {
+    rawScore: score,
+    academicBand,
+    generalBand,
+    difference: Number((academicBand - generalBand).toFixed(1))
+  };
 }
 

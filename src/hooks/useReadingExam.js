@@ -166,7 +166,8 @@ export function useReadingExam({
       questionsData,
       userAnswers,
       timeSpentSeconds,
-      totalTimeMinutes
+      totalTimeMinutes,
+      moduleType: testData?.moduleType || testData?.module || 'academic'
     });
   }, [isSubmitted, testData, questionsData, userAnswers, totalTimeMinutes, timeRemaining]);
 
