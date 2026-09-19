@@ -1122,6 +1122,144 @@ export function analyzeWordOveruse(rawWords, stopwords = STOPWORDS) {
 }
 
 /**
+ * Analyzes sentences for Comma Splices (two independent clauses joined only with a comma).
+ * Cambridge GRA Standard: Band 8.0 requires 0 comma splices;
+ * >= 2 comma splices caps GRA at max 6.0; >= 4 caps at max 5.0.
+ */
+export function analyzeCommaSplices(sentences) {
+  if (!Array.isArray(sentences) || sentences.length === 0) {
+    return { commaSpliceCount: 0, commaSpliceDetails: [] };
+  }
+
+  const SUBORDINATOR_START = /^(although|even though|though|while|whereas|because|since|if|unless|when|whenever|after|before|once|as long as|provided that|given that|despite the fact that|as [a-z]+ed\b)/i;
+
+  const FINITE_VERB_REGEX = /\b(is|are|was|were|has|have|had|do|does|did|can|cannot|can't|could|will|won't|would|should|must|may|might|become|becomes|became|remain|remains|remained|seem|seems|seemed|appear|appears|appeared|serves?|served|brings?|brought|provides?|provided|creates?|created|leads?|led|helps?|helped|causes?|caused|aims?|aimed|tends?|tended|makes?|made|allows?|allowed|enables?|enabled|means?|meant|gives?|gave|given|wants?|wanted|needs?|needed|requires?|required|demands?|demanded|faces?|faced|destroys?|destroyed|harms?|harmed|damages?|damaged|plays?|played|struggles?|struggled|fails?|failed|costs?|results?|resulted|stems?|stemmed|produces?|produced|generates?|generated|works?|worked|lives?|lived|believes?|believed|thinks?|thought|argues?|argued|suggests?|suggested|shows?|showed|shown|lacks?|lacked|suffers?|suffered|spends?|spent|chooses?|chose|chosen|loses?|lost|finds?|found|sees?|saw|seen|takes?|took|taken|builds?|built|grows?|grew|grown|knows?|knew|known|falls?|fell|fallen|rises?|rose|risen|pays?|paid|offers?|offered|gains?|gained|solves?|solved|improves?|improved|increases?|increased|decreases?|decreased|declines?|declined|develops?|developed|affects?|affected|impacts?|impacted|influences?|influenced|secures?|secured|obtains?|obtained|encounters?|encountered|experiences?|experienced|undergoes?|underwent|boosts?|boosted|enhances?|enhanced|tackles?|tackled|addresses?|addressed|invests?|invested|funds?|funded|imposes?|imposed|implements?|implemented|adopts?|adopted|introduces?|introduced|establishes?|established|relies?|relied|depends?|depended|promotes?|promoted|prevents?|prevented|reduces?|reduced|limits?|limited|expands?|expanded|surpasses?|surpassed|exceeds?|exceeded|outstrips?|outstripped|demonstrates?|demonstrated|indicates?|indicated|proves?|proved|proven|reveals?|revealed|illustrates?|illustrated|claims?|claimed|asserts?|asserted|contends?|contended|maintains?|maintained|emphasizes?|emphasized|highlights?|highlighted|prefers?|preferred)\b/i;
+
+  const isIntroductoryPhrase = (clause) => {
+    if (/^(compared\s+to|given\s+that|having\s+[a-z]+ed)\b/i.test(clause)) return true;
+    if (/^to\s+[a-z]+\b/i.test(clause) && !/\b(is|are|was|were|will|can|should|must)\b/i.test(clause)) return true;
+    if (/^[a-z]+ing\b/i.test(clause) && !FINITE_VERB_REGEX.test(clause.replace(/^[a-z]+ing\b/i, ''))) return true;
+    return false;
+  };
+
+  // Pattern 1: Conjunctive adverbs incorrectly joined with comma
+  const CONJUNCTIVE_ADVERB_REGEX = /,\s*(however|therefore|furthermore|moreover|consequently|nevertheless|nonetheless)(?:,\s*|\s+)([a-z]+)\b/gi;
+
+  // Pattern 2: Pronoun / Demonstrative subject + finite verb
+  const PRONOUN_SPLICE_REGEX = /,\s*(it|they|this|these|he|she|we)\s+(?:(often|always|also|now|simply|currently|greatly|directly|rarely|seldom)\s+)?(is|are|was|were|has|have|had|will|would|can|cannot|can't|could|should|must|may|might|brings?|provides?|creates?|leads?|helps?|causes?|aims?|tends?|makes?|allows?|enables?|means?|gives?|wants?|needs?|faces?|destroys?|harms?|plays?|struggles?|fails?|costs?|results?|stems?|produces?|generates?|requires?)\b/gi;
+
+  // Pattern 3: Existential there is/are
+  const EXISTENTIAL_SPLICE_REGEX = /,\s*(there\s+(is|are|was|were|will\s+be|has\s+been|have\s+been))\b/gi;
+
+  // Pattern 4: Common IELTS plural / institutional subjects + modal/aux/verb
+  const NOUN_SPLICE_REGEX = /,\s*(students|people|governments|citizens|parents|children|individuals|companies|workers|consumers|universities|schools|colleges|institutions)\s+(?:(often|always|also|now|simply|currently)\s+)?(can|cannot|can't|could|will|won't|would|should|must|have|has|had|are|were|tend\s+to|need\s+to|face|struggle\s+with|suffer\s+from|play|invest)\b/gi;
+
+  const details = [];
+
+  sentences.forEach((sentence, sIdx) => {
+    const s = sentence.trim();
+    if (!s || s.length < 25) return;
+
+    // Subordinate clause at sentence start -> main clause following comma is valid!
+    if (SUBORDINATOR_START.test(s)) return;
+
+    // Check Pattern 1: Conjunctive Adverb Splice
+    CONJUNCTIVE_ADVERB_REGEX.lastIndex = 0;
+    let match;
+    while ((match = CONJUNCTIVE_ADVERB_REGEX.exec(s)) !== null) {
+      const matchIndex = match.index;
+      const preComma = s.substring(0, matchIndex).trim();
+      const adverb = match[1];
+      const nextWord = match[2];
+
+      // Pre-comma must have a finite verb and not be an introductory phrase
+      if (preComma.split(/\s+/).length >= 3 && 
+          FINITE_VERB_REGEX.test(preComma) && 
+          !isIntroductoryPhrase(preComma)) {
+        
+        // Ensure post-adverb has a subject/verb (not a parenthetical adverb like "This, however, is...")
+        const postAdverbText = s.substring(matchIndex + match[0].length).trim();
+        if (FINITE_VERB_REGEX.test(postAdverbText)) {
+          const capitalizedAdverb = adverb.charAt(0).toUpperCase() + adverb.slice(1);
+          const suggestionOption1 = s.replace(match[0], `; ${adverb}, ${nextWord}`);
+          const suggestionOption2 = s.replace(match[0], `. ${capitalizedAdverb}, ${nextWord}`);
+          
+          details.push({
+            sentenceIndex: sIdx,
+            original: s,
+            commaFragment: match[0].trim(),
+            suggestion: `${suggestionOption1} (hoặc: ${suggestionOption2})`,
+            explanation: `Lỗi Comma Splice với trạng từ liên kết ('${adverb}'): Trong văn phong học thuật, các trạng từ liên kết ('however', 'therefore', 'furthermore'...) nối hai mệnh đề độc lập bắt buộc phải dùng dấu chấm phẩy (; ${adverb},) hoặc tách thành câu mới (. ${capitalizedAdverb},), không được chỉ dùng dấu phẩy.`
+          });
+          return;
+        }
+      }
+    }
+
+    // Helper to test patterns 2, 3, 4
+    const checkSplicePattern = (regex, type) => {
+      regex.lastIndex = 0;
+      let pMatch;
+      while ((pMatch = regex.exec(s)) !== null) {
+        const matchIndex = pMatch.index;
+        const preComma = s.substring(0, matchIndex).trim();
+
+        // Safeguard checks on preComma
+        if (preComma.split(/\s+/).length < 3) continue;
+        if (!FINITE_VERB_REGEX.test(preComma)) continue;
+        if (isIntroductoryPhrase(preComma)) continue;
+
+        // Check if preComma has internal commas and examine the immediate preceding clause
+        const preParts = preComma.split(',');
+        const immediatePre = preParts[preParts.length - 1].trim();
+        if (!FINITE_VERB_REGEX.test(immediatePre) && preParts.length > 1) {
+          const previousPart = preParts[preParts.length - 2].trim();
+          if (!FINITE_VERB_REGEX.test(previousPart)) continue;
+        }
+
+        const matchedText = pMatch[0]; // e.g. ", it brings" or ", students cannot"
+        const cleanMatched = matchedText.replace(/^,\s*/, '');
+        
+        let suggestion = '';
+        if (type === 'pronoun') {
+          const pronoun = pMatch[1].toLowerCase();
+          const adv = pMatch[2] ? pMatch[2] + ' ' : '';
+          const verb = pMatch[3];
+          if (pronoun === 'it' || pronoun === 'this') {
+            suggestion = s.replace(matchedText, `, which ${adv}${verb}`);
+          } else {
+            suggestion = s.replace(matchedText, `, and ${cleanMatched}`);
+          }
+        } else if (type === 'existential') {
+          suggestion = s.replace(matchedText, `; ${cleanMatched}`);
+        } else {
+          suggestion = s.replace(matchedText, `, and ${cleanMatched}`);
+        }
+
+        details.push({
+          sentenceIndex: sIdx,
+          original: s,
+          commaFragment: matchedText.trim(),
+          suggestion: `${suggestion} (hoặc tách câu bằng dấu chấm)`,
+          explanation: `Lỗi Comma Splice (ghép hai mệnh đề độc lập S+V bằng dấu phẩy): Mệnh đề '${cleanMatched}...' là một mệnh đề hoàn chỉnh, không thể nối với mệnh đề trước chỉ bằng dấu phẩy. Cách khắc phục chuẩn Cambridge: (1) Thêm liên từ kết hợp (', and ${cleanMatched}...'), (2) Dùng mệnh đề quan hệ (', which...'), hoặc (3) Tách bằng dấu chấm hoặc chấm phẩy.`
+        });
+        return true;
+      }
+      return false;
+    };
+
+    if (checkSplicePattern(PRONOUN_SPLICE_REGEX, 'pronoun')) return;
+    if (checkSplicePattern(EXISTENTIAL_SPLICE_REGEX, 'existential')) return;
+    if (checkSplicePattern(NOUN_SPLICE_REGEX, 'noun')) return;
+  });
+
+  return {
+    commaSpliceCount: details.length,
+    commaSpliceDetails: details
+  };
+}
+
+/**
  * Deep Paragraph-by-Paragraph Examiner Diagnostics
  * Analyzes Introduction, Body Paragraphs, and Conclusion structure according to P.E.E.L and Cambridge standards.
  */
@@ -1246,7 +1384,7 @@ function analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck =
 /**
  * Generates an Actionable Prescription Roadmap to boost candidate's band score.
  */
-function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0) {
+function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck = null, task1ComparisonCheck = null, task2Fulfillment = null, topicData = null, wordOveruse = null, bareNounErrorCount = 0, commaSpliceCount = 0) {
   const plan = {
     priority1: '',
     priority2: '',
@@ -1267,6 +1405,8 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = `Chấm dứt lỗi chia động từ cơ bản: Phát hiện ${svErrorCount} lỗi hòa hợp Chủ ngữ - Động từ và Danh từ số nhiều. Hãy dành 3 phút cuối giờ rà soát lại thì và đuôi -s/-es của mọi động từ.`;
   } else if (bareNounErrorCount >= 4) {
     plan.priority1 = `Chấm dứt lỗi danh từ trơ trọi & mạo từ: Phát hiện ${bareNounErrorCount} lỗi danh từ đếm được số ít đứng một mình hoặc thiếu mạo từ (a/an/the) (như: 'student should', 'plays important role'). Quy tắc bắt buộc: Danh từ đếm được số ít không bao giờ đứng độc lập. Hãy thêm mạo từ hoặc chuyển sang số nhiều (-s/-es) để mở khóa Band 7.0+ GRA.`;
+  } else if (commaSpliceCount >= 4) {
+    plan.priority1 = `Chấm dứt lỗi ngắt câu Comma Splice nghiêm trọng: Phát hiện ${commaSpliceCount} câu nối hai mệnh đề độc lập chỉ bằng dấu phẩy. Đây là lỗi hệ thống ranh giới câu khống chế GRA ở Band 5.0. Hãy tách thành 2 câu riêng biệt bằng dấu chấm hoặc dùng liên từ kết hợp (', and / but...') hoặc đại từ quan hệ (', which...').`;
   } else if (trBand < 6.0) {
     plan.priority1 = isTask1 
       ? 'Bắt buộc phải có đoạn Overview nêu bật 2 đặc điểm lớn nhất của biểu đồ (không đưa số liệu chi tiết vào Overview).' 
@@ -1275,8 +1415,10 @@ function generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCoun
     plan.priority1 = 'Phát triển chiều sâu lập luận: Đào sâu cơ chế "Vì sao dẫn đến kết quả đó" thay vì chỉ liệt kê ý tưởng bề mặt.';
   }
 
-  // Priority 2: Cohesion, Grammar & Article/Noun Control
-  if (bareNounErrorCount >= 2) {
+  // Priority 2: Cohesion, Grammar & Article/Noun/Splice Control
+  if (commaSpliceCount >= 1) {
+    plan.priority2 = `Khắc phục lỗi Comma Splice (nối câu bằng dấu phẩy): Phát hiện ${commaSpliceCount} câu ghép hai mệnh đề độc lập S+V bằng dấu phẩy mà không có liên từ kết hợp. Hãy chuyển mệnh đề phụ thành mệnh đề quan hệ (', which...'), thêm liên từ (', and / but'), hoặc dùng dấu chấm phẩy để đạt chuẩn Band 7.0+ GRA.`;
+  } else if (bareNounErrorCount >= 2) {
     plan.priority2 = `Khắc phục triệt để lỗi mạo từ & danh từ trơ trọi: Phát hiện ${bareNounErrorCount} lỗi thiếu mạo từ (a/an/the) hoặc dùng danh từ đếm được số ít đứng một mình. Hãy luôn chuyển sang danh từ số nhiều (-s/-es) hoặc thêm 'a/an/the'.`;
   } else if (ccBand < 6.0) {
     plan.priority2 = 'Cải thiện mạch văn: Chia bài viết thành các đoạn cân đối. Hạn chế nhồi nhét "First, Second, Moreover", hãy luyện tập dùng đại từ thay thế (This trend, Such measures) và liên kết ẩn.';
@@ -1924,6 +2066,21 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     });
   });
 
+  // 10. Comma Splices & Run-on Sentences (Cambridge GRA Band 5-6 Red Flags)
+  const commaSpliceAnalysis = analyzeCommaSplices(sentences);
+  const commaSpliceCount = commaSpliceAnalysis.commaSpliceCount;
+  commaSpliceAnalysis.commaSpliceDetails.forEach(detail => {
+    erroneousSentenceIndices.add(detail.sentenceIndex);
+    if (corrections.length < 18) {
+      corrections.push({
+        original: detail.original,
+        corrected: detail.suggestion,
+        type: 'grammar',
+        explanation: detail.explanation
+      });
+    }
+  });
+
   // ===========================================================
   // E. GRAMMATICAL RANGE & ACCURACY (GRA) v3 (CALIBRATED)
   // ===========================================================
@@ -1955,13 +2112,13 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   const complexRatio = complexCount / totalSentences;
 
   // 3. Calibrated Cambridge GRA Matrix (Accuracy + Range Dual Gate)
-  if (svErrorCount === 0 && bareNounErrorCount === 0 && efsrRatio >= 80 && complexRatio >= 0.45 && totalSentences >= 8) {
+  if (svErrorCount === 0 && bareNounErrorCount === 0 && commaSpliceCount === 0 && efsrRatio >= 80 && complexRatio >= 0.45 && totalSentences >= 8) {
     graScore = 8.0;
     graStrengths.push(`Khả năng kiểm soát ngữ pháp xuất sắc: ${Math.round(efsrRatio)}% câu hoàn toàn không lỗi, kết hợp nhuần nhuyễn câu phức và mệnh đề nâng cao (${Math.round(complexRatio * 100)}%).`);
-  } else if (svErrorCount <= 1 && bareNounErrorCount <= 1 && efsrRatio >= 65 && complexRatio >= 0.30) {
+  } else if (svErrorCount <= 1 && bareNounErrorCount <= 1 && commaSpliceCount <= 1 && efsrRatio >= 65 && complexRatio >= 0.30) {
     graScore = 7.0;
     graStrengths.push(`Tỷ lệ câu không lỗi đạt mức tốt (${Math.round(efsrRatio)}%), sử dụng thành thạo nhiều dạng câu phức.`);
-  } else if (svErrorCount <= 2 && bareNounErrorCount <= 2 && efsrRatio >= 40) {
+  } else if (svErrorCount <= 2 && bareNounErrorCount <= 2 && commaSpliceCount <= 2 && efsrRatio >= 40) {
     graScore = 6.0;
     graStrengths.push(`Có sự kết hợp giữa câu đơn và câu phức, truyền tải được thông điệp dù còn một số lỗi ngữ pháp.`);
     if (complexRatio < 0.25) {
@@ -1970,7 +2127,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
   } else {
     // Systematic errors or very low EFSR
     graScore = 5.0;
-    graImprovements.push(`Mắc lỗi ngữ pháp cơ bản lặp đi lặp lại (${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều, ${bareNounErrorCount} lỗi danh từ trơ trọi/mạo từ). Theo tiêu chí Cambridge, lỗi hệ thống giới hạn điểm GRA ở Band 5.0.`);
+    graImprovements.push(`Mắc lỗi ngữ pháp cơ bản lặp đi lặp lại (${svErrorCount} lỗi hòa hợp chủ ngữ-động từ/danh từ số nhiều, ${bareNounErrorCount} lỗi danh từ trơ trọi/mạo từ, ${commaSpliceCount} lỗi comma splice). Theo tiêu chí Cambridge, lỗi hệ thống giới hạn điểm GRA ở Band 5.0.`);
   }
 
   // Underlength hard caps for GRA
@@ -2005,6 +2162,15 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     graImprovements.push(`LỖI HỆ THỐNG DANH TỪ & MẠO TỪ (Bare Nouns / Articles): Phát hiện ${bareNounErrorCount} lỗi danh từ đếm được số ít đứng trơ trọi hoặc thiếu mạo từ (như: 'student should', 'plays important role', 'in big city'). Barem Cambridge Band 7.0+ GRA đòi hỏi tỷ lệ câu không lỗi cao và kiểm soát tốt hình thái danh từ. Lỗi này khống chế điểm Ngữ pháp tối đa Band 6.0. Hãy xem bảng Lỗi sai để sửa triệt để.`);
   }
 
+  // Hard Cap: Comma Splices & Sentence Boundary Defects
+  if (commaSpliceCount >= 4) {
+    if (graScore > 5.0) graScore = 5.0;
+    graImprovements.push(`LỖI HỆ THỐNG PHÂN TÁCH CÂU (Comma Splices / Run-on): Phát hiện ${commaSpliceCount} lỗi nối hai mệnh đề độc lập bằng dấu phẩy không có liên từ (như: 'S+V, S+V'). Lỗi ngắt câu và phân tách ranh giới mệnh đề là lỗi ngữ pháp hệ thống nghiêm trọng, khống chế điểm Ngữ pháp tối đa Band 5.0 theo barem Cambridge.`);
+  } else if (commaSpliceCount >= 2) {
+    if (graScore > 6.0) graScore = 6.0;
+    graImprovements.push(`LỖI PHÂN TÁCH MỆNH ĐỀ (Comma Splices): Phát hiện ${commaSpliceCount} câu ghép hai mệnh đề độc lập S+V chỉ bằng dấu phẩy (như: 'Technology develops rapidly, it brings...'). Tiêu chí Cambridge Band 7.0+ GRA đòi hỏi kiểm soát tốt dấu câu và liên kết mệnh đề. Lỗi này khống chế điểm GRA tối đa Band 6.0. Hãy dùng liên từ kết hợp (, and / , but), mệnh đề quan hệ (, which), hoặc tách bằng dấu chấm/chấm phẩy.`);
+  }
+
   // Sentence Length Diagnostics (Run-on detection)
   const sentenceWordCounts = sentences.map(s => s.split(/\s+/).length);
   const runOnSentences = sentenceWordCounts.filter(cnt => cnt > 42).length;
@@ -2028,7 +2194,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
 
   // Generate In-Depth Paragraph Analysis & Examiner Action Plan
   const paragraphAnalysis = analyzeParagraphsDeeply(paragraphs, isTask1, task, task1OverviewCheck);
-  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount);
+  const actionPlan = generateExaminerActionPlan(trBand, ccBand, lrBand, graBand, svErrorCount, wordCount, targetMinWords, isTask1, task1OverviewCheck, task1ComparisonCheck, task2Fulfillment, topicData, wordOveruse, bareNounErrorCount, commaSpliceCount);
 
   // Band 8 Model Rewrite
   let band8Rewrite = '';
@@ -2121,6 +2287,11 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
     bareNounStats: {
       hasBareNounErrors: bareNounErrorCount > 0,
       bareNounErrorCount
+    },
+    commaSpliceStats: {
+      hasCommaSplices: commaSpliceCount > 0,
+      commaSpliceCount,
+      details: commaSpliceAnalysis.commaSpliceDetails
     }
   };
 }
