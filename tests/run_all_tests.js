@@ -20,7 +20,8 @@ const testSuites = [
   { name: 'Step 11: Diagnostic Placement & IndexedDB', file: 'tests/test_step11_placement_and_indexeddb.js' },
   { name: 'Step 12: Speech Audio Chunking & Anti-Cutoff', file: 'tests/test_speech_audio_chunking.js' },
   { name: 'Step 13: Public AI Content & Zero-Auth Resources', file: 'tests/test_step13_public_ai_content_no_auth.js' },
-  { name: 'Step 14: Mastered Items & History Preservation', file: 'tests/test_step14_mastered_items_feature.js' }
+  { name: 'Step 14: Mastered Items & History Preservation', file: 'tests/test_step14_mastered_items_feature.js' },
+  { name: 'Step 15: Cambridge Hard Band Capping Rules', file: 'tests/test_step15_cambridge_hard_capping.js' }
 ];
 
 console.log('===============================================================');

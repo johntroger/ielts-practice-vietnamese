@@ -451,7 +451,7 @@ const COMMON_GRAMMAR_PATTERNS = [
 // 2. HELPER UTILITIES & TOKENIZERS
 // -------------------------------------------------------------
 
-function sanitizeWords(text) {
+export function sanitizeWords(text) {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, ' ')
@@ -459,14 +459,14 @@ function sanitizeWords(text) {
     .filter(w => w.length > 0);
 }
 
-function getSentences(text) {
+export function getSentences(text) {
   return text
     .split(/(?<=[.!?])\s+|\n+/)
     .map(s => s.trim())
     .filter(s => s.length > 5);
 }
 
-function getParagraphs(text) {
+export function getParagraphs(text) {
   return text
     .split(/\n+/)
     .map(p => p.trim())

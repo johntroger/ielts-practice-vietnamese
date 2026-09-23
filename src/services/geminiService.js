@@ -4,6 +4,7 @@
  */
 
 import { evaluateSpeakingAlgorithmically } from './algorithmicSpeakingService.js';
+import { applyCambridgeWritingHardCaps } from '../utils/ieltsScoringRules.js';
 
 const DEFAULT_MODEL = 'gemini-3.6-flash';
 
@@ -299,6 +300,11 @@ CAMBRIDGE EXAMINER HARD CAPS (NON-NEGOTIABLE):
 4. UNDERLENGTH PENALTY: If word count < 150 (Task 1) or < 250 (Task 2), penalize Task Response / Task Achievement score proportionally (e.g. 150-199 words in T2 capped at 5.0; < 150 words in T2 capped at 4.0).
 5. ZERO TOLERANCE FOR EMPTY FLUFF: Do not award high Lexical Resource for rare "big words" used inappropriately, out of register, or without natural collocations.
 
+FEW-SHOT CALIBRATION ANCHORS (OFFICIAL CAMBRIDGE BENCHMARKS):
+- Anchor 1 (Task 1 with high LR/GRA but NO Overview): Candidate writes 170 words with C1/C2 vocabulary ("meteoric ascent", "precipitous downturn") but jumps directly from introduction into body figures with NO overview paragraph summarizing the general trends. -> Score TA = 5.0 (Strictly capped by Cambridge Band Descriptors).
+- Anchor 2 (Task 1 with numbers in Overview): "Overall, sales rose from 40% to 80% while costs dropped to 10%." -> Score TA <= 5.5 (Overview corrupted by specific raw data).
+- Anchor 3 (Task 2 Discuss Both Views with only one side developed): Candidate only discusses advantages and ignores disadvantages -> Score TR <= 5.0.
+
 ACADEMIC REGISTER & GRAMMAR BENCHMARKS (10-AXES CHECK):
 - HEDGING & TONE: Flag over-assertive absolutes ("prove", "obviously", "undoubtedly", "every person") and replace with academic hedging ("suggest", "indicate", "tend to", "many individuals").
 - UNCOUNTABLE NOUNS: Strictly flag typical non-native errors such as "researches", "evidences", "informations", "feedbacks", "literatures".
@@ -420,7 +426,8 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
 
   try {
     const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned);
+    return applyCambridgeWritingHardCaps({ task, essayText, evaluation: parsed });
   } catch (err) {
     console.error('Failed to parse Gemini response as JSON:', text);
     throw new Error('Lỗi định dạng phản hồi từ AI. Vui lòng thử lại.');
