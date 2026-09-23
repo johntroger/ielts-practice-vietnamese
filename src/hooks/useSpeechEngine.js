@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { speakingSoundEffects } from '../utils/speakingSoundEffects';
+import { splitTextIntoUtteranceChunks } from '../utils/speechAudio';
 
 /**
  * useSpeechEngine
@@ -51,6 +52,7 @@ export function useSpeechEngine({
   const isIntentionalListeningRef = useRef(false);
   const accumulatedTranscriptRef = useRef('');
   const ttsKeepAliveTimerRef = useRef(null);
+  const ttsSessionIdRef = useRef(0);
   const currentUtteranceRef = useRef(null);
 
   // Check Web Speech API support
@@ -77,16 +79,13 @@ export function useSpeechEngine({
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
-      if (ttsKeepAliveTimerRef.current) {
-        clearInterval(ttsKeepAliveTimerRef.current);
-      }
     };
   }, []);
 
   // Helper: Pick best matched native voice for examiner profile
   const getExaminerVoice = useCallback((targetExaminerId) => {
-    // If state availableVoices is empty, query live voices from window.speechSynthesis
     let voices = availableVoices;
+    // If state availableVoices is empty, query live voices from window.speechSynthesis
     if ((!voices || voices.length === 0) && typeof window !== 'undefined' && window.speechSynthesis) {
       voices = window.speechSynthesis.getVoices() || [];
     }
@@ -119,7 +118,7 @@ export function useSpeechEngine({
   }, [availableVoices]);
 
   // =========================================================================
-  // 2. TTS: SPEAK METHOD WITH CHROMIUM / EDGE ANTI-FREEZE & GC PROTECTION
+  // 2. TTS: SPEAK METHOD WITH SENTENCE CHUNKING (NO 10S CUTOFF) & GC PROTECTION
   // =========================================================================
   const speak = useCallback((text, options = {}, onEndCallback = null) => {
     if (typeof window === 'undefined' || !window.speechSynthesis || !text) {
@@ -127,15 +126,15 @@ export function useSpeechEngine({
       return;
     }
 
-    // Always resume SpeechSynthesis if paused
+    const sessionId = ++ttsSessionIdRef.current;
+
+    // Clear previous speech immediately
     try {
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      }
-      // CRITICAL FOR EDGE: Do NOT call cancel() synchronously before speak if not speaking!
-      // In Edge, synchronous cancel() immediately aborts the next speak call.
       if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
         window.speechSynthesis.cancel();
+      }
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
       }
     } catch (e) {}
 
@@ -147,90 +146,106 @@ export function useSpeechEngine({
     lastSpokenTextRef.current = text;
     speakingSoundEffects.playExaminerChime();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    const chosenExaminer = options.examinerId || examinerId;
-    const voice = getExaminerVoice(chosenExaminer);
-    
-    if (voice) {
-      utterance.voice = voice;
-      utterance.lang = voice.lang || 'en-GB';
-    } else {
-      utterance.lang = 'en-GB';
+    const chunks = splitTextIntoUtteranceChunks(text, 140);
+    if (chunks.length === 0) {
+      if (onEndCallback) onEndCallback();
+      return;
     }
 
-    utterance.volume = 1.0;
-    utterance.rate = options.rate || 0.95;
-    utterance.pitch = options.pitch || 1.0;
+    const chosenExaminer = options.examinerId || examinerId;
+    const voice = getExaminerVoice(chosenExaminer);
+    const targetLang = voice?.lang || 'en-GB';
+    const targetRate = options.rate || 0.95;
+    const targetPitch = options.pitch || 1.0;
 
+    let currentIndex = 0;
     let hasEnded = false;
+
     const finishSpeech = () => {
       if (hasEnded) return;
       hasEnded = true;
       setIsSpeaking(false);
-      if (ttsKeepAliveTimerRef.current) {
-        clearInterval(ttsKeepAliveTimerRef.current);
-        ttsKeepAliveTimerRef.current = null;
-      }
-      // Release reference
-      if (window.__ielts_active_utterance === utterance) {
+      currentUtteranceRef.current = null;
+      if (typeof window !== 'undefined' && window.__ielts_active_utterance) {
         window.__ielts_active_utterance = null;
       }
-      currentUtteranceRef.current = null;
       if (onEndCallback) onEndCallback();
     };
 
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      // Chromium/Edge Keep-Alive Interval: Pause & Resume every 8s to prevent frozen speech
-      ttsKeepAliveTimerRef.current = setInterval(() => {
-        if (window.speechSynthesis && window.speechSynthesis.speaking) {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
+    const playNextChunk = () => {
+      if (sessionId !== ttsSessionIdRef.current) return;
+
+      if (currentIndex >= chunks.length) {
+        finishSpeech();
+        return;
+      }
+
+      const chunkText = chunks[currentIndex];
+      const utterance = new SpeechSynthesisUtterance(chunkText);
+
+      if (voice) {
+        utterance.voice = voice;
+      }
+      utterance.lang = targetLang;
+      utterance.volume = 1.0;
+      utterance.rate = targetRate;
+      utterance.pitch = targetPitch;
+
+      // GC Protection in Chromium
+      currentUtteranceRef.current = utterance;
+      if (typeof window !== 'undefined') {
+        window.__ielts_active_utterance = utterance;
+      }
+
+      utterance.onstart = () => {
+        if (sessionId !== ttsSessionIdRef.current) return;
+        setIsSpeaking(true);
+      };
+
+      utterance.onend = () => {
+        if (sessionId !== ttsSessionIdRef.current) return;
+        currentIndex++;
+        // Small 30ms gap between sentence clauses avoids audio queue stutter
+        setTimeout(playNextChunk, 30);
+      };
+
+      utterance.onerror = (e) => {
+        if (sessionId !== ttsSessionIdRef.current) return;
+        if (e.error === 'interrupted' || e.error === 'canceled') {
+          return;
         }
-      }, 8000);
-    };
+        console.warn('Speech synthesis chunk error:', e);
+        currentIndex++;
+        if (currentIndex < chunks.length) {
+          setTimeout(playNextChunk, 40);
+        } else {
+          finishSpeech();
+        }
+      };
 
-    utterance.onend = finishSpeech;
-    utterance.onerror = (e) => {
-      console.warn('Speech synthesis error:', e);
-      finishSpeech();
-    };
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
 
-    // Prevent V8 Garbage Collection in Edge/Chrome
-    currentUtteranceRef.current = utterance;
-    window.__ielts_active_utterance = utterance;
+      window.speechSynthesis.speak(utterance);
+    };
 
     setIsSpeaking(true);
-
-    // Edge requires a tiny delay (20ms) if cancel was called to avoid race condition
-    setTimeout(() => {
-      try {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-        window.speechSynthesis.speak(utterance);
-      } catch (err) {
-        console.warn('SpeechSynthesis speak failed:', err);
-        finishSpeech();
-      }
-    }, 25);
-
-    // Failsafe timeout in case browser drops onend
-    const estimatedDurationMs = Math.max(3000, Math.ceil((text.split(' ').length / 2.5) * 1000) + 2000);
-    setTimeout(() => {
-      if (!hasEnded && window.speechSynthesis && !window.speechSynthesis.speaking) {
-        finishSpeech();
-      }
-    }, estimatedDurationMs);
+    setTimeout(playNextChunk, 25);
   }, [examinerId, getExaminerVoice]);
 
   const stopSpeaking = useCallback(() => {
+    ttsSessionIdRef.current++;
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
     if (ttsKeepAliveTimerRef.current) {
       clearInterval(ttsKeepAliveTimerRef.current);
       ttsKeepAliveTimerRef.current = null;
+    }
+    currentUtteranceRef.current = null;
+    if (typeof window !== 'undefined') {
+      window.__ielts_active_utterance = null;
     }
     setIsSpeaking(false);
   }, []);

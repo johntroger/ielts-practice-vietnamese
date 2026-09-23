@@ -121,9 +121,103 @@ export function findBestIELTSVoice(accent = 'en-GB') {
   return voices.find(v => v.default) || voices[0];
 }
 
+// Speech session tracking to safely invalidate old runs on new speak / stop
+let activeSpeechSessionId = 0;
+
 /**
- * Speak text with automatic voice selection, stuck queue clearance, GC protection,
- * and seamless fallback.
+ * Split long IELTS listening / reading texts into natural sentence/clause chunks.
+ * Keeps each chunk under maxChunkLen (default: 140 chars, approx 20-25 words)
+ * so no utterance ever approaches the 15-second Chromium engine timeout.
+ */
+export function splitTextIntoUtteranceChunks(text, maxChunkLen = 140) {
+  if (!text || typeof text !== 'string') return [];
+  const clean = text.replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!clean) return [];
+
+  if (clean.length <= maxChunkLen) {
+    return [clean];
+  }
+
+  // 1. Split on sentence delimiters (. ? ! ; :)
+  const rawSentences = clean.match(/[^.?!;:]+[.?!;:]*|\S+/g) || [clean];
+  const chunks = [];
+  let currentChunk = '';
+
+  for (const raw of rawSentences) {
+    const s = raw.trim();
+    if (!s) continue;
+
+    if (s.length <= maxChunkLen) {
+      if (!currentChunk) {
+        currentChunk = s;
+      } else if ((currentChunk + ' ' + s).length <= maxChunkLen) {
+        currentChunk += ' ' + s;
+      } else {
+        chunks.push(currentChunk);
+        currentChunk = s;
+      }
+    } else {
+      // Sentence exceeds maxChunkLen: break into comma / clause boundaries
+      if (currentChunk) {
+        chunks.push(currentChunk);
+        currentChunk = '';
+      }
+
+      const subClauses = s.match(/[^,–—]+[,–—]*|\S+/g) || [s];
+      let subChunk = '';
+      for (const rawSub of subClauses) {
+        const sub = rawSub.trim();
+        if (!sub) continue;
+
+        if (sub.length <= maxChunkLen) {
+          if (!subChunk) {
+            subChunk = sub;
+          } else if ((subChunk + ' ' + sub).length <= maxChunkLen) {
+            subChunk += ' ' + sub;
+          } else {
+            chunks.push(subChunk);
+            subChunk = sub;
+          }
+        } else {
+          // Sub-clause still too long: split into individual words
+          if (subChunk) {
+            chunks.push(subChunk);
+            subChunk = '';
+          }
+          const words = sub.split(' ');
+          let wordChunk = '';
+          for (const w of words) {
+            if (!w) continue;
+            if (!wordChunk) {
+              wordChunk = w;
+            } else if ((wordChunk + ' ' + w).length <= maxChunkLen) {
+              wordChunk += ' ' + w;
+            } else {
+              chunks.push(wordChunk);
+              wordChunk = w;
+            }
+          }
+          if (wordChunk) {
+            chunks.push(wordChunk);
+          }
+        }
+      }
+      if (subChunk) {
+        chunks.push(subChunk);
+      }
+    }
+  }
+
+  if (currentChunk) {
+    chunks.push(currentChunk);
+  }
+
+  return chunks.filter(c => c.length > 0);
+}
+
+/**
+ * Speak text with automatic voice selection, sentence chunking, GC protection,
+ * and seamless fallback across long paragraphs without cutting off.
  */
 export function speakText(text, {
   rate = 0.95,
@@ -153,96 +247,112 @@ export function speakText(text, {
   }
 
   try {
-    // Unpause queue if stuck in Chromium
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
+    // Generate new session ID to cancel any prior asynchronous chunk queue
+    const sessionId = ++activeSpeechSessionId;
+
+    // Clear previous speech and active utterances
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      window.speechSynthesis.cancel();
+    }
+    if (window.__activeUtterances) {
+      window.__activeUtterances.clear();
     }
 
-    const cleanText = text.replace(/[\r\n]+/g, ' ').trim();
-    if (!cleanText) {
+    const chunks = splitTextIntoUtteranceChunks(text, 140);
+    if (chunks.length === 0) {
       onEnd?.();
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-
-    // Prevent GC in V8
-    if (window.__activeUtterances) {
-      window.__activeUtterances.add(utterance);
-    }
-    window.__activeSpeechUtterance = utterance;
-
-    utterance.rate = Math.max(0.6, Math.min(1.4, Number(rate) || 0.95));
-    utterance.pitch = Math.max(0.8, Math.min(1.2, Number(pitch) || 1.0));
-    utterance.volume = Math.max(0.1, Math.min(1.0, Number(volume) || 1.0));
-
-    // Voice selection
     const chosenVoice = findBestIELTSVoice(lang);
-    if (chosenVoice) {
-      utterance.voice = chosenVoice;
-      utterance.lang = chosenVoice.lang;
-    } else {
-      utterance.lang = lang;
-    }
+    const targetLang = chosenVoice?.lang || lang;
+    const targetRate = Math.max(0.6, Math.min(1.4, Number(rate) || 0.95));
+    const targetPitch = Math.max(0.8, Math.min(1.2, Number(pitch) || 1.0));
+    const targetVolume = Math.max(0.1, Math.min(1.0, Number(volume) || 1.0));
 
-    let keepAliveTimer = null;
+    let currentIndex = 0;
+    let hasStarted = false;
 
-    const cleanup = () => {
-      if (keepAliveTimer) {
-        clearInterval(keepAliveTimer);
-        keepAliveTimer = null;
+    const playNextChunk = () => {
+      // Abandon if superseded by another speech request or stopSpeech()
+      if (sessionId !== activeSpeechSessionId) {
+        return;
       }
-      if (window.__activeUtterances) {
-        window.__activeUtterances.delete(utterance);
-      }
-      if (window.__activeSpeechUtterance === utterance) {
-        window.__activeSpeechUtterance = null;
-      }
-    };
 
-    utterance.onstart = () => {
-      // Start keepalive heartbeat for sentences longer than 10s
-      keepAliveTimer = setInterval(() => {
-        if (!window.speechSynthesis.speaking) {
-          cleanup();
-        } else {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
+      if (currentIndex >= chunks.length) {
+        if (window.__activeUtterances) {
+          window.__activeUtterances.clear();
         }
-      }, 9000);
-
-      onStart?.();
-    };
-
-    utterance.onend = () => {
-      cleanup();
-      onEnd?.();
-    };
-
-    utterance.onerror = (e) => {
-      // Only treat non-interrupted errors as real issues
-      if (e.error !== 'interrupted' && e.error !== 'canceled') {
-        console.warn('SpeechSynthesisUtterance error:', e);
-        onError?.(e);
+        window.__activeSpeechUtterance = null;
+        onEnd?.();
+        return;
       }
-      cleanup();
-      onEnd?.();
-    };
 
-    // Execute speak: if already speaking, cancel previous and defer speak by 25ms to avoid Chromium cancel bug
-    const executeSpeak = () => {
+      const chunkText = chunks[currentIndex];
+      const utterance = new SpeechSynthesisUtterance(chunkText);
+
+      utterance.rate = targetRate;
+      utterance.pitch = targetPitch;
+      utterance.volume = targetVolume;
+      utterance.lang = targetLang;
+      if (chosenVoice) {
+        utterance.voice = chosenVoice;
+      }
+
+      // GC Protection in V8
+      if (window.__activeUtterances) {
+        window.__activeUtterances.add(utterance);
+      }
+      window.__activeSpeechUtterance = utterance;
+
+      utterance.onstart = () => {
+        if (sessionId !== activeSpeechSessionId) return;
+        if (!hasStarted) {
+          hasStarted = true;
+          onStart?.();
+        }
+      };
+
+      utterance.onend = () => {
+        if (sessionId !== activeSpeechSessionId) return;
+        if (window.__activeUtterances) {
+          window.__activeUtterances.delete(utterance);
+        }
+        currentIndex++;
+        // Small 30ms gap between chunks ensures natural prosody and avoids browser queue jamming
+        setTimeout(playNextChunk, 30);
+      };
+
+      utterance.onerror = (e) => {
+        if (sessionId !== activeSpeechSessionId) return;
+        if (window.__activeUtterances) {
+          window.__activeUtterances.delete(utterance);
+        }
+        // Don't report user cancels as failures
+        if (e.error === 'interrupted' || e.error === 'canceled') {
+          return;
+        }
+        console.warn('SpeechSynthesisUtterance chunk error:', e);
+        currentIndex++;
+        if (currentIndex < chunks.length) {
+          setTimeout(playNextChunk, 40);
+        } else {
+          onError?.(e);
+          onEnd?.();
+        }
+      };
+
+      // Ensure synthesizer is not in paused state
       if (window.speechSynthesis.paused) {
         window.speechSynthesis.resume();
       }
+
       window.speechSynthesis.speak(utterance);
     };
 
-    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-      window.speechSynthesis.cancel();
-      setTimeout(executeSpeak, 25);
-    } else {
-      executeSpeak();
-    }
+    // 25ms delay to allow previous cancel to settle in Chromium audio engine
+    setTimeout(playNextChunk, 25);
+
   } catch (err) {
     console.error('speakText initialization failed:', err);
     onError?.(err);
@@ -251,9 +361,10 @@ export function speakText(text, {
 }
 
 /**
- * Stop any current speech playback
+ * Stop any current speech playback immediately and cancel queued chunks
  */
 export function stopSpeech() {
+  activeSpeechSessionId++;
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();

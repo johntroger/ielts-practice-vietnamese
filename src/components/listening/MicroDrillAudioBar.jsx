@@ -110,13 +110,7 @@ export default function MicroDrillAudioBar({
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     setElapsedSec(0);
     timerIntervalRef.current = setInterval(() => {
-      setElapsedSec(prev => {
-        if (prev >= estimatedDuration + 2) {
-          clearInterval(timerIntervalRef.current);
-          return prev;
-        }
-        return prev + 1;
-      });
+      setElapsedSec(prev => prev + 1);
     }, 1000);
   };
 
@@ -180,7 +174,7 @@ export default function MicroDrillAudioBar({
       onEnd: () => {
         setIsPlaying(false);
         stopElapsedTimer();
-        setElapsedSec(estimatedDuration);
+        setElapsedSec(0);
       },
       onError: (err) => {
         console.warn('TTS playback error:', err);
@@ -220,14 +214,15 @@ export default function MicroDrillAudioBar({
         onEnd: () => {
           setIsPlaying(false);
           stopElapsedTimer();
-          setElapsedSec(estimatedDuration);
+          setElapsedSec(0);
         },
         onError: () => {
           setIsPlaying(false);
           stopElapsedTimer();
+          setErrorMessage('Lỗi phát âm thanh. Vui lòng bấm thử lại.');
         }
       });
-    }, 120);
+    }, 50);
   };
 
   // Sound Test (Generates short pleasant Cambridge exam chime tone)
