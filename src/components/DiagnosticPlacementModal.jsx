@@ -47,6 +47,12 @@ export default function DiagnosticPlacementModal({
   const [completedDays, setCompletedDays] = useState({});
   const [saveStatus, setSaveStatus] = useState('');
 
+  // Filter plan by selected week - unconditionally called at top level
+  const weekPlan = useMemo(() => {
+    if (!Array.isArray(studyPlan)) return [];
+    return studyPlan.filter(p => p && p.week === selectedPlanWeek);
+  }, [studyPlan, selectedPlanWeek]);
+
   // Load existing saved diagnostic test or study plan on mount
   useEffect(() => {
     async function loadSavedPlan() {
@@ -108,8 +114,6 @@ export default function DiagnosticPlacementModal({
     }
     return () => clearInterval(timer);
   }, [isOpen, isTestSubmitted, isTimerRunning, timeRemaining]);
-
-  if (!isOpen) return null;
 
   const currentQ = (DIAGNOSTIC_QUESTIONS && DIAGNOSTIC_QUESTIONS[currentQuestionIndex]) || DIAGNOSTIC_QUESTIONS?.[0];
   const totalQuestions = DIAGNOSTIC_QUESTIONS?.length || 16;
@@ -198,12 +202,6 @@ export default function DiagnosticPlacementModal({
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  // Filter plan by selected week
-  const weekPlan = useMemo(() => {
-    if (!Array.isArray(studyPlan)) return [];
-    return studyPlan.filter(p => p && p.week === selectedPlanWeek);
-  }, [studyPlan, selectedPlanWeek]);
-
   const completedCount = completedDays && typeof completedDays === 'object'
     ? Object.values(completedDays).filter(Boolean).length
     : 0;
@@ -218,6 +216,8 @@ export default function DiagnosticPlacementModal({
       default: return <Sparkles className="w-4 h-4 text-indigo-600" />;
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 lg:p-3 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-200 overflow-hidden">

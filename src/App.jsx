@@ -1359,13 +1359,15 @@ export default function App() {
         onClose={() => setIsContactOpen(false)}
       />
 
-      <DiagnosticPlacementModal
-        isOpen={isDiagnosticOpen}
-        onClose={() => setIsDiagnosticOpen(false)}
-        targetBand={targetBand}
-        onApplyTargetBand={(newBand) => setTargetBand(newBand)}
-        onOpenSkill={(skill) => setActiveSkill(skill)}
-      />
+      <WorkspaceErrorBoundary skillName="Diagnostic Placement & Study Plan">
+        <DiagnosticPlacementModal
+          isOpen={isDiagnosticOpen}
+          onClose={() => setIsDiagnosticOpen(false)}
+          targetBand={targetBand}
+          onApplyTargetBand={(newBand) => setTargetBand(newBand)}
+          onOpenSkill={(skill) => setActiveSkill(skill)}
+        />
+      </WorkspaceErrorBoundary>
 
         {/* Onboarding 3-Step Tour & Target Band Selector */}
         <OnboardingModal
