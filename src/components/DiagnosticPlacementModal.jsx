@@ -60,18 +60,29 @@ export default function DiagnosticPlacementModal({
         const savedCompleted = await idbGet(STORES.KEYVAL, 'ielts_study_plan_completed_days', {})
           || safeGet('ielts_study_plan_completed_days', {});
 
-        if (savedResult) {
+        if (savedResult && typeof savedResult === 'object' && savedResult.estimatedOverallBand != null && savedResult.skillStats) {
           setEvaluationResult(savedResult);
           setIsTestSubmitted(true);
+        } else {
+          setEvaluationResult(null);
+          setIsTestSubmitted(false);
         }
+
         if (savedPlan && Array.isArray(savedPlan)) {
           setStudyPlan(savedPlan);
+        } else {
+          setStudyPlan([]);
         }
-        if (savedCompleted) {
+
+        if (savedCompleted && typeof savedCompleted === 'object') {
           setCompletedDays(savedCompleted);
+        } else {
+          setCompletedDays({});
         }
       } catch (e) {
         console.warn('Could not load saved diagnostic plan:', e);
+        setIsTestSubmitted(false);
+        setEvaluationResult(null);
       }
     }
 
@@ -100,24 +111,24 @@ export default function DiagnosticPlacementModal({
 
   if (!isOpen) return null;
 
-  const currentQ = DIAGNOSTIC_QUESTIONS[currentQuestionIndex];
-  const totalQuestions = DIAGNOSTIC_QUESTIONS.length;
-  const answeredCount = Object.keys(userAnswers).length;
+  const currentQ = (DIAGNOSTIC_QUESTIONS && DIAGNOSTIC_QUESTIONS[currentQuestionIndex]) || DIAGNOSTIC_QUESTIONS?.[0];
+  const totalQuestions = DIAGNOSTIC_QUESTIONS?.length || 16;
+  const answeredCount = userAnswers && typeof userAnswers === 'object' ? Object.keys(userAnswers).length : 0;
 
   const handleSelectOption = (questionId, optionKey) => {
     setUserAnswers(prev => ({
-      ...prev,
+      ...(prev || {}),
       [questionId]: optionKey
     }));
   };
 
   const handleSubmitTest = async () => {
     setIsTimerRunning(false);
-    const result = evaluateDiagnosticTest(userAnswers);
+    const result = evaluateDiagnosticTest(userAnswers || {});
     const generatedPlan = generate30DayStudyPlan(result.estimatedOverallBand, targetBand, result.weaknesses);
     
     setEvaluationResult(result);
-    setStudyPlan(generatedPlan);
+    setStudyPlan(generatedPlan || []);
     setIsTestSubmitted(true);
 
     // Save to IndexedDB and LocalStorage fallback
@@ -131,7 +142,7 @@ export default function DiagnosticPlacementModal({
     safeSet('ielts_30_day_study_plan', generatedPlan);
   };
 
-  const handleRetakeTest = () => {
+  const handleRetakeTest = async () => {
     if (!window.confirm('Bạn có chắc chắn muốn làm lại bài test định vị từ đầu?')) return;
     setUserAnswers({});
     setCurrentQuestionIndex(0);
@@ -139,12 +150,23 @@ export default function DiagnosticPlacementModal({
     setIsTimerRunning(true);
     setIsTestSubmitted(false);
     setEvaluationResult(null);
+    setStudyPlan([]);
+    setCompletedDays({});
+
+    try {
+      await idbSet(STORES.KEYVAL, 'ielts_latest_diagnostic_result', null);
+      await idbSet(STORES.KEYVAL, 'ielts_30_day_study_plan', null);
+      await idbSet(STORES.KEYVAL, 'ielts_study_plan_completed_days', {});
+    } catch (e) {}
+    safeSet('ielts_latest_diagnostic_result', null);
+    safeSet('ielts_30_day_study_plan', null);
+    safeSet('ielts_study_plan_completed_days', {});
   };
 
   const handleToggleDayComplete = async (dayNumber) => {
     const updated = {
-      ...completedDays,
-      [dayNumber]: !completedDays[dayNumber]
+      ...(completedDays || {}),
+      [dayNumber]: !completedDays?.[dayNumber]
     };
     setCompletedDays(updated);
     try {
@@ -170,18 +192,22 @@ export default function DiagnosticPlacementModal({
   };
 
   const formatTimer = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
+    const validSec = Math.max(0, Number(seconds) || 0);
+    const m = Math.floor(validSec / 60);
+    const s = validSec % 60;
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
   // Filter plan by selected week
   const weekPlan = useMemo(() => {
-    return studyPlan.filter(p => p.week === selectedPlanWeek);
+    if (!Array.isArray(studyPlan)) return [];
+    return studyPlan.filter(p => p && p.week === selectedPlanWeek);
   }, [studyPlan, selectedPlanWeek]);
 
-  const completedCount = Object.values(completedDays).filter(Boolean).length;
-  const planProgressPercent = Math.round((completedCount / 30) * 100);
+  const completedCount = completedDays && typeof completedDays === 'object'
+    ? Object.values(completedDays).filter(Boolean).length
+    : 0;
+  const planProgressPercent = Math.min(100, Math.round((completedCount / 30) * 100));
 
   const getSkillIcon = (skill) => {
     switch (skill) {
@@ -409,22 +435,22 @@ export default function DiagnosticPlacementModal({
                     <span>Kết Quả Đánh Giá Năng Lực Đầu Vào</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black">
-                    Band Điểm Ước Tính: Band {evaluationResult?.estimatedOverallBand.toFixed(1)}
+                    Band Điểm Ước Tính: Band {evaluationResult?.estimatedOverallBand != null ? Number(evaluationResult.estimatedOverallBand).toFixed(1) : '6.0'}
                   </h3>
                   <p className="text-xs text-blue-100 max-w-md leading-relaxed">
-                    Bạn trả lời chính xác <span className="font-bold text-white">{evaluationResult?.totalCorrect}/{evaluationResult?.totalQuestions} câu</span> ({evaluationResult?.overallPercentage}%). Hệ thống đã tự động phân tích và tạo Lộ trình 30 ngày để nâng Band lên mục tiêu {targetBand}!
+                    Bạn trả lời chính xác <span className="font-bold text-white">{evaluationResult?.totalCorrect ?? 0}/{evaluationResult?.totalQuestions ?? 16} câu</span> ({evaluationResult?.overallPercentage ?? 0}%). Hệ thống đã tự động phân tích và tạo Lộ trình 30 ngày để nâng Band lên mục tiêu {targetBand}!
                   </p>
                 </div>
 
                 {/* Sub-bands Cards */}
                 <div className="grid grid-cols-4 gap-2 w-full md:w-auto shrink-0">
                   {['reading', 'listening', 'writing', 'speaking'].map(sKey => {
-                    const s = evaluationResult?.skillStats[sKey];
+                    const s = evaluationResult?.skillStats?.[sKey];
                     return (
                       <div key={sKey} className="bg-white/10 backdrop-blur-xs border border-white/20 p-2.5 rounded-xl text-center">
-                        <div className="text-[10px] text-blue-100 uppercase font-bold">{s?.label}</div>
-                        <div className="text-base sm:text-lg font-black">{s?.band.toFixed(1)}</div>
-                        <div className="text-[10px] text-blue-200">{s?.correct}/4 đúng</div>
+                        <div className="text-[10px] text-blue-100 uppercase font-bold">{s?.label || sKey.toUpperCase()}</div>
+                        <div className="text-base sm:text-lg font-black">{s?.band != null ? Number(s.band).toFixed(1) : '6.0'}</div>
+                        <div className="text-[10px] text-blue-200">{s?.correct ?? 0}/4 đúng</div>
                       </div>
                     );
                   })}
@@ -432,7 +458,7 @@ export default function DiagnosticPlacementModal({
               </div>
 
               {/* 2. Weakness Diagnosis & Actionable Insights */}
-              {evaluationResult?.weaknesses && evaluationResult.weaknesses.length > 0 && (
+              {Array.isArray(evaluationResult?.weaknesses) && evaluationResult.weaknesses.length > 0 && (
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
                   <h4 className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4 text-amber-500" />
@@ -442,9 +468,9 @@ export default function DiagnosticPlacementModal({
                     {evaluationResult.weaknesses.map((w, idx) => (
                       <div key={idx} className="p-3 rounded-xl bg-amber-50/60 border border-amber-200/80 text-xs space-y-1">
                         <div className="font-bold text-amber-900 flex items-center gap-1">
-                          <span>⚠️ {w.title}</span>
+                          <span>⚠️ {w?.title}</span>
                         </div>
-                        <p className="text-amber-800 leading-relaxed text-[11px]">{w.advice}</p>
+                        <p className="text-amber-800 leading-relaxed text-[11px]">{w?.advice}</p>
                       </div>
                     ))}
                   </div>
@@ -500,8 +526,8 @@ export default function DiagnosticPlacementModal({
                 <div className="grid grid-cols-4 gap-1.5 sm:gap-2 bg-slate-100 p-1 rounded-xl">
                   {[1, 2, 3, 4].map(wNum => {
                     const isSelected = selectedPlanWeek === wNum;
-                    const weekDays = studyPlan.filter(p => p.week === wNum);
-                    const weekDone = weekDays.filter(d => completedDays[d.day]).length;
+                    const weekDays = (studyPlan || []).filter(p => p && p.week === wNum);
+                    const weekDone = weekDays.filter(d => d && completedDays?.[d.day]).length;
                     return (
                       <button
                         key={wNum}
@@ -524,8 +550,9 @@ export default function DiagnosticPlacementModal({
 
                 {/* Daily Task List for Selected Week */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                  {weekPlan.map(item => {
-                    const isDone = !!completedDays[item.day];
+                  {(weekPlan || []).map(item => {
+                    if (!item) return null;
+                    const isDone = !!completedDays?.[item.day];
                     return (
                       <div
                         key={item.day}
@@ -581,24 +608,24 @@ export default function DiagnosticPlacementModal({
                   <span>Xem Lại Chi Tiết 16 Câu Hỏi Định Vị & Giải Thích Barem</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-96 overflow-y-auto pr-1">
-                  {evaluationResult?.detailedQuestions?.map((dq, idx) => (
+                  {Array.isArray(evaluationResult?.detailedQuestions) && evaluationResult.detailedQuestions.map((dq, idx) => (
                     <div 
-                      key={dq.id} 
+                      key={dq?.id || idx} 
                       className={`p-2.5 rounded-lg border text-xs flex items-start justify-between gap-2 ${
-                        dq.isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-red-50/40 border-red-200'
+                        dq?.isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-red-50/40 border-red-200'
                       }`}
                     >
                       <div className="space-y-0.5">
                         <div className="font-bold flex items-center gap-1.5">
-                          <span>{dq.isCorrect ? '✅' : '❌'} {dq.title}</span>
+                          <span>{dq?.isCorrect ? '✅' : '❌'} {dq?.title}</span>
                         </div>
-                        <p className="text-slate-600 text-[11px]">{dq.explanation}</p>
+                        <p className="text-slate-600 text-[11px]">{dq?.explanation}</p>
                       </div>
                       <div className="text-right shrink-0 font-bold">
-                        <span className={dq.isCorrect ? 'text-emerald-700' : 'text-red-600'}>
-                          Đáp án: {dq.correctAnswer}
+                        <span className={dq?.isCorrect ? 'text-emerald-700' : 'text-red-600'}>
+                          Đáp án: {dq?.correctAnswer}
                         </span>
-                        {dq.userAnswer && !dq.isCorrect && (
+                        {dq?.userAnswer && !dq?.isCorrect && (
                           <div className="text-slate-400 text-[10px]">Bạn chọn: {dq.userAnswer}</div>
                         )}
                       </div>

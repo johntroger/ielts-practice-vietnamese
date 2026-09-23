@@ -260,6 +260,37 @@ async function runTests() {
     assert.strictEqual(saved.normalWebUrl, 'https://images.unsplash.com/photo-1526778548025', 'Ordinary web URLs must be preserved');
   });
 
+  await it('should safely handle corrupted or null diagnostic results without throwing runtime TypeErrors', () => {
+    // Testing corrupted / empty result object
+    const corruptedResults = [null, undefined, {}, { band: 6.5 }, { estimatedOverallBand: null }, '6.5'];
+
+    corruptedResults.forEach(corrupted => {
+      const isValid = corrupted && typeof corrupted === 'object' && corrupted.estimatedOverallBand != null && corrupted.skillStats;
+      assert.strictEqual(!!isValid, false, 'Corrupted result must be flagged as invalid');
+
+      // Verify null-safe formatting
+      const bandStr = corrupted?.estimatedOverallBand != null ? Number(corrupted.estimatedOverallBand).toFixed(1) : '6.0';
+      assert.strictEqual(typeof bandStr, 'string');
+
+      const s = corrupted?.skillStats?.['reading'];
+      const subBandStr = s?.band != null ? Number(s.band).toFixed(1) : '6.0';
+      assert.strictEqual(typeof subBandStr, 'string');
+
+      const totalCorrect = corrupted?.totalCorrect ?? 0;
+      assert.strictEqual(typeof totalCorrect, 'number');
+
+      const weaknesses = Array.isArray(corrupted?.weaknesses) ? corrupted.weaknesses : [];
+      assert.strictEqual(weaknesses.length, 0);
+    });
+
+    // Testing valid result object
+    const validResult = evaluateDiagnosticTest({ 'diag-r1': 'B', 'diag-l1': 'B' });
+    const isValid = validResult && typeof validResult === 'object' && validResult.estimatedOverallBand != null && validResult.skillStats;
+    assert.strictEqual(!!isValid, true, 'Valid result must be accepted');
+    assert.strictEqual(typeof validResult.estimatedOverallBand, 'number');
+    assert.strictEqual(typeof validResult.skillStats.reading.band, 'number');
+  });
+
   console.log(`\n🎉 Step 11 Unit Tests Passed: ${testsPassed}/${testsPassed} tests passed cleanly.`);
 }
 
