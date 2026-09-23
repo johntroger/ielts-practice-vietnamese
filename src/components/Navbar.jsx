@@ -28,6 +28,7 @@ import {
   Target,
   Award
 } from 'lucide-react';
+import { openModal } from '../core/modalStore';
 
 export default function Navbar({
   currentTask,
@@ -61,6 +62,25 @@ export default function Navbar({
   user,
   onOpenAuth
 }) {
+  const doOpenOnboarding = onOpenOnboarding || (() => openModal('onboarding'));
+  const doOpenDiagnostic = onOpenDiagnostic || (() => openModal('diagnostic'));
+  const doOpenVocabGrammar = onOpenVocabGrammar || (() => openModal('vocabGrammar'));
+  const doOpenDrills = onOpenDrills || (() => openModal('drills'));
+  const doOpenWeeklyReport = onOpenWeeklyReport || (() => openModal('weeklyReport'));
+  const doOpenMockTest = onOpenMockTest || (() => openModal('mockTest'));
+  const doOpenIngest = onOpenIngest || (() => openModal('ingest'));
+  const doOpenGenerator = onOpenGenerator || (() => openModal('generator'));
+  const doOpenLibrary = onOpenLibrary || (() => openModal('library'));
+  const doOpenNotebook = onOpenNotebook || (() => openModal('notebook'));
+  const doOpenHistory = onOpenHistory || (() => openModal('history'));
+  const doOpenSettings = onOpenSettings || (() => openModal('settings'));
+  const doOpenTheory = onOpenTheory || (() => openModal('theory'));
+  const doOpenMistakeLog = onOpenMistakeLog || (() => openModal('mistakeLog'));
+  const doOpenFeaturesGuide = onOpenFeaturesGuide || (() => openModal('featuresGuide'));
+  const doOpenProfile = onOpenProfile || (() => openModal('profile'));
+  const doOpenContact = onOpenContact || (() => openModal('contact'));
+  const doOpenAuth = onOpenAuth || (() => openModal('auth'));
+
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const [isPracticeMenuOpen, setIsPracticeMenuOpen] = useState(false);
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
@@ -231,7 +251,7 @@ export default function Navbar({
             
             {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút */}
             <button
-              onClick={onOpenMockTest}
+              onClick={doOpenMockTest}
               className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
               title="Vào Phòng Thi Thử IELTS Áp Lực Cao (60 Phút)"
             >
@@ -266,7 +286,7 @@ export default function Navbar({
                       Đề Thi & Chế Độ Luyện
                     </div>
                     <button
-                      onClick={() => { onOpenDiagnostic?.(); setIsPracticeMenuOpen(false); }}
+                      onClick={() => { doOpenDiagnostic(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/80 text-left text-xs font-bold text-indigo-900 transition-colors cursor-pointer border border-indigo-200/60"
                     >
                       <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs">
@@ -281,7 +301,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenLibrary?.(); setIsPracticeMenuOpen(false); }}
+                      onClick={() => { doOpenLibrary(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
@@ -293,7 +313,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenGenerator(); setIsPracticeMenuOpen(false); }}
+                      onClick={() => { doOpenGenerator(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-red-100 text-red-700">
@@ -305,7 +325,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenDrills(); setIsPracticeMenuOpen(false); }}
+                      onClick={() => { doOpenDrills(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
@@ -317,7 +337,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenIngest(); setIsPracticeMenuOpen(false); }}
+                      onClick={() => { doOpenIngest(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700">
@@ -329,7 +349,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenTheory(); setIsPracticeMenuOpen(false); }}
+                      onClick={() => { doOpenTheory(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
@@ -374,7 +394,7 @@ export default function Navbar({
                       Bộ Công Cụ Bổ Trợ
                     </div>
                     <button
-                      onClick={() => { onOpenNotebook(); setIsToolsMenuOpen(false); }}
+                      onClick={() => { doOpenNotebook(); setIsToolsMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
@@ -386,7 +406,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenMistakeLog(); setIsToolsMenuOpen(false); }}
+                      onClick={() => { doOpenMistakeLog(); setIsToolsMenuOpen(false); }}
                       className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center space-x-2.5">
@@ -405,7 +425,7 @@ export default function Navbar({
                       )}
                     </button>
                     <button
-                      onClick={() => { onOpenVocabGrammar(); setIsToolsMenuOpen(false); }}
+                      onClick={() => { doOpenVocabGrammar(); setIsToolsMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
@@ -447,7 +467,7 @@ export default function Navbar({
                       Báo Cáo & Lịch Sử
                     </div>
                     <button
-                      onClick={() => { onOpenHistory(); setIsProgressMenuOpen(false); }}
+                      onClick={() => { doOpenHistory(); setIsProgressMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
@@ -459,7 +479,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenWeeklyReport(); setIsProgressMenuOpen(false); }}
+                      onClick={() => { doOpenWeeklyReport(); setIsProgressMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
@@ -474,7 +494,7 @@ export default function Navbar({
                       Hỗ Trợ & Hướng Dẫn
                     </div>
                     <button
-                      onClick={() => { onOpenFeaturesGuide(); setIsProgressMenuOpen(false); }}
+                      onClick={() => { doOpenFeaturesGuide(); setIsProgressMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
@@ -486,7 +506,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <button
-                      onClick={() => { onOpenContact?.(); setIsProgressMenuOpen(false); }}
+                      onClick={() => { doOpenContact(); setIsProgressMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
                       <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700">
@@ -504,7 +524,7 @@ export default function Navbar({
 
             {/* API Key Indicator */}
             <button
-              onClick={onOpenSettings}
+              onClick={doOpenSettings}
               className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 apiKey 
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
@@ -525,9 +545,9 @@ export default function Navbar({
             <button
               onClick={() => {
                 if (user) {
-                  onOpenProfile?.();
+                  doOpenProfile();
                 } else {
-                  onOpenAuth();
+                  doOpenAuth();
                 }
               }}
               className={`hidden lg:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
@@ -569,9 +589,9 @@ export default function Navbar({
                 <button 
                   onClick={() => {
                     if (user) {
-                      onOpenProfile?.();
+                      doOpenProfile();
                     } else {
-                      onOpenAuth();
+                      doOpenAuth();
                     }
                     setIsMobileDrawerOpen(false);
                   }}
@@ -601,7 +621,7 @@ export default function Navbar({
               {/* 1. Hero CTA & Goal Target in Mobile Drawer */}
               <div className="space-y-2">
                 <button
-                  onClick={() => { onOpenMockTest(); setIsMobileDrawerOpen(false); }}
+                  onClick={() => { doOpenMockTest(); setIsMobileDrawerOpen(false); }}
                   className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs shadow-md active:scale-95 transition-all min-h-[44px] cursor-pointer"
                 >
                   <div className="flex items-center space-x-2.5">
@@ -628,7 +648,7 @@ export default function Navbar({
                   </div>
                   <button
                     onClick={() => {
-                      onOpenOnboarding?.();
+                      doOpenOnboarding();
                       setIsMobileDrawerOpen(false);
                     }}
                     className="px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-700 text-xs font-bold hover:bg-red-50 shadow-2xs cursor-pointer"
@@ -681,7 +701,7 @@ export default function Navbar({
                 </div>
                 <div className="space-y-1">
                   <button
-                    onClick={() => { onOpenDiagnostic?.(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenDiagnostic(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-left text-xs font-bold text-indigo-900 border border-indigo-200 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -692,7 +712,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenLibrary?.(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenLibrary(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -702,7 +722,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenGenerator(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenGenerator(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -713,7 +733,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenDrills(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenDrills(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -723,7 +743,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenTheory(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenTheory(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -734,7 +754,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenIngest(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenIngest(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -752,7 +772,7 @@ export default function Navbar({
                 </div>
                 <div className="space-y-1">
                   <button
-                    onClick={() => { onOpenNotebook(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenNotebook(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -762,7 +782,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenMistakeLog(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenMistakeLog(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -777,7 +797,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenVocabGrammar(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenVocabGrammar(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -795,7 +815,7 @@ export default function Navbar({
                 </div>
                 <div className="space-y-1">
                   <button
-                    onClick={() => { onOpenHistory(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenHistory(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -805,7 +825,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenWeeklyReport(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenWeeklyReport(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -815,7 +835,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenSettings(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenSettings(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -826,7 +846,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenFeaturesGuide(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenFeaturesGuide(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 border border-red-100 mt-2 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
@@ -836,7 +856,7 @@ export default function Navbar({
                   </button>
 
                   <button
-                    onClick={() => { onOpenContact?.(); setIsMobileDrawerOpen(false); }}
+                    onClick={() => { doOpenContact(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">

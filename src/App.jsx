@@ -36,6 +36,7 @@ const SpeakingResultModal = React.lazy(() => import('./components/speaking/Speak
 const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPanel'));
 const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
+import { useModalStore } from './core/modalStore';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
 import { supabase } from './services/supabaseClient';
 import { 
@@ -44,7 +45,7 @@ import {
   deleteUserSubmission, 
   fetchUserVocab, 
   saveUserVocabItem, 
-  deleteUserVocabItem,
+  deleteUserVocabItem, 
   fetchUserCustomTasks,
   fetchPublicTasks,
   saveUserCustomTask,
@@ -60,6 +61,8 @@ import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationSe
 import { countWords } from './utils/textAnalytics';
 
 export default function App() {
+  const { modals, closeModal: triggerCloseModal } = useModalStore();
+
   // 1. Persistent Storage State with Quota-Resilient Storage Service
   const [apiKey, setApiKey] = useState(() => safeGet('ielts_gemini_api_key', ''));
   const [targetBand, setTargetBand] = useState(() => safeGet('ielts_target_band', '6.5'));
@@ -989,8 +992,8 @@ export default function App() {
 
       <WorkspaceErrorBoundary skillName="IELTS Vocab, Grammar & Spelling">
         <VocabGrammarSpellingModal
-          isOpen={isVocabGrammarOpen}
-          onClose={() => setIsVocabGrammarOpen(false)}
+          isOpen={isVocabGrammarOpen || modals.vocabGrammar}
+          onClose={() => { setIsVocabGrammarOpen(false); triggerCloseModal('vocabGrammar'); }}
           apiKey={apiKey}
           model={model}
           onSaveToNotebook={(v) => setVocabList(prev => [v, ...prev])}
@@ -1002,8 +1005,8 @@ export default function App() {
       </WorkspaceErrorBoundary>
 
       <MicroDrillsModal
-        isOpen={isDrillsOpen}
-        onClose={() => setIsDrillsOpen(false)}
+        isOpen={isDrillsOpen || modals.drills}
+        onClose={() => { setIsDrillsOpen(false); triggerCloseModal('drills'); }}
         apiKey={apiKey}
         model={model}
         activeSkill={activeSkill}
@@ -1014,8 +1017,8 @@ export default function App() {
       />
 
       <WeeklyReportModal
-        isOpen={isWeeklyReportOpen}
-        onClose={() => setIsWeeklyReportOpen(false)}
+        isOpen={isWeeklyReportOpen || modals.weeklyReport}
+        onClose={() => { setIsWeeklyReportOpen(false); triggerCloseModal('weeklyReport'); }}
         submissions={submissions}
         readingHistory={readingHistory}
         listeningHistory={listeningHistory}
@@ -1027,8 +1030,8 @@ export default function App() {
 
       <WorkspaceErrorBoundary skillName="IELTS Mock Exam">
         <MockTestModal
-          isOpen={isMockTestOpen}
-          onClose={() => setIsMockTestOpen(false)}
+          isOpen={isMockTestOpen || modals.mockTest}
+          onClose={() => { setIsMockTestOpen(false); triggerCloseModal('mockTest'); }}
           allTasks={allTasks}
           submissions={submissions}
           readingHistory={readingHistory}
@@ -1062,8 +1065,8 @@ export default function App() {
       </WorkspaceErrorBoundary>
 
       <DocumentIngestModal
-        isOpen={isIngestOpen}
-        onClose={() => setIsIngestOpen(false)}
+        isOpen={isIngestOpen || modals.ingest}
+        onClose={() => { setIsIngestOpen(false); triggerCloseModal('ingest'); }}
         onTaskImported={(newTask) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
@@ -1077,8 +1080,8 @@ export default function App() {
       />
 
       <IdeaMatrixModal
-        isOpen={isIdeaMatrixOpen}
-        onClose={() => setIsIdeaMatrixOpen(false)}
+        isOpen={isIdeaMatrixOpen || modals.ideaMatrix}
+        onClose={() => { setIsIdeaMatrixOpen(false); triggerCloseModal('ideaMatrix'); }}
         promptText={currentTask.prompt}
         onInsertToOutline={(idea) => {
           setOutlines(prev => ({
@@ -1091,8 +1094,8 @@ export default function App() {
       />
 
       <RevisionModal
-        isOpen={isRevisionOpen}
-        onClose={() => setIsRevisionOpen(false)}
+        isOpen={isRevisionOpen || modals.revision}
+        onClose={() => { setIsRevisionOpen(false); triggerCloseModal('revision'); }}
         task={currentTask}
         v1Essay={currentEssay}
         v1Evaluation={currentEvaluation}
@@ -1108,8 +1111,8 @@ export default function App() {
       />
 
       <FeedbackModal
-        isOpen={isFeedbackOpen}
-        onClose={() => setIsFeedbackOpen(false)}
+        isOpen={isFeedbackOpen || modals.feedback}
+        onClose={() => { setIsFeedbackOpen(false); triggerCloseModal('feedback'); }}
         evaluation={currentEvaluation}
         task={currentTask}
         essayText={currentEssay}
@@ -1127,8 +1130,8 @@ export default function App() {
       />
 
       <TaskGeneratorModal
-        isOpen={isGeneratorOpen}
-        onClose={() => setIsGeneratorOpen(false)}
+        isOpen={isGeneratorOpen || modals.generator}
+        onClose={() => { setIsGeneratorOpen(false); triggerCloseModal('generator'); }}
         apiKey={apiKey}
         model={model}
         user={currentUser}
@@ -1157,8 +1160,8 @@ export default function App() {
       />
 
       <TaskLibraryModal
-        isOpen={isLibraryOpen}
-        onClose={() => setIsLibraryOpen(false)}
+        isOpen={isLibraryOpen || modals.library}
+        onClose={() => { setIsLibraryOpen(false); triggerCloseModal('library'); }}
         allTasks={allTasks}
         communityTasks={communityTasks}
         user={currentUser}
@@ -1216,8 +1219,8 @@ export default function App() {
       />
 
       <VocabNotebookModal
-        isOpen={isNotebookOpen}
-        onClose={() => setIsNotebookOpen(false)}
+        isOpen={isNotebookOpen || modals.notebook}
+        onClose={() => { setIsNotebookOpen(false); triggerCloseModal('notebook'); }}
         vocabList={vocabList}
         onAddVocab={(v) => {
           setVocabList(prev => [v, ...prev]);
@@ -1231,16 +1234,16 @@ export default function App() {
       />
 
       <MistakeLogModal
-        isOpen={isMistakeLogOpen}
-        onClose={() => setIsMistakeLogOpen(false)}
+        isOpen={isMistakeLogOpen || modals.mistakeLog}
+        onClose={() => { setIsMistakeLogOpen(false); triggerCloseModal('mistakeLog'); }}
         mistakes={mistakes}
         onDeleteMistake={(idx) => setMistakes(prev => prev.filter((_, i) => i !== idx))}
         onClearAll={() => setMistakes([])}
       />
 
       <HistoryModal
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
+        isOpen={isHistoryOpen || modals.history}
+        onClose={() => { setIsHistoryOpen(false); triggerCloseModal('history'); }}
         submissions={submissions}
         readingHistory={readingHistory}
         listeningHistory={listeningHistory}
@@ -1265,8 +1268,8 @@ export default function App() {
       />
 
       <TheoryHandbookModal
-        isOpen={isTheoryOpen}
-        onClose={() => setIsTheoryOpen(false)}
+        isOpen={isTheoryOpen || modals.theory}
+        onClose={() => { setIsTheoryOpen(false); triggerCloseModal('theory'); }}
         activeSkill={activeSkill}
         personalNotes={personalNotes}
         onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
@@ -1274,14 +1277,14 @@ export default function App() {
       />
 
       <QuickParaphraseModal
-        isOpen={isParaphraseOpen}
-        onClose={() => setIsParaphraseOpen(false)}
+        isOpen={isParaphraseOpen || modals.paraphrase}
+        onClose={() => { setIsParaphraseOpen(false); triggerCloseModal('paraphrase'); }}
         onSaveToNotebook={(v) => setVocabList(prev => [v, ...prev])}
       />
 
       <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        isOpen={isSettingsOpen || modals.settings}
+        onClose={() => { setIsSettingsOpen(false); triggerCloseModal('settings'); }}
         apiKey={apiKey}
         setApiKey={setApiKey}
         model={model}
@@ -1290,20 +1293,20 @@ export default function App() {
       />
 
       <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
+        isOpen={isAuthOpen || modals.auth}
+        onClose={() => { setIsAuthOpen(false); triggerCloseModal('auth'); }}
         user={currentUser}
         onAuthSuccess={(user) => setCurrentUser(user)}
       />
 
       <FeaturesGuideModal
-        isOpen={isFeaturesGuideOpen}
-        onClose={() => setIsFeaturesGuideOpen(false)}
+        isOpen={isFeaturesGuideOpen || modals.featuresGuide}
+        onClose={() => { setIsFeaturesGuideOpen(false); triggerCloseModal('featuresGuide'); }}
       />
 
       <UserProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
+        isOpen={isProfileOpen || modals.profile}
+        onClose={() => { setIsProfileOpen(false); triggerCloseModal('profile'); }}
         user={currentUser}
         masteredIds={masteredIds}
         onToggleMastered={handleToggleMastered}
@@ -1381,14 +1384,14 @@ export default function App() {
       )}
 
       <ContactModal
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
+        isOpen={isContactOpen || modals.contact}
+        onClose={() => { setIsContactOpen(false); triggerCloseModal('contact'); }}
       />
 
       <WorkspaceErrorBoundary skillName="Diagnostic Placement & Study Plan">
         <DiagnosticPlacementModal
-          isOpen={isDiagnosticOpen}
-          onClose={() => setIsDiagnosticOpen(false)}
+          isOpen={isDiagnosticOpen || modals.diagnostic}
+          onClose={() => { setIsDiagnosticOpen(false); triggerCloseModal('diagnostic'); }}
           targetBand={targetBand}
           onApplyTargetBand={(newBand) => setTargetBand(newBand)}
           onOpenSkill={(skill) => setActiveSkill(skill)}
@@ -1397,8 +1400,8 @@ export default function App() {
 
         {/* Onboarding 3-Step Tour & Target Band Selector */}
         <OnboardingModal
-          isOpen={isOnboardingOpen}
-          onClose={() => setIsOnboardingOpen(false)}
+          isOpen={isOnboardingOpen || modals.onboarding}
+          onClose={() => { setIsOnboardingOpen(false); triggerCloseModal('onboarding'); }}
           initialTargetBand={targetBand}
           currentApiKey={apiKey}
           onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
