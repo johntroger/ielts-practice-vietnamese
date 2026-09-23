@@ -47,7 +47,8 @@ export default function ListeningWorkspace({
   onListeningSubmitted,
   onOpenDrills,
   initialTestId = 'cambridge-18-test-1',
-  initialExamMode = 'practice'
+  initialExamMode = 'practice',
+  openGeneratorTrigger
 }) {
   // 1. All Listening Tests (Preloaded + Custom from URL)
   const [allListeningTests, setAllListeningTests] = useState(() => {
@@ -73,6 +74,13 @@ export default function ListeningWorkspace({
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+
+  // Sync external generator trigger
+  useEffect(() => {
+    if (openGeneratorTrigger) {
+      setIsGeneratorOpen(true);
+    }
+  }, [openGeneratorTrigger]);
 
   // Soundcheck State & Controls
   const [isSoundchecking, setIsSoundchecking] = useState(false);

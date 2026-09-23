@@ -48,7 +48,9 @@ export default function ReadingWorkspace({
   onSaveToVocabNotebook,
   onReadingSubmitted,
   initialTestId,
-  initialExamMode
+  initialExamMode,
+  openGeneratorTrigger,
+  openIngestTrigger
 }) {
   const [allReadingTests, setAllReadingTests] = useState(() => {
     try {
@@ -110,6 +112,19 @@ export default function ReadingWorkspace({
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+
+  // External open triggers (e.g. from global Navbar)
+  useEffect(() => {
+    if (openGeneratorTrigger) {
+      setIsGeneratorOpen(true);
+    }
+  }, [openGeneratorTrigger]);
+
+  useEffect(() => {
+    if (openIngestTrigger) {
+      setIsIngestOpen(true);
+    }
+  }, [openIngestTrigger]);
 
   // Callback when a new passage is generated or ingested
   const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = null, extraMeta = {}) => {
@@ -525,6 +540,28 @@ export default function ReadingWorkspace({
             </div>
           )}
 
+          {/* Sinh Đề (AI) Button */}
+          <button
+            type="button"
+            onClick={() => setIsGeneratorOpen(true)}
+            className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 text-purple-700 hover:text-purple-800 font-bold text-xs border border-purple-200 transition-all shadow-2xs shrink-0 cursor-pointer"
+            title="Dùng AI sinh bài đọc & câu hỏi IELTS Reading mới theo chuẩn Cambridge"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
+            <span>Sinh Đề (AI)</span>
+          </button>
+
+          {/* Nạp Từ Báo Button */}
+          <button
+            type="button"
+            onClick={() => setIsIngestOpen(true)}
+            className="hidden xl:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+            title="Nạp một bài báo hoặc văn bản bất kỳ để AI tạo đề thi Reading"
+          >
+            <FileText className="w-3.5 h-3.5 text-amber-600" />
+            <span>Nạp Báo (AI)</span>
+          </button>
+
           {/* Secondary Buttons: Kho Đề & Cẩm Nang */}
           <button
             onClick={() => setIsLibraryOpen(true)}
@@ -581,6 +618,17 @@ export default function ReadingWorkspace({
 
           {/* Right Action Group on Mobile & Desktop */}
           <div className="flex items-center space-x-1 shrink-0">
+
+            {/* Mobile Only Quick Button for Sinh Đề AI */}
+            <button
+              type="button"
+              onClick={() => setIsGeneratorOpen(true)}
+              className="sm:hidden flex items-center space-x-1 px-2 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition-colors shadow-2xs cursor-pointer font-bold text-xs shrink-0"
+              title="Sinh Đề Reading Mới Bằng AI"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+              <span>Sinh Đề</span>
+            </button>
 
             {/* Mobile Only Quick Buttons for Kho Đề & Cẩm Nang */}
             <button
@@ -861,6 +909,14 @@ export default function ReadingWorkspace({
         onDeleteTest={handleDeleteReadingTest}
         onTogglePublic={handleToggleReadingPublic}
         onCreateFullTest={handleCreateFullTest}
+        onOpenGenerator={() => {
+          setIsLibraryOpen(false);
+          setIsGeneratorOpen(true);
+        }}
+        onOpenIngest={() => {
+          setIsLibraryOpen(false);
+          setIsIngestOpen(true);
+        }}
         user={user}
       />
     </div>

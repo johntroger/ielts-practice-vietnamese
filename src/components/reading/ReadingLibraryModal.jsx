@@ -28,10 +28,10 @@ export default function ReadingLibraryModal({
   onDeleteTest,
   onTogglePublic,
   onCreateFullTest,
+  onOpenGenerator,
+  onOpenIngest,
   user
 }) {
-  if (!isOpen) return null;
-
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'ingest' | 'public' | 'custom_builder'
   const [passageFilter, setPassageFilter] = useState('all'); // 'all' | 'full' | 'p1' | 'p2' | 'p3'
   const [searchQuery, setSearchQuery] = useState('');
@@ -256,6 +256,8 @@ export default function ReadingLibraryModal({
     totalPassages: passageBank.length
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
       <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
@@ -354,19 +356,46 @@ export default function ReadingLibraryModal({
               </button>
             </div>
 
-            {/* Search Box */}
-            {activeTab !== 'custom_builder' && (
-              <div className="relative w-full sm:w-64">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Tìm theo tên, mã #01, chủ đề..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400 shadow-2xs"
-                />
-              </div>
-            )}
+            {/* Quick Actions & Search Box */}
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end shrink-0">
+              {onOpenGenerator && (
+                <button
+                  type="button"
+                  onClick={onOpenGenerator}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-all shadow-2xs cursor-pointer shrink-0"
+                  title="Mở bảng sinh bài đọc & câu hỏi IELTS Reading mới bằng AI"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                  <span>Sinh Đề (AI)</span>
+                </button>
+              )}
+
+              {onOpenIngest && (
+                <button
+                  type="button"
+                  onClick={onOpenIngest}
+                  className="hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs cursor-pointer shrink-0"
+                  title="Nạp một bài báo bất kỳ để AI tạo đề thi Reading"
+                >
+                  <FileText className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Nạp Báo</span>
+                </button>
+              )}
+
+              {/* Search Box */}
+              {activeTab !== 'custom_builder' && (
+                <div className="relative w-full sm:w-56">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Tìm tên, mã #01..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400 shadow-2xs"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Secondary Filter: Filter by Passage Structure (Full Test, P1, P2, P3) */}
@@ -712,11 +741,83 @@ export default function ReadingLibraryModal({
         ) : (
           /* REGULAR TEST LIST */
           <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-50/40">
+            {/* Contextual Banner when viewing AI Generated Tab */}
+            {activeTab === 'ai' && onOpenGenerator && (
+              <div className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 border border-purple-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2.5 rounded-xl bg-purple-600 text-white shadow-xs shrink-0">
+                    <Sparkles className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                      <span>Sinh bài đọc IELTS Reading theo yêu cầu bằng Gemini AI</span>
+                      <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-black">AI 2.5</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Tùy chọn 12 chủ đề học thuật, độ khó Passage 1/2/3, bẫy distractors và câu hỏi chuẩn Cambridge.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenGenerator}
+                  className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>+ Sinh Đề Mới</span>
+                </button>
+              </div>
+            )}
+
+            {/* Contextual Banner when viewing Ingest Articles Tab */}
+            {activeTab === 'ingest' && onOpenIngest && (
+              <div className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-yellow-500/10 border border-amber-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2.5 rounded-xl bg-amber-600 text-white shadow-xs shrink-0">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                      <span>Nạp bài báo tiếng Anh để AI tự động chuyển thành đề thi Reading</span>
+                      <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-black">Báo chí</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Dán bài báo từ BBC, CNN, National Geographic, The Economist... AI sẽ phân tích và trích xuất thành bài đọc chuẩn.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenIngest}
+                  className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>+ Nạp Bài Báo</span>
+                </button>
+              </div>
+            )}
+
             {filteredTests.length === 0 ? (
               <div className="text-center py-16">
                 <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3 stroke-[1.5]" />
                 <p className="text-sm font-semibold text-slate-600">Không tìm thấy bài đọc nào phù hợp</p>
                 <p className="text-xs text-slate-400 mt-1">Hãy thử tìm từ khóa khác hoặc chuyển sang tab/dạng bài khác.</p>
+                {activeTab === 'ai' && onOpenGenerator && (
+                  <button
+                    type="button"
+                    onClick={onOpenGenerator}
+                    className="mt-4 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Sinh Đề Thi Mới Bằng AI Ngay</span>
+                  </button>
+                )}
+                {activeTab === 'ingest' && onOpenIngest && (
+                  <button
+                    type="button"
+                    onClick={onOpenIngest}
+                    className="mt-4 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Nạp Bài Báo Để AI Tạo Đề Ngay</span>
+                  </button>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">

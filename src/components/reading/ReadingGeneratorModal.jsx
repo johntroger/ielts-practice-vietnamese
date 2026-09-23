@@ -60,8 +60,6 @@ export default function ReadingGeneratorModal({
   onPassageGenerated,
   onOpenSettings
 }) {
-  if (!isOpen) return null;
-
   const [selectedTopic, setSelectedTopic] = useState(READING_TOPICS[0].en);
   const [selectedPassageNum, setSelectedPassageNum] = useState(1);
   // Mặc định tự động chuyển thành tài nguyên chung của web (trừ khi user cấu hình tắt hoặc toggle tắt)
@@ -107,6 +105,8 @@ export default function ReadingGeneratorModal({
       setIsGenerating(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">

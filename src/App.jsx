@@ -132,6 +132,9 @@ export default function App() {
   const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
   const [isRevisionOpen, setIsRevisionOpen] = useState(false);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
+  const [readingGenTrigger, setReadingGenTrigger] = useState(0);
+  const [readingIngestTrigger, setReadingIngestTrigger] = useState(0);
+  const [listeningGenTrigger, setListeningGenTrigger] = useState(0);
   const [isMockTestOpen, setIsMockTestOpen] = useState(false);
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
   const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
@@ -685,8 +688,22 @@ export default function App() {
         onOpenWeeklyReport={() => setIsWeeklyReportOpen(true)}
         onOpenMockTest={() => setIsMockTestOpen(true)}
         onOpenDiagnostic={() => setIsDiagnosticOpen(true)}
-        onOpenIngest={() => setIsIngestOpen(true)}
-        onOpenGenerator={() => setIsGeneratorOpen(true)}
+        onOpenIngest={() => {
+          if (activeSkill === 'reading') {
+            setReadingIngestTrigger(Date.now());
+          } else {
+            setIsIngestOpen(true);
+          }
+        }}
+        onOpenGenerator={() => {
+          if (activeSkill === 'reading') {
+            setReadingGenTrigger(Date.now());
+          } else if (activeSkill === 'listening') {
+            setListeningGenTrigger(Date.now());
+          } else {
+            setIsGeneratorOpen(true);
+          }
+        }}
         onOpenLibrary={() => setIsLibraryOpen(true)}
         onOpenNotebook={() => setIsNotebookOpen(true)}
         onOpenHistory={() => setIsHistoryOpen(true)}
@@ -764,6 +781,8 @@ export default function App() {
                 }}
                 initialTestId={readingMockTestId}
                 initialExamMode={readingMockExamMode}
+                openGeneratorTrigger={readingGenTrigger}
+                openIngestTrigger={readingIngestTrigger}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
@@ -794,6 +813,7 @@ export default function App() {
                     return updated;
                   });
                 }}
+                openGeneratorTrigger={listeningGenTrigger}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
