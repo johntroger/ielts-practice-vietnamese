@@ -14,7 +14,8 @@ import {
   Globe,
   Lock,
   Share2,
-  Users
+  Users,
+  Link as LinkIcon
 } from 'lucide-react';
 import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
 import TaskImageUploader from './TaskImageUploader';
@@ -47,6 +48,30 @@ export default function TaskLibraryModal({
   const [manualPrompt, setManualPrompt] = useState('');
   const [manualImageUrl, setManualImageUrl] = useState('');
   const [manualModelAnswer, setManualModelAnswer] = useState('');
+
+  const handleCopyShareLink = (task) => {
+    try {
+      const shareData = {
+        id: task.id,
+        taskNumber: task.taskNumber || (task.taskNum || 2),
+        taskNum: task.taskNumber || (task.taskNum || 2),
+        type: task.type || 'opinion',
+        title: task.title || 'Đề bài IELTS',
+        prompt: task.prompt || '',
+        sampleAnswer: task.sampleAnswer || '',
+        imageUrl: (task.imageUrl && !task.imageUrl.startsWith('data:') && !task.imageUrl.startsWith('blob:')) ? task.imageUrl : '',
+        creatorEmail: task.creatorEmail || (user?.email ? user.email.split('@')[0] : 'Cộng đồng')
+      };
+      const jsonStr = JSON.stringify(shareData);
+      const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+      const shareUrl = `${window.location.origin}${window.location.pathname}#shared-task=${encoded}`;
+      navigator.clipboard.writeText(shareUrl);
+      alert('Đã sao chép liên kết chia sẻ đề thi! Bạn có thể dán liên kết này vào bất kỳ tab ẩn danh hoặc gửi bạn bè để mở bài luyện ngay.');
+    } catch (e) {
+      console.error(e);
+      alert('Không thể tạo liên kết chia sẻ.');
+    }
+  };
 
   // Source list depending on activeTab (Tất cả bao gồm cả đề cộng đồng công khai)
   const taskSource = useMemo(() => {
@@ -453,6 +478,15 @@ export default function TaskLibraryModal({
                             <Share2 className="w-3.5 h-3.5" />
                           </button>
                         )}
+
+                        {/* Copy Instant Share Link Button */}
+                        <button
+                          onClick={() => handleCopyShareLink(t)}
+                          className="p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-blue-600"
+                          title="Sao chép liên kết đề thi (Dán trực tiếp vào Tab ẩn danh hoặc gửi bạn bè để mở ngay)"
+                        >
+                          <LinkIcon className="w-3.5 h-3.5" />
+                        </button>
 
                         {(t.isCustom || t.isAiGenerated) && (
                           <button

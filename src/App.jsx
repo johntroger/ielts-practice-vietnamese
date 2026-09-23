@@ -213,6 +213,36 @@ export default function App() {
         });
       }
     });
+
+    // Handle Instant URL Shared Task / Question (Cross-tab & Incognito instant transfer)
+    try {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#shared-task=')) {
+        const raw = decodeURIComponent(hash.replace('#shared-task=', ''));
+        const jsonStr = decodeURIComponent(escape(atob(raw)));
+        const parsed = JSON.parse(jsonStr);
+        if (parsed && parsed.id && (parsed.prompt || parsed.title)) {
+          const formatted = {
+            ...parsed,
+            isPublic: true,
+            isCommunity: true,
+            creatorEmail: parsed.creatorEmail || 'Chia sẻ qua liên kết'
+          };
+          setAllTasks(prev => {
+            if (prev.some(t => t.id === formatted.id)) return prev;
+            return [formatted, ...prev];
+          });
+          setCommunityTasks(prev => {
+            if (prev.some(t => t.id === formatted.id)) return prev;
+            return [formatted, ...prev];
+          });
+          setCurrentTaskId(formatted.id);
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      }
+    } catch (e) {
+      console.warn('Could not parse shared task from URL hash:', e);
+    }
   }, []);
 
   // Fetch from Cloud when user logs in with Bi-directional Auto-Sync
