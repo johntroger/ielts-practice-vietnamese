@@ -4,6 +4,8 @@ export const cambridge18Test1 = {
     description: 'Bộ đề thi thử IELTS Listening chuẩn khảo thí Cambridge 18 gồm đầy đủ 4 phần (Part 1–4) với 40 câu hỏi, thời lượng audio 30 phút và 2 phút kiểm tra lại bài.',
     totalQuestions: 40,
     timeLimitMinutes: 32,
+    isPublic: true,
+    creatorEmail: 'Cambridge Assessment',
     audioUrl: 'https://dn720904.ca.archive.org/0/items/cambridge-15-ielts-listening-test-1/Cambridge%2015%20IELTS%20Listening%20Test%201.mp3',
     fallbackAudioUrl: '/audio/cam18_test1_audio.mp3',
     parts: [

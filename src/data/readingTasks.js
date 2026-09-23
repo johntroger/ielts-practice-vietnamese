@@ -10,6 +10,8 @@ export const INITIAL_READING_TESTS = [
     description: 'Bộ đề thi thử chuẩn Cambridge Academic gồm 3 bài đọc với đầy đủ 40 câu hỏi, thời gian làm bài 60 phút.',
     totalQuestions: 40,
     timeLimitMinutes: 60,
+    isPublic: true,
+    creatorEmail: 'Cambridge Assessment',
     passages: [
       {
         id: 'p1',

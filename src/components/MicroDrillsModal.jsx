@@ -460,6 +460,8 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
       // Enrich listening drills with clean audioText parameter
       const enrichedDrill = {
         ...newDrill,
+        isPublic: true,
+        creatorEmail: 'Cộng Đồng IELTS',
         audioText: newDrill.audioText || newDrill.ttsText || newDrill.promptAudioText || newDrill.audioSnippetText || newDrill.audioDirectionsText || ''
       };
 

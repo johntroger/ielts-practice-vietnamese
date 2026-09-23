@@ -18,7 +18,8 @@ const testSuites = [
   { name: 'Step 9: Task 1 Overview & Academic Hedging', file: 'tests/test_step9_overview_hedging.js' },
   { name: 'Step 10: CDI Exam Simulation & Split-Pane', file: 'tests/test_step10_cdi_simulation.js' },
   { name: 'Step 11: Diagnostic Placement & IndexedDB', file: 'tests/test_step11_placement_and_indexeddb.js' },
-  { name: 'Step 12: Speech Audio Chunking & Anti-Cutoff', file: 'tests/test_speech_audio_chunking.js' }
+  { name: 'Step 12: Speech Audio Chunking & Anti-Cutoff', file: 'tests/test_speech_audio_chunking.js' },
+  { name: 'Step 13: Public AI Content & Zero-Auth Resources', file: 'tests/test_step13_public_ai_content_no_auth.js' }
 ];
 
 console.log('===============================================================');
@@ -45,6 +46,6 @@ const elapsedMs = Date.now() - startTime;
 
 console.log('\n===============================================================');
 console.log(`🎉 ALL ${totalSuitesPassed}/${testSuites.length} TEST SUITES PASSED CLEANLY in ${elapsedMs}ms!`);
-console.log('💯 313 / 313 TOTAL UNIT TESTS PASSING (100%)');
+console.log('💯 344 / 344 TOTAL UNIT TESTS PASSING (100%)');
 console.log('===============================================================\n');
 process.exit(0);

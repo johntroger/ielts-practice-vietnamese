@@ -4,6 +4,8 @@ export const cambridge8Test2 = {
   "description": "Đề thi chính thức Cambridge 8 Test 2: Báo cáo bảo hiểm hàng chuyển nhà, Nông trại sinh thái Red Valley, Dự án nghiên cứu ong mật châu Á và Lịch sử xà phòng vệ sinh cá nhân.",
   "totalQuestions": 40,
   "timeLimitMinutes": 32,
+  "isPublic": true,
+  "creatorEmail": "Cambridge Assessment",
   "audioUrl": "https://dn710908.ca.archive.org/0/items/IELTS8Test2/IELTS_8%2C_Test_2.mp3",
   "fallbackAudioUrl": "https://archive.org/download/IELTS8Test2/IELTS_8%2C_Test_2.mp3",
   "parts": [

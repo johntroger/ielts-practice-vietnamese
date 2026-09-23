@@ -562,6 +562,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     targetBand: '7.0 - 8.5',
     estTime: '12 - 14 phút',
     summary: 'Bài thi thử toàn diện mô phỏng phòng thi IDP/BC xoay quanh chủ đề Công nghệ, Thiết bị số và Chuyển dịch việc làm.',
+    isPublic: true,
     part1TopicId: 'p1-technology',
     part2CueCardId: 'p2-tech-device',
     part3DiscussionId: 'p2-tech-device'
@@ -573,6 +574,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     targetBand: '6.5 - 8.0',
     estTime: '11 - 13 phút',
     summary: 'Phòng thi thử tập trung vào kỹ năng phản biện, lập luận về các quyết định quan trọng, công việc và áp lực cuộc sống.',
+    isPublic: true,
     part1TopicId: 'p1-work-study',
     part2CueCardId: 'p2-challenging-decision',
     part3DiscussionId: 'p2-challenging-decision'
@@ -584,6 +586,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     targetBand: '6.5 - 8.0',
     estTime: '12 - 14 phút',
     summary: 'Thử thách khả năng kể chuyện biểu cảm (Storytelling) và phân tích các vấn đề du lịch đại chúng, bảo tồn di sản.',
+    isPublic: true,
     part1TopicId: 'p1-hometown',
     part2CueCardId: 'p2-memorable-journey',
     part3DiscussionId: 'p2-memorable-journey'
@@ -595,6 +598,7 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     targetBand: '7.0 - 8.5',
     estTime: '12 - 14 phút',
     summary: 'Mô phỏng phòng thi chuyên sâu về con người truyền cảm hứng, phẩm chất lãnh đạo và văn hóa truyền thông hiện đại.',
+    isPublic: true,
     part1TopicId: 'p1-daily-routine',
     part2CueCardId: 'p2-inspiring-person',
     part3DiscussionId: 'p2-inspiring-person'

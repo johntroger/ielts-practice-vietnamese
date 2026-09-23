@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   BookOpen, 
   Plus, 
@@ -48,8 +48,19 @@ export default function TaskLibraryModal({
   const [manualImageUrl, setManualImageUrl] = useState('');
   const [manualModelAnswer, setManualModelAnswer] = useState('');
 
-  // Source list depending on activeTab
-  const taskSource = activeTab === 'community' ? communityTasks : allTasks;
+  // Source list depending on activeTab (Tất cả bao gồm cả đề cộng đồng công khai)
+  const taskSource = useMemo(() => {
+    if (activeTab === 'community') return communityTasks;
+    const combined = [...allTasks];
+    const existingIds = new Set(allTasks.map(t => t.id));
+    for (const ct of communityTasks) {
+      if (!existingIds.has(ct.id)) {
+        combined.push(ct);
+        existingIds.add(ct.id);
+      }
+    }
+    return combined;
+  }, [activeTab, allTasks, communityTasks]);
 
   const filteredTasks = taskSource.filter(t => {
     const matchesTab = 

@@ -52,7 +52,7 @@ import {
   deleteUserCustomTask
 } from './services/dataSyncService';
 
-import { INITIAL_TASKS } from './data/sampleTasks';
+import { INITIAL_TASKS, COMMUNITY_DEFAULT_TASKS } from './data/sampleTasks';
 import { evaluateEssay, brainstormIdeas } from './services/geminiService';
 import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationService';
 import { countWords } from './utils/textAnalytics';
@@ -100,7 +100,11 @@ export default function App() {
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [communityTasks, setCommunityTasks] = useState([]);
+  const [communityTasks, setCommunityTasks] = useState(() => {
+    const cached = safeGet('ielts_public_community_tasks', null);
+    if (Array.isArray(cached) && cached.length > 0) return cached;
+    return COMMUNITY_DEFAULT_TASKS;
+  });
   const [isDrillsOpen, setIsDrillsOpen] = useState(false);
   const [isVocabGrammarOpen, setIsVocabGrammarOpen] = useState(false);
   const [isWeeklyReportOpen, setIsWeeklyReportOpen] = useState(false);
@@ -198,11 +202,15 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch Public Community Tasks on initial load
+  // Fetch Public Community Tasks on initial load and merge with local community bank
   useEffect(() => {
-    fetchPublicTasks().then(tasks => {
-      if (tasks && tasks.length > 0) {
-        setCommunityTasks(tasks);
+    fetchPublicTasks().then(cloudTasks => {
+      if (cloudTasks && cloudTasks.length > 0) {
+        setCommunityTasks(prev => {
+          const cloudIds = new Set(cloudTasks.map(t => t.id));
+          const localOnly = prev.filter(t => !cloudIds.has(t.id));
+          return [...cloudTasks, ...localOnly];
+        });
       }
     });
   }, []);
@@ -292,6 +300,10 @@ export default function App() {
   useEffect(() => {
     safeSet('ielts_streak_count', streakCount.toString());
   }, [streakCount]);
+
+  useEffect(() => {
+    safeSet('ielts_public_community_tasks', communityTasks);
+  }, [communityTasks]);
 
   // Handlers
   const handleEssayChange = (text) => {
@@ -1017,12 +1029,21 @@ export default function App() {
         onTaskCreated={(newTask, isPub) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
+
+          // Always add to public community repository immediately, no login required!
+          if (isPub) {
+            const pubTask = {
+              ...newTask,
+              isPublic: true,
+              isCommunity: true,
+              creatorEmail: currentUser?.email || 'Thành viên cộng đồng'
+            };
+            setCommunityTasks(prev => [pubTask, ...prev.filter(t => t.id !== newTask.id)]);
+          }
+
           // Sync to Cloud if logged in
           if (currentUser) {
             saveUserCustomTask(currentUser.id, newTask, isPub, currentUser.email);
-            if (isPub) {
-              setCommunityTasks(prev => [newTask, ...prev]);
-            }
           }
         }}
         onOpenSettings={() => {
@@ -1048,16 +1069,25 @@ export default function App() {
         }}
         onTogglePublic={(taskId, isPub) => {
           setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
+          
+          // Always update public community task bank immediately, no login required!
+          if (isPub) {
+            const taskToShare = allTasks.find(t => t.id === taskId);
+            if (taskToShare) {
+              const pubTask = {
+                ...taskToShare,
+                isPublic: true,
+                creatorEmail: currentUser?.email || 'Thành viên cộng đồng',
+                isCommunity: true
+              };
+              setCommunityTasks(prev => [pubTask, ...prev.filter(t => t.id !== taskId)]);
+            }
+          } else {
+            setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
+          }
+
           if (currentUser) {
             toggleTaskPublicity(currentUser.id, taskId, isPub);
-            if (isPub) {
-              const taskToShare = allTasks.find(t => t.id === taskId);
-              if (taskToShare) {
-                setCommunityTasks(prev => [{ ...taskToShare, isPublic: true, creatorEmail: currentUser.email, isCommunity: true }, ...prev]);
-              }
-            } else {
-              setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
-            }
           }
         }}
         onDeleteTask={(id) => {
