@@ -442,24 +442,25 @@ export default function ReadingWorkspace({
         </div>
       )}
 
-      {/* 1. Reading Sub-header Toolbar (Fully Responsive, Zero-Clip & Zero-Overlap) */}
-      <div className={`px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 w-full overflow-x-auto no-scrollbar ${
+      {/* 1. Reading Sub-header Toolbar (Clean, Ergonomic & Fully Responsive) */}
+      <div className={`px-2.5 sm:px-4 lg:px-6 py-2 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 shadow-2xs shrink-0 w-full transition-colors ${
         cdiFullscreen ? themeStyles.headerClass : 'bg-white border-b border-slate-200'
       }`}>
         
-        {/* ROW 1 ON MOBILE / LEFT ON DESKTOP: Navigation & Passage Selection */}
-        <div className="flex items-center justify-between lg:justify-start gap-1.5 sm:gap-2.5 min-w-0 flex-1">
+        {/* ROW 1: Navigation, Current Test & Passage Selection */}
+        <div className="flex items-center justify-between lg:justify-start gap-2 min-w-0 flex-wrap sm:flex-nowrap">
           {/* Skill Badge (Ultra-wide Desktop only) */}
-          <div className="hidden 2xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold text-xs border border-blue-200 shrink-0">
+          <div className="hidden 2xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-blue-50 text-blue-800 font-bold text-xs border border-blue-200 shrink-0">
             <BookMarked className="w-3.5 h-3.5 text-blue-600" />
             <span>IELTS Academic Reading</span>
           </div>
 
-          {/* Mobile View Switcher (Passage vs Questions) - High Priority on Mobile */}
-          <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-lg text-xs font-bold shrink-0 border border-slate-200">
+          {/* Mobile View Switcher (Passage vs Questions) */}
+          <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-xl text-xs font-bold shrink-0 border border-slate-200">
             <button
+              type="button"
               onClick={() => setMobileTab('passage')}
-              className={`px-2.5 py-1 rounded-md transition-all ${
+              className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 mobileTab === 'passage' 
                   ? 'bg-blue-600 text-white shadow-xs font-black' 
                   : 'text-slate-600 hover:text-slate-900'
@@ -468,8 +469,9 @@ export default function ReadingWorkspace({
               📖 Bài Đọc
             </button>
             <button
+              type="button"
               onClick={() => setMobileTab('questions')}
-              className={`px-2.5 py-1 rounded-md transition-all ${
+              className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 mobileTab === 'questions' 
                   ? 'bg-blue-600 text-white shadow-xs font-black' 
                   : 'text-slate-600 hover:text-slate-900'
@@ -479,118 +481,102 @@ export default function ReadingWorkspace({
             </button>
           </div>
 
+          {/* Current Test Chip / Selector Button */}
+          <div className="flex items-center space-x-1 shrink-0 min-w-0">
+            <button
+              type="button"
+              onClick={() => setIsLibraryOpen(true)}
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[170px] sm:max-w-[220px] xl:max-w-[280px]"
+              title={`Đề đang làm: ${currentTest.title} (Bấm để mở Kho Đề - ${allReadingTests.length} đề)`}
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span className="truncate">{currentTest.title}</span>
+              <span className="text-[10px] text-indigo-500 font-semibold shrink-0">▾</span>
+            </button>
+
+            {/* Quick toggle public/private button if current test is custom */}
+            {currentTest?.isCustom && (
+              <button
+                type="button"
+                onClick={() => handleToggleReadingPublic(currentTest.id)}
+                className={`p-1 rounded-lg border text-xs font-bold transition-all flex items-center shrink-0 cursor-pointer ${
+                  currentTest.isPublic 
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                    : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                }`}
+                title={currentTest.isPublic ? "Đang chia sẻ công khai! Bấm để chuyển riêng tư" : "Đang để riêng tư! Bấm để chia sẻ"}
+              >
+                {currentTest.isPublic ? <Globe className="w-3.5 h-3.5 text-emerald-600" /> : <Lock className="w-3.5 h-3.5 text-slate-500" />}
+              </button>
+            )}
+          </div>
+
           {/* Passage Selector Buttons */}
-          <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg text-xs font-semibold text-slate-600 shrink-0">
+          <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-xl text-xs font-semibold text-slate-600 shrink-0 border border-slate-200/60">
             {currentTest?.passages?.map(p => (
               <button
                 key={p.passageNumber}
+                type="button"
                 onClick={() => {
                   setSelectedPassageNum(p.passageNumber);
                   setActiveEvidencePara(null);
                 }}
-                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all flex items-center gap-1 ${
+                className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
                   selectedPassageNum === p.passageNumber 
-                    ? 'bg-white text-slate-900 shadow-2xs font-bold' 
-                    : 'text-slate-500 hover:text-slate-800'
+                    ? 'bg-white text-blue-900 shadow-2xs font-black' 
+                    : 'text-slate-500 hover:text-slate-800 font-bold'
                 }`}
                 title={`Chuyển tới Passage ${p.passageNumber}`}
               >
-                <span className="font-bold">P{p.passageNumber}</span>
-                <span className="hidden xl:inline">Passage {p.passageNumber}</span>
+                <span>P{p.passageNumber}</span>
+                <span className="hidden xl:inline text-[11px] font-normal text-slate-400">
+                  Passage {p.passageNumber}
+                </span>
               </button>
             ))}
           </div>
 
-          {/* Test Selector Dropdown if more than 1 test */}
-          {allReadingTests.length > 1 && (
-            <div className="hidden sm:flex items-center space-x-1 min-w-0">
-              <select
-                value={currentTestId}
-                onChange={(e) => {
-                  const targetId = e.target.value;
-                  const t = allReadingTests.find(item => item.id === targetId);
-                  setCurrentTestId(targetId);
-                  setSelectedPassageNum(t?.passages[0]?.passageNumber || 1);
-                }}
-                className="bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[130px] lg:max-w-[160px] truncate"
-              >
-                {allReadingTests.map(t => (
-                  <option key={t.id} value={t.id}>
-                    {t.isCustom ? (t.isPublic ? '🌐 ' : '🔒 ') : '📚 '}
-                    {t.title}
-                  </option>
-                ))}
-              </select>
-
-              {/* Quick toggle public/private button if current test is custom */}
-              {currentTest?.isCustom && (
-                <button
-                  type="button"
-                  onClick={() => handleToggleReadingPublic(currentTest.id)}
-                  className={`p-1 rounded-lg border text-xs font-bold transition-all flex items-center gap-1 ${
-                    currentTest.isPublic 
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
-                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                  }`}
-                  title={currentTest.isPublic ? "Đang chia sẻ công khai!" : "Đang để riêng tư!"}
-                >
-                  {currentTest.isPublic ? <Globe className="w-3.5 h-3.5 text-emerald-600" /> : <Lock className="w-3.5 h-3.5 text-slate-500" />}
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Sinh Đề (AI) Button */}
-          <button
-            type="button"
-            onClick={() => setIsGeneratorOpen(true)}
-            className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 text-purple-700 hover:text-purple-800 font-bold text-xs border border-purple-200 transition-all shadow-2xs shrink-0 cursor-pointer"
-            title="Dùng AI sinh bài đọc & câu hỏi IELTS Reading mới theo chuẩn Cambridge"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
-            <span>Sinh Đề (AI)</span>
-          </button>
-
-          {/* Nạp Từ Báo Button */}
-          <button
-            type="button"
-            onClick={() => setIsIngestOpen(true)}
-            className="hidden xl:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
-            title="Nạp một bài báo hoặc văn bản bất kỳ để AI tạo đề thi Reading"
-          >
-            <FileText className="w-3.5 h-3.5 text-amber-600" />
-            <span>Nạp Báo (AI)</span>
-          </button>
-
-          {/* Secondary Buttons: Kho Đề & Cẩm Nang */}
-          <button
-            onClick={() => setIsLibraryOpen(true)}
-            className="hidden md:flex items-center space-x-1 px-2 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
-            title="Mở thư viện toàn bộ đề thi IELTS Reading"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-            <span className="hidden xl:inline">Kho Đề ({allReadingTests.length})</span>
-            <span className="xl:hidden">Kho Đề</span>
-          </button>
-
-          {onOpenTheory && (
+          {/* Desktop AI & Resource Tools */}
+          <div className="hidden lg:flex items-center space-x-1.5 ml-1 shrink-0">
             <button
               type="button"
-              onClick={onOpenTheory}
-              className="hidden lg:flex items-center space-x-1 px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
-              title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Reading"
+              onClick={() => setIsGeneratorOpen(true)}
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 text-purple-700 hover:text-purple-800 font-bold text-xs border border-purple-200 transition-all shadow-2xs shrink-0 cursor-pointer"
+              title="Sinh bài đọc & bộ câu hỏi IELTS Reading mới bằng AI theo chuẩn Cambridge"
             >
-              <BookMarked className="w-3.5 h-3.5 text-blue-600" />
-              <span>Cẩm Nang</span>
+              <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse shrink-0" />
+              <span>Sinh Đề (AI)</span>
             </button>
-          )}
+
+            <button
+              type="button"
+              onClick={() => setIsIngestOpen(true)}
+              className="hidden xl:flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+              title="Nạp một bài báo hoặc văn bản bất kỳ để AI tạo đề thi Reading"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>Nạp Báo</span>
+            </button>
+
+            {onOpenTheory && (
+              <button
+                type="button"
+                onClick={onOpenTheory}
+                className="hidden xl:flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+                title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Reading"
+              >
+                <BookMarked className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span>Cẩm Nang</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* ROW 2 ON MOBILE / DESKTOP RIGHT: Timer, Controls & Mode */}
+        {/* ROW 2 ON MOBILE / RIGHT ON DESKTOP: Session Controls & Actions */}
         <div className="flex items-center justify-between lg:justify-end gap-1.5 sm:gap-2 text-xs pt-1 lg:pt-0 border-t lg:border-t-0 border-slate-100 shrink-0">
           
           {/* Active Countdown Timer */}
-          <div className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg border font-mono transition-all shrink-0 ${
+          <div className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl border font-mono transition-all shrink-0 ${
             isCriticalTime
               ? 'bg-red-500 text-white border-red-600 animate-pulse'
               : isLowTime
@@ -607,6 +593,7 @@ export default function ReadingWorkspace({
             {/* Play/Pause in Practice Mode */}
             {examMode === 'practice' && !isSubmitted && (
               <button
+                type="button"
                 onClick={toggleTimer}
                 className="p-1 rounded hover:bg-slate-200/80 text-slate-600 transition-colors ml-0.5 cursor-pointer"
                 title={isRunning ? 'Tạm dừng đếm giờ' : 'Bấm tiếp tục đếm giờ'}
@@ -617,38 +604,18 @@ export default function ReadingWorkspace({
           </div>
 
           {/* Right Action Group on Mobile & Desktop */}
-          <div className="flex items-center space-x-1 shrink-0">
+          <div className="flex items-center space-x-1.5 shrink-0">
 
             {/* Mobile Only Quick Button for Sinh Đề AI */}
             <button
               type="button"
               onClick={() => setIsGeneratorOpen(true)}
-              className="sm:hidden flex items-center space-x-1 px-2 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition-colors shadow-2xs cursor-pointer font-bold text-xs shrink-0"
+              className="lg:hidden flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition-colors shadow-2xs cursor-pointer font-bold text-xs shrink-0"
               title="Sinh Đề Reading Mới Bằng AI"
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
               <span>Sinh Đề</span>
             </button>
-
-            {/* Mobile Only Quick Buttons for Kho Đề & Cẩm Nang */}
-            <button
-              onClick={() => setIsLibraryOpen(true)}
-              className="md:hidden p-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors shadow-2xs cursor-pointer"
-              title="Mở Thư Viện Đề Thi Reading"
-            >
-              <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-            </button>
-
-            {onOpenTheory && (
-              <button
-                type="button"
-                onClick={onOpenTheory}
-                className="lg:hidden p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors shadow-2xs cursor-pointer"
-                title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật"
-              >
-                <BookMarked className="w-3.5 h-3.5 text-blue-600" />
-              </button>
-            )}
 
             {/* Global Font Size Controller (Large Desktop only) */}
             <div className="hidden 2xl:flex items-center space-x-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
@@ -733,12 +700,12 @@ export default function ReadingWorkspace({
             <button
               type="button"
               onClick={() => setCdiFullscreen(prev => !prev)}
-              className={`p-1 sm:px-2 sm:py-1 rounded-lg border font-bold text-xs transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
+              className={`p-1.5 sm:px-2.5 sm:py-1 rounded-xl border font-bold text-xs transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
                 cdiFullscreen
                   ? 'bg-purple-600 text-white border-purple-700 shadow-xs'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 shadow-2xs'
               }`}
-              title={cdiFullscreen ? "Thoát toàn màn hình CDI (Phím Esc)" : "Bật chế độ Toàn Màn Hình mô phỏng phòng thi CDI"}
+              title={cdiFullscreen ? "Thoát toàn màn hình CDI (Phím Esc)" : "Bật chế độ Toàn Màn Hình mô phỏng phòng thi máy tính CDI"}
             >
               {cdiFullscreen ? (
                 <>
@@ -755,8 +722,9 @@ export default function ReadingWorkspace({
 
             {/* Mode Selector Button */}
             <button
+              type="button"
               onClick={() => setExamMode(prev => prev === 'exam' ? 'practice' : 'exam')}
-              className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold border text-[11px] sm:text-xs transition-all shrink-0 cursor-pointer ${
+              className={`px-2.5 py-1 rounded-xl font-bold border text-xs transition-all shrink-0 cursor-pointer shadow-2xs ${
                 examMode === 'exam'
                   ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
                   : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
@@ -770,12 +738,13 @@ export default function ReadingWorkspace({
             {/* If Submitted: Quick Button to Re-open Result Modal */}
             {isSubmitted && bandResult && (
               <button
+                type="button"
                 onClick={() => setIsResultModalOpen(true)}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs transition-colors text-[11px] sm:text-xs shrink-0 cursor-pointer"
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-xs transition-colors text-xs shrink-0 cursor-pointer"
                 title="Xem lại Báo cáo tổng kết Band Score"
               >
                 <BarChart2 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Báo Cáo</span>
+                <span className="hidden sm:inline">Báo Cáo:</span>
                 <span>Band {bandResult.band.toFixed(1)}</span>
               </button>
             )}
