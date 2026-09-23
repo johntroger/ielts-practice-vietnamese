@@ -177,16 +177,87 @@ export async function fetchPublicTasks() {
 
     if (error) throw error;
 
+    return (data || [])
+      .filter(row => !row.id.startsWith('custom-drill-') && !row.id.startsWith('drill-') && (!row.task_data || !row.task_data.isDrill))
+      .map(row => ({
+        ...row.task_data,
+        id: row.id,
+        isPublic: true,
+        creatorEmail: row.creator_email,
+        isCommunity: true
+      }));
+  } catch (err) {
+    console.error('Error fetching public community tasks:', err);
+    return [];
+  }
+}
+
+/**
+ * Fetch all public community micro-drills from Supabase Cloud
+ */
+export async function fetchPublicDrills() {
+  try {
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .select('*')
+      .eq('is_public', true)
+      .or('id.like.custom-drill-%,id.like.drill-%')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
     return (data || []).map(row => ({
       ...row.task_data,
       id: row.id,
       isPublic: true,
-      creatorEmail: row.creator_email,
-      isCommunity: true
+      isCommunity: true,
+      creatorEmail: row.creator_email || 'Cộng Đồng IELTS'
     }));
   } catch (err) {
-    console.error('Error fetching public community tasks:', err);
+    console.error('Error fetching public community drills:', err);
     return [];
+  }
+}
+
+/**
+ * Save an AI-generated micro-drill to Supabase Cloud for all visitors
+ */
+export async function savePublicDrill(drill) {
+  if (!drill || !drill.id) return null;
+  try {
+    const row = {
+      id: drill.id,
+      task_data: { ...drill, isDrill: true },
+      is_public: true,
+      creator_email: drill.creatorEmail || 'Cộng Đồng IELTS',
+      created_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .upsert(row);
+
+    if (error) {
+      console.warn('Could not sync drill to Supabase cloud:', error.message);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.warn('Error saving public drill to Supabase:', err);
+    return null;
+  }
+}
+
+/**
+ * Delete / unpublish a public micro-drill from Supabase Cloud
+ */
+export async function deletePublicDrill(drillId) {
+  if (!drillId) return;
+  try {
+    await supabase.from('user_custom_tasks').delete().eq('id', drillId);
+  } catch (err) {
+    console.warn('Error deleting public drill from Supabase:', err);
   }
 }
 

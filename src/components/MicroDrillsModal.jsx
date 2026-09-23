@@ -37,6 +37,7 @@ import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
 import { COMMUNITY_DEFAULT_DRILLS } from '../data/communityMicroDrills';
 import { evaluateParaphrase, generateMicroDrill, evaluateListeningDrill } from '../services/geminiService';
+import { fetchPublicDrills, savePublicDrill, deletePublicDrill } from '../services/dataSyncService';
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
 
@@ -108,12 +109,53 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
     return combinedDefaults;
   });
 
+  // Sync community drills with Supabase Cloud on mount & auto-migrate existing local community drills
+  useEffect(() => {
+    // 1. Fetch community drills from Supabase Cloud
+    fetchPublicDrills().then(cloudDrills => {
+      if (cloudDrills && cloudDrills.length > 0) {
+        setAllDrills(prev => {
+          const drillMap = new Map();
+          prev.forEach(d => drillMap.set(d.id, d));
+          cloudDrills.forEach(d => {
+            drillMap.set(d.id, { ...d, isPublic: true, isCommunity: true });
+          });
+          const merged = Array.from(drillMap.values());
+          try {
+            const commOnly = merged.filter(d => d.isAiGenerated && d.isPublic);
+            localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
+          } catch (e) {}
+          return merged;
+        });
+      }
+    });
+
+    // 2. Auto-sync existing local community drills to Cloud
+    try {
+      const savedCommunity = localStorage.getItem('ielts_community_micro_drills');
+      if (savedCommunity) {
+        const localCommDrills = JSON.parse(savedCommunity);
+        if (Array.isArray(localCommDrills) && localCommDrills.length > 0) {
+          localCommDrills.forEach(drill => {
+            if (drill.id && drill.isPublic) {
+              savePublicDrill(drill);
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Auto-sync local community drills failed:', e);
+    }
+  }, []);
+
   // Handler to toggle publicity of an AI custom drill
   const handleToggleDrillPublic = (drillId) => {
     setAllDrills(prev => {
+      const targetDrill = prev.find(d => d.id === drillId);
+      const nextPub = targetDrill ? !targetDrill.isPublic : true;
+
       const updated = prev.map(d => {
         if (d.id === drillId) {
-          const nextPub = !d.isPublic;
           return { ...d, isPublic: nextPub, isCommunity: nextPub };
         }
         return d;
@@ -124,6 +166,16 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         const commOnly = updated.filter(d => d.isAiGenerated && d.isPublic);
         localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
       } catch (e) {}
+
+      // Sync changes to Supabase Cloud
+      if (targetDrill) {
+        if (nextPub) {
+          savePublicDrill({ ...targetDrill, isPublic: true, isCommunity: true });
+        } else {
+          deletePublicDrill(drillId);
+        }
+      }
+
       return updated;
     });
   };
@@ -551,6 +603,8 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         if (isPub) {
           const commOnly = updated.filter(d => d.isAiGenerated && d.isPublic);
           localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
+          // Save to Supabase Cloud for all visitors
+          savePublicDrill(enrichedDrill);
         }
       } catch (e) {
         console.error('Failed to persist drills to localStorage:', e);
