@@ -115,12 +115,20 @@ CREATE POLICY "Anyone can view public tasks or their own tasks"
     TO authenticated, anon
     USING (is_public = true OR auth.uid() = user_id);
 
--- B. INSERT: Người dùng đăng nhập chỉ được thêm đề cho chính tài khoản của mình
+-- Cho phép cột user_id có thể nhận NULL đối với các đề công khai do khách đóng góp
+ALTER TABLE public.user_custom_tasks ALTER COLUMN user_id DROP NOT NULL;
+
+-- B. INSERT: Người dùng đăng nhập thêm đề cho chính mình HOẶC khách đóng góp đề công khai (is_public = true)
 DROP POLICY IF EXISTS "Authenticated users can create custom tasks" ON public.user_custom_tasks;
-CREATE POLICY "Authenticated users can create custom tasks"
+DROP POLICY IF EXISTS "Users and guests can insert custom tasks" ON public.user_custom_tasks;
+CREATE POLICY "Users and guests can insert custom tasks"
     ON public.user_custom_tasks FOR INSERT
-    TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    TO authenticated, anon
+    WITH CHECK (
+        (auth.uid() IS NOT NULL AND auth.uid() = user_id)
+        OR
+        (is_public = true)
+    );
 
 -- C. UPDATE: Chỉ chính chủ mới có quyền sửa đề hoặc bật/tắt chia sẻ công khai
 DROP POLICY IF EXISTS "Users can update their own custom tasks" ON public.user_custom_tasks;

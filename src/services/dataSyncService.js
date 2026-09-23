@@ -190,26 +190,33 @@ export async function fetchPublicTasks() {
   }
 }
 
-export async function saveUserCustomTask(userId, task, isPublic = false, creatorEmail = '') {
-  if (!userId || !task) return null;
+export async function saveUserCustomTask(userId = null, task, isPublic = false, creatorEmail = '') {
+  if (!task) return null;
+  // If not logged in and not public, don't attempt to sync private tasks of anonymous users to cloud
+  if (!userId && !isPublic) return null;
   try {
     const row = {
       id: task.id || `task-${Date.now()}`,
-      user_id: userId,
       task_data: task,
-      is_public: isPublic,
-      creator_email: creatorEmail || 'Anonymous',
+      is_public: Boolean(isPublic),
+      creator_email: creatorEmail || (userId ? 'Thành viên' : 'Cộng đồng'),
       created_at: new Date().toISOString()
     };
+    if (userId) {
+      row.user_id = userId;
+    }
 
     const { data, error } = await supabase
       .from('user_custom_tasks')
       .upsert(row);
 
-    if (error) throw error;
+    if (error) {
+      console.warn('Supabase cloud task sync notice (RLS or offline):', error.message);
+      return null;
+    }
     return data;
   } catch (err) {
-    console.error('Error saving custom task to Supabase:', err);
+    console.warn('Error saving custom task to Supabase:', err);
     return null;
   }
 }

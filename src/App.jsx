@@ -68,9 +68,18 @@ export default function App() {
     return (saved && validModels.includes(saved)) ? saved : 'gemini-3.6-flash';
   });
   
-  const [allTasks, setAllTasks] = useState(() => safeGet('ielts_all_tasks', INITIAL_TASKS));
+  const [allTasks, setAllTasks] = useState(() => {
+    const saved = safeGet('ielts_all_tasks', null);
+    const defaults = [...INITIAL_TASKS, ...COMMUNITY_DEFAULT_TASKS];
+    if (Array.isArray(saved) && saved.length > 0) {
+      const savedIds = new Set(saved.map(t => t.id));
+      const missingDefaults = defaults.filter(d => !savedIds.has(d.id));
+      return [...saved, ...missingDefaults];
+    }
+    return defaults;
+  });
   const [currentTaskId, setCurrentTaskId] = useState(() => {
-    return safeGet('ielts_current_task_id', allTasks[0]?.id || 't2-ai-workplace-2025');
+    return safeGet('ielts_current_task_id', 't2-ai-workplace-2025');
   });
 
   const [essays, setEssays] = useState(() => safeGet('ielts_essays_drafts', {}));
@@ -210,6 +219,11 @@ export default function App() {
           const cloudIds = new Set(cloudTasks.map(t => t.id));
           const localOnly = prev.filter(t => !cloudIds.has(t.id));
           return [...cloudTasks, ...localOnly];
+        });
+        setAllTasks(prev => {
+          const existingIds = new Set(prev.map(t => t.id));
+          const newCloudTasks = cloudTasks.filter(t => !existingIds.has(t.id));
+          return newCloudTasks.length > 0 ? [...newCloudTasks, ...prev] : prev;
         });
       }
     });
@@ -1071,10 +1085,8 @@ export default function App() {
             setCommunityTasks(prev => [pubTask, ...prev.filter(t => t.id !== newTask.id)]);
           }
 
-          // Sync to Cloud if logged in
-          if (currentUser) {
-            saveUserCustomTask(currentUser.id, newTask, isPub, currentUser.email);
-          }
+          // Sync to Cloud (If public, sync to Supabase Cloud for all visitors)
+          saveUserCustomTask(currentUser?.id || null, newTask, isPub, currentUser?.email || 'Thành viên cộng đồng');
         }}
         onOpenSettings={() => {
           setIsGeneratorOpen(false);
@@ -1089,13 +1101,17 @@ export default function App() {
         communityTasks={communityTasks}
         user={currentUser}
         currentTaskId={currentTaskId}
-        onSelectTask={(t) => setCurrentTaskId(t.id)}
+        onSelectTask={(t) => {
+          setAllTasks(prev => {
+            if (prev.some(existing => existing.id === t.id)) return prev;
+            return [t, ...prev];
+          });
+          setCurrentTaskId(t.id);
+        }}
         onAddNewCustomTask={(newTask) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
-          if (currentUser) {
-            saveUserCustomTask(currentUser.id, newTask, false, currentUser.email);
-          }
+          saveUserCustomTask(currentUser?.id || null, newTask, false, currentUser?.email || 'Khách');
         }}
         onTogglePublic={(taskId, isPub) => {
           setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
