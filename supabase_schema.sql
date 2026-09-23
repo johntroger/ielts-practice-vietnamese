@@ -158,6 +158,20 @@ CREATE INDEX IF NOT EXISTS idx_user_custom_tasks_public ON public.user_custom_ta
 CREATE INDEX IF NOT EXISTS idx_user_custom_tasks_created_at ON public.user_custom_tasks(created_at DESC);
 
 -- ==============================================================================
+-- 9. KÍCH HOẠT SUPABASE REALTIME REPLICATION (ĐỒNG BỘ TỨC THỜI WEBSOCKETS)
+-- Cho phép máy chủ Supabase phát sóng tự động các câu hỏi mới tới mọi trình duyệt đang mở
+-- ==============================================================================
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'user_custom_tasks'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.user_custom_tasks;
+  END IF;
+END $$;
+
+-- ==============================================================================
 -- HOÀN TẤT SETUP!
 -- Khi chạy xong trong Supabase SQL Editor, hệ thống sẽ báo:
 -- "Success. No rows returned"

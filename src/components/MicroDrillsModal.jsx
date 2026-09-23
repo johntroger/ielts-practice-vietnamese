@@ -30,7 +30,8 @@ import {
   Flame,
   Zap,
   Globe,
-  Lock
+  Lock,
+  RefreshCw
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -109,10 +110,40 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
     return combinedDefaults;
   });
 
-  // Sync community drills with Supabase Cloud on mount & auto-migrate existing local community drills
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Cross-Tab Broadcast Channel (Instant 0ms sync between open tabs/windows on same device)
   useEffect(() => {
-    // 1. Fetch community drills from Supabase Cloud
-    fetchPublicDrills().then(cloudDrills => {
+    let bc = null;
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        bc = new BroadcastChannel('ielts_micro_drills_realtime');
+        bc.onmessage = (event) => {
+          const { type, drill, drillId, nextPub } = event.data || {};
+          if (type === 'NEW_DRILL' && drill) {
+            setAllDrills(prev => {
+              if (prev.some(d => d.id === drill.id)) return prev;
+              return [...prev, drill];
+            });
+          } else if (type === 'TOGGLE_PUBLIC' && drillId) {
+            setAllDrills(prev => prev.map(d => d.id === drillId ? { ...d, isPublic: nextPub, isCommunity: nextPub } : d));
+          } else if (type === 'SYNC_ALL') {
+            reloadFromCloud();
+          }
+        };
+      }
+    } catch (e) {
+      console.warn('BroadcastChannel error:', e);
+    }
+    return () => {
+      if (bc) bc.close();
+    };
+  }, []);
+
+  // Function to pull latest public drills from Supabase Cloud
+  const reloadFromCloud = React.useCallback(async () => {
+    try {
+      const cloudDrills = await fetchPublicDrills();
       if (cloudDrills && cloudDrills.length > 0) {
         setAllDrills(prev => {
           const drillMap = new Map();
@@ -128,25 +159,85 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
           return merged;
         });
       }
-    });
+    } catch (err) {
+      console.warn('Cloud reload notice:', err);
+    }
+  }, []);
 
-    // 2. Auto-sync existing local community drills to Cloud
+  // Sync community drills with Supabase Cloud on mount & auto-migrate existing local custom drills
+  useEffect(() => {
+    // 1. Initial Cloud Pull
+    reloadFromCloud();
+
+    // 2. Auto-migrate ALL local custom drills that are AI generated to Supabase Cloud
     try {
+      const savedCustom = localStorage.getItem('ielts_custom_micro_drills');
       const savedCommunity = localStorage.getItem('ielts_community_micro_drills');
-      if (savedCommunity) {
-        const localCommDrills = JSON.parse(savedCommunity);
-        if (Array.isArray(localCommDrills) && localCommDrills.length > 0) {
-          localCommDrills.forEach(drill => {
-            if (drill.id && drill.isPublic) {
-              savePublicDrill(drill);
-            }
-          });
+      const customList = savedCustom ? JSON.parse(savedCustom) : [];
+      const commList = savedCommunity ? JSON.parse(savedCommunity) : [];
+      const combinedLocal = [...commList, ...customList];
+      
+      const seen = new Set();
+      combinedLocal.forEach(drill => {
+        if (drill.id && !seen.has(drill.id)) {
+          seen.add(drill.id);
+          savePublicDrill({ ...drill, isPublic: true, isCommunity: true });
         }
-      }
+      });
     } catch (e) {
       console.warn('Auto-sync local community drills failed:', e);
     }
-  }, []);
+
+    // 3. Window Focus Event: Refresh whenever user switches back to this tab/window
+    const handleFocus = () => {
+      reloadFromCloud();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    // 4. Polling heartbeat every 4 seconds to guarantee sync across different windows/devices
+    const pollInterval = setInterval(() => {
+      reloadFromCloud();
+    }, 4000);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(pollInterval);
+    };
+  }, [reloadFromCloud]);
+
+  // Manual 1-click Cloud Sync Handler
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    try {
+      // Push any unsaved local drills
+      const savedCustom = localStorage.getItem('ielts_custom_micro_drills');
+      const savedCommunity = localStorage.getItem('ielts_community_micro_drills');
+      const customList = savedCustom ? JSON.parse(savedCustom) : [];
+      const commList = savedCommunity ? JSON.parse(savedCommunity) : [];
+      const combinedLocal = [...commList, ...customList];
+      for (const drill of combinedLocal) {
+        if (drill.id) await savePublicDrill({ ...drill, isPublic: true, isCommunity: true });
+      }
+
+      // Pull latest from Cloud
+      await reloadFromCloud();
+
+      // Notify other tabs via BroadcastChannel
+      try {
+        if ('BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('ielts_micro_drills_realtime');
+          bc.postMessage({ type: 'SYNC_ALL' });
+          bc.close();
+        }
+      } catch (e) {}
+
+      alert('Đồng bộ thành công! Toàn bộ câu hỏi và bài luyện đã được cập nhật từ Cloud.');
+    } catch (e) {
+      alert('Đồng bộ hoàn tất.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   // Handler to toggle publicity of an AI custom drill
   const handleToggleDrillPublic = (drillId) => {
@@ -167,7 +258,7 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
       } catch (e) {}
 
-      // Sync changes to Supabase Cloud
+      // Sync changes to Supabase Cloud & BroadcastChannel
       if (targetDrill) {
         if (nextPub) {
           savePublicDrill({ ...targetDrill, isPublic: true, isCommunity: true });
@@ -175,6 +266,14 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
           deletePublicDrill(drillId);
         }
       }
+
+      try {
+        if ('BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('ielts_micro_drills_realtime');
+          bc.postMessage({ type: 'TOGGLE_PUBLIC', drillId, nextPub });
+          bc.close();
+        }
+      } catch (e) {}
 
       return updated;
     });
@@ -605,6 +704,13 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
           localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
           // Save to Supabase Cloud for all visitors
           savePublicDrill(enrichedDrill);
+          try {
+            if ('BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_micro_drills_realtime');
+              bc.postMessage({ type: 'NEW_DRILL', drill: enrichedDrill });
+              bc.close();
+            }
+          } catch (e) {}
         }
       } catch (e) {
         console.error('Failed to persist drills to localStorage:', e);
@@ -927,6 +1033,18 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                     <span className="sm:hidden">🔒 Riêng</span>
                   </>
                 )}
+              </button>
+
+              {/* Manual Cloud Sync Button */}
+              <button
+                type="button"
+                onClick={handleManualSync}
+                disabled={isSyncing}
+                className="px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition-all cursor-pointer shadow-2xs"
+                title="Bấm để đồng bộ tức thời tất cả câu hỏi từ Cloud & giữa các tab"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSyncing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ'}</span>
               </button>
 
               {/* AI Generator Button */}
