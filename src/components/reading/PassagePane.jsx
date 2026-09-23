@@ -9,7 +9,8 @@ import {
   X, 
   Volume2, 
   Search,
-  RefreshCw
+  RefreshCw,
+  Shield
 } from 'lucide-react';
 import { lookupReadingWord } from '../../services/geminiService';
 
@@ -27,7 +28,9 @@ export default function PassagePane({
   apiKey,
   model = 'gemini-2.5-flash',
   onOpenSettings,
-  onSaveToVocabNotebook
+  onSaveToVocabNotebook,
+  examMode = 'practice',
+  theme = 'standard'
 }) {
   const [activeColor, setActiveColor] = useState('yellow');
   const [highlights, setHighlights] = useState({}); // { [paraId]: [ { text, color } ] }
@@ -72,6 +75,20 @@ export default function PassagePane({
 
     const posX = Math.max(10, Math.min(window.innerWidth - 320, rect.left));
     const posY = Math.max(10, rect.bottom + 8);
+
+    if (examMode === 'exam') {
+      setTooltip({
+        word: cleanWord,
+        context: paraText,
+        x: posX,
+        y: posY,
+        loading: false,
+        data: null,
+        error: '🛡️ Trong Chế độ Thi Thử (Strict Exam), tính năng tra từ điển bị vô hiệu hóa để bảo đảm tính trung thực phòng thi.',
+        saved: false
+      });
+      return;
+    }
 
     setTooltip({
       word: cleanWord,
@@ -174,18 +191,68 @@ export default function PassagePane({
     lg: 'text-[19px] leading-[2.0]'
   };
 
+  const themeStyles = {
+    standard: {
+      container: 'bg-white text-slate-800',
+      topBar: 'bg-slate-50 border-b border-slate-200 text-slate-600',
+      controlCard: 'bg-white border-slate-200 text-slate-700',
+      buttonHover: 'hover:bg-slate-100 text-slate-600 hover:text-slate-900',
+      divider: 'border-slate-200',
+      titleBorder: 'border-b border-slate-100',
+      passageTitle: 'text-slate-900',
+      badge: 'bg-blue-50 text-blue-700 border-blue-100',
+      paraHover: 'hover:bg-slate-50/70',
+      paraEvidence: 'bg-amber-50/80 ring-2 ring-amber-400/80 shadow-md',
+      paraBadgeDefault: 'bg-slate-200 text-slate-700 hover:bg-blue-600 hover:text-white',
+      paraText: 'text-slate-800',
+      metaText: 'text-slate-500'
+    },
+    sepia: {
+      container: 'bg-[#fbf7ee] text-[#2c3038]',
+      topBar: 'bg-[#f4efe0] border-b border-[#e8dfc8] text-[#554b38]',
+      controlCard: 'bg-[#fbf7ee] border-[#e2d8c0] text-[#4a4f5b]',
+      buttonHover: 'hover:bg-[#ebe3cf] text-[#554b38] hover:text-[#2c3038]',
+      divider: 'border-[#e2d8c0]',
+      titleBorder: 'border-b border-[#e8dfc8]',
+      passageTitle: 'text-[#24272e]',
+      badge: 'bg-[#efe6cf] text-[#7d5612] border-[#ded3b6]',
+      paraHover: 'hover:bg-[#f3ecd7]/60',
+      paraEvidence: 'bg-[#fcedb8]/90 ring-2 ring-amber-500/80 shadow-md',
+      paraBadgeDefault: 'bg-[#ebe3cf] text-[#554b38] hover:bg-[#855e1a] hover:text-white',
+      paraText: 'text-[#2a2e36]',
+      metaText: 'text-[#776c56]'
+    },
+    slate: {
+      container: 'bg-[#0f172a] text-[#e2e8f0]',
+      topBar: 'bg-[#1e293b] border-b border-slate-800 text-slate-300',
+      controlCard: 'bg-[#0f172a] border-slate-700 text-slate-200',
+      buttonHover: 'hover:bg-slate-800 text-slate-300 hover:text-white',
+      divider: 'border-slate-800',
+      titleBorder: 'border-b border-slate-800',
+      passageTitle: 'text-white',
+      badge: 'bg-blue-950/80 text-blue-300 border-blue-800',
+      paraHover: 'hover:bg-slate-800/50',
+      paraEvidence: 'bg-amber-950/60 ring-2 ring-amber-400 shadow-md text-amber-100',
+      paraBadgeDefault: 'bg-slate-800 text-slate-300 hover:bg-blue-600 hover:text-white',
+      paraText: 'text-slate-200',
+      metaText: 'text-slate-400'
+    }
+  };
+
+  const ts = themeStyles[theme] || themeStyles.standard;
+
   return (
-    <div ref={paneRef} className="h-full flex flex-col bg-white overflow-hidden select-text relative">
+    <div ref={paneRef} className={`h-full flex flex-col overflow-hidden select-text relative transition-colors duration-150 ${ts.container}`}>
       {/* Passage Top Control Bar */}
-      <div className="bg-slate-50 border-b border-slate-200 px-4 py-2.5 flex items-center justify-between gap-3 text-xs shrink-0">
+      <div className={`px-4 py-2.5 flex items-center justify-between gap-3 text-xs shrink-0 transition-colors duration-150 ${ts.topBar}`}>
         {/* Highlighter Tool Palette */}
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 font-semibold text-slate-600 mr-1">
+          <div className="flex items-center space-x-1 font-semibold mr-1">
             <Highlighter className="w-3.5 h-3.5 text-blue-600" />
             <span className="hidden sm:inline">Dạ quang:</span>
           </div>
 
-          <div className="flex items-center space-x-1 bg-white p-1 rounded-lg border border-slate-200 shadow-2xs">
+          <div className={`flex items-center space-x-1 p-1 rounded-lg border shadow-2xs ${ts.controlCard}`}>
             {HIGHLIGHT_COLORS.map(c => (
               <button
                 key={c.id}
@@ -210,19 +277,26 @@ export default function PassagePane({
             </button>
           )}
 
-          <div className="hidden lg:flex items-center space-x-1 text-[11px] text-slate-400 border-l border-slate-200 pl-2">
-            <span>💡 Nhấp đúp vào từ để tra từ điển</span>
+          <div className={`hidden lg:flex items-center space-x-1 text-[11px] border-l pl-2 ${ts.divider}`}>
+            {examMode === 'exam' ? (
+              <span className="text-amber-700 font-semibold flex items-center gap-1">
+                <Shield className="w-3 h-3 text-amber-600" />
+                <span>Phòng Thi Thử: Không hỗ trợ tra từ</span>
+              </span>
+            ) : (
+              <span className={ts.metaText}>💡 Nhấp đúp vào từ để tra từ điển</span>
+            )}
           </div>
         </div>
 
         {/* Font Size & Meta */}
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1 bg-white p-0.5 rounded-lg border border-slate-200">
+          <div className={`flex items-center space-x-1 p-0.5 rounded-lg border ${ts.controlCard}`}>
             <button
               type="button"
               onClick={() => onFontSizeChange && onFontSizeChange('sm')}
               className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
-                fontSize === 'sm' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                fontSize === 'sm' ? 'bg-blue-600 text-white shadow-xs' : ts.buttonHover
               }`}
               title="Cỡ chữ nhỏ (A-)"
             >
@@ -232,7 +306,7 @@ export default function PassagePane({
               type="button"
               onClick={() => onFontSizeChange && onFontSizeChange('base')}
               className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
-                fontSize === 'base' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                fontSize === 'base' ? 'bg-blue-600 text-white shadow-xs' : ts.buttonHover
               }`}
               title="Cỡ chữ chuẩn (A)"
             >
@@ -242,7 +316,7 @@ export default function PassagePane({
               type="button"
               onClick={() => onFontSizeChange && onFontSizeChange('lg')}
               className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
-                fontSize === 'lg' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                fontSize === 'lg' ? 'bg-blue-600 text-white shadow-xs' : ts.buttonHover
               }`}
               title="Cỡ chữ lớn (A+)"
             >
@@ -250,7 +324,7 @@ export default function PassagePane({
             </button>
           </div>
 
-          <div className="hidden md:flex items-center space-x-1 text-slate-500 text-[11px] bg-white px-2 py-1 rounded-md border border-slate-200">
+          <div className={`hidden md:flex items-center space-x-1 text-[11px] px-2 py-1 rounded-md border ${ts.controlCard}`}>
             <span>{passage?.wordCount || 800} từ</span>
           </div>
         </div>
@@ -259,21 +333,21 @@ export default function PassagePane({
       {/* Passage Content Body */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-4 pb-28 sm:pb-32 space-y-6">
         {/* Title Header */}
-        <div className="border-b border-slate-100 pb-4 space-y-2">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
+        <div className={`${ts.titleBorder} pb-4 space-y-2`}>
+          <div className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${ts.badge}`}>
             <span>READING PASSAGE {passage?.passageNumber || 1}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+          <h2 className={`text-xl sm:text-2xl font-black tracking-tight leading-snug ${ts.passageTitle}`}>
             {passage?.title}
           </h2>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span className="font-semibold text-slate-700">Độ khó:</span>
+          <div className={`flex items-center gap-2 text-xs ${ts.metaText}`}>
+            <span className="font-semibold">Độ khó:</span>
             <span>{passage?.difficulty}</span>
           </div>
         </div>
 
         {/* Paragraphs */}
-        <div className="space-y-6 text-slate-800">
+        <div className={`space-y-6 ${ts.paraText}`}>
           {passage?.paragraphs?.map(para => {
             const isTargetEvidence = activeEvidencePara === para.id;
             return (
@@ -284,8 +358,8 @@ export default function PassagePane({
                 onDoubleClick={(e) => handleDoubleClick(e, para.text)}
                 className={`relative pl-7 sm:pl-9 transition-all rounded-xl p-3 ${
                   isTargetEvidence 
-                    ? 'bg-amber-50/80 ring-2 ring-amber-400/80 shadow-md' 
-                    : 'hover:bg-slate-50/70'
+                    ? ts.paraEvidence 
+                    : ts.paraHover
                 }`}
               >
                 {/* Paragraph Label Badge (A, B, C...) */}
@@ -293,7 +367,7 @@ export default function PassagePane({
                   className={`absolute left-1 top-3.5 w-6 h-6 rounded-lg flex items-center justify-center font-black text-xs transition-colors select-none ${
                     isTargetEvidence
                       ? 'bg-amber-500 text-white shadow-sm'
-                      : 'bg-slate-200 text-slate-700 hover:bg-blue-600 hover:text-white'
+                      : ts.paraBadgeDefault
                   }`}
                   title={`Đoạn ${para.id}`}
                 >

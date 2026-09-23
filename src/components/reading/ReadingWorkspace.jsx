@@ -23,7 +23,8 @@ import {
   Globe,
   Lock,
   ChevronDown,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Shield
 } from 'lucide-react';
 import { INITIAL_READING_TESTS } from '../../data/readingTasks';
 import { useReadingExam } from '../../hooks/useReadingExam';
@@ -75,6 +76,20 @@ export default function ReadingWorkspace({
   const [selectedPassageNum, setSelectedPassageNum] = useState(1);
   const [examMode, setExamMode] = useState(() => initialExamMode || 'practice'); // 'exam' | 'practice'
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+  const [readingTheme, setReadingTheme] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_reading_theme') || 'standard';
+    } catch (e) {
+      return 'standard';
+    }
+  });
+
+  const handleThemeChange = (newTheme) => {
+    setReadingTheme(newTheme);
+    try {
+      localStorage.setItem('ielts_reading_theme', newTheme);
+    } catch (e) {}
+  };
 
   // Sync when initialTestId or initialExamMode is updated externally (e.g. from MockTestModal)
   useEffect(() => {
@@ -414,6 +429,24 @@ export default function ReadingWorkspace({
     3: 'Gợi ý: ≤ 23 phút'
   };
 
+  const handleToggleExamMode = () => {
+    if (examMode === 'exam' && !isSubmitted) {
+      if (!window.confirm('Bạn đang ở Chế độ Thi Thử (Strict Exam). Nếu chuyển về Luyện Tập tự do, chế độ kiểm soát thời gian thi thật sẽ kết thúc. Bạn có chắc chắn muốn chuyển sang chế độ Luyện tập?')) {
+        return;
+      }
+    }
+    setExamMode(prev => prev === 'exam' ? 'practice' : 'exam');
+  };
+
+  const handleOpenLibrary = () => {
+    if (examMode === 'exam' && !isSubmitted && Object.keys(userAnswers).length > 0) {
+      if (!window.confirm('Bạn đang làm bài thi thử. Nếu đổi đề thi khác lúc này, tiến độ bài làm hiện tại sẽ bị hủy. Bạn có chắc chắn muốn mở Kho Đề?')) {
+        return;
+      }
+    }
+    setIsLibraryOpen(true);
+  };
+
   const themeStyles = getContrastThemeStyles(cdiTheme);
 
   return (
@@ -484,7 +517,7 @@ export default function ReadingWorkspace({
               {/* Test Chip */}
               <button
                 type="button"
-                onClick={() => setIsLibraryOpen(true)}
+                onClick={handleOpenLibrary}
                 className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[120px] sm:max-w-[190px] min-w-0 truncate"
                 title={`Đề đang làm: ${currentTest.title} (Bấm để mở Kho Đề - ${allReadingTests.length} đề)`}
               >
@@ -543,25 +576,37 @@ export default function ReadingWorkspace({
                   {isRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 text-emerald-600" />}
                 </button>
               )}
+              {examMode === 'exam' && !isSubmitted && (
+                <span className="p-0.5 text-amber-500/80 ml-0.5 shrink-0" title="Chế độ Thi Thử: Đồng hồ chạy liên tục 60 phút (không thể tạm dừng)">
+                  <Lock className="w-3 h-3" />
+                </span>
+              )}
             </div>
 
             {/* Mobile Right Action Group */}
             <div className="flex items-center space-x-1 shrink-0">
-              {/* Sinh Đề AI */}
-              <button
-                type="button"
-                onClick={() => setIsGeneratorOpen(true)}
-                className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs shrink-0 cursor-pointer shadow-2xs"
-                title="Sinh Đề Reading Mới Bằng AI"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
-                <span>Sinh Đề</span>
-              </button>
+              {/* Sinh Đề AI (Chỉ hiện khi Luyện tập để không phân tâm khi Thi thật) */}
+              {examMode === 'practice' ? (
+                <button
+                  type="button"
+                  onClick={() => setIsGeneratorOpen(true)}
+                  className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs shrink-0 cursor-pointer shadow-2xs"
+                  title="Sinh Đề Reading Mới Bằng AI"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
+                  <span>Sinh Đề</span>
+                </button>
+              ) : !isSubmitted ? (
+                <div className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200 font-bold text-[11px] shrink-0 select-none">
+                  <Shield className="w-3 h-3 text-red-600 animate-pulse" />
+                  <span>Phòng Thi</span>
+                </div>
+              ) : null}
 
               {/* Mode Toggle */}
               <button
                 type="button"
-                onClick={() => setExamMode(prev => prev === 'exam' ? 'practice' : 'exam')}
+                onClick={handleToggleExamMode}
                 className={`px-2 py-1 rounded-xl font-bold border text-xs shrink-0 cursor-pointer shadow-2xs ${
                   examMode === 'exam'
                     ? 'bg-red-50 text-red-700 border-red-200'
@@ -621,6 +666,35 @@ export default function ReadingWorkspace({
                         </button>
                       )}
                       <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Chế Độ Giấy Đọc (Bảo Vệ Mắt)
+                      </div>
+                      <div className="flex items-center space-x-1 px-2 pb-1">
+                        <button
+                          type="button"
+                          onClick={() => { handleThemeChange('standard'); setIsToolsDropdownOpen(false); }}
+                          className={`flex-1 py-1 rounded-lg text-xs font-bold border cursor-pointer ${readingTheme === 'standard' ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200'}`}
+                          title="Giao diện chuẩn giấy trắng"
+                        >
+                          ☀️ Chuẩn
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { handleThemeChange('sepia'); setIsToolsDropdownOpen(false); }}
+                          className={`flex-1 py-1 rounded-lg text-xs font-bold border cursor-pointer ${readingTheme === 'sepia' ? 'bg-amber-700 text-amber-50 border-amber-800' : 'bg-[#fbf7ee] text-[#5c4a28] border-[#e8dfc8]'}`}
+                          title="Màu giấy sách ngả vàng ấm, chống mỏi mắt"
+                        >
+                          📜 Sách Giấy
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { handleThemeChange('slate'); setIsToolsDropdownOpen(false); }}
+                          className={`flex-1 py-1 rounded-lg text-xs font-bold border cursor-pointer ${readingTheme === 'slate' ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-slate-300'}`}
+                          title="Chế độ tối dịu mắt Slate"
+                        >
+                          🌙 Tối
+                        </button>
+                      </div>
+                      <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         Cỡ Chữ Đọc
                       </div>
                       <div className="flex items-center space-x-1 px-2 pb-1">
@@ -677,7 +751,7 @@ export default function ReadingWorkspace({
             <div className="flex items-center space-x-1 min-w-0 shrink">
               <button
                 type="button"
-                onClick={() => setIsLibraryOpen(true)}
+                onClick={handleOpenLibrary}
                 className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[170px] xl:max-w-[240px] truncate min-w-0 shrink"
                 title={`Đề đang làm: ${currentTest.title} (Bấm để mở Kho Đề - ${allReadingTests.length} đề)`}
               >
@@ -727,16 +801,24 @@ export default function ReadingWorkspace({
               ))}
             </div>
 
-            {/* AI Generator Button */}
-            <button
-              type="button"
-              onClick={() => setIsGeneratorOpen(true)}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 text-purple-700 hover:text-purple-800 font-bold text-xs border border-purple-200 transition-all shadow-2xs shrink-0 cursor-pointer"
-              title="Sinh bài đọc & bộ câu hỏi IELTS Reading mới bằng AI theo chuẩn Cambridge"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse shrink-0" />
-              <span>Sinh Đề (AI)</span>
-            </button>
+            {/* AI Generator Button or Strict Exam Badge */}
+            {examMode === 'exam' && !isSubmitted ? (
+              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200 text-xs font-bold shadow-2xs shrink-0 select-none">
+                <Shield className="w-3.5 h-3.5 text-red-600 animate-pulse shrink-0" />
+                <span className="hidden sm:inline">Phòng Thi Nghiêm Ngặt</span>
+                <span className="sm:hidden">Thi Thử</span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsGeneratorOpen(true)}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 text-purple-700 hover:text-purple-800 font-bold text-xs border border-purple-200 transition-all shadow-2xs shrink-0 cursor-pointer"
+                title="Sinh bài đọc & bộ câu hỏi IELTS Reading mới bằng AI theo chuẩn Cambridge"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse shrink-0" />
+                <span>Sinh Đề (AI)</span>
+              </button>
+            )}
 
             {/* Desktop Tiện Ích Dropdown */}
             <div className="relative">
@@ -786,6 +868,35 @@ export default function ReadingWorkspace({
                         </div>
                       </button>
                     )}
+                    <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      Chế Độ Giấy Đọc (Bảo Vệ Mắt)
+                    </div>
+                    <div className="flex items-center space-x-1 px-2 pb-1">
+                      <button
+                        type="button"
+                        onClick={() => handleThemeChange('standard')}
+                        className={`flex-1 py-1 px-1 rounded-lg text-xs font-bold border cursor-pointer ${readingTheme === 'standard' ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200'}`}
+                        title="Giao diện chuẩn giấy trắng"
+                      >
+                        ☀️ Chuẩn
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleThemeChange('sepia')}
+                        className={`flex-1 py-1 px-1 rounded-lg text-xs font-bold border cursor-pointer ${readingTheme === 'sepia' ? 'bg-amber-700 text-amber-50 border-amber-800' : 'bg-[#fbf7ee] text-[#5c4a28] border-[#e8dfc8]'}`}
+                        title="Màu giấy sách ngả vàng ấm Cambridge, chống mỏi mắt"
+                      >
+                        📜 Sách Giấy
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleThemeChange('slate')}
+                        className={`flex-1 py-1 px-1 rounded-lg text-xs font-bold border cursor-pointer ${readingTheme === 'slate' ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-100 text-slate-700 border-slate-300'}`}
+                        title="Chế độ tối dịu mắt Slate"
+                      >
+                        🌙 Slate Tối
+                      </button>
+                    </div>
                     <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Cỡ Chữ Đọc
                     </div>
@@ -887,6 +998,11 @@ export default function ReadingWorkspace({
                   {isRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 text-emerald-600" />}
                 </button>
               )}
+              {examMode === 'exam' && !isSubmitted && (
+                <span className="p-1 text-amber-500/80 ml-0.5 shrink-0" title="Chế độ Thi Thử: Đồng hồ chạy liên tục 60 phút (không thể tạm dừng)">
+                  <Lock className="w-3 h-3" />
+                </span>
+              )}
             </div>
 
             {/* CDI Fullscreen Simulation Toggle & Contrast Theme Selector */}
@@ -930,7 +1046,7 @@ export default function ReadingWorkspace({
             {/* Mode Selector Button */}
             <button
               type="button"
-              onClick={() => setExamMode(prev => prev === 'exam' ? 'practice' : 'exam')}
+              onClick={handleToggleExamMode}
               className={`px-2.5 py-1 rounded-xl font-bold border text-xs transition-all shrink-0 cursor-pointer shadow-2xs ${
                 examMode === 'exam'
                   ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
@@ -979,6 +1095,8 @@ export default function ReadingWorkspace({
             model={model}
             onOpenSettings={onOpenSettings}
             onSaveToVocabNotebook={onSaveToVocabNotebook}
+            examMode={examMode}
+            theme={readingTheme}
           />
         </div>
 
@@ -1017,6 +1135,7 @@ export default function ReadingWorkspace({
             model={model}
             onOpenSettings={onOpenSettings}
             onSaveToVocabNotebook={onSaveToVocabNotebook}
+            theme={readingTheme}
           />
         </div>
       </div>

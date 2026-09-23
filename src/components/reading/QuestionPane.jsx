@@ -31,12 +31,54 @@ export default function QuestionPane({
   apiKey,
   model,
   onOpenSettings,
-  onSaveToVocabNotebook
+  onSaveToVocabNotebook,
+  theme = 'standard'
 }) {
   const [aiExplanations, setAiExplanations] = useState({}); // { [order]: data }
   const [loadingAiFor, setLoadingAiFor] = useState(null); // order
   const [aiErrorFor, setAiErrorFor] = useState({}); // { [order]: string }
   const [savedVocabIds, setSavedVocabIds] = useState({}); // { [word]: boolean }
+
+  const themeStyles = {
+    standard: {
+      container: 'bg-slate-50/50 text-slate-800',
+      headerCard: 'bg-white border-slate-200 text-slate-900',
+      instruction: 'text-slate-900',
+      meta: 'text-slate-500',
+      badge: 'bg-blue-50 text-blue-700 border-blue-100',
+      note: 'text-slate-500',
+      card: 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs',
+      box: 'bg-slate-50 border-slate-200 text-slate-800',
+      chip: 'bg-white border-slate-200',
+      text: 'text-slate-900'
+    },
+    sepia: {
+      container: 'bg-[#f4efe0]/40 text-[#2c3038]',
+      headerCard: 'bg-[#fbf7ee] border-[#e8dfc8] text-[#2c3038]',
+      instruction: 'text-[#24272e]',
+      meta: 'text-[#776c56]',
+      badge: 'bg-[#efe6cf] text-[#7d5612] border-[#ded3b6]',
+      note: 'text-[#776c56]',
+      card: 'bg-[#fbf7ee] border-[#e8dfc8] hover:border-[#dbcfae] text-[#2c3038] shadow-2xs',
+      box: 'bg-[#f4efe0] border-[#e2d8c0] text-[#3c3f48]',
+      chip: 'bg-[#fbf7ee] border-[#e2d8c0]',
+      text: 'text-[#2c3038]'
+    },
+    slate: {
+      container: 'bg-[#0b1120] text-[#e2e8f0]',
+      headerCard: 'bg-[#1e293b] border-slate-800 text-slate-100',
+      instruction: 'text-white',
+      meta: 'text-slate-400',
+      badge: 'bg-blue-950/80 text-blue-300 border-blue-800',
+      note: 'text-slate-400',
+      card: 'bg-[#1e293b] border-slate-800 hover:border-slate-700 text-slate-100 shadow-2xs',
+      box: 'bg-slate-800/60 border-slate-700 text-slate-200',
+      chip: 'bg-slate-800 border-slate-700',
+      text: 'text-white'
+    }
+  };
+
+  const ts = themeStyles[theme] || themeStyles.standard;
 
   const handleRequestAiExplanation = async (q) => {
     if (!apiKey) {
@@ -125,7 +167,7 @@ export default function QuestionPane({
                   ? isCorrect 
                     ? 'bg-emerald-50/50 border-emerald-300' 
                     : 'bg-rose-50/50 border-rose-300'
-                  : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
+                  : ts.card
               }`}
             >
               <div className="flex items-start gap-3">
@@ -187,7 +229,7 @@ export default function QuestionPane({
                   ? isCorrect 
                     ? 'bg-emerald-50/50 border-emerald-300' 
                     : 'bg-rose-50/50 border-rose-300'
-                  : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
+                  : ts.card
               }`}
             >
               <div className="flex items-start gap-3">
@@ -266,7 +308,7 @@ export default function QuestionPane({
             <div 
               key={q.order}
               id={`question-card-${q.order}`}
-              className="p-4 rounded-xl border bg-white border-slate-200 shadow-2xs space-y-3"
+              className={`p-4 rounded-xl border space-y-3 ${ts.card}`}
             >
               <div className="flex items-start gap-3">
                 <span className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-800 font-bold text-xs flex items-center justify-center shrink-0">
@@ -361,7 +403,7 @@ export default function QuestionPane({
                   ? isCorrect 
                     ? 'bg-emerald-50/50 border-emerald-300' 
                     : 'bg-rose-50/50 border-rose-300'
-                  : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
+                  : ts.card
               }`}
             >
               <div className="flex items-start gap-3">
@@ -442,7 +484,7 @@ export default function QuestionPane({
                   ? isCorrect 
                     ? 'bg-emerald-50/50 border-emerald-300' 
                     : 'bg-rose-50/50 border-rose-300'
-                  : 'bg-white border-slate-200 hover:border-slate-300 shadow-2xs'
+                  : ts.card
               }`}
             >
               <div className="flex items-start gap-3">
@@ -699,24 +741,24 @@ export default function QuestionPane({
   };
 
   return (
-    <div className={`h-full flex flex-col bg-slate-50/50 overflow-y-auto px-3 sm:px-6 pt-4 pb-28 sm:pb-32 space-y-6 sm:space-y-8 transition-all duration-150 ${questionFontSizeClasses[fontSize] || questionFontSizeClasses.base}`}>
+    <div className={`h-full flex flex-col overflow-y-auto px-3 sm:px-6 pt-4 pb-28 sm:pb-32 space-y-6 sm:space-y-8 transition-colors duration-150 ${ts.container} ${questionFontSizeClasses[fontSize] || questionFontSizeClasses.base}`}>
       {questionGroups.map((group, idx) => (
         <div key={group.id || idx} className="space-y-4">
           {/* Group Header Card */}
-          <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+          <div className={`p-4 rounded-2xl border shadow-2xs space-y-2 transition-colors duration-150 ${ts.headerCard}`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">
+              <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${ts.badge}`}>
                 Questions {group.questions[0]?.order} - {group.questions[group.questions.length - 1]?.order}
               </span>
-              <span className="text-[11px] font-semibold text-slate-500">
+              <span className={`text-[11px] font-semibold ${ts.meta}`}>
                 {group.questions.length} câu hỏi
               </span>
             </div>
-            <h4 className="text-sm font-bold text-slate-900 whitespace-pre-line leading-snug">
+            <h4 className={`text-sm font-bold whitespace-pre-line leading-snug ${ts.instruction}`}>
               {group.instruction || group.instructions}
             </h4>
             {group.extraNotes && (
-              <p className="text-xs text-slate-500 italic">
+              <p className={`text-xs italic ${ts.note}`}>
                 {group.extraNotes}
               </p>
             )}
