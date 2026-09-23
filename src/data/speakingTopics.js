@@ -604,3 +604,143 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     part3DiscussionId: 'p2-inspiring-person'
   }
 ];
+
+// =========================================================================
+// COMMUNITY CURATED AI SPEAKING PRACTICE TOPICS & QUESTIONS (NO AUTH REQ)
+// =========================================================================
+export const COMMUNITY_DEFAULT_P1_TOPICS = [
+  {
+    id: 'p1-comm-ai-future-jobs',
+    title: '✨ [AI Cộng Đồng] Artificial Intelligence & Future Jobs',
+    category: 'Technology & Employment',
+    tag: 'AI Forecast',
+    isPublic: true,
+    isCommunity: true,
+    isAiGenerated: true,
+    creatorEmail: 'AI Community Generator',
+    questions: [
+      {
+        qId: 'p1-comm-ai-1',
+        question: 'Do you believe artificial intelligence will significantly transform your chosen career path?',
+        focus: 'Direct Career Prediction',
+        strategy: 'A.R.E.A: Khẳng định mức độ ảnh hưởng -> Nêu tác vụ cụ thể sẽ tự động hóa -> Nêu kỹ năng con người vẫn giữ vai trò quyết định.',
+        vocabHints: [
+          { phrase: 'streamline administrative workflows', meaningVi: 'tinh gọn quy trình hành chính' },
+          { phrase: 'irreplaceable human empathy', meaningVi: 'sự đồng cảm của con người không thể thay thế' }
+        ],
+        sampleAnswer: 'Undoubtedly yes. In my prospective field, routine analytical tasks are increasingly handled by machine learning models, allowing professionals to focus on creative problem-solving and interpersonal leadership.'
+      },
+      {
+        qId: 'p1-comm-ai-2',
+        question: 'What skills do you think young professionals must acquire to remain competitive alongside AI?',
+        focus: 'Adaptability & Core Competencies',
+        strategy: 'A.R.E.A: Nêu 2 kỹ năng cốt lõi (Tư duy phản biện + Trí tuệ cảm xúc) -> Đưa ví dụ thực tế.',
+        vocabHints: [
+          { phrase: 'cognitive adaptability', meaningVi: 'khả năng thích ứng nhận thức' },
+          { phrase: 'cross-disciplinary literacy', meaningVi: 'hiểu biết liên ngành' }
+        ],
+        sampleAnswer: 'I am convinced that cognitive adaptability and emotional intelligence are paramount. While algorithms excel at pattern recognition, synthesizing complex moral decisions remains distinctly human.'
+      },
+      {
+        qId: 'p1-comm-ai-3',
+        question: 'How frequently do you personally employ generative AI tools in your daily study or work routine?',
+        focus: 'Personal Frequency & Utility',
+        strategy: 'A.R.E.A: Nêu tần suất -> Kể tên công cụ/mục đích -> Đánh giá mức độ hữu ích.',
+        vocabHints: [
+          { phrase: 'indispensable virtual assistant', meaningVi: 'trợ lý ảo không thể thiếu' },
+          { phrase: 'synthesize lengthy academic articles', meaningVi: 'tổng hợp các bài báo học thuật dài' }
+        ],
+        sampleAnswer: 'On an almost daily basis. I utilize generative language models as brainstorming partners to outline complex essays and summarize dense scientific papers.'
+      }
+    ]
+  },
+  {
+    id: 'p1-comm-green-living',
+    title: '✨ [AI Cộng Đồng] Eco-friendly Lifestyle & Green Habits',
+    category: 'Environment & Sustainability',
+    tag: 'Trending Forecast',
+    isPublic: true,
+    isCommunity: true,
+    isAiGenerated: true,
+    creatorEmail: 'AI Community Generator',
+    questions: [
+      {
+        qId: 'p1-comm-green-1',
+        question: 'What daily habits have you adopted to reduce your ecological footprint?',
+        focus: 'Personal Eco Action',
+        strategy: 'A.R.E.A: Nêu thói quen cụ thể (hạn chế đồ nhựa dùng 1 lần, tiết kiệm điện) -> Giải thích lý do.',
+        vocabHints: [
+          { phrase: 'curtail single-use plastics', meaningVi: 'cắt giảm đồ nhựa dùng một lần' },
+          { phrase: 'conscientious consumerism', meaningVi: 'tiêu dùng có ý thức môi trường' }
+        ],
+        sampleAnswer: 'I have made a conscious effort to curtail single-use plastics by carrying a reusable flask and opting for public transit whenever feasible.'
+      },
+      {
+        qId: 'p1-comm-green-2',
+        question: 'Do you find it effortless or inconvenient to practice household recycling in your hometown?',
+        focus: 'Infrastructure & Feasibility',
+        strategy: 'A.R.E.A: Nêu thực trạng hạ tầng phân loại rác -> Đánh giá sự thuận tiện.',
+        vocabHints: [
+          { phrase: 'segregated waste disposal bins', meaningVi: 'thùng rác phân loại riêng biệt' },
+          { phrase: 'municipal recycling infrastructure', meaningVi: 'hạ tầng tái chế của đô thị' }
+        ],
+        sampleAnswer: 'To be candid, municipal recycling infrastructure in my city remains somewhat fragmented, requiring citizens to exert extra effort to locate designated sorting stations.'
+      }
+    ]
+  }
+];
+
+export const COMMUNITY_DEFAULT_P2_CARDS = [
+  {
+    id: 'p2-comm-smart-tool',
+    title: '✨ [AI Cộng Đồng] A Smart Digital Tool or AI Assistant You Regularly Use',
+    category: 'Technology & Innovation',
+    tag: 'AI Forecast',
+    isPublic: true,
+    isCommunity: true,
+    isAiGenerated: true,
+    creatorEmail: 'AI Community Generator',
+    cueCard: {
+      intro: 'Describe a smart digital tool or AI assistant that you frequently rely on. You should say:',
+      bullets: [
+        'What the tool is and when you first discovered it',
+        'How exactly you utilize it in your academic or professional life',
+        'What specific advantages it offers compared to traditional methods',
+        'And explain how it has influenced your overall productivity and learning habits'
+      ]
+    },
+    mindmapNotes: [
+      'Bối cảnh: Giới thiệu ứng dụng AI tạo sinh (Gemini/ChatGPT) & mốc bắt đầu sử dụng',
+      'Công năng: Viết code, brainstorm dàn ý bài viết, sửa lỗi ngữ pháp & dịch thuật học thuật',
+      'Ưu thế: Phản hồi tức thì 24/7, cá nhân hóa phản biện theo từng bước',
+      'Ý nghĩa: Giải phóng thời gian khỏi việc lặp lại, nâng cao khả năng tự học độc lập'
+    ],
+    sampleAnswer: 'I would like to elaborate on an advanced generative AI assistant that has become an indispensable cornerstone of my daily learning routine...'
+  }
+];
+
+export const COMMUNITY_DEFAULT_P3_SETS = [
+  {
+    linkedPart2Id: 'p2-comm-smart-tool',
+    topic: '✨ [AI Cộng Đồng] Automation, Cognitive Dependency & Ethics of AI',
+    isPublic: true,
+    isCommunity: true,
+    isAiGenerated: true,
+    creatorEmail: 'AI Community Generator',
+    questions: [
+      {
+        qId: 'p3-comm-smart-1',
+        question: 'Do you think excessive reliance on artificial intelligence might diminish young people\'s critical thinking faculties?',
+        analysisType: 'Tác động nhận thức & Trí tuệ phản biện',
+        strategy: 'PEEL: Point -> Explanation -> Real-world Example -> Nuanced Conclusion'
+      },
+      {
+        qId: 'p3-comm-smart-2',
+        question: 'In what sectors should artificial intelligence be legally prohibited from making autonomous decisions?',
+        analysisType: 'Ranh giới pháp lý & Đạo đức công nghệ',
+        strategy: 'PEEL: Point -> Judicial/Medical contexts -> Rationale of accountability -> Final verdict'
+      }
+    ]
+  }
+];
+

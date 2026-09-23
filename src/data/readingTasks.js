@@ -618,6 +618,181 @@ export const INITIAL_READING_TESTS = [
         ]
       }
     ]
+  },
+  // COMMUNITY AI GENERATED READING TEST (PUBLIC BY DEFAULT, ACCESSIBLE WITHOUT LOGIN)
+  {
+    id: 'ai-comm-test-perovskite-solar',
+    title: '✨ [AI Cộng Đồng] Next-Gen Perovskite Solar Cells & Energy Transition',
+    description: 'Đề thi đọc học thuật do Gemini AI thiết kế chuẩn Cambridge Academic: Cơ chế pin mặt trời Perovskite, hiệu suất chuyển đổi quang năng và bài toán kinh tế.',
+    totalQuestions: 13,
+    timeLimitMinutes: 20,
+    isCustom: true,
+    isPublic: true,
+    isCommunity: true,
+    creatorEmail: 'AI Community Generator',
+    passages: [
+      {
+        id: 'comm-p1',
+        passageNumber: 1,
+        title: 'Perovskite Photovoltaics: The Dawn of a Solar Revolution',
+        topic: 'tech',
+        difficulty: 'Trung bình (Band 6.5 - 7.5)',
+        wordCount: 850,
+        paragraphs: [
+          {
+            id: 'A',
+            text: 'Over the past two decades, commercial solar energy has relied almost exclusively on silicon-based photovoltaic cells. While silicon technology has matured substantially—achieving power conversion efficiencies exceeding 22%—the manufacturing process requires ultra-high temperatures and energy-intensive crystallization facilities. Recently, material scientists have turned their focus toward an alternative class of compounds known as perovskites, named after the 19th-century Russian mineralogist L. A. Perovski. These synthetic crystals possess a distinct atomic crystal lattice that absorbs photons with exceptional efficiency.'
+          },
+          {
+            id: 'B',
+            text: 'What astounds researchers is the unprecedented speed of perovskite development. When first incorporated into solar architectures in 2009, perovskite cells registered an efficiency of merely 3.8%. Within barely fifteen years, laboratory prototypes have shattered the 26% threshold, an evolutionary sprint that silicon required half a century to accomplish. Furthermore, unlike brittle silicon wafers which must be sliced with micron-level precision, perovskite ink can be printed onto flexible plastic substrates using conventional roll-to-roll printing techniques.'
+          },
+          {
+            id: 'C',
+            text: 'Despite these remarkable attributes, substantial technological hurdles impede immediate commercialization. The primary vulnerability lies in structural instability. Unencapsulated perovskite layers degrade rapidly when subjected to ambient moisture, oxygen, and ultraviolet radiation. Under continuous operational illumination, chemical bonds within the crystal lattice break down, causing electrical performance to plummet after several hundred hours. To overcome this limitation, researchers are engineering tandem cells that combine a resilient silicon bottom layer with a high-absorption perovskite top layer.'
+          },
+          {
+            id: 'D',
+            text: 'Another critical concern revolves around chemical toxicity. Most high-efficiency perovskite formulations utilize trace amounts of water-soluble lead. Environmental watchdog groups fear that damaged modules in commercial solar farms could allow toxic lead halides to leach into agricultural aquifers during torrential rainfall. In response, laboratories in Oxford and Lausanne are developing lead-free alternatives employing tin or bismuth, though their conversion efficiencies currently lag behind lead-based counterparts.'
+          }
+        ],
+        questionGroups: [
+          {
+            id: 'qg-comm-1',
+            type: 'true_false_not_given',
+            title: 'Questions 1–6',
+            instruction: 'Do the following statements agree with the information given in Reading Passage 1?\nIn boxes 1–6 on your answer sheet, choose:\nTRUE if the statement agrees with the information\nFALSE if the statement contradicts the information\nNOT GIVEN if there is no information on this',
+            questions: [
+              {
+                id: 1,
+                order: 1,
+                questionText: 'Traditional silicon solar cells need extremely hot temperatures during fabrication.',
+                answer: 'TRUE',
+                evidenceParagraph: 'A',
+                evidenceQuote: 'the manufacturing process requires ultra-high temperatures and energy-intensive crystallization facilities',
+                explanation: 'Đúng (True). Đoạn A nói rõ "requires ultra-high temperatures", đồng nghĩa với "needs extremely hot temperatures during fabrication".'
+              },
+              {
+                id: 2,
+                order: 2,
+                questionText: 'Perovskite solar technology took fifty years to achieve a conversion efficiency above 26%.',
+                answer: 'FALSE',
+                evidenceParagraph: 'B',
+                evidenceQuote: 'Within barely fifteen years, laboratory prototypes have shattered the 26% threshold, an evolutionary sprint that silicon required half a century to accomplish.',
+                explanation: 'Sai (False). Bài đọc nói pin Perovskite chỉ mất chưa đầy 15 năm ("Within barely fifteen years") để vượt mốc 26%, trong khi nửa thế kỷ (50 năm) là thời gian mà pin silicon phải trải qua.'
+              },
+              {
+                id: 3,
+                order: 3,
+                questionText: 'Perovskite materials can be printed onto pliable surfaces using printing press techniques.',
+                answer: 'TRUE',
+                evidenceParagraph: 'B',
+                evidenceQuote: 'perovskite ink can be printed onto flexible plastic substrates using conventional roll-to-roll printing techniques',
+                explanation: 'Đúng (True). Đoạn B nêu "printed onto flexible plastic substrates using conventional roll-to-roll printing", đồng nghĩa với "printed onto pliable surfaces using printing press techniques".'
+              },
+              {
+                id: 4,
+                order: 4,
+                questionText: 'Commercial solar developers in Europe have widely abandoned silicon panels in favor of pure perovskite panels.',
+                answer: 'FALSE',
+                evidenceParagraph: 'C',
+                evidenceQuote: 'Despite these remarkable attributes, substantial technological hurdles impede immediate commercialization.',
+                explanation: 'Sai (False). Đoạn C khẳng định pin Perovskite chưa thể thương mại hóa ngay ("hurdles impede immediate commercialization"), do đó không hề có việc các nhà phát triển châu Âu đã từ bỏ silicon để chuyển sang perovskite thuần túy.'
+              },
+              {
+                id: 5,
+                order: 5,
+                questionText: 'The manufacturing costs of lead-free perovskite cells are significantly cheaper than those of tin-based cells.',
+                answer: 'NOT GIVEN',
+                evidenceParagraph: 'D',
+                evidenceQuote: 'laboratories in Oxford and Lausanne are developing lead-free alternatives employing tin or bismuth, though their conversion efficiencies currently lag behind',
+                explanation: 'Chưa có thông tin (Not Given). Đoạn D chỉ so sánh hiệu suất chuyển đổi ("efficiencies lag behind"), hoàn toàn không so sánh chi phí sản xuất giữa các loại pin không chứa chì và pin thiếc.'
+              },
+              {
+                id: 6,
+                order: 6,
+                questionText: 'Exposure to atmospheric humidity causes unsealed perovskite layers to deteriorate rapidly.',
+                answer: 'TRUE',
+                evidenceParagraph: 'C',
+                evidenceQuote: 'Unencapsulated perovskite layers degrade rapidly when subjected to ambient moisture, oxygen, and ultraviolet radiation.',
+                explanation: 'Đúng (True). "ambient moisture" chính là "atmospheric humidity", và "degrade rapidly" đồng nghĩa với "deteriorate rapidly".'
+              }
+            ]
+          },
+          {
+            id: 'qg-comm-2',
+            type: 'sentence_completion',
+            title: 'Questions 7–13',
+            instruction: 'Complete the sentences below.\nChoose NO MORE THAN TWO WORDS from the passage for each answer.',
+            questions: [
+              {
+                id: 7,
+                order: 7,
+                questionText: 'Perovskites are synthetic compounds with a unique atomic ________ that efficiently captures photons.',
+                answer: 'crystal lattice',
+                evidenceParagraph: 'A',
+                evidenceQuote: 'These synthetic crystals possess a distinct atomic crystal lattice that absorbs photons with exceptional efficiency.',
+                explanation: 'Từ cần điền là "crystal lattice" theo đúng đoạn A.'
+              },
+              {
+                id: 8,
+                order: 8,
+                questionText: 'In 2009, the very first perovskite solar cells reached an efficiency rate of only ________.',
+                answer: '3.8%',
+                evidenceParagraph: 'B',
+                evidenceQuote: 'When first incorporated into solar architectures in 2009, perovskite cells registered an efficiency of merely 3.8%.',
+                explanation: 'Số liệu chính xác là "3.8%".'
+              },
+              {
+                id: 9,
+                order: 9,
+                questionText: 'The main drawback preventing perovskite deployment is its fundamental ________.',
+                answer: 'structural instability',
+                evidenceParagraph: 'C',
+                evidenceQuote: 'The primary vulnerability lies in structural instability.',
+                explanation: 'Từ cần điền là "structural instability" theo đoạn C.'
+              },
+              {
+                id: 10,
+                order: 10,
+                questionText: 'Engineers are coupling silicon with perovskite to construct resilient ________ cells.',
+                answer: 'tandem',
+                evidenceParagraph: 'C',
+                evidenceQuote: 'researchers are engineering tandem cells that combine a resilient silicon bottom layer',
+                explanation: 'Từ cần điền là "tandem".'
+              },
+              {
+                id: 11,
+                order: 11,
+                questionText: 'A hazardous substance present in many high-performance perovskite mixtures is ________.',
+                answer: 'lead',
+                evidenceParagraph: 'D',
+                evidenceQuote: 'Most high-efficiency perovskite formulations utilize trace amounts of water-soluble lead.',
+                explanation: 'Từ cần điền là "lead".'
+              },
+              {
+                id: 12,
+                order: 12,
+                questionText: 'Environmentalists worry that heavy downpours could wash toxic substances into subterranean ________.',
+                answer: 'aquifers',
+                evidenceParagraph: 'D',
+                evidenceQuote: 'allow toxic lead halides to leach into agricultural aquifers during torrential rainfall',
+                explanation: 'Từ cần điền là "aquifers".'
+              },
+              {
+                id: 13,
+                order: 13,
+                questionText: 'Alternative harmless elements currently tested to replace lead include bismuth and ________.',
+                answer: 'tin',
+                evidenceParagraph: 'D',
+                evidenceQuote: 'developing lead-free alternatives employing tin or bismuth',
+                explanation: 'Từ cần điền là "tin".'
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ];
 

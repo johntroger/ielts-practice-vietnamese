@@ -28,11 +28,14 @@ import {
   Lightbulb,
   Clock,
   Flame,
-  Zap
+  Zap,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
+import { COMMUNITY_DEFAULT_DRILLS } from '../data/communityMicroDrills';
 import { evaluateParaphrase, generateMicroDrill, evaluateListeningDrill } from '../services/geminiService';
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
@@ -67,20 +70,63 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
     else if (room === 'listening') setActiveTab('listening-dictation');
   };
 
-  // Drills stored in LocalStorage combined with defaults
-  const [allDrills, setAllDrills] = useState(() => {
-    const combinedDefaults = [...INITIAL_MICRO_DRILLS, ...READING_MICRO_DRILLS, ...LISTENING_MICRO_DRILLS];
+  // Sharing & Privacy State: Defaults to true (Public community resource) with user toggle
+  const [isAutoShare, setIsAutoShare] = useState(() => {
     try {
-      const saved = localStorage.getItem('ielts_custom_micro_drills');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return [...combinedDefaults, ...parsed];
-      }
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  // Filter scope: 'all' | 'community' | 'mine'
+  const [drillScope, setDrillScope] = useState('all');
+
+  // Drills stored in LocalStorage combined with defaults and community drills
+  const [allDrills, setAllDrills] = useState(() => {
+    const combinedDefaults = [
+      ...INITIAL_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })), 
+      ...READING_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })), 
+      ...LISTENING_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })),
+      ...COMMUNITY_DEFAULT_DRILLS
+    ];
+    try {
+      const savedCustom = localStorage.getItem('ielts_custom_micro_drills');
+      const savedCommunity = localStorage.getItem('ielts_community_micro_drills');
+      const customDrills = savedCustom ? JSON.parse(savedCustom) : [];
+      const communityDrills = savedCommunity ? JSON.parse(savedCommunity) : [];
+
+      const drillMap = new Map();
+      combinedDefaults.forEach(d => drillMap.set(d.id, d));
+      communityDrills.forEach(d => drillMap.set(d.id, { ...d, isPublic: true, isCommunity: true }));
+      customDrills.forEach(d => drillMap.set(d.id, d));
+      return Array.from(drillMap.values());
     } catch (e) {
       console.error('Error loading custom drills:', e);
     }
     return combinedDefaults;
   });
+
+  // Handler to toggle publicity of an AI custom drill
+  const handleToggleDrillPublic = (drillId) => {
+    setAllDrills(prev => {
+      const updated = prev.map(d => {
+        if (d.id === drillId) {
+          const nextPub = !d.isPublic;
+          return { ...d, isPublic: nextPub, isCommunity: nextPub };
+        }
+        return d;
+      });
+      try {
+        const customOnly = updated.filter(d => d.isAiGenerated);
+        localStorage.setItem('ielts_custom_micro_drills', JSON.stringify(customOnly));
+        const commOnly = updated.filter(d => d.isAiGenerated && d.isPublic);
+        localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
+      } catch (e) {}
+      return updated;
+    });
+  };
 
   // AI Generating state
   const [isGeneratingDrill, setIsGeneratingDrill] = useState(false);
@@ -379,6 +425,33 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
           </div>
         </div>
 
+        {/* Current Drill Publicity Badge & Toggle */}
+        {list[index] && (
+          <div className="flex items-center space-x-1.5">
+            {list[index].isCommunity || list[index].isPublic ? (
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                <Globe className="w-3 h-3 text-emerald-600" />
+                <span>🌐 Cộng Đồng</span>
+              </span>
+            ) : (
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
+                <Lock className="w-3 h-3 text-amber-600" />
+                <span>🔒 Riêng tư</span>
+              </span>
+            )}
+            {list[index].isAiGenerated && (
+              <button
+                type="button"
+                onClick={() => handleToggleDrillPublic(list[index].id)}
+                className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                title={list[index].isPublic ? 'Chuyển bài tập này sang Riêng tư' : 'Chia sẻ bài tập này thành tài nguyên chung của web'}
+              >
+                {list[index].isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="flex items-center space-x-2 overflow-x-auto max-w-full py-1">
           {total > 15 ? (
             <div className="flex items-center space-x-1.5">
@@ -457,11 +530,14 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
         model
       });
 
-      // Enrich listening drills with clean audioText parameter
+      // Enrich listening drills with clean audioText parameter and respect user's sharing preference
+      const isPub = Boolean(isAutoShare);
       const enrichedDrill = {
         ...newDrill,
-        isPublic: true,
-        creatorEmail: 'Cộng Đồng IELTS',
+        isPublic: isPub,
+        isCommunity: isPub,
+        isAiGenerated: true,
+        creatorEmail: isPub ? 'Cộng Đồng IELTS' : 'Tôi',
         audioText: newDrill.audioText || newDrill.ttsText || newDrill.promptAudioText || newDrill.audioSnippetText || newDrill.audioDirectionsText || ''
       };
 
@@ -472,6 +548,10 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
       try {
         const customOnly = updated.filter(d => d.isAiGenerated);
         localStorage.setItem('ielts_custom_micro_drills', JSON.stringify(customOnly));
+        if (isPub) {
+          const commOnly = updated.filter(d => d.isAiGenerated && d.isPublic);
+          localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
+        }
       } catch (e) {
         console.error('Failed to persist drills to localStorage:', e);
       }
@@ -761,25 +841,60 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
               )}
             </div>
 
-            {/* AI Generator Button */}
-            <button
-              onClick={handleGenerateDrill}
-              disabled={isGeneratingDrill}
-              className="mb-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95"
-              title="Nhờ Gemini tạo thêm 1 bài tập mới theo đúng dạng đang xem"
-            >
-              {isGeneratingDrill ? (
-                <>
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  <span>Đang tạo...</span>
-                </>
-              ) : (
-                <>
-                  <PlusCircle className="w-3 h-3" />
-                  <span>AI Tạo Bài Mới</span>
-                </>
-              )}
-            </button>
+            {/* AI Generator & Privacy Control Container */}
+            <div className="flex items-center space-x-1.5 shrink-0 mb-1.5">
+              {/* Privacy Sharing Toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !isAutoShare;
+                  setIsAutoShare(next);
+                  try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
+                }}
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border transition-all cursor-pointer ${
+                  isAutoShare 
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
+                    : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                }`}
+                title={isAutoShare 
+                  ? 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.' 
+                  : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.'}
+              >
+                {isAutoShare ? (
+                  <>
+                    <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="hidden sm:inline">🌐 Chia sẻ web</span>
+                    <span className="sm:hidden">🌐 Web</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="hidden sm:inline">🔒 Riêng tư</span>
+                    <span className="sm:hidden">🔒 Riêng</span>
+                  </>
+                )}
+              </button>
+
+              {/* AI Generator Button */}
+              <button
+                onClick={handleGenerateDrill}
+                disabled={isGeneratingDrill}
+                className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95"
+                title="Nhờ Gemini tạo thêm 1 bài tập mới theo đúng dạng đang xem"
+              >
+                {isGeneratingDrill ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>Đang tạo...</span>
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="w-3 h-3" />
+                    <span>AI Tạo Bài Mới</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         )}
 

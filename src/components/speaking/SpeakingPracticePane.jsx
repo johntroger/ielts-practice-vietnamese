@@ -788,11 +788,15 @@ export default function SpeakingPracticePane({
                   }`}
                 >
                   <span>{topic.title}</span>
-                  {topic.isCustom && (
-                    <span className="text-[9px] px-1 py-0.2 bg-purple-900/60 rounded text-purple-200 border border-purple-500/30">
-                      AI
+                  {topic.isCommunity || (topic.isPublic && topic.isCustom) ? (
+                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40">
+                      🌐 Cộng Đồng
                     </span>
-                  )}
+                  ) : topic.isCustom ? (
+                    <span className="text-[9px] px-1.5 py-0.2 bg-amber-950/80 rounded text-amber-300 border border-amber-500/40">
+                      🔒 Riêng
+                    </span>
+                  ) : null}
                 </button>
               </div>
             ))}
@@ -1194,7 +1198,7 @@ export default function SpeakingPracticePane({
               >
                 {part2Cards.map(c => (
                   <option key={c.id} value={c.id}>
-                    {c.title} {c.isCustom ? '(AI Custom)' : ''}
+                    {c.title} {c.isCommunity || (c.isPublic && c.isCustom) ? '(🌐 Cộng Đồng)' : c.isCustom ? '(🔒 Riêng)' : ''}
                   </option>
                 ))}
               </select>
@@ -1518,7 +1522,7 @@ export default function SpeakingPracticePane({
               >
                 {part3Sets.map((s, idx) => (
                   <option key={s.linkedPart2Id || s.id || idx} value={s.linkedPart2Id || s.id || idx}>
-                    {s.topic} {s.isCustom ? '(AI Custom)' : ''}
+                    {s.topic} {s.isCommunity || (s.isPublic && s.isCustom) ? '(🌐 Cộng Đồng)' : s.isCustom ? '(🔒 Riêng)' : ''}
                   </option>
                 ))}
               </select>

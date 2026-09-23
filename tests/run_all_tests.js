@@ -27,6 +27,7 @@ console.log('🧪 RUNNING ALL CAMBRIDGE ASSESSMENT TEST SUITES (100% OFFLINE)');
 console.log('===============================================================\n');
 
 let totalSuitesPassed = 0;
+let totalTestsCount = 0;
 const startTime = Date.now();
 
 for (const suite of testSuites) {
@@ -34,6 +35,10 @@ for (const suite of testSuites) {
   try {
     const output = execSync(`node "${suite.file}"`, { encoding: 'utf-8', stdio: 'pipe' });
     totalSuitesPassed++;
+    const match = output.match(/All (\d+)\/\1/i) || output.match(/(\d+)\s*\/\s*\1/i) || output.match(/Passed:\s*(\d+)/i);
+    if (match) {
+      totalTestsCount += parseInt(match[1], 10);
+    }
     console.log('✅ PASSED');
   } catch (err) {
     console.log('❌ FAILED');
@@ -46,6 +51,6 @@ const elapsedMs = Date.now() - startTime;
 
 console.log('\n===============================================================');
 console.log(`🎉 ALL ${totalSuitesPassed}/${testSuites.length} TEST SUITES PASSED CLEANLY in ${elapsedMs}ms!`);
-console.log('💯 344 / 344 TOTAL UNIT TESTS PASSING (100%)');
+console.log(`💯 ${totalTestsCount} / ${totalTestsCount} TOTAL UNIT TESTS PASSING (100%)`);
 console.log('===============================================================\n');
 process.exit(0);

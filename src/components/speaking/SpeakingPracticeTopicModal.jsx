@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   Plus, 
@@ -10,7 +10,9 @@ import {
   CheckCircle2, 
   AlertCircle,
   HelpCircle,
-  Compass
+  Compass,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { generateSpeakingPracticeTopic } from '../../services/geminiService';
 
@@ -38,6 +40,15 @@ export default function SpeakingPracticeTopicModal({
   const [mode, setMode] = useState('ai'); // 'ai' | 'manual'
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  // Sharing & Privacy State: Defaults to true (Public community resource) with user toggle
+  const [isPublic, setIsPublic] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
 
   // AI Form State
   const [aiTopicInput, setAiTopicInput] = useState('');
@@ -83,7 +94,14 @@ export default function SpeakingPracticeTopicModal({
       });
 
       if (generated) {
-        onTopicCreated(generated);
+        const enriched = {
+          ...generated,
+          isPublic: Boolean(isPublic),
+          isCommunity: Boolean(isPublic),
+          isAiGenerated: true,
+          creatorEmail: isPublic ? 'Cộng Đồng IELTS' : 'Tôi'
+        };
+        onTopicCreated(enriched);
         onClose();
       }
     } catch (err) {
@@ -115,6 +133,10 @@ export default function SpeakingPracticeTopicModal({
         category: 'Chủ đề tự tạo',
         tag: 'Tự tạo',
         isCustom: true,
+        isPublic: Boolean(isPublic),
+        isCommunity: Boolean(isPublic),
+        isAiGenerated: false,
+        creatorEmail: isPublic ? 'Cộng Đồng IELTS' : 'Tôi',
         questions: validQuestions.map((q, idx) => ({
           qId: `p1-cust-q-${idx + 1}`,
           question: q.question.trim(),
@@ -137,6 +159,10 @@ export default function SpeakingPracticeTopicModal({
         title: mP2Title.trim(),
         category: 'Cue Card Tự Tạo',
         isCustom: true,
+        isPublic: Boolean(isPublic),
+        isCommunity: Boolean(isPublic),
+        isAiGenerated: false,
+        creatorEmail: isPublic ? 'Cộng Đồng IELTS' : 'Tôi',
         cueCard: {
           intro: mP2Prompt.trim() || `Describe ${mP2Title.toLowerCase()}. You should say:`,
           bullets: mP2Bullets.filter(b => b.trim())
@@ -168,6 +194,10 @@ export default function SpeakingPracticeTopicModal({
         linkedPart2Id: `p3-custom-${Date.now()}`,
         topic: mP3Topic.trim(),
         isCustom: true,
+        isPublic: Boolean(isPublic),
+        isCommunity: Boolean(isPublic),
+        isAiGenerated: false,
+        creatorEmail: isPublic ? 'Cộng Đồng IELTS' : 'Tôi',
         questions: validQuestions.map((q, idx) => ({
           qId: `p3-cust-q-${idx + 1}`,
           question: q.question.trim(),
@@ -453,6 +483,42 @@ export default function SpeakingPracticeTopicModal({
               )}
             </div>
           )}
+        </div>
+
+        {/* PRIVACY & COMMUNITY SHARING TOGGLE */}
+        <div className="px-5 py-3 bg-slate-950/80 border-t border-slate-800/80 flex items-center justify-between gap-3 text-xs shrink-0">
+          <div className="flex items-center space-x-2.5">
+            {isPublic ? (
+              <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+            ) : (
+              <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+            )}
+            <div>
+              <span className="font-bold text-slate-200 block">
+                {isPublic ? '🌐 Chia sẻ cộng đồng' : '🔒 Lưu riêng tư'}
+              </span>
+              <p className="text-[11px] text-slate-400">
+                {isPublic
+                  ? 'Tự động bổ sung câu hỏi vào tài nguyên chung của web để mọi người cùng luyện tập.'
+                  : 'Chỉ lưu trên thiết bị của bạn (tùy chọn không chia sẻ).'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              const next = !isPublic;
+              setIsPublic(next);
+              try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
+            }}
+            className={`px-3 py-1.5 rounded-xl font-bold text-xs border transition-colors cursor-pointer shrink-0 ${
+              isPublic
+                ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/60'
+                : 'bg-amber-950/60 border-amber-500/50 text-amber-300 hover:bg-amber-900/60'
+            }`}
+          >
+            {isPublic ? 'Đang công khai' : 'Đang riêng tư'}
+          </button>
         </div>
 
         {/* FOOTER */}

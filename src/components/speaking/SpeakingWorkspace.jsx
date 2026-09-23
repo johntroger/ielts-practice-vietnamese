@@ -11,7 +11,10 @@ import {
   SPEAKING_PART1_TOPICS, 
   SPEAKING_PART2_CUECARDS, 
   SPEAKING_PART3_QUESTIONS, 
-  SPEAKING_MOCK_TEST_PACKS 
+  SPEAKING_MOCK_TEST_PACKS,
+  COMMUNITY_DEFAULT_P1_TOPICS,
+  COMMUNITY_DEFAULT_P2_CARDS,
+  COMMUNITY_DEFAULT_P3_SETS
 } from '../../data/speakingTopics';
 import { useSpeechEngine } from '../../hooks/useSpeechEngine';
 import { evaluateSpeakingMockExam, evaluateSpeakingAlgorithmically } from '../../services/geminiService';
@@ -81,33 +84,75 @@ export default function SpeakingWorkspace({
   // Custom practice topics, cards & discussion sets
   const [customP1Topics, setCustomP1Topics] = useState(() => {
     try {
-      const saved = localStorage.getItem('ielts_speaking_custom_p1_topics');
-      return saved ? JSON.parse(saved) : [];
+      const savedCustom = localStorage.getItem('ielts_speaking_custom_p1_topics');
+      const savedCommunity = localStorage.getItem('ielts_speaking_community_p1_topics');
+      const custom = savedCustom ? JSON.parse(savedCustom) : [];
+      const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
+      const map = new Map();
+      [...comm, ...custom].forEach(t => { if (t && t.id) map.set(t.id, t); });
+      return Array.from(map.values());
     } catch (e) { return []; }
   });
 
   const [customP2Cards, setCustomP2Cards] = useState(() => {
     try {
-      const saved = localStorage.getItem('ielts_speaking_custom_p2_cards');
-      return saved ? JSON.parse(saved) : [];
+      const savedCustom = localStorage.getItem('ielts_speaking_custom_p2_cards');
+      const savedCommunity = localStorage.getItem('ielts_speaking_community_p2_cards');
+      const custom = savedCustom ? JSON.parse(savedCustom) : [];
+      const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
+      const map = new Map();
+      [...comm, ...custom].forEach(c => { if (c && c.id) map.set(c.id, c); });
+      return Array.from(map.values());
     } catch (e) { return []; }
   });
 
   const [customP3Sets, setCustomP3Sets] = useState(() => {
     try {
-      const saved = localStorage.getItem('ielts_speaking_custom_p3_sets');
-      return saved ? JSON.parse(saved) : [];
+      const savedCustom = localStorage.getItem('ielts_speaking_custom_p3_sets');
+      const savedCommunity = localStorage.getItem('ielts_speaking_community_p3_sets');
+      const custom = savedCustom ? JSON.parse(savedCustom) : [];
+      const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
+      const map = new Map();
+      [...comm, ...custom].forEach(s => { const key = s.linkedPart2Id || s.id; if (key) map.set(key, s); });
+      return Array.from(map.values());
     } catch (e) { return []; }
   });
 
-  const allP1Topics = [...SPEAKING_PART1_TOPICS, ...customP1Topics];
-  const allP2Cards = [...SPEAKING_PART2_CUECARDS, ...customP2Cards];
-  const allP3Sets = [...SPEAKING_PART3_QUESTIONS, ...customP3Sets];
+  const allP1Topics = React.useMemo(() => {
+    const map = new Map();
+    [...SPEAKING_PART1_TOPICS, ...COMMUNITY_DEFAULT_P1_TOPICS, ...customP1Topics].forEach(t => {
+      if (t && t.id) map.set(t.id, t);
+    });
+    return Array.from(map.values());
+  }, [customP1Topics]);
+
+  const allP2Cards = React.useMemo(() => {
+    const map = new Map();
+    [...SPEAKING_PART2_CUECARDS, ...COMMUNITY_DEFAULT_P2_CARDS, ...customP2Cards].forEach(c => {
+      if (c && c.id) map.set(c.id, c);
+    });
+    return Array.from(map.values());
+  }, [customP2Cards]);
+
+  const allP3Sets = React.useMemo(() => {
+    const map = new Map();
+    [...SPEAKING_PART3_QUESTIONS, ...COMMUNITY_DEFAULT_P3_SETS, ...customP3Sets].forEach(s => {
+      const key = s.linkedPart2Id || s.id;
+      if (key) map.set(key, s);
+    });
+    return Array.from(map.values());
+  }, [customP3Sets]);
 
   const handleAddP1Topic = (newTopic) => {
     setCustomP1Topics(prev => {
       const updated = [newTopic, ...prev];
-      try { localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated)); } catch (e) {}
+      try { 
+        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated)); 
+        if (newTopic.isPublic) {
+          const commOnly = updated.filter(t => t.isPublic);
+          localStorage.setItem('ielts_speaking_community_p1_topics', JSON.stringify(commOnly));
+        }
+      } catch (e) {}
       return updated;
     });
     setSelectedP1TopicId(newTopic.id);
@@ -117,7 +162,11 @@ export default function SpeakingWorkspace({
   const handleDeleteP1Topic = (topicId) => {
     setCustomP1Topics(prev => {
       const updated = prev.filter(t => t.id !== topicId);
-      try { localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated)); } catch (e) {}
+      try { 
+        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated));
+        const commOnly = updated.filter(t => t.isPublic);
+        localStorage.setItem('ielts_speaking_community_p1_topics', JSON.stringify(commOnly));
+      } catch (e) {}
       return updated;
     });
     if (selectedP1TopicId === topicId) {
@@ -129,7 +178,13 @@ export default function SpeakingWorkspace({
   const handleAddP2Card = (newCard) => {
     setCustomP2Cards(prev => {
       const updated = [newCard, ...prev];
-      try { localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated)); } catch (e) {}
+      try { 
+        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated)); 
+        if (newCard.isPublic) {
+          const commOnly = updated.filter(c => c.isPublic);
+          localStorage.setItem('ielts_speaking_community_p2_cards', JSON.stringify(commOnly));
+        }
+      } catch (e) {}
       return updated;
     });
     setSelectedP2CueCardId(newCard.id);
@@ -138,7 +193,11 @@ export default function SpeakingWorkspace({
   const handleDeleteP2Card = (cardId) => {
     setCustomP2Cards(prev => {
       const updated = prev.filter(c => c.id !== cardId);
-      try { localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated)); } catch (e) {}
+      try { 
+        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated));
+        const commOnly = updated.filter(c => c.isPublic);
+        localStorage.setItem('ielts_speaking_community_p2_cards', JSON.stringify(commOnly));
+      } catch (e) {}
       return updated;
     });
     if (selectedP2CueCardId === cardId) {
@@ -149,7 +208,13 @@ export default function SpeakingWorkspace({
   const handleAddP3Set = (newSet) => {
     setCustomP3Sets(prev => {
       const updated = [newSet, ...prev];
-      try { localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated)); } catch (e) {}
+      try { 
+        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated)); 
+        if (newSet.isPublic) {
+          const commOnly = updated.filter(s => s.isPublic);
+          localStorage.setItem('ielts_speaking_community_p3_sets', JSON.stringify(commOnly));
+        }
+      } catch (e) {}
       return updated;
     });
   };
@@ -157,7 +222,11 @@ export default function SpeakingWorkspace({
   const handleDeleteP3Set = (setId) => {
     setCustomP3Sets(prev => {
       const updated = prev.filter(s => (s.linkedPart2Id || s.id) !== setId);
-      try { localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated)); } catch (e) {}
+      try { 
+        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
+        const commOnly = updated.filter(s => s.isPublic);
+        localStorage.setItem('ielts_speaking_community_p3_sets', JSON.stringify(commOnly));
+      } catch (e) {}
       return updated;
     });
   };
