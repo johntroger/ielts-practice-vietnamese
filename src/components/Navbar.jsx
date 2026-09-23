@@ -128,8 +128,8 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Compact Skills Dropdown (Mobile / Tablet only - hidden on Desktop to avoid repetition) */}
-            <div className="relative xl:hidden shrink-0">
+            {/* Compact Skills Dropdown (Mobile, Tablet & Laptops < 1440px) */}
+            <div className="relative 2xl:hidden shrink-0">
               <button
                 onClick={() => {
                   setIsSkillMenuOpen(!isSkillMenuOpen);
@@ -197,8 +197,8 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Direct 4-Skill Switcher Tabs on Large Desktop (Writing / Reading / Listening / Speaking) */}
-            <div className="hidden xl:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1 shrink-0">
+            {/* Direct 4-Skill Switcher Tabs on Ultra-Wide Desktop (Writing / Reading / Listening / Speaking) */}
+            <div className="hidden 2xl:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1 shrink-0">
               {skills.map(s => {
                 const Icon = s.icon;
                 const isCurrent = activeSkill === s.id;
@@ -237,7 +237,7 @@ export default function Navbar({
             >
               <ShieldAlert className="w-4 h-4 text-amber-300 animate-pulse" />
               <span>Thi Thử 60p</span>
-              <span className="hidden xl:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
+              <span className="hidden 2xl:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
             </button>
 
             {/* Desktop Only: 1. Luyện Tập Dropdown */}
