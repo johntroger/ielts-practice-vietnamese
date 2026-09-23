@@ -665,6 +665,190 @@ export default function VocabGrammarSpellingModal({
     }
   };
 
+  /**
+   * Universal scalable question navigation toolbar
+   * Designed to scale gracefully from 1 to 200+ questions:
+   * - Explicit numbering: "Câu: X / Y"
+   * - Numbered pill buttons (1, 2, 3...) with indicator dot for "Đã thuộc" items
+   * - Previous & Next buttons (<, >)
+   * - Quick Jump Select Dropdown for direct access when items > 8
+   * - Mastered button & Community publicity badge for current item
+   * - Hide Mastered Checkbox
+   */
+  const renderScalableNavToolbar = ({
+    type,
+    list = [],
+    currentIndex = 0,
+    onSelectIndex,
+    themeColor = 'red',
+    totalMastered = 0,
+    currentItem,
+    getItemTitle = (item, idx) => `Câu ${idx + 1}`
+  }) => {
+    const total = list.length;
+    if (total === 0) return null;
+
+    const activeBgColor = themeColor === 'red' 
+      ? 'bg-red-600 ring-red-500/30' 
+      : themeColor === 'indigo' 
+        ? 'bg-indigo-600 ring-indigo-500/30' 
+        : 'bg-emerald-600 ring-emerald-500/30';
+    const textAccentColor = themeColor === 'red' ? 'text-red-600' : themeColor === 'indigo' ? 'text-indigo-600' : 'text-emerald-600';
+    const bgLightColor = themeColor === 'red' 
+      ? 'bg-red-50 text-red-800 border-red-200' 
+      : themeColor === 'indigo' 
+        ? 'bg-indigo-50 text-indigo-800 border-indigo-200' 
+        : 'bg-emerald-50 text-emerald-800 border-emerald-200';
+
+    return (
+      <div className="bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-2.5">
+        {/* TOP ROW: Progress, Quick Jump, Hide Mastered & Current Item Actions */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex items-center flex-wrap gap-2">
+            {/* Step Counter */}
+            <div className={`px-3 py-1 rounded-lg border font-black text-xs flex items-center space-x-1 ${bgLightColor}`}>
+              <span>Câu:</span>
+              <span className={`text-sm font-extrabold ${textAccentColor}`}>{currentIndex + 1}</span>
+              <span className="opacity-60 font-semibold">/ {total}</span>
+            </div>
+
+            {/* Prev / Next Buttons */}
+            <div className="flex items-center space-x-1">
+              <button
+                type="button"
+                onClick={() => onSelectIndex(Math.max(0, currentIndex - 1))}
+                disabled={currentIndex === 0}
+                className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition cursor-pointer shadow-2xs"
+                title="Câu trước"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => onSelectIndex(Math.min(total - 1, currentIndex + 1))}
+                disabled={currentIndex === total - 1}
+                className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition cursor-pointer shadow-2xs"
+                title="Câu tiếp theo"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Quick Select Dropdown for Scalability (When total > 8) */}
+            {total > 8 && (
+              <div className="flex items-center space-x-1.5">
+                <span className="text-[11px] text-slate-500 font-semibold hidden md:inline">Chuyển nhanh:</span>
+                <select
+                  value={currentIndex}
+                  onChange={(e) => onSelectIndex(Number(e.target.value))}
+                  className="px-2.5 py-1 rounded-lg border border-slate-300 bg-white font-bold text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 shadow-2xs max-w-[200px] sm:max-w-[260px] truncate cursor-pointer"
+                >
+                  {list.map((item, idx) => {
+                    const isM = masteredIds.includes(item.id);
+                    return (
+                      <option key={item.id || idx} value={idx}>
+                        Câu {idx + 1}: {getItemTitle(item, idx)} {isM ? ' [Đã thuộc ✓]' : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            )}
+
+            {/* Hide Mastered Checkbox */}
+            {currentUser && totalMastered > 0 && (
+              <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
+                <input
+                  type="checkbox"
+                  checked={hideMastered}
+                  onChange={(e) => handleToggleHideMastered(e.target.checked)}
+                  className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                />
+                <span className="font-semibold text-emerald-800 text-[11px]">Ẩn câu đã thuộc ({totalMastered})</span>
+              </label>
+            )}
+          </div>
+
+          {/* Current Item Badges & Mastered Action */}
+          {currentItem && (
+            <div className="flex items-center space-x-2">
+              {/* Mastered / Đã Thuộc Button */}
+              <button
+                type="button"
+                onClick={() => handleToggleMasteredItem(currentItem.id)}
+                className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
+                  masteredIds.includes(currentItem.id)
+                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
+                    : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                }`}
+                title={masteredIds.includes(currentItem.id)
+                  ? "Câu này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
+                  : "Đánh dấu 'Đã thuộc'"}
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
+                <span>{masteredIds.includes(currentItem.id) ? 'Đã thuộc' : 'Thuộc câu này'}</span>
+              </button>
+
+              {/* Community / Private Badge */}
+              {currentItem.isCommunity || currentItem.isPublic ? (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                  <Globe className="w-3 h-3 text-emerald-600" />
+                  <span>🌐 Cộng Đồng</span>
+                </span>
+              ) : (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
+                  <Lock className="w-3 h-3 text-amber-600" />
+                  <span>🔒 Riêng tư</span>
+                </span>
+              )}
+
+              {currentItem.isAiGenerated && (
+                <button
+                  type="button"
+                  onClick={() => handleToggleItemPublicity(currentItem.id, type)}
+                  className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                  title={currentItem.isPublic ? 'Khóa riêng' : 'Mở chia sẻ bài tập này cho mọi người'}
+                >
+                  {currentItem.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* BOTTOM ROW: Numbered Pill Buttons (1, 2, 3...) with horizontal scroll and indicator */}
+        <div className="pt-2 border-t border-slate-100 flex items-center space-x-1.5 overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-slate-300">
+          <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1">Danh sách câu:</span>
+          {list.map((item, idx) => {
+            const isActive = currentIndex === idx;
+            const isMastered = masteredIds.includes(item.id);
+            return (
+              <button
+                key={item.id || idx}
+                type="button"
+                onClick={() => onSelectIndex(idx)}
+                className={`relative min-w-[32px] h-8 px-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center justify-center ${
+                  isActive
+                    ? `${activeBgColor} text-white shadow-xs ring-2 scale-105 z-10`
+                    : isMastered
+                      ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
+                }`}
+                title={`Câu ${idx + 1}: ${getItemTitle(item, idx)}${isMastered ? ' (Đã thuộc)' : ''}`}
+              >
+                <span>{idx + 1}</span>
+                {/* Dot indicator for Mastered items */}
+                {isMastered && !isActive && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   // Safe early return placed AFTER ALL HOOKS
   if (!isOpen) return null;
 
@@ -872,80 +1056,45 @@ export default function VocabGrammarSpellingModal({
           {activeTab === 'spelling' && (
             <div className="max-w-3xl mx-auto space-y-5">
               
-              {/* Score, Mastered Toggle & Controls */}
-              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
-                <div className="flex items-center flex-wrap gap-2">
-                  {currentTrap && (
-                    <>
-                      <div className="px-3 py-1 bg-red-50 border border-red-200 rounded-lg text-red-700 font-black text-xs">
-                        Bẫy {currentSpellingIdx + 1} / {filteredSpellingList.length}
-                      </div>
-                      <span className="px-2 py-0.5 rounded text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
-                        Band {currentTrap.bandLevel || '6.5'}
-                      </span>
-                    </>
-                  )}
+              {/* Scalable Navigation Toolbar */}
+              {renderScalableNavToolbar({
+                type: 'spelling',
+                list: filteredSpellingList,
+                currentIndex: currentSpellingIdx,
+                onSelectIndex: (idx) => {
+                  setCurrentSpellingIdx(idx);
+                  setSelectedSpellingChoice(null);
+                  setIsSpellingChecked(false);
+                },
+                themeColor: 'red',
+                totalMastered: totalMasteredSpelling,
+                currentItem: currentTrap,
+                getItemTitle: (item, idx) => item.correct ? `${item.correct} (Band ${item.bandLevel || '6.5'})` : `Bẫy chính tả ${idx + 1}`
+              })}
 
-                  {/* Hide Mastered Checkbox */}
-                  {currentUser && totalMasteredSpelling > 0 && (
-                    <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
-                      <input
-                        type="checkbox"
-                        checked={hideMastered}
-                        onChange={(e) => handleToggleHideMastered(e.target.checked)}
-                        className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                      />
-                      <span className="font-semibold text-emerald-800 text-[11px]">Ẩn từ đã thuộc ({totalMasteredSpelling})</span>
-                    </label>
-                  )}
-                </div>
-                
-                {/* Current Trap Badges & Mastered Button */}
-                {currentTrap && (
+              {/* Category & Score Bar */}
+              {currentTrap && (
+                <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-slate-100/80 border border-slate-200/80 text-xs font-bold text-slate-600">
                   <div className="flex items-center space-x-2">
-                    {/* Mastered / Đã Thuộc Toggle Button */}
-                    <button
-                      type="button"
-                      onClick={() => handleToggleMasteredItem(currentTrap.id)}
-                      className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
-                        masteredIds.includes(currentTrap.id)
-                          ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
-                          : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
-                      }`}
-                      title={masteredIds.includes(currentTrap.id)
-                        ? "Từ này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
-                        : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập nếu bạn bật 'Ẩn từ đã thuộc')"}
-                    >
-                      <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
-                      <span>{masteredIds.includes(currentTrap.id) ? 'Đã thuộc' : 'Thuộc từ này'}</span>
-                    </button>
-
-                    {/* Community / Private Badge */}
-                    {currentTrap.isCommunity || currentTrap.isPublic ? (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
-                        <Globe className="w-3 h-3 text-emerald-600" />
-                        <span>🌐 Cộng Đồng</span>
+                    <span className="text-slate-500 font-semibold">Chủ đề:</span>
+                    <span className="text-slate-800 font-extrabold">{currentTrap.category || 'Academic English'}</span>
+                    <span className="px-2 py-0.5 rounded text-[11px] font-black bg-blue-100 text-blue-800">
+                      Band {currentTrap.bandLevel || '6.5'}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span>Điểm đúng:</span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-black">
+                      {spellingScore.correct} / {spellingScore.total}
+                    </span>
+                    {spellingScore.total > 0 && (
+                      <span className="text-slate-400 font-semibold">
+                        ({Math.round((spellingScore.correct / spellingScore.total) * 100)}%)
                       </span>
-                    ) : (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
-                        <Lock className="w-3 h-3 text-amber-600" />
-                        <span>🔒 Riêng tư</span>
-                      </span>
-                    )}
-
-                    {currentTrap.isAiGenerated && (
-                      <button
-                        type="button"
-                        onClick={() => handleToggleItemPublicity(currentTrap.id, 'spelling')}
-                        className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                        title={currentTrap.isPublic ? 'Chuyển sang Riêng tư' : 'Mở chia sẻ bài tập này cho mọi người'}
-                      >
-                        {currentTrap.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
-                      </button>
                     )}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Congratulatory Empty State when all are mastered */}
               {filteredSpellingList.length === 0 ? (
@@ -1085,92 +1234,21 @@ export default function VocabGrammarSpellingModal({
           {activeTab === 'grammar' && (
             <div className="max-w-4xl mx-auto space-y-5">
               
-              {/* Pattern Selector Carousel & Mastered Controls */}
-              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setCurrentGrammarIdx(prev => Math.max(0, prev - 1))}
-                    disabled={currentGrammarIdx === 0}
-                    className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-
-                  {currentGrammar && (
-                    <div className="text-left">
-                      <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
-                        Cấu trúc {currentGrammarIdx + 1} / {filteredGrammarList.length} • {currentGrammar.bandTarget}
-                      </span>
-                      <h3 className="text-sm sm:text-base font-extrabold text-slate-900">{currentGrammar.title}</h3>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => setCurrentGrammarIdx(prev => Math.min(filteredGrammarList.length - 1, prev + 1))}
-                    disabled={currentGrammarIdx === filteredGrammarList.length - 1}
-                    className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                  {/* Hide Mastered Checkbox */}
-                  {currentUser && totalMasteredGrammar > 0 && (
-                    <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
-                      <input
-                        type="checkbox"
-                        checked={hideMastered}
-                        onChange={(e) => handleToggleHideMastered(e.target.checked)}
-                        className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                      />
-                      <span className="font-semibold text-emerald-800 text-[11px]">Ẩn cấu trúc đã thuộc ({totalMasteredGrammar})</span>
-                    </label>
-                  )}
-
-                  {currentGrammar && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => handleToggleMasteredItem(currentGrammar.id)}
-                        className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
-                          masteredIds.includes(currentGrammar.id)
-                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
-                            : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
-                        }`}
-                        title={masteredIds.includes(currentGrammar.id)
-                          ? "Cấu trúc này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
-                          : "Đánh dấu 'Đã thuộc'"}
-                      >
-                        <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>{masteredIds.includes(currentGrammar.id) ? 'Đã thuộc' : 'Thuộc cấu trúc'}</span>
-                      </button>
-
-                      {currentGrammar.isCommunity || currentGrammar.isPublic ? (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
-                          <Globe className="w-3 h-3 text-emerald-600" />
-                          <span>🌐 Cộng Đồng</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
-                          <Lock className="w-3 h-3 text-amber-600" />
-                          <span>🔒 Riêng tư</span>
-                        </span>
-                      )}
-
-                      {currentGrammar.isAiGenerated && (
-                        <button
-                          type="button"
-                          onClick={() => handleToggleItemPublicity(currentGrammar.id, 'grammar')}
-                          className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                        >
-                          {currentGrammar.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
+              {/* Scalable Navigation Toolbar */}
+              {renderScalableNavToolbar({
+                type: 'grammar',
+                list: filteredGrammarList,
+                currentIndex: currentGrammarIdx,
+                onSelectIndex: (idx) => {
+                  setCurrentGrammarIdx(idx);
+                  setUserGrammarInput('');
+                  setShowGrammarAnswer(false);
+                },
+                themeColor: 'indigo',
+                totalMastered: totalMasteredGrammar,
+                currentItem: currentGrammar,
+                getItemTitle: (item, idx) => item.title ? `${item.title} (${item.bandTarget || `Band ${item.bandLevel}`})` : `Cấu trúc ${idx + 1}`
+              })}
 
               {/* Congratulatory Empty State when all are mastered */}
               {filteredGrammarList.length === 0 ? (
@@ -1300,39 +1378,24 @@ export default function VocabGrammarSpellingModal({
           {activeTab === 'vocab' && currentDeck && (
             <div className="max-w-3xl mx-auto space-y-5">
               
-              {/* Topic Selector Tabs & Mastered Toggle */}
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center space-x-2 overflow-x-auto pb-1 max-w-full">
-                  {thematicDecks.map(deck => (
-                    <button
-                      key={deck.id}
-                      onClick={() => setActiveDeckId(deck.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                        deck.id === activeDeckId
-                          ? 'bg-slate-900 text-white shadow-sm'
-                          : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                      }`}
-                    >
-                      {deck.topicName.split('(')[0]}
-                      <span className="ml-1.5 opacity-70">
-                        ({deck.cards.filter(c => selectedBandTier === 'band-6' ? (c.bandLevel === '6.0' || c.bandLevel === '6.5') : selectedBandTier === 'band-7' ? (c.bandLevel === '7.0' || c.bandLevel === '7.5') : true).length})
-                      </span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Hide Mastered Checkbox for Vocab */}
-                {currentUser && totalMasteredVocab > 0 && (
-                  <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
-                    <input
-                      type="checkbox"
-                      checked={hideMastered}
-                      onChange={(e) => handleToggleHideMastered(e.target.checked)}
-                      className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                    />
-                    <span className="font-semibold text-emerald-800 text-[11px]">Ẩn thẻ đã thuộc ({totalMasteredVocab})</span>
-                  </label>
-                )}
+              {/* Topic Selector Tabs */}
+              <div className="flex items-center space-x-2 overflow-x-auto pb-1 max-w-full">
+                {thematicDecks.map(deck => (
+                  <button
+                    key={deck.id}
+                    onClick={() => setActiveDeckId(deck.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                      deck.id === activeDeckId
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {deck.topicName.split('(')[0]}
+                    <span className="ml-1.5 opacity-70">
+                      ({deck.cards.filter(c => selectedBandTier === 'band-6' ? (c.bandLevel === '6.0' || c.bandLevel === '6.5') : selectedBandTier === 'band-7' ? (c.bandLevel === '7.0' || c.bandLevel === '7.5') : true).length})
+                    </span>
+                  </button>
+                ))}
               </div>
 
               {/* Congratulatory Empty State when all are mastered */}
@@ -1358,49 +1421,20 @@ export default function VocabGrammarSpellingModal({
                 </div>
               ) : currentCard ? (
                 <div className="space-y-4">
-                  {/* Card Navigation, Badges & Mastered Button */}
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-500 px-1 flex-wrap gap-2">
-                    <span>Thẻ {currentCardIdx + 1} / {filteredCards.length}</span>
-                    <div className="flex items-center space-x-2">
-                      {/* Mastered Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleToggleMasteredItem(currentCard.id)}
-                        className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
-                          masteredIds.includes(currentCard.id)
-                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
-                            : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
-                        }`}
-                        title={masteredIds.includes(currentCard.id)
-                          ? "Thẻ này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
-                          : "Đánh dấu 'Đã thuộc'"}
-                      >
-                        <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>{masteredIds.includes(currentCard.id) ? 'Đã thuộc' : 'Thuộc thẻ này'}</span>
-                      </button>
-
-                      {currentCard.isCommunity || currentCard.isPublic ? (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
-                          <Globe className="w-3 h-3 text-emerald-600" />
-                          <span>🌐 Cộng Đồng</span>
-                        </span>
-                      ) : null}
-
-                      {currentCard.isAiGenerated && (
-                        <button
-                          type="button"
-                          onClick={() => handleToggleItemPublicity(currentCard.id, 'vocab')}
-                          className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                        >
-                          {currentCard.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
-                        </button>
-                      )}
-
-                      <span className="px-2 py-0.5 rounded-md font-extrabold bg-blue-100 text-blue-800">
-                        Band {currentCard.bandScore || currentCard.bandLevel || '6.5'}
-                      </span>
-                    </div>
-                  </div>
+                  {/* Scalable Navigation Toolbar */}
+                  {renderScalableNavToolbar({
+                    type: 'vocab',
+                    list: filteredCards,
+                    currentIndex: currentCardIdx,
+                    onSelectIndex: (idx) => {
+                      setCurrentCardIdx(idx);
+                      setIsFlipped(false);
+                    },
+                    themeColor: 'emerald',
+                    totalMastered: totalMasteredVocab,
+                    currentItem: currentCard,
+                    getItemTitle: (item, idx) => item.term ? `${item.term} (${item.wordType || `Band ${item.bandScore || item.bandLevel || '6.5'}`})` : `Thẻ từ vựng ${idx + 1}`
+                  })}
 
                   {/* Interactive Flip Card */}
                   <div 
