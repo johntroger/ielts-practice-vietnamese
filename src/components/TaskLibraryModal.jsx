@@ -308,6 +308,12 @@ export default function TaskLibraryModal({
                     onImageChange={setManualImageUrl}
                     label="Ảnh Đề Bài Task 1 (Biểu đồ / Bản đồ / Quy trình):"
                   />
+                  {manualImageUrl && (
+                    <p className="text-[11px] text-amber-800 font-medium mt-1.5 flex items-center gap-1 bg-amber-50 p-2 rounded-lg border border-amber-200">
+                      <span>🔒</span>
+                      <span>Ảnh cá nhân tải lên được lưu riêng tư cho tài khoản của bạn, không chia sẻ lên kho đề chung.</span>
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -419,7 +425,13 @@ export default function TaskLibraryModal({
                         {/* Share / Unshare Toggle for own tasks */}
                         {(t.isOwnTask || t.isAiGenerated || t.isCustom) && onTogglePublic && (
                           <button
-                            onClick={() => onTogglePublic(t.id, !t.isPublic)}
+                            onClick={() => {
+                              if (!t.isPublic && t.imageUrl && (t.imageUrl.startsWith('data:') || t.imageUrl.startsWith('blob:'))) {
+                                alert('Đề thi này có hình ảnh tải lên từ thiết bị cá nhân. Theo chính sách bảo mật & tiết kiệm dung lượng, hình ảnh tự tải lên được giữ riêng tư cho tài khoản của bạn, không thể chia sẻ công khai.');
+                                return;
+                              }
+                              onTogglePublic(t.id, !t.isPublic);
+                            }}
                             className={`p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors ${
                               t.isPublic 
                                 ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' 

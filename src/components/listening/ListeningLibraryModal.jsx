@@ -33,6 +33,7 @@ export default function ListeningLibraryModal({
   onSelectTest,
   onDeleteTest,
   onAddCustomTest,
+  onTogglePublic,
   onOpenGenerator,
   user
 }) {
@@ -122,6 +123,8 @@ export default function ListeningLibraryModal({
         matchesTab = !test.isCustom;
       } else if (activeTab === 'ai') {
         matchesTab = Boolean(test.isCustom) && !test.isAssembled;
+      } else if (activeTab === 'public') {
+        matchesTab = Boolean(test.isPublic);
       } else if (activeTab === 'assembled') {
         matchesTab = Boolean(test.isAssembled);
       } else if (activeTab === 'part1') {
@@ -154,6 +157,7 @@ export default function ListeningLibraryModal({
     cambridge: allListeningTests.filter(t => !t.isCustom).length,
     ai: allListeningTests.filter(t => t.isCustom && !t.isAssembled).length,
     assembled: allListeningTests.filter(t => t.isAssembled).length,
+    public: allListeningTests.filter(t => t.isPublic).length,
     p1: allListeningTests.filter(t => t.targetPart === 1 || t.parts?.[0]?.partNumber === 1).length,
     p2: allListeningTests.filter(t => t.targetPart === 2 || t.parts?.[0]?.partNumber === 2).length,
     p3: allListeningTests.filter(t => t.targetPart === 3 || t.parts?.[0]?.partNumber === 3).length,
@@ -213,6 +217,14 @@ export default function ListeningLibraryModal({
               }`}
             >
               📚 Cambridge ({stats.cambridge})
+            </button>
+            <button
+              onClick={() => setActiveTab('public')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                activeTab === 'public' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'hover:text-slate-900'
+              }`}
+            >
+              🌐 Cộng Đồng ({stats.public})
             </button>
             <button
               onClick={() => setActiveTab('assembled')}
@@ -477,6 +489,32 @@ export default function ListeningLibraryModal({
                           }`}>
                             {test.isCustom ? '✨ AI Audio Test' : '📚 Cambridge Official'}
                           </span>
+
+                          {/* Public/Private Badge for Custom Listening Tests */}
+                          {test.isCustom && !test.isEphemeral && (
+                            <button
+                              type="button"
+                              onClick={() => onTogglePublic && onTogglePublic(test.id)}
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 transition-colors cursor-pointer ${
+                                test.isPublic 
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
+                                  : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                              }`}
+                              title="Bấm để chuyển đổi trạng thái Công khai / Riêng tư"
+                            >
+                              {test.isPublic ? (
+                                <>
+                                  <Globe className="w-3 h-3 text-emerald-600" />
+                                  <span>Cộng đồng</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Lock className="w-3 h-3 text-slate-500" />
+                                  <span>Riêng tư</span>
+                                </>
+                              )}
+                            </button>
+                          )}
 
                           {isCurrent && (
                             <span className="px-2 py-0.5 rounded-md bg-purple-600 text-white text-[10px] font-bold">

@@ -19,7 +19,15 @@ export default function TaskGeneratorModal({
   const [timeFrame, setTimeFrame] = useState('any'); // any, dynamic, static
   const [task2Type, setTask2Type] = useState('opinion');
   const [selectedTopic, setSelectedTopic] = useState('tech');
-  const [isPublic, setIsPublic] = useState(false); // Phương án C: toggle chia sẻ cộng đồng
+  // Mặc định tự động chuyển thành tài nguyên chung của web (trừ khi user cấu hình tắt hoặc toggle tắt)
+  const [isPublic, setIsPublic] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -46,6 +54,7 @@ export default function TaskGeneratorModal({
       newTask.isPublic = isPublic;
       newTask.creatorEmail = user?.email || 'Thành viên';
       newTask.isCustom = true;
+      newTask.isAiGenerated = true;
 
       onTaskCreated(newTask, isPublic);
       onClose();
@@ -219,23 +228,28 @@ export default function TaskGeneratorModal({
           </select>
         </div>
 
-        {/* Phương án C: Quyền riêng tư & Chia sẻ cộng đồng */}
-        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className={`p-2 rounded-lg ${isPublic ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-700'}`}>
+        {/* Quyền riêng tư & Tự động chia sẻ tài nguyên cộng đồng */}
+        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+          <div className="flex items-center space-x-3 pr-2">
+            <div className={`p-2 rounded-lg shrink-0 ${isPublic ? 'bg-blue-100 text-blue-700' : 'bg-slate-200 text-slate-700'}`}>
               {isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-800">
-                {isPublic ? 'Chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản của bạn'}
+              <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                {isPublic && (
+                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-700">Tài nguyên chung</span>
+                )}
               </div>
-              <div className="text-[10px] text-slate-500">
-                {isPublic ? 'Mọi người dùng trên web đều có thể xem và luyện tập đề này' : 'Chỉ có bạn mới thấy và làm bài thi này'}
+              <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
+                {isPublic 
+                  ? 'Đề thi sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
+                  : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.'}
               </div>
             </div>
           </div>
 
-          <label className="relative inline-flex items-center cursor-pointer">
+          <label className="relative inline-flex items-center cursor-pointer shrink-0">
             <input 
               type="checkbox" 
               checked={isPublic} 

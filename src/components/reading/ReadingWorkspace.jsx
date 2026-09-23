@@ -112,7 +112,7 @@ export default function ReadingWorkspace({
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
   // Callback when a new passage is generated or ingested
-  const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = false, extraMeta = {}) => {
+  const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = null, extraMeta = {}) => {
     const targetPNum = newPassage.passageNumber || extraMeta.passageNum || 1;
     const cleanTitle = (newPassage.title || '').replace(/^(✨|📰)\s*/, '').trim() || `Bài Đọc IELTS Passage ${targetPNum}`;
     
@@ -130,6 +130,8 @@ export default function ReadingWorkspace({
       standardizedTitle = `✨ [AI - P${targetPNum}] ${seqStr} ${topicLabel}${cleanTitle}`;
     }
 
+    const finalIsPublic = isPublic !== null ? Boolean(isPublic) : true;
+
     const newTest = {
       id: `custom-test-${Date.now()}`,
       title: standardizedTitle,
@@ -137,7 +139,7 @@ export default function ReadingWorkspace({
       totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 13,
       timeLimitMinutes: 20,
       isCustom: true,
-      isPublic: Boolean(isPublic),
+      isPublic: finalIsPublic,
       creatorEmail: user?.email || 'Thành viên',
       passages: [
         {

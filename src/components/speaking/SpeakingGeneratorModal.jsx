@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   Mic, 
@@ -11,7 +11,9 @@ import {
   ArrowRight,
   Loader2,
   Wand2,
-  Target
+  Target,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { generateSpeakingMockPack } from '../../services/geminiService';
 
@@ -41,6 +43,14 @@ export default function SpeakingGeneratorModal({
 
   const [customTopic, setCustomTopic] = useState(TRENDING_SPEAKING_TOPICS[0].en);
   const [selectedDifficulty, setSelectedDifficulty] = useState(DIFFICULTY_PRESETS[1]);
+  const [isPublic, setIsPublic] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -75,6 +85,7 @@ export default function SpeakingGeneratorModal({
         estTime: packData.estTime || '11 - 14 phút',
         summary: packData.summary || 'Bộ đề thi thử Speaking do Gemini AI thiết kế riêng theo chuẩn Cambridge.',
         isCustom: true,
+        isPublic: Boolean(isPublic),
         createdAt: new Date().toISOString(),
         customPart1: {
           id: `p1-custom-${Date.now()}`,
@@ -245,6 +256,38 @@ export default function SpeakingGeneratorModal({
               <li><strong>Part 2:</strong> 1 Cue Card hoàn chỉnh + 4 ô nháp ma trận 60 giây + bài nói mẫu</li>
               <li><strong>Part 3:</strong> 3 câu hỏi phản biện chuyên sâu gắn kết logic với Part 2</li>
             </ul>
+          </div>
+
+          {/* Privacy & Auto-Sharing */}
+          <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 flex items-center justify-between">
+            <div className="flex items-center space-x-3 pr-2">
+              <div className={`p-2 rounded-xl shrink-0 ${isPublic ? 'bg-purple-900/50 text-purple-400' : 'bg-slate-800 text-slate-400'}`}>
+                {isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+              </div>
+              <div>
+                <div className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                  {isPublic && (
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300">Tài nguyên chung</span>
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">
+                  {isPublic 
+                    ? 'Bộ câu hỏi Speaking sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
+                    : 'Chỉ riêng tài khoản của bạn mới thấy và luyện bộ đề này.'}
+                </div>
+              </div>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
+              <input 
+                type="checkbox" 
+                checked={isPublic} 
+                onChange={(e) => setIsPublic(e.target.checked)} 
+                className="sr-only peer" 
+              />
+              <div className="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-700 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
           </div>
         </div>
 

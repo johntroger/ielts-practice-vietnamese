@@ -176,6 +176,23 @@ export default function ListeningWorkspace({
     }
   };
 
+  // Handler: Toggle publicity of custom listening test
+  const handleToggleListeningPublic = (testId) => {
+    setAllListeningTests(prev => {
+      const updated = prev.map(t => {
+        if (t.id === testId) {
+          return { ...t, isPublic: !t.isPublic };
+        }
+        return t;
+      });
+      try {
+        const customOnly = updated.filter(t => t.isCustom && !t.isEphemeral);
+        localStorage.setItem(CUSTOM_TESTS_STORAGE_KEY, JSON.stringify(customOnly));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
   // Candidate ID & Name for authentic CD-IELTS header
   const candidateName = user?.email ? user.email.split('@')[0].toUpperCase() : 'CANDIDATE';
   const candidateId = useMemo(() => {
@@ -1164,6 +1181,7 @@ export default function ListeningWorkspace({
         }}
         onDeleteTest={handleDeleteCustomTest}
         onAddCustomTest={handleAddCustomTest}
+        onTogglePublic={handleToggleListeningPublic}
         onOpenGenerator={() => {
           setIsLibraryOpen(false);
           setIsGeneratorOpen(true);

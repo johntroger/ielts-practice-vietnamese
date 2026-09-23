@@ -21,7 +21,10 @@ import {
   ChevronDown,
   ChevronUp,
   UploadCloud,
-  FolderOpen
+  FolderOpen,
+  Globe,
+  Lock,
+  Shield
 } from 'lucide-react';
 import { saveAudioBlob } from '../../utils/audioStorage';
 import { 
@@ -84,6 +87,16 @@ export default function ListeningURLExerciseGeneratorModal({
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [audioTestStatus, setAudioTestStatus] = useState(null); // 'testing' | 'valid' | 'invalid'
+
+  // Sharing & Privacy State: Defaults to true for AI/URL exercises, forced false for user uploaded audio
+  const [isPublic, setIsPublic] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
 
   // Clean up audio on unmount
   useEffect(() => {
@@ -508,6 +521,7 @@ export default function ListeningURLExerciseGeneratorModal({
         targetPart: selectedPart,
         isEphemeral: isFromUploadedFile, // Auto-deleted after exam submission to save website storage
         isUploadedFile: isFromUploadedFile,
+        isPublic: isFromUploadedFile ? false : Boolean(isPublic), // User uploaded audio is strictly private (Zero-Storage), URL/AI is public by default
         audioStorageId: uploadedAudioInfo?.storageId || null,
         createdAt: new Date().toISOString()
       };
@@ -1133,6 +1147,56 @@ export default function ListeningURLExerciseGeneratorModal({
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Step 3: Privacy & Community Auto-Sharing */}
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <div className="flex items-center space-x-3 pr-2">
+              <div className={`p-2 rounded-lg shrink-0 ${
+                uploadedAudioInfo 
+                  ? 'bg-amber-100 text-amber-700' 
+                  : (isPublic ? 'bg-purple-100 text-purple-700' : 'bg-slate-200 text-slate-700')
+              }`}>
+                {uploadedAudioInfo ? <Shield className="w-4 h-4" /> : (isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />)}
+              </div>
+              <div>
+                <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  {uploadedAudioInfo ? (
+                    <>
+                      <span>Âm thanh cá nhân: Bảo mật riêng tư 100%</span>
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800">Zero-Storage</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                      {isPublic && (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-100 text-purple-700">Tài nguyên chung</span>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
+                  {uploadedAudioInfo ? (
+                    'Tệp âm thanh tải lên từ máy tính của bạn sẽ tự động hủy ngay sau khi thi xong theo chính sách bảo mật.'
+                  ) : (
+                    isPublic 
+                      ? 'Đề thi từ URL công khai sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
+                      : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.'
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <label className={`relative inline-flex items-center shrink-0 ${uploadedAudioInfo ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+              <input 
+                type="checkbox" 
+                disabled={Boolean(uploadedAudioInfo)}
+                checked={uploadedAudioInfo ? false : isPublic} 
+                onChange={(e) => setIsPublic(e.target.checked)} 
+                className="sr-only peer" 
+              />
+              <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
           </div>
 
           {/* Error Message Banner */}

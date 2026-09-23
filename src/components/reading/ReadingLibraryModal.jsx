@@ -41,6 +41,14 @@ export default function ReadingLibraryModal({
   const [builderP2, setBuilderP2] = useState(null);
   const [builderP3, setBuilderP3] = useState(null);
   const [customTestTitle, setCustomTestTitle] = useState('');
+  const [assemblerIsPublic, setAssemblerIsPublic] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
 
   // Extract all single passages available in the bank
   const passageBank = useMemo(() => {
@@ -189,7 +197,7 @@ export default function ReadingLibraryModal({
       totalQuestions: totalQ,
       timeLimitMinutes: 60,
       isCustom: true,
-      isPublic: false,
+      isPublic: assemblerIsPublic,
       creatorEmail: user?.email || 'Thành viên',
       passages: [newP1, newP2, newP3]
     };
@@ -665,19 +673,40 @@ export default function ReadingLibraryModal({
                 </p>
               </div>
 
-              <button
-                type="button"
-                disabled={!builderP1 || !builderP2 || !builderP3}
-                onClick={handleAssembleTest}
-                className={`px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer ${
-                  builderP1 && builderP2 && builderP3
-                    ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 shadow-lg hover:shadow-emerald-500/25 active:scale-95'
-                    : 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                }`}
-              >
-                <span>Tạo & Bắt Đầu Làm Bài Ngay</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Auto-share toggle for assembled test */}
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-800/90 px-3 py-2 rounded-xl border border-slate-700 hover:bg-slate-800 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={assemblerIsPublic}
+                    onChange={(e) => setAssemblerIsPublic(e.target.checked)}
+                    className="rounded border-slate-600 text-blue-500 focus:ring-0 cursor-pointer"
+                  />
+                  <div className="text-left text-xs">
+                    <span className="font-semibold text-slate-200 flex items-center gap-1.5">
+                      {assemblerIsPublic ? <Globe className="w-3.5 h-3.5 text-blue-400" /> : <Lock className="w-3.5 h-3.5 text-slate-400" />}
+                      <span>{assemblerIsPublic ? 'Tự động chia sẻ' : 'Lưu riêng tư'}</span>
+                      {assemblerIsPublic && (
+                        <span className="text-[9px] bg-blue-500/20 text-blue-300 px-1 rounded">Chung</span>
+                      )}
+                    </span>
+                  </div>
+                </label>
+
+                <button
+                  type="button"
+                  disabled={!builderP1 || !builderP2 || !builderP3}
+                  onClick={handleAssembleTest}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer ${
+                    builderP1 && builderP2 && builderP3
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-950 shadow-lg hover:shadow-emerald-500/25 active:scale-95'
+                      : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                  }`}
+                >
+                  <span>Tạo & Bắt Đầu Làm Bài Ngay</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         ) : (

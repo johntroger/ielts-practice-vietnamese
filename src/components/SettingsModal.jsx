@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Settings, Key, CheckCircle, AlertCircle, ExternalLink, X, Shield, 
   RefreshCw, Cpu, Eye, EyeOff, Trash2, HelpCircle, Check, Copy,
-  HardDrive, Download, Upload
+  HardDrive, Download, Upload, Globe, Lock
 } from 'lucide-react';
 import { testApiKey, fetchAvailableModels, POPULAR_GEMINI_MODELS } from '../services/geminiService';
 import { 
@@ -45,12 +45,28 @@ export default function SettingsModal({
   const [storageMetrics, setStorageMetrics] = useState(() => getStorageMetrics());
   const [storageMessage, setStorageMessage] = useState('');
 
+  // AI Content Community Sharing Preference (Default: true)
+  const [autoShareAi, setAutoShareAi] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
   useEffect(() => {
     setInputKey(apiKey || '');
     setTestStatus(null);
     setTestMessage('');
     setStorageMetrics(getStorageMetrics());
     setStorageMessage('');
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      if (saved !== null) {
+        setAutoShareAi(JSON.parse(saved));
+      }
+    } catch (e) {}
   }, [apiKey, isOpen]);
 
   const handleExportBackup = () => {
@@ -118,6 +134,9 @@ export default function SettingsModal({
     const finalKey = inputKey.trim();
     setApiKey(finalKey);
     setModel(finalModel);
+    try {
+      localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(autoShareAi));
+    } catch (e) {}
     onClose();
   };
 
@@ -352,6 +371,43 @@ export default function SettingsModal({
                 />
               </div>
             )}
+          </div>
+
+          {/* Section: Privacy & Community Auto-Sharing */}
+          <div className="pt-2 border-t border-slate-100 space-y-2.5">
+            <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+              <Globe className="w-3.5 h-3.5 text-blue-600" />
+              <span>Quyền Riêng Tư & Chia Sẻ Cộng Đồng</span>
+            </label>
+
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div className="pr-3">
+                <div className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+                  <span>Tự động chia sẻ đề thi AI lên cộng đồng</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">Mặc định</span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                  Đề thi & bài đọc do AI sinh tự động thành tài nguyên chung của web. Tắt nếu bạn muốn mặc định lưu riêng tư cho tài khoản.
+                </p>
+              </div>
+
+              <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                <input 
+                  type="checkbox" 
+                  checked={autoShareAi} 
+                  onChange={(e) => setAutoShareAi(e.target.checked)} 
+                  className="sr-only peer" 
+                />
+                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200/80 text-[11px] text-emerald-950 flex items-start space-x-2">
+              <Shield className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+              <span>
+                <strong>Chính sách bảo mật:</strong> Hình ảnh & file âm thanh cá nhân bạn tải lên luôn được giữ riêng tư 100% và tự hủy sau khi làm bài (Zero-Storage), không bao giờ bị chia sẻ ra ngoài.
+              </span>
+            </div>
           </div>
 
           {/* Section: Storage Resilience & Backup */}
