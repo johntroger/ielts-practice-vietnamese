@@ -967,13 +967,19 @@ export default function App() {
           skill="writing"
         />
 
-      <VocabGrammarSpellingModal
-        isOpen={isVocabGrammarOpen}
-        onClose={() => setIsVocabGrammarOpen(false)}
-        apiKey={apiKey}
-        model={model}
-        onSaveToNotebook={(v) => setVocabList(prev => [v, ...prev])}
-      />
+      <WorkspaceErrorBoundary skillName="IELTS Vocab, Grammar & Spelling">
+        <VocabGrammarSpellingModal
+          isOpen={isVocabGrammarOpen}
+          onClose={() => setIsVocabGrammarOpen(false)}
+          apiKey={apiKey}
+          model={model}
+          onSaveToNotebook={(v) => setVocabList(prev => [v, ...prev])}
+          currentUser={currentUser}
+          masteredIds={masteredIds}
+          onToggleMastered={handleToggleMastered}
+          onOpenAuth={() => setIsAuthOpen(true)}
+        />
+      </WorkspaceErrorBoundary>
 
       <MicroDrillsModal
         isOpen={isDrillsOpen}

@@ -20,7 +20,11 @@ import {
   Lightbulb,
   X,
   Filter,
-  Layers
+  Layers,
+  GraduationCap,
+  Globe,
+  Lock,
+  RefreshCw
 } from 'lucide-react';
 import {
   IELTS_SPELLING_TRAPS,
@@ -32,21 +36,57 @@ import {
   generateGrammarDrillAi,
   generateThematicVocabAi
 } from '../services/geminiService';
+import {
+  fetchPublicVocabGrammarItems,
+  savePublicVocabGrammarItem,
+  deletePublicVocabGrammarItem
+} from '../services/dataSyncService';
 
 export default function VocabGrammarSpellingModal({
   isOpen,
   onClose,
   apiKey,
   model,
-  onSaveToNotebook
+  onSaveToNotebook,
+  currentUser,
+  masteredIds = [],
+  onToggleMastered,
+  onOpenAuth
 }) {
-  if (!isOpen) return null;
-
   // Active Tab: 'spelling' | 'grammar' | 'vocab'
   const [activeTab, setActiveTab] = useState('spelling');
 
   // Band Filter: 'all' (Tất cả 5.5 - 7.5) | 'band-5.5' (Band 5.5 - 6.0) | 'band-6' (Band 6.0 - 6.5) | 'band-7' (Band 7.0 - 7.5)
   const [selectedBandTier, setSelectedBandTier] = useState('all');
+
+  // Sharing & Privacy State (Defaults to true: Public community resource)
+  const [isAutoShare, setIsAutoShare] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_auto_share_ai_content');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  // Mastered Items Visibility Toggle
+  const [hideMastered, setHideMastered] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_hide_mastered_vg');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  const handleToggleHideMastered = (val) => {
+    setHideMastered(val);
+    try {
+      localStorage.setItem('ielts_hide_mastered_vg', JSON.stringify(val));
+    } catch (e) {}
+  };
+
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // ==========================================
   // TAB 1: SPELLING SPRINT STATE
@@ -59,19 +99,26 @@ export default function VocabGrammarSpellingModal({
     return IELTS_SPELLING_TRAPS;
   });
 
-  // Filtered spelling items by band tier
+  // Filtered spelling items by band tier & mastered status
   const filteredSpellingList = useMemo(() => {
+    let list = rawSpellingList;
     if (selectedBandTier === 'band-5.5') {
-      return rawSpellingList.filter(item => item.bandLevel === '5.5' || item.bandLevel === '6.0');
+      list = list.filter(item => item.bandLevel === '5.5' || item.bandLevel === '6.0');
+    } else if (selectedBandTier === 'band-6') {
+      list = list.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5');
+    } else if (selectedBandTier === 'band-7') {
+      list = list.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5');
     }
-    if (selectedBandTier === 'band-6') {
-      return rawSpellingList.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5');
+    if (hideMastered && currentUser && Array.isArray(masteredIds)) {
+      list = list.filter(item => !masteredIds.includes(item.id));
     }
-    if (selectedBandTier === 'band-7') {
-      return rawSpellingList.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5');
-    }
-    return rawSpellingList;
-  }, [rawSpellingList, selectedBandTier]);
+    return list;
+  }, [rawSpellingList, selectedBandTier, hideMastered, currentUser, masteredIds]);
+
+  const totalMasteredSpelling = useMemo(() => {
+    if (!currentUser || !Array.isArray(masteredIds)) return 0;
+    return rawSpellingList.filter(item => masteredIds.includes(item.id)).length;
+  }, [rawSpellingList, currentUser, masteredIds]);
 
   const [currentSpellingIdx, setCurrentSpellingIdx] = useState(0);
   const [selectedSpellingChoice, setSelectedSpellingChoice] = useState(null);
@@ -79,7 +126,7 @@ export default function VocabGrammarSpellingModal({
   const [spellingScore, setSpellingScore] = useState({ correct: 0, total: 0 });
   const [shuffledOptions, setShuffledOptions] = useState([]);
 
-  // Reset index when band filter changes
+  // Reset index when band filter changes or tab changes
   useEffect(() => {
     setCurrentSpellingIdx(0);
   }, [selectedBandTier]);
@@ -89,7 +136,7 @@ export default function VocabGrammarSpellingModal({
   // Shuffle options whenever trap changes
   useEffect(() => {
     if (!currentTrap) return;
-    const opts = [currentTrap.correct, ...currentTrap.distractors];
+    const opts = [currentTrap.correct, ...(currentTrap.distractors || [])];
     for (let i = opts.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [opts[i], opts[j]] = [opts[j], opts[i]];
@@ -130,17 +177,24 @@ export default function VocabGrammarSpellingModal({
   });
 
   const filteredGrammarList = useMemo(() => {
+    let list = rawGrammarList;
     if (selectedBandTier === 'band-5.5') {
-      return rawGrammarList.filter(item => item.bandLevel === '5.5' || item.bandLevel === '6.0' || item.bandTarget?.includes('5.5'));
+      list = list.filter(item => item.bandLevel === '5.5' || item.bandLevel === '6.0' || item.bandTarget?.includes('5.5'));
+    } else if (selectedBandTier === 'band-6') {
+      list = list.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5' || item.bandTarget?.includes('6.'));
+    } else if (selectedBandTier === 'band-7') {
+      list = list.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5' || item.bandTarget?.includes('7.'));
     }
-    if (selectedBandTier === 'band-6') {
-      return rawGrammarList.filter(item => item.bandLevel === '6.0' || item.bandLevel === '6.5' || item.bandTarget?.includes('6.'));
+    if (hideMastered && currentUser && Array.isArray(masteredIds)) {
+      list = list.filter(item => !masteredIds.includes(item.id));
     }
-    if (selectedBandTier === 'band-7') {
-      return rawGrammarList.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5' || item.bandTarget?.includes('7.'));
-    }
-    return rawGrammarList;
-  }, [rawGrammarList, selectedBandTier]);
+    return list;
+  }, [rawGrammarList, selectedBandTier, hideMastered, currentUser, masteredIds]);
+
+  const totalMasteredGrammar = useMemo(() => {
+    if (!currentUser || !Array.isArray(masteredIds)) return 0;
+    return rawGrammarList.filter(item => masteredIds.includes(item.id)).length;
+  }, [rawGrammarList, currentUser, masteredIds]);
 
   const [currentGrammarIdx, setCurrentGrammarIdx] = useState(0);
   const [userGrammarInput, setUserGrammarInput] = useState('');
@@ -175,20 +229,27 @@ export default function VocabGrammarSpellingModal({
 
   const currentDeck = thematicDecks.find(d => d.id === activeDeckId) || thematicDecks[0];
 
-  // Filter cards by selected band tier
+  // Filter cards by selected band tier & mastered status
   const filteredCards = useMemo(() => {
     if (!currentDeck) return [];
+    let cards = currentDeck.cards || [];
     if (selectedBandTier === 'band-5.5') {
-      return currentDeck.cards.filter(c => c.bandLevel === '5.5' || c.bandLevel === '6.0' || c.bandScore === '5.5' || c.bandScore === '6.0');
+      cards = cards.filter(c => c.bandLevel === '5.5' || c.bandLevel === '6.0' || c.bandScore === '5.5' || c.bandScore === '6.0');
+    } else if (selectedBandTier === 'band-6') {
+      cards = cards.filter(c => c.bandLevel === '6.0' || c.bandLevel === '6.5');
+    } else if (selectedBandTier === 'band-7') {
+      cards = cards.filter(c => c.bandLevel === '7.0' || c.bandLevel === '7.5');
     }
-    if (selectedBandTier === 'band-6') {
-      return currentDeck.cards.filter(c => c.bandLevel === '6.0' || c.bandLevel === '6.5');
+    if (hideMastered && currentUser && Array.isArray(masteredIds)) {
+      cards = cards.filter(c => !masteredIds.includes(c.id));
     }
-    if (selectedBandTier === 'band-7') {
-      return currentDeck.cards.filter(c => c.bandLevel === '7.0' || c.bandLevel === '7.5');
-    }
-    return currentDeck.cards;
-  }, [currentDeck, selectedBandTier]);
+    return cards;
+  }, [currentDeck, selectedBandTier, hideMastered, currentUser, masteredIds]);
+
+  const totalMasteredVocab = useMemo(() => {
+    if (!currentUser || !Array.isArray(masteredIds) || !currentDeck) return 0;
+    return (currentDeck.cards || []).filter(c => masteredIds.includes(c.id)).length;
+  }, [currentDeck, currentUser, masteredIds]);
 
   const currentCard = filteredCards[currentCardIdx] || filteredCards[0];
 
@@ -196,6 +257,16 @@ export default function VocabGrammarSpellingModal({
     setCurrentCardIdx(0);
     setIsFlipped(false);
   }, [activeDeckId, selectedBandTier]);
+
+  // Mastered button handler with login guard
+  const handleToggleMasteredItem = (itemId) => {
+    if (!currentUser) {
+      alert('Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
+      onOpenAuth?.();
+      return;
+    }
+    onToggleMastered?.(itemId);
+  };
 
   const handleUpdateMastery = (status) => {
     if (!currentCard) return;
@@ -212,6 +283,11 @@ export default function VocabGrammarSpellingModal({
       } catch (e) {}
       return updated;
     });
+
+    // If marked as 'mastered', automatically add to user's masteredIds if logged in
+    if (status === 'mastered' && currentUser && !masteredIds.includes(currentCard.id)) {
+      onToggleMastered?.(currentCard.id);
+    }
 
     if (currentCardIdx < filteredCards.length - 1) {
       setCurrentCardIdx(prev => prev + 1);
@@ -234,7 +310,232 @@ export default function VocabGrammarSpellingModal({
   };
 
   // ==========================================
-  // AI GENERATOR INTEGRATION (CALIBRATED TO BAND 6.0 - 7.5)
+  // SUPABASE CLOUD & REALTIME SYNC (Like Micro Drills)
+  // ==========================================
+  const reloadFromCloud = React.useCallback(async () => {
+    try {
+      const cloudItems = await fetchPublicVocabGrammarItems();
+      if (cloudItems && cloudItems.length > 0) {
+        const cloudSpelling = cloudItems.filter(item => item.id?.startsWith('ai-sp-'));
+        const cloudGrammar = cloudItems.filter(item => item.id?.startsWith('ai-gr-'));
+        const cloudCards = cloudItems.filter(item => item.id?.startsWith('ai-card-'));
+
+        if (cloudSpelling.length > 0) {
+          setRawSpellingList(prev => {
+            const map = new Map();
+            prev.forEach(item => map.set(item.id, item));
+            cloudSpelling.forEach(item => map.set(item.id, { ...item, isPublic: true, isCommunity: true }));
+            const merged = Array.from(map.values());
+            try {
+              const customOnly = merged.filter(item => item.id?.startsWith('ai-sp-'));
+              localStorage.setItem('ielts_custom_spelling_traps_v2', JSON.stringify(customOnly));
+            } catch (e) {}
+            return merged;
+          });
+        }
+
+        if (cloudGrammar.length > 0) {
+          setRawGrammarList(prev => {
+            const map = new Map();
+            prev.forEach(item => map.set(item.id, item));
+            cloudGrammar.forEach(item => map.set(item.id, { ...item, isPublic: true, isCommunity: true }));
+            const merged = Array.from(map.values());
+            try {
+              const customOnly = merged.filter(item => item.id?.startsWith('ai-gr-'));
+              localStorage.setItem('ielts_custom_grammar_drills_v2', JSON.stringify(customOnly));
+            } catch (e) {}
+            return merged;
+          });
+        }
+
+        if (cloudCards.length > 0) {
+          setThematicDecks(prev => {
+            const updated = prev.map(deck => {
+              const deckCards = [...deck.cards];
+              const cardMap = new Map();
+              deckCards.forEach(c => cardMap.set(c.id, c));
+              cloudCards.forEach(card => {
+                if (card.deckId === deck.id || (!card.deckId && deck.id === 'deck-tech')) {
+                  cardMap.set(card.id, { ...card, isPublic: true, isCommunity: true });
+                }
+              });
+              return { ...deck, cards: Array.from(cardMap.values()) };
+            });
+            try {
+              localStorage.setItem('ielts_custom_thematic_decks_v2', JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Cloud reload notice for vocab/grammar:', err);
+    }
+  }, []);
+
+  // BroadcastChannel for instant cross-tab sync
+  useEffect(() => {
+    let bc = null;
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+        bc.onmessage = (event) => {
+          const { type, item, itemId, nextPub, category } = event.data || {};
+          if (type === 'NEW_ITEM' && item) {
+            if (category === 'spelling') {
+              setRawSpellingList(prev => prev.some(x => x.id === item.id) ? prev : [item, ...prev]);
+            } else if (category === 'grammar') {
+              setRawGrammarList(prev => prev.some(x => x.id === item.id) ? prev : [item, ...prev]);
+            } else if (category === 'vocab') {
+              setThematicDecks(prev => prev.map(d => (d.id === (item.deckId || d.id)) ? { ...d, cards: [item, ...d.cards.filter(c => c.id !== item.id)] } : d));
+            }
+          } else if (type === 'TOGGLE_PUBLIC' && itemId) {
+            setRawSpellingList(prev => prev.map(x => x.id === itemId ? { ...x, isPublic: nextPub, isCommunity: nextPub } : x));
+            setRawGrammarList(prev => prev.map(x => x.id === itemId ? { ...x, isPublic: nextPub, isCommunity: nextPub } : x));
+            setThematicDecks(prev => prev.map(d => ({ ...d, cards: d.cards.map(c => c.id === itemId ? { ...c, isPublic: nextPub, isCommunity: nextPub } : c) })));
+          } else if (type === 'SYNC_ALL') {
+            reloadFromCloud();
+          }
+        };
+      }
+    } catch (e) {
+      console.warn('BroadcastChannel error:', e);
+    }
+    return () => {
+      if (bc) bc.close();
+    };
+  }, [reloadFromCloud]);
+
+  // Sync with Cloud on mount, auto-migrate, heartbeat polling, window focus
+  useEffect(() => {
+    reloadFromCloud();
+
+    try {
+      const savedSp = JSON.parse(localStorage.getItem('ielts_custom_spelling_traps_v2') || '[]');
+      const savedGr = JSON.parse(localStorage.getItem('ielts_custom_grammar_drills_v2') || '[]');
+      savedSp.forEach(item => {
+        if (item.id && item.id.startsWith('ai-sp-')) {
+          savePublicVocabGrammarItem({ ...item, isPublic: true, isCommunity: true });
+        }
+      });
+      savedGr.forEach(item => {
+        if (item.id && item.id.startsWith('ai-gr-')) {
+          savePublicVocabGrammarItem({ ...item, isPublic: true, isCommunity: true });
+        }
+      });
+    } catch (e) {}
+
+    const handleFocus = () => reloadFromCloud();
+    window.addEventListener('focus', handleFocus);
+    const pollInterval = setInterval(() => reloadFromCloud(), 4000);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(pollInterval);
+    };
+  }, [reloadFromCloud]);
+
+  // Manual 1-click Cloud Sync Handler
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    try {
+      await reloadFromCloud();
+      try {
+        if ('BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+          bc.postMessage({ type: 'SYNC_ALL' });
+          bc.close();
+        }
+      } catch (e) {}
+      alert('Đồng bộ thành công! Toàn bộ bẫy chính tả, ngữ pháp và thẻ từ vựng đã được cập nhật từ Cloud.');
+    } catch (e) {
+      alert('Đồng bộ hoàn tất.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Toggle Publicity for AI generated items
+  const handleToggleItemPublicity = (itemId, itemType) => {
+    if (itemType === 'spelling') {
+      setRawSpellingList(prev => {
+        const target = prev.find(x => x.id === itemId);
+        const nextPub = target ? !target.isPublic : true;
+        const updated = prev.map(x => x.id === itemId ? { ...x, isPublic: nextPub, isCommunity: nextPub } : x);
+        try {
+          const customOnly = updated.filter(x => x.id?.startsWith('ai-sp-'));
+          localStorage.setItem('ielts_custom_spelling_traps_v2', JSON.stringify(customOnly));
+        } catch (e) {}
+        if (target) {
+          if (nextPub) savePublicVocabGrammarItem({ ...target, isPublic: true, isCommunity: true });
+          else deletePublicVocabGrammarItem(itemId);
+        }
+        try {
+          if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+            bc.postMessage({ type: 'TOGGLE_PUBLIC', itemId, nextPub, category: 'spelling' });
+            bc.close();
+          }
+        } catch (e) {}
+        return updated;
+      });
+    } else if (itemType === 'grammar') {
+      setRawGrammarList(prev => {
+        const target = prev.find(x => x.id === itemId);
+        const nextPub = target ? !target.isPublic : true;
+        const updated = prev.map(x => x.id === itemId ? { ...x, isPublic: nextPub, isCommunity: nextPub } : x);
+        try {
+          const customOnly = updated.filter(x => x.id?.startsWith('ai-gr-'));
+          localStorage.setItem('ielts_custom_grammar_drills_v2', JSON.stringify(customOnly));
+        } catch (e) {}
+        if (target) {
+          if (nextPub) savePublicVocabGrammarItem({ ...target, isPublic: true, isCommunity: true });
+          else deletePublicVocabGrammarItem(itemId);
+        }
+        try {
+          if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+            bc.postMessage({ type: 'TOGGLE_PUBLIC', itemId, nextPub, category: 'grammar' });
+            bc.close();
+          }
+        } catch (e) {}
+        return updated;
+      });
+    } else if (itemType === 'vocab') {
+      setThematicDecks(prev => {
+        let target = null;
+        const updated = prev.map(d => ({
+          ...d,
+          cards: d.cards.map(c => {
+            if (c.id === itemId) {
+              const nextPub = !c.isPublic;
+              target = { ...c, isPublic: nextPub, isCommunity: nextPub, deckId: d.id };
+              return target;
+            }
+            return c;
+          })
+        }));
+        try {
+          localStorage.setItem('ielts_custom_thematic_decks_v2', JSON.stringify(updated));
+        } catch (e) {}
+        if (target) {
+          if (target.isPublic) savePublicVocabGrammarItem(target);
+          else deletePublicVocabGrammarItem(itemId);
+          try {
+            if ('BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+              bc.postMessage({ type: 'TOGGLE_PUBLIC', itemId, nextPub: target.isPublic, category: 'vocab' });
+              bc.close();
+            }
+          } catch (e) {}
+        }
+        return updated;
+      });
+    }
+  };
+
+  // ==========================================
+  // AI GENERATOR INTEGRATION (CALIBRATED TO BAND 5.5 - 7.5)
   // ==========================================
   const [isAiGenerating, setIsAiGenerating] = useState(false);
   const [aiMessage, setAiMessage] = useState('');
@@ -255,15 +556,33 @@ export default function VocabGrammarSpellingModal({
           ? '7.5'
           : '6.0';
 
+    const isPub = Boolean(isAutoShare);
+    const creatorLabel = isPub ? (currentUser?.email ? `${currentUser.email.split('@')[0]} (Thành viên)` : 'Cộng Đồng IELTS') : 'Tôi';
+
     try {
       if (activeTab === 'spelling') {
-        const newTrap = await generateSpellingTrapAi({ apiKey, model, bandLevel: targetBand });
+        const rawTrap = await generateSpellingTrapAi({ apiKey, model, bandLevel: targetBand });
+        const newTrap = {
+          ...rawTrap,
+          isPublic: isPub,
+          isCommunity: isPub,
+          isAiGenerated: true,
+          creatorEmail: creatorLabel
+        };
         const updated = [newTrap, ...rawSpellingList];
         setRawSpellingList(updated);
         setCurrentSpellingIdx(0);
         try {
-          const customOnly = updated.filter(item => item.id.startsWith('ai-sp-'));
+          const customOnly = updated.filter(item => item.id?.startsWith('ai-sp-'));
           localStorage.setItem('ielts_custom_spelling_traps_v2', JSON.stringify(customOnly));
+          if (isPub) {
+            savePublicVocabGrammarItem(newTrap);
+            if ('BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+              bc.postMessage({ type: 'NEW_ITEM', item: newTrap, category: 'spelling' });
+              bc.close();
+            }
+          }
         } catch (e) {}
         setAiMessage(`Đã tạo bẫy chính tả Band ${targetBand}: "${newTrap.correct}"!`);
       } else if (activeTab === 'grammar') {
@@ -273,24 +592,47 @@ export default function VocabGrammarSpellingModal({
             ? ['Concession with While/Although', 'Relative Clauses', 'Academic Passive Voice']
             : ['Participle Clause V-ing', 'Cleft Sentence', 'Not only Inversion', 'Nominalization'];
         const randomType = types[Math.floor(Math.random() * types.length)];
-        const newGrammar = await generateGrammarDrillAi({ apiKey, model, grammarType: randomType, bandLevel: targetBand });
+        const rawGrammar = await generateGrammarDrillAi({ apiKey, model, grammarType: randomType, bandLevel: targetBand });
+        const newGrammar = {
+          ...rawGrammar,
+          isPublic: isPub,
+          isCommunity: isPub,
+          isAiGenerated: true,
+          creatorEmail: creatorLabel
+        };
         const updated = [newGrammar, ...rawGrammarList];
         setRawGrammarList(updated);
         setCurrentGrammarIdx(0);
         try {
-          const customOnly = updated.filter(item => item.id.startsWith('ai-gr-'));
+          const customOnly = updated.filter(item => item.id?.startsWith('ai-gr-'));
           localStorage.setItem('ielts_custom_grammar_drills_v2', JSON.stringify(customOnly));
+          if (isPub) {
+            savePublicVocabGrammarItem(newGrammar);
+            if ('BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+              bc.postMessage({ type: 'NEW_ITEM', item: newGrammar, category: 'grammar' });
+              bc.close();
+            }
+          }
         } catch (e) {}
         setAiMessage(`Đã tạo bài tập ngữ pháp Band ${targetBand}: "${newGrammar.title}"!`);
       } else if (activeTab === 'vocab') {
         const topicNames = ['Technology & Digital Life', 'Environment & Climate', 'Society & Urban Life'];
         const currentDeckName = currentDeck ? currentDeck.topicName : topicNames[0];
-        const newCards = await generateThematicVocabAi({ apiKey, model, topic: currentDeckName, bandLevel: targetBand });
-        
+        const rawCards = await generateThematicVocabAi({ apiKey, model, topic: currentDeckName, bandLevel: targetBand });
+        const enrichedCards = rawCards.map(c => ({
+          ...c,
+          deckId: activeDeckId,
+          isPublic: isPub,
+          isCommunity: isPub,
+          isAiGenerated: true,
+          creatorEmail: creatorLabel
+        }));
+
         setThematicDecks(prev => {
           const updated = prev.map(deck => {
             if (deck.id === activeDeckId) {
-              return { ...deck, cards: [...newCards, ...deck.cards] };
+              return { ...deck, cards: [...enrichedCards, ...deck.cards] };
             }
             return deck;
           });
@@ -299,9 +641,20 @@ export default function VocabGrammarSpellingModal({
           } catch (e) {}
           return updated;
         });
+
+        if (isPub) {
+          enrichedCards.forEach(c => savePublicVocabGrammarItem(c));
+          try {
+            if ('BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_vocab_grammar_realtime');
+              enrichedCards.forEach(c => bc.postMessage({ type: 'NEW_ITEM', item: c, category: 'vocab' }));
+              bc.close();
+            }
+          } catch (e) {}
+        }
         setCurrentCardIdx(0);
         setIsFlipped(false);
-        setAiMessage(`Đã nạp ${newCards.length} thẻ từ vựng thực chiến Band ${targetBand}!`);
+        setAiMessage(`Đã nạp ${enrichedCards.length} thẻ từ vựng thực chiến Band ${targetBand}!`);
       }
       setTimeout(() => setAiMessage(''), 4000);
     } catch (err) {
@@ -312,35 +665,65 @@ export default function VocabGrammarSpellingModal({
     }
   };
 
+  // Safe early return placed AFTER ALL HOOKS
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 lg:p-3 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-hidden">
       <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh] flex flex-col overflow-hidden overscroll-contain">
         
         {/* MODAL HEADER */}
-        <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shrink-0">
+        <div className="px-4 sm:px-6 py-3.5 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-black shadow-md">
               <Zap className="w-5 h-5 fill-current" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-lg font-bold tracking-tight">Luyện Từ Vựng, Ngữ Pháp & Chính Tả</h2>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
-                  Trọng Tâm Band 5.5 - 7.5+
+                <h2 className="text-base sm:text-lg font-bold tracking-tight">Luyện Từ Vựng, Ngữ Pháp & Chính Tả</h2>
+                <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
+                  Band 5.5 - 7.5+
                 </span>
               </div>
-              <p className="text-xs text-slate-300">
-                Phương pháp Active Recall, phân tầng rõ rệt: Band 5.5-6.0 (Nền tảng vững chắc), Band 6.0-6.5 (Cốt lõi) và Band 7.0-7.5 (Bứt phá)
+              <p className="text-xs text-slate-300 hidden md:block">
+                Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS
               </p>
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Auto Share Toggle */}
+            <label className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-300 bg-white/10 hover:bg-white/15 px-2.5 py-1.5 rounded-lg border border-white/10 cursor-pointer transition">
+              <input
+                type="checkbox"
+                checked={isAutoShare}
+                onChange={(e) => {
+                  setIsAutoShare(e.target.checked);
+                  try {
+                    localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(e.target.checked));
+                  } catch (err) {}
+                }}
+                className="rounded text-emerald-500 focus:ring-emerald-400 cursor-pointer"
+              />
+              <span className="font-semibold text-white text-[11px]">Chia sẻ cộng đồng</span>
+            </label>
+
+            {/* Cloud Sync Button */}
+            <button
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition-all cursor-pointer shadow-2xs"
+              title="Đồng bộ tức thời với Supabase Cloud"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-400' : 'text-slate-300'}`} />
+              <span className="hidden sm:inline">{isSyncing ? 'Đang sync...' : 'Đồng bộ'}</span>
+            </button>
+
             {/* AI Generator Button */}
             <button
               onClick={handleGenerateAiItem}
               disabled={isAiGenerating}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               title="Nhờ Gemini tạo thêm bài tập thực chiến theo dải điểm đã chọn"
             >
               {isAiGenerating ? (
@@ -349,14 +732,14 @@ export default function VocabGrammarSpellingModal({
                 <Sparkles className="w-3.5 h-3.5" />
               )}
               <span className="hidden sm:inline">
-                {isAiGenerating ? 'Đang tạo...' : 'Gemini Sinh Đề Luyện'}
+                {isAiGenerating ? 'Đang tạo...' : 'Gemini Sinh Bài Luyện'}
               </span>
             </button>
 
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -364,16 +747,16 @@ export default function VocabGrammarSpellingModal({
         </div>
 
         {/* BAND LEVEL FILTER BAR */}
-        <div className="bg-slate-100 border-b border-slate-200 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div className="bg-slate-100 border-b border-slate-200 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
           <div className="flex items-center space-x-2">
             <Filter className="w-4 h-4 text-slate-500" />
-            <span className="text-xs font-bold text-slate-700">Phân Loại Trình Độ Luyện Tập:</span>
+            <span className="text-xs font-bold text-slate-700">Phân Loại Trình Độ:</span>
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
+          <div className="flex items-center space-x-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto max-w-full">
             <button
               onClick={() => setSelectedBandTier('all')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 selectedBandTier === 'all'
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -383,33 +766,33 @@ export default function VocabGrammarSpellingModal({
             </button>
             <button
               onClick={() => setSelectedBandTier('band-5.5')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 selectedBandTier === 'band-5.5'
                   ? 'bg-teal-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              📗 Band 5.5 - 6.0 (Nền tảng & Chống mất điểm)
+              📗 Band 5.5 - 6.0
             </button>
             <button
               onClick={() => setSelectedBandTier('band-6')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 selectedBandTier === 'band-6'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              📘 Band 6.0 - 6.5 (Cốt lõi chuẩn xác)
+              📘 Band 6.0 - 6.5
             </button>
             <button
               onClick={() => setSelectedBandTier('band-7')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 selectedBandTier === 'band-7'
                   ? 'bg-purple-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              🚀 Band 7.0 - 7.5 (Bứt phá học thuật)
+              🚀 Band 7.0 - 7.5
             </button>
           </div>
         </div>
@@ -433,10 +816,10 @@ export default function VocabGrammarSpellingModal({
         )}
 
         {/* NAVIGATION TABS */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-6 pt-2 shrink-0">
+        <div className="flex border-b border-slate-200 bg-slate-50 px-4 sm:px-6 pt-2 shrink-0 overflow-x-auto">
           <button
             onClick={() => setActiveTab('spelling')}
-            className={`flex items-center space-x-2 px-4 py-2.5 text-sm font-bold border-b-2 transition-colors ${
+            className={`flex items-center space-x-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'spelling'
                 ? 'border-red-600 text-red-600 bg-white rounded-t-lg shadow-2xs'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -451,7 +834,7 @@ export default function VocabGrammarSpellingModal({
 
           <button
             onClick={() => setActiveTab('grammar')}
-            className={`flex items-center space-x-2 px-4 py-2.5 text-sm font-bold border-b-2 transition-colors ${
+            className={`flex items-center space-x-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'grammar'
                 ? 'border-indigo-600 text-indigo-600 bg-white rounded-t-lg shadow-2xs'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -466,7 +849,7 @@ export default function VocabGrammarSpellingModal({
 
           <button
             onClick={() => setActiveTab('vocab')}
-            className={`flex items-center space-x-2 px-4 py-2.5 text-sm font-bold border-b-2 transition-colors ${
+            className={`flex items-center space-x-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'vocab'
                 ? 'border-emerald-600 text-emerald-600 bg-white rounded-t-lg shadow-2xs'
                 : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -481,267 +864,433 @@ export default function VocabGrammarSpellingModal({
         </div>
 
         {/* MODAL BODY */}
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50/50">
 
           {/* ========================================== */}
           {/* TAB 1: SPELLING SPRINT                     */}
           {/* ========================================== */}
-          {activeTab === 'spelling' && currentTrap && (
-            <div className="max-w-3xl mx-auto space-y-6">
+          {activeTab === 'spelling' && (
+            <div className="max-w-3xl mx-auto space-y-5">
               
-              {/* Score & Progress bar */}
-              <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-                <div className="flex items-center space-x-3">
-                  <div className="px-3 py-1 bg-red-50 border border-red-200 rounded-lg text-red-700 font-black text-xs">
-                    Bẫy {currentSpellingIdx + 1} / {filteredSpellingList.length}
-                  </div>
-                  <span className="px-2 py-0.5 rounded text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
-                    Band {currentTrap.bandLevel || '6.5'}
-                  </span>
-                  <span className="text-xs font-semibold text-slate-500">
-                    Chủ đề: <strong className="text-slate-800">{currentTrap.category}</strong>
-                  </span>
-                </div>
-                
-                <div className="flex items-center space-x-2 text-xs font-bold text-slate-600">
-                  <span>Điểm đúng:</span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-extrabold">
-                    {spellingScore.correct} / {spellingScore.total}
-                  </span>
-                  {spellingScore.total > 0 && (
-                    <span className="text-slate-400">
-                      ({Math.round((spellingScore.correct / spellingScore.total) * 100)}%)
-                    </span>
+              {/* Score, Mastered Toggle & Controls */}
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
+                <div className="flex items-center flex-wrap gap-2">
+                  {currentTrap && (
+                    <>
+                      <div className="px-3 py-1 bg-red-50 border border-red-200 rounded-lg text-red-700 font-black text-xs">
+                        Bẫy {currentSpellingIdx + 1} / {filteredSpellingList.length}
+                      </div>
+                      <span className="px-2 py-0.5 rounded text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+                        Band {currentTrap.bandLevel || '6.5'}
+                      </span>
+                    </>
+                  )}
+
+                  {/* Hide Mastered Checkbox */}
+                  {currentUser && totalMasteredSpelling > 0 && (
+                    <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
+                      <input
+                        type="checkbox"
+                        checked={hideMastered}
+                        onChange={(e) => handleToggleHideMastered(e.target.checked)}
+                        className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <span className="font-semibold text-emerald-800 text-[11px]">Ẩn từ đã thuộc ({totalMasteredSpelling})</span>
+                    </label>
                   )}
                 </div>
-              </div>
+                
+                {/* Current Trap Badges & Mastered Button */}
+                {currentTrap && (
+                  <div className="flex items-center space-x-2">
+                    {/* Mastered / Đã Thuộc Toggle Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleToggleMasteredItem(currentTrap.id)}
+                      className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
+                        masteredIds.includes(currentTrap.id)
+                          ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
+                          : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                      }`}
+                      title={masteredIds.includes(currentTrap.id)
+                        ? "Từ này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
+                        : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập nếu bạn bật 'Ẩn từ đã thuộc')"}
+                    >
+                      <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>{masteredIds.includes(currentTrap.id) ? 'Đã thuộc' : 'Thuộc từ này'}</span>
+                    </button>
 
-              {/* Challenge Card */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6 text-center">
-                <div>
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 mb-3">
-                    🔍 Bẫy chính tả thường gặp Band {currentTrap.bandLevel || '6.0 - 7.5'}
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
-                    Chọn từ viết đúng chính tả vào chỗ trống:
-                  </h3>
-                </div>
+                    {/* Community / Private Badge */}
+                    {currentTrap.isCommunity || currentTrap.isPublic ? (
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                        <Globe className="w-3 h-3 text-emerald-600" />
+                        <span>🌐 Cộng Đồng</span>
+                      </span>
+                    ) : (
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
+                        <Lock className="w-3 h-3 text-amber-600" />
+                        <span>🔒 Riêng tư</span>
+                      </span>
+                    )}
 
-                {/* Context Sentence */}
-                <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-base sm:text-lg text-slate-700 font-serif leading-relaxed italic">
-                  "{currentTrap.contextSentence}"
-                </div>
-
-                {/* Choices */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  {shuffledOptions.map((opt, idx) => {
-                    let btnStyle = 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-800';
-                    if (isSpellingChecked) {
-                      if (opt === currentTrap.correct) {
-                        btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-extrabold ring-2 ring-emerald-500/30';
-                      } else if (opt === selectedSpellingChoice) {
-                        btnStyle = 'border-red-500 bg-red-50 text-red-900 line-through';
-                      } else {
-                        btnStyle = 'border-slate-200 bg-slate-50 text-slate-400 opacity-60';
-                      }
-                    }
-
-                    return (
+                    {currentTrap.isAiGenerated && (
                       <button
-                        key={idx}
-                        onClick={() => handleCheckSpelling(opt)}
-                        disabled={isSpellingChecked}
-                        className={`p-4 rounded-xl border-2 text-base font-bold transition-all text-left flex items-center justify-between ${btnStyle}`}
+                        type="button"
+                        onClick={() => handleToggleItemPublicity(currentTrap.id, 'spelling')}
+                        className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                        title={currentTrap.isPublic ? 'Chuyển sang Riêng tư' : 'Mở chia sẻ bài tập này cho mọi người'}
                       >
-                        <span className="font-mono">{opt}</span>
-                        {isSpellingChecked && opt === currentTrap.correct && (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                        )}
-                        {isSpellingChecked && opt === selectedSpellingChoice && opt !== currentTrap.correct && (
-                          <XCircle className="w-5 h-5 text-red-600 shrink-0" />
-                        )}
+                        {currentTrap.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
                       </button>
-                    );
-                  })}
-                </div>
-
-                {/* Feedback & Mnemonic Rules */}
-                {isSpellingChecked && (
-                  <div className="pt-4 border-t border-slate-100 text-left space-y-4 animate-in fade-in">
-                    <div className={`p-4 rounded-xl border flex items-start space-x-3 ${
-                      selectedSpellingChoice === currentTrap.correct 
-                        ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900' 
-                        : 'bg-red-50/70 border-red-200 text-red-900'
-                    }`}>
-                      {selectedSpellingChoice === currentTrap.correct ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                      ) : (
-                        <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                      )}
-                      <div className="text-sm">
-                        <strong className="block font-bold">
-                          {selectedSpellingChoice === currentTrap.correct ? 'Chính xác tuyệt đối!' : 'Rất tiếc, bạn đã mắc bẫy!'}
-                        </strong>
-                        <p className="mt-1">
-                          Từ đúng là: <span className="font-mono font-black underline">{currentTrap.correct}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Mnemonic Rule Box */}
-                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-950 text-xs sm:text-sm space-y-2">
-                      <div className="flex items-center space-x-1.5 font-bold text-amber-800">
-                        <Lightbulb className="w-4 h-4 text-amber-600" />
-                        <span>Mẹo nhớ nhanh không bị nhầm lẫn:</span>
-                      </div>
-                      <p className="font-medium">{currentTrap.rule}</p>
-                      <p className="text-xs text-amber-700/90 pt-1 border-t border-amber-200/60">
-                        <strong>Nguồn gốc & Giải thích:</strong> {currentTrap.explanation}
-                      </p>
-                    </div>
-
-                    {/* Next Button */}
-                    <div className="flex justify-end pt-2">
-                      <button
-                        onClick={handleNextSpelling}
-                        className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all active:scale-95"
-                      >
-                        <span>Câu tiếp theo</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
+
+              {/* Congratulatory Empty State when all are mastered */}
+              {filteredSpellingList.length === 0 ? (
+                <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-bold text-emerald-900 text-base">
+                    Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredSpelling} bẫy chính tả trong dải điểm này.
+                  </h4>
+                  <p className="text-xs text-emerald-700 max-w-md mx-auto">
+                    Các từ đã thuộc được tự động ẩn khỏi danh sách luyện tập để bạn tập trung vào từ mới. Lịch sử và thống kê của bạn luôn được bảo toàn đầy đủ.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleHideMastered(false)}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Hiện lại tất cả từ đã thuộc để ôn tập</span>
+                  </button>
+                </div>
+              ) : currentTrap ? (
+                /* Challenge Card */
+                <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6 text-center">
+                  <div>
+                    <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 mb-3">
+                      🔍 Bẫy chính tả thường gặp Band {currentTrap.bandLevel || '6.0 - 7.5'}
+                    </span>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+                      Chọn từ viết đúng chính tả vào chỗ trống:
+                    </h3>
+                  </div>
+
+                  {/* Context Sentence */}
+                  <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-base sm:text-lg text-slate-700 font-serif leading-relaxed italic">
+                    "{currentTrap.contextSentence}"
+                  </div>
+
+                  {/* Choices */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    {shuffledOptions.map((opt, idx) => {
+                      let btnStyle = 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-800';
+                      if (isSpellingChecked) {
+                        if (opt === currentTrap.correct) {
+                          btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-extrabold ring-2 ring-emerald-500/30';
+                        } else if (opt === selectedSpellingChoice) {
+                          btnStyle = 'border-red-500 bg-red-50 text-red-900 line-through';
+                        } else {
+                          btnStyle = 'border-slate-200 bg-slate-50 text-slate-400 opacity-60';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleCheckSpelling(opt)}
+                          disabled={isSpellingChecked}
+                          className={`p-4 rounded-xl border-2 text-base font-bold transition-all text-left flex items-center justify-between cursor-pointer ${btnStyle}`}
+                        >
+                          <span className="font-mono">{opt}</span>
+                          {isSpellingChecked && opt === currentTrap.correct && (
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                          )}
+                          {isSpellingChecked && opt === selectedSpellingChoice && opt !== currentTrap.correct && (
+                            <XCircle className="w-5 h-5 text-red-600 shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Feedback & Mnemonic Rules */}
+                  {isSpellingChecked && (
+                    <div className="pt-4 border-t border-slate-100 text-left space-y-4 animate-in fade-in">
+                      <div className={`p-4 rounded-xl border flex items-start space-x-3 ${
+                        selectedSpellingChoice === currentTrap.correct 
+                          ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900' 
+                          : 'bg-red-50/70 border-red-200 text-red-900'
+                      }`}>
+                        {selectedSpellingChoice === currentTrap.correct ? (
+                          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                        )}
+                        <div className="text-sm">
+                          <strong className="block font-bold">
+                            {selectedSpellingChoice === currentTrap.correct ? 'Chính xác tuyệt đối!' : 'Rất tiếc, bạn đã mắc bẫy!'}
+                          </strong>
+                          <p className="mt-1">
+                            Từ đúng là: <span className="font-mono font-black underline">{currentTrap.correct}</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Mnemonic Rule Box */}
+                      <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-950 text-xs sm:text-sm space-y-2">
+                        <div className="flex items-center space-x-1.5 font-bold text-amber-800">
+                          <Lightbulb className="w-4 h-4 text-amber-600" />
+                          <span>Mẹo nhớ nhanh không bị nhầm lẫn:</span>
+                        </div>
+                        <p className="font-medium">{currentTrap.rule}</p>
+                        <p className="text-xs text-amber-700/90 pt-1 border-t border-amber-200/60">
+                          <strong>Nguồn gốc & Giải thích:</strong> {currentTrap.explanation}
+                        </p>
+                      </div>
+
+                      {/* Next Button */}
+                      <div className="flex items-center justify-between pt-2">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleMasteredItem(currentTrap.id)}
+                          className="flex items-center space-x-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-xl border border-emerald-200 transition cursor-pointer"
+                        >
+                          <GraduationCap className="w-4 h-4" />
+                          <span>{masteredIds.includes(currentTrap.id) ? 'Bỏ thuộc từ này' : 'Đánh dấu đã thuộc từ này'}</span>
+                        </button>
+
+                        <button
+                          onClick={handleNextSpelling}
+                          className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+                        >
+                          <span>Câu tiếp theo</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
           )}
 
           {/* ========================================== */}
           {/* TAB 2: GRAMMAR LAB (Band 6.0 - 7.5)        */}
           {/* ========================================== */}
-          {activeTab === 'grammar' && currentGrammar && (
-            <div className="max-w-4xl mx-auto space-y-6">
+          {activeTab === 'grammar' && (
+            <div className="max-w-4xl mx-auto space-y-5">
               
-              {/* Pattern Selector Carousel */}
-              <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-                <button
-                  onClick={() => setCurrentGrammarIdx(prev => Math.max(0, prev - 1))}
-                  disabled={currentGrammarIdx === 0}
-                  className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                <div className="text-center">
-                  <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
-                    Cấu trúc {currentGrammarIdx + 1} / {filteredGrammarList.length} • {currentGrammar.bandTarget}
-                  </span>
-                  <h3 className="text-base font-extrabold text-slate-900">{currentGrammar.title}</h3>
-                </div>
-
-                <button
-                  onClick={() => setCurrentGrammarIdx(prev => Math.min(filteredGrammarList.length - 1, prev + 1))}
-                  disabled={currentGrammarIdx === filteredGrammarList.length - 1}
-                  className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Grammar Formula & Rationale */}
-              <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-md space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-                    Công thức chuẩn {currentGrammar.bandTarget}
-                  </span>
-                  <span className="text-xs text-amber-300 font-semibold">
-                    ⭐ Đảm bảo tiêu chí Grammatical Range & Accuracy
-                  </span>
-                </div>
-                
-                <div className="p-4 rounded-xl bg-white/10 border border-white/15 font-mono text-sm sm:text-base text-amber-200 font-bold">
-                  {currentGrammar.formula}
-                </div>
-
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  <strong>💡 Lợi ích chấm điểm:</strong> {currentGrammar.rationale}
-                </p>
-              </div>
-
-              {/* Comparison: Band 5.5-6.0 vs Band 6.5-7.5 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
-                  <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">
-                    Câu văn Band 5.5 - 6.0 (Đơn điệu / Rời rạc)
-                  </span>
-                  <p className="text-sm text-slate-700 italic">
-                    "{currentGrammar.basicSentence}"
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 shadow-xs space-y-2">
-                  <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                    Nâng cấp {currentGrammar.bandTarget} (Mạch lạc & Chuẩn xác)
-                  </span>
-                  <p className="text-sm font-semibold text-emerald-950">
-                    "{currentGrammar.band8Sentence}"
-                  </p>
-                </div>
-              </div>
-
-              {/* Interactive Upgrade Drill */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
-                <div>
-                  <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
-                    Thực hành Nâng Cấp Câu
-                  </span>
-                  <h4 className="text-sm font-bold text-slate-800 mt-1">{currentGrammar.prompt}</h4>
-                </div>
-
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 font-serif">
-                  "{currentGrammar.testInput}"
-                </div>
-
-                <textarea
-                  value={userGrammarInput}
-                  onChange={(e) => setUserGrammarInput(e.target.value)}
-                  placeholder="Gõ câu viết lại của bạn vào đây để tự kiểm tra..."
-                  className="w-full h-24 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium resize-none"
-                />
-
-                <div className="flex items-center justify-between pt-2">
+              {/* Pattern Selector Carousel & Mastered Controls */}
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+                <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => setShowGrammarAnswer(prev => !prev)}
-                    className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+                    onClick={() => setCurrentGrammarIdx(prev => Math.max(0, prev - 1))}
+                    disabled={currentGrammarIdx === 0}
+                    className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                   >
-                    <HelpCircle className="w-4 h-4" />
-                    <span>{showGrammarAnswer ? 'Ẩn đáp án gợi ý' : 'Xem đáp án mẫu'}</span>
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
 
+                  {currentGrammar && (
+                    <div className="text-left">
+                      <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
+                        Cấu trúc {currentGrammarIdx + 1} / {filteredGrammarList.length} • {currentGrammar.bandTarget}
+                      </span>
+                      <h3 className="text-sm sm:text-base font-extrabold text-slate-900">{currentGrammar.title}</h3>
+                    </div>
+                  )}
+
                   <button
-                    onClick={() => {
-                      if (currentGrammarIdx < filteredGrammarList.length - 1) {
-                        setCurrentGrammarIdx(prev => prev + 1);
-                      } else {
-                        setCurrentGrammarIdx(0);
-                      }
-                    }}
-                    className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all active:scale-95"
+                    onClick={() => setCurrentGrammarIdx(prev => Math.min(filteredGrammarList.length - 1, prev + 1))}
+                    disabled={currentGrammarIdx === filteredGrammarList.length - 1}
+                    className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                   >
-                    <span>Cấu trúc tiếp theo</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
 
-                {showGrammarAnswer && (
-                  <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 space-y-2 text-xs sm:text-sm animate-in fade-in">
-                    <strong className="text-indigo-950 font-bold block">✨ Đáp án chuẩn {currentGrammar.bandTarget}:</strong>
-                    <p className="font-serif font-semibold text-indigo-900 italic">
-                      "{currentGrammar.modelAnswer}"
+                <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                  {/* Hide Mastered Checkbox */}
+                  {currentUser && totalMasteredGrammar > 0 && (
+                    <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
+                      <input
+                        type="checkbox"
+                        checked={hideMastered}
+                        onChange={(e) => handleToggleHideMastered(e.target.checked)}
+                        className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <span className="font-semibold text-emerald-800 text-[11px]">Ẩn cấu trúc đã thuộc ({totalMasteredGrammar})</span>
+                    </label>
+                  )}
+
+                  {currentGrammar && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleMasteredItem(currentGrammar.id)}
+                        className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
+                          masteredIds.includes(currentGrammar.id)
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
+                            : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                        }`}
+                        title={masteredIds.includes(currentGrammar.id)
+                          ? "Cấu trúc này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
+                          : "Đánh dấu 'Đã thuộc'"}
+                      >
+                        <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>{masteredIds.includes(currentGrammar.id) ? 'Đã thuộc' : 'Thuộc cấu trúc'}</span>
+                      </button>
+
+                      {currentGrammar.isCommunity || currentGrammar.isPublic ? (
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                          <Globe className="w-3 h-3 text-emerald-600" />
+                          <span>🌐 Cộng Đồng</span>
+                        </span>
+                      ) : (
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
+                          <Lock className="w-3 h-3 text-amber-600" />
+                          <span>🔒 Riêng tư</span>
+                        </span>
+                      )}
+
+                      {currentGrammar.isAiGenerated && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleItemPublicity(currentGrammar.id, 'grammar')}
+                          className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                        >
+                          {currentGrammar.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Congratulatory Empty State when all are mastered */}
+              {filteredGrammarList.length === 0 ? (
+                <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-bold text-emerald-900 text-base">
+                    Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredGrammar} cấu trúc ngữ pháp trong dải điểm này.
+                  </h4>
+                  <p className="text-xs text-emerald-700 max-w-md mx-auto">
+                    Các cấu trúc đã thuộc được tự động ẩn khỏi danh sách luyện tập để tập trung vào kiến thức mới.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleHideMastered(false)}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Hiện lại tất cả cấu trúc đã thuộc để ôn tập</span>
+                  </button>
+                </div>
+              ) : currentGrammar ? (
+                <>
+                  {/* Grammar Formula & Rationale */}
+                  <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-md space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                        Công thức chuẩn {currentGrammar.bandTarget}
+                      </span>
+                      <span className="text-xs text-amber-300 font-semibold">
+                        ⭐ Đảm bảo tiêu chí Grammatical Range & Accuracy
+                      </span>
+                    </div>
+                    
+                    <div className="p-4 rounded-xl bg-white/10 border border-white/15 font-mono text-sm sm:text-base text-amber-200 font-bold">
+                      {currentGrammar.formula}
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      <strong>💡 Lợi ích chấm điểm:</strong> {currentGrammar.rationale}
                     </p>
                   </div>
-                )}
-              </div>
+
+                  {/* Comparison: Band 5.5-6.0 vs Band 6.5-7.5 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                      <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">
+                        Câu văn Band 5.5 - 6.0 (Đơn điệu / Rời rạc)
+                      </span>
+                      <p className="text-sm text-slate-700 italic">
+                        "{currentGrammar.basicSentence}"
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 shadow-xs space-y-2">
+                      <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                        Nâng cấp {currentGrammar.bandTarget} (Mạch lạc & Chuẩn xác)
+                      </span>
+                      <p className="text-sm font-semibold text-emerald-950">
+                        "{currentGrammar.band8Sentence}"
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Interactive Upgrade Drill */}
+                  <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+                    <div>
+                      <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
+                        Thực hành Nâng Cấp Câu
+                      </span>
+                      <h4 className="text-sm font-bold text-slate-800 mt-1">{currentGrammar.prompt}</h4>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 font-serif">
+                      "{currentGrammar.testInput}"
+                    </div>
+
+                    <textarea
+                      value={userGrammarInput}
+                      onChange={(e) => setUserGrammarInput(e.target.value)}
+                      placeholder="Gõ câu viết lại của bạn vào đây để tự kiểm tra..."
+                      className="w-full h-24 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium resize-none"
+                    />
+
+                    <div className="flex items-center justify-between pt-2">
+                      <button
+                        onClick={() => setShowGrammarAnswer(prev => !prev)}
+                        className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+                      >
+                        <HelpCircle className="w-4 h-4" />
+                        <span>{showGrammarAnswer ? 'Ẩn đáp án gợi ý' : 'Xem đáp án mẫu'}</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          if (currentGrammarIdx < filteredGrammarList.length - 1) {
+                            setCurrentGrammarIdx(prev => prev + 1);
+                          } else {
+                            setCurrentGrammarIdx(0);
+                          }
+                        }}
+                        className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer"
+                      >
+                        <span>Cấu trúc tiếp theo</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {showGrammarAnswer && (
+                      <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 space-y-2 text-xs sm:text-sm animate-in fade-in">
+                        <strong className="text-indigo-950 font-bold block">✨ Đáp án chuẩn {currentGrammar.bandTarget}:</strong>
+                        <p className="font-serif font-semibold text-indigo-900 italic">
+                          "{currentGrammar.modelAnswer}"
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : null}
             </div>
           )}
 
@@ -749,40 +1298,106 @@ export default function VocabGrammarSpellingModal({
           {/* TAB 3: THEMATIC VOCAB & COLLOCATION CARDS */}
           {/* ========================================== */}
           {activeTab === 'vocab' && currentDeck && (
-            <div className="max-w-3xl mx-auto space-y-6">
+            <div className="max-w-3xl mx-auto space-y-5">
               
-              {/* Topic Selector Tabs */}
-              <div className="flex items-center space-x-2 overflow-x-auto pb-2">
-                {thematicDecks.map(deck => (
-                  <button
-                    key={deck.id}
-                    onClick={() => setActiveDeckId(deck.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                      deck.id === activeDeckId
-                        ? 'bg-slate-900 text-white shadow-sm'
-                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    {deck.topicName.split('(')[0]}
-                    <span className="ml-1.5 opacity-70">
-                      ({deck.cards.filter(c => selectedBandTier === 'band-6' ? (c.bandLevel === '6.0' || c.bandLevel === '6.5') : selectedBandTier === 'band-7' ? (c.bandLevel === '7.0' || c.bandLevel === '7.5') : true).length})
-                    </span>
-                  </button>
-                ))}
+              {/* Topic Selector Tabs & Mastered Toggle */}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 overflow-x-auto pb-1 max-w-full">
+                  {thematicDecks.map(deck => (
+                    <button
+                      key={deck.id}
+                      onClick={() => setActiveDeckId(deck.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                        deck.id === activeDeckId
+                          ? 'bg-slate-900 text-white shadow-sm'
+                          : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      {deck.topicName.split('(')[0]}
+                      <span className="ml-1.5 opacity-70">
+                        ({deck.cards.filter(c => selectedBandTier === 'band-6' ? (c.bandLevel === '6.0' || c.bandLevel === '6.5') : selectedBandTier === 'band-7' ? (c.bandLevel === '7.0' || c.bandLevel === '7.5') : true).length})
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Hide Mastered Checkbox for Vocab */}
+                {currentUser && totalMasteredVocab > 0 && (
+                  <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
+                    <input
+                      type="checkbox"
+                      checked={hideMastered}
+                      onChange={(e) => handleToggleHideMastered(e.target.checked)}
+                      className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                    />
+                    <span className="font-semibold text-emerald-800 text-[11px]">Ẩn thẻ đã thuộc ({totalMasteredVocab})</span>
+                  </label>
+                )}
               </div>
 
-              {/* Flashcard Component (Click to flip) */}
-              {currentCard ? (
+              {/* Congratulatory Empty State when all are mastered */}
+              {filteredCards.length === 0 ? (
+                <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-bold text-emerald-900 text-base">
+                    Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredVocab} thẻ từ vựng trong chủ đề này.
+                  </h4>
+                  <p className="text-xs text-emerald-700 max-w-md mx-auto">
+                    Các thẻ đã thuộc được tự động ẩn khỏi danh sách luyện tập để bạn tập trung vào từ mới.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleHideMastered(false)}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Hiện lại tất cả thẻ đã thuộc để ôn tập</span>
+                  </button>
+                </div>
+              ) : currentCard ? (
                 <div className="space-y-4">
-                  {/* Card Navigation and Progress */}
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-500 px-1">
+                  {/* Card Navigation, Badges & Mastered Button */}
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-500 px-1 flex-wrap gap-2">
                     <span>Thẻ {currentCardIdx + 1} / {filteredCards.length}</span>
                     <div className="flex items-center space-x-2">
+                      {/* Mastered Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleMasteredItem(currentCard.id)}
+                        className={`px-2.5 py-1 rounded-full text-xs font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
+                          masteredIds.includes(currentCard.id)
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
+                            : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                        }`}
+                        title={masteredIds.includes(currentCard.id)
+                          ? "Thẻ này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
+                          : "Đánh dấu 'Đã thuộc'"}
+                      >
+                        <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>{masteredIds.includes(currentCard.id) ? 'Đã thuộc' : 'Thuộc thẻ này'}</span>
+                      </button>
+
+                      {currentCard.isCommunity || currentCard.isPublic ? (
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                          <Globe className="w-3 h-3 text-emerald-600" />
+                          <span>🌐 Cộng Đồng</span>
+                        </span>
+                      ) : null}
+
+                      {currentCard.isAiGenerated && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleItemPublicity(currentCard.id, 'vocab')}
+                          className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
+                        >
+                          {currentCard.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+                        </button>
+                      )}
+
                       <span className="px-2 py-0.5 rounded-md font-extrabold bg-blue-100 text-blue-800">
                         Band {currentCard.bandScore || currentCard.bandLevel || '6.5'}
-                      </span>
-                      <span className="capitalize px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
-                        {currentCard.mastery === 'mastered' ? '✅ Thuần thục' : currentCard.mastery === 'reviewed' ? '🟡 Đang nhớ' : '⚪ Cần luyện'}
                       </span>
                     </div>
                   </div>
@@ -851,7 +1466,7 @@ export default function VocabGrammarSpellingModal({
                           e.stopPropagation();
                           handleSaveToNotebook(currentCard);
                         }}
-                        className="flex items-center space-x-1 font-bold text-emerald-600 hover:text-emerald-800"
+                        className="flex items-center space-x-1 font-bold text-emerald-600 hover:text-emerald-800 cursor-pointer"
                       >
                         <Bookmark className="w-3.5 h-3.5" />
                         <span>Lưu vào Sổ tay</span>
@@ -865,7 +1480,7 @@ export default function VocabGrammarSpellingModal({
                       <button
                         onClick={() => setCurrentCardIdx(prev => Math.max(0, prev - 1))}
                         disabled={currentCardIdx === 0}
-                        className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+                        className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
@@ -873,7 +1488,7 @@ export default function VocabGrammarSpellingModal({
                       <button
                         onClick={() => setCurrentCardIdx(prev => Math.min(filteredCards.length - 1, prev + 1))}
                         disabled={currentCardIdx === filteredCards.length - 1}
-                        className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+                        className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-30 cursor-pointer"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -882,34 +1497,27 @@ export default function VocabGrammarSpellingModal({
                     <div className="flex items-center space-x-2 w-full sm:w-auto">
                       <button
                         onClick={() => handleUpdateMastery('learning')}
-                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all active:scale-95"
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all active:scale-95 cursor-pointer"
                       >
                         Chưa nhớ
                       </button>
                       <button
                         onClick={() => handleUpdateMastery('reviewed')}
-                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition-all active:scale-95"
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition-all active:scale-95 cursor-pointer"
                       >
                         Tạm nhớ
                       </button>
                       <button
                         onClick={() => handleUpdateMastery('mastered')}
-                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-all active:scale-95"
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center justify-center space-x-1"
                       >
-                        Đã thuộc lòng
+                        <GraduationCap className="w-3.5 h-3.5" />
+                        <span>Đã thuộc lòng</span>
                       </button>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="bg-white rounded-2xl p-8 border border-slate-200 text-center space-y-3">
-                  <BookOpen className="w-8 h-8 text-slate-400 mx-auto" />
-                  <h4 className="text-base font-bold text-slate-800">Chưa có thẻ từ vựng nào trong phân tầng này</h4>
-                  <p className="text-xs text-slate-500">
-                    Hãy bấm nút <strong className="text-emerald-600">+ AI Sinh Bài Mới</strong> phía trên để Gemini tự động bổ sung thẻ từ vựng chuẩn Band mục tiêu cho bạn!
-                  </p>
-                </div>
-              )}
+              ) : null}
             </div>
           )}
 

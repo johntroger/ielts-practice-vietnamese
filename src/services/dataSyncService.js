@@ -379,3 +379,72 @@ export async function saveUserMasteredItems(userId, masteredIds = []) {
     return null;
   }
 }
+
+/**
+ * Fetch public AI-generated spelling traps, grammar drills, and flashcards from Supabase Cloud
+ */
+export async function fetchPublicVocabGrammarItems() {
+  try {
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .select('*')
+      .eq('is_public', true)
+      .or('id.like.ai-sp-%,id.like.ai-gr-%,id.like.ai-card-%')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (error) throw error;
+
+    return (data || []).map(row => ({
+      ...row.task_data,
+      id: row.id,
+      isPublic: true,
+      isCommunity: true,
+      creatorEmail: row.creator_email || 'Cộng Đồng IELTS'
+    }));
+  } catch (err) {
+    console.error('Error fetching public vocab/grammar items:', err);
+    return [];
+  }
+}
+
+/**
+ * Save an AI-generated spelling trap, grammar drill or flashcard to Supabase Cloud for all visitors
+ */
+export async function savePublicVocabGrammarItem(item) {
+  if (!item || !item.id) return null;
+  try {
+    const row = {
+      id: item.id,
+      task_data: item,
+      is_public: true,
+      creator_email: item.creatorEmail || 'Cộng Đồng IELTS',
+      created_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('user_custom_tasks')
+      .upsert(row);
+
+    if (error) {
+      console.warn('Could not sync vocab/grammar item to Supabase cloud:', error.message);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.warn('Error saving public vocab/grammar item to Supabase:', err);
+    return null;
+  }
+}
+
+/**
+ * Delete / unpublish a public vocab/grammar item from Supabase Cloud
+ */
+export async function deletePublicVocabGrammarItem(itemId) {
+  if (!itemId) return;
+  try {
+    await supabase.from('user_custom_tasks').delete().eq('id', itemId);
+  } catch (err) {
+    console.warn('Error deleting public vocab/grammar item from Supabase:', err);
+  }
+}

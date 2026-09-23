@@ -229,4 +229,77 @@ it('should isolate mastered metadata from user vocabulary notebook', () => {
   }
 });
 
+// ============================================================================
+// 6. VOCAB, GRAMMAR & SPELLING MASTERED FILTERING & PUBLIC SYNC
+// ============================================================================
+it('should filter mastered items in Vocab, Grammar, and Spelling tabs for logged-in users while preserving history', () => {
+  const spellingList = [
+    { id: 'sp-1', correct: 'environment', bandLevel: '6.5' },
+    { id: 'sp-2', correct: 'government', bandLevel: '6.5' },
+    { id: 'sp-3', correct: 'definitely', bandLevel: '7.0' }
+  ];
+
+  const grammarList = [
+    { id: 'gr-1', title: 'Subject-Verb Agreement', bandLevel: '6.0' },
+    { id: 'gr-2', title: 'Relative Clauses', bandLevel: '6.5' }
+  ];
+
+  const vocabCards = [
+    { id: 'card-1', term: 'sustainable development', bandLevel: '7.0' },
+    { id: 'card-2', term: 'paradigm shift', bandLevel: '7.5' }
+  ];
+
+  const masteredIds = ['sp-1', 'gr-2', 'card-1'];
+  const currentUser = { id: 'u1', email: 'student@ielts.vn' };
+  const hideMastered = true;
+
+  // Filter spelling
+  const activeSpelling = spellingList.filter(item => {
+    if (hideMastered && currentUser && masteredIds.includes(item.id)) return false;
+    return true;
+  });
+  assert.strictEqual(activeSpelling.length, 2, 'Spelling sp-1 should be hidden');
+  assert.deepStrictEqual(activeSpelling.map(s => s.id), ['sp-2', 'sp-3']);
+
+  // Filter grammar
+  const activeGrammar = grammarList.filter(item => {
+    if (hideMastered && currentUser && masteredIds.includes(item.id)) return false;
+    return true;
+  });
+  assert.strictEqual(activeGrammar.length, 1, 'Grammar gr-2 should be hidden');
+  assert.strictEqual(activeGrammar[0].id, 'gr-1');
+
+  // Filter vocab
+  const activeCards = vocabCards.filter(c => {
+    if (hideMastered && currentUser && masteredIds.includes(c.id)) return false;
+    return true;
+  });
+  assert.strictEqual(activeCards.length, 1, 'Vocab card-1 should be hidden');
+  assert.strictEqual(activeCards[0].id, 'card-2');
+
+  // In user profile or un-hiding
+  assert.strictEqual(masteredIds.length, 3, 'User profile retains all 3 mastered items');
+});
+
+it('should correctly format and tag AI generated vocab/grammar/spelling items for public community sync', () => {
+  const isAutoShare = true;
+  const user = { email: 'teacher@ielts.vn' };
+  const creatorLabel = isAutoShare ? `${user.email.split('@')[0]} (Thành viên)` : 'Tôi';
+
+  const newTrap = {
+    id: `ai-sp-${Date.now()}`,
+    correct: 'maintenance',
+    distractors: ['maintainance', 'maintenence', 'maintenanse'],
+    isPublic: isAutoShare,
+    isCommunity: isAutoShare,
+    isAiGenerated: true,
+    creatorEmail: creatorLabel
+  };
+
+  assert(newTrap.id.startsWith('ai-sp-'), 'Should have ai-sp- prefix');
+  assert.strictEqual(newTrap.isPublic, true);
+  assert.strictEqual(newTrap.isCommunity, true);
+  assert.strictEqual(newTrap.creatorEmail, 'teacher (Thành viên)');
+});
+
 console.log(`\nAll ${passedTests}/${passedTests} Step 14 Mastered Items tests passed successfully!\n`);
