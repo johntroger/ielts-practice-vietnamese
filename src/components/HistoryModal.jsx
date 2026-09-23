@@ -14,13 +14,15 @@ import {
   CheckCircle2,
   Headphones,
   Mic,
-  Volume2
+  Volume2,
+  GraduationCap
 } from 'lucide-react';
 import { exportToWord } from '../services/exportService';
 
 export default function HistoryModal({
   isOpen,
   onClose,
+  masteredIds = [],
   submissions = [],
   readingHistory = [],
   listeningHistory = [],
@@ -204,6 +206,12 @@ export default function HistoryModal({
                           <Clock className="w-3 h-3" />
                           <span>{sub.stats?.timeSpent || '20m'}</span>
                         </span>
+                        {masteredIds.includes(sub.task?.id) && (
+                          <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 font-bold flex items-center space-x-1 shadow-2xs">
+                            <GraduationCap className="w-3 h-3 text-emerald-700" />
+                            <span>Đã thuộc</span>
+                          </span>
+                        )}
                       </div>
 
                       <h4 className="font-bold text-sm text-slate-900 line-clamp-1">

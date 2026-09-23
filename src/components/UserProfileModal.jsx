@@ -32,7 +32,8 @@ import {
   BookMarked,
   Headphones,
   Mic,
-  Volume2
+  Volume2,
+  GraduationCap
 } from 'lucide-react';
 import SpeakingResultModal from './speaking/SpeakingResultModal';
 
@@ -40,6 +41,8 @@ export default function UserProfileModal({
   isOpen,
   onClose,
   user,
+  masteredIds = [],
+  onToggleMastered,
   submissions = [],
   readingHistory = [],
   listeningHistory = [],
@@ -166,10 +169,14 @@ export default function UserProfileModal({
     };
   }, [submissions]);
 
-  // 2. Filter User's Uploaded / Custom Tasks
+  // 2. Filter User's Uploaded / Custom Tasks & Mastered Tasks
   const userCustomTasks = useMemo(() => {
     return (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
   }, [allTasks]);
+
+  const masteredTasks = useMemo(() => {
+    return (allTasks || []).filter(t => masteredIds.includes(t.id));
+  }, [allTasks, masteredIds]);
 
   const filteredCustomTasks = useMemo(() => {
     if (resourceFilter === 'public') return userCustomTasks.filter(t => t.isPublic);
@@ -289,6 +296,7 @@ export default function UserProfileModal({
     { id: 'reading', label: 'Lịch Sử IELTS Reading', icon: BookMarked, count: readingHistory.length, badge: readingStats.totalTests > 0 ? `Band ${readingStats.avgBand}` : null },
     { id: 'listening', label: 'Lịch Sử IELTS Listening', icon: Headphones, count: listeningHistory.length, badge: listeningStats.totalTests > 0 ? `Band ${listeningStats.avgBand}` : null },
     { id: 'speaking', label: 'Lịch Sử IELTS Speaking', icon: Mic, count: speakingHistory.length, badge: speakingStats.totalTests > 0 ? `Band ${speakingStats.avgBand}` : null },
+    { id: 'mastered', label: 'Đề & Bài Đã Thuộc', icon: GraduationCap, count: masteredIds.length, badge: masteredIds.length > 0 ? `${masteredIds.length}` : null },
     { id: 'resources', label: 'Kho Đề & Tài Nguyên', icon: FolderKanban, count: userCustomTasks.length },
     { id: 'vocab', label: 'Sổ Tay Từ Vựng & Lỗi', icon: Bookmark, count: vocabList.length },
     { id: 'account', label: 'Cài Đặt & Dữ Liệu', icon: Settings, status: user ? 'Đã đăng nhập' : 'Chưa đăng nhập' }
@@ -450,6 +458,7 @@ export default function UserProfileModal({
                 {activeTab === 'reading' && 'Lịch Sử Làm Đề & Thống Kê IELTS Reading'}
                 {activeTab === 'listening' && 'Lịch Sử Làm Đề & Thống Kê IELTS Listening'}
                 {activeTab === 'speaking' && 'Lịch Sử Thi Thử IELTS Speaking'}
+                {activeTab === 'mastered' && 'Danh Sách Đề Thi & Bài Luyện Đã Thuần Thục (Đã Thuộc)'}
                 {activeTab === 'resources' && 'Kho Đề Bài & Tài Nguyên Bạn Đã Tải Lên'}
                 {activeTab === 'vocab' && 'Sổ Tay Từ Vựng & Sổ Tay Lỗi Sai Cá Nhân'}
                 {activeTab === 'account' && 'Cài Đặt Tài Khoản & Quản Lý Dữ Liệu'}
@@ -557,8 +566,28 @@ export default function UserProfileModal({
                   </div>
                 </div>
 
-                {/* SECONDARY ROW: CUSTOM TASKS & VOCAB */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {/* SECONDARY ROW: CUSTOM TASKS & VOCAB & MASTERED */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                  {/* Card: Mastered Items */}
+                  <div 
+                    onClick={() => setActiveTab('mastered')}
+                    className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-2xs flex items-center justify-between cursor-pointer hover:bg-emerald-100/70 transition-all group"
+                  >
+                    <div className="space-y-0.5">
+                      <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block">Đề & Bài Luyện Đã Thuộc</span>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="text-2xl font-black text-emerald-700">{masteredIds.length}</span>
+                        <span className="text-xs text-emerald-600 font-semibold">mục đã thuần thục</span>
+                      </div>
+                      <span className="text-[11px] text-emerald-700/80 block">
+                        Bấm để xem danh sách & ôn tập lại
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-emerald-100 text-emerald-700 group-hover:scale-110 transition-transform">
+                      <GraduationCap className="w-6 h-6" />
+                    </div>
+                  </div>
+
                   {/* Card: Custom Tasks */}
                   <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
                     <div className="space-y-0.5">
@@ -1028,7 +1057,7 @@ export default function UserProfileModal({
                         className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
                       >
                         <div className="space-y-1 flex-1">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 flex-wrap gap-y-1">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
                               sub.task?.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
                             }`}>
@@ -1037,6 +1066,12 @@ export default function UserProfileModal({
                             <span className="text-xs font-bold text-slate-800">
                               {sub.task?.title || 'IELTS Writing Essay'}
                             </span>
+                            {masteredIds.includes(sub.task?.id) && (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center space-x-1 shadow-2xs">
+                                <GraduationCap className="w-3 h-3 text-emerald-700" />
+                                <span>Đã thuộc</span>
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-slate-500 line-clamp-1">
                             {sub.essayText || 'Nội dung bài viết...'}
@@ -1543,6 +1578,113 @@ export default function UserProfileModal({
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* TAB: MASTERED TASKS & DRILLS (ĐÃ THUỘC) */}
+            {/* ========================================================================= */}
+            {activeTab === 'mastered' && (
+              <div className="space-y-4">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900">Đề Thi & Bài Luyện Đã Thuần Thục</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center space-x-1">
+                        <GraduationCap className="w-3 h-3 text-emerald-700" />
+                        <span>{masteredTasks.length} đề</span>
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Các đề thi bạn đã thuộc sẽ tự động ẩn khỏi danh sách luyện tập để tập trung vào đề mới, nhưng lịch sử làm bài và điểm số luôn được lưu giữ đầy đủ tại đây.
+                    </p>
+                  </div>
+                </div>
+
+                {masteredTasks.length === 0 ? (
+                  <div className="p-8 sm:p-12 rounded-3xl bg-slate-50/70 border border-slate-200/80 text-center space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+                      <GraduationCap className="w-6 h-6" />
+                    </div>
+                    <h4 className="font-bold text-slate-800 text-sm">Chưa có đề thi nào trong danh sách "Đã thuộc"</h4>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto">
+                      Khi vào <strong>Thư viện đề</strong> hoặc <strong>Luyện tập vi mô</strong>, bấm vào nút <strong>🎓 Đã thuộc</strong> ở bất kỳ đề bài nào để ẩn đề đó khỏi danh sách luyện tập hàng ngày.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+                    {masteredTasks.map((t) => {
+                      const taskSubs = submissions.filter(s => s.task?.id === t.id);
+                      const bestBand = taskSubs.reduce((max, s) => Math.max(max, s.evaluation?.overallBand || 0), 0);
+
+                      return (
+                        <div 
+                          key={t.id}
+                          className="p-4 sm:p-5 rounded-2xl bg-white border border-emerald-200 hover:border-emerald-300 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between gap-3"
+                        >
+                          <div className="space-y-1.5">
+                            <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                                t.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                              }`}>
+                                Task {t.taskNumber || 2}
+                              </span>
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center space-x-1">
+                                <GraduationCap className="w-3 h-3 text-emerald-700" />
+                                <span>Đã thuộc</span>
+                              </span>
+                              {t.category && (
+                                <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                                  {t.category}
+                                </span>
+                              )}
+                            </div>
+
+                            <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
+                              {t.title}
+                            </h4>
+
+                            <p className="text-xs text-slate-600 line-clamp-2 italic bg-slate-50 p-2 rounded-lg border border-slate-100">
+                              "{t.prompt}"
+                            </p>
+
+                            <div className="flex items-center space-x-3 text-[11px] text-slate-500 pt-1">
+                              <span>Đã viết: <strong>{taskSubs.length} lần</strong></span>
+                              {bestBand > 0 && (
+                                <>
+                                  <span>•</span>
+                                  <span>Điểm cao nhất: <strong className="text-red-600 font-bold">Band {bestBand.toFixed(1)}</strong></span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <button
+                              onClick={() => {
+                                onSelectTask?.(t);
+                                onClose();
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-2xs"
+                              title="Chọn đề này và quay lại phòng viết"
+                            >
+                              <span>Luyện đề này</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              onClick={() => onToggleMastered?.(t.id)}
+                              className="px-3 py-1.5 rounded-xl bg-white hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-300 hover:border-red-200 text-xs font-bold transition-colors cursor-pointer"
+                              title="Bỏ đánh dấu 'Đã thuộc' để hiện lại trong thư viện luyện tập"
+                            >
+                              Bỏ thuộc (Ôn tập lại)
+                            </button>
                           </div>
                         </div>
                       );

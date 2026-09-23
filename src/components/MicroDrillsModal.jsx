@@ -31,7 +31,8 @@ import {
   Zap,
   Globe,
   Lock,
-  RefreshCw
+  RefreshCw,
+  GraduationCap
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -42,7 +43,17 @@ import { fetchPublicDrills, savePublicDrill, deletePublicDrill } from '../servic
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
 
-export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activeSkill = 'writing' }) {
+export default function MicroDrillsModal({ 
+  isOpen, 
+  onClose, 
+  apiKey, 
+  model, 
+  activeSkill = 'writing',
+  currentUser,
+  masteredIds = [],
+  onToggleMastered,
+  onOpenAuth
+}) {
   if (!isOpen) return null;
 
   // Active Room: 'general' | 'writing' | 'reading' | 'listening' | 'speaking'
@@ -283,26 +294,51 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   const [isGeneratingDrill, setIsGeneratingDrill] = useState(false);
   const [drillGenMessage, setDrillGenMessage] = useState('');
 
+  // Mastered Drills Visibility Toggle
+  const [hideMasteredDrills, setHideMasteredDrills] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_hide_mastered_drills');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch (e) {
+      return true;
+    }
+  });
+
+  const handleToggleHideMastered = (val) => {
+    setHideMasteredDrills(val);
+    try {
+      localStorage.setItem('ielts_hide_mastered_drills', JSON.stringify(val));
+    } catch (e) {}
+  };
+
+  const getDrillsByType = (type) => {
+    return allDrills.filter(d => {
+      if (d.type !== type) return false;
+      if (hideMasteredDrills && currentUser && masteredIds.includes(d.id)) return false;
+      return true;
+    });
+  };
+
   // ----------------------------------------------------
   // WRITING DRILLS STATE
   // ----------------------------------------------------
-  const fillDrills = allDrills.filter(d => d.type === 'fill-blanks');
+  const fillDrills = getDrillsByType('fill-blanks');
   const [selectedFillIndex, setSelectedFillIndex] = useState(0);
   const [userFillAnswers, setUserFillAnswers] = useState({});
   const [showFillResults, setShowFillResults] = useState(false);
 
-  const tfDrills = allDrills.filter(d => d.type === 'true-false');
+  const tfDrills = getDrillsByType('true-false');
   const [selectedTfIndex, setSelectedTfIndex] = useState(0);
   const [userTfAnswers, setUserTfAnswers] = useState({});
   const [showTfResults, setShowTfResults] = useState(false);
 
-  const paraDrills = allDrills.filter(d => d.type === 'paraphrase');
+  const paraDrills = getDrillsByType('paraphrase');
   const [selectedParaIndex, setSelectedParaIndex] = useState(0);
   const [candidateParaText, setCandidateParaText] = useState('');
   const [isEvaluatingPara, setIsEvaluatingPara] = useState(false);
   const [paraEvaluation, setParaEvaluation] = useState(null);
 
-  const errorDrills = allDrills.filter(d => d.type === 'error-spotting');
+  const errorDrills = getDrillsByType('error-spotting');
   const [selectedErrorIndex, setSelectedErrorIndex] = useState(0);
   const [userCorrectionText, setUserCorrectionText] = useState('');
   const [showErrorAnswer, setShowErrorAnswer] = useState(false);
@@ -310,33 +346,33 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   // ----------------------------------------------------
   // GENERAL CORE FOUNDATION STATE
   // ----------------------------------------------------
-  const collocDrills = allDrills.filter(d => d.type === 'collocation');
+  const collocDrills = getDrillsByType('collocation');
   const [selectedCollocIndex, setSelectedCollocIndex] = useState(0);
   const [userCollocAnswers, setUserCollocAnswers] = useState({});
   const [showCollocResults, setShowCollocResults] = useState(false);
 
-  const contextVocabDrills = allDrills.filter(d => d.type === 'context-vocab');
+  const contextVocabDrills = getDrillsByType('context-vocab');
   const [selectedVocabIndex, setSelectedVocabIndex] = useState(0);
   const [userVocabChoice, setUserVocabChoice] = useState(null);
   const [showVocabResult, setShowVocabResult] = useState(false);
 
-  const chunkDrills = allDrills.filter(d => d.type === 'sentence-chunking');
+  const chunkDrills = getDrillsByType('sentence-chunking');
   const [selectedChunkIndex, setSelectedChunkIndex] = useState(0);
   const [showChunkAnalysis, setShowChunkAnalysis] = useState(false);
 
   // ----------------------------------------------------
   // READING DRILLS STATE
   // ----------------------------------------------------
-  const readingTfngDrills = allDrills.filter(d => d.type === 'reading-tfng');
+  const readingTfngDrills = getDrillsByType('reading-tfng');
   const [selectedTfngIndex, setSelectedTfngIndex] = useState(0);
   const [userTfngChoice, setUserTfngChoice] = useState(null);
   const [showTfngResult, setShowTfngResult] = useState(false);
 
-  const readingParaDrills = allDrills.filter(d => d.type === 'reading-paraphrase');
+  const readingParaDrills = getDrillsByType('reading-paraphrase');
   const [selectedReadingParaIndex, setSelectedReadingParaIndex] = useState(0);
   const [showReadingParaAnalysis, setShowReadingParaAnalysis] = useState(false);
 
-  const readingHeadingsDrills = allDrills.filter(d => d.type === 'reading-headings');
+  const readingHeadingsDrills = getDrillsByType('reading-headings');
   const [selectedHeadingsIndex, setSelectedHeadingsIndex] = useState(0);
   const [userHeadingChoice, setUserHeadingChoice] = useState(null);
   const [showHeadingsResult, setShowHeadingsResult] = useState(false);
@@ -344,27 +380,27 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
   // ----------------------------------------------------
   // LISTENING DRILLS STATE
   // ----------------------------------------------------
-  const listeningDictationDrills = allDrills.filter(d => d.type === 'listening-dictation');
+  const listeningDictationDrills = getDrillsByType('listening-dictation');
   const [selectedDictationIndex, setSelectedDictationIndex] = useState(0);
   const [userDictationInput, setUserDictationInput] = useState('');
   const [showDictationFeedback, setShowDictationFeedback] = useState(false);
 
-  const listeningSpellingDrills = allDrills.filter(d => d.type === 'listening-spelling');
+  const listeningSpellingDrills = getDrillsByType('listening-spelling');
   const [selectedSpellingIndex, setSelectedSpellingIndex] = useState(0);
   const [userSpellingInput, setUserSpellingInput] = useState('');
   const [showSpellingResult, setShowSpellingResult] = useState(false);
 
-  const listeningDistractorDrills = allDrills.filter(d => d.type === 'listening-distractor');
+  const listeningDistractorDrills = getDrillsByType('listening-distractor');
   const [selectedDistractorIndex, setSelectedDistractorIndex] = useState(0);
   const [userDistractorChoice, setUserDistractorChoice] = useState(null);
   const [showDistractorResult, setShowDistractorResult] = useState(false);
 
-  const listeningMapDrills = allDrills.filter(d => d.type === 'listening-map');
+  const listeningMapDrills = getDrillsByType('listening-map');
   const [selectedMapIndex, setSelectedMapIndex] = useState(0);
   const [userMapChoice, setUserMapChoice] = useState(null);
   const [showMapResult, setShowMapResult] = useState(false);
 
-  const listeningSignDrills = allDrills.filter(d => d.type === 'listening-signposting');
+  const listeningSignDrills = getDrillsByType('listening-signposting');
   const [selectedSignIndex, setSelectedSignIndex] = useState(0);
   const [userSignChoice, setUserSignChoice] = useState(null);
   const [showSignResult, setShowSignResult] = useState(false);
@@ -547,39 +583,104 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
    */
   const renderPaginationBar = () => {
     const { list, index } = getActiveDrillInfo();
+    const currentItem = list[index];
     const total = list.length;
-    if (total <= 1) return null;
+    const totalMasteredInThisTab = allDrills.filter(d => d.type === activeTab && masteredIds.includes(d.id)).length;
+
+    if (total === 0) {
+      if (currentUser && hideMasteredDrills && totalMasteredInThisTab > 0) {
+        return (
+          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
+            <div className="flex items-center justify-center space-x-2 text-emerald-800 font-bold">
+              <GraduationCap className="w-5 h-5 text-emerald-600" />
+              <span>Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredInThisTab} bài tập trong dạng này.</span>
+            </div>
+            <p className="text-xs text-emerald-700">
+              Các bài đã thuộc được tự động ẩn khỏi danh sách luyện tập. Bạn có thể bấm nút bên dưới để ôn tập lại bất kỳ lúc nào.
+            </p>
+            <button
+              type="button"
+              onClick={() => handleToggleHideMastered(false)}
+              className="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Hiện lại tất cả bài đã thuộc để ôn tập</span>
+            </button>
+          </div>
+        );
+      }
+      return null;
+    }
 
     return (
       <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center flex-wrap gap-2">
           <span className="font-bold text-slate-700 whitespace-nowrap">
             Bài tập: <span className="text-red-600 font-extrabold text-sm">{index + 1}</span> / {total}
           </span>
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => handleSelectDrill(index - 1)}
-              disabled={index === 0}
-              className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs"
-              title="Bài trước"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => handleSelectDrill(index + 1)}
-              disabled={index === total - 1}
-              className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs"
-              title="Bài tiếp theo"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+          {total > 1 && (
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={() => handleSelectDrill(index - 1)}
+                disabled={index === 0}
+                className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs cursor-pointer"
+                title="Bài trước"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleSelectDrill(index + 1)}
+                disabled={index === total - 1}
+                className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs cursor-pointer"
+                title="Bài tiếp theo"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Hide Mastered Checkbox */}
+          {currentUser && totalMasteredInThisTab > 0 && (
+            <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
+              <input
+                type="checkbox"
+                checked={hideMasteredDrills}
+                onChange={(e) => handleToggleHideMastered(e.target.checked)}
+                className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+              />
+              <span className="font-semibold text-emerald-800 text-[11px]">Ẩn câu đã thuộc ({totalMasteredInThisTab})</span>
+            </label>
+          )}
         </div>
 
-        {/* Current Drill Publicity Badge & Toggle */}
-        {list[index] && (
+        {/* Current Drill Publicity Badge, Toggle & Mastered Button */}
+        {currentItem && (
           <div className="flex items-center space-x-1.5">
-            {list[index].isCommunity || list[index].isPublic ? (
+            {/* Mastered / Đã Thuộc Toggle Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (!currentUser) {
+                  alert('Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
+                  onOpenAuth?.();
+                  return;
+                }
+                onToggleMastered?.(currentItem.id);
+              }}
+              className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
+                masteredIds.includes(currentItem.id)
+                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
+                  : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+              }`}
+              title={masteredIds.includes(currentItem.id)
+                ? "Bài này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
+                : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập nếu bạn bật 'Ẩn câu đã thuộc')"}
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
+              <span>{masteredIds.includes(currentItem.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
+            </button>
+
+            {currentItem.isCommunity || currentItem.isPublic ? (
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
                 <Globe className="w-3 h-3 text-emerald-600" />
                 <span>🌐 Cộng Đồng</span>
@@ -590,14 +691,14 @@ export default function MicroDrillsModal({ isOpen, onClose, apiKey, model, activ
                 <span>🔒 Riêng tư</span>
               </span>
             )}
-            {list[index].isAiGenerated && (
+            {currentItem.isAiGenerated && (
               <button
                 type="button"
-                onClick={() => handleToggleDrillPublic(list[index].id)}
+                onClick={() => handleToggleDrillPublic(currentItem.id)}
                 className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                title={list[index].isPublic ? 'Chuyển bài tập này sang Riêng tư' : 'Chia sẻ bài tập này thành tài nguyên chung của web'}
+                title={currentItem.isPublic ? 'Chuyển bài tập này sang Riêng tư' : 'Chia sẻ bài tập này thành tài nguyên chung của web'}
               >
-                {list[index].isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+                {currentItem.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
               </button>
             )}
           </div>

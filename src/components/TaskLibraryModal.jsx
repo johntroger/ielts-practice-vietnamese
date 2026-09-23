@@ -15,7 +15,8 @@ import {
   Lock,
   Share2,
   Users,
-  Link as LinkIcon
+  Link as LinkIcon,
+  GraduationCap
 } from 'lucide-react';
 import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
 import TaskImageUploader from './TaskImageUploader';
@@ -32,7 +33,10 @@ export default function TaskLibraryModal({
   user,
   communityTasks = [],
   onExportAllData,
-  onImportData
+  onImportData,
+  masteredIds = [],
+  onToggleMastered,
+  onOpenAuth
 }) {
   if (!isOpen) return null;
 
@@ -87,7 +91,29 @@ export default function TaskLibraryModal({
     return combined;
   }, [activeTab, allTasks, communityTasks]);
 
+  const [hideMastered, setHideMastered] = useState(true);
+
+  const masteredCount = useMemo(() => {
+    return allTasks.filter(t => masteredIds.includes(t.id)).length;
+  }, [allTasks, masteredIds]);
+
   const filteredTasks = taskSource.filter(t => {
+    const isMastered = masteredIds.includes(t.id);
+
+    // If on "mastered" tab, show only mastered tasks
+    if (activeTab === 'mastered') {
+      const matchesTaskNum = filterTaskNum === 'all' || t.taskNumber === Number(filterTaskNum);
+      const matchesSearch = !searchQuery ||
+        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.prompt.toLowerCase().includes(searchQuery.toLowerCase());
+      return isMastered && matchesTaskNum && matchesSearch;
+    }
+
+    // If logged in and hideMastered is on, hide mastered tasks from practice list
+    if (hideMastered && user && isMastered) {
+      return false;
+    }
+
     const matchesTab = 
       activeTab === 'all' || 
       activeTab === 'community' ||
@@ -247,10 +273,33 @@ export default function TaskLibraryModal({
                 <Users className="w-3.5 h-3.5 text-blue-500" />
                 <span>Cộng Đồng Chia Sẻ ({communityTasks.length})</span>
               </button>
+              {user && (
+                <button
+                  onClick={() => setActiveTab('mastered')}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-colors flex items-center space-x-1.5 ${
+                    activeTab === 'mastered' ? 'bg-emerald-600 text-white' : 'bg-white text-emerald-800 border border-emerald-300 hover:bg-emerald-50'
+                  }`}
+                >
+                  <GraduationCap className="w-3.5 h-3.5" />
+                  <span>Đã Thuộc ({masteredCount})</span>
+                </button>
+              )}
             </div>
 
-            {/* Filter Task 1 / 2 */}
-            <div className="flex gap-1">
+            {/* Filter Task 1 / 2 & Hide Mastered Toggle */}
+            <div className="flex items-center gap-2">
+              {user && activeTab !== 'mastered' && masteredCount > 0 && (
+                <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
+                  <input
+                    type="checkbox"
+                    checked={hideMastered}
+                    onChange={(e) => setHideMastered(e.target.checked)}
+                    className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                  />
+                  <span className="font-semibold text-emerald-800">Ẩn đề đã thuộc ({masteredCount})</span>
+                </label>
+              )}
+              <div className="flex gap-1">
               <button
                 onClick={() => setFilterTaskNum('all')}
                 className={`px-2.5 py-1 rounded-md text-xs font-medium ${
@@ -278,6 +327,7 @@ export default function TaskLibraryModal({
             </div>
           </div>
         </div>
+      </div>
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
@@ -445,6 +495,12 @@ export default function TaskLibraryModal({
                             Từ: {t.creatorEmail.split('@')[0]}
                           </span>
                         )}
+                        {masteredIds.includes(t.id) && (
+                          <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 font-bold flex items-center space-x-1 shadow-2xs">
+                            <GraduationCap className="w-3 h-3 text-emerald-700" />
+                            <span>Đã thuộc</span>
+                          </span>
+                        )}
                       </div>
 
                       <h4 className="font-bold text-sm text-slate-900 line-clamp-2">
@@ -486,6 +542,29 @@ export default function TaskLibraryModal({
                           title="Sao chép liên kết đề thi (Dán trực tiếp vào Tab ẩn danh hoặc gửi bạn bè để mở ngay)"
                         >
                           <LinkIcon className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Mastered / Đã Thuộc Toggle Button */}
+                        <button
+                          onClick={() => {
+                            if (!user) {
+                              alert('Tính năng "Đã thuộc" giúp ẩn đề đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
+                              onOpenAuth?.();
+                              return;
+                            }
+                            onToggleMastered?.(t.id);
+                          }}
+                          className={`p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer ${
+                            masteredIds.includes(t.id)
+                              ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
+                              : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
+                          }`}
+                          title={masteredIds.includes(t.id) 
+                            ? "Đề này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)" 
+                            : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập hàng ngày của bạn)"}
+                        >
+                          <GraduationCap className="w-3.5 h-3.5" />
+                          {masteredIds.includes(t.id) && <span className="text-[10px]">Đã thuộc</span>}
                         </button>
 
                         {(t.isCustom || t.isAiGenerated) && (

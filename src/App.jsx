@@ -49,7 +49,9 @@ import {
   fetchPublicTasks,
   saveUserCustomTask,
   toggleTaskPublicity,
-  deleteUserCustomTask
+  deleteUserCustomTask,
+  fetchUserMasteredItems,
+  saveUserMasteredItems
 } from './services/dataSyncService';
 
 import { INITIAL_TASKS, COMMUNITY_DEFAULT_TASKS } from './data/sampleTasks';
@@ -95,6 +97,7 @@ export default function App() {
   const [mistakes, setMistakes] = useState(() => safeGet('ielts_mistakes_log', []));
   const [personalNotes, setPersonalNotes] = useState(() => safeGet('ielts_theory_notes', []));
   const [streakCount, setStreakCount] = useState(() => Number(safeGet('ielts_streak_count', 3)) || 3);
+  const [masteredIds, setMasteredIds] = useState(() => safeGet('ielts_mastered_items', []));
 
   // 2. UI & Mode State
   const [activeSkill, setActiveSkill] = useState(() => safeGet('ielts_active_skill', 'writing'));
@@ -296,8 +299,37 @@ export default function App() {
           localCustom.forEach(t => saveUserCustomTask(currentUser.id, t, t.isPublic || false, currentUser.email));
         }
       });
+
+      // 4. Fetch User's Mastered Tasks & Drills
+      fetchUserMasteredItems(currentUser.id).then(cloudMastered => {
+        if (cloudMastered && cloudMastered.length > 0) {
+          setMasteredIds(prev => {
+            const combined = Array.from(new Set([...prev, ...cloudMastered]));
+            safeSet('ielts_mastered_items', combined);
+            return combined;
+          });
+        } else if (masteredIds && masteredIds.length > 0) {
+          saveUserMasteredItems(currentUser.id, masteredIds);
+        }
+      });
     }
   }, [currentUser]);
+
+  // Mastered Items Toggle Handler (Requires Login)
+  const handleToggleMastered = (itemId) => {
+    if (!currentUser) {
+      alert('Tính năng "Đã thuộc" giúp cá nhân hóa và ẩn câu hỏi đã thuần thục khỏi giao diện luyện tập. Vui lòng Đăng nhập để lưu tiến trình!');
+      setIsAuthOpen(true);
+      return;
+    }
+    setMasteredIds(prev => {
+      const isAlready = prev.includes(itemId);
+      const updated = isAlready ? prev.filter(id => id !== itemId) : [...prev, itemId];
+      safeSet('ielts_mastered_items', updated);
+      saveUserMasteredItems(currentUser.id, updated);
+      return updated;
+    });
+  };
 
   // 5. Auto-save Effects with Quota-Resilient Storage Manager
   useEffect(() => {
@@ -949,6 +981,10 @@ export default function App() {
         apiKey={apiKey}
         model={model}
         activeSkill={activeSkill}
+        currentUser={currentUser}
+        masteredIds={masteredIds}
+        onToggleMastered={handleToggleMastered}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       <WeeklyReportModal
@@ -1101,6 +1137,9 @@ export default function App() {
         communityTasks={communityTasks}
         user={currentUser}
         currentTaskId={currentTaskId}
+        masteredIds={masteredIds}
+        onToggleMastered={handleToggleMastered}
+        onOpenAuth={() => setIsAuthOpen(true)}
         onSelectTask={(t) => {
           setAllTasks(prev => {
             if (prev.some(existing => existing.id === t.id)) return prev;
@@ -1196,6 +1235,7 @@ export default function App() {
         onClearSpeakingHistory={handleClearSpeakingHistory}
         onClearAllHistory={handleClearAllHistory}
         onViewSpeakingSubmission={(sub) => setSelectedHistorySpeakingSub(sub)}
+        masteredIds={masteredIds}
       />
 
       <TheoryHandbookModal
@@ -1239,6 +1279,8 @@ export default function App() {
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         user={currentUser}
+        masteredIds={masteredIds}
+        onToggleMastered={handleToggleMastered}
         submissions={submissions}
         readingHistory={readingHistory}
         listeningHistory={listeningHistory}

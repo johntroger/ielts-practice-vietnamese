@@ -87,13 +87,15 @@ export async function fetchUserVocab(userId) {
 
     if (error) throw error;
 
-    return (data || []).map(row => ({
-      id: row.id,
-      phrase: row.phrase,
-      meaningVi: row.meaning_vi,
-      example: row.example,
-      topic: row.topic
-    }));
+    return (data || [])
+      .filter(row => row.topic !== '_mastered_meta')
+      .map(row => ({
+        id: row.id,
+        phrase: row.phrase,
+        meaningVi: row.meaning_vi,
+        example: row.example,
+        topic: row.topic
+      }));
   } catch (err) {
     console.error('Error fetching vocab from Supabase:', err);
     return [];
@@ -319,5 +321,61 @@ export async function deleteUserCustomTask(userId, taskId) {
     if (error) throw error;
   } catch (err) {
     console.error('Error deleting custom task from Supabase:', err);
+  }
+}
+
+/**
+ * Fetch list of mastered task/drill IDs for authenticated user from Supabase Cloud
+ */
+export async function fetchUserMasteredItems(userId) {
+  if (!userId) return [];
+  try {
+    const { data, error } = await supabase
+      .from('user_vocab')
+      .select('phrase')
+      .eq('user_id', userId)
+      .eq('topic', '_mastered_meta')
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Could not fetch mastered items from Cloud:', error.message);
+      return [];
+    }
+    if (data?.phrase) {
+      return JSON.parse(data.phrase);
+    }
+    return [];
+  } catch (err) {
+    console.warn('Error fetching mastered items:', err);
+    return [];
+  }
+}
+
+/**
+ * Save list of mastered task/drill IDs for authenticated user to Supabase Cloud
+ */
+export async function saveUserMasteredItems(userId, masteredIds = []) {
+  if (!userId) return null;
+  try {
+    const row = {
+      id: `mastered-${userId}`,
+      user_id: userId,
+      phrase: JSON.stringify(masteredIds),
+      meaning_vi: 'Danh sách đề thi và câu hỏi đã thuộc',
+      topic: '_mastered_meta',
+      created_at: new Date().toISOString()
+    };
+    const { data, error } = await supabase
+      .from('user_vocab')
+      .upsert(row);
+
+    if (error) {
+      console.warn('Could not save mastered items to Cloud:', error.message);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.warn('Error saving mastered items to Cloud:', err);
+    return null;
   }
 }
