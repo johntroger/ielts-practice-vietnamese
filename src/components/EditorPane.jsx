@@ -30,7 +30,8 @@ export default function EditorPane({
   timeElapsed,
   lastSaved,
   onOpenParaphrase,
-  onOpenSlideOver
+  onOpenSlideOver,
+  onSubmitEssay
 }) {
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
   const [activeTab, setActiveTab] = useState('essay'); // 'essay' | 'outline'
@@ -202,8 +203,14 @@ export default function EditorPane({
             <textarea
               value={essayText}
               onChange={(e) => setEssayText(e.target.value)}
+              onKeyDown={(e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                  e.preventDefault();
+                  if (onSubmitEssay) onSubmitEssay();
+                }
+              }}
               spellCheck={spellcheckEnabled}
-              placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới)"
+              placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới • Nhấn Ctrl+Enter để nộp bài)"
               className="flex-1 w-full min-h-[350px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] p-3.5 sm:p-6 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16.5px] leading-[1.8] tracking-wide selection:bg-red-100 selection:text-red-900 placeholder:text-slate-400 placeholder:font-normal"
             />
           </div>

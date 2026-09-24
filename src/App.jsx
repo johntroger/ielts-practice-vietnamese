@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Flame, Target, ChevronDown, BookOpen, GraduationCap } from 'lucide-react';
+import { Sparkles, Flame, Target, ChevronDown, BookOpen, GraduationCap, Maximize2, Minimize2, Keyboard } from 'lucide-react';
 import Navbar from './components/Navbar';
 import SplitPane from './components/SplitPane';
 import PromptPane from './components/PromptPane';
@@ -10,6 +10,7 @@ const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWo
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
 
+const KeyboardShortcutsModal = React.lazy(() => import('./components/KeyboardShortcutsModal'));
 const FeedbackModal = React.lazy(() => import('./components/FeedbackModal'));
 const TaskGeneratorModal = React.lazy(() => import('./components/TaskGeneratorModal'));
 const TaskLibraryModal = React.lazy(() => import('./components/TaskLibraryModal'));
@@ -145,6 +146,18 @@ export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [selectedHistorySpeakingSub, setSelectedHistorySpeakingSub] = useState(null);
   const [slideOverConfig, setSlideOverConfig] = useState({ isOpen: false, tab: 'paraphrase' });
+
+  // Phase 1 UX: Focus Mode & Keyboard Shortcuts
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(() => safeGet('ielts_focus_mode', false));
+
+  const toggleFocusMode = () => {
+    setIsFocusMode(prev => {
+      const next = !prev;
+      safeSet('ielts_focus_mode', next);
+      return next;
+    });
+  };
 
   // Reading Mock Test Exam State
   const [readingMockTestId, setReadingMockTestId] = useState(null);
@@ -386,6 +399,70 @@ export default function App() {
   useEffect(() => {
     safeSet('ielts_public_community_tasks', communityTasks);
   }, [communityTasks]);
+
+  // Global Keyboard Shortcuts (Phase 1 UX Improvement)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const activeEl = document.activeElement;
+      const isEditing = activeEl && (
+        activeEl.tagName === 'INPUT' ||
+        activeEl.tagName === 'TEXTAREA' ||
+        activeEl.isContentEditable
+      );
+
+      // Alt + F / Option + F: Toggle Focus Mode
+      if (e.altKey && (e.key === 'f' || e.key === 'F')) {
+        e.preventDefault();
+        toggleFocusMode();
+        return;
+      }
+
+      // Alt + K / Option + K: Open Task Library
+      if (e.altKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        setIsLibraryOpen(true);
+        return;
+      }
+
+      // Alt + M / Option + M: Toggle Mastered Task
+      if (e.altKey && (e.key === 'm' || e.key === 'M')) {
+        e.preventDefault();
+        if (currentTaskId) {
+          handleToggleMastered(currentTaskId);
+        }
+        return;
+      }
+
+      // Alt + T / Option + T: Open Theory Handbook
+      if (e.altKey && (e.key === 't' || e.key === 'T')) {
+        e.preventDefault();
+        setIsTheoryOpen(true);
+        return;
+      }
+
+      // Escape key: exit shortcuts modal if open, or exit focus mode if active
+      if (e.key === 'Escape') {
+        if (isShortcutsOpen) {
+          setIsShortcutsOpen(false);
+          return;
+        }
+        if (isFocusMode) {
+          setIsFocusMode(false);
+          safeSet('ielts_focus_mode', false);
+          return;
+        }
+      }
+
+      // '?' key: Open Keyboard Shortcuts modal (only when not typing in an input/textarea)
+      if (e.key === '?' && !isEditing && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        e.preventDefault();
+        setIsShortcutsOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentTaskId, isFocusMode, isShortcutsOpen]);
 
   // Handlers
   const handleEssayChange = (text) => {
@@ -676,58 +753,77 @@ export default function App() {
   };
 
   return (
-    <div className={`${(activeSkill === 'reading' || activeSkill === 'listening') ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900`}>
+    <div className={`${(activeSkill === 'reading' || activeSkill === 'listening' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative`}>
       
-      {/* 1. Main Navigation Bar */}
-      <Navbar
-        currentTask={currentTask}
-        allTasks={allTasks}
-        onSelectTask={(t) => setCurrentTaskId(t.id)}
-        mode={mode}
-        setMode={setMode}
-        streakCount={streakCount}
-        onOpenVocabGrammar={() => setIsVocabGrammarOpen(true)}
-        onOpenDrills={() => setIsDrillsOpen(true)}
-        onOpenWeeklyReport={() => setIsWeeklyReportOpen(true)}
-        onOpenMockTest={() => setIsMockTestOpen(true)}
-        onOpenDiagnostic={() => setIsDiagnosticOpen(true)}
-        onOpenIngest={() => {
-          if (activeSkill === 'reading') {
-            setReadingIngestTrigger(Date.now());
-          } else {
-            setIsIngestOpen(true);
-          }
-        }}
-        onOpenGenerator={() => {
-          if (activeSkill === 'reading') {
-            setReadingGenTrigger(Date.now());
-          } else if (activeSkill === 'listening') {
-            setListeningGenTrigger(Date.now());
-          } else {
-            setIsGeneratorOpen(true);
-          }
-        }}
-        onOpenLibrary={() => setIsLibraryOpen(true)}
-        onOpenNotebook={() => setIsNotebookOpen(true)}
-        onOpenHistory={() => setIsHistoryOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenTheory={() => setIsTheoryOpen(true)}
-        onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
-        onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
-        onOpenProfile={() => setIsProfileOpen(true)}
-        onOpenContact={() => setIsContactOpen(true)}
-        activeSkill={activeSkill}
-        onSelectSkill={(skill) => setActiveSkill(skill)}
-        mistakesCount={mistakes.length}
-        targetBand={targetBand}
-        onOpenOnboarding={() => setIsOnboardingOpen(true)}
-        apiKey={apiKey}
-        user={currentUser}
-        onOpenAuth={() => setIsAuthOpen(true)}
-      />
+      {/* Focus Mode Floating Exit Pill */}
+      {isFocusMode && (
+        <div className="fixed top-3 right-4 z-50 flex items-center space-x-2 bg-slate-900/90 text-white text-xs px-3 py-1.5 rounded-full shadow-xl border border-slate-700/80 transition-all backdrop-blur-md animate-in fade-in">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-semibold text-slate-200">Chế độ Tập Trung</span>
+          <button
+            onClick={toggleFocusMode}
+            className="ml-2 flex items-center space-x-1 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded-md font-bold transition-colors cursor-pointer"
+            title="Thoát chế độ tập trung (Alt + F hoặc Esc)"
+          >
+            <Minimize2 className="w-3.5 h-3.5 text-slate-300" />
+            <span>Thoát</span>
+            <kbd className="hidden sm:inline text-[10px] text-slate-400 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">Alt+F</kbd>
+          </button>
+        </div>
+      )}
 
-      {/* 1.5 Global Gemini API Key Reminder Banner (Active across ALL 4 Skills: Writing, Reading, Listening, Speaking) */}
-      {!apiKey && (
+      {/* 1. Main Navigation Bar (Hidden in Focus Mode) */}
+      {!isFocusMode && (
+        <Navbar
+          currentTask={currentTask}
+          allTasks={allTasks}
+          onSelectTask={(t) => setCurrentTaskId(t.id)}
+          mode={mode}
+          setMode={setMode}
+          streakCount={streakCount}
+          onOpenVocabGrammar={() => setIsVocabGrammarOpen(true)}
+          onOpenDrills={() => setIsDrillsOpen(true)}
+          onOpenWeeklyReport={() => setIsWeeklyReportOpen(true)}
+          onOpenMockTest={() => setIsMockTestOpen(true)}
+          onOpenDiagnostic={() => setIsDiagnosticOpen(true)}
+          onOpenIngest={() => {
+            if (activeSkill === 'reading') {
+              setReadingIngestTrigger(Date.now());
+            } else {
+              setIsIngestOpen(true);
+            }
+          }}
+          onOpenGenerator={() => {
+            if (activeSkill === 'reading') {
+              setReadingGenTrigger(Date.now());
+            } else if (activeSkill === 'listening') {
+              setListeningGenTrigger(Date.now());
+            } else {
+              setIsGeneratorOpen(true);
+            }
+          }}
+          onOpenLibrary={() => setIsLibraryOpen(true)}
+          onOpenNotebook={() => setIsNotebookOpen(true)}
+          onOpenHistory={() => setIsHistoryOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenTheory={() => setIsTheoryOpen(true)}
+          onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
+          onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
+          onOpenProfile={() => setIsProfileOpen(true)}
+          onOpenContact={() => setIsContactOpen(true)}
+          activeSkill={activeSkill}
+          onSelectSkill={(skill) => setActiveSkill(skill)}
+          mistakesCount={mistakes.length}
+          targetBand={targetBand}
+          onOpenOnboarding={() => setIsOnboardingOpen(true)}
+          apiKey={apiKey}
+          user={currentUser}
+          onOpenAuth={() => setIsAuthOpen(true)}
+        />
+      )}
+
+      {/* 1.5 Global Gemini API Key Reminder Banner (Hidden in Focus Mode) */}
+      {!isFocusMode && !apiKey && (
         <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-slate-950 px-3 sm:px-6 py-2 flex items-center justify-between gap-2 shadow-xs shrink-0 z-20">
           <div className="flex items-center space-x-2 min-w-0">
             <div className="p-1 rounded-md bg-white/20 text-white shrink-0">
@@ -935,6 +1031,34 @@ export default function App() {
                   <span className="text-amber-600">⚠️</span>
                   <span>Lỗi sai ({mistakes.length})</span>
                 </button>
+
+                {/* Focus Mode (Zen Mode) Toggle */}
+                <button
+                  onClick={toggleFocusMode}
+                  className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+                    isFocusMode
+                      ? 'bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                  }`}
+                  title={isFocusMode ? "Đang ở Chế độ Tập Trung. Nhấn để quay lại (Alt + F)" : "Bật Chế độ Tập Trung toàn màn hình (Alt + F)"}
+                >
+                  {isFocusMode ? (
+                    <Minimize2 className="w-3.5 h-3.5 text-purple-600" />
+                  ) : (
+                    <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                  )}
+                  <span className="hidden lg:inline">{isFocusMode ? 'Thoát Focus' : 'Tập trung'}</span>
+                </button>
+
+                {/* Keyboard Shortcuts Trigger Button */}
+                <button
+                  onClick={() => setIsShortcutsOpen(true)}
+                  className="flex items-center space-x-1 px-2 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 border border-slate-200 transition-colors cursor-pointer"
+                  title="Bảng tra cứu phím tắt (Nhấn ?)"
+                >
+                  <Keyboard className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden xl:inline text-[11px] font-semibold">Phím tắt (?)</span>
+                </button>
               </div>
 
               {/* Weekly Word Target Progress Bar */}
@@ -980,6 +1104,7 @@ export default function App() {
                 lastSaved={lastSaved}
                 onOpenParaphrase={() => setSlideOverConfig({ isOpen: true, tab: 'paraphrase' })}
                 onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
+                onSubmitEssay={handleSubmitEssay}
               />
             }
           />
@@ -1410,6 +1535,12 @@ export default function App() {
       <ContactModal
         isOpen={isContactOpen || modals.contact}
         onClose={() => { setIsContactOpen(false); triggerCloseModal('contact'); }}
+      />
+
+      {/* Keyboard Shortcuts Reference Guide Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
       />
 
       <WorkspaceErrorBoundary skillName="Diagnostic Placement & Study Plan">

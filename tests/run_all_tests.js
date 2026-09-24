@@ -23,7 +23,8 @@ const testSuites = [
   { name: 'Step 14: Mastered Items & History Preservation', file: 'tests/test_step14_mastered_items_feature.js' },
   { name: 'Step 15: Cambridge Hard Band Capping Rules', file: 'tests/test_step15_cambridge_hard_capping.js' },
   { name: 'Step 16: Modal Store Pub/Sub State Engine', file: 'tests/test_step16_modal_store.js' },
-  { name: 'Step 17: All-Skill Mastered (Đã Thuộc) System', file: 'tests/test_step17_all_skills_mastered.js' }
+  { name: 'Step 17: All-Skill Mastered (Đã Thuộc) System', file: 'tests/test_step17_all_skills_mastered.js' },
+  { name: 'Step 18: Focus Mode & Keyboard Shortcuts (Phase 1)', file: 'tests/test_step18_focus_mode_shortcuts.js' }
 ];
 
 console.log('===============================================================');
