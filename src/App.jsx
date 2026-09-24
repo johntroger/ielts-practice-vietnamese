@@ -38,6 +38,7 @@ const SpeakingResultModal = React.lazy(() => import('./components/speaking/Speak
 const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPanel'));
 const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
 const CDIDisplayModal = React.lazy(() => import('./components/CDIDisplayModal'));
+const DailyErrorPrescriptionModal = React.lazy(() => import('./components/DailyErrorPrescriptionModal'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -177,6 +178,7 @@ export default function App() {
   const [cdiFontSize, setCdiFontSize] = useState(() => safeGet('ielts_cdi_font_size', 'standard'));
   const [cdiContrast, setCdiContrast] = useState(() => safeGet('ielts_cdi_contrast', 'standard'));
   const [isCDIDisplayOpen, setIsCDIDisplayOpen] = useState(false);
+  const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(false);
 
   const handleChangeCdiFontSize = (size) => {
     setCdiFontSize(size);
@@ -1104,6 +1106,7 @@ export default function App() {
               onOpenOnboarding={() => setIsOnboardingOpen(true)}
               onOpenTheory={() => setIsTheoryOpen(true)}
               onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
+              onOpenPrescription={() => setIsPrescriptionOpen(true)}
               mistakesCount={mistakes.length}
               isFocusMode={isFocusMode}
               toggleFocusMode={toggleFocusMode}
@@ -1577,6 +1580,7 @@ export default function App() {
         onOpenIngest={() => { setIsProfileOpen(false); setIsIngestOpen(true); }}
         onOpenGenerator={() => { setIsProfileOpen(false); setIsGeneratorOpen(true); }}
         onOpenLibrary={() => { setIsProfileOpen(false); setIsLibraryOpen(true); }}
+        onOpenPrescription={() => { setIsProfileOpen(false); setIsPrescriptionOpen(true); }}
         onExportAllData={handleExportAllData}
         onImportData={handleImportData}
       />
@@ -1641,6 +1645,14 @@ export default function App() {
             if (currentUser) saveUserVocabItem(currentUser.id, v);
           }}
           promptText={currentTask?.prompt}
+        />
+
+        {/* Daily Error Prescription Modal (Spaced Repetition Micro-Drill) */}
+        <DailyErrorPrescriptionModal
+          isOpen={isPrescriptionOpen || modals.prescription}
+          onClose={() => { setIsPrescriptionOpen(false); triggerCloseModal('prescription'); }}
+          mistakes={mistakes}
+          submissions={submissions}
         />
       </React.Suspense>
 

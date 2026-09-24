@@ -794,6 +794,31 @@ export const FEATURE_REGISTRY = [
       target: 'feedback',
       label: 'Gửi Góp Ý & Phản Hồi'
     }
+  },
+  {
+    id: 'feat-daily-error-prescription',
+    version: 'v3.0',
+    status: 'new',
+    badge: 'Đơn Thuốc Lỗi',
+    category: 'practice_tools',
+    targetSkills: ['writing', 'speaking'],
+    title: 'Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition Micro-Drill)',
+    shortDesc: 'Vòng lặp học tập cá nhân hóa 3 phút/ngày: Chuyển hóa lỗi sai thực tế từ bài viết và các bẫy ngữ pháp thường gặp thành câu đố trắc nghiệm phản xạ.',
+    icon: 'Pill',
+    shortcut: null,
+    updatedAt: '2026-09-24',
+    highlights: [
+      'Cá nhân hóa 100%: Tự động tổng hợp lỗi sai từ lịch sử làm bài viết & nói của bạn.',
+      'Bổ sung 5 bẫy ngữ pháp người Việt dễ mất điểm nhất: Cụm giới từ, mạo từ, thì quá khứ, danh từ đếm được/không đếm được, câu điều kiện.',
+      'Giải thích chi tiết chuẩn Cambridge: Hiểu rõ nguyên nhân mất điểm và cách viết chuẩn Band 7.5+.',
+      'Hoàn toàn ngoại tuyến (100% Offline-First): Luyện tập mọi lúc không cần Internet hay API Key.'
+    ],
+    usageGuide: 'Vào Toolbar Writing -> Bấm "Tiện Ích Khác" -> Chọn "Đơn Thuốc Sửa Lỗi", hoặc vào Hồ Sơ Cá Nhân để mở.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'prescription',
+      label: 'Mở Đơn Thuốc Sửa Lỗi'
+    }
   }
 ];
 

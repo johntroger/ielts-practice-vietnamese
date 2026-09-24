@@ -13,7 +13,8 @@ import {
   SlidersHorizontal,
   FolderKanban,
   ShieldAlert,
-  Sliders
+  Sliders,
+  Pill
 } from 'lucide-react';
 
 export default function WritingSubHeaderToolbar({
@@ -27,6 +28,7 @@ export default function WritingSubHeaderToolbar({
   onOpenOnboarding,
   onOpenTheory,
   onOpenMistakeLog,
+  onOpenPrescription,
   mistakesCount = 0,
   isFocusMode,
   toggleFocusMode,
@@ -208,6 +210,28 @@ export default function WritingSubHeaderToolbar({
                         {mistakesCount}
                       </span>
                     )}
+                  </button>
+
+                  {/* Item 2.5: Đơn thuốc sửa lỗi mỗi ngày (SRS) */}
+                  <button
+                    onClick={() => {
+                      onOpenPrescription?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-rose-500 to-amber-500 text-white">
+                        <Pill className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs flex items-center space-x-1">
+                          <span>Đơn Thuốc Sửa Lỗi</span>
+                          <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 text-[9px] font-black">SRS</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">Bài tập 3 phút khắc phục bẫy lỗi sai</div>
+                      </div>
+                    </div>
                   </button>
 
                   {/* Item 3: Phím tắt tra cứu */}

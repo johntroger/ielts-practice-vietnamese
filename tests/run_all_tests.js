@@ -33,7 +33,8 @@ const testSuites = [
   { name: 'Step 24: Speaking Dual-Engine & Computer Algorithmic Scorer', file: 'tests/test_step24_speaking_dual_engine.js' },
   { name: 'Step 25: Self-Updating Feature Registry & Help Center Hub', file: 'tests/test_step25_help_registry.js' },
   { name: 'Step 26: Cambridge GRA Sentence Structure Heatmap & Analyzer', file: 'tests/test_step26_gra_sentence_analyzer.js' },
-  { name: 'Step 27: Speaking Fluency Filler Words Tracker & Audio Visualizer', file: 'tests/test_step27_speaking_fluency_filler_tracker.js' }
+  { name: 'Step 27: Speaking Fluency Filler Words Tracker & Audio Visualizer', file: 'tests/test_step27_speaking_fluency_filler_tracker.js' },
+  { name: 'Step 28: Daily Error Prescription & Spaced Repetition Loop', file: 'tests/test_step28_daily_error_prescription.js' }
 ];
 
 console.log('===============================================================');

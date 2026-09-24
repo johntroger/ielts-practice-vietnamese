@@ -34,7 +34,8 @@ import {
   Mic,
   Volume2,
   GraduationCap,
-  Zap
+  Zap,
+  Pill
 } from 'lucide-react';
 import SpeakingResultModal from './speaking/SpeakingResultModal';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
@@ -81,7 +82,8 @@ export default function UserProfileModal({
   onExportAllData,
   onImportData,
   onSaveToVocabNotebook,
-  onSaveMistake
+  onSaveMistake,
+  onOpenPrescription
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'submissions' | 'reading' | 'listening' | 'speaking' | 'resources' | 'vocab' | 'account'
   const [resourceFilter, setResourceFilter] = useState('all'); // 'all' | 'public' | 'private'
@@ -838,6 +840,41 @@ export default function UserProfileModal({
                       <Bookmark className="w-6 h-6" />
                     </div>
                   </div>
+                </div>
+
+                {/* DAILY ERROR PRESCRIPTION PROMO CARD */}
+                <div 
+                  onClick={() => {
+                    onClose?.();
+                    onOpenPrescription?.();
+                  }}
+                  className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-red-500/10 border-2 border-rose-300 dark:border-rose-700/60 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:border-rose-500 hover:shadow-md transition-all group"
+                >
+                  <div className="flex items-center space-x-3.5">
+                    <div className="p-3 rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-md group-hover:scale-105 transition-transform shrink-0">
+                      <Pill className="w-6 h-6 animate-pulse" />
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                          Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition)
+                        </span>
+                        <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-700 rounded-full">
+                          3 Phút / Ngày
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                        Luyện tập giải quyết triệt để {mistakes.length > 0 ? `${mistakes.length} lỗi thực tế bạn đã mắc` : '5 bẫy ngữ pháp người Việt hay mất điểm nhất'} để tăng band điểm bền vững.
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    className="inline-flex items-center justify-center space-x-2 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 rounded-xl shadow-2xs transition-all shrink-0"
+                  >
+                    <span>Mở Đơn Thuốc</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
 
                 {/* ONBOARDING QUICK-ACTION FRAME (KHI CHƯA CÓ BÀI LÀM) */}

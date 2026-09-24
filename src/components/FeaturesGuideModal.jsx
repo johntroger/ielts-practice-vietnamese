@@ -31,7 +31,8 @@ import {
   Calendar,
   SlidersHorizontal,
   Flame,
-  Check
+  Check,
+  Pill
 } from 'lucide-react';
 import { 
   FEATURE_REGISTRY, 
@@ -63,7 +64,8 @@ const ICON_MAP = {
   Keyboard: Keyboard,
   BarChart3: BarChart3,
   FileText: FileText,
-  Compass: Compass
+  Compass: Compass,
+  Pill: Pill
 };
 
 const SKILL_ICONS = {

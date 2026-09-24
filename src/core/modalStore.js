@@ -29,7 +29,8 @@ let state = {
   featuresGuide: false,
   profile: false,
   contact: false,
-  onboarding: false
+  onboarding: false,
+  prescription: false
 };
 
 const listeners = new Set();
