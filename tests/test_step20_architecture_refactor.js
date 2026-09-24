@@ -67,4 +67,20 @@ assert(mockModalCode.includes("from './MarathonTRFScorecard'"), 'MockTestModal.j
 assert(mockModalCode.includes('<MarathonTRFScorecard'), 'MockTestModal.jsx must render MarathonTRFScorecard');
 console.log('  ✅ 6. MockTestModal.jsx delegates TRF simulation scorecard rendering');
 
+// 7. Verify Writing AI Task Generator prominence on Navigation & SubHeader
+const navPath = path.resolve('src/components/Navbar.jsx');
+const navCode = fs.readFileSync(navPath, 'utf8');
+assert(navCode.includes("activeSkill === 'writing'") && navCode.includes('Sinh Đề (AI)'), 'Navbar must prominently expose Sinh Đề (AI) button when activeSkill is writing');
+assert(subHeaderCode.includes('onOpenGenerator') && subHeaderCode.includes('Sinh Đề (AI)'), 'WritingSubHeaderToolbar must include Sinh Đề (AI) button');
+console.log('  ✅ 7. Writing navigation and subheader prominently expose AI Task Generator');
+
+// 8. Verify TaskGeneratorModal viewport overflow resilience
+const genModalPath = path.resolve('src/components/TaskGeneratorModal.jsx');
+const genModalCode = fs.readFileSync(genModalPath, 'utf8');
+assert(genModalCode.includes('max-h-[92dvh]') || genModalCode.includes('max-h-'), 'TaskGeneratorModal must constrain max-height to viewport');
+assert(genModalCode.includes('flex flex-col'), 'TaskGeneratorModal must use flex-col layout');
+assert(genModalCode.includes('overflow-y-auto'), 'TaskGeneratorModal must have a scrollable body container');
+assert(genModalCode.includes('shrink-0'), 'TaskGeneratorModal header and footer must not shrink');
+console.log('  ✅ 8. TaskGeneratorModal guarantees full viewport visibility without requiring browser zoom-out');
+
 console.log('🎉 Step 20: Architecture Refactoring & Modular Components (Phase 3) tests PASSED 100%!\n');

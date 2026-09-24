@@ -260,6 +260,18 @@ export default function Navbar({
               <span className="hidden 2xl:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
             </button>
 
+            {/* Sinh Đề Bằng AI (Đưa trực tiếp ra Nav cho Writing) */}
+            {activeSkill === 'writing' && (
+              <button
+                onClick={doOpenGenerator}
+                className="hidden sm:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
+                title="Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn Cambridge)"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
+                <span>Sinh Đề (AI)</span>
+              </button>
+            )}
+
             {/* Desktop Only: 1. Luyện Tập Dropdown */}
             <div className="relative hidden lg:block">
               <button

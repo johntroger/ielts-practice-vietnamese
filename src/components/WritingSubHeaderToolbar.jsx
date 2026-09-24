@@ -7,7 +7,8 @@ import {
   BookOpen, 
   Maximize2, 
   Minimize2, 
-  Keyboard 
+  Keyboard,
+  Sparkles 
 } from 'lucide-react';
 
 export default function WritingSubHeaderToolbar({
@@ -17,6 +18,7 @@ export default function WritingSubHeaderToolbar({
   masteredIds = [],
   onToggleMastered,
   onOpenLibrary,
+  onOpenGenerator,
   onOpenOnboarding,
   onOpenTheory,
   onOpenMistakeLog,
@@ -81,6 +83,17 @@ export default function WritingSubHeaderToolbar({
         >
           <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTask?.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
           <span className="hidden sm:inline">{masteredIds.includes(currentTask?.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
+        </button>
+
+        {/* Sinh Đề AI Button */}
+        <button
+          onClick={onOpenGenerator}
+          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/90 text-red-700 hover:bg-red-100/90 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs group"
+          title="Sinh đề thi Writing Task 1 hoặc Task 2 mới bằng Gemini AI"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
+          <span className="hidden sm:inline">Sinh Đề (AI)</span>
+          <span className="sm:hidden">Sinh Đề</span>
         </button>
       </div>
 

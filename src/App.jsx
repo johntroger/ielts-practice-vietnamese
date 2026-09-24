@@ -1039,6 +1039,7 @@ export default function App() {
               masteredIds={masteredIds}
               onToggleMastered={handleToggleMastered}
               onOpenLibrary={() => setIsLibraryOpen(true)}
+              onOpenGenerator={() => setIsGeneratorOpen(true)}
               onOpenOnboarding={() => setIsOnboardingOpen(true)}
               onOpenTheory={() => setIsTheoryOpen(true)}
               onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
