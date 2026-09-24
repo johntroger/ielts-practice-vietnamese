@@ -35,7 +35,8 @@ const testSuites = [
   { name: 'Step 26: Cambridge GRA Sentence Structure Heatmap & Analyzer', file: 'tests/test_step26_gra_sentence_analyzer.js' },
   { name: 'Step 27: Speaking Fluency Filler Words Tracker & Audio Visualizer', file: 'tests/test_step27_speaking_fluency_filler_tracker.js' },
   { name: 'Step 28: Daily Error Prescription & Spaced Repetition Loop', file: 'tests/test_step28_daily_error_prescription.js' },
-  { name: 'Step 29: Rating & Popularity Service with Smart Filter & Sort Engine', file: 'tests/test_step29_rating_popularity_service.js' }
+  { name: 'Step 29: Rating & Popularity Service with Smart Filter & Sort Engine', file: 'tests/test_step29_rating_popularity_service.js' },
+  { name: 'Step 30: Task Library Smart Filter Bar & Interactive Rating', file: 'tests/test_step30_task_library_smart_filters.js' }
 ];
 
 console.log('===============================================================');

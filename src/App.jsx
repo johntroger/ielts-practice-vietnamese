@@ -1368,6 +1368,7 @@ export default function App() {
         allTasks={allTasks}
         communityTasks={communityTasks}
         user={currentUser}
+        submissions={submissions}
         currentTaskId={currentTaskId}
         masteredIds={masteredIds}
         onToggleMastered={handleToggleMastered}

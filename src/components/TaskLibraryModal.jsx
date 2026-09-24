@@ -16,10 +16,16 @@ import {
   Share2,
   Users,
   Link as LinkIcon,
-  GraduationCap
+  GraduationCap,
+  Star,
+  Flame,
+  Award
 } from 'lucide-react';
 import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
 import TaskImageUploader from './TaskImageUploader';
+import StarRatingWidget from './common/StarRatingWidget';
+import SmartContentFilterBar from './common/SmartContentFilterBar';
+import { applySmartFilterAndSort, recordAttempt } from '../services/ratingPopularityService';
 
 export default function TaskLibraryModal({
   isOpen,
@@ -36,13 +42,17 @@ export default function TaskLibraryModal({
   onImportData,
   masteredIds = [],
   onToggleMastered,
-  onOpenAuth
+  onOpenAuth,
+  submissions = []
 }) {
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'custom' | 'ai' | 'community'
   const [filterTaskNum, setFilterTaskNum] = useState('all'); // 'all' | 1 | 2
   const [searchQuery, setSearchQuery] = useState('');
+  const [quickFilter, setQuickFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('rating_desc');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [isAddingManual, setIsAddingManual] = useState(false);
 
   // Manual Form State
@@ -97,39 +107,59 @@ export default function TaskLibraryModal({
     return allTasks.filter(t => masteredIds.includes(t.id)).length;
   }, [allTasks, masteredIds]);
 
-  const filteredTasks = taskSource.filter(t => {
-    const isMastered = masteredIds.includes(t.id);
+  const attemptedIds = useMemo(() => {
+    return (submissions || []).map(s => s.task?.id).filter(Boolean);
+  }, [submissions]);
 
-    // If on "mastered" tab, show only mastered tasks
+  const categoryOptions = useMemo(() => {
+    if (filterTaskNum === 1) {
+      return TASK1_TYPES.map(t => ({ value: t.id, label: `Task 1: ${t.label}` }));
+    }
+    if (filterTaskNum === 2) {
+      return TASK2_TYPES.map(t => ({ value: t.id, label: `Task 2: ${t.label}` }));
+    }
+    return [
+      ...TASK1_TYPES.map(t => ({ value: t.id, label: `Task 1: ${t.label}` })),
+      ...TASK2_TYPES.map(t => ({ value: t.id, label: `Task 2: ${t.label}` }))
+    ];
+  }, [filterTaskNum]);
+
+  const filteredTasks = useMemo(() => {
+    let base = taskSource;
+
+    // 1. Tab filter
     if (activeTab === 'mastered') {
-      const matchesTaskNum = filterTaskNum === 'all' || t.taskNumber === Number(filterTaskNum);
-      const matchesSearch = !searchQuery ||
-        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.prompt.toLowerCase().includes(searchQuery.toLowerCase());
-      return isMastered && matchesTaskNum && matchesSearch;
+      base = base.filter(t => masteredIds.includes(t.id));
+    } else {
+      if (activeTab === 'custom') {
+        base = base.filter(t => t.isCustom && !t.isAiGenerated);
+      } else if (activeTab === 'ai') {
+        base = base.filter(t => t.isAiGenerated);
+      } else if (activeTab === 'community') {
+        base = base.filter(t => t.isCommunity);
+      }
+
+      // Hide mastered from general practice list if toggled
+      if (hideMastered && user) {
+        base = base.filter(t => !masteredIds.includes(t.id));
+      }
     }
 
-    // If logged in and hideMastered is on, hide mastered tasks from practice list
-    if (hideMastered && user && isMastered) {
-      return false;
+    // 2. Task 1 / 2 filter
+    if (filterTaskNum !== 'all') {
+      base = base.filter(t => (t.taskNumber || t.taskNum) === Number(filterTaskNum));
     }
 
-    const matchesTab = 
-      activeTab === 'all' || 
-      activeTab === 'community' ||
-      (activeTab === 'custom' && t.isCustom && !t.isAiGenerated) || 
-      (activeTab === 'ai' && t.isAiGenerated);
-
-    const matchesTaskNum = 
-      filterTaskNum === 'all' || t.taskNumber === Number(filterTaskNum);
-
-    const matchesSearch = 
-      !searchQuery ||
-      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.prompt.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesTab && matchesTaskNum && matchesSearch;
-  });
+    // 3. Smart Search, Faceted Category, Quick Filter, and Multi-Dimensional Sort
+    return applySmartFilterAndSort(base, {
+      searchQuery,
+      quickFilter,
+      categoryFilter,
+      sortBy,
+      masteredIds,
+      attemptedIds
+    });
+  }, [taskSource, activeTab, filterTaskNum, hideMastered, user, masteredIds, searchQuery, quickFilter, categoryFilter, sortBy, attemptedIds]);
 
   const handleCreateManual = (e) => {
     e.preventDefault();
@@ -211,54 +241,30 @@ export default function TaskLibraryModal({
         </div>
 
         {/* Filters & Actions */}
-        <div className="p-4 bg-slate-50 border-b border-slate-200 space-y-3">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm đề bài theo tiêu đề hoặc từ khóa..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 bg-white"
-              />
-            </div>
-
-            {/* Add Manual Button */}
-            <button
-              onClick={() => setIsAddingManual(!isAddingManual)}
-              className="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-2xs transition-colors shrink-0"
-            >
-              <Plus className="w-4 h-4" />
-              <span>{isAddingManual ? 'Đóng Form' : 'Nạp Đề Cá Nhân Mới'}</span>
-            </button>
-          </div>
-
-          {/* Tab Filters */}
+        <div className="p-3.5 sm:p-4 bg-slate-50/70 border-b border-slate-200 space-y-2.5">
+          {/* Top Row: Tabs, Task 1/2, Add Button */}
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
-                  activeTab === 'all' ? 'bg-red-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+                  activeTab === 'all' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 Tất cả ({allTasks.length})
               </button>
               <button
                 onClick={() => setActiveTab('custom')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
-                  activeTab === 'custom' ? 'bg-red-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+                  activeTab === 'custom' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 Tài liệu của bạn
               </button>
               <button
                 onClick={() => setActiveTab('ai')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors flex items-center space-x-1 ${
-                  activeTab === 'ai' ? 'bg-red-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1 cursor-pointer ${
+                  activeTab === 'ai' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -266,18 +272,18 @@ export default function TaskLibraryModal({
               </button>
               <button
                 onClick={() => setActiveTab('community')}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors flex items-center space-x-1.5 ${
-                  activeTab === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1.5 cursor-pointer ${
+                  activeTab === 'community' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 <Users className="w-3.5 h-3.5 text-blue-500" />
-                <span>Cộng Đồng Chia Sẻ ({communityTasks.length})</span>
+                <span>Cộng Đồng ({communityTasks.length})</span>
               </button>
               {user && (
                 <button
                   onClick={() => setActiveTab('mastered')}
-                  className={`px-3 py-1.5 rounded-lg font-semibold transition-colors flex items-center space-x-1.5 ${
-                    activeTab === 'mastered' ? 'bg-emerald-600 text-white' : 'bg-white text-emerald-800 border border-emerald-300 hover:bg-emerald-50'
+                  className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1.5 cursor-pointer ${
+                    activeTab === 'mastered' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white text-emerald-800 border border-emerald-300 hover:bg-emerald-50'
                   }`}
                 >
                   <GraduationCap className="w-3.5 h-3.5" />
@@ -286,7 +292,7 @@ export default function TaskLibraryModal({
               )}
             </div>
 
-            {/* Filter Task 1 / 2 & Hide Mastered Toggle */}
+            {/* Filter Task 1 / 2 & Add Manual Button */}
             <div className="flex items-center gap-2">
               {user && activeTab !== 'mastered' && masteredCount > 0 && (
                 <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
@@ -296,38 +302,69 @@ export default function TaskLibraryModal({
                     onChange={(e) => setHideMastered(e.target.checked)}
                     className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                   />
-                  <span className="font-semibold text-emerald-800">Ẩn đề đã thuộc ({masteredCount})</span>
+                  <span className="font-semibold text-emerald-800 text-[11px]">Ẩn đã thuộc ({masteredCount})</span>
                 </label>
               )}
-              <div className="flex gap-1">
+              <div className="flex gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
+                <button
+                  onClick={() => setFilterTaskNum('all')}
+                  className={`px-2 py-0.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    filterTaskNum === 'all' ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Cả 2 Task
+                </button>
+                <button
+                  onClick={() => setFilterTaskNum(1)}
+                  className={`px-2 py-0.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    filterTaskNum === 1 ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Task 1
+                </button>
+                <button
+                  onClick={() => setFilterTaskNum(2)}
+                  className={`px-2 py-0.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    filterTaskNum === 2 ? 'bg-red-600 text-white' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Task 2
+                </button>
+              </div>
+
+              {/* Add Manual Button */}
               <button
-                onClick={() => setFilterTaskNum('all')}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium ${
-                  filterTaskNum === 'all' ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-800'
-                }`}
+                onClick={() => setIsAddingManual(!isAddingManual)}
+                className="flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-2xs transition-colors shrink-0 cursor-pointer"
               >
-                Cả 2 Task
-              </button>
-              <button
-                onClick={() => setFilterTaskNum(1)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium ${
-                  filterTaskNum === 1 ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                Task 1
-              </button>
-              <button
-                onClick={() => setFilterTaskNum(2)}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium ${
-                  filterTaskNum === 2 ? 'bg-red-600 text-white' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                Task 2
+                <Plus className="w-3.5 h-3.5" />
+                <span>{isAddingManual ? 'Đóng' : 'Nạp Đề'}</span>
               </button>
             </div>
           </div>
+
+          {/* Smart Content Filter & Sorting Bar */}
+          <SmartContentFilterBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            quickFilter={quickFilter}
+            onQuickFilterChange={setQuickFilter}
+            sortBy={sortBy}
+            onSortByChange={setSortBy}
+            categoryFilter={categoryFilter}
+            onCategoryFilterChange={setCategoryFilter}
+            categoryOptions={categoryOptions}
+            totalCount={taskSource.length}
+            filteredCount={filteredTasks.length}
+            onResetFilters={() => {
+              setSearchQuery('');
+              setQuickFilter('all');
+              setCategoryFilter('all');
+              setSortBy('rating_desc');
+            }}
+            placeholder="Tìm đề bài theo tiêu đề, từ khóa, chủ đề Cambridge..."
+          />
         </div>
-      </div>
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
@@ -501,6 +538,24 @@ export default function TaskLibraryModal({
                             <span>Đã thuộc</span>
                           </span>
                         )}
+                        {attemptedIds.includes(t.id) && (
+                          <span className="text-[10px] text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-semibold flex items-center space-x-1">
+                            <CheckCircle2 className="w-3 h-3 text-blue-600" />
+                            <span>Đã làm</span>
+                          </span>
+                        )}
+                        {t._metrics?.isHot && (
+                          <span className="text-[10px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 font-bold flex items-center space-x-1">
+                            <Flame className="w-3 h-3 text-rose-500 fill-rose-500" />
+                            <span>Thịnh Hành</span>
+                          </span>
+                        )}
+                        {t._metrics?.isTopRated && (
+                          <span className="text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
+                            <Star className="w-3 h-3 text-amber-500 fill-amber-400" />
+                            <span>Top Đề</span>
+                          </span>
+                        )}
                       </div>
 
                       <h4 className="font-bold text-sm text-slate-900 line-clamp-2">
@@ -510,6 +565,19 @@ export default function TaskLibraryModal({
                       <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
                         {t.prompt}
                       </p>
+
+                      {/* Social Proof: 5-Star Interactive Rating & Attempt Counter */}
+                      <div className="pt-1.5 flex items-center justify-between">
+                        <StarRatingWidget
+                          itemId={t.id}
+                          initialRating={t._metrics?.rating}
+                          initialRatingCount={t._metrics?.ratingCount}
+                          initialUserRating={t._metrics?.userRating}
+                          attemptsCount={t._metrics?.attemptsCount}
+                          showAttempts={true}
+                          size="xs"
+                        />
+                      </div>
                     </div>
 
                     <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
@@ -586,6 +654,7 @@ export default function TaskLibraryModal({
                       ) : (
                         <button
                           onClick={() => {
+                            recordAttempt(t.id);
                             onSelectTask(t);
                             onClose();
                           }}
