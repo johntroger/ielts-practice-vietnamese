@@ -134,7 +134,7 @@ export default function Navbar({
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs shrink-0">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6">
+      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
           
@@ -263,11 +263,11 @@ export default function Navbar({
               <span className="hidden 2xl:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
             </button>
 
-            {/* Sinh Đề Bằng AI (Đưa trực tiếp ra Nav cho Writing) */}
+            {/* Sinh Đề Bằng AI (Đưa trực tiếp ra Nav cho Writing trên màn hình rộng) */}
             {activeSkill === 'writing' && (
               <button
                 onClick={doOpenGenerator}
-                className="hidden sm:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
+                className="hidden xl:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
                 title="Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn Cambridge)"
               >
                 <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
@@ -456,8 +456,8 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Desktop Only: 3. Tiến Độ Dropdown */}
-            <div className="relative hidden lg:block">
+            {/* Desktop Only: 3. Tiến Độ Dropdown (Màn hình rộng) */}
+            <div className="relative hidden xl:block">
               <button
                 onClick={() => {
                   setIsProgressMenuOpen(!isProgressMenuOpen);
