@@ -135,9 +135,9 @@ export default function Navbar({
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs shrink-0">
-      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6">
+      <div className="w-full max-w-full px-2 sm:px-4 lg:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
-        <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-1 sm:gap-2">
           
           {/* 1. LEFT ZONE: Brand & Skills Switcher */}
           <div className="flex items-center space-x-2 sm:space-x-3.5">
@@ -152,77 +152,8 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Compact Skills Dropdown (Mobile, Tablet & Laptops < 1680px) */}
-            <div className="relative min-[1680px]:hidden shrink-0">
-              <button
-                onClick={() => {
-                  setIsSkillMenuOpen(!isSkillMenuOpen);
-                  setIsPracticeMenuOpen(false);
-                  setIsToolsMenuOpen(false);
-                }}
-                className={`flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs group cursor-pointer shrink-0 ${activeColor.btn}`}
-                title="Chuyển đổi kỹ năng IELTS"
-              >
-                <CurrentSkillIcon className={`w-3.5 h-3.5 shrink-0 ${activeColor.icon}`} />
-                <span className="font-bold sm:hidden">{currentSkillObj.label.replace('IELTS ', '')}</span>
-                <span className="font-bold hidden sm:inline">{currentSkillObj.label}</span>
-                <ChevronDown className={`w-3 h-3 shrink-0 transition-transform duration-150 ${activeColor.chevron} ${isSkillMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isSkillMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsSkillMenuOpen(false)} />
-                  <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
-                    <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Chọn Kỹ Năng Luyện Thi
-                    </div>
-                    {skills.map(s => {
-                      const Icon = s.icon;
-                      const isCurrent = activeSkill === s.id;
-                      const sColor = skillColorConfig[s.id] || skillColorConfig.writing;
-                      return (
-                        <button
-                          key={s.id}
-                          onClick={() => {
-                            if (s.active) {
-                              onSelectSkill?.(s.id);
-                              setIsSkillMenuOpen(false);
-                            } else {
-                              alert(`Phân hệ ${s.label} đang được hoàn thiện và sẽ ra mắt trong bản cập nhật tới!`);
-                            }
-                          }}
-                          className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors ${
-                            isCurrent 
-                              ? sColor.activeItem 
-                              : s.active 
-                                ? 'hover:bg-slate-50 text-slate-700' 
-                                : 'opacity-60 hover:bg-slate-50 text-slate-500 cursor-not-allowed'
-                          }`}
-                        >
-                          <div className="flex items-center space-x-2.5">
-                            <div className={`p-1.5 rounded-lg ${isCurrent ? sColor.activeItemIcon : 'bg-slate-100 text-slate-600'}`}>
-                              <Icon className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <div className="font-bold text-xs">{s.label}</div>
-                              <div className="text-[10px] text-slate-400 font-normal">{s.desc}</div>
-                            </div>
-                          </div>
-                          {!s.active && (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium shrink-0">
-                              {s.badge}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Direct 4-Skill Switcher Tabs on Ultra-Wide Desktop >= 1680px (Writing / Reading / Listening / Speaking) */}
-            <div className="hidden min-[1680px]:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1 shrink-0">
+            {/* Direct 4-Skill Switcher Tabs (Writing / Reading / Listening / Speaking) - LUÔN HIỆN HẾT RA NGOÀI */}
+            <div className="hidden sm:flex items-center bg-slate-100/90 p-0.5 sm:p-1 rounded-xl border border-slate-200/80 space-x-0.5 sm:space-x-1 shrink-0">
               {skills.map(s => {
                 const Icon = s.icon;
                 const isCurrent = activeSkill === s.id;
@@ -230,7 +161,7 @@ export default function Navbar({
                   <button
                     key={s.id}
                     onClick={() => onSelectSkill?.(s.id)}
-                    className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       isCurrent
                         ? s.id === 'speaking'
                           ? 'bg-purple-600 text-white shadow-xs'
@@ -242,7 +173,7 @@ export default function Navbar({
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
                     <span>{s.label.replace('IELTS ', '')}</span>
                   </button>
                 );
@@ -251,17 +182,16 @@ export default function Navbar({
           </div>
 
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 pr-1">
+          <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
             {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút */}
             <button
               onClick={doOpenMockTest}
-              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+              className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
               title="Vào Phòng Thi Thử IELTS Áp Lực Cao (60 Phút)"
             >
-              <ShieldAlert className="w-4 h-4 text-amber-300 animate-pulse" />
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
               <span>Thi Thử 60p</span>
-              <span className="hidden min-[1750px]:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
             </button>
 
             {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px) */}
@@ -452,13 +382,40 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Flashcards trau dồi từ vựng học thuật</div>
                       </div>
                     </button>
+                    <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      Tiến Độ & Lịch Sử
+                    </div>
+                    <button
+                      onClick={() => { doOpenHistory(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                    >
+                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                        <History className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold">Lịch Sử Nộp Bài & Điểm Số</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Xem lại các bài thi & feedback chi tiết</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => { doOpenWeeklyReport(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                    >
+                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                        <TrendingUp className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold">Báo Cáo Tiến Độ Tuần</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Radar 4 tiêu chí & chẩn đoán học tập</div>
+                      </div>
+                    </button>
                   </div>
                 </>
               )}
             </div>
 
-            {/* Desktop Only: 3. Tiến Độ Dropdown (Màn hình rộng) */}
-            <div className="relative hidden xl:block">
+            {/* Desktop Only: 3. Tiến Độ Dropdown (Màn hình siêu rộng >= 1536px) */}
+            <div className="relative hidden 2xl:block">
               <button
                 onClick={() => {
                   setIsProgressMenuOpen(!isProgressMenuOpen);
@@ -553,18 +510,18 @@ export default function Navbar({
             {/* Help Center (F1) - 100% Công khai, không cần đăng nhập */}
             <button
               onClick={doOpenFeaturesGuide}
-              className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
+              className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
               title="Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"
             >
               <HelpCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
-              <span className="hidden min-[1680px]:inline text-[11px] font-semibold">Trợ Giúp</span>
-              <kbd className="hidden min-[1750px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
+              <span className="hidden min-[1600px]:inline text-[11px] font-semibold">Trợ Giúp</span>
+              <kbd className="hidden min-[1700px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
             {/* API Key Indicator */}
             <button
               onClick={doOpenSettings}
-              className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 apiKey 
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
                   : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 animate-pulse'
@@ -589,7 +546,7 @@ export default function Navbar({
                   doOpenAuth();
                 }
               }}
-              className={`hidden lg:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
+              className={`hidden lg:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 user 
                   ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' 
                   : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-800'
@@ -597,7 +554,7 @@ export default function Navbar({
               title={user ? `Xem trang cá nhân: ${user.email}` : "Đăng nhập hoặc đăng ký tài khoản"}
             >
               <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
-              <span className="max-w-[90px] xl:max-w-[120px] truncate text-[11px]">
+              <span className="max-w-[70px] xl:max-w-[100px] truncate text-[11px]">
                 {user ? (user.email.split('@')[0]) : 'Tài Khoản'}
               </span>
             </button>
