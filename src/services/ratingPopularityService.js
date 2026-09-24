@@ -270,7 +270,7 @@ export function applySmartFilterAndSort(items = [], criteria = {}) {
     // Filter A: Search Query
     if (normalizedQuery) {
       const searchHaystack = normalizeSearchStr(
-        `${item.title || ''} ${item.prompt || ''} ${item.type || ''} ${item.category || ''} ${item.topic || ''} ${item.word || ''} ${item.question || ''}`
+        `${item.title || ''} ${item.prompt || ''} ${item.type || ''} ${item.category || ''} ${item.topic || ''} ${item.word || ''} ${item.question || ''} ${item.correct || ''} ${item.contextSentence || ''} ${item.vietnameseMeaning || ''} ${item.statement || ''} ${item.formula || ''}`
       );
       if (!searchHaystack.includes(normalizedQuery)) {
         continue;
@@ -285,7 +285,12 @@ export function applySmartFilterAndSort(items = [], criteria = {}) {
       }
     }
 
-    // Filter C: Quick Filter Chip
+    // Filter C: Hide Mastered Items if requested
+    if (criteria.hideMastered && isMastered) {
+      continue;
+    }
+
+    // Filter D: Quick Filter Chip
     if (quickFilter === 'top_rated' && !metrics.isTopRated) {
       continue;
     }

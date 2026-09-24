@@ -24,8 +24,11 @@ import {
   GraduationCap,
   Globe,
   Lock,
-  RefreshCw
+  RefreshCw,
+  Search
 } from 'lucide-react';
+import StarRatingWidget from './common/StarRatingWidget';
+import { recordAttempt, applySmartFilterAndSort } from '../services/ratingPopularityService';
 import {
   IELTS_SPELLING_TRAPS,
   IELTS_GRAMMAR_PACK,
@@ -88,6 +91,11 @@ export default function VocabGrammarSpellingModal({
 
   const [isSyncing, setIsSyncing] = useState(false);
 
+  // Smart Discovery, Rating & Sort State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [vgQuickFilter, setVgQuickFilter] = useState('all');
+  const [vgSortBy, setVgSortBy] = useState('rating_desc');
+
   // ==========================================
   // TAB 1: SPELLING SPRINT STATE
   // ==========================================
@@ -99,7 +107,7 @@ export default function VocabGrammarSpellingModal({
     return IELTS_SPELLING_TRAPS;
   });
 
-  // Filtered spelling items by band tier & mastered status
+  // Filtered spelling items by band tier, smart search, quick filter, sort & mastered status
   const filteredSpellingList = useMemo(() => {
     let list = rawSpellingList;
     if (selectedBandTier === 'band-5.5') {
@@ -109,11 +117,14 @@ export default function VocabGrammarSpellingModal({
     } else if (selectedBandTier === 'band-7') {
       list = list.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5');
     }
-    if (hideMastered && currentUser && Array.isArray(masteredIds)) {
-      list = list.filter(item => !masteredIds.includes(item.id));
-    }
-    return list;
-  }, [rawSpellingList, selectedBandTier, hideMastered, currentUser, masteredIds]);
+    return applySmartFilterAndSort(list, {
+      searchQuery,
+      quickFilter: vgQuickFilter,
+      sortBy: vgSortBy,
+      masteredIds,
+      hideMastered: hideMastered && currentUser
+    });
+  }, [rawSpellingList, selectedBandTier, searchQuery, vgQuickFilter, vgSortBy, hideMastered, currentUser, masteredIds]);
 
   const totalMasteredSpelling = useMemo(() => {
     if (!currentUser || !Array.isArray(masteredIds)) return 0;
@@ -129,7 +140,7 @@ export default function VocabGrammarSpellingModal({
   // Reset index when band filter changes or tab changes
   useEffect(() => {
     setCurrentSpellingIdx(0);
-  }, [selectedBandTier]);
+  }, [selectedBandTier, searchQuery, vgQuickFilter, vgSortBy]);
 
   const currentTrap = filteredSpellingList[currentSpellingIdx] || filteredSpellingList[0];
 
@@ -155,6 +166,9 @@ export default function VocabGrammarSpellingModal({
       correct: prev.correct + (isCorrect ? 1 : 0),
       total: prev.total + 1
     }));
+    if (currentTrap?.id) {
+      recordAttempt(currentTrap.id);
+    }
   };
 
   const handleNextSpelling = () => {
@@ -185,11 +199,14 @@ export default function VocabGrammarSpellingModal({
     } else if (selectedBandTier === 'band-7') {
       list = list.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5' || item.bandTarget?.includes('7.'));
     }
-    if (hideMastered && currentUser && Array.isArray(masteredIds)) {
-      list = list.filter(item => !masteredIds.includes(item.id));
-    }
-    return list;
-  }, [rawGrammarList, selectedBandTier, hideMastered, currentUser, masteredIds]);
+    return applySmartFilterAndSort(list, {
+      searchQuery,
+      quickFilter: vgQuickFilter,
+      sortBy: vgSortBy,
+      masteredIds,
+      hideMastered: hideMastered && currentUser
+    });
+  }, [rawGrammarList, selectedBandTier, searchQuery, vgQuickFilter, vgSortBy, hideMastered, currentUser, masteredIds]);
 
   const totalMasteredGrammar = useMemo(() => {
     if (!currentUser || !Array.isArray(masteredIds)) return 0;
@@ -202,7 +219,7 @@ export default function VocabGrammarSpellingModal({
 
   useEffect(() => {
     setCurrentGrammarIdx(0);
-  }, [selectedBandTier]);
+  }, [selectedBandTier, searchQuery, vgQuickFilter, vgSortBy]);
 
   const currentGrammar = filteredGrammarList[currentGrammarIdx] || filteredGrammarList[0];
 
@@ -229,7 +246,7 @@ export default function VocabGrammarSpellingModal({
 
   const currentDeck = thematicDecks.find(d => d.id === activeDeckId) || thematicDecks[0];
 
-  // Filter cards by selected band tier & mastered status
+  // Filter cards by selected band tier, search query, quick filter, sort & mastered status
   const filteredCards = useMemo(() => {
     if (!currentDeck) return [];
     let cards = currentDeck.cards || [];
@@ -240,11 +257,14 @@ export default function VocabGrammarSpellingModal({
     } else if (selectedBandTier === 'band-7') {
       cards = cards.filter(c => c.bandLevel === '7.0' || c.bandLevel === '7.5');
     }
-    if (hideMastered && currentUser && Array.isArray(masteredIds)) {
-      cards = cards.filter(c => !masteredIds.includes(c.id));
-    }
-    return cards;
-  }, [currentDeck, selectedBandTier, hideMastered, currentUser, masteredIds]);
+    return applySmartFilterAndSort(cards, {
+      searchQuery,
+      quickFilter: vgQuickFilter,
+      sortBy: vgSortBy,
+      masteredIds,
+      hideMastered: hideMastered && currentUser
+    });
+  }, [currentDeck, selectedBandTier, searchQuery, vgQuickFilter, vgSortBy, hideMastered, currentUser, masteredIds]);
 
   const totalMasteredVocab = useMemo(() => {
     if (!currentUser || !Array.isArray(masteredIds) || !currentDeck) return 0;
@@ -256,7 +276,7 @@ export default function VocabGrammarSpellingModal({
   useEffect(() => {
     setCurrentCardIdx(0);
     setIsFlipped(false);
-  }, [activeDeckId, selectedBandTier]);
+  }, [activeDeckId, selectedBandTier, searchQuery, vgQuickFilter, vgSortBy]);
 
   // Mastered button handler with login guard
   const handleToggleMasteredItem = (itemId) => {
@@ -270,6 +290,9 @@ export default function VocabGrammarSpellingModal({
 
   const handleUpdateMastery = (status) => {
     if (!currentCard) return;
+    if (currentCard?.id) {
+      recordAttempt(currentCard.id);
+    }
     setThematicDecks(prev => {
       const updated = prev.map(deck => {
         if (deck.id !== activeDeckId) return deck;
@@ -771,7 +794,14 @@ export default function VocabGrammarSpellingModal({
 
           {/* Current Item Badges & Mastered Action */}
           {currentItem && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center flex-wrap gap-2">
+              {/* Interactive 5-Star Rating & Real Attempts Count */}
+              <StarRatingWidget
+                itemId={currentItem.id}
+                size="xs"
+                showAttempts={true}
+              />
+
               {/* Mastered / Đã Thuộc Button */}
               <button
                 type="button"
@@ -930,54 +960,131 @@ export default function VocabGrammarSpellingModal({
           </div>
         </div>
 
-        {/* BAND LEVEL FILTER BAR */}
-        <div className="bg-slate-100 border-b border-slate-200 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-slate-500" />
-            <span className="text-xs font-bold text-slate-700">Phân Loại Trình Độ:</span>
+        {/* BAND LEVEL & SMART FILTER BAR */}
+        <div className="bg-slate-100 border-b border-slate-200 px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+          <div className="flex items-center flex-wrap gap-2">
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-700">
+              <Filter className="w-3.5 h-3.5 text-slate-500" />
+              <span>Trình độ:</span>
+            </div>
+
+            <div className="flex items-center space-x-1 bg-white p-0.5 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto max-w-full">
+              <button
+                type="button"
+                onClick={() => setSelectedBandTier('all')}
+                className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  selectedBandTier === 'all'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                Toàn Bộ
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedBandTier('band-5.5')}
+                className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  selectedBandTier === 'band-5.5'
+                    ? 'bg-teal-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                📗 5.5 - 6.0
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedBandTier('band-6')}
+                className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  selectedBandTier === 'band-6'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                📘 6.0 - 6.5
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedBandTier('band-7')}
+                className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  selectedBandTier === 'band-7'
+                    ? 'bg-purple-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                🚀 7.0 - 7.5
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto max-w-full">
-            <button
-              onClick={() => setSelectedBandTier('all')}
-              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                selectedBandTier === 'all'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
+          {/* Instant Search & Quick Sort Controls */}
+          <div className="flex items-center flex-wrap gap-2">
+            {/* Instant Search Input */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm từ vựng, bẫy, ngữ pháp..."
+                className="pl-8 pr-7 py-1 text-xs bg-white rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-44 sm:w-56 font-medium text-slate-800 shadow-2xs placeholder:text-slate-400"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Quick Filter Chips */}
+            <div className="flex items-center space-x-1 bg-white p-0.5 rounded-xl border border-slate-200 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setVgQuickFilter('all')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  vgQuickFilter === 'all' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                Tất cả
+              </button>
+              <button
+                type="button"
+                onClick={() => setVgQuickFilter('top_rated')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  vgQuickFilter === 'top_rated' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+                title="Đánh giá từ 4.8★ trở lên"
+              >
+                ⭐ 4.8★+
+              </button>
+              <button
+                type="button"
+                onClick={() => setVgQuickFilter('trending')}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  vgQuickFilter === 'trending' ? 'bg-rose-500 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+                title="Nhiều lượt luyện tập nhất"
+              >
+                🔥 Hot
+              </button>
+            </div>
+
+            {/* Sort Select */}
+            <select
+              value={vgSortBy}
+              onChange={(e) => setVgSortBy(e.target.value)}
+              className="px-2 py-1 text-[11px] font-bold bg-white text-slate-700 border border-slate-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs cursor-pointer"
             >
-              Toàn Bộ (5.5 - 7.5+)
-            </button>
-            <button
-              onClick={() => setSelectedBandTier('band-5.5')}
-              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                selectedBandTier === 'band-5.5'
-                  ? 'bg-teal-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              📗 Band 5.5 - 6.0
-            </button>
-            <button
-              onClick={() => setSelectedBandTier('band-6')}
-              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                selectedBandTier === 'band-6'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              📘 Band 6.0 - 6.5
-            </button>
-            <button
-              onClick={() => setSelectedBandTier('band-7')}
-              className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                selectedBandTier === 'band-7'
-                  ? 'bg-purple-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              🚀 Band 7.0 - 7.5
-            </button>
+              <option value="rating_desc">⭐ Rating cao nhất</option>
+              <option value="attempts_desc">🔥 Luyện nhiều nhất</option>
+              <option value="difficulty_desc">💎 Độ khó cao</option>
+              <option value="difficulty_asc">🌱 Độ khó cơ bản</option>
+              <option value="title_asc">🔤 Tên A-Z</option>
+            </select>
           </div>
         </div>
 
@@ -1336,7 +1443,14 @@ export default function VocabGrammarSpellingModal({
 
                     <div className="flex items-center justify-between pt-2">
                       <button
-                        onClick={() => setShowGrammarAnswer(prev => !prev)}
+                        onClick={() => {
+                          setShowGrammarAnswer(prev => {
+                            if (!prev && currentGrammar?.id) {
+                              recordAttempt(currentGrammar.id);
+                            }
+                            return !prev;
+                          });
+                        }}
                         className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
                       >
                         <HelpCircle className="w-4 h-4" />

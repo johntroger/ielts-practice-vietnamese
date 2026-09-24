@@ -819,6 +819,30 @@ export const FEATURE_REGISTRY = [
       target: 'prescription',
       label: 'Mở Đơn Thuốc Sửa Lỗi'
     }
+  },
+  {
+    id: 'feat-smart-filters-social-proof',
+    title: 'Bộ Lọc Đa Chiều & Đánh Giá Sao Xã Hội (Smart Discovery & Rating)',
+    shortDesc: 'Định vị đề thi & bài tập phù hợp trong 3 giây với bộ lọc đa tiêu chí, đánh giá 5 sao tương tác và số lượt làm thực tế.',
+    category: 'practice_tools',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    badge: 'Đột Phá 2.0',
+    icon: 'Sparkles',
+    version: '2.5.0',
+    updatedAt: '2026-09-24',
+    highlights: [
+      'Bộ lọc thông minh 1 chạm (Tất cả, Đánh giá cao 4.8★+, Thịnh hành >500 lượt, Chưa làm, Đã thuộc, Band 7.5+)',
+      'Đánh giá sao 5★ tương tác trực tiếp với hiệu ứng micro-bounce và điểm số trung bình tức thì',
+      'Đếm số lượt luyện tập tự động (Attempts count) theo thời gian thực chuẩn Social Proof',
+      'Sắp xếp đa chiều: Theo rating, mức độ phổ biến, độ khó band điểm và đề mới nhất',
+      'Phủ sóng toàn diện: Kho đề Writing/Reading/Listening, Micro-Drills và Luyện Từ Vựng - Ngữ Pháp - Chính Tả'
+    ],
+    usageGuide: 'Mở Kho Đề Thi, Phòng Micro-Drills hoặc Luyện Từ Vựng/Ngữ Pháp. Chọn các chip lọc nhanh hoặc dùng ô tìm kiếm tức thì. Bấm vào các ngôi sao trên thẻ để chấm điểm hoặc tham khảo số lượt học viên đã luyện.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'library',
+      label: 'Mở Thư Viện Đề Thi'
+    }
   }
 ];
 
