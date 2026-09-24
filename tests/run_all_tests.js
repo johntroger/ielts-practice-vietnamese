@@ -28,7 +28,8 @@ const testSuites = [
   { name: 'Step 19: CDI Marathon & Task 1 Coverage (Phase 2)', file: 'tests/test_step19_marathon_and_task1_inspector.js' },
   { name: 'Step 20: Architecture Refactoring & Modular Components (Phase 3)', file: 'tests/test_step20_architecture_refactor.js' },
   { name: 'Step 21: UI/UX De-cluttering & CDI Exam Accessibility (Phase 4)', file: 'tests/test_step21_ui_ux_cdi_accessibility.js' },
-  { name: 'Step 22: Task 2 Argument Flow & Pedagogy Depth (Phase 5)', file: 'tests/test_step22_pedagogy_argument_flow.js' }
+  { name: 'Step 22: Task 2 Argument Flow & Pedagogy Depth (Phase 5)', file: 'tests/test_step22_pedagogy_argument_flow.js' },
+  { name: 'Step 23: Multi-Model AI Adapter & Mobile Viewport Resilience (Phase 6)', file: 'tests/test_step23_ai_adapter_and_mobile_viewport.js' }
 ];
 
 console.log('===============================================================');
