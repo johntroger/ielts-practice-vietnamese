@@ -11,7 +11,8 @@ import {
   Volume2,
   X,
   MapPin,
-  ArrowDown
+  ArrowDown,
+  FileText
 } from 'lucide-react';
 
 // Color definitions for highlighter
@@ -69,6 +70,15 @@ export default function ListeningQuestionPane({
   const [activeNoteModal, setActiveNoteModal] = useState(null);
   const [noteInput, setNoteInput] = useState('');
 
+  const [isListeningScratchpadOpen, setIsListeningScratchpadOpen] = useState(false);
+  const [listeningScratchpadText, setListeningScratchpadText] = useState(() => {
+    try {
+      return localStorage.getItem(`ielts_listening_scratchpad_${testId}`) || '';
+    } catch (e) {
+      return '';
+    }
+  });
+
   const [mapZoom, setMapZoom] = useState(1);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
@@ -79,6 +89,12 @@ export default function ListeningQuestionPane({
       localStorage.setItem(`ielts_listening_highlights_${testId}`, JSON.stringify(highlights));
     } catch (e) {}
   }, [highlights, testId]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(`ielts_listening_scratchpad_${testId}`, listeningScratchpadText);
+    } catch (e) {}
+  }, [listeningScratchpadText, testId]);
 
   useEffect(() => {
     if (activeQuestionOrder && questionRefs.current[activeQuestionOrder]) {
@@ -237,9 +253,24 @@ export default function ListeningQuestionPane({
           <span className="px-2.5 py-1 rounded-md bg-red-600 text-white text-xs font-black uppercase tracking-wider">
             Part {partData.partNumber} / 4
           </span>
-          <span className="text-xs text-slate-500 font-mono">
-            Audio: {formatTimestamp(partData.audioTimestampStart)} – {formatTimestamp(partData.audioTimestampEnd)}
-          </span>
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => setIsListeningScratchpadOpen(prev => !prev)}
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                isListeningScratchpadOpen 
+                  ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-2xs' 
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+              }`}
+              title="Mở Bản Nháp Nghe (CDI Scratchpad)"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-600" />
+              <span>Bản Nháp</span>
+            </button>
+            <span className="text-xs text-slate-500 font-mono">
+              Audio: {formatTimestamp(partData.audioTimestampStart)} – {formatTimestamp(partData.audioTimestampEnd)}
+            </span>
+          </div>
         </div>
         <h3 className={`font-bold text-slate-900 mb-1 ${fontSizeClasses.heading} ${contrastTheme === 'dark' ? 'text-white' : ''}`}>
           {partData.title}
@@ -1195,6 +1226,64 @@ export default function ListeningQuestionPane({
                 Lưu Ghi Chú
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Listening CDI Scratchpad Drawer */}
+      {isListeningScratchpadOpen && (
+        <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white shadow-2xl border-l border-slate-200 flex flex-col animate-in slide-in-from-right duration-200 text-left">
+          <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-amber-400" />
+              <span className="font-bold text-sm">Bản Nháp Nghe (Listening Scratchpad)</span>
+            </div>
+            <button
+              onClick={() => setIsListeningScratchpadOpen(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              title="Đóng"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                  Bản nháp tự do (Autosaved)
+                </label>
+                <span className="text-[10px] text-slate-400">Tự động lưu bài nghe</span>
+              </div>
+              <textarea
+                value={listeningScratchpadText}
+                onChange={(e) => setListeningScratchpadText(e.target.value)}
+                placeholder="Ghi chú nhanh các số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy âm thanh (distractor) trong lúc nghe audio..."
+                rows={12}
+                autoFocus
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/20"
+              />
+            </div>
+
+            {highlights.length > 0 && (
+              <div className="space-y-2 border-t border-slate-200 pt-3">
+                <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                  Từ khóa đã đánh dấu ({highlights.length})
+                </span>
+                <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                  {highlights.map(h => (
+                    <div key={h.id} className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
+                      <span className="font-mono text-slate-800 truncate mr-2">"{h.text}"</span>
+                      {h.note && <span className="text-indigo-600 text-[10px] font-semibold">{h.note}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
+            💡 Bản nháp giúp ghi nhanh từ khóa khi nghe mà không ảnh hưởng câu trả lời chính thức.
           </div>
         </div>
       )}

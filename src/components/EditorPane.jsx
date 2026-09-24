@@ -16,11 +16,14 @@ import {
   Plus,
   Check,
   RotateCcw,
-  ListOrdered
+  ListOrdered,
+  GitCommit
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 import Task1DataCoverageModal from './Task1DataCoverageModal';
+import Task2CoherenceModal from './Task2CoherenceModal';
 import { analyzeTask1Overview } from '../services/algorithmicEvaluationService';
+import { analyzeTask2Coherence } from '../utils/coherenceAnalyzer';
 
 export default function EditorPane({
   essayText,
@@ -41,6 +44,7 @@ export default function EditorPane({
   const [outlineMode, setOutlineMode] = useState('scaffold'); // 'scaffold' | 'raw'
   const isTask1 = task?.taskNumber === 1 || task?.isTask1;
   const [isTask1CoverageOpen, setIsTask1CoverageOpen] = useState(false);
+  const [isTask2CoherenceOpen, setIsTask2CoherenceOpen] = useState(false);
   const [scaffold, setScaffold] = useState({
     intro: '',
     overviewOrThesis: '',
@@ -92,6 +96,11 @@ export default function EditorPane({
     const rawParas = paragraphs.map(p => p.text).filter(Boolean);
     return analyzeTask1Overview(rawParas);
   }, [isTask1, paragraphs]);
+
+  const task2CoherenceCheck = React.useMemo(() => {
+    if (isTask1) return null;
+    return analyzeTask2Coherence(essayText);
+  }, [isTask1, essayText]);
 
   return (
     <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
@@ -207,6 +216,29 @@ export default function EditorPane({
                   : 'bg-amber-200 text-amber-900'
               }`}>
                 {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
+              </span>
+            </button>
+          )}
+
+          {/* Task 2 Cambridge Live Argument Flow & Coherence Inspector */}
+          {!isTask1 && (
+            <button
+              onClick={() => setIsTask2CoherenceOpen(true)}
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+                task2CoherenceCheck?.status === 'optimal'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                  : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
+              }`}
+              title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
+            >
+              <GitCommit className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="hidden sm:inline">Lập Luận Task 2</span>
+              <span className={`text-[10px] px-1 rounded font-black ${
+                task2CoherenceCheck?.status === 'optimal'
+                  ? 'bg-emerald-200 text-emerald-900'
+                  : 'bg-indigo-200 text-indigo-900'
+              }`}>
+                {task2CoherenceCheck?.statusLabel || 'Kiểm tra'}
               </span>
             </button>
           )}
@@ -520,6 +552,19 @@ export default function EditorPane({
           onInsertOverview={(sentence) => {
             setEssayText(prev => prev ? `${sentence}\n\n${prev}` : sentence);
             setIsTask1CoverageOpen(false);
+          }}
+        />
+      )}
+
+      {/* Task 2 Cambridge Live Argument Flow & Coherence Modal */}
+      {!isTask1 && (
+        <Task2CoherenceModal
+          isOpen={isTask2CoherenceOpen}
+          onClose={() => setIsTask2CoherenceOpen(false)}
+          essayText={essayText}
+          onInsertText={(text) => {
+            setEssayText(prev => prev ? `${prev}\n\n${text}` : text);
+            setIsTask2CoherenceOpen(false);
           }}
         />
       )}

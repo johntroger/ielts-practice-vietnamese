@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Highlighter, 
   Trash2, 
@@ -10,7 +10,12 @@ import {
   Volume2, 
   Search,
   RefreshCw,
-  Shield
+  Shield,
+  FileText,
+  Edit3,
+  MessageSquare,
+  ChevronRight,
+  Plus
 } from 'lucide-react';
 import { lookupReadingWord } from '../../services/geminiService';
 
@@ -33,26 +38,138 @@ export default function PassagePane({
   theme = 'standard'
 }) {
   const [activeColor, setActiveColor] = useState('yellow');
-  const [highlights, setHighlights] = useState({}); // { [paraId]: [ { text, color } ] }
+  const [highlights, setHighlights] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`ielts_reading_highlights_${passage?.id || 'default'}`);
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      return {};
+    }
+  });
+
+  const [scratchpadText, setScratchpadText] = useState(() => {
+    try {
+      return localStorage.getItem(`ielts_reading_scratchpad_${passage?.id || 'default'}`) || '';
+    } catch (e) {
+      return '';
+    }
+  });
+
+  const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
+  const [selectionPopup, setSelectionPopup] = useState(null); // { x, y, text, paraId }
+  const [activeNoteModal, setActiveNoteModal] = useState(null); // { paraId, text, currentNote }
+  const [noteDraft, setNoteDraft] = useState('');
+
+  // Persist highlights
+  useEffect(() => {
+    try {
+      localStorage.setItem(`ielts_reading_highlights_${passage?.id || 'default'}`, JSON.stringify(highlights));
+    } catch (e) {}
+  }, [highlights, passage?.id]);
+
+  // Persist scratchpad
+  useEffect(() => {
+    try {
+      localStorage.setItem(`ielts_reading_scratchpad_${passage?.id || 'default'}`, scratchpadText);
+    } catch (e) {}
+  }, [scratchpadText, passage?.id]);
+
+  const totalNotesCount = useMemo(() => {
+    let count = 0;
+    Object.values(highlights).forEach(list => {
+      if (Array.isArray(list)) {
+        list.forEach(item => {
+          if (item.note && item.note.trim()) count++;
+        });
+      }
+    });
+    return count;
+  }, [highlights]);
 
   // Double-Click / Selection Dictionary Tooltip State
   const [tooltip, setTooltip] = useState(null); // { word, context, x, y, loading, data, error, saved }
   const paneRef = useRef(null);
 
-  const handleApplyHighlight = (paraId) => {
+  const handleParagraphMouseUp = (e, paraId) => {
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+      setSelectionPopup(null);
+      return;
+    }
     const selectedText = selection.toString().trim();
-    if (!selectedText || selectedText.length < 2) return;
+    if (selectedText.length < 2) {
+      setSelectionPopup(null);
+      return;
+    }
 
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const posX = Math.max(10, Math.min(window.innerWidth - 260, rect.left + rect.width / 2 - 110));
+    const posY = Math.max(10, rect.top - 46);
+
+    setSelectionPopup({
+      x: posX,
+      y: posY,
+      text: selectedText,
+      paraId
+    });
+  };
+
+  const handleAddHighlight = (paraId, text, color) => {
     setHighlights(prev => {
       const currentList = prev[paraId] || [];
-      if (currentList.some(item => item.text === selectedText)) return prev;
+      const filtered = currentList.filter(item => item.text !== text);
       return {
         ...prev,
-        [paraId]: [...currentList, { text: selectedText, color: activeColor }]
+        [paraId]: [...filtered, { text, color, note: '' }]
       };
     });
+    setSelectionPopup(null);
+    window.getSelection()?.removeAllRanges();
+  };
+
+  const handleOpenNoteModal = (paraId, text) => {
+    const currentList = highlights[paraId] || [];
+    const existing = currentList.find(item => item.text === text);
+    setNoteDraft(existing?.note || '');
+    setActiveNoteModal({
+      paraId,
+      text,
+      currentNote: existing?.note || ''
+    });
+    setSelectionPopup(null);
+  };
+
+  const handleSaveNote = () => {
+    if (!activeNoteModal) return;
+    const { paraId, text } = activeNoteModal;
+    setHighlights(prev => {
+      const currentList = prev[paraId] || [];
+      const existing = currentList.find(item => item.text === text);
+      const color = existing ? existing.color : 'yellow';
+      const filtered = currentList.filter(item => item.text !== text);
+      return {
+        ...prev,
+        [paraId]: [...filtered, { text, color, note: noteDraft.trim() }]
+      };
+    });
+    setActiveNoteModal(null);
+    setNoteDraft('');
+    window.getSelection()?.removeAllRanges();
+  };
+
+  const handleDeleteHighlightItem = (paraId, text) => {
+    setHighlights(prev => {
+      const currentList = prev[paraId] || [];
+      return {
+        ...prev,
+        [paraId]: currentList.filter(item => item.text !== text)
+      };
+    });
+    if (activeNoteModal?.text === text) {
+      setActiveNoteModal(null);
+      setNoteDraft('');
+    }
   };
 
   const handleClearHighlights = () => {
@@ -155,7 +272,7 @@ export default function PassagePane({
     }
 
     let parts = [para.text];
-    paraHighlights.forEach(({ text, color }) => {
+    paraHighlights.forEach(({ text, color, note }) => {
       const colorDef = HIGHLIGHT_COLORS.find(c => c.id === color) || HIGHLIGHT_COLORS[0];
       const newParts = [];
       parts.forEach(part => {
@@ -167,10 +284,22 @@ export default function PassagePane({
               newParts.push(
                 <mark
                   key={`${para.id}-${text}-${i}`}
-                  className={`${colorDef.bg} px-1 py-0.5 rounded-sm shadow-2xs font-medium cursor-pointer`}
-                  title="Đã đánh dấu"
+                  className={`${colorDef.bg} px-1 py-0.5 rounded-sm shadow-2xs font-medium cursor-pointer inline-flex items-center gap-1 group`}
+                  title={note ? `Ghi chú: ${note} (Nhấp để sửa)` : 'Đã đánh dấu (Nhấp để thêm ghi chú)'}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNoteModal(para.id, text);
+                  }}
                 >
-                  {text}
+                  <span>{text}</span>
+                  {note && (
+                    <span 
+                      className="px-1 py-0.2 rounded bg-amber-500 text-white text-[10px] font-bold shadow-2xs group-hover:scale-110 transition-transform"
+                      title={`Ghi chú: ${note}`}
+                    >
+                      📝
+                    </span>
+                  )}
                 </mark>
               );
             }
@@ -289,8 +418,28 @@ export default function PassagePane({
           </div>
         </div>
 
-        {/* Font Size & Meta */}
+        {/* Font Size, Scratchpad & Meta */}
         <div className="flex items-center space-x-2">
+          {/* CDI Scratchpad & Notes Button */}
+          <button
+            type="button"
+            onClick={() => setIsScratchpadOpen(prev => !prev)}
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+              isScratchpadOpen 
+                ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-2xs' 
+                : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+            }`}
+            title="Mở Bản Nháp & Sổ Ghi Chú Bài Đọc (CDI Scratchpad)"
+          >
+            <FileText className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden sm:inline">Bản Nháp</span>
+            {totalNotesCount > 0 && (
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500 text-white font-black">
+                {totalNotesCount}
+              </span>
+            )}
+          </button>
+
           <div className={`flex items-center space-x-1 p-0.5 rounded-lg border ${ts.controlCard}`}>
             <button
               type="button"
@@ -354,7 +503,7 @@ export default function PassagePane({
               <div
                 key={para.id}
                 id={`passage-para-${para.id}`}
-                onMouseUp={() => handleApplyHighlight(para.id)}
+                onMouseUp={(e) => handleParagraphMouseUp(e, para.id)}
                 onDoubleClick={(e) => handleDoubleClick(e, para.text)}
                 className={`relative pl-7 sm:pl-9 transition-all rounded-xl p-3 ${
                   isTargetEvidence 
@@ -477,6 +626,201 @@ export default function PassagePane({
               </div>
             </div>
           ) : null}
+        </div>
+      )}
+
+      {/* Floating CDI Selection Popover */}
+      {selectionPopup && (
+        <div 
+          style={{ top: `${selectionPopup.y}px`, left: `${selectionPopup.x}px` }}
+          className="fixed z-50 flex items-center space-x-1.5 p-1 bg-slate-900 text-white rounded-xl shadow-2xl border border-slate-700 text-xs animate-in fade-in zoom-in-95 duration-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => handleAddHighlight(selectionPopup.paraId, selectionPopup.text, 'yellow')}
+            className="px-2 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+            title="Tô dạ quang vàng"
+          >
+            <span>🟡 Vàng</span>
+          </button>
+          <button
+            onClick={() => handleAddHighlight(selectionPopup.paraId, selectionPopup.text, 'cyan')}
+            className="px-2 py-1 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold flex items-center space-x-1 transition-colors cursor-pointer"
+            title="Tô dạ quang xanh"
+          >
+            <span>🔵 Xanh</span>
+          </button>
+          <button
+            onClick={() => handleOpenNoteModal(selectionPopup.paraId, selectionPopup.text)}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold flex items-center space-x-1 transition-colors cursor-pointer border border-slate-600"
+            title="Đính kèm ghi chú vào cụm từ này"
+          >
+            <span>📝 Ghi chú</span>
+          </button>
+          <button
+            onClick={() => setSelectionPopup(null)}
+            className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+            title="Đóng"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* CDI Note Editor Modal */}
+      {activeNoteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div 
+            className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Edit3 className="w-4 h-4 text-amber-400" />
+                <span className="font-bold text-xs sm:text-sm">Ghi Chú Trích Đoạn (Đoạn {activeNoteModal.paraId})</span>
+              </div>
+              <button
+                onClick={() => setActiveNoteModal(null)}
+                className="text-slate-400 hover:text-white p-1 rounded"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-xs italic text-slate-700 line-clamp-3">
+                "{activeNoteModal.text}"
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                  Nội dung ghi chú cá nhân:
+                </label>
+                <textarea
+                  value={noteDraft}
+                  onChange={(e) => setNoteDraft(e.target.value)}
+                  placeholder="Nhập ghi chú (nghĩa từ, suy luận, lý do chọn đáp án, bẫy distractor...)"
+                  rows={4}
+                  autoFocus
+                  className="w-full p-2.5 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs text-slate-900 resize-none font-sans"
+                />
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                {activeNoteModal.currentNote ? (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteHighlightItem(activeNoteModal.paraId, activeNoteModal.text)}
+                    className="px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    Xóa Ghi Chú & Highlight
+                  </button>
+                ) : <div />}
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveNoteModal(null)}
+                    className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveNote}
+                    className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                  >
+                    Lưu Ghi Chú
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CDI Scratchpad & Notes Drawer Slide-Over */}
+      {isScratchpadOpen && (
+        <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white shadow-2xl border-l border-slate-200 flex flex-col animate-in slide-in-from-right duration-200 text-left">
+          <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-amber-400" />
+              <span className="font-bold text-sm">CDI Scratchpad & Sổ Ghi Chú</span>
+            </div>
+            <button
+              onClick={() => setIsScratchpadOpen(false)}
+              className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              title="Đóng"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+            {/* Freeform Scratchpad */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider flex items-center space-x-1">
+                  <span>Bản nháp tự do (Autosaved)</span>
+                </label>
+                <span className="text-[10px] text-slate-400">Tự động lưu bài đọc</span>
+              </div>
+              <textarea
+                value={scratchpadText}
+                onChange={(e) => setScratchpadText(e.target.value)}
+                placeholder="Ghi chú nhanh các từ khóa, mốc thời gian, ý chính các đoạn A, B, C... trong lúc đọc bài..."
+                rows={8}
+                className="w-full p-2.5 rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/30"
+              />
+            </div>
+
+            {/* Attached Notes List */}
+            <div className="space-y-2 border-t border-slate-200 pt-3">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                  Ghi chú theo đoạn ({totalNotesCount})
+                </span>
+              </div>
+
+              {totalNotesCount === 0 ? (
+                <div className="p-4 text-center text-slate-400 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                  <p>Chưa có ghi chú đính kèm nào.</p>
+                  <p className="text-[10px] text-slate-400">Bôi đen văn bản trong bài đọc và chọn "📝 Ghi chú" để đính kèm.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {Object.entries(highlights).map(([paraId, list]) => {
+                    const notesInPara = (list || []).filter(item => item.note && item.note.trim());
+                    if (notesInPara.length === 0) return null;
+                    return (
+                      <div key={paraId} className="space-y-1.5">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase">Đoạn {paraId}</span>
+                        {notesInPara.map((item, idx) => (
+                          <div key={idx} className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200 space-y-1">
+                            <div className="flex items-start justify-between gap-1">
+                              <span className="font-mono text-[10px] text-amber-900 italic line-clamp-1">
+                                "{item.text}"
+                              </span>
+                              <button
+                                onClick={() => handleDeleteHighlightItem(paraId, item.text)}
+                                className="text-slate-400 hover:text-rose-600 transition-colors p-0.5 cursor-pointer"
+                                title="Xóa ghi chú này"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                            <p className="text-slate-800 font-medium text-xs">
+                              {item.note}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
+            💡 Mô phỏng tính năng Highlight & Notes trên hệ thống thi IELTS trên máy (CDI).
+          </div>
         </div>
       )}
     </div>
