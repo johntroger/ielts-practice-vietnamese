@@ -15,7 +15,9 @@ import {
   Headphones,
   Mic,
   Volume2,
-  GraduationCap
+  GraduationCap,
+  Zap,
+  Sparkles
 } from 'lucide-react';
 import { exportToWord } from '../services/exportService';
 
@@ -417,6 +419,17 @@ export default function HistoryModal({
                           <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-purple-100 text-purple-800">
                             BAND {evalData.overallBand ? Number(evalData.overallBand).toFixed(1) : '6.0'}
                           </span>
+                          {evalData.evaluationMethod === 'algorithmic' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center space-x-1">
+                              <Zap className="w-2.5 h-2.5 text-amber-500 fill-amber-500 inline" />
+                              <span>Máy Chấm</span>
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 flex items-center space-x-1">
+                              <Sparkles className="w-2.5 h-2.5 text-purple-500 inline" />
+                              <span>AI Chấm</span>
+                            </span>
+                          )}
                           <span className="text-[11px] text-slate-400 flex items-center space-x-1">
                             <Calendar className="w-3 h-3" />
                             <span>{rec.submittedAt ? new Date(rec.submittedAt).toLocaleDateString('vi-VN') : 'Gần đây'}</span>

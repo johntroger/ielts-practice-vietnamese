@@ -906,8 +906,16 @@ export default function SpeakingWorkspace({
             if (speechEngine.isListening) speechEngine.stopListening();
             if (speechEngine.clearAudioClips) speechEngine.clearAudioClips();
 
-            // 1. OFFLINE / NO-API-KEY DISPATCH: 100% instant 0.02ms algorithmic evaluation
-            if (!apiKey) {
+            // Read learner's preferred engine from Settings
+            let preferredEngine = 'algorithmic';
+            try {
+              preferredEngine = localStorage.getItem('ielts_speaking_preferred_engine') || (apiKey ? 'ai' : 'algorithmic');
+            } catch {
+              preferredEngine = apiKey ? 'ai' : 'algorithmic';
+            }
+
+            // 1. ALGORITHMIC / OFFLINE DISPATCH: 100% instant 0.02ms algorithmic evaluation
+            if (preferredEngine === 'algorithmic' || !apiKey) {
               const evalResult = evaluateSpeakingAlgorithmically({
                 dialogueHistory: finalTranscript,
                 mockPack: activeMockPack,

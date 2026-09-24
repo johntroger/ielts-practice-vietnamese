@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Settings, Key, CheckCircle, AlertCircle, ExternalLink, X, Shield, 
   RefreshCw, Cpu, Eye, EyeOff, Trash2, HelpCircle, Check, Copy,
-  HardDrive, Download, Upload, Globe, Lock
+  HardDrive, Download, Upload, Globe, Lock, Zap
 } from 'lucide-react';
 import { testApiKey, fetchAvailableModels, POPULAR_GEMINI_MODELS } from '../services/geminiService';
 import { 
@@ -74,6 +74,15 @@ export default function SettingsModal({
     }
   });
 
+  // IELTS Speaking Dual-Engine Evaluation Preference ('algorithmic' | 'ai')
+  const [speakingPreferredEngine, setSpeakingPreferredEngine] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_speaking_preferred_engine') || 'algorithmic';
+    } catch (e) {
+      return 'algorithmic';
+    }
+  });
+
   useEffect(() => {
     setInputKey(apiKey || '');
     setTestStatus(null);
@@ -96,6 +105,10 @@ export default function SettingsModal({
       const saved = localStorage.getItem('ielts_auto_share_ai_content');
       if (saved !== null) {
         setAutoShareAi(JSON.parse(saved));
+      }
+      const spkEngine = localStorage.getItem('ielts_speaking_preferred_engine');
+      if (spkEngine) {
+        setSpeakingPreferredEngine(spkEngine);
       }
     } catch (e) {}
   }, [apiKey, isOpen]);
@@ -199,6 +212,7 @@ export default function SettingsModal({
 
     try {
       localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(autoShareAi));
+      localStorage.setItem('ielts_speaking_preferred_engine', speakingPreferredEngine);
     } catch (e) {}
     onClose();
   };
@@ -822,6 +836,66 @@ export default function SettingsModal({
               <span>
                 <strong>Chính sách bảo mật:</strong> Hình ảnh & file âm thanh cá nhân bạn tải lên luôn được giữ riêng tư 100% và tự hủy sau khi làm bài (Zero-Storage), không bao giờ bị chia sẻ ra ngoài.
               </span>
+            </div>
+          </div>
+
+          {/* Section: IELTS Speaking Dual-Engine Evaluation Preference */}
+          <div className="pt-2 border-t border-slate-100 space-y-2.5">
+            <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>Động Cơ Chấm Điểm IELTS Speaking Mặc Định</span>
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {/* Option 1: Algorithmic */}
+              <div 
+                onClick={() => setSpeakingPreferredEngine('algorithmic')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  speakingPreferredEngine === 'algorithmic'
+                    ? 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-500/20 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                      <Zap className="w-3.5 h-3.5 fill-current" />
+                    </div>
+                    <span className="text-xs font-black text-slate-900">Thuật Toán Máy Tính</span>
+                  </div>
+                  {speakingPreferredEngine === 'algorithmic' && (
+                    <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  ⚡ <strong>100% Offline, tức thì (0.02ms)</strong>, chi phí 0đ. Đo định lượng WPM, Type-Token Ratio, câu phức và áp dụng luật trần Cambridge.
+                </p>
+              </div>
+
+              {/* Option 2: AI Examiner */}
+              <div 
+                onClick={() => setSpeakingPreferredEngine('ai')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  speakingPreferredEngine === 'ai'
+                    ? 'bg-purple-50/80 border-purple-500 ring-2 ring-purple-500/20 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
+                      <Cpu className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-black text-slate-900">Giám Khảo AI Chuyên Gia</span>
+                  </div>
+                  {speakingPreferredEngine === 'ai' && (
+                    <span className="w-4 h-4 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  🤖 <strong>Phân tích định tính chuyên sâu</strong>, phát hiện sắc thái ngữ cảnh và viết lại bản mẫu Band 8.5+ từng câu (Yêu cầu API Key).
+                </p>
+              </div>
             </div>
           </div>
 

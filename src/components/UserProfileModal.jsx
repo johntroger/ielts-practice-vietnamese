@@ -33,7 +33,8 @@ import {
   Headphones,
   Mic,
   Volume2,
-  GraduationCap
+  GraduationCap,
+  Zap
 } from 'lucide-react';
 import SpeakingResultModal from './speaking/SpeakingResultModal';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
@@ -1718,10 +1719,21 @@ export default function UserProfileModal({
                           className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-300 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
                         >
                           <div className="space-y-1.5 flex-1 min-w-0">
-                            <div className="flex items-center space-x-2">
+                            <div className="flex flex-wrap items-center gap-1.5">
                               <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-purple-100 text-purple-800">
                                 BAND {evalData.overallBand ? Number(evalData.overallBand).toFixed(1) : '6.0'}
                               </span>
+                              {evalData.evaluationMethod === 'algorithmic' ? (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center space-x-1">
+                                  <Zap className="w-2.5 h-2.5 text-amber-500 fill-amber-500 inline" />
+                                  <span>Máy Chấm (0.02ms)</span>
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 flex items-center space-x-1">
+                                  <Sparkles className="w-2.5 h-2.5 text-purple-500 inline" />
+                                  <span>AI Chấm</span>
+                                </span>
+                              )}
                               <span className="text-xs font-bold text-slate-800">
                                 {rec.mockPack?.title || 'Buổi thi thử IELTS Speaking'}
                               </span>
