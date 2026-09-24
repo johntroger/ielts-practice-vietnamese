@@ -3,11 +3,15 @@ import {
   Mic, MicOff, Volume2, Play, Pause, Square, RotateCcw, CheckCircle2, 
   Sparkles, BookOpen, Layers, Clock, Award, Shield, Compass, Headphones, 
   ChevronRight, ArrowRight, Lightbulb, Copy, Info, AlertCircle, Plus,
-  Trash2, Loader2, GraduationCap
+  Trash2, Loader2, GraduationCap, Zap
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
-import { evaluateSpeakingPracticeAnswer, transcribeAudioWithGemini } from '../../services/geminiService';
+import { 
+  evaluateSpeakingPracticeAnswer, 
+  evaluateSinglePracticeAnswerAlgorithmically,
+  transcribeAudioWithGemini 
+} from '../../services/geminiService';
 import SpeakingSingleEvaluationModal from './SpeakingSingleEvaluationModal';
 import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
 
@@ -334,9 +338,55 @@ export default function SpeakingPracticePane({
   };
 
   // -------------------------------------------------------------
-  // AI EVALUATION HANDLERS & ZERO VOICE RETENTION
+  // DUAL-ENGINE EVALUATION HANDLERS & ZERO VOICE RETENTION
   // -------------------------------------------------------------
-  const handleEvaluateAnswer = async (clipKey, questionText, topicTitle, partNum) => {
+
+  // 1. ALGORITHMIC EVALUATION (100% Offline, Instant 0.02ms, Free)
+  const handleEvaluateAlgorithmically = (clipKey, questionText, topicTitle, partNum) => {
+    let currentTranscript = evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
+    if (clipKey && speechEngine.transcript?.trim()) {
+      currentTranscript = speechEngine.transcript.trim();
+    }
+    const clip = clipKey ? speechEngine.audioClips?.[clipKey] : null;
+
+    if (!currentTranscript || currentTranscript.split(/\s+/).filter(Boolean).length < 3) {
+      alert('Câu trả lời của bạn quá ngắn hoặc micro chưa thu âm được từ ngữ. Vui lòng nói ít nhất vài câu để thuật toán có thể phân tích độ trôi chảy, ngữ pháp và từ vựng.');
+      return;
+    }
+
+    const durationSec = clip?.duration || evaluationContext?.durationSec || (partNum === 2 ? speakSecondsElapsed : 35);
+    const activePart = partNum || evaluationContext?.part || 1;
+    const finalTopic = topicTitle || evaluationContext?.topicTitle || `IELTS Speaking Part ${activePart}`;
+    const finalQuestion = questionText || evaluationContext?.questionText || finalTopic;
+
+    try {
+      const result = evaluateSinglePracticeAnswerAlgorithmically({
+        part: activePart,
+        topicTitle: finalTopic,
+        questionText: finalQuestion,
+        cueBullets: activePart === 2 ? (activeP2Card?.cueCard?.bullets || []) : null,
+        candidateTranscript: currentTranscript,
+        durationSec
+      });
+
+      setEvaluationContext({
+        clipKey: clipKey || evaluationContext?.clipKey,
+        questionText: finalQuestion,
+        topicTitle: finalTopic,
+        candidateTranscript: currentTranscript,
+        durationSec,
+        part: activePart
+      });
+      setSingleEvaluationResult(result);
+      setIsEvaluationModalOpen(true);
+    } catch (err) {
+      console.error('Error in algorithmic evaluation:', err);
+      alert('Lỗi khi chấm bài bằng thuật toán máy tính: ' + (err.message || 'Vui lòng thử lại.'));
+    }
+  };
+
+  // 2. AI EXAMINER EVALUATION (Cambridge AI qualitative analysis)
+  const handleEvaluateWithAI = async (clipKey, questionText, topicTitle, partNum) => {
     if (!apiKey) {
       if (onOpenSettings) {
         if (window.confirm('Vui lòng nhập Google Gemini API Key trong phần Cài đặt để sử dụng tính năng Chấm điểm bằng AI. Mở Cài đặt ngay?')) {
@@ -348,14 +398,17 @@ export default function SpeakingPracticePane({
       return;
     }
 
-    let currentTranscript = speechEngine.transcript?.trim();
-    const clip = speechEngine.audioClips?.[clipKey];
+    let currentTranscript = evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
+    if (clipKey && speechEngine.transcript?.trim()) {
+      currentTranscript = speechEngine.transcript.trim();
+    }
+    const clip = clipKey ? speechEngine.audioClips?.[clipKey] : null;
 
     // AUTO GEMINI MULTIMODAL STT FALLBACK:
     // If Web Speech API was empty or too brief (< 3 words) but user actually spoke (audio clip exists in RAM)
     if ((!currentTranscript || currentTranscript.split(/\s+/).filter(Boolean).length < 3) && clip?.blob) {
       setIsEvaluatingSingle(true);
-      setEvaluatingClipKey(clipKey);
+      if (clipKey) setEvaluatingClipKey(clipKey);
       try {
         const aiTranscribed = await transcribeAudioWithGemini({
           audioBlob: clip.blob,
@@ -381,17 +434,20 @@ export default function SpeakingPracticePane({
       return;
     }
 
-    const durationSec = clip?.duration || (partNum === 2 ? speakSecondsElapsed : 35);
+    const durationSec = clip?.duration || evaluationContext?.durationSec || (partNum === 2 ? speakSecondsElapsed : 35);
+    const activePart = partNum || evaluationContext?.part || 1;
+    const finalTopic = topicTitle || evaluationContext?.topicTitle || `IELTS Speaking Part ${activePart}`;
+    const finalQuestion = questionText || evaluationContext?.questionText || finalTopic;
 
     setIsEvaluatingSingle(true);
-    setEvaluatingClipKey(clipKey);
+    if (clipKey) setEvaluatingClipKey(clipKey);
 
     try {
       const result = await evaluateSpeakingPracticeAnswer({
-        part: partNum,
-        topicTitle: topicTitle || `IELTS Speaking Part ${partNum}`,
-        questionText: questionText || topicTitle,
-        cueBullets: partNum === 2 ? (activeP2Card.cueCard?.bullets || []) : null,
+        part: activePart,
+        topicTitle: finalTopic,
+        questionText: finalQuestion,
+        cueBullets: activePart === 2 ? (activeP2Card?.cueCard?.bullets || []) : null,
         candidateTranscript: currentTranscript,
         durationSec,
         apiKey,
@@ -399,12 +455,12 @@ export default function SpeakingPracticePane({
       });
 
       setEvaluationContext({
-        clipKey,
-        questionText,
-        topicTitle,
+        clipKey: clipKey || evaluationContext?.clipKey,
+        questionText: finalQuestion,
+        topicTitle: finalTopic,
         candidateTranscript: currentTranscript,
         durationSec,
-        part: partNum
+        part: activePart
       });
       setSingleEvaluationResult(result);
       setIsEvaluationModalOpen(true);
@@ -416,6 +472,9 @@ export default function SpeakingPracticePane({
       setEvaluatingClipKey('');
     }
   };
+
+  // Backward compatibility alias
+  const handleEvaluateAnswer = handleEvaluateWithAI;
 
   const handleSaveEvaluationAndCleanVoice = () => {
     if (!singleEvaluationResult || !evaluationContext) return;
@@ -593,21 +652,31 @@ export default function SpeakingPracticePane({
             </button>
           )}
 
-          {/* AI EVALUATION BUTTON */}
+          {/* DUAL EVALUATION ENGINES: MACHINE (OFFLINE) VS AI */}
           <button
-            onClick={() => handleEvaluateAnswer(clipKey, questionText, topicTitle, partNum)}
+            onClick={() => handleEvaluateAlgorithmically(clipKey, questionText, topicTitle, partNum)}
+            className="flex-1 min-w-[140px] py-2.5 px-3 rounded-lg bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black shadow-md shadow-emerald-950/40 flex items-center justify-center space-x-1.5 cursor-pointer transition-all hover:scale-[1.01]"
+            title="Chấm điểm tức thì (0.02ms) bằng thuật toán 4 tiêu chí Cambridge, 100% Offline & Miễn phí"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+            <span>⚡ Chấm Máy (Tức Thì)</span>
+          </button>
+
+          <button
+            onClick={() => handleEvaluateWithAI(clipKey, questionText, topicTitle, partNum)}
             disabled={isEvaluatingSingle}
-            className="w-full sm:flex-1 py-2.5 px-3.5 rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-purple-950/50 flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-60 transition-all hover:scale-[1.01]"
+            className="flex-1 min-w-[140px] py-2.5 px-3 rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-purple-950/50 flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-60 transition-all hover:scale-[1.01]"
+            title="Giám khảo AI chấm phân tích sâu, sửa câu & viết lại bản Band 8.5+"
           >
             {isEvaluatingSingle && evaluatingClipKey === clipKey ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Giám Khảo AI Đang Chấm...</span>
+                <span>AI Đang Chấm...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-                <span>✨ Chấm Điểm Bằng AI (Cambridge)</span>
+                <span>🤖 Chấm Bằng AI</span>
               </>
             )}
           </button>
@@ -1846,6 +1915,19 @@ export default function SpeakingPracticePane({
         candidateTranscript={evaluationContext?.candidateTranscript || ''}
         part={evaluationContext?.part || 1}
         onSaveToHistoryAndCleanVoice={handleSaveEvaluationAndCleanVoice}
+        onReEvaluateWithAI={() => handleEvaluateWithAI(
+          evaluationContext?.clipKey,
+          evaluationContext?.questionText,
+          evaluationContext?.topicTitle,
+          evaluationContext?.part
+        )}
+        onReEvaluateAlgorithmically={() => handleEvaluateAlgorithmically(
+          evaluationContext?.clipKey,
+          evaluationContext?.questionText,
+          evaluationContext?.topicTitle,
+          evaluationContext?.part
+        )}
+        isEvaluatingAI={isEvaluatingSingle}
       />
 
     </div>

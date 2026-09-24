@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Award, 
   CheckCircle2, 
@@ -11,7 +11,11 @@ import {
   TrendingUp, 
   Trash2,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Zap,
+  Activity,
+  Target,
+  Loader2
 } from 'lucide-react';
 
 export default function SpeakingSingleEvaluationModal({
@@ -22,7 +26,10 @@ export default function SpeakingSingleEvaluationModal({
   topicTitle = '',
   candidateTranscript = '',
   part = 1,
-  onSaveToHistoryAndCleanVoice
+  onSaveToHistoryAndCleanVoice,
+  onReEvaluateWithAI,
+  onReEvaluateAlgorithmically,
+  isEvaluatingAI = false
 }) {
   if (!isOpen || !evaluation) return null;
 
@@ -31,6 +38,7 @@ export default function SpeakingSingleEvaluationModal({
 
   const criteria = evaluation.criteria || {};
   const overallBand = evaluation.overallBand || 6.5;
+  const isAlgorithmic = evaluation.evaluationMethod === 'algorithmic';
 
   const handleCopy = (text, idx) => {
     navigator.clipboard.writeText(text);
@@ -53,19 +61,39 @@ export default function SpeakingSingleEvaluationModal({
       <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden text-slate-100 flex flex-col max-h-[92vh]">
         
         {/* HEADER */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-purple-950/90 via-slate-900 to-indigo-950/90 shrink-0">
+        <div className={`p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-gradient-to-r ${
+          isAlgorithmic 
+            ? 'from-emerald-950/90 via-slate-900 to-teal-950/90' 
+            : 'from-purple-950/90 via-slate-900 to-indigo-950/90'
+        }`}>
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-900/50 shrink-0">
-              <Award className="w-5 h-5" />
+            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 ${
+              isAlgorithmic 
+                ? 'bg-gradient-to-tr from-emerald-600 to-teal-600 shadow-emerald-900/50' 
+                : 'bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-purple-900/50'
+            }`}>
+              {isAlgorithmic ? (
+                <Zap className="w-5 h-5 text-amber-300 fill-amber-300" />
+              ) : (
+                <Award className="w-5 h-5" />
+              )}
             </div>
             <div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-base font-black text-white tracking-tight">
                   Đánh Giá Câu Trả Lời • Part {part}
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  Cambridge Benchmark
-                </span>
+                {isAlgorithmic ? (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                    <Zap className="w-3 h-3 text-amber-300 fill-amber-300 inline" />
+                    <span>Máy Chấm Offline (0.02ms)</span>
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center space-x-1">
+                    <Sparkles className="w-3 h-3 text-purple-300 inline" />
+                    <span>AI Cambridge</span>
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-400 line-clamp-1">{topicTitle}</p>
             </div>
@@ -82,9 +110,15 @@ export default function SpeakingSingleEvaluationModal({
         <div className="p-5 overflow-y-auto space-y-5 text-xs text-slate-300">
           
           {/* 1. OVERALL BAND BANNER */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/60 to-slate-900 border border-purple-800/40 flex items-center justify-between gap-3">
+          <div className={`p-4 rounded-2xl border flex items-center justify-between gap-3 ${
+            isAlgorithmic 
+              ? 'bg-gradient-to-r from-emerald-950/60 to-slate-900 border-emerald-800/40' 
+              : 'bg-gradient-to-r from-purple-950/60 to-slate-900 border-purple-800/40'
+          }`}>
             <div>
-              <span className="text-[11px] font-bold text-purple-300 uppercase tracking-wider block">
+              <span className={`text-[11px] font-bold uppercase tracking-wider block ${
+                isAlgorithmic ? 'text-emerald-300' : 'text-purple-300'
+              }`}>
                 Điểm Đánh Giá Dự Kiến
               </span>
               <div className="flex items-baseline space-x-2 mt-0.5">
@@ -99,7 +133,103 @@ export default function SpeakingSingleEvaluationModal({
             </div>
           </div>
 
-          {/* 2. QUESTION & CANDIDATE TRANSCRIPT */}
+          {/* DUAL-ENGINE SWITCHER BANNER */}
+          {(onReEvaluateWithAI || onReEvaluateAlgorithmically) && (
+            <div className={`p-3 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-2.5 ${
+              isAlgorithmic 
+                ? 'bg-indigo-950/40 border-indigo-700/40' 
+                : 'bg-emerald-950/30 border-emerald-700/40'
+            }`}>
+              <div className="flex items-center space-x-2.5">
+                {isAlgorithmic ? (
+                  <Sparkles className="w-4 h-4 text-purple-400 shrink-0" />
+                ) : (
+                  <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+                )}
+                <p className="text-[11px] text-slate-300">
+                  {isAlgorithmic ? (
+                    <>Bạn đang xem kết quả <strong>Thuật Toán Máy Tính</strong>. Muốn Giám Khảo AI nhận xét chi tiết hơn & viết lại bản mẫu Band 8.5+?</>
+                  ) : (
+                    <>Bạn đang xem kết quả <strong>Giám Khảo AI</strong>. Muốn xem các chỉ số định lượng máy tính (WPM, fillers, thì ngữ pháp)?</>
+                  )}
+                </p>
+              </div>
+
+              {isAlgorithmic ? (
+                onReEvaluateWithAI && (
+                  <button
+                    onClick={onReEvaluateWithAI}
+                    disabled={isEvaluatingAI}
+                    className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shrink-0 flex items-center space-x-1.5 shadow cursor-pointer disabled:opacity-50 transition-all hover:scale-[1.02]"
+                  >
+                    {isEvaluatingAI ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>AI Đang Chấm...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>🤖 Chấm Bằng AI Ngay</span>
+                      </>
+                    )}
+                  </button>
+                )
+              ) : (
+                onReEvaluateAlgorithmically && (
+                  <button
+                    onClick={onReEvaluateAlgorithmically}
+                    className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shrink-0 flex items-center space-x-1.5 shadow cursor-pointer transition-all hover:scale-[1.02]"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
+                    <span>⚡ Xem Điểm Thuật Toán Máy</span>
+                  </button>
+                )
+              )}
+            </div>
+          )}
+
+          {/* 2. SPEECH ANALYTICS (IF AVAILABLE) */}
+          {evaluation.speechAnalytics && (
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
+                <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Chỉ Số Tốc Độ & Độ Trôi Chảy Định Lượng:</span>
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Tốc Độ Nói</span>
+                  <div className="text-base font-black text-white mt-0.5">
+                    {evaluation.speechAnalytics.wordsPerMinute} <span className="text-[10px] font-normal text-slate-400">wpm</span>
+                  </div>
+                  <span className="text-[9px] text-slate-500 block">Chuẩn: 110-150 wpm</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Tổng Số Từ</span>
+                  <div className="text-base font-black text-white mt-0.5">
+                    {evaluation.speechAnalytics.wordCount} <span className="text-[10px] font-normal text-slate-400">từ</span>
+                  </div>
+                  <span className="text-[9px] text-slate-500 block">Độ dài thực tế</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Độ Do Dự</span>
+                  <div className="text-base font-black text-white mt-0.5">
+                    {evaluation.speechAnalytics.fillerCount} <span className="text-[10px] font-normal text-slate-400">({evaluation.speechAnalytics.fillerDensityPercent}%)</span>
+                  </div>
+                  <span className="text-[9px] text-slate-500 block">Từ chêm / uhm...</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Thời Lượng</span>
+                  <div className="text-base font-black text-white mt-0.5">
+                    {evaluation.speechAnalytics.durationSec} <span className="text-[10px] font-normal text-slate-400">giây</span>
+                  </div>
+                  <span className="text-[9px] text-slate-500 block">Thời gian phát biểu</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3. QUESTION & CANDIDATE TRANSCRIPT */}
           <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
             <div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -108,14 +238,16 @@ export default function SpeakingSingleEvaluationModal({
               <p className="text-xs font-bold text-white mt-0.5">{questionText}</p>
             </div>
             <div className="pt-2 border-t border-slate-800/80">
-              <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">
+              <span className={`text-[10px] font-bold uppercase tracking-wider block ${
+                isAlgorithmic ? 'text-emerald-400' : 'text-purple-400'
+              }`}>
                 Nội Dung Bạn Vừa Trả Lời:
               </span>
               <p className="text-xs text-slate-200 mt-0.5 italic">"{candidateTranscript}"</p>
             </div>
           </div>
 
-          {/* 3. FOUR CAMBRIDGE CRITERIA BREAKDOWN */}
+          {/* 4. FOUR CAMBRIDGE CRITERIA BREAKDOWN */}
           <div className="space-y-2">
             <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
               Phân Tích 4 Tiêu Chí Khảo Thí:
@@ -169,7 +301,37 @@ export default function SpeakingSingleEvaluationModal({
             </div>
           </div>
 
-          {/* 4. SENTENCE CORRECTIONS */}
+          {/* 5. TOP 3 ACTION PLAN */}
+          {evaluation.top3ActionPlan && (
+            <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/30 to-slate-950 border border-amber-800/40 space-y-2">
+              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-1.5">
+                <Target className="w-3.5 h-3.5 text-amber-400" />
+                <span>Top 3 Hành Động Cải Thiện Ngay:</span>
+              </span>
+              <div className="space-y-1.5 text-xs text-slate-300">
+                {evaluation.top3ActionPlan.priority1 && (
+                  <div className="flex items-start space-x-2">
+                    <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+                    <p className="leading-relaxed"><strong className="text-white">Trôi chảy:</strong> {evaluation.top3ActionPlan.priority1}</p>
+                  </div>
+                )}
+                {evaluation.top3ActionPlan.priority2 && (
+                  <div className="flex items-start space-x-2">
+                    <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+                    <p className="leading-relaxed"><strong className="text-white">Từ vựng:</strong> {evaluation.top3ActionPlan.priority2}</p>
+                  </div>
+                )}
+                {evaluation.top3ActionPlan.priority3 && (
+                  <div className="flex items-start space-x-2">
+                    <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+                    <p className="leading-relaxed"><strong className="text-white">Ngữ pháp:</strong> {evaluation.top3ActionPlan.priority3}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 6. SENTENCE CORRECTIONS */}
           {evaluation.corrections && evaluation.corrections.length > 0 && (
             <div className="space-y-2">
               <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
@@ -192,7 +354,7 @@ export default function SpeakingSingleEvaluationModal({
             </div>
           )}
 
-          {/* 5. BAND 8.5+ UPGRADE */}
+          {/* 7. BAND 8.5+ UPGRADE */}
           {evaluation.upgradedBand8 && (
             <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-700/40 space-y-2">
               <div className="flex items-center justify-between">
@@ -214,7 +376,7 @@ export default function SpeakingSingleEvaluationModal({
             </div>
           )}
 
-          {/* 6. GOLDEN COLLOCATIONS */}
+          {/* 8. GOLDEN COLLOCATIONS */}
           {evaluation.goldenCollocations && evaluation.goldenCollocations.length > 0 && (
             <div className="space-y-1.5">
               <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
