@@ -152,8 +152,8 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Compact Skills Dropdown (Mobile, Tablet & Laptops < 1440px) */}
-            <div className="relative 2xl:hidden shrink-0">
+            {/* Compact Skills Dropdown (Mobile, Tablet & Laptops < 1680px) */}
+            <div className="relative min-[1680px]:hidden shrink-0">
               <button
                 onClick={() => {
                   setIsSkillMenuOpen(!isSkillMenuOpen);
@@ -221,8 +221,8 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Direct 4-Skill Switcher Tabs on Ultra-Wide Desktop (Writing / Reading / Listening / Speaking) */}
-            <div className="hidden 2xl:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1 shrink-0">
+            {/* Direct 4-Skill Switcher Tabs on Ultra-Wide Desktop >= 1680px (Writing / Reading / Listening / Speaking) */}
+            <div className="hidden min-[1680px]:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 space-x-1 shrink-0">
               {skills.map(s => {
                 const Icon = s.icon;
                 const isCurrent = activeSkill === s.id;
@@ -251,7 +251,7 @@ export default function Navbar({
           </div>
 
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 pr-0.5">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 pr-1">
             
             {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút */}
             <button
@@ -261,14 +261,14 @@ export default function Navbar({
             >
               <ShieldAlert className="w-4 h-4 text-amber-300 animate-pulse" />
               <span>Thi Thử 60p</span>
-              <span className="hidden 2xl:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
+              <span className="hidden min-[1750px]:inline px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-black uppercase">Mock Vault</span>
             </button>
 
-            {/* Sinh Đề Bằng AI (Đưa trực tiếp ra Nav cho Writing trên màn hình rộng) */}
+            {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px) */}
             {activeSkill === 'writing' && (
               <button
                 onClick={doOpenGenerator}
-                className="hidden xl:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
+                className="hidden min-[1720px]:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
                 title="Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn Cambridge)"
               >
                 <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
@@ -553,12 +553,12 @@ export default function Navbar({
             {/* Help Center (F1) - 100% Công khai, không cần đăng nhập */}
             <button
               onClick={doOpenFeaturesGuide}
-              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
               title="Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"
             >
               <HelpCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
-              <span className="hidden sm:inline text-[11px] font-semibold">Trợ Giúp</span>
-              <kbd className="hidden 2xl:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
+              <span className="hidden min-[1680px]:inline text-[11px] font-semibold">Trợ Giúp</span>
+              <kbd className="hidden min-[1750px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
             {/* API Key Indicator */}
