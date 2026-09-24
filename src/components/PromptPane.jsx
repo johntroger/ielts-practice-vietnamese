@@ -14,10 +14,13 @@ import {
   Image as ImageIcon, 
   X, 
   ZoomIn,
-  RotateCcw
+  RotateCcw,
+  SlidersHorizontal
 } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
+import StarRatingWidget from './common/StarRatingWidget';
+import { recordAttempt } from '../services/ratingPopularityService';
 
 // Helper to escape special characters for RegExp
 function escapeRegExp(string) {
@@ -80,12 +83,20 @@ export default function PromptPane({
   apiKey,
   onOpenSettings,
   isMastered = false,
-  onToggleMastered
+  onToggleMastered,
+  onOpenLibrary
 }) {
   const [showModelAnswer, setShowModelAnswer] = useState(false);
   const [showOutline, setShowOutline] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
+
+  // Auto-record attempt count when user views/practices this task
+  useEffect(() => {
+    if (task?.id) {
+      recordAttempt(task.id);
+    }
+  }, [task?.id]);
 
   // Persistent highlights per task ID
   const [highlights, setHighlights] = useState(() => {
@@ -153,8 +164,34 @@ export default function PromptPane({
   const isProcessOrMap = task.taskNumber === 1 && (task.type === 'process' || task.type === 'map' || !!task.processSteps || !!task.mapChanges);
 
   return (
-    <div className="p-4 sm:p-6 pb-24 sm:pb-12 max-w-3xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 pb-24 sm:pb-12 max-w-3xl mx-auto space-y-5">
       
+      {/* Social Proof, Star Rating & Discovery Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 rounded-2xl bg-gradient-to-r from-amber-50/80 via-white to-slate-50 border border-amber-200/70 shadow-2xs">
+        <div className="flex items-center flex-wrap gap-2">
+          {task?.id && (
+            <StarRatingWidget
+              itemId={task.id}
+              fallbackTitle={task.title}
+              showAttempts={true}
+              size="sm"
+            />
+          )}
+        </div>
+
+        {onOpenLibrary && (
+          <button
+            type="button"
+            onClick={onOpenLibrary}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200 shadow-2xs transition-all cursor-pointer hover:border-slate-300 active:scale-95"
+            title="Mở Thư Viện Đề để Lọc thông minh, xem Đề Rating cao & Đổi đề thi khác"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-red-600" />
+            <span>Kho Đề & Bộ Lọc</span>
+          </button>
+        )}
+      </div>
+
       {/* Header Badges */}
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
         <div className="flex items-center space-x-2">

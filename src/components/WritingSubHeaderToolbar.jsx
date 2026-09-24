@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import StarRatingWidget from './common/StarRatingWidget';
 import { 
   ChevronDown, 
   ChevronUp,
@@ -55,22 +56,29 @@ export default function WritingSubHeaderToolbar({
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
       {/* ============================================================ */}
       <div className="flex items-center space-x-2 min-w-0">
-        {/* 1. Task Selector Dropdown Trigger */}
-        <button 
-          onClick={onOpenLibrary}
-          className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0 flex-1 md:flex-initial"
-          title="Nhấn để đổi đề thi hoặc chọn từ thư viện đề IELTS"
-        >
-          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-black uppercase tracking-wider shrink-0 ${
-            currentTask?.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-          }`}>
-            Task {currentTask?.taskNumber || 2}
-          </span>
-          <span className="text-xs font-bold text-slate-800 max-w-[140px] sm:max-w-[240px] lg:max-w-[340px] xl:max-w-[440px] truncate">
-            {currentTask?.title || 'IELTS Writing Task'}
-          </span>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
-        </button>
+        {/* 1. Task Selector Dropdown Trigger & Rating */}
+        <div className="flex items-center space-x-1.5 min-w-0">
+          <button 
+            onClick={onOpenLibrary}
+            className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0 flex-1 md:flex-initial"
+            title="Nhấn để đổi đề thi hoặc chọn từ thư viện đề IELTS"
+          >
+            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-black uppercase tracking-wider shrink-0 ${
+              currentTask?.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+            }`}>
+              Task {currentTask?.taskNumber || 2}
+            </span>
+            <span className="text-xs font-bold text-slate-800 max-w-[140px] sm:max-w-[180px] lg:max-w-[240px] xl:max-w-[320px] truncate">
+              {currentTask?.title || 'IELTS Writing Task'}
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
+          </button>
+          {currentTask && (
+            <div className="hidden lg:flex items-center bg-slate-50/90 px-2 py-1 rounded-xl border border-slate-200 shrink-0">
+              <StarRatingWidget itemId={currentTask.id} fallbackTitle={currentTask.title} size="xs" showAttempts={true} />
+            </div>
+          )}
+        </div>
 
         {/* 2. Sinh Đề Mới Bằng AI (Prominent Action) */}
         <button

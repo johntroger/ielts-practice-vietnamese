@@ -1136,6 +1136,7 @@ export default function App() {
                 onOpenSettings={() => setIsSettingsOpen(true)}
                 isMastered={masteredIds.includes(currentTask?.id)}
                 onToggleMastered={() => handleToggleMastered(currentTask?.id)}
+                onOpenLibrary={() => setIsLibraryOpen(true)}
               />
             }
             rightPane={

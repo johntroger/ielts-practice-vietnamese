@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import StarRatingWidget from '../common/StarRatingWidget';
+import { getItemMetrics, recordAttempt } from '../../services/ratingPopularityService';
 import { 
   BookOpen, 
   Search, 
@@ -17,7 +19,8 @@ import {
   ArrowRight,
   Check,
   Filter,
-  GraduationCap
+  GraduationCap,
+  ArrowUpDown
 } from 'lucide-react';
 
 export default function ReadingLibraryModal({
@@ -37,6 +40,7 @@ export default function ReadingLibraryModal({
 }) {
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'ingest' | 'public' | 'mastered' | 'custom_builder'
   const [passageFilter, setPassageFilter] = useState('all'); // 'all' | 'full' | 'p1' | 'p2' | 'p3'
+  const [sortBy, setSortBy] = useState('default'); // 'default' | 'rating-desc' | 'attempts-desc'
   const [searchQuery, setSearchQuery] = useState('');
   const [hideMastered, setHideMastered] = useState(() => {
     try {
@@ -267,6 +271,24 @@ export default function ReadingLibraryModal({
     return matchesTab && matchesPassage && matchesSearch;
   });
 
+  const sortedTests = useMemo(() => {
+    if (sortBy === 'rating-desc') {
+      return [...filteredTests].sort((a, b) => {
+        const rA = getItemMetrics(a.id, a.title);
+        const rB = getItemMetrics(b.id, b.title);
+        return (rB.rating || 0) - (rA.rating || 0);
+      });
+    }
+    if (sortBy === 'attempts-desc') {
+      return [...filteredTests].sort((a, b) => {
+        const rA = getItemMetrics(a.id, a.title);
+        const rB = getItemMetrics(b.id, b.title);
+        return (rB.attemptsCount || 0) - (rA.attemptsCount || 0);
+      });
+    }
+    return filteredTests;
+  }, [filteredTests, sortBy]);
+
   // Calculate statistics
   const stats = {
     total: allReadingTests.length,
@@ -492,8 +514,23 @@ export default function ReadingLibraryModal({
                 </button>
               </div>
 
+              {/* Sort selector */}
+              <div className="flex items-center gap-1.5 shrink-0 sm:ml-auto">
+                <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-white border border-slate-200 text-slate-700 text-[11px] font-bold py-1 px-2 rounded-md shadow-2xs focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                  title="Sắp xếp danh sách đề thi Reading"
+                >
+                  <option value="default">Sắp xếp: Mặc định</option>
+                  <option value="rating-desc">⭐ Đánh giá cao nhất</option>
+                  <option value="attempts-desc">🔥 Nhiều người làm nhất</option>
+                </select>
+              </div>
+
               {/* Hide Mastered Checkbox */}
-              <label className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-bold cursor-pointer hover:bg-slate-50 transition-colors shadow-2xs select-none shrink-0 sm:ml-auto">
+              <label className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-bold cursor-pointer hover:bg-slate-50 transition-colors shadow-2xs select-none shrink-0">
                 <input
                   type="checkbox"
                   checked={hideMastered}
@@ -843,7 +880,7 @@ export default function ReadingLibraryModal({
               </div>
             )}
 
-            {filteredTests.length === 0 ? (
+            {sortedTests.length === 0 ? (
               <div className="text-center py-16">
                 <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3 stroke-[1.5]" />
                 <p className="text-sm font-semibold text-slate-600">Không tìm thấy bài đọc nào phù hợp</p>
@@ -871,7 +908,7 @@ export default function ReadingLibraryModal({
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
-                {filteredTests.map((test) => {
+                {sortedTests.map((test) => {
                   const isSelected = test.id === currentTestId;
                   const passageCount = test.passages?.length || 1;
                   const passageNum = test.passages?.[0]?.passageNumber || 1;
@@ -964,6 +1001,11 @@ export default function ReadingLibraryModal({
                           {test.description || 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.'}
                         </p>
 
+                        {/* Star Rating & Social Proof */}
+                        <div className="pt-1">
+                          <StarRatingWidget itemId={test.id} fallbackTitle={test.title} size="xs" showAttempts={true} />
+                        </div>
+
                         {/* Metadata: Questions & Time */}
                         <div className="flex items-center gap-3 text-[11px] text-slate-500 pt-1">
                           <span className="flex items-center gap-1">
@@ -1015,6 +1057,7 @@ export default function ReadingLibraryModal({
 
                         <button
                           onClick={() => {
+                            try { recordAttempt(test.id); } catch (e) {}
                             onSelectTest(test.id);
                             onClose();
                           }}

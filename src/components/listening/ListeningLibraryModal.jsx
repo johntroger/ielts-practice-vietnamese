@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import StarRatingWidget from '../common/StarRatingWidget';
+import { getItemMetrics, recordAttempt } from '../../services/ratingPopularityService';
 import { 
   Headphones, 
   Search, 
@@ -18,7 +20,8 @@ import {
   Puzzle,
   Dices,
   ChevronRight,
-  GraduationCap
+  GraduationCap,
+  ArrowUpDown
 } from 'lucide-react';
 import { 
   extractListeningPartBank, 
@@ -44,6 +47,7 @@ export default function ListeningLibraryModal({
 
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'assembled' | 'part1' | 'part2' | 'part3' | 'part4' | 'mastered'
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('default'); // 'default' | 'rating-desc' | 'attempts-desc'
   const [hideMastered, setHideMastered] = useState(() => {
     try {
       return localStorage.getItem('ielts_listening_hide_mastered') === 'true';
@@ -180,6 +184,24 @@ export default function ListeningLibraryModal({
       return matchesTab && matchesSearch;
     });
   }, [allListeningTests, activeTab, searchQuery, hideMastered, masteredIds]);
+
+  const sortedTests = useMemo(() => {
+    if (sortBy === 'rating-desc') {
+      return [...filteredTests].sort((a, b) => {
+        const rA = getItemMetrics(a.id, a.title);
+        const rB = getItemMetrics(b.id, b.title);
+        return (rB.rating || 0) - (rA.rating || 0);
+      });
+    }
+    if (sortBy === 'attempts-desc') {
+      return [...filteredTests].sort((a, b) => {
+        const rA = getItemMetrics(a.id, a.title);
+        const rB = getItemMetrics(b.id, b.title);
+        return (rB.attemptsCount || 0) - (rA.attemptsCount || 0);
+      });
+    }
+    return filteredTests;
+  }, [filteredTests, sortBy]);
 
   const stats = {
     total: allListeningTests.length,
@@ -329,6 +351,21 @@ export default function ListeningLibraryModal({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-slate-800"
               />
+            </div>
+
+            {/* Sort Selector */}
+            <div className="flex items-center gap-1 shrink-0">
+              <ArrowUpDown className="w-3 h-3 text-slate-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-white border border-slate-200 text-slate-700 text-[11px] font-bold py-1.5 px-2 rounded-xl shadow-2xs focus:ring-1 focus:ring-purple-500 cursor-pointer"
+                title="Sắp xếp danh sách đề thi Listening"
+              >
+                <option value="default">Mặc định</option>
+                <option value="rating-desc">⭐ Rating cao</option>
+                <option value="attempts-desc">🔥 Lượt làm</option>
+              </select>
             </div>
 
             {/* 1-Click Auto Random Mix */}
@@ -507,7 +544,7 @@ export default function ListeningLibraryModal({
 
         {/* Tests List Grid */}
         <div className="flex-1 overflow-y-auto p-5 bg-slate-50/50">
-          {filteredTests.length === 0 ? (
+          {sortedTests.length === 0 ? (
             <div className="text-center py-16 text-slate-400 space-y-2">
               <Headphones className="w-10 h-10 mx-auto opacity-30 text-slate-500" />
               <p className="text-sm font-semibold text-slate-600">Không tìm thấy bộ đề nghe nào phù hợp.</p>
@@ -515,7 +552,7 @@ export default function ListeningLibraryModal({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
-              {filteredTests.map((test) => {
+              {sortedTests.map((test) => {
                 const isCurrent = currentTestId === test.id;
                 const partCount = test.parts?.length || 4;
 
@@ -590,9 +627,14 @@ export default function ListeningLibraryModal({
                       <h4 className="font-bold text-slate-900 text-sm mb-1.5 line-clamp-2">
                         {test.title}
                       </h4>
-                      <p className="text-xs text-slate-600 line-clamp-2 mb-3 leading-relaxed">
+                      <p className="text-xs text-slate-600 line-clamp-2 mb-2 leading-relaxed">
                         {test.description}
                       </p>
+
+                      {/* Star Rating & Social Proof */}
+                      <div className="mb-3">
+                        <StarRatingWidget itemId={test.id} fallbackTitle={test.title} size="xs" showAttempts={true} />
+                      </div>
 
                       {/* Parts Peek */}
                       <div className="space-y-1.5 mb-4">
@@ -660,6 +702,7 @@ export default function ListeningLibraryModal({
                         <button
                           type="button"
                           onClick={() => {
+                            try { recordAttempt(test.id); } catch (e) {}
                             onSelectTest(test);
                             onClose();
                           }}
