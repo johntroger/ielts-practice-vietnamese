@@ -12,6 +12,7 @@ import { useEffect } from 'react';
  */
 export function useKeyboardShortcuts({
   toggleFocusMode,
+  toggleSlimHeader,
   onOpenLibrary,
   onToggleMastered,
   currentTaskId,
@@ -28,6 +29,13 @@ export function useKeyboardShortcuts({
       if (e.key === 'F1' || (e.altKey && (e.key === 'h' || e.key === 'H'))) {
         e.preventDefault();
         if (onOpenHelp) onOpenHelp();
+        return;
+      }
+
+      // Alt + Z / Option + Z: Toggle Slim Header (Vertical Space Optimizer)
+      if (e.altKey && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        if (toggleSlimHeader) toggleSlimHeader();
         return;
       }
       const activeEl = document.activeElement;
@@ -92,6 +100,7 @@ export function useKeyboardShortcuts({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     toggleFocusMode,
+    toggleSlimHeader,
     onOpenLibrary,
     onToggleMastered,
     currentTaskId,

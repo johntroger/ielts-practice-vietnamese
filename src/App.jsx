@@ -162,6 +162,17 @@ export default function App() {
     });
   };
 
+  // Phase 1 Ergonomics: Slim Header for Laptop Vertical Space
+  const [isSlimHeader, setIsSlimHeader] = useState(() => safeGet('ielts_slim_header', false));
+
+  const toggleSlimHeader = () => {
+    setIsSlimHeader(prev => {
+      const next = !prev;
+      safeSet('ielts_slim_header', next);
+      return next;
+    });
+  };
+
   // Phase 4: CDI Accessibility & Display Settings (Font Scale & Screen Contrast)
   const [cdiFontSize, setCdiFontSize] = useState(() => safeGet('ielts_cdi_font_size', 'standard'));
   const [cdiContrast, setCdiContrast] = useState(() => safeGet('ielts_cdi_contrast', 'standard'));
@@ -451,6 +462,7 @@ export default function App() {
   // Global Keyboard Shortcuts (Phase 1 UX Improvement)
   useKeyboardShortcuts({
     toggleFocusMode,
+    toggleSlimHeader,
     onOpenLibrary: () => setIsLibraryOpen(true),
     onToggleMastered: handleToggleMastered,
     currentTaskId,
@@ -890,31 +902,54 @@ export default function App() {
 
       {/* 1.5 Global Gemini API Key Reminder Banner (Hidden in Focus Mode) */}
       {!isFocusMode && !apiKey && (
-        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-slate-950 px-3 sm:px-6 py-2 flex items-center justify-between gap-2 shadow-xs shrink-0 z-20">
-          <div className="flex items-center space-x-2 min-w-0">
-            <div className="p-1 rounded-md bg-white/20 text-white shrink-0">
-              <Sparkles className="w-4 h-4" />
+        <div className={`bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-slate-950 px-3 sm:px-6 transition-all duration-300 shadow-xs shrink-0 z-20 flex items-center justify-between gap-2 ${
+          isSlimHeader ? 'py-1 text-xs' : 'py-2'
+        }`}>
+          {isSlimHeader ? (
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-2 min-w-0">
+                <Sparkles className="w-3.5 h-3.5 text-white shrink-0 animate-pulse" />
+                <span className="text-[11px] sm:text-xs font-bold text-white truncate">
+                  ⚡ Chưa kết nối Gemini API (AI Chấm bài, Tra từ & Sinh đề đang chạy chế độ offline)
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 shrink-0">
+                <button
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="px-2.5 py-0.5 rounded-md bg-white text-slate-900 hover:bg-amber-50 font-black text-[11px] shadow-2xs transition-all cursor-pointer"
+                >
+                  Kết Nối
+                </button>
+              </div>
             </div>
-            <div className="text-xs text-white leading-tight min-w-0">
-              <span className="font-black text-amber-100 uppercase tracking-wider mr-1.5 text-[10px] sm:text-xs">
-                LƯU Ý KẾT NỐI AI:
-              </span>
-              <span className="hidden sm:inline font-medium text-white/95">
-                Bạn cần <button onClick={() => setIsSettingsOpen(true)} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối Google Gemini API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
-              </span>
-              <span className="sm:hidden font-semibold text-white/95 truncate block text-[11px]">
-                Cần kết nối Gemini API để sử dụng các tính năng AI
-              </span>
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="flex items-center space-x-2 min-w-0">
+                <div className="p-1 rounded-md bg-white/20 text-white shrink-0">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div className="text-xs text-white leading-tight min-w-0">
+                  <span className="font-black text-amber-100 uppercase tracking-wider mr-1.5 text-[10px] sm:text-xs">
+                    LƯU Ý KẾT NỐI AI:
+                  </span>
+                  <span className="hidden sm:inline font-medium text-white/95">
+                    Bạn cần <button onClick={() => setIsSettingsOpen(true)} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối Google Gemini API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
+                  </span>
+                  <span className="sm:hidden font-semibold text-white/95 truncate block text-[11px]">
+                    Cần kết nối Gemini API để sử dụng các tính năng AI
+                  </span>
+                </div>
+              </div>
 
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="px-3 py-1 rounded-lg bg-white text-slate-900 hover:bg-amber-50 font-bold text-xs shadow-xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
-          >
-            <span className="text-amber-600">⚡</span>
-            <span>Kết Nối Ngay</span>
-          </button>
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="px-3 py-1 rounded-lg bg-white text-slate-900 hover:bg-amber-50 font-bold text-xs shadow-xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
+              >
+                <span className="text-amber-600">⚡</span>
+                <span>Kết Nối Ngay</span>
+              </button>
+            </>
+          )}
         </div>
       )}
 
@@ -1079,6 +1114,8 @@ export default function App() {
               onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
               cdiFontSize={cdiFontSize}
               cdiContrast={cdiContrast}
+              isSlimHeader={isSlimHeader}
+              toggleSlimHeader={toggleSlimHeader}
             />
 
           {/* Writing SplitPane Workspace */}
@@ -1111,6 +1148,11 @@ export default function App() {
                 onOpenParaphrase={() => setSlideOverConfig({ isOpen: true, tab: 'paraphrase' })}
                 onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
                 onSubmitEssay={handleSubmitEssay}
+                onEditorFocus={() => {
+                  if (!isSlimHeader && typeof window !== 'undefined' && window.innerHeight < 950) {
+                    setIsSlimHeader(true);
+                  }
+                }}
               />
             }
           />

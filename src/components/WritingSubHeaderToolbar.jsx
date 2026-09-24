@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ChevronDown, 
+  ChevronUp,
   Flame, 
   Target, 
   GraduationCap, 
@@ -35,12 +36,18 @@ export default function WritingSubHeaderToolbar({
   weeklyWordTarget = 2500,
   onOpenCDIDisplay,
   cdiFontSize = 'standard',
-  cdiContrast = 'standard'
+  cdiContrast = 'standard',
+  isSlimHeader = false,
+  toggleSlimHeader
 }) {
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
   return (
-    <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-2xs shrink-0 z-20">
+    <div className={`bg-white border-b border-slate-200 px-3 sm:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
+      isSlimHeader 
+        ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
+        : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2'
+    }`}>
       
       {/* ============================================================ */}
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
@@ -271,6 +278,31 @@ export default function WritingSubHeaderToolbar({
           </div>
           <span className="font-bold text-slate-800 text-[11px]">{currentWeekWords}/{weeklyWordTarget} từ</span>
         </div>
+
+        {/* 5. Slim Header Mode Toggle (Alt + Z) */}
+        {toggleSlimHeader && (
+          <button
+            onClick={toggleSlimHeader}
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+              isSlimHeader
+                ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+            }`}
+            title={isSlimHeader ? "Mở rộng thanh công cụ Writing (Alt + Z)" : "Thu gọn thanh công cụ để tăng diện tích viết bài (Alt + Z)"}
+          >
+            {isSlimHeader ? (
+              <>
+                <ChevronDown className="w-3.5 h-3.5 text-amber-600" />
+                <span className="hidden xl:inline">Mở rộng</span>
+              </>
+            ) : (
+              <>
+                <ChevronUp className="w-3.5 h-3.5 text-slate-500" />
+                <span className="hidden xl:inline">Thu gọn</span>
+              </>
+            )}
+          </button>
+        )}
 
       </div>
 

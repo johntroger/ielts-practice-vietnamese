@@ -36,7 +36,8 @@ export default function EditorPane({
   lastSaved,
   onOpenParaphrase,
   onOpenSlideOver,
-  onSubmitEssay
+  onSubmitEssay,
+  onEditorFocus
 }) {
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
   const [activeTab, setActiveTab] = useState('essay'); // 'essay' | 'outline'
@@ -106,7 +107,7 @@ export default function EditorPane({
     <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
       
       {/* Top Editor Toolbar */}
-      <div className="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+      <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-2 shadow-2xs shrink-0 overflow-x-auto no-scrollbar">
         
         {/* Left: Tab Switcher (Essay vs Scratchpad) */}
         <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
@@ -267,6 +268,7 @@ export default function EditorPane({
             <textarea
               value={essayText}
               onChange={(e) => setEssayText(e.target.value)}
+              onFocus={onEditorFocus}
               onKeyDown={(e) => {
                 if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                   e.preventDefault();
