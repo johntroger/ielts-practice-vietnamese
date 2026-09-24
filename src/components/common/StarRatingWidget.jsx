@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star, Flame, Check } from 'lucide-react';
-import { rateItem } from '../../services/ratingPopularityService';
+import { rateItem, getItemMetrics } from '../../services/ratingPopularityService';
 
 /**
  * StarRatingWidget
@@ -9,19 +9,35 @@ import { rateItem } from '../../services/ratingPopularityService';
  */
 export default function StarRatingWidget({
   itemId,
-  initialRating = 4.8,
-  initialRatingCount = 50,
+  fallbackTitle = '',
+  initialRating,
+  initialRatingCount,
   initialUserRating = null,
-  attemptsCount = 0,
+  attemptsCount: propAttemptsCount,
   size = 'sm',
   interactive = true,
   showCount = true,
   showAttempts = false,
   onRateSuccess
 }) {
-  const [rating, setRating] = useState(initialRating);
-  const [ratingCount, setRatingCount] = useState(initialRatingCount);
-  const [userRating, setUserRating] = useState(initialUserRating);
+  const [metrics, setMetrics] = useState(() => {
+    if (itemId) {
+      return getItemMetrics(itemId, fallbackTitle);
+    }
+    return {
+      rating: initialRating ?? 4.8,
+      ratingCount: initialRatingCount ?? 50,
+      attemptsCount: propAttemptsCount ?? 0,
+      userRating: initialUserRating
+    };
+  });
+
+  useEffect(() => {
+    if (itemId) {
+      setMetrics(getItemMetrics(itemId, fallbackTitle));
+    }
+  }, [itemId, fallbackTitle]);
+
   const [hoverRating, setHoverRating] = useState(0);
   const [showFeedbackToast, setShowFeedbackToast] = useState(false);
 
@@ -37,15 +53,18 @@ export default function StarRatingWidget({
     md: 'text-sm'
   };
 
+  const rating = metrics.rating;
+  const ratingCount = metrics.ratingCount;
+  const userRating = metrics.userRating;
+  const attempts = propAttemptsCount !== undefined ? propAttemptsCount : (metrics.attemptsCount || 0);
+
   const handleStarClick = (e, starVal) => {
     e.stopPropagation();
     if (!interactive || !itemId) return;
 
     const updated = rateItem(itemId, starVal);
     if (updated) {
-      setRating(updated.rating);
-      setRatingCount(updated.ratingCount);
-      setUserRating(updated.userRating);
+      setMetrics(updated);
       setShowFeedbackToast(true);
       setTimeout(() => setShowFeedbackToast(false), 2000);
       onRateSuccess?.(updated);
@@ -100,10 +119,10 @@ export default function StarRatingWidget({
       )}
 
       {/* Attempts Badge */}
-      {showAttempts && attemptsCount > 0 && (
+      {showAttempts && attempts > 0 && (
         <span className="inline-flex items-center space-x-0.5 text-[10px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100">
           <Flame className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
-          <span>{attemptsCount >= 1000 ? `${(attemptsCount / 1000).toFixed(1)}k` : attemptsCount}</span>
+          <span>{attempts >= 1000 ? `${(attempts / 1000).toFixed(1)}k` : attempts}</span>
         </span>
       )}
 

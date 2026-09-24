@@ -74,8 +74,8 @@ export default function WritingSubHeaderToolbar({
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
           </button>
           {currentTask && (
-            <div className="hidden lg:flex items-center bg-slate-50/90 px-2 py-1 rounded-xl border border-slate-200 shrink-0">
-              <StarRatingWidget itemId={currentTask.id} fallbackTitle={currentTask.title} size="xs" showAttempts={true} />
+            <div className="hidden sm:flex items-center bg-slate-50/90 px-2 py-1 rounded-xl border border-slate-200 shrink-0 shadow-2xs">
+              <StarRatingWidget itemId={currentTask.id || currentTask.title} fallbackTitle={currentTask.title} size="xs" showAttempts={true} />
             </div>
           )}
         </div>

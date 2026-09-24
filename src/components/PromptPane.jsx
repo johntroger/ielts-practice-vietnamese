@@ -169,9 +169,9 @@ export default function PromptPane({
       {/* Social Proof, Star Rating & Discovery Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 rounded-2xl bg-gradient-to-r from-amber-50/80 via-white to-slate-50 border border-amber-200/70 shadow-2xs">
         <div className="flex items-center flex-wrap gap-2">
-          {task?.id && (
+          {(task?.id || task?.title) && (
             <StarRatingWidget
-              itemId={task.id}
+              itemId={task.id || task.title}
               fallbackTitle={task.title}
               showAttempts={true}
               size="sm"
@@ -236,9 +236,19 @@ export default function PromptPane({
 
       {/* Task Title & Prompt */}
       <div className="space-y-3">
-        <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-          {task.title}
-        </h2>
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
+            {task.title}
+          </h2>
+          <div className="flex items-center gap-2 mt-2">
+            <StarRatingWidget 
+              itemId={task.id || task.title} 
+              fallbackTitle={task.title} 
+              size="xs" 
+              showAttempts={true} 
+            />
+          </div>
+        </div>
 
         {/* Prompt Card with text selection highlighter */}
         <div 
