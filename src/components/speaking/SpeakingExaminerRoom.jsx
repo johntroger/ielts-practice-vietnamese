@@ -4,6 +4,7 @@ import { Mic, MicOff, AlertTriangle, Radio, Volume2, Square, Play, RotateCcw, Ar
   HelpCircle, ChevronRight, MessageSquare, X, Pause, LogOut
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
+import SpeakingFillerTracker from './SpeakingFillerTracker';
 import SpeakingDigitalNotepad from './SpeakingDigitalNotepad';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
 
@@ -684,6 +685,15 @@ export default function SpeakingExaminerRoom({
               </p>
             )}
           </div>
+
+          {/* Speaking Fluency & Filler Words Live Feedback */}
+          {speechEngine.transcript && !isMicActive && (
+            <SpeakingFillerTracker 
+              transcript={speechEngine.transcript} 
+              durationSec={stageTimerSeconds || 30}
+              className="mt-2"
+            />
+          )}
         </div>
 
       </div>

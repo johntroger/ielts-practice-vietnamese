@@ -6,6 +6,7 @@ import {
   Trash2, Loader2, GraduationCap, Zap
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
+import SpeakingFillerTracker from './SpeakingFillerTracker';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
 import { 
   evaluateSpeakingPracticeAnswer, 
@@ -606,6 +607,14 @@ export default function SpeakingPracticePane({
           </span>
         </div>
 
+        {/* Live Speaking Fluency & Filler Words Tracker */}
+        {speechEngine.transcript && (
+          <SpeakingFillerTracker 
+            transcript={speechEngine.transcript} 
+            durationSec={clip?.duration || 30} 
+          />
+        )}
+
         <div className="flex flex-wrap items-center gap-2">
           {clip && (
             <button
@@ -1107,6 +1116,14 @@ export default function SpeakingPracticePane({
                   </div>
                 </div>
 
+                {/* Speaking Fluency & Filler Words Live Alert */}
+                {speechEngine.transcript && !speechEngine.isListening && (
+                  <SpeakingFillerTracker 
+                    transcript={speechEngine.transcript}
+                    durationSec={speechEngine.audioClips?.[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`]?.duration || 30}
+                  />
+                )}
+
                 {/* Action Button */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">
                   <span className="text-[11px] text-slate-400">
@@ -1518,6 +1535,14 @@ export default function SpeakingPracticePane({
                 )}
               </div>
             </div>
+
+            {/* Speaking Fluency & Filler Words Live Alert */}
+            {speechEngine.transcript && !speechEngine.isListening && (
+              <SpeakingFillerTracker 
+                transcript={speechEngine.transcript}
+                durationSec={speechEngine.audioClips?.[`p2_${activeP2Card.id}`]?.duration || (120 - part2PacingSeconds)}
+              />
+            )}
 
             {/* Action Button */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">

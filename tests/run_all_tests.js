@@ -32,7 +32,8 @@ const testSuites = [
   { name: 'Step 23: Multi-Model AI Adapter & Mobile Viewport Resilience (Phase 6)', file: 'tests/test_step23_ai_adapter_and_mobile_viewport.js' },
   { name: 'Step 24: Speaking Dual-Engine & Computer Algorithmic Scorer', file: 'tests/test_step24_speaking_dual_engine.js' },
   { name: 'Step 25: Self-Updating Feature Registry & Help Center Hub', file: 'tests/test_step25_help_registry.js' },
-  { name: 'Step 26: Cambridge GRA Sentence Structure Heatmap & Analyzer', file: 'tests/test_step26_gra_sentence_analyzer.js' }
+  { name: 'Step 26: Cambridge GRA Sentence Structure Heatmap & Analyzer', file: 'tests/test_step26_gra_sentence_analyzer.js' },
+  { name: 'Step 27: Speaking Fluency Filler Words Tracker & Audio Visualizer', file: 'tests/test_step27_speaking_fluency_filler_tracker.js' }
 ];
 
 console.log('===============================================================');

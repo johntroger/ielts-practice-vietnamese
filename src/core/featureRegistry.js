@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-speaking-filler-tracker',
+    version: 'v3.0',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'ai_evaluation',
+    targetSkills: ['speaking'],
+    title: 'Bộ Đếm Từ Đệm & Sóng Âm Trực Quan (Speaking Fluency Studio)',
+    shortDesc: 'Tự động phát hiện và cảnh báo các từ đệm ngập ngừng (uh, um, like, you know) theo tần suất thời gian thực, kết hợp sóng âm đa tầng 60 FPS.',
+    icon: 'Radio',
+    shortcut: null,
+    updatedAt: '2026-09-24',
+    highlights: [
+      'Bộ lọc nhận diện filler words thời gian thực: Tự động đếm tần suất ngập ngừng ("uh", "um", "like", "you know", "actually", "basically").',
+      'Cảnh báo tiêu chuẩn Cambridge Fluency & Coherence: Báo động ngay nếu tần suất vượt quá 5 từ/phút (nguy cơ tụt xuống Band 5.5).',
+      'Cẩm nang thay thế tự nhiên (Buying-Time Alternatives): Gợi ý các cụm từ đệm tự nhiên như "Well, to be perfectly candid...", "That is an intriguing question...".',
+      'Sóng âm trực quan (Organic Waveform 60 FPS): Hiển thị biên độ âm thanh thời gian thực giúp học viên luôn kiểm soát âm lượng và trường độ nói.'
+    ],
+    usageGuide: 'Tại phòng Luyện Nói Speaking hoặc Phòng Thi Giám Khảo, sau khi nói, hệ thống sẽ tự động hiển thị thanh thống kê từ đệm ngay bên dưới transcript.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'speaking',
+      label: 'Vào Phòng Luyện Speaking'
+    }
+  },
+  {
     id: 'feat-sentence-structure-heatmap',
     version: 'v3.0',
     status: 'new',
