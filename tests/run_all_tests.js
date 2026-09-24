@@ -34,7 +34,8 @@ const testSuites = [
   { name: 'Step 25: Self-Updating Feature Registry & Help Center Hub', file: 'tests/test_step25_help_registry.js' },
   { name: 'Step 26: Cambridge GRA Sentence Structure Heatmap & Analyzer', file: 'tests/test_step26_gra_sentence_analyzer.js' },
   { name: 'Step 27: Speaking Fluency Filler Words Tracker & Audio Visualizer', file: 'tests/test_step27_speaking_fluency_filler_tracker.js' },
-  { name: 'Step 28: Daily Error Prescription & Spaced Repetition Loop', file: 'tests/test_step28_daily_error_prescription.js' }
+  { name: 'Step 28: Daily Error Prescription & Spaced Repetition Loop', file: 'tests/test_step28_daily_error_prescription.js' },
+  { name: 'Step 29: Rating & Popularity Service with Smart Filter & Sort Engine', file: 'tests/test_step29_rating_popularity_service.js' }
 ];
 
 console.log('===============================================================');
