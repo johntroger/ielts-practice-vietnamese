@@ -183,7 +183,7 @@ export default function UserProfileModal({
 
   // 2. Filter User's Uploaded / Custom Tasks & Mastered Tasks
   const userCustomTasks = useMemo(() => {
-    return (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
+    return (allTasks || []).filter(t => t.isOwnTask || t.isCustom || t.isAiGenerated || t.id?.startsWith('task-') || t.id?.startsWith('custom-') || t.id?.startsWith('ai-gen-'));
   }, [allTasks]);
 
   const allReadingBank = useMemo(() => {
@@ -193,7 +193,7 @@ export default function UserProfileModal({
       if (saved) custom = JSON.parse(saved);
     } catch {}
     return [...INITIAL_READING_TESTS, ...(Array.isArray(custom) ? custom : [])];
-  }, []);
+  }, [isOpen]);
 
   const allListeningBank = useMemo(() => {
     let custom = [];
@@ -202,7 +202,7 @@ export default function UserProfileModal({
       if (saved) custom = JSON.parse(saved);
     } catch {}
     return [...INITIAL_LISTENING_TESTS, ...(Array.isArray(custom) ? custom : [])];
-  }, []);
+  }, [isOpen]);
 
   const allSpeakingBank = useMemo(() => {
     let customPacks = [];
@@ -212,17 +212,17 @@ export default function UserProfileModal({
     } catch {}
     let customP1 = [];
     try {
-      const saved = localStorage.getItem('ielts_speaking_custom_p1');
+      const saved = localStorage.getItem('ielts_speaking_custom_p1_topics') || localStorage.getItem('ielts_speaking_custom_p1');
       if (saved) customP1 = JSON.parse(saved);
     } catch {}
     let customP2 = [];
     try {
-      const saved = localStorage.getItem('ielts_speaking_custom_p2');
+      const saved = localStorage.getItem('ielts_speaking_custom_p2_cards') || localStorage.getItem('ielts_speaking_custom_p2');
       if (saved) customP2 = JSON.parse(saved);
     } catch {}
     let customP3 = [];
     try {
-      const saved = localStorage.getItem('ielts_speaking_custom_p3');
+      const saved = localStorage.getItem('ielts_speaking_custom_p3_sets') || localStorage.getItem('ielts_speaking_custom_p3');
       if (saved) customP3 = JSON.parse(saved);
     } catch {}
 
@@ -232,7 +232,7 @@ export default function UserProfileModal({
       p2: [...SPEAKING_PART2_CUECARDS, ...(Array.isArray(customP2) ? customP2 : [])],
       p3: [...SPEAKING_PART3_QUESTIONS, ...(Array.isArray(customP3) ? customP3 : [])],
     };
-  }, []);
+  }, [isOpen]);
 
   const allMasteredItems = useMemo(() => {
     return masteredIds.map(id => {

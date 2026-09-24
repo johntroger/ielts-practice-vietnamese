@@ -205,20 +205,17 @@ export default function ReadingWorkspace({
     setAllReadingTests(prev => {
       const updated = prev.filter(t => t.id !== testId);
       try {
-        const customOnly = updated.filter(t => t.id.startsWith('custom-test-'));
+        const customOnly = updated.filter(t => t.isCustom || t.id.startsWith('custom-test-'));
         localStorage.setItem('ielts_reading_custom_tests', JSON.stringify(customOnly));
       } catch (e) {}
+      if (currentTestId === testId) {
+        if (updated.length > 0) {
+          setCurrentTestId(updated[0].id);
+          setSelectedPassageNum(updated[0].passages[0]?.passageNumber || 1);
+        }
+      }
       return updated;
     });
-
-    // If deleting current active test, fallback to first available
-    if (currentTestId === testId) {
-      const remaining = allReadingTests.filter(t => t.id !== testId);
-      if (remaining.length > 0) {
-        setCurrentTestId(remaining[0].id);
-        setSelectedPassageNum(remaining[0].passages[0]?.passageNumber || 1);
-      }
-    }
   };
 
   // Callback when a full 3-passages test is created from ReadingLibraryModal

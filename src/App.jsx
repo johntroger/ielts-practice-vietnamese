@@ -1410,13 +1410,21 @@ export default function App() {
           }
         }}
         onDeleteTask={(id) => {
-          setAllTasks(prev => prev.filter(t => t.id !== id));
-          setCommunityTasks(prev => prev.filter(t => t.id !== id));
+          setAllTasks(prev => {
+            const updated = prev.filter(t => t.id !== id);
+            safeSet('ielts_all_tasks', updated);
+            return updated;
+          });
+          setCommunityTasks(prev => {
+            const updated = prev.filter(t => t.id !== id);
+            safeSet('ielts_public_community_tasks', updated);
+            return updated;
+          });
           if (currentUser) {
             deleteUserCustomTask(currentUser.id, id);
           }
           if (currentTaskId === id) {
-            setCurrentTaskId(INITIAL_TASKS[0].id);
+            setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
           }
         }}
         onExportAllData={handleExportAllData}
@@ -1552,10 +1560,21 @@ export default function App() {
           }
         }}
         onDeleteTask={(taskId) => {
-          setAllTasks(prev => prev.filter(t => t.id !== taskId));
-          setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
+          setAllTasks(prev => {
+            const updated = prev.filter(t => t.id !== taskId);
+            safeSet('ielts_all_tasks', updated);
+            return updated;
+          });
+          setCommunityTasks(prev => {
+            const updated = prev.filter(t => t.id !== taskId);
+            safeSet('ielts_public_community_tasks', updated);
+            return updated;
+          });
           if (currentUser) {
             deleteUserCustomTask(currentUser.id, taskId);
+          }
+          if (currentTaskId === taskId) {
+            setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
           }
         }}
         onViewSubmission={(sub) => {

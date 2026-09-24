@@ -635,10 +635,14 @@ export default function TaskLibraryModal({
                           {masteredIds.includes(t.id) && <span className="text-[10px]">Đã thuộc</span>}
                         </button>
 
-                        {(t.isCustom || t.isAiGenerated) && (
+                        {(t.isCustom || t.isAiGenerated || t.isOwnTask || t.id?.startsWith('custom-') || t.id?.startsWith('ai-gen-') || t.id?.startsWith('task-user')) && (
                           <button
-                            onClick={() => onDeleteTask(t.id)}
-                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition-colors cursor-pointer"
+                            onClick={() => {
+                              if (window.confirm(`Bạn có chắc chắn muốn xóa đề "${t.title}" khỏi kho đề?`)) {
+                                onDeleteTask(t.id);
+                              }
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                             title="Xóa đề này"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

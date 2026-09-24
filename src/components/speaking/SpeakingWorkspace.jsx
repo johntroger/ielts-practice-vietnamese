@@ -145,6 +145,10 @@ export default function SpeakingWorkspace({
     return Array.from(map.values());
   }, [customP3Sets]);
 
+  const [selectedP3Id, setSelectedP3Id] = useState(() => {
+    return SPEAKING_PART3_QUESTIONS[0]?.linkedPart2Id || 'p3-tech-society';
+  });
+
   const handleAddP1Topic = (newTopic) => {
     setCustomP1Topics(prev => {
       const updated = [newTopic, ...prev];
@@ -175,6 +179,40 @@ export default function SpeakingWorkspace({
       setSelectedP1TopicId(SPEAKING_PART1_TOPICS[0]?.id || 'p1-work-study');
       setActiveP1QuestionIndex(0);
     }
+  };
+
+  const handleAddP1Question = (topicId, newQuestion) => {
+    setCustomP1Topics(prev => {
+      const existing = prev.find(t => t.id === topicId) || allP1Topics.find(t => t.id === topicId);
+      if (!existing) return prev;
+      const updatedTopic = {
+        ...existing,
+        isCustom: true,
+        questions: [...(existing.questions || []), newQuestion]
+      };
+      const updated = [updatedTopic, ...prev.filter(t => t.id !== topicId)];
+      try {
+        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleDeleteP1Question = (topicId, questionId) => {
+    setCustomP1Topics(prev => {
+      const existing = prev.find(t => t.id === topicId) || allP1Topics.find(t => t.id === topicId);
+      if (!existing) return prev;
+      const updatedQuestions = (existing.questions || []).filter((q, idx) => (q.qId || `q-${idx}`) !== questionId && q.id !== questionId);
+      const updatedTopic = {
+        ...existing,
+        questions: updatedQuestions
+      };
+      const updated = [updatedTopic, ...prev.filter(t => t.id !== topicId)];
+      try {
+        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
   };
 
   const handleAddP2Card = (newCard) => {
@@ -219,6 +257,7 @@ export default function SpeakingWorkspace({
       } catch (e) {}
       return updated;
     });
+    setSelectedP3Id(newSet.linkedPart2Id || newSet.id);
   };
 
   const handleDeleteP3Set = (setId) => {
@@ -228,6 +267,43 @@ export default function SpeakingWorkspace({
         localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
         const commOnly = updated.filter(s => s.isPublic);
         localStorage.setItem('ielts_speaking_community_p3_sets', JSON.stringify(commOnly));
+      } catch (e) {}
+      return updated;
+    });
+    if (selectedP3Id === setId) {
+      setSelectedP3Id(SPEAKING_PART3_QUESTIONS[0]?.linkedPart2Id || 'p3-tech-society');
+    }
+  };
+
+  const handleAddP3Question = (setId, newQuestion) => {
+    setCustomP3Sets(prev => {
+      const existing = prev.find(s => (s.linkedPart2Id || s.id) === setId) || allP3Sets.find(s => (s.linkedPart2Id || s.id) === setId);
+      if (!existing) return prev;
+      const updatedSet = {
+        ...existing,
+        isCustom: true,
+        questions: [...(existing.questions || []), newQuestion]
+      };
+      const updated = [updatedSet, ...prev.filter(s => (s.linkedPart2Id || s.id) !== setId)];
+      try {
+        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const handleDeleteP3Question = (setId, questionId) => {
+    setCustomP3Sets(prev => {
+      const existing = prev.find(s => (s.linkedPart2Id || s.id) === setId) || allP3Sets.find(s => (s.linkedPart2Id || s.id) === setId);
+      if (!existing) return prev;
+      const updatedQuestions = (existing.questions || []).filter((q, idx) => (q.qId || `q-${idx}`) !== questionId && q.id !== questionId);
+      const updatedSet = {
+        ...existing,
+        questions: updatedQuestions
+      };
+      const updated = [updatedSet, ...prev.filter(s => (s.linkedPart2Id || s.id) !== setId)];
+      try {
+        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
       } catch (e) {}
       return updated;
     });
@@ -821,6 +897,12 @@ export default function SpeakingWorkspace({
             part3Sets={allP3Sets}
             onAddP3Set={handleAddP3Set}
             onDeleteP3Set={handleDeleteP3Set}
+            selectedP3Id={selectedP3Id}
+            setSelectedP3Id={setSelectedP3Id}
+            onAddP1Question={handleAddP1Question}
+            onDeleteP1Question={handleDeleteP1Question}
+            onAddP3Question={handleAddP3Question}
+            onDeleteP3Question={handleDeleteP3Question}
             activeP3Set={activeP3Set}
             speechEngine={speechEngine}
             activeExaminer={activeExaminer}

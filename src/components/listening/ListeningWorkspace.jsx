@@ -176,15 +176,15 @@ export default function ListeningWorkspace({
     setAllListeningTests(prev => {
       const updated = prev.filter(t => t.id !== testIdToDelete);
       try {
-        const customOnly = updated.filter(t => t.isCustom);
+        const customOnly = updated.filter(t => t.isCustom || t.id?.startsWith('custom-'));
         localStorage.setItem(CUSTOM_TESTS_STORAGE_KEY, JSON.stringify(customOnly));
       } catch (e) {}
+      if (currentTestId === testIdToDelete) {
+        setCurrentTestId(INITIAL_LISTENING_TESTS[0]?.id || 'lis-cam18-t1');
+        setActivePart(1);
+      }
       return updated;
     });
-    if (currentTestId === testIdToDelete) {
-      setCurrentTestId(INITIAL_LISTENING_TESTS[0].id);
-      setActivePart(1);
-    }
   };
 
   // Handler: Toggle publicity of custom listening test

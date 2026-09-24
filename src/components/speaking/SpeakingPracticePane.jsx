@@ -37,6 +37,12 @@ export default function SpeakingPracticePane({
   part3Sets = [],
   onAddP3Set,
   onDeleteP3Set,
+  selectedP3Id: externalSelectedP3Id,
+  setSelectedP3Id: externalSetSelectedP3Id,
+  onAddP1Question,
+  onDeleteP1Question,
+  onAddP3Question,
+  onDeleteP3Question,
   activeP3Set,
   // Engine & callbacks
   speechEngine,
@@ -103,7 +109,9 @@ export default function SpeakingPracticePane({
   const speakTimerRef = useRef(null);
 
   // Part 3 Selector State
-  const [selectedP3Id, setSelectedP3Id] = useState(activeP3Set?.linkedPart2Id || part3Sets[0]?.linkedPart2Id || 'p3-tech-society');
+  const [localSelectedP3Id, setLocalSelectedP3Id] = useState(activeP3Set?.linkedPart2Id || part3Sets[0]?.linkedPart2Id || 'p3-tech-society');
+  const selectedP3Id = externalSelectedP3Id || localSelectedP3Id;
+  const setSelectedP3Id = externalSetSelectedP3Id || setLocalSelectedP3Id;
 
   // Active items
   const activeP1Topic = part1Topics.find(t => t.id === selectedP1TopicId) || part1Topics[0] || {};
@@ -528,12 +536,16 @@ export default function SpeakingPracticePane({
         vocabHints: [],
         sampleAnswer: ''
       };
-      if (activeP1Topic.questions) {
-        activeP1Topic.questions.push(newQ);
+      if (onAddP1Question) {
+        onAddP1Question(activeP1Topic.id, newQ);
       } else {
-        activeP1Topic.questions = [newQ];
+        if (activeP1Topic.questions) {
+          activeP1Topic.questions.push(newQ);
+        } else {
+          activeP1Topic.questions = [newQ];
+        }
       }
-      setActiveP1QuestionIndex(activeP1Topic.questions.length - 1);
+      setActiveP1QuestionIndex(activeP1Topic.questions ? activeP1Topic.questions.length : 0);
     } else if (practicePart === 3 && currentP3Set) {
       const newQ = {
         qId: `p3-q-user-${Date.now()}`,
@@ -542,10 +554,14 @@ export default function SpeakingPracticePane({
         strategy: quickQStrategy.trim() || 'PEEL Framework: Point -> Explanation -> Example -> Link',
         sampleAnswer: ''
       };
-      if (currentP3Set.questions) {
-        currentP3Set.questions.push(newQ);
+      if (onAddP3Question) {
+        onAddP3Question(currentP3Set.linkedPart2Id || currentP3Set.id, newQ);
       } else {
-        currentP3Set.questions = [newQ];
+        if (currentP3Set.questions) {
+          currentP3Set.questions.push(newQ);
+        } else {
+          currentP3Set.questions = [newQ];
+        }
       }
     }
 
@@ -986,13 +1002,30 @@ export default function SpeakingPracticePane({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Câu hỏi khảo thí:</span>
-                  <button
-                    onClick={() => handleReadText(currentP1Question.question)}
-                    className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
-                  >
-                    <Volume2 className="w-3.5 h-3.5" />
-                    <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe Giám khảo đọc câu hỏi'}</span>
-                  </button>
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={() => handleReadText(currentP1Question.question)}
+                      className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe Giám khảo đọc câu hỏi'}</span>
+                    </button>
+                    {(currentP1Question?.qId?.includes('user') || activeP1Topic.isCustom || (activeP1Topic.questions && activeP1Topic.questions.length > 1)) && onDeleteP1Question && (
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Bạn có chắc muốn xóa câu hỏi này khỏi chủ đề ("${(currentP1Question.question || '').substring(0, 45)}...")?`)) {
+                            const targetQId = currentP1Question.qId || currentP1Question.id;
+                            onDeleteP1Question(activeP1Topic.id, targetQId);
+                            setActiveP1QuestionIndex(prev => Math.max(0, prev - 1));
+                          }
+                        }}
+                        className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-rose-900/40"
+                        title="Xóa câu hỏi này khỏi chủ đề"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <h2 className="text-lg sm:text-xl font-black text-white leading-relaxed">
                   "{currentP1Question.question}"
@@ -1738,15 +1771,31 @@ export default function SpeakingPracticePane({
                 <div key={q.qId || idx} className="p-3.5 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-purple-400 uppercase tracking-wider">
-                      Câu hỏi {idx + 1} ({q.analysisType})
+                      Câu hỏi {idx + 1} ({q.analysisType || 'Thảo luận'})
                     </span>
-                    <button
-                      onClick={() => handleReadText(q.question)}
-                      className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
-                    >
-                      <Volume2 className="w-3.5 h-3.5" />
-                      <span>Nghe đọc</span>
-                    </button>
+                    <div className="flex items-center space-x-1.5">
+                      <button
+                        onClick={() => handleReadText(q.question)}
+                        className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                        <span>Nghe đọc</span>
+                      </button>
+                      {(q.qId?.includes('user') || currentP3Set.isCustom || (currentP3Set.questions && currentP3Set.questions.length > 1)) && onDeleteP3Question && (
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`Bạn có chắc muốn xóa câu hỏi thảo luận này?`)) {
+                              const targetQId = q.qId || q.id;
+                              onDeleteP3Question(currentP3Set.linkedPart2Id || currentP3Set.id, targetQId);
+                            }
+                          }}
+                          className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-rose-900/40"
+                          title="Xóa câu hỏi thảo luận này"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <h4 className="text-sm sm:text-base font-bold text-white leading-relaxed">
