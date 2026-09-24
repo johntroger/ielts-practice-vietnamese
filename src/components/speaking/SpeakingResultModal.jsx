@@ -91,25 +91,33 @@ export default function SpeakingResultModal({
       <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200 text-slate-100">
         
         {/* TOP MODAL HEADER */}
-        <div className="bg-gradient-to-r from-purple-950/90 via-slate-900 to-indigo-950/90 border-b border-purple-800/40 p-4 sm:p-6 flex items-center justify-between gap-4 shrink-0">
+        <div className={`border-b p-4 sm:p-6 flex items-center justify-between gap-4 shrink-0 bg-gradient-to-r ${
+          isAlgorithmic 
+            ? 'from-emerald-950/90 via-slate-900 to-teal-950/90 border-emerald-800/40' 
+            : 'from-purple-950/90 via-slate-900 to-indigo-950/90 border-purple-800/40'
+        }`}>
           <div className="flex items-center space-x-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-900/50 shrink-0">
-              <Award className="w-6 h-6" />
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 ${
+              isAlgorithmic 
+                ? 'bg-gradient-to-tr from-emerald-600 to-teal-600 shadow-emerald-900/50' 
+                : 'bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-purple-900/50'
+            }`}>
+              {isAlgorithmic ? <Zap className="w-6 h-6 text-amber-300 fill-amber-300" /> : <Award className="w-6 h-6" />}
             </div>
             <div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
                   Báo Cáo Đánh Giá IELTS Speaking
                 </h2>
                 {isAlgorithmic ? (
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 shadow-sm">
-                    <Zap className="w-3 h-3 text-amber-400" />
-                    ⚡ Thuật Toán Máy Tính
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1 shadow-sm">
+                    <Zap className="w-3 h-3 text-amber-300 fill-amber-300" />
+                    ⚡ Thuật Toán Máy (Offline 0.02ms)
                   </span>
                 ) : (
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1 shadow-sm">
-                    <Sparkles className="w-3 h-3 text-purple-400" />
-                    ✨ AI Gemini
+                    <Sparkles className="w-3 h-3 text-purple-300" />
+                    🤖 AI Cambridge
                   </span>
                 )}
               </div>
@@ -123,21 +131,23 @@ export default function SpeakingResultModal({
             {isAlgorithmic && onReEvaluateWithAI && (
               <button
                 onClick={onReEvaluateWithAI}
-                className="hidden sm:flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm"
-                title="Chấm lại toàn bộ bài thi bằng mô hình AI Gemini"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm"
+                title="Chấm lại toàn bộ bài thi bằng mô hình AI Cambridge"
               >
                 <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                <span>Chấm Lại Bằng AI</span>
+                <span className="hidden sm:inline">Chấm Lại Bằng AI</span>
+                <span className="sm:hidden">AI</span>
               </button>
             )}
             {!isAlgorithmic && onReEvaluateAlgorithmically && (
               <button
                 onClick={onReEvaluateAlgorithmically}
-                className="hidden sm:flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-200 border border-amber-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm"
                 title="Chấm lại ngay tức thì bằng Thuật toán chuẩn khảo thí Cambridge"
               >
                 <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span>Chấm Thuật Toán</span>
+                <span className="hidden sm:inline">Chấm Thuật Toán</span>
+                <span className="sm:hidden">Máy</span>
               </button>
             )}
             <button
@@ -200,11 +210,17 @@ export default function SpeakingResultModal({
             <div className="space-y-6">
               
               {/* 1. OVERALL HERO SCORECARD */}
-              <div className="p-6 rounded-3xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/70 border border-purple-800/40 relative overflow-hidden shadow-xl">
+              <div className={`p-6 rounded-3xl border relative overflow-hidden shadow-xl ${
+                isAlgorithmic 
+                  ? 'bg-gradient-to-r from-emerald-950/80 via-slate-900 to-teal-950/70 border-emerald-800/40' 
+                  : 'bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/70 border-purple-800/40'
+              }`}>
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
                   <div className="space-y-2 text-center sm:text-left">
-                    <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                      IELTS Official Scale
+                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
+                      isAlgorithmic ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                    }`}>
+                      IELTS Official Scale • Cambridge Assessment
                     </span>
                     <h3 className="text-2xl sm:text-3xl font-black text-white">
                       Điểm Dự Phóng Overall
@@ -215,8 +231,12 @@ export default function SpeakingResultModal({
                   </div>
 
                   {/* Band Score Circle */}
-                  <div className="flex flex-col items-center justify-center p-5 rounded-2xl bg-purple-950/80 border border-purple-700/60 shadow-2xl shrink-0 min-w-36 text-center">
-                    <span className="text-[10px] font-extrabold uppercase text-purple-300 tracking-wider">
+                  <div className={`flex flex-col items-center justify-center p-5 rounded-2xl border shadow-2xl shrink-0 min-w-36 text-center ${
+                    isAlgorithmic ? 'bg-emerald-950/80 border-emerald-700/60' : 'bg-purple-950/80 border-purple-700/60'
+                  }`}>
+                    <span className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                      isAlgorithmic ? 'text-emerald-300' : 'text-purple-300'
+                    }`}>
                       BAND SCORE
                     </span>
                     <span className="text-4xl sm:text-5xl font-black text-white tracking-tight my-0.5">
@@ -228,22 +248,90 @@ export default function SpeakingResultModal({
                   </div>
                 </div>
 
-                {/* Speech Metrics Strip */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-6 pt-5 border-t border-purple-900/40 text-center">
+                {/* Speech Metrics Strip: 4 Metric Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-6 pt-5 border-t border-slate-800/80 text-center">
                   <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Tổng Số Từ</span>
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Tổng Số Từ</span>
                     <span className="text-base sm:text-lg font-black text-white">{speechAnalytics.totalWords} từ</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Tốc Độ Nói (Pace)</span>
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Tốc Độ Nói</span>
                     <span className="text-base sm:text-lg font-black text-emerald-400">{speechAnalytics.wordsPerMinute} wpm</span>
+                    <span className="text-[9px] text-slate-500 block">Chuẩn: 110-150</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 font-bold block uppercase">Từ Đệm (Fillers)</span>
-                    <span className="text-base sm:text-lg font-black text-amber-400">{speechAnalytics.fillerWordsCount} lần</span>
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Từ Đệm / Do Dự</span>
+                    <span className="text-base sm:text-lg font-black text-amber-400">
+                      {speechAnalytics.fillerWordsCount} lần
+                      {speechAnalytics.fillerDensityPercent ? ` (${speechAnalytics.fillerDensityPercent}%)` : ''}
+                    </span>
+                    <span className="text-[9px] text-slate-500 block">uhm, er, like...</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                    <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Thời Lượng</span>
+                    <span className="text-base sm:text-lg font-black text-purple-300">
+                      {speechAnalytics.durationSec || totalDurationSec}s
+                    </span>
+                    <span className="text-[9px] text-slate-500 block">Bài thi 3 Parts</span>
                   </div>
                 </div>
               </div>
+
+              {/* DUAL-ENGINE SWITCHER BANNER */}
+              {(onReEvaluateWithAI || onReEvaluateAlgorithmically) && (
+                <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-3 ${
+                  isAlgorithmic 
+                    ? 'bg-gradient-to-r from-emerald-950/40 via-slate-900 to-indigo-950/30 border-emerald-700/50' 
+                    : 'bg-gradient-to-r from-purple-950/40 via-slate-900 to-emerald-950/30 border-purple-700/50'
+                }`}>
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      isAlgorithmic ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30' : 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                    }`}>
+                      {isAlgorithmic ? <Zap className="w-5 h-5 text-amber-300 fill-amber-300" /> : <Sparkles className="w-5 h-5 text-purple-300" />}
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <h4 className="text-xs sm:text-sm font-black text-white">
+                          {isAlgorithmic ? 'Đang hiển thị: Thuật Toán Khảo Thí Máy Tính (0.02ms Offline)' : 'Đang hiển thị: Giám Khảo AI Cambridge'}
+                        </h4>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          isAlgorithmic ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-purple-950 text-purple-300 border border-purple-800'
+                        }`}>
+                          {isAlgorithmic ? '100% Offline' : 'Cambridge AI'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">
+                        {isAlgorithmic 
+                          ? 'Phân tích định lượng chính xác 4 tiêu chí Cambridge (TTR từ vựng, câu phức, mật độ do dự, hard capping rules). Bạn có muốn AI nhận xét sâu từng câu & viết lại bản mẫu Band 8.5+?' 
+                          : 'Phân tích định tính toàn diện từ Giám Khảo AI. Bạn có muốn đối chiếu với các chỉ số kỹ thuật định lượng (WPM, fillers, thì ngữ pháp)?'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {isAlgorithmic ? (
+                    onReEvaluateWithAI && (
+                      <button
+                        onClick={onReEvaluateWithAI}
+                        className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs shrink-0 flex items-center justify-center space-x-2 shadow-lg shadow-purple-950/60 cursor-pointer transition-all hover:scale-[1.02]"
+                      >
+                        <Sparkles className="w-4 h-4 text-purple-200" />
+                        <span>🤖 Chấm Lại Bằng AI</span>
+                      </button>
+                    )
+                  ) : (
+                    onReEvaluateAlgorithmically && (
+                      <button
+                        onClick={onReEvaluateAlgorithmically}
+                        className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shrink-0 flex items-center justify-center space-x-2 shadow-lg shadow-emerald-950/60 cursor-pointer transition-all hover:scale-[1.02]"
+                      >
+                        <Zap className="w-4 h-4 text-amber-300 fill-amber-300" />
+                        <span>⚡ Xem Điểm Thuật Toán Máy</span>
+                      </button>
+                    )
+                  )}
+                </div>
+              )}
 
               {/* 2. 4 CRITERIA CARDS (FC, LR, GRA, PR) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

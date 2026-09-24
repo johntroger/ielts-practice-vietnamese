@@ -475,14 +475,29 @@ export default function SpeakingExaminerRoom({
         </div>
 
         {/* Right: Exit / Conclude */}
-        <button
-          onClick={onExitRoom}
-          className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
-          title="Thoát phòng thi"
-        >
-          <LogOut className="w-3.5 h-3.5 shrink-0" />
-          <span className="hidden sm:inline">Rời phòng</span>
-        </button>
+        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          <button
+            onClick={() => {
+              if (window.confirm('Bạn có muốn kết thúc bài thi ngay bây giờ để chuyển sang phần chấm điểm không?')) {
+                handleConcludeExam();
+              }
+            }}
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-colors cursor-pointer"
+            title="Nộp bài và chấm điểm"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5 text-purple-300 shrink-0" />
+            <span className="hidden sm:inline">Nộp bài & Chấm điểm</span>
+          </button>
+
+          <button
+            onClick={onExitRoom}
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
+            title="Thoát phòng thi"
+          >
+            <LogOut className="w-3.5 h-3.5 shrink-0" />
+            <span className="hidden sm:inline">Rời phòng</span>
+          </button>
+        </div>
       </div>
 
       {/* 2. THE 3D VIRTUAL STAGE (100dvh Zero Viewport Overflow) */}

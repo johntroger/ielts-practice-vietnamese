@@ -906,6 +906,43 @@ export default function SpeakingWorkspace({
             if (speechEngine.isListening) speechEngine.stopListening();
             if (speechEngine.clearAudioClips) speechEngine.clearAudioClips();
 
+            // 1. OFFLINE / NO-API-KEY DISPATCH: 100% instant 0.02ms algorithmic evaluation
+            if (!apiKey) {
+              const evalResult = evaluateSpeakingAlgorithmically({
+                dialogueHistory: finalTranscript,
+                mockPack: activeMockPack,
+                examiner: activeExaminer,
+                totalDurationSec: meta?.totalDurationSec || 600
+              });
+
+              setCurrentEvaluation(evalResult);
+              setCompletedExamData({ finalTranscript, meta, evaluation: evalResult });
+              setIsResultModalOpen(true);
+
+              const submissionRecord = {
+                id: `spk-${Date.now()}`,
+                submittedAt: new Date().toISOString(),
+                mockPack: {
+                  id: activeMockPack.id,
+                  title: activeMockPack.title,
+                  targetBand: activeMockPack.targetBand
+                },
+                examiner: {
+                  name: activeExaminer.name,
+                  accent: activeExaminer.accent
+                },
+                durationSec: meta?.totalDurationSec || 600,
+                evaluation: evalResult,
+                dialogueHistory: finalTranscript
+              };
+
+              if (onSpeakingSubmitted) {
+                onSpeakingSubmitted(submissionRecord);
+              }
+              return;
+            }
+
+            // 2. AI EVALUATION DISPATCH (with automatic resilient fallback)
             setIsEvaluating(true);
             setIsResultModalOpen(true);
 
@@ -943,7 +980,15 @@ export default function SpeakingWorkspace({
                 onSpeakingSubmitted(submissionRecord);
               }
             } catch (err) {
-              console.error('Error during speaking exam evaluation:', err);
+              console.error('Error during speaking exam evaluation, falling back to algorithmic:', err);
+              const fallbackResult = evaluateSpeakingAlgorithmically({
+                dialogueHistory: finalTranscript,
+                mockPack: activeMockPack,
+                examiner: activeExaminer,
+                totalDurationSec: meta?.totalDurationSec || 600
+              });
+              setCurrentEvaluation(fallbackResult);
+              setCompletedExamData({ finalTranscript, meta, evaluation: fallbackResult });
             } finally {
               setIsEvaluating(false);
             }
