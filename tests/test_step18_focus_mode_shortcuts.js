@@ -41,8 +41,11 @@ assert(appCode.includes('onSubmitEssay={handleSubmitEssay}'), 'App.jsx must wire
 console.log('  ✅ 3. App.jsx correctly coordinates Focus Mode, Zen Mode full-height, and global shortcut events');
 
 // 4. Verify no syntax or runtime logic collisions with editable elements
-assert(appCode.includes('activeEl.tagName === \'INPUT\''), 'Global listener must ignore simple keys when editing inputs');
-assert(appCode.includes('activeEl.tagName === \'TEXTAREA\''), 'Global listener must ignore ? shortcut when typing in textarea');
+const hookPath = path.resolve('src/hooks/useKeyboardShortcuts.js');
+const hookCode = fs.existsSync(hookPath) ? fs.readFileSync(hookPath, 'utf8') : '';
+const combinedListenerCode = appCode + hookCode;
+assert(combinedListenerCode.includes('activeEl.tagName === \'INPUT\''), 'Global listener must ignore simple keys when editing inputs');
+assert(combinedListenerCode.includes('activeEl.tagName === \'TEXTAREA\''), 'Global listener must ignore ? shortcut when typing in textarea');
 console.log('  ✅ 4. Shortcuts safely guard against accidental triggers during text editing');
 
 console.log('🎉 Step 18: Focus Mode & Keyboard Shortcuts System tests PASSED 100%!\n');
