@@ -550,14 +550,14 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Help Center (F1) */}
+            {/* Help Center (F1) - 100% Công khai, không cần đăng nhập */}
             <button
               onClick={doOpenFeaturesGuide}
               className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
-              title="Trung tâm trợ giúp & Hướng dẫn tính năng (Phím tắt: F1)"
+              title="Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"
             >
-              <HelpCircle className="w-3.5 h-3.5 text-slate-600" />
-              <span className="hidden xl:inline text-[11px] font-semibold">Trợ Giúp</span>
+              <HelpCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+              <span className="hidden sm:inline text-[11px] font-semibold">Trợ Giúp</span>
               <kbd className="hidden 2xl:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
@@ -897,12 +897,13 @@ export default function Navbar({
 
                   <button
                     onClick={() => { doOpenFeaturesGuide(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 border border-red-100 mt-2 min-h-[44px] cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 border border-red-200 mt-2 min-h-[44px] cursor-pointer shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
-                      <Compass className="w-4 h-4 text-red-600" />
-                      <span>Khám Phá Tất Cả Tính Năng Web</span>
+                      <HelpCircle className="w-4 h-4 text-red-600" />
+                      <span>Trung Tâm Trợ Giúp & Hướng Dẫn</span>
                     </div>
+                    <span className="text-[10px] text-red-600 font-extrabold bg-white border border-red-200 px-1.5 py-0.5 rounded-full">Công Khai</span>
                   </button>
 
                   <button
