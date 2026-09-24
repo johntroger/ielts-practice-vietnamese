@@ -27,7 +27,8 @@ import {
   Mail,
   Target,
   Award,
-  SlidersHorizontal
+  SlidersHorizontal,
+  HelpCircle
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 
@@ -548,6 +549,17 @@ export default function Navbar({
                 </>
               )}
             </div>
+
+            {/* Help Center (F1) */}
+            <button
+              onClick={doOpenFeaturesGuide}
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
+              title="Trung tâm trợ giúp & Hướng dẫn tính năng (Phím tắt: F1)"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden xl:inline text-[11px] font-semibold">Trợ Giúp</span>
+              <kbd className="hidden 2xl:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
+            </button>
 
             {/* API Key Indicator */}
             <button

@@ -455,6 +455,7 @@ export default function App() {
     onToggleMastered: handleToggleMastered,
     currentTaskId,
     onOpenTheory: () => setIsTheoryOpen(true),
+    onOpenHelp: () => setIsFeaturesGuideOpen(prev => !prev),
     isShortcutsOpen,
     setIsShortcutsOpen,
     isFocusMode,
@@ -1469,6 +1470,9 @@ export default function App() {
       <FeaturesGuideModal
         isOpen={isFeaturesGuideOpen || modals.featuresGuide}
         onClose={() => { setIsFeaturesGuideOpen(false); triggerCloseModal('featuresGuide'); }}
+        initialSkill={activeSkill}
+        onNavigateWorkspace={(skill) => setActiveSkill(skill)}
+        onOpenModal={(modalName) => triggerOpenModal(modalName)}
       />
 
       <UserProfileModal

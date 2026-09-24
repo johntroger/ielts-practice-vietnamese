@@ -16,6 +16,7 @@ export function useKeyboardShortcuts({
   onToggleMastered,
   currentTaskId,
   onOpenTheory,
+  onOpenHelp,
   isShortcutsOpen,
   setIsShortcutsOpen,
   isFocusMode,
@@ -23,6 +24,12 @@ export function useKeyboardShortcuts({
 }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // F1 or Alt + H: Open Help Center & Features Guide
+      if (e.key === 'F1' || (e.altKey && (e.key === 'h' || e.key === 'H'))) {
+        e.preventDefault();
+        if (onOpenHelp) onOpenHelp();
+        return;
+      }
       const activeEl = document.activeElement;
       const isEditing = activeEl && (
         activeEl.tagName === 'INPUT' ||
@@ -89,6 +96,7 @@ export function useKeyboardShortcuts({
     onToggleMastered,
     currentTaskId,
     onOpenTheory,
+    onOpenHelp,
     isShortcutsOpen,
     setIsShortcutsOpen,
     isFocusMode,
