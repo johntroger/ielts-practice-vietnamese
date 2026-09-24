@@ -30,17 +30,17 @@ export const SPOKEN_DISCOURSE_MARKERS = [
   { phrase: 'all in all', regex: /\b(all\s+in\s+all|at\s+the\s+end\s+of\s+the\s+day|in\s+a\s+nutshell)\b/gi, label: 'Tóm lược câu trả lời' }
 ];
 
-// 3. High-Band Spoken Collocations (Cambridge C1-C2)
+// 3. High-Band Spoken Collocations (Cambridge C1-C2) - Supporting all verb tenses
 export const GOLDEN_SPOKEN_COLLOCATIONS = [
-  { phrase: 'leave an indelible impression on', regex: /\bleave\s+an\s+indelible\s+impression\b/gi, meaning: 'để lại ấn tượng sâu đậm không thể phai mờ' },
-  { phrase: 'exert a profound influence on', regex: /\bexert\s+a\s+profound\s+(influence|impact)\b/gi, meaning: 'tạo ra ảnh hưởng sâu sắc đến' },
-  { phrase: 'weigh the pros and cons', regex: /\bweigh\s+the\s+pros\s+and\s+cons\b/gi, meaning: 'cân nhắc kỹ lưỡng ưu và nhược điểm' },
+  { phrase: 'leave an indelible impression on', regex: /\b(leave|leaves|left)\s+an\s+indelible\s+impression\b/gi, meaning: 'để lại ấn tượng sâu đậm không thể phai mờ' },
+  { phrase: 'exert a profound influence on', regex: /\b(exert|exerts|exerted)\s+a\s+profound\s+(influence|impact)\b/gi, meaning: 'tạo ra ảnh hưởng sâu sắc đến' },
+  { phrase: 'weigh the pros and cons', regex: /\b(weigh|weighs|weighed)\s+the\s+pros\s+and\s+cons\b/gi, meaning: 'cân nhắc kỹ lưỡng ưu và nhược điểm' },
   { phrase: 'integral component', regex: /\bintegral\s+(component|part)\b/gi, meaning: 'thành tố cốt lõi không thể thiếu' },
   { phrase: 'broad spectrum of', regex: /\b(broad|wide)\s+spectrum\s+of\b/gi, meaning: 'nhiều khía cạnh, phổ rộng đa dạng' },
-  { phrase: 'strike a balance between', regex: /\bstrike\s+a\s+balance\b/gi, meaning: 'đạt được sự cân bằng hài hòa' },
-  { phrase: 'play a pivotal role in', regex: /\bplay\s+a\s+(pivotal|crucial|vital)\s+role\b/gi, meaning: 'đóng vai trò nòng cốt' },
-  { phrase: 'broaden one\'s horizons', regex: /\bbroaden\s+(my|one's|our)\s+horizons\b/gi, meaning: 'mở rộng tầm nhìn và thế giới quan' },
-  { phrase: 'have a knock-on effect', regex: /\b(have|create)\s+a\s+knock-on\s+effect\b/gi, meaning: 'tạo ra hiệu ứng dây chuyền liên đới' },
+  { phrase: 'strike a balance between', regex: /\b(strike|strikes|struck)\s+a\s+balance\b/gi, meaning: 'đạt được sự cân bằng hài hòa' },
+  { phrase: 'play a pivotal role in', regex: /\b(play|plays|played)\s+a\s+(pivotal|crucial|vital)\s+role\b/gi, meaning: 'đóng vai trò nòng cốt' },
+  { phrase: 'broaden one\'s horizons', regex: /\b(broaden|broadens|broadened)\s+(my|one's|our|their|his|her)(\s+[a-z]+)?\s+horizons\b/gi, meaning: 'mở rộng tầm nhìn và thế giới quan' },
+  { phrase: 'have a knock-on effect', regex: /\b(have|has|had|create|creates|created)\s+a\s+knock-on\s+effect\b/gi, meaning: 'tạo ra hiệu ứng dây chuyền liên đới' },
   { phrase: 'a case in point is', regex: /\ba\s+case\s+in\s+point\b/gi, meaning: 'một ví dụ điển hình minh chứng cho' }
 ];
 
@@ -76,6 +76,25 @@ export function analyzeFluencyAndCoherence(candidateTurns, totalDurationSec = 60
   const allSpokenText = candidateTurns.map(t => t.text || '').join(' ');
   const words = allSpokenText.trim().split(/\s+/).filter(Boolean);
   const totalWords = words.length;
+
+  if (totalWords === 0) {
+    return {
+      band: 2.0,
+      totalWords: 0,
+      wordsPerMinute: 0,
+      fillerWordsCount: 0,
+      fillerDensityPercent: 0,
+      p2DurationSec: 0,
+      matchedMarkers: [],
+      hasBriefP1: true,
+      hasPersonalP3Trap: false,
+      fcCapReason: 'Không ghi nhận bài nói nào từ thí sinh.',
+      strengths: 'Chưa có dữ liệu bài nói để đánh giá.',
+      weaknesses: 'Không phát hiện giọng nói hoặc bài nói bị ngắt quãng.',
+      fillerAnalysis: 'Không có dữ liệu.',
+      connectivesEvaluation: 'Chưa xuất hiện liên từ.'
+    };
+  }
 
   // Estimated or actual candidate speaking time in minutes
   const candidateTurnsWithDuration = candidateTurns.filter(t => typeof t.durationSec === 'number' && t.durationSec > 0);
@@ -194,6 +213,23 @@ export function analyzeLexicalResource(candidateTurns) {
   const words = allSpokenText.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/).filter(Boolean);
   const totalWords = words.length;
 
+  if (totalWords === 0) {
+    return {
+      band: 2.0,
+      typeTokenRatio: 0,
+      matchedCollocations: [],
+      severeRepetition: false,
+      strengths: 'Chưa có dữ liệu bài nói để đánh giá.',
+      weaknesses: 'Không ghi nhận từ vựng nào.',
+      advancedWordsUsed: [],
+      recommendedCollocations: [
+        { phrase: 'exert a profound influence on', meaning: 'tạo ra ảnh hưởng sâu sắc đến', example: 'Modern media exerts a profound influence on youth aspirations.' },
+        { phrase: 'integral component', meaning: 'thành tố cốt lõi không thể thiếu', example: 'Critical thinking is an integral component of problem solving.' },
+        { phrase: 'weigh the pros and cons', meaning: 'cân nhắc kỹ lưỡng ưu nhược điểm', example: 'Individuals must weigh the pros and cons before making major investments.' }
+      ]
+    };
+  }
+
   const uniqueWords = new Set(words);
   const typeTokenRatio = totalWords > 0 ? (uniqueWords.size / totalWords) : 0;
 
@@ -251,6 +287,19 @@ export function analyzeLexicalResource(candidateTurns) {
  */
 export function analyzeGrammaticalRangeAndAccuracy(candidateTurns, mockPack) {
   const allSpokenText = candidateTurns.map(t => t.text || '').join(' ');
+  const words = allSpokenText.trim().split(/\s+/).filter(Boolean);
+
+  if (words.length === 0) {
+    return {
+      band: 2.0,
+      complexConnectors: 0,
+      detectedSlips: [],
+      pastTenseInconsistency: false,
+      strengths: 'Chưa có dữ liệu bài nói để đánh giá.',
+      weaknesses: 'Không ghi nhận cấu trúc câu nào.',
+      frequentMistakes: []
+    };
+  }
 
   // Detect Complex Connectors
   const complexConnectors = (allSpokenText.match(/\b(because|although|even\s+though|while|whereas|since|unless|if|so\s+that|which|who|that|provided\s+that)\b/gi) || []).length;
@@ -324,6 +373,16 @@ export function analyzeGrammaticalRangeAndAccuracy(candidateTurns, mockPack) {
  * 4. Analyzes Pronunciation (PR) based on WPM, speech flow, and pauses
  */
 export function analyzePronunciationCadence(wpm, fillerDensityPercent, totalWords) {
+  if (!totalWords || totalWords === 0) {
+    return {
+      band: 2.0,
+      title: 'Pronunciation',
+      strengths: 'Chưa có âm thanh để phân tích.',
+      weaknesses: 'Không phát hiện giọng nói.',
+      pronunciationAdvice: 'Vui lòng kiểm tra lại micro và nói to, rõ ràng.'
+    };
+  }
+
   let prBand = 6.0;
   if (wpm >= 120 && wpm <= 160 && fillerDensityPercent <= 3 && totalWords >= 150) {
     prBand = 7.5;
@@ -400,6 +459,35 @@ export function evaluateSpeakingAlgorithmically({
   const allSpokenText = candidateTurns.map(t => t.text || '').join(' ');
   const words = allSpokenText.trim().split(/\s+/).filter(Boolean);
   const totalWords = words.length;
+
+  if (candidateTurns.length === 0 || totalWords === 0) {
+    const minBand = 2.0;
+    return {
+      overallBand: minBand,
+      evaluationMethod: 'algorithmic',
+      examinerSummaryVerdict: 'Đánh giá tổng kết: Không phát hiện câu trả lời nào từ thí sinh trong buổi thi. Vui lòng kiểm tra thiết bị micro và thử lại.',
+      speechAnalytics: {
+        totalWords: 0,
+        wordsPerMinute: 0,
+        fillerWordsCount: 0,
+        fillerDensityPercent: 0,
+        part2DurationSec: 0
+      },
+      criteria: {
+        fc: { band: minBand, strengths: 'Chưa có dữ liệu', weaknesses: 'Không ghi nhận bài nói.' },
+        lr: { band: minBand, strengths: 'Chưa có dữ liệu', weaknesses: 'Không ghi nhận từ vựng.' },
+        gra: { band: minBand, strengths: 'Chưa có dữ liệu', weaknesses: 'Không ghi nhận cấu trúc câu.' },
+        pr: { band: minBand, strengths: 'Chưa có dữ liệu', weaknesses: 'Không phát hiện âm thanh.' }
+      },
+      top3ActionPlan: {
+        priority1: 'Kiểm tra lại micro và cấp quyền truy cập trình duyệt.',
+        priority2: 'Đảm bảo môi trường yên tĩnh, nói to và rõ ràng.',
+        priority3: 'Bấm nút mic hoặc phím Space để bắt đầu trả lời từng câu hỏi của giám khảo.'
+      },
+      turnEvaluations: [],
+      submittedAt: new Date().toISOString()
+    };
+  }
 
   // 1. Analyze 4 Criteria
   const fc = analyzeFluencyAndCoherence(candidateTurns, totalDurationSec);
@@ -489,5 +577,293 @@ export function evaluateSpeakingAlgorithmically({
     top3ActionPlan,
     turnEvaluations,
     submittedAt: new Date().toISOString()
+  };
+}
+
+/**
+ * Standalone Algorithmic Evaluator for Single Question Speaking Practice (Part 1, 2, or 3)
+ * 100% Standalone & Offline-Capable (Zero external API dependencies).
+ * Immediate response (< 15ms), completely free, deterministic.
+ */
+export function evaluateSinglePracticeAnswerAlgorithmically({
+  part = 1,
+  topicTitle = '',
+  questionText = '',
+  cueBullets = [],
+  candidateTranscript = '',
+  durationSec = 30
+}) {
+  const cleanTranscript = (candidateTranscript || '').trim();
+  const words = cleanTranscript.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+
+  // 1. Edge Case: Empty or under 3 words
+  if (wordCount < 3) {
+    const minBand = 2.0;
+    return {
+      overallBand: minBand,
+      evaluationMethod: 'algorithmic',
+      isShortOrEmpty: true,
+      criteria: {
+        fc: {
+          band: minBand,
+          feedback: 'Không ghi nhận được câu trả lời hoặc câu trả lời quá ngắn (< 3 từ).'
+        },
+        lr: {
+          band: minBand,
+          feedback: 'Vốn từ vựng chưa đủ để hình thành ngữ cảnh giao tiếp.'
+        },
+        gra: {
+          band: minBand,
+          feedback: 'Chưa xuất hiện cấu trúc câu hoàn chỉnh.'
+        },
+        pr: {
+          band: minBand,
+          feedback: 'Chưa đủ mẫu âm thanh để phân tích nhịp điệu phát âm.'
+        }
+      },
+      corrections: [],
+      upgradedBand8: 'Vui lòng nói ít nhất 15-30 từ để hệ thống phân tích chi tiết 4 tiêu chí.',
+      goldenCollocations: [
+        { phrase: 'integral component', meaningVi: 'thành phần không thể thiếu' },
+        { phrase: 'exert a profound influence', meaningVi: 'tạo ra ảnh hưởng sâu sắc' }
+      ],
+      examinerComment: 'Bài nói quá ngắn hoặc micro không thu được tiếng rõ ràng. Vui lòng nói to, rõ ràng và thử lại!',
+      top3ActionPlan: {
+        priority1: 'Nói đủ độ dài: Part 1 cần ít nhất 2-3 câu (25-45 từ), Part 2 cần nói liên tục 1-2 phút (120-200 từ), Part 3 cần 3-5 câu (40-70 từ).',
+        priority2: 'Kiểm tra thiết bị thu âm: Đảm bảo micro hoạt động tốt và môi trường không bị tạp âm.',
+        priority3: 'Áp dụng công thức A.R.E.A (Answer, Reason, Example, Alternative) để mở rộng ý tưởng.'
+      },
+      speechAnalytics: {
+        wordCount: 0,
+        wordsPerMinute: 0,
+        fillerCount: 0,
+        fillerDensityPercent: 0,
+        durationSec: durationSec || 0
+      }
+    };
+  }
+
+  // 2. Speech Analytics
+  const effectiveSec = Math.max(5, durationSec > 0 ? durationSec : Math.round((wordCount / 130) * 60));
+  const wordsPerMinute = Math.round((wordCount / (effectiveSec / 60)));
+
+  // Fillers
+  const fillersFound = cleanTranscript.match(FILLER_REGEX) || [];
+  const fillerCount = fillersFound.length;
+  const fillerDensityPercent = Math.round((fillerCount / wordCount) * 100);
+
+  // Spoken Discourse Markers
+  const matchedMarkers = [];
+  SPOKEN_DISCOURSE_MARKERS.forEach(item => {
+    item.regex.lastIndex = 0;
+    if (item.regex.test(cleanTranscript)) {
+      matchedMarkers.push(item.phrase);
+    }
+  });
+
+  // Advanced Collocations
+  const matchedCollocations = [];
+  GOLDEN_SPOKEN_COLLOCATIONS.forEach(item => {
+    item.regex.lastIndex = 0;
+    if (item.regex.test(cleanTranscript)) {
+      matchedCollocations.push({ phrase: item.phrase, meaningVi: item.meaning });
+    }
+  });
+
+  // Grammatical Range & Slips
+  const complexConnectors = (cleanTranscript.match(/\b(because|although|even\s+though|while|whereas|since|unless|if|so\s+that|which|who|that|provided\s+that)\b/gi) || []).length;
+  const detectedSlips = [];
+  SPOKEN_GRAMMAR_SLIPS.forEach(slip => {
+    slip.regex.lastIndex = 0;
+    let match;
+    while ((match = slip.regex.exec(cleanTranscript)) !== null) {
+      detectedSlips.push({
+        original: match[0],
+        corrected: slip.fix,
+        explanation: slip.explanation
+      });
+    }
+  });
+
+  // Lexical Diversity (TTR)
+  const normalizedWords = cleanTranscript.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/).filter(Boolean);
+  const uniqueWords = new Set(normalizedWords);
+  const ttr = wordCount > 0 ? uniqueWords.size / wordCount : 0;
+
+  // Basic word repetition
+  const basicWords = ['good', 'very', 'like', 'thing', 'bad', 'happy'];
+  let severeRepetition = false;
+  basicWords.forEach(bw => {
+    const reg = new RegExp(`\\b${bw}\\b`, 'gi');
+    const cnt = (cleanTranscript.match(reg) || []).length;
+    if (cnt >= 4) severeRepetition = true;
+  });
+
+  // Narrative past tense check for Part 2
+  let pastTenseInconsistency = false;
+  if (part === 2) {
+    const qLower = (questionText + ' ' + topicTitle).toLowerCase();
+    const isPastCue = qLower.includes('describe a time') || qLower.includes('an event') || qLower.includes('a journey') || qLower.includes('past') || qLower.includes('went');
+    if (isPastCue) {
+      const pastCount = (cleanTranscript.match(PAST_VERBS_REGEX) || []).length;
+      const presentCount = (cleanTranscript.match(PRESENT_VERBS_REGEX) || []).length;
+      if (presentCount > pastCount * 1.5 && presentCount >= 4) {
+        pastTenseInconsistency = true;
+      }
+    }
+  }
+
+  // 3. Criteria Scoring with Cambridge Hard Capping
+  // --- Fluency & Coherence (FC) ---
+  let fcBand = 6.0;
+  if (wordsPerMinute >= 115 && wordsPerMinute <= 165) fcBand = 7.5;
+  else if (wordsPerMinute >= 95 && wordsPerMinute < 115) fcBand = 7.0;
+  else if (wordsPerMinute >= 80 && wordsPerMinute < 95) fcBand = 6.0;
+  else if (wordsPerMinute >= 60 && wordsPerMinute < 80) fcBand = 5.0;
+  else if (wordsPerMinute < 60) fcBand = 4.5;
+  else if (wordsPerMinute > 185) fcBand = 6.0;
+
+  if (matchedMarkers.length >= 1) fcBand += 0.5;
+  if (matchedMarkers.length >= 3) fcBand += 0.5;
+
+  let fcCapReason = null;
+  if (part === 1 && wordCount < 15) {
+    fcBand = Math.min(fcBand, 5.5);
+    fcCapReason = 'Câu trả lời Part 1 quá ngắn (< 15 từ). Barem Cambridge khống chế Fluency tối đa Band 5.5.';
+  } else if (part === 2) {
+    if (effectiveSec < 60 && wordCount < 80) {
+      fcBand = Math.min(fcBand, 5.0);
+      fcCapReason = 'Bài nói Part 2 dừng lại quá sớm (< 60s). Khống chế Fluency ở mức tối đa Band 5.0.';
+    } else if (effectiveSec < 90 && wordCount < 120) {
+      fcBand = Math.min(fcBand, 6.0);
+      fcCapReason = 'Bài nói Part 2 chưa chạm mốc 90 giây. Giới hạn Fluency ở mức tối đa Band 6.0.';
+    } else if (effectiveSec >= 105 && effectiveSec <= 130) {
+      fcBand = Math.min(9.0, fcBand + 0.5);
+    }
+  } else if (part === 3 && wordCount < 25) {
+    fcBand = Math.min(fcBand, 5.5);
+    fcCapReason = 'Câu trả lời Part 3 quá ngắn (< 25 từ). Chưa thể hiện được khả năng phân tích lập luận sâu.';
+  }
+
+  if (fillerDensityPercent > 10) {
+    fcBand = Math.min(fcBand, 5.0);
+    fcCapReason = `Mật độ từ đệm (${fillerDensityPercent}%) quá cao. Giới hạn Fluency ở Band 5.0.`;
+  } else if (fillerDensityPercent > 5) {
+    fcBand = Math.min(fcBand, 6.0);
+    if (!fcCapReason) fcCapReason = `Mật độ từ đệm (${fillerDensityPercent}%) làm giảm độ liền mạch.`;
+  }
+  fcBand = roundToIeltsBand(Math.max(2.0, Math.min(9.0, fcBand)));
+
+  // --- Lexical Resource (LR) ---
+  let lrBand = 6.0;
+  if (ttr >= 0.55 && (wordCount >= 30 || matchedCollocations.length >= 1)) lrBand = 7.0;
+  else if (ttr >= 0.45) lrBand = 6.5;
+  else if (ttr < 0.35) lrBand = 5.5;
+
+  if (matchedCollocations.length >= 1) lrBand += 0.5;
+  if (matchedCollocations.length >= 3) lrBand += 0.5;
+  if (severeRepetition) lrBand = Math.min(lrBand, 6.0);
+  lrBand = roundToIeltsBand(Math.max(2.0, Math.min(9.0, lrBand)));
+
+  // --- Grammatical Range & Accuracy (GRA) ---
+  let graBand = 6.0;
+  if (complexConnectors >= 2 && detectedSlips.length === 0) graBand = 7.0;
+  else if (complexConnectors >= 4 && detectedSlips.length === 0) graBand = 8.0;
+  else if (detectedSlips.length >= 2) graBand = 5.5;
+  else if (detectedSlips.length >= 4) graBand = 5.0;
+
+  if (pastTenseInconsistency) {
+    graBand = Math.min(graBand, 5.5);
+  }
+  graBand = roundToIeltsBand(Math.max(2.0, Math.min(9.0, graBand)));
+
+  // --- Pronunciation (PR) ---
+  let prBand = 6.0;
+  if (wordsPerMinute >= 115 && wordsPerMinute <= 160 && fillerDensityPercent <= 4) prBand = 7.5;
+  else if (wordsPerMinute >= 95 && fillerDensityPercent <= 7) prBand = 6.5;
+  else if (wordsPerMinute < 85 || fillerDensityPercent > 10) prBand = 5.0;
+  prBand = roundToIeltsBand(Math.max(2.0, Math.min(9.0, prBand)));
+
+  // 4. Overall Band Calculation
+  const avg = (fcBand + lrBand + graBand + prBand) / 4;
+  const overallBand = roundToIeltsBand(avg);
+
+  // 5. Corrections, Upgrades & Summary
+  const corrections = detectedSlips.length > 0 
+    ? detectedSlips 
+    : [
+        {
+          original: words.slice(0, 6).join(' '),
+          corrected: part === 3 
+            ? `From a broader sociological viewpoint, ${words.slice(0, 5).join(' ')}` 
+            : `To be completely candid, ${words.slice(0, 5).join(' ')}`,
+          explanation: 'Bổ sung liên từ mở đầu tự nhiên để tăng độ trôi chảy và tính học thuật.'
+        }
+      ];
+
+  let upgradedBand8 = '';
+  if (part === 1) {
+    upgradedBand8 = `Well, to be perfectly honest, I would say that ${cleanTranscript}. Specifically, this offers an invaluable avenue to broaden my personal horizons while concurrently alleviating stress.`;
+  } else if (part === 2) {
+    upgradedBand8 = `To kick off, I would like to dwell upon an experience that left an indelible impression on me. ${cleanTranscript}. Looking back, this transformative episode not only broadened my outlook but also played a pivotal role in shaping my personal aspirations.`;
+  } else {
+    upgradedBand8 = `Well, examining this from a broader sociological perspective, it is widely acknowledged that ${cleanTranscript}. Consequently, this exerts a profound influence on community cohesion and long-term societal progress.`;
+  }
+
+  const goldenCollocations = matchedCollocations.length > 0 
+    ? matchedCollocations 
+    : [
+        { phrase: 'integral component', meaningVi: 'thành phần cốt lõi không thể thiếu' },
+        { phrase: 'exert a profound influence', meaningVi: 'tạo ra ảnh hưởng sâu sắc đến' },
+        { phrase: 'weigh the pros and cons', meaningVi: 'cân nhắc kỹ lưỡng ưu nhược điểm' }
+      ];
+
+  const examinerComment = `Đánh giá câu trả lời Part ${part}: Bạn đạt Band ${overallBand.toFixed(1)} theo chuẩn Cambridge Speaking. Tốc độ nói ~${wordsPerMinute} wpm với ${fillerCount} lần ngập ngừng (${fillerDensityPercent}%). ${fcCapReason ? `Lưu ý: ${fcCapReason}` : 'Mạch lạc ổn định, phản xạ trả lời tốt.'}`;
+
+  return {
+    overallBand,
+    evaluationMethod: 'algorithmic',
+    criteria: {
+      fc: {
+        band: fcBand,
+        feedback: fcCapReason || `Tốc độ nói ~${wordsPerMinute} wpm (${wordsPerMinute >= 110 ? 'nhịp độ tự nhiên' : 'hơi chậm'}), sử dụng ${matchedMarkers.length} liên từ văn nói.`
+      },
+      lr: {
+        band: lrBand,
+        matchedCollocations,
+        feedback: matchedCollocations.length > 0 
+          ? `Sử dụng thành công ${matchedCollocations.length} collocations C1-C2: ${matchedCollocations.map(c => `'${c.phrase}'`).join(', ')}.` 
+          : 'Từ vựng đáp ứng tốt câu hỏi, nên bổ sung thêm collocations học thuật để đạt Band 7.0+.'
+      },
+      gra: {
+        band: graBand,
+        feedback: pastTenseInconsistency 
+          ? 'BẪY THÌ QUÁ KHỨ: Kể trải nghiệm quá khứ nhưng dùng quá nhiều thì hiện tại.' 
+          : (detectedSlips.length > 0 
+            ? `Phát hiện ${detectedSlips.length} lỗi hòa hợp chủ vị hoặc chia thì.` 
+            : `Kiểm soát ngữ pháp tốt với ${complexConnectors} liên từ phụ thuộc.`)
+      },
+      pr: {
+        band: prBand,
+        feedback: `Nhịp điệu nhả âm đạt ${wordsPerMinute} wpm, độ trôi chảy ${fillerDensityPercent <= 5 ? 'tốt' : 'cần tiết chế từ đệm'}.`
+      }
+    },
+    corrections,
+    upgradedBand8,
+    goldenCollocations,
+    examinerComment,
+    top3ActionPlan: {
+      priority1: fcCapReason || (fillerCount > 3 ? 'Giảm bớt từ đệm (um, like) bằng khoảng dừng 1 giây.' : 'Tiếp tục duy trì tốc độ nói tự nhiên 120-150 wpm.'),
+      priority2: matchedCollocations.length < 1 ? 'Chèn thêm 1-2 cụm collocation như "integral component", "profound impact".' : 'Đa dạng hóa vốn từ vựng theo chủ đề chuyên sâu.',
+      priority3: detectedSlips.length > 0 ? 'Khắc phục triệt để lỗi chia động từ số ít/số nhiều trong văn nói.' : 'Luyện ngữ điệu nhấn nhá vào từ mang trọng tâm thông tin.'
+    },
+    speechAnalytics: {
+      wordCount,
+      wordsPerMinute,
+      fillerCount,
+      fillerDensityPercent,
+      durationSec: effectiveSec
+    }
   };
 }

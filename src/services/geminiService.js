@@ -3,7 +3,10 @@
  * Directly communicates with Google Gemini API using structured JSON prompts.
  */
 
-import { evaluateSpeakingAlgorithmically } from './algorithmicSpeakingService.js';
+import { 
+  evaluateSpeakingAlgorithmically, 
+  evaluateSinglePracticeAnswerAlgorithmically 
+} from './algorithmicSpeakingService.js';
 import { applyCambridgeWritingHardCaps } from '../utils/ieltsScoringRules.js';
 
 const DEFAULT_MODEL = 'gemini-3.6-flash';
@@ -2796,7 +2799,7 @@ OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
   }
 }
 
-export { evaluateSpeakingAlgorithmically };
+export { evaluateSpeakingAlgorithmically, evaluateSinglePracticeAnswerAlgorithmically };
 
 /**
  * AI Speaking Mock Test Pack Generator
@@ -2945,43 +2948,14 @@ export async function evaluateSpeakingPracticeAnswer({
   const wordCount = words.length;
 
   if (!apiKey || wordCount < 5) {
-    // Fallback heuristic evaluation
-    const baseBand = wordCount > 100 ? 7.0 : wordCount > 40 ? 6.5 : 6.0;
-    return {
-      overallBand: baseBand,
-      criteria: {
-        fc: {
-          band: baseBand,
-          feedback: `Duy trì được tốc độ nói tự nhiên, câu trả lời có độ dài ${wordCount} từ phù hợp với yêu cầu của Part ${part}.`
-        },
-        lr: {
-          band: baseBand,
-          feedback: 'Sử dụng từ vựng đúng ngữ cảnh, diễn đạt rõ ý.'
-        },
-        gra: {
-          band: Math.max(5.5, baseBand - 0.5),
-          feedback: 'Cấu trúc câu cơ bản kiểm soát tốt, cần tăng cường câu phức.'
-        },
-        pr: {
-          band: baseBand,
-          feedback: 'Phát âm rõ ràng, nhịp điệu dễ theo dõi.'
-        }
-      },
-      corrections: [
-        {
-          original: words.slice(0, 6).join(' ') || 'my answer',
-          corrected: `From my perspective, ${words.slice(0, 6).join(' ') || 'this is crucial'}`,
-          explanation: 'Thêm cụm mở đầu tự nhiên để câu nói học thuật và trôi chảy hơn.'
-        }
-      ],
-      upgradedBand8: `Well, to speak candidly about this, I would argue that ${candidateTranscript}`,
-      goldenCollocations: [
-        { phrase: 'profound impact', meaningVi: 'ảnh hưởng sâu sắc' },
-        { phrase: 'integral component', meaningVi: 'thành phần không thể thiếu' },
-        { phrase: 'broaden horizons', meaningVi: 'mở rộng tầm nhìn' }
-      ],
-      examinerComment: 'Bạn đã hoàn thành câu trả lời khá tốt. Hãy chú ý mở rộng thêm ví dụ thực tế và sử dụng các liên từ học thuật.'
-    };
+    return evaluateSinglePracticeAnswerAlgorithmically({
+      part,
+      topicTitle,
+      questionText,
+      cueBullets,
+      candidateTranscript,
+      durationSec
+    });
   }
 
   const prompt = `You are a Senior Cambridge IELTS Speaking Examiner (IDP/British Council assessment standards).
