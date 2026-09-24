@@ -177,6 +177,23 @@ export default function TaskGeneratorModal({
                 </div>
               </div>
 
+              {/* Process & Map Guaranteed Visual Illustration Banner */}
+              {(task1Type === 'process' || task1Type === 'map') && (
+                <div className="p-3 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/90 text-emerald-950 flex items-center space-x-2.5 shadow-2xs animate-in fade-in duration-150">
+                  <div className="p-2 rounded-lg bg-emerald-600 text-white shrink-0 shadow-xs">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div className="text-xs">
+                    <strong className="text-emerald-900 block font-bold">Bắt buộc kèm hình ảnh minh họa chuẩn Cambridge:</strong>
+                    <span className="text-[11px] text-emerald-800">
+                      {task1Type === 'process' 
+                        ? 'Đề sinh ra được tự động vẽ sơ đồ vector (Process Flowchart) tuần tự các giai đoạn.' 
+                        : 'Đề sinh ra được tự động vẽ bản đồ đối chiếu (Dual-Period Map) trước & sau quy hoạch.'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Time-Frame Selection (Dynamic vs Static) */}
               {task1Type !== 'process' && task1Type !== 'map' && (
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">

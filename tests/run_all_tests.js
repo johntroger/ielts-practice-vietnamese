@@ -37,7 +37,8 @@ const testSuites = [
   { name: 'Step 28: Daily Error Prescription & Spaced Repetition Loop', file: 'tests/test_step28_daily_error_prescription.js' },
   { name: 'Step 29: Rating & Popularity Service with Smart Filter & Sort Engine', file: 'tests/test_step29_rating_popularity_service.js' },
   { name: 'Step 30: Task Library Smart Filter Bar & Interactive Rating', file: 'tests/test_step30_task_library_smart_filters.js' },
-  { name: 'Step 31: Smart Filters & Rating across Micro-Drills & Vocab/Grammar', file: 'tests/test_step31_smart_filters_drills_and_vocab.js' }
+  { name: 'Step 31: Smart Filters & Rating across Micro-Drills & Vocab/Grammar', file: 'tests/test_step31_smart_filters_drills_and_vocab.js' },
+  { name: 'Step 32: Task 1 Process & Map Mandatory Vector Illustrations Engine', file: 'tests/test_step32_process_map_illustrations.js' }
 ];
 
 console.log('===============================================================');

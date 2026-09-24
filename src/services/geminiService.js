@@ -8,6 +8,7 @@ import {
   evaluateSinglePracticeAnswerAlgorithmically 
 } from './algorithmicSpeakingService.js';
 import { applyCambridgeWritingHardCaps } from '../utils/ieltsScoringRules.js';
+import { ensureTaskIllustration } from './processMapSvgEngine.js';
 
 const DEFAULT_MODEL = 'gemini-3.6-flash';
 
@@ -1121,6 +1122,7 @@ REQUIREMENTS:
 3. Provide an ideal 4-paragraph outline (introduction, overview, body1, body2).
 4. Provide a Band 8.5+ Model Answer with outstanding sequencing vocabulary (initially, subsequently, prior to being, once transformed) and passive voice structures.
 5. Provide 5-6 vocabulary highlights with Vietnamese explanations.
+6. MANDATORY VISUAL ILLUSTRATION: You may optionally include an SVG string in 'svgIllustration' (<svg ...>...</svg>) or our built-in graphics engine will automatically generate the vector flowchart diagram from your processSteps.
 
 Return ONLY raw parseable JSON with this structure:
 {
@@ -1158,6 +1160,7 @@ REQUIREMENTS:
 3. Provide an ideal 4-paragraph outline (introduction, overview, body1, body2).
 4. Provide a Band 8.5+ Model Answer with outstanding directional vocabulary (situated in the north-east, flanked by, replaced with, transformed into).
 5. Provide 5-6 vocabulary highlights with Vietnamese explanations.
+6. MANDATORY VISUAL ILLUSTRATION: You may optionally include an SVG string in 'svgIllustration' (<svg ...>...</svg>) or our built-in graphics engine will automatically generate the dual-period map comparison diagram from your mapChanges.
 
 Return ONLY raw parseable JSON with this structure:
 {
@@ -1393,7 +1396,7 @@ Return ONLY raw parseable JSON with this structure:
     if (!taskObj || !taskObj.prompt) {
       throw new Error('Dữ liệu bài tập AI không đầy đủ.');
     }
-    return {
+    const baseTask = {
       id: `ai-gen-${Date.now()}`,
       taskNumber: Number(taskNumber),
       type: type || (isTask1 ? 'line' : 'opinion'),
@@ -1404,6 +1407,9 @@ Return ONLY raw parseable JSON with this structure:
       isAiGenerated: true,
       ...taskObj
     };
+
+    // Ensure Process and Map tasks are guaranteed to have a high-resolution illustration (imageUrl)
+    return ensureTaskIllustration(baseTask);
   } catch (err) {
     console.error('Failed to parse generated task JSON:', text);
     throw new Error('Lỗi định dạng khi AI sinh đề. Vui lòng thử lại.');

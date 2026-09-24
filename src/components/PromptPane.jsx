@@ -312,8 +312,8 @@ export default function PromptPane({
         </div>
       </div>
 
-      {/* Task 1: Attached Image Visualizer (Biểu đồ / Bản đồ / Quy trình từ đề thi thật) */}
-      {task.imageUrl && (
+      {/* Task 1: Attached Image Visualizer (Biểu đồ số liệu từ đề thi thật) */}
+      {task.imageUrl && !isProcessOrMap && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">

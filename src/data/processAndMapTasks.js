@@ -1,11 +1,6 @@
-/**
- * Process and Map Tasks Dataset for IELTS Writing Task 1
- * Includes SVG diagram definitions and specialized vocabulary for:
- * - Natural and Man-made Processes
- * - Historical and Proposed Map Transformations
- */
+import { ensureTaskIllustration } from '../services/processMapSvgEngine.js';
 
-export const PROCESS_AND_MAP_TASKS = [
+const RAW_PROCESS_AND_MAP_TASKS = [
   // 1. TASK 1: PROCESS DIAGRAM (CEMENT PRODUCTION & CONCRETE MIXING)
   {
     id: 't1-process-cement-production',
@@ -87,3 +82,5 @@ Turning to the coastal perimeter, the traditional fishing dock in the south was 
     ]
   }
 ];
+
+export const PROCESS_AND_MAP_TASKS = RAW_PROCESS_AND_MAP_TASKS.map(ensureTaskIllustration);
