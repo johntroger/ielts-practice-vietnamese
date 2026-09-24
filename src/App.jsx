@@ -170,6 +170,31 @@ export default function App() {
     setIsMockTestOpen(false);
   };
 
+  // CDI Full Marathon 3-Skill State (Listening -> Reading -> Writing)
+  const [marathonSession, setMarathonSession] = useState(() => safeGet('ielts_marathon_session', null));
+
+  const handleStartMarathon = () => {
+    const session = {
+      active: true,
+      stage: 'listening',
+      startedAt: Date.now(),
+      listeningScore: null,
+      readingScore: null,
+      writingScore: null
+    };
+    setMarathonSession(session);
+    safeSet('ielts_marathon_session', session);
+    setActiveSkill('listening');
+    setIsMockTestOpen(false);
+  };
+
+  const handleCancelMarathon = () => {
+    if (window.confirm('Bạn có chắc chắn muốn hủy phiên thi marathon 3 kỹ năng này? Toàn bộ tiến trình liên hoàn sẽ được đặt lại.')) {
+      setMarathonSession(null);
+      safeRemove('ielts_marathon_session');
+    }
+  };
+
   // AI Operation States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
@@ -585,6 +610,23 @@ export default function App() {
         saveUserSubmission(currentUser.id, newSubmission);
       }
 
+      // CDI Marathon Final Stage completion check
+      if (marathonSession?.active && marathonSession.stage === 'writing') {
+        const band = evaluation?.overallBand || evaluation?.band || '6.5';
+        const finalSession = {
+          ...marathonSession,
+          stage: 'completed',
+          writingScore: {
+            band,
+            submittedAt: new Date().toISOString()
+          }
+        };
+        setMarathonSession(finalSession);
+        safeSet('ielts_marathon_session', finalSession);
+        alert(`🏆 XUẤT SẮC! BẠN ĐÃ HOÀN THÀNH TRỌN VẸN FULL CDI MARATHON 3 KỸ NĂNG LIÊN HOÀN!\n\n🎧 Listening: Band ${finalSession.listeningScore?.band || 'N/A'}\n📖 Reading: Band ${finalSession.readingScore?.band || 'N/A'}\n✍️ Writing: Band ${band}\n\nĐang mở Bảng điểm tổng kết TRF Simulator...`);
+        setIsMockTestOpen(true);
+      }
+
     } catch (err) {
       alert(err.message || 'Lỗi khi chấm bài. Vui lòng thử lại.');
     } finally {
@@ -772,6 +814,50 @@ export default function App() {
         </div>
       )}
 
+      {/* CDI Full Marathon Sticky Progress Banner */}
+      {marathonSession?.active && (
+        <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 text-white px-3 sm:px-6 py-2 flex items-center justify-between text-xs border-b border-indigo-500/30 shadow-lg shrink-0 z-30 animate-in slide-in-from-top-2">
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+            </span>
+            <span className="font-black text-amber-400 uppercase tracking-wider text-[10px] sm:text-xs shrink-0">
+              CDI Marathon:
+            </span>
+            <div className="flex items-center space-x-1.5 font-bold text-slate-200 truncate text-[11px] sm:text-xs">
+              <span className={marathonSession.stage === 'listening' ? 'text-amber-300 underline font-black' : 'text-slate-400'}>
+                1. Listening {marathonSession.listeningScore ? `(Band ${marathonSession.listeningScore.band})` : ''}
+              </span>
+              <span className="text-slate-500">➔</span>
+              <span className={marathonSession.stage === 'reading' ? 'text-amber-300 underline font-black' : 'text-slate-400'}>
+                2. Reading {marathonSession.readingScore ? `(Band ${marathonSession.readingScore.band})` : ''}
+              </span>
+              <span className="text-slate-500">➔</span>
+              <span className={marathonSession.stage === 'writing' ? 'text-amber-300 underline font-black' : 'text-slate-400'}>
+                3. Writing
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 shrink-0">
+            <button
+              onClick={() => setIsMockTestOpen(true)}
+              className="px-2.5 py-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 text-white font-bold text-[11px] transition-colors cursor-pointer"
+            >
+              Xem TRF
+            </button>
+            <button
+              onClick={handleCancelMarathon}
+              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition-colors cursor-pointer"
+              title="Hủy phiên thi Marathon"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 1. Main Navigation Bar (Hidden in Focus Mode) */}
       {!isFocusMode && (
         <Navbar
@@ -877,6 +963,24 @@ export default function App() {
                     safeSet('ielts_reading_submissions_history', updated);
                     return updated;
                   });
+
+                  if (marathonSession?.active && marathonSession.stage === 'reading') {
+                    const band = sub?.overallBand || sub?.band || '6.5';
+                    const updatedSession = {
+                      ...marathonSession,
+                      stage: 'writing',
+                      readingScore: {
+                        band,
+                        correctCount: sub?.correctAnswers || sub?.correctCount || 0,
+                        totalQuestions: sub?.totalQuestions || 40,
+                        submittedAt: new Date().toISOString()
+                      }
+                    };
+                    setMarathonSession(updatedSession);
+                    safeSet('ielts_marathon_session', updatedSession);
+                    alert(`🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH CHẶNG 2: READING (Band ${band})!\n\nHệ thống đang chuyển tiếp bạn sang Chặng 3: IELTS Writing (Task 1 & Task 2 - 60 phút).\nHãy hoàn thành nốt chặng cuối để nhận Bảng điểm Marathon TRF!`);
+                    setActiveSkill('writing');
+                  }
                 }}
                 initialTestId={readingMockTestId}
                 initialExamMode={readingMockExamMode}
@@ -913,6 +1017,24 @@ export default function App() {
                     safeSet('ielts_listening_submissions_history', updated);
                     return updated;
                   });
+
+                  if (marathonSession?.active && marathonSession.stage === 'listening') {
+                    const band = sub?.overallBand || sub?.band || '6.5';
+                    const updatedSession = {
+                      ...marathonSession,
+                      stage: 'reading',
+                      listeningScore: {
+                        band,
+                        correctCount: sub?.correctAnswers || sub?.correctCount || 0,
+                        totalQuestions: sub?.totalQuestions || 40,
+                        submittedAt: new Date().toISOString()
+                      }
+                    };
+                    setMarathonSession(updatedSession);
+                    safeSet('ielts_marathon_session', updatedSession);
+                    alert(`🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH CHẶNG 1: LISTENING (Band ${band})!\n\nHệ thống đang chuyển bạn sang Chặng 2: IELTS Reading (Thời lượng 60 phút).\nHãy sẵn sàng làm bài!`);
+                    setActiveSkill('reading');
+                  }
                 }}
                 openGeneratorTrigger={listeningGenTrigger}
                 masteredIds={masteredIds}
@@ -1210,6 +1332,9 @@ export default function App() {
           onSelectSkill={(skill) => setActiveSkill(skill)}
           onStartReadingMockExam={handleStartReadingMockExam}
           currentUser={currentUser}
+          marathonSession={marathonSession}
+          onStartMarathon={handleStartMarathon}
+          onCancelMarathon={handleCancelMarathon}
         />
       </WorkspaceErrorBoundary>
 

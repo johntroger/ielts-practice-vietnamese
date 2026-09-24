@@ -19,6 +19,8 @@ import {
   ListOrdered
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
+import Task1DataCoverageModal from './Task1DataCoverageModal';
+import { analyzeTask1Overview } from '../services/algorithmicEvaluationService';
 
 export default function EditorPane({
   essayText,
@@ -38,6 +40,7 @@ export default function EditorPane({
   const [showParagraphDetails, setShowParagraphDetails] = useState(false);
   const [outlineMode, setOutlineMode] = useState('scaffold'); // 'scaffold' | 'raw'
   const isTask1 = task?.taskNumber === 1 || task?.isTask1;
+  const [isTask1CoverageOpen, setIsTask1CoverageOpen] = useState(false);
   const [scaffold, setScaffold] = useState({
     intro: '',
     overviewOrThesis: '',
@@ -83,6 +86,12 @@ export default function EditorPane({
 
   const isWordCountMet = totalWords >= task.minWords;
   const wordDiff = task.minWords - totalWords;
+
+  const task1OverviewCheck = React.useMemo(() => {
+    if (!isTask1) return null;
+    const rawParas = paragraphs.map(p => p.text).filter(Boolean);
+    return analyzeTask1Overview(rawParas);
+  }, [isTask1, paragraphs]);
 
   return (
     <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
@@ -178,6 +187,29 @@ export default function EditorPane({
             <Bookmark className="w-3.5 h-3.5 text-amber-600" />
             <span className="hidden lg:inline">Sổ Từ Vựng</span>
           </button>
+
+          {/* Task 1 Cambridge Data & Overview Live Inspector */}
+          {isTask1 && (
+            <button
+              onClick={() => setIsTask1CoverageOpen(true)}
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+                task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                  : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+              }`}
+              title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
+            >
+              <BarChart2 className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="hidden sm:inline">Phủ Số Liệu Task 1</span>
+              <span className={`text-[10px] px-1 rounded font-black ${
+                task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
+                  ? 'bg-emerald-200 text-emerald-900'
+                  : 'bg-amber-200 text-amber-900'
+              }`}>
+                {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
+              </span>
+            </button>
+          )}
 
           {/* Spellcheck Toggle */}
           <button
@@ -477,6 +509,19 @@ export default function EditorPane({
             </div>
           ))}
         </div>
+      )}
+
+      {/* Task 1 Cambridge Live Coverage Modal */}
+      {isTask1 && (
+        <Task1DataCoverageModal
+          isOpen={isTask1CoverageOpen}
+          onClose={() => setIsTask1CoverageOpen(false)}
+          paragraphs={paragraphs}
+          onInsertOverview={(sentence) => {
+            setEssayText(prev => prev ? `${sentence}\n\n${prev}` : sentence);
+            setIsTask1CoverageOpen(false);
+          }}
+        />
       )}
 
     </div>

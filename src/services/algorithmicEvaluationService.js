@@ -775,7 +775,7 @@ export function analyzeTask1Overview(paragraphs) {
  * Verifies that body paragraphs contain specific figures, percentages, dates, or units.
  * Excludes Overview paragraph from body data calculations.
  */
-function analyzeTask1DataDensity(paragraphs, overviewIndex = -1) {
+export function analyzeTask1DataDensity(paragraphs, overviewIndex = -1) {
   if (paragraphs.length <= 1) return { bodyDataCount: 0, hasAdequateData: false };
 
   // Body paragraphs exclude Introduction (index 0) and Overview paragraph (if any)

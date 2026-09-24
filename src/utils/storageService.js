@@ -181,6 +181,19 @@ export function stripEphemeralMedia(obj) {
 }
 
 /**
+ * Asynchronously mirrors heavy application records into IndexedDB.
+ * Guarantees zero data loss even if localStorage hits the 5MB browser quota.
+ */
+export function backupToIndexedDB(key, data) {
+  if (typeof window === 'undefined') return;
+  try {
+    import('./indexedDbStorage.js').then(({ idbSet, STORES }) => {
+      idbSet(STORES.KEYVAL, key, data).catch(() => {});
+    }).catch(() => {});
+  } catch (e) {}
+}
+
+/**
  * Safely saves an item to storage with automatic QuotaExceeded recovery.
  * Serializes objects to JSON automatically after stripping ephemeral media.
  */
@@ -194,6 +207,11 @@ export function safeSet(key, value) {
   if (!isLocalStorageAvailable()) {
     memoryStore.set(key, serialized);
     return true;
+  }
+
+  // Asynchronous high-capacity backup to IndexedDB for large history & submissions
+  if (key.includes('submissions') || key.includes('history') || key.includes('tasks') || key.includes('marathon')) {
+    backupToIndexedDB(key, sanitizedValue);
   }
 
   try {

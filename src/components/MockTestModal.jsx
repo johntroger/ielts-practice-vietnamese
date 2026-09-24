@@ -66,7 +66,10 @@ export default function MockTestModal({
   activeSkill = 'writing',
   onSelectSkill,
   onStartReadingMockExam,
-  currentUser
+  currentUser,
+  marathonSession,
+  onStartMarathon,
+  onCancelMarathon
 }) {
   if (!isOpen) return null;
 
@@ -213,9 +216,17 @@ export default function MockTestModal({
     return speakingHistory.find(item => item.evaluation?.overallBand !== undefined && item.evaluation?.overallBand !== null) || speakingHistory[0] || null;
   }, [speakingHistory]);
 
-  const listeningBand = latestListening?.band ? Number(latestListening.band) : null;
-  const readingBand = latestReading?.band ? Number(latestReading.band) : null;
-  const writingBand = latestWriting?.evaluation?.overallBand ? Number(latestWriting.evaluation.overallBand) : null;
+  const listeningBand = (marathonSession?.stage === 'completed' && marathonSession.listeningScore?.band)
+    ? Number(marathonSession.listeningScore.band)
+    : (latestListening?.band ? Number(latestListening.band) : null);
+
+  const readingBand = (marathonSession?.stage === 'completed' && marathonSession.readingScore?.band)
+    ? Number(marathonSession.readingScore.band)
+    : (latestReading?.band ? Number(latestReading.band) : null);
+
+  const writingBand = (marathonSession?.stage === 'completed' && marathonSession.writingScore?.band)
+    ? Number(marathonSession.writingScore.band)
+    : (latestWriting?.evaluation?.overallBand ? Number(latestWriting.evaluation.overallBand) : null);
   const speakingBand = latestSpeaking?.evaluation?.overallBand ? Number(latestSpeaking.evaluation.overallBand) : null;
 
   const validBands = useMemo(() => {
@@ -1045,16 +1056,43 @@ export default function MockTestModal({
 
                 {/* Quick Start Marathon Button */}
                 <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-2">
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onSelectSkill?.('listening');
-                    }}
-                    className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-400 hover:to-red-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl hover:shadow-amber-500/25 transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-amber-300/40"
-                  >
-                    <Play className="w-4 h-4 fill-current" />
-                    <span>Khởi Động Marathon (Chặng 1: Listening)</span>
-                  </button>
+                  {marathonSession?.active ? (
+                    <div className="flex flex-col gap-1.5">
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onSelectSkill?.(marathonSession.stage);
+                        }}
+                        className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-emerald-300/40"
+                      >
+                        <Play className="w-4 h-4 fill-current" />
+                        <span>Tiếp Tục Chặng {marathonSession.stage?.toUpperCase()}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (onCancelMarathon) onCancelMarathon();
+                        }}
+                        className="text-[11px] text-center text-slate-400 hover:text-rose-400 underline transition-colors cursor-pointer"
+                      >
+                        Hủy phiên thi Marathon đang chạy
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        if (onStartMarathon) {
+                          onStartMarathon();
+                        } else {
+                          onClose();
+                          onSelectSkill?.('listening');
+                        }
+                      }}
+                      className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-400 hover:to-red-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl hover:shadow-amber-500/25 transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-amber-300/40"
+                    >
+                      <Play className="w-4 h-4 fill-current" />
+                      <span>Khởi Động Marathon (3 Kỹ Năng)</span>
+                    </button>
+                  )}
                   <span className="text-[11px] text-center text-slate-400">
                     Mô phỏng 100% áp lực phòng thi máy tính IDP/BC
                   </span>
