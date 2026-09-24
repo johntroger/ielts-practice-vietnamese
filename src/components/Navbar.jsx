@@ -26,7 +26,8 @@ import {
   Compass, 
   Mail,
   Target,
-  Award
+  Award,
+  SlidersHorizontal
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 
@@ -60,7 +61,8 @@ export default function Navbar({
   mistakesCount = 0,
   apiKey,
   user,
-  onOpenAuth
+  onOpenAuth,
+  onOpenCDIDisplay
 }) {
   const doOpenOnboarding = onOpenOnboarding || (() => openModal('onboarding'));
   const doOpenDiagnostic = onOpenDiagnostic || (() => openModal('diagnostic'));
@@ -80,6 +82,7 @@ export default function Navbar({
   const doOpenProfile = onOpenProfile || (() => openModal('profile'));
   const doOpenContact = onOpenContact || (() => openModal('contact'));
   const doOpenAuth = onOpenAuth || (() => openModal('auth'));
+  const doOpenCDIDisplay = onOpenCDIDisplay || (() => openModal('cdiDisplay'));
 
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const [isPracticeMenuOpen, setIsPracticeMenuOpen] = useState(false);
@@ -529,6 +532,18 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Hỗ trợ kỹ thuật và góp ý phát triển</div>
                       </div>
                     </button>
+                    <button
+                      onClick={() => { doOpenCDIDisplay(); setIsProgressMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-blue-50 text-left text-xs font-semibold text-blue-900 transition-colors cursor-pointer border-t border-slate-100 mt-1 pt-1.5"
+                    >
+                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                        <SlidersHorizontal className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold">Trợ Năng Hiển Thị CDI</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Cỡ chữ & màu tương phản IDP/BC</div>
+                      </div>
+                    </button>
                   </div>
                 </>
               )}
@@ -855,6 +870,17 @@ export default function Navbar({
                       <span>Cài Đặt Hệ Thống & Gemini API Key</span>
                     </div>
                     <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                  </button>
+
+                  <button
+                    onClick={() => { doOpenCDIDisplay(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50 text-left text-xs font-bold text-blue-900 border border-blue-200/80 bg-blue-50/50 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+                      <span>Trợ Năng Hiển Thị CDI (Cỡ Chữ & Màu)</span>
+                    </div>
+                    <span className="text-[10px] text-blue-600 font-bold bg-blue-100 px-1.5 py-0.5 rounded">IDP/BC</span>
                   </button>
 
                   <button

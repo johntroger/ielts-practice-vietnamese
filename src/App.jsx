@@ -37,6 +37,7 @@ const OnboardingModal = React.lazy(() => import('./components/OnboardingModal'))
 const SpeakingResultModal = React.lazy(() => import('./components/speaking/SpeakingResultModal'));
 const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPanel'));
 const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
+const CDIDisplayModal = React.lazy(() => import('./components/CDIDisplayModal'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -159,6 +160,26 @@ export default function App() {
       safeSet('ielts_focus_mode', next);
       return next;
     });
+  };
+
+  // Phase 4: CDI Accessibility & Display Settings (Font Scale & Screen Contrast)
+  const [cdiFontSize, setCdiFontSize] = useState(() => safeGet('ielts_cdi_font_size', 'standard'));
+  const [cdiContrast, setCdiContrast] = useState(() => safeGet('ielts_cdi_contrast', 'standard'));
+  const [isCDIDisplayOpen, setIsCDIDisplayOpen] = useState(false);
+
+  const handleChangeCdiFontSize = (size) => {
+    setCdiFontSize(size);
+    safeSet('ielts_cdi_font_size', size);
+  };
+
+  const handleChangeCdiContrast = (contrast) => {
+    setCdiContrast(contrast);
+    safeSet('ielts_cdi_contrast', contrast);
+  };
+
+  const handleResetCDIDisplay = () => {
+    handleChangeCdiFontSize('standard');
+    handleChangeCdiContrast('standard');
   };
 
   // Reading Mock Test Exam State
@@ -749,7 +770,10 @@ export default function App() {
   };
 
   return (
-    <div className={`${(activeSkill === 'reading' || activeSkill === 'listening' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative`}>
+    <div 
+      data-cdi-font={cdiFontSize}
+      data-cdi-contrast={cdiContrast}
+      className={`${(activeSkill === 'reading' || activeSkill === 'listening' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative`}>
       
       {/* Focus Mode Floating Exit Pill */}
       {isFocusMode && (
@@ -859,6 +883,7 @@ export default function App() {
           apiKey={apiKey}
           user={currentUser}
           onOpenAuth={() => setIsAuthOpen(true)}
+          onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
         />
       )}
 
@@ -1050,6 +1075,9 @@ export default function App() {
               weeklyWordProgress={weeklyWordProgress}
               currentWeekWords={currentWeekWords}
               weeklyWordTarget={weeklyWordTarget}
+              onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
+              cdiFontSize={cdiFontSize}
+              cdiContrast={cdiContrast}
             />
 
           {/* Writing SplitPane Workspace */}
@@ -1403,6 +1431,16 @@ export default function App() {
         personalNotes={personalNotes}
         onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
         onDeletePersonalNote={(id) => setPersonalNotes(prev => prev.filter(n => n.id !== id))}
+      />
+
+      <CDIDisplayModal
+        isOpen={isCDIDisplayOpen}
+        onClose={() => setIsCDIDisplayOpen(false)}
+        cdiFontSize={cdiFontSize}
+        onChangeFontSize={handleChangeCdiFontSize}
+        cdiContrast={cdiContrast}
+        onChangeContrast={handleChangeCdiContrast}
+        onReset={handleResetCDIDisplay}
       />
 
       <QuickParaphraseModal

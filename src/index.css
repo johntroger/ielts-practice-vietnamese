@@ -34,3 +34,66 @@
 .animate-pulse-subtle {
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* ============================================================ */
+/* CDI (Computer-Delivered IELTS) Display & Accessibility Rules  */
+/* ============================================================ */
+
+/* CDI Font Scaling */
+[data-cdi-font="large"] .cdi-scalable-text,
+[data-cdi-font="large"] textarea,
+[data-cdi-font="large"] .prose {
+  font-size: 1.12em !important;
+  line-height: 1.65 !important;
+}
+
+[data-cdi-font="xlarge"] .cdi-scalable-text,
+[data-cdi-font="xlarge"] textarea,
+[data-cdi-font="xlarge"] .prose {
+  font-size: 1.25em !important;
+  line-height: 1.75 !important;
+}
+
+/* 1. Yellow on Black (Official British Council CDI High Contrast Mode) */
+[data-cdi-contrast="yellow-on-black"] .cdi-contrast-area,
+[data-cdi-contrast="yellow-on-black"] textarea,
+[data-cdi-contrast="yellow-on-black"] .bg-white {
+  background-color: #09090b !important;
+  color: #fde047 !important;
+  border-color: #854d0e !important;
+}
+[data-cdi-contrast="yellow-on-black"] .text-slate-900,
+[data-cdi-contrast="yellow-on-black"] .text-slate-800,
+[data-cdi-contrast="yellow-on-black"] .text-slate-700 {
+  color: #fef08a !important;
+}
+[data-cdi-contrast="yellow-on-black"] .text-slate-500,
+[data-cdi-contrast="yellow-on-black"] .text-slate-400 {
+  color: #eab308 !important;
+}
+
+/* 2. Black on Cream / Yellow (Official Soft Contrast Mode) */
+[data-cdi-contrast="black-on-yellow"] .cdi-contrast-area,
+[data-cdi-contrast="black-on-yellow"] textarea,
+[data-cdi-contrast="black-on-yellow"] .bg-white {
+  background-color: #fefce8 !important;
+  color: #1c1917 !important;
+  border-color: #fef08a !important;
+}
+
+/* 3. Dark Exam Contrast */
+[data-cdi-contrast="dark"] .cdi-contrast-area,
+[data-cdi-contrast="dark"] textarea,
+[data-cdi-contrast="dark"] .bg-white {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+[data-cdi-contrast="dark"] .text-slate-900,
+[data-cdi-contrast="dark"] .text-slate-800 {
+  color: #f8fafc !important;
+}
+[data-cdi-contrast="dark"] .text-slate-600,
+[data-cdi-contrast="dark"] .text-slate-500 {
+  color: #94a3b8 !important;
+}

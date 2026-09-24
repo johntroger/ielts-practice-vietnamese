@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ChevronDown, 
   Flame, 
@@ -8,13 +8,17 @@ import {
   Maximize2, 
   Minimize2, 
   Keyboard,
-  Sparkles 
+  Sparkles,
+  SlidersHorizontal,
+  FolderKanban,
+  ShieldAlert,
+  Sliders
 } from 'lucide-react';
 
 export default function WritingSubHeaderToolbar({
   currentTask,
-  streakCount,
-  targetBand,
+  streakCount = 3,
+  targetBand = '6.5',
   masteredIds = [],
   onToggleMastered,
   onOpenLibrary,
@@ -28,12 +32,21 @@ export default function WritingSubHeaderToolbar({
   onOpenShortcuts,
   weeklyWordProgress = 0,
   currentWeekWords = 0,
-  weeklyWordTarget = 2500
+  weeklyWordTarget = 2500,
+  onOpenCDIDisplay,
+  cdiFontSize = 'standard',
+  cdiContrast = 'standard'
 }) {
+  const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+
   return (
     <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2 shadow-2xs shrink-0 z-20">
-      {/* Row 1 / Left: Task Selector & Target Badges */}
+      
+      {/* ============================================================ */}
+      {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
+      {/* ============================================================ */}
       <div className="flex items-center space-x-2 min-w-0">
+        {/* 1. Task Selector Dropdown Trigger */}
         <button 
           onClick={onOpenLibrary}
           className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0 flex-1 md:flex-initial"
@@ -44,35 +57,27 @@ export default function WritingSubHeaderToolbar({
           }`}>
             Task {currentTask?.taskNumber || 2}
           </span>
-          <span className="text-xs font-bold text-slate-800 max-w-[160px] sm:max-w-[260px] lg:max-w-[380px] xl:max-w-[480px] truncate">
+          <span className="text-xs font-bold text-slate-800 max-w-[140px] sm:max-w-[240px] lg:max-w-[340px] xl:max-w-[440px] truncate">
             {currentTask?.title || 'IELTS Writing Task'}
           </span>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
         </button>
 
-        {/* Streak Badge */}
-        <div 
-          className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-bold shrink-0"
-          title={`Chuỗi ngày học liên tục: ${streakCount} ngày!`}
-        >
-          <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500 shrink-0" />
-          <span>{streakCount}d</span>
-        </div>
-
-        {/* Target Band Badge */}
+        {/* 2. Sinh Đề Mới Bằng AI (Prominent Action) */}
         <button
-          onClick={onOpenOnboarding}
-          className="flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/80 text-red-700 hover:bg-red-100/80 text-xs font-black shrink-0 transition-all cursor-pointer shadow-2xs group"
-          title="Mục tiêu điểm IELTS của bạn. Nhấn để thay đổi mục tiêu"
+          onClick={onOpenGenerator}
+          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/90 text-red-700 hover:bg-red-100/90 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs group"
+          title="Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng 2025–2026 bằng AI"
         >
-          <Target className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
-          <span>Band {targetBand}</span>
+          <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
+          <span className="hidden sm:inline">Sinh Đề (AI)</span>
+          <span className="sm:hidden">Sinh Đề</span>
         </button>
 
-        {/* Mastered Task Toggle Button */}
+        {/* 3. Mastered Task Toggle (Thuộc Bài) */}
         <button
           onClick={() => onToggleMastered && onToggleMastered(currentTask?.id)}
-          className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs ${
+          className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs ${
             masteredIds.includes(currentTask?.id)
               ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
               : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
@@ -84,41 +89,32 @@ export default function WritingSubHeaderToolbar({
           <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTask?.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
           <span className="hidden sm:inline">{masteredIds.includes(currentTask?.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
         </button>
-
-        {/* Sinh Đề AI Button */}
-        <button
-          onClick={onOpenGenerator}
-          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/90 text-red-700 hover:bg-red-100/90 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs group"
-          title="Sinh đề thi Writing Task 1 hoặc Task 2 mới bằng Gemini AI"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
-          <span className="hidden sm:inline">Sinh Đề (AI)</span>
-          <span className="sm:hidden">Sinh Đề</span>
-        </button>
       </div>
 
-      {/* Row 2 on Mobile / Right on Desktop: Quick Tools & Word Progress */}
+      {/* ============================================================ */}
+      {/* ZONE 2 (Right): EXAM MODES, CDI DISPLAY & ESSENTIAL TOOLS    */}
+      {/* ============================================================ */}
       <div className="flex items-center justify-between md:justify-end space-x-2 text-xs shrink-0">
         <div className="flex items-center space-x-1.5">
+          
+          {/* 1. CDI Display & Accessibility Settings (Font Scale / Color Contrast) */}
           <button
-            onClick={onOpenTheory}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold border border-amber-200/80 shadow-2xs transition-colors cursor-pointer"
-            title="Cẩm nang chiến thuật & lý thuyết viết IELTS Academic"
+            onClick={onOpenCDIDisplay}
+            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+              (cdiFontSize !== 'standard' || cdiContrast !== 'standard')
+                ? 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100'
+                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+            }`}
+            title="Tùy chỉnh cỡ chữ & chế độ tương phản chuẩn phòng thi máy tính CDI"
           >
-            <BookOpen className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span>Cẩm Nang</span>
+            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="hidden sm:inline">Trợ Năng CDI</span>
+            {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+            )}
           </button>
 
-          <button
-            onClick={onOpenMistakeLog}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 text-slate-700 font-semibold border border-slate-200 transition-colors cursor-pointer"
-            title="Xem sổ tay các lỗi sai ngữ pháp & từ vựng đã lưu"
-          >
-            <span className="text-amber-600">⚠️</span>
-            <span>Lỗi sai ({mistakesCount})</span>
-          </button>
-
-          {/* Focus Mode (Zen Mode) Toggle */}
+          {/* 2. Focus Mode (Zen Mode) Toggle */}
           <button
             onClick={toggleFocusMode}
             className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
@@ -136,18 +132,135 @@ export default function WritingSubHeaderToolbar({
             <span className="hidden lg:inline">{isFocusMode ? 'Thoát Focus' : 'Tập trung'}</span>
           </button>
 
-          {/* Keyboard Shortcuts Trigger Button */}
-          <button
-            onClick={onOpenShortcuts}
-            className="flex items-center space-x-1 px-2 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 border border-slate-200 transition-colors cursor-pointer"
-            title="Bảng tra cứu phím tắt (Nhấn ?)"
-          >
-            <Keyboard className="w-3.5 h-3.5 text-slate-500" />
-            <span className="hidden xl:inline text-[11px] font-semibold">Phím tắt (?)</span>
-          </button>
+          {/* 3. De-cluttered "Tiện Ích & Sổ Tay" Menu Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+                isToolsDropdownOpen || mistakesCount > 0
+                  ? 'bg-amber-50/80 text-amber-900 border-amber-300'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+              }`}
+              title="Mở thực đơn Sổ tay lỗi sai, Cẩm nang, Phím tắt & Mục tiêu"
+            >
+              <FolderKanban className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span className="hidden sm:inline">Tiện Ích</span>
+              {mistakesCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black">
+                  {mistakesCount}
+                </span>
+              )}
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-150 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Dropdown Popover */}
+            {isToolsDropdownOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsToolsDropdownOpen(false)} 
+                />
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
+                  
+                  {/* Item 1: Cẩm nang lý thuyết */}
+                  <button
+                    onClick={() => {
+                      onOpenTheory?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 transition-colors cursor-pointer"
+                  >
+                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs">Cẩm Nang Chiến Thuật</div>
+                      <div className="text-[10px] text-slate-400 font-normal">Chiến lược viết Task 1 & Task 2 chuẩn 8.0+</div>
+                    </div>
+                  </button>
+
+                  {/* Item 2: Sổ tay lỗi sai */}
+                  <button
+                    onClick={() => {
+                      onOpenMistakeLog?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
+                        <ShieldAlert className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs">Sổ Tay Lỗi Sai Thường Gặp</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Ngữ pháp, từ vựng & bẫy diễn đạt</div>
+                      </div>
+                    </div>
+                    {mistakesCount > 0 && (
+                      <span className="text-[10px] bg-rose-100 text-rose-700 font-black px-1.5 py-0.5 rounded-full">
+                        {mistakesCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Item 3: Phím tắt tra cứu */}
+                  <button
+                    onClick={() => {
+                      onOpenShortcuts?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
+                  >
+                    <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+                      <Keyboard className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs">Bảng Tra Cứu Phím Tắt (?)</div>
+                      <div className="text-[10px] text-slate-400 font-normal">Alt+F, Alt+K, Ctrl+Enter, Esc</div>
+                    </div>
+                  </button>
+
+                  <div className="border-t border-slate-100 pt-1 my-1"></div>
+
+                  {/* Item 4: Mục tiêu Band */}
+                  <button
+                    onClick={() => {
+                      onOpenOnboarding?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700">
+                        <Target className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs">Mục Tiêu Band Điểm</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Nhấn để thay đổi lộ trình học</div>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-700 font-black text-[10px]">
+                      Band {targetBand}
+                    </span>
+                  </button>
+
+                  {/* Item 5: Streak Info */}
+                  <div className="px-2.5 py-1.5 bg-orange-50/60 rounded-xl border border-orange-200/50 flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5 text-orange-800 text-xs font-bold">
+                      <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                      <span>Chuỗi học tập</span>
+                    </div>
+                    <span className="font-black text-xs text-orange-700">{streakCount} ngày liên tục</span>
+                  </div>
+
+                </div>
+              </>
+            )}
+          </div>
+
         </div>
 
-        {/* Weekly Word Target Progress Bar */}
+        {/* 4. Weekly Word Target Progress Bar (Visible on desktop/laptop) */}
         <div className="hidden sm:flex items-center space-x-2 text-slate-600 pl-2.5 border-l border-slate-200">
           <span className="font-medium text-[11px] text-slate-500">Mục tiêu tuần:</span>
           <div className="w-20 sm:w-28 lg:w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -158,7 +271,9 @@ export default function WritingSubHeaderToolbar({
           </div>
           <span className="font-bold text-slate-800 text-[11px]">{currentWeekWords}/{weeklyWordTarget} từ</span>
         </div>
+
       </div>
+
     </div>
   );
 }
