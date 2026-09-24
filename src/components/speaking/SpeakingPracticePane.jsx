@@ -3,7 +3,7 @@ import {
   Mic, MicOff, Volume2, Play, Pause, Square, RotateCcw, CheckCircle2, 
   Sparkles, BookOpen, Layers, Clock, Award, Shield, Compass, Headphones, 
   ChevronRight, ArrowRight, Lightbulb, Copy, Info, AlertCircle, Plus,
-  Trash2, Loader2
+  Trash2, Loader2, GraduationCap
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
@@ -42,13 +42,33 @@ export default function SpeakingPracticePane({
   onOpenIdeaMatrix,
   onOpenShadowing,
   onSaveToVocabNotebook,
-  onPracticeAnswerSubmitted
+  onPracticeAnswerSubmitted,
+  masteredIds = [],
+  onToggleMastered
 }) {
   // Common state
   const [showVocabHints, setShowVocabHints] = useState(true);
   const [showSampleAnswer, setShowSampleAnswer] = useState(false);
   const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
   const practiceAudioRef = useRef(null);
+
+  const [hideMastered, setHideMastered] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_speaking_hide_mastered') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const handleToggleHideMastered = () => {
+    setHideMastered(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('ielts_speaking_hide_mastered', String(next));
+      } catch {}
+      return next;
+    });
+  };
 
   // Modals state
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
@@ -738,11 +758,22 @@ export default function SpeakingPracticePane({
           
           {/* Part 1 Topic Control Bar with AI Button */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-900 p-3 rounded-2xl border border-slate-800">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5 flex-wrap">
               <span className="text-xs font-bold text-slate-200">Chủ đề phỏng vấn:</span>
               <span className="text-[11px] text-purple-300 font-semibold bg-purple-950/80 px-2.5 py-0.5 rounded-full border border-purple-800/40">
                 {part1Topics.length} chủ đề
               </span>
+
+              {/* Ẩn chủ đề đã thuộc Checkbox */}
+              <label className="flex items-center space-x-1.5 text-xs text-slate-400 cursor-pointer select-none px-2 py-0.5 rounded-lg hover:bg-slate-800 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={hideMastered}
+                  onChange={handleToggleHideMastered}
+                  className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-800 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                />
+                <span className="whitespace-nowrap font-medium text-[11px]">Ẩn chủ đề đã thuộc</span>
+              </label>
             </div>
 
             <button
@@ -772,7 +803,7 @@ export default function SpeakingPracticePane({
               <span>+ Tạo Mới (AI)</span>
             </button>
 
-            {part1Topics.map(topic => (
+            {(hideMastered ? part1Topics.filter(t => !masteredIds.includes(t.id)) : part1Topics).map(topic => (
               <div key={topic.id} className="relative group shrink-0">
                 <button
                   onClick={() => {
@@ -788,6 +819,9 @@ export default function SpeakingPracticePane({
                   }`}
                 >
                   <span>{topic.title}</span>
+                  {masteredIds.includes(topic.id) && (
+                    <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0" title="Chủ đề đã thuộc" />
+                  )}
                   {topic.isCommunity || (topic.isPublic && topic.isCustom) ? (
                     <span className="text-[9px] px-1.5 py-0.2 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40">
                       🌐 Cộng Đồng
@@ -812,6 +846,25 @@ export default function SpeakingPracticePane({
                     Câu {activeP1QuestionIndex + 1} / {activeP1Topic.questions.length}
                   </span>
                   <span className="text-xs text-slate-400 font-semibold">{activeP1Topic.title}</span>
+                  {onToggleMastered && activeP1Topic.id && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleMastered(activeP1Topic.id)}
+                      className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer border ${
+                        masteredIds.includes(activeP1Topic.id)
+                          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
+                          : 'bg-slate-800 text-slate-400 hover:text-slate-200 border-slate-700'
+                      }`}
+                      title={
+                        masteredIds.includes(activeP1Topic.id)
+                          ? 'Đã thuộc chủ đề này (Bấm để bỏ đánh dấu)'
+                          : 'Đánh dấu đã thuộc chủ đề này'
+                      }
+                    >
+                      <GraduationCap className="w-3 h-3" />
+                      <span>{masteredIds.includes(activeP1Topic.id) ? 'Đã thuộc' : 'Thuộc chủ đề'}</span>
+                    </button>
+                  )}
                   {activeP1Topic.isCustom && onDeleteP1Topic && (
                     <button
                       onClick={() => {
@@ -1166,6 +1219,25 @@ export default function SpeakingPracticePane({
                   Part 2 Long Turn (2 Phút Nói)
                 </span>
                 <span className="text-xs text-slate-400 font-semibold">{activeP2Card.category}</span>
+                {onToggleMastered && activeP2Card.id && (
+                  <button
+                    type="button"
+                    onClick={() => onToggleMastered(activeP2Card.id)}
+                    className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer border ${
+                      masteredIds.includes(activeP2Card.id)
+                        ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-200 border-slate-700'
+                    }`}
+                    title={
+                      masteredIds.includes(activeP2Card.id)
+                        ? 'Đã thuộc Cue Card này (Bấm để bỏ đánh dấu)'
+                        : 'Đánh dấu đã thuộc Cue Card này'
+                    }
+                  >
+                    <GraduationCap className="w-3 h-3" />
+                    <span>{masteredIds.includes(activeP2Card.id) ? 'Đã thuộc' : 'Thuộc Card'}</span>
+                  </button>
+                )}
                 {activeP2Card.isCustom && onDeleteP2Card && (
                   <button
                     onClick={() => {
@@ -1196,9 +1268,9 @@ export default function SpeakingPracticePane({
                 }}
                 className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 font-bold focus:outline-none cursor-pointer flex-1 sm:flex-initial"
               >
-                {part2Cards.map(c => (
+                {(hideMastered ? part2Cards.filter(c => !masteredIds.includes(c.id)) : part2Cards).map(c => (
                   <option key={c.id} value={c.id}>
-                    {c.title} {c.isCommunity || (c.isPublic && c.isCustom) ? '(🌐 Cộng Đồng)' : c.isCustom ? '(🔒 Riêng)' : ''}
+                    {masteredIds.includes(c.id) ? '🎓 ' : ''}{c.title} {c.isCommunity || (c.isPublic && c.isCustom) ? '(🌐 Cộng Đồng)' : c.isCustom ? '(🔒 Riêng)' : ''}
                   </option>
                 ))}
               </select>
@@ -1499,6 +1571,29 @@ export default function SpeakingPracticePane({
                 Part 3: Thảo Luận Hai Chiều (Chuyên Sâu)
               </span>
               <span className="text-xs font-bold text-slate-300">{currentP3Set.topic}</span>
+              {onToggleMastered && (currentP3Set.linkedPart2Id || currentP3Set.id) && (
+                <button
+                  type="button"
+                  onClick={() => onToggleMastered(currentP3Set.linkedPart2Id || currentP3Set.id)}
+                  className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer border ${
+                    masteredIds.includes(currentP3Set.linkedPart2Id || currentP3Set.id)
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200 border-slate-700'
+                  }`}
+                  title={
+                    masteredIds.includes(currentP3Set.linkedPart2Id || currentP3Set.id)
+                      ? 'Đã thuộc bộ thảo luận này (Bấm để bỏ đánh dấu)'
+                      : 'Đánh dấu đã thuộc bộ thảo luận này'
+                  }
+                >
+                  <GraduationCap className="w-3 h-3" />
+                  <span>
+                    {masteredIds.includes(currentP3Set.linkedPart2Id || currentP3Set.id)
+                      ? 'Đã thuộc'
+                      : 'Thuộc bộ câu hỏi'}
+                  </span>
+                </button>
+              )}
               {currentP3Set.isCustom && onDeleteP3Set && (
                 <button
                   onClick={() => {
@@ -1520,9 +1615,9 @@ export default function SpeakingPracticePane({
                 onChange={(e) => setSelectedP3Id(e.target.value)}
                 className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-none cursor-pointer flex-1 sm:flex-initial"
               >
-                {part3Sets.map((s, idx) => (
+                {(hideMastered ? part3Sets.filter(s => !masteredIds.includes(s.linkedPart2Id || s.id)) : part3Sets).map((s, idx) => (
                   <option key={s.linkedPart2Id || s.id || idx} value={s.linkedPart2Id || s.id || idx}>
-                    {s.topic} {s.isCommunity || (s.isPublic && s.isCustom) ? '(🌐 Cộng Đồng)' : s.isCustom ? '(🔒 Riêng)' : ''}
+                    {masteredIds.includes(s.linkedPart2Id || s.id) ? '🎓 ' : ''}{s.topic} {s.isCommunity || (s.isPublic && s.isCustom) ? '(🌐 Cộng Đồng)' : s.isCustom ? '(🔒 Riêng)' : ''}
                   </option>
                 ))}
               </select>

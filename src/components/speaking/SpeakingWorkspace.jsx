@@ -4,7 +4,7 @@ import {
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
-  RotateCcw, X, Loader2
+  RotateCcw, X, Loader2, GraduationCap
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -35,7 +35,9 @@ export default function SpeakingWorkspace({
   user,
   onOpenTheory,
   onSaveToVocabNotebook,
-  onSpeakingSubmitted
+  onSpeakingSubmitted,
+  masteredIds = [],
+  onToggleMastered
 }) {
   // 1. Workspace Configuration State
   const [activeMode, setActiveMode] = useState('mock'); // 'mock' | 'practice'
@@ -634,6 +636,12 @@ export default function SpeakingWorkspace({
                             <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700">
                               {pack.difficulty} • Target {pack.targetBand}
                             </span>
+                            {masteredIds.includes(pack.id) && (
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                                <GraduationCap className="w-3 h-3 text-emerald-400" />
+                                <span>Đã thuộc</span>
+                              </span>
+                            )}
                             {pack.isCustom && (
                               <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
                                 AI Custom
@@ -652,6 +660,28 @@ export default function SpeakingWorkspace({
                       <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
                         <span>Đủ Part 1, 2, 3</span>
                         <div className="flex items-center space-x-2">
+                          {onToggleMastered && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleMastered(pack.id);
+                              }}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer ${
+                                masteredIds.includes(pack.id)
+                                  ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900'
+                                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                              }`}
+                              title={
+                                masteredIds.includes(pack.id)
+                                  ? 'Bỏ đánh dấu đã thuộc'
+                                  : 'Đánh dấu đã thuộc gói đề này'
+                              }
+                            >
+                              <GraduationCap className="w-3 h-3" />
+                              <span>{masteredIds.includes(pack.id) ? 'Đã thuộc' : 'Thuộc đề'}</span>
+                            </button>
+                          )}
                           {pack.isCustom && (
                             <button
                               onClick={(e) => handleDeleteCustomPack(pack.id, e)}
@@ -723,6 +753,30 @@ export default function SpeakingWorkspace({
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5">
+                  {onToggleMastered && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleMastered(selectedMockId)}
+                      className={`px-3.5 py-2.5 rounded-xl font-bold text-xs border flex items-center space-x-1.5 transition-all cursor-pointer shrink-0 ${
+                        masteredIds.includes(selectedMockId)
+                          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
+                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
+                      }`}
+                      title={
+                        masteredIds.includes(selectedMockId)
+                          ? 'Đã thuộc gói đề này (Bấm để bỏ đánh dấu)'
+                          : 'Đánh dấu đã thuộc gói đề này'
+                      }
+                    >
+                      <GraduationCap
+                        className={`w-4 h-4 ${
+                          masteredIds.includes(selectedMockId) ? 'text-emerald-400' : 'text-slate-400'
+                        }`}
+                      />
+                      <span>{masteredIds.includes(selectedMockId) ? 'Đã Thuộc' : 'Thuộc Đề'}</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => setIsSoundcheckOpen(true)}
                     className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white font-bold text-xs border border-purple-500/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
@@ -777,6 +831,8 @@ export default function SpeakingWorkspace({
             onOpenShadowing={() => setIsShadowingOpen(true)}
             onSaveToVocabNotebook={onSaveToVocabNotebook}
             onPracticeAnswerSubmitted={onSpeakingSubmitted}
+            masteredIds={masteredIds}
+            onToggleMastered={onToggleMastered}
           />
         )}
 

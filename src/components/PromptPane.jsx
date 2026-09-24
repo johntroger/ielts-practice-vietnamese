@@ -78,7 +78,9 @@ export default function PromptPane({
   brainstormResult,
   onOpenIdeaMatrix,
   apiKey,
-  onOpenSettings
+  onOpenSettings,
+  isMastered = false,
+  onToggleMastered
 }) {
   const [showModelAnswer, setShowModelAnswer] = useState(false);
   const [showOutline, setShowOutline] = useState(false);
@@ -169,6 +171,22 @@ export default function PromptPane({
               <Sparkles className="w-3 h-3" />
               <span>AI Forecast</span>
             </span>
+          )}
+          {onToggleMastered && (
+            <button
+              onClick={onToggleMastered}
+              className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold transition-all cursor-pointer shadow-2xs border ${
+                isMastered 
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
+                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
+              }`}
+              title={isMastered 
+                ? 'Đề thi này đã thuộc. Nhấp để bỏ đánh dấu' 
+                : 'Đánh dấu đề thi này là "Đã thuộc" để ghi nhớ tiến trình'}
+            >
+              <CheckCircle2 className={`w-3 h-3 ${isMastered ? 'text-emerald-600' : 'text-slate-400'}`} />
+              <span>{isMastered ? 'Đã thuộc' : 'Đánh dấu thuộc'}</span>
+            </button>
           )}
         </div>
 

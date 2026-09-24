@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Flame, Target, ChevronDown, BookOpen } from 'lucide-react';
+import { Sparkles, Flame, Target, ChevronDown, BookOpen, GraduationCap } from 'lucide-react';
 import Navbar from './components/Navbar';
 import SplitPane from './components/SplitPane';
 import PromptPane from './components/PromptPane';
@@ -786,6 +786,8 @@ export default function App() {
                 initialExamMode={readingMockExamMode}
                 openGeneratorTrigger={readingGenTrigger}
                 openIngestTrigger={readingIngestTrigger}
+                masteredIds={masteredIds}
+                onToggleMastered={handleToggleMastered}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
@@ -817,6 +819,8 @@ export default function App() {
                   });
                 }}
                 openGeneratorTrigger={listeningGenTrigger}
+                masteredIds={masteredIds}
+                onToggleMastered={handleToggleMastered}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
@@ -846,6 +850,8 @@ export default function App() {
                     return updated;
                   });
                 }}
+                masteredIds={masteredIds}
+                onToggleMastered={handleToggleMastered}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
@@ -890,6 +896,22 @@ export default function App() {
               >
                 <Target className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
                 <span>Band {targetBand}</span>
+              </button>
+
+              {/* Mastered Task Toggle Button */}
+              <button
+                onClick={() => handleToggleMastered(currentTask?.id)}
+                className={`flex items-center space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs ${
+                  masteredIds.includes(currentTask?.id)
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
+                }`}
+                title={masteredIds.includes(currentTask?.id)
+                  ? 'Đề thi này đã được đánh dấu là "Đã thuộc". Nhấn để bỏ đánh dấu.'
+                  : 'Đánh dấu đề thi này là "Đã thuộc" để ghi nhớ tiến trình và lọc trong thư viện.'}
+              >
+                <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTask?.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
+                <span className="hidden sm:inline">{masteredIds.includes(currentTask?.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
               </button>
             </div>
 
@@ -942,6 +964,8 @@ export default function App() {
                 onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
                 apiKey={apiKey}
                 onOpenSettings={() => setIsSettingsOpen(true)}
+                isMastered={masteredIds.includes(currentTask?.id)}
+                onToggleMastered={() => handleToggleMastered(currentTask?.id)}
               />
             }
             rightPane={

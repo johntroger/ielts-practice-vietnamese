@@ -24,7 +24,8 @@ import {
   Lock,
   ChevronDown,
   SlidersHorizontal,
-  Shield
+  Shield,
+  GraduationCap
 } from 'lucide-react';
 import { INITIAL_READING_TESTS } from '../../data/readingTasks';
 import { useReadingExam } from '../../hooks/useReadingExam';
@@ -53,7 +54,9 @@ export default function ReadingWorkspace({
   initialTestId,
   initialExamMode,
   openGeneratorTrigger,
-  openIngestTrigger
+  openIngestTrigger,
+  masteredIds = [],
+  onToggleMastered
 }) {
   const [allReadingTests, setAllReadingTests] = useState(() => {
     try {
@@ -526,6 +529,22 @@ export default function ReadingWorkspace({
                 <span className="text-[10px] text-indigo-500 font-semibold shrink-0">▾</span>
               </button>
 
+              {/* Mastered Button (Mobile) */}
+              {onToggleMastered && (
+                <button
+                  type="button"
+                  onClick={() => onToggleMastered(currentTest.id)}
+                  className={`p-1 rounded-xl border text-xs font-bold transition-all flex items-center shrink-0 cursor-pointer shadow-2xs ${
+                    masteredIds.includes(currentTest.id)
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                      : 'bg-slate-50 text-slate-400 border-slate-200 hover:text-slate-600'
+                  }`}
+                  title={masteredIds.includes(currentTest.id) ? 'Đã thuộc! Bấm để bỏ đánh dấu' : 'Đánh dấu bài đọc này là "Đã thuộc"'}
+                >
+                  <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTest.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
+                </button>
+              )}
+
               {/* Passages */}
               <div className="flex items-center space-x-0.5 bg-slate-100 p-0.5 rounded-xl text-xs font-semibold text-slate-600 shrink-0 border border-slate-200/60">
                 {currentTest?.passages?.map(p => (
@@ -772,6 +791,25 @@ export default function ReadingWorkspace({
                   title={currentTest.isPublic ? "Đang chia sẻ công khai! Bấm để chuyển riêng tư" : "Đang để riêng tư! Bấm để chia sẻ"}
                 >
                   {currentTest.isPublic ? <Globe className="w-3.5 h-3.5 text-emerald-600" /> : <Lock className="w-3.5 h-3.5 text-slate-500" />}
+                </button>
+              )}
+
+              {/* Mastered Button (Desktop) */}
+              {onToggleMastered && (
+                <button
+                  type="button"
+                  onClick={() => onToggleMastered(currentTest.id)}
+                  className={`flex items-center space-x-1 px-2 py-1 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs shrink-0 ${
+                    masteredIds.includes(currentTest.id)
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
+                  }`}
+                  title={masteredIds.includes(currentTest.id)
+                    ? 'Bài đọc này đã được đánh dấu là "Đã thuộc". Bấm để bỏ đánh dấu.'
+                    : 'Đánh dấu bài đọc này là "Đã thuộc" để ghi nhớ tiến trình và lọc trong thư viện.'}
+                >
+                  <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTest.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <span className="hidden xl:inline">{masteredIds.includes(currentTest.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
                 </button>
               )}
             </div>
@@ -1210,6 +1248,8 @@ export default function ReadingWorkspace({
           setIsIngestOpen(true);
         }}
         user={user}
+        masteredIds={masteredIds}
+        onToggleMastered={onToggleMastered}
       />
     </div>
   );

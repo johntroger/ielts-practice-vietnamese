@@ -36,6 +36,14 @@ import {
   GraduationCap
 } from 'lucide-react';
 import SpeakingResultModal from './speaking/SpeakingResultModal';
+import { INITIAL_READING_TESTS } from '../data/readingTasks';
+import { INITIAL_LISTENING_TESTS } from '../data/listeningTasks';
+import { 
+  SPEAKING_PART1_TOPICS, 
+  SPEAKING_PART2_CUECARDS, 
+  SPEAKING_PART3_QUESTIONS, 
+  SPEAKING_MOCK_TEST_PACKS 
+} from '../data/speakingTopics';
 
 export default function UserProfileModal({
   isOpen,
@@ -76,6 +84,7 @@ export default function UserProfileModal({
 }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'submissions' | 'reading' | 'listening' | 'speaking' | 'resources' | 'vocab' | 'account'
   const [resourceFilter, setResourceFilter] = useState('all'); // 'all' | 'public' | 'private'
+  const [masteredSkillFilter, setMasteredSkillFilter] = useState('all'); // 'all' | 'writing' | 'reading' | 'listening' | 'speaking'
   const [selectedSpeakingSub, setSelectedSpeakingSub] = useState(null);
 
   const handleFileUpload = (e) => {
@@ -174,9 +183,213 @@ export default function UserProfileModal({
     return (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
   }, [allTasks]);
 
-  const masteredTasks = useMemo(() => {
-    return (allTasks || []).filter(t => masteredIds.includes(t.id));
-  }, [allTasks, masteredIds]);
+  const allReadingBank = useMemo(() => {
+    let custom = [];
+    try {
+      const saved = localStorage.getItem('ielts_reading_custom_tests');
+      if (saved) custom = JSON.parse(saved);
+    } catch {}
+    return [...INITIAL_READING_TESTS, ...(Array.isArray(custom) ? custom : [])];
+  }, []);
+
+  const allListeningBank = useMemo(() => {
+    let custom = [];
+    try {
+      const saved = localStorage.getItem('ielts_listening_custom_tests');
+      if (saved) custom = JSON.parse(saved);
+    } catch {}
+    return [...INITIAL_LISTENING_TESTS, ...(Array.isArray(custom) ? custom : [])];
+  }, []);
+
+  const allSpeakingBank = useMemo(() => {
+    let customPacks = [];
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_packs');
+      if (saved) customPacks = JSON.parse(saved);
+    } catch {}
+    let customP1 = [];
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_p1');
+      if (saved) customP1 = JSON.parse(saved);
+    } catch {}
+    let customP2 = [];
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_p2');
+      if (saved) customP2 = JSON.parse(saved);
+    } catch {}
+    let customP3 = [];
+    try {
+      const saved = localStorage.getItem('ielts_speaking_custom_p3');
+      if (saved) customP3 = JSON.parse(saved);
+    } catch {}
+
+    return {
+      packs: [...SPEAKING_MOCK_TEST_PACKS, ...(Array.isArray(customPacks) ? customPacks : [])],
+      p1: [...SPEAKING_PART1_TOPICS, ...(Array.isArray(customP1) ? customP1 : [])],
+      p2: [...SPEAKING_PART2_CUECARDS, ...(Array.isArray(customP2) ? customP2 : [])],
+      p3: [...SPEAKING_PART3_QUESTIONS, ...(Array.isArray(customP3) ? customP3 : [])],
+    };
+  }, []);
+
+  const allMasteredItems = useMemo(() => {
+    return masteredIds.map(id => {
+      // 1. Try Writing
+      const writingTask = (allTasks || []).find(t => t.id === id);
+      if (writingTask) {
+        const taskSubs = (submissions || []).filter(s => s.task?.id === id);
+        const bestBand = taskSubs.reduce((max, s) => Math.max(max, s.evaluation?.overallBand || 0), 0);
+        return {
+          id,
+          skill: 'writing',
+          skillLabel: 'Writing',
+          skillBadgeColor: 'bg-red-50 text-red-700 border-red-200',
+          typeBadge: `Task ${writingTask.taskNumber || 2}`,
+          typeBadgeColor: writingTask.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800',
+          category: writingTask.category || 'Academic Writing',
+          title: writingTask.title,
+          description: writingTask.prompt,
+          statText: `Đã viết: ${taskSubs.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          rawItem: writingTask
+        };
+      }
+
+      // 2. Try Reading
+      const readingTest = allReadingBank.find(t => t.id === id);
+      if (readingTest) {
+        const rHistory = (readingHistory || []).filter(h => h.testId === id);
+        const bestBand = rHistory.reduce((max, h) => Math.max(max, Number(h.band) || 0), 0);
+        return {
+          id,
+          skill: 'reading',
+          skillLabel: 'Reading',
+          skillBadgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          typeBadge: readingTest.type === 'general' ? 'General Training' : 'Academic Reading',
+          typeBadgeColor: 'bg-emerald-100 text-emerald-800',
+          category: readingTest.isCustom ? 'Đề tự tạo (AI)' : 'Cambridge Official',
+          title: readingTest.title,
+          description: readingTest.description || (readingTest.passages?.map(p => p.title).join(' • ') || ''),
+          statText: `Đã làm: ${rHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          rawItem: readingTest
+        };
+      }
+
+      // 3. Try Listening
+      const listeningTest = allListeningBank.find(t => t.id === id);
+      if (listeningTest) {
+        const lHistory = (listeningHistory || []).filter(h => h.testId === id);
+        const bestBand = lHistory.reduce((max, h) => Math.max(max, Number(h.band) || 0), 0);
+        return {
+          id,
+          skill: 'listening',
+          skillLabel: 'Listening',
+          skillBadgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+          typeBadge: 'Listening Test',
+          typeBadgeColor: 'bg-indigo-100 text-indigo-800',
+          category: listeningTest.isCustom ? 'AI Audio' : 'Cambridge Official',
+          title: listeningTest.title,
+          description: listeningTest.description || `${listeningTest.parts?.length || 4} phần nghe`,
+          statText: `Đã làm: ${lHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          rawItem: listeningTest
+        };
+      }
+
+      // 4. Try Speaking Mock Packs
+      const spkPack = allSpeakingBank.packs.find(p => p.id === id);
+      if (spkPack) {
+        const sHistory = (speakingHistory || []).filter(h => h.mockPackId === id);
+        const bestBand = sHistory.reduce((max, h) => Math.max(max, Number(h.overallBand) || 0), 0);
+        return {
+          id,
+          skill: 'speaking',
+          skillLabel: 'Speaking Mock',
+          skillBadgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
+          typeBadge: 'Full Mock Pack',
+          typeBadgeColor: 'bg-purple-100 text-purple-800',
+          category: spkPack.difficulty || ('Target ' + spkPack.targetBand),
+          title: spkPack.title,
+          description: spkPack.summary || 'Trọn bộ 3 Parts chuẩn khảo thí Cambridge',
+          statText: `Đã thi: ${sHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          rawItem: spkPack
+        };
+      }
+
+      // 5. Try Speaking Part 1
+      const p1Topic = allSpeakingBank.p1.find(t => t.id === id);
+      if (p1Topic) {
+        return {
+          id,
+          skill: 'speaking',
+          skillLabel: 'Speaking P1',
+          skillBadgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
+          typeBadge: 'Part 1 Topic',
+          typeBadgeColor: 'bg-purple-100 text-purple-800',
+          category: p1Topic.isCustom ? 'AI Custom' : 'Cambridge',
+          title: p1Topic.title,
+          description: p1Topic.questions?.[0]?.question ? `"${p1Topic.questions[0].question}"` : 'Bộ câu hỏi phỏng vấn Part 1',
+          statText: `${p1Topic.questions?.length || 3} câu hỏi`,
+          rawItem: p1Topic
+        };
+      }
+
+      // 6. Try Speaking Part 2
+      const p2Card = allSpeakingBank.p2.find(c => c.id === id);
+      if (p2Card) {
+        return {
+          id,
+          skill: 'speaking',
+          skillLabel: 'Speaking P2',
+          skillBadgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
+          typeBadge: 'Part 2 Cue Card',
+          typeBadgeColor: 'bg-purple-100 text-purple-800',
+          category: p2Card.category || 'Cue Card',
+          title: p2Card.title,
+          description: p2Card.cueCard?.intro || (p2Card.cueCard?.bullets?.slice(0, 2).join(' • ') || 'Cue card 2 phút nói'),
+          statText: 'Long Turn 2 Phút',
+          rawItem: p2Card
+        };
+      }
+
+      // 7. Try Speaking Part 3
+      const p3Set = allSpeakingBank.p3.find(s => (s.linkedPart2Id || s.id) === id);
+      if (p3Set) {
+        return {
+          id,
+          skill: 'speaking',
+          skillLabel: 'Speaking P3',
+          skillBadgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
+          typeBadge: 'Part 3 Discussion',
+          typeBadgeColor: 'bg-purple-100 text-purple-800',
+          category: 'Thảo luận chuyên sâu',
+          title: p3Set.topic,
+          description: p3Set.questions?.[0]?.question ? `"${p3Set.questions[0].question}"` : 'Bộ câu hỏi thảo luận follow-up',
+          statText: `${p3Set.questions?.length || 3} câu hỏi PEEL`,
+          rawItem: p3Set
+        };
+      }
+
+      // 8. Fallback
+      return {
+        id,
+        skill: 'other',
+        skillLabel: 'Khác',
+        skillBadgeColor: 'bg-slate-100 text-slate-800 border-slate-200',
+        typeBadge: 'Đã thuộc',
+        typeBadgeColor: 'bg-slate-100 text-slate-700',
+        category: 'Đề tự do',
+        title: id,
+        description: 'Mục trong danh sách Đã thuộc của bạn',
+        statText: '',
+        rawItem: null
+      };
+    });
+  }, [masteredIds, allTasks, submissions, readingHistory, listeningHistory, speakingHistory, allReadingBank, allListeningBank, allSpeakingBank]);
+
+  const masteredTasks = allMasteredItems;
+
+  const filteredMasteredItems = useMemo(() => {
+    if (masteredSkillFilter === 'all') return allMasteredItems;
+    return allMasteredItems.filter(i => i.skill === masteredSkillFilter);
+  }, [allMasteredItems, masteredSkillFilter]);
 
   const filteredCustomTasks = useMemo(() => {
     if (resourceFilter === 'public') return userCustomTasks.filter(t => t.isPublic);
@@ -1598,88 +1811,147 @@ export default function UserProfileModal({
                       <h3 className="text-sm sm:text-base font-bold text-slate-900">Đề Thi & Bài Luyện Đã Thuần Thục</h3>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center space-x-1">
                         <GraduationCap className="w-3 h-3 text-emerald-700" />
-                        <span>{masteredTasks.length} đề</span>
+                        <span>{allMasteredItems.length} đề</span>
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 mt-0.5">
                       Các đề thi bạn đã thuộc sẽ tự động ẩn khỏi danh sách luyện tập để tập trung vào đề mới, nhưng lịch sử làm bài và điểm số luôn được lưu giữ đầy đủ tại đây.
                     </p>
                   </div>
+
+                  {/* 4-Skill Filter Pills */}
+                  <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600 overflow-x-auto scrollbar-none shrink-0">
+                    <button
+                      onClick={() => setMasteredSkillFilter('all')}
+                      className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                        masteredSkillFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs font-black' : 'hover:text-slate-900'
+                      }`}
+                    >
+                      Tất Cả ({allMasteredItems.length})
+                    </button>
+                    <button
+                      onClick={() => setMasteredSkillFilter('writing')}
+                      className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                        masteredSkillFilter === 'writing' ? 'bg-white text-red-700 shadow-2xs font-black' : 'hover:text-slate-900'
+                      }`}
+                    >
+                      ✍️ Writing ({allMasteredItems.filter(i => i.skill === 'writing').length})
+                    </button>
+                    <button
+                      onClick={() => setMasteredSkillFilter('reading')}
+                      className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                        masteredSkillFilter === 'reading' ? 'bg-white text-emerald-700 shadow-2xs font-black' : 'hover:text-slate-900'
+                      }`}
+                    >
+                      📖 Reading ({allMasteredItems.filter(i => i.skill === 'reading').length})
+                    </button>
+                    <button
+                      onClick={() => setMasteredSkillFilter('listening')}
+                      className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                        masteredSkillFilter === 'listening' ? 'bg-white text-indigo-700 shadow-2xs font-black' : 'hover:text-slate-900'
+                      }`}
+                    >
+                      🎧 Listening ({allMasteredItems.filter(i => i.skill === 'listening').length})
+                    </button>
+                    <button
+                      onClick={() => setMasteredSkillFilter('speaking')}
+                      className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                        masteredSkillFilter === 'speaking' ? 'bg-white text-purple-700 shadow-2xs font-black' : 'hover:text-slate-900'
+                      }`}
+                    >
+                      🎙️ Speaking ({allMasteredItems.filter(i => i.skill === 'speaking').length})
+                    </button>
+                  </div>
                 </div>
 
-                {masteredTasks.length === 0 ? (
+                {filteredMasteredItems.length === 0 ? (
                   <div className="p-8 sm:p-12 rounded-3xl bg-slate-50/70 border border-slate-200/80 text-center space-y-3">
                     <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
                       <GraduationCap className="w-6 h-6" />
                     </div>
-                    <h4 className="font-bold text-slate-800 text-sm">Chưa có đề thi nào trong danh sách "Đã thuộc"</h4>
+                    <h4 className="font-bold text-slate-800 text-sm">
+                      {masteredSkillFilter === 'all' 
+                        ? 'Chưa có đề thi nào trong danh sách "Đã thuộc"' 
+                        : `Chưa có bài nào thuộc kỹ năng ${masteredSkillFilter.toUpperCase()}`}
+                    </h4>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Khi vào <strong>Thư viện đề</strong> hoặc <strong>Luyện tập vi mô</strong>, bấm vào nút <strong>🎓 Đã thuộc</strong> ở bất kỳ đề bài nào để ẩn đề đó khỏi danh sách luyện tập hàng ngày.
+                      Khi vào <strong>Writing</strong>, <strong>Reading</strong>, <strong>Listening</strong>, hoặc <strong>Speaking</strong>, bấm vào nút <strong>🎓 Đã thuộc</strong> ở bất kỳ đề bài nào để ẩn đề đó khỏi danh sách luyện tập hàng ngày.
                     </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
-                    {masteredTasks.map((t) => {
-                      const taskSubs = submissions.filter(s => s.task?.id === t.id);
-                      const bestBand = taskSubs.reduce((max, s) => Math.max(max, s.evaluation?.overallBand || 0), 0);
-
+                    {filteredMasteredItems.map((item) => {
                       return (
                         <div 
-                          key={t.id}
+                          key={item.id}
                           className="p-4 sm:p-5 rounded-2xl bg-white border border-emerald-200 hover:border-emerald-300 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between gap-3"
                         >
                           <div className="space-y-1.5">
                             <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                                t.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-                              }`}>
-                                Task {t.taskNumber || 2}
+                              {/* Skill Badge */}
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase border flex items-center space-x-1 ${item.skillBadgeColor}`}>
+                                {item.skill === 'writing' && <PenTool className="w-3 h-3 text-red-600" />}
+                                {item.skill === 'reading' && <BookOpen className="w-3 h-3 text-emerald-600" />}
+                                {item.skill === 'listening' && <Headphones className="w-3 h-3 text-indigo-600" />}
+                                {item.skill === 'speaking' && <Mic className="w-3 h-3 text-purple-600" />}
+                                <span>{item.skillLabel}</span>
                               </span>
+
+                              {/* Type Badge */}
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${item.typeBadgeColor}`}>
+                                {item.typeBadge}
+                              </span>
+
                               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center space-x-1">
                                 <GraduationCap className="w-3 h-3 text-emerald-700" />
                                 <span>Đã thuộc</span>
                               </span>
-                              {t.category && (
+
+                              {item.category && (
                                 <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                                  {t.category}
+                                  {item.category}
                                 </span>
                               )}
                             </div>
 
                             <h4 className="font-bold text-sm text-slate-900 line-clamp-1">
-                              {t.title}
+                              {item.title}
                             </h4>
 
-                            <p className="text-xs text-slate-600 line-clamp-2 italic bg-slate-50 p-2 rounded-lg border border-slate-100">
-                              "{t.prompt}"
-                            </p>
+                            {item.description && (
+                              <p className="text-xs text-slate-600 line-clamp-2 italic bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                {item.description}
+                              </p>
+                            )}
 
-                            <div className="flex items-center space-x-3 text-[11px] text-slate-500 pt-1">
-                              <span>Đã viết: <strong>{taskSubs.length} lần</strong></span>
-                              {bestBand > 0 && (
-                                <>
-                                  <span>•</span>
-                                  <span>Điểm cao nhất: <strong className="text-red-600 font-bold">Band {bestBand.toFixed(1)}</strong></span>
-                                </>
-                              )}
-                            </div>
+                            {item.statText && (
+                              <div className="flex items-center space-x-3 text-[11px] text-slate-500 pt-1">
+                                <span>{item.statText}</span>
+                              </div>
+                            )}
                           </div>
 
                           <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                            <button
-                              onClick={() => {
-                                onSelectTask?.(t);
-                                onClose();
-                              }}
-                              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-2xs"
-                              title="Chọn đề này và quay lại phòng viết"
-                            >
-                              <span>Luyện đề này</span>
-                              <ChevronRight className="w-3.5 h-3.5" />
-                            </button>
+                            {item.skill === 'writing' && item.rawItem ? (
+                              <button
+                                onClick={() => {
+                                  onSelectTask?.(item.rawItem);
+                                  onClose();
+                                }}
+                                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-2xs"
+                                title="Chọn đề này và quay lại phòng viết"
+                              >
+                                <span>Luyện đề này</span>
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                            ) : (
+                              <span className="text-[11px] text-slate-400 font-mono">
+                                ID: {item.id}
+                              </span>
+                            )}
 
                             <button
-                              onClick={() => onToggleMastered?.(t.id)}
+                              onClick={() => onToggleMastered?.(item.id)}
                               className="px-3 py-1.5 rounded-xl bg-white hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-300 hover:border-red-200 text-xs font-bold transition-colors cursor-pointer"
                               title="Bỏ đánh dấu 'Đã thuộc' để hiện lại trong thư viện luyện tập"
                             >

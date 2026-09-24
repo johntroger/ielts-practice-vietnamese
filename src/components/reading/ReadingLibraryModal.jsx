@@ -16,7 +16,8 @@ import {
   PlusCircle,
   ArrowRight,
   Check,
-  Filter
+  Filter,
+  GraduationCap
 } from 'lucide-react';
 
 export default function ReadingLibraryModal({
@@ -30,11 +31,21 @@ export default function ReadingLibraryModal({
   onCreateFullTest,
   onOpenGenerator,
   onOpenIngest,
-  user
+  user,
+  masteredIds = [],
+  onToggleMastered
 }) {
-  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'ingest' | 'public' | 'custom_builder'
+  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'ingest' | 'public' | 'mastered' | 'custom_builder'
   const [passageFilter, setPassageFilter] = useState('all'); // 'all' | 'full' | 'p1' | 'p2' | 'p3'
   const [searchQuery, setSearchQuery] = useState('');
+  const [hideMastered, setHideMastered] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_reading_hide_mastered');
+      return saved ? JSON.parse(saved) : false;
+    } catch (e) {
+      return false;
+    }
+  });
 
   // Builder state for selecting 3 passages
   const [builderP1, setBuilderP1] = useState(null); // { testId, passage }
@@ -209,6 +220,15 @@ export default function ReadingLibraryModal({
   };
 
   const filteredTests = allReadingTests.filter(test => {
+    const isMastered = masteredIds.includes(test.id);
+
+    // 0. Mastered filtering
+    if (activeTab === 'mastered') {
+      if (!isMastered) return false;
+    } else if (hideMastered && isMastered) {
+      return false;
+    }
+
     // 1. Tab filter
     let matchesTab = true;
     if (activeTab === 'cambridge') {
@@ -219,6 +239,8 @@ export default function ReadingLibraryModal({
       matchesTab = test.isCustom && (test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí'));
     } else if (activeTab === 'public') {
       matchesTab = Boolean(test.isPublic);
+    } else if (activeTab === 'mastered') {
+      matchesTab = isMastered;
     }
 
     // 2. Passage count/number filter
@@ -252,6 +274,7 @@ export default function ReadingLibraryModal({
     ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test')).length,
     ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰') || t.title?.includes('[Báo chí'))).length,
     public: allReadingTests.filter(t => t.isPublic).length,
+    mastered: allReadingTests.filter(t => masteredIds.includes(t.id)).length,
     fullTests: allReadingTests.filter(t => (t.passages?.length || 1) > 1).length,
     totalPassages: passageBank.length
   };
@@ -353,6 +376,17 @@ export default function ReadingLibraryModal({
                 }`}
               >
                 🌐 Cộng đồng ({stats.public})
+              </button>
+              <button
+                onClick={() => setActiveTab('mastered')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1 ${
+                  activeTab === 'mastered' 
+                    ? 'bg-white text-emerald-800 shadow-xs font-extrabold' 
+                    : 'text-slate-600 hover:text-emerald-700'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Đã thuộc ({stats.mastered})</span>
               </button>
             </div>
 
@@ -457,6 +491,22 @@ export default function ReadingLibraryModal({
                   Passage 3 (Câu 27–40)
                 </button>
               </div>
+
+              {/* Hide Mastered Checkbox */}
+              <label className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-700 font-bold cursor-pointer hover:bg-slate-50 transition-colors shadow-2xs select-none shrink-0 sm:ml-auto">
+                <input
+                  type="checkbox"
+                  checked={hideMastered}
+                  onChange={(e) => {
+                    setHideMastered(e.target.checked);
+                    try {
+                      localStorage.setItem('ielts_reading_hide_mastered', JSON.stringify(e.target.checked));
+                    } catch (err) {}
+                  }}
+                  className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer"
+                />
+                <span className="text-[11px] text-slate-600">Ẩn đề đã thuộc</span>
+              </label>
             </div>
           )}
         </div>
@@ -897,6 +947,13 @@ export default function ReadingLibraryModal({
                               )}
                             </button>
                           )}
+                          {/* Mastered Badge */}
+                          {masteredIds.includes(test.id) && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                              <span>Đã thuộc</span>
+                            </span>
+                          )}
                         </div>
 
                         <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
@@ -922,7 +979,7 @@ export default function ReadingLibraryModal({
 
                       {/* Actions Buttons */}
                       <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <div>
+                        <div className="flex items-center space-x-1.5">
                           {test.isCustom && onDeleteTest ? (
                             <button
                               onClick={() => onDeleteTest(test.id)}
@@ -933,6 +990,26 @@ export default function ReadingLibraryModal({
                             </button>
                           ) : (
                             <span className="text-[10px] text-slate-400 font-medium">Cambridge</span>
+                          )}
+
+                          {onToggleMastered && (
+                            <button
+                              type="button"
+                              onClick={() => onToggleMastered(test.id)}
+                              className={`p-1.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                                masteredIds.includes(test.id)
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
+                              }`}
+                              title={masteredIds.includes(test.id) 
+                                ? 'Đã thuộc! Bấm để bỏ đánh dấu' 
+                                : 'Đánh dấu bài đọc này là "Đã thuộc"'}
+                            >
+                              <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(test.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
+                              <span className="text-[11px] hidden sm:inline">
+                                {masteredIds.includes(test.id) ? 'Đã thuộc' : 'Thuộc bài'}
+                              </span>
+                            </button>
                           )}
                         </div>
 

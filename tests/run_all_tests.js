@@ -22,7 +22,8 @@ const testSuites = [
   { name: 'Step 13: Public AI Content & Zero-Auth Resources', file: 'tests/test_step13_public_ai_content_no_auth.js' },
   { name: 'Step 14: Mastered Items & History Preservation', file: 'tests/test_step14_mastered_items_feature.js' },
   { name: 'Step 15: Cambridge Hard Band Capping Rules', file: 'tests/test_step15_cambridge_hard_capping.js' },
-  { name: 'Step 16: Modal Store Pub/Sub State Engine', file: 'tests/test_step16_modal_store.js' }
+  { name: 'Step 16: Modal Store Pub/Sub State Engine', file: 'tests/test_step16_modal_store.js' },
+  { name: 'Step 17: All-Skill Mastered (Đã Thuộc) System', file: 'tests/test_step17_all_skills_mastered.js' }
 ];
 
 console.log('===============================================================');

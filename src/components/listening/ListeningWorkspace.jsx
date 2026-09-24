@@ -17,7 +17,8 @@ import {
   Sparkles,
   AlertTriangle,
   RefreshCw,
-  Puzzle
+  Puzzle,
+  GraduationCap
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
@@ -48,7 +49,9 @@ export default function ListeningWorkspace({
   onOpenDrills,
   initialTestId = 'cambridge-18-test-1',
   initialExamMode = 'practice',
-  openGeneratorTrigger
+  openGeneratorTrigger,
+  masteredIds = [],
+  onToggleMastered
 }) {
   // 1. All Listening Tests (Preloaded + Custom from URL)
   const [allListeningTests, setAllListeningTests] = useState(() => {
@@ -544,6 +547,29 @@ export default function ListeningWorkspace({
               <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
               <span>Kho Đề</span>
               <span className="hidden sm:inline">({allListeningTests.length})</span>
+            </button>
+
+            {/* Đánh dấu Đã thuộc đề nghe hiện tại */}
+            <button
+              type="button"
+              onClick={() => onToggleMastered && onToggleMastered(currentTestId)}
+              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg font-bold text-xs border transition-colors shadow-2xs cursor-pointer shrink-0 ${
+                masteredIds.includes(currentTestId)
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
+              }`}
+              title={
+                masteredIds.includes(currentTestId)
+                  ? 'Đã thuộc đề nghe này (Bấm để bỏ đánh dấu)'
+                  : 'Đánh dấu đã thuộc đề nghe này'
+              }
+            >
+              <GraduationCap
+                className={`w-3.5 h-3.5 ${
+                  masteredIds.includes(currentTestId) ? 'text-emerald-600' : 'text-slate-400'
+                }`}
+              />
+              <span>{masteredIds.includes(currentTestId) ? 'Đã thuộc' : 'Thuộc đề'}</span>
             </button>
 
             {/* Cẩm Nang Lý Thuyết Listening Button */}
@@ -1195,6 +1221,8 @@ export default function ListeningWorkspace({
           setIsGeneratorOpen(true);
         }}
         user={user}
+        masteredIds={masteredIds}
+        onToggleMastered={onToggleMastered}
       />
 
       {/* 12. Listening AI Test Generator from Audio URL Modal */}
