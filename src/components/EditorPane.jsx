@@ -22,8 +22,10 @@ import {
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 import Task1DataCoverageModal from './Task1DataCoverageModal';
 import Task2CoherenceModal from './Task2CoherenceModal';
+import SentenceHeatmapModal from './SentenceHeatmapModal';
 import { analyzeTask1Overview } from '../services/algorithmicEvaluationService';
 import { analyzeTask2Coherence } from '../utils/coherenceAnalyzer';
+import { analyzeSentenceStructures } from '../services/sentenceAnalyzer';
 
 export default function EditorPane({
   essayText,
@@ -102,6 +104,12 @@ export default function EditorPane({
     if (isTask1) return null;
     return analyzeTask2Coherence(essayText);
   }, [isTask1, essayText]);
+
+  const [isSentenceHeatmapOpen, setIsSentenceHeatmapOpen] = useState(false);
+
+  const sentenceAnalysis = React.useMemo(() => {
+    return analyzeSentenceStructures(essayText);
+  }, [essayText]);
 
   return (
     <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
@@ -243,6 +251,31 @@ export default function EditorPane({
               </span>
             </button>
           )}
+
+          {/* Cambridge GRA Sentence Structure Heatmap Inspector */}
+          <button
+            onClick={() => setIsSentenceHeatmapOpen(true)}
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
+              sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
+                  ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+            }`}
+            title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
+          >
+            <Layers className="w-3.5 h-3.5 text-teal-600" />
+            <span className="hidden sm:inline">Cấu Trúc GRA</span>
+            <span className={`text-[10px] px-1 rounded font-black ${
+              sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
+                ? 'bg-emerald-200 text-emerald-900'
+                : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
+                  ? 'bg-amber-200 text-amber-900'
+                  : 'bg-slate-200 text-slate-800'
+            }`}>
+              {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
+            </span>
+          </button>
 
           {/* Spellcheck Toggle */}
           <button
@@ -570,6 +603,21 @@ export default function EditorPane({
           }}
         />
       )}
+
+      {/* Cambridge GRA Sentence Structure Heatmap Modal */}
+      <SentenceHeatmapModal
+        isOpen={isSentenceHeatmapOpen}
+        onClose={() => setIsSentenceHeatmapOpen(false)}
+        analysisData={sentenceAnalysis}
+        onInsertTemplate={(templateText) => {
+          if (!essayText.trim()) {
+            setEssayText(templateText);
+          } else {
+            setEssayText(prev => prev + '\n\n' + templateText);
+          }
+          setIsSentenceHeatmapOpen(false);
+        }}
+      />
 
     </div>
   );

@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-sentence-structure-heatmap',
+    version: 'v3.0',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'ai_evaluation',
+    targetSkills: ['writing'],
+    title: 'Bản Đồ Nhiệt Cấu Trúc Câu (GRA Sentence Structure Heatmap)',
+    shortDesc: 'Phân tích cú pháp thời gian thực tỷ lệ Câu Đơn, Câu Ghép & Câu Phức theo tiêu chí Grammatical Range & Accuracy (GRA) chuẩn Cambridge.',
+    icon: 'Layers',
+    shortcut: null,
+    updatedAt: '2026-09-24',
+    highlights: [
+      'Phân loại 3 cấp độ cú pháp: 🟢 Câu Phức (Subordinating / Relative / Inversion), 🔵 Câu Ghép (FANBOYS), 🟡 Câu Đơn (Simple).',
+      'Thanh đo nhiệt 3 màu trực quan kèm dự phóng Band GRA: Cảnh báo ngay nếu tỷ lệ câu đơn > 40% (nguy cơ kẹt ở Band 5.5-6.0).',
+      'Bộ soi chi tiết từng câu trong bài viết kèm lý giải cấu trúc và gợi ý nâng cấp câu đơn sang câu phức.',
+      'Cẩm nang 4 mẫu câu vàng (Mệnh đề nhượng bộ, quan hệ chỉ hệ quả, đảo ngữ, phân từ rút gọn) để bứt phá Band 7.5 - 8.0+ GRA.'
+    ],
+    usageGuide: 'Tại màn hình Writing, nhấn nút "Cấu Trúc GRA" trên thanh công cụ soạn bài để mở Bản Đồ Nhiệt và xem phân tích thời gian thực.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'writing',
+      label: 'Mở Phân Tích Cấu Trúc Câu'
+    }
+  },
+  {
     id: 'feat-speaking-dual-engine',
     version: 'v2.8',
     status: 'new',
