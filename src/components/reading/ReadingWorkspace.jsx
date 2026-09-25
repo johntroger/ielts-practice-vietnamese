@@ -29,6 +29,8 @@ import {
 } from 'lucide-react';
 import { INITIAL_READING_TESTS } from '../../data/readingTasks';
 import { useReadingExam } from '../../hooks/useReadingExam';
+import { useReadingExamTimer } from '../../hooks/useReadingExamTimer';
+import { usePassageEvidence } from '../../hooks/usePassageEvidence';
 import PassagePane from './PassagePane';
 import QuestionPane from './QuestionPane';
 import QuestionPaletteBar from './QuestionPaletteBar';
@@ -124,11 +126,9 @@ export default function ReadingWorkspace({
   // Computer-Delivered IELTS (CDI) Simulation states
   const [cdiFullscreen, setCdiFullscreen] = useState(false);
   const [cdiTheme, setCdiTheme] = useState('standard'); // 'standard' | 'black-on-white' | 'white-on-black' | 'yellow-on-black'
-  const [activeCdiNotice, setActiveCdiNotice] = useState(null);
 
-  // Explanation, Evidence and Modals states
+  // Explanation and Modals states
   const [showExplanationFor, setShowExplanationFor] = useState(null);
-  const [activeEvidencePara, setActiveEvidencePara] = useState(null);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
@@ -366,15 +366,18 @@ export default function ReadingWorkspace({
     };
   }, [isDragging]);
 
-  // Monitor CDI Official Exam Timer Warnings (10m and 5m triggers)
-  useEffect(() => {
-    if (!isSubmitted && isRunning) {
-      const status = getCdiTimerStatus(timeRemaining);
-      if (status.noticeText && (!activeCdiNotice || activeCdiNotice.text !== status.noticeText)) {
-        setActiveCdiNotice({ text: status.noticeText, severity: status.severity });
-      }
-    }
-  }, [timeRemaining, isSubmitted, isRunning]);
+  // Dedicated Custom Hook for Reading Exam Timer & CDI Alerts (Clean Architecture)
+  const {
+    formatTimer,
+    activeCdiNotice,
+    setActiveCdiNotice,
+    isLowTime,
+    isCriticalTime
+  } = useReadingExamTimer({
+    timeRemaining,
+    isRunning,
+    isSubmitted
+  });
 
   // ESC key to exit CDI Fullscreen mode
   useEffect(() => {
@@ -387,40 +390,16 @@ export default function ReadingWorkspace({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [cdiFullscreen]);
 
-  const handleLocateEvidence = (paraId) => {
-    setActiveEvidencePara(paraId);
-    if (window.innerWidth < 1024) {
-      setMobileTab('passage');
-    }
-    setTimeout(() => {
-      const el = document.getElementById(`passage-para-${paraId}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 150);
-  };
-
-  const handleJumpToQuestion = (questionOrder) => {
-    if (window.innerWidth < 1024) {
-      setMobileTab('questions');
-    }
-    setTimeout(() => {
-      const el = document.getElementById(`question-card-${questionOrder}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 150);
-  };
-
-  // Timer format (MM:SS)
-  const formatTimer = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const isLowTime = timeRemaining <= 300 && timeRemaining > 0; // Less than 5 mins
-  const isCriticalTime = timeRemaining <= 60 && timeRemaining > 0; // Less than 1 min
+  // Dedicated Custom Hook for Paragraph Evidence Locating & Question Jumping (Clean Architecture)
+  const {
+    activeEvidencePara,
+    setActiveEvidencePara,
+    locateEvidence: handleLocateEvidence,
+    jumpToQuestion: handleJumpToQuestion
+  } = usePassageEvidence({
+    onSwitchToPassage: () => setMobileTab('passage'),
+    onSwitchToQuestions: () => setMobileTab('questions')
+  });
 
   // Suggested time per passage: Passage 1 (17m), Passage 2 (20m), Passage 3 (23m)
   const passageTimeGuide = {

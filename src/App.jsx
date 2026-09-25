@@ -64,6 +64,7 @@ import { INITIAL_TASKS, COMMUNITY_DEFAULT_TASKS } from './data/sampleTasks';
 import { evaluateEssay, brainstormIdeas } from './services/geminiService';
 import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationService';
 import { countWords } from './utils/textAnalytics';
+import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
 
 export default function App() {
   const { modals, closeModal: triggerCloseModal } = useModalStore();
@@ -183,11 +184,13 @@ export default function App() {
   const handleChangeCdiFontSize = (size) => {
     setCdiFontSize(size);
     safeSet('ielts_cdi_font_size', size);
+    setCdiFontSizeInStore(size);
   };
 
   const handleChangeCdiContrast = (contrast) => {
     setCdiContrast(contrast);
     safeSet('ielts_cdi_contrast', contrast);
+    setCdiContrastInStore(contrast);
   };
 
   const handleResetCDIDisplay = () => {

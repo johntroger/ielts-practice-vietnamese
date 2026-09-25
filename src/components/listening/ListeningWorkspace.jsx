@@ -30,6 +30,7 @@ import ListeningURLExerciseGeneratorModal from './ListeningURLExerciseGeneratorM
 import { playIELTSSoundcheck, stopIELTSSoundcheck } from '../../utils/soundcheckAudio';
 import { useAudioEngine } from '../../hooks/useAudioEngine';
 import { useListeningExam } from '../../hooks/useListeningExam';
+import { useListeningShortcuts } from '../../hooks/useListeningShortcuts';
 import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
 import { calculateListeningBandScore } from '../../data/listeningTasks';
 import { scoreListeningExam } from '../../utils/listeningScorer';
@@ -226,6 +227,14 @@ export default function ListeningWorkspace({
     audioEngine,
     examMode,
     questionsData: currentTest.parts.flatMap(p => p.questionGroups.flatMap(g => g.questions))
+  });
+
+  // 4. Keyboard Shortcuts Hook for Listening Audio (Clean Architecture)
+  useListeningShortcuts({
+    audioEngine,
+    examMode,
+    isEnabled: hasStartedExam && !isConfirmSubmitOpen,
+    isModalOpen: isResultModalOpen || isSoundcheckOpen || isTranscriptOpen || isLibraryOpen || isGeneratorOpen
   });
 
   // Check for prior interrupted session on mount
