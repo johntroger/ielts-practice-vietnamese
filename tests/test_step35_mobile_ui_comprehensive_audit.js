@@ -60,5 +60,13 @@ const promptPath = path.join(__dirname, '../src/components/PromptPane.jsx');
 const promptSource = fs.readFileSync(promptPath, 'utf8');
 assert(promptSource.includes('min-w-[40px] min-h-[40px]'), 'PromptPane image zoom close button must have 40px touch target');
 
-console.log('Passed: 6/6 tests in Step 35');
+// 7. FeaturesGuideModal Mobile Header Layout
+console.log('Test 7: Verifying FeaturesGuideModal 2-row mobile header prevents cut-offs and off-screen close button');
+const featuresPath = path.join(__dirname, '../src/components/FeaturesGuideModal.jsx');
+const featuresSource = fs.readFileSync(featuresPath, 'utf8');
+assert(featuresSource.includes('flex flex-col md:flex-row md:items-center'), 'FeaturesGuideModal header must use responsive flex-col on mobile');
+assert(featuresSource.includes('min-w-[40px] min-h-[40px]'), 'FeaturesGuideModal close button must have 40px touch target');
+assert(featuresSource.includes('flex md:hidden items-center'), 'FeaturesGuideModal must provide explicit visible close button for mobile');
+
+console.log('Passed: 7/7 tests in Step 35');
 console.log('✅ ALL TEST STEP 35 CHECKS PASSED SUCCESSFULLY!');

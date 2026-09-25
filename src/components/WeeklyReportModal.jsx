@@ -233,30 +233,31 @@ Return ONLY raw parseable JSON with this exact schema:
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
-      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200 min-w-0">
         
         {/* Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-red-600 to-rose-600 text-white shadow-xs">
-              <TrendingUp className="w-6 h-6" />
+        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between shrink-0 gap-2 min-w-0">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-tr from-red-600 to-rose-600 text-white shadow-xs shrink-0">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold flex items-center space-x-2">
-                <span>Chẩn Đoán Năng Lực Tuần & Lộ Trình 4 Kỹ Năng</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-400/30">
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-lg lg:text-xl font-bold flex items-center space-x-1.5 sm:space-x-2 truncate">
+                <span className="truncate">Chẩn Đoán Năng Lực Tuần & Lộ Trình 4 Kỹ Năng</span>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-400/30 shrink-0">
                   Cambridge AI
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-400 mt-0.5 truncate hidden sm:block">
                 Tổng hợp đa chiều Writing, Reading, Listening, Speaking và kê đơn hành động 7 ngày tới
               </p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
             title="Đóng bảng báo cáo"
+            aria-label="Đóng"
           >
             <X className="w-5 h-5" />
           </button>

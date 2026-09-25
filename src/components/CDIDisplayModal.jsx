@@ -58,20 +58,21 @@ export default function CDIDisplayModal({
       <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[92dvh] sm:max-h-[88dvh] border border-slate-200">
         
         {/* Fixed Header */}
-        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white z-10">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-xs">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white z-10 gap-2 min-w-0">
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-xs shrink-0">
               <SlidersHorizontal className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight">Tùy Chọn Hiển Thị Chuẩn CDI</h3>
-              <p className="text-[11px] text-slate-500">Mô phỏng trợ năng Computer-Delivered IELTS (IDP / BC)</p>
+            <div className="min-w-0">
+              <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight truncate">Tùy Chọn Hiển Thị Chuẩn CDI</h3>
+              <p className="text-[11px] text-slate-500 truncate hidden sm:block">Mô phỏng trợ năng Computer-Delivered IELTS (IDP / BC)</p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-slate-600 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
             title="Đóng (Esc)"
+            aria-label="Đóng"
           >
             <X className="w-5 h-5" />
           </button>
