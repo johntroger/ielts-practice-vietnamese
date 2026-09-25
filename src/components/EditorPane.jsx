@@ -128,11 +128,36 @@ export default function EditorPane({
     return analyzeSentenceStructures(essayText);
   }, [essayText]);
 
+  // Distraction-Free Zen Typing Mode
+  const [isActivelyTyping, setIsActivelyTyping] = useState(false);
+  const [isToolbarHovered, setIsToolbarHovered] = useState(false);
+  const typingTimerRef = useRef(null);
+
+  const handleUserTyping = () => {
+    setIsActivelyTyping(true);
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
+    }
+    typingTimerRef.current = setTimeout(() => {
+      setIsActivelyTyping(false);
+    }, 2500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
       
       {/* Top Editor Toolbar (Compact, Zero Overflow in Split-Screen) */}
-      <div className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 overflow-x-auto">
+      <div 
+        onMouseEnter={() => setIsToolbarHovered(true)}
+        onMouseLeave={() => setIsToolbarHovered(false)}
+        className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 overflow-x-auto"
+      >
         
         {/* Left: Tab Switcher (Essay vs Scratchpad) */}
         <div className="flex items-center space-x-1 bg-slate-100 p-0.5 sm:p-1 rounded-lg shrink-0">
@@ -176,6 +201,11 @@ export default function EditorPane({
             )}
             <span>{totalWords}/{task.minWords} từ</span>
           </div>
+
+          {/* Advanced Auxiliary Metrics: Auto-dim during active typing to reduce visual distraction */}
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 transition-opacity duration-300 ${
+            isActivelyTyping && !isToolbarHovered ? 'opacity-35 hover:opacity-100' : 'opacity-100'
+          }`}>
 
           {/* Lexical Diversity (TTR) */}
           <div 
@@ -325,6 +355,8 @@ export default function EditorPane({
             )}
           </div>
 
+          </div> {/* End auto-dim auxiliary metrics */}
+
         </div>
 
       </div>
@@ -335,9 +367,16 @@ export default function EditorPane({
           <div className="flex-1 flex flex-col h-full min-h-[350px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative focus-within:border-slate-300 transition-colors">
             <textarea
               value={essayText}
-              onChange={(e) => setEssayText(e.target.value)}
-              onFocus={onEditorFocus}
+              onChange={(e) => {
+                setEssayText(e.target.value);
+                handleUserTyping();
+              }}
+              onFocus={(e) => {
+                if (onEditorFocus) onEditorFocus(e);
+                handleUserTyping();
+              }}
               onKeyDown={(e) => {
+                handleUserTyping();
                 if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                   e.preventDefault();
                   if (onSubmitEssay) onSubmitEssay();

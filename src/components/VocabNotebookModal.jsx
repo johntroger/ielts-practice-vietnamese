@@ -97,11 +97,16 @@ export default function VocabNotebookModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
-      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-2 lg:p-3 overflow-hidden animate-in fade-in duration-150">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[94dvh] sm:h-[96dvh] max-h-[96dvh] animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 border border-slate-200 min-w-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
         
+        {/* Mobile Swipe Grab Handle */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0 bg-slate-900">
+          <div className="w-12 h-1.5 bg-slate-600 rounded-full" />
+        </div>
+
         {/* Header */}
-        <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between shrink-0">
+        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between shrink-0 min-w-0 gap-2">
           <div className="flex items-center space-x-3">
             <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
               <Bookmark className="w-5 h-5 sm:w-6 sm:h-6" />

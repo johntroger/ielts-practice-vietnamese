@@ -93,9 +93,14 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-2xl max-h-[92vh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 min-w-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
         
+        {/* Mobile Swipe Grab Handle */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0 bg-slate-900">
+          <div className="w-12 h-1.5 bg-slate-600 rounded-full" />
+        </div>
+
         {/* Header */}
         <div className="px-4 sm:px-6 py-3.5 sm:py-4.5 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white min-w-0 gap-2">
           <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">

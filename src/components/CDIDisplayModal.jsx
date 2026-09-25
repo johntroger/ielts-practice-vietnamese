@@ -54,9 +54,14 @@ export default function CDIDisplayModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-hidden">
-      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[92dvh] sm:max-h-[88dvh] border border-slate-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden animate-in fade-in duration-150">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 flex flex-col max-h-[92dvh] sm:max-h-[88dvh] border border-slate-200 min-w-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
         
+        {/* Mobile Swipe Grab Handle */}
+        <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0 bg-white">
+          <div className="w-12 h-1.5 bg-slate-300 rounded-full" />
+        </div>
+
         {/* Fixed Header */}
         <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white z-10 gap-2 min-w-0">
           <div className="flex items-center space-x-2.5 min-w-0">
