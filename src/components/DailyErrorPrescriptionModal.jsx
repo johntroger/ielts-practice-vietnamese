@@ -81,10 +81,10 @@ export default function DailyErrorPrescriptionModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                <h2 className="text-sm sm:text-lg font-black text-slate-900 tracking-tight truncate">
                   Đơn Thuốc Sửa Lỗi Mỗi Ngày
                 </h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 shrink-0">
                   SRS 3 Phút
                 </span>
               </div>
@@ -96,7 +96,7 @@ export default function DailyErrorPrescriptionModal({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer shrink-0"
             title="Đóng (Esc)"
           >
             <X className="w-5 h-5" />

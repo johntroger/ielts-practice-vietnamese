@@ -365,7 +365,8 @@ export default function PromptPane({
                   </div>
                   <button
                     onClick={() => setIsImageZoomed(false)}
-                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+                    className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+                    aria-label="Đóng ảnh"
                   >
                     <X className="w-5 h-5" />
                   </button>

@@ -55,7 +55,7 @@ export default function WritingSubHeaderToolbar({
       {/* ============================================================ */}
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
       {/* ============================================================ */}
-      <div className="flex items-center space-x-2 min-w-0">
+      <div className="flex items-center space-x-2 min-w-0 overflow-x-auto no-scrollbar py-0.5">
         {/* 1. Task Selector Dropdown Trigger & Rating */}
         <div className="flex items-center space-x-1.5 min-w-0">
           <button 
@@ -111,7 +111,7 @@ export default function WritingSubHeaderToolbar({
       {/* ============================================================ */}
       {/* ZONE 2 (Right): EXAM MODES, CDI DISPLAY & ESSENTIAL TOOLS    */}
       {/* ============================================================ */}
-      <div className="flex items-center justify-between md:justify-end space-x-2 text-xs shrink-0">
+      <div className="flex items-center justify-between md:justify-end space-x-2 text-xs shrink-0 overflow-x-auto no-scrollbar py-0.5">
         <div className="flex items-center space-x-1.5">
           
           {/* 1. CDI Display & Accessibility Settings (Font Scale / Color Contrast) */}

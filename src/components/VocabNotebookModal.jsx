@@ -108,9 +108,9 @@ export default function VocabNotebookModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-xl font-bold">Sổ Tay Từ Vựng Vàng (Vocab Vault)</h2>
+                <h2 className="text-sm sm:text-xl font-bold truncate">Sổ Tay Từ Vựng Vàng (Vocab Vault)</h2>
                 {dueItems.length > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-black animate-pulse">
+                  <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-black animate-pulse shrink-0">
                     {dueItems.length} cần ôn
                   </span>
                 )}
@@ -120,7 +120,7 @@ export default function VocabNotebookModal({
           </div>
           <button 
             onClick={onClose} 
-            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />
@@ -128,7 +128,7 @@ export default function VocabNotebookModal({
         </div>
 
         {/* Tab Navigation (List vs Flashcard SRS) */}
-        <div className="flex items-center border-b border-slate-200 bg-slate-100 px-5 pt-2 shrink-0 space-x-2">
+        <div className="flex items-center border-b border-slate-200 bg-slate-100 px-3 sm:px-5 pt-2 shrink-0 space-x-2 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('list')}
             className={`flex items-center space-x-1.5 px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${

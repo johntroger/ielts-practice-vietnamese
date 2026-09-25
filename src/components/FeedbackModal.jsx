@@ -188,16 +188,17 @@ export default function FeedbackModal({
             </div>
           </div>
 
-          <div className="flex items-center space-x-1.5 sm:space-x-2 w-full sm:w-auto justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 w-full sm:w-auto justify-end shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800 overflow-x-auto no-scrollbar">
             {/* Re-evaluate with AI button if currently graded by algorithm */}
             {evaluation.evaluationMethod === 'algorithmic' && onReEvaluateWithAI && (
               <button
                 onClick={onReEvaluateWithAI}
-                className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold transition-all shadow-xs shrink-0"
+                className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
                 title="Chấm lại bài viết này bằng Trí tuệ nhân tạo Gemini"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Chấm Lại Bằng AI</span>
+                <span className="sm:hidden">Chấm Lại AI</span>
+                <span className="hidden sm:inline">Chấm Lại Bằng AI</span>
               </button>
             )}
 

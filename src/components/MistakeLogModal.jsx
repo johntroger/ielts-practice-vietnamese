@@ -27,11 +27,15 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold">Sổ Tay Lỗi Sai Thường Gặp (Mistake Log)</h2>
+              <h2 className="text-sm sm:text-xl font-bold truncate">Sổ Tay Lỗi Sai Thường Gặp (Mistake Log)</h2>
               <p className="text-xs text-slate-400">Ghi nhận các lỗi ngữ pháp & chính tả lặp lại để ôn luyện, tránh tái diễn khi thi thật</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <button 
+            onClick={onClose} 
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+            aria-label="Đóng"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
