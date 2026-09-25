@@ -119,6 +119,26 @@ export default function App() {
     safeSet('ielts_active_skill', activeSkill);
   }, [activeSkill]);
 
+  // Real-time synchronization across browser tabs and windows
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'ielts_all_tasks') {
+        const updated = safeGet('ielts_all_tasks', null);
+        if (Array.isArray(updated) && updated.length > 0) {
+          setAllTasks(updated);
+        }
+      }
+      if (e.key === 'ielts_public_community_tasks') {
+        const updated = safeGet('ielts_public_community_tasks', null);
+        if (Array.isArray(updated)) {
+          setCommunityTasks(updated);
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);

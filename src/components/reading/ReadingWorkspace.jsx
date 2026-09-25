@@ -234,6 +234,26 @@ export default function ReadingWorkspace({
     alert(`Đã tạo thành công bộ đề thi 3 Passages: "${newFullTest.title}"! Bạn có thể bắt đầu thi ngay.`);
   };
 
+  // Real-time synchronization across browser tabs for Reading
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'ielts_reading_custom_tests') {
+        try {
+          const updated = JSON.parse(e.newValue);
+          if (Array.isArray(updated)) {
+            setAllReadingTests(() => {
+              const map = new Map();
+              [...INITIAL_READING_TESTS, ...updated].forEach(t => { if (t && t.id) map.set(t.id, t); });
+              return Array.from(map.values());
+            });
+          }
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Toggle publicity for a custom reading test
   const handleToggleReadingPublic = (testId) => {
     setAllReadingTests(prev => {

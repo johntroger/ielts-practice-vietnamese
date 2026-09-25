@@ -188,6 +188,26 @@ export default function ListeningWorkspace({
     });
   };
 
+  // Real-time synchronization across browser tabs for Listening
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === CUSTOM_TESTS_STORAGE_KEY) {
+        try {
+          const updated = JSON.parse(e.newValue);
+          if (Array.isArray(updated)) {
+            setAllListeningTests(() => {
+              const map = new Map();
+              [...INITIAL_LISTENING_TESTS, ...updated].forEach(t => { if (t && t.id) map.set(t.id, t); });
+              return Array.from(map.values());
+            });
+          }
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Handler: Toggle publicity of custom listening test
   const handleToggleListeningPublic = (testId) => {
     setAllListeningTests(prev => {

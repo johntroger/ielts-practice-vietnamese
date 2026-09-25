@@ -321,6 +321,40 @@ export default function SpeakingWorkspace({
     localStorage.setItem('ielts_speaking_examiner', selectedExaminerId);
   }, [selectedExaminerId]);
 
+  // Real-time synchronization across browser tabs and windows for Speaking
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'ielts_speaking_custom_p1_topics') {
+        try {
+          const updated = JSON.parse(e.newValue);
+          if (Array.isArray(updated)) setCustomP1Topics(updated);
+        } catch (err) {}
+      }
+      if (e.key === 'ielts_speaking_custom_p2_cards') {
+        try {
+          const updated = JSON.parse(e.newValue);
+          if (Array.isArray(updated)) setCustomP2Cards(updated);
+        } catch (err) {}
+      }
+      if (e.key === 'ielts_speaking_custom_p3_sets') {
+        try {
+          const updated = JSON.parse(e.newValue);
+          if (Array.isArray(updated)) setCustomP3Sets(updated);
+        } catch (err) {}
+      }
+      if (e.key === 'ielts_speaking_custom_packs') {
+        try {
+          const updated = JSON.parse(e.newValue);
+          if (Array.isArray(updated)) {
+            setAllMockPacks([...SPEAKING_MOCK_TEST_PACKS, ...updated]);
+          }
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const activeExaminer = SPEAKING_EXAMINER_PROFILES.find(e => e.id === selectedExaminerId) || SPEAKING_EXAMINER_PROFILES[0];
   const activeMockPack = allMockPacks.find(m => m.id === selectedMockId) || allMockPacks[0];
 
