@@ -39,7 +39,8 @@ const testSuites = [
   { name: 'Step 30: Task Library Smart Filter Bar & Interactive Rating', file: 'tests/test_step30_task_library_smart_filters.js' },
   { name: 'Step 31: Smart Filters & Rating across Micro-Drills & Vocab/Grammar', file: 'tests/test_step31_smart_filters_drills_and_vocab.js' },
   { name: 'Step 32: Task 1 Process & Map Mandatory Vector Illustrations Engine', file: 'tests/test_step32_process_map_illustrations.js' },
-  { name: 'Step 33: Real-Time Synchronization for Deleting Added Questions and Tasks', file: 'tests/test_step33_realtime_delete_tasks_and_questions.js' }
+  { name: 'Step 33: Real-Time Synchronization for Deleting Added Questions and Tasks', file: 'tests/test_step33_realtime_delete_tasks_and_questions.js' },
+  { name: 'Step 34: Responsive Navigation Audit & Mobile UX Verification', file: 'tests/test_step34_navbar_responsive_audit.js' }
 ];
 
 console.log('===============================================================');

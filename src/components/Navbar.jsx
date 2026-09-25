@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, 
   BookOpen, 
@@ -90,6 +90,31 @@ export default function Navbar({
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
   const [isProgressMenuOpen, setIsProgressMenuOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [mobileSkillMenuOpen, setMobileSkillMenuOpen] = useState(false);
+
+  const desktopMenuRef = useRef(null);
+  const mobileSkillRef = useRef(null);
+
+  // Close menus on outside click without blocking adjacent menu switching
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (desktopMenuRef.current && !desktopMenuRef.current.contains(e.target)) {
+        setIsPracticeMenuOpen(false);
+        setIsToolsMenuOpen(false);
+        setIsProgressMenuOpen(false);
+      }
+      if (mobileSkillRef.current && !mobileSkillRef.current.contains(e.target)) {
+        setMobileSkillMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, []);
 
   const skills = [
     { id: 'writing', label: 'IELTS Writing', desc: 'Chấm điểm 4 tiêu chí & sửa lỗi', icon: PenTool, active: true },
@@ -152,6 +177,72 @@ export default function Navbar({
               </div>
             </div>
 
+            {/* Mobile Skill Selector Pill (< 640px) */}
+            <div className="relative sm:hidden" ref={mobileSkillRef}>
+              <button
+                onClick={() => setMobileSkillMenuOpen(!mobileSkillMenuOpen)}
+                className={`flex items-center space-x-1.5 px-2 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
+                  activeSkill === 'writing'
+                    ? 'border-red-200 bg-red-50 text-red-700'
+                    : activeSkill === 'reading'
+                    ? 'border-blue-200 bg-blue-50 text-blue-700'
+                    : activeSkill === 'listening'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                    : 'border-purple-200 bg-purple-50 text-purple-700'
+                }`}
+                aria-label="Chọn kỹ năng IELTS"
+              >
+                <CurrentSkillIcon className="w-3.5 h-3.5 shrink-0" />
+                <span className="font-extrabold">{currentSkillObj.label.replace('IELTS ', '')}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${mobileSkillMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {mobileSkillMenuOpen && (
+                <div className="absolute left-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Chuyển Kỹ Năng Luyện Thi
+                  </div>
+                  {skills.map(s => {
+                    const Icon = s.icon;
+                    const isCurrent = activeSkill === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          onSelectSkill?.(s.id);
+                          setMobileSkillMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center space-x-2.5 p-2 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                          isCurrent
+                            ? s.id === 'writing'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : s.id === 'reading'
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                              : s.id === 'listening'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'text-slate-700 hover:bg-slate-50 border border-transparent'
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-lg shrink-0 ${
+                          s.id === 'writing' ? 'bg-red-100 text-red-700' :
+                          s.id === 'reading' ? 'bg-blue-100 text-blue-700' :
+                          s.id === 'listening' ? 'bg-emerald-100 text-emerald-700' :
+                          'bg-purple-100 text-purple-700'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-extrabold truncate">{s.label}</div>
+                          <div className="text-[10px] text-slate-400 font-normal truncate">{s.desc}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             {/* Direct 4-Skill Switcher Tabs (Writing / Reading / Listening / Speaking) - LUÔN HIỆN HẾT RA NGOÀI */}
             <div className="hidden sm:flex items-center bg-slate-100/90 p-0.5 sm:p-1 rounded-xl border border-slate-200/80 space-x-0.5 sm:space-x-1 shrink-0">
               {skills.map(s => {
@@ -206,27 +297,27 @@ export default function Navbar({
               </button>
             )}
 
-            {/* Desktop Only: 1. Luyện Tập Dropdown */}
-            <div className="relative hidden lg:block">
-              <button
-                onClick={() => {
-                  setIsPracticeMenuOpen(!isPracticeMenuOpen);
-                  setIsToolsMenuOpen(false);
-                  setIsProgressMenuOpen(false);
-                }}
-                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                  isPracticeMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                }`}
-                title="Luyện tập & Đề thi"
-              >
-                <GraduationCap className="w-4 h-4 text-red-600" />
-                <span>Luyện Tập</span>
-                <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isPracticeMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
+            {/* Desktop Menus Group (1-Click Fast Switching & Zero Duplicates) */}
+            <div ref={desktopMenuRef} className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
+              {/* 1. Luyện Tập Dropdown */}
+              <div className="relative hidden lg:block">
+                <button
+                  onClick={() => {
+                    setIsPracticeMenuOpen(prev => !prev);
+                    setIsToolsMenuOpen(false);
+                    setIsProgressMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                    isPracticeMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+                  }`}
+                  title="Luyện tập & Đề thi"
+                >
+                  <GraduationCap className="w-4 h-4 text-red-600" />
+                  <span>Luyện Tập</span>
+                  <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isPracticeMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-              {isPracticeMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsPracticeMenuOpen(false)} />
+                {isPracticeMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Đề Thi & Chế Độ Luyện
@@ -307,34 +398,31 @@ export default function Navbar({
                       </div>
                     </button>
                   </div>
-                </>
-              )}
-            </div>
-
-            {/* Desktop Only: 2. Công Cụ Dropdown */}
-            <div className="relative hidden lg:block">
-              <button
-                onClick={() => {
-                  setIsToolsMenuOpen(!isToolsMenuOpen);
-                  setIsPracticeMenuOpen(false);
-                  setIsProgressMenuOpen(false);
-                }}
-                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                  isToolsMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                }`}
-                title="Công cụ bổ trợ từ vựng & sửa lỗi"
-              >
-                <FolderKanban className="w-4 h-4 text-purple-600" />
-                <span>Công Cụ</span>
-                {mistakesCount > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
                 )}
-                <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isToolsMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
+              </div>
 
-              {isToolsMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsToolsMenuOpen(false)} />
+              {/* 2. Công Cụ Dropdown */}
+              <div className="relative hidden lg:block">
+                <button
+                  onClick={() => {
+                    setIsToolsMenuOpen(prev => !prev);
+                    setIsPracticeMenuOpen(false);
+                    setIsProgressMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                    isToolsMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+                  }`}
+                  title="Công cụ bổ trợ từ vựng & sửa lỗi"
+                >
+                  <FolderKanban className="w-4 h-4 text-purple-600" />
+                  <span>Công Cụ</span>
+                  {mistakesCount > 0 && (
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                  )}
+                  <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isToolsMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isToolsMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Bộ Công Cụ Bổ Trợ
@@ -382,59 +470,72 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Flashcards trau dồi từ vựng học thuật</div>
                       </div>
                     </button>
-                    <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Tiến Độ & Lịch Sử
-                    </div>
                     <button
-                      onClick={() => { doOpenHistory(); setIsToolsMenuOpen(false); }}
-                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                      onClick={() => { doOpenCDIDisplay(); setIsToolsMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-blue-50 text-left text-xs font-semibold text-blue-900 transition-colors cursor-pointer border-t border-slate-100 mt-1 pt-1.5"
                     >
                       <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
-                        <History className="w-4 h-4" />
+                        <SlidersHorizontal className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Lịch Sử Nộp Bài & Điểm Số</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Xem lại các bài thi & feedback chi tiết</div>
+                        <div className="font-bold">Trợ Năng Hiển Thị CDI</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Cỡ chữ & màu tương phản IDP/BC</div>
                       </div>
                     </button>
-                    <button
-                      onClick={() => { doOpenWeeklyReport(); setIsToolsMenuOpen(false); }}
-                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
-                    >
-                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
-                        <TrendingUp className="w-4 h-4" />
+
+                    {/* Quick Progress links only visible on lg screens where Tiến Độ is hidden (No duplication on xl+) */}
+                    <div className="lg:block xl:hidden pt-1 border-t border-slate-100">
+                      <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Tiến Độ & Trợ Giúp
                       </div>
-                      <div>
-                        <div className="font-bold">Báo Cáo Tiến Độ Tuần</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Radar 4 tiêu chí & chẩn đoán học tập</div>
-                      </div>
-                    </button>
+                      <button
+                        onClick={() => { doOpenHistory(); setIsToolsMenuOpen(false); }}
+                        className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                      >
+                        <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                          <History className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold">Lịch Sử Nộp Bài & Điểm Số</div>
+                          <div className="text-[10px] text-slate-400 font-normal">Xem lại các bài thi & feedback</div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => { doOpenWeeklyReport(); setIsToolsMenuOpen(false); }}
+                        className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                      >
+                        <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                          <TrendingUp className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold">Báo Cáo Tiến Độ Tuần</div>
+                          <div className="text-[10px] text-slate-400 font-normal">Radar 4 tiêu chí & chẩn đoán</div>
+                        </div>
+                      </button>
+                    </div>
                   </div>
-                </>
-              )}
-            </div>
+                )}
+              </div>
 
-            {/* Desktop Only: 3. Tiến Độ Dropdown (Màn hình siêu rộng >= 1536px) */}
-            <div className="relative hidden 2xl:block">
-              <button
-                onClick={() => {
-                  setIsProgressMenuOpen(!isProgressMenuOpen);
-                  setIsPracticeMenuOpen(false);
-                  setIsToolsMenuOpen(false);
-                }}
-                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                  isProgressMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
-                }`}
-                title="Tiến độ học tập & Trợ giúp"
-              >
-                <TrendingUp className="w-4 h-4 text-blue-600" />
-                <span>Tiến Độ</span>
-                <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isProgressMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
+              {/* 3. Tiến Độ Dropdown (Màn hình máy tính >= 1280px) */}
+              <div className="relative hidden xl:block">
+                <button
+                  onClick={() => {
+                    setIsProgressMenuOpen(prev => !prev);
+                    setIsPracticeMenuOpen(false);
+                    setIsToolsMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                    isProgressMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+                  }`}
+                  title="Tiến độ học tập & Hướng dẫn"
+                >
+                  <TrendingUp className="w-4 h-4 text-blue-600" />
+                  <span>Tiến Độ</span>
+                  <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isProgressMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-              {isProgressMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsProgressMenuOpen(false)} />
+                {isProgressMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Báo Cáo & Lịch Sử
@@ -490,21 +591,9 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Hỗ trợ kỹ thuật và góp ý phát triển</div>
                       </div>
                     </button>
-                    <button
-                      onClick={() => { doOpenCDIDisplay(); setIsProgressMenuOpen(false); }}
-                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-blue-50 text-left text-xs font-semibold text-blue-900 transition-colors cursor-pointer border-t border-slate-100 mt-1 pt-1.5"
-                    >
-                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
-                        <SlidersHorizontal className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-bold">Trợ Năng Hiển Thị CDI</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Cỡ chữ & màu tương phản IDP/BC</div>
-                      </div>
-                    </button>
                   </div>
-                </>
-              )}
+                )}
+              </div>
             </div>
 
             {/* Help Center (F1) - 100% Công khai, không cần đăng nhập */}
@@ -576,8 +665,8 @@ export default function Navbar({
 
       {/* MOBILE DRAWER */}
       {isMobileDrawerOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end">
-          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto overscroll-contain flex flex-col justify-between pb-[max(2rem,env(safe-area-inset-bottom))]">
+        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
+          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto overscroll-contain flex flex-col justify-between pb-[max(2rem,env(safe-area-inset-bottom))] animate-in slide-in-from-right duration-250 ease-out">
             <div className="space-y-4">
               
               {/* User Bar in Drawer */}
@@ -674,15 +763,33 @@ export default function Navbar({
                             alert(`Phân hệ ${s.label} đang được hoàn thiện và sẽ ra mắt trong bản cập nhật tới!`);
                           }
                         }}
-                        className={`flex items-center space-x-2 p-2.5 rounded-xl border text-left text-xs font-bold transition-all min-h-[44px] cursor-pointer ${
+                        className={`flex items-center space-x-2 p-2 rounded-xl border text-left text-xs font-bold transition-all min-h-[44px] cursor-pointer ${
                           isCurrent
-                            ? 'bg-red-50 text-red-700 border-red-300 shadow-2xs'
+                            ? s.id === 'speaking'
+                              ? 'bg-purple-50 text-purple-700 border-purple-300 shadow-2xs'
+                              : s.id === 'listening'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-2xs'
+                              : s.id === 'reading'
+                              ? 'bg-blue-50 text-blue-700 border-blue-300 shadow-2xs'
+                              : 'bg-red-50 text-red-700 border-red-300 shadow-2xs'
                             : s.active
                             ? 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                             : 'bg-slate-50/50 border-slate-200 text-slate-400 opacity-60'
                         }`}
                       >
-                        <Icon className="w-4 h-4 shrink-0" />
+                        <div className={`p-1.5 rounded-lg shrink-0 ${
+                          isCurrent
+                            ? s.id === 'speaking'
+                              ? 'bg-purple-100 text-purple-700'
+                              : s.id === 'listening'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : s.id === 'reading'
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-red-100 text-red-700'
+                            : 'bg-slate-100 text-slate-500'
+                        }`}>
+                          <Icon className="w-4 h-4 shrink-0" />
+                        </div>
                         <span className="truncate">{s.label.replace('IELTS ', '')}</span>
                       </button>
                     );
