@@ -868,6 +868,31 @@ export const FEATURE_REGISTRY = [
       target: 'trfSimulator',
       label: 'Mở Bảng Điểm TRF'
     }
+  },
+  {
+    id: 'feat-growth-analytics',
+    version: 'v4.0',
+    status: 'new',
+    badge: 'Dự Báo ETA',
+    category: 'analytics_profile',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    title: 'Bảng Phân Tích Tăng Trưởng & Dự Báo Ngày Đạt Band Mục Tiêu (Growth Analytics)',
+    shortDesc: 'Dự báo ngày cán đích Target Band dựa trên định mức khảo thí Cambridge (~120h luyện tập chủ động / 0.5 band) và phân tích điểm nghẽn 4 kỹ năng.',
+    icon: 'TrendingUp',
+    shortcut: null,
+    updatedAt: '2026-09-25',
+    highlights: [
+      'Dự báo ngày hoàn thành mục tiêu (Target Band ETA) theo cường độ học hàng tuần linh hoạt.',
+      'Phát hiện điểm nghẽn ưu tiên số 1 (Bottleneck Skill Gap) đang kéo tụt Overall Band.',
+      'Định mức giờ luyện tập cần thiết theo chuẩn thống kê Cambridge Assessment.',
+      'Đưa ra lời khuyên sư phạm chiến lược cho từng kỹ năng để bứt phá band điểm nhanh nhất.'
+    ],
+    usageGuide: 'Mở Hồ Sơ Cá Nhân hoặc Help Center -> Bấm "Dự Báo Ngày Cán Đích".',
+    quickAction: {
+      type: 'open_modal',
+      target: 'growthAnalytics',
+      label: 'Xem Dự Báo Tăng Trưởng'
+    }
   }
 ];
 

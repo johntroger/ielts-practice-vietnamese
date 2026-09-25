@@ -39,6 +39,7 @@ const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPa
 const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
 const CDIDisplayModal = React.lazy(() => import('./components/CDIDisplayModal'));
 const DailyErrorPrescriptionModal = React.lazy(() => import('./components/DailyErrorPrescriptionModal'));
+const GrowthAnalyticsModal = React.lazy(() => import('./components/GrowthAnalyticsModal'));
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -1680,6 +1681,24 @@ export default function App() {
           onClose={() => { setIsPrescriptionOpen(false); triggerCloseModal('prescription'); }}
           mistakes={mistakes}
           submissions={submissions}
+        />
+
+        {/* Cambridge Growth Analytics & Target Band Prediction Modal */}
+        <GrowthAnalyticsModal
+          isOpen={Boolean(modals.growthAnalytics)}
+          onClose={() => triggerCloseModal('growthAnalytics')}
+          initialTargetBand={Number(targetBand) || 7.0}
+          userScores={{
+            listening: 6.5,
+            reading: 6.5,
+            writing: 6.0,
+            speaking: 6.0,
+            overall: 6.5
+          }}
+          onNavigateSkill={(skill) => {
+            setActiveSkill(skill);
+            triggerCloseModal('growthAnalytics');
+          }}
         />
       </React.Suspense>
 

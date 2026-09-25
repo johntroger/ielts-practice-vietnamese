@@ -564,6 +564,21 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Radar 4 tiêu chí & chẩn đoán học tập</div>
                       </div>
                     </button>
+                    <button
+                      onClick={() => { openModal('growthAnalytics'); setIsProgressMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                    >
+                      <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700">
+                        <Target className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold flex items-center space-x-1.5">
+                          <span>Dự Báo Tăng Trưởng (ETA)</span>
+                          <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-purple-100 text-purple-700">Mới</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">Dự báo ngày đạt Target Band theo chuẩn Cambridge</div>
+                      </div>
+                    </button>
                     <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Hỗ Trợ & Hướng Dẫn
                     </div>

@@ -31,7 +31,8 @@ let state = {
   contact: false,
   onboarding: false,
   prescription: false,
-  trfSimulator: false
+  trfSimulator: false,
+  growthAnalytics: false
 };
 
 const listeners = new Set();
