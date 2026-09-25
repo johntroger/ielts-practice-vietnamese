@@ -60,6 +60,34 @@ export default function FeedbackModal({
   const [expandedRewrites, setExpandedRewrites] = useState({});
   const [userRewrites, setUserRewrites] = useState({});
   const [rewriteResults, setRewriteResults] = useState({});
+  // ZPD Adaptive Pedagogical Focus State: 'all' | 'foundation' | 'advanced'
+  const [pedagogicalFocus, setPedagogicalFocus] = useState('all');
+
+  const filteredCorrections = useMemo(() => {
+    const list = evaluation.corrections || [];
+    if (pedagogicalFocus === 'all') return list;
+    if (pedagogicalFocus === 'foundation') {
+      // Prioritize foundational grammar, punctuation, sentence fragments, spelling
+      return [...list].sort((a, b) => {
+        const isAGrammar = /grammar|spelling|punctuation|verb|tense/i.test(a.type || '');
+        const isBGrammar = /grammar|spelling|punctuation|verb|tense/i.test(b.type || '');
+        if (isAGrammar && !isBGrammar) return -1;
+        if (!isAGrammar && isBGrammar) return 1;
+        return 0;
+      });
+    }
+    if (pedagogicalFocus === 'advanced') {
+      // Prioritize vocabulary, style, hedging, cohesion
+      return [...list].sort((a, b) => {
+        const isAAdv = /vocab|lexical|style|cohesion|tone|hedging/i.test(a.type || '');
+        const isBAdv = /vocab|lexical|style|cohesion|tone|hedging/i.test(b.type || '');
+        if (isAAdv && !isBAdv) return -1;
+        if (!isAAdv && isBAdv) return 1;
+        return 0;
+      });
+    }
+    return list;
+  }, [evaluation.corrections, pedagogicalFocus]);
 
   const trBand = evaluation.criteria?.tr?.band || 6.0;
   const ccBand = evaluation.criteria?.cc?.band || 6.0;
@@ -314,6 +342,49 @@ export default function FeedbackModal({
           </button>
         </div>
 
+        {/* ZPD Pedagogical Adaptive Focus Bar */}
+        <div className="bg-slate-100/90 border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center space-x-1.5 text-slate-700 font-semibold shrink-0">
+            <Target className="w-3.5 h-3.5 text-red-600 shrink-0" />
+            <span>Mục tiêu sư phạm (ZPD):</span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setPedagogicalFocus('all')}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                pedagogicalFocus === 'all'
+                  ? 'bg-slate-800 text-white shadow-xs'
+                  : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-200'
+              }`}
+            >
+              Toàn diện (Tất cả)
+            </button>
+            <button
+              type="button"
+              onClick={() => setPedagogicalFocus('foundation')}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center space-x-1 ${
+                pedagogicalFocus === 'foundation'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'bg-white hover:bg-amber-50 text-amber-800 border border-amber-200'
+              }`}
+            >
+              <span>🎯 Nền tảng (Band 5.5 - 6.5)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPedagogicalFocus('advanced')}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center space-x-1 ${
+                pedagogicalFocus === 'advanced'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200'
+              }`}
+            >
+              <span>🚀 Bứt phá (Band 7.5+)</span>
+            </button>
+          </div>
+        </div>
+
         {/* Modal Body Content */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           
@@ -321,6 +392,31 @@ export default function FeedbackModal({
           {activeTab === 'criteria' && (
             <div className="space-y-6">
               
+              {/* ZPD Coaching Callout Banner */}
+              {pedagogicalFocus === 'foundation' && (
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs space-y-1 shadow-2xs">
+                  <div className="font-bold flex items-center space-x-1.5 text-amber-900">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>Lộ trình trọng tâm Band 5.5 - 6.5: Chuẩn hóa ngữ pháp & tránh mất điểm oan</span>
+                  </div>
+                  <p className="text-amber-800 leading-relaxed">
+                    Ưu tiên số 1 của bạn là độ chuẩn xác ngữ pháp (GRA): Chia thì chuẩn, chia động từ số ít/nhiều ăn khớp chủ ngữ, tránh lỗi ngắt câu (run-on/fragments). Tuyệt đối không nhồi nhét từ C2 khi chưa rõ collocation, hãy viết câu rõ nghĩa trước tiên!
+                  </p>
+                </div>
+              )}
+
+              {pedagogicalFocus === 'advanced' && (
+                <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs space-y-1 shadow-2xs">
+                  <div className="font-bold flex items-center space-x-1.5 text-indigo-900">
+                    <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <span>Lộ trình bứt phá Band 7.5+: Tinh tế hóa lập luận & liên kết tự nhiên</span>
+                  </div>
+                  <p className="text-indigo-800 leading-relaxed">
+                    Để vượt ngưỡng 7.0 lên 8.0+, hãy rèn luyện văn phong dè dặt học thuật (academic hedging: <em>tends to, arguably, indicates that</em>), hạn chế từ nối cơ học rập khuôn (như <em>Furthermore, In conclusion</em>), và đẩy mạnh cụm từ cố định tự nhiên (collocations C1-C2).
+                  </p>
+                </div>
+              )}
+
               {/* Radar Chart + Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div className="h-60 w-full flex items-center justify-center">
@@ -625,12 +721,18 @@ export default function FeedbackModal({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-slate-500">
-                  Tìm thấy <strong>{evaluation.corrections?.length || 0}</strong> vị trí có thể cải thiện ngữ pháp & từ vựng:
+                  {pedagogicalFocus === 'foundation' ? (
+                    <span>🎯 Ưu tiên hiển thị <strong>lỗi Ngữ pháp & Cấu trúc nền tảng</strong> ({filteredCorrections.length} gợi ý):</span>
+                  ) : pedagogicalFocus === 'advanced' ? (
+                    <span>🚀 Ưu tiên hiển thị <strong>tinh chỉnh Học thuật & Từ vựng C1-C2</strong> ({filteredCorrections.length} gợi ý):</span>
+                  ) : (
+                    <span>Tìm thấy <strong>{filteredCorrections.length}</strong> vị trí có thể cải thiện ngữ pháp & từ vựng:</span>
+                  )}
                 </span>
               </div>
 
-              {evaluation.corrections && evaluation.corrections.length > 0 ? (
-                evaluation.corrections.map((c, idx) => (
+              {filteredCorrections && filteredCorrections.length > 0 ? (
+                filteredCorrections.map((c, idx) => (
                   <div 
                     key={idx} 
                     className="p-4 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2 group"

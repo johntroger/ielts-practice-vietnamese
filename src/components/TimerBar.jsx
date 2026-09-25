@@ -1,5 +1,20 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Send, Clock, Sparkles, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  Play, 
+  Pause, 
+  RotateCcw, 
+  Send, 
+  Clock, 
+  Sparkles, 
+  Zap, 
+  ChevronDown, 
+  ChevronUp, 
+  AlertTriangle, 
+  ArrowRight 
+} from 'lucide-react';
+import { detectWritingHabits } from '../utils/habitDetector.js';
+
+export { detectWritingHabits };
 
 export default function TimerBar({
   timeRemaining,
@@ -12,9 +27,15 @@ export default function TimerBar({
   wordCount,
   minWords,
   apiKey,
-  onOpenSettings
+  onOpenSettings,
+  essayText = '',
+  currentTask = null,
+  mistakes = []
 }) {
   const [isMobileCompact, setIsMobileCompact] = useState(false);
+  const [habitWarnings, setHabitWarnings] = useState([]);
+  const [pendingSubmitMethod, setPendingSubmitMethod] = useState(null);
+  const [acknowledgedTextHash, setAcknowledgedTextHash] = useState('');
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -24,6 +45,37 @@ export default function TimerBar({
 
   const isLowTime = timeRemaining <= 300 && timeRemaining > 0; // Less than 5 mins
   const progressPercent = Math.max(0, Math.min(100, (timeRemaining / totalTime) * 100));
+
+  const handleInitiateSubmit = (method) => {
+    const currentHash = `${method}-${essayText.length}-${essayText.slice(0, 30)}`;
+    if (acknowledgedTextHash === currentHash) {
+      onSubmitEssay(method);
+      return;
+    }
+
+    const detected = detectWritingHabits(essayText, currentTask, mistakes);
+    if (detected && detected.length > 0) {
+      setHabitWarnings(detected);
+      setPendingSubmitMethod(method);
+    } else {
+      onSubmitEssay(method);
+    }
+  };
+
+  const handleConfirmSubmit = () => {
+    if (pendingSubmitMethod) {
+      setAcknowledgedTextHash(`${pendingSubmitMethod}-${essayText.length}-${essayText.slice(0, 30)}`);
+      const method = pendingSubmitMethod;
+      setHabitWarnings([]);
+      setPendingSubmitMethod(null);
+      onSubmitEssay(method);
+    }
+  };
+
+  const handleDismissWarning = () => {
+    setHabitWarnings([]);
+    setPendingSubmitMethod(null);
+  };
 
   return (
     <>
@@ -37,7 +89,7 @@ export default function TimerBar({
           <span className="text-slate-600">•</span>
           <span className="text-[11px] text-slate-300 font-semibold">{wordCount}/{minWords} từ</span>
           <button
-            onClick={() => onSubmitEssay('algorithmic')}
+            onClick={() => handleInitiateSubmit('algorithmic')}
             disabled={isSubmitting}
             className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] flex items-center space-x-1 cursor-pointer active:scale-95 transition-transform"
             title="Chấm nhanh bằng máy"
@@ -55,6 +107,46 @@ export default function TimerBar({
         </div>
       ) : (
         <footer className="sticky bottom-0 z-30 shadow-xl flex flex-col">
+          {/* Pre-Submission Habit Check Gentle Nudge Banner */}
+          {habitWarnings.length > 0 && (
+            <div className="bg-amber-950/95 border-t-2 border-amber-500 text-amber-100 p-3 sm:px-5 backdrop-blur-md animate-in slide-in-from-bottom-2 shadow-2xl">
+              <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="space-y-1.5 flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 text-amber-300 font-bold text-xs sm:text-sm">
+                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Rà soát thói quen viết trước khi nộp ({habitWarnings.length} lưu ý):</span>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    {habitWarnings.slice(0, 2).map((w, idx) => (
+                      <div key={idx} className="flex items-start space-x-1.5 text-amber-200/90 leading-tight">
+                        <span className="text-amber-400 font-bold">•</span>
+                        <span><strong>{w.title}:</strong> {w.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 pt-1 md:pt-0">
+                  <button
+                    type="button"
+                    onClick={handleDismissWarning}
+                    className="flex-1 md:flex-none px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center space-x-1 cursor-pointer min-h-[40px]"
+                  >
+                    <span>🔍 Rà soát lại bài</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmSubmit}
+                    className="flex-1 md:flex-none px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-colors flex items-center justify-center space-x-1 cursor-pointer min-h-[40px]"
+                  >
+                    <span>Tiếp tục nộp bài ({pendingSubmitMethod === 'ai' ? 'AI' : 'Máy'})</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Main Timer & Submit Bar */}
           <div className="bg-slate-900 text-white px-3 sm:px-4 pt-2 sm:pt-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
             
@@ -118,7 +210,7 @@ export default function TimerBar({
 
               {/* 1. Algorithmic Fast Grading (Offline, 0s delay, no API Key needed) */}
               <button
-                onClick={() => onSubmitEssay('algorithmic')}
+                onClick={() => handleInitiateSubmit('algorithmic')}
                 disabled={isSubmitting}
                 className="flex items-center space-x-1.5 px-2.5 sm:px-3.5 py-2 sm:py-2 min-h-[40px] rounded-xl bg-slate-800 hover:bg-slate-700/90 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-amber-200 text-xs sm:text-sm font-semibold transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
                 title="Chấm điểm bằng thuật toán chuyên gia Cambridge (phản hồi ngay tức thì, không cần API Key, không tốn quota)"
@@ -130,7 +222,7 @@ export default function TimerBar({
 
               {/* 2. AI In-depth Grading (Gemini) */}
               <button
-                onClick={() => onSubmitEssay('ai')}
+                onClick={() => handleInitiateSubmit('ai')}
                 disabled={isSubmitting}
                 className="flex-1 sm:flex-none justify-center flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2.5 sm:py-2 min-h-[40px] rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
                 title="Chấm chi tiết với Trí tuệ nhân tạo Gemini (cần kết nối API Key)"

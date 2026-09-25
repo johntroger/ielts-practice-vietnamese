@@ -1178,6 +1178,9 @@ export default function App() {
             minWords={currentTask.minWords}
             apiKey={apiKey}
             onOpenSettings={() => setIsSettingsOpen(true)}
+            essayText={currentEssay}
+            currentTask={currentTask}
+            mistakes={mistakes}
           />
         </>
         </WorkspaceErrorBoundary>

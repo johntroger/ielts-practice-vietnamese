@@ -42,7 +42,8 @@ const testSuites = [
   { name: 'Step 33: Real-Time Synchronization for Deleting Added Questions and Tasks', file: 'tests/test_step33_realtime_delete_tasks_and_questions.js' },
   { name: 'Step 34: Responsive Navigation Audit & Mobile UX Verification', file: 'tests/test_step34_navbar_responsive_audit.js' },
   { name: 'Step 35: Comprehensive Mobile UI/UX Audit & Verification', file: 'tests/test_step35_mobile_ui_comprehensive_audit.js' },
-  { name: 'Step 36: Distraction-Free Zen Typing Mode & Mobile Bottom Sheets', file: 'tests/test_step36_zen_mode_and_bottom_sheets.js' }
+  { name: 'Step 36: Distraction-Free Zen Typing Mode & Mobile Bottom Sheets', file: 'tests/test_step36_zen_mode_and_bottom_sheets.js' },
+  { name: 'Step 37: Adaptive Feedback (ZPD) & Habit Pre-Submission Checks', file: 'tests/test_step37_adaptive_feedback_and_habit_check.js' }
 ];
 
 console.log('===============================================================');
