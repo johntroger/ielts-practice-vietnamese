@@ -45,7 +45,8 @@ const testSuites = [
   { name: 'Step 36: Distraction-Free Zen Typing Mode & Mobile Bottom Sheets', file: 'tests/test_step36_zen_mode_and_bottom_sheets.js' },
   { name: 'Step 37: Adaptive Feedback (ZPD) & Habit Pre-Submission Checks', file: 'tests/test_step37_adaptive_feedback_and_habit_check.js' },
   { name: 'Step 38: Clean Architecture Custom Hooks & Unified AppStore', file: 'tests/test_step38_clean_architecture_hooks_and_store.js' },
-  { name: 'Step 39: Official Cambridge TRF Simulator & PDF Export', file: 'tests/test_step39_trf_simulator_export.js' }
+  { name: 'Step 39: Official Cambridge TRF Simulator & PDF Export', file: 'tests/test_step39_trf_simulator_export.js' },
+  { name: 'Step 40: Interactive Speaking Examiner Flow & Adaptive Branching', file: 'tests/test_step40_speaking_examiner_flow.js' }
 ];
 
 console.log('===============================================================');

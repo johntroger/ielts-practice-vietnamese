@@ -7,6 +7,7 @@ import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import SpeakingFillerTracker from './SpeakingFillerTracker';
 import SpeakingDigitalNotepad from './SpeakingDigitalNotepad';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
+import { analyzeCandidateUtterance } from '../../services/speakingAdaptiveService';
 
 /**
  * SpeakingExaminerRoom.jsx
@@ -97,6 +98,9 @@ export default function SpeakingExaminerRoom({
   const [candidateResponseBuffer, setCandidateResponseBuffer] = useState('');
   const [hasInterruptedCandidate, setHasInterruptedCandidate] = useState(false);
   const [isExamCompleted, setIsExamCompleted] = useState(false);
+  const [isAdaptiveMode, setIsAdaptiveMode] = useState(true);
+  const [isAnsweringFollowUp, setIsAnsweringFollowUp] = useState(false);
+  const [activeFollowUpPrompt, setActiveFollowUpPrompt] = useState(null);
 
   // Autosave to sessionStorage
   useEffect(() => {
@@ -232,13 +236,36 @@ export default function SpeakingExaminerRoom({
       { 
         speaker: 'candidate', 
         stage: 'part1', 
-        questionText: part1Topic.questions[p1Index]?.question,
+        questionText: isAnsweringFollowUp ? activeFollowUpPrompt : part1Topic.questions[p1Index]?.question,
         text: currentAnswer, 
         timestamp: new Date().toISOString() 
       }
     ]);
     speechEngine.stopListening();
     speechEngine.resetTranscript();
+
+    // Check if adaptive follow-up is warranted
+    if (isAdaptiveMode && !isAnsweringFollowUp) {
+      const analysis = analyzeCandidateUtterance(currentAnswer, { stage: 'part1', hasFollowedUpOnThisQuestion: false });
+      if (analysis.needsFollowUp && analysis.followUpQuestion) {
+        setIsAnsweringFollowUp(true);
+        setActiveFollowUpPrompt(analysis.followUpQuestion);
+        setActivePromptText(analysis.followUpQuestion);
+        const promptText = `${analysis.acknowledgment} ${analysis.followUpQuestion}`;
+        speechEngine.speak(promptText, { examinerId: examiner.id }, () => {
+          setDialogueHistory(prev => [
+            ...prev,
+            { speaker: 'examiner', stage: 'part1', text: analysis.followUpQuestion, isFollowUp: true, timestamp: new Date().toISOString() }
+          ]);
+          speechEngine.resetTranscript();
+          triggerCandidateTurn(`p1_q${p1Index}_followup`);
+        });
+        return;
+      }
+    }
+
+    setIsAnsweringFollowUp(false);
+    setActiveFollowUpPrompt(null);
 
     const nextIndex = p1Index + 1;
     if (nextIndex < part1Topic.questions.length) {
@@ -346,13 +373,36 @@ export default function SpeakingExaminerRoom({
       { 
         speaker: 'candidate', 
         stage: 'part3', 
-        questionText: part3Set.questions[p3Index]?.question,
+        questionText: isAnsweringFollowUp ? activeFollowUpPrompt : part3Set.questions[p3Index]?.question,
         text: currentAnswer, 
         timestamp: new Date().toISOString() 
       }
     ]);
     speechEngine.stopListening();
     speechEngine.resetTranscript();
+
+    // Check if adaptive follow-up is warranted
+    if (isAdaptiveMode && !isAnsweringFollowUp) {
+      const analysis = analyzeCandidateUtterance(currentAnswer, { stage: 'part3', hasFollowedUpOnThisQuestion: false });
+      if (analysis.needsFollowUp && analysis.followUpQuestion) {
+        setIsAnsweringFollowUp(true);
+        setActiveFollowUpPrompt(analysis.followUpQuestion);
+        setActivePromptText(analysis.followUpQuestion);
+        const promptText = `${analysis.acknowledgment} ${analysis.followUpQuestion}`;
+        speechEngine.speak(promptText, { examinerId: examiner.id }, () => {
+          setDialogueHistory(prev => [
+            ...prev,
+            { speaker: 'examiner', stage: 'part3', text: analysis.followUpQuestion, isFollowUp: true, timestamp: new Date().toISOString() }
+          ]);
+          speechEngine.resetTranscript();
+          triggerCandidateTurn(`p3_q${p3Index}_followup`);
+        });
+        return;
+      }
+    }
+
+    setIsAnsweringFollowUp(false);
+    setActiveFollowUpPrompt(null);
 
     const nextIndex = p3Index + 1;
     if (nextIndex < part3Set.questions.length) {
@@ -475,8 +525,21 @@ export default function SpeakingExaminerRoom({
           <span><span className="hidden sm:inline">Thời gian: </span>{formatTime(totalSeconds)}</span>
         </div>
 
-        {/* Right: Exit / Conclude */}
+        {/* Right: Adaptive Toggle & Exit / Conclude */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          <button
+            onClick={() => setIsAdaptiveMode(prev => !prev)}
+            className={`hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+              isAdaptiveMode
+                ? 'bg-purple-950/60 text-purple-300 border-purple-500/40 hover:bg-purple-900/60'
+                : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800'
+            }`}
+            title="Bật/Tắt tính năng giám khảo hỏi bồi thích ứng (Adaptive Follow-up)"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${isAdaptiveMode ? 'text-purple-400' : 'text-slate-500'}`} />
+            <span>Adaptive AI: {isAdaptiveMode ? 'ON' : 'OFF'}</span>
+          </button>
+
           <button
             onClick={() => {
               if (window.confirm('Bạn có muốn kết thúc bài thi ngay bây giờ để chuyển sang phần chấm điểm không?')) {
@@ -588,6 +651,12 @@ export default function SpeakingExaminerRoom({
           ) : (
             /* STANDARD QUESTION STAGE (Greeting, Part 1, Part 3) */
             <div className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-md text-center space-y-3">
+              {isAnsweringFollowUp && (
+                <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-black uppercase tracking-wider animate-pulse">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>Giám khảo hỏi bồi thích ứng (Adaptive Follow-up)</span>
+                </div>
+              )}
               <p className="text-base sm:text-lg font-extrabold text-white leading-relaxed">
                 "{activePromptText || 'Preparing prompt...'}"
               </p>
