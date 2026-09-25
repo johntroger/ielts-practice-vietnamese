@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Award, 
   User, 
@@ -10,8 +10,11 @@ import {
   Trophy, 
   CheckCheck, 
   ChevronRight, 
-  Sparkles 
+  Sparkles,
+  Printer 
 } from 'lucide-react';
+import { generateTrfData } from '../services/trfExportService.js';
+import TRFSimulatorModal from './TRFSimulatorModal.jsx';
 
 /**
  * MarathonTRFScorecard - Official Cambridge Test Report Form (Simulation) Component
@@ -32,9 +35,22 @@ export default function MarathonTRFScorecard({
   calculatedOverallBand,
   cefrEvaluation = { level: 'N/A', title: '', desc: '' },
   onClose,
-  onSelectSkill,
   setActiveMockTab
 }) {
+  const [isTrfModalOpen, setIsTrfModalOpen] = useState(false);
+
+  const trfData = useMemo(() => {
+    return generateTrfData({
+      candidateName: currentUser?.name || currentUser?.email?.split('@')[0] || 'CANDIDATE',
+      candidateNumber: currentUser?.id ? String(currentUser.id).slice(0, 6) : null,
+      listeningBand: listeningBand || 6.0,
+      readingBand: readingBand || 6.0,
+      writingBand: writingBand || 6.0,
+      speakingBand: speakingBand || 6.0,
+      examinerFeedback: `Candidate demonstrated ${cefrEvaluation?.title || 'solid linguistic operational competence'} across communicative modules.`
+    });
+  }, [currentUser, listeningBand, readingBand, writingBand, speakingBand, cefrEvaluation]);
+
   return (
     <div className="p-6 sm:p-7 rounded-3xl bg-white border-2 border-slate-200 shadow-xl space-y-6 relative">
       {/* Watermark Logo background */}
@@ -304,6 +320,33 @@ export default function MarathonTRFScorecard({
           </span>
         </div>
       </div>
+
+      {/* TRF Export Action Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-md">
+        <div className="flex items-center space-x-2.5">
+          <Award className="w-5 h-5 text-amber-400 shrink-0" />
+          <div className="text-xs">
+            <span className="font-bold block text-sm">Xuất Phiếu Điểm Chuẩn Khảo Thí (IELTS TRF)</span>
+            <span className="text-slate-400">Xem trước chứng chỉ chính thức, mã bảo mật QR và in / tải file PDF</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsTrfModalOpen(true)}
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 cursor-pointer min-h-[40px] shrink-0"
+        >
+          <Printer className="w-4 h-4" />
+          <span>Xem & Tải Phiếu Điểm (PDF)</span>
+        </button>
+      </div>
+
+      {/* TRF Simulator Modal */}
+      <TRFSimulatorModal
+        isOpen={isTrfModalOpen}
+        onClose={() => setIsTrfModalOpen(false)}
+        trfData={trfData}
+      />
     </div>
   );
 }

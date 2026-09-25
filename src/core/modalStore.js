@@ -30,7 +30,8 @@ let state = {
   profile: false,
   contact: false,
   onboarding: false,
-  prescription: false
+  prescription: false,
+  trfSimulator: false
 };
 
 const listeners = new Set();

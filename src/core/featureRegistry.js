@@ -843,6 +843,31 @@ export const FEATURE_REGISTRY = [
       target: 'library',
       label: 'Mở Thư Viện Đề Thi'
     }
+  },
+  {
+    id: 'feat-trf-simulator',
+    version: 'v4.0',
+    status: 'new',
+    badge: 'Chứng Chỉ TRF',
+    category: 'analytics_profile',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    title: 'Phiếu Điểm IELTS TRF Simulator Chuẩn Khảo Thí (Test Report Form PDF)',
+    shortDesc: 'Mô phỏng phiếu điểm chính thức của British Council / IDP / Cambridge với thuật toán làm tròn Overall Band chuẩn xác, mã xác thực QR và xuất PDF.',
+    icon: 'Award',
+    shortcut: null,
+    updatedAt: '2026-09-25',
+    highlights: [
+      'Bảng điểm 4 kỹ năng Listening, Reading, Writing, Speaking và Overall Band chuẩn khảo thí.',
+      'Thuật toán làm tròn Cambridge: .25 lên .5, .75 lên 1.0 và quy đổi cấp độ CEFR (B2, C1, C2).',
+      'Mã bảo mật xác thực (Validation Code), dấu mộc khảo thí và watermark chìm bảo vệ chứng chỉ.',
+      'In hoặc xuất file PDF độ phân giải cao A4 chuẩn mực trong 1 click.'
+    ],
+    usageGuide: 'Vào Tab "🏆 Bảng Điểm TRF 4 Kỹ Năng" trong Phòng Thi Thử (Mock Test Vault) -> Bấm "Xem & Tải Phiếu Điểm (PDF)".',
+    quickAction: {
+      type: 'open_modal',
+      target: 'trfSimulator',
+      label: 'Mở Bảng Điểm TRF'
+    }
   }
 ];
 
