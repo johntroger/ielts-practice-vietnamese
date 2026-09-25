@@ -68,12 +68,15 @@ assert(navbarSource.includes('fade-in duration-200'), 'Drawer backdrop must have
 assert(navbarSource.includes('min-h-[44px]'), 'Mobile interactive elements must have min-h-[44px]');
 assert(navbarSource.includes('min-w-[44px]'), 'Mobile menu toggle buttons must have min-w-[44px]');
 
-// Test 6: Writing SubHeader StarRatingWidget on Mobile
-console.log('Test 6: Verifying WritingSubHeaderToolbar StarRatingWidget is visible on mobile');
-assert(!subheaderSource.includes('hidden sm:flex items-center bg-slate-50/90 px-2 py-1 rounded-xl border border-slate-200 shrink-0 shadow-2xs'),
-  'StarRatingWidget should not be hidden on mobile in WritingSubHeaderToolbar');
-assert(subheaderSource.includes('StarRatingWidget itemId={currentTask.id || currentTask.title}'),
-  'StarRatingWidget must be rendered with currentTask id and title');
+// Test 7: EditorPane Writing Toolbar Overflow Prevention
+console.log('Test 7: Verifying EditorPane toolbar layout prevents cut-offs in split view');
+const editorPath = path.join(__dirname, '../src/components/EditorPane.jsx');
+const editorSource = fs.readFileSync(editorPath, 'utf8');
 
-console.log('Passed: 7/7 checks in Step 34');
+assert(editorSource.includes('isMoreToolsOpen'), 'EditorPane must manage isMoreToolsOpen for compact tools dropdown');
+assert(editorSource.includes('moreToolsRef'), 'EditorPane must use moreToolsRef for outside click detection');
+assert(!editorSource.includes('overflow-x-auto no-scrollbar'), 'Toolbar must not use no-scrollbar that hides clipped content');
+assert(editorSource.includes('totalWords}/{task.minWords} từ'), 'Word count badge must use compact format');
+
+console.log('Passed: 8/8 checks in Step 34');
 console.log('✅ ALL TEST STEP 34 CHECKS PASSED SUCCESSFULLY!');

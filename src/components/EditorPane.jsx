@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   CheckCircle, 
   AlertCircle, 
@@ -17,7 +17,8 @@ import {
   Check,
   RotateCcw,
   ListOrdered,
-  GitCommit
+  GitCommit,
+  SlidersHorizontal
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 import Task1DataCoverageModal from './Task1DataCoverageModal';
@@ -106,6 +107,22 @@ export default function EditorPane({
   }, [isTask1, essayText]);
 
   const [isSentenceHeatmapOpen, setIsSentenceHeatmapOpen] = useState(false);
+  const [isMoreToolsOpen, setIsMoreToolsOpen] = useState(false);
+  const moreToolsRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (moreToolsRef.current && !moreToolsRef.current.contains(e.target)) {
+        setIsMoreToolsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const sentenceAnalysis = React.useMemo(() => {
     return analyzeSentenceStructures(essayText);
@@ -114,62 +131,55 @@ export default function EditorPane({
   return (
     <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
       
-      {/* Top Editor Toolbar */}
-      <div className="bg-white border-b border-slate-200 px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-2 shadow-2xs shrink-0 overflow-x-auto no-scrollbar">
+      {/* Top Editor Toolbar (Compact, Zero Overflow in Split-Screen) */}
+      <div className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 overflow-x-auto">
         
         {/* Left: Tab Switcher (Essay vs Scratchpad) */}
-        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
+        <div className="flex items-center space-x-1 bg-slate-100 p-0.5 sm:p-1 rounded-lg shrink-0">
           <button
             onClick={() => setActiveTab('essay')}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+            className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'essay' 
                 ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <FileText className="w-3.5 h-3.5 text-red-600" />
-            <span className="sm:hidden">Bài Viết</span>
-            <span className="hidden sm:inline">Bài Viết Chính</span>
+            <FileText className="w-3.5 h-3.5 text-red-600 shrink-0" />
+            <span>Bài Viết</span>
           </button>
           <button
             onClick={() => setActiveTab('outline')}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+            className={`flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'outline' 
                 ? 'bg-white text-slate-900 shadow-2xs font-bold' 
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-blue-600" />
-            <span className="sm:hidden">Dàn Ý</span>
-            <span className="hidden sm:inline">Bản Nháp / Dàn Ý</span>
+            <Layers className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span>Dàn Ý</span>
           </button>
         </div>
 
-        {/* Right: Live Metrics Indicators */}
-        <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
+        {/* Right: Live Metrics & Helper Tools */}
+        <div className="flex items-center space-x-1 sm:space-x-1.5 text-xs shrink-0">
           
           {/* Word Count Badge */}
-          <div className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg font-bold border transition-colors ${
+          <div className={`flex items-center space-x-1 px-2 py-1 rounded-lg font-bold border transition-colors shrink-0 text-xs ${
             isWordCountMet 
               ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
               : 'bg-amber-50 text-amber-800 border-amber-200'
           }`}>
             {isWordCountMet ? (
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             ) : (
-              <AlertCircle className="w-4 h-4 text-amber-600" />
+              <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
             )}
-            <span>{totalWords} / {task.minWords} từ</span>
-            {!isWordCountMet && (
-              <span className="text-[10px] text-amber-600 font-normal hidden sm:inline">
-                (thiếu {wordDiff})
-              </span>
-            )}
+            <span>{totalWords}/{task.minWords} từ</span>
           </div>
 
           {/* Lexical Diversity (TTR) */}
           <div 
-            className="hidden sm:flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium cursor-help"
+            className="flex items-center space-x-1 px-1.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium cursor-help shrink-0 text-xs"
             title="Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"
           >
             <span className="text-slate-400 font-bold">TTR:</span>
@@ -178,48 +188,20 @@ export default function EditorPane({
             </span>
           </div>
 
-          {/* WPM */}
-          <div 
-            className="hidden md:flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium cursor-help"
-            title="Tốc độ gõ phím hiện tại (Words Per Minute)"
-          >
-            <Gauge className="w-3.5 h-3.5 text-slate-400" />
-            <span>{currentWpm} WPM</span>
-          </div>
-
-          {/* Quick Paraphrase & Side Panel Helper */}
-          <button
-            onClick={() => onOpenSlideOver ? onOpenSlideOver('paraphrase') : onOpenParaphrase?.()}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer"
-            title="Mở bảng tra cứu Paraphrase cạnh bài viết"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span className="hidden sm:inline">Tra Paraphrase</span>
-          </button>
-
-          <button
-            onClick={() => onOpenSlideOver ? onOpenSlideOver('vocab') : null}
-            className="hidden md:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer"
-            title="Mở Sổ từ vựng cạnh bài viết"
-          >
-            <Bookmark className="w-3.5 h-3.5 text-amber-600" />
-            <span className="hidden lg:inline">Sổ Từ Vựng</span>
-          </button>
-
           {/* Task 1 Cambridge Data & Overview Live Inspector */}
           {isTask1 && (
             <button
               onClick={() => setIsTask1CoverageOpen(true)}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
                 task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
                   ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                   : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
               }`}
               title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
             >
-              <BarChart2 className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="hidden sm:inline">Phủ Số Liệu Task 1</span>
-              <span className={`text-[10px] px-1 rounded font-black ${
+              <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span className="hidden min-[1600px]:inline">Phủ Số Liệu Task 1</span>
+              <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
                 task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
                   ? 'bg-emerald-200 text-emerald-900'
                   : 'bg-amber-200 text-amber-900'
@@ -233,16 +215,16 @@ export default function EditorPane({
           {!isTask1 && (
             <button
               onClick={() => setIsTask2CoherenceOpen(true)}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
                 task2CoherenceCheck?.status === 'optimal'
                   ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                   : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
               }`}
               title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
             >
-              <GitCommit className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="hidden sm:inline">Lập Luận Task 2</span>
-              <span className={`text-[10px] px-1 rounded font-black ${
+              <GitCommit className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span className="hidden min-[1600px]:inline">Lập Luận Task 2</span>
+              <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
                 task2CoherenceCheck?.status === 'optimal'
                   ? 'bg-emerald-200 text-emerald-900'
                   : 'bg-indigo-200 text-indigo-900'
@@ -255,7 +237,7 @@ export default function EditorPane({
           {/* Cambridge GRA Sentence Structure Heatmap Inspector */}
           <button
             onClick={() => setIsSentenceHeatmapOpen(true)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
+            className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
               sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
                 ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                 : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
@@ -264,9 +246,9 @@ export default function EditorPane({
             }`}
             title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
           >
-            <Layers className="w-3.5 h-3.5 text-teal-600" />
-            <span className="hidden sm:inline">Cấu Trúc GRA</span>
-            <span className={`text-[10px] px-1 rounded font-black ${
+            <Layers className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+            <span className="hidden min-[1600px]:inline">Cấu Trúc GRA</span>
+            <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
               sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
                 ? 'bg-emerald-200 text-emerald-900'
                 : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
@@ -277,18 +259,71 @@ export default function EditorPane({
             </span>
           </button>
 
-          {/* Spellcheck Toggle */}
+          {/* Quick Paraphrase Helper */}
           <button
-            onClick={() => setSpellcheckEnabled(!spellcheckEnabled)}
-            className={`p-1.5 rounded-lg border transition-colors ${
-              spellcheckEnabled 
-                ? 'bg-red-50 text-red-600 border-red-200' 
-                : 'bg-slate-100 text-slate-400 border-transparent hover:text-slate-600'
-            }`}
-            title={`Kiểm tra chính tả: ${spellcheckEnabled ? 'Đang BẬT' : 'Đang TẮT (Chuẩn thi thật)'}`}
+            onClick={() => onOpenSlideOver ? onOpenSlideOver('paraphrase') : onOpenParaphrase?.()}
+            className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer shrink-0 text-xs"
+            title="Mở bảng tra cứu Paraphrase cạnh bài viết"
           >
-            <SpellCheck className="w-4 h-4" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="hidden sm:inline">Paraphrase</span>
           </button>
+
+          {/* More Tools Menu: Vocab, WPM, Spellcheck */}
+          <div className="relative shrink-0" ref={moreToolsRef}>
+            <button
+              onClick={() => setIsMoreToolsOpen(!isMoreToolsOpen)}
+              className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer text-xs"
+              title="Mở rộng tiện ích: Sổ từ vựng, Tốc độ gõ WPM & Kiểm tra chính tả"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <span className="hidden min-[1600px]:inline text-[11px]">Tiện ích</span>
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isMoreToolsOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isMoreToolsOpen && (
+              <div className="absolute right-0 mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-xs">
+                {/* Sổ từ vựng */}
+                <button
+                  onClick={() => {
+                    setIsMoreToolsOpen(false);
+                    if (onOpenSlideOver) onOpenSlideOver('vocab');
+                  }}
+                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-50 text-left text-slate-700 font-semibold cursor-pointer"
+                >
+                  <Bookmark className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Sổ Từ Vựng C1-C2</span>
+                </button>
+
+                {/* WPM Speed */}
+                <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 text-slate-700">
+                  <div className="flex items-center space-x-2">
+                    <Gauge className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Tốc độ gõ:</span>
+                  </div>
+                  <span className="font-bold">{currentWpm} WPM</span>
+                </div>
+
+                {/* Spellcheck Toggle */}
+                <button
+                  onClick={() => {
+                    setSpellcheckEnabled(!spellcheckEnabled);
+                  }}
+                  className={`w-full flex items-center justify-between p-2 rounded-lg transition-colors cursor-pointer ${
+                    spellcheckEnabled ? 'bg-red-50 text-red-700 font-bold' : 'hover:bg-slate-50 text-slate-700 font-semibold'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <SpellCheck className="w-4 h-4 shrink-0" />
+                    <span>Kiểm tra chính tả</span>
+                  </div>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded font-black uppercase">
+                    {spellcheckEnabled ? 'BẬT' : 'TẮT'}
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
 
         </div>
 
