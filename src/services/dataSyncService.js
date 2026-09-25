@@ -175,7 +175,7 @@ export async function fetchPublicTasks() {
       .select('*')
       .eq('is_public', true)
       .order('created_at', { ascending: false })
-      .limit(50);
+      .limit(1000);
 
     if (error) throw error;
 
@@ -310,17 +310,18 @@ export async function toggleTaskPublicity(userId, taskId, isPublic) {
 }
 
 export async function deleteUserCustomTask(userId, taskId) {
-  if (!userId || !taskId) return;
+  if (!taskId) return;
   try {
-    const { error } = await supabase
-      .from('user_custom_tasks')
-      .delete()
-      .eq('id', taskId)
-      .eq('user_id', userId);
-
-    if (error) throw error;
+    let query = supabase.from('user_custom_tasks').delete().eq('id', taskId);
+    if (userId) {
+      query = query.or(`user_id.eq.${userId},user_id.is.null`);
+    }
+    const { error } = await query;
+    if (error) {
+      console.warn('Supabase delete custom task notice:', error.message);
+    }
   } catch (err) {
-    console.error('Error deleting custom task from Supabase:', err);
+    console.warn('Error deleting custom task from Supabase:', err);
   }
 }
 

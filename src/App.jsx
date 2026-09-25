@@ -119,8 +119,66 @@ export default function App() {
     safeSet('ielts_active_skill', activeSkill);
   }, [activeSkill]);
 
-  // Real-time synchronization across browser tabs and windows
+  // Real-time synchronization across browser tabs, windows and Supabase Cloud
   useEffect(() => {
+    let bc = null;
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        bc = new BroadcastChannel('ielts_tasks_realtime');
+        bc.onmessage = (event) => {
+          const { type, taskId, task, isPublic } = event.data || {};
+          if (type === 'DELETE_TASK' && taskId) {
+            setAllTasks(prev => {
+              const updated = prev.filter(t => t.id !== taskId);
+              safeSet('ielts_all_tasks', updated);
+              return updated;
+            });
+            setCommunityTasks(prev => {
+              const updated = prev.filter(t => t.id !== taskId);
+              safeSet('ielts_public_community_tasks', updated);
+              return updated;
+            });
+          } else if (type === 'ADD_TASK' && task) {
+            setAllTasks(prev => {
+              if (prev.some(t => t.id === task.id)) return prev;
+              const next = [task, ...prev];
+              safeSet('ielts_all_tasks', next);
+              return next;
+            });
+            if (isPublic) {
+              setCommunityTasks(prev => {
+                if (prev.some(t => t.id === task.id)) return prev;
+                const next = [task, ...prev];
+                safeSet('ielts_public_community_tasks', next);
+                return next;
+              });
+            }
+          } else if (type === 'TOGGLE_PUBLIC' && taskId !== undefined) {
+            setAllTasks(prev => {
+              const next = prev.map(t => t.id === taskId ? { ...t, isPublic } : t);
+              safeSet('ielts_all_tasks', next);
+              return next;
+            });
+            setCommunityTasks(prev => {
+              let next;
+              if (isPublic) {
+                const found = allTasks.find(t => t.id === taskId);
+                if (found && !prev.some(t => t.id === taskId)) {
+                  next = [{ ...found, isPublic: true, isCommunity: true }, ...prev];
+                } else {
+                  next = prev;
+                }
+              } else {
+                next = prev.filter(t => t.id !== taskId);
+              }
+              safeSet('ielts_public_community_tasks', next);
+              return next;
+            });
+          }
+        };
+      }
+    } catch (e) {}
+
     const handleStorageChange = (e) => {
       if (e.key === 'ielts_all_tasks') {
         const updated = safeGet('ielts_all_tasks', null);
@@ -136,7 +194,64 @@ export default function App() {
       }
     };
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+
+    // Supabase Realtime Channel for global cloud updates
+    let channel = null;
+    try {
+      channel = supabase
+        .channel('realtime_public_custom_tasks')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'user_custom_tasks' }, (payload) => {
+          if (payload.eventType === 'DELETE') {
+            const deletedId = payload.old?.id;
+            if (deletedId) {
+              setAllTasks(prev => {
+                const updated = prev.filter(t => t.id !== deletedId);
+                safeSet('ielts_all_tasks', updated);
+                return updated;
+              });
+              setCommunityTasks(prev => {
+                const updated = prev.filter(t => t.id !== deletedId);
+                safeSet('ielts_public_community_tasks', updated);
+                return updated;
+              });
+            }
+          } else if (payload.eventType === 'INSERT') {
+            const row = payload.new;
+            if (row && row.is_public && !row.id.startsWith('custom-drill-') && !row.id.startsWith('drill-') && (!row.task_data || !row.task_data.isDrill)) {
+              const formatted = {
+                ...row.task_data,
+                id: row.id,
+                isPublic: true,
+                creatorEmail: row.creator_email,
+                isCommunity: true
+              };
+              setAllTasks(prev => {
+                if (prev.some(t => t.id === formatted.id)) return prev;
+                const next = [formatted, ...prev];
+                safeSet('ielts_all_tasks', next);
+                return next;
+              });
+              setCommunityTasks(prev => {
+                if (prev.some(t => t.id === formatted.id)) return prev;
+                const next = [formatted, ...prev];
+                safeSet('ielts_public_community_tasks', next);
+                return next;
+              });
+            }
+          }
+        })
+        .subscribe();
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      if (bc) {
+        try { bc.close(); } catch (e) {}
+      }
+      if (channel) {
+        try { supabase.removeChannel(channel); } catch (e) {}
+      }
+    };
   }, []);
 
   // Modals
@@ -324,13 +439,40 @@ export default function App() {
       if (cloudTasks && cloudTasks.length > 0) {
         setCommunityTasks(prev => {
           const cloudIds = new Set(cloudTasks.map(t => t.id));
-          const localOnly = prev.filter(t => !cloudIds.has(t.id));
-          return [...cloudTasks, ...localOnly];
+          const defaultCommIds = new Set(COMMUNITY_DEFAULT_TASKS.map(d => d.id));
+          // Prune stale community tasks that were deleted from Supabase cloud
+          const validLocalOnly = (prev || []).filter(t => 
+            !cloudIds.has(t.id) && (defaultCommIds.has(t.id) || (t.isCustom && !t.isPublic))
+          );
+          const combined = [...cloudTasks];
+          for (const d of COMMUNITY_DEFAULT_TASKS) {
+            if (!cloudIds.has(d.id) && !combined.some(c => c.id === d.id)) {
+              combined.push(d);
+            }
+          }
+          for (const local of validLocalOnly) {
+            if (!combined.some(c => c.id === local.id)) {
+              combined.push(local);
+            }
+          }
+          safeSet('ielts_public_community_tasks', combined);
+          return combined;
         });
         setAllTasks(prev => {
-          const existingIds = new Set(prev.map(t => t.id));
+          const cloudIds = new Set(cloudTasks.map(t => t.id));
+          const defaultTaskIds = new Set([...INITIAL_TASKS, ...COMMUNITY_DEFAULT_TASKS].map(d => d.id));
+          // Prune stale public tasks that were deleted from Supabase cloud
+          const cleanedPrev = (prev || []).filter(t => {
+            if (defaultTaskIds.has(t.id)) return true;
+            if (t.isOwnTask || (t.isCustom && !t.isCommunity && !t.isPublic)) return true;
+            // For community/public tasks, keep ONLY if it exists in the fresh cloudTasks
+            return cloudIds.has(t.id);
+          });
+          const existingIds = new Set(cleanedPrev.map(t => t.id));
           const newCloudTasks = cloudTasks.filter(t => !existingIds.has(t.id));
-          return newCloudTasks.length > 0 ? [...newCloudTasks, ...prev] : prev;
+          const finalAll = newCloudTasks.length > 0 ? [...newCloudTasks, ...cleanedPrev] : cleanedPrev;
+          safeSet('ielts_all_tasks', finalAll);
+          return finalAll;
         });
       }
     });
@@ -1412,6 +1554,13 @@ export default function App() {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);
           saveUserCustomTask(currentUser?.id || null, newTask, false, currentUser?.email || 'Khách');
+          try {
+            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_tasks_realtime');
+              bc.postMessage({ type: 'ADD_TASK', task: newTask, isPublic: false });
+              bc.close();
+            }
+          } catch (e) {}
         }}
         onTogglePublic={(taskId, isPub) => {
           setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
@@ -1435,6 +1584,14 @@ export default function App() {
           if (currentUser) {
             toggleTaskPublicity(currentUser.id, taskId, isPub);
           }
+
+          try {
+            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_tasks_realtime');
+              bc.postMessage({ type: 'TOGGLE_PUBLIC', taskId, isPublic: isPub });
+              bc.close();
+            }
+          } catch (e) {}
         }}
         onDeleteTask={(id) => {
           setAllTasks(prev => {
@@ -1447,9 +1604,14 @@ export default function App() {
             safeSet('ielts_public_community_tasks', updated);
             return updated;
           });
-          if (currentUser) {
-            deleteUserCustomTask(currentUser.id, id);
-          }
+          deleteUserCustomTask(currentUser?.id || null, id);
+          try {
+            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_tasks_realtime');
+              bc.postMessage({ type: 'DELETE_TASK', taskId: id });
+              bc.close();
+            }
+          } catch (e) {}
           if (currentTaskId === id) {
             setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
           }
@@ -1597,9 +1759,14 @@ export default function App() {
             safeSet('ielts_public_community_tasks', updated);
             return updated;
           });
-          if (currentUser) {
-            deleteUserCustomTask(currentUser.id, taskId);
-          }
+          deleteUserCustomTask(currentUser?.id || null, taskId);
+          try {
+            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+              const bc = new BroadcastChannel('ielts_tasks_realtime');
+              bc.postMessage({ type: 'DELETE_TASK', taskId });
+              bc.close();
+            }
+          } catch (e) {}
           if (currentTaskId === taskId) {
             setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
           }

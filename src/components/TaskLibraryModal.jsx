@@ -101,6 +101,18 @@ export default function TaskLibraryModal({
     return combined;
   }, [activeTab, allTasks, communityTasks]);
 
+  const allCount = useMemo(() => {
+    const existingIds = new Set(allTasks.map(t => t.id));
+    let count = allTasks.length;
+    for (const ct of communityTasks) {
+      if (!existingIds.has(ct.id)) {
+        count++;
+        existingIds.add(ct.id);
+      }
+    }
+    return count;
+  }, [allTasks, communityTasks]);
+
   const [hideMastered, setHideMastered] = useState(true);
 
   const masteredCount = useMemo(() => {
@@ -251,7 +263,7 @@ export default function TaskLibraryModal({
                   activeTab === 'all' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                Tất cả ({allTasks.length})
+                Tất cả ({allCount})
               </button>
               <button
                 onClick={() => setActiveTab('custom')}

@@ -161,9 +161,20 @@ console.log('  ✅ Test 8 Passed: Real-time cross-tab storage event listeners ve
 
 // Test 9: Cloud and Local Zero-Delay Sync Confirmation
 console.log('Test 9: Cloud and local state deletion dispatch verified...');
-assert.ok(appContent.includes("deleteUserCustomTask(currentUser.id, id)"), 'App.jsx must dispatch cloud deletion on user custom task removal');
+assert.ok(
+  appContent.includes("deleteUserCustomTask(currentUser.id, id)") ||
+  appContent.includes("deleteUserCustomTask(currentUser?.id || null, id)"),
+  'App.jsx must dispatch cloud deletion on user custom task removal'
+);
 testsPassed++;
 console.log('  ✅ Test 9 Passed: Cloud deletion integration confirmed.');
+
+// Test 10: BroadcastChannel & Library Real-Time Reconciliation
+console.log('Test 10: BroadcastChannel & Library Real-Time Reconciliation verified...');
+assert.ok(appContent.includes("ielts_tasks_realtime"), 'App.jsx must utilize ielts_tasks_realtime BroadcastChannel');
+assert.ok(appContent.includes("realtime_public_custom_tasks"), 'App.jsx must subscribe to Supabase Realtime channel for custom tasks');
+testsPassed++;
+console.log('  ✅ Test 10 Passed: BroadcastChannel & Supabase Realtime confirmed.');
 
 console.log(`\n===============================================================`);
 console.log(`🎉 All ${testsPassed}/${testsPassed} tests passed cleanly in Step 33!`);
