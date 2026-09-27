@@ -27,6 +27,11 @@ import SpeakingExaminerRoom from './SpeakingExaminerRoom';
 import SpeakingResultModal from './SpeakingResultModal';
 import SpeakingGeneratorModal from './SpeakingGeneratorModal';
 import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
+import { 
+  deduplicateSpeakingP1Topics, 
+  deduplicateSpeakingP2Cards, 
+  deduplicateSpeakingP3Sets 
+} from '../../services/deduplicationService';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -83,7 +88,7 @@ export default function SpeakingWorkspace({
   const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
   const practiceAudioRef = React.useRef(null);
 
-  // Custom practice topics, cards & discussion sets
+  // Custom practice topics, cards & discussion sets with auto-deduplication
   const [customP1Topics, setCustomP1Topics] = useState(() => {
     try {
       const savedCustom = localStorage.getItem('ielts_speaking_custom_p1_topics');
@@ -92,7 +97,12 @@ export default function SpeakingWorkspace({
       const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
       const map = new Map();
       [...comm, ...custom].forEach(t => { if (t && t.id) map.set(t.id, t); });
-      return Array.from(map.values());
+      const rawList = Array.from(map.values());
+      const { cleanedTopics, removedCount } = deduplicateSpeakingP1Topics(rawList, 0.75);
+      if (removedCount > 0) {
+        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(cleanedTopics));
+      }
+      return cleanedTopics;
     } catch (e) { return []; }
   });
 
@@ -104,7 +114,12 @@ export default function SpeakingWorkspace({
       const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
       const map = new Map();
       [...comm, ...custom].forEach(c => { if (c && c.id) map.set(c.id, c); });
-      return Array.from(map.values());
+      const rawList = Array.from(map.values());
+      const { cleanedCards, removedCount } = deduplicateSpeakingP2Cards(rawList, 0.75);
+      if (removedCount > 0) {
+        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(cleanedCards));
+      }
+      return cleanedCards;
     } catch (e) { return []; }
   });
 
@@ -116,33 +131,31 @@ export default function SpeakingWorkspace({
       const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
       const map = new Map();
       [...comm, ...custom].forEach(s => { const key = s.linkedPart2Id || s.id; if (key) map.set(key, s); });
-      return Array.from(map.values());
+      const rawList = Array.from(map.values());
+      const { cleanedSets, removedCount } = deduplicateSpeakingP3Sets(rawList, 0.75);
+      if (removedCount > 0) {
+        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(cleanedSets));
+      }
+      return cleanedSets;
     } catch (e) { return []; }
   });
 
   const allP1Topics = React.useMemo(() => {
-    const map = new Map();
-    [...SPEAKING_PART1_TOPICS, ...COMMUNITY_DEFAULT_P1_TOPICS, ...customP1Topics].forEach(t => {
-      if (t && t.id) map.set(t.id, t);
-    });
-    return Array.from(map.values());
+    const combined = [...SPEAKING_PART1_TOPICS, ...COMMUNITY_DEFAULT_P1_TOPICS, ...customP1Topics];
+    const { cleanedTopics } = deduplicateSpeakingP1Topics(combined, 0.75);
+    return cleanedTopics;
   }, [customP1Topics]);
 
   const allP2Cards = React.useMemo(() => {
-    const map = new Map();
-    [...SPEAKING_PART2_CUECARDS, ...COMMUNITY_DEFAULT_P2_CARDS, ...customP2Cards].forEach(c => {
-      if (c && c.id) map.set(c.id, c);
-    });
-    return Array.from(map.values());
+    const combined = [...SPEAKING_PART2_CUECARDS, ...COMMUNITY_DEFAULT_P2_CARDS, ...customP2Cards];
+    const { cleanedCards } = deduplicateSpeakingP2Cards(combined, 0.75);
+    return cleanedCards;
   }, [customP2Cards]);
 
   const allP3Sets = React.useMemo(() => {
-    const map = new Map();
-    [...SPEAKING_PART3_QUESTIONS, ...COMMUNITY_DEFAULT_P3_SETS, ...customP3Sets].forEach(s => {
-      const key = s.linkedPart2Id || s.id;
-      if (key) map.set(key, s);
-    });
-    return Array.from(map.values());
+    const combined = [...SPEAKING_PART3_QUESTIONS, ...COMMUNITY_DEFAULT_P3_SETS, ...customP3Sets];
+    const { cleanedSets } = deduplicateSpeakingP3Sets(combined, 0.75);
+    return cleanedSets;
   }, [customP3Sets]);
 
   const [selectedP3Id, setSelectedP3Id] = useState(() => {
@@ -151,15 +164,16 @@ export default function SpeakingWorkspace({
 
   const handleAddP1Topic = (newTopic) => {
     setCustomP1Topics(prev => {
-      const updated = [newTopic, ...prev];
+      const combined = [newTopic, ...prev];
+      const { cleanedTopics } = deduplicateSpeakingP1Topics(combined, 0.75);
       try { 
-        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated)); 
+        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(cleanedTopics)); 
         if (newTopic.isPublic) {
-          const commOnly = updated.filter(t => t.isPublic);
+          const commOnly = cleanedTopics.filter(t => t.isPublic);
           localStorage.setItem('ielts_speaking_community_p1_topics', JSON.stringify(commOnly));
         }
       } catch (e) {}
-      return updated;
+      return cleanedTopics;
     });
     setSelectedP1TopicId(newTopic.id);
     setActiveP1QuestionIndex(0);
@@ -217,15 +231,16 @@ export default function SpeakingWorkspace({
 
   const handleAddP2Card = (newCard) => {
     setCustomP2Cards(prev => {
-      const updated = [newCard, ...prev];
+      const combined = [newCard, ...prev];
+      const { cleanedCards } = deduplicateSpeakingP2Cards(combined, 0.75);
       try { 
-        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated)); 
+        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(cleanedCards)); 
         if (newCard.isPublic) {
-          const commOnly = updated.filter(c => c.isPublic);
+          const commOnly = cleanedCards.filter(c => c.isPublic);
           localStorage.setItem('ielts_speaking_community_p2_cards', JSON.stringify(commOnly));
         }
       } catch (e) {}
-      return updated;
+      return cleanedCards;
     });
     setSelectedP2CueCardId(newCard.id);
   };
@@ -247,15 +262,16 @@ export default function SpeakingWorkspace({
 
   const handleAddP3Set = (newSet) => {
     setCustomP3Sets(prev => {
-      const updated = [newSet, ...prev];
+      const combined = [newSet, ...prev];
+      const { cleanedSets } = deduplicateSpeakingP3Sets(combined, 0.75);
       try { 
-        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated)); 
+        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(cleanedSets)); 
         if (newSet.isPublic) {
-          const commOnly = updated.filter(s => s.isPublic);
+          const commOnly = cleanedSets.filter(s => s.isPublic);
           localStorage.setItem('ielts_speaking_community_p3_sets', JSON.stringify(commOnly));
         }
       } catch (e) {}
-      return updated;
+      return cleanedSets;
     });
     setSelectedP3Id(newSet.linkedPart2Id || newSet.id);
   };

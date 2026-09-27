@@ -66,6 +66,7 @@ import { evaluateEssay, brainstormIdeas } from './services/geminiService';
 import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationService';
 import { countWords } from './utils/textAnalytics';
 import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
+import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
 
 export default function App() {
   const { modals, closeModal: triggerCloseModal } = useModalStore();
@@ -86,9 +87,12 @@ export default function App() {
     if (Array.isArray(saved) && saved.length > 0) {
       const savedIds = new Set(saved.map(t => t.id));
       const missingDefaults = defaults.filter(d => !savedIds.has(d.id));
-      return [...saved, ...missingDefaults];
+      const combined = [...saved, ...missingDefaults];
+      const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
+      return cleanedTasks;
     }
-    return defaults;
+    const { cleanedTasks } = deduplicateWritingTasks(defaults, 0.75);
+    return cleanedTasks;
   });
   const [currentTaskId, setCurrentTaskId] = useState(() => {
     return safeGet('ielts_current_task_id', 't2-ai-workplace-2025');
@@ -577,7 +581,19 @@ export default function App() {
     });
   };
 
-  // 5. Auto-save Effects with Quota-Resilient Storage Manager
+  // 5. Automated Content Deduplication & Sanitization on startup
+  useEffect(() => {
+    try {
+      const report = auditAndCleanWebsiteContent(0.75);
+      if (report.hasDuplicates) {
+        console.log(`[IELTS Deduplication] Auto-cleaned ${report.totalRemoved} duplicate AI prompts across storage.`, report);
+      }
+    } catch (err) {
+      console.warn('Auto deduplication audit notice:', err);
+    }
+  }, []);
+
+  // 6. Auto-save Effects with Quota-Resilient Storage Manager
   useEffect(() => {
     safeSet('ielts_gemini_api_key', apiKey);
   }, [apiKey]);
@@ -1510,7 +1526,11 @@ export default function App() {
         user={currentUser}
         tasks={allTasks}
         onTaskCreated={(newTask, isPub) => {
-          setAllTasks(prev => [newTask, ...prev]);
+          setAllTasks(prev => {
+            const combined = [newTask, ...prev];
+            const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
+            return cleanedTasks;
+          });
           setCurrentTaskId(newTask.id);
 
           // Always add to public community repository immediately, no login required!
@@ -1552,7 +1572,11 @@ export default function App() {
           setCurrentTaskId(t.id);
         }}
         onAddNewCustomTask={(newTask) => {
-          setAllTasks(prev => [newTask, ...prev]);
+          setAllTasks(prev => {
+            const combined = [newTask, ...prev];
+            const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
+            return cleanedTasks;
+          });
           setCurrentTaskId(newTask.id);
           saveUserCustomTask(currentUser?.id || null, newTask, false, currentUser?.email || 'Khách');
           try {
