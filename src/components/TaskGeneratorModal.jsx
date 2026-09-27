@@ -9,6 +9,7 @@ export default function TaskGeneratorModal({
   apiKey,
   model,
   user,
+  tasks = [],
   onTaskCreated,
   onOpenSettings
 }) {
@@ -42,11 +43,20 @@ export default function TaskGeneratorModal({
 
     try {
       const topicObj = IELTS_TOPICS.find(t => t.id === selectedTopic);
+
+      // Collect existing prompt titles to strictly avoid duplicates
+      const relevantExistingTitles = (tasks || [])
+        .filter(t => Number(t.taskNumber) === Number(taskNumber))
+        .map(t => t.title || t.prompt)
+        .filter(Boolean)
+        .slice(0, 15);
+
       const newTask = await generateNewTask({
         taskNumber,
         type: taskNumber === 1 ? task1Type : task2Type,
         timeFrame: taskNumber === 1 ? timeFrame : 'any',
         topic: topicObj?.name || 'General',
+        existingTitles: relevantExistingTitles,
         apiKey,
         model
       });

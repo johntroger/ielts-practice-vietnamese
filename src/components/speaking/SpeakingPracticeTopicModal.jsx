@@ -33,6 +33,8 @@ export default function SpeakingPracticeTopicModal({
   part = 1,
   apiKey,
   model,
+  existingTopics = [],
+  existingQuestions = [],
   onTopicCreated
 }) {
   if (!isOpen) return null;
@@ -89,6 +91,8 @@ export default function SpeakingPracticeTopicModal({
       const generated = await generateSpeakingPracticeTopic({
         part,
         topic: topicToUse,
+        existingTopics,
+        existingQuestions,
         apiKey,
         model
       });

@@ -48,7 +48,8 @@ const testSuites = [
   { name: 'Step 39: Official Cambridge TRF Simulator & PDF Export', file: 'tests/test_step39_trf_simulator_export.js' },
   { name: 'Step 40: Interactive Speaking Examiner Flow & Adaptive Branching', file: 'tests/test_step40_speaking_examiner_flow.js' },
   { name: 'Step 41: Growth Analytics & Target Band Prediction Engine', file: 'tests/test_step41_growth_analytics_predictor.js' },
-  { name: 'Step 42: Speaking Client-Side Audio & STT Accuracy Engine', file: 'tests/test_step42_speaking_audio_stt_accuracy.js' }
+  { name: 'Step 42: Speaking Client-Side Audio & STT Accuracy Engine', file: 'tests/test_step42_speaking_audio_stt_accuracy.js' },
+  { name: 'Step 43: AI Prompt Diversity, Sub-Angle Matrices & Anti-Duplication System', file: 'tests/test_step43_ai_prompt_diversity_and_deduplication.js' }
 ];
 
 console.log('===============================================================');

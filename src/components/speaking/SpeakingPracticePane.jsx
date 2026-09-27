@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Mic, MicOff, Volume2, Play, Pause, Square, RotateCcw, CheckCircle2, 
   Sparkles, BookOpen, Layers, Clock, Award, Shield, Compass, Headphones, 
@@ -121,6 +121,27 @@ export default function SpeakingPracticePane({
   const activeP2Card = part2Cards.find(c => c.id === selectedP2CueCardId) || part2Cards[0] || {};
   const currentP3Set = part3Sets.find(s => (s.linkedPart2Id || s.id) === selectedP3Id) || activeP3Set || part3Sets[0] || {};
   const currentP1Question = activeP1Topic.questions?.[activeP1QuestionIndex] || null;
+
+  // Existing topics & questions calculation to prevent AI duplicates
+  const currentExistingTopics = useMemo(() => {
+    if (topicModalPart === 1) {
+      return (part1Topics || []).map(t => t.title).filter(Boolean);
+    } else if (topicModalPart === 2) {
+      return (part2Cards || []).map(c => c.title || c.prompt).filter(Boolean);
+    } else {
+      return (part3Sets || []).map(s => s.topic).filter(Boolean);
+    }
+  }, [topicModalPart, part1Topics, part2Cards, part3Sets]);
+
+  const currentExistingQuestions = useMemo(() => {
+    if (topicModalPart === 1) {
+      return (part1Topics || []).flatMap(t => (t.questions || []).map(q => q.question)).filter(Boolean);
+    } else if (topicModalPart === 2) {
+      return (part2Cards || []).map(c => c.prompt).filter(Boolean);
+    } else {
+      return (part3Sets || []).flatMap(s => (s.questions || []).map(q => q.question)).filter(Boolean);
+    }
+  }, [topicModalPart, part1Topics, part2Cards, part3Sets]);
 
   // Cleanup on unmount or tab/topic/question switch
   useEffect(() => {
@@ -2058,6 +2079,8 @@ export default function SpeakingPracticePane({
         part={topicModalPart}
         apiKey={apiKey}
         model={model}
+        existingTopics={currentExistingTopics}
+        existingQuestions={currentExistingQuestions}
         onTopicCreated={(newTopic) => {
           if (topicModalPart === 1 && onAddP1Topic) {
             onAddP1Topic(newTopic);

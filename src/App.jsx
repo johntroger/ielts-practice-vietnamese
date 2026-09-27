@@ -1508,6 +1508,7 @@ export default function App() {
         apiKey={apiKey}
         model={model}
         user={currentUser}
+        tasks={allTasks}
         onTaskCreated={(newTask, isPub) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);

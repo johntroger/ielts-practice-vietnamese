@@ -1081,12 +1081,87 @@ Evaluate and return ONLY valid JSON:
 }
 
 /**
+ * Sub-Angle Matrices for Diversity Injection (Prevents AI repetitiveness & duplicate generation)
+ */
+export const WRITING_SUB_ANGLES = [
+  'Technological disruption & ethical artificial intelligence integration',
+  'Environmental sustainability, climate mitigation & resource depletion',
+  'Socio-economic disparity, wealth distribution & cost-of-living challenges',
+  'Demographic transformation (aging population vs youth employment)',
+  'Mental well-being, psychological impact & modern lifestyle stress',
+  'Public sector intervention & policy governance vs free-market autonomy',
+  'Urban planning, infrastructure congestion & sustainable smart cities',
+  'Cultural heritage preservation in an increasingly globalized world',
+  'Future of education (hybrid digital schooling vs vocational apprenticeships)',
+  'Modern workplace dynamics (remote/hybrid employment vs traditional office life)'
+];
+
+export const SPEAKING_SUB_ANGLES = [
+  'Evolving personal routines & lifestyle adaptations in modern society',
+  'The double-edged sword of digital technology on interpersonal relationships',
+  'Emotional connections & psychological significance of everyday spaces/objects',
+  'Contrasts between fast-paced urban lifestyle and tranquil escapes',
+  'Changing cultural traditions and the perspectives of younger vs older generations',
+  'Sustainability, eco-friendly habits and conscious personal consumption',
+  'Balancing professional/academic ambitions with leisure and community bonding'
+];
+
+/**
+ * Lightweight client-side lexical overlap calculator to detect question repetition
+ */
+export function calculateLexicalOverlap(str1, str2) {
+  if (!str1 || !str2) return 0;
+  const words1 = new Set(str1.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 3));
+  const words2 = new Set(str2.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 3));
+  if (words1.size === 0 || words2.size === 0) return 0;
+  let intersection = 0;
+  for (const w of words1) {
+    if (words2.has(w)) intersection++;
+  }
+  return intersection / Math.min(words1.size, words2.size);
+}
+
+/**
  * Generates an authentic IELTS Task 1 or Task 2 prompt with complete learning materials
  */
-export async function generateNewTask({ taskNumber, type, topic, timeFrame = 'any', targetBand = 8.0, apiKey, model = DEFAULT_MODEL }) {
+export async function generateNewTask({ 
+  taskNumber, 
+  type, 
+  topic, 
+  timeFrame = 'any', 
+  targetBand = 8.0, 
+  existingTitles = [], 
+  apiKey, 
+  model = DEFAULT_MODEL 
+}) {
   if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
 
   const isTask1 = Number(taskNumber) === 1;
+
+  // Diversity Angle Injection: Pick a randomized sub-angle to guarantee uniqueness
+  const randomAngle = WRITING_SUB_ANGLES[Math.floor(Math.random() * WRITING_SUB_ANGLES.length)];
+
+  // Strict Exclusion List: Prevent repeating past prompts
+  let exclusionInstruction = '';
+  if (Array.isArray(existingTitles) && existingTitles.length > 0) {
+    const list = existingTitles.slice(0, 15).map((t, i) => `  ${i + 1}. "${t}"`).join('\n');
+    exclusionInstruction = `
+CRITICAL NO-DUPLICATION & DIVERSITY CONSTRAINT:
+The student has ALREADY practiced the following ${Math.min(15, existingTitles.length)} prompts in this library:
+${list}
+
+STRICT GENERATION RULES:
+- You MUST NOT repeat, imitate, or closely paraphrase ANY prompt from the list above.
+- You MUST create an original prompt exploring a novel real-world scenario reflecting current 2025-2026 trends.
+- Anchor this prompt specifically around this unique angle: "${randomAngle}".
+`;
+  } else {
+    exclusionInstruction = `
+NOVELTY CONSTRAINT:
+- Anchor this prompt around this unique contemporary angle: "${randomAngle}".
+- Avoid generic cliches; pick a fresh, thought-provoking real-world scenario.
+`;
+  }
 
   let timeFrameInstruction = '';
   if (isTask1) {
@@ -1111,6 +1186,7 @@ TIME-FRAME CONSTRAINT: DYNAMIC (Change over time).
       prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a PROCESS DIAGRAM (manufacturing, natural life cycle, or mechanical procedure) reflecting Cambridge standards.
 Topic Category: ${topic || 'Technology & Science'}
 Task Type: process
+${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text ("The diagram below illustrates the process of... Summarise the information by selecting and reporting the main features...").
@@ -1149,6 +1225,7 @@ Return ONLY raw parseable JSON with this structure:
       prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a MAP TRANSFORMATION (comparison of a town, village, campus, or island between two periods, e.g. 2000 vs present or before vs after redevelopment).
 Topic Category: ${topic || 'Urban Planning & Geography'}
 Task Type: map
+${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text ("The maps below show the changes that occurred in ... between ... and ... Summarise the information...").
@@ -1188,6 +1265,7 @@ Return ONLY raw parseable JSON with this structure:
 Topic Category: ${topic || 'General Economy & Demographics'}
 Task Type: table
 ${timeFrameInstruction}
+${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text ("The table below presents data on... Summarise the information...").
@@ -1235,6 +1313,7 @@ Return ONLY raw parseable JSON with this structure:
       prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a MIXED / COMBINATION CHART (e.g. A Pie Chart + Bar Chart, or A Table + Line Graph) reflecting Cambridge standards.
 Topic Category: ${topic || 'Society & Economics'}
 Task Type: mixed
+${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text ("The charts below show... and the table/graph shows... Summarise the information by selecting and reporting the main features, and make comparisons where relevant.").
@@ -1297,6 +1376,7 @@ Return ONLY raw parseable JSON with this structure:
 Topic Category: ${topic || 'General Environment or Economy'}
 Chart Type: ${type || 'line'} (Choose from line, bar, pie)
 ${timeFrameInstruction}
+${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text.
@@ -1344,6 +1424,7 @@ Return ONLY raw parseable JSON with this structure:
     prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, thought-provoking IELTS Writing Task 2 prompt reflecting hot current topics (2024-2026).
 Topic Category: ${topic || 'Technology or Society'}
 Question Type: ${type || 'opinion'} (e.g. opinion, discussion, advantages, problems, twopart)
+${exclusionInstruction}
 
 REQUIREMENTS:
 1. Realistic, modern prompt text.
@@ -1376,7 +1457,7 @@ Return ONLY raw parseable JSON with this structure:
     body: {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
-        temperature: 0.7,
+        temperature: 0.95,
         responseMimeType: 'application/json'
       }
     }
@@ -3052,15 +3133,48 @@ OUTPUT FORMAT: Return ONLY valid raw JSON with NO markdown fences:
 export async function generateSpeakingPracticeTopic({
   part = 1,
   topic = 'Technology & Daily Life',
+  existingTopics = [],
+  existingQuestions = [],
   apiKey,
   model = DEFAULT_MODEL
 }) {
   if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
 
+  // Diversity Angle Injection: Pick a randomized sub-angle to guarantee speaking uniqueness
+  const randomAngle = SPEAKING_SUB_ANGLES[Math.floor(Math.random() * SPEAKING_SUB_ANGLES.length)];
+
+  // Strict Exclusion List: Prevent repeating past speaking questions/topics
+  let exclusionInstruction = '';
+  const knownItems = [
+    ...(Array.isArray(existingTopics) ? existingTopics : []),
+    ...(Array.isArray(existingQuestions) ? existingQuestions : [])
+  ].filter(Boolean).slice(0, 15);
+
+  if (knownItems.length > 0) {
+    const list = knownItems.map((item, idx) => `  ${idx + 1}. "${item}"`).join('\n');
+    exclusionInstruction = `
+CRITICAL NO-DUPLICATION & DIVERSITY CONSTRAINT:
+The candidate has ALREADY answered/practiced the following questions or topics:
+${list}
+
+STRICT GENERATION RULES:
+- You MUST NOT repeat, imitate, or ask questions conceptually similar to the list above.
+- Create original questions exploring modern 2025-2026 perspectives.
+- Anchor questions through this unique nuance/angle: "${randomAngle}".
+`;
+  } else {
+    exclusionInstruction = `
+NOVELTY CONSTRAINT:
+- Anchor questions through this unique contemporary angle: "${randomAngle}".
+- Avoid cliche exam questions; ask fresh, engaging real-life prompts.
+`;
+  }
+
   let prompt = '';
 
   if (part === 1) {
     prompt = `You are a Cambridge IELTS Speaking Examiner. Generate 1 new Part 1 topic containing 3 authentic interview questions on the theme "${topic}".
+${exclusionInstruction}
 Output valid raw JSON:
 {
   "id": "p1-custom-${Date.now()}",
@@ -3097,6 +3211,7 @@ Output valid raw JSON:
 }`;
   } else if (part === 2) {
     prompt = `You are a Cambridge IELTS Speaking Examiner. Generate 1 new Part 2 Cue Card on the theme "${topic}".
+${exclusionInstruction}
 Output valid raw JSON:
 {
   "id": "p2-custom-${Date.now()}",
@@ -3117,6 +3232,7 @@ Output valid raw JSON:
   } else {
     // Part 3
     prompt = `You are a Cambridge IELTS Speaking Examiner. Generate 1 new Part 3 discussion set containing 3 in-depth societal/analytical questions on the theme "${topic}".
+${exclusionInstruction}
 Output valid raw JSON:
 {
   "linkedPart2Id": "p3-custom-${Date.now()}",
@@ -3157,7 +3273,7 @@ Output valid raw JSON:
     body: {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
-        temperature: 0.3,
+        temperature: 0.95,
         maxOutputTokens: 2500,
         responseMimeType: 'application/json'
       }
