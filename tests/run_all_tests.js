@@ -47,7 +47,8 @@ const testSuites = [
   { name: 'Step 38: Clean Architecture Custom Hooks & Unified AppStore', file: 'tests/test_step38_clean_architecture_hooks_and_store.js' },
   { name: 'Step 39: Official Cambridge TRF Simulator & PDF Export', file: 'tests/test_step39_trf_simulator_export.js' },
   { name: 'Step 40: Interactive Speaking Examiner Flow & Adaptive Branching', file: 'tests/test_step40_speaking_examiner_flow.js' },
-  { name: 'Step 41: Growth Analytics & Target Band Prediction Engine', file: 'tests/test_step41_growth_analytics_predictor.js' }
+  { name: 'Step 41: Growth Analytics & Target Band Prediction Engine', file: 'tests/test_step41_growth_analytics_predictor.js' },
+  { name: 'Step 42: Speaking Client-Side Audio & STT Accuracy Engine', file: 'tests/test_step42_speaking_audio_stt_accuracy.js' }
 ];
 
 console.log('===============================================================');

@@ -1,6 +1,54 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { speakingSoundEffects } from '../utils/speakingSoundEffects';
-import { splitTextIntoUtteranceChunks } from '../utils/speechAudio';
+import { speakingSoundEffects } from '../utils/speakingSoundEffects.js';
+import { splitTextIntoUtteranceChunks } from '../utils/speechAudio.js';
+
+/**
+ * Local Rule-Based Phonetic & Typo Sanitizer
+ * Deterministically cleans speech-to-text output on client side (0ms, 100% offline).
+ * Fixes pronoun casing, common STT contractions, and frequent IELTS phonetic misinterpretations.
+ */
+export function sanitizeSpeakingTranscript(text) {
+  if (!text || typeof text !== 'string') return '';
+  let cleaned = text;
+
+  // 1. Capitalize standalone 'i' and standard contractions
+  cleaned = cleaned.replace(/\bi\b/g, 'I');
+  cleaned = cleaned.replace(/\bi'm\b/gi, "I'm");
+  cleaned = cleaned.replace(/\bi've\b/gi, "I've");
+  cleaned = cleaned.replace(/\bi'll\b/gi, "I'll");
+  cleaned = cleaned.replace(/\bi'd\b/gi, "I'd");
+
+  // 2. Common IELTS speech-to-text phonetic misinterpretations for Vietnamese / ESL speakers
+  const phoneticFixes = [
+    [/\bnow a days\b/gi, 'nowadays'],
+    [/\bnow a day\b/gi, 'nowadays'],
+    [/\bkin on\b/gi, 'keen on'],
+    [/\bkeen of\b/gi, 'keen on'],
+    [/\bfor sample\b/gi, 'for example'],
+    [/\bon the other hands\b/gi, 'on the other hand'],
+    [/\bin other word\b/gi, 'in other words'],
+    [/\bfirst of alls\b/gi, 'first of all'],
+    [/\bin my opinions\b/gi, 'in my opinion'],
+    [/\bas far as i know\b/gi, 'as far as I know'],
+    [/\bplay an important role on\b/gi, 'play an important role in'],
+    [/\bpay attention on\b/gi, 'pay attention to'],
+    [/\btake advantage on\b/gi, 'take advantage of'],
+    [/\bdue of\b/gi, 'due to'],
+    [/\baccording with\b/gi, 'according to'],
+    [/\ba lot of peoples\b/gi, 'a lot of people']
+  ];
+
+  for (const [pattern, replacement] of phoneticFixes) {
+    cleaned = cleaned.replace(pattern, replacement);
+  }
+
+  // 3. Sentence start capitalization after punctuation or start of text
+  cleaned = cleaned.replace(/(^\s*|[.!?]\s+)([a-z])/g, (_, prefix, letter) => prefix + letter.toUpperCase());
+
+  // 4. Normalize spacing
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+  return cleaned;
+}
 
 /**
  * useSpeechEngine
@@ -51,6 +99,7 @@ export function useSpeechEngine({
   const recognitionRef = useRef(null);
   const isIntentionalListeningRef = useRef(false);
   const accumulatedTranscriptRef = useRef('');
+  const interimTranscriptRef = useRef('');
   const ttsKeepAliveTimerRef = useRef(null);
   const ttsSessionIdRef = useRef(0);
   const currentUtteranceRef = useRef(null);
@@ -293,7 +342,9 @@ export function useSpeechEngine({
       }
 
       if (newlyFinalized) {
-        accumulatedTranscriptRef.current = (accumulatedTranscriptRef.current + ' ' + newlyFinalized).replace(/\s+/g, ' ').trim();
+        accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
+          (accumulatedTranscriptRef.current + ' ' + newlyFinalized).replace(/\s+/g, ' ').trim()
+        );
         setTranscript(accumulatedTranscriptRef.current);
 
         const history = confidenceHistoryRef.current;
@@ -308,6 +359,7 @@ export function useSpeechEngine({
           });
         }
       }
+      interimTranscriptRef.current = liveInterim.trim();
       setInterimTranscript(liveInterim.trim());
     };
 
@@ -380,6 +432,9 @@ export function useSpeechEngine({
       ) {
         stream = await navigator.mediaDevices.getUserMedia({
           audio: {
+            channelCount: 1, // Mono eliminates stereo phase cancellation & room reverb
+            sampleRate: 48000,
+            sampleSize: 16,
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true
@@ -453,9 +508,10 @@ export function useSpeechEngine({
           ? 'audio/mp4'
           : '';
 
-        const recorder = mimeType 
-          ? new MediaRecorder(stream, { mimeType })
-          : new MediaRecorder(stream);
+        const recorderOptions = { audioBitsPerSecond: 128000 };
+        if (mimeType) recorderOptions.mimeType = mimeType;
+
+        const recorder = new MediaRecorder(stream, recorderOptions);
 
         recorder.ondataavailable = (e) => {
           if (e.data && e.data.size > 0) {
@@ -515,11 +571,21 @@ export function useSpeechEngine({
     }
   }, [initSpeechRecognition]);
 
-  // Stop listening instantly and finalize audio clip
+  // Stop listening instantly and finalize audio clip (Flushes any pending interim words)
   const stopListening = useCallback(() => {
     isIntentionalListeningRef.current = false;
     // OPTIMISTIC UI: Instant visual feedback to user (0ms lag)
     setIsListening(false);
+
+    // FLUSH INTERIM BUFFER: Prevent word truncation/loss at sentence end
+    if (interimTranscriptRef.current && interimTranscriptRef.current.trim()) {
+      const pending = interimTranscriptRef.current.trim();
+      accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
+        (accumulatedTranscriptRef.current + ' ' + pending).replace(/\s+/g, ' ').trim()
+      );
+      setTranscript(accumulatedTranscriptRef.current);
+      interimTranscriptRef.current = '';
+    }
     setInterimTranscript('');
 
     if (recognitionRef.current) {
@@ -539,6 +605,7 @@ export function useSpeechEngine({
 
   const resetTranscript = useCallback(() => {
     accumulatedTranscriptRef.current = '';
+    interimTranscriptRef.current = '';
     confidenceHistoryRef.current = [];
     setTranscript('');
     setInterimTranscript('');
@@ -550,8 +617,10 @@ export function useSpeechEngine({
   }, []);
 
   const setCustomTranscript = useCallback((text) => {
-    accumulatedTranscriptRef.current = text || '';
-    setTranscript(text || '');
+    const cleaned = sanitizeSpeakingTranscript(text || '');
+    accumulatedTranscriptRef.current = cleaned;
+    interimTranscriptRef.current = '';
+    setTranscript(cleaned);
     setInterimTranscript('');
   }, []);
 
