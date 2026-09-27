@@ -32,7 +32,9 @@ import {
   Globe,
   Lock,
   RefreshCw,
-  GraduationCap
+  GraduationCap,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -414,6 +416,7 @@ export default function MicroDrillsModal({
   const [selectedSignIndex, setSelectedSignIndex] = useState(0);
   const [userSignChoice, setUserSignChoice] = useState(null);
   const [showSignResult, setShowSignResult] = useState(false);
+  const [showListeningTranscript, setShowListeningTranscript] = useState(false);
 
   // AI Evaluation State for Listening Micro-Drills
   const [isEvaluatingListening, setIsEvaluatingListening] = useState(false);
@@ -570,11 +573,11 @@ export default function MicroDrillsModal({
       case 'listening-spelling':
         return { list: listeningSpellingDrills, index: selectedSpellingIndex, setIndex: setSelectedSpellingIndex, onReset: () => { setUserSpellingInput(''); setShowSpellingResult(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-distractor':
-        return { list: listeningDistractorDrills, index: selectedDistractorIndex, setIndex: setSelectedDistractorIndex, onReset: () => { setUserDistractorChoice(null); setShowDistractorResult(false); setListeningEvaluation(null); stopSpeech(); } };
+        return { list: listeningDistractorDrills, index: selectedDistractorIndex, setIndex: setSelectedDistractorIndex, onReset: () => { setUserDistractorChoice(null); setShowDistractorResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-map':
-        return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); setListeningEvaluation(null); stopSpeech(); } };
+        return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-signposting':
-        return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); setListeningEvaluation(null); stopSpeech(); } };
+        return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
       default:
         return { list: [], index: 0, setIndex: () => {}, onReset: () => {} };
     }
@@ -2547,11 +2550,45 @@ export default function MicroDrillsModal({
                     accent="en-GB"
                   />
 
-                  <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-950 space-y-1">
-                    <p className="font-bold text-slate-800">Đoạn hội thoại đã gỡ băng:</p>
-                    <p className="text-slate-700 italic">
-                      "{currentDistractor.audioSnippetText}"
-                    </p>
+                  {/* Collapsible Transcript: Hidden by default so user must practice listening first */}
+                  <div className="rounded-xl border border-amber-200/90 bg-amber-50/40 overflow-hidden text-xs transition-all">
+                    <button
+                      type="button"
+                      onClick={() => setShowListeningTranscript(prev => !prev)}
+                      className="w-full px-4 py-2.5 flex items-center justify-between text-slate-700 hover:text-slate-900 hover:bg-amber-100/50 font-bold transition-colors cursor-pointer"
+                    >
+                      <span className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4 text-amber-600" />
+                        <span className="font-bold text-slate-800">Đoạn hội thoại đã gỡ băng (Transcript)</span>
+                        <span className="text-[10px] font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-200">
+                          {showListeningTranscript ? 'Đang mở' : 'Đang ẩn'}
+                        </span>
+                      </span>
+                      <span className="text-xs font-bold text-amber-700 hover:text-amber-900 flex items-center space-x-1">
+                        {showListeningTranscript ? (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5" />
+                            <span>Ẩn gỡ băng</span>
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Xem gỡ băng</span>
+                          </>
+                        )}
+                      </span>
+                    </button>
+
+                    {showListeningTranscript && (
+                      <div className="p-4 pt-2.5 border-t border-amber-200/70 bg-amber-50/90 text-xs space-y-1.5 animate-in fade-in duration-150">
+                        <p className="font-bold text-amber-900 text-[11px] uppercase tracking-wider">
+                          Nội dung đoạn hội thoại:
+                        </p>
+                        <p className="text-slate-700 italic leading-relaxed">
+                          "{currentDistractor.audioSnippetText}"
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -2675,18 +2712,54 @@ export default function MicroDrillsModal({
                     accent="en-GB"
                   />
 
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 space-y-1">
-                    <p className="font-bold text-slate-800">Lời chỉ dẫn không gian:</p>
-                    <p className="text-slate-700 italic">
-                      "{currentMap.audioDirectionsText}"
-                    </p>
-                    <div className="pt-2 border-t border-emerald-200/60 flex flex-wrap gap-1.5">
-                      {currentMap.spatialClues?.map((clue, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-md bg-emerald-100/90 text-emerald-800 font-mono text-[10px] font-bold">
-                          📍 {clue}
+                  {/* Collapsible Spatial Direction Transcript: Hidden by default */}
+                  <div className="rounded-xl border border-emerald-200/90 bg-emerald-50/40 overflow-hidden text-xs transition-all">
+                    <button
+                      type="button"
+                      onClick={() => setShowListeningTranscript(prev => !prev)}
+                      className="w-full px-4 py-2.5 flex items-center justify-between text-slate-700 hover:text-slate-900 hover:bg-emerald-100/50 font-bold transition-colors cursor-pointer"
+                    >
+                      <span className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4 text-emerald-600" />
+                        <span className="font-bold text-slate-800">Lời chỉ dẫn không gian (Transcript)</span>
+                        <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
+                          {showListeningTranscript ? 'Đang mở' : 'Đang ẩn'}
                         </span>
-                      ))}
-                    </div>
+                      </span>
+                      <span className="text-xs font-bold text-emerald-700 hover:text-emerald-900 flex items-center space-x-1">
+                        {showListeningTranscript ? (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5" />
+                            <span>Ẩn chỉ dẫn</span>
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Xem chỉ dẫn</span>
+                          </>
+                        )}
+                      </span>
+                    </button>
+
+                    {showListeningTranscript && (
+                      <div className="p-4 pt-2.5 border-t border-emerald-200/70 bg-emerald-50/90 text-xs space-y-2 animate-in fade-in duration-150">
+                        <p className="font-bold text-emerald-950 text-[11px] uppercase tracking-wider">
+                          Nội dung chỉ dẫn không gian:
+                        </p>
+                        <p className="text-slate-700 italic leading-relaxed">
+                          "{currentMap.audioDirectionsText}"
+                        </p>
+                        {currentMap.spatialClues && currentMap.spatialClues.length > 0 && (
+                          <div className="pt-2 border-t border-emerald-200/60 flex flex-wrap gap-1.5">
+                            {currentMap.spatialClues.map((clue, i) => (
+                              <span key={i} className="px-2 py-0.5 rounded-md bg-emerald-100/90 text-emerald-800 font-mono text-[10px] font-bold">
+                                📍 {clue}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -2809,18 +2882,50 @@ export default function MicroDrillsModal({
                     accent="en-GB"
                   />
 
-                  <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-800">Trích đoạn bài giảng Part 4:</span>
-                      {currentSign.signpostType && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-200/80 text-indigo-900">
-                          🎯 {currentSign.signpostType}
+                  {/* Collapsible Lecture Transcript: Hidden by default */}
+                  <div className="rounded-xl border border-indigo-200/90 bg-indigo-50/40 overflow-hidden text-xs transition-all">
+                    <button
+                      type="button"
+                      onClick={() => setShowListeningTranscript(prev => !prev)}
+                      className="w-full px-4 py-2.5 flex items-center justify-between text-slate-700 hover:text-slate-900 hover:bg-indigo-100/50 font-bold transition-colors cursor-pointer"
+                    >
+                      <span className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4 text-indigo-600" />
+                        <span className="font-bold text-slate-800">Trích đoạn bài giảng Part 4 (Transcript)</span>
+                        <span className="text-[10px] font-semibold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full border border-indigo-200">
+                          {showListeningTranscript ? 'Đang mở' : 'Đang ẩn'}
                         </span>
-                      )}
-                    </div>
-                    <p className="text-slate-700 italic leading-relaxed pt-1">
-                      "{currentSign.audioSnippetText}"
-                    </p>
+                      </span>
+                      <span className="text-xs font-bold text-indigo-700 hover:text-indigo-900 flex items-center space-x-1">
+                        {showListeningTranscript ? (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5" />
+                            <span>Ẩn bài giảng</span>
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Xem bài giảng</span>
+                          </>
+                        )}
+                      </span>
+                    </button>
+
+                    {showListeningTranscript && (
+                      <div className="p-4 pt-2.5 border-t border-indigo-200/70 bg-indigo-50/90 text-xs space-y-2 animate-in fade-in duration-150">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-indigo-950 text-[11px] uppercase tracking-wider">Nội dung bài giảng:</span>
+                          {currentSign.signpostType && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-200/80 text-indigo-900">
+                              🎯 {currentSign.signpostType}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-slate-700 italic leading-relaxed pt-1">
+                          "{currentSign.audioSnippetText}"
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
