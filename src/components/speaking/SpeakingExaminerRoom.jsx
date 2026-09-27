@@ -720,7 +720,7 @@ export default function SpeakingExaminerRoom({
                 <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider pb-1 border-b border-slate-800/60 mb-1">
                   <span className="flex items-center space-x-1.5 text-emerald-400">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Transcript Tự Động (AI Nhận Diện)</span>
+                    <span>Transcript Trực Tiếp (Live STT)</span>
                   </span>
                   {isMicActive && (
                     <span className="text-rose-400 font-mono text-[10px] flex items-center space-x-1">

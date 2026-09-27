@@ -444,6 +444,22 @@ export default function SpeakingSoundcheckModal({
               </div>
             )}
 
+            {/* AI Audio Accuracy Tip Notice */}
+            <div className="p-3 rounded-xl bg-indigo-950/50 border border-indigo-700/50 text-xs text-indigo-200 flex items-start space-x-2.5">
+              <Sparkles className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-bold text-white text-xs">Mẹo nhận diện lời nói chuẩn xác:</span>
+                  <span className="text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.2 rounded-full">
+                    Khuyên Dùng AI
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  Nhận diện trực tiếp của trình duyệt có thể nhầm từ hoặc thiếu âm đuôi. Trong phòng luyện nói, bạn nên bấm nút <span className="font-semibold text-indigo-300">"✨ AI Nhận Diện Lại"</span> để Gemini Multimodal Audio nghe trực tiếp file ghi âm gốc, giúp kết quả phiên âm và chấm điểm chính xác nhất.
+                </p>
+              </div>
+            </div>
+
             {/* Quick manual mic validation fallback */}
             {!testedMic && !soundcheckClip && !speechEngine.isListening && (
               <div className="text-center pt-1">

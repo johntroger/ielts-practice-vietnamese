@@ -91,6 +91,7 @@ export default function SpeakingPracticePane({
   const [evaluationContext, setEvaluationContext] = useState(null);
   const [isRefiningTranscript, setIsRefiningTranscript] = useState(false);
   const [refiningClipKey, setRefiningClipKey] = useState('');
+  const [refinedClips, setRefinedClips] = useState({});
   const [activeRecordClipKey, setActiveRecordClipKey] = useState('');
   const [isMicConnecting, setIsMicConnecting] = useState(false);
   const [micErrorDetail, setMicErrorDetail] = useState(null);
@@ -172,6 +173,11 @@ export default function SpeakingPracticePane({
     setActiveRecordClipKey(clipKey);
     speechEngine.resetTranscript();
     if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
+    setRefinedClips(prev => {
+      const next = { ...prev };
+      delete next[clipKey];
+      return next;
+    });
 
     try {
       await speechEngine.startListening(clipKey);
@@ -228,6 +234,11 @@ export default function SpeakingPracticePane({
       setSpeakSecondsElapsed(0);
       speechEngine.resetTranscript();
       if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(clipKey);
+      setRefinedClips(prev => {
+        const next = { ...prev };
+        delete next[clipKey];
+        return next;
+      });
 
       try {
         await speechEngine.startListening(clipKey);
@@ -334,6 +345,7 @@ export default function SpeakingPracticePane({
 
       if (accurateTranscript && speechEngine.setCustomTranscript) {
         speechEngine.setCustomTranscript(accurateTranscript);
+        setRefinedClips(prev => ({ ...prev, [clipKey]: true }));
       }
       return accurateTranscript;
     } catch (err) {
@@ -609,10 +621,17 @@ export default function SpeakingPracticePane({
         speechEngine.deleteAudioClip(clipKey);
       }
       speechEngine.resetTranscript();
+      setRefinedClips(prev => {
+        const next = { ...prev };
+        delete next[clipKey];
+        return next;
+      });
     };
 
+    const isClipAiRefined = !!refinedClips[clipKey];
+
     return (
-      <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/50 space-y-2.5 animate-in fade-in duration-150">
+      <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/50 space-y-3 animate-in fade-in duration-150">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-white flex items-center space-x-1.5">
             <Volume2 className="w-3.5 h-3.5 text-purple-400" />
@@ -629,6 +648,40 @@ export default function SpeakingPracticePane({
             transcript={speechEngine.transcript} 
             durationSec={clip?.duration || 30} 
           />
+        )}
+
+        {/* AI Audio Accuracy Recommendation Callout Banner */}
+        {clip?.blob && (
+          <div className={`p-3 rounded-xl border transition-all ${
+            isClipAiRefined
+              ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
+              : 'bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-900 border-indigo-500/40 text-indigo-100 shadow-md shadow-indigo-950/30'
+          }`}>
+            <div className="flex items-start gap-2.5">
+              <div className={`p-1.5 rounded-lg shrink-0 ${isClipAiRefined ? 'bg-emerald-900/60 text-emerald-300' : 'bg-indigo-900/60 text-amber-300'}`}>
+                {isClipAiRefined ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Sparkles className="w-4 h-4 text-amber-300" />}
+              </div>
+              <div className="flex-1 space-y-1 text-xs">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-white text-xs">
+                    {isClipAiRefined ? 'Transcript Đã Được Chuẩn Hóa Bằng AI' : 'Khuyên dùng: Chuẩn Hóa Lời Thoại Bằng AI'}
+                  </span>
+                  <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+                    isClipAiRefined 
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40' 
+                      : 'bg-amber-500/20 text-amber-300 border-amber-400/40 animate-pulse'
+                  }`}>
+                    {isClipAiRefined ? '✨ Độ chính xác 98%+' : '⚡ Khuyên Dùng'}
+                  </span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-slate-300">
+                  {isClipAiRefined
+                    ? 'Văn bản lời nói đã được Gemini Multimodal Audio nghe trực tiếp từ file âm thanh gốc và chuẩn hóa chính xác từng từ ngữ.'
+                    : 'Nhận diện thời gian thực của trình duyệt có thể nghe nhầm hoặc thiếu âm đuôi. Bạn nên bấm nút "✨ AI Nhận Diện Lại" bên dưới để Gemini nghe trực tiếp file ghi âm, giúp kết quả chấm điểm chuẩn xác nhất.'}
+                </p>
+              </div>
+            </div>
+          </div>
         )}
 
         <div className="flex flex-wrap items-center gap-2">
@@ -660,18 +713,30 @@ export default function SpeakingPracticePane({
             <button
               onClick={() => handleRefineTranscriptWithAI(clipKey)}
               disabled={isRefiningTranscript}
-              className="flex-1 sm:flex-none py-2 px-3 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 hover:text-white border border-indigo-700/60 text-xs font-bold flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-50 transition-colors"
-              title="Dùng Gemini Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 99.5%"
+              className={`flex-1 sm:flex-none py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-50 transition-all border ${
+                isClipAiRefined
+                  ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 border-emerald-600/50'
+                  : 'bg-gradient-to-r from-indigo-900/90 to-purple-900/90 hover:from-indigo-800 hover:to-purple-800 text-indigo-200 hover:text-white border-indigo-500/60 shadow-sm shadow-indigo-950/50'
+              }`}
+              title="Dùng Gemini Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 98%+"
             >
               {isRefiningTranscript && refiningClipKey === clipKey ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
                   <span>AI Đang Nghe...</span>
                 </>
+              ) : isClipAiRefined ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Đã Chuẩn Hóa AI</span>
+                </>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300/30" />
                   <span>✨ AI Nhận Diện Lại</span>
+                  <span className="ml-1 text-[9px] font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-full border border-amber-400/40">
+                    Khuyên Dùng
+                  </span>
                 </>
               )}
             </button>
@@ -1122,15 +1187,28 @@ export default function SpeakingPracticePane({
                       <button
                         onClick={() => handleRefineTranscriptWithAI(`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`)}
                         disabled={isRefiningTranscript}
-                        className="px-2 py-1 rounded-lg text-indigo-300 hover:text-white bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-800/60 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
-                        title="AI Gemini nghe trực tiếp file ghi âm để sửa lỗi nhận diện giọng nói chính xác 99.5%"
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1.5 cursor-pointer transition-all border ${
+                          refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`]
+                            ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-700/60'
+                            : 'bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 hover:text-white border-indigo-600/60 shadow-sm shadow-indigo-950/50'
+                        }`}
+                        title="AI Gemini nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
                       >
                         {isRefiningTranscript && refiningClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
+                          <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                        ) : refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`] ? (
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                         ) : (
-                          <Sparkles className="w-3 h-3 text-indigo-400" />
+                          <Sparkles className="w-3 h-3 text-amber-300" />
                         )}
-                        <span className="hidden sm:inline">AI Chuẩn Hóa</span>
+                        <span className="hidden sm:inline">
+                          {refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`] ? 'Đã Chuẩn Hóa AI' : 'AI Chuẩn Hóa'}
+                        </span>
+                        {!refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`] && (
+                          <span className="hidden md:inline text-[9px] bg-amber-400/20 text-amber-300 px-1 py-0.2 rounded border border-amber-400/30">
+                            Khuyên Dùng
+                          </span>
+                        )}
                       </button>
                     )}
                     {speechEngine.transcript && !speechEngine.isListening && (
@@ -1542,15 +1620,28 @@ export default function SpeakingPracticePane({
                   <button
                     onClick={() => handleRefineTranscriptWithAI(`p2_${activeP2Card.id}`)}
                     disabled={isRefiningTranscript}
-                    className="px-2 py-1 rounded-lg text-indigo-300 hover:text-white bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-800/60 text-[11px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
-                    title="AI Gemini nghe trực tiếp file ghi âm để sửa lỗi nhận diện giọng nói chính xác 99.5%"
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1.5 cursor-pointer transition-all border ${
+                      refinedClips[`p2_${activeP2Card.id}`]
+                        ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-700/60'
+                        : 'bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 hover:text-white border-indigo-600/60 shadow-sm shadow-indigo-950/50'
+                    }`}
+                    title="AI Gemini nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
                   >
                     {isRefiningTranscript && refiningClipKey === `p2_${activeP2Card.id}` ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                    ) : refinedClips[`p2_${activeP2Card.id}`] ? (
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                     ) : (
-                      <Sparkles className="w-3 h-3 text-indigo-400" />
+                      <Sparkles className="w-3 h-3 text-amber-300" />
                     )}
-                    <span className="hidden sm:inline">AI Chuẩn Hóa</span>
+                    <span className="hidden sm:inline">
+                      {refinedClips[`p2_${activeP2Card.id}`] ? 'Đã Chuẩn Hóa AI' : 'AI Chuẩn Hóa'}
+                    </span>
+                    {!refinedClips[`p2_${activeP2Card.id}`] && (
+                      <span className="hidden md:inline text-[9px] bg-amber-400/20 text-amber-300 px-1 py-0.2 rounded border border-amber-400/30">
+                        Khuyên Dùng
+                      </span>
+                    )}
                   </button>
                 )}
                 {speechEngine.transcript && !speechEngine.isListening && (
