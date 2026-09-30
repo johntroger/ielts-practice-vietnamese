@@ -160,7 +160,7 @@ export default function Navbar({
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs shrink-0">
-      <div className="w-full max-w-full px-2 sm:px-4 lg:px-6">
+      <div className="w-full max-w-full px-2 sm:px-4 xl:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-1 sm:gap-2">
           
@@ -275,10 +275,10 @@ export default function Navbar({
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
-            {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút */}
+            {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút (Hiển thị từ màn hình máy tính >= 1280px; trên Tablet có tại Hamburger Drawer) */}
             <button
               onClick={doOpenMockTest}
-              className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+              className="hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
               title="Vào Phòng Thi Thử IELTS Áp Lực Cao (60 Phút)"
             >
               <ShieldAlert className="w-3.5 h-3.5 text-amber-300 animate-pulse" />

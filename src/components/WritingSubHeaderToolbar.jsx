@@ -49,13 +49,13 @@ export default function WritingSubHeaderToolbar({
     <div className={`bg-white border-b border-slate-200 px-3 sm:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
       isSlimHeader 
         ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
-        : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2'
+        : 'py-2 flex flex-col md:flex-row md:flex-wrap md:items-center md:justify-between gap-2'
     }`}>
       
       {/* ============================================================ */}
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
       {/* ============================================================ */}
-      <div className="flex items-center space-x-2 min-w-0 overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center space-x-2 min-w-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
         {/* 1. Task Selector Dropdown Trigger & Rating */}
         <div className="flex items-center space-x-1.5 min-w-0">
           <button 
@@ -111,7 +111,7 @@ export default function WritingSubHeaderToolbar({
       {/* ============================================================ */}
       {/* ZONE 2 (Right): EXAM MODES, CDI DISPLAY & ESSENTIAL TOOLS    */}
       {/* ============================================================ */}
-      <div className="flex items-center justify-between md:justify-end space-x-2 text-xs shrink-0 overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center justify-between md:justify-end space-x-2 text-xs shrink-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
         <div className="flex items-center space-x-1.5">
           
           {/* 1. CDI Display & Accessibility Settings (Font Scale / Color Contrast) */}
@@ -299,8 +299,8 @@ export default function WritingSubHeaderToolbar({
 
         </div>
 
-        {/* 4. Weekly Word Target Progress Bar (Visible on desktop/laptop) */}
-        <div className="hidden sm:flex items-center space-x-2 text-slate-600 pl-2.5 border-l border-slate-200">
+        {/* 4. Weekly Word Target Progress Bar (Visible on desktop/laptop >= 1280px to preserve tablet space) */}
+        <div className="hidden xl:flex items-center space-x-2 text-slate-600 pl-2.5 border-l border-slate-200">
           <span className="font-medium text-[11px] text-slate-500">Mục tiêu tuần:</span>
           <div className="w-20 sm:w-28 lg:w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
             <div 
