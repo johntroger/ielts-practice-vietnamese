@@ -187,18 +187,21 @@ export default function TaskGeneratorModal({
                 </div>
               </div>
 
-              {/* Process & Map Guaranteed Visual Illustration Banner */}
+              {/* Process & Map Guaranteed Visual Illustration Banner with Google Banana */}
               {(task1Type === 'process' || task1Type === 'map') && (
-                <div className="p-3 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/90 text-emerald-950 flex items-center space-x-2.5 shadow-2xs animate-in fade-in duration-150">
-                  <div className="p-2 rounded-lg bg-emerald-600 text-white shrink-0 shadow-xs">
-                    <Sparkles className="w-4 h-4" />
+                <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-300 text-amber-950 flex items-start space-x-2.5 shadow-2xs animate-in fade-in duration-150">
+                  <div className="p-1.5 rounded-lg bg-amber-500 text-white shrink-0 text-base shadow-xs select-none">
+                    🍌
                   </div>
                   <div className="text-xs">
-                    <strong className="text-emerald-900 block font-bold">Bắt buộc kèm hình ảnh minh họa chuẩn Cambridge:</strong>
-                    <span className="text-[11px] text-emerald-800">
+                    <div className="flex items-center space-x-1.5">
+                      <strong className="text-amber-950 font-black">Tạo hình trực tiếp bằng Google Banana (Gemini Image):</strong>
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-200 text-amber-900">AI Image</span>
+                    </div>
+                    <span className="text-[11px] text-amber-900 block mt-0.5 leading-relaxed">
                       {task1Type === 'process' 
-                        ? 'Đề sinh ra được tự động vẽ sơ đồ vector (Process Flowchart) tuần tự các giai đoạn.' 
-                        : 'Đề sinh ra được tự động vẽ bản đồ đối chiếu (Dual-Period Map) trước & sau quy hoạch.'}
+                        ? 'Google Banana AI sẽ vẽ trực tiếp sơ đồ quy trình / vòng đời độc bản chân thực, không bao giờ bị trùng lặp.' 
+                        : 'Google Banana AI sẽ vẽ trực tiếp bản đồ kép đối chiếu 2 thời kỳ chân thực, sống động chuẩn bài thi thật.'}
                     </span>
                   </div>
                 </div>
@@ -314,7 +317,11 @@ export default function TaskGeneratorModal({
             {isGenerating ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>AI Đang Soạn Đề & Vẽ Biểu Đồ...</span>
+                <span>
+                  {taskNumber === 1 && (task1Type === 'process' || task1Type === 'map')
+                    ? 'Google Banana Đang Vẽ Ảnh Minh Họa...'
+                    : 'AI Đang Soạn Đề & Vẽ Biểu Đồ...'}
+                </span>
               </>
             ) : (
               <>

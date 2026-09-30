@@ -1141,6 +1141,124 @@ export function calculateLexicalOverlap(str1, str2) {
 }
 
 /**
+ * Builds prompt for Google Banana (Gemini 2.5 Flash Image / Imagen 3) to generate authentic IELTS Task 1 Dual Map
+ */
+export function buildGoogleBananaMapPrompt(taskObj = {}) {
+  const title = taskObj.title || 'Map Transformation';
+  const changes = (taskObj.mapChanges || []).map((c, i) => 
+    `${i + 1}. Area "${c.feature || c.area || ''}": Formerly "${c.past || ''}". Modern state: "${c.present || ''}".`
+  ).join('\n');
+
+  return `Create an authentic, high-resolution Cambridge IELTS Academic Writing Task 1 Dual-Map Examination Illustration.
+Topic: "${title}"
+Specific Transformation details to depict between the two periods:
+${changes || 'Urban redevelopment, infrastructure expansion, and spatial transformation'}
+
+Visual & Cartographic Requirements:
+- Layout: EXACTLY TWO maps side-by-side or stacked in one single coherent image.
+- Header badges: Left map clearly titled "MAP 1: Past / Before", Right map clearly titled "MAP 2: Present / After".
+- Cartography Style: Official Cambridge IELTS examination paper style. Clean masterplan drawing with crisp architectural shapes, distinct roads, roundabouts, buildings, bodies of water, trees, and car parking.
+- Compass Rose: A neat compass rose indicating North on both maps.
+- Clear English Labels: Clear, legible English labels matching the landmarks and changes described above.
+- Clean white background, high contrast, professional cartographic vector/handbook aesthetic suitable for an IELTS exam booklet.`;
+}
+
+/**
+ * Builds prompt for Google Banana (Gemini 2.5 Flash Image / Imagen 3) to generate authentic IELTS Task 1 Process Flowchart
+ */
+export function buildGoogleBananaProcessPrompt(taskObj = {}) {
+  const title = taskObj.title || 'Process Diagram';
+  const steps = (taskObj.processSteps || []).map((s, i) => 
+    `Stage ${s.step || i + 1}: "${s.name || ''}" - ${s.desc || ''}`
+  ).join('\n');
+
+  return `Create an authentic, high-resolution Cambridge IELTS Academic Writing Task 1 Sequential Process Flowchart diagram.
+Topic: "${title}"
+Sequential stages to depict in order:
+${steps || 'Sequential industrial manufacturing or biological lifecycle process'}
+
+Visual & Schematic Requirements:
+- Layout: Clear sequential workflow with prominent directional arrows connecting each stage from start to completion.
+- Schematic Style: Official Cambridge IELTS examination paper style. Clean technical apparatus, machinery, chemical vats, heating furnaces, or biological organisms depicted with crisp, clear lines.
+- Stage Labels: Each stage clearly numbered ("Stage 1", "Stage 2"...) with clear English labels for equipment, inputs, and outputs.
+- Clean white or neutral background, high contrast, academic textbook clarity suitable for an IELTS test booklet.`;
+}
+
+/**
+ * Invokes Google Banana (Gemini 2.5 Flash Image / Imagen 3) to generate an image
+ * @param {object} options { prompt, apiKey }
+ * @returns {Promise<string|null>} base64 data URL or null
+ */
+export async function generateGoogleBananaImage({ prompt, apiKey }) {
+  if (!apiKey || !prompt) return null;
+
+  const candidateModels = [
+    'gemini-2.5-flash-image',
+    'gemini-3.1-flash-lite-image'
+  ];
+
+  for (const modelName of candidateModels) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: prompt }]
+            }
+          ],
+          generationConfig: {
+            responseModalities: ['image', 'text']
+          }
+        })
+      });
+
+      if (!response.ok) {
+        console.warn(`[Google Banana] Model ${modelName} returned status ${response.status}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const parts = data?.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        if (part?.inlineData?.data) {
+          const mimeType = part.inlineData.mimeType || 'image/png';
+          return `data:${mimeType};base64,${part.inlineData.data}`;
+        }
+      }
+    } catch (err) {
+      console.warn(`[Google Banana] Error calling ${modelName}:`, err.message);
+    }
+  }
+
+  // Backup: try imagen-3.0-generate-002 if supported on this key
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        instances: [{ prompt }],
+        parameters: { sampleCount: 1 }
+      })
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+      if (b64) {
+        return `data:image/png;base64,${b64}`;
+      }
+    }
+  } catch (err) {
+    // Ignore fallback
+  }
+
+  return null;
+}
+
+/**
  * Generates an authentic IELTS Task 1 or Task 2 prompt with complete learning materials
  */
 export async function generateNewTask({ 
@@ -1521,6 +1639,27 @@ Return ONLY raw parseable JSON with this structure:
       processType: taskObj.processType || chosenProcessArchetype?.type || undefined,
       mapType: taskObj.mapType || chosenMapArchetype?.type || undefined
     };
+
+    // For Task 1 Process and Map: Generate authentic illustration with Google Banana AI Image
+    if (isTask1 && (baseTask.type === 'process' || baseTask.type === 'map')) {
+      try {
+        const bananaPrompt = baseTask.type === 'map'
+          ? buildGoogleBananaMapPrompt(baseTask)
+          : buildGoogleBananaProcessPrompt(baseTask);
+
+        const aiImage = await generateGoogleBananaImage({
+          prompt: bananaPrompt,
+          apiKey
+        });
+
+        if (aiImage) {
+          baseTask.imageUrl = aiImage;
+          baseTask.imageSource = 'google_banana';
+        }
+      } catch (bananaErr) {
+        console.warn('[Google Banana] Image generation fallback to vector engine:', bananaErr?.message);
+      }
+    }
 
     // Ensure Process and Map tasks are guaranteed to have a high-resolution illustration (imageUrl)
     return ensureTaskIllustration(baseTask);
