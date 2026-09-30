@@ -50,7 +50,8 @@ const testSuites = [
   { name: 'Step 41: Growth Analytics & Target Band Prediction Engine', file: 'tests/test_step41_growth_analytics_predictor.js' },
   { name: 'Step 42: Speaking Client-Side Audio & STT Accuracy Engine', file: 'tests/test_step42_speaking_audio_stt_accuracy.js' },
   { name: 'Step 43: AI Prompt Diversity, Sub-Angle Matrices & Anti-Duplication System', file: 'tests/test_step43_ai_prompt_diversity_and_deduplication.js' },
-  { name: 'Step 44: AI Content Deduplication & Automated Cleanup Engine', file: 'tests/test_step44_ai_content_deduplication_and_autoclean.js' }
+  { name: 'Step 44: AI Content Deduplication & Automated Cleanup Engine', file: 'tests/test_step44_ai_content_deduplication_and_autoclean.js' },
+  { name: 'Step 45: Task 1 Process & Map Visual Diversity Engine', file: 'tests/test_step45_process_map_visual_diversity.js' }
 ];
 
 console.log('===============================================================');

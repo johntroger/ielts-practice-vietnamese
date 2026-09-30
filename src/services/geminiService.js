@@ -1107,6 +1107,25 @@ export const SPEAKING_SUB_ANGLES = [
 ];
 
 /**
+ * Task 1 Visual Illustration Archetypes to guarantee authentic diversity
+ */
+export const PROCESS_ARCHETYPES = [
+  { type: 'manufacturing', label: 'Sản xuất & Chế tạo công nghiệp', hint: 'Linear or multi-stage industrial manufacturing (e.g. brick manufacturing, artisanal cheese making, paper production from timber, chocolate manufacturing, tea processing, solar cell manufacturing)' },
+  { type: 'lifecycle', label: 'Vòng đời sinh thái tự nhiên', hint: 'Natural biological life cycle of an animal, insect, or plant (e.g. Pacific salmon migration, honeybee caste life cycle, red-eyed tree frog metamorphosis, monarch butterfly life cycle, silkworm silk production)' },
+  { type: 'recycling', label: 'Tái chế tuần hoàn rác thải', hint: 'Closed-loop recycling and waste reclamation process (e.g. PET plastic bottle recycling into polyester yarn, aluminum beverage can recycling loop, lithium-ion battery material reclamation)' },
+  { type: 'energy_water', label: 'Năng lượng & Xử lý môi trường', hint: 'Energy generation, environmental purification, or hydraulic system (e.g. hydroelectric power dam, geothermal energy capture, municipal wastewater purification & treatment, thermal seawater desalination)' }
+];
+
+export const MAP_ARCHETYPES = [
+  { type: 'university_campus', label: 'Khuôn viên trường đại học', hint: 'Modernisation and expansion of a university or research campus (adding science laboratory complex, new student halls, pedestrian quadrangle, sports pavilion, car parking)' },
+  { type: 'airport_terminal', label: 'Mở rộng sân bay quốc tế', hint: 'Expansion and upgrading of an airport terminal (extending runways, new departure concourses/boarding gates, light rail connection, multi-storey car park)' },
+  { type: 'tropical_island', label: 'Phát triển đảo du lịch sinh thái', hint: 'Transformation of an uninhabited tropical island into an eco-resort (wooden pier/jetty, beachfront eco-villas, central restaurant, dive center, palm grove)' },
+  { type: 'city_center', label: 'Tái quy hoạch trung tâm đô thị', hint: 'Pedestrianisation and urban regeneration of a city centre (converting car lanes into pedestrian walkways, tram lines, modern shopping complex, civic plaza)' },
+  { type: 'hospital_zone', label: 'Khu phức hợp y tế & bệnh viện', hint: 'Development of a medical hospital precinct (adding trauma wings, helipad, ambulance bays, healing garden, staff accommodation)' },
+  { type: 'coastal_village', label: 'Làng chài ven biển tái thiết', hint: 'Redevelopment of a coastal fishing village into a modern seaside town (fishing docks converted to leisure marina, old warehouses into seaside hotels & promenade)' }
+];
+
+/**
  * Lightweight client-side lexical overlap calculator to detect question repetition
  */
 export function calculateLexicalOverlap(str1, str2) {
@@ -1180,31 +1199,38 @@ TIME-FRAME CONSTRAINT: DYNAMIC (Change over time).
   }
 
   let prompt = '';
+  let chosenProcessArchetype = null;
+  let chosenMapArchetype = null;
 
   if (isTask1) {
     if (type === 'process') {
-      prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a PROCESS DIAGRAM (manufacturing, natural life cycle, or mechanical procedure) reflecting Cambridge standards.
+      chosenProcessArchetype = PROCESS_ARCHETYPES[Math.floor(Math.random() * PROCESS_ARCHETYPES.length)];
+      prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a PROCESS DIAGRAM reflecting Cambridge standards.
+Specific Process Archetype to Generate: "${chosenProcessArchetype.type}" (${chosenProcessArchetype.label})
+Archetype Direction: ${chosenProcessArchetype.hint}
 Topic Category: ${topic || 'Technology & Science'}
 Task Type: process
 ${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text ("The diagram below illustrates the process of... Summarise the information by selecting and reporting the main features...").
-2. Provide a 5 to 7-step sequential workflow for the process in "processSteps".
+2. Explicitly include "processType": "${chosenProcessArchetype.type}" in your JSON output.
+3. Provide a 5 to 7-step sequential workflow for the process in "processSteps".
    Each step must have:
    - "step": integer (1, 2, 3...)
    - "name": short step name (e.g. "Collection & Sorting", "Thermal Cracking")
    - "desc": clear 1-2 sentence description of what happens, equipment used, and input/output.
-3. Provide an ideal 4-paragraph outline (introduction, overview, body1, body2).
-4. Provide a Band 8.5+ Model Answer with outstanding sequencing vocabulary (initially, subsequently, prior to being, once transformed) and passive voice structures.
-5. Provide 5-6 vocabulary highlights with Vietnamese explanations.
-6. MANDATORY VISUAL ILLUSTRATION: You may optionally include an SVG string in 'svgIllustration' (<svg ...>...</svg>) or our built-in graphics engine will automatically generate the vector flowchart diagram from your processSteps.
+4. Provide an ideal 4-paragraph outline (introduction, overview, body1, body2).
+5. Provide a Band 8.5+ Model Answer with outstanding sequencing vocabulary (initially, subsequently, prior to being, once transformed) and passive voice structures.
+6. Provide 5-6 vocabulary highlights with Vietnamese explanations.
+7. MANDATORY VISUAL ILLUSTRATION: You may optionally include an SVG string in 'svgIllustration' (<svg ...>...</svg>) or our built-in graphics engine will automatically generate the vector flowchart diagram matching your processType and processSteps.
 
 Return ONLY raw parseable JSON with this structure:
 {
   "title": "Manufacturing Process of ...",
   "prompt": "The diagram below illustrates how ... is manufactured/produced. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
   "type": "process",
+  "processType": "${chosenProcessArchetype.type}",
   "processSteps": [
     { "step": 1, "name": "Raw Material Harvesting", "desc": "Raw ingredients are gathered and transported to the processing plant." },
     { "step": 2, "name": "Purification", "desc": "Impurities are filtered out through a series of high-pressure chambers." }
@@ -1222,28 +1248,33 @@ Return ONLY raw parseable JSON with this structure:
   ]
 }`;
     } else if (type === 'map') {
-      prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a MAP TRANSFORMATION (comparison of a town, village, campus, or island between two periods, e.g. 2000 vs present or before vs after redevelopment).
+      chosenMapArchetype = MAP_ARCHETYPES[Math.floor(Math.random() * MAP_ARCHETYPES.length)];
+      prompt = `You are an expert Cambridge IELTS test designer. Generate a brand new, highly authentic IELTS Writing Task 1 Academic prompt for a MAP TRANSFORMATION (comparison of a site/area between two periods, e.g. before vs after redevelopment).
+Specific Map Archetype to Generate: "${chosenMapArchetype.type}" (${chosenMapArchetype.label})
+Archetype Direction: ${chosenMapArchetype.hint}
 Topic Category: ${topic || 'Urban Planning & Geography'}
 Task Type: map
 ${exclusionInstruction}
 
 REQUIREMENTS:
 1. Provide a realistic prompt title and prompt text ("The maps below show the changes that occurred in ... between ... and ... Summarise the information...").
-2. Provide 4 to 6 key location/feature changes in "mapChanges".
+2. Explicitly include "mapType": "${chosenMapArchetype.type}" in your JSON output.
+3. Provide 4 to 6 key location/feature changes in "mapChanges".
    Each item must have:
    - "feature": specific area or landmark (e.g. "North-Western Farmland", "Industrial Dockland", "Southern Coastline")
    - "past": description of how it looked in the earlier period
    - "present": description of the modern / redeveloped state (demolished, relocated, expanded, pedestrianized, etc.)
-3. Provide an ideal 4-paragraph outline (introduction, overview, body1, body2).
-4. Provide a Band 8.5+ Model Answer with outstanding directional vocabulary (situated in the north-east, flanked by, replaced with, transformed into).
-5. Provide 5-6 vocabulary highlights with Vietnamese explanations.
-6. MANDATORY VISUAL ILLUSTRATION: You may optionally include an SVG string in 'svgIllustration' (<svg ...>...</svg>) or our built-in graphics engine will automatically generate the dual-period map comparison diagram from your mapChanges.
+4. Provide an ideal 4-paragraph outline (introduction, overview, body1, body2).
+5. Provide a Band 8.5+ Model Answer with outstanding directional vocabulary (situated in the north-east, flanked by, replaced with, transformed into).
+6. Provide 5-6 vocabulary highlights with Vietnamese explanations.
+7. MANDATORY VISUAL ILLUSTRATION: You may optionally include an SVG string in 'svgIllustration' (<svg ...>...</svg>) or our built-in graphics engine will automatically generate the dual-period map comparison diagram matching your mapType and mapChanges.
 
 Return ONLY raw parseable JSON with this structure:
 {
   "title": "Redevelopment of ... (1995 vs Present)",
   "prompt": "The two maps below illustrate the changes in ... between ... and ... Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
   "type": "map",
+  "mapType": "${chosenMapArchetype.type}",
   "mapChanges": [
     { "feature": "North Area", "past": "Unused wasteland and farmland", "present": "Converted into a technology park with modern office blocks" },
     { "feature": "Harbour / Waterfront", "past": "Traditional fishing port with timber piers", "present": "Demolished to make way for a recreational marina and promenade" }
@@ -1486,7 +1517,9 @@ Return ONLY raw parseable JSON with this structure:
       timeLimit: isTask1 ? 20 : 40,
       createdAt: new Date().toISOString(),
       isAiGenerated: true,
-      ...taskObj
+      ...taskObj,
+      processType: taskObj.processType || chosenProcessArchetype?.type || undefined,
+      mapType: taskObj.mapType || chosenMapArchetype?.type || undefined
     };
 
     // Ensure Process and Map tasks are guaranteed to have a high-resolution illustration (imageUrl)
