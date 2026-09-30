@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, MapPin, Layers, GitCommit, Compass, Sparkles, ZoomIn, X, Image as ImageIcon, ListOrdered } from 'lucide-react';
 import { ensureTaskIllustration } from '../services/processMapSvgEngine.js';
+import ImageViewerModal from './ImageViewerModal.jsx';
 
 export default function ProcessMapRenderer({ task }) {
   if (!task) return null;
@@ -173,41 +174,13 @@ export default function ProcessMapRenderer({ task }) {
         )}
       </div>
 
-      {/* Fullscreen Zoom Modal */}
-      {isZoomed && effectiveTask.imageUrl && (
-        <div 
-          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150"
-          onClick={() => setIsZoomed(false)}
-        >
-          <div 
-            className="relative bg-white rounded-3xl max-w-5xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-              <div className="flex items-center space-x-2">
-                <ImageIcon className="w-4 h-4 text-blue-400" />
-                <span className="text-xs sm:text-sm font-bold truncate max-w-md sm:max-w-xl">
-                  {task.title || (isProcess ? 'Sơ đồ quy trình' : 'Bản đồ đối chiếu')}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsZoomed(false)}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-4 sm:p-6 overflow-auto flex items-center justify-center bg-slate-100/70">
-              <img
-                src={effectiveTask.imageUrl}
-                alt={task.title}
-                className="max-h-[80vh] w-auto object-contain rounded-xl shadow-md"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Fullscreen Interactive Zoom Modal with Zoom + / Zoom - and Pan */}
+      <ImageViewerModal
+        isOpen={isZoomed && !!effectiveTask.imageUrl}
+        onClose={() => setIsZoomed(false)}
+        imageUrl={effectiveTask.imageUrl}
+        title={task.title || (isProcess ? 'Sơ đồ quy trình (Process Flowchart)' : 'Bản đồ quy hoạch (Map Comparison)')}
+      />
 
     </div>
   );

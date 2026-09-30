@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
+import ImageViewerModal from './ImageViewerModal';
 import StarRatingWidget from './common/StarRatingWidget';
 import { recordAttempt } from '../services/ratingPopularityService';
 
@@ -346,41 +347,14 @@ export default function PromptPane({
             </div>
           </div>
 
-          {/* Zoom Modal */}
-          {isImageZoomed && (
-            <div 
-              className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-150"
-              onClick={() => setIsImageZoomed(false)}
-            >
-              <div 
-                className="relative bg-white rounded-3xl max-w-5xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-                  <div className="flex items-center space-x-2">
-                    <ImageIcon className="w-4 h-4 text-blue-400" />
-                    <span className="text-xs sm:text-sm font-bold truncate max-w-md sm:max-w-xl">
-                      {task.title}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setIsImageZoomed(false)}
-                    className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
-                    aria-label="Đóng ảnh"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                <div className="p-4 sm:p-6 overflow-auto flex items-center justify-center bg-slate-100/70">
-                  <img
-                    src={task.imageUrl}
-                    alt={task.title}
-                    className="max-h-[80vh] w-auto object-contain rounded-xl shadow-md"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Zoom Modal with Zoom + / Zoom - and Pan */}
+          <ImageViewerModal
+            isOpen={isImageZoomed}
+            onClose={() => setIsImageZoomed(false)}
+            imageUrl={task.imageUrl}
+            title={task.title || "Hình ảnh đề bài Task 1"}
+            touchTarget="min-w-[40px] min-h-[40px]"
+          />
         </div>
       )}
 

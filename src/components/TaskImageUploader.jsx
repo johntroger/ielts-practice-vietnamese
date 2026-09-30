@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Image as ImageIcon, Upload, Clipboard, Trash2, ZoomIn, X, AlertCircle } from 'lucide-react';
+import ImageViewerModal from './ImageViewerModal';
 
 /**
  * TaskImageUploader
@@ -202,29 +203,13 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
         <span>Hình ảnh chỉ lưu tạm trong phiên làm bài này để hỗ trợ bạn viết. Khi nộp bài hoặc chuyển đề, ảnh sẽ tự động giải phóng hoàn toàn.</span>
       </div>
 
-      {/* Modal Zoom Preview */}
-      {isZoomModalOpen && imageUrl && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="relative bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-3.5 bg-slate-900 text-white flex items-center justify-between">
-              <span className="text-xs font-bold flex items-center gap-1.5">
-                <ImageIcon className="w-4 h-4 text-blue-400" />
-                <span>Xem Chi Tiết Ảnh Đề Bài Task 1</span>
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsZoomModalOpen(false)}
-                className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="p-3 overflow-auto flex items-center justify-center bg-slate-100/50">
-              <img src={imageUrl} alt="Zoom Preview" className="max-h-[80vh] w-auto object-contain rounded-lg shadow-xs" />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal Zoom Preview with Zoom + / Zoom - and Pan */}
+      <ImageViewerModal
+        isOpen={isZoomModalOpen && !!imageUrl}
+        onClose={() => setIsZoomModalOpen(false)}
+        imageUrl={imageUrl}
+        title="Xem chi tiết ảnh đề bài Task 1"
+      />
     </div>
   );
 }
