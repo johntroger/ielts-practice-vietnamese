@@ -259,7 +259,7 @@ export default function SpeakingPracticeTopicModal({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-300" />
-            <span>Sinh Bằng AI (Gemini)</span>
+            <span>Sinh Bằng AI</span>
           </button>
 
           <button
@@ -290,7 +290,7 @@ export default function SpeakingPracticeTopicModal({
               <div className="p-4 rounded-2xl bg-purple-950/30 border border-purple-800/40 space-y-2">
                 <div className="flex items-center space-x-2 text-purple-300 font-bold text-xs">
                   <Sparkles className="w-4 h-4 text-purple-400" />
-                  <span>Gemini Cambridge Prompt Engine</span>
+                  <span>AI Cambridge Prompt Engine</span>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed">
                   Nhập bất kỳ chủ đề hoặc từ khóa nào bạn muốn luyện tập. AI sẽ tự động kiến tạo bộ câu hỏi khảo thí, gợi ý collocations Band 8+, chiến lược trả lời và bài mẫu chuẩn mực.

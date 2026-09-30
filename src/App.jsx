@@ -735,15 +735,15 @@ export default function App() {
             model
           });
           evaluation.evaluationMethod = 'ai';
-          evaluation.engineName = `Google Gemini (${model})`;
+          evaluation.engineName = `Trí Tuệ Nhân Tạo AI (${model})`;
         } catch (aiErr) {
-          console.warn('[Evaluation Fallback] Gemini API encountered error, switching to Algorithmic Evaluator:', aiErr);
+          console.warn('[Evaluation Fallback] AI API encountered error, switching to Algorithmic Evaluator:', aiErr);
           // Graceful fallback to algorithmic evaluator
           evaluation = evaluateEssayAlgorithmically({
             task: currentTask,
             essayText: currentEssay
           });
-          evaluation.fallbackNotice = 'Máy chủ Google Gemini tạm thời quá tải hoặc chạm hạn ngạch (Quota 429). Hệ thống đã tự động chuyển sang Chế độ Chấm Bằng Máy để bạn nhận kết quả ngay tức thì!';
+          evaluation.fallbackNotice = 'Dịch vụ AI tạm thời quá tải hoặc chạm hạn ngạch (Quota 429). Hệ thống đã tự động chuyển sang Chế độ Chấm Bằng Máy để bạn nhận kết quả ngay tức thì!';
         }
       }
 
@@ -1094,7 +1094,7 @@ export default function App() {
               <div className="flex items-center space-x-2 min-w-0">
                 <Sparkles className="w-3.5 h-3.5 text-white shrink-0 animate-pulse" />
                 <span className="text-[11px] sm:text-xs font-bold text-white truncate">
-                  ⚡ Chưa kết nối Gemini API (AI Chấm bài, Tra từ & Sinh đề đang chạy chế độ offline)
+                  ⚡ Chưa kết nối AI API Key (AI Chấm bài, Tra từ & Sinh đề đang chạy chế độ offline)
                 </span>
               </div>
               <div className="flex items-center space-x-2 shrink-0">
@@ -1117,10 +1117,10 @@ export default function App() {
                     LƯU Ý KẾT NỐI AI:
                   </span>
                   <span className="hidden sm:inline font-medium text-white/95">
-                    Bạn cần <button onClick={() => setIsSettingsOpen(true)} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối Google Gemini API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
+                    Bạn cần <button onClick={() => setIsSettingsOpen(true)} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối AI API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
                   </span>
                   <span className="sm:hidden font-semibold text-white/95 truncate block text-[11px]">
-                    Cần kết nối Gemini API để sử dụng các tính năng AI
+                    Cần kết nối AI API Key để sử dụng các tính năng AI
                   </span>
                 </div>
               </div>

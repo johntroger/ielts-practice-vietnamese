@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   Target, 
@@ -142,7 +142,7 @@ export default function OnboardingModal({
 
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
             {step === 1 && '1. Khám Phá 4 Phòng Luyện Thi Chuẩn Cambridge'}
-            {step === 2 && '2. Thiết Lập Trí Tuệ Nhân Tạo (Gemini AI)'}
+            {step === 2 && '2. Thiết Lập Trí Tuệ Nhân Tạo (AI API Key)'}
             {step === 3 && '3. Thiết Lập Mục Tiêu Điểm Số (Target Band)'}
           </h2>
 
@@ -278,7 +278,7 @@ export default function OnboardingModal({
                   <div className="flex items-center space-x-2">
                     <Key className="w-4 h-4 text-amber-500" />
                     <span className="text-xs font-black uppercase text-slate-700 tracking-wider">
-                      Google Gemini API Key
+                      Google AI API Key
                     </span>
                   </div>
                   <a

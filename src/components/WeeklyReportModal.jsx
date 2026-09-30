@@ -284,7 +284,7 @@ Return ONLY raw parseable JSON with this exact schema:
             className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 text-white text-xs font-bold shadow-2xs transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>{isLoading ? 'AI Đang Chẩn Đoán...' : 'Gemini Chẩn Đoán Tuần Này'}</span>
+            <span>{isLoading ? 'AI Đang Chẩn Đoán...' : 'AI Chẩn Đoán Tuần Này'}</span>
           </button>
         </div>
 
@@ -486,7 +486,7 @@ Return ONLY raw parseable JSON with this exact schema:
             <div className="text-center py-12 text-slate-400 text-xs space-y-2 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
               <Target className="w-8 h-8 text-slate-300 mx-auto" />
               <p className="max-w-md mx-auto">
-                Bấm nút <strong>"Gemini Chẩn Đoán Tuần Này"</strong> ở trên để AI phân tích toàn bộ kết quả 4 kỹ năng (Writing, Reading, Listening, Speaking) và kê đơn lộ trình tối ưu cho bạn!
+                Bấm nút <strong>"AI Chẩn Đoán Tuần Này"</strong> ở trên để AI phân tích toàn bộ kết quả 4 kỹ năng (Writing, Reading, Listening, Speaking) và kê đơn lộ trình tối ưu cho bạn!
               </p>
             </div>
           )}

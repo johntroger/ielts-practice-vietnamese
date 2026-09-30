@@ -57,7 +57,7 @@ export default function RevisionModal({
 
   const handleGradeV2 = async () => {
     if (!apiKey) {
-      alert('Vui lòng vào phần Cài đặt để cấu hình Gemini API Key trước.');
+      alert('Vui lòng vào phần Cài đặt để cấu hình AI API Key trước.');
       return;
     }
     if (wordCount < 20) {
@@ -349,7 +349,7 @@ export default function RevisionModal({
                 {isSubmittingV2 ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Gemini Đang So Sánh v1 & v2...</span>
+                    <span>AI Đang So Sánh v1 & v2...</span>
                   </>
                 ) : (
                   <>

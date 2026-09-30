@@ -34,7 +34,7 @@ export default function TaskGeneratorModal({
 
   const handleGenerate = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cài đặt Gemini API Key trước khi sinh đề.');
+      setErrorMsg('Vui lòng cài đặt AI API Key trước khi sinh đề.');
       return;
     }
 
@@ -86,7 +86,7 @@ export default function TaskGeneratorModal({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight">Gemini Sinh Đề Mới Tự Động</h3>
+              <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight">AI Sinh Đề Mới Tự Động</h3>
               <p className="text-[11px] text-slate-500">Cập nhật xu hướng thi thật IELTS Writing 2025–2026</p>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function TaskGeneratorModal({
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>Chưa cài đặt Gemini API Key.</span>
+                <span>Chưa cài đặt AI API Key.</span>
               </div>
               <button
                 onClick={onOpenSettings}
@@ -195,7 +195,7 @@ export default function TaskGeneratorModal({
                   </div>
                   <div className="text-xs">
                     <div className="flex items-center space-x-1.5">
-                      <strong className="text-amber-950 font-black">Tạo hình trực tiếp bằng Google Banana (Gemini Image):</strong>
+                      <strong className="text-amber-950 font-black">Tạo hình trực tiếp bằng Google Banana (AI Image):</strong>
                       <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-200 text-amber-900">AI Image</span>
                     </div>
                     <span className="text-[11px] text-amber-900 block mt-0.5 leading-relaxed">

@@ -54,7 +54,7 @@ export default function ListeningResultModal({
 
   const handleFetchAiEvaluation = async () => {
     if (!apiKey) {
-      setAiError('Vui lòng cấu hình Gemini API Key tại phần Cài đặt góc trên để kích hoạt Giám khảo AI.');
+      setAiError('Vui lòng cấu hình AI API Key tại phần Cài đặt góc trên để kích hoạt Giám khảo AI.');
       return;
     }
     setIsGeneratingAi(true);
@@ -69,7 +69,7 @@ export default function ListeningResultModal({
       setAiEvaluation(res);
     } catch (err) {
       console.error('Lỗi khi AI phân tích kết quả:', err);
-      setAiError(err.message || 'Không thể kết nối đến Gemini AI. Vui lòng kiểm tra lại kết nối và thử lại.');
+      setAiError(err.message || 'Không thể kết nối đến AI. Vui lòng kiểm tra lại kết nối và thử lại.');
     } finally {
       setIsGeneratingAi(false);
     }
@@ -661,7 +661,7 @@ export default function ListeningResultModal({
                   <Lightbulb className="w-10 h-10 text-purple-400 mx-auto" />
                   <h4 className="font-bold text-slate-800 text-sm">Chưa có dữ liệu nhận xét AI cho bài thi này</h4>
                   <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                    Bấm nút <strong>"Bắt Đầu Nhận Xét AI"</strong> ở trên để Gemini tổng hợp hiệu suất làm bài và đưa ra kế hoạch cải thiện điểm số chi tiết.
+                    Bấm nút <strong>"Bắt Đầu Nhận Xét AI"</strong> ở trên để AI tổng hợp hiệu suất làm bài và đưa ra kế hoạch cải thiện điểm số chi tiết.
                   </p>
                   <button
                     type="button"

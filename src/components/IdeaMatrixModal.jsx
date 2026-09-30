@@ -33,7 +33,7 @@ export default function IdeaMatrixModal({ isOpen, onClose, promptText, onInsertT
 
   const handleFetchAiMatrix = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     setIsAiLoading(true);

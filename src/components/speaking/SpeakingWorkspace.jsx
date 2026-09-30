@@ -544,7 +544,7 @@ export default function SpeakingWorkspace({
               }
             }}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer shrink-0"
-            title={activeMode === 'practice' ? "Dùng Gemini AI để sinh chủ đề luyện tập mới" : "Dùng Gemini AI để tạo bộ đề thi Speaking mới"}
+            title={activeMode === 'practice' ? "Dùng AI để sinh chủ đề luyện tập mới" : "Dùng AI để tạo bộ đề thi Speaking mới"}
           >
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span>{activeMode === 'practice' ? 'Sinh Chủ Đề (AI)' : 'Sinh Đề (AI)'}</span>
@@ -736,7 +736,7 @@ export default function SpeakingWorkspace({
                 <button
                   onClick={() => setIsGeneratorOpen(true)}
                   className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
-                  title="Dùng Gemini AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn"
+                  title="Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Sinh Bộ Đề Mới (AI)</span>

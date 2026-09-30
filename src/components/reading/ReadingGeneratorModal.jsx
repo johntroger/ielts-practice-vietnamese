@@ -78,7 +78,7 @@ export default function ReadingGeneratorModal({
 
   const handleGenerate = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      setErrorMsg('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
@@ -275,7 +275,7 @@ export default function ReadingGeneratorModal({
             {isGenerating ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Gemini đang soạn bài đọc...</span>
+                <span>AI đang soạn bài đọc...</span>
               </>
             ) : (
               <>

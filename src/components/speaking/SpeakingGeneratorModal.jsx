@@ -56,7 +56,7 @@ export default function SpeakingGeneratorModal({
 
   const handleGenerate = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cài đặt Gemini API Key trong phần Cài đặt trước khi sinh đề.');
+      setErrorMsg('Vui lòng cài đặt AI API Key trong phần Cài đặt trước khi sinh đề.');
       return;
     }
 
@@ -83,7 +83,7 @@ export default function SpeakingGeneratorModal({
         difficulty: packData.difficulty || selectedDifficulty.difficulty,
         targetBand: packData.targetBand || selectedDifficulty.target,
         estTime: packData.estTime || '11 - 14 phút',
-        summary: packData.summary || 'Bộ đề thi thử Speaking do Gemini AI thiết kế riêng theo chuẩn Cambridge.',
+        summary: packData.summary || 'Bộ đề thi thử Speaking do AI thiết kế riêng theo chuẩn Cambridge.',
         isCustom: true,
         isPublic: Boolean(isPublic),
         createdAt: new Date().toISOString(),
@@ -160,7 +160,7 @@ export default function SpeakingGeneratorModal({
           <div className="m-5 p-3.5 rounded-2xl bg-amber-950/40 border border-amber-600/40 text-amber-200 text-xs flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
               <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Chưa cấu hình Gemini API Key. Vui lòng cài đặt để dùng tính năng sinh đề.</span>
+              <span>Chưa cấu hình AI API Key. Vui lòng cài đặt để dùng tính năng sinh đề.</span>
             </div>
             {onOpenSettings && (
               <button

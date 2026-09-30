@@ -597,12 +597,12 @@ export default function QuestionPane({
                   {loadingAiFor === q.order ? (
                     <>
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Gemini đang mổ xẻ bẫy & lập bản đồ Paraphrase...</span>
+                      <span>AI đang mổ xẻ bẫy & lập bản đồ Paraphrase...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Mổ xẻ bẫy & Từ vựng chuyên sâu bằng Gemini AI</span>
+                      <span>Mổ xẻ bẫy & Từ vựng chuyên sâu bằng AI</span>
                     </>
                   )}
                 </button>

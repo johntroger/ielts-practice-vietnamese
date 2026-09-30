@@ -455,7 +455,7 @@ export default function SpeakingSoundcheckModal({
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Nhận diện trực tiếp của trình duyệt có thể nhầm từ hoặc thiếu âm đuôi. Trong phòng luyện nói, bạn nên bấm nút <span className="font-semibold text-indigo-300">"✨ AI Nhận Diện Lại"</span> để Gemini Multimodal Audio nghe trực tiếp file ghi âm gốc, giúp kết quả phiên âm và chấm điểm chính xác nhất.
+                  Nhận diện trực tiếp của trình duyệt có thể nhầm từ hoặc thiếu âm đuôi. Trong phòng luyện nói, bạn nên bấm nút <span className="font-semibold text-indigo-300">"✨ AI Nhận Diện Lại"</span> để AI Multimodal Audio nghe trực tiếp file ghi âm gốc, giúp kết quả phiên âm và chấm điểm chính xác nhất.
                 </p>
               </div>
             </div>

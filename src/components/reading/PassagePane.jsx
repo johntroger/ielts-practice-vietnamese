@@ -214,7 +214,7 @@ export default function PassagePane({
       y: posY,
       loading: !!apiKey,
       data: null,
-      error: apiKey ? null : 'Vui lòng cấu hình Gemini API Key để tra từ điển tự động.',
+      error: apiKey ? null : 'Vui lòng cấu hình AI API Key để tra từ điển tự động.',
       saved: false
     });
 

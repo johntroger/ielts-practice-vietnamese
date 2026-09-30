@@ -565,11 +565,11 @@ export default function VocabGrammarSpellingModal({
 
   const handleGenerateAiItem = async () => {
     if (!apiKey) {
-      alert('Vui lòng vào Cài đặt (biểu tượng bánh răng) để cấu hình Gemini API Key trước!');
+      alert('Vui lòng vào Cài đặt (biểu tượng bánh răng) để cấu hình AI API Key trước!');
       return;
     }
     setIsAiGenerating(true);
-    setAiMessage('Gemini đang tạo bài tập chuẩn trọng tâm theo dải điểm...');
+    setAiMessage('AI đang tạo bài tập chuẩn trọng tâm theo dải điểm...');
 
     const targetBand = selectedBandTier === 'band-5.5'
       ? '5.5'
@@ -682,7 +682,7 @@ export default function VocabGrammarSpellingModal({
       setTimeout(() => setAiMessage(''), 4000);
     } catch (err) {
       console.error(err);
-      alert(err.message || 'Lỗi khi gọi Gemini AI sinh nội dung.');
+      alert(err.message || 'Lỗi khi gọi AI sinh nội dung.');
     } finally {
       setIsAiGenerating(false);
     }
@@ -938,7 +938,7 @@ export default function VocabGrammarSpellingModal({
               onClick={handleGenerateAiItem}
               disabled={isAiGenerating}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-              title="Nhờ Gemini tạo thêm bài tập thực chiến theo dải điểm đã chọn"
+              title="Nhờ AI tạo thêm bài tập thực chiến theo dải điểm đã chọn"
             >
               {isAiGenerating ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -946,7 +946,7 @@ export default function VocabGrammarSpellingModal({
                 <Sparkles className="w-3.5 h-3.5" />
               )}
               <span className="hidden sm:inline">
-                {isAiGenerating ? 'Đang tạo...' : 'Gemini Sinh Bài Luyện'}
+                {isAiGenerating ? 'Đang tạo...' : 'AI Sinh Bài Luyện'}
               </span>
             </button>
 

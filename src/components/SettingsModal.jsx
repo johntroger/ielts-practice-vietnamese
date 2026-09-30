@@ -243,7 +243,7 @@ export default function SettingsModal({
     if (activeProvider === 'gemini') {
       if (!inputKey.trim()) {
         setTestStatus('error');
-        setTestMessage('Vui lòng nhập Gemini API Key trước khi kiểm tra.');
+        setTestMessage('Vui lòng nhập Google AI API Key trước khi kiểm tra.');
         return;
       }
       setTestMessage('Đang kết nối thử nghiệm với Google AI...');
@@ -361,7 +361,7 @@ export default function SettingsModal({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                     <Key className="w-3.5 h-3.5 text-red-600" />
-                    <span>Mã Google Gemini API Key:</span>
+                    <span>Mã Google AI API Key:</span>
                   </label>
                   <button
                     type="button"
@@ -432,12 +432,12 @@ export default function SettingsModal({
                 </div>
               </div>
 
-              {/* Gemini Model Selector */}
+              {/* Google AI Model Selector */}
               <div className="space-y-1.5 pt-1">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                     <Cpu className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Mô hình Gemini:</span>
+                    <span>Mô hình Google AI:</span>
                   </label>
                   <button
                     type="button"
@@ -787,7 +787,7 @@ export default function SettingsModal({
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Khuyên dùng</span>
               </div>
               <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                Tự động chuyển sang Google Gemini hoặc thuật toán Offline nếu nhà cung cấp gặp sự cố hoặc vượt hạn ngạch.
+                Tự động chuyển sang Google AI hoặc thuật toán Offline nếu nhà cung cấp gặp sự cố hoặc vượt hạn ngạch.
               </p>
             </div>
 

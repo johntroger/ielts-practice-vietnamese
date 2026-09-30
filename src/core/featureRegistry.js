@@ -118,7 +118,7 @@ export const FEATURE_REGISTRY = [
     category: 'ai_evaluation',
     targetSkills: ['speaking'],
     title: 'Hệ Thống Chấm Điểm Speaking Kép (⚡ Chấm Máy & 🤖 Chấm AI)',
-    shortDesc: 'Tùy chọn linh hoạt giữa chấm bằng máy tính siêu tốc 0.02ms (Cambridge Algorithmic Scorer) và chấm bằng Trí Tuệ Nhân Tạo (Gemini AI).',
+    shortDesc: 'Tùy chọn linh hoạt giữa chấm bằng máy tính siêu tốc 0.02ms (Cambridge Algorithmic Scorer) và chấm bằng Trí Tuệ Nhân Tạo (AI Examiner).',
     icon: 'Zap',
     shortcut: 'Alt + S',
     updatedAt: '2026-09-24',
@@ -226,7 +226,7 @@ export const FEATURE_REGISTRY = [
       'Dán ảnh 1 chạm (Ctrl + V): Không cần lưu ảnh ra file máy tính, chụp màn hình là dán được ngay.',
       'Tự động nén thông minh: Tối ưu dung lượng hình ảnh giữ nét cao, lưu trữ bền vững trên Supabase Storage & IndexedDB.',
       'Chế độ soi ảnh chi tiết (Zoom Modal): Phóng to số liệu để người viết dễ quan sát xu hướng khi đang gõ bài.',
-      'Gemini Vision AI: Giám khảo AI trực quan đọc biểu đồ để chấm Task Achievement cực kỳ chuẩn xác.'
+      'Vision AI: Giám khảo AI trực quan đọc biểu đồ để chấm Task Achievement cực kỳ chuẩn xác.'
     ],
     usageGuide: 'Vào "Kho Đề Thi" -> Bấm "Nạp Đề Cá Nhân Mới (Task 1)" -> Dán ảnh (Ctrl+V) vào khung tải ảnh đề bài.',
     quickAction: {
@@ -589,7 +589,7 @@ export const FEATURE_REGISTRY = [
     category: 'shortcuts_ux',
     targetSkills: ['writing', 'speaking'],
     title: 'Mô Hình BYOK (Bring Your Own Key) & Quản Lý Đa Mô Hình AI',
-    shortDesc: 'Sử dụng API Key cá nhân miễn phí từ Google AI Studio. Hỗ trợ đa mô hình (Gemini 2.5 Flash, 2.5 Pro, 3.6 Flash) và lưu an toàn trên máy.',
+    shortDesc: 'Sử dụng API Key cá nhân miễn phí từ các nhà cung cấp AI hàng đầu (Google AI, DeepSeek, OpenAI, Claude). Hỗ trợ đa mô hình và lưu an toàn trên máy.',
     icon: 'ShieldCheck',
     shortcut: null,
     updatedAt: '2026-08-15',

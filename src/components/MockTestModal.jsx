@@ -833,7 +833,7 @@ export default function MockTestModal({
                           : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                       }`}
                     >
-                      🤖 AI Gemini
+                      🤖 Giám Khảo AI
                     </button>
                   )}
                 </div>

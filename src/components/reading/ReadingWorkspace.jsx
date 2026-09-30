@@ -171,7 +171,7 @@ export default function ReadingWorkspace({
     const newTest = {
       id: `custom-test-${Date.now()}`,
       title: standardizedTitle,
-      description: `Đề thi Passage ${targetPNum} ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi Gemini AI'} theo chuẩn Cambridge Academic.`,
+      description: `Đề thi Passage ${targetPNum} ${source === 'ingest' ? 'trích xuất từ bài báo' : 'sinh bởi AI'} theo chuẩn Cambridge Academic.`,
       totalQuestions: newPassage.questionGroups?.reduce((acc, g) => acc + (g.questions?.length || 0), 0) || 13,
       timeLimitMinutes: 20,
       isCustom: true,

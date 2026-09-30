@@ -53,7 +53,7 @@ export default function ReadingIngestModal({
 
   const handleIngest = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      setErrorMsg('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     if (!rawText.trim() || rawText.trim().length < 80) {
@@ -147,7 +147,7 @@ export default function ReadingIngestModal({
               rows={8}
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder="Dán toàn bộ đoạn văn hoặc bài báo tiếng Anh vào đây. Gemini AI sẽ tự động phân chia đoạn văn A, B, C, D... và biên soạn các câu hỏi trắc nghiệm, True/False/Not Given, trích dẫn bằng chứng và lời giải chi tiết..."
+              placeholder="Dán toàn bộ đoạn văn hoặc bài báo tiếng Anh vào đây. AI sẽ tự động phân chia đoạn văn A, B, C, D... và biên soạn các câu hỏi trắc nghiệm, True/False/Not Given, trích dẫn bằng chứng và lời giải chi tiết..."
               className="w-full p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs text-slate-800 leading-relaxed"
             />
             <div className="text-[11px] text-slate-400 text-right">

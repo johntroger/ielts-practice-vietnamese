@@ -446,7 +446,7 @@ export default function MicroDrillsModal({
 
   const handleEvaluateCurrentListening = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
@@ -877,7 +877,7 @@ export default function MicroDrillsModal({
 
   const handleEvaluateParaphrase = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     if (!candidateParaText.trim()) return;
@@ -904,7 +904,7 @@ export default function MicroDrillsModal({
 
   const handleGenerateDrill = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
@@ -1289,7 +1289,7 @@ export default function MicroDrillsModal({
                 onClick={handleGenerateDrill}
                 disabled={isGeneratingDrill}
                 className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95"
-                title="Nhờ Gemini tạo thêm 1 bài tập mới theo đúng dạng đang xem"
+                title="Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"
               >
                 {isGeneratingDrill ? (
                   <>

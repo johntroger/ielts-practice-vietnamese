@@ -192,7 +192,7 @@ export default function ListeningURLExerciseGeneratorModal({
   // Dynamically trigger AI to search & discover new audio sources
   const handleDiscoverMoreSources = async (prefPart = null, topicOverride = null) => {
     if (!apiKey) {
-      setErrorMessage('Vui lòng cấu hình Gemini API Key trước khi sử dụng AI tìm kiếm nguồn.');
+      setErrorMessage('Vui lòng cấu hình AI API Key trước khi sử dụng AI tìm kiếm nguồn.');
       return;
     }
 
@@ -453,7 +453,7 @@ export default function ListeningURLExerciseGeneratorModal({
   // Analyze Custom URL or Topic with AI
   const handleAnalyzeCustomInput = async () => {
     if (!apiKey) {
-      setErrorMessage('Vui lòng cấu hình Gemini API Key trước khi sử dụng AI.');
+      setErrorMessage('Vui lòng cấu hình AI API Key trước khi sử dụng AI.');
       return;
     }
     if (!audioUrl.trim() && !topicDescription.trim() && !testTitle.trim()) {
@@ -485,7 +485,7 @@ export default function ListeningURLExerciseGeneratorModal({
   // Generate Single-Part Listening Test
   const handleGenerate = async () => {
     if (!apiKey) {
-      setErrorMessage('Vui lòng cấu hình Gemini API Key trước khi sử dụng AI.');
+      setErrorMessage('Vui lòng cấu hình AI API Key trước khi sử dụng AI.');
       return;
     }
 
@@ -957,7 +957,7 @@ export default function ListeningURLExerciseGeneratorModal({
                   {isAnalyzing && (
                     <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-purple-700/40 border-t-purple-700 rounded-full animate-spin shrink-0" />
-                      <span>Gemini đang nghe và phân tích nội dung audio để gợi ý Part phù hợp nhất...</span>
+                      <span>AI đang nghe và phân tích nội dung audio để gợi ý Part phù hợp nhất...</span>
                     </div>
                   )}
 
@@ -1234,7 +1234,7 @@ export default function ListeningURLExerciseGeneratorModal({
               {isGenerating ? (
                 <>
                   <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  <span>Gemini Đang Sinh Part {selectedPart} (5-8s)...</span>
+                  <span>AI Đang Sinh Part {selectedPart} (5-8s)...</span>
                 </>
               ) : (
                 <>

@@ -508,7 +508,7 @@ export default function PromptPane({
               <div className="flex items-center justify-between font-bold text-amber-900">
                 <span className="flex items-center space-x-1">
                   <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span>Gợi ý Luận điểm & Collocation từ Gemini:</span>
+                  <span>Gợi ý Luận điểm & Collocation từ AI:</span>
                 </span>
               </div>
               <div className="whitespace-pre-line leading-relaxed font-sans">

@@ -260,7 +260,7 @@ export async function fetchAvailableModels(apiKey) {
 }
 
 export async function testApiKey(apiKey, model = DEFAULT_MODEL) {
-  if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key');
+  if (!apiKey) throw new Error('Vui lòng nhập AI API Key');
   const response = await callGeminiApi({
     model,
     apiKey,
@@ -281,7 +281,7 @@ export async function testApiKey(apiKey, model = DEFAULT_MODEL) {
  * Enforces strict Cambridge rules (missing Overview hard cap, length penalty).
  */
 export async function evaluateEssay({ task, essayText, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
   if (!essayText || essayText.trim().split(/\s+/).length < 20) {
     throw new Error('Bài viết quá ngắn để giám khảo chấm điểm (tối thiểu 20 từ).');
   }
@@ -426,7 +426,7 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Không nhận được phản hồi hợp lệ từ Gemini.');
+  if (!text) throw new Error('Không nhận được phản hồi hợp lệ từ AI.');
 
   try {
     const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -442,7 +442,7 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
  * Intelligent Document Ingestion: Parses raw text from books, PDFs, or teacher notes into an IELTS Task
  */
 export async function parseDocumentToTask({ rawText, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
 
   const prompt = `You are an expert Cambridge IELTS curriculum coordinator. Analyze the following raw study material / text excerpt and parse it into a clean, structured IELTS Writing Task.
 
@@ -515,7 +515,7 @@ Return ONLY raw parseable JSON in this schema:
  * Instant Evaluation for Paraphrased Sentence Drills
  */
 export async function evaluateParaphrase({ originalSentence, candidateSentence, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
   if (!candidateSentence || candidateSentence.trim().length < 5) {
     throw new Error('Vui lòng nhập câu viết lại của bạn.');
   }
@@ -573,7 +573,7 @@ Return ONLY raw JSON with this format:
  * AI Auto-Generates New Micro-Drills on demand
  */
 export async function generateMicroDrill({ drillType, topic = 'general', apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
 
   let prompt = '';
 
@@ -992,7 +992,7 @@ Return ONLY raw parseable JSON:
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Không nhận được nội dung phản hồi từ Gemini.');
+  if (!text) throw new Error('Không nhận được nội dung phản hồi từ AI.');
 
   try {
     const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1024,7 +1024,7 @@ export async function evaluateListeningDrill({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
 
   const prompt = `Act as an expert Cambridge IELTS Listening examiner and phonetics specialist.
 Evaluate the student's submission for this IELTS Listening Micro-Drill:
@@ -1064,7 +1064,7 @@ Evaluate and return ONLY valid JSON:
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Không nhận được nội dung phản hồi từ Gemini.');
+  if (!text) throw new Error('Không nhận được nội dung phản hồi từ AI.');
 
   try {
     const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -1271,7 +1271,7 @@ export async function generateNewTask({
   apiKey, 
   model = DEFAULT_MODEL 
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
 
   const isTask1 = Number(taskNumber) === 1;
 
@@ -1619,7 +1619,7 @@ Return ONLY raw parseable JSON with this structure:
 
   const result = await response.json();
   const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Không nhận được phản hồi từ Gemini.');
+  if (!text) throw new Error('Không nhận được phản hồi từ AI.');
 
   try {
     const taskObj = robustJsonParse(text, null);
@@ -1673,7 +1673,7 @@ Return ONLY raw parseable JSON with this structure:
  * Instant Brainstorming & Idea Generator for Task 2
  */
 export async function brainstormIdeas({ promptText, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
 
   const prompt = `Act as an elite IELTS Writing mentor. Brainstorm ideas and arguments for this IELTS Writing prompt:
 "${promptText}"
@@ -1706,7 +1706,7 @@ Format output cleanly in Vietnamese with clear bullet points. Keep it punchy and
  * AI Generator for Vocab, Grammar, and Spelling items
  */
 export async function generateSpellingTrapAi({ apiKey, model = DEFAULT_MODEL, category = 'Academic Register', bandLevel = '6.5' }) {
-  if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng nhập AI API Key.');
 
   const prompt = `Act as a senior Cambridge IELTS examiner. Generate 1 practical IELTS spelling trap item targeting Band ${bandLevel} (within target Band 5.5 - 7.5) in JSON format:
 {
@@ -1742,7 +1742,7 @@ Return ONLY raw valid JSON without markdown fences.`;
 }
 
 export async function generateGrammarDrillAi({ apiKey, model = DEFAULT_MODEL, grammarType = 'Complex Sentences', bandLevel = '7.0' }) {
-  if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng nhập AI API Key.');
 
   const prompt = `Act as an elite IELTS Writing Coach. Create 1 practical grammar drill targeting Band ${bandLevel} (range Band 5.5 - 7.5) for pattern "${grammarType}" in JSON format:
 {
@@ -1788,7 +1788,7 @@ Return ONLY raw valid JSON without markdown fences.`;
 }
 
 export async function generateThematicVocabAi({ apiKey, model = DEFAULT_MODEL, topic = 'Technology & Digital Life', bandLevel = '7.0' }) {
-  if (!apiKey) throw new Error('Vui lòng nhập Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng nhập AI API Key.');
 
   const prompt = `Act as a Cambridge Lexical Resource specialist. Generate 2 practical vocabulary items / collocations strictly in Band ${bandLevel} (range Band 5.5 - 7.5) for IELTS topic "${topic}" in JSON format:
 [
@@ -1835,7 +1835,7 @@ Return ONLY raw valid JSON array without markdown fences.`;
  * Compare Version 1 vs Version 2 Revision Analysis
  */
 export async function evaluateRevisionComparison({ task, v1Text, v1Evaluation, v2Text, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cung cấp Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cung cấp AI API Key.');
 
   const prompt = `You are a Cambridge IELTS Senior Examiner. The candidate has written Version 1 of an essay and has now revised it into Version 2 to address previous feedback and improve their band score.
 
@@ -1920,7 +1920,7 @@ export async function explainReadingQuestion({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
 
   const prompt = `ROLE & OBJECTIVE:
 You are an elite Cambridge IELTS Reading Master and Bilingual English-Vietnamese Tutor.
@@ -1977,7 +1977,7 @@ REQUIRED JSON OUTPUT FORMAT (strictly valid JSON, no backticks, no markdown):
  * Instant Double-Click Dictionary Lookup for IELTS Reading
  */
 export async function lookupReadingWord({ word, contextSentence, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
 
   const prompt = `Define this English word in the context of an IELTS Academic Reading text:
 WORD: "${word}"
@@ -2024,7 +2024,7 @@ export async function generateReadingPassage({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
 
   const pNum = Number(targetPassageNum) || 1;
   const startOrder = pNum === 1 ? 1 : pNum === 2 ? 14 : 27;
@@ -2154,7 +2154,7 @@ export async function ingestArticleToReadingPassage({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');
   if (!rawArticleText || rawArticleText.trim().length < 100) {
     throw new Error('Nội dung bài báo quá ngắn để chuyển đổi thành bài đọc IELTS (tối thiểu 100 ký tự).');
   }
@@ -2641,7 +2641,7 @@ export async function generateListeningDiagnosticEvaluation({
   model = DEFAULT_MODEL
 }) {
   if (!apiKey) {
-    throw new Error('Vui lòng cung cấp Gemini API Key để nhận nhận xét và kế hoạch luyện tập từ AI.');
+    throw new Error('Vui lòng cung cấp AI API Key để nhận nhận xét và kế hoạch luyện tập từ AI.');
   }
 
   const {
@@ -3071,7 +3071,7 @@ export async function generateSpeakingMockPack({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
 
   const prompt = `You are an expert Cambridge IELTS Chief Examiner and Speaking Test Author.
 Generate a brand-new, highly authentic, comprehensive IELTS Speaking Mock Test Pack covering full Part 1, Part 2, and Part 3 strictly aligned with official Cambridge and IDP/British Council assessment standards.
@@ -3310,7 +3310,7 @@ export async function generateSpeakingPracticeTopic({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
 
   // Diversity Angle Injection: Pick a randomized sub-angle to guarantee speaking uniqueness
   const randomAngle = SPEAKING_SUB_ANGLES[Math.floor(Math.random() * SPEAKING_SUB_ANGLES.length)];
@@ -3477,7 +3477,7 @@ export async function transcribeAudioWithGemini({
   apiKey,
   model = DEFAULT_MODEL
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
   if (!audioBlob) throw new Error('Không tìm thấy tệp âm thanh ghi âm.');
 
   // Convert Blob to Base64 in browser

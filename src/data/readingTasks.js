@@ -623,7 +623,7 @@ export const INITIAL_READING_TESTS = [
   {
     id: 'ai-comm-test-perovskite-solar',
     title: '✨ [AI Cộng Đồng] Next-Gen Perovskite Solar Cells & Energy Transition',
-    description: 'Đề thi đọc học thuật do Gemini AI thiết kế chuẩn Cambridge Academic: Cơ chế pin mặt trời Perovskite, hiệu suất chuyển đổi quang năng và bài toán kinh tế.',
+    description: 'Đề thi đọc học thuật do AI thiết kế chuẩn Cambridge Academic: Cơ chế pin mặt trời Perovskite, hiệu suất chuyển đổi quang năng và bài toán kinh tế.',
     totalQuestions: 13,
     timeLimitMinutes: 20,
     isCustom: true,

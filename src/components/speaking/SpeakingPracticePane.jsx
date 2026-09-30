@@ -347,11 +347,11 @@ export default function SpeakingPracticePane({
     }
     if (!apiKey) {
       if (onOpenSettings) {
-        if (window.confirm('Vui lòng nhập Google Gemini API Key trong Cài đặt để AI nhận diện giọng nói chính xác cao (Multimodal Audio). Mở Cài đặt ngay?')) {
+        if (window.confirm('Vui lòng nhập AI API Key trong Cài đặt để AI nhận diện giọng nói chính xác cao (Multimodal Audio). Mở Cài đặt ngay?')) {
           onOpenSettings();
         }
       } else {
-        alert('Vui lòng cấu hình Gemini API Key trong Cài đặt.');
+        alert('Vui lòng cấu hình AI API Key trong Cài đặt.');
       }
       return null;
     }
@@ -372,8 +372,8 @@ export default function SpeakingPracticePane({
       }
       return accurateTranscript;
     } catch (err) {
-      console.error('Gemini Audio STT error:', err);
-      alert('Không thể nhận diện âm thanh qua Gemini: ' + (err.message || 'Lỗi không xác định'));
+      console.error('AI Audio STT error:', err);
+      alert('Không thể nhận diện âm thanh qua AI: ' + (err.message || 'Lỗi không xác định'));
       return null;
     } finally {
       setIsRefiningTranscript(false);
@@ -433,11 +433,11 @@ export default function SpeakingPracticePane({
   const handleEvaluateWithAI = async (clipKey, questionText, topicTitle, partNum) => {
     if (!apiKey) {
       if (onOpenSettings) {
-        if (window.confirm('Vui lòng nhập Google Gemini API Key trong phần Cài đặt để sử dụng tính năng Chấm điểm bằng AI. Mở Cài đặt ngay?')) {
+        if (window.confirm('Vui lòng nhập AI API Key trong phần Cài đặt để sử dụng tính năng Chấm điểm bằng AI. Mở Cài đặt ngay?')) {
           onOpenSettings();
         }
       } else {
-        alert('Vui lòng cấu hình Gemini API Key trong Cài đặt để chấm điểm bài nói.');
+        alert('Vui lòng cấu hình AI API Key trong Cài đặt để chấm điểm bài nói.');
       }
       return;
     }
@@ -699,8 +699,8 @@ export default function SpeakingPracticePane({
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-300">
                   {isClipAiRefined
-                    ? 'Văn bản lời nói đã được Gemini Multimodal Audio nghe trực tiếp từ file âm thanh gốc và chuẩn hóa chính xác từng từ ngữ.'
-                    : 'Nhận diện thời gian thực của trình duyệt có thể nghe nhầm hoặc thiếu âm đuôi. Bạn nên bấm nút "✨ AI Nhận Diện Lại" bên dưới để Gemini nghe trực tiếp file ghi âm, giúp kết quả chấm điểm chuẩn xác nhất.'}
+                    ? 'Văn bản lời nói đã được AI Multimodal Audio nghe trực tiếp từ file âm thanh gốc và chuẩn hóa chính xác từng từ ngữ.'
+                    : 'Nhận diện thời gian thực của trình duyệt có thể nghe nhầm hoặc thiếu âm đuôi. Bạn nên bấm nút "✨ AI Nhận Diện Lại" bên dưới để AI nghe trực tiếp file ghi âm, giúp kết quả chấm điểm chuẩn xác nhất.'}
                 </p>
               </div>
             </div>
@@ -803,7 +803,7 @@ export default function SpeakingPracticePane({
                   ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 border-emerald-600/50'
                   : 'bg-gradient-to-r from-indigo-900/90 to-purple-900/90 hover:from-indigo-800 hover:to-purple-800 text-indigo-200 hover:text-white border-indigo-500/60 shadow-sm shadow-indigo-950/50'
               }`}
-              title="Dùng Gemini Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 98%+"
+              title="Dùng AI Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 98%+"
             >
               {isRefiningTranscript && refiningClipKey === clipKey ? (
                 <>
@@ -929,7 +929,7 @@ export default function SpeakingPracticePane({
               setIsTopicModalOpen(true);
             }}
             className="flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40 shrink-0 whitespace-nowrap"
-            title="Dùng Gemini AI để tạo chủ đề và câu hỏi mới cho Part này"
+            title="Dùng AI để tạo chủ đề và câu hỏi mới cho Part này"
           >
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span>✨ Sinh Chủ Đề (AI)</span>
@@ -978,7 +978,7 @@ export default function SpeakingPracticePane({
             <span className="text-xs text-slate-400 font-semibold">• Tích hợp chấm điểm AI Cambridge</span>
           </div>
           <p className="text-xs text-slate-300">
-            Luyện từng câu hỏi độc lập, nhận ngay nhận xét 4 tiêu chí khảo thí & bản nâng cấp Band 8.5+. Bạn có thể sinh thêm bất kỳ chủ đề/câu hỏi nào bằng Gemini AI!
+            Luyện từng câu hỏi độc lập, nhận ngay nhận xét 4 tiêu chí khảo thí & bản nâng cấp Band 8.5+. Bạn có thể sinh thêm bất kỳ chủ đề/câu hỏi nào bằng AI!
           </p>
         </div>
 
@@ -990,7 +990,7 @@ export default function SpeakingPracticePane({
           className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-lg shadow-purple-950/60 flex items-center space-x-2 cursor-pointer transition-all hover:scale-[1.02] shrink-0"
         >
           <Sparkles className="w-4 h-4 text-purple-200" />
-          <span>✨ Sinh Chủ Đề Bằng AI (Gemini)</span>
+          <span>✨ Sinh Chủ Đề Bằng AI</span>
         </button>
       </div>
 
@@ -1028,7 +1028,7 @@ export default function SpeakingPracticePane({
               className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/40 cursor-pointer transition-all hover:scale-[1.01]"
             >
               <Sparkles className="w-4 h-4 text-purple-200" />
-              <span>+ Sinh Chủ Đề & Câu Hỏi Part 1 Bằng AI (Gemini)</span>
+              <span>+ Sinh Chủ Đề & Câu Hỏi Part 1 Bằng AI</span>
             </button>
           </div>
 
@@ -1041,7 +1041,7 @@ export default function SpeakingPracticePane({
                 setIsTopicModalOpen(true);
               }}
               className="px-3.5 py-1.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-purple-300 hover:text-white border border-purple-600/50 text-xs font-bold whitespace-nowrap flex items-center space-x-1 cursor-pointer shrink-0"
-              title="Sinh chủ đề luyện tập Part 1 mới bằng Gemini AI"
+              title="Sinh chủ đề luyện tập Part 1 mới bằng AI"
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-400" />
               <span>+ Tạo Mới (AI)</span>
@@ -1277,7 +1277,7 @@ export default function SpeakingPracticePane({
                             ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-700/60'
                             : 'bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 hover:text-white border-indigo-600/60 shadow-sm shadow-indigo-950/50'
                         }`}
-                        title="AI Gemini nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
+                        title="AI nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
                       >
                         {isRefiningTranscript && refiningClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` ? (
                           <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
@@ -1564,10 +1564,10 @@ export default function SpeakingPracticePane({
                   setIsTopicModalOpen(true);
                 }}
                 className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0"
-                title="Thêm Cue Card luyện tập Part 2 mới bằng AI (Gemini)"
+                title="Thêm Cue Card luyện tập Part 2 mới bằng AI"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>✨ Sinh Cue Card Bằng AI (Gemini)</span>
+                <span>✨ Sinh Cue Card Bằng AI</span>
               </button>
             </div>
           </div>
@@ -1710,7 +1710,7 @@ export default function SpeakingPracticePane({
                         ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-700/60'
                         : 'bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 hover:text-white border-indigo-600/60 shadow-sm shadow-indigo-950/50'
                     }`}
-                    title="AI Gemini nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
+                    title="AI nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
                   >
                     {isRefiningTranscript && refiningClipKey === `p2_${activeP2Card.id}` ? (
                       <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
@@ -1932,10 +1932,10 @@ export default function SpeakingPracticePane({
                   setIsTopicModalOpen(true);
                 }}
                 className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0"
-                title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI (Gemini)"
+                title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>✨ Sinh Bộ Thảo Luận<span className="hidden sm:inline"> Bằng AI (Gemini)</span></span>
+                <span>✨ Sinh Bộ Thảo Luận<span className="hidden sm:inline"> Bằng AI</span></span>
               </button>
             </div>
           </div>

@@ -220,12 +220,12 @@ export default function TimerBar({
                 <span className="hidden sm:inline">Chấm Bằng Máy</span>
               </button>
 
-              {/* 2. AI In-depth Grading (Gemini) */}
+              {/* 2. AI In-depth Grading */}
               <button
                 onClick={() => handleInitiateSubmit('ai')}
                 disabled={isSubmitting}
                 className="flex-1 sm:flex-none justify-center flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2.5 sm:py-2 min-h-[40px] rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
-                title="Chấm chi tiết với Trí tuệ nhân tạo Gemini (cần kết nối API Key)"
+                title="Chấm chi tiết với Trí tuệ nhân tạo AI (cần kết nối API Key)"
               >
                 {isSubmitting ? (
                   <>

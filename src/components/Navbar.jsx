@@ -630,7 +630,7 @@ export default function Navbar({
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
                   : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 animate-pulse'
               }`}
-              title={apiKey ? "Cài đặt hệ thống & Gemini API (Đã có Key)" : "Chưa cài đặt Gemini API Key! Bấm vào để nhập key"}
+              title={apiKey ? "Cài đặt hệ thống & AI API (Đã có Key)" : "Chưa cài đặt AI API Key! Bấm vào để nhập key"}
             >
               <Settings className="w-3.5 h-3.5 text-slate-600 shrink-0" />
               <div className="flex items-center space-x-1">
@@ -958,7 +958,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Settings className="w-4 h-4 text-slate-600" />
-                      <span>Cài Đặt Hệ Thống & Gemini API Key</span>
+                      <span>Cài Đặt Hệ Thống & AI API Key</span>
                     </div>
                     <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                   </button>

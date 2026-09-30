@@ -837,8 +837,8 @@ export default function ReadingLibraryModal({
                   </div>
                   <div>
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                      <span>Sinh bài đọc IELTS Reading theo yêu cầu bằng Gemini AI</span>
-                      <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-black">AI 2.5</span>
+                      <span>Sinh bài đọc IELTS Reading theo yêu cầu bằng AI</span>
+                      <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-black">AI</span>
                     </h4>
                     <p className="text-[11px] text-slate-500 mt-0.5">Tùy chọn 12 chủ đề học thuật, độ khó Passage 1/2/3, bẫy distractors và câu hỏi chuẩn Cambridge.</p>
                   </div>

@@ -26,7 +26,7 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
 
   const handleProcessDocument = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cấu hình Gemini API Key trong phần Cài đặt.');
+      setErrorMsg('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     if (!rawText.trim() || rawText.trim().length < 30) {
@@ -85,7 +85,7 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
           
           <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-xs text-purple-950">
             <strong className="block font-bold mb-0.5">AI sẽ tự động làm gì?</strong>
-            <span>Gemini sẽ tự đọc văn bản của bạn, nhận diện đâu là Đề bài, Task mấy, Dạng bài gì, trích xuất Bài mẫu Band 8.5+ và tạo danh sách Collocations hay mà không cần bạn phải copy/paste thủ công từng ô!</span>
+            <span>AI sẽ tự đọc văn bản của bạn, nhận diện đâu là Đề bài, Task mấy, Dạng bài gì, trích xuất Bài mẫu Band 8.5+ và tạo danh sách Collocations hay mà không cần bạn phải copy/paste thủ công từng ô!</span>
           </div>
 
           {errorMsg && (

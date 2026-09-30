@@ -209,7 +209,7 @@ export default function FeedbackModal({
                 ) : (
                   <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] sm:text-[11px] font-semibold">
                     <Sparkles className="w-3 h-3 text-blue-400" />
-                    <span>Chấm Bởi AI Gemini</span>
+                    <span>Chấm Bởi Giám Khảo AI</span>
                   </span>
                 )}
               </div>
@@ -222,7 +222,7 @@ export default function FeedbackModal({
               <button
                 onClick={onReEvaluateWithAI}
                 className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
-                title="Chấm lại bài viết này bằng Trí tuệ nhân tạo Gemini"
+                title="Chấm lại bài viết này bằng Trí tuệ nhân tạo AI"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span className="sm:hidden">Chấm Lại AI</span>
