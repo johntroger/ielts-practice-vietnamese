@@ -1260,6 +1260,7 @@ export default function ListeningWorkspace({
         onClose={() => setIsGeneratorOpen(false)}
         apiKey={apiKey}
         model={model}
+        user={user}
         onTestGenerated={handleAddCustomTest}
         onOpenSettings={onOpenSettings}
       />

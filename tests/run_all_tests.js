@@ -57,7 +57,8 @@ const testSuites = [
   { name: 'Step 48: Tablet Viewport Audit & Menu Display Verification', file: 'tests/test_step48_tablet_viewport_audit.js' },
   { name: 'Step 49: Speaking Fluency & Reflex Micro-Drills Studio', file: 'tests/test_step49_speaking_micro_drills.js' },
   { name: 'Step 50: Speaking Ready Action Box Responsive Overflow Fix', file: 'tests/test_step50_speaking_action_box_overflow.js' },
-  { name: 'Step 51: Manual Task Generator & Fast Source Filtering', file: 'tests/test_step51_manual_task_generator_and_filtering.js' }
+  { name: 'Step 51: Manual Task Generator & Fast Source Filtering', file: 'tests/test_step51_manual_task_generator_and_filtering.js' },
+  { name: 'Step 52: Owner Media Permission Guard & Quota Restriction', file: 'tests/test_step52_owner_media_permission_guard.js' }
 ];
 
 console.log('===============================================================');

@@ -19,6 +19,7 @@ import {
 import { IELTS_TOPICS, TASK1_TYPES, TASK2_TYPES, TIME_FRAME_TYPES } from '../data/topics';
 import { generateNewTask } from '../services/geminiService';
 import TaskImageUploader from './TaskImageUploader';
+import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../utils/userPermissions';
 
 const QUICK_MANUAL_TEMPLATES = {
   task1: [
@@ -198,6 +199,12 @@ export default function TaskGeneratorModal({
 
     if (!manualPrompt.trim()) {
       setErrorMsg('Vui lòng điền nội dung đề bài (Prompt).');
+      return;
+    }
+
+    // Media Guard: Restrict images to the owner (tranthanhtung37@gmail.com)
+    if (Number(taskNumber) === 1 && manualImageUrl.trim() && !isOwnerUser(user)) {
+      setErrorMsg(OWNER_MEDIA_RESTRICTION_MESSAGE);
       return;
     }
 
@@ -574,6 +581,7 @@ export default function TaskGeneratorModal({
                     imageUrl={manualImageUrl}
                     onImageChange={setManualImageUrl}
                     label="Hình ảnh biểu đồ / Bản đồ / Quy trình Task 1 (Tùy chọn):"
+                    user={user}
                   />
                   {manualImageUrl && (
                     <p className="text-[11px] text-blue-800 font-medium mt-1.5 flex items-center gap-1">

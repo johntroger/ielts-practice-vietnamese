@@ -24,7 +24,8 @@ import {
   FolderOpen,
   Globe,
   Lock,
-  Shield
+  Shield,
+  ShieldCheck
 } from 'lucide-react';
 import { saveAudioBlob } from '../../utils/audioStorage';
 import { 
@@ -33,6 +34,7 @@ import {
   discoverListeningAudioSources 
 } from '../../services/geminiService';
 import { CURATED_LISTENING_AUDIO_SOURCES } from '../../data/listening/curatedAudioSources';
+import { isOwnerUser, OWNER_AUDIO_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../../utils/userPermissions';
 
 export default function ListeningURLExerciseGeneratorModal({
   isOpen,
@@ -40,12 +42,15 @@ export default function ListeningURLExerciseGeneratorModal({
   apiKey,
   model = 'gemini-2.5-flash',
   onTestGenerated,
-  onOpenSettings
+  onOpenSettings,
+  user = null
 }) {
   if (!isOpen) return null;
 
-  // Active Tab: 'curated' (browse & AI discover) | 'custom' (enter URL manually)
-  const [activeTab, setActiveTab] = useState('upload');
+  const isOwner = isOwnerUser(user);
+
+  // Active Tab: default to curated for non-owners, upload for owner
+  const [activeTab, setActiveTab] = useState(() => isOwner ? 'upload' : 'curated');
 
   // Form Fields
   const [audioUrl, setAudioUrl] = useState('');
@@ -303,6 +308,13 @@ export default function ListeningURLExerciseGeneratorModal({
   // Handle Uploading Local Audio File (.mp3, .m4a, .wav)
   const handleAudioFileUpload = async (file) => {
     if (!file) return;
+
+    if (!isOwner) {
+      setErrorMessage(OWNER_AUDIO_RESTRICTION_MESSAGE);
+      alert(OWNER_AUDIO_RESTRICTION_MESSAGE);
+      return;
+    }
+
     setErrorMessage('');
 
     const validTypes = ['audio/mp3', 'audio/mpeg', 'audio/m4a', 'audio/x-m4a', 'audio/wav', 'audio/ogg'];
@@ -494,6 +506,12 @@ export default function ListeningURLExerciseGeneratorModal({
       return;
     }
 
+    if (uploadedAudioInfo && !isOwner) {
+      setErrorMessage(OWNER_AUDIO_RESTRICTION_MESSAGE);
+      alert(OWNER_AUDIO_RESTRICTION_MESSAGE);
+      return;
+    }
+
     setIsGenerating(true);
     setErrorMessage('');
 
@@ -612,17 +630,6 @@ export default function ListeningURLExerciseGeneratorModal({
             <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl">
               <button
                 type="button"
-                onClick={() => setActiveTab('upload')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'upload'
-                    ? 'bg-white text-purple-800 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                📁 Tải File Từ Máy Tính (AI Phân Tích & Gợi Ý Part)
-              </button>
-              <button
-                type="button"
                 onClick={() => setActiveTab('curated')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'curated'
@@ -631,6 +638,22 @@ export default function ListeningURLExerciseGeneratorModal({
                 }`}
               >
                 📚 Kho Audio Bản Xứ Tuyển Chọn ({allSources.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('upload')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  activeTab === 'upload'
+                    ? 'bg-white text-purple-800 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>📁 Tải File Từ Máy Tính</span>
+                {isOwner ? (
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold">Owner</span>
+                ) : (
+                  <Lock className="w-3 h-3 text-amber-500" />
+                )}
               </button>
             </div>
 
@@ -851,17 +874,53 @@ export default function ListeningURLExerciseGeneratorModal({
           {/* TAB CONTENT 2: UPLOAD AUDIO FILE FROM COMPUTER */}
           {activeTab === 'upload' && (
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
-              <div
-                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const file = e.dataTransfer.files?.[0];
-                  if (file) handleAudioFileUpload(file);
-                }}
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-purple-300 hover:border-purple-500 bg-white rounded-xl p-5 text-center cursor-pointer transition-all hover:bg-purple-50/20 flex flex-col items-center justify-center space-y-2"
-              >
+              {!isOwner ? (
+                <div className="rounded-xl border border-amber-200 bg-amber-50/90 p-4 sm:p-5 text-slate-800 space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                        <h4 className="text-xs sm:text-sm font-bold text-amber-950">
+                          Tính năng tải âm thanh từ máy tính chỉ dành riêng cho Quản trị viên
+                        </h4>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-extrabold font-mono">
+                          {OWNER_EMAIL}
+                        </span>
+                      </div>
+                      <p className="text-xs text-amber-900/90 leading-relaxed">
+                        Do dung lượng website giới hạn nên không hỗ trợ tính năng này khi user sử dụng. Bạn vui lòng chuyển sang tab <strong>Kho Audio Bản Xứ Tuyển Chọn</strong> để luyện tập ngay với hơn {allSources.length} bài nghe chuẩn Cambridge!
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between border-t border-amber-200/60">
+                    <span className="text-[11px] text-amber-800">
+                      {user?.email ? `Tài khoản: ${user.email}` : 'Tài khoản học viên'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('curated')}
+                      className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                      Chuyển sang Kho Audio Tuyển Chọn →
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) handleAudioFileUpload(file);
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-purple-300 hover:border-purple-500 bg-white rounded-xl p-5 text-center cursor-pointer transition-all hover:bg-purple-50/20 flex flex-col items-center justify-center space-y-2"
+                  >
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -1007,8 +1066,10 @@ export default function ListeningURLExerciseGeneratorModal({
                   <strong>Chế độ tiết kiệm dung lượng</strong>: Tệp âm thanh và đề thi sẽ tự động được giải phóng bộ nhớ ngay sau khi bạn làm bài xong. Báo cáo kết quả và đánh giá chi tiết vẫn được lưu giữ an toàn.
                 </span>
               </div>
-            </div>
+            </>
           )}
+        </div>
+      )}
 
           {/* STEP 2: ULTRA-COMPACT 4-PART SEGMENTED SELECTOR */}
           <div className="space-y-1.5 pt-1">

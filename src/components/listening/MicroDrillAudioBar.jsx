@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { speakText, stopSpeech, playChimeTone } from '../../utils/speechAudio';
 import { saveAudioBlob, getAudioPlayableUrl } from '../../utils/audioStorage';
+import { isOwnerUser, OWNER_AUDIO_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../../utils/userPermissions';
 
 function formatTime(seconds) {
   if (isNaN(seconds) || seconds < 0) return '00:00';
@@ -33,7 +34,7 @@ function formatTime(seconds) {
  * - Real-time seconds elapsed timer & animated acoustic equalizer waves
  * - Flexible speed controls (0.8x, 1.0x, 1.2x) & volume adjustment
  * - Replay from beginning button & Instant Sound Test
- * - Optional custom audio upload support (.mp3, .wav) for personal practice
+ * - Optional custom audio upload support (.mp3, .wav) for personal practice (Owner only)
  */
 export default function MicroDrillAudioBar({
   drillId,
@@ -43,8 +44,10 @@ export default function MicroDrillAudioBar({
   clipStart = 0,
   clipEnd = 0,
   title = 'Audio bài luyện nghe chuẩn Cambridge',
-  accent = 'en-GB'
+  accent = 'en-GB',
+  currentUser = null
 }) {
+  const isOwner = isOwnerUser(currentUser);
   const audioRef = useRef(null);
   const fileInputRef = useRef(null);
   const timerIntervalRef = useRef(null);
@@ -234,6 +237,11 @@ export default function MicroDrillAudioBar({
   const handleUploadAudio = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!isOwner) {
+      alert(OWNER_AUDIO_RESTRICTION_MESSAGE);
+      return;
+    }
 
     try {
       const storageId = `micro-drill-${Date.now()}`;
@@ -458,9 +466,19 @@ export default function MicroDrillAudioBar({
           {/* Upload custom audio file button */}
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-purple-400 border border-slate-800 transition-colors cursor-pointer"
-            title="Tải tệp âm thanh cá nhân (.mp3, .wav)"
+            onClick={() => {
+              if (!isOwner) {
+                alert(OWNER_AUDIO_RESTRICTION_MESSAGE);
+                return;
+              }
+              fileInputRef.current?.click();
+            }}
+            className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+              isOwner
+                ? 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-purple-400 border-slate-800'
+                : 'bg-slate-900/60 text-slate-600 border-slate-800 hover:text-amber-400'
+            }`}
+            title={isOwner ? "Tải tệp âm thanh cá nhân (.mp3, .wav)" : `Tính năng tải âm thanh cá nhân chỉ dành riêng cho Quản trị viên (${OWNER_EMAIL})`}
           >
             <UploadCloud className="w-3.5 h-3.5" />
           </button>

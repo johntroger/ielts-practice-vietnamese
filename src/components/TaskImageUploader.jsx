@@ -1,13 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Image as ImageIcon, Upload, Clipboard, Trash2, ZoomIn, X, AlertCircle } from 'lucide-react';
+import { Image as ImageIcon, Upload, Clipboard, Trash2, ZoomIn, X, AlertCircle, Lock, ShieldCheck } from 'lucide-react';
 import ImageViewerModal from './ImageViewerModal';
+import { isOwnerUser, OWNER_EMAIL, OWNER_MEDIA_RESTRICTION_MESSAGE } from '../utils/userPermissions';
 
 /**
  * TaskImageUploader
  * Hỗ trợ upload file ảnh (PNG, JPG, WEBP, SVG) hoặc Dán ảnh từ Clipboard (Ctrl+V)
  * Tự động tối ưu dung lượng và resize nếu ảnh quá lớn để lưu trữ an toàn trong LocalStorage/Supabase
+ * 
+ * LƯU Ý BẢO MẬT & QUOTA:
+ * Chỉ có Quản trị viên (tranthanhtung37@gmail.com) mới được phép nạp/tải ảnh đề bài.
+ * Các tài khoản khác sẽ bị khóa với thông báo giới hạn dung lượng website.
  */
-export default function TaskImageUploader({ imageUrl, onImageChange, label = "Hình ảnh đề bài Task 1 (Biểu đồ / Bản đồ / Quy trình):" }) {
+export default function TaskImageUploader({ 
+  imageUrl, 
+  onImageChange, 
+  label = "Hình ảnh đề bài Task 1 (Biểu đồ / Bản đồ / Quy trình):",
+  user = null
+}) {
+  const isOwner = isOwnerUser(user);
   const [isHovered, setIsHovered] = useState(false);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
   const fileInputRef = useRef(null);
@@ -15,6 +26,11 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
 
   // Xử lý nén ảnh Base64 để tránh đầy dung lượng LocalStorage/Database
   const processAndSetImage = (file) => {
+    if (!isOwner) {
+      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      return;
+    }
+
     if (!file || !file.type || !file.type.startsWith('image/')) {
       alert('Vui lòng chọn hoặc dán tệp hình ảnh hợp lệ (PNG, JPG, WEBP, GIF).');
       return;
@@ -56,6 +72,8 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
 
   // Bắt sự kiện Paste (Ctrl+V) khi người dùng đang tương tác với vùng upload
   useEffect(() => {
+    if (!isOwner) return;
+
     const handlePaste = (e) => {
       const items = e.clipboardData?.items;
       if (!items) return;
@@ -76,9 +94,13 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
       dropEl.addEventListener('paste', handlePaste);
       return () => dropEl.removeEventListener('paste', handlePaste);
     }
-  }, []);
+  }, [isOwner]);
 
   const handleFileChange = (e) => {
+    if (!isOwner) {
+      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      return;
+    }
     const file = e.target.files?.[0];
     if (file) {
       processAndSetImage(file);
@@ -88,6 +110,10 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
   const handleDrop = (e) => {
     e.preventDefault();
     setIsHovered(false);
+    if (!isOwner) {
+      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      return;
+    }
     const file = e.dataTransfer.files?.[0];
     if (file) {
       processAndSetImage(file);
@@ -96,7 +122,9 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    setIsHovered(true);
+    if (isOwner) {
+      setIsHovered(true);
+    }
   };
 
   const handleDragLeave = (e) => {
@@ -110,13 +138,60 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
         <label className="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
           <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
           <span>{label}</span>
+          {isOwner && (
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold flex items-center gap-0.5">
+              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+              <span>Owner ({OWNER_EMAIL})</span>
+            </span>
+          )}
         </label>
-        <span className="text-[10px] text-slate-400 font-medium">
-          Kéo thả, chọn file, hoặc bấm <strong>Ctrl + V</strong> để dán ảnh
-        </span>
+        {isOwner ? (
+          <span className="text-[10px] text-slate-400 font-medium">
+            Kéo thả, chọn file, hoặc bấm <strong>Ctrl + V</strong> để dán ảnh
+          </span>
+        ) : (
+          <span className="text-[10px] text-amber-700 font-semibold flex items-center gap-1">
+            <Lock className="w-3 h-3 text-amber-600" />
+            <span>Giới hạn dung lượng: Dành riêng Owner</span>
+          </span>
+        )}
       </div>
 
-      {imageUrl ? (
+      {!isOwner && !imageUrl ? (
+        /* Quota Restriction Notice for Non-Owners */
+        <div className="rounded-xl border border-amber-200 bg-amber-50/85 p-3.5 sm:p-4 text-slate-800 space-y-2">
+          <div className="flex items-start space-x-2.5">
+            <div className="p-2 rounded-lg bg-amber-100 text-amber-800 shrink-0 mt-0.5">
+              <Lock className="w-4 h-4" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                <span className="text-xs font-bold text-amber-950">
+                  Tính năng nạp hình ảnh/âm thanh đề bài chỉ dành riêng cho Quản trị viên
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/90 text-amber-900 font-extrabold font-mono">
+                  {OWNER_EMAIL}
+                </span>
+              </div>
+              <p className="text-[11px] text-amber-900/90 leading-relaxed">
+                Do dung lượng website giới hạn nên không hỗ trợ tính năng này khi user sử dụng. Bạn vẫn có thể nạp nội dung đề bài dạng văn bản (prompt) để luyện tập bình thường.
+              </p>
+            </div>
+          </div>
+          
+          <div className="text-[11px] text-slate-600 bg-white/90 p-2.5 rounded-lg border border-amber-100 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <span>💡</span>
+              <span>Gợi ý: Hãy nhập chi tiết mô tả biểu đồ hoặc số liệu vào ô <strong>Đề bài (Prompt)</strong> bên dưới.</span>
+            </span>
+            {user?.email && (
+              <span className="text-[10px] text-slate-400 font-mono shrink-0 ml-2">
+                Tài khoản: {user.email}
+              </span>
+            )}
+          </div>
+        </div>
+      ) : imageUrl ? (
         <div className="relative rounded-xl border border-blue-200 bg-slate-900/5 p-2 group overflow-hidden">
           <div className="relative max-h-64 sm:max-h-72 flex items-center justify-center overflow-hidden rounded-lg bg-white border border-slate-200">
             <img 
@@ -137,14 +212,16 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
                 <span>Phóng To</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => onImageChange('')}
-                className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center space-x-1 shadow-md transition-transform active:scale-95 cursor-pointer"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Xóa Ảnh</span>
-              </button>
+              {isOwner && (
+                <button
+                  type="button"
+                  onClick={() => onImageChange('')}
+                  className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center space-x-1 shadow-md transition-transform active:scale-95 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Xóa Ảnh</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -152,13 +229,15 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
             <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
               ✓ Đã có ảnh đề bài Task 1
             </span>
-            <button
-              type="button"
-              onClick={() => onImageChange('')}
-              className="text-[11px] text-red-600 hover:underline font-semibold cursor-pointer"
-            >
-              Thay ảnh khác
-            </button>
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() => onImageChange('')}
+                className="text-[11px] text-red-600 hover:underline font-semibold cursor-pointer"
+              >
+                Thay ảnh khác
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -197,10 +276,10 @@ export default function TaskImageUploader({ imageUrl, onImageChange, label = "H�
         </div>
       )}
 
-      {/* Zero Permanent Media Persistence Notice */}
+      {/* Media Policy Notice */}
       <div className="text-[10px] text-slate-400 flex items-center space-x-1 pt-0.5">
         <span className="text-emerald-600 font-bold">🔒 Tiết kiệm dung lượng:</span>
-        <span>Hình ảnh chỉ lưu tạm trong phiên làm bài này để hỗ trợ bạn viết. Khi nộp bài hoặc chuyển đề, ảnh sẽ tự động giải phóng hoàn toàn.</span>
+        <span>Hình ảnh đề bài được kiểm soát dung lượng nghiêm ngặt để đảm bảo tốc độ tải trang cao nhất cho toàn bộ học viên.</span>
       </div>
 
       {/* Modal Zoom Preview with Zoom + / Zoom - and Pan */}

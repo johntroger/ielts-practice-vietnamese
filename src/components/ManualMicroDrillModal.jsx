@@ -17,6 +17,7 @@ import {
   Zap,
   Target
 } from 'lucide-react';
+import { isOwnerUser, OWNER_EMAIL } from '../utils/userPermissions';
 
 const DRILL_PRESETS = {
   'fill-blanks': {
@@ -866,6 +867,14 @@ export default function ManualMicroDrillModal({
                   placeholder="VD: Cảnh giác nối âm liên từ hoặc âm câm..."
                   className="w-full p-2.5 rounded-lg border border-slate-200 text-xs bg-white"
                 />
+              </div>
+
+              {/* Zero Storage Notice */}
+              <div className="p-2.5 rounded-lg bg-purple-50/80 border border-purple-200/60 text-[11px] text-purple-900 flex items-start space-x-2">
+                <span className="shrink-0 mt-0.5">ℹ️</span>
+                <span>
+                  <strong>Hệ thống phát âm tự động:</strong> Bài tập nghe thủ công sử dụng văn bản để tạo giọng đọc bản ngữ trực tiếp (Zero Storage). Do dung lượng website giới hạn, việc tải lên tệp âm thanh trực tiếp hiện chỉ dành riêng cho Quản trị viên ({OWNER_EMAIL}).
+                </span>
               </div>
             </div>
           )}

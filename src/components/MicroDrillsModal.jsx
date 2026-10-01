@@ -2588,6 +2588,7 @@ export default function MicroDrillsModal({
                     audioText={currentDictation.audioText || currentDictation.ttsText}
                     title={`Dictation: ${currentDictation.title}`}
                     accent="en-GB"
+                    currentUser={currentUser}
                   />
 
                   <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-200/80 text-xs text-purple-900 space-y-1">
@@ -2732,6 +2733,7 @@ export default function MicroDrillsModal({
                     audioText={currentSpelling.audioText || currentSpelling.promptAudioText}
                     title={`Đánh vần / Số: ${currentSpelling.title}`}
                     accent="en-GB"
+                    currentUser={currentUser}
                   />
 
                   <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
@@ -2872,6 +2874,7 @@ export default function MicroDrillsModal({
                     audioText={currentDistractor.audioText || currentDistractor.audioSnippetText}
                     title={`Hội thoại bẫy: ${currentDistractor.title}`}
                     accent="en-GB"
+                    currentUser={currentUser}
                   />
 
                   {/* Collapsible Transcript: Hidden by default so user must practice listening first */}
@@ -3034,6 +3037,7 @@ export default function MicroDrillsModal({
                     audioText={currentMap.audioText || currentMap.audioDirectionsText}
                     title={`Chỉ dẫn bản đồ: ${currentMap.title}`}
                     accent="en-GB"
+                    currentUser={currentUser}
                   />
 
                   {/* Collapsible Spatial Direction Transcript: Hidden by default */}
@@ -3204,6 +3208,7 @@ export default function MicroDrillsModal({
                     audioText={currentSign.audioText || currentSign.audioSnippetText}
                     title={`Bài giảng Part 4: ${currentSign.title}`}
                     accent="en-GB"
+                    currentUser={currentUser}
                   />
 
                   {/* Collapsible Lecture Transcript: Hidden by default */}

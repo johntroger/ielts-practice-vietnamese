@@ -27,6 +27,7 @@ import TaskImageUploader from './TaskImageUploader';
 import StarRatingWidget from './common/StarRatingWidget';
 import SmartContentFilterBar from './common/SmartContentFilterBar';
 import { applySmartFilterAndSort, recordAttempt } from '../services/ratingPopularityService';
+import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../utils/userPermissions';
 
 export default function TaskLibraryModal({
   isOpen,
@@ -186,6 +187,12 @@ export default function TaskLibraryModal({
     e.preventDefault();
     if (!manualTitle.trim() || !manualPrompt.trim()) return;
 
+    // Media Guard: Restrict images to Owner (tranthanhtung37@gmail.com)
+    if (Number(manualTaskNum) === 1 && manualImageUrl.trim() && !isOwnerUser(user)) {
+      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      return;
+    }
+
     const newTask = {
       id: `custom-${Date.now()}`,
       taskNumber: Number(manualTaskNum),
@@ -219,6 +226,36 @@ export default function TaskLibraryModal({
     reader.onload = (event) => {
       try {
         const json = JSON.parse(event.target?.result);
+        if (!isOwnerUser(user)) {
+          let strippedMedia = false;
+          const sanitizeItem = (item) => {
+            if (item && (item.imageUrl || item.audioUrl || item.audioBase64)) {
+              strippedMedia = true;
+              const copy = { ...item };
+              delete copy.imageUrl;
+              delete copy.audioUrl;
+              delete copy.audioBase64;
+              return copy;
+            }
+            return item;
+          };
+
+          if (Array.isArray(json)) {
+            const sanitized = json.map(sanitizeItem);
+            if (strippedMedia) {
+              alert('Lưu ý: Do dung lượng website giới hạn, một số hình ảnh/âm thanh trong tệp JSON đã được tự động lược bỏ (tính năng nạp đề chứa hình ảnh/âm thanh hiện chỉ dành riêng cho Quản trị viên tranthanhtung37@gmail.com). Toàn bộ nội dung đề văn bản vẫn được nạp đầy đủ.');
+            }
+            onImportData(sanitized);
+            return;
+          } else if (json && typeof json === 'object') {
+            if (json.tasks && Array.isArray(json.tasks)) {
+              json.tasks = json.tasks.map(sanitizeItem);
+            }
+            if (strippedMedia) {
+              alert('Lưu ý: Do dung lượng website giới hạn, một số hình ảnh/âm thanh trong tệp JSON đã được tự động lược bỏ (tính năng nạp đề chứa hình ảnh/âm thanh hiện chỉ dành riêng cho Quản trị viên tranthanhtung37@gmail.com). Toàn bộ nội dung đề văn bản vẫn được nạp đầy đủ.');
+            }
+          }
+        }
         onImportData(json);
       } catch (err) {
         alert('File JSON không hợp lệ.');
@@ -465,6 +502,7 @@ export default function TaskLibraryModal({
                     imageUrl={manualImageUrl}
                     onImageChange={setManualImageUrl}
                     label="Ảnh Đề Bài Task 1 (Biểu đồ / Bản đồ / Quy trình):"
+                    user={user}
                   />
                   {manualImageUrl && (
                     <p className="text-[11px] text-amber-800 font-medium mt-1.5 flex items-center gap-1 bg-amber-50 p-2 rounded-lg border border-amber-200">

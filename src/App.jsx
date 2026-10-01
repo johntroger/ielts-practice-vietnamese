@@ -1456,6 +1456,7 @@ export default function App() {
       <DocumentIngestModal
         isOpen={isIngestOpen || modals.ingest}
         onClose={() => { setIsIngestOpen(false); triggerCloseModal('ingest'); }}
+        user={currentUser}
         onTaskImported={(newTask) => {
           setAllTasks(prev => [newTask, ...prev]);
           setCurrentTaskId(newTask.id);

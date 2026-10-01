@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { FileUp, Sparkles, CheckCircle2, AlertCircle, X, Loader2, ArrowRight } from 'lucide-react';
 import { parseDocumentToTask } from '../services/geminiService';
 import TaskImageUploader from './TaskImageUploader';
+import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE } from '../utils/userPermissions';
 
-export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, apiKey, model }) {
+export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, apiKey, model, user }) {
   if (!isOpen) return null;
 
   const [rawText, setRawText] = useState('');
@@ -43,9 +44,12 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
         model
       });
 
-      // Gắn kèm ảnh đã upload/dán nếu có
-      if (imageUrl) {
+      // Gắn kèm ảnh đã upload/dán nếu có (chỉ cho phép Owner)
+      if (imageUrl && isOwnerUser(user)) {
         parsedTask.imageUrl = imageUrl;
+      } else if (imageUrl && !isOwnerUser(user)) {
+        alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+        parsedTask.imageUrl = '';
       }
 
       onTaskImported(parsedTask);
@@ -123,6 +127,7 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
               imageUrl={imageUrl}
               onImageChange={setImageUrl}
               label="Ảnh Đề Bài Đi Kèm (Dành cho Task 1 - Biểu đồ / Bản đồ / Sơ đồ quy trình):"
+              user={user}
             />
           </div>
 
