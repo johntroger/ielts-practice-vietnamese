@@ -4,7 +4,7 @@ import {
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
-  RotateCcw, X, Loader2, GraduationCap
+  RotateCcw, X, Loader2, GraduationCap, PenTool
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -68,6 +68,8 @@ export default function SpeakingWorkspace({
   
   // Modals state
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+  const [generatorInitialMode, setGeneratorInitialMode] = useState('ai');
+  const [mockFilter, setMockFilter] = useState('all'); // 'all' | 'cambridge' | 'manual' | 'ai'
   const [isPracticeTopicModalOpen, setIsPracticeTopicModalOpen] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
@@ -373,6 +375,28 @@ export default function SpeakingWorkspace({
 
   const activeExaminer = SPEAKING_EXAMINER_PROFILES.find(e => e.id === selectedExaminerId) || SPEAKING_EXAMINER_PROFILES[0];
   const activeMockPack = allMockPacks.find(m => m.id === selectedMockId) || allMockPacks[0];
+
+  const mockPackCounts = React.useMemo(() => {
+    return {
+      all: allMockPacks.length,
+      cambridge: allMockPacks.filter(p => !p.isCustom).length,
+      manual: allMockPacks.filter(p => p.isManual || (p.isCustom && !p.isAiGenerated)).length,
+      ai: allMockPacks.filter(p => p.isAiGenerated).length
+    };
+  }, [allMockPacks]);
+
+  const filteredMockPacks = React.useMemo(() => {
+    if (mockFilter === 'cambridge') {
+      return allMockPacks.filter(p => !p.isCustom);
+    }
+    if (mockFilter === 'manual') {
+      return allMockPacks.filter(p => p.isManual || (p.isCustom && !p.isAiGenerated));
+    }
+    if (mockFilter === 'ai') {
+      return allMockPacks.filter(p => p.isAiGenerated);
+    }
+    return allMockPacks;
+  }, [allMockPacks, mockFilter]);
 
   // Derive active items for Mock Pack (support both preset IDs and custom inline items)
   const mockP1 = activeMockPack.customPart1 
@@ -728,105 +752,207 @@ export default function SpeakingWorkspace({
                     <span>Chọn Bộ Đề Thi Thử (Mock Test Pack)</span>
                   </h3>
                   <span className="text-xs text-slate-400 font-medium">
-                    {allMockPacks.length} Gói đề thi (Chuẩn Cambridge & AI Tự Sinh)
+                    {allMockPacks.length} Gói đề thi (Chuẩn Cambridge, Thủ công & AI Tự Sinh)
                   </span>
                 </div>
 
-                {/* AI GENERATOR TRIGGER BUTTON */}
+                {/* GENERATOR ACTION BUTTONS */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setGeneratorInitialMode('manual');
+                      setIsGeneratorOpen(true);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                    title="Tự tay tạo bộ đề Speaking mới theo chủ đề mong muốn"
+                  >
+                    <PenTool className="w-4 h-4" />
+                    <span>✍️ Tạo Đề Thủ Công</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setGeneratorInitialMode('ai');
+                      setIsGeneratorOpen(true);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                    title="Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Sinh Bộ Đề Mới (AI)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* FILTER PILLS */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 <button
-                  onClick={() => setIsGeneratorOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
-                  title="Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn"
+                  type="button"
+                  onClick={() => setMockFilter('all')}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    mockFilter === 'all'
+                      ? 'bg-purple-600 text-white shadow-xs'
+                      : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                  }`}
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Sinh Bộ Đề Mới (AI)</span>
+                  Tất Cả ({mockPackCounts.all})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMockFilter('cambridge')}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                    mockFilter === 'cambridge'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span>🏛️ Chuẩn Cambridge ({mockPackCounts.cambridge})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMockFilter('manual')}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                    mockFilter === 'manual'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-slate-900 border border-slate-800 text-emerald-400 hover:text-emerald-300'
+                  }`}
+                >
+                  <PenTool className="w-3 h-3" />
+                  <span>✍️ Thủ Công ({mockPackCounts.manual})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMockFilter('ai')}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                    mockFilter === 'ai'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-slate-900 border border-slate-800 text-purple-300 hover:text-purple-200'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>🤖 AI Sinh ({mockPackCounts.ai})</span>
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {allMockPacks.map(pack => {
-                  const isSelected = selectedMockId === pack.id;
-                  return (
-                    <div
-                      key={pack.id}
-                      onClick={() => setSelectedMockId(pack.id)}
-                      className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
-                        isSelected 
-                          ? 'bg-purple-950/40 border-purple-500/80 shadow-lg shadow-purple-950/50' 
-                          : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
-                      }`}
-                    >
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center space-x-1.5">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700">
-                              {pack.difficulty} • Target {pack.targetBand}
-                            </span>
-                            {masteredIds.includes(pack.id) && (
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
-                                <GraduationCap className="w-3 h-3 text-emerald-400" />
-                                <span>Đã thuộc</span>
+              {filteredMockPacks.length === 0 ? (
+                <div className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400 text-xl">
+                    📂
+                  </div>
+                  <p className="text-xs text-slate-400">
+                    Chưa có bộ đề nào trong mục này.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGeneratorInitialMode('manual');
+                      setIsGeneratorOpen(true);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 cursor-pointer"
+                  >
+                    ✍️ Tạo đề thủ công đầu tiên
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {filteredMockPacks.map(pack => {
+                    const isSelected = selectedMockId === pack.id;
+                    const isManual = pack.isManual || (pack.isCustom && !pack.isAiGenerated);
+                    const isAi = pack.isAiGenerated || (pack.isCustom && !pack.isManual);
+                    return (
+                      <div
+                        key={pack.id}
+                        onClick={() => setSelectedMockId(pack.id)}
+                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
+                          isSelected 
+                            ? 'bg-purple-950/40 border-purple-500/80 shadow-lg shadow-purple-950/50' 
+                            : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                        }`}
+                      >
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center space-x-1.5">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700">
+                                {pack.difficulty} • Target {pack.targetBand}
                               </span>
+                              {masteredIds.includes(pack.id) && (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                                  <GraduationCap className="w-3 h-3 text-emerald-400" />
+                                  <span>Đã thuộc</span>
+                                </span>
+                              )}
+                              {!pack.isCustom && (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                  🏛️ Cambridge
+                                </span>
+                              )}
+                              {isManual && (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                                  <PenTool className="w-2.5 h-2.5" />
+                                  <span>✍️ Thủ Công</span>
+                                </span>
+                              )}
+                              {isAi && (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center space-x-1">
+                                  <Sparkles className="w-2.5 h-2.5 text-purple-400" />
+                                  <span>AI Sinh</span>
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs text-slate-400 font-bold flex items-center space-x-1">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>{pack.estTime}</span>
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-sm text-white leading-snug">{pack.title}</h4>
+                          <p className="text-xs text-slate-400 line-clamp-2">{pack.summary}</p>
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                          <span>Đủ Part 1, 2, 3</span>
+                          <div className="flex items-center space-x-2">
+                            {onToggleMastered && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleMastered(pack.id);
+                                }}
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer ${
+                                  masteredIds.includes(pack.id)
+                                    ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900'
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                                }`}
+                                title={
+                                  masteredIds.includes(pack.id)
+                                    ? 'Bỏ đánh dấu đã thuộc'
+                                    : 'Đánh dấu đã thuộc gói đề này'
+                                }
+                              >
+                                <GraduationCap className="w-3 h-3" />
+                                <span>{masteredIds.includes(pack.id) ? 'Đã thuộc' : 'Thuộc đề'}</span>
+                              </button>
                             )}
                             {pack.isCustom && (
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                                AI Custom
-                              </span>
+                              <button
+                                onClick={(e) => handleDeleteCustomPack(pack.id, e)}
+                                className="text-slate-500 hover:text-rose-400 px-1.5 py-0.5 rounded transition-colors text-[10px] font-bold"
+                                title="Xóa bộ đề tự sinh này"
+                              >
+                                Xóa đề
+                              </button>
                             )}
-                          </div>
-                          <span className="text-xs text-slate-400 font-bold flex items-center space-x-1">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>{pack.estTime}</span>
-                          </span>
-                        </div>
-                        <h4 className="font-bold text-sm text-white leading-snug">{pack.title}</h4>
-                        <p className="text-xs text-slate-400 line-clamp-2">{pack.summary}</p>
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Đủ Part 1, 2, 3</span>
-                        <div className="flex items-center space-x-2">
-                          {onToggleMastered && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onToggleMastered(pack.id);
-                              }}
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer ${
-                                masteredIds.includes(pack.id)
-                                  ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900'
-                                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                              }`}
-                              title={
-                                masteredIds.includes(pack.id)
-                                  ? 'Bỏ đánh dấu đã thuộc'
-                                  : 'Đánh dấu đã thuộc gói đề này'
-                              }
-                            >
-                              <GraduationCap className="w-3 h-3" />
-                              <span>{masteredIds.includes(pack.id) ? 'Đã thuộc' : 'Thuộc đề'}</span>
-                            </button>
-                          )}
-                          {pack.isCustom && (
-                            <button
-                              onClick={(e) => handleDeleteCustomPack(pack.id, e)}
-                              className="text-slate-500 hover:text-rose-400 px-1.5 py-0.5 rounded transition-colors text-[10px] font-bold"
-                              title="Xóa bộ đề tự sinh này"
-                            >
-                              Xóa đề
-                            </button>
-                          )}
-                          <div className="flex items-center space-x-1 text-purple-400 font-bold">
-                            <span>{isSelected ? 'Đang chọn đề này' : 'Bấm để chọn'}</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <div className="flex items-center space-x-1 text-purple-400 font-bold">
+                              <span>{isSelected ? 'Đang chọn đề này' : 'Bấm để chọn'}</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Test Details Breakdown (Part 1, 2, 3 Overview) */}
@@ -1175,12 +1301,13 @@ export default function SpeakingWorkspace({
         apiKey={apiKey}
       />
 
-      {/* 7. STEP 6: AI SPEAKING MOCK TEST GENERATOR MODAL */}
+      {/* 7. STEP 6: AI / MANUAL SPEAKING MOCK TEST GENERATOR MODAL */}
       <SpeakingGeneratorModal
         isOpen={isGeneratorOpen}
         onClose={() => setIsGeneratorOpen(false)}
         apiKey={apiKey}
         model={model}
+        initialMode={generatorInitialMode}
         onOpenSettings={onOpenSettings}
         onPackGenerated={handlePackGenerated}
       />

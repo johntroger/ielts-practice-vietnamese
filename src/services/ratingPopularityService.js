@@ -303,6 +303,12 @@ export function applySmartFilterAndSort(items = [], criteria = {}) {
     if (quickFilter === 'mastered' && !isMastered) {
       continue;
     }
+    if (quickFilter === 'manual' && !(item.isManual || (item.isCustom && !item.isAiGenerated))) {
+      continue;
+    }
+    if (quickFilter === 'ai' && !item.isAiGenerated) {
+      continue;
+    }
     if (quickFilter === 'band_high') {
       const band = parseFloat(item.bandLevel || item.targetBand || item.band || '0');
       if (band < 7.0 && !metrics.isTopRated) {

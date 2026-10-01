@@ -19,7 +19,8 @@ import {
   GraduationCap,
   Star,
   Flame,
-  Award
+  Award,
+  PenTool
 } from 'lucide-react';
 import { TASK1_TYPES, TASK2_TYPES } from '../data/topics';
 import TaskImageUploader from './TaskImageUploader';
@@ -101,23 +102,29 @@ export default function TaskLibraryModal({
     return combined;
   }, [activeTab, allTasks, communityTasks]);
 
-  const allCount = useMemo(() => {
+  const taskCounts = useMemo(() => {
     const existingIds = new Set(allTasks.map(t => t.id));
-    let count = allTasks.length;
+    const fullPool = [...allTasks];
     for (const ct of communityTasks) {
       if (!existingIds.has(ct.id)) {
-        count++;
+        fullPool.push(ct);
         existingIds.add(ct.id);
       }
     }
-    return count;
-  }, [allTasks, communityTasks]);
+    return {
+      all: fullPool.length,
+      manual: fullPool.filter(t => t.isManual || (t.isCustom && !t.isAiGenerated)).length,
+      ai: fullPool.filter(t => t.isAiGenerated).length,
+      cambridge: fullPool.filter(t => !t.isCustom && !t.isAiGenerated).length,
+      community: communityTasks.length,
+      mastered: allTasks.filter(t => masteredIds.includes(t.id)).length
+    };
+  }, [allTasks, communityTasks, masteredIds]);
+
+  const allCount = taskCounts.all;
+  const masteredCount = taskCounts.mastered;
 
   const [hideMastered, setHideMastered] = useState(true);
-
-  const masteredCount = useMemo(() => {
-    return allTasks.filter(t => masteredIds.includes(t.id)).length;
-  }, [allTasks, masteredIds]);
 
   const attemptedIds = useMemo(() => {
     return (submissions || []).map(s => s.task?.id).filter(Boolean);
@@ -143,10 +150,12 @@ export default function TaskLibraryModal({
     if (activeTab === 'mastered') {
       base = base.filter(t => masteredIds.includes(t.id));
     } else {
-      if (activeTab === 'custom') {
-        base = base.filter(t => t.isCustom && !t.isAiGenerated);
+      if (activeTab === 'manual' || activeTab === 'custom') {
+        base = base.filter(t => t.isManual || (t.isCustom && !t.isAiGenerated));
       } else if (activeTab === 'ai') {
         base = base.filter(t => t.isAiGenerated);
+      } else if (activeTab === 'cambridge') {
+        base = base.filter(t => !t.isCustom && !t.isAiGenerated);
       } else if (activeTab === 'community') {
         base = base.filter(t => t.isCommunity);
       }
@@ -188,6 +197,10 @@ export default function TaskLibraryModal({
       minWords: Number(manualTaskNum) === 1 ? 150 : 250,
       timeLimit: Number(manualTaskNum) === 1 ? 20 : 40,
       isCustom: true,
+      isManual: true,
+      isAiGenerated: false,
+      source: 'manual',
+      sampleAnswer: manualModelAnswer.trim(),
       createdAt: new Date().toISOString()
     };
 
@@ -263,33 +276,43 @@ export default function TaskLibraryModal({
                   activeTab === 'all' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                Tất cả ({allCount})
+                Tất cả ({taskCounts.all})
               </button>
               <button
-                onClick={() => setActiveTab('custom')}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
-                  activeTab === 'custom' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                onClick={() => setActiveTab('manual')}
+                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1.5 cursor-pointer ${
+                  activeTab === 'manual' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white text-emerald-800 border border-emerald-300 hover:bg-emerald-50'
                 }`}
               >
-                Tài liệu của bạn
+                <PenTool className="w-3.5 h-3.5 text-emerald-600" />
+                <span>✍️ Thủ Công ({taskCounts.manual})</span>
               </button>
               <button
                 onClick={() => setActiveTab('ai')}
                 className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1 cursor-pointer ${
-                  activeTab === 'ai' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                  activeTab === 'ai' ? 'bg-purple-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>AI của bạn</span>
+                <span>🤖 AI Sinh ({taskCounts.ai})</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('cambridge')}
+                className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1 cursor-pointer ${
+                  activeTab === 'cambridge' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-blue-500" />
+                <span>🏛️ Cambridge ({taskCounts.cambridge})</span>
               </button>
               <button
                 onClick={() => setActiveTab('community')}
                 className={`px-3 py-1.5 rounded-xl font-semibold transition-colors flex items-center space-x-1.5 cursor-pointer ${
-                  activeTab === 'community' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                  activeTab === 'community' ? 'bg-indigo-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                <Users className="w-3.5 h-3.5 text-blue-500" />
-                <span>Cộng Đồng ({communityTasks.length})</span>
+                <Users className="w-3.5 h-3.5 text-indigo-500" />
+                <span>Cộng Đồng ({taskCounts.community})</span>
               </button>
               {user && (
                 <button
@@ -299,7 +322,7 @@ export default function TaskLibraryModal({
                   }`}
                 >
                   <GraduationCap className="w-3.5 h-3.5" />
-                  <span>Đã Thuộc ({masteredCount})</span>
+                  <span>Đã Thuộc ({taskCounts.mastered})</span>
                 </button>
               )}
             </div>
@@ -518,14 +541,20 @@ export default function TaskLibraryModal({
                           {t.type}
                         </span>
                         {t.isAiGenerated && (
-                          <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center space-x-1">
-                            <Sparkles className="w-3 h-3" />
+                          <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center space-x-1 font-semibold">
+                            <Sparkles className="w-3 h-3 text-amber-500" />
                             <span>AI Sinh</span>
                           </span>
                         )}
-                        {t.isCustom && (
-                          <span className="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold">
-                            Tự Nạp
+                        {(t.isManual || (t.isCustom && !t.isAiGenerated)) && (
+                          <span className="text-[10px] text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded border border-emerald-300 font-bold flex items-center space-x-1 shadow-2xs">
+                            <PenTool className="w-3 h-3 text-emerald-600" />
+                            <span>✍️ Thủ Công</span>
+                          </span>
+                        )}
+                        {(!t.isCustom && !t.isAiGenerated) && (
+                          <span className="text-[10px] text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 font-semibold">
+                            🏛️ Cambridge
                           </span>
                         )}
                         {t.imageUrl && (

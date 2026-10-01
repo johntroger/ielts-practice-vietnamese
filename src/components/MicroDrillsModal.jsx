@@ -35,7 +35,8 @@ import {
   GraduationCap,
   Eye,
   EyeOff,
-  VolumeX
+  VolumeX,
+  PenTool
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -48,6 +49,7 @@ import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
 import StarRatingWidget from './common/StarRatingWidget';
 import { recordAttempt, applySmartFilterAndSort } from '../services/ratingPopularityService';
+import ManualMicroDrillModal from './ManualMicroDrillModal';
 
 export default function MicroDrillsModal({ 
   isOpen, 
@@ -105,6 +107,7 @@ export default function MicroDrillsModal({
 
   // Filter scope: 'all' | 'community' | 'mine'
   const [drillScope, setDrillScope] = useState('all');
+  const [isManualDrillModalOpen, setIsManualDrillModalOpen] = useState(false);
 
   // Drills stored in LocalStorage combined with defaults and community drills
   const [allDrills, setAllDrills] = useState(() => {
@@ -929,6 +932,28 @@ export default function MicroDrillsModal({
               >
                 🔥 Hot
               </button>
+              <button
+                type="button"
+                onClick={() => setDrillQuickFilter('manual')}
+                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                  drillQuickFilter === 'manual' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+                title="Chỉ hiển thị bài tập tạo thủ công"
+              >
+                <PenTool className="w-2.5 h-2.5" />
+                <span>✍️ Thủ công</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDrillQuickFilter('ai')}
+                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                  drillQuickFilter === 'ai' ? 'bg-purple-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+                title="Chỉ hiển thị bài tập do AI sinh"
+              >
+                <Sparkles className="w-2.5 h-2.5 text-amber-300" />
+                <span>🤖 AI sinh</span>
+              </button>
             </div>
 
             {/* Sort Select */}
@@ -1032,6 +1057,12 @@ export default function MicroDrillsModal({
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
                   <Lock className="w-3 h-3 text-amber-600" />
                   <span>🔒 Riêng tư</span>
+                </span>
+              )}
+              {(currentItem.isManual || (currentItem.isCustom && !currentItem.isAiGenerated)) && (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                  <PenTool className="w-3 h-3 text-emerald-700" />
+                  <span>✍️ Thủ Công</span>
                 </span>
               )}
               {currentItem.isAiGenerated && (
@@ -1177,6 +1208,36 @@ export default function MicroDrillsModal({
       setIsGeneratingDrill(false);
       setDrillGenMessage('');
     }
+  };
+
+  const handleManualDrillCreated = (newDrill, isPub) => {
+    const updated = [...allDrills, newDrill];
+    setAllDrills(updated);
+    try {
+      const customOnly = updated.filter(d => d.isCustom || d.isManual);
+      localStorage.setItem('ielts_custom_micro_drills', JSON.stringify(customOnly));
+      if (isPub) {
+        const commOnly = updated.filter(d => (d.isCustom || d.isManual) && d.isPublic);
+        localStorage.setItem('ielts_community_micro_drills', JSON.stringify(commOnly));
+        savePublicDrill(newDrill);
+        try {
+          if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel('ielts_micro_drills_realtime');
+            bc.postMessage({ type: 'NEW_DRILL', drill: newDrill });
+            bc.close();
+          }
+        } catch (e) {}
+      }
+    } catch (e) {
+      console.error('Failed to persist manual drill:', e);
+    }
+
+    // Automatically switch to the newly created drill
+    const targetList = updated.filter(d => d.type === activeTab);
+    const newIdx = targetList.length - 1;
+    const { setIndex, onReset } = getActiveDrillInfo();
+    setIndex(newIdx);
+    onReset();
   };
 
   return (
@@ -1537,11 +1598,22 @@ export default function MicroDrillsModal({
                 <span className="hidden sm:inline">{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ'}</span>
               </button>
 
+              {/* Manual Drill Creator Button */}
+              <button
+                type="button"
+                onClick={() => setIsManualDrillModalOpen(true)}
+                className="px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 transition-all active:scale-95 cursor-pointer"
+                title="Tự tay tạo thêm 1 bài tập mới theo đúng dạng đang xem"
+              >
+                <PenTool className="w-3 h-3" />
+                <span>✍️ Tạo Bài Thủ Công</span>
+              </button>
+
               {/* AI Generator Button */}
               <button
                 onClick={handleGenerateDrill}
                 disabled={isGeneratingDrill}
-                className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95"
+                className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
                 title="Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"
               >
                 {isGeneratingDrill ? (
@@ -4305,6 +4377,16 @@ export default function MicroDrillsModal({
           )}
 
         </div>
+
+        {/* MANUAL DRILL CREATOR MODAL */}
+        <ManualMicroDrillModal
+          isOpen={isManualDrillModalOpen}
+          onClose={() => setIsManualDrillModalOpen(false)}
+          activeRoom={activeRoom}
+          activeTab={activeTab}
+          onDrillCreated={handleManualDrillCreated}
+          currentUser={currentUser}
+        />
 
       </div>
     </div>
