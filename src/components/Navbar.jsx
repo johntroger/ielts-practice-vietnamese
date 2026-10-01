@@ -28,9 +28,11 @@ import {
   Target,
   Award,
   SlidersHorizontal,
-  HelpCircle
+  HelpCircle,
+  QrCode
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
+import WebsiteQRCodeModal from './WebsiteQRCodeModal';
 
 export default function Navbar({
   currentTask,
@@ -91,6 +93,7 @@ export default function Navbar({
   const [isProgressMenuOpen, setIsProgressMenuOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [mobileSkillMenuOpen, setMobileSkillMenuOpen] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   const desktopMenuRef = useRef(null);
   const mobileSkillRef = useRef(null);
@@ -166,16 +169,30 @@ export default function Navbar({
           
           {/* 1. LEFT ZONE: Brand & Skills Switcher */}
           <div className="flex items-center space-x-2 sm:space-x-3.5">
-            {/* Logo */}
-            <div className="flex items-center space-x-2 shrink-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-sm text-xs sm:text-sm">
-                IELTS
+            {/* Logo with QR Code Popup Trigger */}
+            <button
+              type="button"
+              onClick={() => setIsQrModalOpen(true)}
+              className="flex items-center space-x-2 shrink-0 group cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-red-500/40 rounded-xl p-0.5 transition-transform active:scale-95"
+              title="Quét mã QR truy cập nhanh website trên điện thoại"
+              aria-label="Mở mã QR website IELTS Studio"
+            >
+              <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-sm text-xs sm:text-sm group-hover:shadow-md group-hover:from-red-700 group-hover:to-rose-600 transition-all">
+                <span>IELTS</span>
+                <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-xs flex items-center justify-center border border-red-100 group-hover:scale-110 group-hover:bg-rose-50 transition-transform">
+                  <QrCode className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-red-600" />
+                </span>
               </div>
               <div className="hidden sm:block">
-                <span className="font-extrabold text-slate-900 text-sm leading-none block">STUDIO</span>
+                <div className="flex items-center space-x-1.5">
+                  <span className="font-extrabold text-slate-900 text-sm leading-none block group-hover:text-red-600 transition-colors">STUDIO</span>
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-50 text-red-600 border border-red-200 group-hover:bg-red-600 group-hover:text-white transition-colors">
+                    QR
+                  </span>
+                </div>
                 <span className="text-[10px] text-slate-400 font-semibold tracking-wider block mt-0.5">ACADEMIC AI</span>
               </div>
-            </div>
+            </button>
 
             {/* Mobile Skill Selector Pill (< 640px) */}
             <div className="relative sm:hidden" ref={mobileSkillRef}>
@@ -986,6 +1003,17 @@ export default function Navbar({
                   </button>
 
                   <button
+                    onClick={() => { setIsQrModalOpen(true); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <QrCode className="w-4 h-4 text-red-600" />
+                      <span>Mã QR Website (Quét Mở Nhanh)</span>
+                    </div>
+                    <span className="text-[10px] text-red-600 font-bold bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">Scan QR</span>
+                  </button>
+
+                  <button
                     onClick={() => { doOpenContact(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
                   >
@@ -1002,6 +1030,12 @@ export default function Navbar({
           </div>
         </div>
       )}
+
+      {/* Website QR Code Modal */}
+      <WebsiteQRCodeModal 
+        isOpen={isQrModalOpen} 
+        onClose={() => setIsQrModalOpen(false)} 
+      />
 
     </header>
   );

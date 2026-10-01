@@ -59,7 +59,8 @@ const testSuites = [
   { name: 'Step 50: Speaking Ready Action Box Responsive Overflow Fix', file: 'tests/test_step50_speaking_action_box_overflow.js' },
   { name: 'Step 51: Manual Task Generator & Fast Source Filtering', file: 'tests/test_step51_manual_task_generator_and_filtering.js' },
   { name: 'Step 52: Owner Media Permission Guard & Quota Restriction', file: 'tests/test_step52_owner_media_permission_guard.js' },
-  { name: 'Step 53: Authentic Cambridge Test Bank & Dedicated Badging Across All 4 Skills', file: 'tests/test_step53_cambridge_test_bank_and_badging.js' }
+  { name: 'Step 53: Authentic Cambridge Test Bank & Dedicated Badging Across All 4 Skills', file: 'tests/test_step53_cambridge_test_bank_and_badging.js' },
+  { name: 'Step 54: Website QR Code Modal & Navbar Quick Access', file: 'tests/test_step54_website_qr_code_modal.js' }
 ];
 
 console.log('===============================================================');
