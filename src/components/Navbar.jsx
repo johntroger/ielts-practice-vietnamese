@@ -639,6 +639,18 @@ export default function Navbar({
               <kbd className="hidden min-[1700px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
+            {/* Liên Hệ & Góp Ý - Đưa trực tiếp ra ngoài thanh Nav trên cùng */}
+            <button
+              onClick={doOpenContact}
+              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group"
+              title="Liên hệ & Góp ý với tác giả phát triển (Hỗ trợ 24/7)"
+              aria-label="Liên hệ và góp ý"
+            >
+              <Mail className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
+              <span className="hidden md:inline text-[11px] font-bold">Liên Hệ & Góp Ý</span>
+              <span className="md:hidden hidden sm:inline text-[11px] font-bold">Liên Hệ</span>
+            </button>
+
             {/* API Key Indicator */}
             <button
               onClick={doOpenSettings}

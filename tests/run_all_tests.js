@@ -61,7 +61,8 @@ const testSuites = [
   { name: 'Step 52: Owner Media Permission Guard & Quota Restriction', file: 'tests/test_step52_owner_media_permission_guard.js' },
   { name: 'Step 53: Authentic Cambridge Test Bank & Dedicated Badging Across All 4 Skills', file: 'tests/test_step53_cambridge_test_bank_and_badging.js' },
   { name: 'Step 54: Website QR Code Modal & Navbar Quick Access', file: 'tests/test_step54_website_qr_code_modal.js' },
-  { name: 'Step 55: Mobile & Tablet Popup UI/UX Audit & Skill-Aware Library Routing', file: 'tests/test_step55_mobile_tablet_popup_audit.js' }
+  { name: 'Step 55: Mobile & Tablet Popup UI/UX Audit & Skill-Aware Library Routing', file: 'tests/test_step55_mobile_tablet_popup_audit.js' },
+  { name: 'Step 56: Top Navbar Direct Contact & Feedback Button', file: 'tests/test_step56_navbar_contact_button.js' }
 ];
 
 console.log('===============================================================');
