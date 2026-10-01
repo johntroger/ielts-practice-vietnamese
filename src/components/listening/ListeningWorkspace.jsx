@@ -51,6 +51,7 @@ export default function ListeningWorkspace({
   initialTestId = 'cambridge-18-test-1',
   initialExamMode = 'practice',
   openGeneratorTrigger,
+  openLibraryTrigger,
   masteredIds = [],
   onToggleMastered
 }) {
@@ -85,6 +86,13 @@ export default function ListeningWorkspace({
       setIsGeneratorOpen(true);
     }
   }, [openGeneratorTrigger]);
+
+  // Sync external library trigger
+  useEffect(() => {
+    if (openLibraryTrigger) {
+      setIsLibraryOpen(true);
+    }
+  }, [openLibraryTrigger]);
 
   // Soundcheck State & Controls
   const [isSoundchecking, setIsSoundchecking] = useState(false);

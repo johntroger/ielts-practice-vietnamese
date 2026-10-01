@@ -953,7 +953,8 @@ export default function VocabGrammarSpellingModal({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0 ml-1.5"
+              aria-label="Đóng bảng luyện từ vựng ngữ pháp"
             >
               <X className="w-5 h-5" />
             </button>

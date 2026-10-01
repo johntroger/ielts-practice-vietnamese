@@ -57,6 +57,7 @@ export default function ReadingWorkspace({
   initialExamMode,
   openGeneratorTrigger,
   openIngestTrigger,
+  openLibraryTrigger,
   masteredIds = [],
   onToggleMastered
 }) {
@@ -146,6 +147,12 @@ export default function ReadingWorkspace({
       setIsIngestOpen(true);
     }
   }, [openIngestTrigger]);
+
+  useEffect(() => {
+    if (openLibraryTrigger) {
+      setIsLibraryOpen(true);
+    }
+  }, [openLibraryTrigger]);
 
   // Callback when a new passage is generated or ingested
   const handleAddCustomPassage = (newPassage, source = 'generated', isPublic = null, extraMeta = {}) => {

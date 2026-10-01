@@ -221,21 +221,21 @@ export default function ListeningLibraryModal({
       <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden overscroll-contain">
         
         {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-purple-50 via-indigo-50 to-slate-50">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs">
+        <div className="px-3.5 sm:px-5 py-3.5 sm:py-4 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-purple-50 via-indigo-50 to-slate-50 shrink-0">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 mr-2">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-xs shrink-0">
               <Headphones className="w-5 h-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center space-x-2">
-                <h3 className="font-black text-slate-900 text-base sm:text-lg">
+                <h3 className="font-black text-slate-900 text-base sm:text-lg truncate">
                   Kho Đề Thi IELTS Listening
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold uppercase tracking-wider shrink-0">
                   {stats.total} Bộ Đề Sẵn Sàng
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 hidden sm:block truncate">
                 Đề thi chính thức Cambridge & đề hội thoại bản xứ sinh bằng AI
               </p>
             </div>
@@ -243,7 +243,8 @@ export default function ListeningLibraryModal({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer shrink-0 ml-1.5"
+            aria-label="Đóng kho đề listening"
           >
             <X className="w-5 h-5" />
           </button>
@@ -543,7 +544,7 @@ export default function ListeningLibraryModal({
         )}
 
         {/* Tests List Grid */}
-        <div className="flex-1 overflow-y-auto p-5 bg-slate-50/50">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-5 bg-slate-50/50">
           {sortedTests.length === 0 ? (
             <div className="text-center py-16 text-slate-400 space-y-2">
               <Headphones className="w-10 h-10 mx-auto opacity-30 text-slate-500" />

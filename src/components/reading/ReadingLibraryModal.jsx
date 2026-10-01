@@ -327,7 +327,8 @@ export default function ReadingLibraryModal({
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-colors"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-1.5"
+            aria-label="Đóng thư viện reading"
           >
             <X className="w-5 h-5" />
           </button>
@@ -550,7 +551,7 @@ export default function ReadingLibraryModal({
 
         {/* TAB CONTENT: 3-PASSAGES BUILDER */}
         {activeTab === 'custom_builder' ? (
-          <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
+          <div className="p-4 sm:p-6 flex-1 min-h-0 overflow-y-auto space-y-6">
             {/* Intro Banner with Random Button */}
             <div className="bg-linear-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
               <div className="space-y-1">
@@ -827,7 +828,7 @@ export default function ReadingLibraryModal({
           </div>
         ) : (
           /* REGULAR TEST LIST */
-          <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-50/40">
+          <div className="p-4 sm:p-6 flex-1 min-h-0 overflow-y-auto bg-slate-50/40">
             {/* Contextual Banner when viewing AI Generated Tab */}
             {activeTab === 'ai' && onOpenGenerator && (
               <div className="mb-4 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 border border-purple-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">

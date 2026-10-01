@@ -41,6 +41,8 @@ export default function SpeakingWorkspace({
   onOpenTheory,
   onSaveToVocabNotebook,
   onSpeakingSubmitted,
+  openGeneratorTrigger,
+  openLibraryTrigger,
   masteredIds = [],
   onToggleMastered
 }) {
@@ -79,6 +81,20 @@ export default function SpeakingWorkspace({
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
+
+  // Sync external generator trigger
+  useEffect(() => {
+    if (openGeneratorTrigger) {
+      setIsGeneratorOpen(true);
+    }
+  }, [openGeneratorTrigger]);
+
+  // Sync external library trigger
+  useEffect(() => {
+    if (openLibraryTrigger) {
+      setIsPracticeTopicModalOpen(true);
+    }
+  }, [openLibraryTrigger]);
 
   // Practice Mode State
   const [practicePart, setPracticePart] = useState(1); // 1 | 2 | 3

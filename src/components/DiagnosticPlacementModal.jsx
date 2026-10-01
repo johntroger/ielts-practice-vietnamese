@@ -258,8 +258,9 @@ export default function DiagnosticPlacementModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
-              title="Đóng modal"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer shrink-0 ml-1.5"
+              aria-label="Đóng kiểm tra định vị"
+              title="Đóng (Esc)"
             >
               <X className="w-5 h-5" />
             </button>

@@ -269,18 +269,18 @@ export default function TaskLibraryModal({
       <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-red-600/30 text-red-400 border border-red-500/30">
-              <BookOpen className="w-6 h-6" />
+        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 mr-2">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-red-600/30 text-red-400 border border-red-500/30 shrink-0">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold">Kho Đề Thi & Quản Lý Tài Liệu</h2>
-              <p className="text-xs text-slate-400">Chọn đề làm bài, nạp thêm tài liệu cá nhân hoặc sao lưu kho đề</p>
+            <div className="min-w-0">
+              <h2 className="text-base sm:text-xl font-bold truncate">Kho Đề Thi & Quản Lý Tài Liệu</h2>
+              <p className="text-xs text-slate-400 hidden sm:block truncate">Chọn đề làm bài, nạp thêm tài liệu cá nhân hoặc sao lưu kho đề</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <button
               onClick={onExportAllData}
               className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
@@ -296,7 +296,11 @@ export default function TaskLibraryModal({
               <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
             </label>
 
-            <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+            <button 
+              onClick={onClose} 
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-1"
+              aria-label="Đóng kho đề"
+            >
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -439,7 +443,7 @@ export default function TaskLibraryModal({
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-5 lg:p-6 space-y-4">
           
           {/* MANUAL ADD FORM */}
           {isAddingManual && (

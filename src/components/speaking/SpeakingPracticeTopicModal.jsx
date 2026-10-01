@@ -242,7 +242,8 @@ export default function SpeakingPracticeTopicModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-1.5"
+            aria-label="Đóng chủ đề speaking"
           >
             <X className="w-5 h-5" />
           </button>

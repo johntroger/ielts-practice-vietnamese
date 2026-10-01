@@ -1250,19 +1250,23 @@ export default function MicroDrillsModal({
             <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 text-white shadow-xs">
               <Puzzle className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-xl font-bold">Phòng Luyện Bổ Trợ (Micro-Drills)</h2>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide">
+                <h2 className="text-base sm:text-xl font-bold truncate">Phòng Luyện Bổ Trợ (Micro-Drills)</h2>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide shrink-0">
                   Đa Kỹ Năng
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">
+              <p className="text-xs text-slate-400 mt-0.5 hidden sm:block truncate">
                 Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <button 
+            onClick={onClose} 
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-1.5"
+            aria-label="Đóng phòng luyện"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>

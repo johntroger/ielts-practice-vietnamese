@@ -283,7 +283,11 @@ export default function App() {
   const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [readingGenTrigger, setReadingGenTrigger] = useState(0);
   const [readingIngestTrigger, setReadingIngestTrigger] = useState(0);
+  const [readingLibraryTrigger, setReadingLibraryTrigger] = useState(0);
   const [listeningGenTrigger, setListeningGenTrigger] = useState(0);
+  const [listeningLibraryTrigger, setListeningLibraryTrigger] = useState(0);
+  const [speakingGenTrigger, setSpeakingGenTrigger] = useState(0);
+  const [speakingLibraryTrigger, setSpeakingLibraryTrigger] = useState(0);
   const [isMockTestOpen, setIsMockTestOpen] = useState(false);
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
   const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
@@ -1059,11 +1063,23 @@ export default function App() {
               setReadingGenTrigger(Date.now());
             } else if (activeSkill === 'listening') {
               setListeningGenTrigger(Date.now());
+            } else if (activeSkill === 'speaking') {
+              setSpeakingGenTrigger(Date.now());
             } else {
               setIsGeneratorOpen(true);
             }
           }}
-          onOpenLibrary={() => setIsLibraryOpen(true)}
+          onOpenLibrary={() => {
+            if (activeSkill === 'reading') {
+              setReadingLibraryTrigger(Date.now());
+            } else if (activeSkill === 'listening') {
+              setListeningLibraryTrigger(Date.now());
+            } else if (activeSkill === 'speaking') {
+              setSpeakingLibraryTrigger(Date.now());
+            } else {
+              setIsLibraryOpen(true);
+            }
+          }}
           onOpenNotebook={() => setIsNotebookOpen(true)}
           onOpenHistory={() => setIsHistoryOpen(true)}
           onOpenSettings={() => setIsSettingsOpen(true)}
@@ -1185,6 +1201,7 @@ export default function App() {
                 initialExamMode={readingMockExamMode}
                 openGeneratorTrigger={readingGenTrigger}
                 openIngestTrigger={readingIngestTrigger}
+                openLibraryTrigger={readingLibraryTrigger}
                 masteredIds={masteredIds}
                 onToggleMastered={handleToggleMastered}
               />
@@ -1236,6 +1253,7 @@ export default function App() {
                   }
                 }}
                 openGeneratorTrigger={listeningGenTrigger}
+                openLibraryTrigger={listeningLibraryTrigger}
                 masteredIds={masteredIds}
                 onToggleMastered={handleToggleMastered}
               />
@@ -1267,6 +1285,8 @@ export default function App() {
                     return updated;
                   });
                 }}
+                openGeneratorTrigger={speakingGenTrigger}
+                openLibraryTrigger={speakingLibraryTrigger}
                 masteredIds={masteredIds}
                 onToggleMastered={handleToggleMastered}
               />
