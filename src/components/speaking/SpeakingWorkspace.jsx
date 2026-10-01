@@ -869,21 +869,22 @@ export default function SpeakingWorkspace({
               </div>
 
               {/* Ready Action Box */}
-              <div className="p-4 rounded-xl bg-purple-950/40 border border-purple-800/40 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4">
-                <div className="text-xs text-slate-300 text-center sm:text-left">
-                  <span className="font-bold text-white block">
+              <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/40 border border-purple-800/50 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3.5 sm:gap-4 overflow-hidden">
+                <div className="text-xs text-slate-300 text-left min-w-0 flex-1 space-y-1">
+                  <span className="font-bold text-white block text-sm sm:text-base leading-snug">
                     Sẵn sàng thi với gói: <span className="text-purple-300 font-extrabold">{activeMockPack.title}</span>?
                   </span>
-                  <span className="text-slate-400">
+                  <span className="text-slate-400 text-xs block leading-relaxed">
                     Giám khảo {activeExaminer.name} ({activeExaminer.accent}) • 11 – 14 phút • Đầy đủ 3 Parts chuẩn Cambridge
                   </span>
                 </div>
-                <div className="flex items-center gap-2.5">
+
+                <div className="flex flex-wrap sm:flex-nowrap items-center justify-start sm:justify-end gap-2 sm:gap-2.5 w-full xl:w-auto shrink-0 pt-2.5 xl:pt-0 border-t border-purple-800/30 xl:border-t-0">
                   {onToggleMastered && (
                     <button
                       type="button"
                       onClick={() => onToggleMastered(selectedMockId)}
-                      className={`px-3.5 py-2.5 rounded-xl font-bold text-xs border flex items-center space-x-1.5 transition-all cursor-pointer shrink-0 ${
+                      className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl font-bold text-xs border flex items-center space-x-1.5 transition-all cursor-pointer shrink-0 ${
                         masteredIds.includes(selectedMockId)
                           ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900'
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
@@ -905,7 +906,7 @@ export default function SpeakingWorkspace({
 
                   <button
                     onClick={() => setIsSoundcheckOpen(true)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white font-bold text-xs border border-purple-500/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
+                    className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white font-bold text-xs border border-purple-500/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
                     title="Kiểm tra loa và mic trước khi vào thi"
                   >
                     <ShieldCheck className="w-4 h-4" />
@@ -914,7 +915,7 @@ export default function SpeakingWorkspace({
 
                   <button
                     onClick={handleEnterExamRoom}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
+                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0 active:scale-95"
                     title="Bắt đầu làm gói đề thi đang chọn"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
