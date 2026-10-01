@@ -45,7 +45,10 @@ for (const task of CAMBRIDGE_WRITING_TASKS) {
 // Verify that INITIAL_TASKS in sampleTasks.js includes Cambridge tasks
 const writingCambridgeInAll = INITIAL_TASKS.filter(t => t.isCambridge || t.source === 'cambridge');
 assert(writingCambridgeInAll.length >= CAMBRIDGE_WRITING_TASKS.length, 'INITIAL_TASKS must include all CAMBRIDGE_WRITING_TASKS');
-console.log(`    ✅ Writing Cambridge dataset verified: ${CAMBRIDGE_WRITING_TASKS.length} authentic tasks with full metadata.`);
+
+// Verify Cambridge 20 specifically
+assert(CAMBRIDGE_WRITING_TASKS.some(t => t.cambridgeBook === 20), 'Writing bank must contain Cambridge 20 tasks');
+console.log(`    ✅ Writing Cambridge dataset verified: ${CAMBRIDGE_WRITING_TASKS.length} authentic tasks with full metadata (including Cambridge 20).`);
 
 // -------------------------------------------------------------
 // 2. READING ROOM CAMBRIDGE BANK VERIFICATION
@@ -54,7 +57,8 @@ console.log('  ▶ 2. Verifying Reading Cambridge Tests...');
 assert(Array.isArray(INITIAL_READING_TESTS), 'INITIAL_READING_TESTS must be an array');
 
 const cambridgeReadingTests = INITIAL_READING_TESTS.filter(t => t.isCambridge || t.source === 'cambridge');
-assert(cambridgeReadingTests.length >= 4, `Expected at least 4 Cambridge reading tests, got ${cambridgeReadingTests.length}`);
+assert(cambridgeReadingTests.length >= 5, `Expected at least 5 Cambridge reading tests, got ${cambridgeReadingTests.length}`);
+assert(cambridgeReadingTests.some(t => t.cambridgeBook === 20), 'Reading bank must contain Cambridge 20 test');
 
 for (const test of cambridgeReadingTests) {
   assert(test.id, 'Reading test must have an id');
@@ -85,7 +89,8 @@ console.log('  ▶ 3. Verifying Listening Cambridge Tests...');
 assert(Array.isArray(INITIAL_LISTENING_TESTS), 'INITIAL_LISTENING_TESTS must be an array');
 
 const cambridgeListeningTests = INITIAL_LISTENING_TESTS.filter(t => t.isCambridge || t.source === 'cambridge');
-assert(cambridgeListeningTests.length >= 4, `Expected at least 4 Cambridge listening tests, got ${cambridgeListeningTests.length}`);
+assert(cambridgeListeningTests.length >= 5, `Expected at least 5 Cambridge listening tests, got ${cambridgeListeningTests.length}`);
+assert(cambridgeListeningTests.some(t => t.cambridgeBook === 20), 'Listening bank must contain Cambridge 20 test');
 
 for (const test of cambridgeListeningTests) {
   assert(test.id, 'Listening test must have an id');
@@ -106,7 +111,7 @@ for (const test of cambridgeListeningTests) {
   }
   assert.strictEqual(testQuestionCount, 40, `Listening test ${test.id} must have exactly 40 questions, got ${testQuestionCount}`);
 }
-console.log(`    ✅ Listening Cambridge dataset verified: ${cambridgeListeningTests.length} full tests with 4 parts and 40 questions each.`);
+console.log(`    ✅ Listening Cambridge dataset verified: ${cambridgeListeningTests.length} full tests with 4 parts and 40 questions each (including Cambridge 20).`);
 
 // -------------------------------------------------------------
 // 4. SPEAKING ROOM CAMBRIDGE PACKS VERIFICATION
@@ -115,7 +120,8 @@ console.log('  ▶ 4. Verifying Speaking Cambridge Mock Packs...');
 assert(Array.isArray(SPEAKING_MOCK_TEST_PACKS), 'SPEAKING_MOCK_TEST_PACKS must be an array');
 
 const cambridgeSpeakingPacks = SPEAKING_MOCK_TEST_PACKS.filter(p => p.isCambridge || p.source === 'cambridge');
-assert(cambridgeSpeakingPacks.length >= 4, `Expected at least 4 Cambridge speaking packs, got ${cambridgeSpeakingPacks.length}`);
+assert(cambridgeSpeakingPacks.length >= 5, `Expected at least 5 Cambridge speaking packs, got ${cambridgeSpeakingPacks.length}`);
+assert(cambridgeSpeakingPacks.some(p => p.cambridgeBook === 20), 'Speaking bank must contain Cambridge 20 pack');
 
 for (const pack of cambridgeSpeakingPacks) {
   assert(pack.id, 'Speaking pack must have an id');

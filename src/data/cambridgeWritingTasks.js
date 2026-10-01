@@ -810,6 +810,203 @@ Following the shaping phase, the moist bricks are transferred to a drying oven, 
       { word: 'two-phase kiln firing', meaning: 'quá trình nung lò 2 giai đoạn' },
       { word: 'ultimate distribution', meaning: 'khâu phân phối cuối cùng' }
     ]
+  },
+  // =========================================================================
+  // CAMBRIDGE IELTS 20 (NEWEST OFFICIAL EDITION)
+  // =========================================================================
+  {
+    id: 'cam-20-t1-water',
+    taskNumber: 2,
+    taskNum: 2,
+    type: 'discussion',
+    topic: 'Environment & Society',
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 20,
+    cambridgeTest: 1,
+    title: 'Cambridge 20 Test 1: Clean Water Access — Universal Right vs Paid Commodity',
+    prompt: 'Some people believe that access to clean water is a basic human right and governments should provide it free of charge to all citizens. Others argue that water is a scarce commodity and should be paid for like any other utility.\n\nDiscuss both views and give your own opinion.',
+    minWords: 250,
+    timeLimit: 40,
+    keywords: ['clean water', 'basic human right', 'free utility', 'scarce commodity', 'water conservation', 'subsidized tariffs'],
+    outline: {
+      introduction: 'Paraphrase the debate on whether municipal water should be a gratuitous human entitlement or a tariffed utility. State opinion: while essential domestic subsistence volume must be guaranteed free, progressive consumption tariffs are vital to deter resource depletion.',
+      body1: 'View A (Water as a Fundamental Right): Water is indispensable for human survival and sanitation; commercializing it penalizes underprivileged families and triggers public health epidemics.',
+      body2: 'View B (Water as a Paid Scarce Resource): Purification, filtration infrastructure, and desalination require immense capital expenditure; unrestricted free supply inevitably invites rampant wastage.',
+      conclusion: 'Reiterate that a tiered tariff structure—guaranteeing free baseline quotas while taxing excessive commercial or luxury usage—reconciles humanitarian welfare with fiscal sustainability.'
+    },
+    modelAnswer: `The contentious discourse surrounding public access to potable water has polarized socioeconomic planners. While humanitarian advocates contend that clean water constitutes an inalienable human entitlement that governments must supply gratuitously, fiscal pragmatists assert that water represents a depletable resource requiring tariffation. In my view, while a foundational subsistence quota should be safeguarded without charge, progressive pricing mechanisms remain indispensable to curb wasteful depletion.
+
+On the one hand, proponents of free municipal provision argue from the standpoint of fundamental human survival and public hygiene. Unlike discretionary commodities, water is biologically vital; depriving impoverished communities of clean supplies inevitably precipitates devastating waterborne epidemics such as cholera and dysentery. Furthermore, when private utilities commodify water distribution, vulnerable citizens are forced to divert disproportionate percentages of household income simply to secure hydration and basic sanitation. From this ethical perspective, ensuring universal, barrier-free access is an elemental governmental obligation that safeguards collective well-being and social equity.
+
+Conversely, those advocating for water charges emphasize the acute scarcity of global freshwater reserves and the colossal capital expenditures required to maintain treatment infrastructure. Pumping, desalinating, and filtering municipal water through complex subterranean piping networks necessitates continuous financial reinvestment. If water were rendered entirely cost-free, agricultural conglomerates and affluent households would possess zero incentive to curtail lavish consumption, leading to the rapid depletion of subterranean aquifers. Imposing measured tariffs compels consumers to adopt conservation technologies, such as rainwater harvesting and low-flow plumbing fixtures.
+
+In conclusion, both arguments possess considerable merit, but they need not be mutually exclusive. I firmly believe that the most judicious policy is a tiered billing architecture: governments should supply a baseline allowance free of charge to satisfy essential physiological needs, while enforcing progressive tariffs on surplus consumption to enforce conservation and sustain infrastructural upkeep.`,
+    vocabularyHighlights: [
+      { word: 'inalienable human entitlement', meaning: 'quyền lợi con người không thể tước đoạt' },
+      { word: 'potable water', meaning: 'nước sạch có thể uống được' },
+      { word: 'waterborne epidemics', meaning: 'dịch bệnh lây qua đường nước' },
+      { word: 'progressive pricing mechanisms', meaning: 'cơ chế định giá lũy tiến' },
+      { word: 'subterranean aquifers', meaning: 'các tầng chứa nước ngầm dưới lòng đất' }
+    ]
+  },
+  {
+    id: 'cam-20-t2-farm-map',
+    taskNumber: 1,
+    taskNum: 1,
+    type: 'map',
+    topic: 'Agriculture & Rural Development',
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 20,
+    cambridgeTest: 2,
+    title: 'Cambridge 20 Test 2: Redevelopment of an Agricultural Farm Site from 1950 to the Present',
+    prompt: 'The two maps below show the layout of a farm site in 1950 and the changes that have taken place up to the present day.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    minWords: 150,
+    timeLimit: 20,
+    keywords: ['Farm redevelopment', 'barn', 'farmhouse', 'visitor centre', 'organic orchard', 'tourist parking'],
+    mapLocations: [
+      { id: 'loc-1', name: 'Original Barns', status: 'Converted into Educational Visitor Centre & Café' },
+      { id: 'loc-2', name: 'Grazing Pastures', status: 'Replaced with Organic Soft Fruit Orchards' },
+      { id: 'loc-3', name: 'Open Dirt Tracks', status: 'Paved into Two-Way Access Road with Electric Vehicle Chargers' },
+      { id: 'loc-4', name: 'Traditional Farmhouse', status: 'Preserved and Expanded with Heritage Farm Museum Wing' }
+    ],
+    outline: {
+      introduction: 'Paraphrase the maps illustrating the spatial transformation of a commercial agrarian farm in 1950 into an integrated agro-tourism and educational site today.',
+      overview: 'Highlight the overarching shift from purely utilitarian livestock and cereal cultivation to commercial agro-tourism, ecological orchards, and enhanced vehicular infrastructure.',
+      body1: 'Detail northern and eastern modifications: conversion of working barns into an interactive visitor pavilion and restaurant, alongside orchard expansion.',
+      body2: 'Detail southern and western modifications: replacement of rough dirt roads with asphalt parking, addition of a heritage museum wing to the farmhouse.'
+    },
+    modelAnswer: `The two maps illustrate the extensive structural and functional transformation of a rural agricultural farm between 1950 and the present day.
+
+Overall, it is readily apparent that the site has transitioned from a traditional, production-oriented agricultural homestead into a modern agro-tourism and ecological education complex. While the original residential footprint has been preserved, working livestock facilities have been systematically repurposed for visitor amenities and specialized organic cultivation.
+
+In 1950, the northern sector of the property was dominated by expansive cattle grazing pastures and two functional timber barns used for tractor storage and livestock shelter. By the present day, these barns have undergone comprehensive renovation, merging into a modern visitor center complete with an artisanal farm-to-table café. Concurrently, the adjacent open pasture has been replaced by neatly arranged rows of organic soft fruit orchards, equipped with interactive customer-picking trails.
+
+Turning to the southern and western portions, the primitive unpaved dirt track of 1950 has been upgraded into a wide asphalt thoroughfare leading to an expansive visitor parking lot with electric vehicle charging stations. Finally, while the original stone farmhouse remains in its original position in the southwest corner, it has been expanded by the addition of a contemporary single-storey wing housing a heritage agricultural museum.`,
+    vocabularyHighlights: [
+      { word: 'structural and functional transformation', meaning: 'sự biến đổi về cấu trúc và công năng' },
+      { word: 'production-oriented agricultural homestead', meaning: 'khu trang trại hướng đến sản xuất nông nghiệp thuần túy' },
+      { word: 'agro-tourism and ecological education complex', meaning: 'quần thể du lịch nông nghiệp và giáo dục sinh thái' },
+      { word: 'thoroughfare', meaning: 'tuyến đường giao thông chính thông thoáng' },
+      { word: 'artisanal farm-to-table café', meaning: 'quán cà phê phục vụ nông sản tươi thủ công' }
+    ]
+  },
+  {
+    id: 'cam-20-t2-holidays',
+    taskNumber: 2,
+    taskNum: 2,
+    type: 'discussion',
+    topic: 'Education & Child Development',
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 20,
+    cambridgeTest: 2,
+    title: 'Cambridge 20 Test 2: Long Summer Vacations vs Frequent Short School Breaks',
+    prompt: 'Some education systems divide the school year into multiple short terms punctuated by frequent brief holidays, while others maintain a long continuous summer vacation. Discuss both approaches and give your own opinion.',
+    minWords: 250,
+    timeLimit: 40,
+    keywords: ['school holidays', 'summer learning loss', 'frequent breaks', 'child burnout', 'working parents', 'academic retention'],
+    outline: {
+      introduction: 'Introduce the structural debate between traditional extended summer holidays versus balanced, frequent shorter breaks. Give opinion: more frequent, distributed vacations optimize cognitive retention and support child mental health.',
+      body1: 'Arguments for Long Summer Breaks: Opportunity for deep experiential learning, seasonal employment for youth, long-distance travel, uninterrupted academic rhythm during terms.',
+      body2: 'Arguments for Frequent Short Holidays: Mitigation of summer learning loss (brain drain), reduction of teacher and pupil burnout, easing childcare scheduling for working parents.',
+      conclusion: 'Reiterate that distributed school terms with frequent respites provide superior academic momentum and psychological well-being.'
+    },
+    modelAnswer: `The structural configuration of the academic calendar remains a topic of spirited pedagogical debate. While traditional educational paradigms advocate for an extended summer vacation spanning two to three months, contemporary reformists promote a calendar characterized by shorter terms interspersed with frequent, regular respites. In my view, distributing vacation time more evenly throughout the year provides substantial cognitive and developmental advantages.
+
+Proponents of the traditional extended summer recess emphasize the value of prolonged, uninterrupted periods away from formal curricula. A lengthy summer hiatus affords adolescents the opportunity to gain formative life experience through internships, seasonal employment, and wilderness summer camps—activities that nurture self-reliance and emotional maturity outside conventional classroom confines. Furthermore, for educators, a substantial break provides the necessary temporal bandwidth for comprehensive curriculum restructuring and doctoral research without the daily pressures of classroom instruction.
+
+Nevertheless, compelling pedagogical research highlights the detrimental repercussions of prolonged absences from formal study, a phenomenon widely documented as "summer learning loss." During a two-month hiatus, students—particularly those from underprivileged socio-economic backgrounds without access to enriching supplementary tutoring—often forfeit vital numeracy and literacy momentum, requiring teachers to squander the first month of autumn re-teaching forgotten competencies. By contrast, a system punctuated by frequent, two-week breaks prevents cognitive regression while offering timely therapeutic relief before academic burnout sets in. Moreover, shorter, regular holidays align far more harmoniously with modern employment realities, alleviating the logistical childcare crisis encountered by dual-income working parents each summer.
+
+In conclusion, although the nostalgic tradition of the lengthy summer break offers opportunities for travel and seasonal vocations, I am convinced that a balanced calendar featuring frequent, shorter breaks is far more conducive to sustained cognitive retention and psychological equilibrium.`,
+    vocabularyHighlights: [
+      { word: 'summer learning loss', meaning: 'sự suy giảm kiến thức trong kỳ nghỉ hè dài' },
+      { word: 'prolonged, uninterrupted periods', meaning: 'khoảng thời gian dài liên tục không bị ngắt quãng' },
+      { word: 'cognitive regression', meaning: 'sự thụt lùi về năng lực nhận thức' },
+      { word: 'temporal bandwidth', meaning: 'quỹ thời gian rộng rãi' },
+      { word: 'psychological equilibrium', meaning: 'trạng thái cân bằng tâm lý' }
+    ]
+  },
+  {
+    id: 'cam-20-t4-bamboo-fabric',
+    taskNumber: 1,
+    taskNum: 1,
+    type: 'process',
+    topic: 'Manufacturing & Sustainable Materials',
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 20,
+    cambridgeTest: 4,
+    title: 'Cambridge 20 Test 4: The Manufacturing Process of Eco-Friendly Fabric from Bamboo',
+    prompt: 'The diagram below shows the industrial manufacturing process of fabric from natural bamboo.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.',
+    minWords: 150,
+    timeLimit: 20,
+    keywords: ['Bamboo fabric', 'mechanical crushing', 'enzyme immersion', 'cellulose pulp', 'spinning yarn', 'weaving textile'],
+    processSteps: [
+      { step: 1, name: 'Bamboo Harvesting', desc: 'Mature bamboo stalks are harvested and trimmed into uniform culm segments' },
+      { step: 2, name: 'Mechanical Crushing', desc: 'Stalks are crushed through heavy industrial rollers into coarse raw fibers' },
+      { step: 3, name: 'Enzyme Digestion', desc: 'Fibers are steeped in natural biological enzyme vats to break down lignins into soft cellulose pulp' },
+      { step: 4, name: 'Pulp Extrusion', desc: 'The refined cellulose mixture is pressed through spinnerets to form continuous thread filaments' },
+      { step: 5, name: 'Yarn Spinning', desc: 'Fine filaments are washed, dried, and spun onto rotating bobbins as durable textile yarn' },
+      { step: 6, name: 'Weaving & Dyeing', desc: 'Yarn is loaded onto mechanized industrial looms to weave sustainable eco-fabric' }
+    ],
+    outline: {
+      introduction: 'Paraphrase the cyclical linear stages required to transform organic bamboo culms into finished commercial textile fabric.',
+      overview: 'Highlight the six primary stages, proceeding from forestry harvesting and biological digestion to thread extrusion and industrial textile weaving.',
+      body1: 'Detail raw material preparation: harvesting mature stalks, roller crushing into raw splinters, and biological enzyme soaking to dissolve tough plant lignins.',
+      body2: 'Detail textile production: extrusion through spinnerets, washing, bobbin yarn spinning, and final loom weaving.'
+    },
+    modelAnswer: `The diagram delineates the sequential industrial procedures involved in manufacturing sustainable textile fabric from raw bamboo stalks.
+
+Overall, the production cycle comprises six discrete phases, beginning with the agricultural harvesting of mature bamboo culms, progressing through mechanical crushing and enzymatic refinement, and culminating in filament extrusion and industrial loom weaving.
+
+In the initial stage, fully grown bamboo stalks are harvested from plantations and trimmed into uniform segments. These stalks are subsequently fed into heavy mechanical roller crushers, which fracture the dense wooden culms into coarse longitudinal fibers. Next, these raw plant strands are submerged into specialized vats containing natural biological enzymes. This biochemical bath gently breaks down the cellular walls and plant lignins, converting the tough woody fibers into a smooth, malleable cellulose pulp.
+
+Following enzymatic digestion, the refined liquid cellulose is forced under high pressure through microscopic perforated spinneret nozzles, yielding continuous ultra-fine filaments. These delicate threads are promptly washed to remove residual biochemicals and dried under heated air currents. Once dry, the filaments are wound onto high-speed rotating bobbins as spun yarn. In the final phase, these yarn spools are mounted onto automated industrial weaving looms to fabricate bolts of soft, breathable, and biodegradable bamboo cloth ready for garment manufacturing.`,
+    vocabularyHighlights: [
+      { word: 'sequential industrial procedures', meaning: 'các quy trình công nghiệp tuần tự' },
+      { word: 'enzymatic refinement', meaning: 'quá trình tinh chế bằng enzyme sinh học' },
+      { word: 'perforated spinneret nozzles', meaning: 'đầu vòi phun tạo sợi có lỗ li ti' },
+      { word: 'malleable cellulose pulp', meaning: 'bột cellulose mềm dẻo dễ uốn' },
+      { word: 'automated industrial weaving looms', meaning: 'máy dệt công nghiệp tự động' }
+    ]
+  },
+  {
+    id: 'cam-20-t4-global-fashion',
+    taskNumber: 2,
+    taskNum: 2,
+    type: 'positive_negative',
+    topic: 'Culture & Modern Globalization',
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 20,
+    cambridgeTest: 4,
+    title: 'Cambridge 20 Test 4: Global Fashion Brands and Cultural Homogenization',
+    prompt: 'In many parts of the world, people wear similar clothes influenced by global fashion brands. Is this a positive or negative development?',
+    minWords: 250,
+    timeLimit: 40,
+    keywords: ['global fashion', 'cultural homogenization', 'fast fashion', 'indigenous textiles', 'affordable clothing', 'artistic diversity'],
+    outline: {
+      introduction: 'Paraphrase the ubiquity of standardized global fashion attire. State thesis: while international retail democratization offers affordable comfort, the attendant erosion of indigenous textile traditions and environmental pollution makes it an overwhelmingly negative phenomenon.',
+      body1: 'Positive Aspects (Brief Counter-balance): Affordability, functional ergonomics, democratization of modern aesthetic trends for average citizens across developing countries.',
+      body2: 'Negative Aspects (Core Stance): Erosion of unique ethnic cultural identity and indigenous craftsmanship; catastrophic environmental consequences of disposable fast-fashion pollution.',
+      conclusion: 'Reaffirm that the loss of cultural heritage and environmental wreckage far outweigh convenience.'
+    },
+    modelAnswer: `In our increasingly interconnected global economy, urban streets from Seoul to São Paulo display an undeniable aesthetic uniformity, as consumers gravitate toward standardized attire popularized by multinational apparel conglomerates. While this sartorial homogenization confers undeniable advantages regarding consumer affordability and functional convenience, I firmly contend that it represents an overwhelmingly detrimental phenomenon due to the obliteration of indigenous cultural heritage and acute ecological degradation.
+
+On the one hand, proponents of globalized fashion point to its democratic accessibility. Mass-production logistics allow international fast-fashion brands to distribute comfortable, weather-appropriate, and aesthetically contemporary clothing at price points accessible to average working-class households. Furthermore, standardized contemporary clothing—such as denim trousers, cotton tees, and waterproof jackets—provides practical ergonomic utility that aligns seamlessly with the fast-paced mobility of modern metropolitan lifestyles, whereas many elaborate traditional garments are cumbersome for daily office or factory labor.
+
+Nevertheless, the negative repercussions of this uniformity are profound and far-reaching. Culturally, the dominance of Western-centric retail chains has accelerated the alarming decline of unique indigenous textiles and artisanal weaving traditions. When younger generations abandon centuries-old traditional costumes—such as the Vietnamese Áo Dài, the Indian Sari, or West African Kente prints—in favor of generic polyester hoodies, ancient craftsmanship and symbolic cultural identities are irretrievably lost. Moreover, the economic engine driving this global uniformity is the destructive fast-fashion model, which encourages hyper-consumption of disposable garments manufactured under exploitative labor conditions and generates colossal mountainous landfills of non-biodegradable synthetic waste worldwide.
+
+In conclusion, although the proliferation of global fashion brands provides practical convenience and affordable choices, it remains a predominantly negative development that homogenizes diverse human cultures into bland uniformity and fuels unprecedented environmental devastation.`,
+    vocabularyHighlights: [
+      { word: 'aesthetic uniformity', meaning: 'sự đồng nhất về thẩm mỹ' },
+      { word: 'sartorial homogenization', meaning: 'sự đồng hóa về phong cách trang phục' },
+      { word: 'indigenous cultural heritage', meaning: 'di sản văn hóa bản địa' },
+      { word: 'democratic accessibility', meaning: 'khả năng tiếp cận bình dân cho mọi người' },
+      { word: 'hyper-consumption of disposable garments', meaning: 'sự tiêu dùng quá mức các trang phục dùng một lần' }
+    ]
   }
 ];
 

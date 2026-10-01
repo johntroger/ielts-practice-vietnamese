@@ -556,6 +556,88 @@ export const SPEAKING_PART3_QUESTIONS = [
 // =========================================================================
 export const SPEAKING_MOCK_TEST_PACKS = [
   {
+    id: 'cambridge-20-mock-test-1',
+    title: 'Cambridge 20 Test 1: Dining Out, High-Stakes Decisions & Crisis Intuition',
+    difficulty: 'Medium - Hard',
+    targetBand: '7.5 - 9.0',
+    estTime: '12 - 14 phút',
+    summary: 'Đề thi chính thức chuẩn Cambridge 20 Test 1 (Mới nhất): Ẩm thực nhà hàng, quyết định áp lực cao và trực giác xử lý khủng hoảng.',
+    isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 20,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
+    customPart1: {
+      id: 'cam20-p1-dining',
+      title: 'Dining Out & Restaurant Preferences',
+      category: 'Lifestyle & Social Habits',
+      questions: [
+        {
+          qId: 'cam20-p1-1',
+          question: 'Do you prefer dining at local neighborhood restaurants or cooking at home?',
+          focus: 'Habit & Comparative Evaluation',
+          strategy: 'A.R.E.A: Trả lời trực diện -> So sánh tiện lợi vs chi phí dinh dưỡng -> Nêu dịp đặc biệt -> Kết luận ngắn.',
+          vocabHints: [
+            { phrase: 'therapeutic culinary process', meaningVi: 'quá trình nấu nướng giúp chữa lành tâm trí' },
+            { phrase: 'vibrant culinary ambiance', meaningVi: 'không khí ẩm thực sôi động' }
+          ],
+          sampleAnswer: 'On weekdays, I prioritize home-cooked meals because of the nutritional control and therapeutic culinary process. However, on weekends, I relish exploring quirky local bistros to immerse myself in their vibrant culinary ambiance.'
+        },
+        {
+          qId: 'cam20-p1-2',
+          question: 'What factors do you consider most important when choosing a dining venue?',
+          focus: 'Criteria & Prioritization',
+          strategy: 'Nêu 2 yếu tố hàng đầu (vệ sinh an toàn thực phẩm + sự độc đáo của hương vị) kèm ví dụ.',
+          vocabHints: [
+            { phrase: 'uncompromising hygiene standards', meaningVi: 'tiêu chuẩn vệ sinh không thỏa hiệp' },
+            { phrase: 'authentic culinary signature', meaningVi: 'dấu ấn ẩm thực nguyên bản đặc trưng' }
+          ],
+          sampleAnswer: 'Above all else, I look for uncompromising hygiene standards and an authentic culinary signature. A minimalist menu utilizing seasonal farm-fresh ingredients is far more appealing than extensive generic offerings.'
+        }
+      ]
+    },
+    customPart2: {
+      id: 'cam20-p2-high-stakes-decision',
+      title: 'A Tough Decision You Made Under Severe Pressure',
+      category: 'Psychology & Life Crossroads',
+      cueCard: {
+        intro: 'Describe a significant decision you had to make under intense time pressure or stress. You should say:',
+        bullets: [
+          'What the situation was and what decision you faced',
+          'Why you had to make this decision quickly without delay',
+          'What alternatives you contemplated at that moment',
+          'And explain how you felt afterwards and what the outcome was'
+        ]
+      },
+      mindmapNotes: [
+        'Bối cảnh: Quyết định chuyển hướng đề tài luận văn tốt nghiệp 3 tuần trước hạn nộp',
+        'Áp lực: Dữ liệu khảo sát cũ không đạt chuẩn độ tin cậy Cronbach Alpha, nguy cơ trễ tốt nghiệp',
+        'Lựa chọn: Cố sửa dữ liệu cũ hay chuyển sang phương pháp nghiên cứu định tính phỏng vấn chuyên gia',
+        'Hành động & Kết quả: Quyết đoán chuyển hướng, làm việc thâu đêm, đạt điểm xuất sắc A+'
+      ],
+      sampleAnswer: 'I would like to recount a critical dilemma I confronted during the penultimate month of my undergraduate degree. With less than three weeks remaining before the thesis submission deadline, statistical audits revealed that my quantitative survey dataset suffered from severe non-response bias, rendering the findings scientifically untrustworthy. I faced an agonizing crossroads: attempt to salvage dubious empirical data or completely pivot to an emergency qualitative case-study methodology. Because postponing graduation was intolerable, I opted for the radical pivot. I conducted round-the-clock interviews with industry specialists, synthesizing findings under immense cognitive strain. Ultimately, the gamble paid off handsomely; the external examiners commended the qualitative depth of the revised thesis, awarding me an A grade.'
+    },
+    customPart3: {
+      linkedPart2Id: 'cam20-p2-high-stakes-decision',
+      topic: 'Crisis Decision-Making, Intuition and Artificial Intelligence',
+      questions: [
+        {
+          qId: 'cam20-p3-1',
+          question: 'Should high-stakes organizational leaders rely predominantly on rational statistical data or gut intuition during sudden emergencies?',
+          analysisType: 'Trực giác vs Phân tích dữ liệu trong khủng hoảng',
+          strategy: 'PEEL: Point -> Limits of data latency in crises -> Trained tacit intuition -> Hybrid decision framework'
+        },
+        {
+          qId: 'cam20-p3-2',
+          question: 'Will predictive artificial intelligence algorithms eventually replace human executive judgement in high-pressure governance?',
+          analysisType: 'Vai trò con người và thuật toán trong tương lai',
+          strategy: 'PEEL: Point -> Algorithmic processing speed -> Lack of moral responsibility & emotional nuance -> Human-in-the-loop necessity'
+        }
+      ]
+    }
+  },
+  {
     id: 'cambridge-19-mock-test-1',
     title: 'Cambridge 19 Test 1: Video Games, Complex Devices & AI Usability',
     difficulty: 'Medium - Hard',

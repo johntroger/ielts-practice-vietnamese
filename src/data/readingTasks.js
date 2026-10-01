@@ -3,11 +3,13 @@
  * Full 3 Passages, 40 Questions, Exact Answer Keys, Evidence Locators & Paraphrase Maps.
  */
 
+import { cambridge20ReadingTest1 } from './reading/cambridge20ReadingTest1.js';
 import { cambridge18ReadingTest1 } from './reading/cambridge18ReadingTest1.js';
 import { cambridge17ReadingTest1 } from './reading/cambridge17ReadingTest1.js';
 import { cambridge16ReadingTest1 } from './reading/cambridge16ReadingTest1.js';
 
 export const INITIAL_READING_TESTS = [
+  cambridge20ReadingTest1,
   cambridge18ReadingTest1,
   cambridge17ReadingTest1,
   cambridge16ReadingTest1,
