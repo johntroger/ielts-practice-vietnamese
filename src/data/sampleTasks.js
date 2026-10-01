@@ -1,4 +1,5 @@
 import { PROCESS_AND_MAP_TASKS } from './processAndMapTasks.js';
+import { CAMBRIDGE_WRITING_TASKS } from './cambridgeWritingTasks.js';
 
 export const INITIAL_TASKS = [
   {
@@ -128,7 +129,8 @@ In conclusion, while eliminating financial barriers for high-achieving, underpri
       { word: 'pragmatic equilibrium', meaning: 'trạng thái cân bằng mang tính thực tiễn' }
     ]
   },
-  ...PROCESS_AND_MAP_TASKS
+  ...PROCESS_AND_MAP_TASKS,
+  ...CAMBRIDGE_WRITING_TASKS
 ];
 
 /**

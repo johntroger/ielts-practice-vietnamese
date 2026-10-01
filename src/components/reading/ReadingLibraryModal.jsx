@@ -236,7 +236,7 @@ export default function ReadingLibraryModal({
     // 1. Tab filter
     let matchesTab = true;
     if (activeTab === 'cambridge') {
-      matchesTab = !test.isCustom;
+      matchesTab = Boolean(test.isCambridge || !test.isCustom);
     } else if (activeTab === 'ai') {
       matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo') && !test.title?.includes('[Full Test'));
     } else if (activeTab === 'ingest') {
@@ -292,7 +292,7 @@ export default function ReadingLibraryModal({
   // Calculate statistics
   const stats = {
     total: allReadingTests.length,
-    cambridge: allReadingTests.filter(t => !t.isCustom).length,
+    cambridge: allReadingTests.filter(t => t.isCambridge || !t.isCustom).length,
     ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test')).length,
     ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰') || t.title?.includes('[Báo chí'))).length,
     public: allReadingTests.filter(t => t.isPublic).length,
@@ -941,9 +941,9 @@ export default function ReadingLibraryModal({
                           </span>
 
                           {/* Source Badge */}
-                          {!test.isCustom ? (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
-                              Cambridge Academic
+                          {(test.isCambridge || !test.isCustom) ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                              🏛️ {test.cambridgeBook ? `Chuẩn Cambridge (Cam ${test.cambridgeBook})` : 'Cambridge Academic'}
                             </span>
                           ) : test.title?.includes('[Full Test') ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -1031,7 +1031,7 @@ export default function ReadingLibraryModal({
                               <Trash2 className="w-4 h-4" />
                             </button>
                           ) : (
-                            <span className="text-[10px] text-slate-400 font-medium">Cambridge</span>
+                            <span className="text-[10px] text-indigo-600 font-bold">🏛️ {test.cambridgeBook ? `Cam ${test.cambridgeBook}` : 'Cambridge'}</span>
                           )}
 
                           {onToggleMastered && (

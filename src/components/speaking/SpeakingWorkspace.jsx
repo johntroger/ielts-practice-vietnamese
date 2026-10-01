@@ -379,7 +379,7 @@ export default function SpeakingWorkspace({
   const mockPackCounts = React.useMemo(() => {
     return {
       all: allMockPacks.length,
-      cambridge: allMockPacks.filter(p => !p.isCustom).length,
+      cambridge: allMockPacks.filter(p => p.isCambridge || !p.isCustom).length,
       manual: allMockPacks.filter(p => p.isManual || (p.isCustom && !p.isAiGenerated)).length,
       ai: allMockPacks.filter(p => p.isAiGenerated).length
     };
@@ -387,7 +387,7 @@ export default function SpeakingWorkspace({
 
   const filteredMockPacks = React.useMemo(() => {
     if (mockFilter === 'cambridge') {
-      return allMockPacks.filter(p => !p.isCustom);
+      return allMockPacks.filter(p => p.isCambridge || !p.isCustom);
     }
     if (mockFilter === 'manual') {
       return allMockPacks.filter(p => p.isManual || (p.isCustom && !p.isAiGenerated));
@@ -881,9 +881,9 @@ export default function SpeakingWorkspace({
                                   <span>Đã thuộc</span>
                                 </span>
                               )}
-                              {!pack.isCustom && (
+                              {(pack.isCambridge || !pack.isCustom) && (
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                                  🏛️ Cambridge
+                                  🏛️ {pack.cambridgeBook ? `Chuẩn Cam ${pack.cambridgeBook}` : 'Cambridge'}
                                 </span>
                               )}
                               {isManual && (

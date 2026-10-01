@@ -151,7 +151,7 @@ export default function ListeningLibraryModal({
       // 1. Tab filter
       let matchesTab = true;
       if (activeTab === 'cambridge') {
-        matchesTab = !test.isCustom;
+        matchesTab = Boolean(test.isCambridge || !test.isCustom);
       } else if (activeTab === 'mastered') {
         matchesTab = isMastered;
       } else if (activeTab === 'ai') {
@@ -205,7 +205,7 @@ export default function ListeningLibraryModal({
 
   const stats = {
     total: allListeningTests.length,
-    cambridge: allListeningTests.filter(t => !t.isCustom).length,
+    cambridge: allListeningTests.filter(t => t.isCambridge || !t.isCustom).length,
     mastered: allListeningTests.filter(t => masteredIds.includes(t.id)).length,
     ai: allListeningTests.filter(t => t.isCustom && !t.isAssembled).length,
     assembled: allListeningTests.filter(t => t.isAssembled).length,
@@ -574,7 +574,7 @@ export default function ListeningLibraryModal({
                               ? 'bg-purple-100 text-purple-800' 
                               : 'bg-emerald-100 text-emerald-800'
                           }`}>
-                            {test.isCustom ? '✨ AI Audio Test' : '📚 Cambridge Official'}
+                            {test.isCustom ? '✨ AI Audio Test' : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`}
                           </span>
 
                           {masteredIds.includes(test.id) && (

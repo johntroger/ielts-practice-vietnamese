@@ -556,6 +556,345 @@ export const SPEAKING_PART3_QUESTIONS = [
 // =========================================================================
 export const SPEAKING_MOCK_TEST_PACKS = [
   {
+    id: 'cambridge-19-mock-test-1',
+    title: 'Cambridge 19 Test 1: Video Games, Complex Devices & AI Usability',
+    difficulty: 'Medium - Hard',
+    targetBand: '7.5 - 9.0',
+    estTime: '12 - 14 phút',
+    summary: 'Đề thi chính thức chuẩn Cambridge 19 Test 1: Trò chơi điện tử, thiết bị công nghệ phức tạp và sự thích nghi của con người.',
+    isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 19,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
+    customPart1: {
+      id: 'cam19-p1-games',
+      title: 'Video Games & Relaxation',
+      category: 'Leisure & Entertainment',
+      questions: [
+        {
+          qId: 'cam19-p1-1',
+          question: 'Do you play video games often?',
+          focus: 'Habit & Personal Frequency',
+          strategy: 'A.R.E.A: Trả lời trực diện -> Nêu thể loại yêu thích hoặc lý do không chơi -> Chi tiết tần suất -> Cảm nghĩ.',
+          vocabHints: [
+            { phrase: 'unwind after intense study sessions', meaningVi: 'thư giãn sau những giờ học căng thẳng' },
+            { phrase: 'immersive storytelling', meaningVi: 'cốt truyện nhập vai cuốn hút' }
+          ],
+          sampleAnswer: 'To be fair, I only indulge in video games intermittently, typically on weekends to unwind after taxing study sessions. I gravitate towards open-world strategy games that feature immersive storytelling.'
+        },
+        {
+          qId: 'cam19-p1-2',
+          question: 'What kinds of video games were popular when you were a young child?',
+          focus: 'Past Nostalgia & Comparison',
+          strategy: 'Nhớ lại trò chơi cổ điển (arcade, 8-bit hoặc console) so sánh với đồ họa ngày nay.',
+          vocabHints: [
+            { phrase: 'nostalgic handheld consoles', meaningVi: 'máy chơi game cầm tay hoài niệm' },
+            { phrase: 'pixelated platformers', meaningVi: 'game đi cảnh đồ họa pixel' }
+          ],
+          sampleAnswer: 'During my formative childhood years, simple pixelated platformers and handheld consoles like Game Boy dominated the playground. Games were far less graphically sophisticated but possessed incredible charm.'
+        },
+        {
+          qId: 'cam19-p1-3',
+          question: 'Do you believe playing video games offers any cognitive benefits for adolescents?',
+          focus: 'Analytical Evaluation',
+          strategy: 'Nêu lợi ích phát triển phản xạ, tư duy không gian và khả năng giải quyết vấn đề.',
+          vocabHints: [
+            { phrase: 'spatial awareness', meaningVi: 'nhận thức không gian' },
+            { phrase: 'rapid decision-making', meaningVi: 'khả năng ra quyết định chớp nhoáng' }
+          ],
+          sampleAnswer: 'Undoubtedly. Empirical studies show that strategic gaming bolsters spatial awareness, hand-eye coordination, and rapid problem-solving faculties under pressure.'
+        }
+      ]
+    },
+    customPart2: {
+      id: 'cam19-p2-tech-device',
+      title: 'A Piece of Electronic Technology You Found Difficult to Use',
+      category: 'Technology & Gadgets',
+      cueCard: {
+        intro: 'Describe a piece of electronic equipment that you found challenging to use initially. You should say:',
+        bullets: [
+          'What the equipment was and when you acquired it',
+          'For what purpose you intended to use it',
+          'Why you encountered complications while operating it',
+          'And explain how you eventually mastered it or felt about the experience'
+        ]
+      },
+      mindmapNotes: [
+        'Thiết bị: Máy ảnh không gương lật chuyên nghiệp (Mirrorless Camera) mua năm ngoái',
+        'Mục đích: Quay phim tài liệu và chụp ảnh nghệ thuật cho dự án đại học',
+        'Khó khăn: Quá nhiều menu con phức tạp, căn chỉnh khẩu độ/tốc độ/ISO bằng tay',
+        'Giải pháp & Cảm nghĩ: Xem video hướng dẫn chuyên sâu, kiên trì thực hành giúp nâng cao tư duy sáng tạo'
+      ],
+      sampleAnswer: 'I would like to talk about a high-end mirrorless digital camera that I acquired approximately eighteen months ago. Being passionate about visual storytelling, I intended to use it for documentary filmmaking. However, transitioning from a basic smartphone to full manual controls proved daunting. The labyrinthine menu settings, combined with balancing aperture, shutter speed, and ISO, felt overwhelming at first. I eventually overcame the learning curve by immersing myself in online masterclasses and dedicating hours to field experimentation, which proved immensely rewarding.'
+    },
+    customPart3: {
+      linkedPart2Id: 'cam19-p2-tech-device',
+      topic: 'Technology, Usability and Human Adaptation',
+      questions: [
+        {
+          qId: 'cam19-p3-1',
+          question: 'Why do manufacturers often make modern electronic appliances excessively complicated?',
+          analysisType: 'Phân tích nguyên nhân thiết kế & Áp lực thương mại',
+          strategy: 'PEEL: Point -> Feature creep / Marketing competition -> Real example -> Impact on elderly'
+        },
+        {
+          qId: 'cam19-p3-2',
+          question: 'How can society ensure elderly generations are not disenfranchised by digital governance and automated services?',
+          analysisType: 'Giải pháp chính sách xã hội & Công bằng số',
+          strategy: 'PEEL: Point -> Community digital literacy programs -> Human fallback desks -> Inclusive design'
+        }
+      ]
+    }
+  },
+  {
+    id: 'cambridge-18-mock-test-1',
+    title: 'Cambridge 18 Test 1: Daily Keys, Historic Sites & Cultural Heritage',
+    difficulty: 'Medium - Hard',
+    targetBand: '7.0 - 8.5',
+    estTime: '12 - 14 phút',
+    summary: 'Đề thi chính thức chuẩn Cambridge 18 Test 1: Chìa khóa và bảo mật cá nhân, địa danh lịch sử ấn tượng và bảo tồn di sản.',
+    isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 18,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
+    customPart1: {
+      id: 'cam18-p1-keys',
+      title: 'Keys & Personal Security',
+      category: 'Daily Habits',
+      questions: [
+        {
+          qId: 'cam18-p1-1',
+          question: 'Do you carry a lot of keys with you on a daily basis?',
+          focus: 'Habit & Daily Routine',
+          strategy: 'A.R.E.A: Trả lời trực diện -> Nêu số lượng chìa -> Chuyển sang khóa thông minh số -> Cảm nhận.',
+          vocabHints: [
+            { phrase: 'keychain bundle', meaningVi: 'chùm chìa khóa' },
+            { phrase: 'smart biometric door lock', meaningVi: 'khóa cửa thông minh sinh trắc học' }
+          ],
+          sampleAnswer: 'Not really, I only carry a minimalist keychain with my house key and bicycle lock. Recently, my apartment installed smart biometric locks, which eliminated the need for cumbersome metal keys.'
+        },
+        {
+          qId: 'cam18-p1-2',
+          question: 'Have you ever accidentally misplaced or lost your keys?',
+          focus: 'Past Experience & Problem Solving',
+          strategy: 'Kể lại tình huống để quên chìa khóa -> Cách giải quyết -> Bài học rút ra.',
+          vocabHints: [
+            { phrase: 'frantic search', meaningVi: 'cuộc tìm kiếm hoảng loạn' },
+            { phrase: 'spare key with a trusted neighbor', meaningVi: 'chìa khóa dự phòng gửi hàng xóm đáng tin' }
+          ],
+          sampleAnswer: 'Yes, unfortunately. Last year I left my apartment keys in a coffee shop, resulting in a frantic search. Fortunately, an honest barista safeguarded them until I returned.'
+        }
+      ]
+    },
+    customPart2: {
+      id: 'cam18-p2-historic-site',
+      title: 'An Interesting Historic Place You Visited',
+      category: 'History & Culture',
+      cueCard: {
+        intro: 'Describe an interesting historical site that you visited. You should say:',
+        bullets: [
+          'Where the historical site is located',
+          'When and with whom you visited this place',
+          'What historical events took place there',
+          'And explain what impressed you most about the site'
+        ]
+      },
+      mindmapNotes: [
+        'Địa danh: Cố đô Huế (The Imperial Citadel of Hue) tại miền Trung Việt Nam',
+        'Thời gian & Bạn đồng hành: Mùa hè năm ngoái cùng hai người bạn thân thời đại học',
+        'Ý nghĩa lịch sử: Kinh đô của triều Nguyễn từ 1802 đến 1945, nhân chứng qua nhiều thăng trầm lịch sử',
+        'Ấn tượng sâu sắc: Kiến trúc cung đình độc đáo hài hòa phong thủy, sự tôn kính quá khứ'
+      ],
+      sampleAnswer: 'I would like to describe my visit to the Imperial Citadel of Hue in central Vietnam, an extraordinary UNESCO World Heritage site that served as the political seat of the Nguyen Dynasty from 1802 to 1945. I explored the complex last summer alongside two close university peers. Walking across the ancient stone bastions and seeing the preserved Royal Palace surrounded by tranquil lotus moats was mesmerising. What left the deepest impression was the exquisite synthesis of classical oriental architecture and natural feng-shui geography, reflecting centuries of resilient royal heritage.'
+    },
+    customPart3: {
+      linkedPart2Id: 'cam18-p2-historic-site',
+      topic: 'Historic Preservation, Tourism and Education',
+      questions: [
+        {
+          qId: 'cam18-p3-1',
+          question: 'Why is it critical for municipal governments to allocate public funding to preserve ancient historical monuments?',
+          analysisType: 'Ý nghĩa bảo tồn di sản & Bản sắc dân tộc',
+          strategy: 'PEEL: Point -> Cultural identity & anchor -> Tourism dividends -> Duty to future generations'
+        },
+        {
+          qId: 'cam18-p3-2',
+          question: 'How can primary and secondary schools make history education more captivating for young students?',
+          analysisType: 'Cải tiến phương pháp sư phạm môn lịch sử',
+          strategy: 'PEEL: Point -> Experiential site field trips -> Virtual reality reenactments -> Moving away from dates memorization'
+        }
+      ]
+    }
+  },
+  {
+    id: 'cambridge-17-mock-test-1',
+    title: 'Cambridge 17 Test 1: Nutrition & Cooking, Public Amenities & Quality of Life',
+    difficulty: 'Medium',
+    targetBand: '7.0 - 8.5',
+    estTime: '12 - 14 phút',
+    summary: 'Đề thi chính thức chuẩn Cambridge 17 Test 1: Nấu ăn và thói quen dinh dưỡng, công trình công cộng ấn tượng và phúc lợi đô thị.',
+    isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 17,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
+    customPart1: {
+      id: 'cam17-p1-cooking',
+      title: 'Nutrition & Home Cooking Habits',
+      category: 'Lifestyle & Health',
+      questions: [
+        {
+          qId: 'cam17-p1-1',
+          question: 'Do you enjoy cooking your own meals at home?',
+          focus: 'Habit & Attitude',
+          strategy: 'A.R.E.A: Trả lời -> Lợi ích tự nấu (kiểm soát gia vị, tiết kiệm) -> Món sở trường -> Cảm nhận.',
+          vocabHints: [
+            { phrase: 'culinary experimentation', meaningVi: 'thử nghiệm nấu nướng' },
+            { phrase: 'control dietary intake', meaningVi: 'kiểm soát lượng dinh dưỡng nạp vào' }
+          ],
+          sampleAnswer: 'Yes, immensely. Preparing meals at home affords me complete control over nutritional ingredients, allowing me to minimise artificial additives while indulging in therapeutic culinary experimentation.'
+        },
+        {
+          qId: 'cam17-p1-2',
+          question: 'Who usually did the cooking in your family when you were a child?',
+          focus: 'Childhood Memory & Role Division',
+          strategy: 'Kể về cha mẹ hoặc người thân nấu ăn -> Món ăn truyền thống gia đình.',
+          vocabHints: [
+            { phrase: 'wholesome family feasts', meaningVi: 'bữa cơm gia đình ấm cúng và bổ dưỡng' },
+            { phrase: 'cherished childhood memories', meaningVi: 'những kỷ niệm tuổi thơ đáng trân trọng' }
+          ],
+          sampleAnswer: 'My mother was the primary cook throughout my upbringing. She consistently prepared wholesome, balanced meals from scratch, which instilled in me an appreciation for authentic home-cooked food.'
+        }
+      ]
+    },
+    customPart2: {
+      id: 'cam17-p2-public-facility',
+      title: 'An Impressive Public Facility or Amenity in Your Area',
+      category: 'Society & Infrastructure',
+      cueCard: {
+        intro: 'Describe an impressive public facility or amenity in your city or hometown. You should say:',
+        bullets: [
+          'What the facility is and where it is located',
+          'How frequently you and other locals visit it',
+          'What activities people can engage in there',
+          'And explain why you consider this facility so valuable for the community'
+        ]
+      },
+      mindmapNotes: [
+        'Công trình: Thư viện tổng hợp trung tâm (Central Public Library) tại trung tâm thành phố',
+        'Tần suất: Ghé thăm 2 lần/tuần để đọc sách nghiên cứu và học tập yên tĩnh',
+        'Hoạt động: Đọc tài liệu, mượn sách số, phòng hội thảo thanh niên, không gian sáng tạo maker-space',
+        'Giá trị: Tiếp cận tri thức bình đẳng miễn phí, kết nối cộng đồng dân cư đa thế hệ'
+      ],
+      sampleAnswer: 'I would like to highlight our state-of-the-art Central Public Library, which opened three years ago in the civic heart of our metropolis. It is an architectural masterpiece of sustainable timber and floor-to-ceiling glass. I visit at least twice weekly to study in its soundproof reading bays. Beyond housing half a million volumes, it provides free broadband internet, multimedia editing suites, and community exhibition zones. It is invaluable because it democratizes access to knowledge for citizens of all socio-economic backgrounds.'
+    },
+    customPart3: {
+      linkedPart2Id: 'cam17-p2-public-facility',
+      topic: 'Public Amenities, Urban Liveability and Municipal Investment',
+      questions: [
+        {
+          qId: 'cam17-p3-1',
+          question: 'What types of public facilities should city councils prioritize when designing new residential districts?',
+          analysisType: 'Quy hoạch đô thị & Cơ sở hạ tầng công cộng',
+          strategy: 'PEEL: Point -> Green recreational parks & clinics -> Accessible transit -> Social cohesion'
+        },
+        {
+          qId: 'cam17-p3-2',
+          question: 'Should commercial private corporations be permitted to operate essential public facilities such as libraries and parks?',
+          analysisType: 'Tư nhân hóa vs Phúc lợi công cộng',
+          strategy: 'PEEL: Point -> Profit incentives vs public accessibility -> Risk of exclusion -> Hybrid public-private oversight'
+        }
+      ]
+    }
+  },
+  {
+    id: 'cambridge-16-mock-test-1',
+    title: 'Cambridge 16 Test 1: Naming Traditions, Health Articles & Preventive Wellbeing',
+    difficulty: 'Medium - Hard',
+    targetBand: '7.5 - 9.0',
+    estTime: '12 - 14 phút',
+    summary: 'Đề thi chính thức chuẩn Cambridge 16 Test 1: Truyền thống đặt tên, bài báo sức khỏe ấn tượng và chăm sóc sức khỏe chủ động.',
+    isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 16,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
+    customPart1: {
+      id: 'cam16-p1-names',
+      title: 'Names & Cultural Significance',
+      category: 'Culture & Personal Identity',
+      questions: [
+        {
+          qId: 'cam16-p1-1',
+          question: 'Does your given name possess any special cultural or familial meaning?',
+          focus: 'Cultural Context & Meaning',
+          strategy: 'A.R.E.A: Nêu ý nghĩa tên -> Nguồn gốc chữ Hán-Việt hoặc mong ước của gia đình -> Cảm nghĩ.',
+          vocabHints: [
+            { phrase: 'symbolic paternal aspiration', meaningVi: 'ước nguyện mang tính biểu tượng của người cha' },
+            { phrase: 'virtue and resilience', meaningVi: 'đức hạnh và sự kiên cường' }
+          ],
+          sampleAnswer: 'Indeed. In Vietnamese culture, given names carry profound paternal aspirations. My name signifies moral integrity and steady fortitude, expressing my parents\' hope that I would navigate life with unwavering resilience.'
+        },
+        {
+          qId: 'cam16-p1-2',
+          question: 'Do people in your country often adopt nicknames in casual social settings?',
+          focus: 'Social Conventions & Tone',
+          strategy: 'Phân tích sự khác biệt giữa gia đình/bạn bè thân thiết và môi trường công việc trang trọng.',
+          vocabHints: [
+            { phrase: 'affectionate moniker', meaningVi: 'biệt danh trìu mến' },
+            { phrase: 'formal professional etiquette', meaningVi: 'phép xã giao nghề nghiệp trang trọng' }
+          ],
+          sampleAnswer: 'Absolutely. Within domestic and close social circles, individuals frequently adopt affectionate monikers based on childhood traits, though formal professional etiquette strictly dictates official names.'
+        }
+      ]
+    },
+    customPart2: {
+      id: 'cam16-p2-health-article',
+      title: 'An Informative Article on Health and Wellbeing You Read',
+      category: 'Health & Science',
+      cueCard: {
+        intro: 'Describe an insightful article about health, nutrition or exercise that you read recently. You should say:',
+        bullets: [
+          'What the article was about and where you read it',
+          'When you read this article',
+          'What new scientific information or advice it presented',
+          'And explain how this article changed your personal lifestyle habits'
+        ]
+      },
+      mindmapNotes: [
+        'Bài viết: Bài báo khoa học về tác động của giấc ngủ sâu và nhịp sinh học (Circadian Rhythm)',
+        'Nguồn: Đọc trên tạp chí y khoa trực tuyến New Scientist vào tháng trước',
+        'Nội dung: Chu kỳ ngủ REM, cơ chế thải độc não Glymphatic system trong khi ngủ',
+        'Thay đổi bản thân: Bỏ thói quen thức khuya lướt điện thoại, đi ngủ đúng giờ, tinh thần tỉnh táo'
+      ],
+      sampleAnswer: 'I would like to discuss an enlightening scientific paper on circadian biology that I read last month on the New Scientist digital platform. The article meticulously detailed the glymphatic clearance system—a biological mechanism wherein cerebrospinal fluid flushes metabolic toxins from brain tissues during deep sleep. It highlighted how chronic sleep deprivation impairs cognitive memory and elevates neurological risks. Reading this prompted me to enforce a strict digital curfew thirty minutes before bed, which has dramatically improved my daytime focus.'
+    },
+    customPart3: {
+      linkedPart2Id: 'cam16-p2-health-article',
+      topic: 'Preventive Healthcare, Misinformation and Public Health Policy',
+      questions: [
+        {
+          qId: 'cam16-p3-1',
+          question: 'Why do so many sensationalized and inaccurate health remedies proliferate rapidly across social media platforms?',
+          analysisType: 'Lan truyền tin tức sức khỏe sai lệch & Tâm lý người dùng',
+          strategy: 'PEEL: Point -> Algorithmic sensationalism & clickbait -> Anxiety of miracle cures -> Lack of media literacy'
+        },
+        {
+          qId: 'cam16-p3-2',
+          question: 'Should public healthcare policy invest more funding in preventive wellness rather than curative treatments?',
+          analysisType: 'Y tế dự phòng vs Điều trị bệnh tật',
+          strategy: 'PEEL: Point -> Preventive cost-effectiveness -> Reducing hospital congestion -> Long-term societal wellbeing'
+        }
+      ]
+    }
+  },
+  {
     id: 'mock-spk-tech-future',
     title: 'Full Mock Test 01: Công Nghệ, Kỹ Thuật Số & Xã Hội Tương Lai',
     difficulty: 'Medium - Hard',
@@ -563,6 +902,11 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     estTime: '12 - 14 phút',
     summary: 'Bài thi thử toàn diện mô phỏng phòng thi IDP/BC xoay quanh chủ đề Công nghệ, Thiết bị số và Chuyển dịch việc làm.',
     isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 15,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
     part1TopicId: 'p1-technology',
     part2CueCardId: 'p2-tech-device',
     part3DiscussionId: 'p2-tech-device'
@@ -575,6 +919,11 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     estTime: '11 - 13 phút',
     summary: 'Phòng thi thử tập trung vào kỹ năng phản biện, lập luận về các quyết định quan trọng, công việc và áp lực cuộc sống.',
     isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 14,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
     part1TopicId: 'p1-work-study',
     part2CueCardId: 'p2-challenging-decision',
     part3DiscussionId: 'p2-challenging-decision'
@@ -587,6 +936,11 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     estTime: '12 - 14 phút',
     summary: 'Thử thách khả năng kể chuyện biểu cảm (Storytelling) và phân tích các vấn đề du lịch đại chúng, bảo tồn di sản.',
     isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 13,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
     part1TopicId: 'p1-hometown',
     part2CueCardId: 'p2-memorable-journey',
     part3DiscussionId: 'p2-memorable-journey'
@@ -599,6 +953,11 @@ export const SPEAKING_MOCK_TEST_PACKS = [
     estTime: '12 - 14 phút',
     summary: 'Mô phỏng phòng thi chuyên sâu về con người truyền cảm hứng, phẩm chất lãnh đạo và văn hóa truyền thông hiện đại.',
     isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 12,
+    cambridgeTest: 1,
+    creatorEmail: 'Cambridge Assessment',
     part1TopicId: 'p1-daily-routine',
     part2CueCardId: 'p2-inspiring-person',
     part3DiscussionId: 'p2-inspiring-person'

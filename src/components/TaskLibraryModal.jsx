@@ -116,7 +116,7 @@ export default function TaskLibraryModal({
       all: fullPool.length,
       manual: fullPool.filter(t => t.isManual || (t.isCustom && !t.isAiGenerated)).length,
       ai: fullPool.filter(t => t.isAiGenerated).length,
-      cambridge: fullPool.filter(t => !t.isCustom && !t.isAiGenerated).length,
+      cambridge: fullPool.filter(t => t.isCambridge || (!t.isCustom && !t.isAiGenerated)).length,
       community: communityTasks.length,
       mastered: allTasks.filter(t => masteredIds.includes(t.id)).length
     };
@@ -156,7 +156,7 @@ export default function TaskLibraryModal({
       } else if (activeTab === 'ai') {
         base = base.filter(t => t.isAiGenerated);
       } else if (activeTab === 'cambridge') {
-        base = base.filter(t => !t.isCustom && !t.isAiGenerated);
+        base = base.filter(t => t.isCambridge || (!t.isCustom && !t.isAiGenerated));
       } else if (activeTab === 'community') {
         base = base.filter(t => t.isCommunity);
       }
@@ -590,9 +590,9 @@ export default function TaskLibraryModal({
                             <span>✍️ Thủ Công</span>
                           </span>
                         )}
-                        {(!t.isCustom && !t.isAiGenerated) && (
-                          <span className="text-[10px] text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 font-semibold">
-                            🏛️ Cambridge
+                        {(t.isCambridge || (!t.isCustom && !t.isAiGenerated)) && (
+                          <span className="text-[10px] text-indigo-800 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200 font-bold flex items-center space-x-1 shadow-2xs">
+                            <span>🏛️ {t.cambridgeBook ? `Chuẩn Cambridge (Cam ${t.cambridgeBook})` : 'Chuẩn Cambridge'}</span>
                           </span>
                         )}
                         {t.imageUrl && (

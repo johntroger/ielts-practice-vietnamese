@@ -309,6 +309,19 @@ export function applySmartFilterAndSort(items = [], criteria = {}) {
     if (quickFilter === 'ai' && !item.isAiGenerated) {
       continue;
     }
+    if (quickFilter === 'cambridge') {
+      const isCam = Boolean(
+        item.isCambridge ||
+        item.cambridgeBook ||
+        item.source === 'cambridge' ||
+        (!item.isCustom && !item.isAiGenerated && item.source !== 'ai' && !item.isManual) ||
+        (item.creatorEmail && item.creatorEmail.toLowerCase().includes('cambridge')) ||
+        (item.title && /cambridge|cam\s*\d+/i.test(item.title))
+      );
+      if (!isCam) {
+        continue;
+      }
+    }
     if (quickFilter === 'band_high') {
       const band = parseFloat(item.bandLevel || item.targetBand || item.band || '0');
       if (band < 7.0 && !metrics.isTopRated) {

@@ -3,14 +3,25 @@
  * Full 3 Passages, 40 Questions, Exact Answer Keys, Evidence Locators & Paraphrase Maps.
  */
 
+import { cambridge18ReadingTest1 } from './reading/cambridge18ReadingTest1.js';
+import { cambridge17ReadingTest1 } from './reading/cambridge17ReadingTest1.js';
+import { cambridge16ReadingTest1 } from './reading/cambridge16ReadingTest1.js';
+
 export const INITIAL_READING_TESTS = [
+  cambridge18ReadingTest1,
+  cambridge17ReadingTest1,
+  cambridge16ReadingTest1,
   {
     id: 'cambridge-academic-test-1',
-    title: 'Cambridge Practice Test 01: Modern Innovation & Science',
+    title: 'Cambridge Practice Test 15: Roman Shipwrecks, Multilingualism & Air Traffic',
     description: 'Bộ đề thi thử chuẩn Cambridge Academic gồm 3 bài đọc với đầy đủ 40 câu hỏi, thời gian làm bài 60 phút.',
     totalQuestions: 40,
     timeLimitMinutes: 60,
     isPublic: true,
+    isCambridge: true,
+    source: 'cambridge',
+    cambridgeBook: 15,
+    cambridgeTest: 1,
     creatorEmail: 'Cambridge Assessment',
     passages: [
       {

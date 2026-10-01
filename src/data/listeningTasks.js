@@ -3,7 +3,9 @@
  * Full 4 Parts, 40 Questions, Exact Answer Keys, Evidence Locators & Audio Timestamps.
  */
 
+import { cambridge19Test1 } from './listening/cambridge19Test1.js';
 import { cambridge18Test1 } from './listening/cambridge18Test1.js';
+import { cambridge17Test1 } from './listening/cambridge17Test1.js';
 import { cambridge8Test1 } from './listening/cambridge8Test1.js';
 import { cambridge8Test2 } from './listening/cambridge8Test2.js';
 import { cambridge8Test3 } from './listening/cambridge8Test3.js';
@@ -29,7 +31,9 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  cambridge19Test1,
   cambridge18Test1,
+  cambridge17Test1,
   cambridge8Test1,
   cambridge8Test2,
   cambridge8Test3
