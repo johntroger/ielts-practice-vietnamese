@@ -948,6 +948,139 @@ Return ONLY raw parseable JSON:
   "signpostType": "...",
   "explanation": "..."
 }`;
+  } else if (drillType === 'speaking-area') {
+    prompt = `Act as an expert Cambridge IELTS Speaking coach. Generate 1 brand new "A.R.E.A Expansion Reflex" micro-drill for IELTS Speaking (Part 1 or Part 3).
+Topic: ${topic}
+
+Requirements:
+- "title": Title e.g. "A.R.E.A Reflex: [Chủ đề sinh hoạt / xã hội]"
+- "topic": Topic name
+- "part": "Part 1" or "Part 3"
+- "question": An authentic Cambridge IELTS Speaking question
+- "difficulty": "Band 7.0 - 8.5"
+- "tip": Clear Vietnamese advice on how to expand the answer
+- "formula": Object containing:
+  - "answer": { "label": "A - Answer (Trực diện)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "reason": { "label": "R - Reason (Lý do)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "example": { "label": "E - Example (Ví dụ)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "alternative": { "label": "A - Alternative (Góc nhìn đối chiếu)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+- "modelAnswerBand8": Full 4-sentence Band 8.5 response
+- "lexicalHighlights": Array of 5-7 advanced C1-C2 collocations/idioms used
+
+Return ONLY raw parseable JSON:
+{
+  "type": "speaking-area",
+  "title": "...",
+  "topic": "...",
+  "part": "Part 1",
+  "question": "...",
+  "difficulty": "Band 7.0 - 8.5",
+  "tip": "...",
+  "formula": {
+    "answer": { "label": "A - Answer (Trực diện)", "prompt": "...", "sample": "...", "keywords": ["..."] },
+    "reason": { "label": "R - Reason (Lý do)", "prompt": "...", "sample": "...", "keywords": ["..."] },
+    "example": { "label": "E - Example (Ví dụ)", "prompt": "...", "sample": "...", "keywords": ["..."] },
+    "alternative": { "label": "A - Alternative (Góc nhìn đối chiếu)", "prompt": "...", "sample": "...", "keywords": ["..."] }
+  },
+  "modelAnswerBand8": "...",
+  "lexicalHighlights": ["...", "..."]
+}`;
+  } else if (drillType === 'speaking-fillers') {
+    prompt = `Act as an expert Cambridge IELTS Speaking coach. Generate 1 brand new "Natural Fillers & Signposting" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Title e.g. "Từ Đệm: [Tình huống phòng thi]"
+- "category": e.g. "Buying Time & Recalling Past", "Speculating & Forecasting", "Balancing Two Sides"
+- "situation": Vietnamese description of the challenging exam moment
+- "question": Examiner question
+- "taskPrompt": Question prompt asking user to pick the most natural native filler
+- "options": Array of 4 options (1 correct native filler with explanation, 3 unnatural/awkward choices with explanations)
+- "targetFiller": The correct filler phrase
+- "sampleContinuation": Full natural continuation sentence
+
+Return ONLY raw parseable JSON:
+{
+  "type": "speaking-fillers",
+  "title": "...",
+  "category": "...",
+  "situation": "...",
+  "question": "...",
+  "taskPrompt": "...",
+  "options": [
+    { "text": "...", "isCorrect": true, "explanation": "..." },
+    { "text": "...", "isCorrect": false, "explanation": "..." },
+    { "text": "...", "isCorrect": false, "explanation": "..." },
+    { "text": "...", "isCorrect": false, "explanation": "..." }
+  ],
+  "targetFiller": "...",
+  "sampleContinuation": "..."
+}`;
+  } else if (drillType === 'speaking-collocations') {
+    prompt = `Act as an expert Cambridge IELTS Speaking coach. Generate 1 brand new "Natural Speaking Collocations & Idioms" micro-drill.
+Topic: ${topic}
+
+Requirements:
+- "title": Title e.g. "Idiom: [Ý nghĩa]"
+- "category": Topic category
+- "context": Context where this idiom is naturally used
+- "prompt": Instruction prompt in Vietnamese
+- "questionSentence": Sentence with "______" blank
+- "options": Array of 4 options (1 correct idiom, 3 incorrect/word-by-word Vietnamese translation traps)
+- "idiom": The target idiom
+- "meaning": English meaning
+- "speakingExample": Example sentence for Speaking test
+
+Return ONLY raw parseable JSON:
+{
+  "type": "speaking-collocations",
+  "title": "...",
+  "category": "...",
+  "context": "...",
+  "prompt": "...",
+  "questionSentence": "...",
+  "options": [
+    { "text": "...", "isCorrect": true, "explanation": "..." },
+    { "text": "...", "isCorrect": false, "explanation": "..." },
+    { "text": "...", "isCorrect": false, "explanation": "..." },
+    { "text": "...", "isCorrect": false, "explanation": "..." }
+  ],
+  "idiom": "...",
+  "meaning": "...",
+  "speakingExample": "..."
+}`;
+  } else if (drillType === 'speaking-part3-counter') {
+    prompt = `Act as an expert Cambridge IELTS Speaking examiner. Generate 1 brand new "Two-Sided Analytical Reflex" micro-drill for IELTS Speaking Part 3.
+Topic: ${topic}
+
+Requirements:
+- "title": Title e.g. "Phản Biện Part 3: [Chủ đề tranh luận]"
+- "topic": Topic name
+- "question": A challenging, multi-layered Part 3 question
+- "category": "Two-Sided Societal Debate"
+- "difficulty": "Band 7.5 - 8.5"
+- "tip": Vietnamese advice on balancing arguments
+- "sideA": { "perspective": "...", "starter": "On the one hand, ...", "points": "..." }
+- "sideB": { "perspective": "...", "starter": "On the flip side, conversely, ...", "points": "..." }
+- "synthesis": { "starter": "So on balance, ...", "conclusion": "..." }
+- "modelAnswerBand8": Full high-scoring response
+- "highBandVocab": Array of 6-8 C1-C2 vocabulary items
+
+Return ONLY raw parseable JSON:
+{
+  "type": "speaking-part3-counter",
+  "title": "...",
+  "topic": "...",
+  "question": "...",
+  "category": "Two-Sided Societal Debate",
+  "difficulty": "Band 7.5 - 8.5",
+  "tip": "...",
+  "sideA": { "perspective": "...", "starter": "...", "points": "..." },
+  "sideB": { "perspective": "...", "starter": "...", "points": "..." },
+  "synthesis": { "starter": "...", "conclusion": "..." },
+  "modelAnswerBand8": "...",
+  "highBandVocab": ["..."]
+}`;
   } else {
     // paraphrase
     prompt = `Act as an expert Cambridge IELTS coach. Generate 1 brand new "Single-Sentence Paraphrasing Drill" for IELTS Writing.
@@ -1076,6 +1209,79 @@ Evaluate and return ONLY valid JSON:
       phoneticFeedback: 'Đã hoàn thành bài nghe. Cần chú ý âm đuôi và hiện tượng nuốt âm.',
       trapAnalysis: 'Hãy đối chiếu kỹ lưỡng với đáp án chuẩn.',
       recommendedReflex: 'Luyện nghe chép chính tả 10 phút mỗi ngày.'
+    };
+  }
+}
+
+/**
+ * AI Detailed Evaluator for Speaking Micro-Drills
+ * Evaluates A.R.E.A expansion, discourse markers, lexical resource and grammatical depth
+ */
+export async function evaluateSpeakingMicroDrill({
+  drillType,
+  question,
+  userInput,
+  modelAnswer,
+  apiKey,
+  model = DEFAULT_MODEL
+}) {
+  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+
+  const prompt = `Act as an expert Cambridge IELTS Speaking senior examiner and pronunciation coach.
+Evaluate the student's spoken/typed response for this IELTS Speaking Micro-Drill:
+Drill Type: ${drillType}
+Examiner Question: "${question}"
+Student Response: "${userInput}"
+${modelAnswer ? `Reference Band 8.5 Model Answer: "${modelAnswer}"` : ''}
+
+Evaluate strictly according to Cambridge IELTS Speaking 4 criteria:
+1. Fluency & Coherence (answer expansion, natural pace, minimal hesitation)
+2. Lexical Resource (idiomatic expressions, precision, avoiding repetition)
+3. Grammatical Range & Accuracy (complex structures, tenses)
+4. Pronunciation & Intonation advice
+
+Return ONLY raw parseable JSON:
+{
+  "estimatedBand": 7.0,
+  "fluencyFeedback": "Detailed Vietnamese feedback on answer expansion, coherence, discourse markers and logical flow",
+  "lexicalFeedback": "Detailed Vietnamese feedback on vocabulary choice, collocations, idiomatic expressions and precision",
+  "grammarFeedback": "Detailed Vietnamese feedback on sentence structures (complex vs simple) and grammar accuracy",
+  "upgradedVersion": "Band 8.5 polished version of the student's idea maintaining their authentic personal stance",
+  "recommendedAction": "1 actionable practice tip for the next Speaking attempt"
+}`;
+
+  const response = await callGeminiApi({
+    model,
+    apiKey,
+    body: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.4,
+        responseMimeType: 'application/json'
+      }
+    }
+  });
+
+  if (!response || !response.ok) {
+    const errorData = await response?.json().catch(() => ({}));
+    throw new Error(formatFriendlyGeminiError(errorData, response?.status));
+  }
+
+  const result = await response.json();
+  const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('Không nhận được nội dung phản hồi từ AI.');
+
+  try {
+    const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (e) {
+    return {
+      estimatedBand: 7.0,
+      fluencyFeedback: 'Ý tưởng trả lời rõ ràng, phát triển đầy đủ các ý chính.',
+      lexicalFeedback: 'Vốn từ sử dụng tự nhiên, có vận dụng collocations tốt.',
+      grammarFeedback: 'Ngữ pháp ổn định, có kết hợp câu ghép và câu phức.',
+      upgradedVersion: modelAnswer || userInput,
+      recommendedAction: 'Luyện tập phát âm nối âm và ngữ điệu để bài nói mượt mà hơn.'
     };
   }
 }

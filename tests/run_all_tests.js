@@ -54,7 +54,8 @@ const testSuites = [
   { name: 'Step 45: Task 1 Process & Map Visual Diversity Engine', file: 'tests/test_step45_process_map_visual_diversity.js' },
   { name: 'Step 46: Google Banana AI Image Generation Engine', file: 'tests/test_step46_google_banana_image_generation.js' },
   { name: 'Step 47: Interactive Image Viewer & Zoom In / Zoom Out Controls', file: 'tests/test_step47_image_zoom_modal.js' },
-  { name: 'Step 48: Tablet Viewport Audit & Menu Display Verification', file: 'tests/test_step48_tablet_viewport_audit.js' }
+  { name: 'Step 48: Tablet Viewport Audit & Menu Display Verification', file: 'tests/test_step48_tablet_viewport_audit.js' },
+  { name: 'Step 49: Speaking Fluency & Reflex Micro-Drills Studio', file: 'tests/test_step49_speaking_micro_drills.js' }
 ];
 
 console.log('===============================================================');

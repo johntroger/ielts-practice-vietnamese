@@ -34,13 +34,15 @@ import {
   RefreshCw,
   GraduationCap,
   Eye,
-  EyeOff
+  EyeOff,
+  VolumeX
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
+import { SPEAKING_MICRO_DRILLS } from '../data/speakingMicroDrills';
 import { COMMUNITY_DEFAULT_DRILLS } from '../data/communityMicroDrills';
-import { evaluateParaphrase, generateMicroDrill, evaluateListeningDrill } from '../services/geminiService';
+import { evaluateParaphrase, generateMicroDrill, evaluateListeningDrill, evaluateSpeakingMicroDrill } from '../services/geminiService';
 import { fetchPublicDrills, savePublicDrill, deletePublicDrill } from '../services/dataSyncService';
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
@@ -64,6 +66,7 @@ export default function MicroDrillsModal({
   const [activeRoom, setActiveRoom] = useState(() => {
     if (activeSkill === 'reading') return 'reading';
     if (activeSkill === 'listening') return 'listening';
+    if (activeSkill === 'speaking') return 'speaking';
     return 'writing';
   });
 
@@ -72,9 +75,11 @@ export default function MicroDrillsModal({
   // Writing: 'fill-blanks' | 'true-false' | 'paraphrase' | 'error-spotting'
   // Reading: 'reading-tfng' | 'reading-paraphrase' | 'reading-headings'
   // Listening: 'listening-dictation' | 'listening-spelling' | 'listening-distractor' | 'listening-map' | 'listening-signposting'
+  // Speaking: 'speaking-area' | 'speaking-fillers' | 'speaking-collocations' | 'speaking-part3-counter'
   const [activeTab, setActiveTab] = useState(() => {
     if (activeSkill === 'reading') return 'reading-tfng';
     if (activeSkill === 'listening') return 'listening-dictation';
+    if (activeSkill === 'speaking') return 'speaking-area';
     return 'fill-blanks';
   });
 
@@ -85,6 +90,7 @@ export default function MicroDrillsModal({
     else if (room === 'writing') setActiveTab('fill-blanks');
     else if (room === 'reading') setActiveTab('reading-tfng');
     else if (room === 'listening') setActiveTab('listening-dictation');
+    else if (room === 'speaking') setActiveTab('speaking-area');
   };
 
   // Sharing & Privacy State: Defaults to true (Public community resource) with user toggle
@@ -106,6 +112,7 @@ export default function MicroDrillsModal({
       ...INITIAL_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })), 
       ...READING_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })), 
       ...LISTENING_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })),
+      ...SPEAKING_MICRO_DRILLS.map(d => ({ ...d, isPublic: true })),
       ...COMMUNITY_DEFAULT_DRILLS
     ];
     try {
@@ -496,6 +503,153 @@ export default function MicroDrillsModal({
     }
   };
 
+  // ----------------------------------------------------
+  // SPEAKING DRILLS STATE & HANDLERS
+  // ----------------------------------------------------
+  const speakingAreaDrills = getDrillsByType('speaking-area');
+  const [selectedAreaIndex, setSelectedAreaIndex] = useState(0);
+  const [userAreaNotes, setUserAreaNotes] = useState({ answer: '', reason: '', example: '', alternative: '' });
+  const [showAreaModel, setShowAreaModel] = useState(false);
+  const [isRecordingArea, setIsRecordingArea] = useState(false);
+
+  const speakingFillersDrills = getDrillsByType('speaking-fillers');
+  const [selectedFillerIndex, setSelectedFillerIndex] = useState(0);
+  const [userFillerChoice, setUserFillerChoice] = useState(null);
+  const [showFillerResult, setShowFillerResult] = useState(false);
+
+  const speakingCollocDrills = getDrillsByType('speaking-collocations');
+  const [selectedSpeakingCollocIndex, setSelectedSpeakingCollocIndex] = useState(0);
+  const [userSpeakingCollocChoice, setUserSpeakingCollocChoice] = useState(null);
+  const [showSpeakingCollocResult, setShowSpeakingCollocResult] = useState(false);
+
+  const speakingPart3Drills = getDrillsByType('speaking-part3-counter');
+  const [selectedPart3Index, setSelectedPart3Index] = useState(0);
+  const [showPart3Model, setShowPart3Model] = useState(false);
+  const [userPart3SpokenText, setUserPart3SpokenText] = useState('');
+  const [isRecordingPart3, setIsRecordingPart3] = useState(false);
+  const [speakingEvaluation, setSpeakingEvaluation] = useState(null);
+  const [isEvaluatingSpeaking, setIsEvaluatingSpeaking] = useState(false);
+
+  // Helper for voice recognition input
+  const handleToggleVoiceDictation = (onTranscript, setIsRecording, currentRecordingState) => {
+    const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+    if (!SpeechRecognition) {
+      alert('Trình duyệt của bạn chưa hỗ trợ Web Speech API nhận diện giọng nói trực tiếp. Bạn có thể gõ câu trả lời vào ô văn bản.');
+      return;
+    }
+
+    if (currentRecordingState) {
+      if (window._microDrillRecognition) {
+        window._microDrillRecognition.stop();
+        window._microDrillRecognition = null;
+      }
+      setIsRecording(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+        playChimeTone(440, 0.1);
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript.trim()) {
+          onTranscript(transcript.trim());
+        }
+      };
+
+      recognition.onerror = (e) => {
+        console.warn('Speech recognition notice:', e.error);
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      window._microDrillRecognition = recognition;
+      recognition.start();
+    } catch (err) {
+      console.warn('Failed to start speech recognition:', err);
+      setIsRecording(false);
+    }
+  };
+
+  const handleEvaluateCurrentSpeaking = async () => {
+    if (!apiKey) {
+      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      return;
+    }
+
+    let questionText = '';
+    let userResponseText = '';
+    let modelAns = '';
+
+    if (activeTab === 'speaking-area') {
+      questionText = currentArea?.question || '';
+      userResponseText = Object.values(userAreaNotes).filter(Boolean).join(' ');
+      modelAns = currentArea?.modelAnswerBand8 || '';
+    } else if (activeTab === 'speaking-part3-counter') {
+      questionText = currentPart3?.question || '';
+      userResponseText = userPart3SpokenText;
+      modelAns = currentPart3?.modelAnswerBand8 || '';
+    }
+
+    if (!userResponseText.trim()) {
+      alert('Vui lòng ghi âm hoặc gõ câu trả lời của bạn trước khi nhờ AI nhận xét.');
+      return;
+    }
+
+    setIsEvaluatingSpeaking(true);
+    setSpeakingEvaluation(null);
+
+    try {
+      const res = await evaluateSpeakingMicroDrill({
+        drillType: activeTab,
+        question: questionText,
+        userInput: userResponseText,
+        modelAnswer: modelAns,
+        apiKey,
+        model
+      });
+      setSpeakingEvaluation(res);
+    } catch (err) {
+      alert(err.message || 'Lỗi khi AI phân tích câu trả lời Speaking.');
+    } finally {
+      setIsEvaluatingSpeaking(false);
+    }
+  };
+
+  const [playingAudioId, setPlayingAudioId] = useState(null);
+
+  const handlePlaySpeakingAudio = (text, audioId, accent = 'en-GB') => {
+    if (!text) return;
+    if (playingAudioId === audioId) {
+      stopSpeech();
+      setPlayingAudioId(null);
+    } else {
+      stopSpeech();
+      setPlayingAudioId(audioId);
+      speakText(text, {
+        lang: accent,
+        playChimeFirst: true,
+        rate: 0.95,
+        onEnd: () => setPlayingAudioId(null),
+        onError: () => setPlayingAudioId(null)
+      });
+    }
+  };
+
   // Sync room and tab when modal opens or activeSkill prop changes
   useEffect(() => {
     if (isOpen) {
@@ -505,6 +659,9 @@ export default function MicroDrillsModal({
       } else if (activeSkill === 'listening') {
         setActiveRoom('listening');
         setActiveTab('listening-dictation');
+      } else if (activeSkill === 'speaking') {
+        setActiveRoom('speaking');
+        setActiveTab('speaking-area');
       } else {
         setActiveRoom('writing');
         setActiveTab('fill-blanks');
@@ -515,12 +672,14 @@ export default function MicroDrillsModal({
   // Stop any active speech on tab change or room change
   useEffect(() => {
     stopSpeech();
+    setPlayingAudioId(null);
   }, [activeTab, activeRoom]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopSpeech();
+      setPlayingAudioId(null);
     };
   }, []);
 
@@ -540,6 +699,10 @@ export default function MicroDrillsModal({
   const currentDistractor = listeningDistractorDrills[selectedDistractorIndex] || listeningDistractorDrills[0];
   const currentMap = listeningMapDrills[selectedMapIndex] || listeningMapDrills[0];
   const currentSign = listeningSignDrills[selectedSignIndex] || listeningSignDrills[0];
+  const currentArea = speakingAreaDrills[selectedAreaIndex] || speakingAreaDrills[0];
+  const currentFiller = speakingFillersDrills[selectedFillerIndex] || speakingFillersDrills[0];
+  const currentSpeakingColloc = speakingCollocDrills[selectedSpeakingCollocIndex] || speakingCollocDrills[0];
+  const currentPart3 = speakingPart3Drills[selectedPart3Index] || speakingPart3Drills[0];
 
   // Current active drills list and active index based on activeTab
   const getActiveDrillInfo = () => {
@@ -578,6 +741,55 @@ export default function MicroDrillsModal({
         return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-signposting':
         return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
+      // Speaking
+      case 'speaking-area':
+        return { 
+          list: speakingAreaDrills, 
+          index: selectedAreaIndex, 
+          setIndex: setSelectedAreaIndex, 
+          onReset: () => { 
+            setUserAreaNotes({ answer: '', reason: '', example: '', alternative: '' }); 
+            setShowAreaModel(false); 
+            setIsRecordingArea(false); 
+            setSpeakingEvaluation(null); 
+            stopSpeech(); 
+          } 
+        };
+      case 'speaking-fillers':
+        return { 
+          list: speakingFillersDrills, 
+          index: selectedFillerIndex, 
+          setIndex: setSelectedFillerIndex, 
+          onReset: () => { 
+            setUserFillerChoice(null); 
+            setShowFillerResult(false); 
+            stopSpeech(); 
+          } 
+        };
+      case 'speaking-collocations':
+        return { 
+          list: speakingCollocDrills, 
+          index: selectedSpeakingCollocIndex, 
+          setIndex: setSelectedSpeakingCollocIndex, 
+          onReset: () => { 
+            setUserSpeakingCollocChoice(null); 
+            setShowSpeakingCollocResult(false); 
+            stopSpeech(); 
+          } 
+        };
+      case 'speaking-part3-counter':
+        return { 
+          list: speakingPart3Drills, 
+          index: selectedPart3Index, 
+          setIndex: setSelectedPart3Index, 
+          onReset: () => { 
+            setShowPart3Model(false); 
+            setUserPart3SpokenText(''); 
+            setIsRecordingPart3(false); 
+            setSpeakingEvaluation(null); 
+            stopSpeech(); 
+          } 
+        };
       default:
         return { list: [], index: 0, setIndex: () => {}, onReset: () => {} };
     }
@@ -1059,28 +1271,27 @@ export default function MicroDrillsModal({
               </span>
             </button>
 
-            {/* Room 5: Chuyên Speaking (Roadmap) */}
+            {/* Room 5: Chuyên Speaking */}
             <button
               onClick={() => handleRoomChange('speaking')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                 activeRoom === 'speaking'
                   ? 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-500/30'
-                  : 'bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-slate-300'
+                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
               }`}
             >
               <Mic className="w-3.5 h-3.5" />
-              <span>Speaking</span>
-              <span className="px-1.5 py-0.2 rounded bg-slate-700 text-slate-300 text-[9px] font-medium">
-                ⏳ Sắp có
+              <span>Chuyên Speaking</span>
+              <span className="px-1.5 py-0.2 rounded bg-emerald-400 text-slate-900 text-[9px] font-black">
+                MỚI
               </span>
             </button>
           </div>
         </div>
 
         {/* Level 2: Sub-tabs within Active Room & AI Generator Button */}
-        {activeRoom !== 'speaking' && (
-          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 sm:px-4 pt-2 gap-2 overflow-x-auto no-scrollbar touch-pan-x text-xs font-semibold text-slate-600 shrink-0">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar touch-pan-x">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 sm:px-4 pt-2 gap-2 overflow-x-auto no-scrollbar touch-pan-x text-xs font-semibold text-slate-600 shrink-0">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar touch-pan-x">
               {/* SUB-TABS FOR GENERAL */}
               {activeRoom === 'general' && (
                 <>
@@ -1236,6 +1447,48 @@ export default function MicroDrillsModal({
                   </button>
                 </>
               )}
+
+              {/* SUB-TABS FOR SPEAKING */}
+              {activeRoom === 'speaking' && (
+                <>
+                  <button
+                    onClick={() => setActiveTab('speaking-area')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'speaking-area' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>1. Mở Rộng Ý A.R.E.A ({speakingAreaDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('speaking-fillers')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'speaking-fillers' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Clock className="w-3.5 h-3.5 text-amber-500" />
+                    <span>2. Từ Đệm Mua Thời Gian ({speakingFillersDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('speaking-collocations')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'speaking-collocations' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Flame className="w-3.5 h-3.5 text-rose-500" />
+                    <span>3. Collocations Tự Nhiên ({speakingCollocDrills.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('speaking-part3-counter')}
+                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
+                      activeTab === 'speaking-part3-counter' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
+                    }`}
+                  >
+                    <Target className="w-3.5 h-3.5 text-teal-600" />
+                    <span>4. Phản Biện Đa Chiều Part 3 ({speakingPart3Drills.length})</span>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* AI Generator & Privacy Control Container */}
@@ -1305,7 +1558,6 @@ export default function MicroDrillsModal({
               </button>
             </div>
           </div>
-        )}
 
         {drillGenMessage && (
           <div className="bg-amber-50 border-b border-amber-200 px-4 py-1.5 text-xs text-amber-800 flex items-center justify-between">
@@ -1317,7 +1569,7 @@ export default function MicroDrillsModal({
         <div className="flex-1 overflow-y-auto p-3 sm:p-6 pb-20 sm:pb-8 space-y-4">
           
           {/* Render Pagination Bar if not in Roadmap rooms */}
-          {activeRoom !== 'listening' && activeRoom !== 'speaking' && renderPaginationBar()}
+          {activeRoom !== 'listening' && renderPaginationBar()}
 
           {/* ============================================================ */}
           {/* READING ROOM: 1. TRUE / FALSE / NOT GIVEN                    */}
@@ -3032,59 +3284,1023 @@ export default function MicroDrillsModal({
           )}
 
           {/* ============================================================ */}
-          {/* ROADMAP ROOM: SPEAKING                                       */}
+          {/* SPEAKING ROOM: FLUENCY & REFLEX MICRO-DRILLS STUDIO           */}
           {/* ============================================================ */}
           {activeRoom === 'speaking' && (
-            <div className="space-y-6 py-4">
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 text-white space-y-4 text-center">
-                <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 text-emerald-300 shadow-sm">
-                  <Mic className="w-8 h-8" />
-                </div>
-                <div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/30 text-emerald-300 text-xs font-black uppercase tracking-wider border border-emerald-400/30">
-                    Đang Nghiên Cứu & Phát Triển
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-bold mt-2">
-                    Phòng Luyện Chuyên Speaking (Speaking Fluency Studio)
-                  </h3>
-                  <p className="text-xs sm:text-sm text-emerald-200 max-w-xl mx-auto mt-1">
-                    Rèn phản xạ mở rộng ý tưởng tức thì (Instant Idea Generation) và duy trì sự trôi chảy tự nhiên không ngập ngừng.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature Preview Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                    ⏱️
+            <div className="space-y-5">
+              {/* 1. CÔNG THỨC MỞ RỘNG Ý TƯỞNG A.R.E.A */}
+              {activeTab === 'speaking-area' && currentArea && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">
+                          {currentArea.part || 'Speaking'} • {currentArea.difficulty || 'Band 7.0 - 8.5'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-teal-50 text-teal-700 text-xs font-medium border border-teal-200">
+                          {currentArea.topic}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-slate-900 text-base mt-1.5">{currentArea.title}</h3>
+                    </div>
                   </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Công Thức Mở Rộng A.R.E.A</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Luyện trả lời câu hỏi Part 1 chuẩn cấu trúc: <strong>Answer</strong> (Trả lời trực diện) $\rightarrow$ <strong>Reason</strong> (Lý do) $\rightarrow$ <strong>Example</strong> (Ví dụ thực tế) $\rightarrow$ <strong>Alternative</strong> (Góc nhìn đối chiếu).
-                  </p>
-                </div>
 
-                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
-                    💬
-                  </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Từ Đệm & Phản Xạ Tự Nhiên</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Sử dụng các cụm diễn đạt tự nhiên (Natural Fillers) như <em>"Well, to be perfectly honest...", "If my memory serves me correctly..."</em> để mua thời gian suy nghĩ mà không bị mất điểm Fluency.
-                  </p>
-                </div>
+                  {/* Examiner Question Banner */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white shadow-md border border-emerald-800/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 text-xs font-bold text-emerald-300 uppercase tracking-wider">
+                        <Mic className="w-4 h-4 text-emerald-400" />
+                        <span>Giám Khảo Hỏi (Examiner Prompt):</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handlePlaySpeakingAudio(currentArea.question, `area-q-${currentArea.id}`, 'en-GB')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                          playingAudioId === `area-q-${currentArea.id}`
+                            ? 'bg-rose-600 hover:bg-rose-700 text-white ring-2 ring-rose-400/50'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                        }`}
+                        title="Nghe giọng giám khảo đọc chuẩn British Accent"
+                      >
+                        {playingAudioId === `area-q-${currentArea.id}` ? (
+                          <>
+                            <VolumeX className="w-4 h-4 animate-pulse" />
+                            <span>Dừng Đọc</span>
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="w-4 h-4" />
+                            <span>Nghe Giám Khảo</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
 
-                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-                    🎙️
+                    <div className="text-base sm:text-lg font-bold text-white font-serif leading-snug">
+                      "{currentArea.question}"
+                    </div>
+
+                    {currentArea.tip && (
+                      <div className="text-xs text-emerald-200/90 bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-start space-x-2">
+                        <Lightbulb className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+                        <span><strong>Mẹo phản xạ:</strong> {currentArea.tip}</span>
+                      </div>
+                    )}
                   </div>
-                  <h4 className="font-bold text-slate-800 text-sm">Phản Biện Sâu Part 3</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Rèn luyện kỹ năng phân tích 2 mặt của một vấn đề xã hội (pros vs cons, short-term vs long-term impact) để đạt tiêu chí tư duy trừu tượng Band 7.5+.
-                  </p>
+
+                  {/* 4-Step A.R.E.A Formula Builder */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
+                      <span className="flex items-center space-x-1.5">
+                        <Sparkles className="w-4 h-4 text-emerald-600" />
+                        <span>Khung Trả Lời 4 Bước A.R.E.A (Nhập ý tưởng hoặc bấm từ gợi ý):</span>
+                      </span>
+                      <span className="text-slate-500 font-normal hidden sm:inline">Chuẩn Cambridge Speaking</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                      {/* Step 1: Answer */}
+                      <div className="p-3.5 rounded-xl bg-white border border-emerald-200/80 shadow-2xs space-y-2 hover:border-emerald-300 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-emerald-800 flex items-center space-x-1.5">
+                            <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[11px] font-black flex items-center justify-center">A</span>
+                            <span>{currentArea.formula.answer.label}</span>
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500">{currentArea.formula.answer.prompt}</p>
+                        
+                        {/* Keyword suggestions */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {currentArea.formula.answer.keywords.map((kw, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setUserAreaNotes(prev => ({
+                                ...prev,
+                                answer: prev.answer ? `${prev.answer} ${kw}` : kw
+                              }))}
+                              className="px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-medium border border-emerald-200 transition-colors cursor-pointer"
+                              title="Bấm để chèn từ này vào câu trả lời"
+                            >
+                              + {kw}
+                            </button>
+                          ))}
+                        </div>
+
+                        <textarea
+                          rows={2}
+                          value={userAreaNotes.answer}
+                          onChange={(e) => setUserAreaNotes(prev => ({ ...prev, answer: e.target.value }))}
+                          placeholder="Gõ hoặc bấm từ khóa bên trên để hoàn thiện Answer..."
+                          className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 resize-none font-sans"
+                        />
+                      </div>
+
+                      {/* Step 2: Reason */}
+                      <div className="p-3.5 rounded-xl bg-white border border-blue-200/80 shadow-2xs space-y-2 hover:border-blue-300 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-blue-800 flex items-center space-x-1.5">
+                            <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] font-black flex items-center justify-center">R</span>
+                            <span>{currentArea.formula.reason.label}</span>
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500">{currentArea.formula.reason.prompt}</p>
+                        
+                        <div className="flex flex-wrap gap-1.5">
+                          {currentArea.formula.reason.keywords.map((kw, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setUserAreaNotes(prev => ({
+                                ...prev,
+                                reason: prev.reason ? `${prev.reason} ${kw}` : kw
+                              }))}
+                              className="px-2 py-0.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-800 text-[11px] font-medium border border-blue-200 transition-colors cursor-pointer"
+                              title="Bấm để chèn từ này vào câu trả lời"
+                            >
+                              + {kw}
+                            </button>
+                          ))}
+                        </div>
+
+                        <textarea
+                          rows={2}
+                          value={userAreaNotes.reason}
+                          onChange={(e) => setUserAreaNotes(prev => ({ ...prev, reason: e.target.value }))}
+                          placeholder="Gõ hoặc bấm từ khóa bên trên để giải thích Reason..."
+                          className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none font-sans"
+                        />
+                      </div>
+
+                      {/* Step 3: Example */}
+                      <div className="p-3.5 rounded-xl bg-white border border-amber-200/80 shadow-2xs space-y-2 hover:border-amber-300 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-amber-800 flex items-center space-x-1.5">
+                            <span className="w-5 h-5 rounded-full bg-amber-600 text-white text-[11px] font-black flex items-center justify-center">E</span>
+                            <span>{currentArea.formula.example.label}</span>
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500">{currentArea.formula.example.prompt}</p>
+                        
+                        <div className="flex flex-wrap gap-1.5">
+                          {currentArea.formula.example.keywords.map((kw, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setUserAreaNotes(prev => ({
+                                ...prev,
+                                example: prev.example ? `${prev.example} ${kw}` : kw
+                              }))}
+                              className="px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-900 text-[11px] font-medium border border-amber-200 transition-colors cursor-pointer"
+                              title="Bấm để chèn từ này vào câu trả lời"
+                            >
+                              + {kw}
+                            </button>
+                          ))}
+                        </div>
+
+                        <textarea
+                          rows={2}
+                          value={userAreaNotes.example}
+                          onChange={(e) => setUserAreaNotes(prev => ({ ...prev, example: e.target.value }))}
+                          placeholder="Gõ hoặc kể một ví dụ cụ thể Example..."
+                          className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20 resize-none font-sans"
+                        />
+                      </div>
+
+                      {/* Step 4: Alternative */}
+                      <div className="p-3.5 rounded-xl bg-white border border-purple-200/80 shadow-2xs space-y-2 hover:border-purple-300 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-purple-800 flex items-center space-x-1.5">
+                            <span className="w-5 h-5 rounded-full bg-purple-600 text-white text-[11px] font-black flex items-center justify-center">A</span>
+                            <span>{currentArea.formula.alternative.label}</span>
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500">{currentArea.formula.alternative.prompt}</p>
+                        
+                        <div className="flex flex-wrap gap-1.5">
+                          {currentArea.formula.alternative.keywords.map((kw, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setUserAreaNotes(prev => ({
+                                ...prev,
+                                alternative: prev.alternative ? `${prev.alternative} ${kw}` : kw
+                              }))}
+                              className="px-2 py-0.5 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-800 text-[11px] font-medium border border-purple-200 transition-colors cursor-pointer"
+                              title="Bấm để chèn từ này vào câu trả lời"
+                            >
+                              + {kw}
+                            </button>
+                          ))}
+                        </div>
+
+                        <textarea
+                          rows={2}
+                          value={userAreaNotes.alternative}
+                          onChange={(e) => setUserAreaNotes(prev => ({ ...prev, alternative: e.target.value }))}
+                          placeholder="Nêu trường hợp đối chiếu hoặc ngoại lệ Alternative..."
+                          className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 resize-none font-sans"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Toolbar */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200">
+                    <div className="flex items-center space-x-2">
+                      {/* Voice Dictation Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleVoiceDictation(
+                          (txt) => setUserAreaNotes(prev => ({
+                            ...prev,
+                            answer: prev.answer ? `${prev.answer} ${txt}` : txt
+                          })),
+                          setIsRecordingArea,
+                          isRecordingArea
+                        )}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                          isRecordingArea
+                            ? 'bg-rose-600 hover:bg-rose-700 text-white ring-2 ring-rose-400 animate-pulse'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
+                        }`}
+                        title="Bấm để nói trực tiếp, hệ thống sẽ tự động chép lời của bạn vào Answer"
+                      >
+                        <Mic className="w-3.5 h-3.5 text-rose-500" />
+                        <span>{isRecordingArea ? 'Đang Thu Âm (Nói đi...)' : 'Nói Qua Mic (Voice)'}</span>
+                      </button>
+
+                      {/* Reset Button */}
+                      <button
+                        type="button"
+                        onClick={() => setUserAreaNotes({ answer: '', reason: '', example: '', alternative: '' })}
+                        className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-1 transition-colors cursor-pointer"
+                        title="Xóa trắng các ô ghi chú để làm lại từ đầu"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Xóa làm lại</span>
+                      </button>
+
+                      {/* Fill Sample Button */}
+                      <button
+                        type="button"
+                        onClick={() => setUserAreaNotes({
+                          answer: currentArea.formula.answer.sample,
+                          reason: currentArea.formula.reason.sample,
+                          example: currentArea.formula.example.sample,
+                          alternative: currentArea.formula.alternative.sample
+                        })}
+                        className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 flex items-center space-x-1 transition-colors cursor-pointer"
+                        title="Nạp nhanh các câu mẫu gợi ý để tham khảo văn phong"
+                      >
+                        <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                        <span>Nạp gợi ý chuẩn</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      {/* AI Evaluation Button */}
+                      <button
+                        type="button"
+                        onClick={handleEvaluateCurrentSpeaking}
+                        disabled={isEvaluatingSpeaking}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5 cursor-pointer"
+                        title="Nhờ AI thẩm định phản xạ A.R.E.A và ước tính Band Score"
+                      >
+                        {isEvaluatingSpeaking ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>AI Đang Phân Tích...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>AI Đánh Giá A.R.E.A</span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* Model Answer Toggle */}
+                      <button
+                        type="button"
+                        onClick={() => setShowAreaModel(prev => !prev)}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-2xs border ${
+                          showAreaModel 
+                            ? 'bg-amber-100 text-amber-900 border-amber-300' 
+                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <Award className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{showAreaModel ? 'Ẩn Bài Mẫu Band 8.5' : 'Xem Mẫu Band 8.5'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* AI Evaluation Result Card */}
+                  {speakingEvaluation && (
+                    <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-white border border-emerald-300 shadow-sm space-y-3 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between border-b border-emerald-200 pb-2.5">
+                        <div className="flex items-center space-x-2">
+                          <Sparkles className="w-5 h-5 text-emerald-600" />
+                          <h4 className="font-bold text-slate-900 text-sm">Kết Quả Phân Tích Speaking Từ AI:</h4>
+                        </div>
+                        <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-black shadow-xs">
+                          {speakingEvaluation.bandEstimate || 'Band 7.5 - 8.0'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                        <div className="p-2.5 rounded-xl bg-white border border-emerald-100 shadow-2xs">
+                          <span className="font-bold text-emerald-800 block mb-1">🌊 Fluency & Coherence:</span>
+                          <p className="text-slate-600">{speakingEvaluation.fluencyFeedback || 'Phản xạ trôi chảy, sử dụng tốt khung A.R.E.A.'}</p>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-emerald-100 shadow-2xs">
+                          <span className="font-bold text-emerald-800 block mb-1">💎 Lexical Resource:</span>
+                          <p className="text-slate-600">{speakingEvaluation.lexicalFeedback || 'Sử dụng collocations tự nhiên và chính xác.'}</p>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-emerald-100 shadow-2xs">
+                          <span className="font-bold text-emerald-800 block mb-1">⚖️ Grammatical Range:</span>
+                          <p className="text-slate-600">{speakingEvaluation.grammarFeedback || 'Cấu trúc câu đa dạng, kết hợp mệnh đề điều kiện.'}</p>
+                        </div>
+                      </div>
+
+                      {speakingEvaluation.upgradedResponse && (
+                        <div className="p-3 rounded-xl bg-white border border-emerald-200 text-xs space-y-1">
+                          <span className="font-bold text-emerald-900 block">⭐ Bản Trả Lời Nâng Cấp Band 8.5+:</span>
+                          <p className="font-serif italic text-slate-800 leading-relaxed">
+                            "{speakingEvaluation.upgradedResponse}"
+                          </p>
+                        </div>
+                      )}
+
+                      {speakingEvaluation.recommendations && (
+                        <p className="text-xs text-emerald-900 bg-emerald-100/60 p-2.5 rounded-xl border border-emerald-200">
+                          💡 <strong>Lời khuyên phòng thi:</strong> {speakingEvaluation.recommendations}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Model Answer Band 8.5 Card */}
+                  {showAreaModel && (
+                    <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200 shadow-sm space-y-3.5 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between border-b border-amber-200 pb-2.5">
+                        <div className="flex items-center space-x-2">
+                          <Award className="w-5 h-5 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-sm sm:text-base">
+                            Bài Mẫu Chuẩn Band 8.5 (Cambridge Model Response)
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handlePlaySpeakingAudio(currentArea.modelAnswerBand8, `area-model-${currentArea.id}`, 'en-GB')}
+                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                            playingAudioId === `area-model-${currentArea.id}`
+                              ? 'bg-rose-600 text-white'
+                              : 'bg-amber-600 hover:bg-amber-700 text-white'
+                          }`}
+                          title="Nghe phát âm chuẩn toàn bộ bài mẫu Band 8.5"
+                        >
+                          {playingAudioId === `area-model-${currentArea.id}` ? (
+                            <>
+                              <VolumeX className="w-3.5 h-3.5 animate-pulse" />
+                              <span>Dừng</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3.5 h-3.5" />
+                              <span>Nghe Bài Mẫu</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-white border border-amber-200/80 shadow-2xs">
+                        <p className="text-sm font-serif leading-relaxed text-slate-800">
+                          {currentArea.modelAnswerBand8}
+                        </p>
+                      </div>
+
+                      {currentArea.lexicalHighlights && (
+                        <div className="space-y-1.5">
+                          <span className="text-xs font-bold text-amber-900 block">
+                            🔑 Từ vựng & Collocations ăn điểm cao:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {currentArea.lexicalHighlights.map((w, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-semibold border border-amber-300 shadow-2xs"
+                              >
+                                {w}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
+
+              {/* 2. TỪ ĐỆM & MUA THỜI GIAN TỰ NHIÊN (SPEAKING FILLERS) */}
+              {activeTab === 'speaking-fillers' && currentFiller && (
+                <div className="space-y-4">
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
+                      {currentFiller.category || 'Natural Fillers'} • Buying Time Reflex
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentFiller.title}
+                    </h3>
+                  </div>
+
+                  {/* Question & Situation Card */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-md border border-slate-700 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                        <Clock className="w-4 h-4 text-amber-400" />
+                        <span>Tình huống phòng thi:</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handlePlaySpeakingAudio(currentFiller.question, `filler-q-${currentFiller.id}`, 'en-GB')}
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                          playingAudioId === `filler-q-${currentFiller.id}`
+                            ? 'bg-rose-600 text-white'
+                            : 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                        }`}
+                        title="Nghe câu hỏi giám khảo"
+                      >
+                        {playingAudioId === `filler-q-${currentFiller.id}` ? (
+                          <>
+                            <VolumeX className="w-3.5 h-3.5 animate-pulse" />
+                            <span>Dừng</span>
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="w-3.5 h-3.5" />
+                            <span>Nghe Câu Hỏi</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="text-xs text-slate-300 leading-relaxed bg-white/5 p-3 rounded-xl border border-white/10">
+                      💡 <strong>Ngữ cảnh:</strong> {currentFiller.situation}
+                    </div>
+
+                    <div className="text-base sm:text-lg font-bold text-white font-serif">
+                      "{currentFiller.question}"
+                    </div>
+                  </div>
+
+                  {/* Task Prompt */}
+                  <div className="text-xs font-bold text-slate-700 px-1">
+                    {currentFiller.taskPrompt || 'Chọn cụm từ đệm tự nhiên nhất để mở đầu câu trả lời:'}
+                  </div>
+
+                  {/* Multiple Choice Options */}
+                  <div className="space-y-2.5">
+                    {currentFiller.options.map((opt, idx) => {
+                      const isSelected = userFillerChoice === idx;
+                      let cardStyle = 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50';
+
+                      if (showFillerResult) {
+                        if (opt.isCorrect) {
+                          cardStyle = 'border-emerald-500 bg-emerald-50/80 ring-2 ring-emerald-500/30';
+                        } else if (isSelected && !opt.isCorrect) {
+                          cardStyle = 'border-rose-500 bg-rose-50/80 ring-2 ring-rose-500/30';
+                        }
+                      } else if (isSelected) {
+                        cardStyle = 'border-amber-600 bg-amber-50/60 ring-2 ring-amber-500/20';
+                      }
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => {
+                            if (!showFillerResult) {
+                              setUserFillerChoice(idx);
+                              setShowFillerResult(true);
+                            }
+                          }}
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer shadow-2xs ${cardStyle}`}
+                        >
+                          <div className="flex items-start space-x-3">
+                            <span className={`w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 ${
+                              isSelected ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-600'
+                            }`}>
+                              {String.fromCharCode(65 + idx)}
+                            </span>
+                            <div className="flex-1 space-y-1">
+                              <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                                "{opt.text}"
+                              </p>
+                              {showFillerResult && (
+                                <p className={`text-xs mt-1.5 leading-relaxed pt-1.5 border-t ${
+                                  opt.isCorrect ? 'border-emerald-200 text-emerald-800 font-medium' : 'border-rose-200 text-rose-700'
+                                }`}>
+                                  {opt.explanation}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Result & Sample Continuation Card */}
+                  {showFillerResult && (
+                    <div className="space-y-3 pt-2 animate-in fade-in duration-200">
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
+                        <div className="flex items-center justify-between font-bold">
+                          {currentFiller.options[userFillerChoice]?.isCorrect ? (
+                            <span className="text-emerald-700 flex items-center space-x-1.5">
+                              <CheckCircle2 className="w-4 h-4 inline" />
+                              <span>XUẤT SẮC! Cụm từ đệm tự nhiên chuẩn người bản xứ.</span>
+                            </span>
+                          ) : (
+                            <span className="text-rose-700 flex items-center space-x-1.5">
+                              <XCircle className="w-4 h-4 inline" />
+                              <span>CHƯA TỰ NHIÊN! Xem phân tích đáp án chuẩn màu xanh phía trên.</span>
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUserFillerChoice(null);
+                              setShowFillerResult(false);
+                            }}
+                            className="text-slate-500 hover:text-slate-800 font-semibold flex items-center space-x-1"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Làm lại câu này</span>
+                          </button>
+                        </div>
+
+                        {currentFiller.sampleContinuation && (
+                          <div className="p-3 rounded-lg bg-white border border-slate-200 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-slate-800 block">
+                                🎙️ Câu Nói Mẫu Hoàn Chỉnh Khi Áp Dụng Từ Đệm:
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handlePlaySpeakingAudio(currentFiller.sampleContinuation, `filler-sample-${currentFiller.id}`, 'en-GB')}
+                                className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center space-x-1 cursor-pointer"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                                <span>Nghe Câu Mẫu</span>
+                              </button>
+                            </div>
+                            <p className="font-serif italic text-slate-800 text-xs sm:text-sm leading-relaxed">
+                              "{currentFiller.sampleContinuation}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 3. COLLOCATIONS & IDIOMS GIAO TIẾP TỰ NHIÊN */}
+              {activeTab === 'speaking-collocations' && currentSpeakingColloc && (
+                <div className="space-y-4">
+                  <div>
+                    <span className="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[11px] font-bold uppercase">
+                      {currentSpeakingColloc.category || 'Lexical Resource'} • Idiom & Collocation Reflex
+                    </span>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {currentSpeakingColloc.title}
+                    </h3>
+                  </div>
+
+                  {/* Context & Question Prompt Card */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-rose-950 text-white shadow-md border border-slate-700 space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-rose-300 uppercase tracking-wider">
+                      <span className="flex items-center space-x-1.5">
+                        <Flame className="w-4 h-4 text-rose-400" />
+                        <span>Ngữ Cảnh Giao Tiếp:</span>
+                      </span>
+                    </div>
+
+                    {currentSpeakingColloc.context && (
+                      <div className="text-xs text-slate-300 leading-relaxed bg-white/5 p-3 rounded-xl border border-white/10">
+                        {currentSpeakingColloc.context}
+                      </div>
+                    )}
+
+                    <div className="text-sm sm:text-base font-semibold text-rose-200">
+                      {currentSpeakingColloc.prompt}
+                    </div>
+
+                    <div className="text-base sm:text-lg font-bold text-white font-serif p-3 rounded-xl bg-white/10 border border-white/20">
+                      "{currentSpeakingColloc.questionSentence}"
+                    </div>
+                  </div>
+
+                  {/* Options */}
+                  <div className="space-y-2.5">
+                    {currentSpeakingColloc.options.map((opt, idx) => {
+                      const isSelected = userSpeakingCollocChoice === idx;
+                      let cardStyle = 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50';
+
+                      if (showSpeakingCollocResult) {
+                        if (opt.isCorrect) {
+                          cardStyle = 'border-emerald-500 bg-emerald-50/80 ring-2 ring-emerald-500/30';
+                        } else if (isSelected && !opt.isCorrect) {
+                          cardStyle = 'border-rose-500 bg-rose-50/80 ring-2 ring-rose-500/30';
+                        }
+                      } else if (isSelected) {
+                        cardStyle = 'border-rose-600 bg-rose-50/60 ring-2 ring-rose-500/20';
+                      }
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => {
+                            if (!showSpeakingCollocResult) {
+                              setUserSpeakingCollocChoice(idx);
+                              setShowSpeakingCollocResult(true);
+                            }
+                          }}
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer shadow-2xs ${cardStyle}`}
+                        >
+                          <div className="flex items-start space-x-3">
+                            <span className={`w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 ${
+                              isSelected ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600'
+                            }`}>
+                              {String.fromCharCode(65 + idx)}
+                            </span>
+                            <div className="flex-1 space-y-1">
+                              <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                                {opt.text}
+                              </p>
+                              {showSpeakingCollocResult && (
+                                <p className={`text-xs mt-1.5 leading-relaxed pt-1.5 border-t ${
+                                  opt.isCorrect ? 'border-emerald-200 text-emerald-800 font-medium' : 'border-rose-200 text-rose-700'
+                                }`}>
+                                  {opt.explanation}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Result & Idiom Meaning */}
+                  {showSpeakingCollocResult && (
+                    <div className="space-y-3 pt-2 animate-in fade-in duration-200">
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
+                        <div className="flex items-center justify-between font-bold">
+                          {currentSpeakingColloc.options[userSpeakingCollocChoice]?.isCorrect ? (
+                            <span className="text-emerald-700 flex items-center space-x-1.5">
+                              <CheckCircle2 className="w-4 h-4 inline" />
+                              <span>CHÍNH XÁC! Bạn đã nắm vững thành ngữ tự nhiên này.</span>
+                            </span>
+                          ) : (
+                            <span className="text-rose-700 flex items-center space-x-1.5">
+                              <XCircle className="w-4 h-4 inline" />
+                              <span>CẦN ÔN LẠI! Xem giải thích và nghĩa cụ thể bên dưới.</span>
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUserSpeakingCollocChoice(null);
+                              setShowSpeakingCollocResult(false);
+                            }}
+                            className="text-slate-500 hover:text-slate-800 font-semibold flex items-center space-x-1"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Làm lại</span>
+                          </button>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-white border border-slate-200 space-y-2">
+                          <div className="font-bold text-slate-800">
+                            📖 <strong>Ý nghĩa học thuật:</strong> <span className="text-rose-700">{currentSpeakingColloc.idiom}</span> = {currentSpeakingColloc.meaning}
+                          </div>
+                          
+                          {currentSpeakingColloc.speakingExample && (
+                            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                              <div className="space-y-1">
+                                <span className="text-[11px] font-bold text-slate-500 block">Ví dụ Speaking Band 8.0+:</span>
+                                <p className="font-serif italic text-slate-800">
+                                  "{currentSpeakingColloc.speakingExample}"
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handlePlaySpeakingAudio(currentSpeakingColloc.speakingExample, `colloc-sample-${currentSpeakingColloc.id}`, 'en-GB')}
+                                className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] flex items-center space-x-1 cursor-pointer shrink-0 ml-3"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                                <span>Nghe</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 4. PHẢN BIỆN ĐA CHIỀU PART 3 (TWO-SIDED ANALYTICAL REFLEX) */}
+              {activeTab === 'speaking-part3-counter' && currentPart3 && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="px-2 py-0.5 rounded bg-teal-100 text-teal-800 text-xs font-bold">
+                          Part 3 Analytical Debate • {currentPart3.difficulty || 'Band 7.5 - 8.5'}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+                          {currentPart3.topic}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-slate-900 text-base mt-1.5">{currentPart3.title}</h3>
+                    </div>
+                  </div>
+
+                  {/* Part 3 Question Banner */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-950 via-slate-900 to-indigo-950 text-white shadow-md border border-teal-800/40 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 text-xs font-bold text-teal-300 uppercase tracking-wider">
+                        <Target className="w-4 h-4 text-teal-400" />
+                        <span>Đề Bài Tranh Biện Part 3:</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handlePlaySpeakingAudio(currentPart3.question, `part3-q-${currentPart3.id}`, 'en-GB')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                          playingAudioId === `part3-q-${currentPart3.id}`
+                            ? 'bg-rose-600 text-white'
+                            : 'bg-teal-600 hover:bg-teal-500 text-white'
+                        }`}
+                        title="Nghe giám khảo hỏi Part 3"
+                      >
+                        {playingAudioId === `part3-q-${currentPart3.id}` ? (
+                          <>
+                            <VolumeX className="w-4 h-4 animate-pulse" />
+                            <span>Dừng</span>
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="w-4 h-4" />
+                            <span>Nghe Giám Khảo</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="text-base sm:text-lg font-bold text-white font-serif leading-snug">
+                      "{currentPart3.question}"
+                    </div>
+
+                    {currentPart3.tip && (
+                      <div className="text-xs text-teal-200/90 bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-start space-x-2">
+                        <Lightbulb className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+                        <span><strong>Mẹo phản biện:</strong> {currentPart3.tip}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 3 Two-Sided Analytical Cards */}
+                  <div className="space-y-3">
+                    <div className="text-xs font-bold text-slate-700 px-1 flex items-center space-x-1.5">
+                      <Split className="w-4 h-4 text-teal-600" />
+                      <span>Cấu Trúc Lập Luận Hai Chiều (Two-Sided Argumentation Structure):</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {/* Side A Card */}
+                      <div className="p-3.5 rounded-xl bg-white border border-rose-200 shadow-2xs space-y-2">
+                        <div className="flex items-center space-x-1.5 text-xs font-bold text-rose-800">
+                          <span className="w-5 h-5 rounded-full bg-rose-600 text-white text-[11px] font-black flex items-center justify-center">1</span>
+                          <span>Góc Nhìn 1 (Side A)</span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-rose-700">{currentPart3.sideA.perspective}</p>
+                        <p className="text-xs text-slate-600 bg-rose-50/50 p-2 rounded-lg border border-rose-100 font-sans">
+                          <em>"{currentPart3.sideA.starter}"</em> {currentPart3.sideA.points}
+                        </p>
+                      </div>
+
+                      {/* Side B Card */}
+                      <div className="p-3.5 rounded-xl bg-white border border-blue-200 shadow-2xs space-y-2">
+                        <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-800">
+                          <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] font-black flex items-center justify-center">2</span>
+                          <span>Góc Nhìn 2 (Side B)</span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-blue-700">{currentPart3.sideB.perspective}</p>
+                        <p className="text-xs text-slate-600 bg-blue-50/50 p-2 rounded-lg border border-blue-100 font-sans">
+                          <em>"{currentPart3.sideB.starter}"</em> {currentPart3.sideB.points}
+                        </p>
+                      </div>
+
+                      {/* Synthesis Card */}
+                      <div className="p-3.5 rounded-xl bg-white border border-teal-200 shadow-2xs space-y-2">
+                        <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-800">
+                          <span className="w-5 h-5 rounded-full bg-teal-600 text-white text-[11px] font-black flex items-center justify-center">3</span>
+                          <span>Tổng Hợp / Đa Chiều</span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-teal-700">Điểm cân bằng (Synthesis)</p>
+                        <p className="text-xs text-slate-600 bg-teal-50/50 p-2 rounded-lg border border-teal-100 font-sans">
+                          <em>"{currentPart3.synthesis.starter}"</em> {currentPart3.synthesis.conclusion}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Practice Studio: Mic Dictation / Typing Response */}
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+                        <Mic className="w-4 h-4 text-teal-600" />
+                        <span>Thực Hành Nói Hoặc Gõ Câu Trả Lời Của Bạn:</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleVoiceDictation(
+                          (txt) => setUserPart3SpokenText(prev => prev ? `${prev} ${txt}` : txt),
+                          setIsRecordingPart3,
+                          isRecordingPart3
+                        )}
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                          isRecordingPart3
+                            ? 'bg-rose-600 text-white ring-2 ring-rose-400 animate-pulse'
+                            : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'
+                        }`}
+                      >
+                        <Mic className="w-3.5 h-3.5 text-rose-500" />
+                        <span>{isRecordingPart3 ? 'Đang Thu Âm...' : 'Nói Qua Mic'}</span>
+                      </button>
+                    </div>
+
+                    <textarea
+                      rows={3}
+                      value={userPart3SpokenText}
+                      onChange={(e) => setUserPart3SpokenText(e.target.value)}
+                      placeholder="Gõ hoặc thu âm câu trả lời phản biện của bạn kết hợp cả 2 góc nhìn..."
+                      className="w-full p-3 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none font-sans"
+                    />
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setUserPart3SpokenText('')}
+                        className="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center space-x-1"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        <span>Xóa chữ</span>
+                      </button>
+
+                      <div className="flex items-center space-x-2">
+                        {/* AI Evaluation Button */}
+                        <button
+                          type="button"
+                          onClick={handleEvaluateCurrentSpeaking}
+                          disabled={isEvaluatingSpeaking}
+                          className="px-4 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5 cursor-pointer"
+                        >
+                          {isEvaluatingSpeaking ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>AI Đang Đánh Giá...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>AI Thẩm Định Lập Luận</span>
+                            </>
+                          )}
+                        </button>
+
+                        {/* Model Toggle Button */}
+                        <button
+                          type="button"
+                          onClick={() => setShowPart3Model(prev => !prev)}
+                          className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-2xs border ${
+                            showPart3Model 
+                              ? 'bg-amber-100 text-amber-900 border-amber-300' 
+                              : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          <Award className="w-3.5 h-3.5 text-amber-600" />
+                          <span>{showPart3Model ? 'Ẩn Mẫu Band 8.5' : 'Xem Mẫu Band 8.5'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI Evaluation Card */}
+                  {speakingEvaluation && (
+                    <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-teal-50 via-indigo-50 to-white border border-teal-300 shadow-sm space-y-3 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between border-b border-teal-200 pb-2.5">
+                        <div className="flex items-center space-x-2">
+                          <Sparkles className="w-5 h-5 text-teal-600" />
+                          <h4 className="font-bold text-slate-900 text-sm">AI Chẩn Đoán Lập Luận Part 3:</h4>
+                        </div>
+                        <span className="px-3 py-1 rounded-full bg-teal-600 text-white text-xs font-black shadow-xs">
+                          {speakingEvaluation.bandEstimate || 'Band 7.5 - 8.0'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                        <div className="p-2.5 rounded-xl bg-white border border-teal-100 shadow-2xs">
+                          <span className="font-bold text-teal-800 block mb-1">⚖️ Tư duy phản biện 2 chiều:</span>
+                          <p className="text-slate-600">{speakingEvaluation.fluencyFeedback || 'Lập luận cân bằng và logic.'}</p>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-teal-100 shadow-2xs">
+                          <span className="font-bold text-teal-800 block mb-1">💎 Vốn từ học thuật:</span>
+                          <p className="text-slate-600">{speakingEvaluation.lexicalFeedback || 'Sử dụng từ vựng phân tích tốt.'}</p>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-teal-100 shadow-2xs">
+                          <span className="font-bold text-teal-800 block mb-1">🧩 Độ chính xác ngữ pháp:</span>
+                          <p className="text-slate-600">{speakingEvaluation.grammarFeedback || 'Các cấu trúc phức được duy trì chuẩn xác.'}</p>
+                        </div>
+                      </div>
+
+                      {speakingEvaluation.upgradedResponse && (
+                        <div className="p-3 rounded-xl bg-white border border-teal-200 text-xs space-y-1">
+                          <span className="font-bold text-teal-900 block">⭐ Bản Trả Lời Nâng Cấp Band 8.5+:</span>
+                          <p className="font-serif italic text-slate-800 leading-relaxed">
+                            "{speakingEvaluation.upgradedResponse}"
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Model Answer Band 8.5 Card */}
+                  {showPart3Model && (
+                    <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200 shadow-sm space-y-3.5 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between border-b border-amber-200 pb-2.5">
+                        <div className="flex items-center space-x-2">
+                          <Award className="w-5 h-5 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-sm sm:text-base">
+                            Bài Mẫu Tranh Luận Part 3 Band 8.5
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handlePlaySpeakingAudio(currentPart3.modelAnswerBand8, `part3-model-${currentPart3.id}`, 'en-GB')}
+                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-xs active:scale-95 ${
+                            playingAudioId === `part3-model-${currentPart3.id}`
+                              ? 'bg-rose-600 text-white'
+                              : 'bg-amber-600 hover:bg-amber-700 text-white'
+                          }`}
+                        >
+                          {playingAudioId === `part3-model-${currentPart3.id}` ? (
+                            <>
+                              <VolumeX className="w-3.5 h-3.5 animate-pulse" />
+                              <span>Dừng</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3.5 h-3.5" />
+                              <span>Nghe Bài Mẫu</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-white border border-amber-200/80 shadow-2xs">
+                        <p className="text-sm font-serif leading-relaxed text-slate-800">
+                          {currentPart3.modelAnswerBand8}
+                        </p>
+                      </div>
+
+                      {currentPart3.highBandVocab && (
+                        <div className="space-y-1.5">
+                          <span className="text-xs font-bold text-amber-900 block">
+                            🔑 Từ vựng học thuật & cụm từ chuyển mạch:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {currentPart3.highBandVocab.map((w, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-semibold border border-amber-300 shadow-2xs"
+                              >
+                                {w}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
