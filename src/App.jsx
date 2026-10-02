@@ -319,6 +319,24 @@ export default function App() {
     });
   };
 
+  // Mobile / Tablet Virtual Keyboard VisualViewport adaptation:
+  // Automatically activate slim header when virtual keyboard opens to preserve maximum vertical typing space
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) return;
+
+    const handleViewportResize = () => {
+      const vv = window.visualViewport;
+      if (vv.height < window.innerHeight * 0.78) {
+        setIsSlimHeader(true);
+      }
+    };
+
+    window.visualViewport.addEventListener('resize', handleViewportResize);
+    return () => {
+      window.visualViewport.removeEventListener('resize', handleViewportResize);
+    };
+  }, []);
+
   // Phase 4: CDI Accessibility & Display Settings (Font Scale & Screen Contrast)
   const [cdiFontSize, setCdiFontSize] = useState(() => safeGet('ielts_cdi_font_size', 'standard'));
   const [cdiContrast, setCdiContrast] = useState(() => safeGet('ielts_cdi_contrast', 'standard'));

@@ -80,90 +80,40 @@ export default function WritingSubHeaderToolbar({
           )}
         </div>
 
-        {/* 2. Sinh Đề Mới Bằng AI (Prominent Action) */}
+        {/* 2. Sinh Đề Mới Bằng AI (Primary Action) */}
         <button
           onClick={onOpenGenerator}
-          className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 lg:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/90 text-red-700 hover:bg-red-100/90 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs group"
-          title="Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng 2025–2026 bằng AI"
+          className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-bold shrink-0 transition-all cursor-pointer shadow-xs active:scale-95 group"
+          title="Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng bằng AI"
         >
-          <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
-          <span className="hidden xl:inline">Sinh Đề (AI)</span>
-          <span className="hidden sm:inline xl:hidden">Sinh Đề</span>
-          <span className="sm:hidden">Sinh Đề</span>
-        </button>
-
-        {/* 3. Mastered Task Toggle (Thuộc Bài) */}
-        <button
-          onClick={() => onToggleMastered && onToggleMastered(currentTask?.id)}
-          className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs ${
-            masteredIds.includes(currentTask?.id)
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
-          }`}
-          title={masteredIds.includes(currentTask?.id)
-            ? 'Đề thi này đã được đánh dấu là "Đã thuộc". Nhấn để bỏ đánh dấu.'
-            : 'Đánh dấu đề thi này là "Đã thuộc" để ghi nhớ tiến trình và lọc trong thư viện.'}
-        >
-          <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTask?.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
-          <span className="hidden lg:inline">{masteredIds.includes(currentTask?.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
+          <Sparkles className="w-3.5 h-3.5 text-amber-300 group-hover:scale-110 transition-transform shrink-0" />
+          <span>Sinh Đề (AI)</span>
         </button>
       </div>
 
       {/* ============================================================ */}
-      {/* ZONE 2 (Right): EXAM MODES, CDI DISPLAY & ESSENTIAL TOOLS    */}
+      {/* ZONE 2 (Right): ESSENTIAL CONTROLS & UNIFIED TOOLS DROPDOWN  */}
       {/* ============================================================ */}
-      <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 text-xs shrink-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 text-xs shrink-0 max-w-full py-0.5">
         <div className="flex items-center space-x-1 sm:space-x-1.5">
           
-          {/* 1. CDI Display & Accessibility Settings (Font Scale / Color Contrast) */}
-          <button
-            onClick={onOpenCDIDisplay}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
-              (cdiFontSize !== 'standard' || cdiContrast !== 'standard')
-                ? 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100'
-                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-            }`}
-            title="Tùy chỉnh cỡ chữ & chế độ tương phản chuẩn phòng thi máy tính CDI"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span className="hidden lg:inline">Trợ Năng CDI</span>
-            <span className="hidden sm:inline lg:hidden">CDI</span>
-            {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-            )}
-          </button>
-
-          {/* 2. Focus Mode (Zen Mode) Toggle */}
-          <button
-            onClick={toggleFocusMode}
-            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
-              isFocusMode
-                ? 'bg-purple-50 text-purple-700 border-purple-300 hover:bg-purple-100'
-                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-            }`}
-            title={isFocusMode ? "Đang ở Chế độ Tập Trung. Nhấn để quay lại (Alt + F)" : "Bật Chế độ Tập Trung toàn màn hình (Alt + F)"}
-          >
-            {isFocusMode ? (
-              <Minimize2 className="w-3.5 h-3.5 text-purple-600" />
-            ) : (
-              <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
-            )}
-            <span className="hidden lg:inline">{isFocusMode ? 'Thoát Focus' : 'Tập trung'}</span>
-          </button>
-
-          {/* 3. De-cluttered "Tiện Ích & Sổ Tay" Menu Dropdown */}
+          {/* Unified "Tiện Ích & Cài Đặt" Menu Dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                 isToolsDropdownOpen || mistakesCount > 0
-                  ? 'bg-amber-50/80 text-amber-900 border-amber-300'
+                  ? 'bg-amber-50/90 text-amber-900 border-amber-300'
                   : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
               }`}
-              title="Mở thực đơn Sổ tay lỗi sai, Cẩm nang, Phím tắt & Mục tiêu"
+              title="Mở thực đơn Tiện ích: CDI, Chế độ tập trung, Thuộc bài, Sổ lỗi sai & Cẩm nang"
             >
               <FolderKanban className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span className="hidden sm:inline">Tiện Ích</span>
+              <span className="hidden xs:inline">Tiện Ích & Cài Đặt</span>
+              <span className="xs:hidden">Tiện Ích</span>
+              {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
+                <span className="w-2 h-2 rounded-full bg-blue-600" title="Đang bật tùy chỉnh tương phản CDI" />
+              )}
               {mistakesCount > 0 && (
                 <span className="px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black">
                   {mistakesCount}
@@ -179,26 +129,92 @@ export default function WritingSubHeaderToolbar({
                   className="fixed inset-0 z-40" 
                   onClick={() => setIsToolsDropdownOpen(false)} 
                 />
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
                   
-                  {/* Item 1: Cẩm nang lý thuyết */}
+                  {/* SECTION 1: Cấu hình thi & Hiển thị */}
+                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Cấu Hình Phòng Thi & Hiển Thị
+                  </div>
+
+                  {/* Focus Mode Toggle */}
                   <button
                     onClick={() => {
-                      onOpenTheory?.();
+                      toggleFocusMode?.();
                       setIsToolsDropdownOpen(false);
                     }}
-                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 transition-colors cursor-pointer"
+                    className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      isFocusMode ? 'bg-purple-50 text-purple-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                    }`}
                   >
-                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
-                      <BookOpen className="w-4 h-4" />
+                    <div className="flex items-center space-x-2.5">
+                      <div className={`p-1.5 rounded-lg ${isFocusMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700'}`}>
+                        {isFocusMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs">Chế Độ Tập Trung (Zen)</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Ẩn mọi menu để tập trung viết (Alt+F)</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-bold text-xs">Cẩm Nang Chiến Thuật</div>
-                      <div className="text-[10px] text-slate-400 font-normal">Chiến lược viết Task 1 & Task 2 chuẩn 8.0+</div>
-                    </div>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isFocusMode ? 'bg-purple-200 text-purple-800' : 'bg-slate-100 text-slate-600'}`}>
+                      {isFocusMode ? 'BẬT' : 'TẮT'}
+                    </span>
                   </button>
 
-                  {/* Item 2: Sổ tay lỗi sai */}
+                  {/* CDI Display Settings */}
+                  <button
+                    onClick={() => {
+                      onOpenCDIDisplay?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                        <SlidersHorizontal className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs">Trợ Năng Hiển Thị CDI</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Cỡ chữ & màu tương phản IDP/BC</div>
+                      </div>
+                    </div>
+                    {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
+                        Tùy chỉnh
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Mastered Task Toggle */}
+                  <button
+                    onClick={() => {
+                      onToggleMastered?.(currentTask?.id);
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      masteredIds.includes(currentTask?.id) ? 'bg-emerald-50 text-emerald-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className={`p-1.5 rounded-lg ${masteredIds.includes(currentTask?.id) ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'}`}>
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs">Đánh Dấu Thuộc Đề Thi Này</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Ghi nhớ đã luyện thành thạo dạng bài này</div>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${masteredIds.includes(currentTask?.id) ? 'bg-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+                      {masteredIds.includes(currentTask?.id) ? 'Đã thuộc ✓' : 'Chưa thuộc'}
+                    </span>
+                  </button>
+
+                  {/* SECTION 2: Học tập & Sửa lỗi */}
+                  <div className="border-t border-slate-100 pt-1 my-1"></div>
+                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Sổ Tay & Kiến Thức Luyện Viết
+                  </div>
+
+                  {/* Sổ tay lỗi sai */}
                   <button
                     onClick={() => {
                       onOpenMistakeLog?.();
@@ -222,7 +238,7 @@ export default function WritingSubHeaderToolbar({
                     )}
                   </button>
 
-                  {/* Item 2.5: Đơn thuốc sửa lỗi mỗi ngày (SRS) */}
+                  {/* Đơn thuốc sửa lỗi SRS */}
                   <button
                     onClick={() => {
                       onOpenPrescription?.();
@@ -244,7 +260,24 @@ export default function WritingSubHeaderToolbar({
                     </div>
                   </button>
 
-                  {/* Item 3: Phím tắt tra cứu */}
+                  {/* Cẩm nang lý thuyết */}
+                  <button
+                    onClick={() => {
+                      onOpenTheory?.();
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 transition-colors cursor-pointer"
+                  >
+                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs">Cẩm Nang Chiến Thuật</div>
+                      <div className="text-[10px] text-slate-400 font-normal">Chiến lược viết Task 1 & Task 2 chuẩn 8.0+</div>
+                    </div>
+                  </button>
+
+                  {/* Phím tắt tra cứu */}
                   <button
                     onClick={() => {
                       onOpenShortcuts?.();
@@ -261,9 +294,8 @@ export default function WritingSubHeaderToolbar({
                     </div>
                   </button>
 
+                  {/* SECTION 3: Mục tiêu & Streak */}
                   <div className="border-t border-slate-100 pt-1 my-1"></div>
-
-                  {/* Item 4: Mục tiêu Band */}
                   <button
                     onClick={() => {
                       onOpenOnboarding?.();
@@ -285,7 +317,7 @@ export default function WritingSubHeaderToolbar({
                     </span>
                   </button>
 
-                  {/* Item 5: Streak Info */}
+                  {/* Streak Info */}
                   <div className="px-2.5 py-1.5 bg-orange-50/60 rounded-xl border border-orange-200/50 flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 text-orange-800 text-xs font-bold">
                       <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
@@ -293,12 +325,10 @@ export default function WritingSubHeaderToolbar({
                     </div>
                     <span className="font-black text-xs text-orange-700">{streakCount} ngày liên tục</span>
                   </div>
-
                 </div>
               </>
             )}
           </div>
-
         </div>
 
         {/* 4. Weekly Word Target Progress Bar (Visible on desktop/laptop >= 1280px to preserve tablet space) */}
