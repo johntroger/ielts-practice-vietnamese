@@ -147,3 +147,14 @@
 
 ### Chặng 4: Tâm Lý Phòng Thi & Tương Tác Giám Khảo
 * [20. Tâm lý phòng thi & Khi bị giám khảo ngắt lời](speaking/speaking-examiner-interruption.md)
+
+---
+
+## 🚀 Hướng Dẫn Sử Dụng & Tính Năng Hệ Thống
+* [Tổng Quan Tính Năng Nền Tảng](features/README.md)
+* [Phân Hệ AI & Chấm Điểm Chuẩn Cambridge](features/ai-evaluation.md)
+* [Kho Đề & Công Cụ Luyện Tập 4 Kỹ Năng](features/practice-tools.md)
+* [Phòng Thi Thử Chuẩn CDI & Marathon](features/exam-simulation.md)
+* [Cẩm Nang Lý Thuyết & Sổ Tay Từ Vựng](features/theory-vocab.md)
+* [Theo Dõi Tiến Độ, Hồ Sơ & Bảng Điểm TRF](features/analytics-profile.md)
+* [Bảng Tra Cứu Phím Tắt Toàn Năng](features/shortcuts-ux.md)

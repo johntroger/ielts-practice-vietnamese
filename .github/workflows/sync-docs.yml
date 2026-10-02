@@ -1,0 +1,44 @@
+name: Auto-Sync Features Docs to GitBook
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/core/featureRegistry.js'
+      - 'scripts/sync_features_to_gitbook.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-docs:
+    name: Sync Features to GitBook Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Documentation Sync Engine
+        run: node scripts/sync_features_to_gitbook.js
+
+      - name: Check and Commit Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain docs/)" ]; then
+            git add docs/
+            git commit -m "docs: auto-sync features to GitBook [skip ci]"
+            git push origin main
+            echo "✅ Successfully synced and pushed updated docs to GitBook!"
+          else
+            echo "✨ Docs are already in 100% sync with featureRegistry.js. No commit needed."
+          fi

@@ -597,6 +597,24 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Hướng dẫn làm quen và tối ưu học tập</div>
                       </div>
                     </button>
+                    <a
+                      href="https://vneconomics.gitbook.io/vneconomics-docs/features"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsProgressMenuOpen(false)}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-red-50/70 text-left text-xs font-semibold text-slate-700 hover:text-red-700 transition-colors cursor-pointer"
+                    >
+                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-1.5">
+                          <span className="font-bold">Tài Liệu GitBook Live</span>
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-100 text-emerald-700">Live</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">Đọc hướng dẫn chi tiết & cẩm nang 4 kỹ năng</div>
+                      </div>
+                    </a>
                     <button
                       onClick={() => { doOpenContact(); setIsProgressMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"

@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/sync_features_to_gitbook.js && vite build",
     "preview": "vite preview",
-    "test": "node tests/run_all_tests.js"
+    "test": "node tests/run_all_tests.js",
+    "docs:sync": "node scripts/sync_features_to_gitbook.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

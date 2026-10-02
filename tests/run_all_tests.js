@@ -64,7 +64,8 @@ const testSuites = [
   { name: 'Step 55: Mobile & Tablet Popup UI/UX Audit & Skill-Aware Library Routing', file: 'tests/test_step55_mobile_tablet_popup_audit.js' },
   { name: 'Step 56: Top Navbar Direct Contact & Feedback Button', file: 'tests/test_step56_navbar_contact_button.js' },
   { name: 'Step 57: GitBook Documentation & Auto-Sync Integration', file: 'tests/test_step57_gitbook_docs_integration.js' },
-  { name: 'Step 58: Two-Tier High Capacity Storage (IndexedDB Archive & LocalStorage Index)', file: 'tests/test_step58_two_tier_indexeddb_storage.js' }
+  { name: 'Step 58: Two-Tier High Capacity Storage (IndexedDB Archive & LocalStorage Index)', file: 'tests/test_step58_two_tier_indexeddb_storage.js' },
+  { name: 'Step 59: Automated Features Documentation & GitBook Sync Engine', file: 'tests/test_step59_automated_features_docs_sync.js' }
 ];
 
 console.log('===============================================================');

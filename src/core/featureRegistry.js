@@ -1022,3 +1022,43 @@ export function dispatchFeatureAction(quickAction, handlers = {}) {
 
   return false;
 }
+
+/**
+ * Ánh xạ danh mục tính năng sang URL slug trên GitBook
+ */
+export const GITBOOK_CATEGORY_SLUGS = {
+  ai_evaluation: 'ai-evaluation',
+  practice_tools: 'practice-tools',
+  exam_simulation: 'exam-simulation',
+  theory_vocab: 'theory-vocab',
+  analytics_profile: 'analytics-profile',
+  shortcuts_ux: 'shortcuts-ux'
+};
+
+export const GITBOOK_DOCS_BASE_URL = 'https://vneconomics.gitbook.io/vneconomics-docs';
+export const GITBOOK_FEATURES_BASE_URL = 'https://vneconomics.gitbook.io/vneconomics-docs/features';
+
+/**
+ * Sinh đường dẫn GitBook Deep Link chính xác theo danh mục hoặc tính năng cụ thể
+ * @param {string|object} featureOrCategory - ID danh mục hoặc đối tượng feature
+ * @param {string} [featureId] - ID của tính năng để tạo anchor link #feat-id
+ * @returns {string} URL GitBook đầy đủ
+ */
+export function getFeatureGitBookUrl(featureOrCategory, featureId = null) {
+  if (!featureOrCategory || featureOrCategory === 'all') {
+    return GITBOOK_FEATURES_BASE_URL;
+  }
+
+  // Nếu là đối tượng feature
+  if (typeof featureOrCategory === 'object') {
+    const category = featureOrCategory.category;
+    const slug = GITBOOK_CATEGORY_SLUGS[category];
+    const anchor = featureOrCategory.id ? `#${featureOrCategory.id}` : '';
+    return slug ? `${GITBOOK_FEATURES_BASE_URL}/${slug}${anchor}` : GITBOOK_FEATURES_BASE_URL;
+  }
+
+  // Nếu là category string
+  const slug = GITBOOK_CATEGORY_SLUGS[featureOrCategory];
+  const anchor = featureId ? `#${featureId}` : '';
+  return slug ? `${GITBOOK_FEATURES_BASE_URL}/${slug}${anchor}` : GITBOOK_FEATURES_BASE_URL;
+}
