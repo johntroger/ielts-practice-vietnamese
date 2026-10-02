@@ -158,7 +158,7 @@ export default function WritingSubHeaderToolbar({
                   className="fixed inset-0 z-40" 
                   onClick={() => setIsToolsDropdownOpen(false)} 
                 />
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
+                <div className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-24px)] max-h-[calc(100dvh-160px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
                   
                   {/* SECTION 1: Cấu hình thi & Hiển thị */}
                   <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
