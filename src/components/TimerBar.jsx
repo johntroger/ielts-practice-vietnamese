@@ -106,7 +106,7 @@ export default function TimerBar({
           </button>
         </div>
       ) : (
-        <footer className="sticky bottom-0 z-30 shadow-xl flex flex-col">
+        <footer className="sticky bottom-0 z-30 shadow-xl flex flex-col shrink-0">
           {/* Pre-Submission Habit Check Gentle Nudge Banner */}
           {habitWarnings.length > 0 && (
             <div className="bg-amber-950/95 border-t-2 border-amber-500 text-amber-100 p-3 sm:px-5 backdrop-blur-md animate-in slide-in-from-bottom-2 shadow-2xl">

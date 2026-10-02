@@ -330,8 +330,8 @@ export default function Navbar({
 
             {/* Desktop Menus Group (1-Click Fast Switching & Zero Duplicates) */}
             <div ref={desktopMenuRef} className="flex items-center gap-1 sm:gap-1.5 xl:gap-2">
-              {/* 1. Luyện Tập Dropdown */}
-              <div className="relative hidden lg:block">
+              {/* 1. Luyện Tập Dropdown (Desktop >= 1280px) */}
+              <div className="relative hidden xl:block">
                 <button
                   onClick={() => {
                     setIsPracticeMenuOpen(prev => !prev);
@@ -435,8 +435,8 @@ export default function Navbar({
                 )}
               </div>
 
-              {/* 2. Công Cụ Dropdown */}
-              <div className="relative hidden lg:block">
+              {/* 2. Công Cụ Dropdown (Desktop >= 1280px) */}
+              <div className="relative hidden xl:block">
                 <button
                   onClick={() => {
                     setIsToolsMenuOpen(prev => !prev);
@@ -516,37 +516,6 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Cỡ chữ & màu tương phản IDP/BC</div>
                       </div>
                     </button>
-
-                    {/* Quick Progress links only visible on lg screens where Tiến Độ is hidden (No duplication on xl+) */}
-                    <div className="lg:block xl:hidden pt-1 border-t border-slate-100">
-                      <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        Tiến Độ & Trợ Giúp
-                      </div>
-                      <button
-                        onClick={() => { doOpenHistory(); setIsToolsMenuOpen(false); }}
-                        className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
-                      >
-                        <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
-                          <History className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="font-bold">Lịch Sử Nộp Bài & Điểm Số</div>
-                          <div className="text-[10px] text-slate-400 font-normal">Xem lại các bài thi & feedback</div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => { doOpenWeeklyReport(); setIsToolsMenuOpen(false); }}
-                        className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
-                          <TrendingUp className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="font-bold">Báo Cáo Tiến Độ Tuần</div>
-                          <div className="text-[10px] text-slate-400 font-normal">Radar 4 tiêu chí & chẩn đoán</div>
-                        </div>
-                      </button>
-                    </div>
                   </div>
                 )}
               </div>
@@ -686,7 +655,7 @@ export default function Navbar({
               </div>
             </button>
 
-            {/* Desktop Only: User Profile Button */}
+            {/* Desktop Only (>= 1280px): User Profile Button */}
             <button
               onClick={() => {
                 if (user) {
@@ -695,7 +664,7 @@ export default function Navbar({
                   doOpenAuth();
                 }
               }}
-              className={`hidden lg:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
+              className={`hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 user 
                   ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' 
                   : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-800'
@@ -703,15 +672,15 @@ export default function Navbar({
               title={user ? `Xem trang cá nhân: ${user.email}` : "Đăng nhập hoặc đăng ký tài khoản"}
             >
               <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
-              <span className="hidden xl:inline max-w-[100px] truncate text-[11px]">
+              <span className="max-w-[100px] truncate text-[11px]">
                 {user ? (user.email.split('@')[0]) : 'Tài Khoản'}
               </span>
             </button>
 
-            {/* Mobile & Tablet Hamburger Menu Button (44px touch target) */}
+            {/* Mobile & Tablet Hamburger Menu Button (44px touch target, active up to 1280px) */}
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-              className="lg:hidden flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+              className="xl:hidden flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
               aria-label="Mở menu đầy đủ"
             >
               {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5" />}
@@ -723,10 +692,10 @@ export default function Navbar({
 
       </div>
 
-      {/* MOBILE DRAWER */}
+      {/* MOBILE & TABLET DRAWER (Active for all screens < 1280px) */}
       {isMobileDrawerOpen && (
         <div 
-          className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200 cursor-pointer"
+          className="xl:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200 cursor-pointer"
           onClick={() => setIsMobileDrawerOpen(false)}
         >
           <div 
