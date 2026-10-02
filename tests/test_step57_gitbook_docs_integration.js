@@ -17,9 +17,9 @@ import path from 'path';
 console.log('📖 Testing Step 57: GitBook Documentation & Auto-Sync Integration...');
 
 // -------------------------------------------------------------
-// 1. VERIFY .gitbook.yaml CONFIGURATION
+// 1. VERIFY .gitbook.yaml & gitbook-docs.yaml CONFIGURATION
 // -------------------------------------------------------------
-console.log('  ▶ 1. Verifying .gitbook.yaml configuration...');
+console.log('  ▶ 1. Verifying .gitbook.yaml & gitbook-docs.yaml configuration...');
 const gitbookYamlPath = path.resolve('.gitbook.yaml');
 assert(fs.existsSync(gitbookYamlPath), '.gitbook.yaml must exist at repository root');
 const gitbookYamlContent = fs.readFileSync(gitbookYamlPath, 'utf8');
@@ -27,7 +27,15 @@ assert(
   gitbookYamlContent.includes('root: ./docs') || gitbookYamlContent.includes('root: docs'),
   '.gitbook.yaml must point root to ./docs'
 );
-console.log('    ✅ .gitbook.yaml properly configured with root: ./docs.');
+
+const gitbookDocsYamlPath = path.resolve('gitbook-docs.yaml');
+assert(fs.existsSync(gitbookDocsYamlPath), 'gitbook-docs.yaml must exist for GitBook Sites sync');
+const gitbookDocsYamlContent = fs.readFileSync(gitbookDocsYamlPath, 'utf8');
+assert(
+  gitbookDocsYamlContent.includes('directory: ./docs') || gitbookDocsYamlContent.includes('directory: docs'),
+  'gitbook-docs.yaml must map directory to ./docs'
+);
+console.log('    ✅ .gitbook.yaml and gitbook-docs.yaml properly configured.');
 
 // -------------------------------------------------------------
 // 2. VERIFY docs/README.md & docs/SUMMARY.md

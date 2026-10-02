@@ -1,0 +1,10 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: IELTS Master Handbook
+  structure:
+    - type: space
+      key: ielts-handbook
+      title: IELTS Master Handbook
+      path: ""
+      content:
+        directory: ./docs
