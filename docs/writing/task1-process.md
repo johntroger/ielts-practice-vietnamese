@@ -5,25 +5,52 @@
 
 ---
 
-### Phân Loại 2 Dạng Process
-1. **Man-made Process (Quy trình sản xuất nhân tạo - vd: sản xuất xi măng, tái chế nhựa)**:
-   - **Quy tắc vàng**: 80-90% các câu phải dùng **Thể Bị Động (Passive Voice)** vì đối tượng chính là vật liệu/sản phẩm được con người hoặc máy móc tác động lên.
-   - *Ví dụ*: "The limestone **is crushed** into powder, after which it **is heated** in a rotary kiln."
-2. **Natural Cycle (Vòng tuần hoàn tự nhiên - vd: vòng đời của ếch, chu trình nước)**:
-   - **Quy tắc vàng**: Dùng **Thể Chủ Động (Active Voice)** vì các sinh vật hoặc hiện tượng tự nhiên tự vận động.
-   - *Ví dụ*: "The eggs **hatch** into tadpoles, which subsequently **develop** hind legs."
+### 1. Phân Loại 3 Dạng Process Trong Đề Thi IELTS
 
-### Công Thức Viết Overview Cho Process
-Overview của Process cực kỳ đơn giản và dễ lấy điểm nếu làm theo 2 vế:
-- *Vế 1*: Quy trình gồm bao nhiêu bước / giai đoạn (how many stages/steps).
-- *Vế 2*: Bắt đầu từ đâu và kết thúc bằng thành phẩm / trạng thái nào.
-- *Mẫu chuẩn*: "Overall, the manufacturing process comprises [N] distinct stages, commencing with the extraction of raw materials and culminating in the packaging and distribution of the finished product."
+1. **Man-made Process (Quy trình sản xuất nhân tạo - vd: tái chế nhôm, đóng hộp dứa, lọc nước)**:
+   - **Quy tắc vàng**: 80 – 90% câu dùng **Thể Bị Động (Passive Voice)** vì đối tượng chính là nguyên vật liệu/sản phẩm được máy móc và con người xử lý.
+   - *Ví dụ*: *"The discarded cans **are collected**, after which they **are shredded and melted** into liquid aluminium."*
+2. **Natural Cycle (Chu trình sinh học & tự nhiên - vd: vòng đời của ếch, sự phát triển của cây trồng)**:
+   - **Quy tắc vàng**: Dùng **Thể Chủ Động (Active Voice)** ở thì Hiện tại đơn vì các sinh vật tự sinh trưởng và vận động.
+   - *Ví dụ*: *"The seeds **germinate** into seedlings, which gradually **grow** into mature plants."*
+3. **Evolutionary / Crafting Process (Sự tiến hóa công cụ / Chế tác thủ công qua các thời kỳ)**:
+   - Thường so sánh 2 công cụ hoặc 2 kỹ thuật chế tác từ các niên đại khác nhau (ví dụ: công cụ cắt đá 1.4 triệu năm trước vs 800,000 năm trước).
+   - *Quy tắc*: Kết hợp miêu tả hình học (*dimensions, thickness, tapering toward the top, jagged edges*) và phương pháp tác động (*chipping away small fragments of stone*).
 
-### Bộ Từ Nối Diễn Tả Trình Tự Thời Gian (Sequencing Words)
-- *Giai đoạn đầu*: Initially, In the initial phase, The process commences with...
-- *Giai đoạn tiếp theo*: Subsequently, Following this, Once [X] is completed, At the next juncture...
-- *Giai đoạn đồng thời*: Concurrently, Simultaneously, While this is taking place...
-- *Giai đoạn kết thúc*: Eventually, Finally, The cycle culminates in...
+---
+
+### 2. Công Thức Viết Overview Chuẩn Mực
+
+Overview của Process luôn gồm 2 vế thông tin cốt lõi:
+- *Vế 1*: Quy trình gồm bao nhiêu bước / giai đoạn chính (how many stages/steps).
+- *Vế 2*: Bắt đầu từ nguyên liệu thô ban đầu và kết thúc bằng thành phẩm cuối cùng.
+- *Mẫu chuẩn*:  
+  > *"Overall, the process comprises [N] distinct stages, commencing with [Starting action] and culminating in [Final product / Distribution]."*
+
+---
+
+### 3. Kỹ Thuật Nối Câu Phức Tránh Lặp Từ Nối (Advanced Sentence Structures)
+
+Nếu câu nào bạn cũng dùng *"Then...", "Next...", "After that..."*, tiêu chí Coherence & Cohesion sẽ bị ghim ở Band 5.5. Hãy áp dụng 3 cấu trúc ngữ pháp cao cấp sau:
+
+- **1. Mệnh đề phân từ quá khứ (Past Participle Clauses):**  
+  👉 *"Once **sorted and cleaned**, the raw materials are transferred to an industrial furnace."*  
+  👉 *"After **being heated to extreme temperatures**, the metal is solidified and flattened into rolls."*
+- **2. Mệnh đề quan hệ chỉ nơi chốn / mục đích (Where / Whereby Clauses):**  
+  👉 *"...transported to a processing facility, **where they undergo shredding and compressing** into compact blocks."*
+- **3. Cấu trúc bị động sở hữu (Causative Passive):**  
+  👉 *"The pineapples **have their tops removed and their rinds peeled** before being sliced into chunks."*
+
+---
+
+### 4. Bảng Từ Nối Trình Tự & Động Từ Thao Tác Chuyên Dụng
+
+| Giai Đoạn Quy Trình | Liên Từ Điều Hướng | Động Từ Thao Tác Thường Gặp |
+| :--- | :--- | :--- |
+| **Giai đoạn khởi đầu** | Initially, The process commences with, At the outset | collect, harvest, gather, extract, space apart |
+| **Giai đoạn biến đổi** | Following that, Subsequently, In the subsequent phase | sort, grade, filter, crush, melt, purify, ferment |
+| **Giai đoạn tạo hình** | Concurrently, At this juncture, Once [X] is completed | solidify, flatten into sheets, mold, shape, cut into chunks |
+| **Giai đoạn hoàn thiện** | Finally, The cycle culminates in, In the final stage | pack into crates, can, coat in wax, distribute for reuse |
 
 ---
 

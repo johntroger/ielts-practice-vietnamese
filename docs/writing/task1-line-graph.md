@@ -20,14 +20,33 @@ Line Graph hầu như 100% là **Dynamic (biến thiên theo thời gian)**. M�
 4. **Body 2 (Giai đoạn sau & Điểm kết thúc / Điểm vượt mặt)**:
    - Miêu tả diễn biến giai đoạn cuối, điểm giao cắt (crossover) nơi một đối tượng vượt qua đối tượng khác, và vị trí cuối cùng vào năm kết thúc.
 
-### Từ Vựng & Cấu Trúc Đắt Giá Cho Line Graph
-- **Tăng vọt / Tăng mạnh**: surge, soar, rocket, experience an exponential growth.
-- **Giảm sâu / Giảm đột ngột**: plunge, plummet, dive, register a precipitous drop.
-- **Dao động liên tục**: fluctuate erratically, experience wild oscillations between [X] and [Y].
-- **Chạm đỉnh / Chạm đáy**: reach an all-time high of [X], peak at [X] before retreating / hit a trough of [X], bottom out at [X].
-- **Cấu trúc điểm vượt mặt (Crossover)**:
-  - "By 2015, car usage had overtaken bus travel, reaching 45% compared to 30%."
-  - "In 2020, expenditure on renewables surpassed that of fossil fuels, becoming the dominant energy source."
+### 3. Phân Rã Các Mẫu Hình Biến Đổi Phức Tạp (Complex Trends)
+
+Trong các bài thi học thuật gần đây, các đường số liệu hiếm khi tăng hoặc giảm đơn điệu mà thường có các khúc quanh phức tạp:
+
+- **1. Biến động dữ dội (Wild Fluctuations):**  
+  👉 *"The prices of imported commodities **experienced wild fluctuations**, swinging erratically between $1.2 and $2.8 per kilogram."*
+- **2. Chững lại ở mức cao / Đạt thế ổn định (Plateau / Leveling off):**  
+  👉 *"After a decade of rapid expansion, the volume of exports **reached a plateau**, **leveling off** at slightly above the $30 billion mark until the end of the timeframe."*
+- **3. Chạm đáy rồi phục hồi ngoạn mục (Dip and Rebound):**  
+  👉 *"The proportion of tourists **dropped to a low of** just 15% in 2002 before **rebounding sharply** to conclude the period at 45%."*
+- **4. Xu hướng soi chiếu, tương đồng (Mirroring Trends):**  
+  👉 *"The unemployment rate in Scotland **almost exactly mirrored this fluctuating trend**, albeit at a slightly more moderate pace."*
+- **5. Dao động quanh một ngưỡng cố định (Hovering):**  
+  👉 *"Throughout the 15-year study, international passenger figures **hovered around the 45% threshold**, showing minimal deviation."*
+
+---
+
+### 4. Bảng Tra Cứu Từ Vựng Khảo Thí Tuyệt Đối Cho Line Graph
+
+| Xu Hướng Số Liệu | Động Từ / Cụm Động Từ (Verbs) | Danh Từ / Cụm Danh Từ (Nouns) |
+| :--- | :--- | :--- |
+| **Tăng mạnh** | soar, surge, rocket, climb steeply | a dramatic surge, a sharp climb, a steep rise |
+| **Giảm sâu** | plummet, plunge, slump dramatically | a precipitous drop, a sharp slump |
+| **Giảm từ từ** | drop steadily, decrease gradually | a gradual decline, a steady fall |
+| **Phục hồi** | rebound, bounce back, stage a recovery | a noticeable resurgence, a gradual recovery |
+| **Ổn định / Chững** | level off, reach a plateau, hover around | a period of stability, a plateau phase |
+| **Giao cắt / Vượt** | overtake, surpass, outstrip | a definitive crossover, an overtaking point |
 
 ---
 

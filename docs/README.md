@@ -31,11 +31,13 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 
 ### 2. Dành Cho Mục Tiêu Band 6.0 – 6.5:
 - [Master Chiến Lược Toàn Diện Task 1](writing/task1-mastery.md) & [Cấu Trúc Đoạn Văn PEEL Task 2](writing/task2-peel-structure.md)
+- [Mặt bằng kiến trúc (Floor Plans) & Quy trình sản xuất phức tạp](writing/writing-task1-floor-plans-processes.md)
 - [Quản trị thời gian 15-20-25m Reading](reading/time-management.md) & [Tuyệt chiêu Matching Headings](reading/matching-headings.md)
 - [Bẫy Distractor trong Listening](listening/distractor-traps.md) & [Bản đồ Map Labelling](listening/map-and-signposting.md)
 - [Kỹ thuật Storytelling Dòng Thời Gian PPF Part 2](speaking/storytelling-part2.md)
 
 ### 3. Dành Cho Mục Tiêu Bứt Phá Band 7.5 – 8.5+:
+- [Bẻ bẫy đề So sánh & So sánh nhất ("The Best Way") Task 2](writing/writing-task2-comparative-superlative-traps.md)
 - [Giải mã nhận xét Giám khảo Cam 18-19 & Lỗi mất điểm 8.0+](writing/cambridge-examiner-insights-band8.md)
 - [Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](writing/academic-hedging.md)
 - [Phân biệt ý kiến dẫn lại vs Quan điểm tác giả Passage 3](reading/reading-passage3-author-stance.md)

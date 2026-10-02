@@ -33,4 +33,4 @@
 
 | ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [23. Task 2: Two-Part Question](task2-two-part.md) | [Mục Lục Cẩm Nang](../README.md) | [25. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](academic-hedging.md) |
+| [25. Task 2: Bẻ Bẫy Đề So Sánh & So Sánh Nhất](writing-task2-comparative-superlative-traps.md) | [Mục Lục Cẩm Nang](../README.md) | [27. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](academic-hedging.md) |

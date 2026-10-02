@@ -37,4 +37,4 @@ Trong tiêu chí chấm **Lexical Resource Band 7.0 - 8.0+**, giám khảo Cambr
 
 | ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [14. Task 1: Mixed Chart (Biểu Đồ Kết Hợp)](task1-mixed.md) | [Mục Lục Cẩm Nang](../README.md) | [16. Task 1: Mốc thời gian dự báo tương lai](writing-task1-future-projections.md) |
+| [15. Task 1: Mặt Bằng Kiến Trúc & Quy Trình Sản Xuất](writing-task1-floor-plans-processes.md) | [Mục Lục Cẩm Nang](../README.md) | [17. Task 1: Mốc thời gian dự báo tương lai](writing-task1-future-projections.md) |
