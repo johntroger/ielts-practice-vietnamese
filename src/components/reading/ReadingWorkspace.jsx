@@ -128,6 +128,26 @@ export default function ReadingWorkspace({
   const [cdiFullscreen, setCdiFullscreen] = useState(false);
   const [cdiTheme, setCdiTheme] = useState('standard'); // 'standard' | 'black-on-white' | 'white-on-black' | 'yellow-on-black'
 
+  // Responsive state for screen width >= 1024px (Desktop & Tablet Landscape)
+  const [isDesktopOrLandscape, setIsDesktopOrLandscape] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktopOrLandscape(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
   // Explanation and Modals states
   const [showExplanationFor, setShowExplanationFor] = useState(null);
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
@@ -1122,7 +1142,7 @@ export default function ReadingWorkspace({
       >
         {/* Left: Passage Pane */}
         <div 
-          style={{ width: window.innerWidth >= 1024 ? `${splitWidth}%` : '100%' }}
+          style={{ width: isDesktopOrLandscape ? `${splitWidth}%` : '100%' }}
           className={`h-full border-r border-slate-200 overflow-hidden ${
             mobileTab === 'passage' ? 'block' : 'hidden lg:block'
           }`}
@@ -1154,7 +1174,7 @@ export default function ReadingWorkspace({
 
         {/* Right: Question Pane */}
         <div 
-          style={{ width: window.innerWidth >= 1024 ? `${100 - splitWidth}%` : '100%' }}
+          style={{ width: isDesktopOrLandscape ? `${100 - splitWidth}%` : '100%' }}
           className={`h-full flex-1 overflow-hidden ${
             mobileTab === 'questions' ? 'block' : 'hidden lg:block'
           }`}

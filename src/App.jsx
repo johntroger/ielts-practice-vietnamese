@@ -974,7 +974,7 @@ export default function App() {
     <div 
       data-cdi-font={cdiFontSize}
       data-cdi-contrast={cdiContrast}
-      className={`${(activeSkill === 'reading' || activeSkill === 'listening' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative`}>
+      className={`${(activeSkill === 'reading' || activeSkill === 'listening' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
       
       {/* Focus Mode Floating Exit Pill */}
       {isFocusMode && (

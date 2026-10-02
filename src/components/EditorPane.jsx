@@ -150,7 +150,7 @@ export default function EditorPane({
   }, []);
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 pb-16 sm:pb-6">
+    <div className="flex flex-col h-full bg-slate-50 pb-24 sm:pb-20 md:pb-4 overflow-hidden">
       
       {/* Top Editor Toolbar (Compact, Zero Overflow in Split-Screen) */}
       <div 
@@ -362,9 +362,9 @@ export default function EditorPane({
       </div>
 
       {/* Main Textarea Area */}
-      <div className="flex-1 p-3 sm:p-5 lg:p-6 flex flex-col min-h-[380px] sm:min-h-[600px] lg:min-h-[660px] xl:min-h-[740px] relative">
+      <div className="flex-1 p-2.5 sm:p-4 lg:p-6 flex flex-col min-h-[300px] sm:min-h-[380px] md:min-h-0 h-full relative overflow-hidden">
         {activeTab === 'essay' ? (
-          <div className="flex-1 flex flex-col h-full min-h-[350px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative focus-within:border-slate-300 transition-colors">
+          <div className="flex-1 flex flex-col h-full min-h-[280px] sm:min-h-[350px] md:min-h-0 bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative focus-within:border-slate-300 transition-colors">
             <textarea
               value={essayText}
               onChange={(e) => {
@@ -384,11 +384,11 @@ export default function EditorPane({
               }}
               spellCheck={spellcheckEnabled}
               placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới • Nhấn Ctrl+Enter để nộp bài)"
-              className="flex-1 w-full min-h-[350px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] p-3.5 sm:p-6 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16.5px] leading-[1.8] tracking-wide selection:bg-red-100 selection:text-red-900 placeholder:text-slate-400 placeholder:font-normal"
+              className="flex-1 w-full h-full min-h-[280px] sm:min-h-[350px] md:min-h-0 p-3.5 sm:p-5 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16px] leading-[1.8] tracking-wide selection:bg-red-100 selection:text-red-900 placeholder:text-slate-400 placeholder:font-normal overflow-y-auto"
             />
           </div>
         ) : (
-          <div className="flex-1 flex flex-col h-full min-h-[480px] sm:min-h-[560px] lg:min-h-[620px] xl:min-h-[700px] bg-white rounded-xl border border-indigo-200 shadow-2xs overflow-hidden p-3.5 sm:p-5 space-y-3">
+          <div className="flex-1 flex flex-col h-full min-h-[300px] sm:min-h-[380px] md:min-h-0 bg-white rounded-xl border border-indigo-200 shadow-2xs overflow-hidden p-3.5 sm:p-5 space-y-3 overflow-y-auto">
             {/* Header & Mode Switcher */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
               <div className="flex items-center space-x-2">
@@ -560,7 +560,7 @@ export default function EditorPane({
                   value={outlineText}
                   onChange={(e) => setOutlineText(e.target.value)}
                   placeholder="Ghi nhanh các ý tưởng, từ vựng hay hoặc dàn ý tự do trước khi viết bài chính..."
-                  className="flex-1 w-full min-h-[380px] p-3 resize-none focus:outline-none text-slate-700 font-mono text-sm leading-relaxed rounded-lg border border-slate-200"
+                  className="flex-1 w-full min-h-[220px] md:min-h-0 p-3 resize-none focus:outline-none text-slate-700 font-mono text-sm leading-relaxed rounded-lg border border-slate-200"
                 />
                 <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t">
                   <span>Ghi chú tự do không tính vào bài nộp chính thức</span>

@@ -8,6 +8,26 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
   const isDragging = useRef(false);
   const containerRef = useRef(null);
 
+  // Responsive state for screen width >= 768px (Tablets portrait/landscape and Desktops)
+  const [isTabletOrDesktop, setIsTabletOrDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsTabletOrDesktop(window.innerWidth >= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
   const startDragging = (e) => {
     isDragging.current = true;
     document.body.style.cursor = 'col-resize';
@@ -56,10 +76,10 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 w-full min-h-0">
+    <div className="flex flex-col flex-1 w-full min-h-0 h-full overflow-hidden">
       
-      {/* MOBILE ONLY: Segmented View Controller (Tiêu điểm làm bài trên mobile - Zero-Overlap Flow) */}
-      <div className="lg:hidden bg-slate-50/90 backdrop-blur-xs p-1.5 flex items-center justify-center border-b border-slate-200 gap-1.5 shadow-2xs shrink-0 z-10">
+      {/* MOBILE ONLY (< 768px): Segmented View Controller */}
+      <div className="md:hidden bg-slate-50/90 backdrop-blur-xs p-1.5 flex items-center justify-center border-b border-slate-200 gap-1.5 shadow-2xs shrink-0 z-10">
         <button
           onClick={() => setMobileTab('editor')}
           className={`flex-1 flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -100,14 +120,14 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
       {/* Main Two-Pane Container */}
       <div 
         ref={containerRef} 
-        className="flex flex-col lg:flex-row flex-1 w-full relative lg:min-h-[740px] xl:min-h-[840px]"
+        className="flex flex-col md:flex-row flex-1 w-full h-full min-h-0 relative overflow-hidden"
       >
         {/* Left Pane (Prompt / Chart / Notes) */}
         <div 
-          className={`w-full lg:min-h-[740px] xl:min-h-[840px] shrink-0 lg:shrink overflow-y-auto bg-white border-b lg:border-b-0 lg:border-r border-slate-200 transition-all ${
-            mobileTab === 'editor' ? 'hidden lg:block' : 'block'
-          } ${mobileTab === 'both' ? 'max-h-[48vh] lg:max-h-none' : ''}`}
-          style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${splitRatio}%` : '100%' }}
+          className={`w-full md:h-full shrink-0 md:shrink overflow-y-auto bg-white border-b md:border-b-0 md:border-r border-slate-200 transition-all ${
+            mobileTab === 'editor' ? 'hidden md:block' : 'block'
+          } ${mobileTab === 'both' ? 'max-h-[46vh] md:max-h-none' : ''}`}
+          style={{ width: isTabletOrDesktop ? `${splitRatio}%` : '100%' }}
         >
           {leftPane}
         </div>
@@ -116,7 +136,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
         <div
           onMouseDown={startDragging}
           onTouchStart={startDragging}
-          className="hidden lg:flex items-center justify-center w-2 hover:w-2.5 bg-slate-200 hover:bg-red-500 cursor-col-resize transition-all z-20 group relative select-none touch-none"
+          className="hidden md:flex items-center justify-center w-2 hover:w-2.5 bg-slate-200 hover:bg-red-500 cursor-col-resize transition-all z-20 group relative select-none touch-none shrink-0"
           title="Kéo thả để chỉnh độ rộng 2 màn hình"
         >
           <div className="h-10 w-1 bg-slate-400 group-hover:bg-white rounded-full transition-colors"></div>
@@ -124,10 +144,10 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
 
         {/* Right Pane (Editor / Stats / Tools) */}
         <div 
-          className={`w-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1 transition-all ${
-            mobileTab === 'prompt' ? 'hidden lg:flex' : 'flex'
-          } ${mobileTab === 'editor' ? 'min-h-[calc(100vh-140px)]' : mobileTab === 'both' ? 'min-h-[50vh]' : 'min-h-[620px]'} lg:min-h-[740px] xl:min-h-[840px]`}
-          style={{ width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? `${100 - splitRatio}%` : '100%' }}
+          className={`w-full md:h-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1 min-h-0 transition-all ${
+            mobileTab === 'prompt' ? 'hidden md:flex' : 'flex'
+          } ${mobileTab === 'editor' ? 'min-h-[calc(100vh-140px)] md:min-h-0' : mobileTab === 'both' ? 'min-h-[48vh] md:min-h-0' : 'min-h-[300px] md:min-h-0'}`}
+          style={{ width: isTabletOrDesktop ? `${100 - splitRatio}%` : '100%' }}
         >
           {rightPane}
         </div>

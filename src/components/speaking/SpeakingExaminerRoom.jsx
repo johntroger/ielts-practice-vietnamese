@@ -564,8 +564,8 @@ export default function SpeakingExaminerRoom({
         </div>
       </div>
 
-      {/* 2. THE 3D VIRTUAL STAGE (100dvh Zero Viewport Overflow) */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden">
+      {/* 2. THE 3D VIRTUAL STAGE (Responsive scroll on short tablet screens) */}
+      <div className="flex-1 flex flex-col items-center justify-start sm:justify-center p-3 sm:p-6 md:p-8 relative overflow-y-auto overflow-x-hidden min-h-0">
         
         {/* Dynamic Presence Aura: Glow breathes behind Examiner Avatar */}
         <div className="relative flex flex-col items-center justify-center">

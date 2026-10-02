@@ -202,7 +202,7 @@ export default function Navbar({
                     QR
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-400 font-semibold tracking-wider block mt-0.5">ACADEMIC AI</span>
+                <span className="hidden xl:block text-[10px] text-slate-400 font-semibold tracking-wider mt-0.5">ACADEMIC AI</span>
               </div>
             </button>
 
@@ -294,7 +294,7 @@ export default function Navbar({
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span className={isCurrent ? 'inline' : 'hidden md:inline'}>
+                    <span className={isCurrent ? 'inline' : 'hidden xl:inline'}>
                       {s.label.replace('IELTS ', '')}
                     </span>
                   </button>
@@ -664,8 +664,7 @@ export default function Navbar({
               aria-label="Liên hệ và góp ý"
             >
               <Mail className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
-              <span className="hidden md:inline text-[11px] font-bold">Liên Hệ & Góp Ý</span>
-              <span className="md:hidden hidden sm:inline text-[11px] font-bold">Liên Hệ</span>
+              <span className="hidden xl:inline text-[11px] font-bold">Liên Hệ & Góp Ý</span>
             </button>
 
             {/* API Key Indicator */}
@@ -681,7 +680,7 @@ export default function Navbar({
               <Settings className="w-3.5 h-3.5 text-slate-600 shrink-0" />
               <div className="flex items-center space-x-1">
                 <span className={`w-2 h-2 rounded-full shrink-0 ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                <span className="hidden sm:inline text-[11px] font-semibold">
+                <span className="hidden xl:inline text-[11px] font-semibold">
                   {apiKey ? 'API Key' : 'Nhập Key'}
                 </span>
               </div>
@@ -704,7 +703,7 @@ export default function Navbar({
               title={user ? `Xem trang cá nhân: ${user.email}` : "Đăng nhập hoặc đăng ký tài khoản"}
             >
               <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
-              <span className="max-w-[70px] xl:max-w-[100px] truncate text-[11px]">
+              <span className="hidden xl:inline max-w-[100px] truncate text-[11px]">
                 {user ? (user.email.split('@')[0]) : 'Tài Khoản'}
               </span>
             </button>

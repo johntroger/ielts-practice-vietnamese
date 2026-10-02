@@ -46,21 +46,21 @@ export default function WritingSubHeaderToolbar({
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
   return (
-    <div className={`bg-white border-b border-slate-200 px-3 sm:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
+    <div className={`bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
       isSlimHeader 
         ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
-        : 'py-2 flex flex-col md:flex-row md:flex-wrap md:items-center md:justify-between gap-2'
+        : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-1.5 sm:gap-2'
     }`}>
       
       {/* ============================================================ */}
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
       {/* ============================================================ */}
-      <div className="flex items-center space-x-2 min-w-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
         {/* 1. Task Selector Dropdown Trigger & Rating */}
-        <div className="flex items-center space-x-1.5 min-w-0">
+        <div className="flex items-center space-x-1 sm:space-x-1.5 min-w-0">
           <button 
             onClick={onOpenLibrary}
-            className="flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0 flex-1 md:flex-initial"
+            className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-2.5 lg:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0 flex-1 md:flex-initial"
             title="Nhấn để đổi đề thi hoặc chọn từ thư viện đề IELTS"
           >
             <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-black uppercase tracking-wider shrink-0 ${
@@ -68,13 +68,13 @@ export default function WritingSubHeaderToolbar({
             }`}>
               Task {currentTask?.taskNumber || 2}
             </span>
-            <span className="text-xs font-bold text-slate-800 max-w-[140px] sm:max-w-[180px] lg:max-w-[240px] xl:max-w-[320px] truncate">
+            <span className="text-xs font-bold text-slate-800 max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[240px] xl:max-w-[320px] truncate">
               {currentTask?.title || 'IELTS Writing Task'}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
           </button>
           {currentTask && (
-            <div className="flex items-center bg-slate-50/90 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-xl border border-slate-200 shrink-0 shadow-2xs">
+            <div className="hidden xs:flex items-center bg-slate-50/90 px-1 sm:px-1.5 py-0.5 sm:py-1 rounded-xl border border-slate-200 shrink-0 shadow-2xs">
               <StarRatingWidget itemId={currentTask.id || currentTask.title} fallbackTitle={currentTask.title} size="xs" showAttempts={true} />
             </div>
           )}
@@ -83,18 +83,19 @@ export default function WritingSubHeaderToolbar({
         {/* 2. Sinh Đề Mới Bằng AI (Prominent Action) */}
         <button
           onClick={onOpenGenerator}
-          className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/90 text-red-700 hover:bg-red-100/90 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs group"
+          className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 lg:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 border border-red-200/90 text-red-700 hover:bg-red-100/90 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs group"
           title="Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng 2025–2026 bằng AI"
         >
           <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
-          <span className="hidden sm:inline">Sinh Đề (AI)</span>
+          <span className="hidden xl:inline">Sinh Đề (AI)</span>
+          <span className="hidden sm:inline xl:hidden">Sinh Đề</span>
           <span className="sm:hidden">Sinh Đề</span>
         </button>
 
         {/* 3. Mastered Task Toggle (Thuộc Bài) */}
         <button
           onClick={() => onToggleMastered && onToggleMastered(currentTask?.id)}
-          className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs ${
+          className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs ${
             masteredIds.includes(currentTask?.id)
               ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
               : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
@@ -104,20 +105,20 @@ export default function WritingSubHeaderToolbar({
             : 'Đánh dấu đề thi này là "Đã thuộc" để ghi nhớ tiến trình và lọc trong thư viện.'}
         >
           <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTask?.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
-          <span className="hidden sm:inline">{masteredIds.includes(currentTask?.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
+          <span className="hidden lg:inline">{masteredIds.includes(currentTask?.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
         </button>
       </div>
 
       {/* ============================================================ */}
       {/* ZONE 2 (Right): EXAM MODES, CDI DISPLAY & ESSENTIAL TOOLS    */}
       {/* ============================================================ */}
-      <div className="flex items-center justify-between md:justify-end space-x-2 text-xs shrink-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
-        <div className="flex items-center space-x-1.5">
+      <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 text-xs shrink-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
+        <div className="flex items-center space-x-1 sm:space-x-1.5">
           
           {/* 1. CDI Display & Accessibility Settings (Font Scale / Color Contrast) */}
           <button
             onClick={onOpenCDIDisplay}
-            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
               (cdiFontSize !== 'standard' || cdiContrast !== 'standard')
                 ? 'bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100'
                 : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -125,7 +126,8 @@ export default function WritingSubHeaderToolbar({
             title="Tùy chỉnh cỡ chữ & chế độ tương phản chuẩn phòng thi máy tính CDI"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span className="hidden sm:inline">Trợ Năng CDI</span>
+            <span className="hidden lg:inline">Trợ Năng CDI</span>
+            <span className="hidden sm:inline lg:hidden">CDI</span>
             {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
             )}
