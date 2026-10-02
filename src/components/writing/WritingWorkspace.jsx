@@ -65,6 +65,11 @@ export default function WritingWorkspace({
   // Local state for SlideOver tool panel (Paraphrase & Vocabulary)
   const [slideOverConfig, setSlideOverConfig] = useState({ isOpen: false, tab: 'paraphrase' });
 
+  // Reset brainstorm when task changes
+  useEffect(() => {
+    setBrainstormResult('');
+  }, [currentTask?.id]);
+
   // Handle Brainstorming with AI
   const handleBrainstorm = async () => {
     if (!apiKey) {

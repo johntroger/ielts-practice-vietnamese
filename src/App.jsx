@@ -415,7 +415,6 @@ export default function App() {
     setTimeRemaining((currentTask?.timeLimit || 40) * 60);
     setTimeElapsed(0);
     setIsTimerRunning(false);
-    setBrainstormResult('');
   }, [currentTaskId]);
 
   useEffect(() => {
