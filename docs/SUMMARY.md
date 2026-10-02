@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Giới thiệu](README.md)
+* [Bản Đồ Cẩm Nang 4 Kỹ Năng: Writing - Reading - Listening - Speaking](four-skills-overview.md)
 
 ## IELTS Writing
 
@@ -50,32 +51,38 @@
 
 ## IELTS Reading
 
-### Chặng 1: Nền Tảng & Dò Tìm Từ Khóa (Band 4.0 – 5.0)
-* [1. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](reading/foundation-reading-band4-to-5-strategy.md)
-* [2. Điền từ: Summary, Note, Table & Flow-chart](reading/reading-completion-forms.md)
-* [3. Bộ quy tắc Paraphrasing kinh điển](reading/reading-academic-paraphrasing.md)
-* [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading/reading-progression-50-to-75.md)
+### Chặng 1: Nền Tảng & Kỹ Năng Cốt Lõi (Band 4.0 – 5.0)
+* [1. Tổng quan đề thi Reading: Academic vs General Training & Bảng quy đổi điểm chuẩn](reading/reading-overview-academic-vs-general-conversion.md)
+* [2. Bộ ba kỹ năng cốt lõi: Skimming – Scanning – Close Reading](reading/reading-core-skills-skimming-scanning-close-reading.md)
+* [3. Phân loại từ khóa: Keywords Loại 1 (Định vị) vs Loại 2 (Đối chiếu nghĩa)](reading/reading-keyword-classification-locating-micro.md)
+* [4. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](reading/foundation-reading-band4-to-5-strategy.md)
+* [5. Điền từ: Summary, Note, Table & Flow-chart](reading/reading-completion-forms.md)
+* [6. Bộ quy tắc Paraphrasing kinh điển](reading/reading-academic-paraphrasing.md)
+* [7. Lộ trình Reading từ Band 5.0 lên 7.5+](reading/reading-progression-50-to-75.md)
 
 ### Chặng 2: Nắm Vững Toàn Bộ Dạng Bài Thực Chiến (Band 5.5 – 6.5)
-* [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](reading/time-management.md)
-* [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](reading/true-false-not-given.md)
-* [7. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading/reading-tfng-strategy.md)
-* [8. Tuyệt Chiêu Xử Lý Matching Headings](reading/matching-headings.md)
-* [9. Chiến thuật cho Multiple Choice & Pick Multiple Options](reading/reading-multiple-choice.md)
-* [10. Matching Information & Matching Features](reading/reading-matching-info-features.md)
-* [11. Summary Completion có khung từ chọn sẵn](reading/reading-summary-box-options.md)
-* [12. Diagram & Flow-Chart Labelling](reading/reading-diagram-flowchart.md)
-* [13. 50 Cặp từ Paraphrase lặp lại Cam 10-19](reading/reading-cambridge-synonym-lexicon.md)
+* [8. Quản Trị Thời Gian 15 - 20 - 25 Phút](reading/time-management.md)
+* [9. Phá Bẫy True / False / Not Given & Yes / No / Not Given](reading/true-false-not-given.md)
+* [10. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading/reading-tfng-strategy.md)
+* [11. Tuyệt Chiêu Xử Lý Matching Headings](reading/matching-headings.md)
+* [12. Matching Names / Researchers & Theories (Nối Tên Học Giả)](reading/reading-matching-names-researchers.md)
+* [13. Chiến thuật cho Multiple Choice & Pick Multiple Options](reading/reading-multiple-choice.md)
+* [14. Matching Information & Matching Features](reading/reading-matching-info-features.md)
+* [15. Summary Completion có khung từ chọn sẵn](reading/reading-summary-box-options.md)
+* [16. Diagram & Flow-Chart Labelling](reading/reading-diagram-flowchart.md)
+* [17. Short-Answer Questions (Câu hỏi trả lời ngắn)](reading/reading-short-answer-questions.md)
+* [18. 50 Cặp từ Paraphrase lặp lại Cam 10-19](reading/reading-cambridge-synonym-lexicon.md)
 
-### Chặng 3: Đọc Hiểu Chuyên Sâu & Bẻ Bẫy Passage 3 (Band 7.0 – 9.0)
-* [14. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading/reading-contextual-guessing-roots.md)
-* [15. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading/reading-chunking-speed.md)
-* [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading/reading-passage3-author-stance.md)
-* [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading/reading-strategic-time-management.md)
-* [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading/reading-last-5-minutes-rescue.md)
+### Chặng 3: Đọc Hiểu Chuyên Sâu, Bẻ Bẫy & Chiến Thuật Làm Bài (Band 7.0 – 9.0)
+* [19. Chiến lược thứ tự làm bài (In-order vs Out-of-order) & 6 Lưu ý sống còn phòng thi](reading/reading-order-strategy-and-golden-rules.md)
+* [20. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading/reading-contextual-guessing-roots.md)
+* [21. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading/reading-chunking-speed.md)
+* [22. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading/reading-passage3-author-stance.md)
+* [23. Quy tắc 90 giây & Buông bỏ chiến thuật](reading/reading-strategic-time-management.md)
+* [24. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading/reading-last-5-minutes-rescue.md)
 
 ### Chặng 4: Kỹ Thuật Đọc Thi Máy Tính (CDI)
-* [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](reading/computer-delivered-reading-techniques.md)
+* [25. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](reading/computer-delivered-reading-techniques.md)
 
 ---
 

@@ -8,6 +8,21 @@ Tài liệu được thiết kế mở, tự động đồng bộ hóa thông qu
 
 ---
 
+## 🧭 Bản Đồ Cẩm Nang 4 Kỹ Năng (Writing – Reading – Listening – Speaking)
+
+Để có cái nhìn toàn diện về phương pháp luận và lộ trình chinh phục trọn vẹn 4 kỹ năng thi IELTS, bạn hãy truy cập ngay:
+
+👉 **[Xem Bản Đồ Cẩm Nang 4 Kỹ Năng Toàn Diện](four-skills-overview.md)**
+
+| Kỹ Năng | Thời Gian & Số Câu | Trọng Tâm Chiến Thuật | Lối Tắt Nhanh |
+| :--- | :--- | :--- | :--- |
+| ✍️ **IELTS Writing** | 60 phút / 2 Tasks | Task 1 phân tích khách quan + Task 2 lập luận PEEL & Hedging | [Khám phá Writing](writing/criteria-overview.md) |
+| 📖 **IELTS Reading** | 60 phút / 40 câu | Skimming - Scanning - Close Reading, Bắt cặp Paraphrase | [Khám phá Reading](reading/reading-overview-academic-vs-general-conversion.md) |
+| 🎧 **IELTS Listening** | 30 - 40 phút / 40 câu | Phản xạ âm học, Xóa bẫy Distractor, Map Labelling | [Khám phá Listening](listening/listening-overview-format.md) |
+| 🗣️ **IELTS Speaking** | 11 - 14 phút / 3 Parts | Khung A.R.E.A Part 1, Storytelling PPF Part 2, PEEL Part 3 | [Khám phá Speaking](speaking/speaking-criteria-descriptors.md) |
+
+---
+
 ## Cấu Trúc Khóa Học Phân Tầng (4-Tier Pedagogical Architecture)
 
 Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn dễ dàng chọn đúng lộ trình theo trình độ hiện tại của mình:
@@ -24,6 +39,9 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 ## Lối Tắt Điều Hướng Nhanh
 
 ### 1. Dành Cho Người Mất Gốc / Mới Bắt Đầu (Band 4.0 – 5.0):
+- [Tổng quan đề thi Reading: Academic vs General & Bảng quy đổi điểm](reading/reading-overview-academic-vs-general-conversion.md)
+- [Bộ ba kỹ năng cốt lõi: Skimming – Scanning – Close Reading](reading/reading-core-skills-skimming-scanning-close-reading.md)
+- [Phân loại từ khóa Loại 1 (Định vị) vs Loại 2 (Đối chiếu)](reading/reading-keyword-classification-locating-micro.md)
 - [Chinh phục Writing từ Band 4.0 lên 5.0: Cấu trúc câu & Bố cục 4 đoạn](writing/foundation-band4-to-5-survival-guide.md)
 - [Chiến thuật Reading Band 4.5 – 5.0: Ăn chắc Passage 1 & Dò từ khóa](reading/foundation-reading-band4-to-5-strategy.md)
 - [Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](listening/foundation-listening-band4-to-5-part1-mastery.md)
@@ -32,7 +50,9 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 ### 2. Dành Cho Mục Tiêu Band 6.0 – 6.5:
 - [Master Chiến Lược Toàn Diện Task 1](writing/task1-mastery.md) & [Cấu Trúc Đoạn Văn PEEL Task 2](writing/task2-peel-structure.md)
 - [Mặt bằng kiến trúc (Floor Plans) & Quy trình sản xuất phức tạp](writing/writing-task1-floor-plans-processes.md)
+- [Tuyệt chiêu Matching Names & Researchers](reading/reading-matching-names-researchers.md) & [Short-Answer Questions](reading/reading-short-answer-questions.md)
 - [Quản trị thời gian 15-20-25m Reading](reading/time-management.md) & [Tuyệt chiêu Matching Headings](reading/matching-headings.md)
+- [Chiến lược thứ tự làm bài (In-order vs Out-of-order) & 6 Lưu ý phòng thi](reading/reading-order-strategy-and-golden-rules.md)
 - [Bẫy Distractor trong Listening](listening/distractor-traps.md) & [Bản đồ Map Labelling](listening/map-and-signposting.md)
 - [Kỹ thuật Storytelling Dòng Thời Gian PPF Part 2](speaking/storytelling-part2.md)
 
