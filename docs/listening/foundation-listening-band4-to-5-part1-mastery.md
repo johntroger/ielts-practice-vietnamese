@@ -1,4 +1,4 @@
-# 🎧 Luyện Listening Band 4.0 Lên 5.0: Tuyệt Chiêu "Ăn Trọn" Điểm Part 1 & Bẫy Chữ Cái / Con Số
+# Luyện Listening Band 4.0 Lên 5.0: Tuyệt Chiêu "Ăn Trọn" Điểm Part 1 & Bẫy Chữ Cái / Con Số
 
 Để nâng band điểm IELTS Listening từ **Band 4.0** (chỉ đúng 10 – 12 câu) lên **Band 5.0 – 5.5** (đúng **16 – 22 câu**), bạn không cần phải nghe hiểu toàn bộ các bài giảng khoa học phức tạp ở Part 4 hay cuộc tranh luận học thuật ở Part 3.
 
@@ -6,7 +6,7 @@ Chìa khóa vàng nằm ở việc: **Ăn trọn vẹn 8 – 10 điểm ở Part
 
 ---
 
-## 🔡 1. Bốn Cặp Âm Chữ Cái "Tử Thần" Dễ Nghe Nhầm Nhất Của Người Việt
+## 1. Bốn Cặp Âm Chữ Cái "Tử Thần" Dễ Nghe Nhầm Nhất Của Người Việt
 
 Trong Part 1, đề thi luôn có ít nhất 1 – 2 câu bắt bạn nghe đánh vần tên người, tên đường, tên thành phố hoặc mã bưu điện. Dưới đây là 4 cặp chữ cái người Việt hay nghe nhầm nhất:
 
@@ -30,7 +30,7 @@ Khi đánh vần, người bản xứ thường không đọc *"S - S"* mà sẽ
 
 ---
 
-## 🔢 2. Bẫy Con Số: Phân Biệt Đuôi "-teen" (/tiːn/) vs Đuôi "-ty" (/ti/)
+## 2. Bẫy Con Số: Phân Biệt Đuôi "-teen" (/tiːn/) vs Đuôi "-ty" (/ti/)
 
 Đây là bẫy xuất hiện trong **90% đề thi IELTS Listening Part 1** khi hỏi về giá tiền, số tuổi hoặc địa chỉ nhà:
 
@@ -46,7 +46,7 @@ Khi đánh vần, người bản xứ thường không đọc *"S - S"* mà sẽ
 
 ---
 
-## 📅 3. Quy Tắc Viết Ngày Tháng & Tiền Tệ Đúng Chuẩn Không Bị Mất Điểm
+## 3. Quy Tắc Viết Ngày Tháng & Tiền Tệ Đúng Chuẩn Không Bị Mất Điểm
 
 Nhiều bạn nghe được con số nhưng viết sai định dạng dẫn đến việc bị máy tính hoặc giám khảo chấm 0 điểm:
 
@@ -61,7 +61,7 @@ Giả sử bạn nghe băng đọc: *"The conference starts on the **twenty-firs
 
 ---
 
-## ⚡ 4. Kỹ Thuật Đọc Trước 30 Giây Part 1 Cho Người Mới
+## 4. Kỹ Thuật Đọc Trước 30 Giây Part 1 Cho Người Mới
 
 Trong 30 giây trước khi nghe Part 1, hãy thực hiện phản xạ **"Nhìn trước đoán sau"**:
 1. Ô trống điền `Name: Mr. .........` ➡️ Chuẩn bị tinh thần nghe đánh vần từng chữ cái.
@@ -71,8 +71,8 @@ Trong 30 giây trước khi nghe Part 1, hãy thực hiện phản xạ **"Nhìn
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](../reading/computer-delivered-reading-techniques.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Part 1: Bẫy đánh vần tên riêng, con số & mã bưu chính](listening-part1-spelling-numbers.md) |
+| [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](../reading/computer-delivered-reading-techniques.md) | [Mục Lục Cẩm Nang](../README.md) | [2. Part 1: Bẫy đánh vần tên riêng, con số & mã bưu chính](listening-part1-spelling-numbers.md) |

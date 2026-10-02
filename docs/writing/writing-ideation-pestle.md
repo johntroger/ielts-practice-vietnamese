@@ -42,8 +42,8 @@ Nếu PESTLE nhìn từ góc độ vĩ mô, thì Stakeholder Mapping nhìn từ 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [28. Task 2: Top 60 Academic Collocations theo chủ đề](writing-academic-collocations-topics.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [30. Task 2: Tiêu chí CC 8.0+ Nghệ thuật liên kết ẩn](writing-cc-thematic-progression.md) |
+| [28. Task 2: Top 60 Academic Collocations theo chủ đề](writing-academic-collocations-topics.md) | [Mục Lục Cẩm Nang](../README.md) | [30. Task 2: Tiêu chí CC 8.0+ Nghệ thuật liên kết ẩn](writing-cc-thematic-progression.md) |

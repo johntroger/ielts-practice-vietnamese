@@ -1,4 +1,4 @@
-# 🚀 Cẩm Nang Chinh Phục Writing Từ Band 4.0 Lên 5.0 Cho Người Mất Gốc
+# Cẩm Nang Chinh Phục Writing Từ Band 4.0 Lên 5.0 Cho Người Mất Gốc
 
 Đối với người mới bắt đầu hoặc người học bị mất gốc tiếng Anh (đang ở mức **Band 3.5 – 4.0**), bài thi IELTS Writing thường là rào cản đáng sợ nhất. Nhiều bạn lầm tưởng muốn lên điểm phải học từ vựng "khủng" hay ngữ pháp đảo ngữ phức tạp. 
 
@@ -10,7 +10,7 @@ Cẩm nang này là **phao cứu sinh** giúp bạn vượt qua mốc Band 4.0 �
 
 ---
 
-## 🏗️ 1. Ba Cấu Trúc Câu "Sống Còn" Phải Viết Đúng 100%
+## 1. Ba Cấu Trúc Câu "Sống Còn" Phải Viết Đúng 100%
 
 Ở mức Band 4.0, lỗi nguy hiểm nhất là **Sentence Fragment (Câu què - thiếu chủ ngữ hoặc vị ngữ)** và **Run-on Sentence (Câu nối tùy tiện bằng dấu phẩy)**. Bạn chỉ cần làm chủ 3 mẫu câu sau:
 
@@ -34,7 +34,7 @@ Lưu ý quy tắc cấm kỵ: **Có Because thì không có So; có Although th�
 
 ---
 
-## 📝 2. Bố Cục 4 Đoạn "Chống Liệt" Cho Task 2 (Đảm Bảo > 250 Từ)
+## 2. Bố Cục 4 Đoạn "Chống Liệt" Cho Task 2 (Đảm Bảo > 250 Từ)
 
 Nỗi ám ảnh lớn nhất của thí sinh Band 4.0 là **không viết đủ 250 từ** (viết 210 từ sẽ bị phạt trừ điểm rất nặng vào Task Response). Hãy học thuộc và áp dụng khung sườn 4 đoạn cố định sau:
 
@@ -46,7 +46,7 @@ flowchart TD
     D --> E["Tổng Cộng: ~ 255 - 270 Từ (Đạt Chuẩn)"]
 ```
 
-### 📋 Mẫu dàn ý chi tiết từng câu:
+### Mẫu dàn ý chi tiết từng câu:
 
 #### 1. Mở bài (Introduction - 2 câu):
 - **Câu 1 (Paraphrase đề bài):** *Nowadays, it is true that [chủ đề đề bài].*
@@ -70,7 +70,7 @@ flowchart TD
 
 ---
 
-## 📊 3. Khung Viết Task 1 Đạt Chuẩn Band 5.0 (Tối Thiểu 150 Từ)
+## 3. Khung Viết Task 1 Đạt Chuẩn Band 5.0 (Tối Thiểu 150 Từ)
 
 Rất nhiều bạn thi thử bị điểm Task 1 dưới 4.5 vì **quên viết Overview**. Cambridge quy định: **Không có Overview = Tối đa Band 5.0 Task Achievement**.
 
@@ -88,7 +88,7 @@ Rất nhiều bạn thi thử bị điểm Task 1 dưới 4.5 vì **quên viết
 
 ---
 
-## ⚠️ 4. Top 10 Từ Hay Sai Chính Tả Nhất Ở Band 4.0 - 5.0
+## 4. Top 10 Từ Hay Sai Chính Tả Nhất Ở Band 4.0 - 5.0
 
 Chỉ cần viết sai 5-7 từ trong bài, điểm Lexical Resource sẽ bị khóa ở Band 4.0. Hãy chép tay và học thuộc 10 từ này:
 
@@ -111,8 +111,8 @@ Chỉ cần viết sai 5-7 từ trong bài, điểm Lexical Resource sẽ bị k
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [🏠 Trang Chủ Cẩm Nang](../README.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Chinh phục mốc Band 5.5 - 6.0: Xóa 5 lỗi chí mạng](band-55-foundation-guide.md) |
+| [Trang Chủ Cẩm Nang](../README.md) | [Mục Lục Cẩm Nang](../README.md) | [2. Chinh phục mốc Band 5.5 - 6.0: Xóa 5 lỗi chí mạng](band-55-foundation-guide.md) |

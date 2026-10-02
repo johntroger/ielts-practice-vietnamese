@@ -2,16 +2,16 @@
 
 * [Giới thiệu](README.md)
 
-## ✍️ IELTS Writing
+## IELTS Writing
 
-### 🌱 Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)
+### Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)
 * [1. Chinh phục Writing từ Band 4.0 lên 5.0 cho người mất gốc](writing/foundation-band4-to-5-survival-guide.md)
 * [2. Chinh phục mốc Band 5.5 - 6.0: Xóa 5 lỗi chí mạng](writing/band-55-foundation-guide.md)
 * [3. Quy tắc dấu câu & Bẫy Comma Splice](writing/writing-punctuation-comma-splice.md)
 * [4. Checklist 10 lỗi sai dậm chân ở Band 5.5 - 6.0](writing/common-mistakes.md)
 * [5. Lộ trình nâng band Writing 5.0 lên 7.5+](writing/writing-progression-50-to-75.md)
 
-### 🌿 Chặng 2: Làm Chủ Toàn Bộ Dạng Bài Task 1 & Task 2 (Band 5.5 – 6.5)
+### Chặng 2: Làm Chủ Toàn Bộ Dạng Bài Task 1 & Task 2 (Band 5.5 – 6.5)
 * [6. Tiêu chí chấm điểm & Band Descriptors 2026](writing/criteria-overview.md)
 * [7. Master Chiến Lược Toàn Diện Task 1](writing/task1-mastery.md)
 * [8. Task 1: Line Graph (Biểu Đồ Đường)](writing/task1-line-graph.md)
@@ -31,7 +31,7 @@
 * [22. Task 2: Problem & Solution](writing/task2-problem-solution.md)
 * [23. Task 2: Two-Part Question](writing/task2-two-part.md)
 
-### 🦅 Chặng 3: Bứt Phá Chuyên Sâu & Bẻ Bẫy (Band 7.0 – 8.5+)
+### Chặng 3: Bứt Phá Chuyên Sâu & Bẻ Bẫy (Band 7.0 – 8.5+)
 * [24. Bí quyết bứt phá từ Band 6.0 lên Band 7.5+](writing/band-7plus-secrets.md)
 * [25. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](writing/academic-hedging.md)
 * [26. Task 2: Đoạn Phản Biện & Bác Bỏ (8.0+)](writing/writing-counter-argument-refutation.md)
@@ -41,20 +41,20 @@
 * [30. Task 2: Tiêu chí CC 8.0+ Nghệ thuật liên kết ẩn](writing/writing-cc-thematic-progression.md)
 * [31. Giải mã nhận xét Giám khảo Cam 18-19 & Lỗi mất điểm 8.0+](writing/cambridge-examiner-insights-band8.md)
 
-### 💻 Chặng 4: Kỹ Năng Thi Máy Tính (CDI) & One Skill Retake
+### Chặng 4: Kỹ Năng Thi Máy Tính (CDI) & One Skill Retake
 * [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](writing/cdi-and-one-skill-retake-strategy.md)
 
 ---
 
-## 📖 IELTS Reading
+## IELTS Reading
 
-### 🌱 Chặng 1: Nền Tảng & Dò Tìm Từ Khóa (Band 4.0 – 5.0)
+### Chặng 1: Nền Tảng & Dò Tìm Từ Khóa (Band 4.0 – 5.0)
 * [1. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](reading/foundation-reading-band4-to-5-strategy.md)
 * [2. Điền từ: Summary, Note, Table & Flow-chart](reading/reading-completion-forms.md)
 * [3. Bộ quy tắc Paraphrasing kinh điển](reading/reading-academic-paraphrasing.md)
 * [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading/reading-progression-50-to-75.md)
 
-### 🌿 Chặng 2: Nắm Vững Toàn Bộ Dạng Bài Thực Chiến (Band 5.5 – 6.5)
+### Chặng 2: Nắm Vững Toàn Bộ Dạng Bài Thực Chiến (Band 5.5 – 6.5)
 * [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](reading/time-management.md)
 * [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](reading/true-false-not-given.md)
 * [7. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading/reading-tfng-strategy.md)
@@ -65,21 +65,21 @@
 * [12. Diagram & Flow-Chart Labelling](reading/reading-diagram-flowchart.md)
 * [13. 50 Cặp từ Paraphrase lặp lại Cam 10-19](reading/reading-cambridge-synonym-lexicon.md)
 
-### 🦅 Chặng 3: Đọc Hiểu Chuyên Sâu & Bẻ Bẫy Passage 3 (Band 7.0 – 9.0)
+### Chặng 3: Đọc Hiểu Chuyên Sâu & Bẻ Bẫy Passage 3 (Band 7.0 – 9.0)
 * [14. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading/reading-contextual-guessing-roots.md)
 * [15. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading/reading-chunking-speed.md)
 * [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading/reading-passage3-author-stance.md)
 * [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading/reading-strategic-time-management.md)
 * [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading/reading-last-5-minutes-rescue.md)
 
-### 💻 Chặng 4: Kỹ Thuật Đọc Thi Máy Tính (CDI)
+### Chặng 4: Kỹ Thuật Đọc Thi Máy Tính (CDI)
 * [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](reading/computer-delivered-reading-techniques.md)
 
 ---
 
-## 🎧 IELTS Listening
+## IELTS Listening
 
-### 🌱 Chặng 1: Nền Tảng & Phản Xạ Âm Học (Band 4.0 – 5.0)
+### Chặng 1: Nền Tảng & Phản Xạ Âm Học (Band 4.0 – 5.0)
 * [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](listening/foundation-listening-band4-to-5-part1-mastery.md)
 * [2. Part 1: Bẫy đánh vần tên riêng, con số & mã bưu chính](listening/listening-part1-spelling-numbers.md)
 * [3. Chính Tả, Con Số & Đơn Vị Đo Lường](listening/spelling-and-units.md)
@@ -88,7 +88,7 @@
 * [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening/listening-dictation-shadowing-method.md)
 * [7. Lộ trình Listening từ Band 5.0 lên 7.5+](listening/listening-progression-50-to-75.md)
 
-### 🌿 Chặng 2: Nắm Vững 4 Phần Thi & Bẫy Kinh Điển (Band 5.5 – 6.5)
+### Chặng 2: Nắm Vững 4 Phần Thi & Bẫy Kinh Điển (Band 5.5 – 6.5)
 * [8. Bẫy Distractor & Đổi Ý Trong Listening](listening/distractor-traps.md)
 * [9. Bản Đồ Map Labelling & Tín Hiệu Chuyển Ý Signposting](listening/map-and-signposting.md)
 * [10. Part 2: Định hướng không gian & Bản đồ](listening/listening-part2-map-directions.md)
@@ -96,28 +96,28 @@
 * [12. Quy trình 30 giây đọc trước đề thi](listening/listening-pre-prediction-protocol.md)
 * [13. Cẩm nang nhận diện các giọng Accent địa phương](listening/listening-accents-guide.md)
 
-### 🦅 Chặng 3: Bẻ Khóa Đối Thoại & Bài Giảng Học Thuật (Band 7.0 – 9.0)
+### Chặng 3: Bẻ Khóa Đối Thoại & Bài Giảng Học Thuật (Band 7.0 – 9.0)
 * [14. Part 3: Trắc nghiệm học thuật & Bẫy đối kháng](listening/listening-part3-academic-discussion.md)
 * [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening/listening-part3-tone-attitude-sarcasm.md)
 * [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](listening/cambridge-part3-consensus-traps.md)
 * [17. Part 4: Bắt tín hiệu chuyển ý bài giảng học thuật](listening/listening-part4-lecture-signposting.md)
 * [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening/listening-connected-speech-phonetics.md)
 
-### 💻 Chặng 4: Kỹ Năng Thi Listening Trên Máy Tính (CDI)
+### Chặng 4: Kỹ Năng Thi Listening Trên Máy Tính (CDI)
 * [19. Format thi Listening & Kỹ năng thi CD-IELTS](listening/listening-overview-format.md)
 * [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](listening/listening-cd-ielts-hacks-and-focus.md)
 
 ---
 
-## 🗣️ IELTS Speaking
+## IELTS Speaking
 
-### 🌱 Chặng 1: Nền Tảng Phản Xạ & Xóa Sợ Nói (Band 4.0 – 5.0)
+### Chặng 1: Nền Tảng Phản Xạ & Xóa Sợ Nói (Band 4.0 – 5.0)
 * [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](speaking/foundation-speaking-band4-to-5-fluency.md)
 * [2. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](speaking/area-framework-part1.md)
 * [3. Khắc phục lỗi âm đuôi, trọng âm & ngữ điệu](speaking/speaking-pronunciation-intonation.md)
 * [4. Lộ trình Speaking từ Band 5.0 lên 7.5+](speaking/speaking-progression-50-to-75.md)
 
-### 🌿 Chặng 2: Làm Chủ Part 1 & Storytelling Part 2 (Band 5.5 – 6.5)
+### Chặng 2: Làm Chủ Part 1 & Storytelling Part 2 (Band 5.5 – 6.5)
 * [5. Bản đồ 4 tiêu chí chấm điểm Speaking & Làm tròn](speaking/speaking-criteria-descriptors.md)
 * [6. Kỹ Thuật Storytelling Dòng Thời Gian PPF (Part 2)](speaking/storytelling-part2.md)
 * [7. Tuyệt chiêu căn chuẩn nhịp độ 2 phút (Pacing)](speaking/speaking-part2-pacing-timing.md)
@@ -126,11 +126,11 @@
 * [10. Mẹo câu giờ & Xử lý tình huống khẩn cấp phòng thi](speaking/speaking-emergency-buying-time.md)
 * [11. Giữ giọng tự nhiên & Né bẫy học thuộc lòng](speaking/speaking-avoiding-memorization-trap.md)
 
-### 🦅 Chặng 3: Tư Duy Phản Biện & Collocations C1/C2 (Band 7.0 – 8.5+)
+### Chặng 3: Tư Duy Phản Biện & Collocations C1/C2 (Band 7.0 – 8.5+)
 * [12. Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3](speaking/critical-thinking-part3.md)
 * [13. Ma trận khung trả lời so sánh đa chiều Part 3](speaking/speaking-part3-comparison-frameworks.md)
 * [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](speaking/examiner-red-flags-and-c1-collocations.md)
 * [15. Top 35+ thành ngữ Idiomatic tự nhiên Band 8.0+](speaking/speaking-idiomatic-lexicon-c1-c2.md)
 
-### 💻 Chặng 4: Tâm Lý Phòng Thi & Tương Tác Giám Khảo
+### Chặng 4: Tâm Lý Phòng Thi & Tương Tác Giám Khảo
 * [16. Tâm lý phòng thi & Khi bị giám khảo ngắt lời](speaking/speaking-examiner-interruption.md)

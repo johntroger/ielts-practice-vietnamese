@@ -23,8 +23,8 @@ Ngược lại, nếu bạn sử dụng các **cụm từ đệm tự nhiên (Na
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [9. 50 Natural Fillers & Kỹ Thuật Câu Giờ Tự Nhiên](natural-fillers.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Giữ giọng tự nhiên & Né bẫy học thuộc lòng](speaking-avoiding-memorization-trap.md) |
+| [9. 50 Natural Fillers & Kỹ Thuật Câu Giờ Tự Nhiên](natural-fillers.md) | [Mục Lục Cẩm Nang](../README.md) | [11. Giữ giọng tự nhiên & Né bẫy học thuộc lòng](speaking-avoiding-memorization-trap.md) |

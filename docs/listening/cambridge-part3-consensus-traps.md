@@ -1,4 +1,4 @@
-# 🎧 Bẻ Khóa Bẫy "Đồng Thuận Ảo" & Đối Kháng Ngầm Trong Listening Part 3 (Xu Hướng Cam 18-19)
+# Bẻ Khóa Bẫy "Đồng Thuận Ảo" & Đối Kháng Ngầm Trong Listening Part 3 (Xu Hướng Cam 18-19)
 
 Trong các đề thi **Cambridge IELTS 18 & 19**, **Listening Part 3** (cuộc đối thoại học thuật giữa 2 - 3 sinh viên hoặc sinh viên và giáo sư hướng dẫn) được đánh giá là phần thi có tỷ lệ thí sinh mất điểm cao nhất. Nguyên nhân không phải do từ vựng quá khó, mà là do các bẫy tâm lý và nghệ thuật "gài bẫy đồng thuận" cực kỳ tinh vi của ban ra đề.
 
@@ -6,7 +6,7 @@ Bài viết này bóc tách bản chất của 3 dạng bẫy kinh điển trong
 
 ---
 
-## 🎭 1. Bẫy "Đồng Thuận Ảo" (Initial Agreement but Eventual Rejection)
+## 1. Bẫy "Đồng Thuận Ảo" (Initial Agreement but Eventual Rejection)
 
 Đây là dạng bẫy mà người nói thứ nhất đưa ra một đề xuất (trùng khớp với Phương án A trong đề thi). Người nói thứ hai ban đầu tỏ ra đồng ý, nhưng sau đó dùng các từ chuyển ý bất ngờ để lật ngược vấn đề và chọn sang Phương án B.
 
@@ -24,7 +24,7 @@ Bài viết này bóc tách bản chất của 3 dạng bẫy kinh điển trong
 
 ---
 
-## 👥 2. Bẫy "Phân Vai Người Nói" (Who Said What?)
+## 2. Bẫy "Phân Vai Người Nói" (Who Said What?)
 
 Một cái bẫy thường gặp trong câu hỏi trắc nghiệm Part 3 là thí sinh không chú ý đến **chủ ngữ của câu hỏi**.
 
@@ -42,7 +42,7 @@ Trong 30 giây đọc đề trước khi nghe, hãy khoanh tròn hoặc bôi đ�
 
 ---
 
-## 🔄 3. Bẫy "Cả 3 Phương Án Đều Được Nhắc Đến"
+## 3. Bẫy "Cả 3 Phương Án Đều Được Nhắc Đến"
 
 Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi âm sẽ nhắc đến từ khóa của cả 3 phương án**.
 - Một phương án bị loại vì **đã từng thử trong quá khứ nhưng thất bại** (past tense).
@@ -67,9 +67,9 @@ Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi
 
 ---
 
-## 🎧 5. Bài Tập Minh Họa Thực Tế (Kèm Script & Bóc Bẫy Chi Tiết)
+## 5. Bài Tập Minh Họa Thực Tế (Kèm Script & Bóc Bẫy Chi Tiết)
 
-### 📌 Đề bài mẫu:
+### Đề bài mẫu:
 > **Question 24:** *What aspect of their architectural presentation do Jack and Chloe agree to revise?*
 > - **A.** The 3D model software animation
 > - **B.** The construction cost breakdown
@@ -77,7 +77,7 @@ Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi
 
 ---
 
-### 🎙️ Băng ghi âm thực tế (Audio Script):
+### Băng ghi âm thực tế (Audio Script):
 > **Jack:** *"Chloe, I went over our slides again last night. Don’t you think our 3D model animation (**A**) looks a bit clunky? We could re-render the whole sequence in Blender."*
 > 
 > **Chloe:** *"I noticed that too, **but rendering takes at least eight hours**, and we simply don't have that time before tomorrow morning's deadline. It's good enough as it stands."* *(➡️ Bẫy loại trừ A do bất khả thi về mặt thời gian)*
@@ -94,7 +94,7 @@ Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi
 
 ---
 
-### 📝 Bảng ghi chú nháp thực chiến của thí sinh Band 8.5:
+### Bảng ghi chú nháp thực chiến của thí sinh Band 8.5:
 
 ```text
 [Q24: Agree to revise?]
@@ -112,8 +112,8 @@ Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening-part3-tone-attitude-sarcasm.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [17. Part 4: Bắt tín hiệu chuyển ý bài giảng học thuật](listening-part4-lecture-signposting.md) |
+| [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening-part3-tone-attitude-sarcasm.md) | [Mục Lục Cẩm Nang](../README.md) | [17. Part 4: Bắt tín hiệu chuyển ý bài giảng học thuật](listening-part4-lecture-signposting.md) |

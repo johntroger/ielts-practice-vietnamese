@@ -27,8 +27,8 @@ Trong sổ tay khảo thí của Cambridge, giám khảo được đào tạo ng
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [10. Mẹo câu giờ & Xử lý tình huống khẩn cấp phòng thi](speaking-emergency-buying-time.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [12. Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3](critical-thinking-part3.md) |
+| [10. Mẹo câu giờ & Xử lý tình huống khẩn cấp phòng thi](speaking-emergency-buying-time.md) | [Mục Lục Cẩm Nang](../README.md) | [12. Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3](critical-thinking-part3.md) |

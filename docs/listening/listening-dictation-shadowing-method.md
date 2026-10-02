@@ -27,8 +27,8 @@ Sau khi đã hiểu 100% nội dung bài nghe qua bước Dictation, hãy chuy�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [5. Top 80 từ sát thủ dễ sai chính tả (Spelling Demons)](listening-spelling-demons-100.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Lộ trình Listening từ Band 5.0 lên 7.5+](listening-progression-50-to-75.md) |
+| [5. Top 80 từ sát thủ dễ sai chính tả (Spelling Demons)](listening-spelling-demons-100.md) | [Mục Lục Cẩm Nang](../README.md) | [7. Lộ trình Listening từ Band 5.0 lên 7.5+](listening-progression-50-to-75.md) |

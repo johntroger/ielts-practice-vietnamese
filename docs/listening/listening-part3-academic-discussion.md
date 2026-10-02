@@ -20,8 +20,8 @@ Trong câu hỏi Multiple Choice Part 3, người nói sẽ nhắc đến **tấ
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [13. Cẩm nang nhận diện các giọng Accent địa phương](listening-accents-guide.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening-part3-tone-attitude-sarcasm.md) |
+| [13. Cẩm nang nhận diện các giọng Accent địa phương](listening-accents-guide.md) | [Mục Lục Cẩm Nang](../README.md) | [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening-part3-tone-attitude-sarcasm.md) |

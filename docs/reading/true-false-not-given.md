@@ -1,11 +1,11 @@
-# 🎯 Phá Bẫy True / False / Not Given & Yes / No / Not Given Chuẩn Cambridge
+# Phá Bẫy True / False / Not Given & Yes / No / Not Given Chuẩn Cambridge
 
 > **Kỹ năng**: READING | **Chuyên mục**: Question Type Strategy  
 > **Tóm tắt**: Bí kíp phân biệt ranh giới mong manh giữa False và Not Given với độ chính xác 100%, bóc tách 3 bẫy kinh điển và lưu đồ quyết định đáp án không thể sai lệch.
 
 ---
 
-## ⚖️ 1. Bản Chất Khác Biệt Giữa TFNG & YNNG
+## 1. Bản Chất Khác Biệt Giữa TFNG & YNNG
 
 Rất nhiều thí sinh nhầm lẫn hoặc chủ quan giữa 2 dạng bài này:
 
@@ -18,7 +18,7 @@ Rất nhiều thí sinh nhầm lẫn hoặc chủ quan giữa 2 dạng bài này
 
 ---
 
-## 🚦 2. Lưu Đồ Quyết Định 3 Bước (3-Step Decision Flowchart)
+## 2. Lưu Đồ Quyết Định 3 Bước (3-Step Decision Flowchart)
 
 Để không bao giờ bị bối rối giữa **FALSE** và **NOT GIVEN**, hãy áp dụng quy tắc vàng sau:
 
@@ -38,15 +38,15 @@ flowchart TD
     style NG2 fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
 ```
 
-### 🔑 Định nghĩa sống còn:
+### Định nghĩa sống còn:
 - **FALSE / NO:** Khi bạn có thể dùng chính thông tin trong bài đọc để **chứng minh câu hỏi sai** (Nghĩa là: $A \neq B$).
 - **NOT GIVEN:** Khi bạn **không thể biết câu hỏi đúng hay sai** vì tác giả đơn giản là không cung cấp thông tin so sánh hoặc mức độ đó.
 
 ---
 
-## 💣 3. Bóc Tách 3 Bẫy Kinh Điển Trong Đề Thi Cambridge
+## 3. Bóc Tách 3 Bẫy Kinh Điển Trong Đề Thi Cambridge
 
-### 🥊 Bẫy 1: Ranh giới mong manh giữa FALSE và NOT GIVEN
+### Bẫy 1: Ranh giới mong manh giữa FALSE và NOT GIVEN
 - **Bài đọc (Passage):** *"Dr. Watson completed his medical degree in London before moving to Edinburgh."*
 - **Câu hỏi A:** *"Dr. Watson obtained his medical qualification in Edinburgh."*
   - ➡️ **Đáp án: FALSE** (Vì bài đọc nói rõ ông lấy bằng ở London rồi mới chuyển đến Edinburgh. London mâu thuẫn trực tiếp với Edinburgh).
@@ -55,7 +55,7 @@ flowchart TD
 
 ---
 
-### 🥊 Bẫy 2: Bẫy Từ Hạn Định & Mức Độ Tuyệt Đối (Qualifiers vs Absolutes)
+### Bẫy 2: Bẫy Từ Hạn Định & Mức Độ Tuyệt Đối (Qualifiers vs Absolutes)
 Ban ra đề Cambridge rất thích thay đổi các từ chỉ tần suất hoặc mức độ xác suất:
 
 | Nhóm Từ Trong Bài Đọc (Mức độ vừa phải) | Nhóm Từ Trong Câu Hỏi (Tuyệt đối hóa) | Kết Luận Đáp Án |
@@ -72,7 +72,7 @@ Ban ra đề Cambridge rất thích thay đổi các từ chỉ tần suất ho�
 
 ---
 
-### 🥊 Bẫy 3: Bẫy So Sánh Giả Tạo (The Comparison Trap)
+### Bẫy 3: Bẫy So Sánh Giả Tạo (The Comparison Trap)
 Đây là cái bẫy tinh vi nhất khiến thí sinh mất điểm ở Passage 2 và Passage 3:
 
 > **Bài đọc:** *"Solar power installations grew rapidly throughout 2022. During the same period, wind energy projects also received substantial state funding."*
@@ -85,15 +85,15 @@ Ban ra đề Cambridge rất thích thay đổi các từ chỉ tần suất ho�
 
 ---
 
-## ⚡ 4. Quy Tắc Vàng 30 Giây Trong Phòng Thi
+## 4. Quy Tắc Vàng 30 Giây Trong Phòng Thi
 1. **Làm câu hỏi theo đúng thứ tự xuất hiện:** 99% câu hỏi TFNG xuất hiện theo thứ tự diễn tiến từ trên xuống dưới của bài đọc (Order of text). Nếu câu 1 ở đoạn 1, câu 3 ở đoạn 3 thì câu 2 chắc chắn nằm ở đoạn 1 hoặc 2.
 2. **Không suy diễn kiến thức ngoài đời:** Chỉ căn cứ vào những gì in trên trang giấy. Dù ngoài đời sự thật đó đúng 100%, nhưng nếu bài đọc không đề cập ➡️ Vẫn là **NOT GIVEN**.
 3. **Không để trống:** Nếu phân vân 50/50 ở những giây cuối, hãy chọn đáp án có căn cứ nhất và tiếp tục tiến lên!
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](time-management.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading-tfng-strategy.md) |
+| [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](time-management.md) | [Mục Lục Cẩm Nang](../README.md) | [7. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading-tfng-strategy.md) |

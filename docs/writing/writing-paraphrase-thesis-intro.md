@@ -34,8 +34,8 @@ Tuyệt đối không viết nước đôi hoặc chung chung (*'This essay will
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [17. Cấu Trúc Đoạn Văn PEEL & Dàn Bài Task 2](task2-peel-structure.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [19. Task 2: Agree / Disagree](task2-opinion.md) |
+| [17. Cấu Trúc Đoạn Văn PEEL & Dàn Bài Task 2](task2-peel-structure.md) | [Mục Lục Cẩm Nang](../README.md) | [19. Task 2: Agree / Disagree](task2-opinion.md) |

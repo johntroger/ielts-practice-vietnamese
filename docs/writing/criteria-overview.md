@@ -1,11 +1,11 @@
-# 📊 Tiêu Chí Chấm Điểm & Band Descriptors 2026 (Writing)
+# Tiêu Chí Chấm Điểm & Band Descriptors 2026 (Writing)
 
 > **Kỹ năng**: WRITING | **Chuyên mục**: General Strategy  
 > **Tóm tắt**: Khảo cứu 4 tiêu chí chính thức của Cambridge Assessment English (TR/TA, CC, LR, GRA), công thức tính điểm toán học và bí quyết bứt phá từng band điểm.
 
 ---
 
-## ⚖️ 1. Thang Điểm & Công Thức Tính Điểm Tổng (Overall Writing)
+## 1. Thang Điểm & Công Thức Tính Điểm Tổng (Overall Writing)
 
 Điểm thi IELTS Writing được cấu thành từ 4 tiêu chí độc lập, mỗi tiêu chí chiếm đúng **25% trọng số**:
 1. **TR / TA (Task Response / Task Achievement):** Khả năng trả lời đúng, trúng và phát triển sâu mọi yêu cầu của đề bài.
@@ -13,12 +13,12 @@
 3. **LR (Lexical Resource):** Vốn từ vựng, độ chuẩn xác của ngữ cảnh, khả năng paraphrase và kết hợp từ (Collocations).
 4. **GRA (Grammatical Range & Accuracy):** Sự đa dạng của cấu trúc ngữ pháp và tỷ lệ câu viết không có lỗi sai.
 
-### 📐 Công thức toán học tính điểm tổng:
+### Công thức toán học tính điểm tổng:
 Trong bài thi IELTS, **Task 2 chiếm 2/3 tổng số điểm** và **Task 1 chiếm 1/3 tổng số điểm**:
 
 $$\text{Overall Writing} = \frac{\text{Task 1} + (\text{Task 2} \times 2)}{3}$$
 
-### 🔢 Quy tắc làm tròn điểm chính thức của Cambridge:
+### Quy tắc làm tròn điểm chính thức của Cambridge:
 - Nếu phần thập phân rơi vào **.25** ➡️ Được làm tròn **LÊN .5** (Ví dụ: $(6.0 + 6.5 \times 2)/3 = 6.333$ ➡️ Điểm thành phần được quy đổi làm tròn lên **6.5**).
 - Nếu phần thập phân rơi vào **.75** ➡️ Được làm tròn **LÊN 1.0** (Ví dụ: $6.75$ ➡️ Điểm được làm tròn thành **7.0**).
 - Nếu phần thập phân dưới **.25** (ví dụ .125) ➡️ Được làm tròn **XUỐNG .0** (Ví dụ: $6.125$ ➡️ **6.0**).
@@ -28,7 +28,7 @@ $$\text{Overall Writing} = \frac{\text{Task 1} + (\text{Task 2} \times 2)}{3}$$
 
 ---
 
-## 🔍 2. Bảng Ma Trận So Sánh 4 Tiêu Chí Từ Band 5.0 Đến Band 8.5
+## 2. Bảng Ma Trận So Sánh 4 Tiêu Chí Từ Band 5.0 Đến Band 8.5
 
 Dưới đây là bản phân rã chi tiết thang chấm chính thức của Cambridge giúp bạn hiểu giám khảo kỳ vọng điều gì ở từng mức điểm:
 
@@ -41,7 +41,7 @@ Dưới đây là bản phân rã chi tiết thang chấm chính thức của Ca
 
 ---
 
-## 💡 3. Ví Dụ Minh Họa Trực Tiếp Cho Từng Tiêu Chí
+## 3. Ví Dụ Minh Họa Trực Tiếp Cho Từng Tiêu Chí
 
 ### 1. Về Tiêu chí Coherence & Cohesion (CC):
 - ❌ **Band 6.0 (Liên kết cơ học):**  
@@ -80,7 +80,7 @@ gantt
 
 ---
 
-## ✅ 5. Bảng Tự Đánh Giá 30 Giây Trước Khi Nộp Bài
+## 5. Bảng Tự Đánh Giá 30 Giây Trước Khi Nộp Bài
 - [ ] **Độ dài an toàn:** Task 1 đã trên 150 từ? Task 2 đã trên 250 từ?
 - [ ] **Overview Task 1:** Đã có câu nêu xu hướng chung và câu đối tượng nổi bật nhất chưa? Có bị lẫn số liệu cụ thể vào không?
 - [ ] **Thesis Statement Task 2:** Người đọc có thấy rõ quan điểm của bạn ngay ở cuối đoạn Mở bài không?
@@ -89,8 +89,8 @@ gantt
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [5. Lộ trình nâng band Writing 5.0 lên 7.5+](writing-progression-50-to-75.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Master Chiến Lược Toàn Diện Task 1](task1-mastery.md) |
+| [5. Lộ trình nâng band Writing 5.0 lên 7.5+](writing-progression-50-to-75.md) | [Mục Lục Cẩm Nang](../README.md) | [7. Master Chiến Lược Toàn Diện Task 1](task1-mastery.md) |

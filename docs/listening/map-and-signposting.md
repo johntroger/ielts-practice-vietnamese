@@ -20,8 +20,8 @@ Part 4 là bài diễn thuyết học thuật không nghỉ giữa chừng. Hãy
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [8. Bẫy Distractor & Đổi Ý Trong Listening](distractor-traps.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [10. Part 2: Định hướng không gian & Bản đồ](listening-part2-map-directions.md) |
+| [8. Bẫy Distractor & Đổi Ý Trong Listening](distractor-traps.md) | [Mục Lục Cẩm Nang](../README.md) | [10. Part 2: Định hướng không gian & Bản đồ](listening-part2-map-directions.md) |

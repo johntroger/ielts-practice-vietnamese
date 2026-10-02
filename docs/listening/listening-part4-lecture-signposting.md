@@ -23,8 +23,8 @@ Nếu bạn đang chờ đáp án cho câu 34 mà bỗng nhiên nghe thấy gi�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](cambridge-part3-consensus-traps.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening-connected-speech-phonetics.md) |
+| [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](cambridge-part3-consensus-traps.md) | [Mục Lục Cẩm Nang](../README.md) | [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening-connected-speech-phonetics.md) |

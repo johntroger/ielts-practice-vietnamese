@@ -23,8 +23,8 @@ Trước khi băng bắt đầu phát mỗi Section, giọng đọc luôn thông
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [11. Chiến thuật đoán số ít / số nhiều (-s)](listening-plural-s-grammar-rule.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [13. Cẩm nang nhận diện các giọng Accent địa phương](listening-accents-guide.md) |
+| [11. Chiến thuật đoán số ít / số nhiều (-s)](listening-plural-s-grammar-rule.md) | [Mục Lục Cẩm Nang](../README.md) | [13. Cẩm nang nhận diện các giọng Accent địa phương](listening-accents-guide.md) |

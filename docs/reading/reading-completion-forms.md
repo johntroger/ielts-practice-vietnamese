@@ -22,8 +22,8 @@ Trước khi quét bài đọc, hãy dành 30 giây nhìn vào chỗ trống và
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [1. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](foundation-reading-band4-to-5-strategy.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Bộ quy tắc Paraphrasing kinh điển](reading-academic-paraphrasing.md) |
+| [1. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](foundation-reading-band4-to-5-strategy.md) | [Mục Lục Cẩm Nang](../README.md) | [3. Bộ quy tắc Paraphrasing kinh điển](reading-academic-paraphrasing.md) |

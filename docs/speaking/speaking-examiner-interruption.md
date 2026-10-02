@@ -23,8 +23,8 @@ Nhiều thí sinh nghe không rõ nhưng ngại hỏi lại, dẫn đến việc
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [15. Top 35+ thành ngữ Idiomatic tự nhiên Band 8.0+](speaking-idiomatic-lexicon-c1-c2.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [🎉 Hoàn Thành Cẩm Nang](../README.md) |
+| [15. Top 35+ thành ngữ Idiomatic tự nhiên Band 8.0+](speaking-idiomatic-lexicon-c1-c2.md) | [Mục Lục Cẩm Nang](../README.md) | [Hoàn Thành Cẩm Nang](../README.md) |

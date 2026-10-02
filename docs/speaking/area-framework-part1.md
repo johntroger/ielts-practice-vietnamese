@@ -1,17 +1,17 @@
-# 🗣️ Khung A.R.E.A - Trả Lời Tự Nhiên & Chuẩn Độ Dài Part 1
+# Khung A.R.E.A - Trả Lời Tự Nhiên & Chuẩn Độ Dài Part 1
 
 > **Kỹ năng**: SPEAKING | **Chuyên mục**: Part 1 Strategy  
 > **Tóm tắt**: Bí kíp trả lời tự nhiên từ 2 – 4 câu cho Part 1, không cộc lốc một từ và không lan man lạc đề, kèm 5 bài mẫu thực chiến cho các chủ đề kinh điển.
 
 ---
 
-## 🏛️ 1. Bản Chất Tiêu Chí Chấm Điểm Speaking Part 1
+## 1. Bản Chất Tiêu Chí Chấm Điểm Speaking Part 1
 
 Trong **Part 1 (Phỏng vấn cá nhân ngắn)**, giám khảo muốn kiểm tra phản xạ tự nhiên của bạn về các chủ đề đời sống thường ngày. Giám khảo không yêu cầu bạn phải phát biểu như một bài thuyết trình, nhưng:
 - ❌ **Trả lời quá ngắn (Dưới 1 câu / 5 giây):** Nói *"Yes, I do"*, *"No, I don't"* khiến giám khảo không đủ dữ liệu để đánh giá độ trôi chảy (Fluency) và ngữ pháp (GRA) ➡️ Điểm bị khóa ở Band 4.5 – 5.0.
 - ❌ **Trả lời quá dài (Hơn 40 giây):** Nói lê thê sang chủ đề khác khiến giám khảo phải ngắt lời, làm bạn mất tự tin.
 
-### 📐 Công thức A.R.E.A chuẩn mực (Độ dài lý tưởng: 15 – 25 giây / 2 – 4 câu):
+### Công thức A.R.E.A chuẩn mực (Độ dài lý tưởng: 15 – 25 giây / 2 – 4 câu):
 
 ```mermaid
 flowchart LR
@@ -32,11 +32,11 @@ flowchart LR
 
 ---
 
-## 🔬 2. Năm Bài Mẫu Thực Chiến Đối Chiếu (Band 5.0 vs Band 8.5)
+## 2. Năm Bài Mẫu Thực Chiến Đối Chiếu (Band 5.0 vs Band 8.5)
 
 ---
 
-### 📌 Chủ đề 1: Hometown (Quê hương)
+### Chủ đề 1: Hometown (Quê hương)
 > **Examiner:** *"What do you like most about your hometown?"*
 
 - ❌ **Band 5.0 (Cộc lốc, từ vựng cơ bản):**  
@@ -49,7 +49,7 @@ flowchart LR
 
 ---
 
-### 📌 Chủ đề 2: Work or Study (Công việc / Học tập)
+### Chủ đề 2: Work or Study (Công việc / Học tập)
 > **Examiner:** *"Why did you choose your current field of study?"*
 
 - ❌ **Band 5.0 (Nói nông, thiếu liên kết):**  
@@ -62,7 +62,7 @@ flowchart LR
 
 ---
 
-### 📌 Chủ đề 3: Weather & Seasons (Thời tiết & Mùa)
+### Chủ đề 3: Weather & Seasons (Thời tiết & Mùa)
 > **Examiner:** *"What kind of weather do you prefer?"*
 
 - ❌ **Band 5.0 (Lặp từ, câu đơn ngắn):**  
@@ -75,7 +75,7 @@ flowchart LR
 
 ---
 
-### 📌 Chủ đề 4: Hobbies & Leisure (Sở thích & Thời gian rảnh)
+### Chủ đề 4: Hobbies & Leisure (Sở thích & Thời gian rảnh)
 > **Examiner:** *"Do you prefer spending your free time indoors or outdoors?"*
 
 - ❌ **Band 5.0 (Thiếu chiều sâu, không có ví dụ):**  
@@ -88,7 +88,7 @@ flowchart LR
 
 ---
 
-### 📌 Chủ đề 5: Technology & Social Media (Công nghệ & Mạng xã hội)
+### Chủ đề 5: Technology & Social Media (Công nghệ & Mạng xã hội)
 > **Examiner:** *"How often do you use social media apps?"*
 
 - ❌ **Band 5.0 (Liệt kê thô sơ):**  
@@ -108,8 +108,8 @@ flowchart LR
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](foundation-speaking-band4-to-5-fluency.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Khắc phục lỗi âm đuôi, trọng âm & ngữ điệu](speaking-pronunciation-intonation.md) |
+| [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](foundation-speaking-band4-to-5-fluency.md) | [Mục Lục Cẩm Nang](../README.md) | [3. Khắc phục lỗi âm đuôi, trọng âm & ngữ điệu](speaking-pronunciation-intonation.md) |

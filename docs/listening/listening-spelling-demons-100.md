@@ -37,8 +37,8 @@ IELTS Listening áp dụng quy tắc chấm tuyệt đối: **Sai 1 chữ cái =
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [4. Bẫy đơn vị đo lường & Tiền tệ quốc tế](listening-units-currency-traps.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening-dictation-shadowing-method.md) |
+| [4. Bẫy đơn vị đo lường & Tiền tệ quốc tế](listening-units-currency-traps.md) | [Mục Lục Cẩm Nang](../README.md) | [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening-dictation-shadowing-method.md) |

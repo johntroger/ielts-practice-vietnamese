@@ -28,8 +28,8 @@ Luôn đặt mục tiêu hoàn thành 40 câu hỏi trong **55 phút** (Passage 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading-passage3-author-stance.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading-last-5-minutes-rescue.md) |
+| [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading-passage3-author-stance.md) | [Mục Lục Cẩm Nang](../README.md) | [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading-last-5-minutes-rescue.md) |

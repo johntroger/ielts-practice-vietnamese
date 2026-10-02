@@ -25,8 +25,8 @@ Trong lúc người nói mô tả hành trình, hãy di chuyển con trỏ chu�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [9. Bản Đồ Map Labelling & Tín Hiệu Chuyển Ý Signposting](map-and-signposting.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Chiến thuật đoán số ít / số nhiều (-s)](listening-plural-s-grammar-rule.md) |
+| [9. Bản Đồ Map Labelling & Tín Hiệu Chuyển Ý Signposting](map-and-signposting.md) | [Mục Lục Cẩm Nang](../README.md) | [11. Chiến thuật đoán số ít / số nhiều (-s)](listening-plural-s-grammar-rule.md) |

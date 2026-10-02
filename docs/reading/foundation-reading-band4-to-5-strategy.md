@@ -1,4 +1,4 @@
-# 📖 Chiến Thuật Reading Đạt Band 4.5 – 5.0: "Ăn Chắc" Passage 1 & Kỹ Thuật Dò Tìm Từ Khóa
+# Chiến Thuật Reading Đạt Band 4.5 – 5.0: "Ăn Chắc" Passage 1 & Kỹ Thuật Dò Tìm Từ Khóa
 
 Rất nhiều bạn ở trình độ **Band 4.0** khi làm đề Reading cảm thấy choáng ngợp vì bài đọc quá dài (3 bài đọc khoảng 2500 từ) và có hàng trăm từ vựng chuyên ngành y khoa, lịch sử, khảo cổ học mà bạn chưa từng thấy bao giờ.
 
@@ -8,7 +8,7 @@ Cẩm nang này sẽ chỉ cho bạn chiến lược phân bổ năng lượng t
 
 ---
 
-## 🎯 1. Bản Đồ Mục Tiêu Điểm Số Band 5.0 Reading
+## 1. Bản Đồ Mục Tiêu Điểm Số Band 5.0 Reading
 
 Để đạt được Band 5.0, bạn **không cần làm đúng hết 40 câu**, bạn chỉ cần **đúng tối thiểu 16 câu**:
 
@@ -21,7 +21,7 @@ Cẩm nang này sẽ chỉ cho bạn chiến lược phân bổ năng lượng t
 
 ---
 
-## 🔍 2. Kỹ Thuật Định Vị "Từ Khóa Không Biến Đổi" (Unchangeable Keywords)
+## 2. Kỹ Thuật Định Vị "Từ Khóa Không Biến Đổi" (Unchangeable Keywords)
 
 Ở trình độ Band 4.0 - 5.0, vốn từ vựng đồng nghĩa (Paraphrasing) của bạn chưa phong phú. Vì vậy, **tuyệt đối không đi tìm các từ chung chung** như *"important"*, *"increase"*, *"problem"*, vì trong bài đọc chúng sẽ bị đổi thành *"crucial"*, *"surge"*, *"obstacle"*.
 
@@ -45,7 +45,7 @@ mindmap
       'hyperloop', 'superconductor'
 ```
 
-### 💡 Ví dụ thực tế:
+### Ví dụ thực tế:
 > **Câu hỏi trong đề:** *In **1992**, researcher **Thomas Green** discovered a rare species of frog in **Madagascar**.*
 > 
 > 👉 **Cách làm của bạn:**
@@ -55,7 +55,7 @@ mindmap
 
 ---
 
-## 📝 3. Tuyệt Chiêu "Ăn Trọn" Điểm Dạng Điền Từ (Completion)
+## 3. Tuyệt Chiêu "Ăn Trọn" Điểm Dạng Điền Từ (Completion)
 
 Dạng bài **Điền từ vào chỗ trống (Notes, Table, Form Completion)** là dạng bài dễ nhất trong IELTS Reading và luôn xuất hiện ở Passage 1.
 
@@ -74,7 +74,7 @@ Dạng bài **Điền từ vào chỗ trống (Notes, Table, Form Completion)** 
 
 ---
 
-## 🎲 4. Chiến Thuật "Cứu Hộ" 7 Phút Cuối: Đoán Mò Có Khoa Học Cho Passage 3
+## 4. Chiến Thuật "Cứu Hộ" 7 Phút Cuối: Đoán Mò Có Khoa Học Cho Passage 3
 
 Khi đã dành 35 phút cho Passage 1 và 18 phút cho Passage 2, bạn chỉ còn 7 phút cho Passage 3. **Lúc này tuyệt đối không được ngồi đọc bài!**
 
@@ -89,8 +89,8 @@ Khi đã dành 35 phút cho Passage 1 và 18 phút cho Passage 2, bạn chỉ c�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](../writing/cdi-and-one-skill-retake-strategy.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Điền từ: Summary, Note, Table & Flow-chart](reading-completion-forms.md) |
+| [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](../writing/cdi-and-one-skill-retake-strategy.md) | [Mục Lục Cẩm Nang](../README.md) | [2. Điền từ: Summary, Note, Table & Flow-chart](reading-completion-forms.md) |

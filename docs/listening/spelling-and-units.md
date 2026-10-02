@@ -20,8 +20,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [2. Part 1: Bẫy đánh vần tên riêng, con số & mã bưu chính](listening-part1-spelling-numbers.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [4. Bẫy đơn vị đo lường & Tiền tệ quốc tế](listening-units-currency-traps.md) |
+| [2. Part 1: Bẫy đánh vần tên riêng, con số & mã bưu chính](listening-part1-spelling-numbers.md) | [Mục Lục Cẩm Nang](../README.md) | [4. Bẫy đơn vị đo lường & Tiền tệ quốc tế](listening-units-currency-traps.md) |

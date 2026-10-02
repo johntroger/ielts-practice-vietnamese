@@ -26,8 +26,8 @@ Sai lầm chết người của 90% thí sinh là khi phát hiện mình vừa b
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [19. Format thi Listening & Kỹ năng thi CD-IELTS](listening-overview-format.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](../speaking/foundation-speaking-band4-to-5-fluency.md) |
+| [19. Format thi Listening & Kỹ năng thi CD-IELTS](listening-overview-format.md) | [Mục Lục Cẩm Nang](../README.md) | [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](../speaking/foundation-speaking-band4-to-5-fluency.md) |

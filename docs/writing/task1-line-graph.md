@@ -31,8 +31,8 @@ Line Graph hầu như 100% là **Dynamic (biến thiên theo thời gian)**. M�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [7. Master Chiến Lược Toàn Diện Task 1](task1-mastery.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [9. Task 1: Bar Chart (Biểu Đồ Cột)](task1-bar-chart.md) |
+| [7. Master Chiến Lược Toàn Diện Task 1](task1-mastery.md) | [Mục Lục Cẩm Nang](../README.md) | [9. Task 1: Bar Chart (Biểu Đồ Cột)](task1-bar-chart.md) |

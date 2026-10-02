@@ -1,11 +1,11 @@
-# 📈 Master Chiến Lược Toàn Diện IELTS Writing Task 1
+# Master Chiến Lược Toàn Diện IELTS Writing Task 1
 
 > **Kỹ năng**: WRITING | **Chuyên mục**: Task 1 Master Guide  
 > **Tóm tắt**: Cẩm nang bẻ khóa toàn diện tất cả 7 dạng bài biểu đồ và hình vẽ Task 1 đạt chuẩn Band 7.5+, công thức viết Overview bất bại và kỹ thuật gom nhóm số liệu khoa học.
 
 ---
 
-## 🗺️ 1. Bản Đồ Phân Loại 7 Dạng Bài Task 1
+## 1. Bản Đồ Phân Loại 7 Dạng Bài Task 1
 
 Task 1 kiểm tra khả năng tóm tắt, miêu tả và so sánh thông tin số liệu trong **tối thiểu 150 từ** (khuyến nghị lý tưởng: **170 – 190 từ**) trong vòng **20 phút**:
 
@@ -31,11 +31,11 @@ graph TD
 
 ---
 
-## 🏆 2. Tuyệt Chiêu Viết Câu Overview "Ăn Điểm Tuyệt Đối"
+## 2. Tuyệt Chiêu Viết Câu Overview "Ăn Điểm Tuyệt Đối"
 
 Theo quy định khảo thí của Cambridge: **Nếu bài viết không có Overview rõ ràng, điểm Task Achievement sẽ bị khóa ở Band 5.0**, bất kể từ vựng hay ngữ pháp có xuất sắc đến đâu.
 
-### 📐 Công thức Overview 2 câu cho từng nhóm dạng bài:
+### Công thức Overview 2 câu cho từng nhóm dạng bài:
 
 #### Nhóm 1: Biểu đồ biến thiên theo thời gian (Dynamic Charts)
 - **Câu 1 (Xu hướng chung):** Đối tượng nào có xu hướng tăng, đối tượng nào giảm hoặc giữ nguyên?
@@ -47,7 +47,7 @@ Theo quy định khảo thí của Cambridge: **Nếu bài viết không có Ove
 
 ---
 
-### 🔬 Ví dụ đối chiếu thực tế: Viết Overview cho biểu đồ tiêu thụ năng lượng
+### Ví dụ đối chiếu thực tế: Viết Overview cho biểu đồ tiêu thụ năng lượng
 
 > **Đề bài mô phỏng:** *Biểu đồ đường thể hiện mức tiêu thụ than đá (Coal), dầu mỏ (Oil) và năng lượng tái tạo (Renewable Energy) tại Anh từ năm 1980 đến 2025.*
 
@@ -63,7 +63,7 @@ Theo quy định khảo thí của Cambridge: **Nếu bài viết không có Ove
 
 ---
 
-## 📊 3. Kỹ Thuật Gom Nhóm Số Liệu (Data Grouping) Thân Bài 1 & Thân Bài 2
+## 3. Kỹ Thuật Gom Nhóm Số Liệu (Data Grouping) Thân Bài 1 & Thân Bài 2
 
 Sai lầm lớn nhất của thí sinh mức điểm 6.0 là **kể lể máy móc theo từng năm** (năm 1980 thế này, năm 1990 thế kia, năm 2000 thế nọ...). Giám khảo tìm kiếm khả năng **so sánh và phân nhóm logic (Categorization)**:
 
@@ -76,7 +76,7 @@ Sai lầm lớn nhất của thí sinh mức điểm 6.0 là **kể lể máy m�
 
 ---
 
-## 💎 4. Bộ Từ Vựng Học Thuật Miêu Tả Biến Động Số Liệu Chuẩn C1/C2
+## 4. Bộ Từ Vựng Học Thuật Miêu Tả Biến Động Số Liệu Chuẩn C1/C2
 
 Thay vì lặp đi lặp lại những từ cơ bản như *"increase"* hay *"decrease"*, hãy sử dụng các cặp Động từ – Trạng từ hoặc Cụm danh từ phong phú sau:
 
@@ -99,7 +99,7 @@ mindmap
 
 ---
 
-## 🚫 5. Ba "Cờ Đỏ" Khiến Thí Sinh Bị Hạ Điểm Oan Trong Task 1
+## 5. Ba "Cờ Đỏ" Khiến Thí Sinh Bị Hạ Điểm Oan Trong Task 1
 
 1. **Đưa ý kiến cá nhân (Personal Opinions):** Task 1 là bài báo cáo khách quan. Tuyệt đối không được giải thích lý do tại sao số liệu tăng/giảm nếu biểu đồ không nói (ví dụ: *"Oil increased because people bought more cars"* ➡️ **Bị trừ điểm TR nặng nề vì tự suy diễn**).
 2. **Quên đơn vị đo lường (Units):** Biểu đồ đo bằng *nghìn người (thousands)* hay *triệu tấn (million tonnes)* hay *phần trăm (%)*. Nếu viết thiếu đơn vị, số liệu hoàn toàn mất giá trị.
@@ -107,8 +107,8 @@ mindmap
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [6. Tiêu chí chấm điểm & Band Descriptors 2026](criteria-overview.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [8. Task 1: Line Graph (Biểu Đồ Đường)](task1-line-graph.md) |
+| [6. Tiêu chí chấm điểm & Band Descriptors 2026](criteria-overview.md) | [Mục Lục Cẩm Nang](../README.md) | [8. Task 1: Line Graph (Biểu Đồ Đường)](task1-line-graph.md) |

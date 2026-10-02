@@ -36,8 +36,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [1. Chinh phục Writing từ Band 4.0 lên 5.0 cho người mất gốc](foundation-band4-to-5-survival-guide.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Quy tắc dấu câu & Bẫy Comma Splice](writing-punctuation-comma-splice.md) |
+| [1. Chinh phục Writing từ Band 4.0 lên 5.0 cho người mất gốc](foundation-band4-to-5-survival-guide.md) | [Mục Lục Cẩm Nang](../README.md) | [3. Quy tắc dấu câu & Bẫy Comma Splice](writing-punctuation-comma-splice.md) |

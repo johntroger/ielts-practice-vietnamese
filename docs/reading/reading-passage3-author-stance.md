@@ -34,8 +34,8 @@ Hãy chú ý kỹ động từ mà tác giả dùng để dẫn lời người k
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [15. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading-chunking-speed.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading-strategic-time-management.md) |
+| [15. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading-chunking-speed.md) | [Mục Lục Cẩm Nang](../README.md) | [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading-strategic-time-management.md) |

@@ -47,8 +47,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [27. Task 2: 4 Cấu trúc ngữ pháp Band 8.0+](writing-advanced-grammar-band8.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [29. Task 2: Khung tìm ý tưởng PESTLE](writing-ideation-pestle.md) |
+| [27. Task 2: 4 Cấu trúc ngữ pháp Band 8.0+](writing-advanced-grammar-band8.md) | [Mục Lục Cẩm Nang](../README.md) | [29. Task 2: Khung tìm ý tưởng PESTLE](writing-ideation-pestle.md) |

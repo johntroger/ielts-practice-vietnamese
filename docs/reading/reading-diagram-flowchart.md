@@ -25,8 +25,8 @@ Dạng bài Diagram (Sơ đồ cấu tạo máy móc/vật thể) và Flow-chart
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [11. Summary Completion có khung từ chọn sẵn](reading-summary-box-options.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [13. 50 Cặp từ Paraphrase lặp lại Cam 10-19](reading-cambridge-synonym-lexicon.md) |
+| [11. Summary Completion có khung từ chọn sẵn](reading-summary-box-options.md) | [Mục Lục Cẩm Nang](../README.md) | [13. 50 Cặp từ Paraphrase lặp lại Cam 10-19](reading-cambridge-synonym-lexicon.md) |

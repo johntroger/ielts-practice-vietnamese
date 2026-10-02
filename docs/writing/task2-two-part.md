@@ -17,8 +17,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [22. Task 2: Problem & Solution](task2-problem-solution.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [24. Bí quyết bứt phá từ Band 6.0 lên Band 7.5+](band-7plus-secrets.md) |
+| [22. Task 2: Problem & Solution](task2-problem-solution.md) | [Mục Lục Cẩm Nang](../README.md) | [24. Bí quyết bứt phá từ Band 6.0 lên Band 7.5+](band-7plus-secrets.md) |

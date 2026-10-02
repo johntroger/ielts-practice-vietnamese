@@ -35,8 +35,8 @@ Trong tiêu chí **Lexical Resource Band 7.0 - 8.0**, giám khảo yêu cầu th
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](examiner-red-flags-and-c1-collocations.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Tâm lý phòng thi & Khi bị giám khảo ngắt lời](speaking-examiner-interruption.md) |
+| [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](examiner-red-flags-and-c1-collocations.md) | [Mục Lục Cẩm Nang](../README.md) | [16. Tâm lý phòng thi & Khi bị giám khảo ngắt lời](speaking-examiner-interruption.md) |

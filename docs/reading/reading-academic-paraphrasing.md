@@ -25,8 +25,8 @@ IELTS Reading thực chất là một bài kiểm tra khả năng nhận diện 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [2. Điền từ: Summary, Note, Table & Flow-chart](reading-completion-forms.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading-progression-50-to-75.md) |
+| [2. Điền từ: Summary, Note, Table & Flow-chart](reading-completion-forms.md) | [Mục Lục Cẩm Nang](../README.md) | [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading-progression-50-to-75.md) |

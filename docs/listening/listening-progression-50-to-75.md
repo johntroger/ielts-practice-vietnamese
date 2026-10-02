@@ -41,8 +41,8 @@ Sai lầm của thí sinh Band 5.0 là cắm đầu nghe các bài lecture khoa 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening-dictation-shadowing-method.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [8. Bẫy Distractor & Đổi Ý Trong Listening](distractor-traps.md) |
+| [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening-dictation-shadowing-method.md) | [Mục Lục Cẩm Nang](../README.md) | [8. Bẫy Distractor & Đổi Ý Trong Listening](distractor-traps.md) |

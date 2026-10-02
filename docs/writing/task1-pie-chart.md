@@ -28,8 +28,8 @@ Pie chart dùng để biểu thị sự phân bổ các phần tạo nên một 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [9. Task 1: Bar Chart (Biểu Đồ Cột)](task1-bar-chart.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Task 1: Table (Bảng Số Liệu)](task1-table.md) |
+| [9. Task 1: Bar Chart (Biểu Đồ Cột)](task1-bar-chart.md) | [Mục Lục Cẩm Nang](../README.md) | [11. Task 1: Table (Bảng Số Liệu)](task1-table.md) |

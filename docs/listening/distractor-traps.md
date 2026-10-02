@@ -24,8 +24,8 @@ Hãy cảnh giác cao độ khi người nói phát ra các tín hiệu sau:
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [7. Lộ trình Listening từ Band 5.0 lên 7.5+](listening-progression-50-to-75.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [9. Bản Đồ Map Labelling & Tín Hiệu Chuyển Ý Signposting](map-and-signposting.md) |
+| [7. Lộ trình Listening từ Band 5.0 lên 7.5+](listening-progression-50-to-75.md) | [Mục Lục Cẩm Nang](../README.md) | [9. Bản Đồ Map Labelling & Tín Hiệu Chuyển Ý Signposting](map-and-signposting.md) |

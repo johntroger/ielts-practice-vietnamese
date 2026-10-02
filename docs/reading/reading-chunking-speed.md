@@ -29,8 +29,8 @@ Một cụm nghĩa tự nhiên thường rơi vào các cấu trúc ngữ pháp 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [14. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading-contextual-guessing-roots.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading-passage3-author-stance.md) |
+| [14. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading-contextual-guessing-roots.md) | [Mục Lục Cẩm Nang](../README.md) | [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading-passage3-author-stance.md) |

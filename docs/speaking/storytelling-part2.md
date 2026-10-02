@@ -17,8 +17,8 @@ Bí quyết giúp bài nói không bị tắc ý giữa chừng là mở rộng 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [5. Bản đồ 4 tiêu chí chấm điểm Speaking & Làm tròn](speaking-criteria-descriptors.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Tuyệt chiêu căn chuẩn nhịp độ 2 phút (Pacing)](speaking-part2-pacing-timing.md) |
+| [5. Bản đồ 4 tiêu chí chấm điểm Speaking & Làm tròn](speaking-criteria-descriptors.md) | [Mục Lục Cẩm Nang](../README.md) | [7. Tuyệt chiêu căn chuẩn nhịp độ 2 phút (Pacing)](speaking-part2-pacing-timing.md) |

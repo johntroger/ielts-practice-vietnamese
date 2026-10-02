@@ -1,4 +1,4 @@
-# 🔍 Giải Mã Nhận Xét Của Giám Khảo Cambridge 18-19: Những Lỗi Mất Điểm Band 8.0+
+# Giải Mã Nhận Xét Của Giám Khảo Cambridge 18-19: Những Lỗi Mất Điểm Band 8.0+
 
 Phân tích các bài viết mẫu kèm nhận xét chính thức của giám khảo khảo thí trong các bộ sách gần đây nhất (**Cambridge IELTS 18 & 19**) cho thấy một sự thay đổi rõ rệt trong tiêu chí đánh giá của giám khảo quốc tế. Các giám khảo ngày càng khắt khe hơn với các bài viết mang tính "văn mẫu học thuộc", lạm dụng từ vựng đao to búa lớn nhưng thiếu chiều sâu lập luận.
 
@@ -6,7 +6,7 @@ Bài viết này tổng hợp những đúc kết mang tính bước ngoặt gi�
 
 ---
 
-## 🚫 1. Cái Chết Của Các "Template Rập Khuôn" (Mechanical Linking)
+## 1. Cái Chết Của Các "Template Rập Khuôn" (Mechanical Linking)
 
 Nhiều thí sinh được dạy các mẫu câu mở đầu nghe có vẻ "cao cấp" nhưng trong thang chấm chính thức của Cambridge, chúng bị xếp vào nhóm **"Overuse of memorized phrases"** hoặc **"Mechanical cohesion"** (tiêu chí Coherence & Cohesion bị giữ ở mức Band 6.0 hoặc 7.0).
 
@@ -22,7 +22,7 @@ Nhiều thí sinh được dạy các mẫu câu mở đầu nghe có vẻ "cao 
 
 ---
 
-## 🔗 2. Nghệ Thuật Liên Kết Ẩn (Referencing Chains) Thay Thế Từ Nối
+## 2. Nghệ Thuật Liên Kết Ẩn (Referencing Chains) Thay Thế Từ Nối
 
 Ở mức **Band 8.0 Coherence & Cohesion (CC)**, giám khảo không tìm kiếm những từ nối bắt đầu câu dài dòng. Thay vào đó, giám khảo tìm kiếm **sự kết dính ý nghĩa tự nhiên giữa các câu**:
 
@@ -40,7 +40,7 @@ Nhiều thí sinh được dạy các mẫu câu mở đầu nghe có vẻ "cao 
 
 ---
 
-## 📈 3. Phát Triển Ý Theo Chiều Dọc (Vertical Depth) vs Liệt Kê Theo Chiều Ngang (Horizontal Listing)
+## 3. Phát Triển Ý Theo Chiều Dọc (Vertical Depth) vs Liệt Kê Theo Chiều Ngang (Horizontal Listing)
 
 Một trong những lý do lớn nhất khiến thí sinh có từ vựng tốt vẫn chỉ dừng ở **Band 6.5 - 7.0 Task Response (TR)** là lỗi **"Liệt kê ý tưởng"**: đưa ra quá nhiều lý do nhưng không có lý do nào được giải thích cặn kẽ tới tận cùng.
 
@@ -69,9 +69,9 @@ flowchart TD
 
 ---
 
-## 🏆 4. Trích Dẫn Thực Tế Từ Cambridge 18 & 19
+## 4. Trích Dẫn Thực Tế Từ Cambridge 18 & 19
 
-### 📝 Nhận xét của Giám khảo về bài viết Band 8.0 (Cambridge 18, Test 2, Task 2):
+### Nhận xét của Giám khảo về bài viết Band 8.0 (Cambridge 18, Test 2, Task 2):
 > *"The candidate has fully addressed all parts of the prompt with well-developed ideas. What distinguishes this response is the natural progression of thought; arguments are not merely asserted but are substantiated through logical causal chains. The lexical choice is precise and academic, with no clumsy attempt to show off rare words."*
 
 **Bài học rút ra:**
@@ -81,14 +81,14 @@ flowchart TD
 
 ---
 
-## 🔬 5. Ví Dụ Đối Chiếu Thực Chiến: Thân Bài Task 2 Chuẩn Cambridge 19
+## 5. Ví Dụ Đối Chiếu Thực Chiến: Thân Bài Task 2 Chuẩn Cambridge 19
 
-### 📌 Đề bài mẫu (Cambridge IELTS 19):
+### Đề bài mẫu (Cambridge IELTS 19):
 > *"Some people think that universities should provide graduates with the knowledge and skills needed in the workplace. Others think that the true function of a university should be to give access to knowledge for its own sake, regardless of whether the course is useful to an employer. Discuss both views and give your opinion."*
 
 ---
 
-### ❌ Đoạn văn Thân bài 1 - Band 6.0 (Mắc lỗi rập khuôn & liệt kê nông):
+### Đoạn văn Thân bài 1 - Band 6.0 (Mắc lỗi rập khuôn & liệt kê nông):
 > *"On the one hand, it is undeniable that universities should teach vocational skills. Firstly, students pay expensive tuition fees, so they need a good job after graduation. Furthermore, companies nowadays require practical experience rather than pure theory. In addition, if universities only teach academic knowledge, the unemployment rate will increase significantly. To put it in a nutshell, practical training is extremely essential for young people."*
 
 🔍 **Nhận xét của Giám khảo vì sao bị khóa ở Band 6.0:**
@@ -98,7 +98,7 @@ flowchart TD
 
 ---
 
-### ✅ Đoạn văn Thân bài 1 - Band 8.5 (Chuỗi nhân quả dọc & Liên kết tự nhiên):
+### Đoạn văn Thân bài 1 - Band 8.5 (Chuỗi nhân quả dọc & Liên kết tự nhiên):
 > *"On the one hand, proponents of vocational tertiary education argue that academic curricula must align directly with the demands of the modern labor market. **The primary rationale** is that higher education represents a substantial financial investment for most households; consequently, graduates require tangible competencies to secure employment and recoup their tuition costs. **To achieve this**, universities ought to integrate technical toolkits, analytical frameworks, and industry internships into their degree programs. **Such pragmatic training** not only bridges the persistent gap between theoretical knowledge and practical execution but also equips young professionals to adapt swiftly to automated workplace environments."*
 
 💡 **Phân tích cơ chế ăn điểm tối đa của đoạn văn Band 8.5:**
@@ -109,8 +109,8 @@ flowchart TD
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [30. Task 2: Tiêu chí CC 8.0+ Nghệ thuật liên kết ẩn](writing-cc-thematic-progression.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](cdi-and-one-skill-retake-strategy.md) |
+| [30. Task 2: Tiêu chí CC 8.0+ Nghệ thuật liên kết ẩn](writing-cc-thematic-progression.md) | [Mục Lục Cẩm Nang](../README.md) | [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](cdi-and-one-skill-retake-strategy.md) |

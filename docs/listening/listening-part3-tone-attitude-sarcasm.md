@@ -26,8 +26,8 @@ Người bản xứ Anh hiếm khi nói thẳng *"No, you are wrong"*. Họ luô
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [14. Part 3: Trắc nghiệm học thuật & Bẫy đối kháng](listening-part3-academic-discussion.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](cambridge-part3-consensus-traps.md) |
+| [14. Part 3: Trắc nghiệm học thuật & Bẫy đối kháng](listening-part3-academic-discussion.md) | [Mục Lục Cẩm Nang](../README.md) | [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](cambridge-part3-consensus-traps.md) |

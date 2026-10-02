@@ -27,8 +27,8 @@ Người nói thường đưa ra một thông tin ban đầu, sau đó lập t�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](foundation-listening-band4-to-5-part1-mastery.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Chính Tả, Con Số & Đơn Vị Đo Lường](spelling-and-units.md) |
+| [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](foundation-listening-band4-to-5-part1-mastery.md) | [Mục Lục Cẩm Nang](../README.md) | [3. Chính Tả, Con Số & Đơn Vị Đo Lường](spelling-and-units.md) |

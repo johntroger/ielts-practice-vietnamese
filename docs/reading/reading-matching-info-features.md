@@ -18,8 +18,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [9. Chiến thuật cho Multiple Choice & Pick Multiple Options](reading-multiple-choice.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Summary Completion có khung từ chọn sẵn](reading-summary-box-options.md) |
+| [9. Chiến thuật cho Multiple Choice & Pick Multiple Options](reading-multiple-choice.md) | [Mục Lục Cẩm Nang](../README.md) | [11. Summary Completion có khung từ chọn sẵn](reading-summary-box-options.md) |

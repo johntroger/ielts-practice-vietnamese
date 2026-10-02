@@ -1,4 +1,4 @@
-# 🖥️ Kỹ Thuật Highlight, Split-Screen & Note-Taking Thực Chiến Trong Reading Trên Máy Tính
+# Kỹ Thuật Highlight, Split-Screen & Note-Taking Thực Chiến Trong Reading Trên Máy Tính
 
 Bài thi **Reading trên máy tính (CDI)** có định dạng giao diện đặc thù: chia đôi màn hình (Split-Screen) với bài đọc bên trái và câu hỏi bên phải. Nếu không nắm vững các thao tác điều khiển giao diện, thí sinh rất dễ rơi vào tình trạng mỏi mắt, cuộn trang liên tục (scrolling fatigue) và mất từ 5 – 7 phút quý giá chỉ để tìm lại dòng thông tin mình vừa đọc.
 
@@ -6,7 +6,7 @@ Cẩm nang dưới đây hướng dẫn bạn làm chủ 100% công cụ số tr
 
 ---
 
-## 📐 1. Chiến Thuật Điều Chỉnh Khung Chia Đôi Màn Hình (Split-Screen)
+## 1. Chiến Thuật Điều Chỉnh Khung Chia Đôi Màn Hình (Split-Screen)
 
 Trong hệ thống thi của IDP/BC:
 - Bạn có thể **kéo thanh phân cách dọc (Split divider)** giữa bài đọc và khung câu hỏi để điều chỉnh tỷ lệ hiển thị.
@@ -21,23 +21,23 @@ Trong hệ thống thi của IDP/BC:
 
 ---
 
-## 🖍️ 2. Nguyên Tắc "Golden Highlight" - Tránh Bẫy "Tô Vàng Cả Trang"
+## 2. Nguyên Tắc "Golden Highlight" - Tránh Bẫy "Tô Vàng Cả Trang"
 
 Hệ thống cho phép bạn bôi đen bất kỳ đoạn văn bản nào rồi **nhấp chuột phải (Right-click) -> Chọn Highlight** (màu vàng) hoặc **Notes** (ghi chú).
 
-### ❌ 3 Sai lầm phổ biến khiến Highlight phản tác dụng:
+### 3 Sai lầm phổ biến khiến Highlight phản tác dụng:
 1. **Bôi vàng toàn bộ câu:** Khi nhìn lại, bài đọc trở thành một khối màu vàng chói mắt, não bộ mất khả năng nhận diện điểm nhấn thị giác.
 2. **Highlight quá nhiều từ khóa chung chung:** Bôi những từ lặp lại nhiều lần trong bài (ví dụ: tên đề tài nghiên cứu) khiến bạn bị phân tâm.
 3. **Mất quá nhiều thời gian để thao tác chuột:** Bôi đen tỉ mỉ từng ký tự làm chậm tốc độ đọc trung bình 15 - 20%.
 
-### ✅ Nguyên tắc "Golden Highlight" chỉ bôi 3 nhóm dữ liệu sau:
+### Nguyên tắc "Golden Highlight" chỉ bôi 3 nhóm dữ liệu sau:
 - **Mỏ neo định vị (Anchor words):** Tên riêng nhà khoa học, năm xuất bản, địa danh, thuật ngữ viết hoa in nghiêng.
 - **Từ chỉ quan hệ logic & bước ngoặt lập luận:** `However`, `Surprisingly`, `Contrary to popular belief`, `Nevertheless`, `In reality`.
 - **Số liệu thống kê & kết quả then chốt:** Các tỷ lệ phần trăm (%), con số tăng trưởng hoặc kết luận của nghiên cứu.
 
 ---
 
-## 📝 3. Ứng Dụng Tính Năng Digital Notepad Trong Passage 3
+## 3. Ứng Dụng Tính Năng Digital Notepad Trong Passage 3
 
 Passage 3 là phần thi khó nhất với lượng từ vựng học thuật dày đặc và các câu hỏi suy luận quan điểm tác giả.
 
@@ -48,7 +48,7 @@ Passage 3 là phần thi khó nhất với lượng từ vựng học thuật d�
 
 ---
 
-## ⚠️ 4. Tránh 2 Bẫy Kỹ Thuật Nghiêm Trọng
+## 4. Tránh 2 Bẫy Kỹ Thuật Nghiêm Trọng
 
 > [!WARNING]
 > **Bẫy Cuộn Trang Riêng Biệt (Independent Scrollbars):**
@@ -62,26 +62,26 @@ Passage 3 là phần thi khó nhất với lượng từ vựng học thuật d�
 
 ---
 
-## 🔬 5. Ví Dụ Thực Chiến: Phân Biệt Highlight Đúng vs Sai
+## 5. Ví Dụ Thực Chiến: Phân Biệt Highlight Đúng vs Sai
 
-### 📌 Đoạn văn trích xuất (Mô phỏng Passage 2 chuẩn Cambridge):
+### Đoạn văn trích xuất (Mô phỏng Passage 2 chuẩn Cambridge):
 > *"In 2018, Dr. Aris Thorne conducted an extensive longitudinal study at the University of Cambridge analyzing whether artificial lighting in urban centers accelerates avian migratory patterns. Initial hypotheses suggested that high-intensity LEDs would severely disorient night-flying sparrows. However, comprehensive GPS tracking revealed that while initial confusion occurred, urban flocks adapted their flight altitude within merely two weeks, thereby avoiding navigational hazards."*
 
 ---
 
-### ❌ Cách Highlight Sai (Tô vàng vô tội vạ - Gây rối mắt):
+### Cách Highlight Sai (Tô vàng vô tội vạ - Gây rối mắt):
 > `[In 2018, Dr. Aris Thorne conducted an extensive longitudinal study at the University of Cambridge analyzing whether artificial lighting in urban centers accelerates avian migratory patterns.]` `[Initial hypotheses suggested that high-intensity LEDs would severely disorient night-flying sparrows.]` `[However, comprehensive GPS tracking revealed that while initial confusion occurred, urban flocks adapted their flight altitude within merely two weeks, thereby avoiding navigational hazards.]`
 > 
 > 🚨 **Hậu quả:** Toàn bộ đoạn văn bị nhuộm vàng. Thí sinh mất thêm 15 giây đọc lại từ đầu đến cuối mà không định vị được điểm chốt.
 
 ---
 
-### ✅ Cách "Golden Highlight" Chuẩn Band 8.5 (Chỉ bôi 4 mỏ neo):
+### Cách "Golden Highlight" Chuẩn Band 8.5 (Chỉ bôi 4 mỏ neo):
 > *"In **2018**, **Dr. Aris Thorne** conducted an extensive longitudinal study at the University of Cambridge analyzing whether artificial lighting in urban centers accelerates avian migratory patterns. Initial hypotheses suggested that high-intensity LEDs would severely disorient night-flying sparrows. **However**, comprehensive GPS tracking revealed that while initial confusion occurred, urban flocks **adapted their flight altitude within merely two weeks**, thereby avoiding navigational hazards."*
 
 ---
 
-### 🎯 Ứng dụng giải câu hỏi trong 10 giây:
+### Ứng dụng giải câu hỏi trong 10 giây:
 **Câu hỏi trắc nghiệm:**
 > *According to the passage, how did urban sparrows respond to the introduction of LED lights?*
 > - A. They permanently relocated to rural habitats.
@@ -98,8 +98,8 @@ Passage 3 là phần thi khó nhất với lượng từ vựng học thuật d�
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading-last-5-minutes-rescue.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](../listening/foundation-listening-band4-to-5-part1-mastery.md) |
+| [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading-last-5-minutes-rescue.md) | [Mục Lục Cẩm Nang](../README.md) | [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](../listening/foundation-listening-band4-to-5-part1-mastery.md) |

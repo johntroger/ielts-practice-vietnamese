@@ -1,11 +1,11 @@
-# 🧱 Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2
+# Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2
 
 > **Kỹ năng**: WRITING | **Chuyên mục**: Task 2 Master Guide  
 > **Tóm tắt**: Bí quyết xây dựng thân bài lập luận chặt chẽ đạt điểm tuyệt đối cho hai tiêu chí Task Response và Coherence & Cohesion bằng mô hình chuẩn học thuật PEEL.
 
 ---
 
-## 🏛️ 1. Mô Hình PEEL Là Gì & Tại Sao Giám Khảo Đánh Giá Cao?
+## 1. Mô Hình PEEL Là Gì & Tại Sao Giám Khảo Đánh Giá Cao?
 
 Trong văn học thuật phương Tây, **PEEL** là tiêu chuẩn vàng giúp đoạn văn có cấu trúc lập luận mạch lạc, chặt chẽ và không thể phản bác. Nó giải quyết triệt để lỗi "nói suông" hoặc "liệt kê nông" mà hầu hết thí sinh Việt Nam hay mắc phải.
 
@@ -34,12 +34,12 @@ flowchart TD
 
 ---
 
-## 🔬 2. Mẫu Phân Rã Chi Tiết Từng Câu Trong Thân Bài Chuẩn PEEL
+## 2. Mẫu Phân Rã Chi Tiết Từng Câu Trong Thân Bài Chuẩn PEEL
 
-### 📌 Đề bài mẫu:
+### Đề bài mẫu:
 > *"Some people think that university students should pay the full cost of their studies. To what extent do you agree or disagree?"*
 
-### 📝 Đoạn văn hoàn chỉnh áp dụng PEEL (Bảo vệ quan điểm: Nhà nước nên hỗ trợ học phí):
+### Đoạn văn hoàn chỉnh áp dụng PEEL (Bảo vệ quan điểm: Nhà nước nên hỗ trợ học phí):
 
 > 🔴 **[POINT - Câu chủ đề]:**  
 > *"First and foremost, government subsidization of higher education is essential to ensure equal educational opportunities for students from underprivileged socio-economic backgrounds."*
@@ -55,7 +55,7 @@ flowchart TD
 
 ---
 
-## ⚖️ 3. So Sánh Đối Chiếu: Đoạn Văn Thất Bại vs Đoạn Văn PEEL Chuẩn
+## 3. So Sánh Đối Chiếu: Đoạn Văn Thất Bại vs Đoạn Văn PEEL Chuẩn
 
 | Yếu Tố | ❌ Đoạn Văn Lỗi (Band 5.5 - 6.0) | ✅ Đoạn Văn PEEL Chuẩn (Band 8.0+) |
 | :--- | :--- | :--- |
@@ -65,7 +65,7 @@ flowchart TD
 
 ---
 
-## 📋 4. Bố Cục Toàn Diện 4 Đoạn Bài Task 2 (250 – 290 Từ / 40 Phút)
+## 4. Bố Cục Toàn Diện 4 Đoạn Bài Task 2 (250 – 290 Từ / 40 Phút)
 
 Để đạt điểm cao nhất, toàn bài Essay nên gồm đúng **4 đoạn văn cân đối**:
 
@@ -82,8 +82,8 @@ flowchart TD
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [16. Task 1: Mốc thời gian dự báo tương lai](writing-task1-future-projections.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [18. Task 2: 3 Công thức Paraphrase Mở bài & Thesis](writing-paraphrase-thesis-intro.md) |
+| [16. Task 1: Mốc thời gian dự báo tương lai](writing-task1-future-projections.md) | [Mục Lục Cẩm Nang](../README.md) | [18. Task 2: 3 Công thức Paraphrase Mở bài & Thesis](writing-paraphrase-thesis-intro.md) |

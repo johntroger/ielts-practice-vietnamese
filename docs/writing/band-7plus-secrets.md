@@ -29,8 +29,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [23. Task 2: Two-Part Question](task2-two-part.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [25. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](academic-hedging.md) |
+| [23. Task 2: Two-Part Question](task2-two-part.md) | [Mục Lục Cẩm Nang](../README.md) | [25. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](academic-hedging.md) |

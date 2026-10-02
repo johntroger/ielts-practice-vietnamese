@@ -1,4 +1,4 @@
-# 🗣️ Luyện Speaking Band 4.0 Lên 5.0: Phá Bỏ Nỗi Sợ Nói & Khung Trả Lời Part 1, Part 2
+# Luyện Speaking Band 4.0 Lên 5.0: Phá Bỏ Nỗi Sợ Nói & Khung Trả Lời Part 1, Part 2
 
 Thí sinh ở mức **Band 4.0 Speaking** thường gặp phải các vấn đề tâm lý và kỹ thuật sau:
 1. **Sợ nói sai nên im lặng (Prolonged silence):** Khi giám khảo hỏi một câu, bạn ngồi suy nghĩ quá lâu (hơn 5 giây) hoặc chỉ trả lời cộc lốc một từ: *"Yes"*, *"No"*, *"I don't know"*.
@@ -12,7 +12,7 @@ Theo tiêu chuẩn chấm điểm chính thức của Cambridge: Để đạt **
 
 ---
 
-## 🎯 1. Công Thức "2 Câu Cứu Sinh" Cho Part 1
+## 1. Công Thức "2 Câu Cứu Sinh" Cho Part 1
 
 Đừng cố nói dài lê thê ở Part 1 để rồi bị vấp ngữ pháp. Quy tắc an toàn nhất để đạt Band 5.0 là **Công thức 2 câu: Trả Lời Trực Tiếp + 1 Chi Tiết / Lý Do Bổ Sung**:
 
@@ -22,7 +22,7 @@ flowchart LR
     B --> C["Dừng lại với nụ cười tự tin!"]
 ```
 
-### 💡 Ví dụ áp dụng thực tế:
+### Ví dụ áp dụng thực tế:
 
 #### Ví dụ 1:
 - **Examiner:** *"Do you work or are you a student?"*
@@ -96,7 +96,7 @@ Nhiều thí sinh khi không hiểu câu hỏi thì cười trừ hoặc đoán 
 
 ---
 
-## 📋 4. Checklist Tự Luyện Nói Hàng Ngày Đạt Band 5.0
+## 4. Checklist Tự Luyện Nói Hàng Ngày Đạt Band 5.0
 - [ ] Mỗi ngày chọn 3 câu hỏi Part 1, luyện trả lời theo **Công thức 2 câu**.
 - [ ] Dùng điện thoại ghi âm lại giọng nói của mình, nghe lại xem có bị ngắt quãng giữa câu hay không.
 - [ ] Luôn chú ý bật âm đuôi cơ bản: `/s/` trong số nhiều (*two books*) và ngôi thứ 3 (*he likes*).
@@ -104,8 +104,8 @@ Nhiều thí sinh khi không hiểu câu hỏi thì cười trừ hoặc đoán 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](../listening/listening-cd-ielts-hacks-and-focus.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](area-framework-part1.md) |
+| [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](../listening/listening-cd-ielts-hacks-and-focus.md) | [Mục Lục Cẩm Nang](../README.md) | [2. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](area-framework-part1.md) |

@@ -29,8 +29,8 @@ Bài thi IELTS Listening gồm **4 Parts (40 câu hỏi)**, phát một lần du
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening-connected-speech-phonetics.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](listening-cd-ielts-hacks-and-focus.md) |
+| [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening-connected-speech-phonetics.md) | [Mục Lục Cẩm Nang](../README.md) | [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](listening-cd-ielts-hacks-and-focus.md) |

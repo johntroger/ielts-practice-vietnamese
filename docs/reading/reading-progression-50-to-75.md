@@ -55,8 +55,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [3. Bộ quy tắc Paraphrasing kinh điển](reading-academic-paraphrasing.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](time-management.md) |
+| [3. Bộ quy tắc Paraphrasing kinh điển](reading-academic-paraphrasing.md) | [Mục Lục Cẩm Nang](../README.md) | [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](time-management.md) |

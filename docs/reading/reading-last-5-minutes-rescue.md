@@ -25,8 +25,8 @@ Trong một cụm 4-6 câu T/F/NG của Cambridge:
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading-strategic-time-management.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](computer-delivered-reading-techniques.md) |
+| [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading-strategic-time-management.md) | [Mục Lục Cẩm Nang](../README.md) | [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](computer-delivered-reading-techniques.md) |

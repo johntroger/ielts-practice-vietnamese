@@ -24,8 +24,8 @@ Tổng thời gian làm bài là 60 phút cho 40 câu hỏi trải dài trên 3 
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading-progression-50-to-75.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](true-false-not-given.md) |
+| [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading-progression-50-to-75.md) | [Mục Lục Cẩm Nang](../README.md) | [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](true-false-not-given.md) |

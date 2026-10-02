@@ -30,8 +30,8 @@ Nhấn sai trọng âm khiến người bản ngữ phải căng tai suy đoán:
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [2. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](area-framework-part1.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [4. Lộ trình Speaking từ Band 5.0 lên 7.5+](speaking-progression-50-to-75.md) |
+| [2. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](area-framework-part1.md) | [Mục Lục Cẩm Nang](../README.md) | [4. Lộ trình Speaking từ Band 5.0 lên 7.5+](speaking-progression-50-to-75.md) |

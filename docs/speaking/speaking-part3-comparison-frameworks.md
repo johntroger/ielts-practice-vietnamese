@@ -31,8 +31,8 @@ Khảo sát thực tế các đề thi Cambridge cho thấy hơn **80% câu hỏ
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [12. Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3](critical-thinking-part3.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](examiner-red-flags-and-c1-collocations.md) |
+| [12. Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3](critical-thinking-part3.md) | [Mục Lục Cẩm Nang](../README.md) | [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](examiner-red-flags-and-c1-collocations.md) |

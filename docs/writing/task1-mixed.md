@@ -16,8 +16,8 @@ Khi gặp đề bài gồm 2 biểu đồ (Ví dụ: Biểu đồ tròn thể hi
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [13. Task 1: Map (Bản Đồ)](task1-map.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [15. Task 1: Ngôn ngữ biến động số liệu & Tỷ lệ xấp xỉ](writing-task1-data-proportions.md) |
+| [13. Task 1: Map (Bản Đồ)](task1-map.md) | [Mục Lục Cẩm Nang](../README.md) | [15. Task 1: Ngôn ngữ biến động số liệu & Tỷ lệ xấp xỉ](writing-task1-data-proportions.md) |

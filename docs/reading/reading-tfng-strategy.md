@@ -31,8 +31,8 @@
 
 ---
 
-> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
 
-| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
-| [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](true-false-not-given.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [8. Tuyệt Chiêu Xử Lý Matching Headings](matching-headings.md) |
+| [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](true-false-not-given.md) | [Mục Lục Cẩm Nang](../README.md) | [8. Tuyệt Chiêu Xử Lý Matching Headings](matching-headings.md) |
