@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Play, 
   Pause, 
@@ -62,6 +62,38 @@ export default function AudioPlayerBar({
   // Check if buffer is actively pre-loading or waiting on mobile
   const isPreloadingBuffer = !isBufferReady && !isPlaying && duration > 0 && bufferedPercent < 3;
 
+  // Global Listening Keyboard Shortcuts:
+  // - Space: Play/Pause (when not inside input/textarea)
+  // - ArrowLeft: -5s (practice mode)
+  // - ArrowRight: +5s (practice mode)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = e.target?.tagName?.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || e.target?.isContentEditable) {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay?.();
+        return;
+      }
+
+      if (examMode !== 'strict') {
+        if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          seek?.(Math.max(0, currentTime - 5));
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          seek?.(Math.min(duration || 0, currentTime + 5));
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [togglePlay, seek, currentTime, duration, examMode]);
+
   return (
     <div className="sticky top-0 z-10 bg-slate-950 text-slate-100 border-b border-slate-800 shadow-md">
       {/* Top Banner if Error */}
@@ -93,7 +125,7 @@ export default function AudioPlayerBar({
         <div className="flex items-center justify-between gap-2">
           
           {/* Left: Play/Pause & Time & Wave */}
-          <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <div className="relative">
               <button
                 type="button"
@@ -103,7 +135,7 @@ export default function AudioPlayerBar({
                     ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
                     : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
                 }`}
-                title={isLoading ? 'Đang tải tệp âm thanh...' : isPlaying ? 'Tạm dừng bài nghe' : 'Phát bài nghe'}
+                title={isLoading ? 'Đang tải tệp âm thanh...' : isPlaying ? 'Tạm dừng bài nghe (Phím Space)' : 'Phát bài nghe (Phím Space)'}
               >
                 {isLoading ? (
                   <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
@@ -121,6 +153,30 @@ export default function AudioPlayerBar({
                 </span>
               )}
             </div>
+
+            {/* Quick Seek Buttons (-5s & +5s) in Practice mode */}
+            {examMode !== 'strict' && (
+              <div className="flex items-center space-x-1">
+                <button
+                  type="button"
+                  onClick={() => seek?.(Math.max(0, currentTime - 5))}
+                  className="px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all active:scale-95 cursor-pointer flex items-center space-x-0.5 border border-slate-800 shadow-2xs"
+                  title="Lùi 5 giây (Phím Mũi tên trái ←)"
+                >
+                  <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
+                  <span className="text-[10px] sm:text-[11px] font-mono font-bold">-5s</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => seek?.(Math.min(duration || 0, currentTime + 5))}
+                  className="px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all active:scale-95 cursor-pointer flex items-center space-x-0.5 border border-slate-800 shadow-2xs"
+                  title="Tiến 5 giây (Phím Mũi tên phải →)"
+                >
+                  <span className="text-[10px] sm:text-[11px] font-mono font-bold">+5s</span>
+                  <FastForward className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
+                </button>
+              </div>
+            )}
 
             {/* Time Indicators */}
             <div className="flex items-baseline space-x-1 font-mono text-[11px] sm:text-sm">

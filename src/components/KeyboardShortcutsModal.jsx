@@ -87,6 +87,10 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
         {
           keys: ['Space'],
           desc: 'Tạm dừng / Tiếp tục phát Audio Listening',
+        },
+        {
+          keys: ['←', '→'],
+          desc: 'Tua lùi 5 giây / Tua tiến 5 giây (Audio Listening)',
         }
       ]
     }
