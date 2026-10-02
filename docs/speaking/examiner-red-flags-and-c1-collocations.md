@@ -76,3 +76,50 @@ Khi gặp một câu hỏi quá khó hoặc trừu tượng (ví dụ: *"Do you 
 > *"On a superficial level, machines can mimic sentiment through advanced voice modulation. **However, at a deeper existential level**, genuine human empathy stems from biological vulnerability and lived experiences, which no digital algorithm could ever replicate."*
 
 Cách trả lời này chứng minh cho giám khảo thấy khả năng **Critical Thinking (Tư duy phản biện)** và đẩy mức điểm Speaking của bạn trực tiếp lên **Band 8.0 - 8.5**!
+
+---
+
+## 🎭 4. Ví Dụ Đối Chiếu Thực Chiến: Part 1 & Part 3
+
+### 📌 Cặp 1: Phỏng vấn Part 1 (Chủ đề cá nhân hàng ngày)
+> **Examiner:** *"Do you prefer spending time alone or with your friends?"*
+
+---
+
+#### ❌ Câu trả lời Band 5.5 - 6.0 (Dính Cờ Đỏ học vẹt & Thành ngữ sáo rỗng):
+> *"Well, as the saying goes, every coin has two sides. To be honest, I am an extrovert person, so when I hang out with my buddies, I am on cloud nine and feel like it is a piece of cake to forget stress. However, in a nutshell, when it rains cats and dogs, I just stay at home alone."*
+
+🔍 **Tại sao giám khảo hạ điểm?**
+- Lạm dụng thành ngữ sáo rỗng một cách vô nghĩa (*every coin has two sides, on cloud nine, piece of cake, rains cats and dogs*).
+- Dùng từ nối học thuật trịnh trọng *"in a nutshell"* trong giao tiếp thân mật.
+- Ngữ pháp thiếu tự nhiên (*"an extrovert person"* thay vì *"an extrovert"*).
+
+---
+
+#### ✅ Câu trả lời Band 8.5 (Tự nhiên, linh hoạt, từ vựng C1 chuẩn xác):
+> *"To be completely candid, it really depends on my mental bandwidth. After an intense, high-pressure workweek, I actually cherish some quiet solitude to decompress, read, and recharge my batteries. That said, over the weekends, I’m definitely much more inclined to catch up with close friends over coffee to blow off some steam and keep feelings of isolation at bay."*
+
+💡 **Điểm sáng Band 8.5:**
+- Mở đầu tự nhiên: *To be completely candid, it really depends on my mental bandwidth...*
+- Cụm từ C1/C2 tự nhiên: *quiet solitude to decompress, recharge my batteries, inclined to catch up with, blow off some steam, keep feelings of isolation at bay*.
+- Mạch nói trôi chảy, không một chút gượng ép.
+
+---
+
+### 📌 Cặp 2: Thảo luận chuyên sâu Part 3 (Chủ đề xã hội trừu tượng)
+> **Examiner:** *"Do you think modern technological devices have weakened the sense of community in neighborhoods?"*
+
+---
+
+#### ❌ Câu trả lời Band 6.0 (Liệt kê nông, ý tưởng đơn sơ):
+> *"Yes, I think so. Nowadays everyone is looking at their smartphones. Furthermore, people don't talk to their neighbors anymore. In addition, children play video games instead of playing outside together. So modern technology makes community life worse."*
+
+---
+
+#### ✅ Câu trả lời Band 8.5 (Đào sâu đa chiều, tư duy phản biện sắc bén):
+> *"I'd argue that technology is a double-edged sword in this regard. On the one hand, excessive screen time undoubtedly **erodes casual, serendipitous interactions** between physical neighbors, creating somewhat sterile residential blocks where people barely know the person next door. **Conversely**, however, digital platforms such as localized community forums or neighborhood chat groups have enabled residents to organize charity drives, coordinate security patrols, and mobilize communal support far more efficiently than traditional bulletin boards ever could. So, while physical proximity has arguably lost some of its warmth, the functional cohesion of communities has actually taken on a more dynamic, digital form."*
+
+💡 **Điểm sáng Band 8.5:**
+- Cấu trúc tư duy phản biện 2 chiều: Mất đi sự tình cờ ấm áp (*serendipitous interactions, sterile residential blocks*) nhưng tăng cường tính gắn kết chức năng (*functional cohesion, mobilize communal support*).
+- Hệ thống Collocations C1 thượng thừa: *casual interactions, physical proximity, digital platforms, mobilize support*.
+

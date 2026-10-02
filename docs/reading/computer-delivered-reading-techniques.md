@@ -59,3 +59,40 @@ Passage 3 là phần thi khó nhất với lượng từ vựng học thuật d�
 > Ở góc trên cùng bên phải giao diện thi CDI có nút **Settings**:
 > - **Font size:** Chọn `Standard`, `Large` hoặc `Extra Large`. Nếu bạn bị mỏi mắt sau 30 phút, hãy tăng lên cỡ `Large`.
 > - **Color contrast:** Cho phép đổi sang nền đen chữ trắng (Dark mode) hoặc nền vàng chữ đen nếu ánh sáng phòng thi quá chói.
+
+---
+
+## 🔬 5. Ví Dụ Thực Chiến: Phân Biệt Highlight Đúng vs Sai
+
+### 📌 Đoạn văn trích xuất (Mô phỏng Passage 2 chuẩn Cambridge):
+> *"In 2018, Dr. Aris Thorne conducted an extensive longitudinal study at the University of Cambridge analyzing whether artificial lighting in urban centers accelerates avian migratory patterns. Initial hypotheses suggested that high-intensity LEDs would severely disorient night-flying sparrows. However, comprehensive GPS tracking revealed that while initial confusion occurred, urban flocks adapted their flight altitude within merely two weeks, thereby avoiding navigational hazards."*
+
+---
+
+### ❌ Cách Highlight Sai (Tô vàng vô tội vạ - Gây rối mắt):
+> `[In 2018, Dr. Aris Thorne conducted an extensive longitudinal study at the University of Cambridge analyzing whether artificial lighting in urban centers accelerates avian migratory patterns.]` `[Initial hypotheses suggested that high-intensity LEDs would severely disorient night-flying sparrows.]` `[However, comprehensive GPS tracking revealed that while initial confusion occurred, urban flocks adapted their flight altitude within merely two weeks, thereby avoiding navigational hazards.]`
+> 
+> 🚨 **Hậu quả:** Toàn bộ đoạn văn bị nhuộm vàng. Thí sinh mất thêm 15 giây đọc lại từ đầu đến cuối mà không định vị được điểm chốt.
+
+---
+
+### ✅ Cách "Golden Highlight" Chuẩn Band 8.5 (Chỉ bôi 4 mỏ neo):
+> *"In **2018**, **Dr. Aris Thorne** conducted an extensive longitudinal study at the University of Cambridge analyzing whether artificial lighting in urban centers accelerates avian migratory patterns. Initial hypotheses suggested that high-intensity LEDs would severely disorient night-flying sparrows. **However**, comprehensive GPS tracking revealed that while initial confusion occurred, urban flocks **adapted their flight altitude within merely two weeks**, thereby avoiding navigational hazards."*
+
+---
+
+### 🎯 Ứng dụng giải câu hỏi trong 10 giây:
+**Câu hỏi trắc nghiệm:**
+> *According to the passage, how did urban sparrows respond to the introduction of LED lights?*
+> - A. They permanently relocated to rural habitats.
+> - B. They modified their cruising height after a short period.
+> - C. They suffered severe, irreversible navigational damage.
+
+💡 **Cách giải siêu tốc nhờ Golden Highlight:**
+1. Thí sinh nhìn thấy từ **However** (bước ngoặt đối lập với giả thuyết ban đầu).
+2. Mắt quét thẳng vào cụm đã highlight: **adapted their flight altitude within merely two weeks**.
+3. Đối chiếu paraphrase:
+   - `adapted flight altitude` = `modified their cruising height`
+   - `within merely two weeks` = `after a short period`
+4. ➡️ **Khoanh ngay B trong chưa đầy 10 giây**, không bị phương án gây nhiễu A hay C đánh lừa!
+

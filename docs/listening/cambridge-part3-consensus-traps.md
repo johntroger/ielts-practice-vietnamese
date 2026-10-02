@@ -64,3 +64,49 @@ Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi
 1. **Bỏ qua phần giới thiệu chung:** Ngay khi giọng đọc nói *"Now turn to Section 3..."*, lập tức đọc lướt qua câu hỏi thay vì ngồi nghe hướng dẫn.
 2. **Gạch chân điểm khác biệt giữa các lựa chọn:** Trong 3 phương án A, B, C, tìm từ mang tính quyết định (thường là danh từ chỉ kết quả hoặc tính từ mang sắc thái tích cực/tiêu cực).
 3. **Hình dung ngữ cảnh:** Xác định mối quan hệ giữa các nhân vật (Thầy - Trò, Đồng nghiệp, Nhóm sinh viên làm bài tập lớn) để đón đầu hướng tranh luận.
+
+---
+
+## 🎧 5. Bài Tập Minh Họa Thực Tế (Kèm Script & Bóc Bẫy Chi Tiết)
+
+### 📌 Đề bài mẫu:
+> **Question 24:** *What aspect of their architectural presentation do Jack and Chloe agree to revise?*
+> - **A.** The 3D model software animation
+> - **B.** The construction cost breakdown
+> - **C.** The acoustic soundproofing analysis
+
+---
+
+### 🎙️ Băng ghi âm thực tế (Audio Script):
+> **Jack:** *"Chloe, I went over our slides again last night. Don’t you think our 3D model animation (**A**) looks a bit clunky? We could re-render the whole sequence in Blender."*
+> 
+> **Chloe:** *"I noticed that too, **but rendering takes at least eight hours**, and we simply don't have that time before tomorrow morning's deadline. It's good enough as it stands."* *(➡️ Bẫy loại trừ A do bất khả thi về mặt thời gian)*
+> 
+> **Jack:** *"Fair enough. What about our cost calculations (**B**)? Professor Davis commented that our material estimates were slightly overly optimistic."*
+> 
+> **Chloe:** *"Actually, I spoke with him during office hours today. He said as long as we add a small 10% contingency note, the numbers are totally fine. So we don't need to alter the budget spreadsheets."* *(➡️ Bẫy loại trừ B do đã được giáo sư duyệt)*
+> 
+> **Jack:** *"Phew, that's a relief! But wait, what about the acoustic soundproofing section (**C**)? We completely forgot to include the decibel reduction figures for the library study pods."*
+> 
+> **Chloe:** *"Oh goodness, you're right! That was one of the core criteria in the brief. **Let's sit down right now and update those decibel charts.**"* *(➡️ Cả 2 cùng chốt sửa)*
+> 
+> **Jack:** *"Awesome, I'll pull up the lab measurements."*
+
+---
+
+### 📝 Bảng ghi chú nháp thực chiến của thí sinh Band 8.5:
+
+```text
+[Q24: Agree to revise?]
+- A (3D animation): Jack gợi ý -> Chloe gạt đi (hết giờ) ❌
+- B (Cost breakdown): Jack lo lắng -> Chloe xác nhận thầy đã ok ❌
+- C (Acoustic sound): Jack phát hiện thiếu số liệu -> Chloe: "Let's sit down right now and update" ✅ 
+==> CHỌN C!
+```
+
+💡 **Đúc kết:**
+- Giám khảo luôn dẫn dắt thí sinh đi qua lần lượt **A ➡️ B ➡️ C**.
+- Nếu bạn vội vã chọn **A** khi vừa nghe Jack nói *"animation"*, bạn sẽ dính bẫy.
+- Nếu bạn chọn **B** khi nghe Jack nhắc đến *"cost calculations"*, bạn tiếp tục sập bẫy.
+- **Chỉ khi Chloe thốt lên câu quyết định hành động: *"Let's sit down right now and update those decibel charts"*, đáp án C mới chính thức được xác lập!**
+

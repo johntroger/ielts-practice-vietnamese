@@ -74,3 +74,36 @@ Trong giao diện Writing CDI, bên dưới khung soạn thảo luôn có con s�
 - Khi thi xong OSR, bạn sẽ nhận được một **Bảng điểm mới (Updated TRF)** bao gồm: Điểm kỹ năng mới được thi lại + Điểm của 3 kỹ năng còn lại từ bài thi ban đầu.
 - Điểm Overall sẽ được tính toán lại tự động theo quy tắc làm tròn chính thức của IELTS.
 - Bạn hoàn toàn có quyền lựa chọn gửi bảng điểm gốc hoặc bảng điểm OSR mới tùy thuộc vào điểm số nào có lợi hơn cho bạn!
+
+---
+
+## 📊 4. Case Study Minh Họa & Thao Tác Phím Tắt Thực Tế
+
+### 🌟 Case Study 1: Tối ưu điểm số và chi phí với OSR
+Thí sinh **Nguyễn Hoàng M.** cần đạt tối thiểu **Overall 7.5 và không kỹ năng nào dưới 7.0** để nộp hồ sơ học bổng Thạc sĩ tại Đại học Melbourne (Úc).
+
+- **Lần thi gốc (Full CDI Sitting):**
+  - Listening: **8.5** | Reading: **8.0** | Speaking: **7.5** | Writing: **6.5**
+  - ➡️ Overall gốc: $(8.5 + 8.0 + 7.5 + 6.5) / 4 = 7.625$ ➡️ Làm tròn thành **Overall 7.5**.
+  - *Vấn đề:* Kỹ năng Writing bị thiếu 0.5 để thỏa mãn điều kiện *"không kỹ năng nào dưới 7.0"*.
+- **Chiến lược OSR:**
+  - Thay vì thi lại cả 4 kỹ năng (chi phí ~4.7 triệu VNĐ và mất thời gian ôn lại Nghe, Đọc, Nói), Hoàng M. chỉ đăng ký **One Skill Retake môn Writing** sau 3 tuần tập trung luyện Task 2.
+  - Kết quả thi lại Writing: Đạt **7.5**.
+- **Bảng điểm TRF mới sau Retake:**
+  - Listening: **8.5** | Reading: **8.0** | Speaking: **7.5** | Writing: **7.5** (Updated)
+  - ➡️ Overall mới: $(8.5 + 8.0 + 7.5 + 7.5) / 4 = 7.875$ ➡️ Làm tròn thành **Overall 8.0**!
+  - ➡️ *Kết quả:* Vừa nâng được Overall lên 8.0, vừa thỏa mãn điều kiện học bổng, tiết kiệm hơn 60% lệ phí thi và giảm 75% áp lực tâm lý.
+
+---
+
+### ⌨️ Case Study 2: Ứng dụng phím tắt tái cấu trúc đoạn văn trong 15 giây
+Giả sử bạn đang viết dở Task 2 và nhận ra câu ví dụ của bạn đang bị đặt trước câu giải thích cơ chế, khiến mạch lập luận bị ngược:
+
+> 1. Dùng chuột hoặc giữ phím `Shift + Mũi tên` bôi đen nhanh câu ví dụ.
+> 2. Nhấn `Ctrl + X` (Cắt câu ví dụ vào bộ nhớ tạm - đoạn văn tự động co lại gọn gàng).
+> 3. Dùng phím mũi tên di chuyển con trỏ xuống sau câu giải thích.
+> 4. Nhấn `Ctrl + V` (Dán câu ví dụ vào vị trí mới chuẩn logic PEEL).
+> 5. Nhấn `Ctrl + Z` nếu nhận ra mình cắt nhầm, câu chữ sẽ trở về nguyên vẹn ngay lập tức!
+>
+> *(Nếu thi giấy, việc đổi vị trí 2 câu như thế này sẽ làm bài thi bị tẩy xóa bẩn, gạch chéo nham nhở hoặc phải chép lại từ đầu làm mất ít nhất 3 - 5 phút).*
+

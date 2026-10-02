@@ -78,3 +78,32 @@ flowchart TD
 1. Giám khảo không bao giờ thưởng điểm cho những từ ngữ "lập dị" dùng sai ngữ cảnh.
 2. Từ vựng Band 8.0 nằm ở **độ chuẩn xác của Collocations** (ví dụ: *discernible difference, implement stringent regulations, exacerbate financial burdens*).
 3. Luận điểm phải được chứng minh bằng chuỗi nhân quả logic (logical causal chains).
+
+---
+
+## 🔬 5. Ví Dụ Đối Chiếu Thực Chiến: Thân Bài Task 2 Chuẩn Cambridge 19
+
+### 📌 Đề bài mẫu (Cambridge IELTS 19):
+> *"Some people think that universities should provide graduates with the knowledge and skills needed in the workplace. Others think that the true function of a university should be to give access to knowledge for its own sake, regardless of whether the course is useful to an employer. Discuss both views and give your opinion."*
+
+---
+
+### ❌ Đoạn văn Thân bài 1 - Band 6.0 (Mắc lỗi rập khuôn & liệt kê nông):
+> *"On the one hand, it is undeniable that universities should teach vocational skills. Firstly, students pay expensive tuition fees, so they need a good job after graduation. Furthermore, companies nowadays require practical experience rather than pure theory. In addition, if universities only teach academic knowledge, the unemployment rate will increase significantly. To put it in a nutshell, practical training is extremely essential for young people."*
+
+🔍 **Nhận xét của Giám khảo vì sao bị khóa ở Band 6.0:**
+- **Coherence & Cohesion (Band 6.0):** Lạm dụng chuỗi liên từ cơ học ở đầu câu: *"Firstly,... Furthermore,... In addition,... To put it in a nutshell..."*.
+- **Task Response (Band 6.0):** Nêu ra 3 ý tưởng rời rạc (học phí đắt, yêu cầu công ty, tỷ lệ thất nghiệp) nhưng **không giải thích cơ chế sâu**: Tại sao kỹ năng thực tế lại giúp giảm thất nghiệp? Sinh viên học được kỹ năng gì cụ thể?
+- **Lexical Resource (Band 6.0):** Dùng từ chung chung (*"good job", "practical experience", "extremely essential"*), dùng sai ngữ vực *"To put it in a nutshell"*.
+
+---
+
+### ✅ Đoạn văn Thân bài 1 - Band 8.5 (Chuỗi nhân quả dọc & Liên kết tự nhiên):
+> *"On the one hand, proponents of vocational tertiary education argue that academic curricula must align directly with the demands of the modern labor market. **The primary rationale** is that higher education represents a substantial financial investment for most households; consequently, graduates require tangible competencies to secure employment and recoup their tuition costs. **To achieve this**, universities ought to integrate technical toolkits, analytical frameworks, and industry internships into their degree programs. **Such pragmatic training** not only bridges the persistent gap between theoretical knowledge and practical execution but also equips young professionals to adapt swiftly to automated workplace environments."*
+
+💡 **Phân tích cơ chế ăn điểm tối đa của đoạn văn Band 8.5:**
+1. **Câu 1 (Topic sentence):** Diễn đạt học thuật, dùng cụm *proponents of vocational tertiary education* và *align directly with the demands of the modern labor market*.
+2. **Câu 2 (Mechanism - Tại sao?):** Dùng cụm danh từ quy chiếu *The primary rationale is that...* và liên từ logic *consequently* để nối 2 vế nhân quả, dùng collocations đắt giá: *substantial financial investment, tangible competencies, recoup tuition costs*.
+3. **Câu 3 (Implementation - Làm như thế nào?):** Dùng *To achieve this* để dẫn giải giải pháp cụ thể: *integrate technical toolkits, analytical frameworks, and industry internships*.
+4. **Câu 4 (Impact - Hệ quả sâu sắc):** Dùng kỹ thuật tóm lược danh từ *Such pragmatic training* để tạo liên kết ẩn (Lexical cohesion), kết thúc bằng cụm từ vựng chuẩn C1/C2: *bridge the persistent gap, practical execution, adapt swiftly to automated workplace environments*.
+
