@@ -3758,6 +3758,224 @@ Rules:
   return transcribedText.replace(/^["']|["']$/g, '').trim();
 }
 
+/**
+ * Algorithmic Heuristic Fallback for Thesis Statement Validation
+ */
+export function validateThesisAlgorithmically({ task, thesisText = '' }) {
+  const text = (thesisText || '').trim();
+  const lower = text.toLowerCase();
+  const isTask1 = task?.taskNumber === 1;
+
+  if (isTask1) {
+    const hasOverviewTrend = /(overall|in\s+general|it\s+is\s+(clear|evident|observable|notable)\s+that|noticeable\s+trend)/i.test(lower);
+    const hasNumbers = /\b\d+(\.\d+)?%?|\b\d{4}\b/.test(lower);
+
+    if (!hasOverviewTrend) {
+      return {
+        stanceLevel: 'vague',
+        isDecisive: false,
+        estimatedBand: 5.0,
+        feedback: 'Câu Overview của bạn chưa sử dụng từ tín hiệu tổng quan (Overall, It is clear that...). Theo chuẩn Cambridge Task 1, thiếu Overview rõ ràng sẽ bị chặn trần Band 5.0 TA.',
+        strengths: ['Đã bước đầu viết câu tóm tắt nội dung biểu đồ.'],
+        improvements: ['Bắt đầu bằng "Overall, it is readily observable that..." và nêu 1-2 xu hướng nổi bật nhất mà không đưa số liệu cụ thể.'],
+        upgrades: [
+          {
+            type: 'Overview chuẩn Cambridge Band 8.0+',
+            thesis: `Overall, it is readily observable that significant shifts transpired throughout the surveyed timeframe, with ${task?.title || 'the dominant category'} undergoing a pronounced upward trajectory.`,
+            rationale: 'Nêu bật xu hướng tổng thể mà không bị sa đà vào việc liệt kê số liệu thô.'
+          }
+        ]
+      };
+    }
+
+    if (hasNumbers) {
+      return {
+        stanceLevel: 'vague',
+        isDecisive: false,
+        estimatedBand: 5.5,
+        feedback: 'Cảnh báo: Đoạn Overview của bạn đang chứa số liệu cụ thể (data dump). Cambridge quy định Overview chỉ được khái quát xu hướng, việc đưa dữ liệu số liệu bị khống chế trần tối đa Band 5.5 TA.',
+        strengths: ['Đã có từ chỉ dấu tổng quan rõ ràng.'],
+        improvements: ['Loại bỏ toàn bộ các số liệu, phần trăm và năm cụ thể ra khỏi Overview; chỉ mô tả hướng tăng/giảm hoặc nhóm áp đảo.'],
+        upgrades: [
+          {
+            type: 'Overview chuẩn Cambridge (Không chứa số liệu)',
+            thesis: `Overall, it is readily apparent that while certain metrics experienced marked expansion, others demonstrated a steady downward trend over the period examined.`,
+            rationale: 'Tuyệt đối không đưa số liệu vào Overview để tránh bị trừ điểm Task Achievement.'
+          }
+        ]
+      };
+    }
+
+    return {
+      stanceLevel: 'clear',
+      isDecisive: true,
+      estimatedBand: 8.0,
+      feedback: 'Rất tốt! Câu Overview của bạn nêu bật xu hướng tổng quát, có từ chỉ dấu rõ ràng và không vi phạm quy tắc đưa số liệu thô.',
+      strengths: ['Có tín hiệu chỉ dấu tổng quan rõ ràng.', 'Không bị lỗi đưa số liệu chi tiết vào Overview.'],
+      improvements: ['Có thể sử dụng thêm các từ vựng học thuật chỉ xu hướng như "pronounced upward trajectory", "divergence".'],
+      upgrades: [
+        {
+          type: 'Nâng cấp sắc thái học thuật Band 8.5+',
+          thesis: `Overall, it is immediately discernible that substantial fluctuations characterized the period, with the disparity between key sectors narrowing noticeably towards the end.`,
+          rationale: 'Tăng cường tính mạch lạc và từ vựng so sánh tương quan.'
+        }
+      ]
+    };
+  }
+
+  // Task 2 Thesis Validation
+  const hasDecisiveStance = /(i\s+(firmly|strongly|completely|totally|fully)\s+(believe|agree|disagree|maintain|contend)|in\s+my\s+(opinion|view)|i\s+would\s+argue\s+that|i\s+tend\s+to\s+agree|far\s+outweighs?|vastly\s+superior|cannot\s+be\s+supported)/i.test(lower);
+  const hasVagueMiddleGround = /(both\s+(sides|perspectives|views)|advantages\s+and\s+disadvantages|pros\s+and\s+cons|has\s+two\s+sides|some\s+people\s+agree.*while\s+others)/i.test(lower) && !hasDecisiveStance;
+
+  if (hasVagueMiddleGround) {
+    return {
+      stanceLevel: 'vague',
+      isDecisive: false,
+      estimatedBand: 5.5,
+      feedback: 'Cảnh báo Barem Cambridge: Câu Thesis của bạn mang tính "nước đôi" / trung lập (neutral fence-sitting) mà không chọn rõ lập trường. Theo tiêu chí Task Response (TR), không thể hiện quan điểm rõ ràng (clear position throughout) sẽ bị chặn trần tối đa Band 5.5 - 6.0.',
+      strengths: ['Đã nhận biết được 2 mặt của vấn đề.'],
+      improvements: ['Phải chốt dứt khoát bạn nghiêng về bên nào hơn (ví dụ: mặc dù cả hai bên đều có lý, nhưng tôi tin chắc rằng bên B mang lại nhiều lợi ích hơn).'],
+      upgrades: [
+        {
+          type: 'Mệnh đề nhượng bộ chốt quan điểm (Band 8.0+)',
+          thesis: `While acknowledging that traditional arguments hold some merit, I firmly adhere to the view that progressive methodologies offer vastly superior long-term benefits.`,
+          rationale: 'Dùng cấu trúc "While [nhượng bộ A], I firmly adhere to the view that [chốt B]" giúp đạt điểm tuyệt đối về Stance.'
+        },
+        {
+          type: 'So sánh mức độ vượt trội (Outweigh Stance)',
+          thesis: `In my view, although certain initial drawbacks exist, the socioeconomic advantages generated by this trend overwhelmingly outweigh the disadvantages.`,
+          rationale: 'Chốt rõ lợi ích áp đảo bất lợi (outweighs) giải quyết trọn vẹn yêu cầu đề bài.'
+        }
+      ]
+    };
+  }
+
+  if (hasDecisiveStance) {
+    return {
+      stanceLevel: 'clear',
+      isDecisive: true,
+      estimatedBand: 8.0,
+      feedback: 'Xuất sắc! Câu Thesis của bạn có lập trường rất dứt khoát, định hình rõ ràng hướng lập luận cho các đoạn thân bài tiếp theo, hoàn toàn đáp ứng tiêu chí Band 7.0+ Task Response.',
+      strengths: ['Chốt quan điểm dứt khoát, không mang tính nước đôi.', 'Định hướng rõ ràng cho thân bài.'],
+      improvements: ['Có thể bổ sung thêm 1 lý do khái quát ngắn gọn (tổng kết 2 luận điểm chính) để câu thesis có chiều sâu hơn.'],
+      upgrades: [
+        {
+          type: 'Tích hợp vắn tắt 2 lý do cốt lõi (Band 8.5+)',
+          thesis: `I firmly contend that this policy is overwhelmingly advantageous, primarily because it fosters economic productivity and mitigates systemic social inequality.`,
+          rationale: 'Khái quát trước 2 luận điểm chính sẽ viết trong Body 1 và Body 2.'
+        }
+      ]
+    };
+  }
+
+  return {
+    stanceLevel: text.length > 20 ? 'moderate' : 'vague',
+    isDecisive: false,
+    estimatedBand: 6.0,
+    feedback: 'Câu Thesis của bạn đã nêu được chủ đề nhưng mức độ dứt khoát chưa cao. Giám khảo mong muốn nhìn thấy cụm từ thể hiện quan điểm cá nhân trực diện (ví dụ: "I firmly believe that...", "In my opinion, ...").',
+    strengths: ['Đã bám sát từ khóa của đề thi.'],
+    improvements: ['Bổ sung động từ thể hiện lập trường cá nhân rõ ràng hơn để tránh bị đánh giá là câu nêu lại đề bài (paraphrase thuần túy).'],
+    upgrades: [
+      {
+        type: 'Khẳng định lập trường trực diện (Band 8.0+)',
+        thesis: `In my opinion, adopting this approach is indispensable for sustainable growth, as it addresses both foundational and future challenges.`,
+        rationale: 'Khẳng định dứt khoát quan điểm cá nhân và định hướng thân bài.'
+      }
+    ]
+  };
+}
+
+/**
+ * Validates candidate's Thesis Statement & Question Stance
+ * against Cambridge Band Descriptors (TR / Task Response Band 7.0+ Requirement).
+ */
+export async function validateThesisStatement({ task, thesisText, apiKey, model = DEFAULT_MODEL }) {
+  if (!thesisText || thesisText.trim().length < 5) {
+    throw new Error('Vui lòng nhập câu Thesis Statement (ít nhất 5 ký tự).');
+  }
+
+  // Algorithmic Fallback if no API key
+  if (!apiKey) {
+    return validateThesisAlgorithmically({ task, thesisText });
+  }
+
+  const prompt = `ROLE & OBJECTIVE:
+You are an expert Cambridge IELTS Examiner evaluating a student's THESIS STATEMENT or INTRODUCTION STANCE for IELTS Writing Task ${task?.taskNumber || 2}.
+
+CAMBRIDGE ASSESSMENT CRITERION (TASK RESPONSE - POSITION REQUIREMENT):
+- Band 7+ TR requires: "presents a clear position throughout the response".
+- If the thesis is vague, purely neutral without a stance ("there are both pros and cons"), or fails to directly answer the question, TR is capped at Band 5.5 - 6.0.
+- If it directly and decisively answers all parts of the prompt with clear direction, it supports Band 7.0 - 9.0.
+
+QUESTION DETAILS:
+- Task: Task ${task?.taskNumber || 2}
+- Prompt: "${task?.prompt || ''}"
+
+CANDIDATE'S THESIS STATEMENT:
+"""
+${thesisText.trim()}
+"""
+
+INSTRUCTIONS:
+1. Determine if candidate presents a decisive position/stance (clear, vague, missing, or off_topic).
+2. Estimate the Thesis Statement Quality Band (e.g. 5.5, 6.5, 7.5, 8.5).
+3. Provide constructive feedback in Vietnamese: explain why it succeeds or what it lacks according to Cambridge criteria.
+4. Provide TWO elevated Band 8.5+ alternative thesis versions adhering to their original stance:
+   - Version 1 (Balanced concession / Nuanced): e.g. "While acknowledging [counter-argument], I firmly argue that [main stance] due to [reason]."
+   - Version 2 (Categorical / Direct): e.g. "I completely agree that..., primarily because [reason 1] and [reason 2]."
+
+OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO backticks. Schema:
+{
+  "stanceLevel": "clear" | "vague" | "missing" | "off_topic",
+  "isDecisive": true,
+  "estimatedBand": 7.5,
+  "feedback": "Examiner evaluation in Vietnamese...",
+  "strengths": ["..."],
+  "improvements": ["..."],
+  "upgrades": [
+    {
+      "type": "Nhượng bộ & Cân bằng (Nuanced Concession)",
+      "thesis": "While...",
+      "rationale": "Sử dụng mệnh đề nhượng bộ thể hiện tư duy phản biện sắc bén."
+    },
+    {
+      "type": "Khẳng định trực diện (Direct & Decisive)",
+      "thesis": "I firmly maintain that...",
+      "rationale": "Chốt lập trường dứt khoát, dễ dàng triển khai luận điểm ở thân bài."
+    }
+  ]
+}
+`;
+
+  try {
+    const response = await callGeminiApi({
+      model,
+      apiKey,
+      body: {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: 'application/json'
+        }
+      }
+    });
+
+    if (!response || !response.ok) {
+      return validateThesisAlgorithmically({ task, thesisText });
+    }
+
+    const result = await response.json();
+    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) return validateThesisAlgorithmically({ task, thesisText });
+
+    const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.warn('AI thesis validation failed, falling back to algorithmic checker:', err);
+    return validateThesisAlgorithmically({ task, thesisText });
+  }
+}
+
 
 
 
