@@ -156,7 +156,7 @@ export default function EditorPane({
       <div 
         onMouseEnter={() => setIsToolbarHovered(true)}
         onMouseLeave={() => setIsToolbarHovered(false)}
-        className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 overflow-x-auto"
+        className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 relative z-30"
       >
         
         {/* Left: Tab Switcher (Essay vs Scratchpad) */}
@@ -303,16 +303,20 @@ export default function EditorPane({
           <div className="relative shrink-0" ref={moreToolsRef}>
             <button
               onClick={() => setIsMoreToolsOpen(!isMoreToolsOpen)}
-              className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer text-xs"
+              className={`flex items-center space-x-1 px-2 py-1 rounded-lg font-semibold transition-colors cursor-pointer text-xs ${
+                isMoreToolsOpen 
+                  ? 'bg-slate-200 text-slate-900 shadow-inner' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+              }`}
               title="Mở rộng tiện ích: Sổ từ vựng, Tốc độ gõ WPM & Kiểm tra chính tả"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600 shrink-0" />
               <span className="hidden min-[1600px]:inline text-[11px]">Tiện ích</span>
-              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isMoreToolsOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isMoreToolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isMoreToolsOpen && (
-              <div className="absolute right-0 mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-xs">
+              <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-xl shadow-2xl border border-slate-200 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-xs">
                 {/* Sổ từ vựng */}
                 <button
                   onClick={() => {
