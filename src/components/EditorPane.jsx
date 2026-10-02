@@ -40,9 +40,12 @@ export default function EditorPane({
   onOpenParaphrase,
   onOpenSlideOver,
   onSubmitEssay,
-  onEditorFocus
+  onEditorFocus,
+  writingViewMode = 'pro',
+  onToggleWritingViewMode
 }) {
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
+  const [isMetricsMenuOpen, setIsMetricsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('essay'); // 'essay' | 'outline'
   const [showParagraphDetails, setShowParagraphDetails] = useState(false);
   const [outlineMode, setOutlineMode] = useState('scaffold'); // 'scaffold' | 'raw'
@@ -109,11 +112,15 @@ export default function EditorPane({
   const [isSentenceHeatmapOpen, setIsSentenceHeatmapOpen] = useState(false);
   const [isMoreToolsOpen, setIsMoreToolsOpen] = useState(false);
   const moreToolsRef = useRef(null);
+  const metricsMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (moreToolsRef.current && !moreToolsRef.current.contains(e.target)) {
         setIsMoreToolsOpen(false);
+      }
+      if (metricsMenuRef.current && !metricsMenuRef.current.contains(e.target)) {
+        setIsMetricsMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -202,102 +209,243 @@ export default function EditorPane({
             <span>{totalWords}/{task.minWords} từ</span>
           </div>
 
-          {/* Advanced Auxiliary Metrics: Auto-dim during active typing to reduce visual distraction */}
-          <div className={`flex items-center space-x-1 sm:space-x-1.5 transition-opacity duration-300 ${
-            isActivelyTyping && !isToolbarHovered ? 'opacity-35 hover:opacity-100' : 'opacity-100'
-          }`}>
+          {/* Minimal Mode vs Pro Studio Mode auxiliary indicators */}
+          {writingViewMode === 'minimal' ? (
+            /* Popover gọn gom nhóm các công cụ phân tích để giảm tải nhận thức */
+            <div className="relative shrink-0" ref={metricsMenuRef}>
+              <button
+                type="button"
+                onClick={() => setIsMetricsMenuOpen(!isMetricsMenuOpen)}
+                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                  isMetricsMenuOpen
+                    ? 'bg-indigo-50 border-indigo-300 text-indigo-700 shadow-inner'
+                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                }`}
+                title="Mở bảng tóm tắt chỉ số phân tích bài viết"
+              >
+                <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                <span className="font-medium hidden sm:inline">Chỉ Số Phân Tích</span>
+                <span className="font-medium sm:hidden">Chỉ số</span>
+                <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isMetricsMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-          {/* Lexical Diversity (TTR) */}
-          <div 
-            className="flex items-center space-x-1 px-1.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium cursor-help shrink-0 text-xs"
-            title="Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"
-          >
-            <span className="text-slate-400 font-bold">TTR:</span>
-            <span className={`font-bold ${lexicalData.ttr >= 50 ? 'text-emerald-700' : 'text-slate-700'}`}>
-              {lexicalData.ttr}%
-            </span>
-          </div>
+              {isMetricsMenuOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-2 text-xs">
+                  <div className="text-[11px] font-bold text-slate-400 px-1 uppercase tracking-wider">
+                    Chỉ số phân tích trực tiếp
+                  </div>
+                  
+                  {/* Lexical Diversity (TTR) */}
+                  <div 
+                    className="flex items-center justify-between p-2 rounded-lg bg-slate-50 text-slate-700 font-medium"
+                    title="Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"
+                  >
+                    <span className="text-slate-500 font-bold">Từ vựng (TTR):</span>
+                    <span className={`font-bold ${lexicalData.ttr >= 50 ? 'text-emerald-700' : 'text-slate-700'}`}>
+                      {lexicalData.ttr}%
+                    </span>
+                  </div>
 
-          {/* Task 1 Cambridge Data & Overview Live Inspector */}
-          {isTask1 && (
-            <button
-              onClick={() => setIsTask1CoverageOpen(true)}
-              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
-                task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                  : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
-              }`}
-              title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
-            >
-              <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              <span className="hidden min-[1600px]:inline">Phủ Số Liệu Task 1</span>
-              <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
-                task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
-                  ? 'bg-emerald-200 text-emerald-900'
-                  : 'bg-amber-200 text-amber-900'
-              }`}>
-                {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
-              </span>
-            </button>
-          )}
+                  {/* Task 1 Cambridge Data & Overview Live Inspector */}
+                  {isTask1 && (
+                    <button
+                      onClick={() => {
+                        setIsMetricsMenuOpen(false);
+                        setIsTask1CoverageOpen(true);
+                      }}
+                      className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                        task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                          : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                      }`}
+                      title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
+                    >
+                      <div className="flex items-center space-x-1.5">
+                        <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                        <span>Phủ Số Liệu Task 1</span>
+                      </div>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-black ${
+                        task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
+                          ? 'bg-emerald-200 text-emerald-900'
+                          : 'bg-amber-200 text-amber-900'
+                      }`}>
+                        {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
+                      </span>
+                    </button>
+                  )}
 
-          {/* Task 2 Cambridge Live Argument Flow & Coherence Inspector */}
-          {!isTask1 && (
-            <button
-              onClick={() => setIsTask2CoherenceOpen(true)}
-              className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
-                task2CoherenceCheck?.status === 'optimal'
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                  : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
-              }`}
-              title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
-            >
-              <GitCommit className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              <span className="hidden min-[1600px]:inline">Lập Luận Task 2</span>
-              <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
-                task2CoherenceCheck?.status === 'optimal'
-                  ? 'bg-emerald-200 text-emerald-900'
-                  : 'bg-indigo-200 text-indigo-900'
-              }`}>
-                {task2CoherenceCheck?.statusLabel || 'Kiểm tra'}
-              </span>
-            </button>
-          )}
+                  {/* Task 2 Cambridge Live Argument Flow & Coherence Inspector */}
+                  {!isTask1 && (
+                    <button
+                      onClick={() => {
+                        setIsMetricsMenuOpen(false);
+                        setIsTask2CoherenceOpen(true);
+                      }}
+                      className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                        task2CoherenceCheck?.status === 'optimal'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                          : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
+                      }`}
+                      title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
+                    >
+                      <div className="flex items-center space-x-1.5">
+                        <GitCommit className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                        <span>Lập Luận Task 2</span>
+                      </div>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-black ${
+                        task2CoherenceCheck?.status === 'optimal'
+                          ? 'bg-emerald-200 text-emerald-900'
+                          : 'bg-indigo-200 text-indigo-900'
+                      }`}>
+                        {task2CoherenceCheck?.statusLabel || 'Kiểm tra'}
+                      </span>
+                    </button>
+                  )}
 
-          {/* Cambridge GRA Sentence Structure Heatmap Inspector */}
-          <button
-            onClick={() => setIsSentenceHeatmapOpen(true)}
-            className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
-              sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
-                  ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
-                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-            }`}
-            title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
-          >
-            <Layers className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-            <span className="hidden min-[1600px]:inline">Cấu Trúc GRA</span>
-            <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
-              sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
-                ? 'bg-emerald-200 text-emerald-900'
-                : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
-                  ? 'bg-amber-200 text-amber-900'
-                  : 'bg-slate-200 text-slate-800'
+                  {/* Cambridge GRA Sentence Structure Heatmap Inspector */}
+                  <button
+                    onClick={() => {
+                      setIsMetricsMenuOpen(false);
+                      setIsSentenceHeatmapOpen(true);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                      sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                        : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
+                          ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
+                    title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
+                  >
+                    <div className="flex items-center space-x-1.5">
+                      <Layers className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                      <span>Cấu Trúc GRA</span>
+                    </div>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-black ${
+                      sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
+                        ? 'bg-emerald-200 text-emerald-900'
+                        : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
+                          ? 'bg-amber-200 text-amber-900'
+                          : 'bg-slate-200 text-slate-800'
+                    }`}>
+                      {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
+                    </span>
+                  </button>
+
+                  {/* Quick Paraphrase Helper */}
+                  <button
+                    onClick={() => {
+                      setIsMetricsMenuOpen(false);
+                      if (onOpenSlideOver) onOpenSlideOver('paraphrase');
+                      else onOpenParaphrase?.();
+                    }}
+                    className="w-full flex items-center space-x-2 p-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold transition-colors cursor-pointer"
+                    title="Mở bảng tra cứu Paraphrase cạnh bài viết"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Tra Cứu Paraphrase C1-C2</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Advanced Auxiliary Metrics (Pro Mode): Auto-dim during active typing to reduce visual distraction */
+            <div className={`flex items-center space-x-1 sm:space-x-1.5 transition-opacity duration-300 ${
+              isActivelyTyping && !isToolbarHovered ? 'opacity-35 hover:opacity-100' : 'opacity-100'
             }`}>
-              {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
-            </span>
-          </button>
+              {/* Lexical Diversity (TTR) */}
+              <div 
+                className="flex items-center space-x-1 px-1.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium cursor-help shrink-0 text-xs"
+                title="Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"
+              >
+                <span className="text-slate-400 font-bold">TTR:</span>
+                <span className={`font-bold ${lexicalData.ttr >= 50 ? 'text-emerald-700' : 'text-slate-700'}`}>
+                  {lexicalData.ttr}%
+                </span>
+              </div>
 
-          {/* Quick Paraphrase Helper */}
-          <button
-            onClick={() => onOpenSlideOver ? onOpenSlideOver('paraphrase') : onOpenParaphrase?.()}
-            className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer shrink-0 text-xs"
-            title="Mở bảng tra cứu Paraphrase cạnh bài viết"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-            <span className="hidden sm:inline">Paraphrase</span>
-          </button>
+              {/* Task 1 Cambridge Data & Overview Live Inspector */}
+              {isTask1 && (
+                <button
+                  onClick={() => setIsTask1CoverageOpen(true)}
+                  className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
+                    task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                      : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                  }`}
+                  title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
+                >
+                  <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <span className="hidden min-[1600px]:inline">Phủ Số Liệu Task 1</span>
+                  <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
+                    task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
+                      ? 'bg-emerald-200 text-emerald-900'
+                      : 'bg-amber-200 text-amber-900'
+                  }`}>
+                    {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
+                  </span>
+                </button>
+              )}
+
+              {/* Task 2 Cambridge Live Argument Flow & Coherence Inspector */}
+              {!isTask1 && (
+                <button
+                  onClick={() => setIsTask2CoherenceOpen(true)}
+                  className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
+                    task2CoherenceCheck?.status === 'optimal'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                      : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
+                  }`}
+                  title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
+                >
+                  <GitCommit className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <span className="hidden min-[1600px]:inline">Lập Luận Task 2</span>
+                  <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
+                    task2CoherenceCheck?.status === 'optimal'
+                      ? 'bg-emerald-200 text-emerald-900'
+                      : 'bg-indigo-200 text-indigo-900'
+                  }`}>
+                    {task2CoherenceCheck?.statusLabel || 'Kiểm tra'}
+                  </span>
+                </button>
+              )}
+
+              {/* Cambridge GRA Sentence Structure Heatmap Inspector */}
+              <button
+                onClick={() => setIsSentenceHeatmapOpen(true)}
+                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold border transition-all cursor-pointer shadow-2xs shrink-0 ${
+                  sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                    : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
+                      ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                }`}
+                title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
+              >
+                <Layers className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                <span className="hidden min-[1600px]:inline">Cấu Trúc GRA</span>
+                <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
+                  sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
+                    ? 'bg-emerald-200 text-emerald-900'
+                    : sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.simplePercentage > 45
+                      ? 'bg-amber-200 text-amber-900'
+                      : 'bg-slate-200 text-slate-800'
+                }`}>
+                  {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
+                </span>
+              </button>
+
+              {/* Quick Paraphrase Helper */}
+              <button
+                onClick={() => onOpenSlideOver ? onOpenSlideOver('paraphrase') : onOpenParaphrase?.()}
+                className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer shrink-0 text-xs"
+                title="Mở bảng tra cứu Paraphrase cạnh bài viết"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span className="hidden sm:inline">Paraphrase</span>
+              </button>
+            </div>
+          )}
 
           {/* More Tools Menu: Vocab, WPM, Spellcheck */}
           <div className="relative shrink-0" ref={moreToolsRef}>
@@ -358,8 +506,6 @@ export default function EditorPane({
               </div>
             )}
           </div>
-
-          </div> {/* End auto-dim auxiliary metrics */}
 
         </div>
 

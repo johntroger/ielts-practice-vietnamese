@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-minimal-focus-view',
+    version: 'v3.1',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'shortcuts_ux',
+    targetSkills: ['writing'],
+    title: 'Chế Độ Luyện Tập Tinh Giản (Minimal Focus View)',
+    shortDesc: 'Chuyển đổi 1-chạm giữa giao diện tập trung tinh giản (Zero Distraction) và Pro Studio, ẩn bớt tải nhận thức và gom gọn các chỉ số phân tích.',
+    icon: 'Maximize2',
+    shortcut: null,
+    updatedAt: '2026-10-02',
+    highlights: [
+      'Chuyển đổi 1-chạm linh hoạt: Dễ dàng chuyển giữa Minimal View và Pro Studio trên thanh subheader hoặc menu Tiện ích.',
+      'Giảm tải nhận thức (Cognitive Declutter): Ẩn tiến độ tuần và gom các chỉ số TTR, GRA, Coherence, Paraphrase vào popover Chỉ Số Phân Tích.',
+      'Tập trung tối đa vào kỹ năng viết: Giữ trọn vẹn Đề bài, Khung gõ, Số từ, Đồng hồ và Nút nộp bài.',
+      'Ghi nhớ cấu hình tự động: Lưu trạng thái lựa chọn vào bộ nhớ thiết bị, sẵn sàng cho các phiên làm bài tiếp theo.'
+    ],
+    usageGuide: 'Tại thanh công cụ IELTS Writing, nhấn vào nút "✨ Tinh Giản" trên thanh điều hướng subheader hoặc mở menu Tiện ích để chuyển chế độ.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'writing',
+      label: 'Vào Phòng Luyện Writing'
+    }
+  },
+  {
     id: 'feat-speaking-filler-tracker',
     version: 'v3.0',
     status: 'new',

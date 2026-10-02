@@ -1,15 +1,39 @@
 # ⌨️ Giao Diện Tập Trung & Bảng Phím Tắt Toàn Năng
 
-> **Chuyên mục**: `shortcuts_ux` | **Số lượng**: **5 tính năng**  
+> **Chuyên mục**: `shortcuts_ux` | **Số lượng**: **6 tính năng**  
 > **Tổng quan**: Tối ưu hóa trải nghiệm làm bài với chế độ tập trung (Focus Mode), bảng phím tắt thao tác nhanh chuẩn phòng thi máy tính.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
 
 ---
 
+<a id="feat-minimal-focus-view"></a>
+
+## 1. Chế Độ Luyện Tập Tinh Giản (Minimal Focus View)
+
+> **Phiên bản**: `v3.1` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Writing** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Chuyển đổi 1-chạm giữa giao diện tập trung tinh giản (Zero Distraction) và Pro Studio, ẩn bớt tải nhận thức và gom gọn các chỉ số phân tích.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Chuyển đổi 1-chạm linh hoạt: Dễ dàng chuyển giữa Minimal View và Pro Studio trên thanh subheader hoặc menu Tiện ích.
+- Giảm tải nhận thức (Cognitive Declutter): Ẩn tiến độ tuần và gom các chỉ số TTR, GRA, Coherence, Paraphrase vào popover Chỉ Số Phân Tích.
+- Tập trung tối đa vào kỹ năng viết: Giữ trọn vẹn Đề bài, Khung gõ, Số từ, Đồng hồ và Nút nộp bài.
+- Ghi nhớ cấu hình tự động: Lưu trạng thái lựa chọn vào bộ nhớ thiết bị, sẵn sàng cho các phiên làm bài tiếp theo.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Tại thanh công cụ IELTS Writing, nhấn vào nút "✨ Tinh Giản" trên thanh điều hướng subheader hoặc mở menu Tiện ích để chuyển chế độ.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Vào Phòng Luyện Writing"** trong giao diện làm bài.
+
+---
+
 <a id="feat-byok-security"></a>
 
-## 1. Mô Hình BYOK (Bring Your Own Key) & Quản Lý Đa Mô Hình AI
+## 2. Mô Hình BYOK (Bring Your Own Key) & Quản Lý Đa Mô Hình AI
 
 > **Phiên bản**: `v2.2` | **Huy hiệu**: `Bảo Mật` | **Kỹ năng**: **Writing** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -32,7 +56,7 @@ Bấm vào nút "API Key" hoặc "Cài Đặt (⚙️)" trên Navbar -> Dán key
 
 <a id="feat-keyboard-shortcuts-hub"></a>
 
-## 2. Hệ Thống Phím Tắt Toàn Cục Tối Ưu Tốc Độ Thao Tác
+## 3. Hệ Thống Phím Tắt Toàn Cục Tối Ưu Tốc Độ Thao Tác
 
 > **Phiên bản**: `v2.5` | **Huy hiệu**: `Phím Tắt` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: `F1 / Alt + H`
 
@@ -57,7 +81,7 @@ Nhấn F1 tại bất kỳ đâu để xem danh sách phím tắt đầy đủ.
 
 <a id="feat-help-center-hub"></a>
 
-## 3. Trung Tâm Trợ Giúp & Tra Cứu Tính Năng Toàn Năng (Help Center)
+## 4. Trung Tâm Trợ Giúp & Tra Cứu Tính Năng Toàn Năng (Help Center)
 
 > **Phiên bản**: `v2.5` | **Huy hiệu**: `Trợ Giúp` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: `F1 / Alt + H`
 
@@ -80,7 +104,7 @@ Nhấn F1 hoặc bấm biểu tượng Trợ Giúp trên thanh Navbar để mở
 
 <a id="feat-cdi-display-settings"></a>
 
-## 4. Tùy Chỉnh Hiển Thị & Tương Phản Chuẩn Thi CDI (CDI Display)
+## 5. Tùy Chỉnh Hiển Thị & Tương Phản Chuẩn Thi CDI (CDI Display)
 
 > **Phiên bản**: `v3.0` | **Huy hiệu**: `CDI Chuẩn` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -103,7 +127,7 @@ Nhấp vào nút "Màn Hình CDI" trên thanh công cụ hoặc menu để mở 
 
 <a id="feat-user-feedback-support"></a>
 
-## 5. Kênh Góp Ý Tính Năng & Hỗ Trợ Kỹ Thuật Trực Tiếp
+## 6. Kênh Góp Ý Tính Năng & Hỗ Trợ Kỹ Thuật Trực Tiếp
 
 > **Phiên bản**: `v2.0` | **Huy hiệu**: `Hỗ Trợ` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: _Không có_
 

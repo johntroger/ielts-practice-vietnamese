@@ -7,6 +7,7 @@ import TimerBar from '../TimerBar';
 import SlideOverToolPanel from '../SlideOverToolPanel';
 import { countWords } from '../../utils/textAnalytics';
 import { brainstormIdeas } from '../../services/geminiService';
+import { safeGet, safeSet } from '../../utils/storageService';
 
 /**
  * WritingWorkspace - Self-contained workspace for IELTS Writing (Task 1 & Task 2)
@@ -58,6 +59,15 @@ export default function WritingWorkspace({
   onAddVocab,
   currentUser
 }) {
+  // Phase 3 UI/UX: Minimal Focus View vs Pro Studio View Mode
+  const [writingViewMode, setWritingViewMode] = useState(() => safeGet('ielts_writing_view_mode', 'pro'));
+
+  const handleToggleWritingViewMode = (newMode) => {
+    const next = newMode || (writingViewMode === 'minimal' ? 'pro' : 'minimal');
+    setWritingViewMode(next);
+    safeSet('ielts_writing_view_mode', next);
+  };
+
   // Local state for Brainstorming AI
   const [isBrainstorming, setIsBrainstorming] = useState(false);
   const [brainstormResult, setBrainstormResult] = useState('');
@@ -101,7 +111,7 @@ export default function WritingWorkspace({
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+    <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden" data-writing-view={writingViewMode}>
       {/* 1. Writing Workspace Sub-Header Toolbar */}
       <WritingSubHeaderToolbar
         currentTask={currentTask}
@@ -127,6 +137,8 @@ export default function WritingWorkspace({
         cdiContrast={cdiContrast}
         isSlimHeader={isSlimHeader}
         toggleSlimHeader={toggleSlimHeader}
+        writingViewMode={writingViewMode}
+        onToggleWritingViewMode={handleToggleWritingViewMode}
       />
 
       {/* 2. Writing SplitPane Workspace (Prompt + Editor) */}
@@ -145,6 +157,7 @@ export default function WritingWorkspace({
             isMastered={masteredIds.includes(currentTask?.id)}
             onToggleMastered={() => onToggleMastered?.(currentTask?.id)}
             onOpenLibrary={onOpenLibrary}
+            writingViewMode={writingViewMode}
           />
         }
         rightPane={
@@ -165,6 +178,8 @@ export default function WritingWorkspace({
                 setIsSlimHeader?.(true);
               }
             }}
+            writingViewMode={writingViewMode}
+            onToggleWritingViewMode={handleToggleWritingViewMode}
           />
         }
       />

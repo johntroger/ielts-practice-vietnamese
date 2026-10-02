@@ -92,7 +92,8 @@ export default function PromptPane({
   onOpenSettings,
   isMastered = false,
   onToggleMastered,
-  onOpenLibrary
+  onOpenLibrary,
+  writingViewMode = 'pro'
 }) {
   const [showModelAnswer, setShowModelAnswer] = useState(false);
   const [showOutline, setShowOutline] = useState(false);

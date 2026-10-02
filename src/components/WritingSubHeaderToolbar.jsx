@@ -42,7 +42,9 @@ export default function WritingSubHeaderToolbar({
   cdiFontSize = 'standard',
   cdiContrast = 'standard',
   isSlimHeader = false,
-  toggleSlimHeader
+  toggleSlimHeader,
+  writingViewMode = 'pro',
+  onToggleWritingViewMode
 }) {
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
@@ -126,6 +128,37 @@ export default function WritingSubHeaderToolbar({
       <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 text-xs shrink-0 max-w-full py-0.5">
         <div className="flex items-center space-x-1 sm:space-x-1.5">
           
+          {/* Minimal Focus View vs Pro Studio View Mode Switcher */}
+          <div className="inline-flex items-center p-0.5 rounded-xl bg-slate-100 border border-slate-200/90 text-xs shrink-0 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => onToggleWritingViewMode?.('minimal')}
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                writingViewMode === 'minimal'
+                  ? 'bg-white text-indigo-700 shadow-xs border border-indigo-100'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Chế độ Tinh Giản (Minimal View): Ẩn các chỉ số phức tạp, tập trung gõ bài"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Tinh Giản</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onToggleWritingViewMode?.('pro')}
+              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                writingViewMode === 'pro'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Chế độ Pro Studio: Đầy đủ các tiện ích và chỉ số phân tích chuyên sâu"
+            >
+              <Sliders className="w-3.5 h-3.5 text-slate-700" />
+              <span className="hidden xs:inline">Pro Studio</span>
+              <span className="xs:hidden">Pro</span>
+            </button>
+          </div>
+
           {/* Unified "Tiện Ích & Cài Đặt" Menu Dropdown */}
           <div className="relative">
             <button
@@ -186,6 +219,30 @@ export default function WritingSubHeaderToolbar({
                     </div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isFocusMode ? 'bg-purple-200 text-purple-800' : 'bg-slate-100 text-slate-600'}`}>
                       {isFocusMode ? 'BẬT' : 'TẮT'}
+                    </span>
+                  </button>
+
+                  {/* Minimal Focus View Mode Toggle */}
+                  <button
+                    onClick={() => {
+                      onToggleWritingViewMode?.(writingViewMode === 'minimal' ? 'pro' : 'minimal');
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      writingViewMode === 'minimal' ? 'bg-indigo-50 text-indigo-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className={`p-1.5 rounded-lg ${writingViewMode === 'minimal' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700'}`}>
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs">Giao Diện Tinh Giản (Minimal)</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Ẩn các bảng biểu phân tích phụ, tối ưu tập trung</div>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${writingViewMode === 'minimal' ? 'bg-indigo-200 text-indigo-800' : 'bg-slate-100 text-slate-600'}`}>
+                      {writingViewMode === 'minimal' ? 'BẬT' : 'TẮT'}
                     </span>
                   </button>
 
@@ -395,17 +452,19 @@ export default function WritingSubHeaderToolbar({
           </div>
         </div>
 
-        {/* 4. Weekly Word Target Progress Bar (Visible on desktop/laptop >= 1280px to preserve tablet space) */}
-        <div className="hidden xl:flex items-center space-x-2 text-slate-600 pl-2.5 border-l border-slate-200">
-          <span className="font-medium text-[11px] text-slate-500">Mục tiêu tuần:</span>
-          <div className="w-20 sm:w-28 lg:w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-500"
-              style={{ width: `${weeklyWordProgress}%` }}
-            />
+        {/* 4. Weekly Word Target Progress Bar (Visible on desktop/laptop >= 1280px in Pro Studio Mode) */}
+        {writingViewMode !== 'minimal' && (
+          <div className="hidden xl:flex items-center space-x-2 text-slate-600 pl-2.5 border-l border-slate-200">
+            <span className="font-medium text-[11px] text-slate-500">Mục tiêu tuần:</span>
+            <div className="w-20 sm:w-28 lg:w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full transition-all duration-500"
+                style={{ width: `${weeklyWordProgress}%` }}
+              />
+            </div>
+            <span className="font-bold text-slate-800 text-[11px]">{currentWeekWords}/{weeklyWordTarget} từ</span>
           </div>
-          <span className="font-bold text-slate-800 text-[11px]">{currentWeekWords}/{weeklyWordTarget} từ</span>
-        </div>
+        )}
 
         {/* 5. Slim Header Mode Toggle (Alt + Z) */}
         {toggleSlimHeader && (

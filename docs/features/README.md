@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **36 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **37 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -18,7 +18,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
-| ⌨️ **Giao Diện Tập Trung** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
+| ⌨️ **Giao Diện Tập Trung** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
 
 ---
 
@@ -41,6 +41,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Chế Độ Luyện Tập Tinh Giản (Minimal Focus View)](shortcuts-ux.md#feat-minimal-focus-view)
+- **Phiên bản**: `v3.1` | **Kỹ năng**: **Writing**
+- **Tóm tắt**: Chuyển đổi 1-chạm giữa giao diện tập trung tinh giản (Zero Distraction) và Pro Studio, ẩn bớt tải nhận thức và gom gọn các chỉ số phân tích.
+- **Cách dùng nhanh**: Tại thanh công cụ IELTS Writing, nhấn vào nút "✨ Tinh Giản" trên thanh điều hướng subheader hoặc mở menu Tiện ích để chuyển chế độ.
 
 ### ✦ [Bộ Đếm Từ Đệm & Sóng Âm Trực Quan (Speaking Fluency Studio)](ai-evaluation.md#feat-speaking-filler-tracker)
 - **Phiên bản**: `v3.0` | **Kỹ năng**: **Speaking**
