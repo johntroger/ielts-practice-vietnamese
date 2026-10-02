@@ -118,34 +118,38 @@ assert(fs.existsSync(handbookModalPath), 'TheoryHandbookModal.jsx must exist');
 const handbookModalContent = fs.readFileSync(handbookModalPath, 'utf8');
 
 assert(
-  handbookModalContent.includes('GitBook Online'),
-  'TheoryHandbookModal.jsx must include "GitBook Online" button'
+  handbookModalContent.includes('Mở Bản Web Đầy Đủ'),
+  'TheoryHandbookModal.jsx must include user-friendly "Mở Bản Web Đầy Đủ" button'
 );
 assert(
   handbookModalContent.includes('ExternalLink'),
   'TheoryHandbookModal.jsx must import and use ExternalLink icon'
 );
 assert(
+  handbookModalContent.includes('vneconomics.gitbook.io'),
+  'TheoryHandbookModal.jsx must reference live vneconomics.gitbook.io portal'
+);
+assert(
   handbookModalContent.includes('VITE_GITBOOK_URL'),
   'TheoryHandbookModal.jsx must reference VITE_GITBOOK_URL environment variable'
 );
-console.log('    ✅ TheoryHandbookModal.jsx GitBook portal button properly wired.');
+console.log('    ✅ TheoryHandbookModal.jsx user-friendly portal button properly wired.');
 
 // -------------------------------------------------------------
-// 6. VERIFY Navbar.jsx GITBOOK DISCOVERABILITY BADGES
+// 6. VERIFY Navbar.jsx DISCOVERABILITY BADGES
 // -------------------------------------------------------------
-console.log('  ▶ 6. Verifying Navbar.jsx GitBook badges...');
+console.log('  ▶ 6. Verifying Navbar.jsx user-friendly badges...');
 const navbarPath = path.resolve('src/components/Navbar.jsx');
 const navbarContent = fs.readFileSync(navbarPath, 'utf8');
 
 assert(
-  navbarContent.includes('GitBook'),
-  'Navbar.jsx must display GitBook badge/indicator'
+  navbarContent.includes('Bản Web'),
+  'Navbar.jsx must display user-friendly "Bản Web" badge/indicator'
 );
 assert(
-  navbarContent.includes('GitBook Sync'),
-  'Navbar.jsx mobile drawer must display GitBook Sync badge'
+  navbarContent.includes('Bản Web Online'),
+  'Navbar.jsx mobile drawer must display "Bản Web Online" badge'
 );
-console.log('    ✅ Navbar.jsx GitBook indicators verified.');
+console.log('    ✅ Navbar.jsx user-friendly indicators verified.');
 
 console.log('🎉 Step 57 Test Suite PASSED: GitBook documentation and auto-sync fully verified!');

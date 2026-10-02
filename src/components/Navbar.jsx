@@ -412,9 +412,9 @@ export default function Navbar({
                       <div>
                         <div className="flex items-center space-x-1.5">
                           <span className="font-bold">Cẩm Nang Chiến Thuật</span>
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-sky-100 text-sky-700">GitBook</span>
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-sky-100 text-sky-700">Bản Web</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">Chiến lược 4 kỹ năng & GitBook Online</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Chiến lược 4 kỹ năng & đọc trực tuyến</div>
                       </div>
                     </button>
                   </div>
@@ -900,7 +900,7 @@ export default function Navbar({
                       <BookMarked className="w-4 h-4 text-amber-600" />
                       <span>Cẩm Nang Lý Thuyết & Chiến Thuật</span>
                     </div>
-                    <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded">GitBook Sync</span>
+                    <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded">Bản Web Online</span>
                   </button>
 
                   <button

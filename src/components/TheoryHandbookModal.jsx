@@ -605,12 +605,13 @@ export default function TheoryHandbookModal({
               href={import.meta.env.VITE_GITBOOK_URL || "https://vneconomics.gitbook.io/vneconomics-docs/"}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 hover:text-white text-xs font-semibold border border-sky-400/30 transition-colors cursor-pointer shrink-0"
-              title="Mở tài liệu đồng bộ GitBook trực tuyến"
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/25 hover:bg-sky-500/35 text-sky-200 hover:text-white text-xs font-bold border border-sky-400/40 transition-all cursor-pointer shrink-0 shadow-xs"
+              title="Mở cẩm nang trực tuyến trên trang web riêng (giao diện sách điện tử toàn màn hình, mục lục đầy đủ & chế độ ban đêm)"
             >
-              <BookOpen className="w-3.5 h-3.5 text-sky-400" />
-              <span className="hidden sm:inline">GitBook Online</span>
-              <ExternalLink className="w-3 h-3 opacity-70" />
+              <BookOpen className="w-3.5 h-3.5 text-sky-300" />
+              <span className="hidden sm:inline">Mở Bản Web Đầy Đủ</span>
+              <span className="sm:hidden">Bản Web</span>
+              <ExternalLink className="w-3 h-3 opacity-80" />
             </a>
             <button 
               onClick={onClose} 
@@ -1036,6 +1037,35 @@ export default function TheoryHandbookModal({
           ) : (
             /* STANDARD HANDBOOK VIEW */
             <div className="space-y-6">
+              {/* Quick web reader callout banner */}
+              <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 via-slate-50 to-indigo-50 border border-sky-100 text-xs text-sky-950 shadow-2xs">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 rounded-xl bg-sky-600 text-white shrink-0 shadow-2xs">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                      <span>Đọc Thoải Mái Hơn Trên Trang Web Riêng?</span>
+                      <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-sky-200 text-sky-800">E-Book</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 line-clamp-1 sm:line-clamp-none">
+                      Xem đầy đủ 73 chuyên đề với thanh mục lục bên trái, tìm kiếm nhanh và chế độ đọc toàn màn hình.
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href={import.meta.env.VITE_GITBOOK_URL || "https://vneconomics.gitbook.io/vneconomics-docs/"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shrink-0 transition-colors shadow-2xs ml-2 cursor-pointer"
+                  title="Mở cẩm nang trên trang web riêng"
+                >
+                  <span className="hidden sm:inline">Mở Bản Web</span>
+                  <span className="sm:hidden">Mở</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
               {filteredHandbook.length > 0 ? (
                 filteredHandbook.map(item => {
                   const isCopied = copiedId === item.id;
