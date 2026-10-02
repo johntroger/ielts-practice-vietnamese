@@ -3,7 +3,8 @@ import {
   BookOpen, Search, Bookmark, Plus, Trash2, X, Sparkles, 
   Layers, BarChart2, FileText, AlertTriangle, Edit3, Calendar,
   ChevronRight, Lightbulb, CheckCircle2, Copy, Check, Headphones,
-  BookMarked, PenTool, Volume2, Mic, Compass, HelpCircle, CheckCheck
+  BookMarked, PenTool, Volume2, Mic, Compass, HelpCircle, CheckCheck,
+  ExternalLink
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 
@@ -599,13 +600,26 @@ export default function TheoryHandbookModal({
               <p className="text-xs text-slate-400 line-clamp-1">{headerMeta.subtitle}</p>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-2"
-            aria-label="Đóng cẩm nang"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2 shrink-0 ml-2">
+            <a
+              href={import.meta.env.VITE_GITBOOK_URL || "https://johntroger.gitbook.io/ielts-practice-vietnamese/"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 hover:text-white text-xs font-semibold border border-sky-400/30 transition-colors cursor-pointer shrink-0"
+              title="Mở tài liệu đồng bộ GitBook trực tuyến"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+              <span className="hidden sm:inline">GitBook Online</span>
+              <ExternalLink className="w-3 h-3 opacity-70" />
+            </a>
+            <button 
+              onClick={onClose} 
+              className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+              aria-label="Đóng cẩm nang"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Level 1 Navigation: Skill Switcher Bar */}
