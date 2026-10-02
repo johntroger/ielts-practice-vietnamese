@@ -30,4 +30,9 @@ Khi gặp một từ lạ không đoán được nghĩa, hãy coi nó như một
 - Ta chỉ cần biết [pyroclastic debris] là **một thứ gì đó do núi lửa phun ra làm chôn vùi làng mạc (đá/tro bụi)**. Không nhất thiết phải biết nghĩa địa chất học chi tiết để trả lời đúng câu hỏi!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [13. 50 Cặp từ Paraphrase lặp lại Cam 10-19](reading-cambridge-synonym-lexicon.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [15. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading-chunking-speed.md) |

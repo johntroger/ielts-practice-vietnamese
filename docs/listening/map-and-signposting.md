@@ -19,4 +19,9 @@ Part 4 là bài diễn thuyết học thuật không nghỉ giữa chừng. Hãy
 - **Minh họa ví dụ**: *"To illustrate this phenomenon...", "Take the case of..."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [8. Bẫy Distractor & Đổi Ý Trong Listening](distractor-traps.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [10. Part 2: Định hướng không gian & Bản đồ](listening-part2-map-directions.md) |

@@ -16,4 +16,9 @@
 4. **Đối chiếu và loại trừ**: Loại bỏ ngay các tiêu đề đã chọn và cẩn thận với tiêu đề thừa (Distractors).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [7. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading-tfng-strategy.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [9. Chiến thuật cho Multiple Choice & Pick Multiple Options](reading-multiple-choice.md) |

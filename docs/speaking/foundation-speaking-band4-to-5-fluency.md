@@ -101,3 +101,11 @@ Nhiều thí sinh khi không hiểu câu hỏi thì cười trừ hoặc đoán 
 - [ ] Dùng điện thoại ghi âm lại giọng nói của mình, nghe lại xem có bị ngắt quãng giữa câu hay không.
 - [ ] Luôn chú ý bật âm đuôi cơ bản: `/s/` trong số nhiều (*two books*) và ngôi thứ 3 (*he likes*).
 - [ ] Luôn trả lời có chủ ngữ (*"I like..."* thay vì chỉ nói *"Like..."*).
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](../listening/listening-cd-ielts-hacks-and-focus.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](area-framework-part1.md) |

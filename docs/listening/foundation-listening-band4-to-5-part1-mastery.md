@@ -68,3 +68,11 @@ Trong 30 giây trước khi nghe Part 1, hãy thực hiện phản xạ **"Nhìn
 2. Ô trống điền `Postcode: .........` ➡️ Chuẩn bị nghe kết hợp chữ cái và số (ví dụ: `SW1A 1AA`).
 3. Ô trống điền `Time: .........` ➡️ Chuẩn bị nghe giờ (ví dụ: `8.30 am` hoặc `half past eight`).
 4. Ô trống điền `Transport: by .........` ➡️ Chuẩn bị nghe phương tiện (ví dụ: `train`, `bus`, `bicycle`).
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](../reading/computer-delivered-reading-techniques.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Part 1: Bẫy đánh vần tên riêng, con số & mã bưu chính](listening-part1-spelling-numbers.md) |

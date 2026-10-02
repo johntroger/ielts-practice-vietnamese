@@ -26,4 +26,9 @@ Overview của Process cực kỳ đơn giản và dễ lấy điểm nếu làm
 - *Giai đoạn kết thúc*: Eventually, Finally, The cycle culminates in...
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [11. Task 1: Table (Bảng Số Liệu)](task1-table.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [13. Task 1: Map (Bản Đồ)](task1-map.md) |

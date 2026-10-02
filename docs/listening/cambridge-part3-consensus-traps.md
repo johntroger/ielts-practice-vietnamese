@@ -110,3 +110,10 @@ Trong các câu hỏi trắc nghiệm 3 lựa chọn (A, B, C), **100% băng ghi
 - Nếu bạn chọn **B** khi nghe Jack nhắc đến *"cost calculations"*, bạn tiếp tục sập bẫy.
 - **Chỉ khi Chloe thốt lên câu quyết định hành động: *"Let's sit down right now and update those decibel charts"*, đáp án C mới chính thức được xác lập!**
 
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening-part3-tone-attitude-sarcasm.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [17. Part 4: Bắt tín hiệu chuyển ý bài giảng học thuật](listening-part4-lecture-signposting.md) |

@@ -26,4 +26,9 @@ Chỉ ra 2 đặc điểm biến đổi bao trùm nhất của toàn khu vực:
   - Flanked by residential complexes on both sides...
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [12. Task 1: Process (Quy Trình)](task1-process.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [14. Task 1: Mixed Chart (Biểu Đồ Kết Hợp)](task1-mixed.md) |

@@ -26,4 +26,9 @@ Sau khi đã hiểu 100% nội dung bài nghe qua bước Dictation, hãy chuy�
 - *Tác dụng kép*: Khi cơ miệng bạn phát âm chuẩn xác được tốc độ đó, đôi tai của bạn sẽ tự động nghe kịp người bản xứ khi đi thi thật!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [5. Top 80 từ sát thủ dễ sai chính tả (Spelling Demons)](listening-spelling-demons-100.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Lộ trình Listening từ Band 5.0 lên 7.5+](listening-progression-50-to-75.md) |

@@ -19,4 +19,9 @@ Trong câu hỏi Multiple Choice Part 3, người nói sẽ nhắc đến **tấ
 - Chỉ có một phương án là quyết định cuối cùng được cả hai thống nhất (*finally agreed upon*).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [13. Cẩm nang nhận diện các giọng Accent địa phương](listening-accents-guide.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [15. Part 3: Cảm xúc, thái độ ngầm & mỉa mai](listening-part3-tone-attitude-sarcasm.md) |

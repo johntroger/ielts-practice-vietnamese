@@ -17,4 +17,9 @@
 - Thân bài 2: Nêu bật các ưu điểm mang tính nền tảng, lâu dài (long-term sustainability) và tác động sâu rộng đến toàn xã hội.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [20. Task 2: Discuss Both Views](task2-discussion.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [22. Task 2: Problem & Solution](task2-problem-solution.md) |

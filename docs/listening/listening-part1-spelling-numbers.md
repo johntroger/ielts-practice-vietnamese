@@ -26,4 +26,9 @@ Người nói thường đưa ra một thông tin ban đầu, sau đó lập t�
 - Dấu hiệu nhận biết: *"Sorry, actually...", "Make that...", "Let me double check...", "Oh, I misspoke..."*.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](foundation-listening-band4-to-5-part1-mastery.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Chính Tả, Con Số & Đơn Vị Đo Lường](spelling-and-units.md) |

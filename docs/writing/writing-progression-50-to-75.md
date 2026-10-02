@@ -37,4 +37,9 @@ Cùng một luận điểm: *"Nếu chính phủ chi tiền làm đường và x
 - **Ngày 41 - 60 (Cán đích 7.5)**: Rèn luyện kỹ thuật Danh từ hóa; tập phản biện lại ý kiến đối lập (Counter-argument); bấm giờ viết hoàn chỉnh bài Task 1 (20 phút) và Task 2 (40 phút).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [4. Checklist 10 lỗi sai dậm chân ở Band 5.5 - 6.0](common-mistakes.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [6. Tiêu chí chấm điểm & Band Descriptors 2026](criteria-overview.md) |

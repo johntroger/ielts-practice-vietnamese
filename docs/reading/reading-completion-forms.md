@@ -21,4 +21,9 @@ Trước khi quét bài đọc, hãy dành 30 giây nhìn vào chỗ trống và
 - *Cách làm*: Tìm từ gốc trong bài trước -> Tra vào khung xem từ nào đồng nghĩa với từ gốc đó -> Điền chữ cái tương ứng.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [1. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](foundation-reading-band4-to-5-strategy.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Bộ quy tắc Paraphrasing kinh điển](reading-academic-paraphrasing.md) |

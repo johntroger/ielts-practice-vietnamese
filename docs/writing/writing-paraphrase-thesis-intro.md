@@ -33,4 +33,9 @@ Tuyệt đối không viết nước đôi hoặc chung chung (*'This essay will
   - *"This pressing challenge stems chiefly from [Nguyên nhân cốt lõi], and it can be effectively mitigated through [Giải pháp chủ chốt]."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [17. Cấu Trúc Đoạn Văn PEEL & Dàn Bài Task 2](task2-peel-structure.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [19. Task 2: Agree / Disagree](task2-opinion.md) |

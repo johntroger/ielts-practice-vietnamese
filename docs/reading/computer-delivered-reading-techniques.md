@@ -96,3 +96,10 @@ Passage 3 là phần thi khó nhất với lượng từ vựng học thuật d�
    - `within merely two weeks` = `after a short period`
 4. ➡️ **Khoanh ngay B trong chưa đầy 10 giây**, không bị phương án gây nhiễu A hay C đánh lừa!
 
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [18. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading-last-5-minutes-rescue.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [1. Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](../listening/foundation-listening-band4-to-5-part1-mastery.md) |

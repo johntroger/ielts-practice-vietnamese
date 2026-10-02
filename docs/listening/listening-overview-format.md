@@ -28,4 +28,9 @@ Bài thi IELTS Listening gồm **4 Parts (40 câu hỏi)**, phát một lần du
 - *Mẹo thi máy*: Sử dụng phím **Tab** để nhảy nhanh giữa các ô điền từ; dùng chuột bôi đen để highlight từ khóa trong câu hỏi; điều chỉnh âm lượng tai nghe ngay từ phần Soundcheck.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening-connected-speech-phonetics.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [20. Bí kíp thi máy (CD-IELTS): Phím tắt, Quản trị màn hình & Phục hồi khi lạc trôi](listening-cd-ielts-hacks-and-focus.md) |

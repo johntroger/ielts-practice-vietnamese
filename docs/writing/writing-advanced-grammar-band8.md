@@ -35,4 +35,9 @@ Thay vì dùng "If" thông thường, dùng cấu trúc đảo ngữ học thu�
   - *Ví dụ*: *"Had stringent zoning laws been enforced a decade ago, urban sprawl would not have engulfed surrounding agricultural reserves."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [26. Task 2: Đoạn Phản Biện & Bác Bỏ (8.0+)](writing-counter-argument-refutation.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [28. Task 2: Top 60 Academic Collocations theo chủ đề](writing-academic-collocations-topics.md) |

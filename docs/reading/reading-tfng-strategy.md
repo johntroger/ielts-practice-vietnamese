@@ -30,4 +30,9 @@
    - Câu hỏi T/F/NG **luôn đi theo thứ tự đoạn văn** (Chronological order). Nếu bạn tìm thấy câu 3 ở đoạn 2 và câu 5 ở đoạn 4, thì câu 4 bắt buộc phải nằm giữa đoạn 2 và đoạn 4. Nếu đọc kỹ đoạn 3 mà không thấy -> Khả năng cao câu 4 là NOT GIVEN.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [6. Phá Bẫy True / False / Not Given & Yes / No / Not Given](true-false-not-given.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [8. Tuyệt Chiêu Xử Lý Matching Headings](matching-headings.md) |

@@ -123,3 +123,10 @@ Cách trả lời này chứng minh cho giám khảo thấy khả năng **Critic
 - Cấu trúc tư duy phản biện 2 chiều: Mất đi sự tình cờ ấm áp (*serendipitous interactions, sterile residential blocks*) nhưng tăng cường tính gắn kết chức năng (*functional cohesion, mobilize communal support*).
 - Hệ thống Collocations C1 thượng thừa: *casual interactions, physical proximity, digital platforms, mobilize support*.
 
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [13. Ma trận khung trả lời so sánh đa chiều Part 3](speaking-part3-comparison-frameworks.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [15. Top 35+ thành ngữ Idiomatic tự nhiên Band 8.0+](speaking-idiomatic-lexicon-c1-c2.md) |

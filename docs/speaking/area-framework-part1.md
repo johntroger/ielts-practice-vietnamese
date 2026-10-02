@@ -105,3 +105,11 @@ flowchart LR
 - **Nguyên tắc 15 giây vàng:** Mỗi câu hỏi Part 1 chỉ cần trả lời trong khoảng **15 – 25 giây** (tương đương 2 – 4 câu).
 - **Khi giám khảo chuyển câu hỏi:** Nếu giám khảo gật đầu và chuyển câu hỏi tiếp theo trong khi bạn đang nói câu thứ 4, **đừng hoảng hốt!** Đó là tín hiệu giám khảo đã nghe đủ tiêu chí và muốn dành thời gian hỏi thêm câu mới để cho bạn thêm điểm.
 - **Nụ cười & Giao tiếp mắt (Eye contact):** Nói với thái độ tự tin, nhìn vào mắt giám khảo thay vì nhìn lên trần nhà hoặc nhìn xuống sàn để giữ vững ấn tượng ban đầu tốt đẹp.
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](foundation-speaking-band4-to-5-fluency.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [3. Khắc phục lỗi âm đuôi, trọng âm & ngữ điệu](speaking-pronunciation-intonation.md) |

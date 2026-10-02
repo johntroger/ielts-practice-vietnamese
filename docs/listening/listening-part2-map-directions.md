@@ -24,4 +24,9 @@
 Trong lúc người nói mô tả hành trình, hãy di chuyển con trỏ chuột theo từng bước chân của họ trên màn hình. Nếu mất dấu, hãy nhanh chóng tìm mốc vật thể tiếp theo được nhắc tên để tái định vị.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [9. Bản Đồ Map Labelling & Tín Hiệu Chuyển Ý Signposting](map-and-signposting.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Chiến thuật đoán số ít / số nhiều (-s)](listening-plural-s-grammar-rule.md) |

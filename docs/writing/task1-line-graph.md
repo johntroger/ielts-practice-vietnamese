@@ -30,4 +30,9 @@ Line Graph hầu như 100% là **Dynamic (biến thiên theo thời gian)**. M�
   - "In 2020, expenditure on renewables surpassed that of fossil fuels, becoming the dominant energy source."
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [7. Master Chiến Lược Toàn Diện Task 1](task1-mastery.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [9. Task 1: Bar Chart (Biểu Đồ Cột)](task1-bar-chart.md) |

@@ -25,4 +25,9 @@ Sai lầm chết người của 90% thí sinh là khi phát hiện mình vừa b
   3. Đặt con trỏ chuột ngay vào câu hỏi tiếp theo và bắt nhịp lại 100% năng lượng. Hãy nhớ: Mất 1 câu bạn vẫn có thể đạt 8.5 hoặc 9.0!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [19. Format thi Listening & Kỹ năng thi CD-IELTS](listening-overview-format.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [1. Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](../speaking/foundation-speaking-band4-to-5-fluency.md) |

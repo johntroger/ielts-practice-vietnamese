@@ -28,4 +28,9 @@
    - *Band 7.5*: **Increased life expectancy** has contributed directly to **the expansion of the aging population**.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [23. Task 2: Two-Part Question](task2-two-part.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [25. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](academic-hedging.md) |

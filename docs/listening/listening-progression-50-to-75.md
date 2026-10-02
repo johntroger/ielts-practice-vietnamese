@@ -40,4 +40,9 @@ Sai lầm của thí sinh Band 5.0 là cắm đầu nghe các bài lecture khoa 
   - Bám chặt các từ báo hiệu cấu trúc bài giảng (**Signpost words**): *"Turning now to the second aspect...", "In stark contrast to earlier findings...", "What surprised researchers most was..."*.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening-dictation-shadowing-method.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [8. Bẫy Distractor & Đổi Ý Trong Listening](distractor-traps.md) |

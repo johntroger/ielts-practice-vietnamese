@@ -19,4 +19,9 @@ Dạng đề: *"Discuss both views and give your opinion."*
   - Nêu rõ lập luận của bạn và lý do vì sao nó ưu việt hơn quan điểm ở Thân bài 1.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [19. Task 2: Agree / Disagree](task2-opinion.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [21. Task 2: Advantages vs Disadvantages](task2-advantages-disadvantages.md) |

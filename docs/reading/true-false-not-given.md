@@ -89,3 +89,11 @@ Ban ra đề Cambridge rất thích thay đổi các từ chỉ tần suất ho�
 1. **Làm câu hỏi theo đúng thứ tự xuất hiện:** 99% câu hỏi TFNG xuất hiện theo thứ tự diễn tiến từ trên xuống dưới của bài đọc (Order of text). Nếu câu 1 ở đoạn 1, câu 3 ở đoạn 3 thì câu 2 chắc chắn nằm ở đoạn 1 hoặc 2.
 2. **Không suy diễn kiến thức ngoài đời:** Chỉ căn cứ vào những gì in trên trang giấy. Dù ngoài đời sự thật đó đúng 100%, nhưng nếu bài đọc không đề cập ➡️ Vẫn là **NOT GIVEN**.
 3. **Không để trống:** Nếu phân vân 50/50 ở những giây cuối, hãy chọn đáp án có căn cứ nhất và tiếp tục tiến lên!
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [5. Quản Trị Thời Gian 15 - 20 - 25 Phút](time-management.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Chiến lược chuyên sâu TFNG chuẩn Cambridge](reading-tfng-strategy.md) |

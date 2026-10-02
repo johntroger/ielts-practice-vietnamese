@@ -33,4 +33,9 @@ Hãy chú ý kỹ động từ mà tác giả dùng để dẫn lời người k
 3. **Bước 3**: Tìm các tính từ và trạng từ biểu cảm của tác giả (*regrettably, fortunately, paradoxically, short-sighted, insightful*). Đó chính là chìa khóa vàng mở ra đáp án đúng!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [15. Đọc phân cụm nghĩa Chunking (300+ từ/phút)](reading-chunking-speed.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading-strategic-time-management.md) |

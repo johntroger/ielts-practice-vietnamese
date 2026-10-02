@@ -37,4 +37,9 @@ Giọng Úc rất hay xuất hiện trong Part 1 và Part 2 (đặt phòng tour 
   - Giọng Mỹ uốn lưỡi âm /r/ cực kỳ rõ (*car* -> /kɑːr/).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [12. Quy trình 30 giây đọc trước đề thi](listening-pre-prediction-protocol.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [14. Part 3: Trắc nghiệm học thuật & Bẫy đối kháng](listening-part3-academic-discussion.md) |

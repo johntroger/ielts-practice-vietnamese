@@ -107,3 +107,10 @@ Giả sử bạn đang viết dở Task 2 và nhận ra câu ví dụ của bạ
 >
 > *(Nếu thi giấy, việc đổi vị trí 2 câu như thế này sẽ làm bài thi bị tẩy xóa bẩn, gạch chéo nham nhở hoặc phải chép lại từ đầu làm mất ít nhất 3 - 5 phút).*
 
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [31. Giải mã nhận xét Giám khảo Cam 18-19 & Lỗi mất điểm 8.0+](cambridge-examiner-insights-band8.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [1. Chiến thuật Reading đạt Band 4.5 - 5.0: Ăn chắc Passage 1](../reading/foundation-reading-band4-to-5-strategy.md) |

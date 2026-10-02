@@ -23,4 +23,9 @@ Bảng số liệu (Table) thường chứa rất nhiều con số (15-30 số l
 - "Regarding the bottom of the spectrum, [Category Y] recorded negligible numbers across all surveyed demographics."
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [10. Task 1: Pie Chart (Biểu Đồ Tròn)](task1-pie-chart.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [12. Task 1: Process (Quy Trình)](task1-process.md) |

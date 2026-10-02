@@ -25,4 +25,9 @@ Trong Band Descriptors của Hội Đồng Khảo Thí Cambridge:
   > *"Admittedly, advocates of tuition-free tertiary education argue that it democratizes learning opportunities for underprivileged youths. Nonetheless, this viewpoint overlooks the severe fiscal burden imposed on national budgets and the inevitable dilution of educational quality. When governments subsidize 100% of university tuition, higher education institutions frequently suffer from underfunded laboratory facilities, outdated curricula, and uncompetitive faculty salaries. A more sustainable compromise, therefore, is targeted need-based scholarships rather than universal fee waivers."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [25. Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](academic-hedging.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [27. Task 2: 4 Cấu trúc ngữ pháp Band 8.0+](writing-advanced-grammar-band8.md) |

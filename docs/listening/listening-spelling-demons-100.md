@@ -36,4 +36,9 @@ IELTS Listening áp dụng quy tắc chấm tuyệt đối: **Sai 1 chữ cái =
 - Nghề nghiệp: **Architect**, **Technician**, **Pharmacist**, **Veterinarian** (bác sĩ thú y), **Receptionist**.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [4. Bẫy đơn vị đo lường & Tiền tệ quốc tế](listening-units-currency-traps.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [6. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening-dictation-shadowing-method.md) |

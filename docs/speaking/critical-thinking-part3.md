@@ -18,4 +18,9 @@ Khi gặp câu hỏi khó, hãy chia nhỏ vấn đề theo các cặp đối l�
 - **Khu vực thành thị vs Nông thôn (Urban vs Rural areas)**.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [11. Giữ giọng tự nhiên & Né bẫy học thuộc lòng](speaking-avoiding-memorization-trap.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [13. Ma trận khung trả lời so sánh đa chiều Part 3](speaking-part3-comparison-frameworks.md) |

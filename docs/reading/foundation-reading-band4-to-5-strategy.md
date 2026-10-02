@@ -86,3 +86,11 @@ Khi đã dành 35 phút cho Passage 1 và 18 phút cho Passage 2, bạn chỉ c�
 - **Đối với dạng True / False / Not Given:**
   - Nếu câu hỏi chứa các từ tuyệt đối hóa như: `always`, `never`, `all`, `only`, `completely` ➡️ Khả năng rất cao là **FALSE**.
   - Nếu câu hỏi nói về một giả định tương lai hoặc cảm xúc mà bài đọc không đề cập ➡️ Chọn **NOT GIVEN**.
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](../writing/cdi-and-one-skill-retake-strategy.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Điền từ: Summary, Note, Table & Flow-chart](reading-completion-forms.md) |

@@ -32,4 +32,9 @@ Các giám khảo Cambridge khi thiết kế câu hỏi luôn tuân thủ nguyê
 | **primary cause** | root catalyst / chief determinant / prime driving factor |
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [12. Diagram & Flow-Chart Labelling](reading-diagram-flowchart.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [14. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading-contextual-guessing-roots.md) |

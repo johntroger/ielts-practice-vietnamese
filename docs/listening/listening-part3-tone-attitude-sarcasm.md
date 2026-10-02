@@ -25,4 +25,9 @@ Người bản xứ Anh hiếm khi nói thẳng *"No, you are wrong"*. Họ luô
   - *"Well, that was certainly worth the wait!"* (khi kết quả thí nghiệm thất bại thảm hại).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [14. Part 3: Trắc nghiệm học thuật & Bẫy đối kháng](listening-part3-academic-discussion.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](cambridge-part3-consensus-traps.md) |

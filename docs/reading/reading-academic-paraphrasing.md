@@ -24,4 +24,9 @@ IELTS Reading thực chất là một bài kiểm tra khả năng nhận diện 
    - Câu hỏi: *nocturnal creatures* -> Bài đọc: *species that hunt actively during hours of darkness*.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [2. Điền từ: Summary, Note, Table & Flow-chart](reading-completion-forms.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [4. Lộ trình Reading từ Band 5.0 lên 7.5+](reading-progression-50-to-75.md) |

@@ -16,4 +16,9 @@ Bí quyết giúp bài nói không bị tắc ý giữa chừng là mở rộng 
 - Chỉ viết **từ khóa (keywords)** và **collocations đắt giá** theo sơ đồ dọc hoặc nhánh Mindmap để mắt có thể quét nhanh trong khi nói.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [5. Bản đồ 4 tiêu chí chấm điểm Speaking & Làm tròn](speaking-criteria-descriptors.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Tuyệt chiêu căn chuẩn nhịp độ 2 phút (Pacing)](speaking-part2-pacing-timing.md) |

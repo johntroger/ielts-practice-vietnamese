@@ -108,3 +108,11 @@ Chỉ cần viết sai 5-7 từ trong bài, điểm Lexical Resource sẽ bị k
 > [!TIP]
 > **Quy tắc vàng lên Band 5.0:**
 > "Viết đơn giản nhưng đúng ngữ pháp luôn luôn được điểm cao hơn viết phức tạp mà sai toe toét!"
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [🏠 Trang Chủ Cẩm Nang](../README.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [2. Chinh phục mốc Band 5.5 - 6.0: Xóa 5 lỗi chí mạng](band-55-foundation-guide.md) |

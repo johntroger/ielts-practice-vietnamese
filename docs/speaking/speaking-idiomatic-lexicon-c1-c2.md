@@ -34,4 +34,9 @@ Trong tiêu chí **Lexical Resource Band 7.0 - 8.0**, giám khảo yêu cầu th
 | **cross that bridge when I come to it** | Tới đâu hay tới đó, không lo xa | *"I haven’t planned for retirement yet; I will cross that bridge when I come to it."* |
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](examiner-red-flags-and-c1-collocations.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Tâm lý phòng thi & Khi bị giám khảo ngắt lời](speaking-examiner-interruption.md) |

@@ -24,4 +24,9 @@ Trong văn phong học thuật chuẩn quốc tế, không bao giờ khẳng đ�
    - *"Not only does automation elevate productivity, but it also alleviates the physical burden on industrial laborers."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [24. Bí quyết bứt phá từ Band 6.0 lên Band 7.5+](band-7plus-secrets.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [26. Task 2: Đoạn Phản Biện & Bác Bỏ (8.0+)](writing-counter-argument-refutation.md) |

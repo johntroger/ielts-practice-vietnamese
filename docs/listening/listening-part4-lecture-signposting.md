@@ -22,4 +22,9 @@ Khác với Part 1-3, Part 4 **phát liên tục một mạch 10 câu hỏi (t�
 Nếu bạn đang chờ đáp án cho câu 34 mà bỗng nhiên nghe thấy giảng viên đã nói sang nội dung của câu 36, **hãy lập tức gạch bỏ câu 34-35 và tập trung 100% tinh thần cho câu 36!** Tuyệt đối không tiếc nuối ngoái lại câu cũ.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [16. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](cambridge-part3-consensus-traps.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [18. Cẩm nang âm học: Nối âm, Nuốt âm & Giảm âm](listening-connected-speech-phonetics.md) |

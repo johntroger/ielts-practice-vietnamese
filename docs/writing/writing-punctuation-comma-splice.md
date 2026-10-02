@@ -26,4 +26,9 @@ Rất nhiều thí sinh viết: *"Governments should invest in clean energy, how
   - *"The study revealed a troubling phenomenon: urban youths spend an average of seven hours daily on sedentary screen entertainment."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [2. Chinh phục mốc Band 5.5 - 6.0: Xóa 5 lỗi chí mạng](band-55-foundation-guide.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [4. Checklist 10 lỗi sai dậm chân ở Band 5.5 - 6.0](common-mistakes.md) |

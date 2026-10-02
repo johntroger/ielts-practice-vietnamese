@@ -24,4 +24,9 @@ Trong một cụm 4-6 câu T/F/NG của Cambridge:
 - Đưa mắt quét nhanh đoạn văn tìm cụm từ có chứa mạo từ hoặc danh từ tương ứng để "bốc" vào ô trống.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [17. Quy tắc 90 giây & Buông bỏ chiến thuật](reading-strategic-time-management.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [19. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](computer-delivered-reading-techniques.md) |

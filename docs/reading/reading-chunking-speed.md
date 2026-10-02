@@ -28,4 +28,9 @@ Một cụm nghĩa tự nhiên thường rơi vào các cấu trúc ngữ pháp 
 - Áp dụng phương pháp này liên tục trong 7 ngày, tốc độ đọc của bạn sẽ tăng vọt từ 200 từ/phút lên **350+ từ/phút**, giúp bạn dư ít nhất 10-12 phút để rà soát đáp án!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [14. Đoán nghĩa từ qua gốc từ & ngữ cảnh](reading-contextual-guessing-roots.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Phân biệt ý kiến dẫn lại vs Quan điểm tác giả (Passage 3)](reading-passage3-author-stance.md) |

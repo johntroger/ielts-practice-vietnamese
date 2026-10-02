@@ -104,3 +104,11 @@ mindmap
 1. **Đưa ý kiến cá nhân (Personal Opinions):** Task 1 là bài báo cáo khách quan. Tuyệt đối không được giải thích lý do tại sao số liệu tăng/giảm nếu biểu đồ không nói (ví dụ: *"Oil increased because people bought more cars"* ➡️ **Bị trừ điểm TR nặng nề vì tự suy diễn**).
 2. **Quên đơn vị đo lường (Units):** Biểu đồ đo bằng *nghìn người (thousands)* hay *triệu tấn (million tonnes)* hay *phần trăm (%)*. Nếu viết thiếu đơn vị, số liệu hoàn toàn mất giá trị.
 3. **Sai thì thời gian (Tense Inconsistency):** Nếu biểu đồ nói về năm 1990 - 2020, toàn bộ bài phải dùng thì **Quá khứ đơn (Past Simple)**. Chỉ dùng Hiện tại hoàn thành hoặc cấu trúc tương lai (*is projected to, is predicted to*) khi có năm sau thời điểm hiện tại.
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [6. Tiêu chí chấm điểm & Band Descriptors 2026](criteria-overview.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [8. Task 1: Line Graph (Biểu Đồ Đường)](task1-line-graph.md) |

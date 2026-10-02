@@ -27,4 +27,9 @@ Pie chart dùng để biểu thị sự phân bổ các phần tạo nên một 
 - Chỉ ra thành phần có sự mở rộng (expansion) rõ rệt nhất và thành phần có sự thu hẹp (contraction) sâu nhất.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [9. Task 1: Bar Chart (Biểu Đồ Cột)](task1-bar-chart.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Task 1: Table (Bảng Số Liệu)](task1-table.md) |

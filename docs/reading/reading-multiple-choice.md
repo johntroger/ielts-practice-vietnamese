@@ -23,4 +23,9 @@
 - **Nhiễu loại 3 (Bẫy nửa vời - Half-truth)**: Vế đầu hoàn toàn đúng và trùng khớp bài đọc, nhưng vế sau lại gài thêm một tính từ hoặc từ hạn định sai lệch (vd: *caused immense damage* trong khi bài chỉ nói *minor inconvenience*).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [8. Tuyệt Chiêu Xử Lý Matching Headings](matching-headings.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [10. Matching Information & Matching Features](reading-matching-info-features.md) |

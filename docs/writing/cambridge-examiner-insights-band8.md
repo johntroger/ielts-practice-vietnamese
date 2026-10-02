@@ -107,3 +107,10 @@ flowchart TD
 3. **Câu 3 (Implementation - Làm như thế nào?):** Dùng *To achieve this* để dẫn giải giải pháp cụ thể: *integrate technical toolkits, analytical frameworks, and industry internships*.
 4. **Câu 4 (Impact - Hệ quả sâu sắc):** Dùng kỹ thuật tóm lược danh từ *Such pragmatic training* để tạo liên kết ẩn (Lexical cohesion), kết thúc bằng cụm từ vựng chuẩn C1/C2: *bridge the persistent gap, practical execution, adapt swiftly to automated workplace environments*.
 
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [30. Task 2: Tiêu chí CC 8.0+ Nghệ thuật liên kết ẩn](writing-cc-thematic-progression.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [32. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](cdi-and-one-skill-retake-strategy.md) |

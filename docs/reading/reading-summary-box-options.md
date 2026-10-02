@@ -24,4 +24,9 @@
     - -> Từ gốc là *prolong* tương đương với từ **extend** (Đáp án: B).
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [10. Matching Information & Matching Features](reading-matching-info-features.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [12. Diagram & Flow-Chart Labelling](reading-diagram-flowchart.md) |

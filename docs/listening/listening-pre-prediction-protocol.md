@@ -22,4 +22,9 @@ Trước khi băng bắt đầu phát mỗi Section, giọng đọc luôn thông
    - Gạch chân các từ không thể bị paraphrase đứng ngay trước hoặc sau chỗ trống: Năm lịch sử, tên riêng viết hoa, thuật ngữ khoa học, đơn vị đo lường. Khi nghe thấy người nói nhắc đến 'từ neo', bạn biết đáp án chuẩn bị xuất hiện trong 2-3 từ tiếp theo!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [11. Chiến thuật đoán số ít / số nhiều (-s)](listening-plural-s-grammar-rule.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [13. Cẩm nang nhận diện các giọng Accent địa phương](listening-accents-guide.md) |

@@ -32,4 +32,9 @@ Trong tiêu chí chấm **Lexical Resource Band 7.0 - 8.0+**, giám khảo Cambr
 - *Band 8.5*: *"The proportion of citizens opting for public transit almost doubled, surging from a quarter in 2010 to just under half by the end of the decade."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [14. Task 1: Mixed Chart (Biểu Đồ Kết Hợp)](task1-mixed.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [16. Task 1: Mốc thời gian dự báo tương lai](writing-task1-future-projections.md) |

@@ -23,4 +23,9 @@ Sai lầm lớn nhất của thí sinh là liệt kê từng cột một cách c
 - "Consumer spending on groceries represented the lion's share, easily outstripping all other expenditure categories combined."
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [8. Task 1: Line Graph (Biểu Đồ Đường)](task1-line-graph.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [10. Task 1: Pie Chart (Biểu Đồ Tròn)](task1-pie-chart.md) |

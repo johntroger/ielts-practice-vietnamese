@@ -18,4 +18,9 @@
 10. **Câu văn quá dài và rối rắm (Run-on sentences)**: Cố viết câu dài 4-5 dòng dẫn đến mất kiểm soát chủ ngữ - vị ngữ.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [3. Quy tắc dấu câu & Bẫy Comma Splice](writing-punctuation-comma-splice.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [5. Lộ trình nâng band Writing 5.0 lên 7.5+](writing-progression-50-to-75.md) |

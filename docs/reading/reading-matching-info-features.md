@@ -17,4 +17,9 @@
    - Đọc kỹ các động từ biểu đạt quan điểm quanh tên người: *argued that, discovered that, disputed the claim that, hypothesized that*.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [9. Chiến thuật cho Multiple Choice & Pick Multiple Options](reading-multiple-choice.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [11. Summary Completion có khung từ chọn sẵn](reading-summary-box-options.md) |

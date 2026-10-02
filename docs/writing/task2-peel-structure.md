@@ -79,3 +79,11 @@ flowchart TD
 4. **Đoạn 4: Kết bài (Conclusion - 2 câu ~ 35 từ):**
    - *Câu 1:* Khẳng định lại Thesis Statement bằng từ ngữ khác (không dùng lại từ ở Mở bài).
    - *Câu 2:* Nêu một đề xuất hoặc dự báo tương lai ngắn gọn. *(Tuyệt đối không đưa luận điểm mới vào Kết bài!)*.
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [16. Task 1: Mốc thời gian dự báo tương lai](writing-task1-future-projections.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [18. Task 2: 3 Công thức Paraphrase Mở bài & Thesis](writing-paraphrase-thesis-intro.md) |

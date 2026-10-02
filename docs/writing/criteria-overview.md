@@ -86,3 +86,11 @@ gantt
 - [ ] **Thesis Statement Task 2:** Người đọc có thấy rõ quan điểm của bạn ngay ở cuối đoạn Mở bài không?
 - [ ] **Chia thì:** Nếu biểu đồ có năm trong quá khứ (ví dụ 2010), tất cả động từ đã chia ở quá khứ đơn (increased, fell) chưa?
 - [ ] **Dấu câu:** Có câu nào nối tùy tiện bằng dấu phẩy mà thiếu liên từ (Comma Splice) không?
+
+---
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [5. Lộ trình nâng band Writing 5.0 lên 7.5+](writing-progression-50-to-75.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [7. Master Chiến Lược Toàn Diện Task 1](task1-mastery.md) |

@@ -31,4 +31,9 @@ Người nói phát âm bằng một đơn vị thông dụng, nhưng câu hỏi
 - **p** (Pence - đồng xu lẻ của Anh): *50p* hoặc *fifty pence*.
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [3. Chính Tả, Con Số & Đơn Vị Đo Lường](spelling-and-units.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [5. Top 80 từ sát thủ dễ sai chính tả (Spelling Demons)](listening-spelling-demons-100.md) |

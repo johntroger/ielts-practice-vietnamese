@@ -23,4 +23,9 @@ Trong phòng thi, âm /s/ ở cuối từ thường bị nuốt (Elision) hoặc
    - *Information, equipment, advice, furniture, luggage, research, evidence, traffic, accommodation*. Bất kể ngữ cảnh nào cũng KHÔNG được thêm -s!
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [10. Part 2: Định hướng không gian & Bản đồ](listening-part2-map-directions.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [12. Quy trình 30 giây đọc trước đề thi](listening-pre-prediction-protocol.md) |

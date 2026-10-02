@@ -33,4 +33,9 @@ Thay vì chỉ viết *"Car usage will increase to 60% in 2040"*, hãy đa dạn
 - *Mẫu chuẩn*: *"Overall, while reliance on traditional coal is expected to experience a precipitous downturn, renewable energy is projected to become the predominant power source by 2050."*
 
 ---
-*Tài liệu thuộc hệ thống Cẩm Nang Chiến Thuật IELTS Master (Đồng bộ trực tiếp qua GitHub & GitBook).*
+
+> 🚀 **Luyện tập thực chiến trên IELTS Studio:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành bài tập và nhận đánh giá chi tiết từ AI.
+
+| ⬅️ Bài trước | 📋 Mục Lục | ➡️ Bài tiếp theo |
+| :--- | :---: | ---: |
+| [15. Task 1: Ngôn ngữ biến động số liệu & Tỷ lệ xấp xỉ](writing-task1-data-proportions.md) | [📋 Mục Lục Cẩm Nang](../README.md) | [17. Cấu Trúc Đoạn Văn PEEL & Dàn Bài Task 2](task2-peel-structure.md) |
