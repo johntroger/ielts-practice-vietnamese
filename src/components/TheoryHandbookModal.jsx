@@ -602,7 +602,7 @@ export default function TheoryHandbookModal({
           </div>
           <div className="flex items-center space-x-2 shrink-0 ml-2">
             <a
-              href={import.meta.env.VITE_GITBOOK_URL || "https://johntroger.gitbook.io/ielts-practice-vietnamese/"}
+              href={import.meta.env.VITE_GITBOOK_URL || "https://vneconomics.gitbook.io/vneconomics-docs/"}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 hover:text-white text-xs font-semibold border border-sky-400/30 transition-colors cursor-pointer shrink-0"
