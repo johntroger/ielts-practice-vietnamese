@@ -62,6 +62,8 @@ export default function FeedbackModal({
   const [rewriteResults, setRewriteResults] = useState({});
   // ZPD Adaptive Pedagogical Focus State: 'all' | 'foundation' | 'advanced'
   const [pedagogicalFocus, setPedagogicalFocus] = useState('all');
+  // Band Stepping Rewrite Mode: '6.5' | '8.5'
+  const [selectedRewriteBand, setSelectedRewriteBand] = useState('8.5');
 
   const filteredCorrections = useMemo(() => {
     const list = evaluation.corrections || [];
@@ -903,28 +905,75 @@ export default function FeedbackModal({
                   </div>
                 </div>
 
-                {/* Band 8.5+ Rewrite */}
+                {/* Band Stepping Rewrite Column */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between px-1">
-                    <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                      Bản Nâng Cấp Band 8.5+
-                    </span>
+                  <div className="flex items-center justify-between px-1 flex-wrap gap-1.5">
+                    {/* Band Selection Buttons */}
+                    <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRewriteBand('6.5')}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                          selectedRewriteBand === '6.5'
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                        title="Bản mẫu Band 6.5 - 7.0: Ngữ pháp chuẩn hóa, câu cú rõ ràng, dễ áp dụng cho học viên đang ở band 5.0 - 6.0"
+                      >
+                        🌟 Band 6.5 - 7.0 (Vừa sức)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRewriteBand('8.5')}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                          selectedRewriteBand === '8.5'
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                        title="Bản mẫu Band 8.5+: Nâng cấp từ vựng học thuật C1/C2, ngữ pháp phức hợp, sắc thái nghĩa tinh tế"
+                      >
+                        💎 Band 8.5+ (Nâng cao)
+                      </button>
+                    </div>
+
                     <button
                       onClick={() => {
-                        if (evaluation.band8Rewrite) {
-                          navigator.clipboard.writeText(evaluation.band8Rewrite);
-                          alert('Đã sao chép bản nâng cấp Band 8.5+ vào clipboard!');
+                        const targetText = selectedRewriteBand === '6.5' 
+                          ? (evaluation.band65Rewrite || evaluation.band8Rewrite)
+                          : (evaluation.band8Rewrite || evaluation.band65Rewrite);
+                        if (targetText) {
+                          navigator.clipboard.writeText(targetText);
+                          alert(`Đã sao chép bản nâng cấp Band ${selectedRewriteBand === '6.5' ? '6.5 - 7.0' : '8.5+'} vào clipboard!`);
                         }
                       }}
-                      className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer flex items-center gap-1"
+                      className="text-[11px] font-bold px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition-colors cursor-pointer flex items-center gap-1 shrink-0"
                     >
                       <Check className="w-3 h-3 text-emerald-600" />
                       <span>Sao chép</span>
                     </button>
                   </div>
-                  <div className="p-4 sm:p-5 rounded-xl bg-emerald-50/30 border border-emerald-200 text-xs sm:text-sm text-slate-900 whitespace-pre-line leading-relaxed font-sans shadow-2xs h-full max-h-[60vh] overflow-y-auto">
-                    {evaluation.band8Rewrite || 'Đang cập nhật bài viết lại...'}
+
+                  {/* Pedagogical Commentary Banner */}
+                  <div className={`px-3 py-1.5 rounded-xl text-[11px] border font-medium transition-all ${
+                    selectedRewriteBand === '6.5'
+                      ? 'bg-blue-50/80 border-blue-200 text-blue-900'
+                      : 'bg-emerald-50/80 border-emerald-200 text-emerald-900'
+                  }`}>
+                    <span>
+                      {selectedRewriteBand === '6.5'
+                        ? '💡 Bản mẫu 6.5: Chuẩn hóa 100% ngữ pháp, phân đoạn rõ ràng, sử dụng câu ghép & câu phức thông dụng, dễ học và áp dụng ngay.'
+                        : '💡 Bản mẫu 8.5+: Nâng cấp từ vựng học thuật C1/C2 (AWL), ngữ pháp phức hợp, kiểm soát sắc thái nghĩa và cấu trúc câu linh hoạt.'}
+                    </span>
+                  </div>
+
+                  <div className={`p-4 sm:p-5 rounded-xl border text-xs sm:text-sm whitespace-pre-line leading-relaxed font-sans shadow-2xs h-full max-h-[55vh] overflow-y-auto transition-colors ${
+                    selectedRewriteBand === '6.5'
+                      ? 'bg-blue-50/30 border-blue-200 text-slate-900'
+                      : 'bg-emerald-50/30 border-emerald-200 text-slate-900'
+                  }`}>
+                    {selectedRewriteBand === '6.5'
+                      ? (evaluation.band65Rewrite || evaluation.band8Rewrite || 'Đang cập nhật bài viết lại...')
+                      : (evaluation.band8Rewrite || evaluation.band65Rewrite || 'Đang cập nhật bài viết lại...')}
                   </div>
                 </div>
               </div>

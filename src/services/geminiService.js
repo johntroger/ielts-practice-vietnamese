@@ -335,7 +335,9 @@ INSTRUCTIONS:
    - GRA (Grammatical Range & Accuracy)
 2. Calculate the Overall Band (standard IELTS rounding rule: average of 4 criteria, rounded to nearest 0.5).
 3. Extract specific sentence-level corrections (grammar errors, awkward collocations, word choice, punctuation, hedging, academic tone).
-4. Provide a full Band 8.5+ rewrite of the candidate's essay, preserving their exact original stance/viewpoint and structure, but elevating lexical precision and grammatical sophistication.
+4. Provide TWO tiered rewrites of the candidate's essay (Band Stepping):
+   - "band65Rewrite": A clean, accessible Band 6.5 - 7.0 version. Focus on 100% grammatical accuracy, clear cohesive progression, standard sentence variety, and natural B2/early-C1 vocabulary (easy for a Band 5.0-6.0 learner to adopt).
+   - "band8Rewrite": A sophisticated Band 8.5+ version elevating lexical precision, C1/C2 collocations, nuanced hedging, and complex syntax.
 5. Extract 5-8 golden academic collocations from the Band 8.5 rewrite with Vietnamese meanings.
 
 OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO backticks. Schema:
@@ -375,7 +377,8 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
       "explanation": "clear explanation in Vietnamese explaining why and how to improve"
     }
   ],
-  "band8Rewrite": "Full complete rewritten essay at Band 8.5+...",
+  "band65Rewrite": "Full complete rewritten essay at Band 6.5 - 7.0 (accessible, clear, error-free)...",
+  "band8Rewrite": "Full complete rewritten essay at Band 8.5+ (advanced academic sophistication)...",
   "keyVocabulary": [
     {
       "phrase": "collocation or academic idiom",

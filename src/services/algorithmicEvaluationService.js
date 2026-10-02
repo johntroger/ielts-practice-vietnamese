@@ -2873,6 +2873,11 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       : `It is widely argued that ${task?.prompt?.slice(0, 100) || 'this topic'} has ignited profound debate in contemporary society. While some individuals contend that traditional perspectives remain paramount, I firmly adhere to the view that progressive methodologies offer far superior societal advantages.\n\nOn the one hand, proponents of conventional approaches frequently cite proven reliability as their core justification. From this standpoint, established paradigms mitigate unforeseen socioeconomic hazards and preserve foundational stability. For instance, empirical evidence highlights how standardized frameworks cultivate structural discipline across institutions.\n\nOn the other hand, the compelling benefits of embracing modernization are indisputable. Firstly, adapting to technological and sociological evolutions fosters unprecedented productivity and unlocks innovative solutions to pressing issues. Furthermore, prioritizing contemporary strategies empowers future generations to navigate increasingly complex global challenges effectively.\n\nIn conclusion, although conventional practices provide undeniable initial safeguards, the multifaceted benefits of forward-looking alternatives are far more substantial. Consequently, proactive adoption should be championed across all societal sectors.`;
   }
 
+  // Band 6.5 Model Rewrite (Accessible, clean sentence variety, direct linkage)
+  let band65Rewrite = isTask1
+    ? `The provided chart presents information regarding ${task?.title || 'the given topic'} during the period shown.\n\nOverall, it is clear that there were significant changes over the period. While some figures increased, others experienced a downward trend.\n\nLooking at the main categories in more detail, the initial numbers started at a moderate level and then rose steadily. In contrast, other figures decreased gradually over time.\n\nIn summary, the data illustrates clear differences between the different groups, with the gap between them changing noticeably by the end of the period.`
+    : `Nowadays, there is a common debate about ${task?.prompt?.slice(0, 100) || 'this issue'}. While some people believe that traditional approaches are better, I agree that modern methods provide greater benefits.\n\nOn the one hand, traditional approaches have clear advantages. They have been tested over time and provide security and stability for individuals and organizations. For example, traditional education methods help students focus better in structured environments.\n\nOn the other hand, adopting new methods is essential for continuous progress. Firstly, modern technology and flexible approaches increase efficiency and help solve everyday problems much faster. Secondly, they prepare people better for future challenges in a changing world.\n\nIn conclusion, although traditional methods still hold value, I believe that adopting modern solutions is more beneficial overall.`;
+
   return {
     overallBand,
     evaluationMethod: 'algorithmic',
@@ -2905,6 +2910,7 @@ export function evaluateEssayAlgorithmically({ task, essayText }) {
       }
     },
     corrections,
+    band65Rewrite,
     band8Rewrite,
     keyVocabulary,
     paragraphAnalysis,
