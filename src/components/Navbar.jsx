@@ -111,11 +111,23 @@ export default function Navbar({
       }
     };
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsPracticeMenuOpen(false);
+        setIsToolsMenuOpen(false);
+        setIsProgressMenuOpen(false);
+        setMobileSkillMenuOpen(false);
+        setIsMobileDrawerOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleOutsideClick);
     document.addEventListener('touchstart', handleOutsideClick);
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
       document.removeEventListener('touchstart', handleOutsideClick);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -282,7 +294,9 @@ export default function Navbar({
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span>{s.label.replace('IELTS ', '')}</span>
+                    <span className={isCurrent ? 'inline' : 'hidden md:inline'}>
+                      {s.label.replace('IELTS ', '')}
+                    </span>
                   </button>
                 );
               })}
@@ -634,7 +648,7 @@ export default function Navbar({
             {/* Help Center (F1) - 100% Công khai, không cần đăng nhập */}
             <button
               onClick={doOpenFeaturesGuide}
-              className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer"
+              className="flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px]"
               title="Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"
             >
               <HelpCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
@@ -645,7 +659,7 @@ export default function Navbar({
             {/* Liên Hệ & Góp Ý - Đưa trực tiếp ra ngoài thanh Nav trên cùng */}
             <button
               onClick={doOpenContact}
-              className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group"
+              className="flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group min-h-[38px] sm:min-h-[40px]"
               title="Liên hệ & Góp ý với tác giả phát triển (Hỗ trợ 24/7)"
               aria-label="Liên hệ và góp ý"
             >
@@ -657,7 +671,7 @@ export default function Navbar({
             {/* API Key Indicator */}
             <button
               onClick={doOpenSettings}
-              className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
+              className={`flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px] ${
                 apiKey 
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
                   : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 animate-pulse'
@@ -712,8 +726,14 @@ export default function Navbar({
 
       {/* MOBILE DRAWER */}
       {isMobileDrawerOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
-          <div className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto overscroll-contain flex flex-col justify-between pb-[max(2rem,env(safe-area-inset-bottom))] animate-in slide-in-from-right duration-250 ease-out">
+        <div 
+          className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200 cursor-pointer"
+          onClick={() => setIsMobileDrawerOpen(false)}
+        >
+          <div 
+            className="w-4/5 max-w-sm bg-white h-full shadow-2xl p-5 overflow-y-auto overscroll-contain flex flex-col justify-between pb-[max(2rem,env(safe-area-inset-bottom))] animate-in slide-in-from-right duration-250 ease-out cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="space-y-4">
               
               {/* User Bar in Drawer */}
