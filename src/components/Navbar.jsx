@@ -605,7 +605,7 @@ export default function Navbar({
                         <Mail className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Liên Hệ & Góp Ý</div>
+                        <div className="font-bold">Gửi góp ý</div>
                         <div className="text-[10px] text-slate-400 font-normal">Hỗ trợ kỹ thuật và góp ý phát triển</div>
                       </div>
                     </button>
@@ -633,7 +633,7 @@ export default function Navbar({
               aria-label="Liên hệ và góp ý"
             >
               <Mail className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
-              <span className="hidden xl:inline text-[11px] font-bold">Liên Hệ & Góp Ý</span>
+              <span className="hidden xl:inline text-[11px] font-bold">Gửi góp ý</span>
             </button>
 
             {/* API Key Indicator */}
@@ -1022,7 +1022,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Mail className="w-4 h-4 text-rose-600" />
-                      <span>Liên Hệ & Góp Ý</span>
+                      <span>Gửi góp ý</span>
                     </div>
                     <span className="text-[10px] text-slate-400 font-medium">Hỗ trợ 24/7</span>
                   </button>
