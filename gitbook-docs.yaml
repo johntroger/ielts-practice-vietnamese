@@ -5,6 +5,7 @@ site:
     - type: space
       key: ielts-handbook
       title: IELTS Master Handbook
-      path: ""
+      path: docs
+      default: true
       content:
         directory: ./docs
