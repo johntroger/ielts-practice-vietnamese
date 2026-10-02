@@ -61,7 +61,7 @@ Dưới đây là bản phân rã chi tiết thang chấm chính thức của Ca
 
 ---
 
-## ⏱️ 4. Phân Bổ Thời Gian Vàng 60 Phút Thực Chiến
+## 4. Phân Bổ Thời Gian Vàng 60 Phút Thực Chiến
 
 ```mermaid
 gantt
