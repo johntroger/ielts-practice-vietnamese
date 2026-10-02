@@ -46,6 +46,7 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 - [Chiến thuật Reading Band 4.5 – 5.0: Ăn chắc Passage 1 & Dò từ khóa](reading/foundation-reading-band4-to-5-strategy.md)
 - [Luyện Listening Band 4.0 lên 5.0: Ăn trọn điểm Part 1 & Bẫy chữ cái](listening/foundation-listening-band4-to-5-part1-mastery.md)
 - [Luyện Speaking Band 4.0 lên 5.0: Phá bỏ nỗi sợ nói & Khung 2 câu](speaking/foundation-speaking-band4-to-5-fluency.md)
+- [Cẩm nang 10 chủ đề Part 1 kinh điển & Bộ Collocations tự nhiên](speaking/speaking-part1-top-topics-and-collocations.md)
 
 ### 2. Dành Cho Mục Tiêu Band 6.0 – 6.5:
 - [Master Chiến Lược Toàn Diện Task 1](writing/task1-mastery.md) & [Cấu Trúc Đoạn Văn PEEL Task 2](writing/task2-peel-structure.md)
@@ -54,7 +55,7 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 - [Quản trị thời gian 15-20-25m Reading](reading/time-management.md) & [Tuyệt chiêu Matching Headings](reading/matching-headings.md)
 - [Chiến lược thứ tự làm bài (In-order vs Out-of-order) & 6 Lưu ý phòng thi](reading/reading-order-strategy-and-golden-rules.md)
 - [Bẫy Distractor trong Listening](listening/distractor-traps.md) & [Bản đồ Map Labelling](listening/map-and-signposting.md)
-- [Kỹ thuật Storytelling Dòng Thời Gian PPF Part 2](speaking/storytelling-part2.md)
+- [Khung Kể Chuyện STAR Làm Chủ 2 Phút Part 2](speaking/speaking-part2-star-storytelling-method.md) & [Kỹ thuật Storytelling PPF](speaking/storytelling-part2.md)
 
 ### 3. Dành Cho Mục Tiêu Bứt Phá Band 7.5 – 8.5+:
 - [Bẻ bẫy đề So sánh & So sánh nhất ("The Best Way") Task 2](writing/writing-task2-comparative-superlative-traps.md)
@@ -62,6 +63,8 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 - [Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+](writing/academic-hedging.md)
 - [Phân biệt ý kiến dẫn lại vs Quan điểm tác giả Passage 3](reading/reading-passage3-author-stance.md)
 - [Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Listening Part 3](listening/cambridge-part3-consensus-traps.md)
+- [Kỹ thuật chuyển dịch từ cá nhân sang vĩ mô Micro-to-Macro Shift](speaking/speaking-part3-micro-to-macro-social-expansion.md)
+- [Bộ Phrasal Verbs & Cụm từ tự nhiên C1/C2 thay thế Idioms sáo rỗng](speaking/speaking-natural-phrasal-verbs-collocations.md)
 - [Cờ đỏ phòng thi Speaking & 30 Collocations C1/C2 tự nhiên](speaking/examiner-red-flags-and-c1-collocations.md)
 
 ### 4. Kỹ Năng Khảo Thí Số & Thi Máy Tính (CDI) 2026:

@@ -151,9 +151,11 @@ IELTS Speaking là cuộc phỏng vấn trực tiếp 1-1 với giám khảo b�
 * **Part 1 (4 – 5 phút): Phản xạ các chủ đề đời thường quen thuộc:**
   * [Xóa nỗi sợ nói & Khung phản xạ 2 câu cho người mới bắt đầu](speaking/foundation-speaking-band4-to-5-fluency.md).
   * [Khung A.R.E.A trả lời tự nhiên Part 1](speaking/area-framework-part1.md) (Answer - Reason - Example - Alternative).
+  * [Cẩm nang 10 chủ đề Part 1 kinh điển & Bộ Collocations tự nhiên](speaking/speaking-part1-top-topics-and-collocations.md).
   * [Khắc phục lỗi nuốt âm đuôi, sai trọng âm & ngữ điệu đều đều](speaking/speaking-pronunciation-intonation.md).
 
 * **Part 2 (3 – 4 phút): Thuyết trình độc thoại 2 phút về trải nghiệm cá nhân:**
+  * [Khung Kể Chuyện STAR (Situation – Task – Action – Result) Làm Chủ 2 Phút](speaking/speaking-part2-star-storytelling-method.md).
   * [Kỹ thuật Storytelling Dòng Thời Gian PPF (Past – Present – Future)](speaking/storytelling-part2.md).
   * [Tuyệt chiêu căn chuẩn nhịp độ 2 phút (Pacing)](speaking/speaking-part2-pacing-timing.md).
   * [5 Câu chuyện mẫu vạn năng ứng dụng cho mọi chủ đề Part 2](speaking/speaking-5-universal-archetypes.md).
@@ -161,7 +163,9 @@ IELTS Speaking là cuộc phỏng vấn trực tiếp 1-1 với giám khảo b�
 
 * **Part 3 (4 – 5 phút): Thảo luận chiều sâu & Phản biện xã hội:**
   * [Tư duy phản biện & Ma trận PEEL trong Part 3](speaking/critical-thinking-part3.md).
+  * [Kỹ thuật chuyển dịch từ cá nhân sang vĩ mô Micro-to-Macro Shift](speaking/speaking-part3-micro-to-macro-social-expansion.md).
   * [Ma trận khung trả lời so sánh đa chiều Part 3](speaking/speaking-part3-comparison-frameworks.md) (So sánh Quá khứ vs Tương lai, Nhóm tuổi, Giới tính).
+  * [Bộ Phrasal Verbs & Cụm từ tự nhiên C1/C2 thay thế Idioms sáo rỗng](speaking/speaking-natural-phrasal-verbs-collocations.md).
   * [Cờ đỏ phòng thi & 30 Collocations C1/C2 học thuật](speaking/examiner-red-flags-and-c1-collocations.md).
   * [Top 35+ Thành ngữ Idiomatic tự nhiên Band 8.0+](speaking/speaking-idiomatic-lexicon-c1-c2.md).
 
