@@ -15,7 +15,8 @@ import {
   FolderKanban,
   ShieldAlert,
   Sliders,
-  Pill
+  Pill,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function WritingSubHeaderToolbar({
@@ -44,6 +45,34 @@ export default function WritingSubHeaderToolbar({
   toggleSlimHeader
 }) {
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+
+  // Daily Missions Progress Tracker
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const hasWrittenToday = (() => {
+    try {
+      const subs = JSON.parse(localStorage.getItem('ielts_submissions_history') || '[]');
+      return Array.isArray(subs) && subs.some(s => (s.timestamp || s.date || '').startsWith(todayStr));
+    } catch {
+      return false;
+    }
+  })();
+  const hasPrescriptionToday = (() => {
+    try {
+      const history = JSON.parse(localStorage.getItem('ielts_prescription_history') || '{}');
+      return Boolean(history[todayStr]?.completed);
+    } catch {
+      return false;
+    }
+  })();
+  const hasVocabToday = (() => {
+    try {
+      const vocab = JSON.parse(localStorage.getItem('ielts_vocab_notebook') || '[]');
+      return Array.isArray(vocab) && vocab.length > 0;
+    } catch {
+      return false;
+    }
+  })();
+  const missionsDone = [hasWrittenToday, hasPrescriptionToday, hasVocabToday].filter(Boolean).length;
 
   return (
     <div className={`bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
@@ -324,6 +353,41 @@ export default function WritingSubHeaderToolbar({
                       <span>Chuỗi học tập</span>
                     </div>
                     <span className="font-black text-xs text-orange-700">{streakCount} ngày liên tục</span>
+                  </div>
+
+                  {/* Daily Mission Progress */}
+                  <div className="mt-1.5 p-2 bg-gradient-to-br from-indigo-50/70 to-blue-50/70 rounded-xl border border-indigo-100/80 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-indigo-900">
+                      <div className="flex items-center space-x-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>Nhiệm Vụ Hôm Nay</span>
+                      </div>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded font-black ${
+                        missionsDone === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'
+                      }`}>
+                        {missionsDone}/3 Đạt
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-[10px] text-slate-600 font-medium">
+                      <div className="flex items-center justify-between">
+                        <span>1. Viết bài / Dàn ý hôm nay</span>
+                        <span className={hasWrittenToday ? "text-emerald-700 font-bold" : "text-slate-400"}>
+                          {hasWrittenToday ? "✓ Xong" : "0/1"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>2. Uống đơn thuốc lỗi SRS</span>
+                        <span className={hasPrescriptionToday ? "text-emerald-700 font-bold" : "text-slate-400"}>
+                          {hasPrescriptionToday ? "✓ Xong" : "0/1"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>3. Ôn tập từ vựng & bẫy lỗi</span>
+                        <span className={hasVocabToday ? "text-emerald-700 font-bold" : "text-slate-400"}>
+                          {hasVocabToday ? "✓ Xong" : "0/1"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>

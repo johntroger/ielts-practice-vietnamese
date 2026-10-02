@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Flame, Target, ChevronDown, BookOpen, GraduationCap, Maximize2, Minimize2, Keyboard } from 'lucide-react';
 import Navbar from './components/Navbar';
-import SplitPane from './components/SplitPane';
-import PromptPane from './components/PromptPane';
-import EditorPane from './components/EditorPane';
-import TimerBar from './components/TimerBar';
-import WritingSubHeaderToolbar from './components/WritingSubHeaderToolbar';
+import WritingWorkspace from './components/writing/WritingWorkspace';
 // Lazy-loaded workspaces and modals for optimal initial bundle performance
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
@@ -35,7 +31,6 @@ const ContactModal = React.lazy(() => import('./components/ContactModal'));
 const AIEvaluationProgressModal = React.lazy(() => import('./components/AIEvaluationProgressModal'));
 const OnboardingModal = React.lazy(() => import('./components/OnboardingModal'));
 const SpeakingResultModal = React.lazy(() => import('./components/speaking/SpeakingResultModal'));
-const SlideOverToolPanel = React.lazy(() => import('./components/SlideOverToolPanel'));
 const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
 const CDIDisplayModal = React.lazy(() => import('./components/CDIDisplayModal'));
 const DailyErrorPrescriptionModal = React.lazy(() => import('./components/DailyErrorPrescriptionModal'));
@@ -62,7 +57,7 @@ import {
 } from './services/dataSyncService';
 
 import { INITIAL_TASKS, COMMUNITY_DEFAULT_TASKS } from './data/sampleTasks';
-import { evaluateEssay, brainstormIdeas } from './services/geminiService';
+import { evaluateEssay } from './services/geminiService';
 import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationService';
 import { countWords } from './utils/textAnalytics';
 import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
@@ -294,7 +289,6 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [selectedHistorySpeakingSub, setSelectedHistorySpeakingSub] = useState(null);
-  const [slideOverConfig, setSlideOverConfig] = useState({ isOpen: false, tab: 'paraphrase' });
 
   // Phase 1 UX: Focus Mode & Keyboard Shortcuts
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
@@ -399,8 +393,6 @@ export default function App() {
   // AI Operation States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
-  const [isBrainstorming, setIsBrainstorming] = useState(false);
-  const [brainstormResult, setBrainstormResult] = useState('');
 
   // 3. Current Task & Text Derivations
   const currentTask = allTasks.find(t => t.id === currentTaskId) || allTasks[0];
@@ -691,34 +683,8 @@ export default function App() {
     }
   };
 
-  const handleInsertSlideOverText = (text) => {
-    const current = essays[currentTaskId] || '';
-    const updated = current ? `${current.trim()} ${text} ` : `${text} `;
-    handleEssayChange(updated);
-  };
-
   const handleOutlineChange = (text) => {
     setOutlines(prev => ({ ...prev, [currentTaskId]: text }));
-  };
-
-  const handleBrainstorm = async () => {
-    if (!apiKey) {
-      setIsSettingsOpen(true);
-      return;
-    }
-    setIsBrainstorming(true);
-    try {
-      const res = await brainstormIdeas({
-        promptText: currentTask.prompt,
-        apiKey,
-        model
-      });
-      setBrainstormResult(res);
-    } catch (err) {
-      alert(err.message || 'Lỗi gợi ý ý tưởng.');
-    } finally {
-      setIsBrainstorming(false);
-    }
   };
 
   const handleSubmitEssay = async (method = 'ai') => {
@@ -1313,96 +1279,59 @@ export default function App() {
         </div>
       ) : (
         <WorkspaceErrorBoundary skillName="IELTS Writing" emergencyData={essays[currentTaskId] || ''}>
-          <>
-            {/* Writing Workspace Sub-Header Toolbar (Modularized) */}
-            <WritingSubHeaderToolbar
-              currentTask={currentTask}
-              streakCount={streakCount}
-              targetBand={targetBand}
-              masteredIds={masteredIds}
-              onToggleMastered={handleToggleMastered}
-              onOpenLibrary={() => setIsLibraryOpen(true)}
-              onOpenGenerator={() => setIsGeneratorOpen(true)}
-              onOpenOnboarding={() => setIsOnboardingOpen(true)}
-              onOpenTheory={() => setIsTheoryOpen(true)}
-              onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
-              onOpenPrescription={() => setIsPrescriptionOpen(true)}
-              mistakesCount={mistakes.length}
-              isFocusMode={isFocusMode}
-              toggleFocusMode={toggleFocusMode}
-              onOpenShortcuts={() => setIsShortcutsOpen(true)}
-              weeklyWordProgress={weeklyWordProgress}
-              currentWeekWords={currentWeekWords}
-              weeklyWordTarget={weeklyWordTarget}
-              onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
-              cdiFontSize={cdiFontSize}
-              cdiContrast={cdiContrast}
-              isSlimHeader={isSlimHeader}
-              toggleSlimHeader={toggleSlimHeader}
-            />
-
-          {/* Writing SplitPane Workspace */}
-          <SplitPane
-            defaultSplit={46}
-            leftPane={
-              <PromptPane
-                task={currentTask}
-                mode={mode}
-                onBrainstorm={handleBrainstorm}
-                isBrainstorming={isBrainstorming}
-                brainstormResult={brainstormResult}
-                onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
-                apiKey={apiKey}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                isMastered={masteredIds.includes(currentTask?.id)}
-                onToggleMastered={() => handleToggleMastered(currentTask?.id)}
-                onOpenLibrary={() => setIsLibraryOpen(true)}
-              />
-            }
-            rightPane={
-              <EditorPane
-                essayText={currentEssay}
-                setEssayText={handleEssayChange}
-                outlineText={currentOutline}
-                setOutlineText={handleOutlineChange}
-                task={currentTask}
-                mode={mode}
-                timeElapsed={timeElapsed}
-                lastSaved={lastSaved}
-                onOpenParaphrase={() => setSlideOverConfig({ isOpen: true, tab: 'paraphrase' })}
-                onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
-                onSubmitEssay={handleSubmitEssay}
-                onEditorFocus={() => {
-                  if (!isSlimHeader && typeof window !== 'undefined' && window.innerHeight < 950) {
-                    setIsSlimHeader(true);
-                  }
-                }}
-              />
-            }
-          />
-
-          {/* Writing TimerBar */}
-          <TimerBar
+          <WritingWorkspace
+            currentTask={currentTask}
+            currentEssay={currentEssay}
+            onEssayChange={handleEssayChange}
+            currentOutline={currentOutline}
+            onOutlineChange={handleOutlineChange}
+            mode={mode}
+            apiKey={apiKey}
+            model={model}
+            timeElapsed={timeElapsed}
             timeRemaining={timeRemaining}
-            totalTime={(currentTask?.timeLimit || 40) * 60}
-            isRunning={isTimerRunning}
+            isTimerRunning={isTimerRunning}
             onToggleTimer={() => setIsTimerRunning(!isTimerRunning)}
             onResetTimer={() => {
               setTimeRemaining((currentTask?.timeLimit || 40) * 60);
               setTimeElapsed(0);
               setIsTimerRunning(false);
             }}
-            onSubmitEssay={handleSubmitEssay}
             isSubmitting={isSubmitting}
-            wordCount={countWords(currentEssay)}
-            minWords={currentTask.minWords}
-            apiKey={apiKey}
+            onSubmitEssay={handleSubmitEssay}
+            lastSaved={lastSaved}
+            streakCount={streakCount}
+            targetBand={targetBand}
+            masteredIds={masteredIds}
+            onToggleMastered={handleToggleMastered}
+            onOpenLibrary={() => setIsLibraryOpen(true)}
+            onOpenGenerator={() => setIsGeneratorOpen(true)}
+            onOpenOnboarding={() => setIsOnboardingOpen(true)}
+            onOpenTheory={() => setIsTheoryOpen(true)}
+            onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
+            onOpenPrescription={() => setIsPrescriptionOpen(true)}
+            onOpenShortcuts={() => setIsShortcutsOpen(true)}
+            onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
+            onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
             onOpenSettings={() => setIsSettingsOpen(true)}
-            essayText={currentEssay}
-            currentTask={currentTask}
             mistakes={mistakes}
+            isFocusMode={isFocusMode}
+            toggleFocusMode={toggleFocusMode}
+            weeklyWordProgress={weeklyWordProgress}
+            currentWeekWords={currentWeekWords}
+            weeklyWordTarget={weeklyWordTarget}
+            cdiFontSize={cdiFontSize}
+            cdiContrast={cdiContrast}
+            isSlimHeader={isSlimHeader}
+            toggleSlimHeader={toggleSlimHeader}
+            setIsSlimHeader={setIsSlimHeader}
+            vocabList={vocabList}
+            onAddVocab={(v) => {
+              setVocabList(prev => [v, ...prev]);
+              if (currentUser) saveUserVocabItem(currentUser.id, v);
+            }}
+            currentUser={currentUser}
           />
-        </>
         </WorkspaceErrorBoundary>
       )}
 
@@ -1910,20 +1839,6 @@ export default function App() {
             if (newBand) setTargetBand(newBand);
             if (newKey) setApiKey(newKey);
           }}
-        />
-
-        {/* Side Panel Tool for Paraphrase & Vocab */}
-        <SlideOverToolPanel
-          isOpen={slideOverConfig.isOpen}
-          onClose={() => setSlideOverConfig(prev => ({ ...prev, isOpen: false }))}
-          initialTab={slideOverConfig.tab}
-          vocabList={vocabList}
-          onInsertText={handleInsertSlideOverText}
-          onAddVocab={(v) => {
-            setVocabList(prev => [v, ...prev]);
-            if (currentUser) saveUserVocabItem(currentUser.id, v);
-          }}
-          promptText={currentTask?.prompt}
         />
 
         {/* Daily Error Prescription Modal (Spaced Repetition Micro-Drill) */}
