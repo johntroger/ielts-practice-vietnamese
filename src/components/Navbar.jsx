@@ -625,15 +625,15 @@ export default function Navbar({
               <kbd className="hidden min-[1700px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
-            {/* Liên Hệ & Góp Ý - Đưa trực tiếp ra ngoài thanh Nav trên cùng */}
+            {/* Gửi Góp Ý - Icon gọn gàng trên tablet, nhãn chữ mở rộng trên màn hình lớn >= 1600px */}
             <button
               onClick={doOpenContact}
               className="flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group min-h-[38px] sm:min-h-[40px]"
-              title="Liên hệ & Góp ý với tác giả phát triển (Hỗ trợ 24/7)"
-              aria-label="Liên hệ và góp ý"
+              title="Gửi góp ý với tác giả phát triển (Hỗ trợ 24/7)"
+              aria-label="Gửi góp ý"
             >
               <Mail className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
-              <span className="hidden xl:inline text-[11px] font-bold">Gửi góp ý</span>
+              <span className="hidden min-[1600px]:inline text-[11px] font-bold">Gửi góp ý</span>
             </button>
 
             {/* API Key Indicator */}
