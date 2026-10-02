@@ -598,7 +598,7 @@ export default function Navbar({
                       </div>
                     </button>
                     <a
-                      href="https://vneconomics.gitbook.io/vneconomics-docs/features"
+                      href="https://vneconomics.gitbook.io/vneconomics-docs/huong-dan-su-dung-and-tinh-nang-he-thong/features"
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setIsProgressMenuOpen(false)}

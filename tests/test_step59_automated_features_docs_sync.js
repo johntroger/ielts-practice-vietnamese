@@ -118,8 +118,8 @@ console.log('    ✅ docs/SUMMARY.md contains all feature guide links with verif
 console.log('  ▶ 6. Verifying getFeatureGitBookUrl deep linking resolver...');
 import { getFeatureGitBookUrl, GITBOOK_FEATURES_BASE_URL, GITBOOK_CATEGORY_SLUGS } from '../src/core/featureRegistry.js';
 
-assert.strictEqual(getFeatureGitBookUrl(), GITBOOK_FEATURES_BASE_URL, 'Default url must return features base url');
-assert.strictEqual(getFeatureGitBookUrl('all'), GITBOOK_FEATURES_BASE_URL, "'all' category must return features base url");
+assert.strictEqual(getFeatureGitBookUrl(), `${GITBOOK_FEATURES_BASE_URL}/features`, 'Default url must return features hub url');
+assert.strictEqual(getFeatureGitBookUrl('all'), `${GITBOOK_FEATURES_BASE_URL}/features`, "'all' category must return features hub url");
 
 Object.entries(GITBOOK_CATEGORY_SLUGS).forEach(([catId, slug]) => {
   const categoryUrl = getFeatureGitBookUrl(catId);
@@ -146,7 +146,7 @@ const navbarCode = fs.readFileSync(path.resolve('src/components/Navbar.jsx'), 'u
 assert(modalCode.includes('getFeatureGitBookUrl'), 'FeaturesGuideModal must import getFeatureGitBookUrl');
 assert(modalCode.includes('GitBook Docs'), 'FeaturesGuideModal header must include GitBook Docs button');
 assert(modalCode.includes('Đọc Trên GitBook'), 'FeaturesGuideModal detail must include Đọc Trên GitBook button');
-assert(navbarCode.includes('vneconomics.gitbook.io/vneconomics-docs/features'), 'Navbar must link to GitBook features docs');
+assert(navbarCode.includes('huong-dan-su-dung-and-tinh-nang-he-thong/features'), 'Navbar must link to GitBook features docs');
 console.log('    ✅ UI components correctly integrate GitBook deep links.');
 
 console.log('🎉 Step 59 Test Suite PASSED: Automated Features Documentation & GitBook Sync 100% VERIFIED!\n');
