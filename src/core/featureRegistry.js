@@ -627,8 +627,56 @@ export const FEATURE_REGISTRY = [
     usageGuide: 'Nhấn F1 tại bất kỳ đâu để xem danh sách phím tắt đầy đủ.',
     quickAction: {
       type: 'open_modal',
-      target: 'featuresGuide',
+      target: 'shortcuts',
       label: 'Xem Danh Sách Phím Tắt'
+    }
+  },
+  {
+    id: 'feat-help-center-hub',
+    version: 'v2.5',
+    status: 'stable',
+    badge: 'Trợ Giúp',
+    category: 'shortcuts_ux',
+    targetSkills: ['writing', 'reading', 'speaking', 'listening'],
+    title: 'Trung Tâm Trợ Giúp & Tra Cứu Tính Năng Toàn Năng (Help Center)',
+    shortDesc: 'Tìm kiếm nhanh mọi tính năng, phím tắt, cẩm nang sử dụng và nhật ký cập nhật hệ thống với phím tắt F1.',
+    icon: 'Compass',
+    shortcut: 'F1 / Alt + H',
+    updatedAt: '2026-09-24',
+    highlights: [
+      'Tìm kiếm Spotlight thời gian thực theo từ khóa tiếng Việt và tiếng Anh.',
+      '1-Click Action Launcher: Mở trực tiếp các công cụ luyện tập từ kết quả tìm kiếm.',
+      'Xem nhật ký phiên bản và hướng dẫn chi tiết từng tính năng.'
+    ],
+    usageGuide: 'Nhấn F1 hoặc bấm biểu tượng Trợ Giúp trên thanh Navbar để mở trung tâm tra cứu.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'featuresGuide',
+      label: 'Mở Trung Tâm Trợ Giúp'
+    }
+  },
+  {
+    id: 'feat-cdi-display-settings',
+    version: 'v3.0',
+    status: 'new',
+    badge: 'CDI Chuẩn',
+    category: 'shortcuts_ux',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    title: 'Tùy Chỉnh Hiển Thị & Tương Phản Chuẩn Thi CDI (CDI Display)',
+    shortDesc: 'Cấu hình cỡ chữ (Standard, Large, Extra Large) và bảng màu tương phản (Đen/Trắng, Trắng/Đen, Xanh/Vàng nhạt) chuẩn phòng thi máy tính IDP/BC.',
+    icon: 'Smartphone',
+    shortcut: null,
+    updatedAt: '2026-09-24',
+    highlights: [
+      '3 cấp độ cỡ chữ: Chuẩn (Standard), Lớn (Large), Siêu lớn (Extra Large).',
+      '4 chế độ tương phản: Đen/Trắng, Trắng/Đen, Xanh/Vàng nhạt bảo vệ thị lực theo chuẩn CDI Cambridge.',
+      'Đồng bộ giao diện trên toàn bộ các kỹ năng phòng thi máy tính.'
+    ],
+    usageGuide: 'Nhấp vào nút "Màn Hình CDI" trên thanh công cụ hoặc menu để mở giao diện cài đặt.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'cdiDisplay',
+      label: 'Mở Cài Đặt Hiển Thị CDI'
     }
   },
   {

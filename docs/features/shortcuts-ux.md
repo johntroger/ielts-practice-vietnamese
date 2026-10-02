@@ -1,6 +1,6 @@
 # ⌨️ Giao Diện Tập Trung & Bảng Phím Tắt Toàn Năng
 
-> **Chuyên mục**: `shortcuts_ux` | **Số lượng**: **3 tính năng**  
+> **Chuyên mục**: `shortcuts_ux` | **Số lượng**: **5 tính năng**  
 > **Tổng quan**: Tối ưu hóa trải nghiệm làm bài với chế độ tập trung (Focus Mode), bảng phím tắt thao tác nhanh chuẩn phòng thi máy tính.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
@@ -55,9 +55,55 @@ Nhấn F1 tại bất kỳ đâu để xem danh sách phím tắt đầy đủ.
 
 ---
 
+<a id="feat-help-center-hub"></a>
+
+## 3. Trung Tâm Trợ Giúp & Tra Cứu Tính Năng Toàn Năng (Help Center)
+
+> **Phiên bản**: `v2.5` | **Huy hiệu**: `Trợ Giúp` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: `F1 / Alt + H`
+
+### 📝 Mô Tả Tính Năng
+Tìm kiếm nhanh mọi tính năng, phím tắt, cẩm nang sử dụng và nhật ký cập nhật hệ thống với phím tắt F1.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Tìm kiếm Spotlight thời gian thực theo từ khóa tiếng Việt và tiếng Anh.
+- 1-Click Action Launcher: Mở trực tiếp các công cụ luyện tập từ kết quả tìm kiếm.
+- Xem nhật ký phiên bản và hướng dẫn chi tiết từng tính năng.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Nhấn F1 hoặc bấm biểu tượng Trợ Giúp trên thanh Navbar để mở trung tâm tra cứu.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Mở Trung Tâm Trợ Giúp"** trong giao diện làm bài.
+
+---
+
+<a id="feat-cdi-display-settings"></a>
+
+## 4. Tùy Chỉnh Hiển Thị & Tương Phản Chuẩn Thi CDI (CDI Display)
+
+> **Phiên bản**: `v3.0` | **Huy hiệu**: `CDI Chuẩn` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Cấu hình cỡ chữ (Standard, Large, Extra Large) và bảng màu tương phản (Đen/Trắng, Trắng/Đen, Xanh/Vàng nhạt) chuẩn phòng thi máy tính IDP/BC.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- 3 cấp độ cỡ chữ: Chuẩn (Standard), Lớn (Large), Siêu lớn (Extra Large).
+- 4 chế độ tương phản: Đen/Trắng, Trắng/Đen, Xanh/Vàng nhạt bảo vệ thị lực theo chuẩn CDI Cambridge.
+- Đồng bộ giao diện trên toàn bộ các kỹ năng phòng thi máy tính.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Nhấp vào nút "Màn Hình CDI" trên thanh công cụ hoặc menu để mở giao diện cài đặt.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Mở Cài Đặt Hiển Thị CDI"** trong giao diện làm bài.
+
+---
+
 <a id="feat-user-feedback-support"></a>
 
-## 3. Kênh Góp Ý Tính Năng & Hỗ Trợ Kỹ Thuật Trực Tiếp
+## 5. Kênh Góp Ý Tính Năng & Hỗ Trợ Kỹ Thuật Trực Tiếp
 
 > **Phiên bản**: `v2.0` | **Huy hiệu**: `Hỗ Trợ` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: _Không có_
 

@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **34 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **36 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -18,7 +18,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
-| ⌨️ **Giao Diện Tập Trung** | **3** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
+| ⌨️ **Giao Diện Tập Trung** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
 
 ---
 
@@ -34,6 +34,7 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 | `Space (Play/Pause)` | Phòng Luyện Nghe Đa Tốc Độ & Audioscript Phân Đoạn Thông Minh | [Chi tiết ↗](exam-simulation.md#feat-listening-cdi-workspace) |
 | `Ctrl + Enter` | Giám Khảo AI Chấm Điểm Writing 4 Tiêu Chí Kèm Radar Chart | [Chi tiết ↗](ai-evaluation.md#feat-ai-task2-grading) |
 | `F1 / Alt + H` | Hệ Thống Phím Tắt Toàn Cục Tối Ưu Tốc Độ Thao Tác | [Chi tiết ↗](shortcuts-ux.md#feat-keyboard-shortcuts-hub) |
+| `F1 / Alt + H` | Trung Tâm Trợ Giúp & Tra Cứu Tính Năng Toàn Năng (Help Center) | [Chi tiết ↗](shortcuts-ux.md#feat-help-center-hub) |
 
 ---
 
@@ -60,6 +61,11 @@ Dưới đây là các tính năng học thuật mới nhất được nâng c�
 - **Phiên bản**: `v2.8` | **Kỹ năng**: **Speaking**
 - **Tóm tắt**: Trải nghiệm thi vấn đáp 1:1 trọn vẹn 3 Parts (11-14 phút) với Giám khảo ảo mô phỏng đúng quy trình thi thực tế của British Council / IDP.
 - **Cách dùng nhanh**: Vào phân hệ "Speaking" -> Bấm tab "🎓 Phòng Thi Giám Khảo" -> Chọn bộ đề thi mẫu và bấm "Bắt Đầu Thi Thử".
+
+### ✦ [Tùy Chỉnh Hiển Thị & Tương Phản Chuẩn Thi CDI (CDI Display)](shortcuts-ux.md#feat-cdi-display-settings)
+- **Phiên bản**: `v3.0` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking**
+- **Tóm tắt**: Cấu hình cỡ chữ (Standard, Large, Extra Large) và bảng màu tương phản (Đen/Trắng, Trắng/Đen, Xanh/Vàng nhạt) chuẩn phòng thi máy tính IDP/BC.
+- **Cách dùng nhanh**: Nhấp vào nút "Màn Hình CDI" trên thanh công cụ hoặc menu để mở giao diện cài đặt.
 
 ### ✦ [Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition Micro-Drill)](practice-tools.md#feat-daily-error-prescription)
 - **Phiên bản**: `v3.0` | **Kỹ năng**: **Writing** • **Speaking**

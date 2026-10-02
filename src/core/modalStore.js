@@ -32,7 +32,11 @@ let state = {
   onboarding: false,
   prescription: false,
   trfSimulator: false,
-  growthAnalytics: false
+  growthAnalytics: false,
+  shortcuts: false,
+  speakingResult: false,
+  cdiDisplay: false,
+  evaluationProgress: false
 };
 
 const listeners = new Set();

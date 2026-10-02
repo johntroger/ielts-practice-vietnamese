@@ -72,7 +72,7 @@ const allQuickActionTargets = new Set(
 );
 
 // Allow specific internal modals to be covered indirectly or directly
-const exemptModals = new Set(['contact', 'onboarding']); // auxiliary dialogs
+const exemptModals = new Set(['contact', 'onboarding', 'speakingResult', 'evaluationProgress']); // auxiliary & internal flow dialogs
 registeredModalNames.forEach(modalName => {
   if (exemptModals.has(modalName)) return;
   const isCovered = allQuickActionTargets.has(modalName);

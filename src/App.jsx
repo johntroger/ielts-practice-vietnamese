@@ -7,34 +7,7 @@ const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWo
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
 
-const KeyboardShortcutsModal = React.lazy(() => import('./components/KeyboardShortcutsModal'));
-const FeedbackModal = React.lazy(() => import('./components/FeedbackModal'));
-const TaskGeneratorModal = React.lazy(() => import('./components/TaskGeneratorModal'));
-const TaskLibraryModal = React.lazy(() => import('./components/TaskLibraryModal'));
-const VocabNotebookModal = React.lazy(() => import('./components/VocabNotebookModal'));
-const MistakeLogModal = React.lazy(() => import('./components/MistakeLogModal'));
-const HistoryModal = React.lazy(() => import('./components/HistoryModal'));
-const TheoryHandbookModal = React.lazy(() => import('./components/TheoryHandbookModal'));
-const QuickParaphraseModal = React.lazy(() => import('./components/QuickParaphraseModal'));
-const SettingsModal = React.lazy(() => import('./components/SettingsModal'));
-const MicroDrillsModal = React.lazy(() => import('./components/MicroDrillsModal'));
-const IdeaMatrixModal = React.lazy(() => import('./components/IdeaMatrixModal'));
-const RevisionModal = React.lazy(() => import('./components/RevisionModal'));
-const WeeklyReportModal = React.lazy(() => import('./components/WeeklyReportModal'));
-const DocumentIngestModal = React.lazy(() => import('./components/DocumentIngestModal'));
-const MockTestModal = React.lazy(() => import('./components/MockTestModal'));
-const VocabGrammarSpellingModal = React.lazy(() => import('./components/VocabGrammarSpellingModal'));
-const AuthModal = React.lazy(() => import('./components/AuthModal'));
-const FeaturesGuideModal = React.lazy(() => import('./components/FeaturesGuideModal'));
-const UserProfileModal = React.lazy(() => import('./components/UserProfileModal'));
-const ContactModal = React.lazy(() => import('./components/ContactModal'));
-const AIEvaluationProgressModal = React.lazy(() => import('./components/AIEvaluationProgressModal'));
-const OnboardingModal = React.lazy(() => import('./components/OnboardingModal'));
-const SpeakingResultModal = React.lazy(() => import('./components/speaking/SpeakingResultModal'));
-const DiagnosticPlacementModal = React.lazy(() => import('./components/DiagnosticPlacementModal'));
-const CDIDisplayModal = React.lazy(() => import('./components/CDIDisplayModal'));
-const DailyErrorPrescriptionModal = React.lazy(() => import('./components/DailyErrorPrescriptionModal'));
-const GrowthAnalyticsModal = React.lazy(() => import('./components/GrowthAnalyticsModal'));
+import AppModalHost from './components/modals/AppModalHost';
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -71,12 +44,11 @@ import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContra
 import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
 
 export default function App() {
-  const { modals, closeModal: triggerCloseModal } = useModalStore();
+  const { modals, openModal, closeModal, toggleModal } = useModalStore();
 
   // 1. Persistent Storage State with Quota-Resilient Storage Service
   const [apiKey, setApiKey] = useState(() => safeGet('ielts_gemini_api_key', ''));
   const [targetBand, setTargetBand] = useState(() => safeGet('ielts_target_band', '6.5'));
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => !safeGet('ielts_user_onboarded', false));
   const [model, setModel] = useState(() => {
     const saved = safeGet('ielts_gemini_model', '');
     const validModels = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.1-pro-preview'];
@@ -260,29 +232,13 @@ export default function App() {
     };
   }, []);
 
-  // Modals
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  // User & Workspace States
   const [currentUser, setCurrentUser] = useState(null);
   const [communityTasks, setCommunityTasks] = useState(() => {
     const cached = safeGet('ielts_public_community_tasks', null);
     if (Array.isArray(cached) && cached.length > 0) return cached;
     return COMMUNITY_DEFAULT_TASKS;
   });
-  const [isDrillsOpen, setIsDrillsOpen] = useState(false);
-  const [isVocabGrammarOpen, setIsVocabGrammarOpen] = useState(false);
-  const [isWeeklyReportOpen, setIsWeeklyReportOpen] = useState(false);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
-  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
-  const [isNotebookOpen, setIsNotebookOpen] = useState(false);
-  const [isMistakeLogOpen, setIsMistakeLogOpen] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [isTheoryOpen, setIsTheoryOpen] = useState(false);
-  const [isParaphraseOpen, setIsParaphraseOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
-  const [isRevisionOpen, setIsRevisionOpen] = useState(false);
-  const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [readingGenTrigger, setReadingGenTrigger] = useState(0);
   const [readingIngestTrigger, setReadingIngestTrigger] = useState(0);
   const [readingLibraryTrigger, setReadingLibraryTrigger] = useState(0);
@@ -290,16 +246,15 @@ export default function App() {
   const [listeningLibraryTrigger, setListeningLibraryTrigger] = useState(0);
   const [speakingGenTrigger, setSpeakingGenTrigger] = useState(0);
   const [speakingLibraryTrigger, setSpeakingLibraryTrigger] = useState(0);
-  const [isMockTestOpen, setIsMockTestOpen] = useState(false);
-  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
-  const [isFeaturesGuideOpen, setIsFeaturesGuideOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isContactOpen, setIsContactOpen] = useState(false);
   const [selectedHistorySpeakingSub, setSelectedHistorySpeakingSub] = useState(null);
 
-  // Phase 1 UX: Focus Mode & Keyboard Shortcuts
-  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  // Phase 1 UX: Focus Mode & Modal Store Compatibility Aliases
   const [isFocusMode, setIsFocusMode] = useState(() => safeGet('ielts_focus_mode', false));
+  const isShortcutsOpen = Boolean(modals.shortcuts);
+  const isPrescriptionOpen = Boolean(modals.prescription);
+
+  // Centralized Modal Container (AppModalHost) delegates rendering for:
+  // KeyboardShortcutsModal, CDIDisplayModal, DailyErrorPrescriptionModal, GrowthAnalyticsModal
 
   const toggleFocusMode = () => {
     setIsFocusMode(prev => {
@@ -341,8 +296,6 @@ export default function App() {
   // Phase 4: CDI Accessibility & Display Settings (Font Scale & Screen Contrast)
   const [cdiFontSize, setCdiFontSize] = useState(() => safeGet('ielts_cdi_font_size', 'standard'));
   const [cdiContrast, setCdiContrast] = useState(() => safeGet('ielts_cdi_contrast', 'standard'));
-  const [isCDIDisplayOpen, setIsCDIDisplayOpen] = useState(false);
-  const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(false);
 
   const handleChangeCdiFontSize = (size) => {
     setCdiFontSize(size);
@@ -369,7 +322,7 @@ export default function App() {
     setActiveSkill('reading');
     setReadingMockTestId(testId);
     setReadingMockExamMode('exam');
-    setIsMockTestOpen(false);
+    closeModal('mockTest');
   };
 
   // CDI Full Marathon 3-Skill State (Listening -> Reading -> Writing)
@@ -387,7 +340,7 @@ export default function App() {
     setMarathonSession(session);
     safeSet('ielts_marathon_session', session);
     setActiveSkill('listening');
-    setIsMockTestOpen(false);
+    closeModal('mockTest');
   };
 
   const handleCancelMarathon = () => {
@@ -589,7 +542,7 @@ export default function App() {
   const handleToggleMastered = (itemId) => {
     if (!currentUser) {
       alert('Tính năng "Đã thuộc" giúp cá nhân hóa và ẩn câu hỏi đã thuần thục khỏi giao diện luyện tập. Vui lòng Đăng nhập để lưu tiến trình!');
-      setIsAuthOpen(true);
+      openModal('auth');
       return;
     }
     setMasteredIds(prev => {
@@ -701,17 +654,24 @@ export default function App() {
     safeSet('ielts_public_community_tasks', communityTasks);
   }, [communityTasks]);
 
+  // Launch onboarding for first-time visitors
+  useEffect(() => {
+    if (!safeGet('ielts_user_onboarded', false)) {
+      openModal('onboarding');
+    }
+  }, []);
+
   // Global Keyboard Shortcuts (Phase 1 UX Improvement)
   useKeyboardShortcuts({
     toggleFocusMode,
     toggleSlimHeader,
-    onOpenLibrary: () => setIsLibraryOpen(true),
+    onOpenLibrary: () => openModal('library'),
     onToggleMastered: handleToggleMastered,
     currentTaskId,
-    onOpenTheory: () => setIsTheoryOpen(true),
-    onOpenHelp: () => setIsFeaturesGuideOpen(prev => !prev),
-    isShortcutsOpen,
-    setIsShortcutsOpen,
+    onOpenTheory: () => openModal('theory'),
+    onOpenHelp: () => toggleModal('featuresGuide'),
+    isShortcutsOpen: Boolean(modals.shortcuts),
+    setIsShortcutsOpen: (val) => (typeof val === 'function' ? (val(Boolean(modals.shortcuts)) ? openModal('shortcuts') : closeModal('shortcuts')) : (val ? openModal('shortcuts') : closeModal('shortcuts'))),
     isFocusMode,
     setIsFocusMode: (val) => {
       setIsFocusMode(val);
@@ -740,7 +700,7 @@ export default function App() {
 
     // If requesting AI grading but no API Key is configured, guide user to Settings
     if (method === 'ai' && !apiKey) {
-      setIsSettingsOpen(true);
+      openModal('settings');
       return;
     }
 
@@ -780,7 +740,7 @@ export default function App() {
       }
 
       setCurrentEvaluation(evaluation);
-      setIsFeedbackOpen(true);
+      openModal('feedback');
 
       // Save to submissions history (strictly preserve scores, evaluation, text; drop heavy ephemeral media)
       const cleanTask = {
@@ -828,7 +788,7 @@ export default function App() {
         setMarathonSession(finalSession);
         safeSet('ielts_marathon_session', finalSession);
         alert(`🏆 XUẤT SẮC! BẠN ĐÃ HOÀN THÀNH TRỌN VẸN FULL CDI MARATHON 3 KỸ NĂNG LIÊN HOÀN!\n\n🎧 Listening: Band ${finalSession.listeningScore?.band || 'N/A'}\n📖 Reading: Band ${finalSession.readingScore?.band || 'N/A'}\n✍️ Writing: Band ${band}\n\nĐang mở Bảng điểm tổng kết TRF Simulator...`);
-        setIsMockTestOpen(true);
+        openModal('mockTest');
       }
 
     } catch (err) {
@@ -1035,7 +995,7 @@ export default function App() {
 
           <div className="flex items-center space-x-2 shrink-0">
             <button
-              onClick={() => setIsMockTestOpen(true)}
+              onClick={() => openModal('mockTest')}
               className="px-2.5 py-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 text-white font-bold text-[11px] transition-colors cursor-pointer"
             >
               Xem TRF
@@ -1060,16 +1020,16 @@ export default function App() {
           mode={mode}
           setMode={setMode}
           streakCount={streakCount}
-          onOpenVocabGrammar={() => setIsVocabGrammarOpen(true)}
-          onOpenDrills={() => setIsDrillsOpen(true)}
-          onOpenWeeklyReport={() => setIsWeeklyReportOpen(true)}
-          onOpenMockTest={() => setIsMockTestOpen(true)}
-          onOpenDiagnostic={() => setIsDiagnosticOpen(true)}
+          onOpenVocabGrammar={() => openModal('vocabGrammar')}
+          onOpenDrills={() => openModal('drills')}
+          onOpenWeeklyReport={() => openModal('weeklyReport')}
+          onOpenMockTest={() => openModal('mockTest')}
+          onOpenDiagnostic={() => openModal('diagnostic')}
           onOpenIngest={() => {
             if (activeSkill === 'reading') {
               setReadingIngestTrigger(Date.now());
             } else {
-              setIsIngestOpen(true);
+              openModal('ingest');
             }
           }}
           onOpenGenerator={() => {
@@ -1080,7 +1040,7 @@ export default function App() {
             } else if (activeSkill === 'speaking') {
               setSpeakingGenTrigger(Date.now());
             } else {
-              setIsGeneratorOpen(true);
+              openModal('generator');
             }
           }}
           onOpenLibrary={() => {
@@ -1091,26 +1051,26 @@ export default function App() {
             } else if (activeSkill === 'speaking') {
               setSpeakingLibraryTrigger(Date.now());
             } else {
-              setIsLibraryOpen(true);
+              openModal('library');
             }
           }}
-          onOpenNotebook={() => setIsNotebookOpen(true)}
-          onOpenHistory={() => setIsHistoryOpen(true)}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onOpenTheory={() => setIsTheoryOpen(true)}
-          onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
-          onOpenFeaturesGuide={() => setIsFeaturesGuideOpen(true)}
-          onOpenProfile={() => setIsProfileOpen(true)}
-          onOpenContact={() => setIsContactOpen(true)}
+          onOpenNotebook={() => openModal('notebook')}
+          onOpenHistory={() => openModal('history')}
+          onOpenSettings={() => openModal('settings')}
+          onOpenTheory={() => openModal('theory')}
+          onOpenMistakeLog={() => openModal('mistakeLog')}
+          onOpenFeaturesGuide={() => openModal('featuresGuide')}
+          onOpenProfile={() => openModal('profile')}
+          onOpenContact={() => openModal('contact')}
           activeSkill={activeSkill}
           onSelectSkill={(skill) => setActiveSkill(skill)}
           mistakesCount={mistakes.length}
           targetBand={targetBand}
-          onOpenOnboarding={() => setIsOnboardingOpen(true)}
+          onOpenOnboarding={() => openModal('onboarding')}
           apiKey={apiKey}
           user={currentUser}
-          onOpenAuth={() => setIsAuthOpen(true)}
-          onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
+          onOpenAuth={() => openModal('auth')}
+          onOpenCDIDisplay={() => openModal('cdiDisplay')}
         />
       )}
 
@@ -1129,7 +1089,7 @@ export default function App() {
               </div>
               <div className="flex items-center space-x-2 shrink-0">
                 <button
-                  onClick={() => setIsSettingsOpen(true)}
+                  onClick={() => openModal('settings')}
                   className="px-2.5 py-0.5 rounded-md bg-white text-slate-900 hover:bg-amber-50 font-black text-[11px] shadow-2xs transition-all cursor-pointer"
                 >
                   Kết Nối
@@ -1147,7 +1107,7 @@ export default function App() {
                     LƯU Ý KẾT NỐI AI:
                   </span>
                   <span className="hidden sm:inline font-medium text-white/95">
-                    Bạn cần <button onClick={() => setIsSettingsOpen(true)} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối AI API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
+                    Bạn cần <button onClick={() => openModal('settings')} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối AI API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
                   </span>
                   <span className="sm:hidden font-semibold text-white/95 truncate block text-[11px]">
                     Cần kết nối AI API Key để sử dụng các tính năng AI
@@ -1156,7 +1116,7 @@ export default function App() {
               </div>
 
               <button
-                onClick={() => setIsSettingsOpen(true)}
+                onClick={() => openModal('settings')}
                 className="px-3 py-1 rounded-lg bg-white text-slate-900 hover:bg-amber-50 font-bold text-xs shadow-xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
               >
                 <span className="text-amber-600">⚡</span>
@@ -1236,11 +1196,11 @@ export default function App() {
               <ListeningWorkspace
                 apiKey={apiKey}
                 model={model}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenTheory={() => setIsTheoryOpen(true)}
+                onOpenSettings={() => openModal('settings')}
+                onOpenTheory={() => openModal('theory')}
                 user={currentUser}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-                onOpenDrills={() => setIsDrillsOpen(true)}
+                onOpenDrills={() => openModal('drills')}
                 onListeningSubmitted={(sub) => {
                   setListeningHistory(prev => {
                     const updated = [sub, ...prev];
@@ -1288,9 +1248,9 @@ export default function App() {
               <SpeakingWorkspace
                 apiKey={apiKey}
                 model={model}
-                onOpenSettings={() => setIsSettingsOpen(true)}
+                onOpenSettings={() => openModal('settings')}
                 user={currentUser}
-                onOpenTheory={() => setIsTheoryOpen(true)}
+                onOpenTheory={() => openModal('theory')}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onSpeakingSubmitted={(sub) => {
                   setSpeakingHistory(prev => {
@@ -1312,6 +1272,7 @@ export default function App() {
           <WritingWorkspace
             currentTask={currentTask}
             currentEssay={currentEssay}
+            essayText={currentEssay}
             onEssayChange={handleEssayChange}
             currentOutline={currentOutline}
             onOutlineChange={handleOutlineChange}
@@ -1334,16 +1295,16 @@ export default function App() {
             targetBand={targetBand}
             masteredIds={masteredIds}
             onToggleMastered={handleToggleMastered}
-            onOpenLibrary={() => setIsLibraryOpen(true)}
-            onOpenGenerator={() => setIsGeneratorOpen(true)}
-            onOpenOnboarding={() => setIsOnboardingOpen(true)}
-            onOpenTheory={() => setIsTheoryOpen(true)}
-            onOpenMistakeLog={() => setIsMistakeLogOpen(true)}
-            onOpenPrescription={() => setIsPrescriptionOpen(true)}
-            onOpenShortcuts={() => setIsShortcutsOpen(true)}
-            onOpenCDIDisplay={() => setIsCDIDisplayOpen(true)}
-            onOpenIdeaMatrix={() => setIsIdeaMatrixOpen(true)}
-            onOpenSettings={() => setIsSettingsOpen(true)}
+            onOpenLibrary={() => openModal('library')}
+            onOpenGenerator={() => openModal('generator')}
+            onOpenOnboarding={() => openModal('onboarding')}
+            onOpenTheory={() => openModal('theory')}
+            onOpenMistakeLog={() => openModal('mistakeLog')}
+            onOpenPrescription={() => openModal('prescription')}
+            onOpenShortcuts={() => openModal('shortcuts')}
+            onOpenCDIDisplay={() => openModal('cdiDisplay')}
+            onOpenIdeaMatrix={() => openModal('ideaMatrix')}
+            onOpenSettings={() => openModal('settings')}
             mistakes={mistakes}
             isFocusMode={isFocusMode}
             toggleFocusMode={toggleFocusMode}
@@ -1365,165 +1326,69 @@ export default function App() {
         </WorkspaceErrorBoundary>
       )}
 
-      {/* 3. Modals System */}
-      <React.Suspense fallback={null}>
-        <AIEvaluationProgressModal
-          isOpen={isSubmitting}
-          taskNumber={currentTask?.taskNumber || 2}
-          skill="writing"
-        />
-
-      <WorkspaceErrorBoundary skillName="IELTS Vocab, Grammar & Spelling">
-        <VocabGrammarSpellingModal
-          isOpen={isVocabGrammarOpen || modals.vocabGrammar}
-          onClose={() => { setIsVocabGrammarOpen(false); triggerCloseModal('vocabGrammar'); }}
-          apiKey={apiKey}
-          model={model}
-          onSaveToNotebook={(v) => setVocabList(prev => [v, ...prev])}
-          currentUser={currentUser}
-          masteredIds={masteredIds}
-          onToggleMastered={handleToggleMastered}
-          onOpenAuth={() => setIsAuthOpen(true)}
-        />
-      </WorkspaceErrorBoundary>
-
-      <MicroDrillsModal
-        isOpen={isDrillsOpen || modals.drills}
-        onClose={() => { setIsDrillsOpen(false); triggerCloseModal('drills'); }}
-        apiKey={apiKey}
-        model={model}
-        activeSkill={activeSkill}
+      {/* 3. Centralized Modals System (Grouped into Exam, Learning, and System Clusters) */}
+      <AppModalHost
         currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
+        model={model}
+        setModel={setModel}
+        targetBand={targetBand}
+        setTargetBand={setTargetBand}
+        activeSkill={activeSkill}
+        setActiveSkill={setActiveSkill}
         masteredIds={masteredIds}
         onToggleMastered={handleToggleMastered}
-        onOpenAuth={() => setIsAuthOpen(true)}
-      />
-
-      <WeeklyReportModal
-        isOpen={isWeeklyReportOpen || modals.weeklyReport}
-        onClose={() => { setIsWeeklyReportOpen(false); triggerCloseModal('weeklyReport'); }}
+        currentTask={currentTask}
+        currentTaskId={currentTaskId}
+        setCurrentTaskId={setCurrentTaskId}
+        allTasks={allTasks}
+        setAllTasks={setAllTasks}
+        communityTasks={communityTasks}
+        setCommunityTasks={setCommunityTasks}
+        currentEssay={currentEssay}
+        currentOutline={currentOutline}
+        setOutlines={setOutlines}
+        timeElapsed={timeElapsed}
+        isSubmitting={isSubmitting}
+        currentEvaluation={currentEvaluation}
+        setCurrentEvaluation={setCurrentEvaluation}
+        onSubmitEssay={handleSubmitEssay}
         submissions={submissions}
+        setSubmissions={setSubmissions}
         readingHistory={readingHistory}
         listeningHistory={listeningHistory}
         speakingHistory={speakingHistory}
+        selectedHistorySpeakingSub={selectedHistorySpeakingSub}
+        setSelectedHistorySpeakingSub={setSelectedHistorySpeakingSub}
+        onDeleteWritingSubmission={handleDeleteWritingSubmission}
+        onClearWritingHistory={handleClearWritingHistory}
+        onDeleteReadingSubmission={handleDeleteReadingSubmission}
+        onClearReadingHistory={handleClearReadingHistory}
+        onDeleteListeningSubmission={handleDeleteListeningSubmission}
+        onClearListeningHistory={handleClearListeningHistory}
+        onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
+        onClearSpeakingHistory={handleClearSpeakingHistory}
+        onClearAllHistory={handleClearAllHistory}
+        vocabList={vocabList}
+        setVocabList={setVocabList}
         mistakes={mistakes}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      <WorkspaceErrorBoundary skillName="IELTS Mock Exam">
-        <MockTestModal
-          isOpen={isMockTestOpen || modals.mockTest}
-          onClose={() => { setIsMockTestOpen(false); triggerCloseModal('mockTest'); }}
-          allTasks={allTasks}
-          submissions={submissions}
-          readingHistory={readingHistory}
-          listeningHistory={listeningHistory}
-          speakingHistory={speakingHistory}
-          onSaveMockResult={(res) => {
-            setStreakCount(prev => prev + 1);
-            setSubmissions(prev => {
-              const updated = [
-                {
-                  id: `mock-${Date.now()}`,
-                  task: { title: 'Full Mock Test 60 phút', taskNumber: '1 & 2' },
-                  essayText: 'Completed both Task 1 and Task 2',
-                  evaluation: { overallBand: res.finalOverall },
-                  stats: { wordCount: res.t1Words + res.t2Words, timeSpent: '60 phút' },
-                  date: res.date
-                },
-                ...prev
-              ];
-              safeSet('ielts_submissions_history', updated);
-              return updated;
-            });
-          }}
-          apiKey={apiKey}
-          model={model}
-          activeSkill={activeSkill}
-          onSelectSkill={(skill) => setActiveSkill(skill)}
-          onStartReadingMockExam={handleStartReadingMockExam}
-          currentUser={currentUser}
-          marathonSession={marathonSession}
-          onStartMarathon={handleStartMarathon}
-          onCancelMarathon={handleCancelMarathon}
-        />
-      </WorkspaceErrorBoundary>
-
-      <DocumentIngestModal
-        isOpen={isIngestOpen || modals.ingest}
-        onClose={() => { setIsIngestOpen(false); triggerCloseModal('ingest'); }}
-        user={currentUser}
-        onTaskImported={(newTask) => {
-          setAllTasks(prev => [newTask, ...prev]);
-          setCurrentTaskId(newTask.id);
-          // Sync to Cloud if logged in
-          if (currentUser) {
-            saveUserCustomTask(currentUser.id, newTask, false, currentUser.email);
-          }
-        }}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      <IdeaMatrixModal
-        isOpen={isIdeaMatrixOpen || modals.ideaMatrix}
-        onClose={() => { setIsIdeaMatrixOpen(false); triggerCloseModal('ideaMatrix'); }}
-        promptText={currentTask.prompt}
-        onInsertToOutline={(idea) => {
-          setOutlines(prev => ({
-            ...prev,
-            [currentTaskId]: (prev[currentTaskId] || '') + `\n- [Ý tưởng]: ${idea}`
-          }));
-        }}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      <RevisionModal
-        isOpen={isRevisionOpen || modals.revision}
-        onClose={() => { setIsRevisionOpen(false); triggerCloseModal('revision'); }}
-        task={currentTask}
-        v1Essay={currentEssay}
-        v1Evaluation={currentEvaluation}
-        onSaveV2Submission={(v2Sub) => {
-          setSubmissions(prev => [v2Sub, ...prev]);
-          // Sync V2 to Cloud if logged in
-          if (currentUser) {
-            saveUserSubmission(currentUser.id, v2Sub);
-          }
-        }}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      <FeedbackModal
-        isOpen={isFeedbackOpen || modals.feedback}
-        onClose={() => { setIsFeedbackOpen(false); triggerCloseModal('feedback'); }}
-        evaluation={currentEvaluation}
-        task={currentTask}
-        essayText={currentEssay}
-        stats={{
-          wordCount: countWords(currentEssay),
-          timeSpent: `${Math.floor(timeElapsed / 60)}p ${timeElapsed % 60}s`
-        }}
-        onSaveToMistakeLog={(m) => setMistakes(prev => [m, ...prev])}
-        onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-        onOpenRevision={() => setIsRevisionOpen(true)}
-        onReEvaluateWithAI={() => {
-          setIsFeedbackOpen(false);
-          handleSubmitEssay('ai');
-        }}
-      />
-
-      <TaskGeneratorModal
-        isOpen={isGeneratorOpen || modals.generator}
-        onClose={() => { setIsGeneratorOpen(false); triggerCloseModal('generator'); }}
-        apiKey={apiKey}
-        model={model}
-        user={currentUser}
-        tasks={allTasks}
-        onTaskCreated={(newTask, isPub) => {
+        setMistakes={setMistakes}
+        personalNotes={personalNotes}
+        setPersonalNotes={setPersonalNotes}
+        streakCount={streakCount}
+        setStreakCount={setStreakCount}
+        marathonSession={marathonSession}
+        onStartMarathon={handleStartMarathon}
+        onCancelMarathon={handleCancelMarathon}
+        onStartReadingMockExam={handleStartReadingMockExam}
+        cdiFontSize={cdiFontSize}
+        onChangeCdiFontSize={handleChangeCdiFontSize}
+        cdiContrast={cdiContrast}
+        onChangeCdiContrast={handleChangeCdiContrast}
+        onResetCDIDisplay={handleResetCDIDisplay}
+        onAddNewCustomTask={(newTask, isPub) => {
           setAllTasks(prev => {
             const combined = [newTask, ...prev];
             const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
@@ -1531,7 +1396,6 @@ export default function App() {
           });
           setCurrentTaskId(newTask.id);
 
-          // Always add to public community repository immediately, no login required!
           if (isPub) {
             const pubTask = {
               ...newTask,
@@ -1542,53 +1406,17 @@ export default function App() {
             setCommunityTasks(prev => [pubTask, ...prev.filter(t => t.id !== newTask.id)]);
           }
 
-          // Sync to Cloud (If public, sync to Supabase Cloud for all visitors)
-          saveUserCustomTask(currentUser?.id || null, newTask, isPub, currentUser?.email || 'Thành viên cộng đồng');
-        }}
-        onOpenSettings={() => {
-          setIsGeneratorOpen(false);
-          setIsSettingsOpen(true);
-        }}
-      />
-
-      <TaskLibraryModal
-        isOpen={isLibraryOpen || modals.library}
-        onClose={() => { setIsLibraryOpen(false); triggerCloseModal('library'); }}
-        allTasks={allTasks}
-        communityTasks={communityTasks}
-        user={currentUser}
-        submissions={submissions}
-        currentTaskId={currentTaskId}
-        masteredIds={masteredIds}
-        onToggleMastered={handleToggleMastered}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onSelectTask={(t) => {
-          setAllTasks(prev => {
-            if (prev.some(existing => existing.id === t.id)) return prev;
-            return [t, ...prev];
-          });
-          setCurrentTaskId(t.id);
-        }}
-        onAddNewCustomTask={(newTask) => {
-          setAllTasks(prev => {
-            const combined = [newTask, ...prev];
-            const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
-            return cleanedTasks;
-          });
-          setCurrentTaskId(newTask.id);
-          saveUserCustomTask(currentUser?.id || null, newTask, false, currentUser?.email || 'Khách');
+          saveUserCustomTask(currentUser?.id || null, newTask, isPub, currentUser?.email || 'Khách');
           try {
             if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
               const bc = new BroadcastChannel('ielts_tasks_realtime');
-              bc.postMessage({ type: 'ADD_TASK', task: newTask, isPublic: false });
+              bc.postMessage({ type: 'ADD_TASK', task: newTask, isPublic: Boolean(isPub) });
               bc.close();
             }
           } catch (e) {}
         }}
         onTogglePublic={(taskId, isPub) => {
           setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
-          
-          // Always update public community task bank immediately, no login required!
           if (isPub) {
             const taskToShare = allTasks.find(t => t.id === taskId);
             if (taskToShare) {
@@ -1603,11 +1431,9 @@ export default function App() {
           } else {
             setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
           }
-
           if (currentUser) {
             toggleTaskPublicity(currentUser.id, taskId, isPub);
           }
-
           try {
             if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
               const bc = new BroadcastChannel('ielts_tasks_realtime');
@@ -1639,264 +1465,51 @@ export default function App() {
             setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
           }
         }}
-        onExportAllData={handleExportAllData}
-        onImportData={handleImportData}
-      />
-
-      <VocabNotebookModal
-        isOpen={isNotebookOpen || modals.notebook}
-        onClose={() => { setIsNotebookOpen(false); triggerCloseModal('notebook'); }}
-        vocabList={vocabList}
-        onAddVocab={(v) => {
-          setVocabList(prev => [v, ...prev]);
+        onSaveMockResult={(res) => {
+          setStreakCount(prev => prev + 1);
+          setSubmissions(prev => {
+            const updated = [
+              {
+                id: `mock-${Date.now()}`,
+                task: { title: 'Full Mock Test 60 phút', taskNumber: '1 & 2' },
+                essayText: 'Completed both Task 1 and Task 2',
+                evaluation: { overallBand: res.finalOverall },
+                stats: { wordCount: res.t1Words + res.t2Words, timeSpent: '60 phút' },
+                date: res.date
+              },
+              ...prev
+            ];
+            safeSet('ielts_submissions_history', updated);
+            return updated;
+          });
+        }}
+        onSaveV2Submission={(v2Sub) => {
+          setSubmissions(prev => [v2Sub, ...prev]);
+          if (currentUser) {
+            saveUserSubmission(currentUser.id, v2Sub);
+          }
+        }}
+        onTaskImported={(newTask) => {
+          setAllTasks(prev => [newTask, ...prev]);
+          setCurrentTaskId(newTask.id);
+          if (currentUser) {
+            saveUserCustomTask(currentUser.id, newTask, false, currentUser.email);
+          }
+        }}
+        onSaveUserVocab={(v) => {
           if (currentUser) saveUserVocabItem(currentUser.id, v);
         }}
-        onDeleteVocab={(id) => {
-          setVocabList(prev => prev.filter((v, i) => (v.id || i) !== id));
+        onDeleteUserVocab={(id) => {
           if (currentUser) deleteUserVocabItem(currentUser.id, id);
         }}
-        onClearAll={() => setVocabList([])}
-      />
-
-      <MistakeLogModal
-        isOpen={isMistakeLogOpen || modals.mistakeLog}
-        onClose={() => { setIsMistakeLogOpen(false); triggerCloseModal('mistakeLog'); }}
-        mistakes={mistakes}
-        onDeleteMistake={(idx) => setMistakes(prev => prev.filter((_, i) => i !== idx))}
-        onClearAll={() => setMistakes([])}
-      />
-
-      <HistoryModal
-        isOpen={isHistoryOpen || modals.history}
-        onClose={() => { setIsHistoryOpen(false); triggerCloseModal('history'); }}
-        submissions={submissions}
-        readingHistory={readingHistory}
-        listeningHistory={listeningHistory}
-        speakingHistory={speakingHistory}
-        activeSkill={activeSkill}
-        onViewSubmission={(sub) => {
-          setCurrentTaskId(sub.task.id);
-          setCurrentEvaluation(sub.evaluation);
-          setIsFeedbackOpen(true);
-        }}
-        onDeleteSubmission={handleDeleteWritingSubmission}
-        onClearHistory={handleClearWritingHistory}
-        onDeleteReadingSubmission={handleDeleteReadingSubmission}
-        onClearReadingHistory={handleClearReadingHistory}
-        onDeleteListeningSubmission={handleDeleteListeningSubmission}
-        onClearListeningHistory={handleClearListeningHistory}
-        onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
-        onClearSpeakingHistory={handleClearSpeakingHistory}
-        onClearAllHistory={handleClearAllHistory}
-        onViewSpeakingSubmission={(sub) => setSelectedHistorySpeakingSub(sub)}
-        masteredIds={masteredIds}
-      />
-
-      <TheoryHandbookModal
-        isOpen={isTheoryOpen || modals.theory}
-        onClose={() => { setIsTheoryOpen(false); triggerCloseModal('theory'); }}
-        activeSkill={activeSkill}
-        personalNotes={personalNotes}
-        onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
-        onDeletePersonalNote={(id) => setPersonalNotes(prev => prev.filter(n => n.id !== id))}
-      />
-
-      <CDIDisplayModal
-        isOpen={isCDIDisplayOpen}
-        onClose={() => setIsCDIDisplayOpen(false)}
-        cdiFontSize={cdiFontSize}
-        onChangeFontSize={handleChangeCdiFontSize}
-        cdiContrast={cdiContrast}
-        onChangeContrast={handleChangeCdiContrast}
-        onReset={handleResetCDIDisplay}
-      />
-
-      <QuickParaphraseModal
-        isOpen={isParaphraseOpen || modals.paraphrase}
-        onClose={() => { setIsParaphraseOpen(false); triggerCloseModal('paraphrase'); }}
-        onSaveToNotebook={(v) => setVocabList(prev => [v, ...prev])}
-      />
-
-      <SettingsModal
-        isOpen={isSettingsOpen || modals.settings}
-        onClose={() => { setIsSettingsOpen(false); triggerCloseModal('settings'); }}
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-        model={model}
-        setModel={setModel}
-        onClearAllLocalData={handleClearAllLocalData}
-      />
-
-      <AuthModal
-        isOpen={isAuthOpen || modals.auth}
-        onClose={() => { setIsAuthOpen(false); triggerCloseModal('auth'); }}
-        user={currentUser}
-        onAuthSuccess={(user) => setCurrentUser(user)}
-      />
-
-      <FeaturesGuideModal
-        isOpen={isFeaturesGuideOpen || modals.featuresGuide}
-        onClose={() => { setIsFeaturesGuideOpen(false); triggerCloseModal('featuresGuide'); }}
-        initialSkill={activeSkill}
-        onNavigateWorkspace={(skill) => setActiveSkill(skill)}
-        onOpenModal={(modalName) => triggerOpenModal(modalName)}
-      />
-
-      <UserProfileModal
-        isOpen={isProfileOpen || modals.profile}
-        onClose={() => { setIsProfileOpen(false); triggerCloseModal('profile'); }}
-        user={currentUser}
-        masteredIds={masteredIds}
-        onToggleMastered={handleToggleMastered}
-        submissions={submissions}
-        readingHistory={readingHistory}
-        listeningHistory={listeningHistory}
-        speakingHistory={speakingHistory}
-        vocabList={vocabList}
-        mistakes={mistakes}
-        streakCount={streakCount}
-        allTasks={allTasks}
-        onSelectTask={(t) => setCurrentTaskId(t.id)}
-        onTogglePublic={(taskId, isPub) => {
-          setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
-          if (currentUser) {
-            toggleTaskPublicity(currentUser.id, taskId, isPub);
-            if (isPub) {
-              const taskToShare = allTasks.find(t => t.id === taskId);
-              if (taskToShare) {
-                setCommunityTasks(prev => [{ ...taskToShare, isPublic: true, creatorEmail: currentUser.email, isCommunity: true }, ...prev]);
-              }
-            } else {
-              setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
-            }
-          }
-        }}
-        onDeleteTask={(taskId) => {
-          setAllTasks(prev => {
-            const updated = prev.filter(t => t.id !== taskId);
-            safeSet('ielts_all_tasks', updated);
-            return updated;
-          });
-          setCommunityTasks(prev => {
-            const updated = prev.filter(t => t.id !== taskId);
-            safeSet('ielts_public_community_tasks', updated);
-            return updated;
-          });
-          deleteUserCustomTask(currentUser?.id || null, taskId);
-          try {
-            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-              const bc = new BroadcastChannel('ielts_tasks_realtime');
-              bc.postMessage({ type: 'DELETE_TASK', taskId });
-              bc.close();
-            }
-          } catch (e) {}
-          if (currentTaskId === taskId) {
-            setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
-          }
-        }}
-        onViewSubmission={(sub) => {
-          setCurrentTaskId(sub.task.id);
-          setCurrentEvaluation(sub.evaluation);
-          setIsFeedbackOpen(true);
-        }}
-        onDeleteSubmission={handleDeleteWritingSubmission}
-        onClearHistory={handleClearWritingHistory}
-        onDeleteReadingSubmission={handleDeleteReadingSubmission}
-        onClearReadingHistory={handleClearReadingHistory}
-        onDeleteListeningSubmission={handleDeleteListeningSubmission}
-        onClearListeningHistory={handleClearListeningHistory}
-        onDeleteSpeakingSubmission={handleDeleteSpeakingSubmission}
-        onClearSpeakingHistory={handleClearSpeakingHistory}
-        onClearAllHistory={handleClearAllHistory}
-        onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-        onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
         onSignOut={async () => {
           await supabase.auth.signOut();
-          setIsProfileOpen(false);
+          closeModal('profile');
         }}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onOpenIngest={() => { setIsProfileOpen(false); setIsIngestOpen(true); }}
-        onOpenGenerator={() => { setIsProfileOpen(false); setIsGeneratorOpen(true); }}
-        onOpenLibrary={() => { setIsProfileOpen(false); setIsLibraryOpen(true); }}
-        onOpenPrescription={() => { setIsProfileOpen(false); setIsPrescriptionOpen(true); }}
+        onClearAllLocalData={handleClearAllLocalData}
         onExportAllData={handleExportAllData}
         onImportData={handleImportData}
       />
-
-      {/* Speaking Evaluation Result Modal (opened from HistoryModal) */}
-      {selectedHistorySpeakingSub && (
-        <SpeakingResultModal
-          isOpen={!!selectedHistorySpeakingSub}
-          onClose={() => setSelectedHistorySpeakingSub(null)}
-          evaluation={selectedHistorySpeakingSub.evaluation}
-          dialogueHistory={selectedHistorySpeakingSub.dialogueHistory}
-          mockPack={selectedHistorySpeakingSub.mockPack}
-          examiner={selectedHistorySpeakingSub.examiner}
-          totalDurationSec={selectedHistorySpeakingSub.durationSec}
-          onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
-          onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
-        />
-      )}
-
-      <ContactModal
-        isOpen={isContactOpen || modals.contact}
-        onClose={() => { setIsContactOpen(false); triggerCloseModal('contact'); }}
-      />
-
-      {/* Keyboard Shortcuts Reference Guide Modal */}
-      <KeyboardShortcutsModal
-        isOpen={isShortcutsOpen}
-        onClose={() => setIsShortcutsOpen(false)}
-      />
-
-      <WorkspaceErrorBoundary skillName="Diagnostic Placement & Study Plan">
-        <DiagnosticPlacementModal
-          isOpen={isDiagnosticOpen || modals.diagnostic}
-          onClose={() => { setIsDiagnosticOpen(false); triggerCloseModal('diagnostic'); }}
-          targetBand={targetBand}
-          onApplyTargetBand={(newBand) => setTargetBand(newBand)}
-          onOpenSkill={(skill) => setActiveSkill(skill)}
-        />
-      </WorkspaceErrorBoundary>
-
-        {/* Onboarding 3-Step Tour & Target Band Selector */}
-        <OnboardingModal
-          isOpen={isOnboardingOpen || modals.onboarding}
-          onClose={() => { setIsOnboardingOpen(false); triggerCloseModal('onboarding'); }}
-          initialTargetBand={targetBand}
-          currentApiKey={apiKey}
-          onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
-            if (newBand) setTargetBand(newBand);
-            if (newKey) setApiKey(newKey);
-          }}
-        />
-
-        {/* Daily Error Prescription Modal (Spaced Repetition Micro-Drill) */}
-        <DailyErrorPrescriptionModal
-          isOpen={isPrescriptionOpen || modals.prescription}
-          onClose={() => { setIsPrescriptionOpen(false); triggerCloseModal('prescription'); }}
-          mistakes={mistakes}
-          submissions={submissions}
-        />
-
-        {/* Cambridge Growth Analytics & Target Band Prediction Modal */}
-        <GrowthAnalyticsModal
-          isOpen={Boolean(modals.growthAnalytics)}
-          onClose={() => triggerCloseModal('growthAnalytics')}
-          initialTargetBand={Number(targetBand) || 7.0}
-          userScores={{
-            listening: 6.5,
-            reading: 6.5,
-            writing: 6.0,
-            speaking: 6.0,
-            overall: 6.5
-          }}
-          onNavigateSkill={(skill) => {
-            setActiveSkill(skill);
-            triggerCloseModal('growthAnalytics');
-          }}
-        />
-      </React.Suspense>
 
     </div>
   );
