@@ -489,7 +489,8 @@ writeFile('README.md', [
   '- Thực hành [Khung A.R.E.A Speaking](speaking/area-framework-part1.md)',
   '',
   '---',
-  '*Biên soạn bởi Đội ngũ IELTS Practice Vietnamese. Mọi đóng góp xin gửi về repository GitHub chính thức.*'
+  '*Biên soạn bởi Đội ngũ [IELTS Practice Vietnamese](https://ielts-practice-vietnamese.vercel.app/). Mọi đóng góp xin gửi về [repository GitHub chính thức](https://github.com/johntroger/ielts-practice-vietnamese).*',
+  '*Website luyện thi trực tuyến:* [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/)'
 ].join('\n'));
 
 // 4. Generate docs/SUMMARY.md (GitBook Table of Contents)

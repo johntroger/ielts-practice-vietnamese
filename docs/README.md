@@ -1,8 +1,10 @@
 # IELTS Master Handbook - Cẩm Nang Chiến Thuật Toàn Diện
 
-Chào mừng bạn đến với **IELTS Master Handbook** — Cẩm nang chiến thuật và lý thuyết luyện thi IELTS chuyên sâu, được biên soạn tỉ mỉ theo chuẩn khảo thí chính thức của **Cambridge Assessment English**, **British Council** và **IDP Education**.
+Chào mừng bạn đến với **IELTS Master Handbook** — Cẩm nang chiến thuật và lý thuyết luyện thi IELTS chuyên sâu, đồng hành cùng hệ thống luyện thi trực tuyến **[IELTS Practice Vietnamese](https://ielts-practice-vietnamese.vercel.app/)**, được biên soạn tỉ mỉ theo chuẩn khảo thí chính thức của **Cambridge Assessment English**, **British Council** và **IDP Education**.
 
 Tài liệu được thiết kế mở, tự động đồng bộ hóa thông qua **GitHub** và nền tảng **GitBook**, phục vụ miễn phí 100% cho cộng đồng người học IELTS tại Việt Nam.
+
+> **Ứng dụng luyện thi trực tuyến:** Truy cập [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/) để làm bài thi mô phỏng chuẩn Cambridge, phòng thi máy CDI và nhận phản hồi chi tiết từ AI.
 
 ---
 
@@ -46,4 +48,5 @@ Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn d�
 - [Bí kíp thi máy CD-IELTS: Phím tắt & Phục hồi khi lỡ nhịp](listening/listening-cd-ielts-hacks-and-focus.md)
 
 ---
-*Biên soạn bởi Đội ngũ IELTS Practice Vietnamese. Mọi đóng góp xin gửi về repository GitHub chính thức.*
+*Biên soạn bởi Đội ngũ [IELTS Practice Vietnamese](https://ielts-practice-vietnamese.vercel.app/). Mọi đóng góp xin gửi về [repository GitHub chính thức](https://github.com/johntroger/ielts-practice-vietnamese).*  
+*Website luyện thi trực tuyến:* [https://ielts-practice-vietnamese.vercel.app/](https://ielts-practice-vietnamese.vercel.app/)
