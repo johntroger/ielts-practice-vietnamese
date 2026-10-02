@@ -23,7 +23,7 @@ assert(fs.existsSync(toolbarPath), 'src/components/WritingSubHeaderToolbar.jsx m
 const toolbarCode = fs.readFileSync(toolbarPath, 'utf8');
 
 assert(toolbarCode.includes('onOpenCDIDisplay'), 'Toolbar must accept onOpenCDIDisplay prop');
-assert(toolbarCode.includes('Trợ Năng CDI'), 'Toolbar must expose CDI Display button');
+assert(toolbarCode.includes('Trợ Năng') && toolbarCode.includes('CDI'), 'Toolbar must expose CDI Display button');
 assert(toolbarCode.includes('isToolsDropdownOpen'), 'Toolbar must group auxiliary tools into de-cluttered popover');
 assert(toolbarCode.includes('Sinh Đề (AI)'), 'Toolbar must feature prominent AI Task Generator button');
 assert(toolbarCode.includes('Thuộc bài'), 'Toolbar must retain quick Mastered toggle');

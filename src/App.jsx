@@ -39,6 +39,13 @@ import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
+import { 
+  saveTwoTierSubmissions, 
+  loadTwoTierSubmissions, 
+  deleteSubmissionTwoTier, 
+  clearSubmissionsTwoTier, 
+  migrateSubmissionsToIndexedDb 
+} from './utils/indexedDbStorage';
 import { supabase } from './services/supabaseClient';
 import { 
   fetchUserSubmissions, 
@@ -632,9 +639,47 @@ export default function App() {
     safeSet('ielts_outlines_drafts', outlines);
   }, [outlines]);
 
+  // Asynchronous Two-Tier IndexedDB Hydration & Storage Migration
   useEffect(() => {
-    safeSet('ielts_submissions_history', submissions);
+    let isMounted = true;
+    async function hydrateTwoTierHistory() {
+      try {
+        await migrateSubmissionsToIndexedDb();
+        const [fullWriting, fullReading, fullListening, fullSpeaking] = await Promise.all([
+          loadTwoTierSubmissions('ielts_submissions_history', null),
+          loadTwoTierSubmissions('ielts_reading_submissions_history', null),
+          loadTwoTierSubmissions('ielts_listening_submissions_history', null),
+          loadTwoTierSubmissions('ielts_speaking_submissions_history', null)
+        ]);
+        if (!isMounted) return;
+        if (Array.isArray(fullWriting) && fullWriting.length > 0) setSubmissions(fullWriting);
+        if (Array.isArray(fullReading) && fullReading.length > 0) setReadingHistory(fullReading);
+        if (Array.isArray(fullListening) && fullListening.length > 0) setListeningHistory(fullListening);
+        if (Array.isArray(fullSpeaking) && fullSpeaking.length > 0) setSpeakingHistory(fullSpeaking);
+      } catch (err) {
+        console.warn('[Storage] Two-tier history hydration error:', err);
+      }
+    }
+    hydrateTwoTierHistory();
+    return () => { isMounted = false; };
+  }, []);
+
+  // Two-Tier Submissions Persistence (Full in IndexedDB, Ultra-lightweight Summary in LocalStorage)
+  useEffect(() => {
+    saveTwoTierSubmissions('ielts_submissions_history', submissions);
   }, [submissions]);
+
+  useEffect(() => {
+    saveTwoTierSubmissions('ielts_reading_submissions_history', readingHistory);
+  }, [readingHistory]);
+
+  useEffect(() => {
+    saveTwoTierSubmissions('ielts_listening_submissions_history', listeningHistory);
+  }, [listeningHistory]);
+
+  useEffect(() => {
+    saveTwoTierSubmissions('ielts_speaking_submissions_history', speakingHistory);
+  }, [speakingHistory]);
 
   useEffect(() => {
     safeSet('ielts_vocab_notebook', vocabList);
@@ -861,15 +906,17 @@ export default function App() {
     setMistakes([]);
     setPersonalNotes([]);
     setApiKey('');
+    clearSubmissionsTwoTier('ielts_submissions_history');
+    clearSubmissionsTwoTier('ielts_reading_submissions_history');
+    clearSubmissionsTwoTier('ielts_listening_submissions_history');
+    clearSubmissionsTwoTier('ielts_speaking_submissions_history');
     alert('Đã khôi phục toàn bộ cài đặt gốc.');
   };
 
   const handleDeleteWritingSubmission = (subId) => {
     setSubmissions(prev => {
       const updated = prev.filter(s => s.id !== subId);
-      try {
-        localStorage.setItem('ielts_submissions_history', JSON.stringify(updated));
-      } catch (e) {}
+      deleteSubmissionTwoTier('ielts_submissions_history', subId);
       return updated;
     });
     if (currentUser) {
@@ -880,17 +927,13 @@ export default function App() {
   const handleClearWritingHistory = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài nộp Writing? Thao tác này sẽ dọn dẹp sạch danh sách bài viết.')) return;
     setSubmissions([]);
-    try {
-      localStorage.removeItem('ielts_submissions_history');
-    } catch (e) {}
+    clearSubmissionsTwoTier('ielts_submissions_history');
   };
 
   const handleDeleteReadingSubmission = (subId) => {
     setReadingHistory(prev => {
       const updated = prev.filter(r => r.id !== subId);
-      try {
-        localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(updated));
-      } catch (e) {}
+      deleteSubmissionTwoTier('ielts_reading_submissions_history', subId);
       return updated;
     });
   };
@@ -898,17 +941,13 @@ export default function App() {
   const handleClearReadingHistory = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Reading? Thao tác này sẽ dọn dẹp sạch danh sách bài đọc.')) return;
     setReadingHistory([]);
-    try {
-      localStorage.removeItem('ielts_reading_submissions_history');
-    } catch (e) {}
+    clearSubmissionsTwoTier('ielts_reading_submissions_history');
   };
 
   const handleDeleteListeningSubmission = (subId) => {
     setListeningHistory(prev => {
       const updated = prev.filter(r => r.id !== subId);
-      try {
-        localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(updated));
-      } catch (e) {}
+      deleteSubmissionTwoTier('ielts_listening_submissions_history', subId);
       return updated;
     });
   };
@@ -916,17 +955,13 @@ export default function App() {
   const handleClearListeningHistory = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Listening? Thao tác này sẽ dọn dẹp sạch danh sách bài nghe.')) return;
     setListeningHistory([]);
-    try {
-      localStorage.removeItem('ielts_listening_submissions_history');
-    } catch (e) {}
+    clearSubmissionsTwoTier('ielts_listening_submissions_history');
   };
 
   const handleDeleteSpeakingSubmission = (subId) => {
     setSpeakingHistory(prev => {
       const updated = prev.filter(r => r.id !== subId);
-      try {
-        localStorage.setItem('ielts_speaking_submissions_history', JSON.stringify(updated));
-      } catch (e) {}
+      deleteSubmissionTwoTier('ielts_speaking_submissions_history', subId);
       return updated;
     });
   };
@@ -934,9 +969,7 @@ export default function App() {
   const handleClearSpeakingHistory = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Speaking? Thao tác này sẽ dọn dẹp sạch danh sách bài nói.')) return;
     setSpeakingHistory([]);
-    try {
-      localStorage.removeItem('ielts_speaking_submissions_history');
-    } catch (e) {}
+    clearSubmissionsTwoTier('ielts_speaking_submissions_history');
   };
 
   const handleClearAllHistory = () => {
@@ -945,12 +978,10 @@ export default function App() {
     setReadingHistory([]);
     setListeningHistory([]);
     setSpeakingHistory([]);
-    try {
-      localStorage.removeItem('ielts_submissions_history');
-      localStorage.removeItem('ielts_reading_submissions_history');
-      localStorage.removeItem('ielts_listening_submissions_history');
-      localStorage.removeItem('ielts_speaking_submissions_history');
-    } catch (e) {}
+    clearSubmissionsTwoTier('ielts_submissions_history');
+    clearSubmissionsTwoTier('ielts_reading_submissions_history');
+    clearSubmissionsTwoTier('ielts_listening_submissions_history');
+    clearSubmissionsTwoTier('ielts_speaking_submissions_history');
   };
 
   return (

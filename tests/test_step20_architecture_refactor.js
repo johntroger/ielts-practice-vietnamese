@@ -41,10 +41,20 @@ assert(subHeaderCode.includes('onOpenShortcuts'), 'WritingSubHeaderToolbar must 
 assert(subHeaderCode.includes('weeklyWordProgress'), 'WritingSubHeaderToolbar must display weekly word progress');
 console.log('  ✅ 3. WritingSubHeaderToolbar modularizes writing workspace toolbar controls');
 
-// 4. Verify App.jsx integrates WritingSubHeaderToolbar
-assert(appCode.includes("from './components/WritingSubHeaderToolbar'"), 'App.jsx must import WritingSubHeaderToolbar');
-assert(appCode.includes('<WritingSubHeaderToolbar'), 'App.jsx must render WritingSubHeaderToolbar component');
-console.log('  ✅ 4. App.jsx renders WritingSubHeaderToolbar with clean props separation');
+// 4. Verify App.jsx or WritingWorkspace integrates WritingSubHeaderToolbar
+const writingWorkspacePath = path.resolve('src/components/writing/WritingWorkspace.jsx');
+const writingWorkspaceCode = fs.existsSync(writingWorkspacePath) ? fs.readFileSync(writingWorkspacePath, 'utf8') : '';
+assert(
+  appCode.includes("from './components/WritingSubHeaderToolbar'") ||
+  writingWorkspaceCode.includes("from '../WritingSubHeaderToolbar'"),
+  'App.jsx or WritingWorkspace must import WritingSubHeaderToolbar'
+);
+assert(
+  appCode.includes('<WritingSubHeaderToolbar') ||
+  writingWorkspaceCode.includes('<WritingSubHeaderToolbar'),
+  'Writing workspace must render WritingSubHeaderToolbar component'
+);
+console.log('  ✅ 4. Writing workspace renders WritingSubHeaderToolbar with clean props separation');
 
 // 5. Verify MarathonTRFScorecard.jsx
 const trfPath = path.resolve('src/components/MarathonTRFScorecard.jsx');

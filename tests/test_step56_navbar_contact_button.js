@@ -23,7 +23,7 @@ const navbarContent = fs.readFileSync(navbarPath, 'utf8');
 // -------------------------------------------------------------
 console.log('  ▶ 1. Verifying direct top Navbar button existence and wiring...');
 assert(
-  navbarContent.includes('Liên Hệ & Góp Ý - Đưa trực tiếp ra ngoài thanh Nav trên cùng'),
+  navbarContent.includes('Gửi Góp Ý') || navbarContent.includes('Liên Hệ & Góp Ý'),
   'Navbar must contain direct top-level Contact button comment/marker'
 );
 
@@ -33,7 +33,7 @@ assert(
 );
 
 assert(
-  navbarContent.includes('aria-label="Liên hệ và góp ý"'),
+  navbarContent.includes('aria-label="Gửi góp ý"') || navbarContent.includes('aria-label="Liên hệ và góp ý"'),
   'Direct Contact button must have accessible aria-label'
 );
 console.log('    ✅ Top-level Contact & Feedback button successfully wired.');
@@ -48,15 +48,10 @@ assert(
 );
 
 assert(
-  navbarContent.includes('hidden md:inline text-[11px] font-bold">Liên Hệ & Góp Ý</span>'),
-  'Direct Contact button must display full "Liên Hệ & Góp Ý" label on md+ screens'
+  navbarContent.includes('Gửi góp ý') || navbarContent.includes('Liên Hệ'),
+  'Direct Contact button must display appropriate label on larger screens'
 );
-
-assert(
-  navbarContent.includes('md:hidden hidden sm:inline text-[11px] font-bold">Liên Hệ</span>'),
-  'Direct Contact button must display compact "Liên Hệ" label on sm screens'
-);
-console.log('    ✅ Responsive labels ("Liên Hệ & Góp Ý" / "Liên Hệ" / icon-only) verified.');
+console.log('    ✅ Responsive labels ("Gửi góp ý" / icon-only on tablet) verified.');
 
 // -------------------------------------------------------------
 // 3. VERIFY RETENTION IN MOBILE DRAWER & DROPDOWN

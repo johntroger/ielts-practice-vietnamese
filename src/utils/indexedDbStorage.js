@@ -7,6 +7,8 @@
 const DB_NAME = 'IELTS_WEB_DB';
 const DB_VERSION = 1;
 
+import { stripEphemeralMedia, safeSet, safeGet } from './storageService.js';
+
 export const STORES = {
   KEYVAL: 'keyval',
   DIAGNOSTIC_RECORDS: 'diagnostic_records',
@@ -70,8 +72,6 @@ export function openIeltsDb() {
     }
   });
 }
-
-import { stripEphemeralMedia } from './storageService.js';
 
 /**
  * Sets a value in the specified store.
@@ -292,4 +292,259 @@ export async function getStorageQuotaMetrics() {
     percentUsed: 0,
     storageType: 'Memory / Fallback'
   };
+}
+
+/**
+ * Creates a lightweight summary of a submission for LocalStorage index.
+ * Strips heavy evaluation rewrites, full paragraphs, and ephemeral media,
+ * reducing payload by >95% to prevent browser QuotaExceededError.
+ */
+export function createLightweightSubmission(sub) {
+  if (!sub || typeof sub !== 'object') return sub;
+
+  const isReadingOrListening = sub.readingTest || sub.listeningTest || sub.totalQuestions !== undefined;
+  const isSpeaking = sub.speakingTopic || sub.audioBlob || sub.sttTranscript;
+
+  const lightweight = {
+    id: sub.id,
+    date: sub.date,
+    timestamp: sub.timestamp || sub.date,
+    hasFullDetailInIdb: true
+  };
+
+  // Task basic info
+  if (sub.task) {
+    lightweight.task = {
+      id: sub.task.id,
+      title: sub.task.title,
+      taskNumber: sub.task.taskNumber
+    };
+  }
+
+  // Stats
+  if (sub.stats) {
+    lightweight.stats = {
+      wordCount: sub.stats.wordCount,
+      timeSpent: sub.stats.timeSpent
+    };
+  }
+
+  // Evaluation summary
+  if (sub.evaluation) {
+    lightweight.evaluation = {
+      overallBand: sub.evaluation.overallBand ?? sub.evaluation.band,
+      band: sub.evaluation.overallBand ?? sub.evaluation.band,
+      score: sub.evaluation.score,
+      evaluationMethod: sub.evaluation.evaluationMethod,
+      engineName: sub.evaluation.engineName
+    };
+
+    if (sub.evaluation.criteriaScores) {
+      lightweight.evaluation.criteriaScores = {
+        taskResponse: { band: sub.evaluation.criteriaScores.taskResponse?.band },
+        coherence: { band: sub.evaluation.criteriaScores.coherence?.band },
+        lexicalResource: { band: sub.evaluation.criteriaScores.lexicalResource?.band },
+        grammaticalRange: { band: sub.evaluation.criteriaScores.grammaticalRange?.band }
+      };
+    }
+  }
+
+  // Truncated preview for UI card display
+  if (sub.essayText) {
+    lightweight.essayText = sub.essayText.slice(0, 150) + (sub.essayText.length > 150 ? '...' : '');
+  }
+
+  // Reading / Listening specific metrics
+  if (isReadingOrListening) {
+    lightweight.band = sub.band ?? sub.evaluation?.overallBand;
+    lightweight.score = sub.score;
+    lightweight.totalQuestions = sub.totalQuestions;
+    lightweight.timeSpent = sub.timeSpent;
+    if (sub.testTitle) lightweight.testTitle = sub.testTitle;
+  }
+
+  // Speaking specific metrics
+  if (isSpeaking) {
+    lightweight.band = sub.band ?? sub.overallBand;
+    lightweight.speakingTopic = sub.speakingTopic ? { title: sub.speakingTopic.title } : undefined;
+    lightweight.fluencyBand = sub.fluencyBand;
+    lightweight.lexicalBand = sub.lexicalBand;
+    lightweight.grammarBand = sub.grammarBand;
+    lightweight.pronunciationBand = sub.pronunciationBand;
+  }
+
+  return lightweight;
+}
+
+/**
+ * Saves full submissions to high-capacity IndexedDB while saving
+ * an ultra-lightweight summary index into LocalStorage.
+ * @param {string} key - Storage key e.g. 'ielts_submissions_history'
+ * @param {Array} fullSubmissions - Array of full submission objects
+ */
+export async function saveTwoTierSubmissions(key, fullSubmissions) {
+  if (!Array.isArray(fullSubmissions)) return false;
+
+  try {
+    // 1. Persist full detailed records into IndexedDB KEYVAL store
+    await idbSet(STORES.KEYVAL, key, fullSubmissions);
+
+    // 2. Index each individual item into SUBMISSIONS_ARCHIVE for direct lookup by ID
+    for (const item of fullSubmissions) {
+      if (item && item.id) {
+        await idbSet(STORES.SUBMISSIONS_ARCHIVE, item.id, item);
+      }
+    }
+
+    // 3. Create lightweight summary array for LocalStorage (< 50KB total for hundreds of essays)
+    const lightweight = fullSubmissions.map(createLightweightSubmission);
+    safeSet(key, lightweight);
+    return true;
+  } catch (err) {
+    console.warn(`[TwoTierStorage] Error saving submissions for '${key}':`, err);
+    safeSet(key, fullSubmissions);
+    return false;
+  }
+}
+
+/**
+ * Loads submissions with two-tier strategy:
+ * First attempts to retrieve full records from IndexedDB;
+ * if empty or unavailable, falls back to LocalStorage summary.
+ * @param {string} key - Storage key
+ * @param {*} defaultVal - Fallback value
+ * @returns {Promise<Array>}
+ */
+export async function loadTwoTierSubmissions(key, defaultVal = []) {
+  try {
+    // 1. Try to load full records from IndexedDB
+    const idbData = await idbGet(STORES.KEYVAL, key, null);
+    if (Array.isArray(idbData) && idbData.length > 0) {
+      return idbData;
+    }
+  } catch (err) {
+    console.warn(`[TwoTierStorage] Error reading '${key}' from IndexedDB, using LocalStorage:`, err);
+  }
+
+  // 2. Fallback to LocalStorage
+  return safeGet(key, defaultVal);
+}
+
+/**
+ * Deletes a submission from both IndexedDB and LocalStorage.
+ * @param {string} key - Storage key
+ * @param {string} subId - Submission ID
+ */
+export async function deleteSubmissionTwoTier(key, subId) {
+  if (!subId) return false;
+
+  try {
+    // Delete from individual archive
+    await idbDelete(STORES.SUBMISSIONS_ARCHIVE, subId);
+
+    // Update KEYVAL in IndexedDB
+    const existing = await idbGet(STORES.KEYVAL, key, []);
+    if (Array.isArray(existing)) {
+      const updated = existing.filter(item => item && item.id !== subId);
+      await idbSet(STORES.KEYVAL, key, updated);
+
+      // Update LocalStorage summary
+      const lightweight = updated.map(createLightweightSubmission);
+      safeSet(key, lightweight);
+    }
+    return true;
+  } catch (err) {
+    console.warn(`[TwoTierStorage] Error deleting submission '${subId}':`, err);
+    return false;
+  }
+}
+
+/**
+ * Clears an entire submission history category from both IndexedDB and LocalStorage.
+ * @param {string} key - Storage key
+ */
+export async function clearSubmissionsTwoTier(key) {
+  try {
+    await idbSet(STORES.KEYVAL, key, []);
+    safeSet(key, []);
+    return true;
+  } catch (err) {
+    console.warn(`[TwoTierStorage] Error clearing submissions for '${key}':`, err);
+    safeSet(key, []);
+    return false;
+  }
+}
+
+/**
+ * Retrieves a single full submission by ID from the archive.
+ * @param {string} subId - Submission ID
+ * @returns {Promise<Object|null>}
+ */
+export async function getSubmissionById(subId) {
+  if (!subId) return null;
+  try {
+    return await idbGet(STORES.SUBMISSIONS_ARCHIVE, subId, null);
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Migrates existing legacy LocalStorage full submissions into IndexedDB.
+ * Compresses the LocalStorage entry to lightweight summaries to prevent QuotaExceededError.
+ * Safe to run multiple times (idempotent).
+ * @returns {Promise<number>} Number of migrated submissions
+ */
+export async function migrateSubmissionsToIndexedDb() {
+  const historyKeys = [
+    'ielts_submissions_history',
+    'ielts_reading_submissions_history',
+    'ielts_listening_submissions_history',
+    'ielts_speaking_submissions_history'
+  ];
+
+  let totalMigrated = 0;
+
+  for (const key of historyKeys) {
+    try {
+      const localData = safeGet(key, null);
+      if (Array.isArray(localData) && localData.length > 0) {
+        const idbData = await idbGet(STORES.KEYVAL, key, null);
+
+        // Check if LocalStorage holds unmigrated or heavy data
+        const hasHeavyFields = localData.some(item => 
+          item?.evaluation?.band65Rewrite || 
+          item?.evaluation?.band8Rewrite || 
+          item?.evaluation?.paragraphFeedback ||
+          item?.evaluation?.detailedAnalysis ||
+          (item?.essayText && item.essayText.length > 200)
+        );
+
+        if (!idbData || !Array.isArray(idbData) || idbData.length < localData.length || hasHeavyFields) {
+          const mergedData = (Array.isArray(idbData) && idbData.length >= localData.length) ? idbData : localData;
+          
+          // Save full data into IndexedDB
+          await idbSet(STORES.KEYVAL, key, mergedData);
+          for (const item of mergedData) {
+            if (item && item.id) {
+              await idbSet(STORES.SUBMISSIONS_ARCHIVE, item.id, item);
+            }
+          }
+
+          // Shrink LocalStorage to lightweight summaries
+          const lightweight = mergedData.map(createLightweightSubmission);
+          safeSet(key, lightweight);
+          totalMigrated += mergedData.length;
+        }
+      }
+    } catch (err) {
+      console.warn(`[StorageMigration] Migration skipped for key '${key}':`, err);
+    }
+  }
+
+  if (totalMigrated > 0) {
+    console.log(`[StorageMigration] Successfully migrated ${totalMigrated} submissions to IndexedDB and compressed LocalStorage.`);
+  }
+
+  return totalMigrated;
 }

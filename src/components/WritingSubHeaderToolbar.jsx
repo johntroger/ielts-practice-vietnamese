@@ -78,7 +78,7 @@ export default function WritingSubHeaderToolbar({
     <div className={`bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
       isSlimHeader 
         ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
-        : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-1.5 sm:gap-2'
+        : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between md:flex-wrap gap-1.5 sm:gap-2'
     }`}>
       
       {/* ============================================================ */}
