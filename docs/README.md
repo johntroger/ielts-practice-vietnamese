@@ -19,7 +19,7 @@ Tài liệu được thiết kế mở, tự động đồng bộ hóa thông qu
 
 ## 🚀 Tính Năng Nổi Bật
 
-- **Chuẩn Khảo Thí Cambridge**: Toàn bộ chiến thuật dựa trên Band Descriptors thực tế và phân tích đề thi Cambridge IELTS từ quyển 10 đến 19.
+- **Chuẩn Khảo Thí Cambridge 2026**: Toàn bộ chiến thuật dựa trên Band Descriptors thực tế và phân tích đề thi Cambridge IELTS từ quyển 10 đến 19, cập nhật xu hướng thi máy tính (CDI) và One Skill Retake (OSR).
 - **Lộ Trình Bứt Phá Điểm Rõ Ràng**: Cung cấp các bài viết chuyên biệt hướng dẫn thí sinh vượt qua rào cản **Band 5.0 -> 6.5 -> 7.5+**.
 - **Đa Nền Tảng**: Đọc trực tiếp trên giao diện web của [Ứng Dụng Luyện Thi IELTS](https://ielts-practice-vietnamese.vercel.app/) thông qua tính năng Cẩm Nang Trực Tuyến, hoặc đọc trên cổng thông tin GitBook chuyên nghiệp.
 
@@ -27,10 +27,12 @@ Tài liệu được thiết kế mở, tự động đồng bộ hóa thông qu
 
 ## 🧭 Điều Hướng Nhanh
 
-- Bắt đầu với [Tiêu chí chấm điểm Writing](writing/criteria-overview.md)
-- Xem [Quản trị thời gian Reading](reading/time-management.md)
-- Nắm vững [Bẫy Distractor Listening](listening/distractor-traps.md)
-- Thực hành [Khung A.R.E.A Speaking](speaking/area-framework-part1.md)
+- Bắt đầu với [Tiêu chí chấm điểm Writing 2026](writing/criteria-overview.md)
+- Xem [Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](writing/cdi-and-one-skill-retake-strategy.md)
+- Xem [Giải mã nhận xét Giám khảo Cam 18-19 & Lỗi mất điểm 8.0+](writing/cambridge-examiner-insights-band8.md)
+- Nắm vững [Kỹ thuật Highlight & Split-screen Reading](reading/computer-delivered-reading-techniques.md)
+- Bẻ khóa [Bẫy Đồng thuận ảo Listening Part 3](listening/cambridge-part3-consensus-traps.md)
+- Vượt qua [Cờ đỏ phòng thi Speaking & Collocations C1/C2](speaking/examiner-red-flags-and-c1-collocations.md)
 
 ---
 *Biên soạn bởi Đội ngũ IELTS Practice Vietnamese. Mọi đóng góp xin gửi về repository GitHub chính thức.*

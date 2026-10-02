@@ -30,6 +30,8 @@
 * [25. Task 2: 3 Công thức Paraphrase Mở bài & Thesis](writing/writing-paraphrase-thesis-intro.md)
 * [26. Checklist 10 lỗi sai dậm chân ở Band 5.5 - 6.0](writing/common-mistakes.md)
 * [27. Quy tắc dấu câu & Bẫy Comma Splice](writing/writing-punctuation-comma-splice.md)
+* [28. Chiến lược thi máy (CDI) & Kỹ thuật One Skill Retake (OSR)](writing/cdi-and-one-skill-retake-strategy.md)
+* [29. Giải mã nhận xét Giám khảo Cam 18-19 & Lỗi mất điểm 8.0+](writing/cambridge-examiner-insights-band8.md)
 
 ## 📖 IELTS Reading
 * [1. Quản Trị Thời Gian 15 - 20 - 25 Phút](reading/time-management.md)
@@ -48,6 +50,7 @@
 * [14. Quy tắc 90 giây & Buông bỏ chiến thuật](reading/reading-strategic-time-management.md)
 * [15. Cấp cứu 5 phút cuối: Đoán mò có căn cứ khoa học](reading/reading-last-5-minutes-rescue.md)
 * [16. Lộ trình Reading từ Band 5.0 lên 7.5+](reading/reading-progression-50-to-75.md)
+* [17. Kỹ thuật Highlight & Split-screen tối ưu trên máy tính](reading/computer-delivered-reading-techniques.md)
 
 ## 🎧 IELTS Listening
 * [1. Bẫy Distractor & Đổi Ý Trong Listening](listening/distractor-traps.md)
@@ -66,6 +69,7 @@
 * [14. Phương pháp Chép chính tả & Nhại giọng (Shadowing)](listening/listening-dictation-shadowing-method.md)
 * [15. Cẩm nang nhận diện các giọng Accent địa phương](listening/listening-accents-guide.md)
 * [16. Lộ trình Listening từ Band 5.0 lên 7.5+](listening/listening-progression-50-to-75.md)
+* [17. Bẻ khóa bẫy Đồng thuận ảo & Đối kháng ngầm Part 3](listening/cambridge-part3-consensus-traps.md)
 
 ## 🗣️ IELTS Speaking
 * [1. Khung A.R.E.A - Trả Lời Tự Nhiên Part 1](speaking/area-framework-part1.md)
@@ -81,3 +85,4 @@
 * [11. Tâm lý phòng thi & Khi bị giám khảo ngắt lời](speaking/speaking-examiner-interruption.md)
 * [12. Top 35+ thành ngữ Idiomatic tự nhiên Band 8.0+](speaking/speaking-idiomatic-lexicon-c1-c2.md)
 * [13. Lộ trình Speaking từ Band 5.0 lên 7.5+](speaking/speaking-progression-50-to-75.md)
+* [14. Cờ đỏ phòng thi & 30 Collocations C1/C2 tự nhiên](speaking/examiner-red-flags-and-c1-collocations.md)
