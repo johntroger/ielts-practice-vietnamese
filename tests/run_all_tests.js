@@ -79,7 +79,8 @@ const testSuites = [
   { name: 'Step 70: Header Decluttering & Hierarchy Upgrade', file: 'tests/test_step70_header_decluttering_and_optimization.js' },
   { name: 'Step 71: Academic Typography & Visual Tokens', file: 'tests/test_step71_typography_and_visual_tokens.js' },
   { name: 'Step 72: Slide-Over Utility Panel (Vocab, Paraphrase & Mistakes)', file: 'tests/test_step72_slide_over_utility_panel.js' },
-  { name: 'Step 73: Skimmable Actionable Feedback & 3-Second Action Plan', file: 'tests/test_step73_skimmable_actionable_feedback.js' }
+  { name: 'Step 73: Skimmable Actionable Feedback & 3-Second Action Plan', file: 'tests/test_step73_skimmable_actionable_feedback.js' },
+  { name: 'Step 74: AI Domain Adapters Modularization & Facade', file: 'tests/test_step74_ai_domain_adapters_modularization.js' }
 ];
 
 console.log('===============================================================');

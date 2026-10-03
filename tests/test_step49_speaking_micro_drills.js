@@ -83,7 +83,13 @@ part3Drills.forEach(d => {
 // 3. Verify Gemini AI Service Integration
 console.log('Test 6: Verifying geminiService.js AI speaking prompts & evaluation');
 const geminiServicePath = path.join(__dirname, '../src/services/geminiService.js');
-const geminiSource = fs.readFileSync(geminiServicePath, 'utf8');
+let geminiSource = fs.readFileSync(geminiServicePath, 'utf8');
+if (geminiSource.includes("from './ai/")) {
+  const practiceAiPath = path.join(__dirname, '../src/services/ai/practiceDrillsAiService.js');
+  const speakingAiPath = path.join(__dirname, '../src/services/ai/speakingAiService.js');
+  if (fs.existsSync(practiceAiPath)) geminiSource += '\n' + fs.readFileSync(practiceAiPath, 'utf8');
+  if (fs.existsSync(speakingAiPath)) geminiSource += '\n' + fs.readFileSync(speakingAiPath, 'utf8');
+}
 
 assert(geminiSource.includes('evaluateSpeakingMicroDrill'), 'geminiService must export evaluateSpeakingMicroDrill');
 assert(geminiSource.includes("drillType === 'speaking-area'"), 'generateMicroDrill must support speaking-area');
