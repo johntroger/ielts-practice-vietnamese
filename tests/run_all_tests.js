@@ -66,7 +66,8 @@ const testSuites = [
   { name: 'Step 57: GitBook Documentation & Auto-Sync Integration', file: 'tests/test_step57_gitbook_docs_integration.js' },
   { name: 'Step 58: Two-Tier High Capacity Storage (IndexedDB Archive & LocalStorage Index)', file: 'tests/test_step58_two_tier_indexeddb_storage.js' },
   { name: 'Step 59: Automated Features Documentation & GitBook Sync Engine', file: 'tests/test_step59_automated_features_docs_sync.js' },
-  { name: 'Step 60: Minimal Focus View & Cognitive Decluttering (Phase 3.1)', file: 'tests/test_step60_minimal_focus_view.js' }
+  { name: 'Step 60: Minimal Focus View & Cognitive Decluttering (Phase 3.1)', file: 'tests/test_step60_minimal_focus_view.js' },
+  { name: 'Step 61: Speaking Mock Room ReferenceError Fix (Phase 1)', file: 'tests/test_step61_speaking_mock_error_fix.js' }
 ];
 
 console.log('===============================================================');

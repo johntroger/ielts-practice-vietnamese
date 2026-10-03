@@ -63,6 +63,9 @@ export default function SpeakingExaminerRoom({
   // Current prompt displayed in center stage
   // Local Mic Active state synchronized with speechEngine for instant, glitch-free UI response
   const [isMicActive, setIsMicActive] = useState(speechEngine.isListening);
+  const [turnDurationSec, setTurnDurationSec] = useState(30);
+  const turnStartTimeRef = useRef(null);
+
   useEffect(() => {
     setIsMicActive(speechEngine.isListening);
   }, [speechEngine.isListening]);
@@ -71,9 +74,14 @@ export default function SpeakingExaminerRoom({
     if (isMicActive || speechEngine.isListening) {
       setIsMicActive(false);
       speechEngine.stopListening();
+      if (turnStartTimeRef.current) {
+        const elapsed = Math.max(5, Math.round((Date.now() - turnStartTimeRef.current) / 1000));
+        setTurnDurationSec(elapsed);
+      }
     } else {
       setIsMicActive(true);
       setIsAwaitingCandidateMic(false);
+      turnStartTimeRef.current = Date.now();
       try {
         const clipToStart = nextClipIdRef.current || ('turn_' + Date.now());
         await speechEngine.startListening(clipToStart);
@@ -759,7 +767,7 @@ export default function SpeakingExaminerRoom({
           {speechEngine.transcript && !isMicActive && (
             <SpeakingFillerTracker 
               transcript={speechEngine.transcript} 
-              durationSec={stageTimerSeconds || 30}
+              durationSec={currentStage === 'part2_speak' ? (part2SpeakSeconds || 60) : (turnDurationSec || 30)}
               className="mt-2"
             />
           )}
