@@ -36,7 +36,9 @@ import {
   Eye,
   EyeOff,
   VolumeX,
-  PenTool
+  PenTool,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -94,6 +96,36 @@ export default function MicroDrillsModal({
     else if (room === 'listening') setActiveTab('listening-dictation');
     else if (room === 'speaking') setActiveTab('speaking-area');
   };
+
+  // Fullscreen / Expanded Workspace Mode
+  const [isExpanded, setIsExpanded] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_micro_drills_expanded') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const toggleExpanded = () => {
+    setIsExpanded(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('ielts_micro_drills_expanded', String(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.altKey && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        toggleExpanded();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Sharing & Privacy State: Defaults to true (Public community resource) with user toggle
   const [isAutoShare, setIsAutoShare] = useState(() => {
@@ -1241,8 +1273,16 @@ export default function MicroDrillsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-1 sm:p-2 lg:p-3 overflow-hidden">
-      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] shadow-2xl overflow-hidden overscroll-contain flex flex-col h-[96dvh] max-h-[96dvh] animate-in fade-in zoom-in-95 duration-200">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden transition-all duration-200 ${
+      isExpanded 
+        ? 'p-0 bg-slate-950' 
+        : 'p-1 sm:p-2 lg:p-3 bg-slate-900/60 backdrop-blur-xs'
+    }`}>
+      <div className={`bg-white shadow-2xl overflow-hidden overscroll-contain flex flex-col transition-all duration-200 ${
+        isExpanded 
+          ? 'w-screen h-screen max-w-none max-h-none rounded-none' 
+          : 'rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh]'
+      }`}>
         
         {/* Top Header */}
         <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
@@ -1262,13 +1302,31 @@ export default function MicroDrillsModal({
               </p>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-1.5"
-            aria-label="Đóng phòng luyện"
-          >
-            <X className="w-5 h-5" />
-          </button>
+
+          <div className="flex items-center space-x-1.5 shrink-0">
+            {/* Fullscreen / Expanded Workspace Toggle */}
+            <button 
+              type="button"
+              onClick={toggleExpanded} 
+              className={`p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl transition-all cursor-pointer ${
+                isExpanded
+                  ? 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-xs'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
+              }`}
+              title={isExpanded ? "Thu gọn giao diện phòng luyện (Alt + Z)" : "Mở rộng toàn màn hình phòng luyện (Alt + Z)"}
+              aria-label={isExpanded ? "Thu gọn phòng luyện" : "Mở rộng phòng luyện"}
+            >
+              {isExpanded ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+            </button>
+
+            <button 
+              onClick={onClose} 
+              className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              aria-label="Đóng phòng luyện"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Level 1: Room Selector Bar (Phòng Chuyên Môn) */}

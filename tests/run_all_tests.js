@@ -74,7 +74,8 @@ const testSuites = [
   { name: 'Step 65: Soundcheck Audio Gain Balance (Phase 5)', file: 'tests/test_step65_soundcheck_audio_gain_balance.js' },
   { name: 'Step 66: Full Notion Bugfix Regression & Integration (Phase 6)', file: 'tests/test_step66_full_notion_bugfix_regression.js' },
   { name: 'Step 67: Workspace Expansion & Header Toggle (Alt+Z)', file: 'tests/test_step67_workspace_expansion_header_toggle.js' },
-  { name: 'Step 68: Grammar & Vocabulary Documentation Integrity', file: 'tests/test_step68_grammar_vocab_docs.js' }
+  { name: 'Step 68: Grammar & Vocabulary Documentation Integrity', file: 'tests/test_step68_grammar_vocab_docs.js' },
+  { name: 'Step 69: Micro-Drills & Vocab/Grammar Workspace Expansion', file: 'tests/test_step69_micro_drills_and_vocab_expansion.js' }
 ];
 
 console.log('===============================================================');

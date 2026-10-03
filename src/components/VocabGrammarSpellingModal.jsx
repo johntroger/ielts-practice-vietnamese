@@ -25,7 +25,9 @@ import {
   Globe,
   Lock,
   RefreshCw,
-  Search
+  Search,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import StarRatingWidget from './common/StarRatingWidget';
 import { recordAttempt, applySmartFilterAndSort } from '../services/ratingPopularityService';
@@ -58,6 +60,37 @@ export default function VocabGrammarSpellingModal({
 }) {
   // Active Tab: 'spelling' | 'grammar' | 'vocab'
   const [activeTab, setActiveTab] = useState('spelling');
+
+  // Fullscreen / Expanded Workspace Mode
+  const [isExpanded, setIsExpanded] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_vocab_grammar_expanded') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const toggleExpanded = () => {
+    setIsExpanded(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('ielts_vocab_grammar_expanded', String(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.altKey && (e.key === 'z' || e.key === 'Z')) {
+        e.preventDefault();
+        toggleExpanded();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   // Band Filter: 'all' (Tất cả 5.5 - 7.5) | 'band-5.5' (Band 5.5 - 6.0) | 'band-6' (Band 6.0 - 6.5) | 'band-7' (Band 7.0 - 7.5)
   const [selectedBandTier, setSelectedBandTier] = useState('all');
@@ -883,8 +916,16 @@ export default function VocabGrammarSpellingModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 lg:p-3 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-hidden">
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh] flex flex-col overflow-hidden overscroll-contain">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden transition-all duration-200 ${
+      isExpanded 
+        ? 'p-0 bg-slate-950' 
+        : 'p-1 sm:p-2 lg:p-3 bg-slate-900/60 backdrop-blur-xs'
+    }`}>
+      <div className={`bg-white shadow-2xl border border-slate-200 flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
+        isExpanded 
+          ? 'w-screen h-screen max-w-none max-h-none rounded-none' 
+          : 'rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh]'
+      }`}>
         
         {/* MODAL HEADER */}
         <div className="px-4 sm:px-6 py-3.5 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shrink-0">
@@ -950,10 +991,25 @@ export default function VocabGrammarSpellingModal({
               </span>
             </button>
 
+            {/* Fullscreen / Expanded Workspace Toggle */}
+            <button
+              type="button"
+              onClick={toggleExpanded}
+              className={`p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl transition-all cursor-pointer shrink-0 ml-1 ${
+                isExpanded
+                  ? 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-xs'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10 bg-white/5 border border-white/10'
+              }`}
+              title={isExpanded ? "Thu gọn giao diện (Alt + Z)" : "Mở rộng toàn màn hình (Alt + Z)"}
+              aria-label={isExpanded ? "Thu gọn" : "Mở rộng"}
+            >
+              {isExpanded ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+            </button>
+
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0 ml-1.5"
+              className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
               aria-label="Đóng bảng luyện từ vựng ngữ pháp"
             >
               <X className="w-5 h-5" />
