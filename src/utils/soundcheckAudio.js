@@ -49,7 +49,9 @@ export function playIELTSSoundcheck({ volume = 1.0, onStart, onEnd } = {}) {
       osc.frequency.setValueAtTime(n.freq, now + n.time);
 
       gain.gain.setValueAtTime(0, now + n.time);
-      gain.gain.linearRampToValueAtTime(0.35 * clampedVol, now + n.time + 0.04);
+      // Calibrated to 0.85 peak (industry standard for IELTS audio tracks)
+      // Master gain already applies clampedVol scaling linearly
+      gain.gain.linearRampToValueAtTime(0.85, now + n.time + 0.04);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + n.time + n.dur);
 
       osc.connect(gain);
