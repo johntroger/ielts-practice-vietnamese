@@ -23,6 +23,17 @@ Tài liệu được thiết kế mở, tự động đồng bộ hóa thông qu
 
 ---
 
+## 📚 Ngữ Pháp & Từ Vựng Trọng Tâm IELTS (Mới Cập Nhật)
+
+Kho tài liệu chuyên sâu chuẩn Cambridge tổng hợp các cấu trúc ngữ pháp và từ vựng học thuật quan trọng nhất (kèm công thức, giải thích tiếng Việt và ví dụ song ngữ):
+
+👉 **[Khám Phá Toàn Diện Ngữ Pháp & Từ Vựng](grammar-vocab/README.md)**
+
+- **Phần Ngữ Pháp (A1 – A7):** [Câu đơn, ghép, phức & MĐ quan hệ](grammar-vocab/grammar-sentence-structures.md) • [Chọn thì đúng theo từng Task](grammar-vocab/grammar-tenses-by-task.md) • [Câu bị động & Bị động khách quan](grammar-vocab/grammar-passive-voice.md) • [Câu điều kiện toàn diện](grammar-vocab/grammar-conditionals.md) • [Cấu trúc so sánh số liệu](grammar-vocab/grammar-comparison-structures.md) • [Đảo ngữ, câu chẻ & Danh từ hóa](grammar-vocab/grammar-advanced-structures.md) • [Checklist xóa lỗi ngữ pháp người Việt](grammar-vocab/grammar-common-errors-vietnamese.md).
+- **Phần Từ Vựng (B1 – B5):** [Từ nối theo chức năng logic](grammar-vocab/vocab-linking-devices.md) • [Ngôn ngữ mô tả số liệu Task 1](grammar-vocab/vocab-task1-data-language.md) • [Academic Collocations theo 8 chủ đề](grammar-vocab/vocab-topic-collocations.md) • [Họ từ AWL & Kỹ thuật paraphrase đổi loại từ](grammar-vocab/vocab-academic-word-families.md) • [Ngôn ngữ chức năng Speaking](grammar-vocab/vocab-speaking-functional-language.md).
+
+---
+
 ## Cấu Trúc Khóa Học Phân Tầng (4-Tier Pedagogical Architecture)
 
 Cẩm nang được chia thành 4 chặng học tập rõ ràng, giúp bạn dễ dàng chọn đúng lộ trình theo trình độ hiện tại của mình:

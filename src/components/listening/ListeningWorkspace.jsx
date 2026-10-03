@@ -18,7 +18,9 @@ import {
   AlertTriangle,
   RefreshCw,
   Puzzle,
-  GraduationCap
+  GraduationCap,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
@@ -53,7 +55,9 @@ export default function ListeningWorkspace({
   openGeneratorTrigger,
   openLibraryTrigger,
   masteredIds = [],
-  onToggleMastered
+  onToggleMastered,
+  isSlimHeader = false,
+  toggleSlimHeader
 }) {
   // 1. All Listening Tests (Preloaded + Custom from URL)
   const [allListeningTests, setAllListeningTests] = useState(() => {
@@ -492,6 +496,23 @@ export default function ListeningWorkspace({
             >
               Thoát Thi
             </button>
+
+            {/* Workspace Expansion Toggle in Strict Mode (Alt + Z) */}
+            {toggleSlimHeader && (
+              <button
+                type="button"
+                onClick={toggleSlimHeader}
+                className={`px-2 py-1 rounded-md border text-[11px] font-bold transition-all flex items-center space-x-1 cursor-pointer shrink-0 ${
+                  isSlimHeader
+                    ? 'bg-amber-500 text-slate-950 border-amber-400'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                }`}
+                title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa phòng thi Listening, ẩn thanh menu trên (Alt + Z)"}
+              >
+                {isSlimHeader ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">{isSlimHeader ? 'Thu gọn' : 'Mở rộng'}</span>
+              </button>
+            )}
             <div className="flex items-center space-x-1 px-2 py-1 rounded-md bg-slate-900 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm shrink-0">
               <Clock className="w-3.5 h-3.5" />
               <span>
@@ -691,6 +712,32 @@ export default function ListeningWorkspace({
               <Volume2 className="w-3.5 h-3.5" />
               <span>Soundcheck</span>
             </button>
+
+            {/* Workspace Expansion Toggle (Alt + Z) */}
+            {toggleSlimHeader && (
+              <button
+                type="button"
+                onClick={toggleSlimHeader}
+                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg border text-xs font-bold transition-colors cursor-pointer shadow-2xs shrink-0 ${
+                  isSlimHeader
+                    ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                }`}
+                title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa không gian làm bài nghe, ẩn thanh menu trên (Alt + Z)"}
+              >
+                {isSlimHeader ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="hidden sm:inline">Thu gọn</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                    <span className="hidden sm:inline">Mở rộng</span>
+                  </>
+                )}
+              </button>
+            )}
 
             {/* Reset Exam Button */}
             {exam.isSubmitted && (

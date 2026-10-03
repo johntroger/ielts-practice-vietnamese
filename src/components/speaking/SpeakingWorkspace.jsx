@@ -4,7 +4,8 @@ import {
   Layers, Clock, Award, Shield, User, Settings, AlertCircle, 
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
-  RotateCcw, X, Loader2, GraduationCap, PenTool
+  RotateCcw, X, Loader2, GraduationCap, PenTool,
+  Maximize2, Minimize2
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -44,7 +45,9 @@ export default function SpeakingWorkspace({
   openGeneratorTrigger,
   openLibraryTrigger,
   masteredIds = [],
-  onToggleMastered
+  onToggleMastered,
+  isSlimHeader = false,
+  toggleSlimHeader
 }) {
   // 1. Workspace Configuration State
   const [activeMode, setActiveMode] = useState('mock'); // 'mock' | 'practice'
@@ -636,6 +639,32 @@ export default function SpeakingWorkspace({
               title="Cài đặt API & Âm thanh"
             >
               <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </button>
+          )}
+
+          {/* Workspace Expansion Toggle (Alt + Z) */}
+          {toggleSlimHeader && (
+            <button
+              type="button"
+              onClick={toggleSlimHeader}
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs shrink-0 ${
+                isSlimHeader
+                  ? 'bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-400'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+              }`}
+              title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa phòng thi Speaking, ẩn thanh menu trên (Alt + Z)"}
+            >
+              {isSlimHeader ? (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Thu gọn</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Mở rộng</span>
+                </>
+              )}
             </button>
           )}
         </div>

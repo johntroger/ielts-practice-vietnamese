@@ -59,7 +59,9 @@ export default function ReadingWorkspace({
   openIngestTrigger,
   openLibraryTrigger,
   masteredIds = [],
-  onToggleMastered
+  onToggleMastered,
+  isSlimHeader = false,
+  toggleSlimHeader
 }) {
   const [allReadingTests, setAllReadingTests] = useState(() => {
     try {
@@ -674,6 +676,23 @@ export default function ReadingWorkspace({
                 <span className="hidden sm:inline">{cdiFullscreen ? 'Thoát' : 'CDI'}</span>
               </button>
 
+              {/* Workspace Expansion Toggle (Alt + Z) */}
+              {toggleSlimHeader && (
+                <button
+                  type="button"
+                  onClick={toggleSlimHeader}
+                  className={`p-1 sm:px-2 sm:py-1 rounded-xl border font-bold text-xs flex items-center gap-1 shrink-0 cursor-pointer shadow-2xs ${
+                    isSlimHeader
+                      ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                  title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa không gian làm bài đọc, ẩn thanh menu trên (Alt + Z)"}
+                >
+                  {isSlimHeader ? <Minimize2 className="w-3.5 h-3.5 text-amber-600" /> : <Maximize2 className="w-3.5 h-3.5 text-slate-600" />}
+                  <span className="hidden sm:inline">{isSlimHeader ? 'Thu gọn' : 'Mở rộng'}</span>
+                </button>
+              )}
+
               {/* Tools Dropdown Trigger for Mobile */}
               <div className="relative">
                 <button
@@ -1103,6 +1122,32 @@ export default function ReadingWorkspace({
                 </>
               )}
             </button>
+
+            {/* Workspace Expansion Toggle (Alt + Z) */}
+            {toggleSlimHeader && (
+              <button
+                type="button"
+                onClick={toggleSlimHeader}
+                className={`px-2.5 py-1 rounded-xl border font-bold text-xs transition-all flex items-center gap-1 cursor-pointer shrink-0 shadow-2xs ${
+                  isSlimHeader
+                    ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                }`}
+                title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa không gian làm bài đọc, ẩn thanh menu trên (Alt + Z)"}
+              >
+                {isSlimHeader ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="hidden sm:inline">Thu gọn</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-slate-600" />
+                    <span className="hidden sm:inline">Mở rộng</span>
+                  </>
+                )}
+              </button>
+            )}
 
             {/* Mode Selector Button */}
             <button

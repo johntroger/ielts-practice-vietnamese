@@ -150,6 +150,23 @@
 
 ---
 
+## 📚 Ngữ Pháp & Từ Vựng Trọng Tâm IELTS
+* [Tổng Quan Ngữ Pháp & Từ Vựng](grammar-vocab/README.md)
+* [A1. Câu Đơn, Câu Ghép, Câu Phức & Mệnh Đề Quan Hệ](grammar-vocab/grammar-sentence-structures.md)
+* [A2. Chọn Thì Đúng Cho Từng Task / Part](grammar-vocab/grammar-tenses-by-task.md)
+* [A3. Câu Bị Động & Bị Động Khách Quan](grammar-vocab/grammar-passive-voice.md)
+* [A4. Câu Điều Kiện Toàn Diện (0, 1, 2, 3, Hỗn Hợp, Đảo Ngữ)](grammar-vocab/grammar-conditionals.md)
+* [A5. Cấu Trúc So Sánh Đa Dạng (Task 1 & Task 2)](grammar-vocab/grammar-comparison-structures.md)
+* [A6. Cấu Trúc Nâng Cao: Đảo Ngữ, Câu Chẻ, Mệnh Đề Phân Từ & Danh Từ Hóa](grammar-vocab/grammar-advanced-structures.md)
+* [A7. Lỗi Ngữ Pháp Đặc Thù Của Người Việt & Checklist Tự Sửa](grammar-vocab/grammar-common-errors-vietnamese.md)
+* [B1. Từ Nối & Liên Kết Theo Chức Năng (Cohesive Devices)](grammar-vocab/vocab-linking-devices.md)
+* [B2. Ngôn Ngữ Mô Tả Số Liệu & Xu Hướng Task 1](grammar-vocab/vocab-task1-data-language.md)
+* [B3. Academic Collocations Theo 8 Chủ Đề Trọng Tâm](grammar-vocab/vocab-topic-collocations.md)
+* [B4. Họ Từ Học Thuật (AWL) & Paraphrase Bằng Đổi Loại Từ](grammar-vocab/vocab-academic-word-families.md)
+* [B5. Ngôn Ngữ Chức Năng Cho Speaking (Functional Language)](grammar-vocab/vocab-speaking-functional-language.md)
+
+---
+
 ## 🚀 Hướng Dẫn Sử Dụng & Tính Năng Hệ Thống
 * [Tổng Quan Tính Năng Nền Tảng](features/README.md)
 * [Phân Hệ AI & Chấm Điểm Chuẩn Cambridge](features/ai-evaluation.md)

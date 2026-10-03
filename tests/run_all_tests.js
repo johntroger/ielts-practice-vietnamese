@@ -73,7 +73,8 @@ const testSuites = [
   { name: 'Step 64: Listening Header Overlap Fix & Non-obstructive Scratchpad UX (Phase 4)', file: 'tests/test_step64_listening_header_and_scratchpad_ux.js' },
   { name: 'Step 65: Soundcheck Audio Gain Balance (Phase 5)', file: 'tests/test_step65_soundcheck_audio_gain_balance.js' },
   { name: 'Step 66: Full Notion Bugfix Regression & Integration (Phase 6)', file: 'tests/test_step66_full_notion_bugfix_regression.js' },
-  { name: 'Step 67: Workspace Expansion & Header Toggle (Alt+Z)', file: 'tests/test_step67_workspace_expansion_header_toggle.js' }
+  { name: 'Step 67: Workspace Expansion & Header Toggle (Alt+Z)', file: 'tests/test_step67_workspace_expansion_header_toggle.js' },
+  { name: 'Step 68: Grammar & Vocabulary Documentation Integrity', file: 'tests/test_step68_grammar_vocab_docs.js' }
 ];
 
 console.log('===============================================================');

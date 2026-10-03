@@ -1178,6 +1178,8 @@ export default function App() {
                 openLibraryTrigger={readingLibraryTrigger}
                 masteredIds={masteredIds}
                 onToggleMastered={handleToggleMastered}
+                isSlimHeader={isSlimHeader}
+                toggleSlimHeader={toggleSlimHeader}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
@@ -1230,6 +1232,8 @@ export default function App() {
                 openLibraryTrigger={listeningLibraryTrigger}
                 masteredIds={masteredIds}
                 onToggleMastered={handleToggleMastered}
+                isSlimHeader={isSlimHeader}
+                toggleSlimHeader={toggleSlimHeader}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
@@ -1263,6 +1267,8 @@ export default function App() {
                 openLibraryTrigger={speakingLibraryTrigger}
                 masteredIds={masteredIds}
                 onToggleMastered={handleToggleMastered}
+                isSlimHeader={isSlimHeader}
+                toggleSlimHeader={toggleSlimHeader}
               />
             </React.Suspense>
           </WorkspaceErrorBoundary>
