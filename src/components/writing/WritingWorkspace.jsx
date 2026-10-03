@@ -139,6 +139,7 @@ export default function WritingWorkspace({
         toggleSlimHeader={toggleSlimHeader}
         writingViewMode={writingViewMode}
         onToggleWritingViewMode={handleToggleWritingViewMode}
+        onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
       />
 
       {/* 2. Writing SplitPane Workspace (Prompt + Editor) */}
@@ -200,12 +201,13 @@ export default function WritingWorkspace({
         mistakes={mistakes}
       />
 
-      {/* 4. Slide-Over Panel for Vocabulary & Paraphrasing */}
+      {/* 4. Slide-Over Panel for Vocabulary, Paraphrasing & Common Mistakes */}
       <SlideOverToolPanel
         isOpen={slideOverConfig.isOpen}
         onClose={() => setSlideOverConfig(prev => ({ ...prev, isOpen: false }))}
         initialTab={slideOverConfig.tab}
         vocabList={vocabList}
+        mistakes={mistakes}
         onInsertText={handleInsertSlideOverText}
         onAddVocab={onAddVocab}
         promptText={currentTask?.prompt}

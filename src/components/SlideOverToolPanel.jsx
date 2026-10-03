@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   Bookmark, 
@@ -10,7 +10,9 @@ import {
   Plus, 
   ArrowRight, 
   BookMarked,
-  Layers
+  Layers,
+  ShieldAlert,
+  AlertTriangle
 } from 'lucide-react';
 import { lookupSynonyms, ACADEMIC_THESAURUS } from '../data/academicThesaurus';
 import { IELTS_TOPICS } from '../data/topics';
@@ -20,6 +22,7 @@ export default function SlideOverToolPanel({
   onClose,
   initialTab = 'paraphrase',
   vocabList = [],
+  mistakes = [],
   onInsertText,
   onSaveToNotebook,
   promptText = '',
@@ -31,10 +34,17 @@ export default function SlideOverToolPanel({
   const [searchTerm, setSearchTerm] = useState('important');
   const [copiedWord, setCopiedWord] = useState('');
   const [vocabSearch, setVocabSearch] = useState('');
+  const [mistakeSearch, setMistakeSearch] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('all');
+  const [selectedMistakeType, setSelectedMistakeType] = useState('all');
   const [isAddingVocab, setIsAddingVocab] = useState(false);
   const [newPhrase, setNewPhrase] = useState('');
   const [newMeaning, setNewMeaning] = useState('');
+
+  // Keep activeTab in sync when opened with a specific tab
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   const synonyms = lookupSynonyms(searchTerm);
   const commonWords = Object.keys(ACADEMIC_THESAURUS);
@@ -57,6 +67,16 @@ export default function SlideOverToolPanel({
       v.phrase?.toLowerCase().includes(vocabSearch.toLowerCase()) ||
       v.meaningVi?.toLowerCase().includes(vocabSearch.toLowerCase());
     return matchesTopic && matchesSearch;
+  });
+
+  const filteredMistakes = mistakes.filter(m => {
+    const matchesType = selectedMistakeType === 'all' || (m.type || '').toLowerCase() === selectedMistakeType.toLowerCase();
+    const query = mistakeSearch.toLowerCase();
+    const matchesSearch = !mistakeSearch ||
+      (m.original || m.wrong || '').toLowerCase().includes(query) ||
+      (m.corrected || m.correction || '').toLowerCase().includes(query) ||
+      (m.explanation || '').toLowerCase().includes(query);
+    return matchesType && matchesSearch;
   });
 
   const handleQuickAdd = (e) => {
@@ -96,7 +116,7 @@ export default function SlideOverToolPanel({
               </div>
               <div>
                 <h3 className="font-bold text-sm text-white">Trợ Lý Viết Cạnh Bài (Side Panel)</h3>
-                <p className="text-[11px] text-slate-400">Tra cứu từ vựng & paraphrase không làm ngắt quãng bài viết</p>
+                <p className="text-[11px] text-slate-400">Tra cứu từ vựng, paraphrase & lỗi sai không ngắt quãng bài viết</p>
               </div>
             </div>
             <button
@@ -109,10 +129,10 @@ export default function SlideOverToolPanel({
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex items-center border-b border-slate-200 bg-slate-100 px-3 pt-2 shrink-0 space-x-1">
+          <div className="flex items-center border-b border-slate-200 bg-slate-100 px-3 pt-2 shrink-0 space-x-1 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveTab('paraphrase')}
-              className={`flex items-center space-x-1.5 px-3 py-2 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
                 activeTab === 'paraphrase'
                   ? 'bg-white text-red-600 border-t-2 border-red-600 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -124,7 +144,7 @@ export default function SlideOverToolPanel({
 
             <button
               onClick={() => setActiveTab('vocab')}
-              className={`flex items-center space-x-1.5 px-3 py-2 rounded-t-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
                 activeTab === 'vocab'
                   ? 'bg-white text-amber-600 border-t-2 border-amber-600 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -132,6 +152,18 @@ export default function SlideOverToolPanel({
             >
               <Bookmark className="w-3.5 h-3.5 text-amber-500" />
               <span>Sổ Từ Vựng ({vocabList.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('mistakes')}
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-t-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                activeTab === 'mistakes'
+                  ? 'bg-white text-rose-600 border-t-2 border-rose-600 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
+              <span>Sổ Lỗi Sai ({mistakes.length})</span>
             </button>
           </div>
 
@@ -355,6 +387,107 @@ export default function SlideOverToolPanel({
                   ) : (
                     <div className="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
                       Chưa có từ vựng nào trong danh mục này. Hãy thêm từ vựng mới hoặc lưu từ bài chấm điểm!
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: MISTAKES LOG (Sổ Lỗi Sai Thường Gặp) */}
+            {activeTab === 'mistakes' && (
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={mistakeSearch}
+                    onChange={(e) => setMistakeSearch(e.target.value)}
+                    placeholder="Tìm kiếm lỗi sai theo câu hoặc từ..."
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500/20 bg-white"
+                  />
+                </div>
+
+                {/* Filter by error type */}
+                <div className="flex items-center space-x-1 overflow-x-auto pb-1 no-scrollbar text-xs">
+                  <button
+                    onClick={() => setSelectedMistakeType('all')}
+                    className={`px-2.5 py-1 rounded-lg font-bold shrink-0 cursor-pointer ${
+                      selectedMistakeType === 'all' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    Tất cả ({mistakes.length})
+                  </button>
+                  {['grammar', 'spelling', 'collocation', 'lexical'].map(type => {
+                    const count = mistakes.filter(m => (m.type || '').toLowerCase() === type).length;
+                    if (count === 0) return null;
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => setSelectedMistakeType(type)}
+                        className={`px-2 py-0.5 rounded-lg font-bold shrink-0 capitalize cursor-pointer ${
+                          selectedMistakeType === type ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                      >
+                        {type} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Mistakes cards list */}
+                <div className="space-y-2.5">
+                  {filteredMistakes.length > 0 ? (
+                    filteredMistakes.map((m, idx) => (
+                      <div
+                        key={m.id || idx}
+                        className="p-3 rounded-xl border border-slate-200 bg-white hover:border-rose-300 transition-all space-y-2 shadow-2xs"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold uppercase tracking-wider">
+                            {m.type || 'Lỗi Diễn Đạt'}
+                          </span>
+                          <div className="flex items-center space-x-1 shrink-0">
+                            <button
+                              onClick={() => handleCopy(m.corrected || m.correction || '')}
+                              className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer"
+                              title="Sao chép câu chuẩn"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleInsert(m.corrected || m.correction || '')}
+                              className="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-200 cursor-pointer flex items-center space-x-1"
+                              title="Chèn câu đúng vào bài viết"
+                            >
+                              <ArrowRight className="w-3 h-3" />
+                              <span>Chèn</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1 text-xs">
+                          <div className="flex items-baseline space-x-1.5 text-rose-800 line-through bg-rose-50/60 p-1.5 rounded-lg">
+                            <span className="text-[10px] font-bold text-rose-500 shrink-0">Sai:</span>
+                            <span>{m.original || m.wrong || m.phrase || 'Lỗi chưa ghi nhận'}</span>
+                          </div>
+                          <div className="flex items-baseline space-x-1.5 text-emerald-800 font-semibold bg-emerald-50/60 p-1.5 rounded-lg">
+                            <span className="text-[10px] font-bold text-emerald-600 shrink-0">Đúng:</span>
+                            <span>{m.corrected || m.correction || m.fix || 'Câu sửa chuẩn'}</span>
+                          </div>
+                        </div>
+
+                        {m.explanation && (
+                          <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded-lg border border-slate-100">
+                            💡 {m.explanation}
+                          </p>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                      {mistakes.length === 0
+                        ? 'Chưa có lỗi sai nào được ghi nhận. Các lỗi khi AI chấm bài sẽ tự động lưu vào đây!'
+                        : 'Không tìm thấy lỗi sai phù hợp với từ khóa tìm kiếm.'}
                     </div>
                   )}
                 </div>

@@ -44,7 +44,8 @@ export default function WritingSubHeaderToolbar({
   isSlimHeader = false,
   toggleSlimHeader,
   writingViewMode = 'pro',
-  onToggleWritingViewMode
+  onToggleWritingViewMode,
+  onOpenSlideOver
 }) {
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
@@ -303,7 +304,11 @@ export default function WritingSubHeaderToolbar({
                   {/* Sổ tay lỗi sai */}
                   <button
                     onClick={() => {
-                      onOpenMistakeLog?.();
+                      if (onOpenSlideOver) {
+                        onOpenSlideOver('mistakes');
+                      } else {
+                        onOpenMistakeLog?.();
+                      }
                       setIsToolsDropdownOpen(false);
                     }}
                     className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 transition-colors cursor-pointer"
@@ -313,8 +318,11 @@ export default function WritingSubHeaderToolbar({
                         <ShieldAlert className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold text-xs">Sổ Tay Lỗi Sai Thường Gặp</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Ngữ pháp, từ vựng & bẫy diễn đạt</div>
+                        <div className="font-bold text-xs flex items-center gap-1.5">
+                          <span>Sổ Tay Lỗi Sai Thường Gặp</span>
+                          <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 text-[9px] font-bold">Khay Trượt</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">Ngữ pháp, từ vựng & bẫy diễn đạt bên hông</div>
                       </div>
                     </div>
                     {mistakesCount > 0 && (
@@ -322,6 +330,30 @@ export default function WritingSubHeaderToolbar({
                         {mistakesCount}
                       </span>
                     )}
+                  </button>
+
+                  {/* Sổ tay từ vựng & Collocations */}
+                  <button
+                    onClick={() => {
+                      if (onOpenSlideOver) {
+                        onOpenSlideOver('vocab');
+                      }
+                      setIsToolsDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                        <Bookmark className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs flex items-center gap-1.5">
+                          <span>Sổ Tay Từ Vựng & Collocations</span>
+                          <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold">Khay Trượt</span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-normal">Tra cứu nhanh từ vựng & chèn trực tiếp vào bài</div>
+                      </div>
+                    </div>
                   </button>
 
                   {/* Đơn thuốc sửa lỗi SRS */}

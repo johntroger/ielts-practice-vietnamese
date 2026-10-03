@@ -18,7 +18,8 @@ import {
   RotateCcw,
   ListOrdered,
   GitCommit,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ShieldAlert
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 import Task1DataCoverageModal from './Task1DataCoverageModal';
@@ -475,6 +476,18 @@ export default function EditorPane({
                 >
                   <Bookmark className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>Sổ Từ Vựng C1-C2</span>
+                </button>
+
+                {/* Sổ lỗi sai thường gặp */}
+                <button
+                  onClick={() => {
+                    setIsMoreToolsOpen(false);
+                    if (onOpenSlideOver) onOpenSlideOver('mistakes');
+                  }}
+                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-rose-50 text-left text-slate-700 hover:text-rose-900 font-semibold cursor-pointer"
+                >
+                  <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Sổ Lỗi Sai Thường Gặp</span>
                 </button>
 
                 {/* WPM Speed */}
