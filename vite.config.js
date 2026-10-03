@@ -33,8 +33,30 @@ export default defineConfig({
           ) {
             return 'engine-algorithmic';
           }
-          if (id.includes('geminiService')) {
+          if (id.includes('geminiService') || id.includes('src/services/ai/') || id.includes('src\\services\\ai\\')) {
             return 'engine-gemini';
+          }
+          // Dynamic Data Chunking for Cambridge Bank & Learning Assets
+          if (id.includes('src/data/') || id.includes('src\\data\\')) {
+            if (id.includes('cambridgeWritingTasks') || id.includes('sampleTasks') || id.includes('processAndMapTasks')) {
+              return 'data-cambridge-writing';
+            }
+            if (id.includes('readingTasks')) {
+              return 'data-reading-tasks';
+            }
+            if (id.includes('listeningTasks')) {
+              return 'data-listening-tasks';
+            }
+            if (id.includes('speakingTopics')) {
+              return 'data-speaking-topics';
+            }
+            if (id.includes('theoryHandbook')) {
+              return 'data-theory-handbook';
+            }
+            if (id.includes('MicroDrills') || id.includes('microDrills') || id.includes('vocabGrammarSpellingData')) {
+              return 'data-drills-bank';
+            }
+            return 'data-core-bank';
           }
         },
       },
