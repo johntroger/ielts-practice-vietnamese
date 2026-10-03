@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Award, 
   CheckCircle, 
@@ -16,7 +16,10 @@ import {
   Target,
   ShieldAlert,
   Edit3,
-  AlertCircle
+  AlertCircle,
+  ArrowRight,
+  ChevronRight,
+  CheckCircle2
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -90,6 +93,62 @@ export default function FeedbackModal({
     }
     return list;
   }, [evaluation.corrections, pedagogicalFocus]);
+
+  // Compute 3-Second Action Takeaway (High-Impact Quick Wins for Fast +0.5 Band Leap)
+  const actionTakeaway = useMemo(() => {
+    let p1 = evaluation.actionPlan?.priority1;
+    let p2 = evaluation.actionPlan?.priority2;
+    let p3 = evaluation.actionPlan?.priority3;
+    let targetBand = evaluation.actionPlan?.estimatedBandTarget;
+
+    const criteriaEntries = Object.entries(evaluation.criteria || {});
+    const sortedCriteria = [...criteriaEntries].sort((a, b) => (a[1]?.band || 0) - (b[1]?.band || 0));
+    const weakest = sortedCriteria[0];
+    const secondWeakest = sortedCriteria[1];
+
+    if (!p1) {
+      if (task?.taskNumber === 1 && evaluation.task1OverviewStats && !evaluation.task1OverviewStats.hasOverview) {
+        p1 = 'Bổ sung ngay câu Overview tổng quan mở đầu bằng "Overall, it is clear that...". Thiếu Overview sẽ bị khống chế tối đa Band 5.0 Task Achievement.';
+      } else if (task?.taskNumber === 2 && evaluation.hedgingStats?.hasOvergeneralisation) {
+        p1 = 'Loại bỏ các phát ngôn khẳng định tuyệt đối (always, undeniable...). Thay bằng ngôn ngữ dè dặt học thuật (tends to, appears to) để thoát trần Band 6.0.';
+      } else if (weakest && weakest[1]?.improvements?.[0]) {
+        const name = weakest[0] === 'tr' ? 'Task Response' : weakest[0] === 'cc' ? 'Coherence & Cohesion' : weakest[0] === 'lr' ? 'Lexical Resource' : 'Grammar';
+        p1 = `Nâng cấp điểm nghẽn ${name} (hiện Band ${weakest[1]?.band?.toFixed(1) || '6.0'}): ${weakest[1]?.improvements[0]}`;
+      } else {
+        p1 = 'Khắc phục các lỗi ngữ pháp và chia động từ cơ bản để đảm bảo độ chuẩn xác toàn bài.';
+      }
+    }
+
+    if (!p2) {
+      if (secondWeakest && secondWeakest[1]?.improvements?.[0]) {
+        const name = secondWeakest[0] === 'tr' ? 'Task Response' : secondWeakest[0] === 'cc' ? 'Coherence & Cohesion' : secondWeakest[0] === 'lr' ? 'Lexical Resource' : 'Grammar';
+        p2 = `Cải thiện tiêu chí ${name}: ${secondWeakest[1]?.improvements[0]}`;
+      } else if (evaluation.corrections && evaluation.corrections.length > 0) {
+        p2 = `Sửa ${Math.min(3, evaluation.corrections.length)} lỗi dùng từ / cấu trúc nổi cộm trong bài viết.`;
+      } else {
+        p2 = 'Đa dạng hóa vốn từ vựng học thuật theo chủ đề và sử dụng collocations tự nhiên.';
+      }
+    }
+
+    if (!p3) {
+      p3 = 'Rèn luyện liên kết ý giữa các đoạn văn mạch lạc theo cấu trúc P.E.E.L (Point - Explain - Example - Link).';
+    }
+
+    const currentOverall = evaluation.overallBand || 6.5;
+    const potentialBand = Math.min(9.0, Math.round((currentOverall + 0.5) * 2) / 2);
+    if (!targetBand) {
+      targetBand = `Lộ trình mục tiêu: Tăng từ Band ${currentOverall.toFixed(1)} lên Band ${potentialBand.toFixed(1)} - ${(potentialBand + 0.5).toFixed(1)} khi khắc phục triệt để 3 điểm trên.`;
+    }
+
+    return {
+      priority1: p1,
+      priority2: p2,
+      priority3: p3,
+      targetBand,
+      currentOverall,
+      potentialBand
+    };
+  }, [evaluation, task]);
 
   const trBand = evaluation.criteria?.tr?.band || 6.0;
   const ccBand = evaluation.criteria?.cc?.band || 6.0;
@@ -390,124 +449,270 @@ export default function FeedbackModal({
         {/* Modal Body Content */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           
-          {/* TAB 1: 4 CRITERIA & RADAR CHART */}
+          {/* TAB 1: 4 CRITERIA & 3-SECOND ACTIONABLE FEEDBACK */}
           {activeTab === 'criteria' && (
             <div className="space-y-6">
               
-              {/* ZPD Coaching Callout Banner */}
-              {pedagogicalFocus === 'foundation' && (
-                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs space-y-1 shadow-2xs">
-                  <div className="font-bold flex items-center space-x-1.5 text-amber-900">
-                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                    <span>Lộ trình trọng tâm Band 5.5 - 6.5: Chuẩn hóa ngữ pháp & tránh mất điểm oan</span>
+              {/* ========================================================================= */}
+              {/* 1. HERO TAKEAWAY: 3-SECOND SKIMMABLE ACTION PLAN                         */}
+              {/* ========================================================================= */}
+              <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white border border-indigo-900/60 shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-800/60 pb-3.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-red-600/30 border border-red-500/40 text-red-400 shrink-0">
+                      <Target className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-extrabold text-sm sm:text-base lg:text-lg tracking-wide text-white">
+                          Kế Hoạch Hành Động 3 Giây (3-Second Action Plan)
+                        </h3>
+                        <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-[10px] font-bold">
+                          Chiến Lược Tăng Band
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300 font-normal">
+                        3 điểm mấu chốt cần sửa ngay để nâng từ +0.5 đến 1.0 Band điểm
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-amber-800 leading-relaxed">
-                    Ưu tiên số 1 của bạn là độ chuẩn xác ngữ pháp (GRA): Chia thì chuẩn, chia động từ số ít/nhiều ăn khớp chủ ngữ, tránh lỗi ngắt câu (run-on/fragments). Tuyệt đối không nhồi nhét từ C2 khi chưa rõ collocation, hãy viết câu rõ nghĩa trước tiên!
-                  </p>
-                </div>
-              )}
 
-              {pedagogicalFocus === 'advanced' && (
-                <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs space-y-1 shadow-2xs">
-                  <div className="font-bold flex items-center space-x-1.5 text-indigo-900">
-                    <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span>Lộ trình bứt phá Band 7.5+: Tinh tế hóa lập luận & liên kết tự nhiên</span>
+                  {/* Band Leap Progress Pill */}
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 shrink-0 self-start sm:self-auto">
+                    <div className="text-left">
+                      <span className="text-[10px] text-slate-400 block font-medium">Hiện tại</span>
+                      <strong className="text-xs sm:text-sm text-white font-extrabold">Band {actionTakeaway.currentOverall.toFixed(1)}</strong>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-emerald-400 shrink-0 animate-pulse" />
+                    <div className="text-left">
+                      <span className="text-[10px] text-emerald-400 block font-medium">Tiềm năng</span>
+                      <strong className="text-xs sm:text-sm text-emerald-300 font-extrabold">
+                        Band {actionTakeaway.potentialBand.toFixed(1)} - {(actionTakeaway.potentialBand + 0.5).toFixed(1)}
+                      </strong>
+                    </div>
                   </div>
-                  <p className="text-indigo-800 leading-relaxed">
-                    Để vượt ngưỡng 7.0 lên 8.0+, hãy rèn luyện văn phong dè dặt học thuật (academic hedging: <em>tends to, arguably, indicates that</em>), hạn chế từ nối cơ học rập khuôn (như <em>Furthermore, In conclusion</em>), và đẩy mạnh cụm từ cố định tự nhiên (collocations C1-C2).
-                  </p>
                 </div>
-              )}
 
-              {/* Radar Chart + Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="h-60 w-full flex items-center justify-center">
-                  <Radar data={radarData} options={radarOptions} />
+                {/* 3 Prioritized Action Columns */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {/* Card 1: Critical Bottleneck */}
+                  <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-800/50 flex flex-col justify-between space-y-2.5 transition-all hover:bg-red-950/60">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded bg-red-600 text-white font-black text-[9px] uppercase tracking-wider">
+                          ƯU TIÊN 1 • CHẶN TRẦN ĐIỂM
+                        </span>
+                        <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                      </div>
+                      <p className="text-xs text-slate-200 leading-relaxed font-medium">
+                        {actionTakeaway.priority1}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('corrections')}
+                      className="inline-flex items-center space-x-1 text-[11px] font-bold text-red-300 hover:text-white transition-colors cursor-pointer pt-1"
+                    >
+                      <span>Xem lỗi cần sửa</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Card 2: High Leverage */}
+                  <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/50 flex flex-col justify-between space-y-2.5 transition-all hover:bg-amber-950/60">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded bg-amber-600 text-white font-black text-[9px] uppercase tracking-wider">
+                          ƯU TIÊN 2 • MẠCH LẠC & TỪ VỰNG
+                        </span>
+                        <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      </div>
+                      <p className="text-xs text-slate-200 leading-relaxed font-medium">
+                        {actionTakeaway.priority2}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('rewrite')}
+                      className="inline-flex items-center space-x-1 text-[11px] font-bold text-amber-300 hover:text-white transition-colors cursor-pointer pt-1"
+                    >
+                      <span>Học bài mẫu 8.5+</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Card 3: Academic Polish */}
+                  <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/50 flex flex-col justify-between space-y-2.5 transition-all hover:bg-emerald-950/60">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-black text-[9px] uppercase tracking-wider">
+                          ƯU TIÊN 3 • TINH TẾ HÓA CÂU
+                        </span>
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      </div>
+                      <p className="text-xs text-slate-200 leading-relaxed font-medium">
+                        {actionTakeaway.priority3}
+                      </p>
+                    </div>
+                    {onOpenRevision ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          onOpenRevision();
+                        }}
+                        className="inline-flex items-center space-x-1 text-[11px] font-bold text-emerald-300 hover:text-white transition-colors cursor-pointer pt-1"
+                      >
+                        <span>Viết lại bản v2</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('rewrite')}
+                        className="inline-flex items-center space-x-1 text-[11px] font-bold text-emerald-300 hover:text-white transition-colors cursor-pointer pt-1"
+                      >
+                        <span>Xem đối chiếu bản sửa</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-3">
-                  <h4 className="font-bold text-slate-800 text-sm flex items-center space-x-1.5">
-                    <TrendingUp className="w-4 h-4 text-red-600" />
-                    <span>Tổng quan Band Score theo Cambridge:</span>
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
-                      <span className="text-slate-500 block">Task Response</span>
-                      <strong className="text-base text-slate-900">Band {trBand.toFixed(1)}</strong>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
-                      <span className="text-slate-500 block">Coherence & Cohesion</span>
-                      <strong className="text-base text-slate-900">Band {ccBand.toFixed(1)}</strong>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
-                      <span className="text-slate-500 block">Lexical Resource</span>
-                      <strong className="text-base text-slate-900">Band {lrBand.toFixed(1)}</strong>
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
-                      <span className="text-slate-500 block">Grammar Range</span>
-                      <strong className="text-base text-slate-900">Band {graBand.toFixed(1)}</strong>
-                    </div>
+
+                {/* Bottom Quick-Action CTAs Bar */}
+                <div className="pt-2 border-t border-indigo-800/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center space-x-1.5 text-slate-300 text-[11px]">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>{actionTakeaway.targetBand}</span>
+                  </div>
+
+                  <div className="flex items-center space-x-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('corrections')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px] transition-colors cursor-pointer"
+                    >
+                      🔍 Soi {evaluation.corrections?.length || 0} Lỗi Chi Tiết
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('rewrite')}
+                      className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px] transition-colors cursor-pointer"
+                    >
+                      📖 Đọc Bài Mẫu Band 8.5+
+                    </button>
+                    {onOpenRevision && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onClose();
+                          onOpenRevision();
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-[11px] transition-all shadow-xs cursor-pointer flex items-center space-x-1"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Viết Lại Bản v2</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Examiner Action Plan (Đơn thuốc cải thiện điểm số) */}
-              {evaluation.actionPlan && (
-                <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white border border-indigo-800/60 shadow-md space-y-3">
-                  <div className="flex items-center justify-between border-b border-indigo-800/80 pb-2.5">
-                    <div className="flex items-center space-x-2">
-                      <Target className="w-5 h-5 text-red-400" />
-                      <h4 className="font-bold text-sm sm:text-base tracking-wide">
-                        Đơn Thuốc Cải Thiện Điểm Số (Action Plan)
-                      </h4>
-                    </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] sm:text-[11px] font-semibold">
-                      Chief Examiner Strategy
-                    </span>
-                  </div>
-
-                  <div className="space-y-2.5 text-xs">
-                    {evaluation.actionPlan.priority1 && (
-                      <div className="flex items-start space-x-2.5 p-2.5 rounded-lg bg-red-950/40 border border-red-800/40">
-                        <span className="px-2 py-0.5 rounded bg-red-600 text-white font-extrabold text-[10px] shrink-0 mt-0.5">
-                          ƯU TIÊN 1
-                        </span>
-                        <p className="text-slate-200 leading-relaxed">
-                          {evaluation.actionPlan.priority1}
-                        </p>
-                      </div>
-                    )}
-
-                    {evaluation.actionPlan.priority2 && (
-                      <div className="flex items-start space-x-2.5 p-2.5 rounded-lg bg-blue-950/40 border border-blue-800/40">
-                        <span className="px-2 py-0.5 rounded bg-blue-600 text-white font-extrabold text-[10px] shrink-0 mt-0.5">
-                          ƯU TIÊN 2
-                        </span>
-                        <p className="text-slate-200 leading-relaxed">
-                          {evaluation.actionPlan.priority2}
-                        </p>
-                      </div>
-                    )}
-
-                    {evaluation.actionPlan.priority3 && (
-                      <div className="flex items-start space-x-2.5 p-2.5 rounded-lg bg-purple-950/40 border border-purple-800/40">
-                        <span className="px-2 py-0.5 rounded bg-purple-600 text-white font-extrabold text-[10px] shrink-0 mt-0.5">
-                          ƯU TIÊN 3
-                        </span>
-                        <p className="text-slate-200 leading-relaxed">
-                          {evaluation.actionPlan.priority3}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {evaluation.actionPlan.estimatedBandTarget && (
-                    <div className="pt-2 border-t border-indigo-800/80 flex items-center space-x-2 text-xs font-semibold text-emerald-400">
-                      <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span>{evaluation.actionPlan.estimatedBandTarget}</span>
-                    </div>
-                  )}
+              {/* ========================================================================= */}
+              {/* 2. 4 CRITERIA BENTO GRID WITH BAND PROGRESS BARS                           */}
+              {/* ========================================================================= */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
+                    <Award className="w-4 h-4 text-red-600" />
+                    <span>Chi Tiết 4 Tiêu Chí Chấm Khảo Thí Cambridge:</span>
+                  </h4>
+                  <span className="text-[11px] text-slate-500 hidden sm:inline">
+                    Thang điểm tối đa 9.0 • Vạch mốc chuẩn 6.0 & 7.0
+                  </span>
                 </div>
-              )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(evaluation.criteria || {}).map(([key, data]) => {
+                    const band = typeof data.band === 'number' ? data.band : 6.0;
+                    const progressPercent = Math.min(100, Math.max(12, (band / 9) * 100));
+                    const isHighBand = band >= 7.0;
+                    const isMidBand = band >= 6.0 && band < 7.0;
+
+                    return (
+                      <div 
+                        key={key} 
+                        className="p-4 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-3 flex flex-col justify-between hover:border-slate-300 transition-all"
+                      >
+                        <div className="space-y-2">
+                          {/* Criteria Header */}
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs sm:text-sm text-slate-900 uppercase tracking-wide">
+                              {key === 'tr' ? 'Task Response (TR)' :
+                               key === 'cc' ? 'Coherence & Cohesion (CC)' :
+                               key === 'lr' ? 'Lexical Resource (LR)' : 'Grammar Range & Accuracy (GRA)'}
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-full font-black text-xs border ${
+                              isHighBand ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                              isMidBand ? 'bg-blue-50 text-blue-800 border-blue-200' :
+                              'bg-rose-50 text-rose-800 border-rose-200'
+                            }`}>
+                              Band {band.toFixed(1)}
+                            </span>
+                          </div>
+
+                          {/* Visual Band Progress Bar */}
+                          <div className="space-y-1">
+                            <div className="w-full bg-slate-100 rounded-full h-2 relative overflow-hidden">
+                              <div 
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  isHighBand ? 'bg-gradient-to-r from-emerald-500 to-teal-500' :
+                                  isMidBand ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
+                                  'bg-gradient-to-r from-rose-500 to-amber-500'
+                                }`} 
+                                style={{ width: `${progressPercent}%` }} 
+                              />
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold px-0.5">
+                              <span>0.0</span>
+                              <span className="text-slate-500">Mốc 6.0</span>
+                              <span className="text-slate-500">Mốc 7.0</span>
+                              <span>9.0</span>
+                            </div>
+                          </div>
+
+                          {/* Examiner Feedback */}
+                          <p className="text-xs text-slate-600 leading-relaxed pt-1">
+                            {data.feedback}
+                          </p>
+                        </div>
+
+                        {/* Improvements Bullet Points */}
+                        {data.improvements && data.improvements.length > 0 && (
+                          <div className="pt-2.5 border-t border-slate-100 text-[11px] space-y-1.5 bg-slate-50/60 p-2.5 rounded-lg">
+                            <span className="font-bold block text-slate-800 flex items-center space-x-1">
+                              <TrendingUp className="w-3 h-3 text-amber-600" />
+                              <span>Điểm cần hoàn thiện để lên band:</span>
+                            </span>
+                            <ul className="space-y-1 text-slate-600">
+                              {data.improvements.map((imp, i) => (
+                                <li key={i} className="flex items-start space-x-1.5">
+                                  <span className="text-amber-600 font-bold shrink-0">•</span>
+                                  <span>{imp}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ========================================================================= */}
+              {/* 3. DIAGNOSTIC GATEKEEPER INSPECTORS (Task 1 & Task 2)                    */}
+              {/* ========================================================================= */}
 
               {/* Task 1: Cambridge Overview Gatekeeper Inspector */}
               {task?.taskNumber === 1 && evaluation.task1OverviewStats && (
@@ -607,38 +812,63 @@ export default function FeedbackModal({
                 </div>
               )}
 
-              {/* 4 Detail Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {Object.entries(evaluation.criteria || {}).map(([key, data]) => (
-                  <div key={key} className="p-4 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <span className="font-bold text-sm text-slate-900 uppercase">
-                        {key === 'tr' ? 'Task Response (TR)' :
-                         key === 'cc' ? 'Coherence & Cohesion (CC)' :
-                         key === 'lr' ? 'Lexical Resource (LR)' : 'Grammar Range (GRA)'}
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 font-extrabold text-xs">
-                        Band {data.band ? data.band.toFixed(1) : 'N/A'}
-                      </span>
+              {/* ========================================================================= */}
+              {/* 4. RADAR PROFILE & QUICK SCORE STATS                                      */}
+              {/* ========================================================================= */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="h-60 w-full flex items-center justify-center">
+                  <Radar data={radarData} options={radarOptions} />
+                </div>
+                <div className="space-y-3">
+                  <h4 className="font-bold text-slate-800 text-sm flex items-center space-x-1.5">
+                    <TrendingUp className="w-4 h-4 text-red-600" />
+                    <span>Tổng quan Band Score theo Cambridge:</span>
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
+                      <span className="text-slate-500 block">Task Response</span>
+                      <strong className="text-base text-slate-900">Band {trBand.toFixed(1)}</strong>
                     </div>
-
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {data.feedback}
-                    </p>
-
-                    {data.improvements && data.improvements.length > 0 && (
-                      <div className="pt-2 border-t border-slate-100 text-[11px] text-amber-800 space-y-1">
-                        <span className="font-semibold block text-amber-950">Điểm cần cải thiện:</span>
-                        <ul className="list-disc list-inside space-y-0.5">
-                          {data.improvements.map((imp, i) => (
-                            <li key={i}>{imp}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
+                      <span className="text-slate-500 block">Coherence & Cohesion</span>
+                      <strong className="text-base text-slate-900">Band {ccBand.toFixed(1)}</strong>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
+                      <span className="text-slate-500 block">Lexical Resource</span>
+                      <strong className="text-base text-slate-900">Band {lrBand.toFixed(1)}</strong>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-white border border-slate-200">
+                      <span className="text-slate-500 block">Grammar Range</span>
+                      <strong className="text-base text-slate-900">Band {graBand.toFixed(1)}</strong>
+                    </div>
                   </div>
-                ))}
+                </div>
               </div>
+
+              {/* ZPD Coaching Callout Banner */}
+              {pedagogicalFocus === 'foundation' && (
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs space-y-1 shadow-2xs">
+                  <div className="font-bold flex items-center space-x-1.5 text-amber-900">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>Lộ trình trọng tâm Band 5.5 - 6.5: Chuẩn hóa ngữ pháp & tránh mất điểm oan</span>
+                  </div>
+                  <p className="text-amber-800 leading-relaxed">
+                    Ưu tiên số 1 của bạn là độ chuẩn xác ngữ pháp (GRA): Chia thì chuẩn, chia động từ số ít/nhiều ăn khớp chủ ngữ, tránh lỗi ngắt câu (run-on/fragments). Tuyệt đối không nhồi nhét từ C2 khi chưa rõ collocation, hãy viết câu rõ nghĩa trước tiên!
+                  </p>
+                </div>
+              )}
+
+              {pedagogicalFocus === 'advanced' && (
+                <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs space-y-1 shadow-2xs">
+                  <div className="font-bold flex items-center space-x-1.5 text-indigo-900">
+                    <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <span>Lộ trình bứt phá Band 7.5+: Tinh tế hóa lập luận & liên kết tự nhiên</span>
+                  </div>
+                  <p className="text-indigo-800 leading-relaxed">
+                    Để vượt ngưỡng 7.0 lên 8.0+, hãy rèn luyện văn phong dè dặt học thuật (academic hedging: <em>tends to, arguably, indicates that</em>), hạn chế từ nối cơ học rập khuôn (như <em>Furthermore, In conclusion</em>), và đẩy mạnh cụm từ cố định tự nhiên (collocations C1-C2).
+                  </p>
+                </div>
+              )}
 
             </div>
           )}
@@ -900,7 +1130,7 @@ export default function FeedbackModal({
                       Band {evaluation.overallBand ? evaluation.overallBand.toFixed(1) : '6.5'}
                     </span>
                   </div>
-                  <div className="p-4 sm:p-5 rounded-xl bg-slate-50/80 border border-slate-200 text-xs sm:text-sm text-slate-700 whitespace-pre-line leading-relaxed font-sans shadow-2xs h-full max-h-[60vh] overflow-y-auto">
+                  <div className="p-4 sm:p-5 rounded-xl bg-slate-50/80 border border-slate-200 text-xs sm:text-sm text-slate-700 whitespace-pre-line leading-relaxed font-serif academic-reading-text shadow-2xs h-full max-h-[60vh] overflow-y-auto">
                     {essayText || 'Không có bài làm.'}
                   </div>
                 </div>
@@ -966,7 +1196,7 @@ export default function FeedbackModal({
                     </span>
                   </div>
 
-                  <div className={`p-4 sm:p-5 rounded-xl border text-xs sm:text-sm whitespace-pre-line leading-relaxed font-sans shadow-2xs h-full max-h-[55vh] overflow-y-auto transition-colors ${
+                  <div className={`p-4 sm:p-5 rounded-xl border text-xs sm:text-sm whitespace-pre-line leading-relaxed font-serif academic-reading-text shadow-2xs h-full max-h-[55vh] overflow-y-auto transition-colors ${
                     selectedRewriteBand === '6.5'
                       ? 'bg-blue-50/30 border-blue-200 text-slate-900'
                       : 'bg-emerald-50/30 border-emerald-200 text-slate-900'

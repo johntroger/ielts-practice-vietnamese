@@ -78,7 +78,8 @@ const testSuites = [
   { name: 'Step 69: Micro-Drills & Vocab/Grammar Workspace Expansion', file: 'tests/test_step69_micro_drills_and_vocab_expansion.js' },
   { name: 'Step 70: Header Decluttering & Hierarchy Upgrade', file: 'tests/test_step70_header_decluttering_and_optimization.js' },
   { name: 'Step 71: Academic Typography & Visual Tokens', file: 'tests/test_step71_typography_and_visual_tokens.js' },
-  { name: 'Step 72: Slide-Over Utility Panel (Vocab, Paraphrase & Mistakes)', file: 'tests/test_step72_slide_over_utility_panel.js' }
+  { name: 'Step 72: Slide-Over Utility Panel (Vocab, Paraphrase & Mistakes)', file: 'tests/test_step72_slide_over_utility_panel.js' },
+  { name: 'Step 73: Skimmable Actionable Feedback & 3-Second Action Plan', file: 'tests/test_step73_skimmable_actionable_feedback.js' }
 ];
 
 console.log('===============================================================');
