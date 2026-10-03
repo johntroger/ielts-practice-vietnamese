@@ -72,7 +72,8 @@ const testSuites = [
   { name: 'Step 63: Modal Layout Overflow & Top Cut-Off UI Fix (Phase 3)', file: 'tests/test_step63_modal_overflow_ui_fix.js' },
   { name: 'Step 64: Listening Header Overlap Fix & Non-obstructive Scratchpad UX (Phase 4)', file: 'tests/test_step64_listening_header_and_scratchpad_ux.js' },
   { name: 'Step 65: Soundcheck Audio Gain Balance (Phase 5)', file: 'tests/test_step65_soundcheck_audio_gain_balance.js' },
-  { name: 'Step 66: Full Notion Bugfix Regression & Integration (Phase 6)', file: 'tests/test_step66_full_notion_bugfix_regression.js' }
+  { name: 'Step 66: Full Notion Bugfix Regression & Integration (Phase 6)', file: 'tests/test_step66_full_notion_bugfix_regression.js' },
+  { name: 'Step 67: Workspace Expansion & Header Toggle (Alt+Z)', file: 'tests/test_step67_workspace_expansion_header_toggle.js' }
 ];
 
 console.log('===============================================================');

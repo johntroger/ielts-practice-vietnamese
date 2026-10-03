@@ -466,26 +466,26 @@ export default function WritingSubHeaderToolbar({
           </div>
         )}
 
-        {/* 5. Slim Header Mode Toggle (Alt + Z) */}
+        {/* 5. Workspace Expansion & Slim Header Toggle (Alt + Z) */}
         {toggleSlimHeader && (
           <button
             onClick={toggleSlimHeader}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
+            className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
               isSlimHeader
                 ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                 : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
             }`}
-            title={isSlimHeader ? "Mở rộng thanh công cụ Writing (Alt + Z)" : "Thu gọn thanh công cụ để tăng diện tích viết bài (Alt + Z)"}
+            title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa không gian viết bài, ẩn thanh menu trên (Alt + Z)"}
           >
             {isSlimHeader ? (
               <>
-                <ChevronDown className="w-3.5 h-3.5 text-amber-600" />
-                <span className="hidden xl:inline">Mở rộng</span>
+                <Minimize2 className="w-3.5 h-3.5 text-amber-600" />
+                <span className="hidden sm:inline">Thu gọn</span>
               </>
             ) : (
               <>
-                <ChevronUp className="w-3.5 h-3.5 text-slate-500" />
-                <span className="hidden xl:inline">Thu gọn</span>
+                <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                <span className="hidden sm:inline">Mở rộng</span>
               </>
             )}
           </button>

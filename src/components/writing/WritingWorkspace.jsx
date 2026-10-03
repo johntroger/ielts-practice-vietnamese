@@ -174,9 +174,7 @@ export default function WritingWorkspace({
             onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
             onSubmitEssay={onSubmitEssay}
             onEditorFocus={() => {
-              if (!isSlimHeader && typeof window !== 'undefined' && window.innerHeight < 950) {
-                setIsSlimHeader?.(true);
-              }
+              // Respect user manual control without forced resets
             }}
             writingViewMode={writingViewMode}
             onToggleWritingViewMode={handleToggleWritingViewMode}

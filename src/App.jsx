@@ -1011,8 +1011,8 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. Main Navigation Bar (Hidden in Focus Mode) */}
-      {!isFocusMode && (
+      {/* 1. Main Navigation Bar (Hidden in Focus Mode or when Workspace is Expanded via Alt+Z) */}
+      {!isFocusMode && !isSlimHeader && (
         <Navbar
           currentTask={currentTask}
           allTasks={allTasks}
