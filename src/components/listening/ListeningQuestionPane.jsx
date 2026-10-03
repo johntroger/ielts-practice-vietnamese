@@ -12,7 +12,10 @@ import {
   X,
   MapPin,
   ArrowDown,
-  FileText
+  FileText,
+  Minimize2,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 
 // Color definitions for highlighter
@@ -71,6 +74,7 @@ export default function ListeningQuestionPane({
   const [noteInput, setNoteInput] = useState('');
 
   const [isListeningScratchpadOpen, setIsListeningScratchpadOpen] = useState(false);
+  const [scratchpadMode, setScratchpadMode] = useState('floating'); // 'floating' | 'minimized' | 'sidebar'
   const [listeningScratchpadText, setListeningScratchpadText] = useState(() => {
     try {
       return localStorage.getItem(`ielts_listening_scratchpad_${testId}`) || '';
@@ -1230,62 +1234,171 @@ export default function ListeningQuestionPane({
         </div>
       )}
 
-      {/* Listening CDI Scratchpad Drawer */}
+      {/* Listening CDI Scratchpad: Non-obstructive Floating Dock / Minimized Pill / Sidebar */}
       {isListeningScratchpadOpen && (
-        <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white shadow-2xl border-l border-slate-200 flex flex-col animate-in slide-in-from-right duration-200 text-left">
-          <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
-            <div className="flex items-center space-x-2">
-              <FileText className="w-4 h-4 text-amber-400" />
-              <span className="font-bold text-sm">Bản Nháp Nghe (Listening Scratchpad)</span>
+        <>
+          {/* Case A: Minimized floating pill button at bottom-right */}
+          {scratchpadMode === 'minimized' && (
+            <div className="fixed bottom-4 right-4 z-40 animate-in slide-in-from-bottom-2">
+              <button
+                type="button"
+                onClick={() => setScratchpadMode('floating')}
+                className="px-3.5 py-2 rounded-xl bg-slate-900/95 hover:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700 flex items-center space-x-2 cursor-pointer transition-all hover:scale-105"
+                title="Mở lại Bản Nháp Nghe (Listening Scratchpad)"
+              >
+                <FileText className="w-4 h-4 text-amber-400" />
+                <span>Bản Nháp {listeningScratchpadText.trim() ? '• Có ghi chú' : ''}</span>
+                <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+              </button>
             </div>
-            <button
-              onClick={() => setIsListeningScratchpadOpen(false)}
-              className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Đóng"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+          )}
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                  Bản nháp tự do (Autosaved)
-                </label>
-                <span className="text-[10px] text-slate-400">Tự động lưu bài nghe</span>
-              </div>
-              <textarea
-                value={listeningScratchpadText}
-                onChange={(e) => setListeningScratchpadText(e.target.value)}
-                placeholder="Ghi chú nhanh các số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy âm thanh (distractor) trong lúc nghe audio..."
-                rows={12}
-                autoFocus
-                className="w-full p-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/20"
-              />
-            </div>
-
-            {highlights.length > 0 && (
-              <div className="space-y-2 border-t border-slate-200 pt-3">
-                <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                  Từ khóa đã đánh dấu ({highlights.length})
-                </span>
-                <div className="space-y-1.5 max-h-48 overflow-y-auto">
-                  {highlights.map(h => (
-                    <div key={h.id} className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-                      <span className="font-mono text-slate-800 truncate mr-2">"{h.text}"</span>
-                      {h.note && <span className="text-indigo-600 text-[10px] font-semibold">{h.note}</span>}
-                    </div>
-                  ))}
+          {/* Case B: Floating Window (Default - Bottom Right, Không che câu hỏi phía trên & bên trái) */}
+          {scratchpadMode === 'floating' && (
+            <div className="fixed bottom-4 right-4 z-40 w-full max-w-[calc(100vw-2rem)] sm:w-88 md:w-96 max-h-[70vh] bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-3 duration-200 text-left">
+              <div className="px-3.5 py-2.5 bg-slate-900 text-white flex items-center justify-between shrink-0">
+                <div className="flex items-center space-x-2">
+                  <FileText className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="font-bold text-xs">Bản Nháp Nghe (Listening Scratchpad)</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <button
+                    type="button"
+                    onClick={() => setScratchpadMode('minimized')}
+                    className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    title="Thu nhỏ xuống góc dưới"
+                  >
+                    <Minimize2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setScratchpadMode('sidebar')}
+                    className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer hidden md:inline-block"
+                    title="Mở rộng toàn màn hình bên phải (Sidebar)"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsListeningScratchpadOpen(false)}
+                    className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    title="Đóng bản nháp"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
-            )}
-          </div>
 
-          <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
-            💡 Bản nháp giúp ghi nhanh từ khóa khi nghe mà không ảnh hưởng câu trả lời chính thức.
-          </div>
-        </div>
+              <div className="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                      Ghi chú nhanh khi nghe (Autosaved)
+                    </label>
+                    <span className="text-[10px] text-emerald-600 font-semibold">Tự động lưu</span>
+                  </div>
+                  <textarea
+                    value={listeningScratchpadText}
+                    onChange={(e) => setListeningScratchpadText(e.target.value)}
+                    placeholder="Ghi chú nhanh số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy distractor..."
+                    rows={6}
+                    autoFocus
+                    className="w-full p-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/20"
+                  />
+                </div>
+
+                {highlights.length > 0 && (
+                  <div className="space-y-1.5 border-t border-slate-200 pt-2.5">
+                    <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                      Từ khóa đã đánh dấu ({highlights.length})
+                    </span>
+                    <div className="space-y-1 max-h-36 overflow-y-auto">
+                      {highlights.map(h => (
+                        <div key={h.id} className="p-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
+                          <span className="font-mono text-slate-800 truncate mr-2">"{h.text}"</span>
+                          {h.note && <span className="text-indigo-600 text-[10px] font-semibold">{h.note}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="px-3 py-2 bg-slate-50 border-t border-slate-200 text-center text-[10px] text-slate-500 shrink-0">
+                💡 Bản nháp không che đề thi và không ảnh hưởng câu trả lời chính thức.
+              </div>
+            </div>
+          )}
+
+          {/* Case C: Full-height Sidebar (Màn hình lớn muốn xem dọc) */}
+          {scratchpadMode === 'sidebar' && (
+            <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-white shadow-2xl border-l border-slate-200 flex flex-col animate-in slide-in-from-right duration-200 text-left">
+              <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+                <div className="flex items-center space-x-2">
+                  <FileText className="w-4 h-4 text-amber-400" />
+                  <span className="font-bold text-sm">Bản Nháp Nghe (Listening Scratchpad)</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <button
+                    type="button"
+                    onClick={() => setScratchpadMode('floating')}
+                    className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    title="Chuyển về cửa sổ nổi góc dưới (Không che câu hỏi)"
+                  >
+                    <Minimize2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsListeningScratchpadOpen(false)}
+                    className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    title="Đóng"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                      Bản nháp tự do (Autosaved)
+                    </label>
+                    <span className="text-[10px] text-slate-400">Tự động lưu bài nghe</span>
+                  </div>
+                  <textarea
+                    value={listeningScratchpadText}
+                    onChange={(e) => setListeningScratchpadText(e.target.value)}
+                    placeholder="Ghi chú nhanh các số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy âm thanh (distractor) trong lúc nghe audio..."
+                    rows={12}
+                    autoFocus
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/20"
+                  />
+                </div>
+
+                {highlights.length > 0 && (
+                  <div className="space-y-2 border-t border-slate-200 pt-3">
+                    <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+                      Từ khóa đã đánh dấu ({highlights.length})
+                    </span>
+                    <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                      {highlights.map(h => (
+                        <div key={h.id} className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
+                          <span className="font-mono text-slate-800 truncate mr-2">"{h.text}"</span>
+                          {h.note && <span className="text-indigo-600 text-[10px] font-semibold">{h.note}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
+                💡 Bản nháp giúp ghi nhanh từ khóa khi nghe mà không ảnh hưởng câu trả lời chính thức.
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

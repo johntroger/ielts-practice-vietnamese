@@ -69,7 +69,8 @@ const testSuites = [
   { name: 'Step 60: Minimal Focus View & Cognitive Decluttering (Phase 3.1)', file: 'tests/test_step60_minimal_focus_view.js' },
   { name: 'Step 61: Speaking Mock Room ReferenceError Fix (Phase 1)', file: 'tests/test_step61_speaking_mock_error_fix.js' },
   { name: 'Step 62: Authentic English Exam Questions & Practice Prompts (Phase 2)', file: 'tests/test_step62_english_exam_questions_standardization.js' },
-  { name: 'Step 63: Modal Layout Overflow & Top Cut-Off UI Fix (Phase 3)', file: 'tests/test_step63_modal_overflow_ui_fix.js' }
+  { name: 'Step 63: Modal Layout Overflow & Top Cut-Off UI Fix (Phase 3)', file: 'tests/test_step63_modal_overflow_ui_fix.js' },
+  { name: 'Step 64: Listening Header Overlap Fix & Non-obstructive Scratchpad UX (Phase 4)', file: 'tests/test_step64_listening_header_and_scratchpad_ux.js' }
 ];
 
 console.log('===============================================================');
