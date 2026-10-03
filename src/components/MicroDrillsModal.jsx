@@ -1683,12 +1683,12 @@ export default function MicroDrillsModal({
 
               {/* Interactive 3 Choice Buttons */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 block">Lựa chọn của bạn:</label>
+                <label className="text-xs font-bold text-slate-700 block">Your Selection:</label>
                 <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
                   {[
-                    { val: 'TRUE', label: 'TRUE', desc: 'Bài đọc khẳng định đúng', color: 'emerald' },
-                    { val: 'FALSE', label: 'FALSE', desc: 'Bài đọc mâu thuẫn trực tiếp', color: 'rose' },
-                    { val: 'NOT GIVEN', label: 'NOT GIVEN', desc: 'Không có thông tin / Suy diễn', color: 'amber' }
+                    { val: 'TRUE', label: 'TRUE', desc: 'Passage agrees with statement', color: 'emerald' },
+                    { val: 'FALSE', label: 'FALSE', desc: 'Passage contradicts statement', color: 'rose' },
+                    { val: 'NOT GIVEN', label: 'NOT GIVEN', desc: 'No information / impossible to tell', color: 'amber' }
                   ].map(opt => {
                     const isSelected = userTfngChoice === opt.val;
                     let btnStyle = 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50';
@@ -1804,7 +1804,7 @@ export default function MicroDrillsModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 space-y-1">
                   <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider block">
-                    1. Câu hỏi trong đề thi (Exam Question):
+                    1. Exam Question:
                   </span>
                   <p className="text-xs sm:text-sm font-medium text-blue-950 font-sans leading-relaxed">
                     "{currentReadingPara.questionText}"
@@ -1813,7 +1813,7 @@ export default function MicroDrillsModal({
 
                 <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1">
                   <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">
-                    2. Câu gốc trong bài đọc (Passage Excerpt):
+                    2. Passage Excerpt:
                   </span>
                   <p className="text-xs sm:text-sm font-serif text-emerald-950 leading-relaxed">
                     "{currentReadingPara.passageExcerpt}"

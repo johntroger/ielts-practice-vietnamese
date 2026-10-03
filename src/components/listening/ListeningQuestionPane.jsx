@@ -26,11 +26,11 @@ const HIGHLIGHT_COLORS = [
 function parseWordLimit(instruction) {
   if (!instruction) return null;
   const upper = instruction.toUpperCase();
-  if (upper.includes('ONE WORD ONLY')) return { maxWords: 1, text: 'Tối đa 1 từ duy nhất' };
-  if (upper.includes('ONE WORD AND/OR A NUMBER')) return { maxWords: 1, text: 'Tối đa 1 từ và/hoặc 1 số' };
-  if (upper.includes('NO MORE THAN TWO WORDS')) return { maxWords: 2, text: 'Tối đa không quá 2 từ' };
-  if (upper.includes('NO MORE THAN THREE WORDS')) return { maxWords: 3, text: 'Tối đa không quá 3 từ' };
-  if (upper.includes('NO MORE THAN ONE WORD')) return { maxWords: 1, text: 'Tối đa không quá 1 từ' };
+  if (upper.includes('ONE WORD ONLY')) return { maxWords: 1, text: 'NO MORE THAN ONE WORD' };
+  if (upper.includes('ONE WORD AND/OR A NUMBER')) return { maxWords: 1, text: 'ONE WORD AND/OR A NUMBER' };
+  if (upper.includes('NO MORE THAN TWO WORDS')) return { maxWords: 2, text: 'NO MORE THAN TWO WORDS' };
+  if (upper.includes('NO MORE THAN THREE WORDS')) return { maxWords: 3, text: 'NO MORE THAN THREE WORDS' };
+  if (upper.includes('NO MORE THAN ONE WORD')) return { maxWords: 1, text: 'NO MORE THAN ONE WORD' };
   return null;
 }
 
@@ -188,7 +188,7 @@ export default function ListeningQuestionPane({
       return {
         wordCount: words.length,
         maxWords: limit.maxWords,
-        message: `⚠️ Đã gõ ${words.length} từ (Yêu cầu: ${limit.text})`
+        message: `⚠️ Typed ${words.length} words (Limit: ${limit.text})`
       };
     }
     return null;
@@ -281,7 +281,7 @@ export default function ListeningQuestionPane({
 
         {/* Speakers */}
         <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100 text-xs">
-          <span className="text-slate-400 font-medium">Giọng đọc:</span>
+          <span className="text-slate-400 font-medium">Speakers:</span>
           {partData.speakers?.map((s, idx) => (
             <span
               key={idx}
@@ -300,14 +300,14 @@ export default function ListeningQuestionPane({
         <div className="sticky top-16 z-30 mb-4 flex items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl p-2.5 shadow-xs">
           <div className="flex items-center space-x-2 text-indigo-900 font-bold text-xs">
             <MapPin className="w-4 h-4 text-indigo-600 shrink-0" />
-            <span>Sơ đồ / Bản đồ cho câu hỏi 15–20</span>
+            <span>Map / Diagram for questions {mapGroup.startQuestion || 15}–{mapGroup.endQuestion || 20}</span>
           </div>
           <button
             onClick={() => setIsMapModalOpen(true)}
             className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1 cursor-pointer"
           >
             <Maximize2 className="w-3.5 h-3.5" />
-            <span>Mở Bản Đồ To</span>
+            <span>Enlarge Map</span>
           </button>
         </div>
       )}
@@ -383,7 +383,7 @@ export default function ListeningQuestionPane({
                               {q.order}
                             </span>
                             <span className="text-xs font-semibold text-slate-500">
-                              Điền vào chỗ trống
+                              Complete the note / blank
                             </span>
                           </div>
 
@@ -655,7 +655,7 @@ export default function ListeningQuestionPane({
                 <div className="space-y-4">
                   <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
-                      Lựa chọn (Chọn tối đa {group.maxSelections || 2} phương án):
+                      Options (Choose up to {group.maxSelections || 2} options):
                     </div>
                     <div className="space-y-2">
                       {group.options?.map((opt) => {
@@ -729,7 +729,7 @@ export default function ListeningQuestionPane({
                               {q.order}
                             </span>
                             <span className="text-xs font-bold text-slate-700">
-                              Lựa chọn: {userVal || '(Chưa chọn)'}
+                              Selected: {userVal || '(None)'}
                             </span>
                             {isSubmitted && (
                               <span>
@@ -766,7 +766,7 @@ export default function ListeningQuestionPane({
                 <div className="space-y-4">
                   <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                     <div className="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
-                      Danh Sách Lựa Chọn (Options Box):
+                      List of Options (Options Box):
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {group.options?.map(opt => (
@@ -829,7 +829,7 @@ export default function ListeningQuestionPane({
                                   : 'bg-white border-slate-300 text-slate-800 focus:border-red-500 focus:ring-2 focus:ring-red-200'
                               }`}
                             >
-                              <option value="">-- Chọn A–{group.options ? group.options[group.options.length - 1]?.key : 'F'} --</option>
+                              <option value="">-- Select A–{group.options ? group.options[group.options.length - 1]?.key : 'F'} --</option>
                               {group.options?.map(opt => (
                                 <option key={opt.key} value={opt.key}>
                                   {opt.key}: {opt.text.substring(0, 40)}...
@@ -1010,7 +1010,7 @@ export default function ListeningQuestionPane({
                         >
                           <div className="flex items-center justify-between gap-2 mb-2">
                             <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-xs">
-                              Bước {idx + 1} (Câu {q.order})
+                              Step {idx + 1} (Question {q.order})
                             </span>
                             {isSubmitted && (
                               <span>
@@ -1114,7 +1114,7 @@ export default function ListeningQuestionPane({
                                 tabIndex={100 + q.order}
                                 onChange={(e) => onAnswerChange && onAnswerChange(q.order, e.target.value)}
                                 className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs w-full max-w-[200px]"
-                                placeholder="Nhập đáp án..."
+                                placeholder="Type your answer..."
                               />
                             </td>
                           </tr>
@@ -1153,7 +1153,7 @@ export default function ListeningQuestionPane({
                           disabled={isSubmitted}
                           tabIndex={100 + q.order}
                           onChange={(e) => onAnswerChange && onAnswerChange(q.order, e.target.value)}
-                          placeholder="Nhập câu trả lời ngắn..."
+                          placeholder="Type your short answer..."
                           className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs sm:text-sm"
                         />
                       </div>
@@ -1173,14 +1173,14 @@ export default function ListeningQuestionPane({
           <div className="flex items-center justify-between text-white mb-2">
             <h3 className="font-bold text-sm sm:text-base flex items-center space-x-2">
               <MapPin className="w-4 h-4 text-emerald-400" />
-              <span>Sơ đồ / Bản đồ chi tiết</span>
+              <span>Detailed Map / Diagram View</span>
             </h3>
             <button
               onClick={() => setIsMapModalOpen(false)}
               className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold flex items-center space-x-1 cursor-pointer"
             >
               <X className="w-4 h-4" />
-              <span>Đóng</span>
+              <span>Close</span>
             </button>
           </div>
 

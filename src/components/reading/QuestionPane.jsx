@@ -319,7 +319,7 @@ export default function QuestionPane({
                     {q.questionText}
                   </p>
                   <div className="text-xs text-blue-600 font-medium">
-                    (Chọn {q.maxSelect || 2} phương án. Đã chọn: {selectedArray.join(', ') || 'Chưa chọn'})
+                    (Choose {q.maxSelect || 2} options. Selected: {selectedArray.join(', ') || 'None'})
                   </div>
 
                   <div className="space-y-2 pt-1">
@@ -364,7 +364,7 @@ export default function QuestionPane({
         {group.summaryText && (
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 text-sm leading-relaxed font-serif">
             <span className="text-xs font-bold font-sans text-blue-700 block mb-2 uppercase tracking-wide">
-              Đoạn tóm tắt (Summary Context):
+              Summary Context:
             </span>
             <p className="whitespace-pre-line">
               {group.summaryText}
@@ -375,7 +375,7 @@ export default function QuestionPane({
         {/* Word Bank if available */}
         {group.wordBank && (
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-            <span className="text-xs font-bold text-slate-700 block">Hộp Từ Vựng Tham Khảo:</span>
+            <span className="text-xs font-bold text-slate-700 block">Word Bank / Reference Options:</span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
               {group.wordBank.map(item => (
                 <div key={item.key} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center gap-1.5 shadow-2xs">
@@ -424,7 +424,7 @@ export default function QuestionPane({
                       disabled={isSubmitted}
                       value={currentAns}
                       onChange={(e) => onAnswerChange(q.order, e.target.value)}
-                      placeholder={group.wordBank ? "Nhập chữ cái đại diện (ví dụ: A, B...)" : "Nhập câu trả lời..."}
+                      placeholder={group.wordBank ? "Enter letter (e.g. A, B...)" : "Type your answer..."}
                       className={`w-full sm:max-w-md px-3.5 py-2 rounded-xl text-sm border focus:outline-hidden focus:ring-2 transition-all ${
                         isSubmitted
                           ? isCorrect 
@@ -452,7 +452,7 @@ export default function QuestionPane({
         {(group.headings || group.features) && (
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
             <span className="text-xs font-bold text-slate-700 block">
-              {group.headings ? 'Danh Sách Tiêu Đề (List of Headings):' : 'Danh Sách Đối Tượng (List of Features):'}
+              {group.headings ? 'List of Headings:' : 'List of Features / Categories:'}
             </span>
             <div className="space-y-1 text-xs">
               {(group.headings || group.features).map(item => (
@@ -751,7 +751,7 @@ export default function QuestionPane({
                 Questions {group.questions[0]?.order} - {group.questions[group.questions.length - 1]?.order}
               </span>
               <span className={`text-[11px] font-semibold ${ts.meta}`}>
-                {group.questions.length} câu hỏi
+                {group.questions.length} {group.questions.length > 1 ? 'questions' : 'question'}
               </span>
             </div>
             <h4 className={`text-sm font-bold whitespace-pre-line leading-snug ${ts.instruction}`}>

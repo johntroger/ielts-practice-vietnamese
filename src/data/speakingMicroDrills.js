@@ -22,26 +22,26 @@ export const SPEAKING_MICRO_DRILLS = [
     tip: 'Đừng chỉ trả lời "I prefer apartment because it is cheap". Hãy vận dụng A.R.E.A để tạo câu trả lời 30s mạch lạc, tự nhiên.',
     formula: {
       answer: {
-        label: 'A - Answer (Trực diện)',
-        prompt: 'Khẳng định rõ ràng lựa chọn với collocation tự nhiên',
+        label: 'A - Answer',
+        prompt: 'Directly state your preference using a natural academic collocation',
         sample: 'Personally, I would definitely opt for living in an apartment rather than a traditional standalone house.',
         keywords: ['opt for', 'apartment', 'standalone house']
       },
       reason: {
-        label: 'R - Reason (Lý do)',
-        prompt: 'Nêu lý do then chốt (tiện lợi, an ninh, tiện ích)',
+        label: 'R - Reason',
+        prompt: 'Provide key justifications (convenience, security, integrated amenities)',
         sample: 'The primary rationale is sheer convenience; modern residential complexes offer 24/7 security and integrated amenities like gyms and mini-marts right downstairs.',
         keywords: ['primary rationale', 'sheer convenience', 'integrated amenities', '24/7 security']
       },
       example: {
-        label: 'E - Example (Ví dụ)',
-        prompt: 'Kể trải nghiệm cá nhân cụ thể',
+        label: 'E - Example',
+        prompt: 'Give a concrete personal experience or scenario',
         sample: 'For instance, in my current flat, if there is a plumbing malfunction or power outage, the building maintenance team resolves it in a heartbeat.',
         keywords: ['for instance', 'maintenance team', 'in a heartbeat']
       },
       alternative: {
-        label: 'A - Alternative (Góc nhìn đối chiếu)',
-        prompt: 'Nêu trường hợp ngoại lệ hoặc dự định tương lai',
+        label: 'A - Alternative',
+        prompt: 'Offer an alternative perspective or future consideration',
         sample: 'Having said that, if I decide to start a larger family down the road, I might consider moving to a suburban house for more outdoor greenery and privacy.',
         keywords: ['having said that', 'down the road', 'suburban house', 'greenery']
       }
@@ -60,26 +60,26 @@ export const SPEAKING_MICRO_DRILLS = [
     tip: 'Tránh dùng "I read books every day". Hãy nói về thể loại yêu thích và thời điểm đọc bằng các cụm từ phong phú.',
     formula: {
       answer: {
-        label: 'A - Answer (Trực diện)',
-        prompt: 'Tần suất đọc sách kèm sở thích',
+        label: 'A - Answer',
+        prompt: 'State your reading frequency and general interest',
         sample: 'To be perfectly frank, I am an avid reader, so I try to delve into a book almost on a daily basis.',
         keywords: ['avid reader', 'delve into', 'on a daily basis']
       },
       reason: {
-        label: 'R - Reason (Lý do)',
-        prompt: 'Lợi ích về mặt tâm trí hoặc kiến thức',
+        label: 'R - Reason',
+        prompt: 'Explain mental wellness and cognitive benefits',
         sample: 'Reading serves as an unbeatable way for me to unwind and decompress after an intense day at work, while simultaneously broadening my intellectual horizons.',
         keywords: ['unbeatable way', 'decompress', 'broaden intellectual horizons']
       },
       example: {
-        label: 'E - Example (Ví dụ)',
-        prompt: 'Cuốn sách hoặc thói quen gần nhất',
+        label: 'E - Example',
+        prompt: 'Mention a recent book or current reading habit',
         sample: 'At the moment, I am flipping through a non-fiction book about behavioral psychology right before hitting the sack every night.',
         keywords: ['flipping through', 'non-fiction', 'hitting the sack']
       },
       alternative: {
-        label: 'A - Alternative (Góc nhìn đối chiếu)',
-        prompt: 'Trường hợp bận rộn thì thế nào?',
+        label: 'A - Alternative',
+        prompt: 'Contrast with exceptionally busy or hectic circumstances',
         sample: 'On exceptionally busy weeks when time is at a premium, though, I tend to switch to audiobooks during my daily commute instead.',
         keywords: ['at a premium', 'daily commute', 'audiobooks']
       }
@@ -98,26 +98,26 @@ export const SPEAKING_MICRO_DRILLS = [
     tip: 'Làm nổi bật khả năng tập trung (deep focus) khi học một mình nhưng vẫn thừa nhận giá trị của thảo luận nhóm (brainstorming).',
     formula: {
       answer: {
-        label: 'A - Answer (Trực diện)',
-        prompt: 'Nêu rõ sở thích học tập',
+        label: 'A - Answer',
+        prompt: 'Clearly state your study environment preference',
         sample: 'Without a shadow of a doubt, I lean heavily towards studying in solitude rather than in a group setting.',
         keywords: ['without a shadow of a doubt', 'lean towards', 'in solitude']
       },
       reason: {
-        label: 'R - Reason (Lý do)',
-        prompt: 'Lý do về sự tập trung và tốc độ học',
+        label: 'R - Reason',
+        prompt: 'Explain deep focus, fewer distractions, and personalized pacing',
         sample: 'Working alone allows me to enter a state of deep focus without constant interruptions, enabling me to digest complex materials at my own natural pace.',
         keywords: ['deep focus', 'interruptions', 'at my own natural pace']
       },
       example: {
-        label: 'E - Example (Ví dụ)',
-        prompt: 'Ví dụ lúc ôn thi IELTS hoặc đồ án',
+        label: 'E - Example',
+        prompt: 'Give an example during high-stakes exam revision or research',
         sample: 'For instance, when cramming for difficult exams, I can effortlessly lock myself in my study room for hours and absorb high-density information.',
         keywords: ['cramming for', 'effortlessly', 'absorb high-density information']
       },
       alternative: {
-        label: 'A - Alternative (Góc nhìn đối chiếu)',
-        prompt: 'Khi nào học nhóm lại hữu ích?',
+        label: 'A - Alternative',
+        prompt: 'Acknowledge situations where collaborative teamwork is vital',
         sample: 'That being said, if a project requires creative brainstorming and diverse viewpoints, group discussions are undeniably indispensable.',
         keywords: ['that being said', 'brainstorming', 'indispensable']
       }
@@ -136,26 +136,26 @@ export const SPEAKING_MICRO_DRILLS = [
     tip: 'Khai thác khía cạnh dinh dưỡng (nutritional value) và niềm vui sáng tạo (culinary experiment).',
     formula: {
       answer: {
-        label: 'A - Answer (Trực diện)',
-        prompt: 'Thái độ đối với việc nấu ăn',
+        label: 'A - Answer',
+        prompt: 'Express your overall attitude and enthusiasm toward home cooking',
         sample: 'I would say I am thoroughly passionate about whipping up meals in my own kitchen whenever time permits.',
         keywords: ['thoroughly passionate', 'whipping up meals', 'time permits']
       },
       reason: {
-        label: 'R - Reason (Lý do)',
-        prompt: 'Kiểm soát chất lượng và thư giãn',
+        label: 'R - Reason',
+        prompt: 'Highlight nutritional control and therapeutic decompression',
         sample: 'Preparing home-cooked dishes gives me complete control over nutritional value and hygiene, while also acting as a surprisingly therapeutic hobby.',
         keywords: ['home-cooked dishes', 'nutritional value', 'therapeutic']
       },
       example: {
-        label: 'E - Example (Ví dụ)',
-        prompt: 'Món ăn hoặc dịp nấu gần nhất',
+        label: 'E - Example',
+        prompt: 'Illustrate with a recent dish or weekend cooking session',
         sample: 'Over the weekend, for example, I spent a couple of hours concocting an authentic Italian pasta from scratch, which turned out delicious.',
         keywords: ['concocting', 'from scratch', 'turned out delicious']
       },
       alternative: {
-        label: 'A - Alternative (Góc nhìn đối chiếu)',
-        prompt: 'Khi kiệt sức trong tuần thì sao?',
+        label: 'A - Alternative',
+        prompt: 'Contrast with exhausting weekdays when quick takeout is needed',
         sample: 'However, on hectic weekdays when I am running on empty, I occasionally resort to grabbing takeout or ordering via food delivery apps.',
         keywords: ['running on empty', 'resort to', 'takeout']
       }
@@ -174,26 +174,26 @@ export const SPEAKING_MICRO_DRILLS = [
     tip: 'Ở Part 3, quan điểm cần mang tính xã hội và có tính cân nhắc hai chiều sâu sắc.',
     formula: {
       answer: {
-        label: 'A - Answer (Trực diện)',
-        prompt: 'Khẳng định rõ quan điểm về việc kiểm soát thiết bị',
+        label: 'A - Answer',
+        prompt: 'Assert a firm stance on regulating screen time for toddlers',
         sample: 'From my vantage point, letting children have unrestricted access to smart gadgets is an extremely hazardous practice that should be avoided.',
         keywords: ['from my vantage point', 'unrestricted access', 'hazardous practice']
       },
       reason: {
-        label: 'R - Reason (Lý do)',
-        prompt: 'Phân tích tác hại đối với sức khỏe và trí tuệ',
+        label: 'R - Reason',
+        prompt: 'Analyze adverse impacts on cognitive development and sleep patterns',
         sample: 'Excessive screen exposure at an impressionable age can severely impair cognitive development, disrupt sleep patterns, and induce digital addiction.',
         keywords: ['screen exposure', 'impressionable age', 'cognitive development', 'digital addiction']
       },
       example: {
-        label: 'E - Example (Ví dụ)',
-        prompt: 'Dẫn chứng thực tế hoặc nghiên cứu',
+        label: 'E - Example',
+        prompt: 'Cite clinical observations or documented developmental findings',
         sample: 'Numerous clinical studies have shown that toddlers who spend over four hours daily glued to screens frequently exhibit shorter attention spans and speech delays.',
         keywords: ['glued to screens', 'attention spans', 'speech delays']
       },
       alternative: {
-        label: 'A - Alternative (Góc nhìn đối chiếu)',
-        prompt: 'Giải pháp hài hòa (công nghệ giáo dục có định hướng)',
+        label: 'A - Alternative',
+        prompt: 'Present a balanced view under guided parental supervision',
         sample: 'Nevertheless, under strict parental supervision and with educational applications, moderate screen interaction can still offer valuable learning benefits.',
         keywords: ['parental supervision', 'moderate screen interaction', 'valuable learning benefits']
       }
@@ -210,9 +210,9 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-fillers',
     title: 'Từ Đệm 1: Hồi Tưởng Sự Việc Trong Quá Khứ Xa Xôi',
     category: 'Buying Time & Recalling Past',
-    situation: 'Giám khảo hỏi bạn về một sự việc xảy ra từ thời thơ ấu mà bạn không thể nhớ chi tiết ngay lập tức.',
+    situation: 'The examiner asks about a childhood event that you cannot recall instantaneously.',
     question: 'Can you remember a game you played a lot when you were in primary school?',
-    taskPrompt: 'Chọn cụm từ đệm tự nhiên nhất để "mua 2-3 giây suy nghĩ" mà không bị trừ điểm Fluency:',
+    taskPrompt: 'Select the most natural signpost filler to buy 2-3 seconds of thinking time without losing fluency:',
     options: [
       {
         text: 'Well, to be quite honest, that was ages ago, but off the top of my head, I would say...',
@@ -243,9 +243,9 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-fillers',
     title: 'Từ Đệm 2: Suy Đoán Về Tương Lai Không Chắc Chắn',
     category: 'Speculating & Forecasting',
-    situation: 'Giám khảo hỏi một câu hỏi mang tính phỏng đoán về xu hướng 20-30 năm tới.',
+    situation: 'The examiner asks a speculative question forecasting trends 20-30 years into the future.',
     question: 'Do you think robots will completely replace human teachers in the future?',
-    taskPrompt: 'Chọn cụm từ đệm thể hiện quan điểm phỏng đoán học thuật chuẩn Band 8.0:',
+    taskPrompt: 'Choose the most natural academic speculative filler suitable for Band 8.0+:',
     options: [
       {
         text: 'That is a rather intriguing question. It is hard to say with absolute certainty, but I would hazard a guess that...',
@@ -276,9 +276,9 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-fillers',
     title: 'Từ Đệm 3: Thừa Nhận Một Thực Tế Ngược Đời / Khó Xử',
     category: 'Concession & Honest Reflection',
-    situation: 'Giám khảo hỏi một câu hỏi đòi hỏi bạn phải thừa nhận một thói quen không hoàn hảo của bản thân.',
+    situation: 'The examiner asks a question requiring you to admit an imperfect habit honestly.',
     question: 'Do you always manage to lead a healthy lifestyle?',
-    taskPrompt: 'Chọn cách mở đầu khéo léo thể hiện tính chân thực nhưng giàu vốn từ vựng:',
+    taskPrompt: 'Select the optimal starter demonstrating candid authenticity and strong lexical resource:',
     options: [
       {
         text: 'To be brutally honest with you, although I strive to maintain healthy habits, more often than not...',
@@ -309,9 +309,9 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-fillers',
     title: 'Từ Đệm 4: Câu Hỏi Về Lĩnh Vực Bạn Không Rành Lắm',
     category: 'Unfamiliar Topics & Deflecting',
-    situation: 'Giám khảo bất ngờ hỏi về chủ đề bạn ít quan tâm (ví dụ: nghệ thuật điêu khắc, trang sức cổ).',
+    situation: 'The examiner asks about an unfamiliar topic that you rarely engage with (e.g. classical sculpture).',
     question: 'Are you interested in ancient historical artifacts?',
-    taskPrompt: 'Chọn cụm từ đệm xử lý tình huống "không rành chủ đề" một cách thông minh nhất:',
+    taskPrompt: 'Choose the smartest spoken strategy to navigate an unfamiliar subject naturally:',
     options: [
       {
         text: 'To be fair, historical artifacts are not really my cup of tea, but if I had to pick something interesting...',
@@ -346,8 +346,8 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-collocations',
     title: 'Idiom 1: Vui Mừng Tột Cùng Khi Nhận Tin Tốt',
     category: 'Emotions & Celebrations',
-    context: 'Khi diễn tả cảm xúc lúc đạt kết quả thi cử hoặc nhận học bổng mong ước.',
-    prompt: 'Chọn thành ngữ tiếng Anh tự nhiên nhất để điền vào chỗ trống:',
+    context: 'Expressing sheer excitement upon achieving an outstanding test score or winning a dream scholarship.',
+    prompt: 'Select the most natural English idiom to complete the blank:',
     questionSentence: 'When I received the letter confirming my overseas scholarship, I was absolutely ______.',
     options: [
       {
@@ -380,8 +380,8 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-collocations',
     title: 'Idiom 2: Giá Cả Quá Đắt Đỏ (Part 1/2)',
     category: 'Shopping & Expenses',
-    context: 'Khi nói về việc mua sắm đồ công nghệ cao cấp hoặc giá nhà đất tại các đại đô thị.',
-    prompt: 'Chọn thành ngữ bản xứ để diễn tả món đồ "đắt đỏ cắt cổ":',
+    context: 'Discussing premium tech gadgets or skyrocketing real estate prices in major metropolitan centers.',
+    prompt: 'Select the native idiomatic expression meaning "exorbitantly expensive":',
     questionSentence: 'Buying an apartment in downtown Hanoi or Ho Chi Minh City costs an ______ nowadays.',
     options: [
       {
@@ -414,8 +414,8 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-collocations',
     title: 'Idiom 3: Dậy Cực Kỳ Sớm Vào Buổi Sáng',
     category: 'Daily Routine & Habits',
-    context: 'Khi nói về thói quen dậy sớm để học bài, chạy bộ hoặc bắt chuyến bay sớm.',
-    prompt: 'Chọn thành ngữ diễn tả "thức dậy từ tờ mờ sáng":',
+    context: 'Describing the habit of waking up very early for exam preparation, morning exercise, or catching a flight.',
+    prompt: 'Select the idiomatic phrase meaning "to wake up extremely early at sunrise":',
     questionSentence: 'During exam season, I usually wake up at the ______ to review key formulas before the test.',
     options: [
       {
@@ -448,8 +448,8 @@ export const SPEAKING_MICRO_DRILLS = [
     type: 'speaking-collocations',
     title: 'Idiom 4: Nạp Lại Năng Lượng Sau Chuỗi Ngày Mệt Mỏi',
     category: 'Health, Wellness & Relaxation',
-    context: 'Khi nói về kỳ nghỉ cuối tuần, đi du lịch hoặc ngủ đủ giấc để phục hồi sức khỏe.',
-    prompt: 'Chọn collocation tự nhiên mang nghĩa "nạp lại năng lượng":',
+    context: 'Discussing weekend getaways, outdoor travels, or resting to regain physical and mental strength.',
+    prompt: 'Select the natural collocation meaning "to rest and regain energy":',
     questionSentence: 'Going camping in nature over the weekend really helps me ______ my batteries after grueling project deadlines.',
     options: [
       {
@@ -491,12 +491,12 @@ export const SPEAKING_MICRO_DRILLS = [
     difficulty: 'Band 7.5 - 8.5',
     tip: 'Tại Part 3, điểm mấu chốt là không được nhìn nhận vấn đề một chiều đen-trắng. Hãy phân tích tác động hai mặt và đưa ra kết luận trung dung có chiều sâu.',
     sideA: {
-      perspective: 'Mặt tiêu cực: Gây xa cách & quan hệ ảo',
+      perspective: 'Counter perspective: Digital estrangement & superficial ties',
       starter: 'On the one hand, it cannot be denied that...',
       points: 'Over-reliance on digital messaging fosters superficial virtual bonds while substantially eroding authentic face-to-face interpersonal skills.'
     },
     sideB: {
-      perspective: 'Mặt tích cực: Vượt qua khoảng cách địa lý',
+      perspective: 'Affirmative perspective: Bridging geographic divides',
       starter: 'On the flip side, however, it is equally undeniable that...',
       points: 'Geographical boundaries are effortlessly bridged, allowing cross-border families and global remote teams to maintain synchronous collaboration.'
     },
@@ -517,12 +517,12 @@ export const SPEAKING_MICRO_DRILLS = [
     difficulty: 'Band 7.5 - 8.5',
     tip: 'Phân tích giữa giá trị bản sắc văn hóa / du lịch và nhu cầu thực tiễn về hạ tầng nhà ở / giao thông.',
     sideA: {
-      perspective: 'Ưu tiên di sản: Bản sắc & Giá trị du lịch',
+      perspective: 'Heritage focus: Cultural lineage & tourism value',
       starter: 'From one perspective, preserving heritage is paramount because...',
       points: 'Historic architecture embodies a nation\'s cultural identity and acts as a potent magnet for high-revenue international tourism.'
     },
     sideB: {
-      perspective: 'Ưu tiên hiện đại: Đáp ứng dân số & Kinh tế',
+      perspective: 'Modernization focus: Urban density & economic growth',
       starter: 'Conversely, proponents of modernization argue that...',
       points: 'Skyrocketing urban populations desperately require modern high-density housing, advanced transportation grids, and commercial hubs to stimulate economic growth.'
     },
