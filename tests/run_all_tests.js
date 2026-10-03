@@ -85,7 +85,8 @@ const testSuites = [
   { name: 'Step 76: Repository Pattern & App.jsx Data Access Streamlining', file: 'tests/test_step76_repository_pattern_and_app_streamlining.js' },
   { name: 'Step 77: Dynamic Data Chunking & On-Demand Cambridge Bank Architecture', file: 'tests/test_step77_dynamic_data_chunking.js' },
   { name: 'Step 78: Standardized Testing & DOM Simulation Mock Engine Architecture', file: 'tests/test_step78_testing_mock_engine_and_dom_simulation.js' },
-  { name: 'Step 79: Spelling Demons & Natural Fillers Academic Integrity', file: 'tests/test_step79_demons_and_fillers.js' }
+  { name: 'Step 79: Spelling Demons & Natural Fillers Academic Integrity', file: 'tests/test_step79_demons_and_fillers.js' },
+  { name: 'Step 80: Spelling & Units & Speaking Descriptors Academic Integrity', file: 'tests/test_step80_spelling_units_and_speaking_criteria.js' }
 ];
 
 console.log('===============================================================');
