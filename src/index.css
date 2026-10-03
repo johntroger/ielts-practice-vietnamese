@@ -7,6 +7,26 @@
     @apply antialiased text-slate-800 bg-slate-50 font-sans;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Academic Reading & Editorial Typography Tokens */
+.academic-reading-text {
+  font-family: 'Lora', 'Newsreader', Georgia, serif;
+  letter-spacing: 0.01em;
+  line-height: 1.82;
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Custom modern scrollbars */

@@ -76,7 +76,8 @@ const testSuites = [
   { name: 'Step 67: Workspace Expansion & Header Toggle (Alt+Z)', file: 'tests/test_step67_workspace_expansion_header_toggle.js' },
   { name: 'Step 68: Grammar & Vocabulary Documentation Integrity', file: 'tests/test_step68_grammar_vocab_docs.js' },
   { name: 'Step 69: Micro-Drills & Vocab/Grammar Workspace Expansion', file: 'tests/test_step69_micro_drills_and_vocab_expansion.js' },
-  { name: 'Step 70: Header Decluttering & Hierarchy Upgrade', file: 'tests/test_step70_header_decluttering_and_optimization.js' }
+  { name: 'Step 70: Header Decluttering & Hierarchy Upgrade', file: 'tests/test_step70_header_decluttering_and_optimization.js' },
+  { name: 'Step 71: Academic Typography & Visual Tokens', file: 'tests/test_step71_typography_and_visual_tokens.js' }
 ];
 
 console.log('===============================================================');

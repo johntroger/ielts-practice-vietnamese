@@ -323,7 +323,7 @@ export default function PromptPane({
           </div>
 
           {/* Render Prompt with Persistent Inline Highlights */}
-          <p className="whitespace-pre-line text-slate-900 font-medium text-sm sm:text-base leading-relaxed">
+          <p className="whitespace-pre-line text-slate-900 font-serif text-[15px] sm:text-[16px] leading-[1.8] tracking-wide">
             {renderHighlightedPrompt(task.prompt, highlights, removeHighlight)}
           </p>
 

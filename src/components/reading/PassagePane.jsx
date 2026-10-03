@@ -524,7 +524,7 @@ export default function PassagePane({
                 </div>
 
                 {/* Paragraph Content */}
-                <p className={`text-justify font-serif cursor-text transition-all duration-150 ${fontSizeClasses[fontSize] || fontSizeClasses.base}`}>
+                <p className={`text-justify font-serif academic-reading-text cursor-text transition-all duration-150 ${fontSizeClasses[fontSize] || fontSizeClasses.base}`}>
                   {renderParagraphContent(para)}
                 </p>
               </div>
