@@ -174,7 +174,7 @@ export default function Navbar({
   const activeColor = skillColorConfig[activeSkill] || skillColorConfig.writing;
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs shrink-0">
+    <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0">
       <div className="w-full max-w-full px-2 sm:px-4 xl:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-1 sm:gap-2">

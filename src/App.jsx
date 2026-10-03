@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Flame, Target, ChevronDown, BookOpen, GraduationCap, Maximize2, Minimize2, Keyboard } from 'lucide-react';
+import { Sparkles, Flame, Target, ChevronDown, BookOpen, GraduationCap, Maximize2, Minimize2, Keyboard, X } from 'lucide-react';
 import Navbar from './components/Navbar';
 import WritingWorkspace from './components/writing/WritingWorkspace';
 // Lazy-loaded workspaces and modals for optimal initial bundle performance
@@ -91,6 +91,7 @@ export default function App() {
   const [activeSkill, setActiveSkill] = useState(() => safeGet('ielts_active_skill', 'writing'));
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
   const [lastSaved, setLastSaved] = useState(new Date());
+  const [isApiKeyBannerDismissed, setIsApiKeyBannerDismissed] = useState(() => safeGet('ielts_dismiss_api_banner', false));
 
   // Keep active skill in localStorage safely
   useEffect(() => {
@@ -1074,54 +1075,78 @@ export default function App() {
         />
       )}
 
-      {/* 1.5 Global Gemini API Key Reminder Banner (Hidden in Focus Mode) */}
-      {!isFocusMode && !apiKey && (
-        <div className={`bg-gradient-to-r from-amber-500 via-amber-600 to-rose-600 text-slate-950 px-3 sm:px-6 transition-all duration-300 shadow-xs shrink-0 z-20 flex items-center justify-between gap-2 ${
-          isSlimHeader ? 'py-1 text-xs' : 'py-2'
+      {/* 1.5 Global Gemini API Key Reminder Banner (Dismissible & Hidden in Focus Mode) */}
+      {!isFocusMode && !apiKey && !isApiKeyBannerDismissed && (
+        <div className={`bg-amber-50/95 border-b border-amber-200/90 text-amber-950 px-3 sm:px-6 transition-all duration-300 shadow-2xs shrink-0 z-20 flex items-center justify-between gap-2.5 ${
+          isSlimHeader ? 'py-1 text-xs' : 'py-1.5'
         }`}>
           {isSlimHeader ? (
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center space-x-2 min-w-0">
-                <Sparkles className="w-3.5 h-3.5 text-white shrink-0 animate-pulse" />
-                <span className="text-[11px] sm:text-xs font-bold text-white truncate">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0 animate-pulse" />
+                <span className="text-[11px] sm:text-xs font-semibold text-amber-900 truncate">
                   ⚡ Chưa kết nối AI API Key (AI Chấm bài, Tra từ & Sinh đề đang chạy chế độ offline)
                 </span>
               </div>
               <div className="flex items-center space-x-2 shrink-0">
                 <button
                   onClick={() => openModal('settings')}
-                  className="px-2.5 py-0.5 rounded-md bg-white text-slate-900 hover:bg-amber-50 font-black text-[11px] shadow-2xs transition-all cursor-pointer"
+                  className="px-2.5 py-0.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] shadow-2xs transition-all cursor-pointer"
                 >
                   Kết Nối
+                </button>
+                <button
+                  onClick={() => {
+                    setIsApiKeyBannerDismissed(true);
+                    safeSet('ielts_dismiss_api_banner', true);
+                  }}
+                  className="p-1 rounded-md text-amber-700 hover:text-amber-950 hover:bg-amber-100 transition-colors cursor-pointer"
+                  title="Ẩn thông báo"
+                  aria-label="Ẩn thông báo"
+                >
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
           ) : (
             <>
-              <div className="flex items-center space-x-2 min-w-0">
-                <div className="p-1 rounded-md bg-white/20 text-white shrink-0">
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <div className="p-1 rounded-lg bg-amber-100 text-amber-700 shrink-0">
                   <Sparkles className="w-4 h-4" />
                 </div>
-                <div className="text-xs text-white leading-tight min-w-0">
-                  <span className="font-black text-amber-100 uppercase tracking-wider mr-1.5 text-[10px] sm:text-xs">
+                <div className="text-xs text-amber-900 leading-tight min-w-0">
+                  <span className="font-extrabold text-amber-800 uppercase tracking-wider mr-1.5 text-[10px] sm:text-xs">
                     LƯU Ý KẾT NỐI AI:
                   </span>
-                  <span className="hidden sm:inline font-medium text-white/95">
-                    Bạn cần <button onClick={() => openModal('settings')} className="underline font-bold hover:text-amber-200 cursor-pointer">kết nối AI API Key</button> cá nhân (miễn phí) để sử dụng trọn vẹn mọi tính năng AI (Chấm bài Writing 4 tiêu chí, Tra từ & Giải thích Reading, Luyện thi nói với Examiner AI, Sinh đề mới).
+                  <span className="hidden sm:inline font-medium text-amber-900">
+                    Bạn cần <button onClick={() => openModal('settings')} className="underline font-bold text-amber-900 hover:text-amber-700 cursor-pointer">kết nối AI API Key</button> cá nhân (miễn phí) để sử dụng đầy đủ các tính năng AI (Chấm bài 4 tiêu chí, Tra từ & Giải thích, Examiner AI, Sinh đề).
                   </span>
-                  <span className="sm:hidden font-semibold text-white/95 truncate block text-[11px]">
-                    Cần kết nối AI API Key để sử dụng các tính năng AI
+                  <span className="sm:hidden font-semibold text-amber-900 truncate block text-[11px]">
+                    Cần kết nối AI API Key để sử dụng tính năng AI
                   </span>
                 </div>
               </div>
 
-              <button
-                onClick={() => openModal('settings')}
-                className="px-3 py-1 rounded-lg bg-white text-slate-900 hover:bg-amber-50 font-bold text-xs shadow-xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
-              >
-                <span className="text-amber-600">⚡</span>
-                <span>Kết Nối Ngay</span>
-              </button>
+              <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+                <button
+                  onClick={() => openModal('settings')}
+                  className="px-2.5 sm:px-3 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-2xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
+                >
+                  <span className="text-amber-200">⚡</span>
+                  <span>Kết Nối Ngay</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setIsApiKeyBannerDismissed(true);
+                    safeSet('ielts_dismiss_api_banner', true);
+                  }}
+                  className="p-1 sm:p-1.5 rounded-lg text-amber-700 hover:text-amber-950 hover:bg-amber-100 transition-colors cursor-pointer"
+                  title="Ẩn thông báo này"
+                  aria-label="Ẩn thông báo"
+                >
+                  <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                </button>
+              </div>
             </>
           )}
         </div>
