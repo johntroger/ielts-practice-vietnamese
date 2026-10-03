@@ -8,6 +8,7 @@
     "build": "node scripts/sync_features_to_gitbook.js && vite build",
     "preview": "vite preview",
     "test": "node tests/run_all_tests.js",
+    "test:simulation": "node tests/test_step78_testing_mock_engine_and_dom_simulation.js",
     "docs:sync": "node scripts/sync_features_to_gitbook.js"
   },
   "dependencies": {
