@@ -8,6 +8,7 @@ const ListeningWorkspace = React.lazy(() => import('./components/listening/Liste
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
 
 import AppModalHost from './components/modals/AppModalHost';
+import { useStudyData } from './hooks/useStudyData';
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
@@ -55,42 +56,31 @@ export default function App() {
     return (saved && validModels.includes(saved)) ? saved : 'gemini-3.6-flash';
   });
   
-  const [allTasks, setAllTasks] = useState(() => {
-    const saved = safeGet('ielts_all_tasks', null);
-    const defaults = [...INITIAL_TASKS, ...COMMUNITY_DEFAULT_TASKS];
-    if (Array.isArray(saved) && saved.length > 0) {
-      const savedIds = new Set(saved.map(t => t.id));
-      const missingDefaults = defaults.filter(d => !savedIds.has(d.id));
-      const combined = [...saved, ...missingDefaults];
-      const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
-      return cleanedTasks;
-    }
-    const { cleanedTasks } = deduplicateWritingTasks(defaults, 0.75);
-    return cleanedTasks;
-  });
-  const [currentTaskId, setCurrentTaskId] = useState(() => {
-    return safeGet('ielts_current_task_id', 't2-ai-workplace-2025');
-  });
+  // User state
+  const [currentUser, setCurrentUser] = useState(null);
 
-  const [essays, setEssays] = useState(() => safeGet('ielts_essays_drafts', {}));
-  const [outlines, setOutlines] = useState(() => safeGet('ielts_outlines_drafts', {}));
-  const [submissions, setSubmissions] = useState(() => safeGet('ielts_submissions_history', []));
-  const [readingHistory, setReadingHistory] = useState(() => safeGet('ielts_reading_submissions_history', []));
-  const [listeningHistory, setListeningHistory] = useState(() => safeGet('ielts_listening_submissions_history', []));
-  const [speakingHistory, setSpeakingHistory] = useState(() => safeGet('ielts_speaking_submissions_history', []));
-  const [vocabList, setVocabList] = useState(() => safeGet('ielts_vocab_notebook', [
-    { id: 'v1', phrase: 'catalyze novel industries', meaningVi: 'thúc đẩy các ngành mới', example: 'AI will catalyze novel industries.', topic: 'tech' },
-    { id: 'v2', phrase: 'pivotal element', meaningVi: 'yếu tố then chốt', example: 'Education is a pivotal element.', topic: 'edu' },
-  ]));
-  const [mistakes, setMistakes] = useState(() => safeGet('ielts_mistakes_log', []));
-  const [personalNotes, setPersonalNotes] = useState(() => safeGet('ielts_theory_notes', []));
-  const [streakCount, setStreakCount] = useState(() => Number(safeGet('ielts_streak_count', 3)) || 3);
-  const [masteredIds, setMasteredIds] = useState(() => safeGet('ielts_mastered_items', []));
+  // Repository Layer Integration (Step 76: Data Access Layer Architecture)
+  const {
+    allTasks, setAllTasks,
+    communityTasks, setCommunityTasks,
+    currentTaskId, setCurrentTaskId,
+    essays, setEssays,
+    outlines, setOutlines,
+    lastSaved, setLastSaved,
+    submissions, setSubmissions,
+    readingHistory, setReadingHistory,
+    listeningHistory, setListeningHistory,
+    speakingHistory, setSpeakingHistory,
+    vocabList, setVocabList,
+    mistakes, setMistakes,
+    personalNotes, setPersonalNotes,
+    streakCount, setStreakCount,
+    masteredIds, setMasteredIds
+  } = useStudyData(currentUser);
 
   // 2. UI & Mode State
   const [activeSkill, setActiveSkill] = useState(() => safeGet('ielts_active_skill', 'writing'));
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
-  const [lastSaved, setLastSaved] = useState(new Date());
   const [isApiKeyBannerDismissed, setIsApiKeyBannerDismissed] = useState(() => safeGet('ielts_dismiss_api_banner', false));
 
   // Keep active skill in localStorage safely
@@ -233,13 +223,7 @@ export default function App() {
     };
   }, []);
 
-  // User & Workspace States
-  const [currentUser, setCurrentUser] = useState(null);
-  const [communityTasks, setCommunityTasks] = useState(() => {
-    const cached = safeGet('ielts_public_community_tasks', null);
-    if (Array.isArray(cached) && cached.length > 0) return cached;
-    return COMMUNITY_DEFAULT_TASKS;
-  });
+  // Workspace Trigger States
   const [readingGenTrigger, setReadingGenTrigger] = useState(0);
   const [readingIngestTrigger, setReadingIngestTrigger] = useState(0);
   const [readingLibraryTrigger, setReadingLibraryTrigger] = useState(0);

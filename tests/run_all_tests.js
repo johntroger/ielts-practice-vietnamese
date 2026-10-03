@@ -81,7 +81,8 @@ const testSuites = [
   { name: 'Step 72: Slide-Over Utility Panel (Vocab, Paraphrase & Mistakes)', file: 'tests/test_step72_slide_over_utility_panel.js' },
   { name: 'Step 73: Skimmable Actionable Feedback & 3-Second Action Plan', file: 'tests/test_step73_skimmable_actionable_feedback.js' },
   { name: 'Step 74: AI Domain Adapters Modularization & Facade', file: 'tests/test_step74_ai_domain_adapters_modularization.js' },
-  { name: 'Step 75: Micro-Drills Sub-Rooms Architecture Modularization', file: 'tests/test_step75_micro_drills_modularization.js' }
+  { name: 'Step 75: Micro-Drills Sub-Rooms Architecture Modularization', file: 'tests/test_step75_micro_drills_modularization.js' },
+  { name: 'Step 76: Repository Pattern & App.jsx Data Access Streamlining', file: 'tests/test_step76_repository_pattern_and_app_streamlining.js' }
 ];
 
 console.log('===============================================================');
