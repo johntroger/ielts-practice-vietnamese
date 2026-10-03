@@ -164,7 +164,7 @@ export default function EditorPane({
       <div 
         onMouseEnter={() => setIsToolbarHovered(true)}
         onMouseLeave={() => setIsToolbarHovered(false)}
-        className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 relative z-30"
+        className="bg-white border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5 sm:gap-2 shadow-2xs shrink-0 relative z-20"
       >
         
         {/* Left: Tab Switcher (Essay vs Scratchpad) */}

@@ -79,7 +79,7 @@ export default function WritingSubHeaderToolbar({
   const missionsDone = [hasWrittenToday, hasPrescriptionToday, hasVocabToday].filter(Boolean).length;
 
   return (
-    <div className={`bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 shadow-2xs shrink-0 z-20 transition-all duration-300 ${
+    <div className={`bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 shadow-2xs shrink-0 relative z-30 transition-all duration-300 ${
       isSlimHeader 
         ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
         : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between md:flex-wrap gap-1.5 sm:gap-2'
@@ -193,7 +193,7 @@ export default function WritingSubHeaderToolbar({
                   className="fixed inset-0 z-40" 
                   onClick={() => setIsToolsDropdownOpen(false)} 
                 />
-                <div className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-24px)] max-h-[calc(100dvh-160px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
+                <div className="absolute right-0 top-full mt-1.5 w-72 sm:w-80 max-w-[calc(100vw-24px)] max-h-[calc(100dvh-160px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
                   
                   {/* SECTION 1: Cấu hình thi & Hiển thị */}
                   <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
