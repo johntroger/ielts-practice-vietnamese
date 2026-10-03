@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   FolderKanban,
   ShieldAlert,
+  Bookmark,
   Sliders,
   Pill,
   CheckCircle2

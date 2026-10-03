@@ -93,7 +93,11 @@ assert(
   toolbarCode.includes('Khay Trượt'),
   'WritingSubHeaderToolbar must visually indicate "Khay Trượt" mode to user'
 );
-console.log('    ✅ WritingSubHeaderToolbar side-panel buttons verified.');
+assert(
+  /import\s*\{[^}]*\bBookmark\b[^}]*\}\s*from\s*['"]lucide-react['"]/.test(toolbarCode),
+  'WritingSubHeaderToolbar must properly import Bookmark from lucide-react'
+);
+console.log('    ✅ WritingSubHeaderToolbar side-panel buttons and icon imports verified.');
 
 // 4. Verify EditorPane Integration
 console.log('  ▶ 4. Verifying EditorPane more tools menu integration...');
