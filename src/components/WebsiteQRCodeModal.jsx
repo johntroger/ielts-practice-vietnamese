@@ -101,19 +101,19 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-in zoom-in-95 duration-200 text-slate-800"
+        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-in zoom-in-95 duration-200 text-slate-800 max-h-[92vh] flex flex-col my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Ribbon */}
-        <div className="bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 p-5 text-white relative">
+        {/* Header Ribbon - Sticky at top */}
+        <div className="bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 p-4 sm:p-5 text-white relative shrink-0 sticky top-0 z-10 shadow-xs">
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
+            className="absolute top-3.5 sm:top-4 right-3.5 sm:right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
             aria-label="Đóng"
           >
             <X className="w-4 h-4" />
@@ -135,8 +135,8 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Content Body */}
-        <div className="p-6 text-center space-y-4">
+        {/* Content Body - Scrollable */}
+        <div className="p-4 sm:p-6 text-center space-y-4 overflow-y-auto flex-1 overscroll-contain">
           <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
             Quét mã QR bằng ứng dụng <strong>Camera</strong>, <strong>Zalo</strong> hoặc trình duyệt trên điện thoại để mở ngay website mà không cần gõ tên miền.
           </p>
