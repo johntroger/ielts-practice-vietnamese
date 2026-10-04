@@ -1,6 +1,6 @@
 # ⌨️ Giao Diện Tập Trung & Bảng Phím Tắt Toàn Năng
 
-> **Chuyên mục**: `shortcuts_ux` | **Số lượng**: **6 tính năng**  
+> **Chuyên mục**: `shortcuts_ux` | **Số lượng**: **7 tính năng**  
 > **Tổng quan**: Tối ưu hóa trải nghiệm làm bài với chế độ tập trung (Focus Mode), bảng phím tắt thao tác nhanh chuẩn phòng thi máy tính.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
@@ -144,6 +144,30 @@ Bấm nút "Góp Ý & Báo Lỗi" ở dưới chân trang hoặc trong Menu Hamb
 ```
 
 > 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Gửi Góp Ý & Phản Hồi"** trong giao diện làm bài.
+
+---
+
+<a id="feat-dark-mode-theme"></a>
+
+## 7. Chế Độ Giao Diện Tối Toàn Diện (Website-Wide Dark Mode)
+
+> **Phiên bản**: `v4.5` | **Huy hiệu**: `Theme Sang Trọng` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Bảo vệ mắt học viên khi luyện đề vào ban đêm, giao diện Dark-Tech sang trọng cho toàn bộ 4 kỹ năng, thanh điều hướng và cửa sổ chức năng.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Chuyển đổi 1-chạm giữa Light Mode và Dark Mode ngay trên thanh Navbar hoặc menu Mobile.
+- Bảo vệ mắt, chống mỏi điều tiết khi làm bài thi thử kéo dài vào ban đêm.
+- Tự động lưu cấu hình người dùng vào LocalStorage và đồng bộ tức thời mọi cửa sổ.
+- Tối ưu độ tương phản văn bản chuẩn học thuật, bảo toàn màu sắc trực quan của các badge và biểu đồ.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Nhấn vào biểu tượng Mặt Trăng / Mặt Trời trên Navbar trên cùng hoặc vào Cài Đặt Hệ Thống -> Chế Độ Giao Diện.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Cài Đặt Giao Diện"** trong giao diện làm bài.
 
 ---
 

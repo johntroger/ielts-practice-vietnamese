@@ -13,6 +13,7 @@ import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
+import { initTheme } from './utils/themeService';
 import { 
   saveTwoTierSubmissions, 
   loadTwoTierSubmissions, 
@@ -539,8 +540,9 @@ export default function App() {
     });
   };
 
-  // 5. Automated Content Deduplication & Sanitization on startup
+  // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
+    initTheme();
     try {
       const report = auditAndCleanWebsiteContent(0.75);
       if (report.hasDuplicates) {

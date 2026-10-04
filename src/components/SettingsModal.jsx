@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Settings, Key, CheckCircle, AlertCircle, ExternalLink, X, Shield, 
   RefreshCw, Cpu, Eye, EyeOff, Trash2, HelpCircle, Check, Copy,
-  HardDrive, Download, Upload, Globe, Lock, Zap
+  HardDrive, Download, Upload, Globe, Lock, Zap, Moon, Sun
 } from 'lucide-react';
+import { getTheme, setTheme as setGlobalTheme, subscribeTheme } from '../utils/themeService';
 import { testApiKey, fetchAvailableModels, POPULAR_GEMINI_MODELS } from '../services/geminiService';
 import { 
   getStorageMetrics, 
@@ -50,6 +51,12 @@ export default function SettingsModal({
   // Storage resilience state
   const [storageMetrics, setStorageMetrics] = useState(() => getStorageMetrics());
   const [storageMessage, setStorageMessage] = useState('');
+
+  // Website Theme state
+  const [currentTheme, setCurrentTheme] = useState(() => getTheme());
+  useEffect(() => {
+    return subscribeTheme((t) => setCurrentTheme(t));
+  }, []);
 
   // Multi-Model AI Provider State
   const [activeProvider, setActiveProvider] = useState(() => getAiProviderConfig().provider || 'gemini');
@@ -800,6 +807,66 @@ export default function SettingsModal({
               />
               <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
             </label>
+          </div>
+
+          {/* Section: Website Theme (Light / Dark Mode) */}
+          <div className="pt-2 border-t border-slate-100 space-y-2.5">
+            <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+              {currentTheme === 'dark' ? <Moon className="w-3.5 h-3.5 text-indigo-400" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
+              <span>Chế Độ Giao Diện (Theme & Appearance)</span>
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {/* Option 1: Light Mode */}
+              <div 
+                onClick={() => { setGlobalTheme('light'); setCurrentTheme('light'); }}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  currentTheme === 'light'
+                    ? 'bg-amber-50/70 border-amber-500 ring-2 ring-amber-500/20 shadow-xs'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
+                      <Sun className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-black text-slate-900">Giao Diện Sáng (Light)</span>
+                  </div>
+                  {currentTheme === 'light' && (
+                    <span className="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  ☀️ Tươi sáng, độ tương phản cao chuẩn tài liệu khảo thí Cambridge Academic.
+                </p>
+              </div>
+
+              {/* Option 2: Dark Mode */}
+              <div 
+                onClick={() => { setGlobalTheme('dark'); setCurrentTheme('dark'); }}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  currentTheme === 'dark'
+                    ? 'bg-indigo-950/40 border-indigo-500 ring-2 ring-indigo-500/20 shadow-xs'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                      <Moon className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-black text-slate-900">Giao Diện Tối (Dark)</span>
+                  </div>
+                  {currentTheme === 'dark' && (
+                    <span className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  🌙 Dịu mắt khi luyện đề ban đêm, phong cách Dark-Tech sang trọng và hiện đại.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Section: Privacy & Community Auto-Sharing */}

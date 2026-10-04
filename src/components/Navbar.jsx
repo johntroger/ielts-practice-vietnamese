@@ -30,10 +30,13 @@ import {
   Award,
   SlidersHorizontal,
   HelpCircle,
-  QrCode
+  QrCode,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import WebsiteQRCodeModal from './WebsiteQRCodeModal';
+import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
 
 export default function Navbar({
   currentTask,
@@ -95,6 +98,13 @@ export default function Navbar({
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [mobileSkillMenuOpen, setMobileSkillMenuOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(() => getTheme());
+
+  useEffect(() => {
+    return subscribeTheme((theme) => {
+      setCurrentTheme(theme);
+    });
+  }, []);
 
   const desktopMenuRef = useRef(null);
   const mobileSkillRef = useRef(null);
@@ -663,6 +673,21 @@ export default function Navbar({
               <span className="hidden min-[1600px]:inline text-[11px] font-bold">Gửi góp ý</span>
             </button>
 
+            {/* Theme Toggle Button (Light / Dark Mode) */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
+              title={currentTheme === 'dark' ? "Chuyển sang Giao diện Sáng (Light Mode)" : "Chuyển sang Giao diện Ban Đêm (Dark Mode)"}
+              aria-label="Chuyển đổi giao diện Sáng / Tối"
+            >
+              {currentTheme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-600 group-hover:-rotate-12 transition-transform" />
+              )}
+            </button>
+
             {/* API Key Indicator */}
             <button
               onClick={doOpenSettings}
@@ -1020,6 +1045,29 @@ export default function Navbar({
                       <span>Trợ Năng Hiển Thị CDI (Cỡ Chữ & Màu)</span>
                     </div>
                     <span className="text-[10px] text-blue-600 font-bold bg-blue-100 px-1.5 py-0.5 rounded">IDP/BC</span>
+                  </button>
+
+                  {/* Dark Mode Toggle in Mobile Drawer */}
+                  <button
+                    onClick={() => {
+                      toggleTheme();
+                    }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className={`p-1.5 rounded-lg ${currentTheme === 'dark' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700'}`}>
+                        {currentTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                      </div>
+                      <div>
+                        <div>{currentTheme === 'dark' ? 'Giao Diện Ban Đêm (Dark Mode)' : 'Giao Diện Ban Ngày (Light Mode)'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">Chạm để đổi sang chế độ {currentTheme === 'dark' ? 'Sáng' : 'Tối'}</div>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                      currentTheme === 'dark' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'
+                    }`}>
+                      {currentTheme === 'dark' ? 'ĐANG BẬT' : 'ĐANG TẮT'}
+                    </span>
                   </button>
 
                   <button

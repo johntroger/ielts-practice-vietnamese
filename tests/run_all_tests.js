@@ -92,7 +92,8 @@ const testSuites = [
   { name: 'Step 83: Mobile Drawer Portal & Viewport Escape Verification', file: 'tests/test_step83_mobile_drawer_portal_containment.js' },
   { name: 'Step 84: Reading Micro-Drills & Listening Audioscript Distractors Integrity', file: 'tests/test_step84_micro_drills_and_audioscripts.js' },
   { name: 'Step 85: Smart Daily Recommendation Engine & UI Integration', file: 'tests/test_step85_smart_daily_recommendation.js' },
-  { name: 'Step 86: Academic Error Log & Paraphrase Journal Template Integrity', file: 'tests/test_step86_error_log_and_paraphrase_template.js' }
+  { name: 'Step 86: Academic Error Log & Paraphrase Journal Template Integrity', file: 'tests/test_step86_error_log_and_paraphrase_template.js' },
+  { name: 'Step 87: Comprehensive Dark Mode Theme System', file: 'tests/test_step87_dark_mode_theme_system.js' }
 ];
 
 console.log('===============================================================');

@@ -991,6 +991,31 @@ export const FEATURE_REGISTRY = [
       target: 'writing',
       label: 'Xem Gợi Ý Bài Luyện'
     }
+  },
+  {
+    id: 'feat-dark-mode-theme',
+    version: 'v4.5',
+    status: 'new',
+    badge: 'Theme Sang Trọng',
+    category: 'shortcuts_ux',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    title: 'Chế Độ Giao Diện Tối Toàn Diện (Website-Wide Dark Mode)',
+    shortDesc: 'Bảo vệ mắt học viên khi luyện đề vào ban đêm, giao diện Dark-Tech sang trọng cho toàn bộ 4 kỹ năng, thanh điều hướng và cửa sổ chức năng.',
+    icon: 'Moon',
+    shortcut: null,
+    updatedAt: '2026-10-04',
+    highlights: [
+      'Chuyển đổi 1-chạm giữa Light Mode và Dark Mode ngay trên thanh Navbar hoặc menu Mobile.',
+      'Bảo vệ mắt, chống mỏi điều tiết khi làm bài thi thử kéo dài vào ban đêm.',
+      'Tự động lưu cấu hình người dùng vào LocalStorage và đồng bộ tức thời mọi cửa sổ.',
+      'Tối ưu độ tương phản văn bản chuẩn học thuật, bảo toàn màu sắc trực quan của các badge và biểu đồ.'
+    ],
+    usageGuide: 'Nhấn vào biểu tượng Mặt Trăng / Mặt Trời trên Navbar trên cùng hoặc vào Cài Đặt Hệ Thống -> Chế Độ Giao Diện.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'settings',
+      label: 'Cài Đặt Giao Diện'
+    }
   }
 ];
 

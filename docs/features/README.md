@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **38 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **39 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -18,7 +18,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
-| ⌨️ **Giao Diện Tập Trung** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
+| ⌨️ **Giao Diện Tập Trung** | **7** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
 
 ---
 
@@ -91,6 +91,11 @@ Dưới đây là các tính năng học thuật mới nhất được nâng c�
 - **Phiên bản**: `v4.5` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking**
 - **Tóm tắt**: Tự động phân tích lịch sử bài làm, sổ lỗi sai và mục tiêu điểm để đề xuất bài luyện trọng tâm trong ngày, chống trì hoãn học tập và cân bằng kỹ năng.
 - **Cách dùng nhanh**: Thẻ gợi ý xuất hiện ở đầu Workspace luyện viết. Bấm "Luyện ngay" để kích hoạt đề thi hoặc công cụ được gợi ý.
+
+### ✦ [Chế Độ Giao Diện Tối Toàn Diện (Website-Wide Dark Mode)](shortcuts-ux.md#feat-dark-mode-theme)
+- **Phiên bản**: `v4.5` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking**
+- **Tóm tắt**: Bảo vệ mắt học viên khi luyện đề vào ban đêm, giao diện Dark-Tech sang trọng cho toàn bộ 4 kỹ năng, thanh điều hướng và cửa sổ chức năng.
+- **Cách dùng nhanh**: Nhấn vào biểu tượng Mặt Trăng / Mặt Trời trên Navbar trên cùng hoặc vào Cài Đặt Hệ Thống -> Chế Độ Giao Diện.
 
 ---
 *Tài liệu tự động đồng bộ qua GitBook Sync Pipeline. Mọi thay đổi trong source code sẽ tự động cập nhật lên đây.*
