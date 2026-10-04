@@ -966,6 +966,31 @@ export const FEATURE_REGISTRY = [
       target: 'growthAnalytics',
       label: 'Xem Dự Báo Tăng Trưởng'
     }
+  },
+  {
+    id: 'feat-smart-recommendation-engine',
+    version: 'v4.5',
+    status: 'new',
+    badge: 'Định Hướng AI',
+    category: 'practice_tools',
+    targetSkills: ['writing', 'reading', 'listening', 'speaking'],
+    title: 'Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)',
+    shortDesc: 'Tự động phân tích lịch sử bài làm, sổ lỗi sai và mục tiêu điểm để đề xuất bài luyện trọng tâm trong ngày, chống trì hoãn học tập và cân bằng kỹ năng.',
+    icon: 'Compass',
+    shortcut: null,
+    updatedAt: '2026-10-04',
+    highlights: [
+      'Phân tích tự động tỷ lệ Task 1 vs Task 2 để đề xuất bài luyện cân bằng 33% và 66% điểm số.',
+      'Nhận diện lỗi sai ngữ pháp/từ vựng trong sổ tay để kích hoạt Đơn thuốc sửa lỗi SRS 3 phút.',
+      'Gợi ý bài luyện phản xạ Micro-Drills và bổ sung Collocations theo mục tiêu Band điểm.',
+      'Hỗ trợ chế độ thu gọn 1 dòng (Compact) và chu kỳ chuyển đổi "Đổi gợi ý khác" linh hoạt.'
+    ],
+    usageGuide: 'Thẻ gợi ý xuất hiện ở đầu Workspace luyện viết. Bấm "Luyện ngay" để kích hoạt đề thi hoặc công cụ được gợi ý.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'writing',
+      label: 'Xem Gợi Ý Bài Luyện'
+    }
   }
 ];
 

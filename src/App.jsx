@@ -1337,6 +1337,10 @@ export default function App() {
               if (currentUser) saveUserVocabItem(currentUser.id, v);
             }}
             currentUser={currentUser}
+            allTasks={allTasks}
+            submissions={submissions}
+            onSelectTask={(t) => setCurrentTaskId(t.id)}
+            onOpenModal={(modal) => openModal(modal)}
           />
         </WorkspaceErrorBoundary>
       )}

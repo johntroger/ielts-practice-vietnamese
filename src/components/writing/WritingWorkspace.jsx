@@ -5,6 +5,7 @@ import PromptPane from '../PromptPane';
 import EditorPane from '../EditorPane';
 import TimerBar from '../TimerBar';
 import SlideOverToolPanel from '../SlideOverToolPanel';
+import SmartRecommendationBanner from '../SmartRecommendationBanner';
 import { countWords } from '../../utils/textAnalytics';
 import { brainstormIdeas } from '../../services/geminiService';
 import { safeGet, safeSet } from '../../utils/storageService';
@@ -57,7 +58,11 @@ export default function WritingWorkspace({
   setIsSlimHeader,
   vocabList = [],
   onAddVocab,
-  currentUser
+  currentUser,
+  allTasks = [],
+  submissions = [],
+  onSelectTask,
+  onOpenModal
 }) {
   // Phase 3 UI/UX: Minimal Focus View vs Pro Studio View Mode
   const [writingViewMode, setWritingViewMode] = useState(() => safeGet('ielts_writing_view_mode', 'pro'));
@@ -142,7 +147,28 @@ export default function WritingWorkspace({
         onOpenSlideOver={(tab) => setSlideOverConfig({ isOpen: true, tab })}
       />
 
-      {/* 2. Writing SplitPane Workspace (Prompt + Editor) */}
+      {/* 2. Smart Daily Recommendation Banner (Guided Practice) */}
+      <SmartRecommendationBanner
+        submissions={submissions}
+        mistakes={mistakes}
+        vocabList={vocabList}
+        targetBand={targetBand}
+        allTasks={allTasks}
+        currentTaskId={currentTask?.id}
+        onSelectTask={onSelectTask}
+        onOpenModal={(modalId) => {
+          if (modalId === 'prescription') onOpenPrescription?.();
+          else if (modalId === 'library') onOpenLibrary?.();
+          else if (modalId === 'generator') onOpenGenerator?.();
+          else if (modalId === 'theory') onOpenTheory?.();
+          else if (modalId === 'mistakeLog') onOpenMistakeLog?.();
+          else if (onOpenModal) onOpenModal(modalId);
+        }}
+        isFocusMode={isFocusMode}
+        writingViewMode={writingViewMode}
+      />
+
+      {/* 3. Writing SplitPane Workspace (Prompt + Editor) */}
       <SplitPane
         defaultSplit={46}
         leftPane={

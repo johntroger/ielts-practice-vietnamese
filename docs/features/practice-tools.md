@@ -1,6 +1,6 @@
 # 🛠️ Kho Đề Thi & Bộ Công Cụ Luyện Tập 4 Kỹ Năng
 
-> **Chuyên mục**: `practice_tools` | **Số lượng**: **9 tính năng**  
+> **Chuyên mục**: `practice_tools` | **Số lượng**: **10 tính năng**  
 > **Tổng quan**: Bộ sưu tập công cụ hỗ trợ người học: nạp đề từ ảnh chụp Task 1 (OCR), ma trận phát triển ý tưởng, từ điển đồng nghĩa và phân tầng trình độ.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
@@ -215,6 +215,30 @@ Mở Kho Đề Thi, Phòng Micro-Drills hoặc Luyện Từ Vựng/Ngữ Pháp. 
 ```
 
 > 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Mở Thư Viện Đề Thi"** trong giao diện làm bài.
+
+---
+
+<a id="feat-smart-recommendation-engine"></a>
+
+## 10. Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)
+
+> **Phiên bản**: `v4.5` | **Huy hiệu**: `Định Hướng AI` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Tự động phân tích lịch sử bài làm, sổ lỗi sai và mục tiêu điểm để đề xuất bài luyện trọng tâm trong ngày, chống trì hoãn học tập và cân bằng kỹ năng.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Phân tích tự động tỷ lệ Task 1 vs Task 2 để đề xuất bài luyện cân bằng 33% và 66% điểm số.
+- Nhận diện lỗi sai ngữ pháp/từ vựng trong sổ tay để kích hoạt Đơn thuốc sửa lỗi SRS 3 phút.
+- Gợi ý bài luyện phản xạ Micro-Drills và bổ sung Collocations theo mục tiêu Band điểm.
+- Hỗ trợ chế độ thu gọn 1 dòng (Compact) và chu kỳ chuyển đổi "Đổi gợi ý khác" linh hoạt.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Thẻ gợi ý xuất hiện ở đầu Workspace luyện viết. Bấm "Luyện ngay" để kích hoạt đề thi hoặc công cụ được gợi ý.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Xem Gợi Ý Bài Luyện"** trong giao diện làm bài.
 
 ---
 

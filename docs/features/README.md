@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **37 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **38 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -14,7 +14,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
 | 🤖 **Phân Hệ AI** | **4** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
-| 🛠️ **Kho Đề Thi** | **9** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
+| 🛠️ **Kho Đề Thi** | **10** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
@@ -86,6 +86,11 @@ Dưới đây là các tính năng học thuật mới nhất được nâng c�
 - **Phiên bản**: `v4.0` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking**
 - **Tóm tắt**: Dự báo ngày cán đích Target Band dựa trên định mức khảo thí Cambridge (~120h luyện tập chủ động / 0.5 band) và phân tích điểm nghẽn 4 kỹ năng.
 - **Cách dùng nhanh**: Mở Hồ Sơ Cá Nhân hoặc Help Center -> Bấm "Dự Báo Ngày Cán Đích".
+
+### ✦ [Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)](practice-tools.md#feat-smart-recommendation-engine)
+- **Phiên bản**: `v4.5` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking**
+- **Tóm tắt**: Tự động phân tích lịch sử bài làm, sổ lỗi sai và mục tiêu điểm để đề xuất bài luyện trọng tâm trong ngày, chống trì hoãn học tập và cân bằng kỹ năng.
+- **Cách dùng nhanh**: Thẻ gợi ý xuất hiện ở đầu Workspace luyện viết. Bấm "Luyện ngay" để kích hoạt đề thi hoặc công cụ được gợi ý.
 
 ---
 *Tài liệu tự động đồng bộ qua GitBook Sync Pipeline. Mọi thay đổi trong source code sẽ tự động cập nhật lên đây.*
