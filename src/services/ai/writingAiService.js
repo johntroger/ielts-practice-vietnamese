@@ -1152,6 +1152,361 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
   }
 }
 
+/**
+ * Split text into distinct sentences with robust punctuation boundary handling
+ */
+function extractSentences(text) {
+  if (!text || typeof text !== 'string') return [];
+  const raw = text.replace(/([.?!])\s*(?=[A-Z0-9"']|$)/g, '$1|---PEEL_SPLIT---|').split('|---PEEL_SPLIT---|');
+  return raw.map(s => s.trim()).filter(s => s.length > 3);
+}
+
+/**
+ * Algorithmic Offline Checker for PEEL Argument Coherence in IELTS Task 2 Body Paragraphs.
+ * Evaluates: Point (Topic), Explanation (Mechanism), Evidence (Concrete Example), Link (Impact).
+ * Compliant with Cambridge Task Response (TR Band 7+) & Coherence (CC Band 7+) descriptors.
+ */
+export function validatePeelParagraphAlgorithmically({ task, paragraphText = '' }) {
+  const text = (paragraphText || '').trim();
+  const sentences = extractSentences(text);
+  const words = text.match(/\b[\w'-]+\b/g) || [];
+  const wordCount = words.length;
+
+  if (sentences.length === 0 || wordCount < 5) {
+    return {
+      completenessScore: 0,
+      estimatedBand: 4.0,
+      wordCount: 0,
+      sentenceCount: 0,
+      hasPoint: false,
+      hasExplanation: false,
+      hasEvidence: false,
+      hasLink: false,
+      missingComponents: ['Point', 'Explanation', 'Evidence', 'Link'],
+      unsupportedClaims: [],
+      sentenceBreakdown: [],
+      examinerFeedback: 'Vui lòng nhập một đoạn thân bài (Body paragraph) có ít nhất 1-2 câu để bắt đầu phân tích chuỗi lập luận PEEL.',
+      strengths: [],
+      improvements: ['Nhập đoạn thân bài hoàn chỉnh (khoảng 80 - 130 từ).'],
+      exemplaryUpgrade: {
+        text: 'To begin with, the proliferation of digital automation significantly boosts industrial efficiency. When routine tasks are delegated to sophisticated artificial intelligence, human workers can dedicate their intellectual bandwidth to creative problem-solving and strategic innovation. For example, contemporary manufacturing plants employing robotic assembly lines have achieved a 40% reduction in error rates while substantially lowering overhead costs. Consequently, adopting technological modernization is indispensable for maintaining national economic competitiveness.',
+        breakdown: {
+          point: 'To begin with, the proliferation of digital automation significantly boosts industrial efficiency.',
+          explanation: 'When routine tasks are delegated to sophisticated artificial intelligence, human workers can dedicate their intellectual bandwidth to creative problem-solving and strategic innovation.',
+          evidence: 'For example, contemporary manufacturing plants employing robotic assembly lines have achieved a 40% reduction in error rates while substantially lowering overhead costs.',
+          link: 'Consequently, adopting technological modernization is indispensable for maintaining national economic competitiveness.'
+        }
+      }
+    };
+  }
+
+  // Regex catalogues for PEEL elements
+  const POINT_PATTERNS = [
+    /\b(?:first(?:ly)?|first and foremost|to begin with|in the first place)\b/i,
+    /\b(?:the (?:primary|major|key|predominant|paramount|crucial|main))\s+(?:reason|factor|advantage|benefit|drawback|cause|argument|justification)\b/i,
+    /\b(?:on the one hand|on the other hand)\b/i,
+    /\b(?:another|a second|furthermore|moreover|in addition|equally important)\s*(?:compelling|significant|vital)?\s*(?:point|factor|argument|benefit|aspect)\b/i,
+    /\b(?:turning to|with regard to|regarding|it is often argued that|one major justification)\b/i
+  ];
+
+  const EXPLANATION_PATTERNS = [
+    /\b(?:this is because|in other words|that is to say|the rationale behind|this means that|meaning that)\b/i,
+    /\b(?:due to|owing to|as a consequence|consequently|as a result of|leads to|results in|paves the way for)\b/i,
+    /\b(?:serves to|implies that|in doing so|by doing so|underpins|fuels|exacerbates|facilitates|enables|allows)\b/i,
+    /\b(?:when|if|because|since|given that|as a matter of fact)\b/i,
+    /\b(?:specifically|to be more precise|more specifically|not only.*but also)\b/i
+  ];
+
+  const EVIDENCE_PATTERNS = [
+    /\b(?:for example|for instance|to illustrate|as an illustration)\b/i,
+    /\b(?:a (?:pertinent|prime|clear|telling|notable|compelling|vivid) example (?:of this )?is)\b/i,
+    /\b(?:take (?:for example )?[A-Z][a-z]+|take\s+[\w\s]{3,30}\s+as an example)\b/i,
+    /\b(?:a case in point is|such as|evidence (?:shows|demonstrates|suggests) that)\b/i,
+    /\b(?:in countries such as|in cities like|studies (?:conducted by|reveal)|statistics show|according to)\b/i
+  ];
+
+  const LINK_PATTERNS = [
+    /\b(?:therefore|thus|hence|consequently|as a result|accordingly)\b/i,
+    /\b(?:in this regard|for this reason|ultimately|in light of this|this makes it clear that|it is evident that)\b/i,
+    /\b(?:this (?:demonstrates|proves|underscores|highlights|solidifies) that)\b/i
+  ];
+
+  const PERSONAL_EXAMPLE_PATTERNS = [
+    /\b(?:my (?:friend|father|mother|brother|sister|family|teacher|neighbor)|in my life|when i was|my personal experience)\b/i
+  ];
+
+  const ABSOLUTE_CLAIM_PATTERNS = [
+    /\b(?:obviously|definitely|without (?:any )?doubt|everyone knows|all people (?:must|always)|it is completely clear that|undeniably)\b/i
+  ];
+
+  let hasPoint = false;
+  let hasExplanation = false;
+  let hasEvidence = false;
+  let hasLink = false;
+  const unsupportedClaims = [];
+
+  const sentenceBreakdown = sentences.map((sentence, idx) => {
+    const isFirstSentence = idx === 0;
+    const isLastSentence = idx === sentences.length - 1 && sentences.length >= 3;
+    const s = sentence.trim();
+
+    // Check evidence first
+    const isEvidence = EVIDENCE_PATTERNS.some(p => p.test(s));
+    const isPersonal = PERSONAL_EXAMPLE_PATTERNS.some(p => p.test(s));
+    const isLink = isLastSentence && LINK_PATTERNS.some(p => p.test(s));
+    const isPoint = (isFirstSentence && !isEvidence) || POINT_PATTERNS.some(p => p.test(s));
+    const isExplanation = EXPLANATION_PATTERNS.some(p => p.test(s));
+    const hasAbsoluteClaim = ABSOLUTE_CLAIM_PATTERNS.some(p => p.test(s));
+
+    if (hasAbsoluteClaim) {
+      unsupportedClaims.push({
+        sentence: s,
+        reason: 'Khẳng định mang tính tuyệt đối hóa (Absolute Claim) thiếu dữ chứng bảo đảm theo tiêu chuẩn học thuật.'
+      });
+    }
+
+    let role = 'neutral';
+    let roleName = 'Câu Bổ Trợ (Supporting)';
+    let color = 'slate';
+    let tip = 'Câu phát triển ý thông thường.';
+
+    if (isEvidence) {
+      role = 'evidence';
+      roleName = 'E - Dẫn Chứng Thực Tế (Evidence)';
+      color = 'purple';
+      hasEvidence = true;
+      tip = isPersonal 
+        ? 'Cảnh báo: Ví dụ mang tính cá nhân. Nên thay bằng dẫn chứng xu hướng thực tế hoặc tổ chức uy tín.' 
+        : 'Dẫn chứng cụ thể, tăng sức nặng thuyết phục cho Task Response Band 7.0+.';
+    } else if (isLink) {
+      role = 'link';
+      roleName = 'L - Móc Nối Hệ Quả (Link)';
+      color = 'rose';
+      hasLink = true;
+      tip = 'Móc nối hệ quả quay lại luận đề, tạo kết cấu đoạn văn chặt chẽ.';
+    } else if (isPoint && (!hasPoint || isFirstSentence)) {
+      role = 'point';
+      roleName = 'P - Luận Điểm Chủ Đề (Point)';
+      color = 'blue';
+      hasPoint = true;
+      tip = 'Nêu rõ ý trọng tâm của đoạn, định hướng người đọc.';
+    } else if (isExplanation) {
+      role = 'explanation';
+      roleName = 'E - Giải Thích Cơ Chế (Explanation)';
+      color = 'emerald';
+      hasExplanation = true;
+      tip = 'Phân tích cơ chế logic "tại sao/như thế nào", đào sâu luận điểm.';
+    } else {
+      // If no explanation detected yet and not first sentence, assume it serves explanation role
+      if (hasPoint && !hasEvidence && !isLastSentence) {
+        role = 'explanation';
+        roleName = 'E - Diễn Giải Luận Điểm';
+        color = 'emerald';
+        hasExplanation = true;
+        tip = 'Diễn giải luận điểm.';
+      }
+    }
+
+    return {
+      index: idx + 1,
+      text: s,
+      role,
+      roleName,
+      color,
+      tip,
+      isPersonal
+    };
+  });
+
+  // Calculate completeness score
+  let score = 0;
+  if (hasPoint) score += 25;
+  if (hasExplanation) score += 35;
+  if (hasEvidence) score += 25;
+  if (hasLink) score += 15;
+
+  const missingComponents = [];
+  if (!hasPoint) missingComponents.push('Point (Câu chủ đề)');
+  if (!hasExplanation) missingComponents.push('Explanation (Giải thích cơ chế)');
+  if (!hasEvidence) missingComponents.push('Evidence (Dẫn chứng thực tế)');
+  if (!hasLink) missingComponents.push('Link (Móc nối kết đoạn)');
+
+  // Estimate Band
+  let estimatedBand = 5.0;
+  if (score >= 90 && wordCount >= 55) estimatedBand = 8.0;
+  else if (score >= 80) estimatedBand = 7.5;
+  else if (score >= 65) estimatedBand = 7.0;
+  else if (score >= 50) estimatedBand = 6.5;
+  else if (score >= 35) estimatedBand = 6.0;
+  else if (score >= 20) estimatedBand = 5.5;
+
+  // Examiner feedback formulation
+  const strengths = [];
+  const improvements = [];
+
+  if (hasPoint) strengths.push('Có câu chủ đề rõ ràng giúp định hướng người đọc ngay từ đầu đoạn.');
+  if (hasExplanation) strengths.push('Có phân tích cơ chế giải thích lý do, giúp ý tưởng không bị hời hợt.');
+  if (hasEvidence) strengths.push('Có dẫn chứng minh họa thực tế hỗ trợ cho luận điểm.');
+  if (hasLink) strengths.push('Có câu kết đoạn móc nối hệ quả logic quay trở lại chủ đề bài viết.');
+
+  if (!hasEvidence) {
+    improvements.push('Đoạn văn đang thiếu Dẫn chứng cụ thể (Evidence / Example). Cambridge Band 7+ TR yêu cầu luận điểm phải được "sufficiently supported". Hãy thêm một ví dụ bắt đầu bằng "For example, ..." hoặc "A pertinent example is...".');
+  }
+  if (!hasExplanation) {
+    improvements.push('Đoạn văn nhảy ngay sang ví dụ hoặc kết luận mà thiếu phần Giải thích cơ chế (Explanation). Hãy dùng các từ nối chỉ nguyên nhân như "This is because...", "Consequently..." để làm rõ cơ chế logic.');
+  }
+  if (!hasLink && sentences.length >= 3) {
+    improvements.push('Nên bổ sung 1 câu chốt (Link) ở cuối đoạn dùng "Therefore, ..." hoặc "Ultimately, ..." để khép lại chuỗi lập luận một cách trọn vẹn.');
+  }
+  if (wordCount < 70) {
+    improvements.push(`Đoạn văn hiện tại (${wordCount} từ) hơi ngắn so với tiêu chuẩn thân bài Cambridge (khuyến nghị từ 80 - 120 từ).`);
+  }
+
+  let examinerFeedback = '';
+  if (score >= 90) {
+    examinerFeedback = 'Đoạn văn có chuỗi lập luận PEEL mẫu mực! Luận điểm rõ ràng, cơ chế giải thích thấu đáo, có ví dụ minh chứng sắc bén và câu chốt chặt chẽ. Hoàn toàn đáp ứng tiêu chí Task Response & Coherence Band 7.5 - 8.5.';
+  } else if (score >= 70) {
+    examinerFeedback = 'Cấu trúc lập luận khá tốt và mạch lạc. Để nâng lên Band 8.0+, bạn nên củng cố thêm tính liên kết của câu chốt và làm sắc sảo hơn phần dẫn chứng.';
+  } else if (!hasEvidence) {
+    examinerFeedback = 'Cảnh báo Giám khảo IELTS: Đoạn văn của bạn có ý tưởng tốt nhưng bị xếp vào nhóm "Unsupported claims" do thiếu dẫn chứng thực tế. Trong thang TR, lỗi này sẽ khiến điểm bị chặn ở Band 6.0 - 6.5.';
+  } else {
+    examinerFeedback = 'Chuỗi lập luận cần được phát triển mạch lạc hơn theo mô hình PEEL. Hãy đảm bảo bạn có đầy đủ: Luận điểm (Point) ➔ Giải thích cơ chế (Explanation) ➔ Dẫn chứng (Evidence) ➔ Móc nối hệ quả (Link).';
+  }
+
+  return {
+    completenessScore: score,
+    estimatedBand,
+    wordCount,
+    sentenceCount: sentences.length,
+    hasPoint,
+    hasExplanation,
+    hasEvidence,
+    hasLink,
+    missingComponents,
+    unsupportedClaims,
+    sentenceBreakdown,
+    examinerFeedback,
+    strengths: strengths.length > 0 ? strengths : ['Đã bước đầu viết được đoạn văn có trọng tâm.'],
+    improvements: improvements.length > 0 ? improvements : ['Duy trì cấu trúc lập luận mạch lạc này cho các đoạn tiếp theo.'],
+    exemplaryUpgrade: {
+      text: `To begin with, ${sentences[0]?.replace(/^[A-Z][a-z]*,\s*/, '').toLowerCase() || 'this issue warrants serious consideration'}. This is because when direct interventions are implemented, they systematically address the underlying structural bottlenecks. For instance, recent empirical data from leading international research institutes demonstrates that targeted policies yielded an immediate 35% improvement in long-term outcomes. Therefore, sustaining this strategic approach is pivotal to achieving lasting systemic benefits.`,
+      breakdown: {
+        point: sentences[0] || 'Clear topic sentence establishing the primary argument.',
+        explanation: 'In-depth explanation unpacking why this mechanism operates.',
+        evidence: 'Concrete empirical evidence or real-world example.',
+        link: 'Concluding sentence linking back to the overarching thesis.'
+      }
+    }
+  };
+}
+
+/**
+ * Validates candidate's Body Paragraph Argument Coherence using PEEL Framework
+ * against Cambridge Band Descriptors (Task Response TR 7+ & Coherence CC 7+).
+ * Employs Gemini AI with fallback to algorithmic evaluation.
+ */
+export async function validatePeelParagraph({ task, paragraphText, apiKey, model = DEFAULT_MODEL }) {
+  if (!paragraphText || paragraphText.trim().length < 15) {
+    throw new Error('Vui lòng nhập đoạn văn thân bài có ít nhất 15 ký tự để phân tích.');
+  }
+
+  // Fallback to algorithmic checker if no API key provided
+  if (!apiKey) {
+    return validatePeelParagraphAlgorithmically({ task, paragraphText });
+  }
+
+  const prompt = `ROLE & OBJECTIVE:
+You are a Senior Cambridge IELTS Examiner evaluating a student's BODY PARAGRAPH for IELTS Writing Task 2 using the rigorous PEEL Argument Coherence Framework.
+
+PEEL CRITERIA (Aligned with Band 7.0 - 9.0 Task Response & Coherence):
+- P (Point / Topic Sentence): Clearly states one central topic and argument for this paragraph.
+- E (Explanation / Elaboration): Explains the mechanism of "why" or "how" (cause-effect logic, depth of development).
+- E (Evidence / Concrete Example): Concrete, realistic example (real-world phenomenon, studies, institutions) supporting the claim without personal anecdotes ("my friend").
+- L (Link / Impact / Mini-conclusion): Connects back to the main question/thesis or highlights broader significance.
+
+QUESTION DETAILS:
+- Task: Task 2
+- Prompt: "${task?.prompt || 'General Academic Task 2 Prompt'}"
+
+CANDIDATE'S BODY PARAGRAPH:
+"""
+${paragraphText.trim()}
+"""
+
+INSTRUCTIONS:
+1. Break down EVERY sentence in the paragraph and assign its PEEL role: "point", "explanation", "evidence", "link", or "neutral".
+2. Check for missing PEEL components and unsupported claims (overgeneralized statements lacking evidence).
+3. Estimate the Paragraph Quality Band (e.g. 5.5, 6.5, 7.5, 8.5) and calculate Completeness Score (0-100%).
+4. Provide constructive feedback in Vietnamese: explain strengths, exact weaknesses under Cambridge TR & CC criteria.
+5. Provide an exemplary Band 8.5+ rewrite of this paragraph that preserves the student's core idea but executes PEEL with academic precision.
+
+OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO backticks. Schema:
+{
+  "completenessScore": 85,
+  "estimatedBand": 7.5,
+  "wordCount": 95,
+  "sentenceCount": 4,
+  "hasPoint": true,
+  "hasExplanation": true,
+  "hasEvidence": true,
+  "hasLink": true,
+  "missingComponents": [],
+  "unsupportedClaims": [],
+  "sentenceBreakdown": [
+    {
+      "index": 1,
+      "text": "...",
+      "role": "point",
+      "roleName": "P - Luận Điểm Chủ Đề (Point)",
+      "color": "blue",
+      "tip": "Topic sentence is focused and direct."
+    }
+  ],
+  "examinerFeedback": "Vietnamese explanation from Cambridge Examiner perspective...",
+  "strengths": ["..."],
+  "improvements": ["..."],
+  "exemplaryUpgrade": {
+    "text": "Full upgraded paragraph text at Band 8.5+...",
+    "breakdown": {
+      "point": "...",
+      "explanation": "...",
+      "evidence": "...",
+      "link": "..."
+    }
+  }
+}
+`;
+
+  try {
+    const response = await callGeminiApi({
+      model,
+      apiKey,
+      body: {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: 'application/json'
+        }
+      }
+    });
+
+    if (!response || !response.ok) {
+      return validatePeelParagraphAlgorithmically({ task, paragraphText });
+    }
+
+    const result = await response.json();
+    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) return validatePeelParagraphAlgorithmically({ task, paragraphText });
+
+    const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.warn('AI PEEL validation failed, falling back to algorithmic checker:', err);
+    return validatePeelParagraphAlgorithmically({ task, paragraphText });
+  }
+}
+
+
 
 
 

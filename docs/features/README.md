@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **39 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **40 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -13,7 +13,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
-| 🤖 **Phân Hệ AI** | **4** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
+| 🤖 **Phân Hệ AI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
 | 🛠️ **Kho Đề Thi** | **10** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
@@ -96,6 +96,11 @@ Dưới đây là các tính năng học thuật mới nhất được nâng c�
 - **Phiên bản**: `v4.5` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking**
 - **Tóm tắt**: Bảo vệ mắt học viên khi luyện đề vào ban đêm, giao diện Dark-Tech sang trọng cho toàn bộ 4 kỹ năng, thanh điều hướng và cửa sổ chức năng.
 - **Cách dùng nhanh**: Nhấn vào biểu tượng Mặt Trăng / Mặt Trời trên Navbar trên cùng hoặc vào Cài Đặt Hệ Thống -> Chế Độ Giao Diện.
+
+### ✦ [Công Cụ Kiểm Định Chuỗi Lập Luận PEEL (PEEL Argument Coherence Checker)](ai-evaluation.md#feat-peel-argument-checker)
+- **Phiên bản**: `v4.6` | **Kỹ năng**: **Writing**
+- **Tóm tắt**: Kiểm định cấu trúc đoạn thân bài Task 2 theo chuẩn Cambridge: Point ➔ Explanation ➔ Evidence ➔ Link, phát hiện nhận định thiếu căn cứ và đề xuất bản mẫu Band 8.5+.
+- **Cách dùng nhanh**: Tại màn hình Luyện viết Task 2, nhấn nút "Check Đoạn PEEL (AI)" ở cột Đề bài hoặc mở modal "Lập Luận Task 2" trong trình soạn thảo.
 
 ---
 *Tài liệu tự động đồng bộ qua GitBook Sync Pipeline. Mọi thay đổi trong source code sẽ tự động cập nhật lên đây.*

@@ -16,6 +16,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { analyzeTask2Coherence } from '../utils/coherenceAnalyzer';
+import { validatePeelParagraphAlgorithmically } from '../services/geminiService';
 
 export default function Task2CoherenceModal({
   isOpen,
@@ -43,6 +44,10 @@ export default function Task2CoherenceModal({
   };
 
   const activePara = analysis.paragraphs[selectedParagraphIndex] || analysis.paragraphs[0];
+  const activePeel = React.useMemo(() => {
+    if (!activePara || activePara.role !== 'body' || !activePara.text) return null;
+    return validatePeelParagraphAlgorithmically({ paragraphText: activePara.text });
+  }, [activePara]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
@@ -263,6 +268,15 @@ export default function Task2CoherenceModal({
                   <div className="flex items-center space-x-1.5 text-[10px] font-bold">
                     {activePara.role === 'body' && (
                       <>
+                        {activePeel && (
+                          <span className={`px-2 py-0.5 rounded font-black border ${
+                            activePeel.completenessScore >= 80
+                              ? 'bg-purple-100 text-purple-900 border-purple-200'
+                              : 'bg-amber-100 text-amber-900 border-amber-200'
+                          }`}>
+                            PEEL: {activePeel.completenessScore}% (Band {activePeel.estimatedBand})
+                          </span>
+                        )}
                         <span className={`px-2 py-0.5 rounded ${
                           activePara.health.hasTopic ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'
                         }`}>
@@ -325,6 +339,54 @@ export default function Task2CoherenceModal({
                         <li key={rIdx}>{rec}</li>
                       ))}
                     </ul>
+                  </div>
+                )}
+
+                {/* PEEL Unsupported Claims Warning */}
+                {activePeel && activePeel.unsupportedClaims && activePeel.unsupportedClaims.length > 0 && (
+                  <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1">
+                    <span className="font-bold flex items-center space-x-1 text-rose-800">
+                      <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Cảnh báo Lập luận Thiếu Căn cứ (Unsupported Claims):</span>
+                    </span>
+                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-rose-800">
+                      {activePeel.unsupportedClaims.map((uc, uIdx) => (
+                        <li key={uIdx}>
+                          <span className="italic">"{uc.sentence}"</span>: {uc.reason}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* PEEL Exemplary Rewrite for Body Paragraph */}
+                {activePeel && activePeel.exemplaryUpgrade?.text && (
+                  <div className="p-3 rounded-lg bg-purple-50/80 border border-purple-200 text-xs text-purple-950 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold flex items-center space-x-1 text-purple-900">
+                        <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                        <span>Mẫu PEEL Viết Lại Band 8.5+:</span>
+                      </span>
+                      <button
+                        onClick={() => handleCopy(activePeel.exemplaryUpgrade.text, `peel-upgrade-${selectedParagraphIndex}`)}
+                        className="flex items-center space-x-1 text-purple-600 hover:text-purple-900 font-bold text-[10px] cursor-pointer"
+                      >
+                        {copiedKey === `peel-upgrade-${selectedParagraphIndex}` ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            <span className="text-emerald-600">Đã chép</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>Sao chép</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <p className="font-serif italic text-slate-800 leading-relaxed text-[11px]">
+                      "{activePeel.exemplaryUpgrade.text}"
+                    </p>
                   </div>
                 )}
               </div>

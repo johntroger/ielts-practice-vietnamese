@@ -1016,6 +1016,31 @@ export const FEATURE_REGISTRY = [
       target: 'settings',
       label: 'Cài Đặt Giao Diện'
     }
+  },
+  {
+    id: 'feat-peel-argument-checker',
+    version: 'v4.6',
+    status: 'new',
+    badge: 'Chuẩn TR & CC 7.0+',
+    category: 'ai_evaluation',
+    targetSkills: ['writing'],
+    title: 'Công Cụ Kiểm Định Chuỗi Lập Luận PEEL (PEEL Argument Coherence Checker)',
+    shortDesc: 'Kiểm định cấu trúc đoạn thân bài Task 2 theo chuẩn Cambridge: Point ➔ Explanation ➔ Evidence ➔ Link, phát hiện nhận định thiếu căn cứ và đề xuất bản mẫu Band 8.5+.',
+    icon: 'Layers',
+    shortcut: null,
+    updatedAt: '2026-10-04',
+    highlights: [
+      'Giải phẫu chức năng 4 thành phần kinh điển: P (Luận điểm), E (Cơ chế giải thích), E (Dẫn chứng thực tế), L (Móc nối hệ quả).',
+      'Đo lường Điểm Hoàn Thiện PEEL (0 - 100%) và ước lượng Band điểm Task Response / Coherence & Cohesion tức thì.',
+      'Cảnh báo thông minh các nhận định thiếu căn cứ (Unsupported Claims) và ví dụ mang tính cá nhân hoá.',
+      'Đề xuất đoạn văn mẫu viết lại hoàn chỉnh Band 8.5+ nâng tầm từ ý tưởng gốc của học viên kèm nút sao chép 1-chạm.'
+    ],
+    usageGuide: 'Tại màn hình Luyện viết Task 2, nhấn nút "Check Đoạn PEEL (AI)" ở cột Đề bài hoặc mở modal "Lập Luận Task 2" trong trình soạn thảo.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'writing',
+      label: 'Mở Phòng Viết Task 2'
+    }
   }
 ];
 

@@ -1,6 +1,6 @@
 # 🤖 Phân Hệ AI & Hệ Thống Chấm Điểm Kép Chuẩn Cambridge
 
-> **Chuyên mục**: `ai_evaluation` | **Số lượng**: **4 tính năng**  
+> **Chuyên mục**: `ai_evaluation` | **Số lượng**: **5 tính năng**  
 > **Tổng quan**: Tổng hợp các công cụ trí tuệ nhân tạo và bộ chấm thuật toán máy tính 0.02ms, phân tích 4 tiêu chí Cambridge (TR/TA, CC, LR, GRA, FC, PR).
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
@@ -100,6 +100,30 @@ Sau khi viết xong bài trong phòng Writing, nhấn nút "Nộp Bài & Chấm 
 ```
 
 > 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Thử Chấm Điểm Writing"** trong giao diện làm bài.
+
+---
+
+<a id="feat-peel-argument-checker"></a>
+
+## 5. Công Cụ Kiểm Định Chuỗi Lập Luận PEEL (PEEL Argument Coherence Checker)
+
+> **Phiên bản**: `v4.6` | **Huy hiệu**: `Chuẩn TR & CC 7.0+` | **Kỹ năng**: **Writing** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Kiểm định cấu trúc đoạn thân bài Task 2 theo chuẩn Cambridge: Point ➔ Explanation ➔ Evidence ➔ Link, phát hiện nhận định thiếu căn cứ và đề xuất bản mẫu Band 8.5+.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Giải phẫu chức năng 4 thành phần kinh điển: P (Luận điểm), E (Cơ chế giải thích), E (Dẫn chứng thực tế), L (Móc nối hệ quả).
+- Đo lường Điểm Hoàn Thiện PEEL (0 - 100%) và ước lượng Band điểm Task Response / Coherence & Cohesion tức thì.
+- Cảnh báo thông minh các nhận định thiếu căn cứ (Unsupported Claims) và ví dụ mang tính cá nhân hoá.
+- Đề xuất đoạn văn mẫu viết lại hoàn chỉnh Band 8.5+ nâng tầm từ ý tưởng gốc của học viên kèm nút sao chép 1-chạm.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Tại màn hình Luyện viết Task 2, nhấn nút "Check Đoạn PEEL (AI)" ở cột Đề bài hoặc mở modal "Lập Luận Task 2" trong trình soạn thảo.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Mở Phòng Viết Task 2"** trong giao diện làm bài.
 
 ---
 
