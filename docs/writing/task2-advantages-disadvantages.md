@@ -70,7 +70,18 @@ In conclusion, while the decline of traditional retail spaces and occasional iss
 
 ---
 
-## 4. Bảng Phân Tích Từ Vựng & Collocations C1/C2 Đắt Giá
+## 4. Phân Tích Chấm Điểm 4 Tiêu Chí (Examiner Feedback)
+
+| Tiêu Chí Khảo Thí | Phân Tích Điểm Sáng Trong Bài Mẫu Band 8.5+ |
+| :--- | :--- |
+| **Task Response (TR)** | - Trả lời dứt khoát câu hỏi "Outweigh" ngay từ Mở bài (*far more substantial*), Thân bài 2 (*unequivocally eclipse*), và Kết bài (*far outweighed by*).<br>- Áp dụng kỹ thuật giảm thiểu hóa (*transient and mitigable*) xuất sắc để chứng minh nhược điểm chỉ là tạm thời, ưu điểm mới là nền tảng. |
+| **Coherence & Cohesion (CC)** | - Bố cục 4 đoạn mẫu mực, liên kết đoạn bằng các cụm từ nối học thuật (*On the one hand, Furthermore, Nevertheless, On the other hand, Chief among these, On a macroeconomic scale, In conclusion*). |
+| **Lexical Resource (LR)** | - Vốn từ vựng kinh tế & thương mại C1/C2 phong phú: *proliferation of e-commerce, paradigm shift, brick-and-mortar establishments, transient and mitigable, unrivaled convenience, price transparency, democratize commerce, prohibitive storefront rents*. |
+| **Grammatical Range & Accuracy (GRA)** | - Kết hợp đa dạng câu phức, mệnh đề phân từ (*thereby saving substantial commute time*, *enabling entrepreneurial ventures to reach...*), mệnh đề nhượng bộ (*Although this development brings...*). 100% chính xác về ngữ pháp và chính tả. |
+
+---
+
+## 5. Bảng Phân Tích Từ Vựng & Collocations C1/C2 Đắt Giá
 
 | Từ Vựng / Collocation | Ý Nghĩa Tiếng Việt | Ngữ Cảnh Ứng Dụng Trong Task 2 |
 | :--- | :--- | :--- |

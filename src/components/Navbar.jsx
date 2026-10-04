@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Sparkles, 
   BookOpen, 
@@ -173,8 +174,16 @@ export default function Navbar({
   };
   const activeColor = skillColorConfig[activeSkill] || skillColorConfig.writing;
 
+  const renderPortal = (children) => {
+    if (typeof document !== 'undefined' && document.body) {
+      return createPortal(children, document.body);
+    }
+    return children;
+  };
+
   return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0">
+    <>
+      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0">
       <div className="w-full max-w-full px-2 sm:px-4 xl:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
         <div className="flex items-center justify-between h-14 sm:h-16 gap-1 sm:gap-2">
@@ -709,11 +718,12 @@ export default function Navbar({
         </div>
 
       </div>
+    </header>
 
-      {/* MOBILE & TABLET DRAWER (Active for all screens < 1280px) */}
-      {isMobileDrawerOpen && (
-        <div 
-          className="xl:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200 cursor-pointer"
+    {/* MOBILE & TABLET DRAWER (Active for all screens < 1280px - Portaled to document.body to break out of containing blocks) */}
+    {isMobileDrawerOpen && renderPortal(
+      <div 
+        className="xl:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200 cursor-pointer"
           onClick={() => setIsMobileDrawerOpen(false)}
         >
           <div 
@@ -1053,11 +1063,13 @@ export default function Navbar({
       )}
 
       {/* Website QR Code Modal */}
-      <WebsiteQRCodeModal 
-        isOpen={isQrModalOpen} 
-        onClose={() => setIsQrModalOpen(false)} 
-      />
+      {renderPortal(
+        <WebsiteQRCodeModal 
+          isOpen={isQrModalOpen} 
+          onClose={() => setIsQrModalOpen(false)} 
+        />
+      )}
 
-    </header>
+    </>
   );
 }

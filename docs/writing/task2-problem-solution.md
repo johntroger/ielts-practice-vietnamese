@@ -66,7 +66,18 @@ In conclusion, urban congestion and air degradation stem predominantly from vehi
 
 ---
 
-## 3. Bảng Phân Tích Từ Vựng & Collocations C1/C2 Đắt Giá
+## 3. Phân Tích Chấm Điểm 4 Tiêu Chí (Examiner Feedback)
+
+| Tiêu Chí Khảo Thí | Phân Tích Điểm Sáng Trong Bài Mẫu Band 8.5+ |
+| :--- | :--- |
+| **Task Response (TR)** | - Áp dụng nguyên tắc ghép cặp đối xứng tuyệt đối (The Direct Pairing Principle): Nguyên nhân 1 (xe cá nhân) $\rightarrow$ Giải pháp 1 (phí ùn tắc London/Singapore); Nguyên nhân 2 (hạ tầng lạc hậu) $\rightarrow$ Giải pháp 2 (mở rộng metro và xe buýt điện).<br>- Phân tích sâu căn nguyên và cơ chế giải pháp, chỉ rõ chủ thể hành động (*municipal governments*). |
+| **Coherence & Cohesion (CC)** | - Bố cục chuẩn mực, phân tách rõ ràng giữa phân tích nguyên nhân và đề xuất giải pháp.<br>- Sử dụng các liên từ và cụm định hướng mạch lạc: *To begin with, Foremost among these, Compounding this issue, To mitigate these urban crises, In the first place, Concurrently, In conclusion*. |
+| **Lexical Resource (LR)** | - Vốn từ vựng đô thị và môi trường chuẩn C1/C2: *rampant traffic congestion, escalating atmospheric pollution, formidable challenges, single-occupancy vehicles, voluminous greenhouse gas emissions, antiquated state of public transportation, multi-pronged intervention strategy, congestion charges, earmarked exclusively, mass rapid transit*. |
+| **Grammatical Range & Accuracy (GRA)** | - Kết hợp đa dạng câu phức, mệnh đề phân từ (*generating voluminous emissions, overwhelming road capacities, thereby incentivizing...*), cấu trúc bị động chỉ định (*ought to be instituted, should be earmarked*). Kiểm soát ngữ pháp và dấu câu hoàn hảo. |
+
+---
+
+## 4. Bảng Phân Tích Từ Vựng & Collocations C1/C2 Đắt Giá
 
 | Từ Vựng / Collocation | Loại Từ & Nghĩa Tiếng Việt | Ứng Dụng Trong Dạng Problem & Solution |
 | :--- | :--- | :--- |
