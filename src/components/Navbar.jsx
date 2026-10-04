@@ -35,6 +35,7 @@ import {
   Sun
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
+import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
 import WebsiteQRCodeModal from './WebsiteQRCodeModal';
 import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
 
@@ -616,8 +617,9 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal">Hướng dẫn làm quen và tối ưu học tập</div>
                       </div>
                     </button>
+                    {/* Link đến GitBook Docs: huong-dan-su-dung-and-tinh-nang-he-thong/features */}
                     <a
-                      href="https://vneconomics.gitbook.io/vneconomics-docs/huong-dan-su-dung-and-tinh-nang-he-thong/features"
+                      href={`${GITBOOK_FEATURES_BASE_URL}/features`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setIsProgressMenuOpen(false)}

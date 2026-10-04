@@ -1158,8 +1158,16 @@ export const GITBOOK_CATEGORY_SLUGS = {
   shortcuts_ux: 'shortcuts-ux'
 };
 
-export const GITBOOK_DOCS_BASE_URL = 'https://vneconomics.gitbook.io/vneconomics-docs';
-export const GITBOOK_FEATURES_BASE_URL = 'https://vneconomics.gitbook.io/vneconomics-docs/huong-dan-su-dung-and-tinh-nang-he-thong';
+// Helper xác định URL Base của GitBook hỗ trợ cấu hình động từ .env
+export const getGitBookBaseUrl = () => {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GITBOOK_URL) {
+    return import.meta.env.VITE_GITBOOK_URL.replace(/\/+$/, '');
+  }
+  return 'https://vneconomics.gitbook.io/vneconomics-docs';
+};
+
+export const GITBOOK_DOCS_BASE_URL = getGitBookBaseUrl();
+export const GITBOOK_FEATURES_BASE_URL = `${getGitBookBaseUrl()}/huong-dan-su-dung-and-tinh-nang-he-thong`;
 
 /**
  * Sinh đường dẫn GitBook Deep Link chính xác theo danh mục hoặc tính năng cụ thể
@@ -1168,8 +1176,10 @@ export const GITBOOK_FEATURES_BASE_URL = 'https://vneconomics.gitbook.io/vnecono
  * @returns {string} URL GitBook đầy đủ
  */
 export function getFeatureGitBookUrl(featureOrCategory, featureId = null) {
+  const featuresBase = `${getGitBookBaseUrl()}/huong-dan-su-dung-and-tinh-nang-he-thong`;
+
   if (!featureOrCategory || featureOrCategory === 'all') {
-    return `${GITBOOK_FEATURES_BASE_URL}/features`;
+    return `${featuresBase}/features`;
   }
 
   // Nếu là đối tượng feature
@@ -1177,11 +1187,11 @@ export function getFeatureGitBookUrl(featureOrCategory, featureId = null) {
     const category = featureOrCategory.category;
     const slug = GITBOOK_CATEGORY_SLUGS[category];
     const anchor = featureOrCategory.id ? `#${featureOrCategory.id}` : '';
-    return slug ? `${GITBOOK_FEATURES_BASE_URL}/${slug}${anchor}` : `${GITBOOK_FEATURES_BASE_URL}/features`;
+    return slug ? `${featuresBase}/${slug}${anchor}` : `${featuresBase}/features`;
   }
 
   // Nếu là category string
   const slug = GITBOOK_CATEGORY_SLUGS[featureOrCategory];
   const anchor = featureId ? `#${featureId}` : '';
-  return slug ? `${GITBOOK_FEATURES_BASE_URL}/${slug}${anchor}` : `${GITBOOK_FEATURES_BASE_URL}/features`;
+  return slug ? `${featuresBase}/${slug}${anchor}` : `${featuresBase}/features`;
 }

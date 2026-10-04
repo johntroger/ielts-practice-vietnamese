@@ -7,6 +7,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
+import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
 
 // Helper to render bold, italic, code and inline highlights
 function renderInlineText(text) {
@@ -601,8 +602,9 @@ export default function TheoryHandbookModal({
             </div>
           </div>
           <div className="flex items-center space-x-2 shrink-0 ml-2">
+            {/* GitBook Docs Portal (Fallback: vneconomics.gitbook.io via VITE_GITBOOK_URL) */}
             <a
-              href={import.meta.env.VITE_GITBOOK_URL || "https://vneconomics.gitbook.io/vneconomics-docs/"}
+              href={GITBOOK_DOCS_BASE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/25 hover:bg-sky-500/35 text-sky-200 hover:text-white text-xs font-bold border border-sky-400/40 transition-all cursor-pointer shrink-0 shadow-xs"
@@ -1054,7 +1056,7 @@ export default function TheoryHandbookModal({
                   </div>
                 </div>
                 <a
-                  href={import.meta.env.VITE_GITBOOK_URL || "https://vneconomics.gitbook.io/vneconomics-docs/"}
+                  href={GITBOOK_DOCS_BASE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shrink-0 transition-colors shadow-2xs ml-2 cursor-pointer"
