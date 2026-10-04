@@ -1,4 +1,4 @@
-name: Auto-Sync Features Docs to GitBook
+name: GitBook Docs CI/CD & Link Integrity Guard
 
 on:
   push:
@@ -7,14 +7,21 @@ on:
     paths:
       - 'src/core/featureRegistry.js'
       - 'scripts/sync_features_to_gitbook.js'
+      - 'docs/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'src/core/featureRegistry.js'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  sync-docs:
-    name: Sync Features to GitBook Docs
+  validate-and-sync-docs:
+    name: Validate Markdown Links & Sync to GitBook
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -30,15 +37,22 @@ jobs:
       - name: Run Documentation Sync Engine
         run: node scripts/sync_features_to_gitbook.js
 
-      - name: Check and Commit Changes
+      - name: Verify Markdown Hyperlinks Integrity (Zero Broken Links Guard)
+        run: node tests/test_step89_markdown_links_integrity.js
+
+      - name: Verify GitBook URL Config & Normalization
+        run: node tests/test_step88_gitbook_url_abstraction.js
+
+      - name: Check and Commit Changes (Only on Push to Main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain docs/)" ]; then
             git add docs/
-            git commit -m "docs: auto-sync features to GitBook [skip ci]"
+            git commit -m "docs(ci): auto-sync features to GitBook and verify link integrity [skip ci]"
             git push origin main
-            echo "✅ Successfully synced and pushed updated docs to GitBook!"
+            echo "✅ Successfully synced and pushed validated docs to GitBook!"
           else
-            echo "✨ Docs are already in 100% sync with featureRegistry.js. No commit needed."
+            echo "✨ Docs are 100% synchronized and all 640+ links verified. No commit needed."
           fi
