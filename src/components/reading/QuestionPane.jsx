@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { explainReadingQuestion } from '../../services/geminiService';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
+import { evaluateQuestionAnswer } from '../../services/answerEvaluationService';
 
 export default function QuestionPane({
   passageTitle = '',
@@ -538,10 +539,8 @@ export default function QuestionPane({
 
     const isExpanded = showExplanationFor === q.order;
     const currentAns = userAnswers[q.order] || '';
-    const isCorrect = isSubmitted && (
-      (q.answer && currentAns.trim().toUpperCase() === q.answer.trim().toUpperCase()) ||
-      (q.acceptableAnswers && q.acceptableAnswers.some(a => a.trim().toLowerCase() === currentAns.trim().toLowerCase()))
-    );
+    const evalResult = evaluateQuestionAnswer(q, currentAns);
+    const isCorrect = evalResult.isCorrect;
 
     return (
       <div className="mt-3 pt-3 border-t border-slate-100 text-xs space-y-2">
