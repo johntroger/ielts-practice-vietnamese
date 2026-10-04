@@ -1,7 +1,7 @@
-# Tuyệt Chiêu Xử Lý Matching Headings (Nối Tiêu Đề)
+# Tuyệt Chiêu Xử Lý Matching Headings (Nối Tiêu Đề Đoạn Văn)
 
-> **Kỹ năng**: READING | **Chuyên mục**: Question Type Strategy
-> **Tóm tắt**: Chiến thuật Skimming ý chính đoạn văn, né bẫy trùng từ vựng và xử lý nhanh chóng.
+> **Kỹ năng**: READING | **Chuyên mục**: Question Type Strategy  
+> **Tóm tắt**: Chiến thuật Skimming ý chính đoạn văn, né 3 bẫy kinh điển (Word-spotting, Detail trap, Over-generalized), quy trình 4 bước chuẩn Cambridge và bài tập trích đoạn thực hành (Micro-Passage Drill) kèm giải thích chi tiết.
 
 ---
 
@@ -46,7 +46,41 @@ Matching Headings yêu cầu bạn xác định **ý nghĩa bao trùm (Global me
 
 ---
 
-> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để thực hành và nhận đánh giá chi tiết từ AI.
+## 🔬 5. Bài Tập Trích Đoạn Thực Hành Chuẩn Cambridge (Micro-Passage Drill)
+
+Hãy đọc đoạn văn thực tế dưới đây và chọn tiêu đề chuẩn xác nhất từ danh sách:
+
+### Đoạn văn mẫu (Paragraph A):
+> *"For decades, conventional wisdom held that sleep was merely a passive state of biological dormancy, during which brain activity slowed to an absolute minimum. However, advances in modern neuroimaging have fundamentally overturned this assumption. Far from shutting down, the sleeping brain undergoes intense metabolic rhythms, orchestrating complex molecular maintenance. During deep non-REM stages, the brain’s glymphatic system actively flushes out toxic metabolic waste products—including amyloid-beta proteins associated with Alzheimer’s disease. Simultaneously, rapid-eye-movement (REM) sleep facilitates synaptic pruning and memory consolidation, cementing newly acquired cognitive patterns. Rather than being an unproductive pause in daily life, sleep serves as an essential nocturnal restoration cycle that sustains neural plasticity."*
+
+### Danh sách tiêu đề (List of Headings):
+* **i.** The economic costs of sleep deprivation
+* **ii.** How toxic waste leads to neurodegenerative diseases
+* **iii.** A revised scientific understanding of sleep's active function
+* **iv.** The biochemical differences between REM and non-REM sleep
+* **v.** Ancient misconceptions about the human brain
+
+---
+
+### Bóc Tách Bẫy & Lời Giải Chi Tiết
+
+* **Bước 1: Phân tích cấu trúc đoạn văn**:
+  - Câu 1 nêu quan niệm cũ: *"conventional wisdom held that sleep was merely a passive state of biological dormancy..."* (quan niệm ngủ là trạng thái thụ động, não nghỉ ngơi hoàn toàn).
+  - Câu 2 có từ nối tương phản bản lề **However**: *"However, advances in modern neuroimaging have fundamentally overturned this assumption."* (Những tiến bộ về hình ảnh thần kinh đã lật ngược hoàn toàn giả định này).
+  - Các câu tiếp theo chứng minh não bộ hoạt động cực kỳ tích cực khi ngủ (*intense metabolic rhythms, flushes out toxic waste, memory consolidation*).
+  - Câu cuối chốt lại: *"sleep serves as an essential nocturnal restoration cycle that sustains neural plasticity."*
+* **Bước 2: Phân tích và loại trừ các tiêu đề**:
+  - ❌ **Heading i (The economic costs...)**: Hoàn toàn **Not Mentioned** (không nhắc tới chi phí kinh tế).
+  - ❌ **Heading ii (How toxic waste leads to neurodegenerative diseases)**: **Detail Trap (Bẫy chi tiết hẹp)**. Độc tố và bệnh Alzheimer chỉ là một ví dụ minh họa nhỏ ở giữa đoạn cho cơ chế tự dọn dẹp của não, không phải ý chính của cả đoạn.
+  - ❌ **Heading iv (The biochemical differences between REM and non-REM sleep)**: **Detail Trap**. Đoạn văn có nhắc tới cả 2 giai đoạn này nhưng chỉ để chứng minh não hoạt động tích cực, không nhằm mục đích so sánh sự khác biệt sinh hóa giữa hai giai đoạn.
+  - ❌ **Heading v (Ancient misconceptions...)**: **Over-generalized Trap**. Bài đọc chỉ nói về quan niệm cũ vài thập kỷ qua (*for decades*), không phải quan niệm cổ đại (*ancient*).
+  - ✅ **Heading iii (A revised scientific understanding of sleep's active function)**: **ĐÁP ÁN CHÍNH XÁC**.
+    - *A revised scientific understanding* paraphrase hoàn hảo cho *"advances in modern neuroimaging have fundamentally overturned this assumption"*.
+    - *sleep's active function* tóm trọn thông điệp *"far from shutting down... an essential nocturnal restoration cycle"*.
+
+---
+
+> **Luyện tập thực chiến:** Mở ứng dụng [IELTS Practice Web](https://ielts-practice-vietnamese.vercel.app/) để làm bài tập Matching Headings với tính năng Highlight từ khóa và giải thích đáp án thông minh.
 
 | ← Bài trước | Mục Lục | Bài tiếp theo → |
 | :--- | :---: | ---: |
