@@ -14,6 +14,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { explainReadingQuestion } from '../../services/geminiService';
+import DistractorTrapExplainer from '../DistractorTrapExplainer';
 
 export default function QuestionPane({
   passageTitle = '',
@@ -571,6 +572,26 @@ export default function QuestionPane({
 
         {isExpanded && (
           <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 space-y-3 animate-fadeIn">
+            {/* Cambridge Distractor Trap Explainer (Automatic Offline Analysis) */}
+            {!isCorrect && (
+              <DistractorTrapExplainer
+                question={q}
+                userAnswer={userAnswers[q.order]}
+                correctAnswer={q.answer}
+                evidenceQuote={q.evidenceQuote}
+                skill="reading"
+                onSaveMistake={(mistake) => {
+                  try {
+                    const raw = localStorage.getItem('ielts_mistakes_log') || '[]';
+                    const list = JSON.parse(raw);
+                    localStorage.setItem('ielts_mistakes_log', JSON.stringify([mistake, ...list]));
+                  } catch (e) {
+                    console.warn('Failed to save mistake:', e);
+                  }
+                }}
+              />
+            )}
+
             {q.evidenceQuote && (
               <div className="space-y-1">
                 <span className="font-bold text-amber-900 block text-[11px]">Trích dẫn bằng chứng trong bài:</span>

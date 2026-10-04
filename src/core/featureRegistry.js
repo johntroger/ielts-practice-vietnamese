@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-distractor-trap-decoder',
+    version: 'v3.2',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'ai_evaluation',
+    targetSkills: ['reading', 'listening'],
+    title: 'Bộ Giải Mã & Bóc Tách Bẫy Khảo Thí Cambridge (Distractor Trap Decoder)',
+    shortDesc: 'Tự động nhận diện 6 mẫu hình bẫy kinh điển (False Synonym, Scope Creep NOT GIVEN, Turnaround Pivot...) kèm phân tích tâm lý và chiến thuật phản xạ 3 giây.',
+    icon: 'Crosshair',
+    shortcut: null,
+    updatedAt: '2026-10-04',
+    highlights: [
+      'Giải Mã 6 Archetype Bẫy Khảo Thí: Bẫy Trùng Từ Giả (False Synonym), Bẫy Suy Diễn NOT GIVEN, Bẫy Bẻ Lái 180 Độ Phút Chót (Listening Turnaround), Bẫy Số Liệu & Đơn Vị Nhiễu, Bẫy Từ Tuyệt Đối Hóa và Phủ Định Ẩn.',
+      'Bóc Trần Tâm Lý Thí Sinh: Giải thích cặn kẽ vì sao mắt hoặc tai bạn bị thu hút vào đáp án sai thay vì chỉ thông báo đúng/sai đơn thuần.',
+      'Chiến Thuật Phản Xạ 3 Giây (3-Second Reflex Rule): Cung cấp bí kíp thực chiến của Giám khảo Cambridge để không bao giờ mắc lại lỗi sai tương tự.',
+      'Tự Động 100% Offline & Lưu Sổ Lỗi Sai: Hoạt động tức thời không cần API Key và hỗ trợ lưu 1-chạm vào Sổ Lỗi Sai Cá Nhân để ôn tập định kỳ.'
+    ],
+    usageGuide: 'Sau khi làm bài Reading hoặc Listening và nộp bài, tại các câu làm sai, hệ thống tự động hiển thị thẻ "Bẫy Khảo Thí Cambridge" với phân tích chi tiết và chiến thuật phản xạ.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'reading',
+      label: 'Vào Phòng Luyện Reading'
+    }
+  },
+  {
     id: 'feat-in-situ-lexical-upgrader',
     version: 'v3.2',
     status: 'new',

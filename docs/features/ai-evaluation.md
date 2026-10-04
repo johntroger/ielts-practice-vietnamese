@@ -1,15 +1,39 @@
 # 🤖 Phân Hệ AI & Hệ Thống Chấm Điểm Kép Chuẩn Cambridge
 
-> **Chuyên mục**: `ai_evaluation` | **Số lượng**: **5 tính năng**  
+> **Chuyên mục**: `ai_evaluation` | **Số lượng**: **6 tính năng**  
 > **Tổng quan**: Tổng hợp các công cụ trí tuệ nhân tạo và bộ chấm thuật toán máy tính 0.02ms, phân tích 4 tiêu chí Cambridge (TR/TA, CC, LR, GRA, FC, PR).
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
 
 ---
 
+<a id="feat-distractor-trap-decoder"></a>
+
+## 1. Bộ Giải Mã & Bóc Tách Bẫy Khảo Thí Cambridge (Distractor Trap Decoder)
+
+> **Phiên bản**: `v3.2` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Reading** • **Listening** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Tự động nhận diện 6 mẫu hình bẫy kinh điển (False Synonym, Scope Creep NOT GIVEN, Turnaround Pivot...) kèm phân tích tâm lý và chiến thuật phản xạ 3 giây.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Giải Mã 6 Archetype Bẫy Khảo Thí: Bẫy Trùng Từ Giả (False Synonym), Bẫy Suy Diễn NOT GIVEN, Bẫy Bẻ Lái 180 Độ Phút Chót (Listening Turnaround), Bẫy Số Liệu & Đơn Vị Nhiễu, Bẫy Từ Tuyệt Đối Hóa và Phủ Định Ẩn.
+- Bóc Trần Tâm Lý Thí Sinh: Giải thích cặn kẽ vì sao mắt hoặc tai bạn bị thu hút vào đáp án sai thay vì chỉ thông báo đúng/sai đơn thuần.
+- Chiến Thuật Phản Xạ 3 Giây (3-Second Reflex Rule): Cung cấp bí kíp thực chiến của Giám khảo Cambridge để không bao giờ mắc lại lỗi sai tương tự.
+- Tự Động 100% Offline & Lưu Sổ Lỗi Sai: Hoạt động tức thời không cần API Key và hỗ trợ lưu 1-chạm vào Sổ Lỗi Sai Cá Nhân để ôn tập định kỳ.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Sau khi làm bài Reading hoặc Listening và nộp bài, tại các câu làm sai, hệ thống tự động hiển thị thẻ "Bẫy Khảo Thí Cambridge" với phân tích chi tiết và chiến thuật phản xạ.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Vào Phòng Luyện Reading"** trong giao diện làm bài.
+
+---
+
 <a id="feat-speaking-filler-tracker"></a>
 
-## 1. Bộ Đếm Từ Đệm & Sóng Âm Trực Quan (Speaking Fluency Studio)
+## 2. Bộ Đếm Từ Đệm & Sóng Âm Trực Quan (Speaking Fluency Studio)
 
 > **Phiên bản**: `v3.0` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Speaking** | **Phím tắt**: _Không có_
 
@@ -33,7 +57,7 @@ Tại phòng Luyện Nói Speaking hoặc Phòng Thi Giám Khảo, sau khi nói,
 
 <a id="feat-sentence-structure-heatmap"></a>
 
-## 2. Bản Đồ Nhiệt Cấu Trúc Câu (GRA Sentence Structure Heatmap)
+## 3. Bản Đồ Nhiệt Cấu Trúc Câu (GRA Sentence Structure Heatmap)
 
 > **Phiên bản**: `v3.0` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Writing** | **Phím tắt**: _Không có_
 
@@ -57,7 +81,7 @@ Tại màn hình Writing, nhấn nút "Cấu Trúc GRA" trên thanh công cụ s
 
 <a id="feat-speaking-dual-engine"></a>
 
-## 3. Hệ Thống Chấm Điểm Speaking Kép (⚡ Chấm Máy & 🤖 Chấm AI)
+## 4. Hệ Thống Chấm Điểm Speaking Kép (⚡ Chấm Máy & 🤖 Chấm AI)
 
 > **Phiên bản**: `v2.8` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Speaking** | **Phím tắt**: `Alt + S`
 
@@ -81,7 +105,7 @@ Tại phòng Luyện Speaking hoặc Phòng Thi Giám Khảo, sau khi ghi âm b�
 
 <a id="feat-ai-task2-grading"></a>
 
-## 4. Giám Khảo AI Chấm Điểm Writing 4 Tiêu Chí Kèm Radar Chart
+## 5. Giám Khảo AI Chấm Điểm Writing 4 Tiêu Chí Kèm Radar Chart
 
 > **Phiên bản**: `v2.3` | **Huy hiệu**: `Cambridge 4 Tiêu Chí` | **Kỹ năng**: **Writing** | **Phím tắt**: `Ctrl + Enter`
 
@@ -105,7 +129,7 @@ Sau khi viết xong bài trong phòng Writing, nhấn nút "Nộp Bài & Chấm 
 
 <a id="feat-peel-argument-checker"></a>
 
-## 5. Công Cụ Kiểm Định Chuỗi Lập Luận PEEL (PEEL Argument Coherence Checker)
+## 6. Công Cụ Kiểm Định Chuỗi Lập Luận PEEL (PEEL Argument Coherence Checker)
 
 > **Phiên bản**: `v4.6` | **Huy hiệu**: `Chuẩn TR & CC 7.0+` | **Kỹ năng**: **Writing** | **Phím tắt**: _Không có_
 

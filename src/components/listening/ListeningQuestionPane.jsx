@@ -17,6 +17,7 @@ import {
   ChevronUp,
   ChevronDown
 } from 'lucide-react';
+import DistractorTrapExplainer from '../DistractorTrapExplainer';
 
 // Color definitions for highlighter
 const HIGHLIGHT_COLORS = [
@@ -196,6 +197,28 @@ export default function ListeningQuestionPane({
       };
     }
     return null;
+  };
+
+  const renderDistractorTrap = (q, status) => {
+    if (!isSubmitted || status?.isCorrect) return null;
+    return (
+      <DistractorTrapExplainer
+        question={q}
+        userAnswer={userAnswers[q.order]}
+        correctAnswer={q.answer}
+        evidenceQuote={q.evidenceQuote}
+        skill="listening"
+        onSaveMistake={(mistake) => {
+          try {
+            const raw = localStorage.getItem('ielts_mistakes_log') || '[]';
+            const list = JSON.parse(raw);
+            localStorage.setItem('ielts_mistakes_log', JSON.stringify([mistake, ...list]));
+          } catch (e) {
+            console.warn('Failed to save mistake:', e);
+          }
+        }}
+      />
+    );
   };
 
   if (!partData) {
@@ -498,6 +521,8 @@ export default function ListeningQuestionPane({
                                 <span>Nghe lại đoạn này ({formatTimestamp(q.evidenceTimestamp)})</span>
                               </button>
                             )}
+
+                            {renderDistractorTrap(q, status)}
                           </div>
                         )}
                       </div>
@@ -646,6 +671,8 @@ export default function ListeningQuestionPane({
                                 <span>Nghe lại đoạn này ({formatTimestamp(q.evidenceTimestamp)})</span>
                               </button>
                             )}
+
+                            {renderDistractorTrap(q, status)}
                           </div>
                         )}
                       </div>

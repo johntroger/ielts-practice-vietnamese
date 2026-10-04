@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **41 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **42 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -13,7 +13,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
-| 🤖 **Phân Hệ AI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
+| 🤖 **Phân Hệ AI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
 | 🛠️ **Kho Đề Thi** | **11** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
@@ -41,6 +41,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Bộ Giải Mã & Bóc Tách Bẫy Khảo Thí Cambridge (Distractor Trap Decoder)](ai-evaluation.md#feat-distractor-trap-decoder)
+- **Phiên bản**: `v3.2` | **Kỹ năng**: **Reading** • **Listening**
+- **Tóm tắt**: Tự động nhận diện 6 mẫu hình bẫy kinh điển (False Synonym, Scope Creep NOT GIVEN, Turnaround Pivot...) kèm phân tích tâm lý và chiến thuật phản xạ 3 giây.
+- **Cách dùng nhanh**: Sau khi làm bài Reading hoặc Listening và nộp bài, tại các câu làm sai, hệ thống tự động hiển thị thẻ "Bẫy Khảo Thí Cambridge" với phân tích chi tiết và chiến thuật phản xạ.
 
 ### ✦ [Nâng Cấp Từ Vựng Ngữ Cảnh 1-Chạm (In-situ Lexical Upgrader)](practice-tools.md#feat-in-situ-lexical-upgrader)
 - **Phiên bản**: `v3.2` | **Kỹ năng**: **Writing**
