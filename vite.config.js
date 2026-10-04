@@ -28,6 +28,14 @@ export default defineConfig({
             return 'vendor-libs';
           }
           if (
+            id.includes('indexedDbStorage') ||
+            id.includes('storageService') ||
+            id.includes('submissionRepository') ||
+            id.includes('backupRepository')
+          ) {
+            return 'core-storage';
+          }
+          if (
             id.includes('algorithmicEvaluationService') ||
             id.includes('algorithmicSpeakingService')
           ) {

@@ -3,6 +3,8 @@
  * Protects application against QuotaExceededError, corrupted JSON, and private-mode storage blocking.
  */
 
+import { idbSet, STORES } from './indexedDbStorage.js';
+
 // In-memory fallback if localStorage is disabled, full, or inaccessible
 const memoryStore = new Map();
 
@@ -187,9 +189,7 @@ export function stripEphemeralMedia(obj) {
 export function backupToIndexedDB(key, data) {
   if (typeof window === 'undefined') return;
   try {
-    import('./indexedDbStorage.js').then(({ idbSet, STORES }) => {
-      idbSet(STORES.KEYVAL, key, data).catch(() => {});
-    }).catch(() => {});
+    idbSet(STORES.KEYVAL, key, data).catch(() => {});
   } catch (e) {}
 }
 
