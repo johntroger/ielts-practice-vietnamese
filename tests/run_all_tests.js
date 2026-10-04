@@ -88,7 +88,8 @@ const testSuites = [
   { name: 'Step 79: Spelling Demons & Natural Fillers Academic Integrity', file: 'tests/test_step79_demons_and_fillers.js' },
   { name: 'Step 80: Spelling & Units & Speaking Descriptors Academic Integrity', file: 'tests/test_step80_spelling_units_and_speaking_criteria.js' },
   { name: 'Step 81: Writing Task 1 Model Essays & Assessment Integrity', file: 'tests/test_step81_task1_model_essays.js' },
-  { name: 'Step 82: Writing Task 2 Model Essays & Assessment Integrity', file: 'tests/test_step82_task2_model_essays.js' }
+  { name: 'Step 82: Writing Task 2 Model Essays & Assessment Integrity', file: 'tests/test_step82_task2_model_essays.js' },
+  { name: 'Step 83: Mobile Drawer Portal & Viewport Escape Verification', file: 'tests/test_step83_mobile_drawer_portal_containment.js' }
 ];
 
 console.log('===============================================================');
