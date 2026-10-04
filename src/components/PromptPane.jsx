@@ -525,9 +525,8 @@ export default function PromptPane({
         </div>
       )}
 
-      {/* Practice Mode Helpers (Brainstorming, Idea Matrix & Model Answer) */}
-      {mode === 'practice' && (
-        <div className="pt-4 border-t border-slate-200 space-y-4">
+      {/* Writing Helpers & AI Diagnostic Tools (Brainstorming, Idea Matrix, Thesis & PEEL Checkers) */}
+      <div className="pt-4 border-t border-slate-200 space-y-4">
           
           {/* Action Row */}
           <div className="flex flex-wrap gap-2">
@@ -1106,7 +1105,6 @@ export default function PromptPane({
           )}
 
         </div>
-      )}
 
       {/* Zoom Modal for Chart */}
       {isZoomed && task.chartData && (
