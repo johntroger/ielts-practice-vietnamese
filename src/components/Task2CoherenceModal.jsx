@@ -27,9 +27,25 @@ export default function Task2CoherenceModal({
   const [copiedKey, setCopiedKey] = useState(null);
   const [selectedParagraphIndex, setSelectedParagraphIndex] = useState(0);
 
-  if (!isOpen) return null;
+  // Unconditionally call useMemo hooks before any early return to strictly adhere to React Rules of Hooks
+  const analysis = React.useMemo(() => {
+    if (!isOpen) return null;
+    return analyzeTask2Coherence(essayText);
+  }, [isOpen, essayText]);
 
-  const analysis = analyzeTask2Coherence(essayText);
+  const activePara = analysis?.paragraphs?.[selectedParagraphIndex] || analysis?.paragraphs?.[0] || null;
+
+  // Reset selected paragraph index when essay paragraphs change
+  React.useEffect(() => {
+    if (analysis?.paragraphs && selectedParagraphIndex >= analysis.paragraphs.length) {
+      setSelectedParagraphIndex(0);
+    }
+  }, [analysis, selectedParagraphIndex]);
+
+  const activePeel = React.useMemo(() => {
+    if (!isOpen || !activePara || activePara.role !== 'body' || !activePara.text) return null;
+    return validatePeelParagraphAlgorithmically({ paragraphText: activePara.text });
+  }, [isOpen, activePara]);
 
   const handleCopy = (text, key) => {
     navigator.clipboard.writeText(text);
@@ -43,11 +59,7 @@ export default function Task2CoherenceModal({
     }
   };
 
-  const activePara = analysis.paragraphs[selectedParagraphIndex] || analysis.paragraphs[0];
-  const activePeel = React.useMemo(() => {
-    if (!activePara || activePara.role !== 'body' || !activePara.text) return null;
-    return validatePeelParagraphAlgorithmically({ paragraphText: activePara.text });
-  }, [activePara]);
+  if (!isOpen || !analysis) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">

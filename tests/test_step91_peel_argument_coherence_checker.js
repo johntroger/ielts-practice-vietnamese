@@ -117,4 +117,13 @@ assert.ok(feature.title.includes('PEEL'), 'Title must mention PEEL');
 assert.ok(feature.highlights.length >= 3, 'Must have at least 3 highlights');
 console.log('    ✅ Feature registry entry verified.');
 
-console.log('\n🎉 ALL 7/7 TESTS FOR STEP 91 (PEEL ARGUMENT COHERENCE CHECKER) PASSED CLEANLY!\n');
+// 8. Verify React Rules of Hooks compliance in Task2CoherenceModal.jsx
+console.log('  ▶ 8. Verifying React Rules of Hooks compliance in Task2CoherenceModal.jsx...');
+const returnIdx = coherenceModalCode.indexOf('if (!isOpen || !analysis) return null;');
+const peelHookIdx = coherenceModalCode.indexOf('const activePeel = React.useMemo');
+assert.ok(returnIdx !== -1, 'Must have safe return guard');
+assert.ok(peelHookIdx !== -1, 'Must have activePeel hook');
+assert.ok(peelHookIdx < returnIdx, 'activePeel hook MUST be called BEFORE early return to prevent React Hook count mismatch error');
+console.log('    ✅ React Rules of Hooks compliance verified.');
+
+console.log('\n🎉 ALL 8/8 TESTS FOR STEP 91 (PEEL ARGUMENT COHERENCE CHECKER) PASSED CLEANLY!\n');
