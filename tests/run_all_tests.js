@@ -100,7 +100,8 @@ const testSuites = [
   { name: 'Step 91: PEEL Argument Coherence Checker (Task 2 Cambridge TR & CC)', file: 'tests/test_step91_peel_argument_coherence_checker.js' },
   { name: 'Step 92: In-situ Lexical Upgrader (Cambridge LR Band 7.0 - 8.5+)', file: 'tests/test_step92_in_situ_lexical_upgrader.js' },
   { name: 'Step 93: Distractor Trap Decoder (Reading & Listening Cambridge Traps)', file: 'tests/test_step93_distractor_trap_decoder.js' },
-  { name: 'Step 94: Speaking Part 2 Pacing Bar (Thanh Căn Nhịp Độ 2 Phút)', file: 'tests/test_step94_speaking_pacing_bar.js' }
+  { name: 'Step 94: Speaking Part 2 Pacing Bar (Thanh Căn Nhịp Độ 2 Phút)', file: 'tests/test_step94_speaking_pacing_bar.js' },
+  { name: 'Step 95: Code Health, Architecture & Answer Evaluation Integrity', file: 'tests/test_step95_code_health_and_architecture.js' }
 ];
 
 console.log('===============================================================');

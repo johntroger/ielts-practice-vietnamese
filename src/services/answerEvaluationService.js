@@ -1,25 +1,29 @@
 /**
  * Answer Evaluation Service
  * Centralized, battle-tested answer comparison and scoring engine for IELTS Reading & Listening.
- * Prevents variable scoping leaks, case sensitivity issues, and acceptable answer misses.
+ * Supports both `correctAnswer` and `answer` fields, acceptable alternative answers,
+ * whitespace/punctuation normalization, and Roman numerals.
  */
 
 /**
  * Evaluates a user's answer against the target question key and acceptable alternatives.
- * @param {object} question - Question object containing { answer, acceptableAnswers, type }
+ * @param {object} question - Question object containing { answer, correctAnswer, acceptableAnswers, type }
  * @param {string|number} rawUserAnswer - Raw candidate response from UI
- * @returns {object} { isCorrect: boolean, isAnswered: boolean, normalizedUser: string, normalizedTarget: string }
+ * @returns {object} { isCorrect: boolean, isAnswered: boolean, userAnswer: string, correctAnswer: string, normalizedUser: string, normalizedTarget: string }
  */
 export function evaluateQuestionAnswer(question, rawUserAnswer) {
   if (!question) {
     return {
       isCorrect: false,
       isAnswered: false,
+      userAnswer: '',
+      correctAnswer: '',
       normalizedUser: '',
       normalizedTarget: ''
     };
   }
 
+  const targetStr = String(question.correctAnswer ?? question.answer ?? '').trim();
   const userStr = rawUserAnswer !== null && rawUserAnswer !== undefined ? String(rawUserAnswer).trim() : '';
   const isAnswered = userStr.length > 0;
   
@@ -27,12 +31,13 @@ export function evaluateQuestionAnswer(question, rawUserAnswer) {
     return {
       isCorrect: false,
       isAnswered: false,
+      userAnswer: '',
+      correctAnswer: targetStr,
       normalizedUser: '',
-      normalizedTarget: String(question.answer || '').trim()
+      normalizedTarget: targetStr
     };
   }
 
-  const targetStr = String(question.answer || '').trim();
   const userUpper = userStr.toUpperCase();
   const targetUpper = targetStr.toUpperCase();
   const userLower = userStr.toLowerCase();
@@ -42,6 +47,8 @@ export function evaluateQuestionAnswer(question, rawUserAnswer) {
     return {
       isCorrect: true,
       isAnswered: true,
+      userAnswer: userStr,
+      correctAnswer: targetStr,
       normalizedUser: userStr,
       normalizedTarget: targetStr
     };
@@ -58,6 +65,8 @@ export function evaluateQuestionAnswer(question, rawUserAnswer) {
       return {
         isCorrect: true,
         isAnswered: true,
+        userAnswer: userStr,
+        correctAnswer: targetStr,
         normalizedUser: userStr,
         normalizedTarget: targetStr
       };
@@ -70,6 +79,8 @@ export function evaluateQuestionAnswer(question, rawUserAnswer) {
       return {
         isCorrect: true,
         isAnswered: true,
+        userAnswer: userStr,
+        correctAnswer: targetStr,
         normalizedUser: userStr,
         normalizedTarget: targetStr
       };
@@ -79,6 +90,8 @@ export function evaluateQuestionAnswer(question, rawUserAnswer) {
   return {
     isCorrect: false,
     isAnswered: true,
+    userAnswer: userStr,
+    correctAnswer: targetStr,
     normalizedUser: userStr,
     normalizedTarget: targetStr
   };
