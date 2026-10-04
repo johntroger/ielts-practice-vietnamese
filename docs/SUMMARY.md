@@ -164,6 +164,7 @@
 * [B3. Academic Collocations Theo 8 Chủ Đề Trọng Tâm](grammar-vocab/vocab-topic-collocations.md)
 * [B4. Họ Từ Học Thuật (AWL) & Paraphrase Bằng Đổi Loại Từ](grammar-vocab/vocab-academic-word-families.md)
 * [B5. Ngôn Ngữ Chức Năng Cho Speaking (Functional Language)](grammar-vocab/vocab-speaking-functional-language.md)
+* [B6. Sổ Tay Quản Trị Lỗi Sai (Error Log & Paraphrase Journal Template)](grammar-vocab/error-log-and-paraphrase-journal.md)
 
 ---
 
