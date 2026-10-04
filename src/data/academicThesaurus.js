@@ -117,13 +117,106 @@ export const ACADEMIC_THESAURUS = {
     { word: 'a multitude of', type: 'phrase', meaningVi: 'vô vàn, số lượng lớn', example: 'Offering a multitude of educational opportunities.' },
     { word: 'an abundance of', type: 'phrase', meaningVi: 'sự dồi dào, phong phú', example: 'The region possesses an abundance of mineral resources.' },
     { word: 'countless', type: 'adj', meaningVi: 'không đếm xuể', example: 'Technological innovations have spared countless hours of labor.' },
+  ],
+  crime: [
+    { word: 'criminal activity', type: 'phrase', meaningVi: 'hoạt động phạm tội', example: 'Poverty often exacerbates criminal activity in urban peripheries.' },
+    { word: 'unlawful conduct', type: 'phrase', meaningVi: 'hành vi vi phạm pháp luật', example: 'Stringent penalties deter individuals from unlawful conduct.' },
+    { word: 'illicit behavior', type: 'phrase', meaningVi: 'hành vi phi pháp, trái chuẩn mực', example: 'Rehabilitating youths prone to illicit behavior.' },
+    { word: 'transgression', type: 'noun', meaningVi: 'hành vi sai trái, vi phạm luật lệ', example: 'Judges reserve severe penalties for grave transgressions.' },
+    { word: 'offenses', type: 'noun', meaningVi: 'các hành vi phạm tội', example: 'First-time nonviolent offenses.' }
+  ],
+  police: [
+    { word: 'law enforcement agencies', type: 'phrase', meaningVi: 'các cơ quan thực thi pháp luật', example: 'Law enforcement agencies collaborate across borders.' },
+    { word: 'patrol authorities', type: 'phrase', meaningVi: 'lực lượng tuần tra và kiểm soát', example: 'Visible patrol authorities reassure the community.' },
+    { word: 'the constabulary', type: 'noun', meaningVi: 'lực lượng cảnh sát', example: 'Modernizing the equipment of the local constabulary.' },
+    { word: 'security apparatus', type: 'phrase', meaningVi: 'bộ máy an ninh công', example: 'A transparent public security apparatus.' }
+  ],
+  policing: [
+    { word: 'law enforcement operations', type: 'phrase', meaningVi: 'các hoạt động thực thi pháp luật', example: 'Deploying predictive algorithms in law enforcement operations.' },
+    { word: 'crime prevention initiatives', type: 'phrase', meaningVi: 'các sáng kiến phòng chống tội phạm', example: 'Community-led crime prevention initiatives foster neighborhood trust.' },
+    { word: 'security oversight', type: 'phrase', meaningVi: 'sự giám sát an ninh trật tự', example: 'Modern security oversight relies on data analytics.' }
+  ],
+  money: [
+    { word: 'financial resources', type: 'phrase', meaningVi: 'nguồn lực tài chính', example: 'Allocating substantial financial resources to clean energy.' },
+    { word: 'capital allocation', type: 'phrase', meaningVi: 'sự phân bổ nguồn vốn', example: 'Prudent capital allocation stimulates long-term economic expansion.' },
+    { word: 'fiscal revenue', type: 'phrase', meaningVi: 'nguồn thu ngân sách nhà nước', example: 'Tourism constitutes a vital source of fiscal revenue.' },
+    { word: 'pecuniary assets', type: 'phrase', meaningVi: 'tài sản tài chính', example: 'Protecting citizens’ pecuniary assets from digital fraud.' }
+  ],
+  education: [
+    { word: 'pedagogical training', type: 'phrase', meaningVi: 'đào tạo mang tính sư phạm', example: 'Enhancing teachers through modern pedagogical training.' },
+    { word: 'academic instruction', type: 'phrase', meaningVi: 'sự giảng dạy học thuật chính quy', example: 'Rigorous academic instruction cultivates analytical proficiency.' },
+    { word: 'intellectual cultivation', type: 'phrase', meaningVi: 'sự bồi dưỡng trí tuệ', example: 'Universities serve as centers for intellectual cultivation.' },
+    { word: 'vocational schooling', type: 'phrase', meaningVi: 'giáo dục hướng nghiệp thực tiễn', example: 'Expanding vocational schooling alleviates youth unemployment.' }
+  ],
+  think: [
+    { word: 'maintain the view that', type: 'phrase', meaningVi: 'kiên định quan điểm rằng', example: 'I firmly maintain the view that green investment is vital.' },
+    { word: 'contend that', type: 'verb', meaningVi: 'quả quyết, lập luận rằng', example: 'Economists contend that globalization fosters competition.' },
+    { word: 'postulate that', type: 'verb', meaningVi: 'đưa ra giả định / nhận định rằng', example: 'Researchers postulate that regular sleep enhances cognition.' },
+    { word: 'are convinced that', type: 'phrase', meaningVi: 'tin chắc chắn rằng', example: 'Many experts are convinced that automation will create new roles.' }
+  ],
+  big: [
+    { word: 'substantial', type: 'adj', meaningVi: 'đáng kể, to lớn', example: 'Yielding substantial economic improvements.' },
+    { word: 'monumental', type: 'adj', meaningVi: 'vĩ đại, cực kỳ to lớn', example: 'Facing a monumental environmental challenge.' },
+    { word: 'immense', type: 'adj', meaningVi: 'bao la, vô cùng lớn', example: 'Digital media holds immense persuasive power.' },
+    { word: 'pronounced', type: 'adj', meaningVi: 'rõ rệt, nổi trội', example: 'A pronounced disparity between urban and rural wages.' }
+  ],
+  cause: [
+    { word: 'precipitate', type: 'verb', meaningVi: 'châm ngòi, thúc đẩy nhanh', example: 'Rapid industrialization precipitated environmental degradation.' },
+    { word: 'engender', type: 'verb', meaningVi: 'làm nảy sinh, đem lại', example: 'Transparent governance engenders public trust.' },
+    { word: 'give rise to', type: 'phrase', meaningVi: 'làm dấy lên, dẫn đến', example: 'Economic uncertainty gives rise to social unrest.' },
+    { word: 'trigger', type: 'verb', meaningVi: 'kích hoạt, khơi mào', example: 'Excessive pollution triggers widespread respiratory illnesses.' }
   ]
 };
 
 export function lookupSynonyms(word) {
   if (!word) return [];
-  const clean = word.toLowerCase().trim();
-  return ACADEMIC_THESAURUS[clean] || [];
+  const clean = word.toLowerCase().trim().replace(/^[^\w]+|[^\w]+$/g, '');
+  if (ACADEMIC_THESAURUS[clean]) return ACADEMIC_THESAURUS[clean];
+
+  // Simple lemmatization fallbacks
+  const candidates = [];
+  if (clean.endsWith('ing')) candidates.push(clean.slice(0, -3), clean.slice(0, -3) + 'e');
+  if (clean.endsWith('ed')) candidates.push(clean.slice(0, -2), clean.slice(0, -1));
+  if (clean.endsWith('s')) candidates.push(clean.slice(0, -1), clean.slice(0, -2));
+  if (clean.endsWith('ly')) candidates.push(clean.slice(0, -2));
+
+  for (const cand of candidates) {
+    if (ACADEMIC_THESAURUS[cand]) {
+      return ACADEMIC_THESAURUS[cand];
+    }
+  }
+
+  return [];
+}
+
+/**
+ * Intelligent Lexical Upgrade Lookup for In-Situ Selection
+ * Returns structured C1/C2 upgrades with part-of-speech, Vietnamese meaning, and IELTS example.
+ */
+export function findLexicalUpgrades(wordOrPhrase) {
+  if (!wordOrPhrase || typeof wordOrPhrase !== 'string') return null;
+  const raw = wordOrPhrase.trim().replace(/^["'`“‘]+|["'`”’]+$/g, '');
+  const clean = raw.toLowerCase();
+
+  const synonyms = lookupSynonyms(clean);
+  if (synonyms.length > 0) {
+    return {
+      original: raw,
+      found: true,
+      suggestions: synonyms.map(s => ({
+        word: s.word,
+        type: s.type || 'phrase',
+        meaningVi: s.meaningVi,
+        example: s.example
+      }))
+    };
+  }
+
+  return {
+    original: raw,
+    found: false,
+    suggestions: []
+  };
 }
 
 /**

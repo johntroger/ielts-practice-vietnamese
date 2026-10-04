@@ -97,7 +97,8 @@ const testSuites = [
   { name: 'Step 88: GitBook URL Abstraction & .gitattributes Normalization', file: 'tests/test_step88_gitbook_url_abstraction.js' },
   { name: 'Step 89: Markdown Link Integrity & Documentation Graph Verification', file: 'tests/test_step89_markdown_links_integrity.js' },
   { name: 'Step 90: CI/CD GitHub Actions & One-Way Sync Guard Integrity', file: 'tests/test_step90_ci_pipeline_and_docs_sync_guard.js' },
-  { name: 'Step 91: PEEL Argument Coherence Checker (Task 2 Cambridge TR & CC)', file: 'tests/test_step91_peel_argument_coherence_checker.js' }
+  { name: 'Step 91: PEEL Argument Coherence Checker (Task 2 Cambridge TR & CC)', file: 'tests/test_step91_peel_argument_coherence_checker.js' },
+  { name: 'Step 92: In-situ Lexical Upgrader (Cambridge LR Band 7.0 - 8.5+)', file: 'tests/test_step92_in_situ_lexical_upgrader.js' }
 ];
 
 console.log('===============================================================');

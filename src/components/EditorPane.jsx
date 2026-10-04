@@ -19,15 +19,18 @@ import {
   ListOrdered,
   GitCommit,
   SlidersHorizontal,
-  ShieldAlert
+  ShieldAlert,
+  Zap
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
 import Task1DataCoverageModal from './Task1DataCoverageModal';
 import Task2CoherenceModal from './Task2CoherenceModal';
 import SentenceHeatmapModal from './SentenceHeatmapModal';
+import InSituLexicalUpgrader from './InSituLexicalUpgrader';
 import { analyzeTask1Overview } from '../services/algorithmicEvaluationService';
 import { analyzeTask2Coherence } from '../utils/coherenceAnalyzer';
 import { analyzeSentenceStructures } from '../services/sentenceAnalyzer';
+import { findLexicalUpgrades } from '../data/academicThesaurus';
 
 export default function EditorPane({
   essayText,
@@ -43,7 +46,8 @@ export default function EditorPane({
   onSubmitEssay,
   onEditorFocus,
   writingViewMode = 'pro',
-  onToggleWritingViewMode
+  onToggleWritingViewMode,
+  onAddVocab
 }) {
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
   const [isMetricsMenuOpen, setIsMetricsMenuOpen] = useState(false);
@@ -53,6 +57,15 @@ export default function EditorPane({
   const isTask1 = task?.taskNumber === 1 || task?.isTask1;
   const [isTask1CoverageOpen, setIsTask1CoverageOpen] = useState(false);
   const [isTask2CoherenceOpen, setIsTask2CoherenceOpen] = useState(false);
+
+  // In-situ Lexical Upgrader state
+  const [lexicalUpgrader, setLexicalUpgrader] = useState({
+    isOpen: false,
+    selectedWord: '',
+    selectionRange: null // { start: number, end: number } | null
+  });
+  const textareaRef = useRef(null);
+
   const [scaffold, setScaffold] = useState({
     intro: '',
     overviewOrThesis: '',
@@ -156,6 +169,75 @@ export default function EditorPane({
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     };
   }, []);
+
+  // Textarea word selection detection for in-situ upgrading
+  const handleTextareaSelection = (e) => {
+    if (!e || !e.target) return;
+    const start = e.target.selectionStart;
+    const end = e.target.selectionEnd;
+    if (typeof start === 'number' && typeof end === 'number' && start !== end && end - start <= 50) {
+      const selected = e.target.value.substring(start, end).trim();
+      // Only trigger if selection is between 2 and 45 characters and not containing line breaks
+      if (selected.length >= 2 && !selected.includes('\n')) {
+        setLexicalUpgrader({
+          isOpen: true,
+          selectedWord: selected,
+          selectionRange: { start, end }
+        });
+      }
+    }
+  };
+
+  const handleOpenUpgraderForWord = (word) => {
+    if (!word) return;
+    setLexicalUpgrader({
+      isOpen: true,
+      selectedWord: word.trim(),
+      selectionRange: null
+    });
+  };
+
+  const handleApplyLexicalReplacement = (oldWord, newWord) => {
+    if (!newWord) return;
+
+    if (lexicalUpgrader.selectionRange) {
+      const { start, end } = lexicalUpgrader.selectionRange;
+      const nextText = essayText.slice(0, start) + newWord + essayText.slice(end);
+      setEssayText(nextText);
+    } else {
+      // Replace the first match of oldWord in the essay text
+      const cleanOld = oldWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const reg = new RegExp(`\\b${cleanOld}\\b`, 'i');
+      if (reg.test(essayText)) {
+        const nextText = essayText.replace(reg, newWord);
+        setEssayText(nextText);
+      } else {
+        setEssayText(prev => prev.replace(oldWord, newWord));
+      }
+    }
+
+    // Refocus textarea after replacement
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 80);
+  };
+
+  const handleSaveVocabToNotebook = (vocabItem) => {
+    if (onAddVocab) {
+      onAddVocab(vocabItem);
+    } else {
+      try {
+        const raw = localStorage.getItem('ielts_vocab_notebook') || '[]';
+        const list = JSON.parse(raw);
+        const updated = [vocabItem, ...list.filter(v => v.phrase !== vocabItem.phrase)];
+        localStorage.setItem('ielts_vocab_notebook', JSON.stringify(updated));
+      } catch (err) {
+        console.warn('Failed to save to localStorage:', err);
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-slate-50 pb-24 sm:pb-20 md:pb-4 overflow-hidden">
@@ -346,6 +428,30 @@ export default function EditorPane({
                     <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                     <span>Tra Cứu Paraphrase C1-C2</span>
                   </button>
+
+                  {/* Quick In-Situ Lexical Upgrader */}
+                  <button
+                    onClick={() => {
+                      setIsMetricsMenuOpen(false);
+                      if (lexicalData.overusedWords && lexicalData.overusedWords.length > 0) {
+                        handleOpenUpgraderForWord(lexicalData.overusedWords[0].word);
+                      } else {
+                        handleOpenUpgraderForWord('important');
+                      }
+                    }}
+                    className="w-full flex items-center justify-between p-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-semibold transition-colors cursor-pointer"
+                    title="Nâng cấp từ vựng C1/C2 tức thì tại chỗ (1-Click Replace)"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Zap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                      <span>Nâng Cấp Từ Vựng C1/C2</span>
+                    </div>
+                    {lexicalData.overusedWords?.length > 0 && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-black bg-amber-200 text-amber-900">
+                        {lexicalData.overusedWords.length} từ lặp
+                      </span>
+                    )}
+                  </button>
                 </div>
               )}
             </div>
@@ -434,6 +540,31 @@ export default function EditorPane({
                 }`}>
                   {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
                 </span>
+              </button>
+
+              {/* In-situ Lexical Upgrader Helper */}
+              <button
+                onClick={() => {
+                  if (lexicalData.overusedWords && lexicalData.overusedWords.length > 0) {
+                    handleOpenUpgraderForWord(lexicalData.overusedWords[0].word);
+                  } else {
+                    handleOpenUpgraderForWord('important');
+                  }
+                }}
+                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer shrink-0 ${
+                  lexicalData.overusedWords?.length > 0
+                    ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border-indigo-200'
+                }`}
+                title="Nâng cấp từ vựng C1/C2 tức thì tại chỗ (1-Click Replace)"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span className="hidden sm:inline">Nâng Cấp C1/C2</span>
+                {lexicalData.overusedWords?.length > 0 && (
+                  <span className="text-[10px] px-1 py-0.2 rounded font-black bg-amber-200 text-amber-900">
+                    {lexicalData.overusedWords.length}
+                  </span>
+                )}
               </button>
 
               {/* Quick Paraphrase Helper */}
@@ -529,10 +660,17 @@ export default function EditorPane({
         {activeTab === 'essay' ? (
           <div className="flex-1 flex flex-col h-full min-h-[280px] sm:min-h-[350px] md:min-h-0 bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden relative focus-within:border-slate-300 transition-colors">
             <textarea
+              ref={textareaRef}
               value={essayText}
               onChange={(e) => {
                 setEssayText(e.target.value);
                 handleUserTyping();
+              }}
+              onSelect={handleTextareaSelection}
+              onMouseUp={handleTextareaSelection}
+              onKeyUp={(e) => {
+                handleUserTyping();
+                handleTextareaSelection(e);
               }}
               onFocus={(e) => {
                 if (onEditorFocus) onEditorFocus(e);
@@ -546,9 +684,21 @@ export default function EditorPane({
                 }
               }}
               spellCheck={spellcheckEnabled}
-              placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới • Nhấn Ctrl+Enter để nộp bài)"
-              className="flex-1 w-full h-full min-h-[280px] sm:min-h-[350px] md:min-h-0 p-3.5 sm:p-5 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16px] leading-[1.8] tracking-wide selection:bg-red-100 selection:text-red-900 placeholder:text-slate-400 placeholder:font-normal overflow-y-auto"
+              placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới • Nhấn Ctrl+Enter để nộp bài • Bôi đen từ bất kỳ để Nâng Cấp Từ Vựng C1/C2)"
+              className="flex-1 w-full h-full min-h-[280px] sm:min-h-[350px] md:min-h-0 p-3.5 sm:p-5 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16px] leading-[1.8] tracking-wide selection:bg-amber-100 selection:text-amber-950 placeholder:text-slate-400 placeholder:font-normal overflow-y-auto"
             />
+
+            {/* In-Situ Lexical Upgrader Floating Popover */}
+            {lexicalUpgrader.isOpen && (
+              <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-40 max-w-sm sm:max-w-md w-[calc(100%-1.5rem)] shadow-2xl rounded-xl border border-indigo-200/80 bg-white animate-in fade-in slide-in-from-bottom-2 duration-150">
+                <InSituLexicalUpgrader
+                  selectedWord={lexicalUpgrader.selectedWord}
+                  onReplaceText={handleApplyLexicalReplacement}
+                  onSaveToNotebook={handleSaveVocabToNotebook}
+                  onClose={() => setLexicalUpgrader(prev => ({ ...prev, isOpen: false }))}
+                />
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex-1 flex flex-col h-full min-h-[300px] sm:min-h-[380px] md:min-h-0 bg-white rounded-xl border border-indigo-200 shadow-2xs overflow-hidden p-3.5 sm:p-5 space-y-3 overflow-y-auto">
@@ -745,22 +895,47 @@ export default function EditorPane({
         )}
       </div>
 
-      {/* Overused Words Warning Bar */}
+      {/* Overused Words Warning Bar with 1-Click Lexical Upgrader */}
       {lexicalData.overusedWords && lexicalData.overusedWords.length > 0 && (
-        <div className="mx-4 sm:mx-6 mb-2 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-between text-xs text-amber-900">
-          <div className="flex items-center space-x-1.5 truncate">
+        <div className="mx-2.5 sm:mx-4 lg:mx-6 mb-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-900 shadow-2xs">
+          <div className="flex items-center space-x-1.5 flex-wrap gap-1.5">
             <Info className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span className="font-semibold">Cảnh báo lặp từ:</span>
-            <span className="text-amber-800 truncate">
-              Bạn đang dùng {lexicalData.overusedWords.map(w => `"${w.word}" (${w.count}x)`).join(', ')}.
-            </span>
+            <span className="font-semibold text-amber-950">Cảnh báo lặp từ (LR):</span>
+            <span className="text-amber-800 text-[11px] hidden sm:inline">Nhấp từ để nâng cấp C1/C2:</span>
+            {lexicalData.overusedWords.map((w, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleOpenUpgraderForWord(w.word)}
+                className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs border ${
+                  lexicalUpgrader.isOpen && lexicalUpgrader.selectedWord.toLowerCase() === w.word.toLowerCase()
+                    ? 'bg-amber-600 text-white border-amber-700 ring-2 ring-amber-300'
+                    : 'bg-white hover:bg-amber-100 text-amber-900 border-amber-300 hover:border-amber-400 active:scale-95'
+                }`}
+                title={`Nhấp để mở bảng gợi ý collocations C1/C2 thay thế cho "${w.word}"`}
+              >
+                <span>"{w.word}"</span>
+                <span className="text-[10px] opacity-80 font-normal">({w.count}x)</span>
+                <Sparkles className="w-2.5 h-2.5 text-amber-500" />
+              </button>
+            ))}
           </div>
-          <button
-            onClick={onOpenParaphrase}
-            className="text-[11px] font-bold text-amber-900 hover:underline shrink-0 ml-2"
-          >
-            Tìm từ thay thế →
-          </button>
+
+          <div className="flex items-center space-x-2 shrink-0 ml-auto sm:ml-0">
+            <button
+              onClick={() => {
+                if (lexicalData.overusedWords.length > 0) {
+                  handleOpenUpgraderForWord(lexicalData.overusedWords[0].word);
+                } else {
+                  onOpenParaphrase?.();
+                }
+              }}
+              className="text-[11px] font-bold text-amber-900 hover:text-amber-950 hover:underline flex items-center space-x-1 cursor-pointer"
+            >
+              <span>Nâng cấp từ vựng ngay</span>
+              <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
         </div>
       )}
 

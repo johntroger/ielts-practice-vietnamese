@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-in-situ-lexical-upgrader',
+    version: 'v3.2',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'practice_tools',
+    targetSkills: ['writing'],
+    title: 'Nâng Cấp Từ Vựng Ngữ Cảnh 1-Chạm (In-situ Lexical Upgrader)',
+    shortDesc: 'Thay thế tức thì các từ vựng B1/B2 phổ thông và từ lặp trong bài viết thành các collocations C1/C2 học thuật chuẩn Cambridge chỉ với 1 cú nhấp chuột.',
+    icon: 'Sparkles',
+    shortcut: null,
+    updatedAt: '2026-10-04',
+    highlights: [
+      'Nâng Cấp 1-Chạm (1-Click Replace): Bôi đen từ bất kỳ hoặc nhấp vào từ bị cảnh báo lặp từ để hiển thị 3-5 collocations C1/C2 học thuật kèm nghĩa tiếng Việt và câu ví dụ IELTS.',
+      'Thay Thế Tức Thì Tại Vị Trí: Tự động hoán đổi từ ngữ ngay trong khung bài viết mà không làm mất con trỏ soạn thảo hay phải sao chép thủ công.',
+      'Tích Hợp Cảnh Báo Lặp Từ (Lexical Resource Band 7.0-8.5): Biến toàn bộ từ lặp thành các huy hiệu tương tác để khắc phục ngay điểm yếu từ vựng.',
+      'Lưu Nhanh Sổ Tay (1-Click Save to Notebook): Lưu trực tiếp collocation mới vào Sổ Tay Từ Vựng cá nhân kèm nghĩa và ví dụ để ôn tập định kỳ.'
+    ],
+    usageGuide: 'Trong phòng luyện IELTS Writing, bôi đen từ cần nâng cấp trong bài hoặc nhấp vào các từ trên thanh "Cảnh báo lặp từ", sau đó chọn "Thay từ này" để áp dụng ngay.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'writing',
+      label: 'Vào Phòng Luyện Writing'
+    }
+  },
+  {
     id: 'feat-minimal-focus-view',
     version: 'v3.1',
     status: 'new',

@@ -1,15 +1,39 @@
 # 🛠️ Kho Đề Thi & Bộ Công Cụ Luyện Tập 4 Kỹ Năng
 
-> **Chuyên mục**: `practice_tools` | **Số lượng**: **10 tính năng**  
+> **Chuyên mục**: `practice_tools` | **Số lượng**: **11 tính năng**  
 > **Tổng quan**: Bộ sưu tập công cụ hỗ trợ người học: nạp đề từ ảnh chụp Task 1 (OCR), ma trận phát triển ý tưởng, từ điển đồng nghĩa và phân tầng trình độ.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
 
 ---
 
+<a id="feat-in-situ-lexical-upgrader"></a>
+
+## 1. Nâng Cấp Từ Vựng Ngữ Cảnh 1-Chạm (In-situ Lexical Upgrader)
+
+> **Phiên bản**: `v3.2` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Writing** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Thay thế tức thì các từ vựng B1/B2 phổ thông và từ lặp trong bài viết thành các collocations C1/C2 học thuật chuẩn Cambridge chỉ với 1 cú nhấp chuột.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Nâng Cấp 1-Chạm (1-Click Replace): Bôi đen từ bất kỳ hoặc nhấp vào từ bị cảnh báo lặp từ để hiển thị 3-5 collocations C1/C2 học thuật kèm nghĩa tiếng Việt và câu ví dụ IELTS.
+- Thay Thế Tức Thì Tại Vị Trí: Tự động hoán đổi từ ngữ ngay trong khung bài viết mà không làm mất con trỏ soạn thảo hay phải sao chép thủ công.
+- Tích Hợp Cảnh Báo Lặp Từ (Lexical Resource Band 7.0-8.5): Biến toàn bộ từ lặp thành các huy hiệu tương tác để khắc phục ngay điểm yếu từ vựng.
+- Lưu Nhanh Sổ Tay (1-Click Save to Notebook): Lưu trực tiếp collocation mới vào Sổ Tay Từ Vựng cá nhân kèm nghĩa và ví dụ để ôn tập định kỳ.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Trong phòng luyện IELTS Writing, bôi đen từ cần nâng cấp trong bài hoặc nhấp vào các từ trên thanh "Cảnh báo lặp từ", sau đó chọn "Thay từ này" để áp dụng ngay.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Vào Phòng Luyện Writing"** trong giao diện làm bài.
+
+---
+
 <a id="feat-band-55-60-expansion"></a>
 
-## 1. Mở Rộng Phân Tầng Trình Độ: Dải Điểm Band 5.5 - 6.0
+## 2. Mở Rộng Phân Tầng Trình Độ: Dải Điểm Band 5.5 - 6.0
 
 > **Phiên bản**: `v2.6` | **Huy hiệu**: `Học Thuật` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -33,7 +57,7 @@ Mở "Vocab & Lỗi Sai" -> Chọn tab "📗 Band 5.5 - 6.0" hoặc mở "Cẩm 
 
 <a id="feat-task1-image-upload"></a>
 
-## 2. Tải Lên & Dán Trực Tiếp Ảnh Biểu Đồ Writing Task 1 (Ctrl + V)
+## 3. Tải Lên & Dán Trực Tiếp Ảnh Biểu Đồ Writing Task 1 (Ctrl + V)
 
 > **Phiên bản**: `v2.5` | **Huy hiệu**: `Hot` | **Kỹ năng**: **Writing** | **Phím tắt**: `Ctrl + V`
 
@@ -57,7 +81,7 @@ Vào "Kho Đề Thi" -> Bấm "Nạp Đề Cá Nhân Mới (Task 1)" -> Dán ả
 
 <a id="feat-ai-generator-pro"></a>
 
-## 3. Trình Sinh Đề & Bài Mẫu AI (AI Prompt & Task Generator)
+## 4. Trình Sinh Đề & Bài Mẫu AI (AI Prompt & Task Generator)
 
 > **Phiên bản**: `v2.2` | **Huy hiệu**: `AI Pro` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -80,7 +104,7 @@ Bấm nút "Sinh Đề (AI)" trên thanh điều hướng hoặc trong Menu Côn
 
 <a id="feat-idea-matrix"></a>
 
-## 4. Ma Trận Phát Triển Ý Tưởng (Idea Matrix & Critical Thinking)
+## 5. Ma Trận Phát Triển Ý Tưởng (Idea Matrix & Critical Thinking)
 
 > **Phiên bản**: `v2.1` | **Huy hiệu**: `Tư Duy` | **Kỹ năng**: **Writing** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -103,7 +127,7 @@ Bấm nút "Ma Trận Ý" trên thanh điều hướng hoặc trong Menu Luyện
 
 <a id="feat-paraphrase-helper"></a>
 
-## 5. Trợ Thủ Paraphrase Học Thuật C1-C2 (Academic Rewriter)
+## 6. Trợ Thủ Paraphrase Học Thuật C1-C2 (Academic Rewriter)
 
 > **Phiên bản**: `v2.1` | **Huy hiệu**: `Từ Vựng` | **Kỹ năng**: **Writing** • **Speaking** • **Reading** | **Phím tắt**: _Không có_
 
@@ -126,7 +150,7 @@ Nhấn vào "Trợ Thủ Paraphrase" trong Menu Công Cụ hoặc bấm vào bi�
 
 <a id="feat-micro-drills-studio"></a>
 
-## 6. Phòng Luyện Phản Xạ Vi Mô (Micro-Drills Studio)
+## 7. Phòng Luyện Phản Xạ Vi Mô (Micro-Drills Studio)
 
 > **Phiên bản**: `v2.0` | **Huy hiệu**: `Bài Tập Nhanh` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: _Không có_
 
@@ -149,7 +173,7 @@ Bấm nút "Phòng Luyện" trên Navbar -> Chọn dạng bài tập bạn muố
 
 <a id="feat-raw-task-ingest"></a>
 
-## 7. Công Cụ Nạp Đề & Bài Mẫu Thô Hàng Loạt (Raw Task Ingest)
+## 8. Công Cụ Nạp Đề & Bài Mẫu Thô Hàng Loạt (Raw Task Ingest)
 
 > **Phiên bản**: `v2.3` | **Huy hiệu**: `Nạp Đề Nhanh` | **Kỹ năng**: **Writing** • **Reading** | **Phím tắt**: _Không có_
 
@@ -171,7 +195,7 @@ Mở Menu Công Cụ -> Chọn "Nạp Đề & Bài Mẫu Thô" -> Dán nội dun
 
 <a id="feat-daily-error-prescription"></a>
 
-## 8. Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition Micro-Drill)
+## 9. Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition Micro-Drill)
 
 > **Phiên bản**: `v3.0` | **Huy hiệu**: `Đơn Thuốc Lỗi` | **Kỹ năng**: **Writing** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -195,7 +219,7 @@ Vào Toolbar Writing -> Bấm "Tiện Ích Khác" -> Chọn "Đơn Thuốc Sửa
 
 <a id="feat-smart-filters-social-proof"></a>
 
-## 9. Bộ Lọc Đa Chiều & Đánh Giá Sao Xã Hội (Smart Discovery & Rating)
+## 10. Bộ Lọc Đa Chiều & Đánh Giá Sao Xã Hội (Smart Discovery & Rating)
 
 > **Phiên bản**: `2.5.0` | **Huy hiệu**: `Đột Phá 2.0` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -220,7 +244,7 @@ Mở Kho Đề Thi, Phòng Micro-Drills hoặc Luyện Từ Vựng/Ngữ Pháp. 
 
 <a id="feat-smart-recommendation-engine"></a>
 
-## 10. Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)
+## 11. Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)
 
 > **Phiên bản**: `v4.5` | **Huy hiệu**: `Định Hướng AI` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
 

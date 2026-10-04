@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **40 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **41 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -14,7 +14,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
 | 🤖 **Phân Hệ AI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
-| 🛠️ **Kho Đề Thi** | **10** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
+| 🛠️ **Kho Đề Thi** | **11** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
@@ -41,6 +41,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Nâng Cấp Từ Vựng Ngữ Cảnh 1-Chạm (In-situ Lexical Upgrader)](practice-tools.md#feat-in-situ-lexical-upgrader)
+- **Phiên bản**: `v3.2` | **Kỹ năng**: **Writing**
+- **Tóm tắt**: Thay thế tức thì các từ vựng B1/B2 phổ thông và từ lặp trong bài viết thành các collocations C1/C2 học thuật chuẩn Cambridge chỉ với 1 cú nhấp chuột.
+- **Cách dùng nhanh**: Trong phòng luyện IELTS Writing, bôi đen từ cần nâng cấp trong bài hoặc nhấp vào các từ trên thanh "Cảnh báo lặp từ", sau đó chọn "Thay từ này" để áp dụng ngay.
 
 ### ✦ [Chế Độ Luyện Tập Tinh Giản (Minimal Focus View)](shortcuts-ux.md#feat-minimal-focus-view)
 - **Phiên bản**: `v3.1` | **Kỹ năng**: **Writing**

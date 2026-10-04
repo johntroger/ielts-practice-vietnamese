@@ -205,6 +205,7 @@ export default function WritingWorkspace({
             }}
             writingViewMode={writingViewMode}
             onToggleWritingViewMode={handleToggleWritingViewMode}
+            onAddVocab={onAddVocab}
           />
         }
       />
