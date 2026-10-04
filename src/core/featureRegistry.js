@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-speaking-pacing-bar',
+    version: 'v3.2',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'exam_simulation',
+    targetSkills: ['speaking'],
+    title: 'Thanh Căn Nhịp Độ 2 Phút Speaking Part 2 (Speaking Pacing Bar)',
+    shortDesc: 'Bản đồ 4 chặng thời gian vàng (0-30s bối cảnh, 30-75s diễn biến, 75-105s cao trào, 105-120s đúc kết) giúp giữ nhịp nói 1:50 - 2:00 không lo hụt ý hay cháy giờ.',
+    icon: 'Clock',
+    shortcut: null,
+    updatedAt: '2026-10-04',
+    highlights: [
+      'Bản Đồ 4 Chặng Thời Gian Vàng Cambridge: Phân chia 120 giây thành 4 giai đoạn rõ ràng: Khởi động bối cảnh, Chi tiết cốt lõi, Cao trào cảm xúc và Đúc kết bài học.',
+      'Gợi Ý Chiến Thuật Thời Gian Thực (Live Coaching Prompts): Tự động hiển thị lời khuyên sư phạm tương ứng với từng giây đang nói để thí sinh luôn làm chủ mạch bài.',
+      'Vạch Báo Động Vùng Điểm Fluency: Cảnh báo vùng nguy cơ non giờ (< 1:15 bị kẹt Band 5.0), vùng an toàn (1:15 - 1:45) và vùng chạm đích xuất sắc (1:45 - 2:00 Band 7.5 - 8.5+).',
+      'Đếm Ngược 15 Giây Về Đích: Nhịp thở nhấp nháy êm ái nhắc nhở thí sinh kết bài tròn vẹn trước khi Giám khảo ngắt lời.'
+    ],
+    usageGuide: 'Tại phòng Luyện Nói Speaking hoặc Phòng Thi Giám Khảo, khi chuyển sang Part 2, thanh Pacing Bar sẽ tự động đồng bộ theo thời gian ghi âm của bạn.',
+    quickAction: {
+      type: 'navigate_workspace',
+      target: 'speaking',
+      label: 'Vào Phòng Luyện Speaking'
+    }
+  },
+  {
     id: 'feat-distractor-trap-decoder',
     version: 'v3.2',
     status: 'new',

@@ -15,6 +15,7 @@ import {
 } from '../../services/geminiService';
 import SpeakingSingleEvaluationModal from './SpeakingSingleEvaluationModal';
 import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
+import SpeakingPacingBar from './SpeakingPacingBar';
 
 export default function SpeakingPracticePane({
   practicePart = 1,
@@ -1637,50 +1638,13 @@ export default function SpeakingPracticePane({
               : 'bg-slate-950 border-slate-800'
           }`}>
             
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-xs font-black uppercase tracking-wider text-white block">
-                  Giai đoạn 2: Luyện Nói 2 Phút (Pacing Bar)
-                </span>
-                <span className="text-[11px] text-slate-400">
-                  Thanh định nhịp giúp bạn căn chuẩn mốc 1:30 - 2:00 mà không bị non giờ
-                </span>
-              </div>
-              <span className="text-sm font-mono font-black text-emerald-400">
-                {Math.floor(speakSecondsElapsed / 60)}:{(speakSecondsElapsed % 60).toString().padStart(2, '0')} / 02:00
-              </span>
-            </div>
-
-            {/* CALM 3-STAGE PACING BAR */}
-            <div className="space-y-1.5">
-              <div className="h-3.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 flex">
-                {/* 0 - 60s (Emerald) */}
-                <div 
-                  className="bg-emerald-500 transition-all duration-300 h-full"
-                  style={{ width: `${Math.min(50, (speakSecondsElapsed / 120) * 100)}%` }}
-                  title="0 - 60s: Mở đầu & bối cảnh"
-                />
-                {/* 60 - 90s (Amber) */}
-                <div 
-                  className="bg-amber-500 transition-all duration-300 h-full"
-                  style={{ width: `${Math.max(0, Math.min(25, ((speakSecondsElapsed - 60) / 120) * 100))}%` }}
-                  title="60 - 90s: Chi tiết cốt lõi & cảm xúc"
-                />
-                {/* 90 - 120s (Purple/Rose) */}
-                <div 
-                  className="bg-rose-500 transition-all duration-300 h-full"
-                  style={{ width: `${Math.max(0, Math.min(25, ((speakSecondsElapsed - 90) / 120) * 100))}%` }}
-                  title="90 - 120s: Kết luận & bài học"
-                />
-              </div>
-
-              <div className="flex items-center justify-between text-[10px] font-bold text-slate-500">
-                <span>0s<span className="hidden sm:inline"> (Bắt đầu)</span></span>
-                <span className="text-emerald-400">60s<span className="hidden sm:inline"> (Đã đủ bối cảnh)</span></span>
-                <span className="text-amber-400">90s<span className="hidden sm:inline"> (Vùng an toàn 7.0+)</span></span>
-                <span className="text-rose-400">120s<span className="hidden sm:inline"> (Chuẩn Cambridge)</span></span>
-              </div>
-            </div>
+            {/* Advanced Cambridge 4-Phase Pacing Bar */}
+            <SpeakingPacingBar
+              secondsElapsed={speakSecondsElapsed}
+              isActive={isPart2Speaking}
+              showStrategyTip={true}
+              theme="dark"
+            />
 
             {/* Waveform */}
             <div className="h-16 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden">

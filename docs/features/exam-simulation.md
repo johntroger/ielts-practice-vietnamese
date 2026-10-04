@@ -1,15 +1,39 @@
 # ⏱️ Phòng Thi Thử Chuẩn CDI & Chế Độ Marathon 3 Kỹ Năng
 
-> **Chuyên mục**: `exam_simulation` | **Số lượng**: **5 tính năng**  
+> **Chuyên mục**: `exam_simulation` | **Số lượng**: **6 tính năng**  
 > **Tổng quan**: Không gian mô phỏng phòng thi máy tính thực tế (Computer-Delivered IELTS) của IDP/British Council với giao diện chuẩn mực và phím tắt thi thật.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
 
 ---
 
+<a id="feat-speaking-pacing-bar"></a>
+
+## 1. Thanh Căn Nhịp Độ 2 Phút Speaking Part 2 (Speaking Pacing Bar)
+
+> **Phiên bản**: `v3.2` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Speaking** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Bản đồ 4 chặng thời gian vàng (0-30s bối cảnh, 30-75s diễn biến, 75-105s cao trào, 105-120s đúc kết) giúp giữ nhịp nói 1:50 - 2:00 không lo hụt ý hay cháy giờ.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Bản Đồ 4 Chặng Thời Gian Vàng Cambridge: Phân chia 120 giây thành 4 giai đoạn rõ ràng: Khởi động bối cảnh, Chi tiết cốt lõi, Cao trào cảm xúc và Đúc kết bài học.
+- Gợi Ý Chiến Thuật Thời Gian Thực (Live Coaching Prompts): Tự động hiển thị lời khuyên sư phạm tương ứng với từng giây đang nói để thí sinh luôn làm chủ mạch bài.
+- Vạch Báo Động Vùng Điểm Fluency: Cảnh báo vùng nguy cơ non giờ (< 1:15 bị kẹt Band 5.0), vùng an toàn (1:15 - 1:45) và vùng chạm đích xuất sắc (1:45 - 2:00 Band 7.5 - 8.5+).
+- Đếm Ngược 15 Giây Về Đích: Nhịp thở nhấp nháy êm ái nhắc nhở thí sinh kết bài tròn vẹn trước khi Giám khảo ngắt lời.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Tại phòng Luyện Nói Speaking hoặc Phòng Thi Giám Khảo, khi chuyển sang Part 2, thanh Pacing Bar sẽ tự động đồng bộ theo thời gian ghi âm của bạn.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Vào Phòng Luyện Speaking"** trong giao diện làm bài.
+
+---
+
 <a id="feat-speaking-mock-examiner"></a>
 
-## 1. Phòng Thi Nói Giám Khảo Mô Phỏng Cambridge (Examiner Room)
+## 2. Phòng Thi Nói Giám Khảo Mô Phỏng Cambridge (Examiner Room)
 
 > **Phiên bản**: `v2.8` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Speaking** | **Phím tắt**: _Không có_
 
@@ -33,7 +57,7 @@ Vào phân hệ "Speaking" -> Bấm tab "🎓 Phòng Thi Giám Khảo" -> Chọn
 
 <a id="feat-writing-cdi-workspace"></a>
 
-## 2. Phòng Viết Chuẩn Cambridge CDI & Chế Độ Tập Trung (Focus Mode)
+## 3. Phòng Viết Chuẩn Cambridge CDI & Chế Độ Tập Trung (Focus Mode)
 
 > **Phiên bản**: `v2.4` | **Huy hiệu**: `Cốt Lõi` | **Kỹ năng**: **Writing** | **Phím tắt**: `Alt + F`
 
@@ -57,7 +81,7 @@ Chuyển sang tab "Writing" trên thanh Navbar. Nhấn Alt + F để bật/tắt
 
 <a id="feat-reading-cdi-workspace"></a>
 
-## 3. Phòng Thi Đọc CDI Trực Quan: Tra Từ & Phá Bẫy Distractor
+## 4. Phòng Thi Đọc CDI Trực Quan: Tra Từ & Phá Bẫy Distractor
 
 > **Phiên bản**: `v2.4` | **Huy hiệu**: `Cốt Lõi` | **Kỹ năng**: **Reading** | **Phím tắt**: _Không có_
 
@@ -81,7 +105,7 @@ Chọn kỹ năng "Reading" trên Navbar -> Chọn đề bài từ Thư viện v
 
 <a id="feat-listening-cdi-workspace"></a>
 
-## 4. Phòng Luyện Nghe Đa Tốc Độ & Audioscript Phân Đoạn Thông Minh
+## 5. Phòng Luyện Nghe Đa Tốc Độ & Audioscript Phân Đoạn Thông Minh
 
 > **Phiên bản**: `v2.4` | **Huy hiệu**: `Cốt Lõi` | **Kỹ năng**: **Listening** | **Phím tắt**: `Space (Play/Pause)`
 
@@ -105,7 +129,7 @@ Chọn kỹ năng "Listening" trên Navbar -> Chọn bài nghe và nhấn phím 
 
 <a id="feat-mock-test-vault"></a>
 
-## 5. Phòng Thi Thử Áp Lực Cao (Mock Test Vault) 60 Phút & Đại Thi Thử
+## 6. Phòng Thi Thử Áp Lực Cao (Mock Test Vault) 60 Phút & Đại Thi Thử
 
 > **Phiên bản**: `v2.0` | **Huy hiệu**: `Thực Chiến` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
 

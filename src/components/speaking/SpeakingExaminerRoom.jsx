@@ -6,6 +6,7 @@ import { Mic, MicOff, AlertTriangle, Radio, Volume2, Square, Play, RotateCcw, Ar
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import SpeakingFillerTracker from './SpeakingFillerTracker';
 import SpeakingDigitalNotepad from './SpeakingDigitalNotepad';
+import SpeakingPacingBar from './SpeakingPacingBar';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
 import { analyzeCandidateUtterance } from '../../services/speakingAdaptiveService';
 
@@ -634,6 +635,19 @@ export default function SpeakingExaminerRoom({
                   <li key={idx} className="leading-relaxed">{p}</li>
                 ))}
               </ul>
+
+              {/* In Part 2 Speak: Live 4-Phase Pacing Bar */}
+              {currentStage === 'part2_speak' && (
+                <div className="pt-2">
+                  <SpeakingPacingBar
+                    secondsElapsed={part2SpeakSeconds}
+                    isActive={isMicActive}
+                    compact={false}
+                    showStrategyTip={true}
+                    theme="dark"
+                  />
+                </div>
+              )}
 
               {/* In Part 2 Prep: Embed Full Interactive 4-Quadrant Notepad */}
               {currentStage === 'part2_prep' && (

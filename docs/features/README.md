@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **42 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **43 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -15,7 +15,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | :--- | :---: | :--- | :--- |
 | 🤖 **Phân Hệ AI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
 | 🛠️ **Kho Đề Thi** | **11** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
-| ⏱️ **Phòng Thi Thử Chuẩn CDI** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
+| ⏱️ **Phòng Thi Thử Chuẩn CDI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
 | ⌨️ **Giao Diện Tập Trung** | **7** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](shortcuts-ux.md) |
@@ -41,6 +41,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Thanh Căn Nhịp Độ 2 Phút Speaking Part 2 (Speaking Pacing Bar)](exam-simulation.md#feat-speaking-pacing-bar)
+- **Phiên bản**: `v3.2` | **Kỹ năng**: **Speaking**
+- **Tóm tắt**: Bản đồ 4 chặng thời gian vàng (0-30s bối cảnh, 30-75s diễn biến, 75-105s cao trào, 105-120s đúc kết) giúp giữ nhịp nói 1:50 - 2:00 không lo hụt ý hay cháy giờ.
+- **Cách dùng nhanh**: Tại phòng Luyện Nói Speaking hoặc Phòng Thi Giám Khảo, khi chuyển sang Part 2, thanh Pacing Bar sẽ tự động đồng bộ theo thời gian ghi âm của bạn.
 
 ### ✦ [Bộ Giải Mã & Bóc Tách Bẫy Khảo Thí Cambridge (Distractor Trap Decoder)](ai-evaluation.md#feat-distractor-trap-decoder)
 - **Phiên bản**: `v3.2` | **Kỹ năng**: **Reading** • **Listening**
