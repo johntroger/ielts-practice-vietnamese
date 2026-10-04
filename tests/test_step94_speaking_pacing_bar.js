@@ -72,11 +72,15 @@ export async function runStep94Tests() {
   assert(getFluencySafeZone(110).isSafe === true, '110s nằm trong vùng xuất sắc (105s-120s)');
   assert(getFluencySafeZone(122).isOver === true, '122s đã hết 2:00 (over)');
 
-  // 6. Kiểm tra tích hợp trong SpeakingPracticePane.jsx
+  // 6. Kiểm tra tích hợp trong SpeakingPracticePane.jsx hoặc subroom SpeakingPart2Room.jsx
   const practicePanePath = path.join(rootDir, 'src', 'components', 'speaking', 'SpeakingPracticePane.jsx');
   const practicePaneContent = fs.readFileSync(practicePanePath, 'utf8');
-  assert(practicePaneContent.includes('SpeakingPacingBar'), 'SpeakingPracticePane.jsx đã import SpeakingPacingBar');
-  assert(practicePaneContent.includes('<SpeakingPacingBar'), 'SpeakingPracticePane.jsx render component SpeakingPacingBar');
+  const part2RoomPath = path.join(rootDir, 'src', 'components', 'speaking', 'subrooms', 'SpeakingPart2Room.jsx');
+  const part2RoomContent = fs.existsSync(part2RoomPath) ? fs.readFileSync(part2RoomPath, 'utf8') : '';
+  
+  const hasPracticeIntegration = (practicePaneContent.includes('SpeakingPacingBar') && practicePaneContent.includes('<SpeakingPacingBar')) ||
+                                 (practicePaneContent.includes('SpeakingPart2Room') && part2RoomContent.includes('<SpeakingPacingBar'));
+  assert(hasPracticeIntegration, 'Speaking Practice (SpeakingPracticePane / SpeakingPart2Room) tích hợp SpeakingPacingBar');
 
   // 7. Kiểm tra tích hợp trong SpeakingExaminerRoom.jsx
   const examinerRoomPath = path.join(rootDir, 'src', 'components', 'speaking', 'SpeakingExaminerRoom.jsx');
