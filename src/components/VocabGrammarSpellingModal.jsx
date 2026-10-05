@@ -27,15 +27,20 @@ import {
   RefreshCw,
   Search,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Compass,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import StarRatingWidget from './common/StarRatingWidget';
 import { recordAttempt, applySmartFilterAndSort } from '../services/ratingPopularityService';
 import {
   IELTS_SPELLING_TRAPS,
   IELTS_GRAMMAR_PACK,
-  IELTS_THEMATIC_VOCAB_DECKS
+  IELTS_THEMATIC_VOCAB_DECKS,
+  CAMBRIDGE_SYNONYM_PAIRS
 } from '../data/vocabGrammarSpellingData';
+import { getGitBookBaseUrl } from '../core/featureRegistry';
 import {
   generateSpellingTrapAi,
   generateGrammarDrillAi,
@@ -128,6 +133,7 @@ export default function VocabGrammarSpellingModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [vgQuickFilter, setVgQuickFilter] = useState('all');
   const [vgSortBy, setVgSortBy] = useState('rating_desc');
+  const [selectedSpellingCategory, setSelectedSpellingCategory] = useState('all');
 
   // ==========================================
   // TAB 1: SPELLING SPRINT STATE
@@ -140,7 +146,7 @@ export default function VocabGrammarSpellingModal({
     return IELTS_SPELLING_TRAPS;
   });
 
-  // Filtered spelling items by band tier, smart search, quick filter, sort & mastered status
+  // Filtered spelling items by band tier, category, smart search, quick filter, sort & mastered status
   const filteredSpellingList = useMemo(() => {
     let list = rawSpellingList;
     if (selectedBandTier === 'band-5.5') {
@@ -150,6 +156,11 @@ export default function VocabGrammarSpellingModal({
     } else if (selectedBandTier === 'band-7') {
       list = list.filter(item => item.bandLevel === '7.0' || item.bandLevel === '7.5');
     }
+
+    if (selectedSpellingCategory !== 'all') {
+      list = list.filter(item => item.category === selectedSpellingCategory);
+    }
+
     return applySmartFilterAndSort(list, {
       searchQuery,
       quickFilter: vgQuickFilter,
@@ -157,7 +168,19 @@ export default function VocabGrammarSpellingModal({
       masteredIds,
       hideMastered: hideMastered && currentUser
     });
-  }, [rawSpellingList, selectedBandTier, searchQuery, vgQuickFilter, vgSortBy, hideMastered, currentUser, masteredIds]);
+  }, [rawSpellingList, selectedBandTier, selectedSpellingCategory, searchQuery, vgQuickFilter, vgSortBy, hideMastered, currentUser, masteredIds]);
+
+  // Tab 4: Cambridge Synonyms Filter
+  const filteredSynonymsList = useMemo(() => {
+    let list = CAMBRIDGE_SYNONYM_PAIRS || [];
+    if (!searchQuery.trim()) return list;
+    const q = searchQuery.toLowerCase().trim();
+    return list.filter(item => 
+      item.questionStem?.toLowerCase().includes(q) ||
+      item.passageMatch?.toLowerCase().includes(q) ||
+      item.category?.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   const totalMasteredSpelling = useMemo(() => {
     if (!currentUser || !Array.isArray(masteredIds)) return 0;
@@ -1209,6 +1232,21 @@ export default function VocabGrammarSpellingModal({
               {filteredCards.length} thẻ
             </span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('synonyms')}
+            className={`flex items-center space-x-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+              activeTab === 'synonyms'
+                ? 'border-purple-600 text-purple-600 bg-white rounded-t-lg shadow-2xs'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Compass className="w-4 h-4" />
+            <span>50 Cặp Paraphrase Cambridge (Reading)</span>
+            <span className="px-1.5 py-0.5 rounded text-[11px] bg-purple-100 text-purple-700 font-extrabold">
+              {filteredSynonymsList.length} cặp
+            </span>
+          </button>
         </div>
 
         {/* MODAL BODY */}
@@ -1220,6 +1258,46 @@ export default function VocabGrammarSpellingModal({
           {activeTab === 'spelling' && (
             <div className="max-w-3xl mx-auto space-y-5">
               
+              {/* Category Filter Chips & Handbook Link */}
+              <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 shadow-2xs">
+                <div className="flex items-center space-x-1.5 overflow-x-auto min-w-0 flex-1">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0 mr-1">Nhóm bẫy:</span>
+                  {[
+                    { id: 'all', label: 'Tất cả' },
+                    { id: 'Double Letters', label: 'Ký tự kép' },
+                    { id: 'Vowel Traps', label: 'Nguyên âm' },
+                    { id: 'Silent Letters', label: 'Âm câm' },
+                    { id: 'Plural Demons', label: 'Số nhiều' },
+                    { id: 'Campus & Jobs', label: 'Trường học & Nghề' }
+                  ].map(cat => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedSpellingCategory(cat.id)}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                        selectedSpellingCategory === cat.id
+                          ? 'bg-red-600 text-white shadow-2xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                <a
+                  href={`${getGitBookBaseUrl()}/listening/listening-spelling-demons-100`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold border border-red-200 transition-colors shrink-0"
+                  title="Xem toàn bộ 100 từ sát thủ chính tả trên cẩm nang GitBook"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-red-600" />
+                  <span>Bí Kíp 100 Từ</span>
+                  <ExternalLink className="w-3 h-3 text-red-400" />
+                </a>
+              </div>
+
               {/* Scalable Navigation Toolbar */}
               {renderScalableNavToolbar({
                 type: 'spelling',
@@ -1723,6 +1801,110 @@ export default function VocabGrammarSpellingModal({
                   </div>
                 </div>
               ) : null}
+            </div>
+          )}
+
+          {/* ========================================== */}
+          {/* TAB 4: CAMBRIDGE SYNONYMS LEXICON          */}
+          {/* ========================================== */}
+          {activeTab === 'synonyms' && (
+            <div className="max-w-4xl mx-auto space-y-5 animate-in fade-in duration-150">
+              
+              {/* Banner Info & Handbook Link */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 text-white border border-purple-800/40 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/30 text-purple-200 border border-purple-500/40">
+                      Reading Cambridge 10 - 19
+                    </span>
+                    <span className="text-xs text-purple-300 font-semibold">Tần suất xuất hiện cao nhất</span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-white">
+                    Bảng Vàng 50 Cặp Từ Paraphrase Độc Quyền
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
+                    Chiến lược giải mã cơ chế hoán đổi từ của Giám khảo: Đối chiếu từ khóa câu hỏi (Question Stem) vs từ thực tế trong bài đọc (Passage Text).
+                  </p>
+                </div>
+
+                <a
+                  href={`${getGitBookBaseUrl()}/reading/reading-cambridge-synonym-lexicon`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="self-start sm:self-auto flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-md shrink-0 cursor-pointer"
+                  title="Xem toàn bộ ma trận từ đồng nghĩa trên cẩm nang GitBook"
+                >
+                  <BookOpen className="w-4 h-4 text-purple-200" />
+                  <span>Cẩm Nang Paraphrase</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-purple-300" />
+                </a>
+              </div>
+
+              {/* Quick Summary Pill & Filter count */}
+              <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+                <span>
+                  Hiển thị <strong>{filteredSynonymsList.length}</strong> / {CAMBRIDGE_SYNONYM_PAIRS.length} cặp từ tương đương
+                </span>
+                <span className="text-slate-400 italic hidden sm:inline">
+                  💡 Bấm vào từ bất kỳ để sao chép vào bộ nhớ đệm
+                </span>
+              </div>
+
+              {/* Grid of Synonym Pairs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {filteredSynonymsList.map((item, idx) => (
+                  <div
+                    key={item.id || idx}
+                    className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-purple-300 hover:shadow-xs transition-all space-y-3 flex flex-col justify-between"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-200">
+                          #{idx + 1} {item.category}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(`${item.questionStem} <=> ${item.passageMatch}`);
+                            alert(`Đã sao chép: "${item.questionStem} <=> ${item.passageMatch}"`);
+                          }}
+                          className="p-1 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
+                          title="Sao chép cặp từ này"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Question Stem */}
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                          Từ khóa trong câu hỏi (Question Stem):
+                        </span>
+                        <p className="text-xs sm:text-sm font-extrabold text-slate-900 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                          {item.questionStem}
+                        </p>
+                      </div>
+
+                      {/* Passage Match */}
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider block flex items-center space-x-1">
+                          <ArrowRight className="w-3 h-3 text-purple-500" />
+                          <span>Từ thực tế xuất hiện trong bài đọc:</span>
+                        </span>
+                        <p className="text-xs sm:text-sm font-bold text-purple-950 bg-purple-50/70 p-2 rounded-xl border border-purple-100/80 leading-relaxed font-serif">
+                          {item.passageMatch}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-50">
+                      <span>Cambridge Academic Lexicon</span>
+                      <span className="text-emerald-600 font-semibold">Paraphrase 100% khớp</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
             </div>
           )}
 

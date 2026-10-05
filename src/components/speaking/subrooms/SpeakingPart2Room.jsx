@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   GraduationCap, 
@@ -16,6 +16,7 @@ import {
 import SpeechWaveVisualizer from '../SpeechWaveVisualizer';
 import SpeakingPacingBar from '../SpeakingPacingBar';
 import SpeakingFillerTracker from '../SpeakingFillerTracker';
+import UniversalStoryArchetypesModal from '../UniversalStoryArchetypesModal';
 import { openTheoryModalWithContext } from '../../../services/theoryContextService';
 
 
@@ -62,6 +63,9 @@ export default function SpeakingPart2Room({
   setIsPrepping,
   setSpeakSecondsElapsed
 }) {
+  const [isArchetypesModalOpen, setIsArchetypesModalOpen] = useState(false);
+  const [customQuadrantNotes, setCustomQuadrantNotes] = useState(null);
+
   if (!activeP2Card) return null;
 
   return (
@@ -110,6 +114,16 @@ export default function SpeakingPart2Room({
           </div>
 
           <div className="flex items-center space-x-2 flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setIsArchetypesModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-700 hover:from-purple-600 hover:to-indigo-600 text-white text-xs font-bold border border-purple-500/40 transition-all cursor-pointer flex items-center space-x-1.5 shadow-md shadow-purple-950/40"
+              title="Mở bộ 5 Cốt Truyện Vạn Năng để bẻ lái mọi đề Forecast Part 2"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>5 Cốt Truyện Vạn Năng</span>
+            </button>
+
             <button
               type="button"
               onClick={() => openTheoryModalWithContext({
@@ -219,8 +233,33 @@ export default function SpeakingPart2Room({
         </div>
 
         {/* 4-Quadrant Mindmap Notes */}
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-[11px] font-bold text-slate-400">
+            {customQuadrantNotes ? 'Dàn ý 4 ô (Đã áp dụng từ 5 Cốt Truyện Vạn Năng):' : 'Dàn ý 4 ô gợi ý chuẩn:'}
+          </span>
+          <div className="flex items-center space-x-2">
+            {customQuadrantNotes && (
+              <button
+                type="button"
+                onClick={() => setCustomQuadrantNotes(null)}
+                className="text-[10px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
+              >
+                Khôi phục mặc định
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsArchetypesModalOpen(true)}
+              className="text-[11px] text-purple-400 hover:text-purple-300 font-bold flex items-center space-x-1 cursor-pointer"
+            >
+              <Sparkles className="w-3 h-3 text-amber-300" />
+              <span>Gợi ý 5 Cốt Truyện Vạn Năng</span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {activeP2Card.mindmapNotes?.map((note, idx) => (
+          {(customQuadrantNotes || activeP2Card.mindmapNotes || []).map((note, idx) => (
             <div key={idx} className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
               <span className="font-bold text-purple-400 mr-1.5">Ô {idx + 1}:</span>
               <span>{note}</span>
@@ -422,6 +461,17 @@ export default function SpeakingPart2Room({
           </div>
         )}
       </div>
+
+      {/* 5 Universal Story Archetypes Modal */}
+      <UniversalStoryArchetypesModal
+        isOpen={isArchetypesModalOpen}
+        onClose={() => setIsArchetypesModalOpen(false)}
+        currentCueCard={activeP2Card}
+        onInsertToNotes={(quadrants) => {
+          setCustomQuadrantNotes(quadrants);
+          setIsArchetypesModalOpen(false);
+        }}
+      />
 
     </div>
   );

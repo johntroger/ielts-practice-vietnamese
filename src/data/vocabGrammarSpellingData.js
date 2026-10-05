@@ -280,6 +280,1126 @@ export const IELTS_SPELLING_TRAPS = [
     "explanation": "Lỗi đảo vị trí 'ie' thành 'ei' xuất hiện dày đặc trong bài viết của học viên Band 5.0 - 5.5.",
     "category": "Academic Writing Core",
     "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-21",
+    "correct": "accommodate",
+    "distractors": [
+      "acommodate",
+      "accomodate",
+      "acomodate"
+    ],
+    "rule": "2 chữ 'c' và 2 chữ 'm': ac-com-mo-date.",
+    "contextSentence": "The university hall can ________ up to 500 conference delegates.",
+    "explanation": "Động từ tương ứng của danh từ 'accommodation'. Cực kỳ hay viết nhầm 1 chữ 'm'.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-22",
+    "correct": "assessment",
+    "distractors": [
+      "assesment",
+      "asesment",
+      "assessement"
+    ],
+    "rule": "2 chữ 's' ở cả hai vị trí: as-ses-s-ment (tổng cộng 4 chữ 's').",
+    "contextSentence": "Continuous academic ________ provides an equitable evaluation of student progress.",
+    "explanation": "Học viên thường quên nhân đôi chữ 's' ở vị trí thứ hai.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-23",
+    "correct": "possession",
+    "distractors": [
+      "posession",
+      "possessionn",
+      "posesion"
+    ],
+    "rule": "2 chữ 's' ở giữa và 2 chữ 's' ở đuôi: pos-ses-sion.",
+    "contextSentence": "Personal ________ must be safely stored in the examination lockers.",
+    "explanation": "Từ chỉ quyền sở hữu/vật dụng cá nhân, gồm 4 chữ 's'.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-24",
+    "correct": "successfully",
+    "distractors": [
+      "succesfully",
+      "successfuly",
+      "sucessfully"
+    ],
+    "rule": "2 chữ 'c', 2 chữ 's' và 2 chữ 'l': suc-ces-s-ful-ly.",
+    "contextSentence": "The medical team ________ performed the intricate cardiac operation.",
+    "explanation": "Trạng từ có tới 3 cặp ký tự kép liên tiếp.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-25",
+    "correct": "dissatisfied",
+    "distractors": [
+      "disatisfied",
+      "dissatified",
+      "dissatisfyed"
+    ],
+    "rule": "Tiền tố 'dis-' ghép với 'satisfied' tạo thành 2 chữ 's': dis-sa-tis-fied.",
+    "contextSentence": "Consumers were deeply ________ with the substandard customer service.",
+    "explanation": "Rất hay viết thiếu 1 chữ 's' do phát âm nối âm.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-26",
+    "correct": "recommend",
+    "distractors": [
+      "recommand",
+      "reccommend",
+      "recommed"
+    ],
+    "rule": "CHỈ CÓ 1 chữ 'c' và 2 chữ 'm': re-com-mend.",
+    "contextSentence": "Physicians strongly ________ at least thirty minutes of cardiovascular activity daily.",
+    "explanation": "Hơn 50% thí sinh nhầm lẫn thành 2 chữ 'c' (reccommend).",
+    "category": "Double Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-27",
+    "correct": "disappoint",
+    "distractors": [
+      "dissappoint",
+      "disapoint",
+      "dissapoint"
+    ],
+    "rule": "1 chữ 's' và 2 chữ 'p': dis-ap-point.",
+    "contextSentence": "The unexpected research findings did not ________ the passionate research team.",
+    "explanation": "Thí sinh rất hay nhầm thành 2 chữ 's' (dissappoint).",
+    "category": "Double Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-28",
+    "correct": "professional",
+    "distractors": [
+      "profesional",
+      "proffessional",
+      "proffesional"
+    ],
+    "rule": "1 chữ 'f' và 2 chữ 's': pro-fes-sio-nal.",
+    "contextSentence": "All candidates must maintain high standards of ________ integrity.",
+    "explanation": "Rất hay bị viết thừa 2 chữ 'f' hoặc thiếu 1 chữ 's'.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-29",
+    "correct": "committee",
+    "distractors": [
+      "comittee",
+      "commitee",
+      "committe"
+    ],
+    "rule": "Kỷ lục ký tự kép: 2 chữ 'm', 2 chữ 't' và 2 chữ 'e': com-mit-tee.",
+    "contextSentence": "The ethics ________ convened to deliberate on gene-editing boundaries.",
+    "explanation": "Một trong những từ bẫy chính tả phổ biến nhất Cambridge Listening Section 2.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-30",
+    "correct": "exaggerate",
+    "distractors": [
+      "exagerate",
+      "exaggurate",
+      "exagerrate"
+    ],
+    "rule": "2 chữ 'g' và 1 chữ 'r': ex-ag-ge-rate.",
+    "contextSentence": "Sensationalist tabloids frequently ________ the severity of economic recessions.",
+    "explanation": "Người học thường viết thiếu 1 chữ 'g' hoặc thêm thừa chữ 'r'.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-31",
+    "correct": "interruption",
+    "distractors": [
+      "interuption",
+      "interuprion",
+      "interrupsion"
+    ],
+    "rule": "2 chữ 'r': in-ter-rup-tion.",
+    "contextSentence": "The keynote speaker continued his delivery without any awkward ________.",
+    "explanation": "Thường bị viết thiếu thành 1 chữ 'r'.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-32",
+    "correct": "apparent",
+    "distractors": [
+      "aparent",
+      "apparant",
+      "apparrent"
+    ],
+    "rule": "2 chữ 'p' và 1 chữ 'r': ap-pa-rent.",
+    "contextSentence": "It soon became ________ that initial climate projections were overly optimistic.",
+    "explanation": "Rất dễ nhầm thành 1 chữ 'p' hoặc 2 chữ 'r'.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-33",
+    "correct": "parallel",
+    "distractors": [
+      "paralell",
+      "parallell",
+      "parrallel"
+    ],
+    "rule": "2 chữ 'l' ở giữa, 1 chữ 'l' ở cuối: pa-ral-lel.",
+    "contextSentence": "Historians drew a poignant ________ between ancient and modern geopolitical crises.",
+    "explanation": "Lỗi hoán đổi vị trí chữ đơn và chữ kép.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-34",
+    "correct": "colleague",
+    "distractors": [
+      "collegue",
+      "colleage",
+      "colleguee"
+    ],
+    "rule": "2 chữ 'l' và đuôi '-gue': col-league.",
+    "contextSentence": "She exchanged peer-reviewed feedback with an esteemed departmental ________.",
+    "explanation": "Thí sinh hay viết nhầm đuôi thành '-ge' hoặc '-g'.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-35",
+    "correct": "accessory",
+    "distractors": [
+      "accesory",
+      "accessary",
+      "acessory"
+    ],
+    "rule": "2 chữ 'c' và 2 chữ 's': ac-ces-so-ry.",
+    "contextSentence": "Safety goggles serve as an indispensable laboratory ________ during acid testing.",
+    "explanation": "Hay nhầm lẫn giữa chữ đơn và kép ở cả 'c' và 's'.",
+    "category": "Double Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-36",
+    "correct": "aggressive",
+    "distractors": [
+      "agressive",
+      "aggresive",
+      "agresive"
+    ],
+    "rule": "2 chữ 'g' và 2 chữ 's': ag-gres-sive.",
+    "contextSentence": "Startups adopted an ________ expansion strategy to capture overseas market share.",
+    "explanation": "Hay viết thiếu 1 chữ 'g' hoặc 1 chữ 's'.",
+    "category": "Double Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-37",
+    "correct": "permission",
+    "distractors": [
+      "permision",
+      "permisson",
+      "permissian"
+    ],
+    "rule": "2 chữ 's' và đuôi '-sion': per-mis-sion.",
+    "contextSentence": "Field investigators obtained written ________ prior to interviewing local villagers.",
+    "explanation": "Lỗi phổ biến là viết 1 chữ 's'.",
+    "category": "Double Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-38",
+    "correct": "surveillance",
+    "distractors": [
+      "surveilance",
+      "survalience",
+      "survaillance"
+    ],
+    "rule": "2 chữ 'l' và đuôi '-lance': sur-veil-lance.",
+    "contextSentence": "Autonomous drone ________ has enhanced coastal border protection significantly.",
+    "explanation": "Từ vựng nâng cao Band 7.5 trong đề tài An ninh & Công nghệ.",
+    "category": "Double Letters",
+    "bandLevel": "7.5"
+  },
+  {
+    "id": "sp-39",
+    "correct": "privilege",
+    "distractors": [
+      "priviledge",
+      "privelege",
+      "privledge"
+    ],
+    "rule": "KHÔNG có chữ 'd': pri-vi-lege (chữ 'i' thứ hai và đuôi '-lege').",
+    "contextSentence": "Tertiary education should be an accessible universal right, not a wealthy ________.",
+    "explanation": "Hơn 60% học viên thêm chữ 'd' giống từ 'knowledge'.",
+    "category": "Vowel Traps",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-40",
+    "correct": "category",
+    "distractors": [
+      "catagory",
+      "categary",
+      "cetegory"
+    ],
+    "rule": "Chữ 'e' ở giữa và 'o' ở âm tiết 3: ca-te-go-ry.",
+    "contextSentence": "Survey respondents were stratified into three distinct socio-economic ________.",
+    "explanation": "Do phát âm âm Schwa, học viên rất hay viết thành 'catagory'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-41",
+    "correct": "discipline",
+    "distractors": [
+      "disipline",
+      "dissipline",
+      "disciplin"
+    ],
+    "rule": "Có cả 's' và 'c': dis-ci-pline.",
+    "contextSentence": "Unwavering academic ________ is the cornerstone of exceptional IELTS performance.",
+    "explanation": "Rất hay thiếu chữ 'c' do âm /s/ nuốt chữ.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-42",
+    "correct": "noticeable",
+    "distractors": [
+      "noticable",
+      "noticeble",
+      "noticible"
+    ],
+    "rule": "Giữ nguyên chữ 'e' của 'notice': no-tice-a-ble.",
+    "contextSentence": "There was a ________ disparity between urban and rural literacy rates.",
+    "explanation": "Quy tắc giữ 'e' khi thêm hậu tố '-able' sau 'ce' để giữ âm /s/.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-43",
+    "correct": "changeable",
+    "distractors": [
+      "changable",
+      "changeble",
+      "changible"
+    ],
+    "rule": "Giữ nguyên chữ 'e' của 'change': change-a-ble.",
+    "contextSentence": "The high-altitude weather conditions proved notoriously ________ throughout the trek.",
+    "explanation": "Giữ 'e' sau 'ge' để duy trì phát âm /dʒ/.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-44",
+    "correct": "independent",
+    "distractors": [
+      "independant",
+      "independunt",
+      "indepentent"
+    ],
+    "rule": "Đuôi '-ent', tuyệt đối KHÔNG PHẢI '-ant': in-de-pen-dent.",
+    "contextSentence": "The committee appointed an ________ external auditor to review finances.",
+    "explanation": "Một trong những lỗi đuôi tính từ phổ biến nhất trong IELTS Writing & Listening.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-45",
+    "correct": "dependence",
+    "distractors": [
+      "dependance",
+      "dependanse",
+      "dependense"
+    ],
+    "rule": "Đuôi '-ence': de-pen-dence.",
+    "contextSentence": "Excessive economic ________ on single-commodity exports creates vulnerability.",
+    "explanation": "Hay nhầm lẫn đuôi '-ence' thành '-ance'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-46",
+    "correct": "attendance",
+    "distractors": [
+      "attendence",
+      "attendense",
+      "atendance"
+    ],
+    "rule": "Đuôi '-ance': at-ten-dance (2 chữ 't' và đuôi '-ance').",
+    "contextSentence": "Punctual seminar ________ constitutes ten percent of the module evaluation.",
+    "explanation": "Khác với dependence (-ence), attendance dùng đuôi '-ance'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-47",
+    "correct": "guidance",
+    "distractors": [
+      "guidence",
+      "guidense",
+      "gidence"
+    ],
+    "rule": "Đuôi '-ance': gui-dance.",
+    "contextSentence": "Undergraduate researchers sought meticulous ________ from their thesis supervisor.",
+    "explanation": "Dùng '-ance', rất hay bị nhầm thành '-ence'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-48",
+    "correct": "existence",
+    "distractors": [
+      "existance",
+      "existense",
+      "existanse"
+    ],
+    "rule": "Đuôi '-ence': ex-is-tence.",
+    "contextSentence": "Paleontologists verified the historical ________ of prehistoric marine reptiles.",
+    "explanation": "Thí sinh rất hay viết thành 'existance'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-49",
+    "correct": "curriculum",
+    "distractors": [
+      "curiculum",
+      "curriculam",
+      "curicullum"
+    ],
+    "rule": "2 chữ 'r', 1 chữ 'c' và đuôi '-lum': cur-ri-cu-lum.",
+    "contextSentence": "The vocational ________ was revamped to align with digital workplace demands.",
+    "explanation": "Từ khóa học thuật cốt lõi trong Listening Section 3.",
+    "category": "Vowel Traps",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-50",
+    "correct": "explanation",
+    "distractors": [
+      "explaination",
+      "explanasion",
+      "explanition"
+    ],
+    "rule": "BỎ chữ 'i' của 'explain': ex-pla-na-tion (không phải explaination).",
+    "contextSentence": "The laboratory manual offered a straightforward ________ of data sampling methods.",
+    "explanation": "Lỗi tương tự 'pronunciation', học viên bị thói quen động từ 'explain' chi phối.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-51",
+    "correct": "repetition",
+    "distractors": [
+      "repeatition",
+      "repetation",
+      "repatition"
+    ],
+    "rule": "re-pe-ti-tion (bỏ chữ 'a' của 'repeat').",
+    "contextSentence": "Spaced lexical ________ substantially reinforces long-term memory consolidation.",
+    "explanation": "Động từ là 'repeat' nhưng danh từ là 'repetition'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-52",
+    "correct": "description",
+    "distractors": [
+      "discription",
+      "describtion",
+      "descripsion"
+    ],
+    "rule": "Bắt đầu bằng 'de-': de-scrip-tion (đổi 'b' thành 'p').",
+    "contextSentence": "The botanical catalogue provided an exhaustive ________ of endemic flora.",
+    "explanation": "Động từ 'describe' nhưng danh từ là 'description'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-53",
+    "correct": "beneficial",
+    "distractors": [
+      "benificial",
+      "benefical",
+      "benefitial"
+    ],
+    "rule": "be-ne-fi-cial (chữ 'e' ở âm tiết 2, 'i' ở âm tiết 3).",
+    "contextSentence": "Aerobic conditioning exercises are remarkably ________ to cardiovascular health.",
+    "explanation": "Rất hay nhầm nguyên âm 'e' thành 'i'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-54",
+    "correct": "grammar",
+    "distractors": [
+      "grammer",
+      "gramar",
+      "gramer"
+    ],
+    "rule": "2 chữ 'm' và đuôi '-ar': gram-mar.",
+    "contextSentence": "A command of nuanced academic ________ is indispensable for Band 8 writing.",
+    "explanation": "Hơn 40% người học tiếng Anh viết nhầm thành 'grammer'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-55",
+    "correct": "calendar",
+    "distractors": [
+      "calender",
+      "calandar",
+      "calander"
+    ],
+    "rule": "Đuôi '-ar': ca-len-dar (âm tiết giữa là 'e', đuôi là 'ar').",
+    "contextSentence": "Consult the institutional academic ________ for dissertation submission deadlines.",
+    "explanation": "Lỗi cực kỳ kinh điển trong IELTS Listening Section 1.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-56",
+    "correct": "familiar",
+    "distractors": [
+      "familar",
+      "familier",
+      "familliar"
+    ],
+    "rule": "Đuôi '-iar': fa-mi-li-ar.",
+    "contextSentence": "Candidates should become intimately ________ with computer-delivered test software.",
+    "explanation": "Hay thiếu chữ 'i' hoặc nhầm thành '-ier'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-57",
+    "correct": "similar",
+    "distractors": [
+      "similiar",
+      "similer",
+      "similair"
+    ],
+    "rule": "Đuôi '-ar': si-mi-lar (chỉ có 1 chữ 'i' trước 'm', 1 'i' sau 'm').",
+    "contextSentence": "Both ecological case studies documented remarkably ________ migratory behaviours.",
+    "explanation": "Hay bị viết thừa thành 'similiar'.",
+    "category": "Vowel Traps",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-58",
+    "correct": "Wednesday",
+    "distractors": [
+      "Wenesday",
+      "Wensday",
+      "Wednesdey"
+    ],
+    "rule": "Câm chữ 'd': Wed-nes-day.",
+    "contextSentence": "The chemistry lab workshop convenes promptly every ________ morning.",
+    "explanation": "Từ căn bản Section 1 nhưng tỷ lệ sai chính tả lên đến 25%.",
+    "category": "Silent Letters",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-59",
+    "correct": "February",
+    "distractors": [
+      "Febuary",
+      "Feburary",
+      "Februrary"
+    ],
+    "rule": "Có chữ 'r' sau 'b': Feb-ru-ary.",
+    "contextSentence": "Annual departmental funding allocations are finalized in late ________.",
+    "explanation": "Phát âm thường lướt qua âm /ru/ khiến người học bỏ quên chữ 'r'.",
+    "category": "Silent Letters",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-60",
+    "correct": "autumn",
+    "distractors": [
+      "autum",
+      "autumnn",
+      "otumn"
+    ],
+    "rule": "Câm chữ 'n' cuối: au-tumn.",
+    "contextSentence": "Migratory birds depart for southern wetlands at the commencement of ________.",
+    "explanation": "Chữ 'n' hoàn toàn câm sau 'm'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-61",
+    "correct": "column",
+    "distractors": [
+      "colum",
+      "columnn",
+      "columns"
+    ],
+    "rule": "Câm chữ 'n' cuối: co-lumn.",
+    "contextSentence": "Insert demographic figures accurately into the third ________ of the spreadsheet.",
+    "explanation": "Chữ 'n' câm tương tự 'autumn'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-62",
+    "correct": "receipt",
+    "distractors": [
+      "receit",
+      "reciept",
+      "recipt"
+    ],
+    "rule": "Câm chữ 'p' và 'ei' sau 'c': re-ceipt.",
+    "contextSentence": "Candidates must preserve their booking payment ________ for verification.",
+    "explanation": "Chữ 'p' câm và tuân theo luật 'I before E except after C'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-63",
+    "correct": "doubt",
+    "distractors": [
+      "dout",
+      "doudt",
+      "doubtt"
+    ],
+    "rule": "Câm chữ 'b': dou-bt.",
+    "contextSentence": "There is little empirical ________ that global warming alters oceanic currents.",
+    "explanation": "Âm /b/ hoàn toàn câm.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-64",
+    "correct": "debt",
+    "distractors": [
+      "det",
+      "dept",
+      "debtt"
+    ],
+    "rule": "Câm chữ 'b': de-bt.",
+    "contextSentence": "Emerging economies struggled under the weight of ballooning sovereign ________.",
+    "explanation": "Âm /b/ câm, phát âm là /det/.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-65",
+    "correct": "subtle",
+    "distractors": [
+      "suttle",
+      "subtel",
+      "sutle"
+    ],
+    "rule": "Câm chữ 'b': sub-tle (đọc là /ˈsʌt.əl/).",
+    "contextSentence": "There are ________ contextual nuances differentiating these two grammatical forms.",
+    "explanation": "Chữ 'b' câm hoàn toàn.",
+    "category": "Silent Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-66",
+    "correct": "rhythm",
+    "distractors": [
+      "rythm",
+      "rhytm",
+      "rhythmn"
+    ],
+    "rule": "r-h-y-t-h-m (có 2 chữ 'h' và dùng 'y' làm nguyên âm).",
+    "contextSentence": "Consistent circadian ________ promotes restorative sleep cycles.",
+    "explanation": "Một trong những từ dễ viết sai nhất vì không có nguyên âm chuẩn a, e, i, o, u.",
+    "category": "Silent Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-67",
+    "correct": "rhyme",
+    "distractors": [
+      "ryme",
+      "rime",
+      "rhyme"
+    ],
+    "rule": "r-h-y-m-e.",
+    "contextSentence": "Linguistic tests evaluate whether young learners can identify basic nursery ________.",
+    "explanation": "Có chữ 'h' câm sau 'r'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-68",
+    "correct": "guarantee",
+    "distractors": [
+      "garantee",
+      "garentee",
+      "guarente"
+    ],
+    "rule": "Bắt đầu bằng 'gua-': gua-ran-tee.",
+    "contextSentence": "Rigorous study habits offer no absolute ________ of achieving an 8.5 band score.",
+    "explanation": "Chữ 'u' sau 'g' rất hay bị bỏ quên.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-69",
+    "correct": "guard",
+    "distractors": [
+      "gard",
+      "gaurd",
+      "gourd"
+    ],
+    "rule": "g-u-a-r-d (chữ 'u' đứng trước 'a').",
+    "contextSentence": "Campus security personnel ________ the archival research facility overnight.",
+    "explanation": "Người học thường viết nhầm thành 'gaurd' theo phát âm.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-70",
+    "correct": "schedule",
+    "distractors": [
+      "shedule",
+      "schedual",
+      "skedule"
+    ],
+    "rule": "s-c-h-e-d-u-l-e.",
+    "contextSentence": "Adhering to a realistic revision ________ mitigates acute examination anxiety.",
+    "explanation": "Cách phát âm Anh-Anh /ˈʃedʒ.uːl/ và Anh-Mỹ /ˈskedʒ.uːl/ đều viết là 'schedule'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-71",
+    "correct": "vehicle",
+    "distractors": [
+      "vechicle",
+      "vehical",
+      "vehilce"
+    ],
+    "rule": "Câm chữ 'h': ve-hi-cle.",
+    "contextSentence": "Subsidies for zero-emission electric ________ surged across Scandinavia.",
+    "explanation": "Chữ 'h' câm và đuôi '-cle'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-72",
+    "correct": "exhibition",
+    "distractors": [
+      "exibition",
+      "exhibitionn",
+      "exhibision"
+    ],
+    "rule": "Có chữ 'h': ex-hi-bi-tion.",
+    "contextSentence": "The contemporary art museum launched an interactive sensory ________.",
+    "explanation": "Dù phát âm /ˌek.sɪˈbɪʃ.ən/ nuốt âm 'h', dạng viết bắt buộc phải có 'h'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-73",
+    "correct": "exhausted",
+    "distractors": [
+      "exausted",
+      "exhaustid",
+      "exhasted"
+    ],
+    "rule": "Có chữ 'h' và 'au': ex-haus-ted.",
+    "contextSentence": "Candidates felt mentally ________ following the rigorous four-hour test battery.",
+    "explanation": "Chữ 'h' câm sau 'x'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-74",
+    "correct": "knowledge",
+    "distractors": [
+      "knowlege",
+      "knowledg",
+      "nowledge"
+    ],
+    "rule": "Bắt đầu bằng 'kn-' và kết thúc bằng '-dge': know-ledge.",
+    "contextSentence": "Empirical observation transforms theoretical ________ into practical competence.",
+    "explanation": "Rất hay viết thiếu chữ 'd' trong đuôi '-dge'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-75",
+    "correct": "acknowledge",
+    "distractors": [
+      "acknowlege",
+      "acnowledge",
+      "aknowledge"
+    ],
+    "rule": "ac-know-ledge.",
+    "contextSentence": "Scholars must formally ________ institutional grants in published articles.",
+    "explanation": "Ghép 'ac-' và 'knowledge'.",
+    "category": "Silent Letters",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-76",
+    "correct": "foreign",
+    "distractors": [
+      "foriegn",
+      "forein",
+      "foreing"
+    ],
+    "rule": "Câm chữ 'g': fo-reign.",
+    "contextSentence": "Fluency in a second ________ language enhances cognitive adaptability.",
+    "explanation": "Chữ 'g' câm trước 'n', và viết 'ei' thay vì 'ie'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-77",
+    "correct": "campaign",
+    "distractors": [
+      "campain",
+      "campaing",
+      "campagne"
+    ],
+    "rule": "Câm chữ 'g': cam-paign.",
+    "contextSentence": "A nationwide public education ________ reduced consumer single-use plastic waste.",
+    "explanation": "Chữ 'g' câm trước 'n'.",
+    "category": "Silent Letters",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-78",
+    "correct": "activities",
+    "distractors": [
+      "activitys",
+      "activites",
+      "actevities"
+    ],
+    "rule": "Đổi '-y' thành '-ies': ac-ti-vi-ties.",
+    "contextSentence": "Extracurricular ________ foster team collaboration and leadership resilience.",
+    "explanation": "Danh từ số nhiều của 'activity'.",
+    "category": "Plural Demons",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-79",
+    "correct": "facilities",
+    "distractors": [
+      "facilitys",
+      "facilites",
+      "facillities"
+    ],
+    "rule": "Đổi '-y' thành '-ies': fa-ci-li-ties.",
+    "contextSentence": "Cutting-edge athletic ________ attract international elite sporting teams.",
+    "explanation": "Danh từ số nhiều của 'facility'.",
+    "category": "Plural Demons",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-80",
+    "correct": "strategies",
+    "distractors": [
+      "strategys",
+      "strateges",
+      "stratigies"
+    ],
+    "rule": "Đổi '-y' thành '-ies': stra-te-gies.",
+    "contextSentence": "Effective skimming and scanning ________ accelerate Reading section completion.",
+    "explanation": "Danh từ số nhiều của 'strategy'.",
+    "category": "Plural Demons",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-81",
+    "correct": "shelves",
+    "distractors": [
+      "shelfs",
+      "shelvs",
+      "shelfes"
+    ],
+    "rule": "Đổi '-f' thành '-ves': shel-ves.",
+    "contextSentence": "Dust-covered archival tomes filled the towering library ________.",
+    "explanation": "Bất quy tắc: shelf -> shelves.",
+    "category": "Plural Demons",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-82",
+    "correct": "leaves",
+    "distractors": [
+      "leafs",
+      "leavs",
+      "leafes"
+    ],
+    "rule": "Đổi '-f' thành '-ves': lea-ves.",
+    "contextSentence": "Deciduous canopy trees shed their golden ________ each autumn.",
+    "explanation": "Bất quy tắc: leaf -> leaves.",
+    "category": "Plural Demons",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-83",
+    "correct": "knives",
+    "distractors": [
+      "knifes",
+      "knivs",
+      "nives"
+    ],
+    "rule": "Đổi '-fe' thành '-ves': kni-ves.",
+    "contextSentence": "Surgical ________ require uncompromising sterile autoclave procedures.",
+    "explanation": "Bất quy tắc: knife -> knives.",
+    "category": "Plural Demons",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-84",
+    "correct": "volcanoes",
+    "distractors": [
+      "volcanos",
+      "volcano's",
+      "volcanose"
+    ],
+    "rule": "Thêm '-es': vol-ca-noes.",
+    "contextSentence": "Active underwater ________ emit concentrated plumes of mineral-rich sulfur.",
+    "explanation": "Ưu tiên dạng '-es' chuẩn mực Cambridge.",
+    "category": "Plural Demons",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-85",
+    "correct": "tomatoes",
+    "distractors": [
+      "tomatos",
+      "tomatos'",
+      "tomatose"
+    ],
+    "rule": "Bắt buộc thêm '-es': to-ma-toes.",
+    "contextSentence": "Hydroponic greenhouse facilities produce vitamin-dense organic ________.",
+    "explanation": "Từ kết thúc bằng nguyên âm + o phải thêm -es.",
+    "category": "Plural Demons",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-86",
+    "correct": "potatoes",
+    "distractors": [
+      "potatos",
+      "potatos'",
+      "potatose"
+    ],
+    "rule": "Bắt buộc thêm '-es': po-ta-toes.",
+    "contextSentence": "Starchy staple crops such as sweet ________ anchor local food security.",
+    "explanation": "Tương tự 'tomatoes', bắt buộc thêm -es.",
+    "category": "Plural Demons",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-87",
+    "correct": "criteria",
+    "distractors": [
+      "criterias",
+      "criterions",
+      "criterias'"
+    ],
+    "rule": "Số nhiều gốc Hy Lạp: criterion -> cri-te-ri-a.",
+    "contextSentence": "Examiners rate written transcripts across four rigorously defined band ________.",
+    "explanation": "Tuyệt đối không thêm 's' vào sau criteria vì bản thân nó đã là số nhiều.",
+    "category": "Plural Demons",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-88",
+    "correct": "phenomena",
+    "distractors": [
+      "phenomenas",
+      "phenomenons",
+      "phenomens"
+    ],
+    "rule": "Số nhiều gốc Hy Lạp: phenomenon -> phe-no-me-na.",
+    "contextSentence": "Aurora borealis displays are breathtaking magnetic atmospheric ________.",
+    "explanation": "Số nhiều không thêm 's'.",
+    "category": "Plural Demons",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-89",
+    "correct": "analyses",
+    "distractors": [
+      "analysises",
+      "analysiss",
+      "analasies"
+    ],
+    "rule": "Số nhiều đổi '-is' thành '-es': a-nal-y-ses (đọc là /əˈnæl.ə.siːz/).",
+    "contextSentence": "Comparative econometric ________ revealed pronounced cross-regional income disparities.",
+    "explanation": "Analysis (số ít) -> Analyses (số nhiều).",
+    "category": "Plural Demons",
+    "bandLevel": "7.5"
+  },
+  {
+    "id": "sp-90",
+    "correct": "hypotheses",
+    "distractors": [
+      "hypothesiss",
+      "hypothesises",
+      "hypotheses'"
+    ],
+    "rule": "Số nhiều đổi '-is' thành '-es': hy-po-the-ses.",
+    "contextSentence": "Doctoral researchers postulated two mutually exclusive experimental ________.",
+    "explanation": "Hypothesis (số ít) -> Hypotheses (số nhiều).",
+    "category": "Plural Demons",
+    "bandLevel": "7.5"
+  },
+  {
+    "id": "sp-91",
+    "correct": "bacteria",
+    "distractors": [
+      "bacterias",
+      "bacteriums",
+      "bacteries"
+    ],
+    "rule": "Số nhiều gốc Latinh: bacterium -> bac-te-ri-a.",
+    "contextSentence": "Pathogenic gut ________ developed notable resistance to broad-spectrum penicillin.",
+    "explanation": "Bản thân 'bacteria' là số nhiều, không thêm 's'.",
+    "category": "Plural Demons",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-92",
+    "correct": "restaurant",
+    "distractors": [
+      "restarant",
+      "resturant",
+      "restaraunt"
+    ],
+    "rule": "res-tau-rant (có cụm 'au' ở giữa).",
+    "contextSentence": "Commuters patronized the organic vegetarian ________ situated near the campus plaza.",
+    "explanation": "Một trong những từ Section 1 viết sai nhiều nhất mọi thời đại.",
+    "category": "Campus & Jobs",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-93",
+    "correct": "cafeteria",
+    "distractors": [
+      "cafataria",
+      "cafeteriaa",
+      "cafetaria"
+    ],
+    "rule": "ca-fe-te-ri-a (hai chữ 'e').",
+    "contextSentence": "The newly renovated campus ________ serves hot meals continuously until evening.",
+    "explanation": "Hay nhầm nguyên âm 'e' thành 'a'.",
+    "category": "Campus & Jobs",
+    "bandLevel": "6.0"
+  },
+  {
+    "id": "sp-94",
+    "correct": "laboratory",
+    "distractors": [
+      "labratory",
+      "laboratary",
+      "laboratery"
+    ],
+    "rule": "la-bo-ra-to-ry (có chữ 'o' ở cả hai âm tiết 2 và 4).",
+    "contextSentence": "Chemical safety goggles are mandatory prior to entering the biology ________.",
+    "explanation": "Dù nói tắt là 'lab', khi điền từ thi Listening phải viết đầy đủ 'laboratory'.",
+    "category": "Campus & Jobs",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-95",
+    "correct": "library",
+    "distractors": [
+      "libary",
+      "librery",
+      "libarry"
+    ],
+    "rule": "li-bra-ry (phải có chữ 'r' thứ hai).",
+    "contextSentence": "Dedicated silent carrels occupy the upper gallery of the university ________.",
+    "explanation": "Rất hay viết thiếu chữ 'r' thành 'libary'.",
+    "category": "Campus & Jobs",
+    "bandLevel": "5.5"
+  },
+  {
+    "id": "sp-96",
+    "correct": "stationery",
+    "distractors": [
+      "stationary",
+      "stationeryy",
+      "stationry"
+    ],
+    "rule": "Đuôi '-ery': sta-tion-e-ry (phân biệt với stationary có nghĩa là đứng yên).",
+    "contextSentence": "The bookstore offers examination-approved calculators and high-grade ________.",
+    "explanation": "Mẹo nhớ: StationERy có chữ 'E' là Envelopes (phong bì thư/văn phòng phẩm).",
+    "category": "Campus & Jobs",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-97",
+    "correct": "architect",
+    "distractors": [
+      "architech",
+      "arkitect",
+      "artchitect"
+    ],
+    "rule": "ar-chi-tect (viết 'ch' nhưng đọc là /k/).",
+    "contextSentence": "The award-winning sustainable ________ drafted plans for the green technology hub.",
+    "explanation": "Thường bị viết sai thành đuôi '-tech'.",
+    "category": "Campus & Jobs",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-98",
+    "correct": "technician",
+    "distractors": [
+      "technitian",
+      "technican",
+      "tecnician"
+    ],
+    "rule": "tech-ni-cian (đuôi '-cian').",
+    "contextSentence": "A specialized audiovisual ________ resolved the conference microphone glitch promptly.",
+    "explanation": "Chỉ nghề nghiệp bằng đuôi '-cian' thay vì '-tian'.",
+    "category": "Campus & Jobs",
+    "bandLevel": "6.5"
+  },
+  {
+    "id": "sp-99",
+    "correct": "auditorium",
+    "distractors": [
+      "audotorium",
+      "auditarium",
+      "oditorium"
+    ],
+    "rule": "au-di-to-ri-um.",
+    "contextSentence": "The inaugural chancellor convocation convened inside the grand tiered ________.",
+    "explanation": "Từ vựng campus điển hình chỉ hội trường/giảng đường lớn.",
+    "category": "Campus & Jobs",
+    "bandLevel": "7.0"
+  },
+  {
+    "id": "sp-100",
+    "correct": "archaeology",
+    "distractors": [
+      "archeology",
+      "archeaology",
+      "archaeolagy"
+    ],
+    "rule": "ar-chae-ol-o-gy (có cụm 'ae').",
+    "contextSentence": "Undergraduate ________ students unearthed Roman mosaic tiles during their field dig.",
+    "explanation": "Chuẩn Anh-Anh viết 'archaeology' (Anh-Mỹ chấp nhận 'archeology').",
+    "category": "Campus & Jobs",
+    "bandLevel": "7.5"
   }
 ];
 
@@ -881,5 +2001,308 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
         "mastery": "learning"
       }
     ]
+  }
+];
+
+export const CAMBRIDGE_SYNONYM_PAIRS = [
+  {
+    "id": "syn-1",
+    "questionStem": "solve / tackle a problem",
+    "passageMatch": "address / overcome / mitigate a dilemma / crisis",
+    "category": "Problem Solving"
+  },
+  {
+    "id": "syn-2",
+    "questionStem": "significant / dramatic decrease",
+    "passageMatch": "precipitous plunge / sharp downturn / substantial drop",
+    "category": "Trends & Quantities"
+  },
+  {
+    "id": "syn-3",
+    "questionStem": "rely heavily on",
+    "passageMatch": "be excessively dependent upon / place reliance on",
+    "category": "Relationships"
+  },
+  {
+    "id": "syn-4",
+    "questionStem": "financial assistance / funding",
+    "passageMatch": "state subsidy / grant / monetary sponsorship",
+    "category": "Finance & Economy"
+  },
+  {
+    "id": "syn-5",
+    "questionStem": "harmful / detrimental impact",
+    "passageMatch": "adverse repercussions / pernicious consequences",
+    "category": "Effects & Outcomes"
+  },
+  {
+    "id": "syn-6",
+    "questionStem": "traditional methods",
+    "passageMatch": "conventional practices / orthodox techniques",
+    "category": "Methods & Practices"
+  },
+  {
+    "id": "syn-7",
+    "questionStem": "disclose / reveal information",
+    "passageMatch": "divulge / unveil / make public",
+    "category": "Communication"
+  },
+  {
+    "id": "syn-8",
+    "questionStem": "annual / every year",
+    "passageMatch": "per annum / yearly occurrence",
+    "category": "Time & Frequency"
+  },
+  {
+    "id": "syn-9",
+    "questionStem": "skeptical / doubtful about",
+    "passageMatch": "express reservations / dispute the validity of",
+    "category": "Attitudes & Opinions"
+  },
+  {
+    "id": "syn-10",
+    "questionStem": "imitate / copy",
+    "passageMatch": "emulate / replicate / mirror",
+    "category": "Actions & Behaviour"
+  },
+  {
+    "id": "syn-11",
+    "questionStem": "limit / restrict",
+    "passageMatch": "constrain / curtail / impede",
+    "category": "Control & Governance"
+  },
+  {
+    "id": "syn-12",
+    "questionStem": "unexpected finding",
+    "passageMatch": "counter-intuitive discovery / surprising revelation",
+    "category": "Research & Science"
+  },
+  {
+    "id": "syn-13",
+    "questionStem": "resemble / look like",
+    "passageMatch": "bear striking similarities to / share morphological traits",
+    "category": "Appearance & Traits"
+  },
+  {
+    "id": "syn-14",
+    "questionStem": "artificial / man-made",
+    "passageMatch": "synthetic / manufactured / engineered",
+    "category": "Materials & Nature"
+  },
+  {
+    "id": "syn-15",
+    "questionStem": "dangerous / risky",
+    "passageMatch": "perilous / hazardous / precarious",
+    "category": "Risk & Safety"
+  },
+  {
+    "id": "syn-16",
+    "questionStem": "flourish / thrive",
+    "passageMatch": "burgeon / proliferate / boom",
+    "category": "Growth & Success"
+  },
+  {
+    "id": "syn-17",
+    "questionStem": "initial / early stage",
+    "passageMatch": "embryonic phase / nascent period / inception",
+    "category": "Time & Phases"
+  },
+  {
+    "id": "syn-18",
+    "questionStem": "mandatory / compulsory",
+    "passageMatch": "obligatory / legally required / statutory",
+    "category": "Law & Rules"
+  },
+  {
+    "id": "syn-19",
+    "questionStem": "scarce / rare",
+    "passageMatch": "deficient / sparsely distributed / meagre",
+    "category": "Quantities & Availability"
+  },
+  {
+    "id": "syn-20",
+    "questionStem": "primary cause",
+    "passageMatch": "root catalyst / chief determinant / prime driving factor",
+    "category": "Causality"
+  },
+  {
+    "id": "syn-21",
+    "questionStem": "expand / grow rapidly",
+    "passageMatch": "mushroom / surge exponentially / escalate",
+    "category": "Growth & Scale"
+  },
+  {
+    "id": "syn-22",
+    "questionStem": "accurate / precise",
+    "passageMatch": "unimpeachable / rigorous / exacting fidelity",
+    "category": "Accuracy & Truth"
+  },
+  {
+    "id": "syn-23",
+    "questionStem": "obstacle / barrier",
+    "passageMatch": "impediment / hurdle / bottleneck",
+    "category": "Difficulties"
+  },
+  {
+    "id": "syn-24",
+    "questionStem": "enhance / improve",
+    "passageMatch": "bolster / enrich / augment",
+    "category": "Optimization"
+  },
+  {
+    "id": "syn-25",
+    "questionStem": "destroy / devastate",
+    "passageMatch": "decimate / obliterate / wreak havoc upon",
+    "category": "Destruction"
+  },
+  {
+    "id": "syn-26",
+    "questionStem": "allocate / distribute",
+    "passageMatch": "apportion / earmark / disperse",
+    "category": "Resources"
+  },
+  {
+    "id": "syn-27",
+    "questionStem": "continuous / uninterrupted",
+    "passageMatch": "incessant / perpetual / unremitting",
+    "category": "Continuity"
+  },
+  {
+    "id": "syn-28",
+    "questionStem": "crucial / vital",
+    "passageMatch": "pivotal / paramount / indispensable",
+    "category": "Importance"
+  },
+  {
+    "id": "syn-29",
+    "questionStem": "isolate / separate",
+    "passageMatch": "quarantine / segregate / cloister",
+    "category": "Division & Space"
+  },
+  {
+    "id": "syn-30",
+    "questionStem": "inevitable / unavoidable",
+    "passageMatch": "inescapable / fated / bound to happen",
+    "category": "Certainty"
+  },
+  {
+    "id": "syn-31",
+    "questionStem": "prosperous / wealthy",
+    "passageMatch": "affluent / opulent / well-heeled",
+    "category": "Wealth & Prosperity"
+  },
+  {
+    "id": "syn-32",
+    "questionStem": "abandon / discard",
+    "passageMatch": "relinquish / forgo / repudiate",
+    "category": "Loss & Renunciation"
+  },
+  {
+    "id": "syn-33",
+    "questionStem": "comprehend / understand",
+    "passageMatch": "fathom / grasp the nuances / discern",
+    "category": "Cognition & Learning"
+  },
+  {
+    "id": "syn-34",
+    "questionStem": "deter / discourage",
+    "passageMatch": "dissuade / disincentivize / put off",
+    "category": "Influence & Deterrence"
+  },
+  {
+    "id": "syn-35",
+    "questionStem": "controversial / debatable",
+    "passageMatch": "contentious / polarising / disputed",
+    "category": "Debate & Contention"
+  },
+  {
+    "id": "syn-36",
+    "questionStem": "plentiful / abundant",
+    "passageMatch": "copious / bountiful / profuse",
+    "category": "Quantities"
+  },
+  {
+    "id": "syn-37",
+    "questionStem": "accelerate / speed up",
+    "passageMatch": "expedite / precipitate / catalyse",
+    "category": "Speed & Change"
+  },
+  {
+    "id": "syn-38",
+    "questionStem": "obscure / unclear",
+    "passageMatch": "opaque / ambiguous / enigmatic",
+    "category": "Clarity & Perception"
+  },
+  {
+    "id": "syn-39",
+    "questionStem": "genuine / authentic",
+    "passageMatch": "bona fide / legitimate / unadulterated",
+    "category": "Authenticity"
+  },
+  {
+    "id": "syn-40",
+    "questionStem": "fragile / delicate",
+    "passageMatch": "vulnerable / brittle / susceptible",
+    "category": "Resilience"
+  },
+  {
+    "id": "syn-41",
+    "questionStem": "consequence / result",
+    "passageMatch": "aftermath / outcome / upshot",
+    "category": "Results"
+  },
+  {
+    "id": "syn-42",
+    "questionStem": "coincide with / happen simultaneously",
+    "passageMatch": "synchronise / overlap with / concur",
+    "category": "Time & Concurrence"
+  },
+  {
+    "id": "syn-43",
+    "questionStem": "prohibit / forbid",
+    "passageMatch": "interdict / ban / disallow",
+    "category": "Law & Prohibition"
+  },
+  {
+    "id": "syn-44",
+    "questionStem": "superficial / shallow",
+    "passageMatch": "cursory / cosmetic / skin-deep",
+    "category": "Depth & Quality"
+  },
+  {
+    "id": "syn-45",
+    "questionStem": "indigenous / native",
+    "passageMatch": "endemic / aboriginal / local inhabitant",
+    "category": "Nature & Anthropology"
+  },
+  {
+    "id": "syn-46",
+    "questionStem": "alleviate / lessen",
+    "passageMatch": "assuage / mollify / attenuate",
+    "category": "Relief & Mitigation"
+  },
+  {
+    "id": "syn-47",
+    "questionStem": "intricate / complex",
+    "passageMatch": "labyrinthine / convoluted / multifaceted",
+    "category": "Complexity"
+  },
+  {
+    "id": "syn-48",
+    "questionStem": "temporary / short-lived",
+    "passageMatch": "transient / ephemeral / evanescent",
+    "category": "Time & Ephemerality"
+  },
+  {
+    "id": "syn-49",
+    "questionStem": "unpredictable / erratic",
+    "passageMatch": "capricious / volatile / whimsical",
+    "category": "Stability & Volatility"
+  },
+  {
+    "id": "syn-50",
+    "questionStem": "ubiquitous / everywhere",
+    "passageMatch": "omnipresent / pervasive / widespread",
+    "category": "Ubiquity & Distribution"
   }
 ];

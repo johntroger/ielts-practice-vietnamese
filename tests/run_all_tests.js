@@ -104,7 +104,8 @@ const testSuites = [
   { name: 'Step 95: Code Health, Architecture & Answer Evaluation Integrity', file: 'tests/test_step95_code_health_and_architecture.js' },
   { name: 'Step 96: Adaptive 30-Min Sprint Coach Integrity', file: 'tests/test_step96_adaptive_30min_sprint_coach.js' },
   { name: 'Step 97: GitBook Curriculum Integration & Theory Handbook Expansion', file: 'tests/test_step97_gitbook_theory_handbook_expansion.js' },
-  { name: 'Step 98: GitBook Deep-Linking & Contextual Strategy Coaching', file: 'tests/test_step98_gitbook_deep_linking_and_contextual_coaching.js' }
+  { name: 'Step 98: GitBook Deep-Linking & Contextual Strategy Coaching', file: 'tests/test_step98_gitbook_deep_linking_and_contextual_coaching.js' },
+  { name: 'Step 99: Interactive PESTLE Matrix, 5 Universal Archetypes & 100 Spelling Demons', file: 'tests/test_step99_interactive_pestle_archetypes_and_spelling100.js' }
 ];
 
 console.log('===============================================================');
