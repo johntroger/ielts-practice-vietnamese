@@ -195,10 +195,10 @@ export default function Navbar({
 
   return (
     <>
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0">
+      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0 overflow-x-clip">
       <div className="w-full max-w-full px-2 sm:px-4 xl:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
-        <div className="flex items-center justify-between h-14 sm:h-16 gap-1 sm:gap-2">
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-1 xl:gap-1.5 2xl:gap-2">
           
           {/* 1. LEFT ZONE: Brand & Skills Switcher */}
           <div className="flex items-center space-x-2 sm:space-x-3.5">
@@ -315,7 +315,7 @@ export default function Navbar({
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span className={isCurrent ? 'inline' : 'hidden xl:inline'}>
+                    <span className={isCurrent ? 'inline' : 'hidden 2xl:inline'}>
                       {s.label.replace('IELTS ', '')}
                     </span>
                   </button>
@@ -325,7 +325,7 @@ export default function Navbar({
           </div>
 
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
-          <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
+          <div className="flex items-center gap-1 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
             {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút (Hiển thị từ màn hình máy tính >= 1280px; trên Tablet có tại Hamburger Drawer) */}
             <button
@@ -669,10 +669,10 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Help Center (F1) - 100% Công khai, không cần đăng nhập */}
+            {/* Help Center (F1) - 100% Công khai, hiển thị trên màn hình rộng >= 1536px; trên tablet nằm trong menu Tiến Độ */}
             <button
               onClick={doOpenFeaturesGuide}
-              className="flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px]"
+              className="hidden 2xl:flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px]"
               title="Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"
             >
               <HelpCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
@@ -680,10 +680,10 @@ export default function Navbar({
               <kbd className="hidden min-[1700px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
-            {/* Gửi Góp Ý - Icon gọn gàng trên tablet, nhãn chữ mở rộng trên màn hình lớn >= 1600px */}
+            {/* Gửi Góp Ý - Hiển thị trên màn hình lớn >= 1536px; trên tablet nằm trong menu Tiến Độ */}
             <button
               onClick={doOpenContact}
-              className="flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group min-h-[38px] sm:min-h-[40px]"
+              className="hidden 2xl:flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group min-h-[38px] sm:min-h-[40px]"
               title="Gửi góp ý với tác giả phát triển (Hỗ trợ 24/7)"
               aria-label="Gửi góp ý"
             >
@@ -719,7 +719,7 @@ export default function Navbar({
               <Settings className="w-3.5 h-3.5 text-slate-600 shrink-0" />
               <div className="flex items-center space-x-1">
                 <span className={`w-2 h-2 rounded-full shrink-0 ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                <span className="hidden xl:inline text-[11px] font-semibold">
+                <span className="hidden 2xl:inline text-[11px] font-semibold">
                   {apiKey ? 'API Key' : 'Nhập Key'}
                 </span>
               </div>
@@ -734,7 +734,7 @@ export default function Navbar({
                   doOpenAuth();
                 }
               }}
-              className={`hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
+              className={`hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2 2xl:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer ${
                 user 
                   ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' 
                   : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-800'
@@ -742,7 +742,7 @@ export default function Navbar({
               title={user ? `Xem trang cá nhân: ${user.email}` : "Đăng nhập hoặc đăng ký tài khoản"}
             >
               <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
-              <span className="max-w-[100px] truncate text-[11px]">
+              <span className="max-w-[70px] 2xl:max-w-[100px] truncate text-[11px]">
                 {user ? (user.email.split('@')[0]) : 'Tài Khoản'}
               </span>
             </button>
