@@ -102,7 +102,8 @@ const testSuites = [
   { name: 'Step 93: Distractor Trap Decoder (Reading & Listening Cambridge Traps)', file: 'tests/test_step93_distractor_trap_decoder.js' },
   { name: 'Step 94: Speaking Part 2 Pacing Bar (Thanh Căn Nhịp Độ 2 Phút)', file: 'tests/test_step94_speaking_pacing_bar.js' },
   { name: 'Step 95: Code Health, Architecture & Answer Evaluation Integrity', file: 'tests/test_step95_code_health_and_architecture.js' },
-  { name: 'Step 96: Adaptive 30-Min Sprint Coach Integrity', file: 'tests/test_step96_adaptive_30min_sprint_coach.js' }
+  { name: 'Step 96: Adaptive 30-Min Sprint Coach Integrity', file: 'tests/test_step96_adaptive_30min_sprint_coach.js' },
+  { name: 'Step 97: GitBook Curriculum Integration & Theory Handbook Expansion', file: 'tests/test_step97_gitbook_theory_handbook_expansion.js' }
 ];
 
 console.log('===============================================================');

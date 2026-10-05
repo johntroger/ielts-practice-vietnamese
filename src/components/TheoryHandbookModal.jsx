@@ -4,7 +4,7 @@ import {
   Layers, BarChart2, FileText, AlertTriangle, Edit3, Calendar,
   ChevronRight, Lightbulb, CheckCircle2, Copy, Check, Headphones,
   BookMarked, PenTool, Volume2, Mic, Compass, HelpCircle, CheckCheck,
-  ExternalLink
+  ExternalLink, Monitor
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
@@ -84,6 +84,7 @@ function MarkdownRenderer({ content, accentColor = 'red' }) {
       case 'blue': return 'bg-blue-600';
       case 'emerald': return 'bg-emerald-600';
       case 'purple': return 'bg-purple-600';
+      case 'teal': return 'bg-teal-600';
       default: return 'bg-red-600';
     }
   };
@@ -93,6 +94,7 @@ function MarkdownRenderer({ content, accentColor = 'red' }) {
       case 'blue': return 'bg-blue-100 text-blue-700';
       case 'emerald': return 'bg-emerald-100 text-emerald-700';
       case 'purple': return 'bg-purple-100 text-purple-700';
+      case 'teal': return 'bg-teal-100 text-teal-700';
       default: return 'bg-red-100 text-red-700';
     }
   };
@@ -102,6 +104,7 @@ function MarkdownRenderer({ content, accentColor = 'red' }) {
       case 'blue': return 'bg-blue-500';
       case 'emerald': return 'bg-emerald-500';
       case 'purple': return 'bg-purple-500';
+      case 'teal': return 'bg-teal-500';
       default: return 'bg-red-500';
     }
   };
@@ -249,15 +252,15 @@ export default function TheoryHandbookModal({
 }) {
   if (!isOpen) return null;
 
-  // Selected skill tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'personal'
+  // Selected skill tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'grammar-vocab' | 'personal'
   const [selectedSkill, setSelectedSkill] = useState(() => {
-    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking') return activeSkill;
+    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || activeSkill === 'grammar-vocab') return activeSkill;
     return 'writing';
   });
 
   // When opening or prop changes, sync selectedSkill if user hasn't explicitly picked one
   useEffect(() => {
-    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || activeSkill === 'writing') {
+    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || activeSkill === 'grammar-vocab' || activeSkill === 'writing') {
       setSelectedSkill(activeSkill);
     }
   }, [activeSkill, isOpen]);
@@ -330,6 +333,13 @@ export default function TheoryHandbookModal({
       color: 'purple'
     },
     { 
+      id: 'grammar-vocab', 
+      label: 'Ngữ Pháp & Từ Vựng', 
+      count: THEORY_HANDBOOK.filter(i => i.skill === 'grammar-vocab').length, 
+      icon: Sparkles,
+      color: 'teal'
+    },
+    { 
       id: 'personal', 
       label: 'Ghi Chú Của Bạn', 
       count: personalNotes.length, 
@@ -344,28 +354,39 @@ export default function TheoryHandbookModal({
     { id: 'general', label: 'Tiêu Chí & Điểm Số', icon: BookOpen },
     { id: 'task1', label: 'Cẩm Nang Task 1', icon: BarChart2 },
     { id: 'task2', label: 'Cẩm Nang Task 2', icon: FileText },
+    { id: 'strategy', label: 'Chiến Thuật 7.5+ & Hedging', icon: Compass },
     { id: 'mistakes', label: 'Lỗi Sai Cần Tránh', icon: AlertTriangle },
+    { id: 'exam-skills', label: 'Thi Máy CDI & OSR', icon: Monitor },
   ];
 
   const readingCategories = [
     { id: 'all', label: 'Tất Cả Reading', icon: Layers },
     { id: 'reading-strategy', label: 'Chiến Thuật & Paraphrase', icon: Compass },
     { id: 'reading-types', label: '14 Dạng Câu Hỏi Thường Gặp', icon: BookMarked },
+    { id: 'exam-skills', label: 'Kỹ Thuật Thi Máy CDI', icon: Monitor },
   ];
 
   const listeningCategories = [
     { id: 'all', label: 'Tất Cả Listening', icon: Layers },
     { id: 'listening-strategy', label: 'Format, Điểm & Âm Học', icon: Volume2 },
     { id: 'listening-parts', label: 'Chiến Thuật 4 Parts', icon: Headphones },
+    { id: 'exam-skills', label: 'Kỹ Năng Thi Máy CDI', icon: Monitor },
   ];
 
   const speakingCategories = [
     { id: 'all', label: 'Tất Cả Speaking', icon: Layers },
-    { id: 'general', label: 'Tiêu Chí & Tâm Lý', icon: BookOpen },
+    { id: 'general', label: 'Tiêu Chí & Lộ Trình', icon: BookOpen },
     { id: 'part1', label: 'Chiến Thuật Part 1', icon: Mic },
     { id: 'part2', label: 'Part 2 & Pacing', icon: FileText },
     { id: 'part3', label: 'Part 3 & Phản Biện', icon: Compass },
     { id: 'pronunciation-strategy', label: 'Phát Âm & Ngữ Điệu', icon: Volume2 },
+    { id: 'exam-skills', label: 'Tâm Lý Phòng Thi', icon: AlertTriangle },
+  ];
+
+  const grammarVocabCategories = [
+    { id: 'all', label: 'Tất Cả Ngữ Pháp & Từ Vựng', icon: Layers },
+    { id: 'grammar', label: 'Ngữ Pháp Trọng Tâm (A1 - A7)', icon: BookOpen },
+    { id: 'vocab', label: 'Từ Vựng & Sổ Tay Lỗi (B1 - B6)', icon: Sparkles },
   ];
 
   const currentCategories = selectedSkill === 'reading' 
@@ -374,6 +395,8 @@ export default function TheoryHandbookModal({
     ? listeningCategories 
     : selectedSkill === 'speaking'
     ? speakingCategories
+    : selectedSkill === 'grammar-vocab'
+    ? grammarVocabCategories
     : writingCategories;
 
   // Subtype filters
@@ -473,6 +496,23 @@ export default function TheoryHandbookModal({
     { id: 'mindset', label: 'Tâm Lý & Giám Khảo Ngắt Lời' },
   ];
 
+  const grammarVocabSubTypes = [
+    { id: 'all', label: 'Tất cả chuyên đề' },
+    { id: 'grammar-sentence-structures', label: 'A1. Câu Đơn, Ghép, Phức & Quan Hệ' },
+    { id: 'grammar-tenses-by-task', label: 'A2. Chọn Thì Đúng Cho Từng Task' },
+    { id: 'grammar-passive-voice', label: 'A3. Câu Bị Động & Bị Động Khách Quan' },
+    { id: 'grammar-conditionals', label: 'A4. Câu Điều Kiện Toàn Diện' },
+    { id: 'grammar-comparison-structures', label: 'A5. Cấu Trúc So Sánh Đa Dạng' },
+    { id: 'grammar-advanced-structures', label: 'A6. Đảo Ngữ, Câu Chẻ & Danh Từ Hóa' },
+    { id: 'grammar-common-errors-vietnamese', label: 'A7. Lỗi Ngữ Pháp Người Việt' },
+    { id: 'vocab-linking-devices', label: 'B1. Từ Nối Cohesive Devices' },
+    { id: 'vocab-task1-data-language', label: 'B2. Ngôn Ngữ Số Liệu Task 1' },
+    { id: 'vocab-topic-collocations', label: 'B3. Academic Collocations 8 Chủ Đề' },
+    { id: 'vocab-academic-word-families', label: 'B4. Họ Từ AWL & Paraphrase' },
+    { id: 'vocab-speaking-functional-language', label: 'B5. Ngôn Ngữ Chức Năng Speaking' },
+    { id: 'error-log-and-paraphrase-journal', label: 'B6. Sổ Tay Quản Trị Lỗi Sai' },
+  ];
+
   // Filter handbook by selected skill, category, subtype, and search query
   const filteredHandbook = THEORY_HANDBOOK.filter(item => {
     if (selectedSkill !== 'personal' && item.skill !== selectedSkill) return false;
@@ -553,6 +593,16 @@ export default function TheoryHandbookModal({
           accent: 'purple',
           headerBg: 'from-purple-950 via-slate-900 to-slate-900',
           iconBg: 'bg-purple-600/30 text-purple-400 border-purple-500/30'
+        };
+      case 'grammar-vocab':
+        return {
+          title: 'Ngữ Pháp & Từ Vựng Trọng Tâm IELTS (A1 – A7 & B1 – B6)',
+          subtitle: 'Hệ thống cấu trúc câu, thì, câu bị động, đảo ngữ, họ từ AWL, collocations và sổ tay quản trị lỗi sai',
+          badge: 'Grammar & Vocab Hub',
+          icon: Sparkles,
+          accent: 'teal',
+          headerBg: 'from-teal-950 via-slate-900 to-slate-900',
+          iconBg: 'bg-teal-600/30 text-teal-400 border-teal-500/30'
         };
       case 'personal':
         return {
@@ -645,6 +695,8 @@ export default function TheoryHandbookModal({
                         ? 'bg-emerald-600 text-white shadow-md'
                         : tab.color === 'purple'
                         ? 'bg-purple-600 text-white shadow-md'
+                        : tab.color === 'teal'
+                        ? 'bg-teal-600 text-white shadow-md'
                         : 'bg-amber-600 text-white shadow-md'
                       : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-700/50'
                   }`}
@@ -678,6 +730,8 @@ export default function TheoryHandbookModal({
                     ? "Tìm kiếm lý thuyết Listening (vd: part 1, số điện thoại, bản đồ, signpost, nối âm, schwa...)"
                     : selectedSkill === 'speaking'
                     ? "Tìm kiếm lý thuyết Speaking (vd: A.R.E.A, PPF storytelling, PEEL, buying time, phát âm...)"
+                    : selectedSkill === 'grammar-vocab'
+                    ? "Tìm kiếm Ngữ Pháp & Từ Vựng (vd: câu điều kiện, bị động, đảo ngữ, collocations, AWL, error log...)"
                     : selectedSkill === 'personal'
                     ? "Tìm kiếm trong sổ tay ghi chú của bạn..."
                     : "Tìm kiếm lý thuyết Writing (vd: line graph, overview, PEEL, opinion, map, bị động...)"
@@ -711,6 +765,8 @@ export default function TheoryHandbookModal({
                       ? 'bg-emerald-600 text-white'
                       : selectedSkill === 'speaking'
                       ? 'bg-purple-600 text-white'
+                      : selectedSkill === 'grammar-vocab'
+                      ? 'bg-teal-600 text-white'
                       : 'bg-red-600 text-white';
 
                   return (
@@ -861,6 +917,26 @@ export default function TheoryHandbookModal({
                       className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                         activeSubType === st.id
                           ? 'bg-purple-100 text-purple-800 border border-purple-300 font-semibold'
+                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Sub-Filters for Grammar & Vocab */}
+              {selectedSkill === 'grammar-vocab' && (
+                <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
+                  <span className="text-teal-700 font-semibold whitespace-nowrap mr-1">Chuyên đề A & B:</span>
+                  {grammarVocabSubTypes.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => setActiveSubType(st.id)}
+                      className={`px-2.5 py-1 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                        activeSubType === st.id
+                          ? 'bg-teal-100 text-teal-800 border border-teal-300 font-semibold'
                           : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
                       }`}
                     >
@@ -1051,7 +1127,7 @@ export default function TheoryHandbookModal({
                       <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-sky-200 text-sky-800">E-Book</span>
                     </div>
                     <p className="text-[11px] text-slate-500 line-clamp-1 sm:line-clamp-none">
-                      Xem đầy đủ 73 chuyên đề với thanh mục lục bên trái, tìm kiếm nhanh và chế độ đọc toàn màn hình.
+                      Xem đầy đủ 113 chuyên đề với thanh mục lục bên trái, tìm kiếm nhanh và chế độ đọc toàn màn hình.
                     </p>
                   </div>
                 </div>
@@ -1078,6 +1154,8 @@ export default function TheoryHandbookModal({
                       ? 'emerald' 
                       : item.skill === 'speaking'
                       ? 'purple'
+                      : item.skill === 'grammar-vocab'
+                      ? 'teal'
                       : 'red';
 
                   return (
@@ -1090,6 +1168,8 @@ export default function TheoryHandbookModal({
                           ? 'border-emerald-100 hover:border-emerald-200'
                           : itemColor === 'purple'
                           ? 'border-purple-100 hover:border-purple-200'
+                          : itemColor === 'teal'
+                          ? 'border-teal-100 hover:border-teal-200'
                           : 'border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -1103,6 +1183,8 @@ export default function TheoryHandbookModal({
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                 : itemColor === 'purple'
                                 ? 'bg-purple-50 text-purple-700 border-purple-200'
+                                : itemColor === 'teal'
+                                ? 'bg-teal-50 text-teal-700 border-teal-200'
                                 : 'bg-red-50 text-red-700 border-red-200'
                             }`}>
                               {item.skill === 'reading' 
@@ -1111,16 +1193,19 @@ export default function TheoryHandbookModal({
                                 ? 'IELTS Listening' 
                                 : item.skill === 'speaking'
                                 ? 'IELTS Speaking'
-                                : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : 'Chiến Lược & Tiêu Chí')}
+                                : item.skill === 'grammar-vocab'
+                                ? (item.category === 'grammar' ? 'Ngữ Pháp Trọng Tâm' : 'Từ Vựng & Sổ Tay')
+                                : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : item.category === 'exam-skills' ? 'Thi Máy CDI' : 'Chiến Lược & Tiêu Chí')}
                             </span>
-                            {item.subType === 'progression-5-75' ? (
+                            {item.stage && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/80">
+                                {item.stage}
+                              </span>
+                            )}
+                            {item.subType === 'progression-5-75' && (
                               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 text-white shadow-2xs flex items-center gap-1">
                                 <Sparkles className="w-3 h-3 text-amber-200" />
                                 <span>Lộ Trình Band 5.0 - 7.5</span>
-                              </span>
-                            ) : item.subType && item.subType !== 'overview' && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                                {item.subType}
                               </span>
                             )}
                           </div>
@@ -1129,6 +1214,10 @@ export default function TheoryHandbookModal({
                               ? 'text-blue-900'
                               : itemColor === 'emerald'
                               ? 'text-emerald-900'
+                              : itemColor === 'purple'
+                              ? 'text-purple-900'
+                              : itemColor === 'teal'
+                              ? 'text-teal-900'
                               : 'text-slate-900'
                           }`}>
                             {item.title}
@@ -1136,8 +1225,21 @@ export default function TheoryHandbookModal({
                           <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.summary}</p>
                         </div>
 
-                        {/* Copy Button */}
-                        <div className="shrink-0">
+                        {/* Copy & GitBook Deep Link Buttons */}
+                        <div className="flex items-center space-x-1.5 shrink-0 flex-wrap gap-1">
+                          {item.gitbookSlug && (
+                            <a
+                              href={`${GITBOOK_DOCS_BASE_URL}/${item.gitbookSlug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-sky-200/90 bg-sky-50/70 hover:bg-sky-100 text-sky-800 text-xs font-semibold transition-all cursor-pointer shadow-2xs shrink-0"
+                              title={`Đọc bài "${item.title}" trực tiếp trên GitBook`}
+                            >
+                              <BookOpen className="w-3.5 h-3.5 text-sky-600" />
+                              <span className="hidden sm:inline">Bản Web</span>
+                              <ExternalLink className="w-3 h-3 text-sky-500" />
+                            </a>
+                          )}
                           <button
                             onClick={() => handleCopy(item)}
                             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
