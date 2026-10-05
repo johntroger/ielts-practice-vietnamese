@@ -11,10 +11,12 @@ import {
   Square,
   AlertCircle,
   CheckCircle2,
-  RotateCcw
+  RotateCcw,
+  BookOpen
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../SpeechWaveVisualizer';
 import SpeakingFillerTracker from '../SpeakingFillerTracker';
+import { openTheoryModalWithContext } from '../../../services/theoryContextService';
 
 /**
  * SpeakingPart1Room Sub-component
@@ -201,6 +203,22 @@ export default function SpeakingPart1Room({
                 className="px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 transition-colors cursor-pointer"
               >
                 {showSampleAnswer ? 'Ẩn Bài Mẫu' : 'Xem Bài Mẫu 8.5'}
+              </button>
+              <button
+                type="button"
+                onClick={() => openTheoryModalWithContext({
+                  skill: 'speaking',
+                  category: 'part1',
+                  subType: 'area',
+                  topicId: 'area-framework-part1',
+                  title: 'Khung A.R.E.A - Trả Lời Tự Nhiên & Chuẩn Độ Dài Part 1'
+                })}
+                className="px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 text-xs font-bold border border-indigo-700/50 transition-colors cursor-pointer flex items-center space-x-1"
+                title="Mở cẩm nang khung phản xạ 3 câu A.R.E.A Part 1"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="hidden sm:inline">Cẩm Nang A.R.E.A</span>
+                <span className="sm:hidden">A.R.E.A</span>
               </button>
             </div>
           </div>

@@ -7,9 +7,11 @@ import {
   Plus, 
   Loader2, 
   Square, 
-  Mic 
+  Mic,
+  BookOpen
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../SpeechWaveVisualizer';
+import { openTheoryModalWithContext } from '../../../services/theoryContextService';
 
 /**
  * SpeakingPart3Room Sub-component
@@ -91,15 +93,33 @@ export default function SpeakingPart3Room({
             )}
           </div>
 
-          {/* ADD PART 3 TOPIC BUTTON */}
-          <button
-            onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
-            className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
-            title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-            <span>+ Sinh Bộ Thảo Luận Bằng AI</span>
-          </button>
+          <div className="flex items-center space-x-2 flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => openTheoryModalWithContext({
+                skill: 'speaking',
+                category: 'part3',
+                subType: 'critical-thinking',
+                topicId: 'critical-thinking-part3',
+                title: 'Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3'
+              })}
+              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-purple-300 text-xs font-bold border border-purple-800/60 transition-colors cursor-pointer flex items-center space-x-1.5 shadow-xs"
+              title="Mở cẩm nang khung tư duy phản biện PEEL mở rộng tầm xã hội cho Speaking Part 3"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+              <span>Cẩm Nang PEEL Part 3</span>
+            </button>
+
+            {/* ADD PART 3 TOPIC BUTTON */}
+            <button
+              onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
+              className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
+              title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+              <span>+ Sinh Bộ Thảo Luận Bằng AI</span>
+            </button>
+          </div>
         </div>
 
         {/* Topic Selection Bar */}

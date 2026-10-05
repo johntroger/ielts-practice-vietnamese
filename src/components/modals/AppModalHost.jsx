@@ -398,7 +398,11 @@ export default function AppModalHost({
       <TheoryHandbookModal
         isOpen={Boolean(modals.theory)}
         onClose={() => closeModal('theory')}
-        activeSkill={activeSkill}
+        activeSkill={typeof modals.theory === 'object' && modals.theory?.skill ? modals.theory.skill : activeSkill}
+        initialCategory={typeof modals.theory === 'object' && modals.theory?.category ? modals.theory.category : 'all'}
+        initialSubType={typeof modals.theory === 'object' && modals.theory?.subType ? modals.theory.subType : 'all'}
+        initialTopicId={typeof modals.theory === 'object' && modals.theory?.topicId ? modals.theory.topicId : null}
+        initialSearchQuery={typeof modals.theory === 'object' && modals.theory?.searchQuery ? modals.theory.searchQuery : ''}
         personalNotes={personalNotes}
         onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
         onDeletePersonalNote={(id) => setPersonalNotes(prev => prev.filter(n => n.id !== id))}

@@ -15,9 +15,12 @@ import {
   FileText,
   Minimize2,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  BookOpen,
+  ExternalLink
 } from 'lucide-react';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
+import { getTheoryContext, openTheoryModalWithContext } from '../../services/theoryContextService';
 
 // Color definitions for highlighter
 const HIGHLIGHT_COLORS = [
@@ -377,6 +380,39 @@ export default function ListeningQuestionPane({
                     {group.headerTitle}
                   </div>
                 )}
+
+                {(() => {
+                  const theoryCtx = getTheoryContext({
+                    skill: 'listening',
+                    section: partData?.sectionNumber || partData?.partNumber || 1,
+                    questionType: group.type,
+                    prompt: group.title || group.instruction
+                  });
+                  if (!theoryCtx) return null;
+                  return (
+                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => openTheoryModalWithContext(theoryCtx)}
+                        className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-[11px] font-bold transition-colors cursor-pointer"
+                        title={theoryCtx.tip}
+                      >
+                        <BookOpen className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>{theoryCtx.badge}</span>
+                      </button>
+                      <a
+                        href={theoryCtx.gitbookUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-950 hover:underline shrink-0"
+                        title="Đọc cẩm nang chi tiết trên GitBook"
+                      >
+                        <span>Bản Web</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* TYPE 1: NOTE / FORM / SENTENCE / SUMMARY COMPLETION */}

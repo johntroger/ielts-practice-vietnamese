@@ -11,11 +11,14 @@ import {
   Bookmark,
   Check,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  BookOpen,
+  ExternalLink
 } from 'lucide-react';
 import { explainReadingQuestion } from '../../services/geminiService';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
 import { evaluateQuestionAnswer } from '../../services/answerEvaluationService';
+import { getTheoryContext, openTheoryModalWithContext } from '../../services/theoryContextService';
 
 export default function QuestionPane({
   passageTitle = '',
@@ -787,6 +790,36 @@ export default function QuestionPane({
                 {group.extraNotes}
               </p>
             )}
+            {(() => {
+              const theoryCtx = getTheoryContext({
+                skill: 'reading',
+                questionType: group.type
+              });
+              if (!theoryCtx) return null;
+              return (
+                <div className="pt-2 mt-2 border-t border-slate-100/70 flex items-center justify-between flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openTheoryModalWithContext(theoryCtx)}
+                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-blue-50/80 hover:bg-blue-100 text-blue-900 border border-blue-200/80 text-[11px] font-bold transition-colors cursor-pointer"
+                    title={theoryCtx.tip}
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span>{theoryCtx.badge}</span>
+                  </button>
+                  <a
+                    href={theoryCtx.gitbookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1 text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline shrink-0"
+                    title="Đọc cẩm nang chi tiết trên GitBook"
+                  >
+                    <span>Bản Web</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Render by Question Group Type */}

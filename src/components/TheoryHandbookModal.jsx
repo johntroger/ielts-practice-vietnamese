@@ -246,6 +246,10 @@ export default function TheoryHandbookModal({
   isOpen, 
   onClose, 
   activeSkill = 'writing',
+  initialCategory = 'all',
+  initialSubType = 'all',
+  initialTopicId = null,
+  initialSearchQuery = '',
   personalNotes = [], 
   onSavePersonalNote, 
   onDeletePersonalNote 
@@ -258,17 +262,38 @@ export default function TheoryHandbookModal({
     return 'writing';
   });
 
-  // When opening or prop changes, sync selectedSkill if user hasn't explicitly picked one
-  useEffect(() => {
-    if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || activeSkill === 'grammar-vocab' || activeSkill === 'writing') {
-      setSelectedSkill(activeSkill);
-    }
-  }, [activeSkill, isOpen]);
-
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [activeSubType, setActiveSubType] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState(initialCategory || 'all');
+  const [activeSubType, setActiveSubType] = useState(initialSubType || 'all');
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery || '');
   const [copiedId, setCopiedId] = useState(null);
+  const [highlightedTopicId, setHighlightedTopicId] = useState(initialTopicId);
+
+  // When opening or prop changes, sync selectedSkill & contextual parameters
+  useEffect(() => {
+    if (isOpen) {
+      if (activeSkill && ['writing', 'reading', 'listening', 'speaking', 'grammar-vocab', 'personal'].includes(activeSkill)) {
+        setSelectedSkill(activeSkill);
+      }
+      if (initialCategory && initialCategory !== 'all') {
+        setActiveCategory(initialCategory);
+      }
+      if (initialSubType && initialSubType !== 'all') {
+        setActiveSubType(initialSubType);
+      }
+      if (initialSearchQuery) {
+        setSearchQuery(initialSearchQuery);
+      }
+      if (initialTopicId) {
+        setHighlightedTopicId(initialTopicId);
+        setTimeout(() => {
+          const el = document.getElementById(`theory-card-${initialTopicId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 200);
+      }
+    }
+  }, [activeSkill, isOpen, initialCategory, initialSubType, initialTopicId, initialSearchQuery]);
 
   // Note creation & editing state
   const [isAddingNote, setIsAddingNote] = useState(false);
@@ -1161,8 +1186,11 @@ export default function TheoryHandbookModal({
                   return (
                     <div 
                       key={item.id} 
-                      className={`p-6 rounded-2xl border bg-white shadow-2xs hover:shadow-xs transition-shadow space-y-4 ${
-                        itemColor === 'blue' 
+                      id={`theory-card-${item.id}`}
+                      className={`p-6 rounded-2xl border bg-white shadow-2xs hover:shadow-xs transition-all space-y-4 ${
+                        highlightedTopicId === item.id
+                          ? 'ring-2 ring-amber-500 border-amber-400 shadow-md bg-amber-50/15'
+                          : itemColor === 'blue' 
                           ? 'border-blue-100 hover:border-blue-200' 
                           : itemColor === 'emerald'
                           ? 'border-emerald-100 hover:border-emerald-200'

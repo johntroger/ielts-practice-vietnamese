@@ -23,7 +23,9 @@ import {
   Award,
   Check,
   Copy,
-  RefreshCw
+  RefreshCw,
+  BookOpen,
+  ExternalLink
 } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
@@ -31,6 +33,7 @@ import ImageViewerModal from './ImageViewerModal';
 import StarRatingWidget from './common/StarRatingWidget';
 import { recordAttempt } from '../services/ratingPopularityService';
 import { validateThesisStatement, validatePeelParagraph } from '../services/geminiService';
+import { getTheoryContext, openTheoryModalWithContext } from '../services/theoryContextService';
 
 // Helper to escape special characters for RegExp
 function escapeRegExp(string) {
@@ -278,6 +281,39 @@ export default function PromptPane({
           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium capitalize">
             {task.type}
           </span>
+          {(() => {
+            const theoryCtx = getTheoryContext({
+              skill: 'writing',
+              taskNumber: task.taskNumber,
+              taskType: task.type,
+              prompt: task.prompt
+            });
+            if (!theoryCtx) return null;
+            return (
+              <div className="inline-flex items-center rounded-md border border-sky-200 bg-sky-50 text-sky-900 text-[11px] font-semibold shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => openTheoryModalWithContext(theoryCtx)}
+                  className="inline-flex items-center space-x-1 px-2 py-0.5 hover:bg-sky-100 transition-colors cursor-pointer rounded-l-md"
+                  title={theoryCtx.tip}
+                >
+                  <BookOpen className="w-3 h-3 text-sky-600 shrink-0" />
+                  <span className="hidden sm:inline">{theoryCtx.badge}</span>
+                  <span className="sm:hidden">Cẩm Nang</span>
+                </button>
+                <a
+                  href={theoryCtx.gitbookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-1.5 py-0.5 text-sky-700 hover:text-sky-950 hover:underline border-l border-sky-200 flex items-center shrink-0"
+                  title="Đọc cẩm nang chi tiết trên GitBook"
+                >
+                  <span className="hidden sm:inline">Bản Web</span>
+                  <ExternalLink className="w-2.5 h-2.5 sm:ml-0.5 opacity-80" />
+                </a>
+              </div>
+            );
+          })()}
           {task.isAiGenerated && (
             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-medium">
               <Sparkles className="w-3 h-3" />
@@ -785,14 +821,31 @@ export default function PromptPane({
           {/* AI PEEL Argument Coherence Drawer (Task 2 Body Paragraphs) */}
           {showPeelValidator && task?.taskNumber === 2 && (
             <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50/90 via-indigo-50/60 to-slate-50 border border-purple-200 text-xs text-purple-950 space-y-3.5 shadow-sm">
-              <div className="flex items-center justify-between font-bold text-purple-950">
+              <div className="flex items-center justify-between font-bold text-purple-950 flex-wrap gap-2">
                 <span className="flex items-center space-x-1.5">
                   <Layers className="w-4 h-4 text-purple-600" />
                   <span className="text-sm">Kiểm Tra Chuỗi Lập Luận PEEL (Thân Bài Task 2)</span>
                 </span>
-                <span className="text-[11px] font-medium text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-full border border-purple-200">
-                  Task Response & Coherence 7.0+
-                </span>
+                <div className="flex items-center space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => openTheoryModalWithContext({
+                      skill: 'writing',
+                      category: 'task2',
+                      subType: 'all',
+                      topicId: 'task2-peel-structure',
+                      title: 'Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2'
+                    })}
+                    className="inline-flex items-center space-x-1 text-purple-700 hover:text-purple-950 hover:underline font-semibold text-[11px] cursor-pointer"
+                    title="Mở cẩm nang chi tiết về cấu trúc PEEL"
+                  >
+                    <BookOpen className="w-3 h-3 text-purple-600" />
+                    <span>Cẩm nang PEEL</span>
+                  </button>
+                  <span className="text-[11px] font-medium text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-full border border-purple-200">
+                    Task Response & Coherence 7.0+
+                  </span>
+                </div>
               </div>
 
               <p className="text-[11px] text-slate-600 leading-relaxed">

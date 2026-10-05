@@ -10,11 +10,13 @@ import {
   RotateCcw, 
   Square, 
   Mic, 
-  AlertCircle 
+  AlertCircle,
+  BookOpen
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../SpeechWaveVisualizer';
 import SpeakingPacingBar from '../SpeakingPacingBar';
 import SpeakingFillerTracker from '../SpeakingFillerTracker';
+import { openTheoryModalWithContext } from '../../../services/theoryContextService';
 
 
 /**
@@ -107,15 +109,33 @@ export default function SpeakingPart2Room({
             )}
           </div>
 
-          {/* ADD CUE CARD BUTTON (AI / MANUAL) */}
-          <button
-            onClick={() => onOpenTopicModal && onOpenTopicModal(2)}
-            className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
-            title="Thêm Cue Card luyện tập Part 2 mới bằng AI"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-            <span>+ Sinh Cue Card Bằng AI</span>
-          </button>
+          <div className="flex items-center space-x-2 flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => openTheoryModalWithContext({
+                skill: 'speaking',
+                category: 'part2',
+                subType: 'storytelling',
+                topicId: 'storytelling-part2',
+                title: 'Kỹ Thuật Storytelling Dòng Thời Gian PPF (Part 2)'
+              })}
+              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-purple-300 text-xs font-bold border border-purple-800/60 transition-colors cursor-pointer flex items-center space-x-1.5 shadow-xs"
+              title="Mở cẩm nang chiến thuật căn nhịp 2 phút và phân bổ thì Past - Present - Future"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+              <span>Cẩm Nang Pacing 2P</span>
+            </button>
+
+            {/* ADD CUE CARD BUTTON (AI / MANUAL) */}
+            <button
+              onClick={() => onOpenTopicModal && onOpenTopicModal(2)}
+              className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
+              title="Thêm Cue Card luyện tập Part 2 mới bằng AI"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+              <span>+ Sinh Cue Card Bằng AI</span>
+            </button>
+          </div>
         </div>
 
         {/* Cue Card Selection Bar */}

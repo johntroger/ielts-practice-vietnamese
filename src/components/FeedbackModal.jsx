@@ -19,8 +19,10 @@ import {
   AlertCircle,
   ArrowRight,
   ChevronRight,
-  CheckCircle2
+  CheckCircle2,
+  BookOpen
 } from 'lucide-react';
+import { openTheoryModalWithContext } from '../services/theoryContextService';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -704,6 +706,35 @@ export default function FeedbackModal({
                             </ul>
                           </div>
                         )}
+
+                        {(() => {
+                          const getCriteriaGuide = (cKey) => {
+                            if (cKey === 'tr') {
+                              return task?.taskNumber === 1
+                                ? { topicId: 'task1-mastery', skill: 'writing', category: 'task1', title: 'Master Toàn Diện Task 1 (Overview & Band Descriptors)', label: 'Cẩm Nang Overview & TA' }
+                                : { topicId: 'task2-peel-structure', skill: 'writing', category: 'task2', title: 'Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2', label: 'Cẩm Nang Lập Luận TR' };
+                            }
+                            if (cKey === 'cc') return { topicId: 'writing-cc-thematic-progression', skill: 'writing', category: 'strategy', title: 'Tiêu Chí Coherence & Cohesion 8.0+', label: 'Cẩm Nang Liên Kết CC 8.0+' };
+                            if (cKey === 'lr') return { topicId: 'writing-academic-collocations-topics', skill: 'writing', category: 'strategy', title: 'Top 60 Academic Collocations "Ăn Điểm"', label: 'Cẩm Nang Collocations LR' };
+                            if (cKey === 'gra') return { topicId: 'academic-hedging', skill: 'writing', category: 'strategy', title: 'Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+', label: 'Cẩm Nang Ngữ Pháp GRA 8.0+' };
+                            return null;
+                          };
+                          const guide = getCriteriaGuide(key);
+                          if (!guide) return null;
+                          return (
+                            <div className="pt-1.5 flex items-center justify-between border-t border-slate-100">
+                              <button
+                                type="button"
+                                onClick={() => openTheoryModalWithContext(guide)}
+                                className="inline-flex items-center space-x-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 hover:underline cursor-pointer"
+                                title="Xem cẩm nang chuyên sâu khắc phục điểm nghẽn tiêu chí này"
+                              >
+                                <BookOpen className="w-3 h-3 text-blue-600 shrink-0" />
+                                <span>Bí kíp nâng band: {guide.label} ➔</span>
+                              </button>
+                            </div>
+                          );
+                        })()}
                       </div>
                     );
                   })}

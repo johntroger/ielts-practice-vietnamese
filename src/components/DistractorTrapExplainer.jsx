@@ -11,9 +11,11 @@ import {
   Check, 
   ChevronDown, 
   Lightbulb,
-  Crosshair
+  Crosshair,
+  BookOpen
 } from 'lucide-react';
 import { analyzeDistractorTrap } from '../services/trapAnalysisService';
+import { openTheoryModalWithContext } from '../services/theoryContextService';
 
 /**
  * Distractor Trap Explainer Component
@@ -183,31 +185,51 @@ export default function DistractorTrapExplainer({
           </div>
 
           {/* Footer Action Bar */}
-          <div className="pt-1 flex items-center justify-between text-[11px]">
+          <div className="pt-1 flex items-center justify-between text-[11px] flex-wrap gap-2">
             <span className="text-slate-500 italic">
               💡 Hiểu rõ cơ chế bẫy giúp giảm 80% lỗi sai lặp lại ở bài thi thật.
             </span>
 
-            {onSaveMistake && (
+            <div className="flex items-center space-x-1.5 shrink-0">
               <button
                 type="button"
-                onClick={handleSaveToMistakeLog}
+                onClick={() => openTheoryModalWithContext({
+                  skill: skill === 'listening' ? 'listening' : 'reading',
+                  category: skill === 'listening' ? 'listening-strategy' : 'reading-types',
+                  subType: 'all',
+                  topicId: skill === 'listening' ? 'distractor-traps' : 'true-false-not-given',
+                  title: skill === 'listening' 
+                    ? 'Bẫy Distractor & Đổi Ý Trong IELTS Listening: Chiến Lược Bẻ Bẫy'
+                    : 'Phá Bẫy True / False / Not Given & Yes / No / Not Given'
+                })}
                 className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold flex items-center space-x-1 transition-colors cursor-pointer shadow-2xs"
-                title="Lưu dạng bẫy này vào Sổ Lỗi Sai để ôn tập"
+                title="Mở cẩm nang lý thuyết bẻ bẫy Cambridge"
               >
-                {isSaved ? (
-                  <>
-                    <Check className="w-3 h-3 text-emerald-600" />
-                    <span className="text-emerald-700">Đã lưu sổ lỗi</span>
-                  </>
-                ) : (
-                  <>
-                    <Bookmark className="w-3 h-3 text-amber-600" />
-                    <span>Lưu vào Sổ Lỗi Sai</span>
-                  </>
-                )}
+                <BookOpen className="w-3 h-3 text-sky-600" />
+                <span>Đọc Cẩm Nang Bẫy</span>
               </button>
-            )}
+
+              {onSaveMistake && (
+                <button
+                  type="button"
+                  onClick={handleSaveToMistakeLog}
+                  className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold flex items-center space-x-1 transition-colors cursor-pointer shadow-2xs"
+                  title="Lưu dạng bẫy này vào Sổ Lỗi Sai để ôn tập"
+                >
+                  {isSaved ? (
+                    <>
+                      <Check className="w-3 h-3 text-emerald-600" />
+                      <span className="text-emerald-700">Đã lưu sổ lỗi</span>
+                    </>
+                  ) : (
+                    <>
+                      <Bookmark className="w-3 h-3 text-amber-600" />
+                      <span>Lưu vào Sổ Lỗi Sai</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
 
         </div>
