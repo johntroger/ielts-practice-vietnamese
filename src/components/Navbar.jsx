@@ -32,7 +32,8 @@ import {
   HelpCircle,
   QrCode,
   Moon,
-  Sun
+  Sun,
+  Zap
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
@@ -386,6 +387,21 @@ export default function Navbar({
                           <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-[9px] text-white font-black">15p</span>
                         </div>
                         <div className="text-[10px] text-indigo-700/80 font-normal">Test 16 câu định vị Band & tạo kế hoạch 30 ngày</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => { openModal('adaptiveSprint'); setIsPracticeMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-amber-50/70 hover:bg-amber-100/80 text-left text-xs font-bold text-amber-900 transition-colors cursor-pointer border border-amber-200/60"
+                    >
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-500 text-white shadow-2xs">
+                        <Zap className="w-4 h-4 fill-current" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span>Huấn Luyện Viên 30P</span>
+                          <span className="px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-black">MỚI</span>
+                        </div>
+                        <div className="text-[10px] text-amber-700/80 font-normal">Sprint 3 chặng nước rút cá nhân hóa theo điểm yếu</div>
                       </div>
                     </button>
                     <button
@@ -902,6 +918,17 @@ export default function Navbar({
                       <span>Định Vị Band & Lộ Trình 30 Ngày</span>
                     </div>
                     <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded">15 Phút</span>
+                  </button>
+
+                  <button
+                    onClick={() => { openModal('adaptiveSprint'); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Zap className="w-4 h-4 text-amber-600 fill-current" />
+                      <span>Huấn Luyện Viên 30P (Adaptive Sprint)</span>
+                    </div>
+                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded">MỚI</span>
                   </button>
 
                   <button

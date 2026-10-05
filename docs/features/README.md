@@ -1,7 +1,7 @@
 # 🚀 Trung Tâm Hướng Dẫn & Tính Năng Nền Tảng (Feature Matrix)
 
 > **Cập nhật tự động**: Trang tài liệu này được đồng bộ trực tiếp từ Codebase (`src/core/featureRegistry.js`).  
-> **Tổng số tính năng hiện có**: **43 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
+> **Tổng số tính năng hiện có**: **44 tính năng chuyên sâu** | **Phiên bản mới nhất**: `v3.0 (2026 Edition)`
 
 ---
 
@@ -14,7 +14,7 @@ Hệ thống **IELTS Practice Vietnamese** được thiết kế theo tiêu chu�
 | Chuyên Mục Tính Năng | Số Lượng | Trạng Thái Nổi Bật | Xem Tài Liệu |
 | :--- | :---: | :--- | :--- |
 | 🤖 **Phân Hệ AI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](ai-evaluation.md) |
-| 🛠️ **Kho Đề Thi** | **11** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
+| 🛠️ **Kho Đề Thi** | **12** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](practice-tools.md) |
 | ⏱️ **Phòng Thi Thử Chuẩn CDI** | **6** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](exam-simulation.md) |
 | 📖 **Cẩm Nang Lý Thuyết** | **5** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](theory-vocab.md) |
 | 📊 **Theo Dõi Tiến Độ, Hồ Sơ Cá Nhân** | **8** tính năng | Đầy đủ hướng dẫn & mẹo thi | [Xem chi tiết ↗](analytics-profile.md) |
@@ -41,6 +41,11 @@ Hệ thống tích hợp toàn bộ các phím tắt tiêu chuẩn quốc tế g
 ## 🌟 Các Tính Năng Mới Cập Nhật (Release 2026)
 
 Dưới đây là các tính năng học thuật mới nhất được nâng cấp trên hệ thống:
+
+### ✦ [Huấn Luyện Viên Cá Nhân Hóa (Adaptive 30-Min Sprint Coach)](practice-tools.md#feat-adaptive-30min-sprint)
+- **Phiên bản**: `v3.3` | **Kỹ năng**: **Writing** • **Speaking** • **Reading** • **Listening**
+- **Tóm tắt**: Chu trình 30 phút luyện tập nước rút 3 chặng thông minh, tự động chẩn đoán điểm nghẽn học viên (Ngữ pháp, Phản xạ Speaking, Lập luận Writing) để bứt phá Band điểm mỗi ngày.
+- **Cách dùng nhanh**: Tại thanh Navbar mục "Luyện Tập" hoặc banner trên trang chủ, bấm vào "Huấn Luyện Viên 30P" để bắt đầu phiên luyện tập nước rút của ngày hôm nay.
 
 ### ✦ [Thanh Căn Nhịp Độ 2 Phút Speaking Part 2 (Speaking Pacing Bar)](exam-simulation.md#feat-speaking-pacing-bar)
 - **Phiên bản**: `v3.2` | **Kỹ năng**: **Speaking**

@@ -61,6 +61,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-adaptive-30min-sprint',
+    version: 'v3.3',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'practice_tools',
+    targetSkills: ['writing', 'speaking', 'reading', 'listening'],
+    title: 'Huấn Luyện Viên Cá Nhân Hóa (Adaptive 30-Min Sprint Coach)',
+    shortDesc: 'Chu trình 30 phút luyện tập nước rút 3 chặng thông minh, tự động chẩn đoán điểm nghẽn học viên (Ngữ pháp, Phản xạ Speaking, Lập luận Writing) để bứt phá Band điểm mỗi ngày.',
+    icon: 'Zap',
+    shortcut: null,
+    updatedAt: '2026-10-05',
+    highlights: [
+      'Chẩn Đoán Điểm Nghẽn Tự Động (Bottleneck Diagnostic): AI rà soát Sổ lỗi sai, bài nộp gần đây và Target Band để tìm ra kỹ năng cần củng cố gấp nhất.',
+      'Lộ Trình 3 Chặng Tối Ưu Não Bộ: Chặng 1 (7p) Xóa bẫy ngữ pháp ➔ Chặng 2 (15p) Nước rút chuyên sâu Speaking/Writing ➔ Chặng 3 (8p) Nạp từ vựng C1/C2.',
+      'Đồng Hồ Đếm Giờ Chặng Thời Gian Thực (Stage Stopwatch): Tích hợp bộ đếm giờ riêng từng chặng, chuyển chặng 1-chạm và màn hình vinh danh khi hoàn tất.',
+      'Chuỗi Ngày Liên Tục (Sprint Streak Engine): Theo dõi kỷ luật học tập hàng ngày với chuỗi Streak và lưu giữ lịch sử luyện tập bền bỉ.'
+    ],
+    usageGuide: 'Tại thanh Navbar mục "Luyện Tập" hoặc banner trên trang chủ, bấm vào "Huấn Luyện Viên 30P" để bắt đầu phiên luyện tập nước rút của ngày hôm nay.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'adaptiveSprint',
+      label: 'Mở Huấn Luyện Viên 30P'
+    }
+  },
+  {
     id: 'feat-speaking-pacing-bar',
     version: 'v3.2',
     status: 'new',

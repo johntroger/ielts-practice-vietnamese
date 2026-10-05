@@ -30,6 +30,7 @@ const IdeaMatrixModal = React.lazy(() => import('../IdeaMatrixModal'));
 const RevisionModal = React.lazy(() => import('../RevisionModal'));
 const QuickParaphraseModal = React.lazy(() => import('../QuickParaphraseModal'));
 const SpeakingResultModal = React.lazy(() => import('../speaking/SpeakingResultModal'));
+const AdaptiveSprintModal = React.lazy(() => import('../AdaptiveSprintModal'));
 
 // 3. System & Profile Cluster
 const SettingsModal = React.lazy(() => import('../SettingsModal'));
@@ -437,6 +438,20 @@ export default function AppModalHost({
         onClose={() => closeModal('prescription')}
         mistakes={mistakes}
         submissions={submissions}
+      />
+
+      {/* 2.16b Adaptive 30-Min Sprint Coach */}
+      <AdaptiveSprintModal
+        isOpen={Boolean(modals.adaptiveSprint)}
+        onClose={() => closeModal('adaptiveSprint')}
+        submissions={submissions}
+        mistakes={mistakes}
+        vocabList={vocabList}
+        targetBand={targetBand}
+        onSaveToVocabNotebook={(v) => {
+          setVocabList(prev => [v, ...prev]);
+          if (onSaveUserVocab) onSaveUserVocab(v);
+        }}
       />
 
       {/* 2.17 Cambridge Growth Analytics & Prediction */}

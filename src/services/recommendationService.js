@@ -178,6 +178,21 @@ export function getSmartDailyRecommendations({
     });
   }
 
+  // RULE F: Daily 30-Min Adaptive Sprint Coach
+  recommendations.push({
+    id: 'rec-adaptive-30min-sprint',
+    priority: 89,
+    type: 'adaptive_sprint',
+    badge: '🏃 Huấn Luyện Viên 30P',
+    badgeColor: 'amber',
+    title: 'Kích hoạt phiên nước rút 30 phút cá nhân hóa hôm nay',
+    description: 'Chẩn đoán tự động bẫy lỗi sai, kỹ năng trọng tâm và từ vựng C1/C2 theo 3 chặng đếm giờ có hướng dẫn từ Huấn luyện viên AI.',
+    actionType: 'open_modal',
+    actionPayload: 'adaptiveSprint',
+    actionLabel: 'Bắt đầu Sprint 30P',
+    estimatedMinutes: 30
+  });
+
   // RULE F: Full Mock Exam Challenge
   if (recentSubmissions.length >= 3) {
     recommendations.push({
