@@ -241,6 +241,46 @@ export const en = {
     improvements: 'Areas for Improvement',
     rewrites: 'Band Stepping Rewrites',
     corrections: 'Sentence-Level Corrections',
-    collocations: 'High-Value Collocations'
+    collocations: 'High-Value Collocations',
+    tabs: {
+      criteria: '4 Criteria & Roadmap',
+      paragraphs: 'Paragraph Dissection',
+      corrections: 'Sentence Corrections',
+      rewrites: 'Band 8.5+ Upgrades',
+      vocab: 'Golden Collocations'
+    },
+    actions: {
+      rewriteV2: 'Rewrite v2',
+      exportWord: 'Export Word',
+      printPdf: 'Print / PDF',
+      retryAi: 'Retry AI',
+      close: 'Close'
+    },
+    zpd: {
+      title: 'Pedagogical Focus (ZPD):',
+      all: 'Comprehensive (All)',
+      foundation: '🎯 Foundation (Band 5.5 - 6.5)',
+      advanced: '🚀 Advanced (Band 7.5+)'
+    },
+    speaking: {
+      reportTitle: 'IELTS Speaking Evaluation Report',
+      algoMode: '⚡ Algorithmic Engine (Offline)',
+      aiMode: '🤖 Cambridge AI Examiner',
+      overviewTab: '4 Criteria Overview',
+      transcriptTab: 'Transcript & Sentence Corrections',
+      reEvalAi: 'Re-grade with AI',
+      reEvalAlgo: 'Algorithmic Grade',
+      exportWord: 'Export Word (.doc)',
+      expertUser: 'Expert User',
+      goodUser: 'Good User',
+      competentUser: 'Competent User',
+      modestUser: 'Modest User',
+      developingUser: 'Developing User',
+      rankExpertDesc: 'Fully operational command',
+      rankGoodDesc: 'Fluent and natural control',
+      rankCompetentDesc: 'Effective with occasional inaccuracies',
+      rankModestDesc: 'Partial command / basic communication',
+      rankDevelopingDesc: 'Building foundation'
+    }
   }
 };

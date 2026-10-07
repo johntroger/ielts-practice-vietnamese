@@ -24,6 +24,7 @@ import {
   Bookmark
 } from 'lucide-react';
 import { exportSpeakingReport } from '../../services/exportService';
+import { useTranslation } from '../../i18n';
 
 export default function SpeakingResultModal({
   isOpen,
@@ -42,6 +43,7 @@ export default function SpeakingResultModal({
 }) {
   if (!isOpen || !evaluation) return null;
 
+  const { t, isEn } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'transcript'
   const [expandedTurns, setExpandedTurns] = useState({ 0: true, 1: true });
   const [copiedIndex, setCopiedIndex] = useState(null);
@@ -55,11 +57,11 @@ export default function SpeakingResultModal({
   };
 
   const getRankBadge = (band) => {
-    if (band >= 8.0) return { title: 'Expert User', color: 'bg-amber-500 text-slate-950 font-black', desc: 'Thông thạo hoàn hảo' };
-    if (band >= 7.0) return { title: 'Good User', color: 'bg-purple-600 text-white font-bold', desc: 'Lưu loát & Tự nhiên' };
-    if (band >= 6.0) return { title: 'Competent User', color: 'bg-blue-600 text-white font-bold', desc: 'Hiệu quả, đôi chỗ còn lỗi' };
-    if (band >= 5.0) return { title: 'Modest User', color: 'bg-emerald-600 text-white font-bold', desc: 'Giao tiếp cơ bản' };
-    return { title: 'Developing User', color: 'bg-slate-700 text-slate-200', desc: 'Đang xây nền tảng' };
+    if (band >= 8.0) return { title: 'Expert User', color: 'bg-amber-500 text-slate-950 font-black', desc: isEn ? 'Fully operational command' : 'Thông thạo hoàn hảo' };
+    if (band >= 7.0) return { title: 'Good User', color: 'bg-purple-600 text-white font-bold', desc: isEn ? 'Fluent and natural control' : 'Lưu loát & Tự nhiên' };
+    if (band >= 6.0) return { title: 'Competent User', color: 'bg-blue-600 text-white font-bold', desc: isEn ? 'Effective with occasional inaccuracies' : 'Hiệu quả, đôi chỗ còn lỗi' };
+    if (band >= 5.0) return { title: 'Modest User', color: 'bg-emerald-600 text-white font-bold', desc: isEn ? 'Partial command / basic communication' : 'Giao tiếp cơ bản' };
+    return { title: 'Developing User', color: 'bg-slate-700 text-slate-200', desc: isEn ? 'Building foundation' : 'Đang xây nền tảng' };
   };
 
   const rank = getRankBadge(overallBand);
@@ -107,22 +109,22 @@ export default function SpeakingResultModal({
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                  Báo Cáo Đánh Giá IELTS Speaking
+                  {t('feedback.speaking.reportTitle', null, 'Báo Cáo Đánh Giá IELTS Speaking')}
                 </h2>
                 {isAlgorithmic ? (
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1 shadow-sm">
                     <Zap className="w-3 h-3 text-amber-300 fill-amber-300" />
-                    ⚡ Thuật Toán Máy (Offline 0.02ms)
+                    {t('feedback.speaking.algoMode', null, '⚡ Thuật Toán Máy (Offline 0.02ms)')}
                   </span>
                 ) : (
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1 shadow-sm">
-                    <Sparkles className="w-3 h-3 text-purple-300" />
-                    🤖 AI Cambridge
+                    <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                    {t('feedback.speaking.aiMode', null, '🤖 AI Cambridge')}
                   </span>
                 )}
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                {mockPack?.title || 'Mock Test'} • Giám khảo: {examiner?.name} ({examiner?.accent})
+                {mockPack?.title || 'Mock Test'} • {isEn ? 'Examiner' : 'Giám khảo'}: {examiner?.name} ({examiner?.accent})
               </p>
             </div>
           </div>
@@ -132,10 +134,10 @@ export default function SpeakingResultModal({
               <button
                 onClick={onReEvaluateWithAI}
                 className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm"
-                title="Chấm lại toàn bộ bài thi bằng mô hình AI Cambridge"
+                title={isEn ? "Re-evaluate the entire test with Cambridge AI" : "Chấm lại toàn bộ bài thi bằng mô hình AI Cambridge"}
               >
                 <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                <span className="hidden sm:inline">Chấm Lại Bằng AI</span>
+                <span className="hidden sm:inline">{t('feedback.speaking.reEvalAi', null, 'Chấm Lại Bằng AI')}</span>
                 <span className="sm:hidden">AI</span>
               </button>
             )}
@@ -143,26 +145,26 @@ export default function SpeakingResultModal({
               <button
                 onClick={onReEvaluateAlgorithmically}
                 className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs font-bold transition-all cursor-pointer shadow-sm"
-                title="Chấm lại ngay tức thì bằng Thuật toán chuẩn khảo thí Cambridge"
+                title={isEn ? "Re-evaluate immediately with Algorithmic engine" : "Chấm lại ngay tức thì bằng Thuật toán chuẩn khảo thí Cambridge"}
               >
                 <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">Chấm Thuật Toán</span>
+                <span className="hidden sm:inline">{t('feedback.speaking.reEvalAlgo', null, 'Chấm Thuật Toán')}</span>
                 <span className="sm:hidden">Máy</span>
               </button>
             )}
             <button
               onClick={handleExportWord}
               className="hidden sm:flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all cursor-pointer"
-              title="Tải báo cáo Word (.doc)"
+              title={isEn ? "Download Word report (.doc)" : "Tải báo cáo Word (.doc)"}
             >
               <FileDown className="w-4 h-4" />
-              <span>Xuất Word (.doc)</span>
+              <span>{t('feedback.speaking.exportWord', null, 'Xuất Word (.doc)')}</span>
             </button>
             <button
               onClick={onClose}
               className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Đóng báo cáo"
-              aria-label="Đóng báo cáo"
+              title={isEn ? "Close report" : "Đóng báo cáo"}
+              aria-label={isEn ? "Close report" : "Đóng báo cáo"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -180,7 +182,7 @@ export default function SpeakingResultModal({
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
             >
-              Tổng Quan 4 Tiêu Chí
+              {t('feedback.speaking.overviewTab', null, 'Tổng Quan 4 Tiêu Chí')}
             </button>
             <button
               onClick={() => setActiveTab('transcript')}
@@ -190,7 +192,7 @@ export default function SpeakingResultModal({
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
             >
-              Kịch Bản & Sửa Lỗi Từng Câu
+              {t('feedback.speaking.transcriptTab', null, 'Kịch Bản & Sửa Lỗi Từng Câu')}
             </button>
           </div>
 

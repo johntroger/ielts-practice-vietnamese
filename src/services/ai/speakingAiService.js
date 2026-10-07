@@ -15,9 +15,12 @@ export async function evaluateSpeakingMicroDrill({
   userInput,
   modelAnswer,
   apiKey,
-  model = DEFAULT_MODEL
+  model = DEFAULT_MODEL,
+  language = 'vi'
 }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+  if (!apiKey) throw new Error(language === 'en' ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+
+  const isEnglish = language === 'en';
 
   const prompt = `Act as an expert Cambridge IELTS Speaking senior examiner and pronunciation coach.
 Evaluate the student's spoken/typed response for this IELTS Speaking Micro-Drill:
@@ -31,15 +34,18 @@ Evaluate strictly according to Cambridge IELTS Speaking 4 criteria:
 2. Lexical Resource (idiomatic expressions, precision, avoiding repetition)
 3. Grammatical Range & Accuracy (complex structures, tenses)
 4. Pronunciation & Intonation advice
+${isEnglish 
+  ? '5. LANGUAGE DIRECTIVE: Output all feedbacks, commentary and recommended actions strictly in ENGLISH.'
+  : '5. Output all feedbacks, commentary and recommended actions in clear, helpful Vietnamese.'}
 
 Return ONLY raw parseable JSON:
 {
   "estimatedBand": 7.0,
-  "fluencyFeedback": "Detailed Vietnamese feedback on answer expansion, coherence, discourse markers and logical flow",
-  "lexicalFeedback": "Detailed Vietnamese feedback on vocabulary choice, collocations, idiomatic expressions and precision",
-  "grammarFeedback": "Detailed Vietnamese feedback on sentence structures (complex vs simple) and grammar accuracy",
+  "fluencyFeedback": "${isEnglish ? 'Detailed English feedback on answer expansion, coherence, discourse markers' : 'Nhận xét chi tiết bằng tiếng Việt về phát triển câu và mạch lạc'}",
+  "lexicalFeedback": "${isEnglish ? 'Detailed English feedback on vocabulary choice, collocations and precision' : 'Nhận xét chi tiết về từ vựng và collocations'}",
+  "grammarFeedback": "${isEnglish ? 'Detailed English feedback on grammar range and accuracy' : 'Nhận xét chi tiết về cấu trúc ngữ pháp'}",
   "upgradedVersion": "Band 8.5 polished version of the student's idea maintaining their authentic personal stance",
-  "recommendedAction": "1 actionable practice tip for the next Speaking attempt"
+  "recommendedAction": "${isEnglish ? '1 actionable practice tip in English for the next attempt' : '1 lời khuyên luyện tập cụ thể bằng tiếng Việt'}"
 }`;
 
   const response = await callGeminiApi({
@@ -89,8 +95,10 @@ export async function evaluateSpeakingMockExam({
   examiner,
   totalDurationSec = 600,
   apiKey,
-  model = DEFAULT_MODEL
+  model = DEFAULT_MODEL,
+  language = 'vi'
 }) {
+  const isEnglish = language === 'en';
   // Extract candidate answers
   const candidateTurns = dialogueHistory.filter(d => d.speaker === 'candidate');
   const allSpokenText = candidateTurns.map(t => t.text || '').join(' ');
@@ -134,9 +142,11 @@ INSTRUCTIONS:
    - Grammatical Range and Accuracy (GRA)
    - Pronunciation (PR - assessed based on clarity, cadence, discourse phrasing, and phonetic accuracy observed from speech recognition)
 2. Compute the official overallBand using IELTS half-band rounding rules.
-3. Formulate Top 3 Actionable Priorities to gain +0.5 band in Vietnamese.
+3. Formulate Top 3 Actionable Priorities to gain +0.5 band.
 4. For each candidate answer, provide inline feedback, grammatical corrections, an upgraded Band 8.5+ native version preserving the candidate's original message, and golden collocations.
-5. All feedbacks, explanations, and advice must be in clear, professional Vietnamese.
+${isEnglish 
+  ? '5. CRITICAL LANGUAGE RULE: The user is in English mode. All examiner feedbacks, overall summary verdicts, corrections explanations, and advice MUST be in professional, authentic ENGLISH.'
+  : '5. All feedbacks, explanations, and advice must be in clear, professional Vietnamese.'}
 
 OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
 {

@@ -46,6 +46,7 @@ import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills';
 import { SPEAKING_MICRO_DRILLS } from '../data/speakingMicroDrills';
 import { COMMUNITY_DEFAULT_DRILLS } from '../data/communityMicroDrills';
 import { evaluateParaphrase, generateMicroDrill, evaluateListeningDrill, evaluateSpeakingMicroDrill } from '../services/geminiService';
+import { useTranslation } from '../i18n';
 import { fetchPublicDrills, savePublicDrill, deletePublicDrill } from '../services/dataSyncService';
 import { speakText, stopSpeech, playChimeTone } from '../utils/speechAudio';
 import MicroDrillAudioBar from './listening/MicroDrillAudioBar';
@@ -73,6 +74,8 @@ export default function MicroDrillsModal({
   onOpenAuth
 }) {
   if (!isOpen) return null;
+
+  const { t, isEn, language } = useTranslation();
 
   // Active Room: 'general' | 'writing' | 'reading' | 'listening' | 'speaking'
   const [activeRoom, setActiveRoom] = useState(() => {
@@ -663,7 +666,8 @@ export default function MicroDrillsModal({
         userInput: userResponseText,
         modelAnswer: modelAns,
         apiKey,
-        model
+        model,
+        language
       });
       setSpeakingEvaluation(res);
     } catch (err) {

@@ -26,6 +26,7 @@ export function LanguageProvider({ children }) {
   const value = useMemo(() => {
     return {
       lang,
+      language: lang,
       setLanguage: (newLang) => {
         setLanguage(newLang);
         setLangState(newLang);
@@ -71,6 +72,7 @@ export function useTranslation() {
   // Fallback standalone hook if not wrapped by Provider
   return {
     lang: standaloneLang,
+    language: standaloneLang,
     setLanguage: (newLang) => {
       setLanguage(newLang);
       setStandaloneLang(newLang);

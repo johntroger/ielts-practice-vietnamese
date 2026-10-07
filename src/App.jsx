@@ -44,8 +44,10 @@ import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationSe
 import { countWords } from './utils/textAnalytics';
 import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
 import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
+import { useTranslation } from './i18n';
 
 export default function App() {
+  const { t, language } = useTranslation();
   const { modals, openModal, closeModal, toggleModal } = useModalStore();
 
   // 1. Persistent Storage State with Quota-Resilient Storage Service
@@ -711,10 +713,11 @@ export default function App() {
             task: currentTask,
             essayText: currentEssay,
             apiKey,
-            model
+            model,
+            language
           });
           evaluation.evaluationMethod = 'ai';
-          evaluation.engineName = `Trí Tuệ Nhân Tạo AI (${model})`;
+          evaluation.engineName = language === 'en' ? `AI Examiner (${model})` : `Trí Tuệ Nhân Tạo AI (${model})`;
         } catch (aiErr) {
           console.warn('[Evaluation Fallback] AI API encountered error, switching to Algorithmic Evaluator:', aiErr);
           // Graceful fallback to algorithmic evaluator
@@ -722,7 +725,9 @@ export default function App() {
             task: currentTask,
             essayText: currentEssay
           });
-          evaluation.fallbackNotice = 'Dịch vụ AI tạm thời quá tải hoặc chạm hạn ngạch (Quota 429). Hệ thống đã tự động chuyển sang Chế độ Chấm Bằng Máy để bạn nhận kết quả ngay tức thì!';
+          evaluation.fallbackNotice = language === 'en'
+            ? 'AI service is temporarily busy (Quota 429). The system seamlessly evaluated your essay using the Cambridge Algorithmic Engine!'
+            : 'Dịch vụ AI tạm thời quá tải hoặc chạm hạn ngạch (Quota 429). Hệ thống đã tự động chuyển sang Chế độ Chấm Bằng Máy để bạn nhận kết quả ngay tức thì!';
         }
       }
 

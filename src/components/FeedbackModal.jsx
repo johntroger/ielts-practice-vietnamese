@@ -23,6 +23,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { openTheoryModalWithContext } from '../services/theoryContextService';
+import { useTranslation } from '../i18n';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -59,6 +60,7 @@ export default function FeedbackModal({
 }) {
   if (!isOpen || !evaluation) return null;
 
+  const { t, isEn } = useTranslation();
   const [activeTab, setActiveTab] = useState('criteria'); // 'criteria' | 'corrections' | 'rewrite' | 'vocab'
   const [savedVocabs, setSavedVocabs] = useState({});
   const [savedMistakes, setSavedMistakes] = useState({});
@@ -110,36 +112,54 @@ export default function FeedbackModal({
 
     if (!p1) {
       if (task?.taskNumber === 1 && evaluation.task1OverviewStats && !evaluation.task1OverviewStats.hasOverview) {
-        p1 = 'Bổ sung ngay câu Overview tổng quan mở đầu bằng "Overall, it is clear that...". Thiếu Overview sẽ bị khống chế tối đa Band 5.0 Task Achievement.';
+        p1 = isEn
+          ? 'Add an Overview sentence starting with "Overall, it is clear that...". Missing an overview caps Task Achievement at Band 5.0.'
+          : 'Bổ sung ngay câu Overview tổng quan mở đầu bằng "Overall, it is clear that...". Thiếu Overview sẽ bị khống chế tối đa Band 5.0 Task Achievement.';
       } else if (task?.taskNumber === 2 && evaluation.hedgingStats?.hasOvergeneralisation) {
-        p1 = 'Loại bỏ các phát ngôn khẳng định tuyệt đối (always, undeniable...). Thay bằng ngôn ngữ dè dặt học thuật (tends to, appears to) để thoát trần Band 6.0.';
+        p1 = isEn
+          ? 'Eliminate absolute overgeneralisations (always, undeniable...). Use academic hedging (tends to, appears to) to surpass Band 6.0.'
+          : 'Loại bỏ các phát ngôn khẳng định tuyệt đối (always, undeniable...). Thay bằng ngôn ngữ dè dặt học thuật (tends to, appears to) để thoát trần Band 6.0.';
       } else if (weakest && weakest[1]?.improvements?.[0]) {
         const name = weakest[0] === 'tr' ? 'Task Response' : weakest[0] === 'cc' ? 'Coherence & Cohesion' : weakest[0] === 'lr' ? 'Lexical Resource' : 'Grammar';
-        p1 = `Nâng cấp điểm nghẽn ${name} (hiện Band ${weakest[1]?.band?.toFixed(1) || '6.0'}): ${weakest[1]?.improvements[0]}`;
+        p1 = isEn
+          ? `Upgrade bottleneck ${name} (currently Band ${weakest[1]?.band?.toFixed(1) || '6.0'}): ${weakest[1]?.improvements[0]}`
+          : `Nâng cấp điểm nghẽn ${name} (hiện Band ${weakest[1]?.band?.toFixed(1) || '6.0'}): ${weakest[1]?.improvements[0]}`;
       } else {
-        p1 = 'Khắc phục các lỗi ngữ pháp và chia động từ cơ bản để đảm bảo độ chuẩn xác toàn bài.';
+        p1 = isEn
+          ? 'Correct foundational grammar and verb tense errors to ensure overall sentence accuracy.'
+          : 'Khắc phục các lỗi ngữ pháp và chia động từ cơ bản để đảm bảo độ chuẩn xác toàn bài.';
       }
     }
 
     if (!p2) {
       if (secondWeakest && secondWeakest[1]?.improvements?.[0]) {
         const name = secondWeakest[0] === 'tr' ? 'Task Response' : secondWeakest[0] === 'cc' ? 'Coherence & Cohesion' : secondWeakest[0] === 'lr' ? 'Lexical Resource' : 'Grammar';
-        p2 = `Cải thiện tiêu chí ${name}: ${secondWeakest[1]?.improvements[0]}`;
+        p2 = isEn
+          ? `Improve ${name}: ${secondWeakest[1]?.improvements[0]}`
+          : `Cải thiện tiêu chí ${name}: ${secondWeakest[1]?.improvements[0]}`;
       } else if (evaluation.corrections && evaluation.corrections.length > 0) {
-        p2 = `Sửa ${Math.min(3, evaluation.corrections.length)} lỗi dùng từ / cấu trúc nổi cộm trong bài viết.`;
+        p2 = isEn
+          ? `Fix ${Math.min(3, evaluation.corrections.length)} prominent word choice and grammatical slips in your essay.`
+          : `Sửa ${Math.min(3, evaluation.corrections.length)} lỗi dùng từ / cấu trúc nổi cộm trong bài viết.`;
       } else {
-        p2 = 'Đa dạng hóa vốn từ vựng học thuật theo chủ đề và sử dụng collocations tự nhiên.';
+        p2 = isEn
+          ? 'Diversify academic vocabulary by topic and incorporate natural collocations.'
+          : 'Đa dạng hóa vốn từ vựng học thuật theo chủ đề và sử dụng collocations tự nhiên.';
       }
     }
 
     if (!p3) {
-      p3 = 'Rèn luyện liên kết ý giữa các đoạn văn mạch lạc theo cấu trúc P.E.E.L (Point - Explain - Example - Link).';
+      p3 = isEn
+        ? 'Reinforce paragraph cohesion following the P.E.E.L framework (Point - Explain - Example - Link).'
+        : 'Rèn luyện liên kết ý giữa các đoạn văn mạch lạc theo cấu trúc P.E.E.L (Point - Explain - Example - Link).';
     }
 
     const currentOverall = evaluation.overallBand || 6.5;
     const potentialBand = Math.min(9.0, Math.round((currentOverall + 0.5) * 2) / 2);
     if (!targetBand) {
-      targetBand = `Lộ trình mục tiêu: Tăng từ Band ${currentOverall.toFixed(1)} lên Band ${potentialBand.toFixed(1)} - ${(potentialBand + 0.5).toFixed(1)} khi khắc phục triệt để 3 điểm trên.`;
+      targetBand = isEn
+        ? `Target roadmap: Boost from Band ${currentOverall.toFixed(1)} to Band ${potentialBand.toFixed(1)} - ${(potentialBand + 0.5).toFixed(1)} once these 3 areas are addressed.`
+        : `Lộ trình mục tiêu: Tăng từ Band ${currentOverall.toFixed(1)} lên Band ${potentialBand.toFixed(1)} - ${(potentialBand + 0.5).toFixed(1)} khi khắc phục triệt để 3 điểm trên.`;
     }
 
     return {
@@ -150,7 +170,7 @@ export default function FeedbackModal({
       currentOverall,
       potentialBand
     };
-  }, [evaluation, task]);
+  }, [evaluation, task, isEn]);
 
   const trBand = evaluation.criteria?.tr?.band || 6.0;
   const ccBand = evaluation.criteria?.cc?.band || 6.0;
@@ -162,7 +182,7 @@ export default function FeedbackModal({
     labels: ['Task Response (TR)', 'Coherence & Cohesion (CC)', 'Lexical Resource (LR)', 'Grammar Range & Acc (GRA)'],
     datasets: [
       {
-        label: 'Band Score của bạn',
+        label: isEn ? 'Your Band Score' : 'Band Score của bạn',
         data: [trBand, ccBand, lrBand, graBand],
         backgroundColor: 'rgba(217, 26, 42, 0.2)',
         borderColor: '#D91A2A',
@@ -172,7 +192,7 @@ export default function FeedbackModal({
         pointHoverBorderColor: '#D91A2A'
       },
       {
-        label: 'Mục tiêu Band 8.0',
+        label: isEn ? 'Band 8.0 Target' : 'Mục tiêu Band 8.0',
         data: [8, 8, 8, 8],
         backgroundColor: 'rgba(59, 130, 246, 0.05)',
         borderColor: 'rgba(59, 130, 246, 0.4)',
@@ -301,32 +321,32 @@ export default function FeedbackModal({
                   onOpenRevision();
                 }}
                 className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white text-xs font-bold transition-all shadow-xs shrink-0"
-                title="Luyện viết lại lần 2 để nâng band"
+                title={isEn ? "Second-draft revision to boost band" : "Luyện viết lại lần 2 để nâng band"}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Viết Lại v2</span>
+                <span>{t('feedback.actions.rewriteV2', null, 'Viết Lại v2')}</span>
               </button>
             )}
 
             <button
               onClick={() => exportToWord({ task, essayText, evaluation, stats })}
               className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors shrink-0"
-              title="Xuất bài ra file Word .doc"
+              title={isEn ? "Export to Word (.doc)" : "Xuất bài ra file Word .doc"}
             >
               <FileDown className="w-4 h-4 text-blue-400" />
-              <span className="hidden sm:inline">Xuất Word</span>
+              <span className="hidden sm:inline">{t('feedback.actions.exportWord', null, 'Xuất Word')}</span>
             </button>
             <button
               onClick={printFormattedReport}
               className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors shrink-0 cursor-pointer"
-              title="In / Lưu thành PDF"
+              title={isEn ? "Print / Save as PDF" : "In / Lưu thành PDF"}
             >
               <Printer className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
               className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors shrink-0 cursor-pointer"
-              title="Đóng bảng kết quả"
+              title={isEn ? "Close results" : "Đóng bảng kết quả"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -345,7 +365,7 @@ export default function FeedbackModal({
                 onClick={onReEvaluateWithAI}
                 className="px-2.5 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] shrink-0 transition-colors"
               >
-                Thử lại AI
+                {t('feedback.actions.retryAi', null, 'Thử lại AI')}
               </button>
             )}
           </div>
@@ -359,7 +379,7 @@ export default function FeedbackModal({
               activeTab === 'criteria' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
             }`}
           >
-            4 Tiêu Chí & Lộ Trình
+            {t('feedback.tabs.criteria', null, '4 Tiêu Chí & Lộ Trình')}
           </button>
           <button
             onClick={() => setActiveTab('paragraphs')}
@@ -367,7 +387,7 @@ export default function FeedbackModal({
               activeTab === 'paragraphs' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
             }`}
           >
-            <span>Mổ Xẻ Từng Đoạn</span>
+            <span>{t('feedback.tabs.paragraphs', null, 'Mổ Xẻ Từng Đoạn')}</span>
             {evaluation.paragraphAnalysis && evaluation.paragraphAnalysis.length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold">
                 {evaluation.paragraphAnalysis.length}
@@ -380,7 +400,7 @@ export default function FeedbackModal({
               activeTab === 'corrections' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
             }`}
           >
-            <span>Soi Lỗi Từng Câu</span>
+            <span>{t('feedback.tabs.corrections', null, 'Soi Lỗi Từng Câu')}</span>
             {evaluation.corrections && evaluation.corrections.length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full bg-red-100 text-red-700 text-[10px]">
                 {evaluation.corrections.length}
@@ -393,7 +413,7 @@ export default function FeedbackModal({
               activeTab === 'rewrite' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
             }`}
           >
-            Bản Nâng Cấp Band 8.5+
+            {t('feedback.tabs.rewrites', null, 'Bản Nâng Cấp Band 8.5+')}
           </button>
           <button
             onClick={() => setActiveTab('vocab')}
@@ -401,7 +421,7 @@ export default function FeedbackModal({
               activeTab === 'vocab' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
             }`}
           >
-            Từ Vựng Vàng Trích Xuất
+            {t('feedback.tabs.vocab', null, 'Từ Vựng Vàng Trích Xuất')}
           </button>
         </div>
 
@@ -409,7 +429,7 @@ export default function FeedbackModal({
         <div className="bg-slate-100/90 border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center space-x-1.5 text-slate-700 font-semibold shrink-0">
             <Target className="w-3.5 h-3.5 text-red-600 shrink-0" />
-            <span>Mục tiêu sư phạm (ZPD):</span>
+            <span>{t('feedback.zpd.title', null, 'Mục tiêu sư phạm (ZPD):')}</span>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
@@ -421,7 +441,7 @@ export default function FeedbackModal({
                   : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-200'
               }`}
             >
-              Toàn diện (Tất cả)
+              {t('feedback.zpd.all', null, 'Toàn diện (Tất cả)')}
             </button>
             <button
               type="button"
@@ -432,7 +452,7 @@ export default function FeedbackModal({
                   : 'bg-white hover:bg-amber-50 text-amber-800 border border-amber-200'
               }`}
             >
-              <span>🎯 Nền tảng (Band 5.5 - 6.5)</span>
+              <span>{t('feedback.zpd.foundation', null, '🎯 Nền tảng (Band 5.5 - 6.5)')}</span>
             </button>
             <button
               type="button"
@@ -443,7 +463,7 @@ export default function FeedbackModal({
                   : 'bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-200'
               }`}
             >
-              <span>🚀 Bứt phá (Band 7.5+)</span>
+              <span>{t('feedback.zpd.advanced', null, '🚀 Bứt phá (Band 7.5+)')}</span>
             </button>
           </div>
         </div>

@@ -108,7 +108,8 @@ const testSuites = [
   { name: 'Step 99: Interactive PESTLE Matrix, 5 Universal Archetypes & 100 Spelling Demons', file: 'tests/test_step99_interactive_pestle_archetypes_and_spelling100.js' },
   { name: 'Step 100: Dynamic Theory Chunks & Bundle Splitting (Performance & Milestone 100)', file: 'tests/test_step100_dynamic_theory_chunks_and_bundle_splitting.js' },
   { name: 'Step 101: Internationalization (i18n) Core Architecture & Language Switching', file: 'tests/test_step101_i18n_core_and_language_switching.js' },
-  { name: 'Step 102: Workspaces & UI Shell Localization (Bilingual Phase 2)', file: 'tests/test_step102_i18n_workspaces_localization.js' }
+  { name: 'Step 102: Workspaces & UI Shell Localization (Bilingual Phase 2)', file: 'tests/test_step102_i18n_workspaces_localization.js' },
+  { name: 'Step 103: Bilingual AI Evaluation & Feedback Engine (Phase 3)', file: 'tests/test_step103_i18n_ai_evaluation_localization.js' }
 ];
 
 console.log('===============================================================');

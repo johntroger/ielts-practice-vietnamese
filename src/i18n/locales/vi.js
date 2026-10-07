@@ -241,6 +241,46 @@ export const vi = {
     improvements: 'Điểm cần cải thiện',
     rewrites: 'Bản nâng cấp bài viết',
     corrections: 'Sửa lỗi chi tiết từng câu',
-    collocations: 'Từ vựng & Collocations đắt giá'
+    collocations: 'Từ vựng & Collocations đắt giá',
+    tabs: {
+      criteria: '4 Tiêu Chí & Lộ Trình',
+      paragraphs: 'Mổ Xẻ Từng Đoạn',
+      corrections: 'Soi Lỗi Từng Câu',
+      rewrites: 'Bản Nâng Cấp Band 8.5+',
+      vocab: 'Từ Vựng Vàng Trích Xuất'
+    },
+    actions: {
+      rewriteV2: 'Viết Lại v2',
+      exportWord: 'Xuất Word',
+      printPdf: 'In / PDF',
+      retryAi: 'Thử lại AI',
+      close: 'Đóng'
+    },
+    zpd: {
+      title: 'Mục tiêu sư phạm (ZPD):',
+      all: 'Toàn diện (Tất cả)',
+      foundation: '🎯 Nền tảng (Band 5.5 - 6.5)',
+      advanced: '🚀 Bứt phá (Band 7.5+)'
+    },
+    speaking: {
+      reportTitle: 'Báo Cáo Đánh Giá IELTS Speaking',
+      algoMode: '⚡ Thuật Toán Máy (Offline)',
+      aiMode: '🤖 AI Cambridge',
+      overviewTab: 'Tổng Quan 4 Tiêu Chí',
+      transcriptTab: 'Kịch Bản & Sửa Lỗi Từng Câu',
+      reEvalAi: 'Chấm Lại Bằng AI',
+      reEvalAlgo: 'Chấm Thuật Toán',
+      exportWord: 'Xuất Word (.doc)',
+      expertUser: 'Expert User',
+      goodUser: 'Good User',
+      competentUser: 'Competent User',
+      modestUser: 'Modest User',
+      developingUser: 'Developing User',
+      rankExpertDesc: 'Thông thạo hoàn hảo',
+      rankGoodDesc: 'Lưu loát & Tự nhiên',
+      rankCompetentDesc: 'Hiệu quả, đôi chỗ còn lỗi',
+      rankModestDesc: 'Giao tiếp cơ bản',
+      rankDevelopingDesc: 'Đang xây nền tảng'
+    }
   }
 };

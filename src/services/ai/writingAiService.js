@@ -54,11 +54,13 @@ export const MAP_ARCHETYPES = [
  */
 
 
-export async function evaluateEssay({ task, essayText, apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+export async function evaluateEssay({ task, essayText, apiKey, model = DEFAULT_MODEL, language = 'vi' }) {
+  if (!apiKey) throw new Error(language === 'en' ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
   if (!essayText || essayText.trim().split(/\s+/).length < 20) {
-    throw new Error('Bài viết quá ngắn để giám khảo chấm điểm (tối thiểu 20 từ).');
+    throw new Error(language === 'en' ? 'Essay response is too short to evaluate (minimum 20 words).' : 'Bài viết quá ngắn để giám khảo chấm điểm (tối thiểu 20 từ).');
   }
+
+  const isEnglish = language === 'en';
 
   const prompt = `ROLE & PERSONA:
 You are an accredited Cambridge IELTS Senior Examiner and Academic Assessment Specialist. You grade rigorously according to the official Cambridge IELTS Band Descriptors (TR/TA, CC, LR, GRA) and international Academic Register standards.
@@ -112,7 +114,13 @@ INSTRUCTIONS:
 4. Provide TWO tiered rewrites of the candidate's essay (Band Stepping):
    - "band65Rewrite": A clean, accessible Band 6.5 - 7.0 version. Focus on 100% grammatical accuracy, clear cohesive progression, standard sentence variety, and natural B2/early-C1 vocabulary (easy for a Band 5.0-6.0 learner to adopt).
    - "band8Rewrite": A sophisticated Band 8.5+ version elevating lexical precision, C1/C2 collocations, nuanced hedging, and complex syntax.
-5. Extract 5-8 golden academic collocations from the Band 8.5 rewrite with Vietnamese meanings.
+${isEnglish 
+  ? `CRITICAL LANGUAGE DIRECTIVE: 
+The candidate is using the English Version of the platform. ALL examiner commentary, feedback, strengths, improvements, and error explanations MUST be written entirely in academic, professional ENGLISH.
+5. Extract 5-8 golden academic collocations from the Band 8.5 rewrite with clear English explanations and definitions.`
+  : `NGÔN NGỮ BÁO CÁO: 
+Báo cáo chấm điểm dành cho thí sinh Việt Nam. Toàn bộ nhận xét chi tiết, điểm mạnh, điểm cần cải thiện, và giải thích lỗi sai (explanation) phải viết bằng TIẾNG VIỆT tự nhiên, chuẩn mực sư phạm.
+5. Extract 5-8 golden academic collocations from the Band 8.5 rewrite with Vietnamese meanings.`}
 
 OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO backticks. Schema:
 {
@@ -120,25 +128,25 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
   "criteria": {
     "tr": {
       "band": 7.0,
-      "feedback": "Detailed examiner commentary on task achievement...",
+      "feedback": "${isEnglish ? 'Detailed examiner commentary on task achievement in English...' : 'Nhận xét chi tiết của giám khảo về Task Achievement bằng tiếng Việt...'}",
       "strengths": ["...", "..."],
       "improvements": ["...", "..."]
     },
     "cc": {
       "band": 6.5,
-      "feedback": "Detailed examiner commentary on coherence and cohesion...",
+      "feedback": "${isEnglish ? 'Detailed examiner commentary on coherence and cohesion in English...' : 'Nhận xét chi tiết về tính mạch lạc và liên kết bằng tiếng Việt...'}",
       "strengths": ["...", "..."],
       "improvements": ["...", "..."]
     },
     "lr": {
       "band": 7.0,
-      "feedback": "Detailed examiner commentary on vocabulary and collocations...",
+      "feedback": "${isEnglish ? 'Detailed examiner commentary on vocabulary and collocations in English...' : 'Nhận xét chi tiết về vốn từ vựng và collocations bằng tiếng Việt...'}",
       "strengths": ["...", "..."],
       "improvements": ["...", "..."]
     },
     "gra": {
       "band": 6.5,
-      "feedback": "Detailed examiner commentary on grammar range and errors...",
+      "feedback": "${isEnglish ? 'Detailed examiner commentary on grammar range and errors in English...' : 'Nhận xét chi tiết về cấu trúc ngữ pháp và độ chính xác bằng tiếng Việt...'}",
       "strengths": ["...", "..."],
       "improvements": ["...", "..."]
     }
@@ -148,7 +156,7 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
       "original": "exact sentence from candidate text",
       "corrected": "polished academic version",
       "type": "grammar | vocabulary | collocation | punctuation",
-      "explanation": "clear explanation in Vietnamese explaining why and how to improve"
+      "explanation": "${isEnglish ? 'Clear explanation in English explaining why and how to improve' : 'Giải thích rõ ràng bằng tiếng Việt nguyên nhân lỗi và cách cải thiện'}"
     }
   ],
   "band65Rewrite": "Full complete rewritten essay at Band 6.5 - 7.0 (accessible, clear, error-free)...",
@@ -156,7 +164,7 @@ OUTPUT FORMAT: Return ONLY valid, parseable JSON with NO markdown formatting, NO
   "keyVocabulary": [
     {
       "phrase": "collocation or academic idiom",
-      "meaningVi": "Vietnamese meaning and explanation",
+      "meaningVi": "${isEnglish ? 'Clear English definition and contextual explanation' : 'Nghĩa tiếng Việt và phân tích ngữ cảnh'}",
       "example": "example sentence"
     }
   ]

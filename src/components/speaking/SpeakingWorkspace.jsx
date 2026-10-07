@@ -50,7 +50,7 @@ export default function SpeakingWorkspace({
   isSlimHeader = false,
   toggleSlimHeader
 }) {
-  const { t, isEn } = useTranslation();
+  const { t, isEn, language } = useTranslation();
   // 1. Workspace Configuration State
   const [activeMode, setActiveMode] = useState('mock'); // 'mock' | 'practice'
   const [selectedExaminerId, setSelectedExaminerId] = useState(() => {
@@ -504,7 +504,8 @@ export default function SpeakingWorkspace({
         examiner: activeExaminer,
         totalDurationSec: completedExamData.meta?.totalDurationSec || 600,
         apiKey,
-        model
+        model,
+        language
       });
       setCurrentEvaluation(evalResult);
     } catch (err) {
@@ -1267,7 +1268,8 @@ export default function SpeakingWorkspace({
                 examiner: activeExaminer,
                 totalDurationSec: meta?.totalDurationSec || 600,
                 apiKey,
-                model
+                model,
+                language
               });
 
               setCurrentEvaluation(evalResult);
