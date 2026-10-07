@@ -13,6 +13,7 @@ import {
   ArrowRight 
 } from 'lucide-react';
 import { detectWritingHabits } from '../utils/habitDetector.js';
+import { useTranslation } from '../i18n/index.js';
 
 export { detectWritingHabits };
 
@@ -32,6 +33,7 @@ export default function TimerBar({
   currentTask = null,
   mistakes = []
 }) {
+  const { t, isEn } = useTranslation();
   const [isMobileCompact, setIsMobileCompact] = useState(false);
   const [habitWarnings, setHabitWarnings] = useState([]);
   const [pendingSubmitMethod, setPendingSubmitMethod] = useState(null);
@@ -204,8 +206,8 @@ export default function TimerBar({
               {wordCount < minWords && (
                 <span className="text-[11px] sm:text-xs text-amber-400 font-medium mr-1">
                   <span className="sm:hidden">{wordCount}/{minWords}</span>
-                  <span className="hidden sm:inline lg:hidden">{wordCount}/{minWords} từ</span>
-                  <span className="hidden lg:inline">Chưa đạt số từ tối thiểu ({wordCount}/{minWords})</span>
+                  <span className="hidden sm:inline lg:hidden">{wordCount}/{minWords} {t('common.words')}</span>
+                  <span className="hidden lg:inline">{isEn ? `Below minimum word count (${wordCount}/${minWords})` : `Chưa đạt số từ tối thiểu (${wordCount}/${minWords})`}</span>
                 </span>
               )}
 
@@ -214,11 +216,11 @@ export default function TimerBar({
                 onClick={() => handleInitiateSubmit('algorithmic')}
                 disabled={isSubmitting}
                 className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-xl bg-slate-800 hover:bg-slate-700/90 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-amber-200 text-xs sm:text-sm font-semibold transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
-                title="Chấm điểm bằng thuật toán chuyên gia Cambridge (phản hồi ngay tức thì, không cần API Key, không tốn quota)"
+                title={isEn ? "Fast algorithmic grading (instant, no API key required)" : "Chấm điểm bằng thuật toán chuyên gia Cambridge (phản hồi ngay tức thì, không cần API Key, không tốn quota)"}
               >
                 <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 fill-amber-400/40" />
-                <span className="lg:hidden">Chấm Máy</span>
-                <span className="hidden lg:inline">Chấm Bằng Máy</span>
+                <span className="lg:hidden">{isEn ? 'Algorithm' : 'Chấm Máy'}</span>
+                <span className="hidden lg:inline">{isEn ? 'Algorithm Grade' : 'Chấm Bằng Máy'}</span>
               </button>
 
               {/* 2. AI In-depth Grading */}
@@ -226,18 +228,18 @@ export default function TimerBar({
                 onClick={() => handleInitiateSubmit('ai')}
                 disabled={isSubmitting}
                 className="flex-1 sm:flex-none justify-center flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
-                title="Chấm chi tiết với Trí tuệ nhân tạo AI (cần kết nối API Key)"
+                title={isEn ? "In-depth AI grading with Cambridge examiner criteria" : "Chấm chi tiết với Trí tuệ nhân tạo AI (cần kết nối API Key)"}
               >
                 {isSubmitting ? (
                   <>
                     <Sparkles className="w-4 h-4 animate-spin" />
-                    <span>Đang Chấm...</span>
+                    <span>{isEn ? 'Evaluating...' : 'Đang Chấm...'}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    <span className="lg:hidden">Chấm AI</span>
-                    <span className="hidden lg:inline">Chấm Bằng AI</span>
+                    <span className="lg:hidden">{isEn ? 'AI Grade' : 'Chấm AI'}</span>
+                    <span className="hidden lg:inline">{isEn ? 'Grade with AI' : 'Chấm Bằng AI'}</span>
                   </>
                 )}
               </button>

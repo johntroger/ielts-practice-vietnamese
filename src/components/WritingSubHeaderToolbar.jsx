@@ -19,6 +19,7 @@ import {
   Pill,
   CheckCircle2
 } from 'lucide-react';
+import { useTranslation } from '../i18n/index.js';
 
 export default function WritingSubHeaderToolbar({
   currentTask,
@@ -48,6 +49,7 @@ export default function WritingSubHeaderToolbar({
   onToggleWritingViewMode,
   onOpenSlideOver
 }) {
+  const { t, isEn } = useTranslation();
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
 
   // Daily Missions Progress Tracker
@@ -140,10 +142,10 @@ export default function WritingSubHeaderToolbar({
                   ? 'bg-white text-indigo-700 shadow-xs border border-indigo-100'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
-              title="Chế độ Tinh Giản (Minimal View): Ẩn các chỉ số phức tạp, tập trung gõ bài"
+              title={t('toolbar.minimalDesc')}
             >
               <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Tinh Giản</span>
+              <span>{t('toolbar.minimal')}</span>
             </button>
             <button
               type="button"
@@ -153,10 +155,10 @@ export default function WritingSubHeaderToolbar({
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
-              title="Chế độ Pro Studio: Đầy đủ các tiện ích và chỉ số phân tích chuyên sâu"
+              title={t('toolbar.proStudioDesc')}
             >
               <Sliders className="w-3.5 h-3.5 text-slate-700" />
-              <span className="hidden xs:inline">Pro Studio</span>
+              <span className="hidden xs:inline">{t('toolbar.proStudio')}</span>
               <span className="xs:hidden">Pro</span>
             </button>
           </div>
@@ -170,11 +172,11 @@ export default function WritingSubHeaderToolbar({
                   ? 'bg-amber-50/90 text-amber-900 border-amber-300'
                   : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
               }`}
-              title="Mở thực đơn Tiện ích: CDI, Chế độ tập trung, Thuộc bài, Sổ lỗi sai & Cẩm nang"
+              title="Utilities & Settings"
             >
               <FolderKanban className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span className="hidden xs:inline">Tiện Ích & Cài Đặt</span>
-              <span className="xs:hidden">Tiện Ích</span>
+              <span className="hidden xs:inline">{t('toolbar.utilitiesSettings')}</span>
+              <span className="xs:hidden">{t('toolbar.utilitiesShort')}</span>
               {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
                 <span className="w-2 h-2 rounded-full bg-blue-600" title="Đang bật tùy chỉnh tương phản CDI" />
               )}
@@ -287,7 +289,7 @@ export default function WritingSubHeaderToolbar({
                         <GraduationCap className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold text-xs">Đánh Dấu Thuộc Đề Thi Này</div>
+                        <div className="font-bold text-xs">Đánh Dấu Thuộc Đề Thi Này (Thuộc bài)</div>
                         <div className="text-[10px] text-slate-400 font-normal">Ghi nhớ đã luyện thành thạo dạng bài này</div>
                       </div>
                     </div>

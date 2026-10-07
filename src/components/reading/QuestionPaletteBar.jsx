@@ -7,6 +7,7 @@ import {
   Award,
   Flag
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/index.js';
 
 export default function QuestionPaletteBar({
   totalQuestions = 40,
@@ -22,6 +23,7 @@ export default function QuestionPaletteBar({
   onSelectPassage,
   onOpenResultModal
 }) {
+  const { t, isEn } = useTranslation();
   const answeredCount = Object.keys(userAnswers).filter(k => {
     const val = userAnswers[k];
     if (Array.isArray(val)) return val.length > 0;
@@ -226,7 +228,7 @@ export default function QuestionPaletteBar({
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Làm lại từ đầu</span>
+            <span>{isEn ? 'Start Over' : 'Làm lại từ đầu'}</span>
           </button>
         ) : (
           <button
@@ -234,7 +236,7 @@ export default function QuestionPaletteBar({
             className="flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold shadow-md shadow-blue-500/20 transition-all hover:scale-102"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Nộp bài chấm điểm</span>
+            <span>{t('reading.submitTest', 'Nộp bài chấm điểm')}</span>
           </button>
         )}
       </div>

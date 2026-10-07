@@ -37,6 +37,7 @@ import { INITIAL_LISTENING_TESTS } from '../../data/listeningTasks';
 import { calculateListeningBandScore } from '../../data/listeningTasks';
 import { scoreListeningExam } from '../../utils/listeningScorer';
 import { deleteAudioBlob } from '../../utils/audioStorage';
+import { useTranslation } from '../../i18n';
 
 const SNAPSHOT_KEY_PREFIX = 'ielts_listening_snapshot_';
 const CUSTOM_TESTS_STORAGE_KEY = 'ielts_listening_custom_tests';
@@ -59,6 +60,7 @@ export default function ListeningWorkspace({
   isSlimHeader = false,
   toggleSlimHeader
 }) {
+  const { t, language } = useTranslation();
   // 1. All Listening Tests (Preloaded + Custom from URL)
   const [allListeningTests, setAllListeningTests] = useState(() => {
     try {
@@ -482,7 +484,7 @@ export default function ListeningWorkspace({
                 title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật Listening"
               >
                 <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden xs:inline">Cẩm Nang</span>
+                <span className="hidden xs:inline">{t('listening.theoryHandbook', 'Cẩm Nang')}</span>
               </button>
             )}
             <button
@@ -494,7 +496,7 @@ export default function ListeningWorkspace({
               className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700 cursor-pointer shrink-0"
               title="Quay về chế độ luyện tập"
             >
-              Thoát Thi
+              {t('listening.exitExam', 'Thoát Thi')}
             </button>
 
             {/* Workspace Expansion Toggle in Strict Mode (Alt + Z) */}
@@ -510,7 +512,7 @@ export default function ListeningWorkspace({
                 title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa phòng thi Listening, ẩn thanh menu trên (Alt + Z)"}
               >
                 {isSlimHeader ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-                <span className="hidden sm:inline">{isSlimHeader ? 'Thu gọn' : 'Mở rộng'}</span>
+                <span className="hidden sm:inline">{isSlimHeader ? t('listening.collapseWorkspace', 'Thu gọn') : t('listening.expandWorkspace', 'Mở rộng')}</span>
               </button>
             )}
             <div className="flex items-center space-x-1 px-2 py-1 rounded-md bg-slate-900 border border-slate-800 text-emerald-400 font-mono font-bold text-xs sm:text-sm shrink-0">
@@ -538,13 +540,15 @@ export default function ListeningWorkspace({
                     {currentTest.title}
                   </h2>
                   <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">
-                    Cambridge Official
+                    {t('listening.cambridgeOfficial', 'Cambridge Official')}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1.5 text-[10px] sm:text-[11px] text-slate-500 whitespace-nowrap shrink-0">
-                  <span className="shrink-0 font-medium">{currentTest.totalQuestions} câu</span>
+                  <span className="shrink-0 font-medium">{t('listening.questionsCount', { count: currentTest.totalQuestions })}</span>
                   <span>•</span>
-                  <span className="text-indigo-600 font-semibold shrink-0">Đã làm: {exam.answeredCount}/{currentTest.totalQuestions}</span>
+                  <span className="text-indigo-600 font-semibold shrink-0">
+                    {t('listening.answeredProgress', { answered: exam.answeredCount, total: currentTest.totalQuestions })}
+                  </span>
                 </div>
               </div>
             </div>
@@ -555,13 +559,13 @@ export default function ListeningWorkspace({
                 onClick={() => setExamMode('practice')}
                 className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
-                Luyện Tập
+                {t('listening.practiceMode', 'Luyện Tập')}
               </button>
               <button
                 onClick={() => setExamMode('strict')}
                 className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
-                Thi Thử
+                {t('listening.examMode', 'Thi Thử')}
               </button>
             </div>
           </div>
@@ -603,7 +607,7 @@ export default function ListeningWorkspace({
               title="Mở thư viện toàn bộ đề thi IELTS Listening"
             >
               <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Kho Đề</span>
+              <span>{t('listening.testLibrary', 'Kho Đề')}</span>
               <span className="hidden sm:inline">({allListeningTests.length})</span>
             </button>
 
@@ -627,7 +631,7 @@ export default function ListeningWorkspace({
                   masteredIds.includes(currentTestId) ? 'text-emerald-600' : 'text-slate-400'
                 }`}
               />
-              <span>{masteredIds.includes(currentTestId) ? 'Đã thuộc' : 'Thuộc đề'}</span>
+              <span>{masteredIds.includes(currentTestId) ? t('listening.mastered', 'Đã thuộc') : t('listening.markMastered', 'Thuộc đề')}</span>
             </button>
 
             {/* Cẩm Nang Lý Thuyết Listening Button */}
@@ -639,7 +643,7 @@ export default function ListeningWorkspace({
                 title="Mở Cẩm Nang Lý Thuyết & Kỹ Năng Nghe IELTS (Format, Âm học, 4 Parts, Chép chính tả, Shadowing)"
               >
                 <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
-                <span>📖 Cẩm Nang</span>
+                <span>📖 {t('listening.theoryHandbook', 'Cẩm Nang')}</span>
               </button>
             )}
 
@@ -650,7 +654,7 @@ export default function ListeningWorkspace({
               title="Sinh đề thi IELTS mới bằng AI từ file ghi âm máy tính hoặc audio bản xứ"
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>Sinh Đề (AI)</span>
+              <span>{t('listening.generateAi', 'Sinh Đề (AI)')}</span>
             </button>
 
             {/* Luyện Bổ Trợ Micro-Drills Button */}
@@ -661,7 +665,7 @@ export default function ListeningWorkspace({
                 title="Mở 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills: Số/Đánh vần, Bẫy nhiễu, Bản đồ, Signposting, Dictation)"
               >
                 <Puzzle className="w-3.5 h-3.5 text-amber-600" />
-                <span>Luyện Bổ Trợ</span>
+                <span>{t('listening.microDrills', 'Luyện Bổ Trợ')}</span>
               </button>
             )}
 
@@ -683,13 +687,13 @@ export default function ListeningWorkspace({
                 onClick={() => setExamMode('practice')}
                 className={"px-2.5 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
-                📗 Luyện Tập
+                📗 {t('listening.practiceMode', 'Luyện Tập')}
               </button>
               <button
                 onClick={() => setExamMode('strict')}
                 className={"px-2.5 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
-                🛡️ Thi Thử
+                🛡️ {t('listening.examMode', 'Thi Thử')}
               </button>
             </div>
 
@@ -700,7 +704,7 @@ export default function ListeningWorkspace({
               title="Mở lời thoại gỡ băng đồng bộ thời gian thực (Karaoke Transcript)"
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>Lời Thoại</span>
+              <span>{t('listening.transcript', 'Lời Thoại')}</span>
             </button>
 
             {/* Soundcheck Button */}
@@ -710,7 +714,7 @@ export default function ListeningWorkspace({
               title="Kiểm tra âm lượng tai nghe trước khi làm bài"
             >
               <Volume2 className="w-3.5 h-3.5" />
-              <span>Soundcheck</span>
+              <span>{t('listening.soundcheck', 'Soundcheck')}</span>
             </button>
 
             {/* Workspace Expansion Toggle (Alt + Z) */}
@@ -728,12 +732,12 @@ export default function ListeningWorkspace({
                 {isSlimHeader ? (
                   <>
                     <Minimize2 className="w-3.5 h-3.5 text-amber-600" />
-                    <span className="hidden sm:inline">Thu gọn</span>
+                    <span className="hidden sm:inline">{t('listening.collapseWorkspace', 'Thu gọn')}</span>
                   </>
                 ) : (
                   <>
                     <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="hidden sm:inline">Mở rộng</span>
+                    <span className="hidden sm:inline">{t('listening.expandWorkspace', 'Mở rộng')}</span>
                   </>
                 )}
               </button>

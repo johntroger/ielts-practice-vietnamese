@@ -28,6 +28,7 @@ import Task2CoherenceModal from './Task2CoherenceModal';
 import SentenceHeatmapModal from './SentenceHeatmapModal';
 import InSituLexicalUpgrader from './InSituLexicalUpgrader';
 import { analyzeTask1Overview } from '../services/algorithmicEvaluationService';
+import { useTranslation } from '../i18n/index.js';
 import { analyzeTask2Coherence } from '../utils/coherenceAnalyzer';
 import { analyzeSentenceStructures } from '../services/sentenceAnalyzer';
 import { findLexicalUpgrades } from '../data/academicThesaurus';
@@ -49,6 +50,7 @@ export default function EditorPane({
   onToggleWritingViewMode,
   onAddVocab
 }) {
+  const { t, isEn } = useTranslation();
   const [spellcheckEnabled, setSpellcheckEnabled] = useState(mode === 'practice');
   const [isMetricsMenuOpen, setIsMetricsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('essay'); // 'essay' | 'outline'
@@ -260,7 +262,7 @@ export default function EditorPane({
             }`}
           >
             <FileText className="w-3.5 h-3.5 text-red-600 shrink-0" />
-            <span>Bài Viết</span>
+            <span>{isEn ? 'Essay' : 'Bài Viết'}</span>
           </button>
           <button
             onClick={() => setActiveTab('outline')}
@@ -271,7 +273,7 @@ export default function EditorPane({
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span>Dàn Ý</span>
+            <span>{isEn ? 'Outline' : 'Dàn Ý'}</span>
           </button>
         </div>
 
@@ -618,14 +620,14 @@ export default function EditorPane({
                   className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-rose-50 text-left text-slate-700 hover:text-rose-900 font-semibold cursor-pointer"
                 >
                   <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>Sổ Lỗi Sai Thường Gặp</span>
+                  <span>{isEn ? 'Mistake Journal' : 'Sổ Lỗi Sai Thường Gặp'}</span>
                 </button>
 
                 {/* WPM Speed */}
                 <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 text-slate-700">
                   <div className="flex items-center space-x-2">
                     <Gauge className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Tốc độ gõ:</span>
+                    <span>{isEn ? 'Typing Speed:' : 'Tốc độ gõ:'}</span>
                   </div>
                   <span className="font-bold">{currentWpm} WPM</span>
                 </div>
@@ -641,10 +643,10 @@ export default function EditorPane({
                 >
                   <div className="flex items-center space-x-2">
                     <SpellCheck className="w-4 h-4 shrink-0" />
-                    <span>Kiểm tra chính tả</span>
+                    <span>{isEn ? 'Spellcheck' : 'Kiểm tra chính tả'}</span>
                   </div>
                   <span className="text-[10px] px-1.5 py-0.5 rounded font-black uppercase">
-                    {spellcheckEnabled ? 'BẬT' : 'TẮT'}
+                    {spellcheckEnabled ? (isEn ? 'ON' : 'BẬT') : (isEn ? 'OFF' : 'TẮT')}
                   </span>
                 </button>
               </div>
@@ -684,7 +686,7 @@ export default function EditorPane({
                 }
               }}
               spellCheck={spellcheckEnabled}
-              placeholder="Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới • Nhấn Ctrl+Enter để nộp bài • Bôi đen từ bất kỳ để Nâng Cấp Từ Vựng C1/C2)"
+              placeholder={isEn ? "Start writing your essay response here... (Press Enter twice for a new paragraph • Press Ctrl+Enter to submit • Highlight any word to trigger Lexical Upgrader)" : "Bắt đầu viết bài luận của bạn tại đây... (Nhấn Enter hai lần để sang đoạn mới • Nhấn Ctrl+Enter để nộp bài • Bôi đen từ bất kỳ để Nâng Cấp Từ Vựng C1/C2)"}
               className="flex-1 w-full h-full min-h-[280px] sm:min-h-[350px] md:min-h-0 p-3.5 sm:p-5 lg:p-7 resize-none focus:outline-none text-slate-850 font-sans text-[15px] sm:text-[16px] leading-[1.8] tracking-wide selection:bg-amber-100 selection:text-amber-950 placeholder:text-slate-400 placeholder:font-normal overflow-y-auto"
             />
 

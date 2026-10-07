@@ -33,6 +33,7 @@ import {
   deduplicateSpeakingP2Cards, 
   deduplicateSpeakingP3Sets 
 } from '../../services/deduplicationService';
+import { useTranslation } from '../../i18n/index.js';
 
 export default function SpeakingWorkspace({
   apiKey,
@@ -49,6 +50,7 @@ export default function SpeakingWorkspace({
   isSlimHeader = false,
   toggleSlimHeader
 }) {
+  const { t, isEn } = useTranslation();
   // 1. Workspace Configuration State
   const [activeMode, setActiveMode] = useState('mock'); // 'mock' | 'practice'
   const [selectedExaminerId, setSelectedExaminerId] = useState(() => {
@@ -560,7 +562,7 @@ export default function SpeakingWorkspace({
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span>Thi Thử<span className="hidden sm:inline"> Full Test</span></span>
+              <span>{isEn ? 'Mock Exam' : 'Thi Thử'}<span className="hidden sm:inline"> Full Test</span></span>
             </button>
             <button
               onClick={() => setActiveMode('practice')}
@@ -570,7 +572,7 @@ export default function SpeakingWorkspace({
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span>Luyện Tự Do</span>
+              <span>{isEn ? 'Practice Mode' : 'Luyện Tự Do'}</span>
             </button>
           </div>
         </div>
@@ -587,20 +589,20 @@ export default function SpeakingWorkspace({
               }
             }}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer shrink-0"
-            title={activeMode === 'practice' ? "Dùng AI để sinh chủ đề luyện tập mới" : "Dùng AI để tạo bộ đề thi Speaking mới"}
+            title={activeMode === 'practice' ? (isEn ? "Generate speaking practice topics with AI" : "Dùng AI để sinh chủ đề luyện tập mới") : (isEn ? "Generate new speaking mock test with AI" : "Dùng AI để tạo bộ đề thi Speaking mới")}
           >
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            <span>{activeMode === 'practice' ? 'Sinh Chủ Đề (AI)' : 'Sinh Đề (AI)'}</span>
+            <span>{activeMode === 'practice' ? (isEn ? 'AI Topics' : 'Sinh Chủ Đề (AI)') : (isEn ? 'AI Test' : 'Sinh Đề (AI)')}</span>
           </button>
 
           {/* Soundcheck Quick Button */}
           <button
             onClick={() => setIsSoundcheckOpen(true)}
             className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0"
-            title="Kiểm tra Micro và Âm lượng loa"
+            title={isEn ? "Check microphone and speaker volume" : "Kiểm tra Micro và Âm lượng loa"}
           >
             <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">Kiểm Tra Thiết Bị</span>
+            <span className="hidden sm:inline">{isEn ? 'Soundcheck' : 'Kiểm Tra Thiết Bị'}</span>
           </button>
 
           {/* Examiner Picker */}
@@ -624,10 +626,10 @@ export default function SpeakingWorkspace({
             <button
               onClick={onOpenTheory}
               className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-purple-300 hover:text-purple-200 border border-purple-500/30 text-xs font-bold transition-all cursor-pointer shrink-0"
-              title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật Speaking"
+              title={isEn ? "Open Speaking Strategy & Theory Handbook" : "Mở Cẩm Nang Lý Thuyết & Chiến Thuật Speaking"}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>📖 Cẩm Nang</span>
+              <span>📖 {isEn ? 'Handbook' : 'Cẩm Nang'}</span>
             </button>
           )}
 

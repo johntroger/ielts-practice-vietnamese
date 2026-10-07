@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { lookupSynonyms, ACADEMIC_THESAURUS } from '../data/academicThesaurus';
 import { IELTS_TOPICS } from '../data/topics';
+import { useTranslation } from '../i18n/index.js';
 
 export default function SlideOverToolPanel({
   isOpen,
@@ -30,6 +31,7 @@ export default function SlideOverToolPanel({
 }) {
   if (!isOpen) return null;
 
+  const { t, isEn } = useTranslation();
   const [activeTab, setActiveTab] = useState(initialTab);
   const [searchTerm, setSearchTerm] = useState('important');
   const [copiedWord, setCopiedWord] = useState('');
@@ -115,8 +117,8 @@ export default function SlideOverToolPanel({
                 <Layers className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-white">Trợ Lý Viết Cạnh Bài (Side Panel)</h3>
-                <p className="text-[11px] text-slate-400">Tra cứu từ vựng, paraphrase & lỗi sai không ngắt quãng bài viết</p>
+                <h3 className="font-bold text-sm text-white">{t('slideOver.title', isEn ? 'Writing Side Assistant (Side Panel)' : 'Trợ Lý Viết Cạnh Bài (Side Panel)')}</h3>
+                <p className="text-[11px] text-slate-400">{isEn ? 'Look up vocabulary, paraphrase & mistakes without disrupting flow' : 'Tra cứu từ vựng, paraphrase & lỗi sai không ngắt quãng bài viết'}</p>
               </div>
             </div>
             <button
@@ -151,7 +153,7 @@ export default function SlideOverToolPanel({
               }`}
             >
               <Bookmark className="w-3.5 h-3.5 text-amber-500" />
-              <span>Sổ Từ Vựng ({vocabList.length})</span>
+              <span>{t('slideOver.vocabTab', isEn ? 'Vocab Notebook' : 'Sổ Từ Vựng')} ({vocabList.length})</span>
             </button>
 
             <button
@@ -163,7 +165,7 @@ export default function SlideOverToolPanel({
               }`}
             >
               <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
-              <span>Sổ Lỗi Sai ({mistakes.length})</span>
+              <span>{isEn ? `Mistake Journal (${mistakes.length})` : `Sổ Lỗi Sai (${mistakes.length})`}</span>
             </button>
           </div>
 

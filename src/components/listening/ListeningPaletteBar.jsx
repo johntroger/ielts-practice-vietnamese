@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Flag, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from '../../i18n/index.js';
 
 export default function ListeningPaletteBar({
   totalQuestions = 40,
@@ -14,6 +15,7 @@ export default function ListeningPaletteBar({
   isSubmitted = false,
   availableParts = null
 }) {
+  const { t, isEn } = useTranslation();
   const activePillRef = useRef(null);
 
   // Auto scroll active pill into visible horizontal area on mobile
@@ -168,19 +170,19 @@ export default function ListeningPaletteBar({
                 onClick={handlePrevQuestion}
                 disabled={activeQuestionOrder <= 1}
                 className="px-2 sm:px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 text-xs font-semibold flex items-center space-x-1 transition-colors border border-slate-700"
-                title="Câu trước"
+                title={isEn ? "Previous question" : "Câu trước"}
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Câu trước</span>
+                <span className="hidden sm:inline">{isEn ? 'Previous' : 'Câu trước'}</span>
               </button>
 
               <button
                 onClick={handleNextQuestion}
                 disabled={activeQuestionOrder >= totalQuestions}
                 className="px-2 sm:px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 text-xs font-semibold flex items-center space-x-1 transition-colors border border-slate-700"
-                title="Câu sau"
+                title={isEn ? "Next question" : "Câu sau"}
               >
-                <span className="hidden sm:inline">Câu sau</span>
+                <span className="hidden sm:inline">{isEn ? 'Next' : 'Câu sau'}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -192,7 +194,7 @@ export default function ListeningPaletteBar({
                 className="px-2.5 sm:px-3.5 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95 flex items-center space-x-1 ml-1 sm:ml-2 shrink-0"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Nộp Bài</span>
+                <span>{t('common.submit', isEn ? 'Submit Test' : 'Nộp Bài')}</span>
               </button>
             )}
           </div>
