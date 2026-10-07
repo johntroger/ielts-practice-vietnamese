@@ -105,7 +105,8 @@ const testSuites = [
   { name: 'Step 96: Adaptive 30-Min Sprint Coach Integrity', file: 'tests/test_step96_adaptive_30min_sprint_coach.js' },
   { name: 'Step 97: GitBook Curriculum Integration & Theory Handbook Expansion', file: 'tests/test_step97_gitbook_theory_handbook_expansion.js' },
   { name: 'Step 98: GitBook Deep-Linking & Contextual Strategy Coaching', file: 'tests/test_step98_gitbook_deep_linking_and_contextual_coaching.js' },
-  { name: 'Step 99: Interactive PESTLE Matrix, 5 Universal Archetypes & 100 Spelling Demons', file: 'tests/test_step99_interactive_pestle_archetypes_and_spelling100.js' }
+  { name: 'Step 99: Interactive PESTLE Matrix, 5 Universal Archetypes & 100 Spelling Demons', file: 'tests/test_step99_interactive_pestle_archetypes_and_spelling100.js' },
+  { name: 'Step 100: Dynamic Theory Chunks & Bundle Splitting (Performance & Milestone 100)', file: 'tests/test_step100_dynamic_theory_chunks_and_bundle_splitting.js' }
 ];
 
 console.log('===============================================================');

@@ -1,0 +1,64 @@
+=== TIÊU ĐỀ EMAIL (SUBJECT LINE) ===
+
+Chính (dùng cho bản A):
+Luyện thi IELTS miễn phí 100% – chuẩn Cambridge, có phản hồi từ AI
+
+Phương án B (để A/B test):
+Miễn phí hoàn toàn, nhưng chất lượng vượt xa các website luyện thi IELTS khác
+
+Phương án C:
+{{ contact.firstname | default("Bạn") }} ơi, nâng band IELTS cùng nền tảng miễn phí do người Việt xây dựng
+
+Phương án D (ngắn):
+Luyện IELTS miễn phí, chuẩn Cambridge
+
+Preview text (dòng xem trước trong hộp thư):
+Làm đề mô phỏng chuẩn Cambridge, thi máy CDI và nhận phản hồi AI chi tiết – hoàn toàn miễn phí.
+
+
+=== BẢN PLAIN TEXT (dán vào mục Plain-text version của HubSpot) ===
+
+Chào {{ contact.firstname | default("bạn") }},
+
+MIỄN PHÍ 100%, CHẤT LƯỢNG VƯỢT XA KỲ VỌNG
+
+IELTS Practice Vietnamese là nền tảng luyện thi IELTS 4 kỹ năng bằng tiếng Việt, kèm phản hồi từ AI và cẩm nang chiến thuật từ Band 4.0 đến 8.5+. Nội dung không tốn một đồng nào, nhưng chất lượng được đầu tư để vượt trội hơn rất nhiều website luyện thi hiện nay.
+
+>> Luyện thi ngay:
+https://ielts-practice-vietnamese.vercel.app/?utm_source=hubspot&utm_medium=email&utm_campaign=ielts-launch&utm_content=plaintext-cta
+
+SỨ MỆNH CỦA DỰ ÁN
+Giúp người Việt Nam nâng cao năng lực tiếng Anh. Chúng tôi tin rằng chất lượng học tập không nên phụ thuộc vào học phí, vì vậy toàn bộ đề luyện, phản hồi AI và cẩm nang đều miễn phí hoàn toàn.
+
+BẠN SẼ CÓ GÌ?
+- Đề thi mô phỏng chuẩn Cambridge: làm bài Writing, Reading, Listening, Speaking với cấu trúc và thời gian như thi thật.
+- Phản hồi chi tiết từ AI: nhận xét theo 4 tiêu chí chấm điểm để biết chính xác mình cần cải thiện ở đâu.
+- Phòng thi máy CDI: làm quen giao diện thi trên máy tính, kỹ thuật highlight, split-screen và chiến lược One Skill Retake.
+- Cẩm nang, ngữ pháp & từ vựng: công thức, giải thích tiếng Việt và ví dụ song ngữ.
+
+CHIẾN THUẬT CHO TỪNG KỸ NĂNG
+- Writing: Task 1 khách quan, Task 2 lập luận PEEL & Hedging.
+- Reading: Skimming – Scanning, bắt cặp paraphrase, quản lý thời gian.
+- Listening: tránh bẫy distractor, Map Labelling, nối âm – nuốt âm.
+- Speaking: khung A.R.E.A, kể chuyện PPF/STAR, tư duy phản biện Part 3.
+
+LỘ TRÌNH THEO TRÌNH ĐỘ
+- Band 4.0 – 5.0: xây nền tảng, thoát khỏi mất gốc.
+- Band 5.5 – 6.5: nắm vững mọi dạng bài thực chiến.
+- Band 7.0 – 8.5+: bứt phá điểm cao với tư duy học thuật nâng cao.
+
+Bắt đầu một bài luyện tập đầu tiên chỉ trong vài phút:
+https://ielts-practice-vietnamese.vercel.app/?utm_source=hubspot&utm_medium=email&utm_campaign=ielts-launch&utm_content=plaintext-footer
+
+Cẩm nang miễn phí trên GitHub:
+https://github.com/johntroger/ielts-practice-vietnamese
+
+Trân trọng,
+Mr. Tung Tran
+Founder, VNEconomics Academy
+
+--
+Bạn nhận được email này vì đã đăng ký nhận thông tin từ IELTS Practice Vietnamese.
+{{ site_settings.company_name }} · {{ site_settings.company_street_address_1 }}, {{ site_settings.company_city }}
+Hủy đăng ký: {{ unsubscribe_link }}
+Quản lý tùy chọn email: {{ unsubscribe_link_all }}

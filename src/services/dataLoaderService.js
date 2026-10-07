@@ -80,6 +80,28 @@ export class DataLoaderService {
   }
 
   /**
+   * Lazily loads Theory Handbook chunk for a specific skill.
+   */
+  static async loadTheoryHandbookBySkill(skill) {
+    const cacheKey = `theoryHandbook_${skill}`;
+    if (dataCache.has(cacheKey)) {
+      return dataCache.get(cacheKey);
+    }
+    const module = await import('../data/theoryHandbook.js');
+    const items = await module.loadTheoryHandbookBySkill(skill);
+    dataCache.set(cacheKey, items);
+    return items;
+  }
+
+  /**
+   * Lazily loads a single Theory Article on demand.
+   */
+  static async loadTheoryArticle(articleId) {
+    const module = await import('../data/theoryHandbook.js');
+    return module.loadTheoryArticle(articleId);
+  }
+
+  /**
    * Filters Cambridge tasks by book edition (e.g. Cambridge 18, 19, 20).
    */
   static async filterTasksByCambridgeBook(bookNumber) {
@@ -94,3 +116,6 @@ export class DataLoaderService {
     dataCache.clear();
   }
 }
+
+export const loadTheoryHandbookBySkill = (skill) => DataLoaderService.loadTheoryHandbookBySkill(skill);
+export const loadTheoryArticle = (articleId) => DataLoaderService.loadTheoryArticle(articleId);

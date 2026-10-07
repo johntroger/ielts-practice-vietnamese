@@ -58,6 +58,25 @@ export default defineConfig({
             if (id.includes('speakingTopics')) {
               return 'data-speaking-topics';
             }
+            // Skill-specific Dynamic Chunks for Theory & Strategy Guides
+            if (id.includes('writingTheoryData')) {
+              return 'data-theory-writing';
+            }
+            if (id.includes('readingTheoryData')) {
+              return 'data-theory-reading';
+            }
+            if (id.includes('listeningTheoryData')) {
+              return 'data-theory-listening';
+            }
+            if (id.includes('speakingTheoryData')) {
+              return 'data-theory-speaking';
+            }
+            if (id.includes('grammarVocabTheoryData')) {
+              return 'data-theory-grammar-vocab';
+            }
+            if (id.includes('theoryMetadata')) {
+              return 'data-theory-metadata';
+            }
             if (id.includes('theoryHandbook')) {
               return 'data-theory-handbook';
             }
