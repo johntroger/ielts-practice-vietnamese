@@ -33,12 +33,14 @@ import {
   QrCode,
   Moon,
   Sun,
-  Zap
+  Zap,
+  Globe
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
 import WebsiteQRCodeModal from './WebsiteQRCodeModal';
 import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
+import { useTranslation } from '../i18n/index.js';
 
 export default function Navbar({
   currentTask,
@@ -101,6 +103,7 @@ export default function Navbar({
   const [mobileSkillMenuOpen, setMobileSkillMenuOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState(() => getTheme());
+  const { t, lang, toggleLanguage, isEn } = useTranslation();
 
   useEffect(() => {
     return subscribeTheme((theme) => {
@@ -145,10 +148,10 @@ export default function Navbar({
   }, []);
 
   const skills = [
-    { id: 'writing', label: 'IELTS Writing', desc: 'Chấm điểm 4 tiêu chí & sửa lỗi', icon: PenTool, active: true },
-    { id: 'reading', label: 'IELTS Reading', desc: 'Luyện đề 14 dạng & giải thích bằng chứng', icon: BookMarked, active: true },
-    { id: 'listening', label: 'IELTS Listening', desc: 'Luyện đề 8 dạng, audio evidence & dictation', icon: Headphones, active: true },
-    { id: 'speaking', label: 'IELTS Speaking', desc: 'Luyện nói 1-on-1 với AI Audio', icon: Mic, active: true },
+    { id: 'writing', label: 'IELTS Writing', desc: isEn ? 'Examiner Grading & Error Correction' : 'Chấm điểm 4 tiêu chí & sửa lỗi', icon: PenTool, active: true },
+    { id: 'reading', label: 'IELTS Reading', desc: isEn ? '14 Question Types & Evidence Decoding' : 'Luyện đề 14 dạng & giải thích bằng chứng', icon: BookMarked, active: true },
+    { id: 'listening', label: 'IELTS Listening', desc: isEn ? 'Acoustic Reflex & Distractor Traps' : 'Luyện đề 8 dạng, audio evidence & dictation', icon: Headphones, active: true },
+    { id: 'speaking', label: 'IELTS Speaking', desc: isEn ? '1-on-1 AI Examiner & Pacing Bar' : 'Luyện nói 1-on-1 với AI Audio', icon: Mic, active: true },
   ];
 
   const currentSkillObj = skills.find(s => s.id === activeSkill) || skills[0];
@@ -691,6 +694,20 @@ export default function Navbar({
               <span className="hidden min-[1600px]:inline text-[11px] font-bold">Gửi góp ý</span>
             </button>
 
+            {/* Language Toggle Switcher (VI / EN) */}
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="flex items-center justify-center space-x-1 px-2 py-1.5 sm:px-2.5 h-9 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group font-bold text-xs"
+              title={isEn ? "Switch to Vietnamese (Chuyển sang Tiếng Việt)" : "Switch to English (Chuyển sang Tiếng Anh)"}
+              aria-label="Switch Language"
+            >
+              <Globe className="w-3.5 h-3.5 text-blue-600 group-hover:rotate-45 transition-transform shrink-0" />
+              <span className="text-[11px] font-black tracking-wider text-slate-800">
+                {isEn ? 'EN' : 'VI'}
+              </span>
+            </button>
+
             {/* Theme Toggle Button (Light / Dark Mode) */}
             <button
               type="button"
@@ -1074,6 +1091,27 @@ export default function Navbar({
                       <span>Trợ Năng Hiển Thị CDI (Cỡ Chữ & Màu)</span>
                     </div>
                     <span className="text-[10px] text-blue-600 font-bold bg-blue-100 px-1.5 py-0.5 rounded">IDP/BC</span>
+                  </button>
+
+                  {/* Language Toggle in Mobile Drawer */}
+                  <button
+                    onClick={() => {
+                      toggleLanguage();
+                    }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                        <Globe className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div>{isEn ? 'Ngôn Ngữ (Language): English' : 'Ngôn Ngữ (Language): Tiếng Việt'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Chạm để đổi sang Tiếng Việt' : 'Chạm để đổi sang English'}</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                      {isEn ? '🇬🇧 EN' : '🇻🇳 VI'}
+                    </span>
                   </button>
 
                   {/* Dark Mode Toggle in Mobile Drawer */}

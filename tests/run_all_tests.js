@@ -106,7 +106,8 @@ const testSuites = [
   { name: 'Step 97: GitBook Curriculum Integration & Theory Handbook Expansion', file: 'tests/test_step97_gitbook_theory_handbook_expansion.js' },
   { name: 'Step 98: GitBook Deep-Linking & Contextual Strategy Coaching', file: 'tests/test_step98_gitbook_deep_linking_and_contextual_coaching.js' },
   { name: 'Step 99: Interactive PESTLE Matrix, 5 Universal Archetypes & 100 Spelling Demons', file: 'tests/test_step99_interactive_pestle_archetypes_and_spelling100.js' },
-  { name: 'Step 100: Dynamic Theory Chunks & Bundle Splitting (Performance & Milestone 100)', file: 'tests/test_step100_dynamic_theory_chunks_and_bundle_splitting.js' }
+  { name: 'Step 100: Dynamic Theory Chunks & Bundle Splitting (Performance & Milestone 100)', file: 'tests/test_step100_dynamic_theory_chunks_and_bundle_splitting.js' },
+  { name: 'Step 101: Internationalization (i18n) Core Architecture & Language Switching', file: 'tests/test_step101_i18n_core_and_language_switching.js' }
 ];
 
 console.log('===============================================================');

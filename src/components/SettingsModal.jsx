@@ -18,6 +18,7 @@ import {
   saveAiProviderConfig, 
   testProviderConnection 
 } from '../services/aiProviderService';
+import { useTranslation } from '../i18n/index.js';
 
 export default function SettingsModal({
   isOpen,
@@ -52,8 +53,10 @@ export default function SettingsModal({
   const [storageMetrics, setStorageMetrics] = useState(() => getStorageMetrics());
   const [storageMessage, setStorageMessage] = useState('');
 
-  // Website Theme state
+  // Website Theme & Language state
   const [currentTheme, setCurrentTheme] = useState(() => getTheme());
+  const { t, lang, setLanguage, isEn, isVi } = useTranslation();
+
   useEffect(() => {
     return subscribeTheme((t) => setCurrentTheme(t));
   }, []);
@@ -807,6 +810,62 @@ export default function SettingsModal({
               />
               <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
             </label>
+          </div>
+
+          {/* Section: Display Language (Tiếng Việt & English) */}
+          <div className="pt-2 border-t border-slate-100 space-y-2.5">
+            <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+              <Globe className="w-3.5 h-3.5 text-blue-600" />
+              <span>{isEn ? 'Display Language (Ngôn Ngữ Hiển Thị)' : 'Ngôn Ngữ Hiển Thị (Display Language)'}</span>
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {/* Option 1: Vietnamese */}
+              <div 
+                onClick={() => setLanguage('vi')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  isVi
+                    ? 'bg-rose-50/70 border-rose-500 ring-2 ring-rose-500/20 shadow-xs'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">🇻🇳</span>
+                    <span className="text-xs font-black text-slate-900">Tiếng Việt (Vietnamese)</span>
+                  </div>
+                  {isVi && (
+                    <span className="w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  Giao diện tiếng Việt, giải thích mẹo thi và nhận xét AI bằng tiếng Việt quen thuộc.
+                </p>
+              </div>
+
+              {/* Option 2: English */}
+              <div 
+                onClick={() => setLanguage('en')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  isEn
+                    ? 'bg-blue-50/70 border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
+                    : 'bg-slate-50 border-slate-200 hover:bg-slate-100/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">🇬🇧</span>
+                    <span className="text-xs font-black text-slate-900">English (International)</span>
+                  </div>
+                  {isEn && (
+                    <span className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                  Full English interface, academic Cambridge terminology, and English examiner grading.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Section: Website Theme (Light / Dark Mode) */}
