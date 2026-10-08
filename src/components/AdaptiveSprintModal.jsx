@@ -25,6 +25,7 @@ import {
   recordSprintCompletion,
   getSprintStats
 } from '../services/sprintCoachService';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function AdaptiveSprintModal({
   isOpen,
@@ -35,6 +36,7 @@ export default function AdaptiveSprintModal({
   targetBand = '7.0',
   onSaveToVocabNotebook
 }) {
+  const { t, isEn } = useTranslation();
   const [sprintPlan, setSprintPlan] = useState(null);
   const [currentStageIdx, setCurrentStageIdx] = useState(0);
   const [stageProgress, setStageProgress] = useState(null);
@@ -180,14 +182,14 @@ export default function AdaptiveSprintModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-base sm:text-lg font-black text-white">
-                  Huấn Luyện Viên Cá Nhân Hóa (Adaptive 30-Min Sprint)
+                  {t('modals.sprint.title')}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                  Sprint Hàng Ngày
+                  {isEn ? 'Daily Sprint' : 'Sprint Hàng Ngày'}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Lộ trình 3 chặng nước rút được thiết kế riêng theo điểm yếu thực tế của bạn
+                {t('modals.sprint.subtitle')}
               </p>
             </div>
           </div>
@@ -196,7 +198,7 @@ export default function AdaptiveSprintModal({
             {/* Streak Counter */}
             <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-950/60 border border-amber-600/50 text-amber-300 font-bold text-xs">
               <Flame className="w-4 h-4 fill-amber-400 text-amber-500 animate-pulse" />
-              <span>Streak: {stats.currentStreak} ngày</span>
+              <span>{isEn ? `Streak: ${stats.currentStreak} days` : `Streak: ${stats.currentStreak} ngày`}</span>
             </div>
 
             <button

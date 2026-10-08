@@ -28,6 +28,7 @@ import {
 } from '../utils/diagnosticPlacementEngine';
 import { idbSet, idbGet, STORES } from '../utils/indexedDbStorage';
 import { safeGet, safeSet } from '../utils/storageService';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function DiagnosticPlacementModal({
   isOpen,
@@ -36,6 +37,7 @@ export default function DiagnosticPlacementModal({
   onApplyTargetBand,
   onOpenSkill
 }) {
+  const { t, isEn } = useTranslation();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(15 * 60); // 15 mins = 900s
@@ -231,13 +233,13 @@ export default function DiagnosticPlacementModal({
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-1.5">
-                <span>Kiểm Tra Định Vị 15 Phút & Lộ Trình 30 Ngày</span>
+                <span>{t('modals.diagnostic.title')}</span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
                   Cambridge Diagnostic
                 </span>
               </h2>
               <p className="text-xs text-slate-500 hidden sm:block">
-                Định vị Band năng lực đầu vào • Chẩn đoán bẫy lỗi • Thiết kế lộ trình 30 ngày cá nhân hóa
+                {t('modals.diagnostic.subtitle')}
               </p>
             </div>
           </div>

@@ -7,6 +7,7 @@ import {
   generateGrowthAnalyticsReport, 
   DEFAULT_WEEKLY_STUDY_HOURS 
 } from '../services/growthPredictorService.js';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function GrowthAnalyticsModal({
   isOpen,
@@ -15,6 +16,7 @@ export default function GrowthAnalyticsModal({
   userScores = { listening: 6.5, reading: 6.5, writing: 6.0, speaking: 6.0, overall: 6.5 },
   onNavigateSkill
 }) {
+  const { t, isEn } = useTranslation();
   const [targetBand, setTargetBand] = useState(initialTargetBand);
   const [weeklyHours, setWeeklyHours] = useState(DEFAULT_WEEKLY_STUDY_HOURS);
 
@@ -51,13 +53,13 @@ export default function GrowthAnalyticsModal({
             </div>
             <div>
               <h2 id="growth-analytics-title" className="text-base sm:text-lg font-black text-white tracking-tight flex items-center space-x-2">
-                <span>Dự Báo Tăng Trưởng & Ngày Đạt Target Band</span>
+                <span>{t('modals.analytics.title', null, 'Dự Báo Tăng Trưởng & Ngày Đạt Target Band')}</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
                   Cambridge AI
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Mô hình học máy dự báo dựa trên định mức khảo thí Cambridge (~120 giờ luyện tập chủ động / 0.5 band)
+                {t('modals.analytics.subtitle')}
               </p>
             </div>
           </div>

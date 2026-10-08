@@ -28,6 +28,7 @@ import StarRatingWidget from './common/StarRatingWidget';
 import SmartContentFilterBar from './common/SmartContentFilterBar';
 import { applySmartFilterAndSort, recordAttempt } from '../services/ratingPopularityService';
 import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../utils/userPermissions';
+import { useTranslation } from '../i18n';
 
 export default function TaskLibraryModal({
   isOpen,
@@ -49,6 +50,7 @@ export default function TaskLibraryModal({
 }) {
   if (!isOpen) return null;
 
+  const { t, isEn } = useTranslation();
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'custom' | 'ai' | 'community'
   const [filterTaskNum, setFilterTaskNum] = useState('all'); // 'all' | 1 | 2
   const [searchQuery, setSearchQuery] = useState('');
@@ -275,8 +277,12 @@ export default function TaskLibraryModal({
               <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-base sm:text-xl font-bold truncate">Kho Đề Thi & Quản Lý Tài Liệu</h2>
-              <p className="text-xs text-slate-400 hidden sm:block truncate">Chọn đề làm bài, nạp thêm tài liệu cá nhân hoặc sao lưu kho đề</p>
+              <h2 className="text-base sm:text-xl font-bold truncate">
+                {t('modals.library.title', null, 'Kho Đề Thi & Quản Lý Tài Liệu')}
+              </h2>
+              <p className="text-xs text-slate-400 hidden sm:block truncate">
+                {t('modals.library.subtitle', null, 'Chọn đề làm bài, nạp thêm tài liệu cá nhân hoặc sao lưu kho đề')}
+              </p>
             </div>
           </div>
 
@@ -284,22 +290,22 @@ export default function TaskLibraryModal({
             <button
               onClick={onExportAllData}
               className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
-              title="Xuất toàn bộ đề & bài làm ra file JSON"
+              title={isEn ? "Backup all tasks and submissions as JSON" : "Xuất toàn bộ đề & bài làm ra file JSON"}
             >
               <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sao lưu JSON</span>
+              <span className="hidden sm:inline">{isEn ? "Backup JSON" : "Sao lưu JSON"}</span>
             </button>
 
             <label className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer">
               <Upload className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Nạp JSON</span>
+              <span className="hidden sm:inline">{isEn ? "Import JSON" : "Nạp JSON"}</span>
               <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
             </label>
 
             <button 
               onClick={onClose} 
               className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0 ml-1"
-              aria-label="Đóng kho đề"
+              aria-label="Close"
             >
               <X className="w-5 h-5" />
             </button>
@@ -317,7 +323,7 @@ export default function TaskLibraryModal({
                   activeTab === 'all' ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                Tất cả ({taskCounts.all})
+                {t('modals.library.tabAll', null, 'Tất cả')} ({taskCounts.all})
               </button>
               <button
                 onClick={() => setActiveTab('manual')}
@@ -326,7 +332,7 @@ export default function TaskLibraryModal({
                 }`}
               >
                 <PenTool className="w-3.5 h-3.5 text-emerald-600" />
-                <span>✍️ Thủ Công ({taskCounts.manual})</span>
+                <span>{t('modals.library.tabManual', null, '✍️ Thủ Công')} ({taskCounts.manual})</span>
               </button>
               <button
                 onClick={() => setActiveTab('ai')}
@@ -335,7 +341,7 @@ export default function TaskLibraryModal({
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>🤖 AI Sinh ({taskCounts.ai})</span>
+                <span>{t('modals.library.tabAi', null, '🤖 AI Sinh')} ({taskCounts.ai})</span>
               </button>
               <button
                 onClick={() => setActiveTab('cambridge')}
@@ -344,7 +350,7 @@ export default function TaskLibraryModal({
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5 text-blue-500" />
-                <span>🏛️ Cambridge ({taskCounts.cambridge})</span>
+                <span>{t('modals.library.tabCambridge', null, '🏛️ Cambridge')} ({taskCounts.cambridge})</span>
               </button>
               <button
                 onClick={() => setActiveTab('community')}
@@ -353,7 +359,7 @@ export default function TaskLibraryModal({
                 }`}
               >
                 <Users className="w-3.5 h-3.5 text-indigo-500" />
-                <span>Cộng Đồng ({taskCounts.community})</span>
+                <span>{t('modals.library.tabCommunity', null, 'Cộng Đồng')} ({taskCounts.community})</span>
               </button>
               {user && (
                 <button
@@ -363,7 +369,7 @@ export default function TaskLibraryModal({
                   }`}
                 >
                   <GraduationCap className="w-3.5 h-3.5" />
-                  <span>Đã Thuộc ({taskCounts.mastered})</span>
+                  <span>{t('modals.library.tabMastered', null, 'Đã Thuộc')} ({taskCounts.mastered})</span>
                 </button>
               )}
             </div>
@@ -378,7 +384,7 @@ export default function TaskLibraryModal({
                     onChange={(e) => setHideMastered(e.target.checked)}
                     className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                   />
-                  <span className="font-semibold text-emerald-800 text-[11px]">Ẩn đã thuộc ({masteredCount})</span>
+                  <span className="font-semibold text-emerald-800 text-[11px]">{t('modals.library.hideMastered', null, 'Ẩn đã thuộc')} ({masteredCount})</span>
                 </label>
               )}
               <div className="flex gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
@@ -388,7 +394,7 @@ export default function TaskLibraryModal({
                     filterTaskNum === 'all' ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
-                  Cả 2 Task
+                  {t('modals.library.bothTasks', null, 'Cả 2 Task')}
                 </button>
                 <button
                   onClick={() => setFilterTaskNum(1)}

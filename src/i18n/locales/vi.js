@@ -282,5 +282,71 @@ export const vi = {
       rankModestDesc: 'Giao tiếp cơ bản',
       rankDevelopingDesc: 'Đang xây nền tảng'
     }
+  },
+  modals: {
+    vocabGrammar: {
+      title: 'Luyện Từ Vựng, Ngữ Pháp & Chính Tả',
+      subtitle: 'Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS',
+      tabSpelling: '100 Bẫy Chính Tả Listening (Spelling Demons)',
+      tabGrammar: 'Ngữ Pháp Điểm Tựa (Grammar Architecture)',
+      tabVocab: 'Thẻ Từ Vựng & Collocation (Active Recall)',
+      tabSynonyms: '50 Cặp Paraphrase Cambridge (Reading)',
+      tierAll: 'Toàn Bộ',
+      searchPlaceholder: 'Tìm từ vựng, bẫy, ngữ pháp...'
+    },
+    microDrills: {
+      title: 'Phòng Luyện Bổ Trợ (Micro-Drills)',
+      subtitle: 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật',
+      multiSkillBadge: 'Đa Kỹ Năng',
+      roomLabel: 'Phòng Luyện:',
+      roomGeneral: 'Phòng Chung',
+      roomWriting: 'Chuyên Writing',
+      roomReading: 'Chuyên Reading',
+      roomListening: 'Chuyên Listening',
+      roomSpeaking: 'Chuyên Speaking'
+    },
+    library: {
+      title: 'Kho Đề Thi IELTS Academic (Official Bank)',
+      subtitle: 'Đề thi thật Cambridge và các bộ đề AI chuẩn khảo thí quốc tế',
+      tabAll: 'Tất cả',
+      tabManual: '✍️ Thủ Công',
+      tabAi: '🤖 AI Sinh',
+      tabCambridge: '🏛️ Cambridge',
+      tabCommunity: 'Cộng Đồng',
+      tabMastered: 'Đã Thuộc',
+      bothTasks: 'Cả 2 Task',
+      hideMastered: 'Ẩn đã thuộc'
+    },
+    handbook: {
+      title: 'Cẩm Nang & Chiến Thuật Khảo Thí Cambridge',
+      subtitle: 'Kho tài liệu phương pháp luận, chiến thuật làm bài & thang điểm chuẩn',
+      skillWriting: 'IELTS Writing',
+      skillReading: 'IELTS Reading',
+      skillListening: 'IELTS Listening',
+      skillSpeaking: 'IELTS Speaking',
+      skillGrammarVocab: 'Ngữ Pháp & Từ Vựng',
+      skillNotes: 'Ghi Chú Của Bạn'
+    },
+    diagnostic: {
+      title: 'Kiểm Tra Định Vị 15 Phút & Lộ Trình 30 Ngày',
+      subtitle: 'Định vị Band năng lực đầu vào • Chẩn đoán bẫy lỗi • Thiết kế lộ trình 30 ngày cá nhân hóa'
+    },
+    sprint: {
+      title: 'Huấn Luyện Viên Nước Rút 30 Phút (Adaptive Sprint Coach)',
+      subtitle: 'Lộ trình 3 chặng nước rút được thiết kế riêng theo điểm yếu thực tế của bạn',
+      streakLabel: 'Streak: {count} ngày'
+    },
+    analytics: {
+      title: 'Dự Báo Tăng Trưởng & Ngày Đạt Target Band',
+      subtitle: 'Mô hình học máy dự báo dựa trên định mức khảo thí Cambridge (~120 giờ luyện tập chủ động / 0.5 band)'
+    },
+    weeklyReport: {
+      title: 'Báo Cáo Tiến Trình Tuần (Weekly Diagnostic Report)',
+      subtitle: 'Tổng hợp phân tích hiệu suất và kế hoạch hành động 4 kỹ năng'
+    },
+    history: {
+      title: 'Lịch Sử Luyện Thi & Nhật Ký Bài Làm',
+      clearAll: 'Xóa sạch 4 kỹ năng ({count})'
+    }
   }
 };

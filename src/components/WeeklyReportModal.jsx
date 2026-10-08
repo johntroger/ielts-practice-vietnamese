@@ -18,6 +18,7 @@ import {
   Layers
 } from 'lucide-react';
 import { callGeminiApi } from '../services/geminiService';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function WeeklyReportModal({ 
   isOpen, 
@@ -30,6 +31,7 @@ export default function WeeklyReportModal({
   apiKey, 
   model 
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -243,13 +245,13 @@ Return ONLY raw parseable JSON with this exact schema:
             </div>
             <div className="min-w-0">
               <h2 className="text-sm sm:text-lg lg:text-xl font-bold flex items-center space-x-1.5 sm:space-x-2 truncate">
-                <span className="truncate">Chẩn Đoán Năng Lực Tuần & Lộ Trình 4 Kỹ Năng</span>
+                <span className="truncate">{t('modals.weeklyReport.title')}</span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-400/30 shrink-0">
                   Cambridge AI
                 </span>
               </h2>
               <p className="text-xs text-slate-400 mt-0.5 truncate hidden sm:block">
-                Tổng hợp đa chiều Writing, Reading, Listening, Speaking và kê đơn hành động 7 ngày tới
+                {t('modals.weeklyReport.subtitle')}
               </p>
             </div>
           </div>

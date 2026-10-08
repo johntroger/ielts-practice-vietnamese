@@ -20,6 +20,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { exportToWord } from '../services/exportService';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function HistoryModal({
   isOpen,
@@ -42,6 +43,7 @@ export default function HistoryModal({
   onViewSpeakingSubmission,
   activeSkill = 'writing'
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState(() => {
@@ -65,9 +67,11 @@ export default function HistoryModal({
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
-                <h2 className="text-sm sm:text-lg lg:text-xl font-bold truncate">Lịch Sử Bài Làm 4 Kỹ Năng</h2>
+                <h2 className="text-sm sm:text-lg lg:text-xl font-bold truncate">
+                  {t('modals.history.title')}
+                </h2>
                 <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold uppercase shrink-0">
-                  {totalAllHistoryCount} bài đã lưu
+                  {isEn ? `${totalAllHistoryCount} tests saved` : `${totalAllHistoryCount} bài đã lưu`}
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-400 truncate mt-0.5">Writing, Reading, Listening & Speaking</p>
@@ -79,49 +83,49 @@ export default function HistoryModal({
               <button
                 onClick={onClearHistory}
                 className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                title="Xóa toàn bộ bài nộp Writing"
+                title={isEn ? "Clear Writing history" : "Xóa toàn bộ bài nộp Writing"}
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Xóa Writing ({submissions.length})</span>
+                <span>{isEn ? `Clear Writing (${submissions.length})` : `Xóa Writing (${submissions.length})`}</span>
               </button>
             )}
             {activeTab === 'reading' && readingHistory.length > 0 && (
               <button
                 onClick={onClearReadingHistory}
                 className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                title="Xóa toàn bộ bài thi Reading"
+                title={isEn ? "Clear Reading history" : "Xóa toàn bộ bài thi Reading"}
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Xóa Reading ({readingHistory.length})</span>
+                <span>{isEn ? `Clear Reading (${readingHistory.length})` : `Xóa Reading (${readingHistory.length})`}</span>
               </button>
             )}
             {activeTab === 'listening' && listeningHistory.length > 0 && (
               <button
                 onClick={onClearListeningHistory}
                 className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                title="Xóa toàn bộ bài thi Listening"
+                title={isEn ? "Clear Listening history" : "Xóa toàn bộ bài thi Listening"}
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Xóa Listening ({listeningHistory.length})</span>
+                <span>{isEn ? `Clear Listening (${listeningHistory.length})` : `Xóa Listening (${listeningHistory.length})`}</span>
               </button>
             )}
             {activeTab === 'speaking' && speakingHistory.length > 0 && (
               <button
                 onClick={onClearSpeakingHistory}
                 className="flex items-center space-x-1 text-[11px] sm:text-xs text-red-400 hover:text-white bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                title="Xóa toàn bộ bài thi Speaking"
+                title={isEn ? "Clear Speaking history" : "Xóa toàn bộ bài thi Speaking"}
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Xóa Speaking ({speakingHistory.length})</span>
+                <span>{isEn ? `Clear Speaking (${speakingHistory.length})` : `Xóa Speaking (${speakingHistory.length})`}</span>
               </button>
             )}
             {totalAllHistoryCount > 0 && onClearAllHistory && (
               <button
                 onClick={onClearAllHistory}
                 className="hidden lg:flex items-center space-x-1 text-[11px] sm:text-xs text-slate-400 hover:text-rose-300 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 font-medium px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
-                title="Xóa sạch toàn bộ lịch sử của cả 4 kỹ năng"
+                title={isEn ? "Clear complete 4-skill history" : "Xóa sạch toàn bộ lịch sử của cả 4 kỹ năng"}
               >
-                <span>Xóa sạch 4 kỹ năng ({totalAllHistoryCount})</span>
+                <span>{isEn ? `Clear all 4 skills (${totalAllHistoryCount})` : `Xóa sạch 4 kỹ năng (${totalAllHistoryCount})`}</span>
               </button>
             )}
             <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white shrink-0 cursor-pointer">

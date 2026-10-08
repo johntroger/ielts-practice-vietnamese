@@ -282,5 +282,71 @@ export const en = {
       rankModestDesc: 'Partial command / basic communication',
       rankDevelopingDesc: 'Building foundation'
     }
+  },
+  modals: {
+    vocabGrammar: {
+      title: 'Vocabulary, Grammar & Spelling Studio',
+      subtitle: 'Active Recall, spelling traps & authentic Cambridge IELTS grammar architectures',
+      tabSpelling: '100 Listening Spelling Demons',
+      tabGrammar: 'Grammar Architecture & Scaffolding',
+      tabVocab: 'Vocabulary & Golden Collocations (Active Recall)',
+      tabSynonyms: '50 Cambridge Paraphrase Pairs (Reading)',
+      tierAll: 'All Levels',
+      searchPlaceholder: 'Search vocab, traps, grammar...'
+    },
+    microDrills: {
+      title: 'Targeted Reflex Studio (Micro-Drills)',
+      subtitle: 'Sharpen language reflexes and conquer classic trap patterns before test day',
+      multiSkillBadge: 'Multi-Skill',
+      roomLabel: 'Practice Room:',
+      roomGeneral: 'General Studio',
+      roomWriting: 'Writing Drills',
+      roomReading: 'Reading Drills',
+      roomListening: 'Listening Drills',
+      roomSpeaking: 'Speaking Drills'
+    },
+    library: {
+      title: 'IELTS Academic Official Test Bank',
+      subtitle: 'Authentic Cambridge past tests and international-standard AI prompts',
+      tabAll: 'All',
+      tabManual: '✍️ Manual',
+      tabAi: '🤖 AI Generated',
+      tabCambridge: '🏛️ Cambridge',
+      tabCommunity: 'Community',
+      tabMastered: 'Mastered',
+      bothTasks: 'Both Tasks',
+      hideMastered: 'Hide Mastered'
+    },
+    handbook: {
+      title: 'Cambridge Theory & Strategy Handbook',
+      subtitle: 'Master methodology, question strategies & official scoring descriptors',
+      skillWriting: 'IELTS Writing',
+      skillReading: 'IELTS Reading',
+      skillListening: 'IELTS Listening',
+      skillSpeaking: 'IELTS Speaking',
+      skillGrammarVocab: 'Grammar & Vocabulary',
+      skillNotes: 'Your Notes'
+    },
+    diagnostic: {
+      title: '15-Min Diagnostic Placement & 30-Day Roadmap',
+      subtitle: 'Assess baseline Band • Diagnose cognitive traps • Personalized 30-day study plan'
+    },
+    sprint: {
+      title: 'Adaptive 30-Min Sprint Coach',
+      subtitle: 'Personalized 3-stage sprint based on your authentic error log',
+      streakLabel: 'Streak: {count} days'
+    },
+    analytics: {
+      title: 'Growth Analytics & Target Band Timeline',
+      subtitle: 'Machine learning projection calibrated against Cambridge benchmarks (~120 active study hours / +0.5 band)'
+    },
+    weeklyReport: {
+      title: 'Weekly Diagnostic Progress Report',
+      subtitle: 'Holistic 4-skill performance analytics and targeted action plans'
+    },
+    history: {
+      title: 'Submission History & Study Log',
+      clearAll: 'Clear all 4 skills ({count})'
+    }
   }
 };

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
+import { useTranslation } from '../i18n';
 
 // Helper to render bold, italic, code and inline highlights
 function renderInlineText(text) {
@@ -256,6 +257,8 @@ export default function TheoryHandbookModal({
 }) {
   if (!isOpen) return null;
 
+  const { t, isEn } = useTranslation();
+
   // Selected skill tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'grammar-vocab' | 'personal'
   const [selectedSkill, setSelectedSkill] = useState(() => {
     if (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || activeSkill === 'grammar-vocab') return activeSkill;
@@ -359,14 +362,14 @@ export default function TheoryHandbookModal({
     },
     { 
       id: 'grammar-vocab', 
-      label: 'Ngữ Pháp & Từ Vựng', 
+      label: isEn ? 'Grammar & Vocab' : 'Ngữ Pháp & Từ Vựng', 
       count: THEORY_HANDBOOK.filter(i => i.skill === 'grammar-vocab').length, 
       icon: Sparkles,
       color: 'teal'
     },
     { 
       id: 'personal', 
-      label: 'Ghi Chú Của Bạn', 
+      label: isEn ? 'Your Notes' : 'Ghi Chú Của Bạn', 
       count: personalNotes.length, 
       icon: Bookmark,
       color: 'amber'
@@ -375,43 +378,43 @@ export default function TheoryHandbookModal({
 
   // Dynamic categories per skill
   const writingCategories = [
-    { id: 'all', label: 'Tất Cả Writing', icon: Layers },
-    { id: 'general', label: 'Tiêu Chí & Điểm Số', icon: BookOpen },
-    { id: 'task1', label: 'Cẩm Nang Task 1', icon: BarChart2 },
-    { id: 'task2', label: 'Cẩm Nang Task 2', icon: FileText },
-    { id: 'strategy', label: 'Chiến Thuật 7.5+ & Hedging', icon: Compass },
-    { id: 'mistakes', label: 'Lỗi Sai Cần Tránh', icon: AlertTriangle },
-    { id: 'exam-skills', label: 'Thi Máy CDI & OSR', icon: Monitor },
+    { id: 'all', label: isEn ? 'All Writing' : 'Tất Cả Writing', icon: Layers },
+    { id: 'general', label: isEn ? 'Criteria & Scoring' : 'Tiêu Chí & Điểm Số', icon: BookOpen },
+    { id: 'task1', label: isEn ? 'Task 1 Handbook' : 'Cẩm Nang Task 1', icon: BarChart2 },
+    { id: 'task2', label: isEn ? 'Task 2 Handbook' : 'Cẩm Nang Task 2', icon: FileText },
+    { id: 'strategy', label: isEn ? '7.5+ Strategy & Hedging' : 'Chiến Thuật 7.5+ & Hedging', icon: Compass },
+    { id: 'mistakes', label: isEn ? 'Common Pitfalls' : 'Lỗi Sai Cần Tránh', icon: AlertTriangle },
+    { id: 'exam-skills', label: isEn ? 'CDI & OSR Exam' : 'Thi Máy CDI & OSR', icon: Monitor },
   ];
 
   const readingCategories = [
-    { id: 'all', label: 'Tất Cả Reading', icon: Layers },
-    { id: 'reading-strategy', label: 'Chiến Thuật & Paraphrase', icon: Compass },
-    { id: 'reading-types', label: '14 Dạng Câu Hỏi Thường Gặp', icon: BookMarked },
-    { id: 'exam-skills', label: 'Kỹ Thuật Thi Máy CDI', icon: Monitor },
+    { id: 'all', label: isEn ? 'All Reading' : 'Tất Cả Reading', icon: Layers },
+    { id: 'reading-strategy', label: isEn ? 'Strategy & Paraphrase' : 'Chiến Thuật & Paraphrase', icon: Compass },
+    { id: 'reading-types', label: isEn ? '14 Question Types' : '14 Dạng Câu Hỏi Thường Gặp', icon: BookMarked },
+    { id: 'exam-skills', label: isEn ? 'CDI Exam Technique' : 'Kỹ Thuật Thi Máy CDI', icon: Monitor },
   ];
 
   const listeningCategories = [
-    { id: 'all', label: 'Tất Cả Listening', icon: Layers },
-    { id: 'listening-strategy', label: 'Format, Điểm & Âm Học', icon: Volume2 },
-    { id: 'listening-parts', label: 'Chiến Thuật 4 Parts', icon: Headphones },
-    { id: 'exam-skills', label: 'Kỹ Năng Thi Máy CDI', icon: Monitor },
+    { id: 'all', label: isEn ? 'All Listening' : 'Tất Cả Listening', icon: Layers },
+    { id: 'listening-strategy', label: isEn ? 'Format, Scoring & Acoustics' : 'Format, Điểm & Âm Học', icon: Volume2 },
+    { id: 'listening-parts', label: isEn ? '4 Parts Strategy' : 'Chiến Thuật 4 Parts', icon: Headphones },
+    { id: 'exam-skills', label: isEn ? 'CDI Exam Skills' : 'Kỹ Năng Thi Máy CDI', icon: Monitor },
   ];
 
   const speakingCategories = [
-    { id: 'all', label: 'Tất Cả Speaking', icon: Layers },
-    { id: 'general', label: 'Tiêu Chí & Lộ Trình', icon: BookOpen },
-    { id: 'part1', label: 'Chiến Thuật Part 1', icon: Mic },
-    { id: 'part2', label: 'Part 2 & Pacing', icon: FileText },
-    { id: 'part3', label: 'Part 3 & Phản Biện', icon: Compass },
-    { id: 'pronunciation-strategy', label: 'Phát Âm & Ngữ Điệu', icon: Volume2 },
-    { id: 'exam-skills', label: 'Tâm Lý Phòng Thi', icon: AlertTriangle },
+    { id: 'all', label: isEn ? 'All Speaking' : 'Tất Cả Speaking', icon: Layers },
+    { id: 'general', label: isEn ? 'Criteria & Roadmap' : 'Tiêu Chí & Lộ Trình', icon: BookOpen },
+    { id: 'part1', label: isEn ? 'Part 1 Strategy' : 'Chiến Thuật Part 1', icon: Mic },
+    { id: 'part2', label: isEn ? 'Part 2 & Pacing' : 'Part 2 & Pacing', icon: FileText },
+    { id: 'part3', label: isEn ? 'Part 3 & Critique' : 'Part 3 & Phản Biện', icon: Compass },
+    { id: 'pronunciation-strategy', label: isEn ? 'Pronunciation & Intonation' : 'Phát Âm & Ngữ Điệu', icon: Volume2 },
+    { id: 'exam-skills', label: isEn ? 'Exam Room Mindset' : 'Tâm Lý Phòng Thi', icon: AlertTriangle },
   ];
 
   const grammarVocabCategories = [
-    { id: 'all', label: 'Tất Cả Ngữ Pháp & Từ Vựng', icon: Layers },
-    { id: 'grammar', label: 'Ngữ Pháp Trọng Tâm (A1 - A7)', icon: BookOpen },
-    { id: 'vocab', label: 'Từ Vựng & Sổ Tay Lỗi (B1 - B6)', icon: Sparkles },
+    { id: 'all', label: isEn ? 'All Grammar & Vocab' : 'Tất Cả Ngữ Pháp & Từ Vựng', icon: Layers },
+    { id: 'grammar', label: isEn ? 'Core Grammar (A1 - A7)' : 'Ngữ Pháp Trọng Tâm (A1 - A7)', icon: BookOpen },
+    { id: 'vocab', label: isEn ? 'Vocab & Error Log (B1 - B6)' : 'Từ Vựng & Sổ Tay Lỗi (B1 - B6)', icon: Sparkles },
   ];
 
   const currentCategories = selectedSkill === 'reading' 
@@ -591,8 +594,8 @@ export default function TheoryHandbookModal({
     switch (selectedSkill) {
       case 'reading':
         return {
-          title: 'Cẩm Nang Chiến Lược & Kỹ Thuật IELTS Reading',
-          subtitle: 'Phân bổ thời gian 15-20-25 phút, phá bẫy True/False/Not Given, Matching Headings & 5 quy tắc Paraphrasing',
+          title: isEn ? 'IELTS Reading Strategy & Technique Handbook' : 'Cẩm Nang Chiến Lược & Kỹ Thuật IELTS Reading',
+          subtitle: isEn ? '15-20-25m pacing, True/False/Not Given traps, Headings & 5 Paraphrasing rules' : 'Phân bổ thời gian 15-20-25 phút, phá bẫy True/False/Not Given, Matching Headings & 5 quy tắc Paraphrasing',
           badge: 'Reading Studio',
           icon: BookMarked,
           accent: 'blue',
@@ -601,8 +604,8 @@ export default function TheoryHandbookModal({
         };
       case 'listening':
         return {
-          title: 'Cẩm Nang Chiến Thuật & Âm Học IELTS Listening',
-          subtitle: 'Quy tắc 4 Parts, bẫy đánh vần, số điện thoại, bản đồ không gian, signposting và nối/nuốt âm tự nhiên',
+          title: isEn ? 'IELTS Listening Strategy & Acoustic Masterclass' : 'Cẩm Nang Chiến Thuật & Âm Học IELTS Listening',
+          subtitle: isEn ? '4 Parts rules, spelling traps, numbers, spatial maps, signposting and connected speech' : 'Quy tắc 4 Parts, bẫy đánh vần, số điện thoại, bản đồ không gian, signposting và nối/nuốt âm tự nhiên',
           badge: 'Listening Studio',
           icon: Headphones,
           accent: 'emerald',
@@ -611,8 +614,8 @@ export default function TheoryHandbookModal({
         };
       case 'speaking':
         return {
-          title: 'Cẩm Nang Chiến Lược & Phản Xạ IELTS Speaking',
-          subtitle: 'Công thức A.R.E.A Part 1, kể chuyện PPF Part 2, tư duy phản biện PEEL Part 3 & 50+ cụm từ câu giờ',
+          title: isEn ? 'IELTS Speaking Strategy & Fluency Playbook' : 'Cẩm Nang Chiến Lược & Phản Xạ IELTS Speaking',
+          subtitle: isEn ? 'A.R.E.A Part 1, PPF narrative Part 2, critical PEEL Part 3 & 50+ fillers' : 'Công thức A.R.E.A Part 1, kể chuyện PPF Part 2, tư duy phản biện PEEL Part 3 & 50+ cụm từ câu giờ',
           badge: 'Speaking Studio',
           icon: Mic,
           accent: 'purple',
@@ -621,8 +624,8 @@ export default function TheoryHandbookModal({
         };
       case 'grammar-vocab':
         return {
-          title: 'Ngữ Pháp & Từ Vựng Trọng Tâm IELTS (A1 – A7 & B1 – B6)',
-          subtitle: 'Hệ thống cấu trúc câu, thì, câu bị động, đảo ngữ, họ từ AWL, collocations và sổ tay quản trị lỗi sai',
+          title: isEn ? 'IELTS Core Grammar & Academic Vocabulary' : 'Ngữ Pháp & Từ Vựng Trọng Tâm IELTS (A1 – A7 & B1 – B6)',
+          subtitle: isEn ? 'Sentence structures, tenses, passive voice, inversions, AWL word families & error log' : 'Hệ thống cấu trúc câu, thì, câu bị động, đảo ngữ, họ từ AWL, collocations và sổ tay quản trị lỗi sai',
           badge: 'Grammar & Vocab Hub',
           icon: Sparkles,
           accent: 'teal',
@@ -631,8 +634,8 @@ export default function TheoryHandbookModal({
         };
       case 'personal':
         return {
-          title: 'Sổ Tay Ghi Chú & Mẹo Học Riêng Của Bạn',
-          subtitle: 'Lưu trữ các câu mẫu, từ vựng đắt giá, template và checklist cá nhân hoá cho kỳ thi IELTS',
+          title: isEn ? 'Your Personal Study Notes & Key Checklists' : 'Sổ Tay Ghi Chú & Mẹo Học Riêng Của Bạn',
+          subtitle: isEn ? 'Store model sentences, golden collocations, templates and personalized checklists' : 'Lưu trữ các câu mẫu, từ vựng đắt giá, template và checklist cá nhân hoá cho kỳ thi IELTS',
           badge: 'Personal Notes',
           icon: Bookmark,
           accent: 'amber',
@@ -641,8 +644,8 @@ export default function TheoryHandbookModal({
         };
       default:
         return {
-          title: 'Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Writing',
-          subtitle: 'Tra cứu công thức câu Overview Task 1, mô hình PEEL Task 2, từ nối liên kết và checklist tránh mất điểm',
+          title: isEn ? 'IELTS Writing Theory & Band Descriptors Handbook' : 'Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Writing',
+          subtitle: isEn ? 'Task 1 Overview formulas, Task 2 PEEL frameworks, cohesive devices and band boosters' : 'Tra cứu công thức câu Overview Task 1, mô hình PEEL Task 2, từ nối liên kết và checklist tránh mất điểm',
           badge: 'Writing Studio',
           icon: PenTool,
           accent: 'red',

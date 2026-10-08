@@ -51,6 +51,7 @@ import {
   savePublicVocabGrammarItem,
   deletePublicVocabGrammarItem
 } from '../services/dataSyncService';
+import { useTranslation } from '../i18n';
 
 export default function VocabGrammarSpellingModal({
   isOpen,
@@ -63,6 +64,7 @@ export default function VocabGrammarSpellingModal({
   onToggleMastered,
   onOpenAuth
 }) {
+  const { t, isEn } = useTranslation();
   // Active Tab: 'spelling' | 'grammar' | 'vocab'
   const [activeTab, setActiveTab] = useState('spelling');
 
@@ -958,13 +960,15 @@ export default function VocabGrammarSpellingModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold tracking-tight">Luyện Từ Vựng, Ngữ Pháp & Chính Tả</h2>
+                <h2 className="text-base sm:text-lg font-bold tracking-tight">
+                  {t('modals.vocabGrammar.title', null, 'Luyện Từ Vựng, Ngữ Pháp & Chính Tả')}
+                </h2>
                 <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
                   Band 5.5 - 7.5+
                 </span>
               </div>
               <p className="text-xs text-slate-300 hidden md:block">
-                Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS
+                {t('modals.vocabGrammar.subtitle', null, 'Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS')}
               </p>
             </div>
           </div>
@@ -1045,7 +1049,7 @@ export default function VocabGrammarSpellingModal({
           <div className="flex items-center flex-wrap gap-2">
             <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-700">
               <Filter className="w-3.5 h-3.5 text-slate-500" />
-              <span>Trình độ:</span>
+              <span>{isEn ? 'Level:' : 'Trình độ:'}</span>
             </div>
 
             <div className="flex items-center space-x-1 bg-white p-0.5 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto max-w-full">
@@ -1058,7 +1062,7 @@ export default function VocabGrammarSpellingModal({
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Toàn Bộ
+                {t('modals.vocabGrammar.tierAll', null, 'Toàn Bộ')}
               </button>
               <button
                 type="button"
@@ -1105,7 +1109,7 @@ export default function VocabGrammarSpellingModal({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm từ vựng, bẫy, ngữ pháp..."
+                placeholder={t('modals.vocabGrammar.searchPlaceholder', null, 'Tìm từ vựng, bẫy, ngữ pháp...')}
                 className="pl-8 pr-7 py-1 text-xs bg-white rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-44 sm:w-56 font-medium text-slate-800 shadow-2xs placeholder:text-slate-400"
               />
               {searchQuery && (
@@ -1197,9 +1201,9 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <SpellCheck2 className="w-4 h-4" />
-            <span>Chính Tả Thần Tốc (Spelling Sprint)</span>
+            <span>{t('modals.vocabGrammar.tabSpelling', null, '100 Bẫy Chính Tả Listening (Spelling Demons)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-red-100 text-red-700 font-extrabold">
-              {filteredSpellingList.length} bẫy
+              {filteredSpellingList.length} {isEn ? 'traps' : 'bẫy'}
             </span>
           </button>
 
@@ -1212,9 +1216,9 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <Award className="w-4 h-4" />
-            <span>Ngữ Pháp Band 6.0 - 7.5 (Grammar Lab)</span>
+            <span>{t('modals.vocabGrammar.tabGrammar', null, 'Ngữ Pháp Điểm Tựa (Grammar Architecture)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-indigo-100 text-indigo-700 font-extrabold">
-              {filteredGrammarList.length} cấu trúc
+              {filteredGrammarList.length} {isEn ? 'rules' : 'cấu trúc'}
             </span>
           </button>
 
@@ -1227,9 +1231,9 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>Thẻ Từ Vựng & Collocation (Active Recall)</span>
+            <span>{t('modals.vocabGrammar.tabVocab', null, 'Thẻ Từ Vựng & Collocation (Active Recall)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-emerald-100 text-emerald-700 font-extrabold">
-              {filteredCards.length} thẻ
+              {filteredCards.length} {isEn ? 'cards' : 'thẻ'}
             </span>
           </button>
 
@@ -1242,9 +1246,9 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <Compass className="w-4 h-4" />
-            <span>50 Cặp Paraphrase Cambridge (Reading)</span>
+            <span>{t('modals.vocabGrammar.tabSynonyms', null, '50 Cặp Paraphrase Cambridge (Reading)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-purple-100 text-purple-700 font-extrabold">
-              {filteredSynonymsList.length} cặp
+              {filteredSynonymsList.length} {isEn ? 'pairs' : 'cặp'}
             </span>
           </button>
         </div>

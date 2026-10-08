@@ -1304,13 +1304,15 @@ export default function MicroDrillsModal({
             </div>
             <div className="min-w-0">
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-xl font-bold truncate">Phòng Luyện Bổ Trợ (Micro-Drills)</h2>
+                <h2 className="text-base sm:text-xl font-bold truncate">
+                  {t('modals.microDrills.title', null, 'Phòng Luyện Bổ Trợ (Micro-Drills)')}
+                </h2>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide shrink-0">
-                  Đa Kỹ Năng
+                  {t('modals.microDrills.multiSkillBadge', null, 'Đa Kỹ Năng')}
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5 hidden sm:block truncate">
-                Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật
+                {t('modals.microDrills.subtitle', null, 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật')}
               </p>
             </div>
           </div>
@@ -1325,8 +1327,8 @@ export default function MicroDrillsModal({
                   ? 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-xs'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
               }`}
-              title={isExpanded ? "Thu gọn giao diện phòng luyện (Alt + Z)" : "Mở rộng toàn màn hình phòng luyện (Alt + Z)"}
-              aria-label={isExpanded ? "Thu gọn phòng luyện" : "Mở rộng phòng luyện"}
+              title={isExpanded ? (isEn ? "Collapse drill workspace (Alt + Z)" : "Thu gọn giao diện phòng luyện (Alt + Z)") : (isEn ? "Expand full workspace (Alt + Z)" : "Mở rộng toàn màn hình phòng luyện (Alt + Z)")}
+              aria-label={isExpanded ? "Collapse" : "Expand"}
             >
               {isExpanded ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </button>
@@ -1334,7 +1336,7 @@ export default function MicroDrillsModal({
             <button 
               onClick={onClose} 
               className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-              aria-label="Đóng phòng luyện"
+              aria-label="Close"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1345,7 +1347,7 @@ export default function MicroDrillsModal({
         <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar touch-pan-x shrink-0">
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:inline">
-              Phòng Luyện:
+              {t('modals.microDrills.roomLabel', null, 'Phòng Luyện:')}
             </span>
 
             {/* Room 1: Chung */}
@@ -1358,7 +1360,7 @@ export default function MicroDrillsModal({
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Phòng Chung</span>
+              <span>{t('modals.microDrills.roomGeneral', null, 'Phòng Chung')}</span>
             </button>
 
             {/* Room 2: Chuyên Writing */}
@@ -1371,7 +1373,7 @@ export default function MicroDrillsModal({
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>Chuyên Writing</span>
+              <span>{t('modals.microDrills.roomWriting', null, 'Chuyên Writing')}</span>
             </button>
 
             {/* Room 3: Chuyên Reading */}
@@ -1384,9 +1386,9 @@ export default function MicroDrillsModal({
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>Chuyên Reading</span>
+              <span>{t('modals.microDrills.roomReading', null, 'Chuyên Reading')}</span>
               <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black">
-                MỚI
+                {isEn ? 'NEW' : 'MỚI'}
               </span>
             </button>
 
@@ -1400,9 +1402,9 @@ export default function MicroDrillsModal({
               }`}
             >
               <Headphones className="w-3.5 h-3.5" />
-              <span>Chuyên Listening</span>
+              <span>{t('modals.microDrills.roomListening', null, 'Chuyên Listening')}</span>
               <span className="px-1.5 py-0.2 rounded bg-purple-400 text-slate-900 text-[9px] font-black">
-                MỚI
+                {isEn ? 'NEW' : 'MỚI'}
               </span>
             </button>
 
@@ -1416,9 +1418,9 @@ export default function MicroDrillsModal({
               }`}
             >
               <Mic className="w-3.5 h-3.5" />
-              <span>Chuyên Speaking</span>
+              <span>{t('modals.microDrills.roomSpeaking', null, 'Chuyên Speaking')}</span>
               <span className="px-1.5 py-0.2 rounded bg-emerald-400 text-slate-900 text-[9px] font-black">
-                MỚI
+                {isEn ? 'NEW' : 'MỚI'}
               </span>
             </button>
           </div>
