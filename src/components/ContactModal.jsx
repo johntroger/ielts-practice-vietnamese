@@ -16,8 +16,10 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export default function ContactModal({ isOpen, onClose }) {
+  const { t, isEn } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [category, setCategory] = useState('feedback');
   const [senderName, setSenderName] = useState('');
@@ -116,8 +118,14 @@ export default function ContactModal({ isOpen, onClose }) {
                 <MessageSquareHeart className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-black tracking-tight text-white">Liên Hệ & Đóng Góp Ý Kiến</h3>
-                <p className="text-xs text-red-100 font-medium mt-0.5">Chúng tôi luôn lắng nghe để hoàn thiện trải nghiệm học IELTS của bạn</p>
+                <h3 className="text-lg font-black tracking-tight text-white">
+                  {isEn ? 'Feedback & Contact Support' : 'Liên Hệ & Đóng Góp Ý Kiến'}
+                </h3>
+                <p className="text-xs text-red-100 font-medium mt-0.5">
+                  {isEn 
+                    ? 'We welcome feedback, suggestions and error reports to enhance your IELTS preparation'
+                    : 'Chúng tôi luôn lắng nghe để hoàn thiện trải nghiệm học IELTS của bạn'}
+                </p>
               </div>
             </div>
             <button 
@@ -197,10 +205,10 @@ export default function ContactModal({ isOpen, onClose }) {
               {/* Category pills */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                 {[
-                  { id: 'feedback', label: 'Góp ý chung', icon: MessageSquareHeart },
-                  { id: 'feature', label: 'Tính năng mới', icon: Lightbulb },
-                  { id: 'bug', label: 'Báo lỗi web', icon: Bug },
-                  { id: 'partnership', label: 'Hợp tác / Hỏi đáp', icon: Handshake },
+                  { id: 'feedback', label: isEn ? 'Feedback' : 'Góp ý chung', icon: MessageSquareHeart },
+                  { id: 'feature', label: isEn ? 'New Feature' : 'Tính năng mới', icon: Lightbulb },
+                  { id: 'bug', label: isEn ? 'Bug Report' : 'Báo lỗi web', icon: Bug },
+                  { id: 'partnership', label: isEn ? 'Partnership' : 'Hợp tác / Hỏi đáp', icon: Handshake },
                 ].map(cat => {
                   const Icon = cat.icon;
                   const isSelected = category === cat.id;

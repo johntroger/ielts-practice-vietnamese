@@ -13,84 +13,86 @@ import {
   CheckCircle2,
   Command
 } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export default function KeyboardShortcutsModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
+  const { t, isEn } = useTranslation();
   const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
   const modifierKey = isMac ? '⌘ Cmd' : 'Ctrl';
 
   const shortcutGroups = [
     {
-      title: '🎯 Điều Hướng & Trải Nghiệm Tập Trung',
+      title: isEn ? '🎯 Navigation & Focus Experience' : '🎯 Điều Hướng & Trải Nghiệm Tập Trung',
       shortcuts: [
         {
           keys: ['Alt', 'F'],
-          desc: 'Bật / Tắt Chế độ Tập Trung (Focus Mode)',
-          badge: 'Khuyên dùng'
+          desc: isEn ? 'Toggle Zen Focus Mode' : 'Bật / Tắt Chế độ Tập Trung (Focus Mode)',
+          badge: isEn ? 'Recommended' : 'Khuyên dùng'
         },
         {
           keys: ['Alt', 'K'],
-          desc: 'Mở nhanh Kho Đề / Thư viện đề thi',
+          desc: isEn ? 'Quick Open Exam Library / Test Bank' : 'Mở nhanh Kho Đề / Thư viện đề thi',
         },
         {
           keys: ['Alt', 'M'],
-          desc: 'Đánh dấu hoặc Bỏ đánh dấu "Đã thuộc" đề hiện tại',
+          desc: isEn ? 'Toggle Mastered status for current task' : 'Đánh dấu hoặc Bỏ đánh dấu "Đã thuộc" đề hiện tại',
         },
         {
           keys: ['Alt', 'T'],
-          desc: 'Mở Cẩm Nang Lý Thuyết & Chiến Thuật',
+          desc: isEn ? 'Open Theory & Strategy Handbook' : 'Mở Cẩm Nang Lý Thuyết & Chiến Thuật',
         },
         {
           keys: ['?'],
-          desc: 'Mở bảng tra cứu Phím Tắt Nhanh (Shortcut Guide)',
+          desc: isEn ? 'Open Keyboard Shortcuts Guide' : 'Mở bảng tra cứu Phím Tắt Nhanh (Shortcut Guide)',
         },
         {
           keys: ['Esc'],
-          desc: 'Thoát Chế độ Tập Trung / Đóng các cửa sổ Modal',
+          desc: isEn ? 'Exit Focus Mode / Close active modals' : 'Thoát Chế độ Tập Trung / Đóng các cửa sổ Modal',
         }
       ]
     },
     {
-      title: '✍️ Kỹ Năng IELTS Writing',
+      title: isEn ? '✍️ IELTS Writing Skills' : '✍️ Kỹ Năng IELTS Writing',
       shortcuts: [
         {
           keys: [modifierKey, 'Enter'],
-          desc: 'Nộp bài & Yêu cầu Giám khảo AI Chấm Điểm 4 tiêu chí',
-          badge: 'Tức thì'
+          desc: isEn ? 'Submit Essay & Request Cambridge AI Feedback' : 'Nộp bài & Yêu cầu Giám khảo AI Chấm Điểm 4 tiêu chí',
+          badge: isEn ? 'Instant' : 'Tức thì'
         },
         {
           keys: ['Alt', 'P'],
-          desc: 'Mở công cụ Tra Cứu Từ Đồng Nghĩa (Quick Paraphrase)',
+          desc: isEn ? 'Open Quick Paraphrase Tool' : 'Mở công cụ Tra Cứu Từ Đồng Nghĩa (Quick Paraphrase)',
         },
         {
           keys: ['Alt', 'I'],
-          desc: 'Mở Ma Trận Phát Triển Ý Tưởng (Idea Matrix)',
+          desc: isEn ? 'Open Idea Matrix Generator' : 'Mở Ma Trận Phát Triển Ý Tưởng (Idea Matrix)',
         },
         {
           keys: ['Tab'],
-          desc: 'Chuyển đổi giữa Soạn thảo bài viết và Dàn ý PEEL',
+          desc: isEn ? 'Toggle between Essay Editor and Outline' : 'Chuyển đổi giữa Soạn thảo bài viết và Dàn ý PEEL',
         }
       ]
     },
     {
-      title: '📖 & 🎧 Reading / Listening (CDI Simulation)',
+      title: isEn ? '📖 & 🎧 Reading / Listening (CDI Simulation)' : '📖 & 🎧 Reading / Listening (CDI Simulation)',
       shortcuts: [
         {
           keys: ['Alt', 'H'],
-          desc: 'Bật / Tắt chế độ Tô Màu (Highlight) đoạn văn bản',
+          desc: isEn ? 'Toggle text highlighting mode' : 'Bật / Tắt chế độ Tô Màu (Highlight) đoạn văn bản',
         },
         {
           keys: ['Alt', 'N'],
-          desc: 'Thêm Ghi Chú (Notes) cho từ vựng hoặc đoạn đọc',
+          desc: isEn ? 'Add Vocabulary / Passage note' : 'Thêm Ghi Chú (Notes) cho từ vựng hoặc đoạn đọc',
         },
         {
           keys: ['Space'],
-          desc: 'Tạm dừng / Tiếp tục phát Audio Listening',
+          desc: isEn ? 'Play / Pause Listening audio' : 'Tạm dừng / Tiếp tục phát Audio Listening',
         },
         {
           keys: ['←', '→'],
-          desc: 'Tua lùi 5 giây / Tua tiến 5 giây (Audio Listening)',
+          desc: isEn ? 'Rewind 5s / Fast Forward 5s' : 'Tua lùi 5 giây / Tua tiến 5 giây (Audio Listening)',
         }
       ]
     }
@@ -114,14 +116,16 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
             <div className="min-w-0">
               <div className="flex items-center space-x-1.5 sm:space-x-2">
                 <h3 className="font-extrabold text-sm sm:text-lg text-white truncate">
-                  Phím Tắt Nhanh (Shortcuts)
+                  {isEn ? 'Keyboard Shortcuts Guide' : 'Phím Tắt Nhanh (Shortcuts)'}
                 </h3>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 text-[10px] font-black uppercase tracking-wider border border-indigo-400/30 shrink-0">
                   CDI Ready
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5 truncate hidden sm:block">
-                Thao tác thần tốc không cần rời tay khỏi bàn phím, chuẩn công thái học thi máy
+                {isEn 
+                  ? 'High-speed keyboard shortcuts calibrated for computer-delivered IELTS exam ergonomics'
+                  : 'Thao tác thần tốc không cần rời tay khỏi bàn phím, chuẩn công thái học thi máy'}
               </p>
             </div>
           </div>
@@ -129,7 +133,7 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
           <button
             onClick={onClose}
             className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
-            title="Đóng (Esc)"
+            title={isEn ? "Close (Esc)" : "Đóng (Esc)"}
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />

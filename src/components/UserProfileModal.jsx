@@ -46,6 +46,7 @@ import {
   SPEAKING_PART3_QUESTIONS, 
   SPEAKING_MOCK_TEST_PACKS 
 } from '../data/speakingTopics';
+import { useTranslation } from '../i18n';
 
 export default function UserProfileModal({
   isOpen,
@@ -85,6 +86,7 @@ export default function UserProfileModal({
   onSaveMistake,
   onOpenPrescription
 }) {
+  const { t, isEn } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'submissions' | 'reading' | 'listening' | 'speaking' | 'resources' | 'vocab' | 'account'
   const [resourceFilter, setResourceFilter] = useState('all'); // 'all' | 'public' | 'private'
   const [masteredSkillFilter, setMasteredSkillFilter] = useState('all'); // 'all' | 'writing' | 'reading' | 'listening' | 'speaking'
@@ -507,15 +509,15 @@ export default function UserProfileModal({
 
   // Nav Items Definitions (All 4 Skills)
   const navItems = [
-    { id: 'overview', label: 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: overallProjectedBand > 0 ? `Overall ${overallProjectedBand}` : null },
-    { id: 'submissions', label: 'Lịch Sử IELTS Writing', icon: History, count: submissions.length, badge: stats.avgBand > 0 ? `Band ${stats.avgBand}` : null },
-    { id: 'reading', label: 'Lịch Sử IELTS Reading', icon: BookMarked, count: readingHistory.length, badge: readingStats.totalTests > 0 ? `Band ${readingStats.avgBand}` : null },
-    { id: 'listening', label: 'Lịch Sử IELTS Listening', icon: Headphones, count: listeningHistory.length, badge: listeningStats.totalTests > 0 ? `Band ${listeningStats.avgBand}` : null },
-    { id: 'speaking', label: 'Lịch Sử IELTS Speaking', icon: Mic, count: speakingHistory.length, badge: speakingStats.totalTests > 0 ? `Band ${speakingStats.avgBand}` : null },
-    { id: 'mastered', label: 'Đề & Bài Đã Thuộc', icon: GraduationCap, count: masteredIds.length, badge: masteredIds.length > 0 ? `${masteredIds.length}` : null },
-    { id: 'resources', label: 'Kho Đề & Tài Nguyên', icon: FolderKanban, count: userCustomTasks.length },
-    { id: 'vocab', label: 'Sổ Tay Từ Vựng & Lỗi', icon: Bookmark, count: vocabList.length },
-    { id: 'account', label: 'Cài Đặt & Dữ Liệu', icon: Settings, status: user ? 'Đã đăng nhập' : 'Chưa đăng nhập' }
+    { id: 'overview', label: isEn ? 'Overview & Analytics' : 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: overallProjectedBand > 0 ? `Overall ${overallProjectedBand}` : null },
+    { id: 'submissions', label: isEn ? 'Writing Submissions' : 'Lịch Sử IELTS Writing', icon: History, count: submissions.length, badge: stats.avgBand > 0 ? `Band ${stats.avgBand}` : null },
+    { id: 'reading', label: isEn ? 'Reading History' : 'Lịch Sử IELTS Reading', icon: BookMarked, count: readingHistory.length, badge: readingStats.totalTests > 0 ? `Band ${readingStats.avgBand}` : null },
+    { id: 'listening', label: isEn ? 'Listening History' : 'Lịch Sử IELTS Listening', icon: Headphones, count: listeningHistory.length, badge: listeningStats.totalTests > 0 ? `Band ${listeningStats.avgBand}` : null },
+    { id: 'speaking', label: isEn ? 'Speaking Mock Exams' : 'Lịch Sử IELTS Speaking', icon: Mic, count: speakingHistory.length, badge: speakingStats.totalTests > 0 ? `Band ${speakingStats.avgBand}` : null },
+    { id: 'mastered', label: isEn ? 'Mastered Tasks' : 'Đề & Bài Đã Thuộc', icon: GraduationCap, count: masteredIds.length, badge: masteredIds.length > 0 ? `${masteredIds.length}` : null },
+    { id: 'resources', label: isEn ? 'Custom Resources' : 'Kho Đề & Tài Nguyên', icon: FolderKanban, count: userCustomTasks.length },
+    { id: 'vocab', label: isEn ? 'Vocab & Error Vault' : 'Sổ Tay Từ Vựng & Lỗi', icon: Bookmark, count: vocabList.length },
+    { id: 'account', label: isEn ? 'Settings & Data' : 'Cài Đặt & Dữ Liệu', icon: Settings, status: user ? (isEn ? 'Logged in' : 'Đã đăng nhập') : (isEn ? 'Guest' : 'Chưa đăng nhập') }
   ];
 
   // If modal is not open, don't render DOM (must be after all hooks!)
@@ -669,15 +671,15 @@ export default function UserProfileModal({
                 </span>
               </div>
               <h1 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
-                {activeTab === 'overview' && 'Tổng Quan Năng Lực & Dự Phóng Điểm IELTS'}
-                {activeTab === 'submissions' && 'Lịch Sử Bài Viết IELTS Writing'}
-                {activeTab === 'reading' && 'Lịch Sử Làm Đề & Thống Kê IELTS Reading'}
-                {activeTab === 'listening' && 'Lịch Sử Làm Đề & Thống Kê IELTS Listening'}
-                {activeTab === 'speaking' && 'Lịch Sử Thi Thử IELTS Speaking'}
-                {activeTab === 'mastered' && 'Danh Sách Đề Thi & Bài Luyện Đã Thuần Thục (Đã Thuộc)'}
-                {activeTab === 'resources' && 'Kho Đề Bài & Tài Nguyên Bạn Đã Tải Lên'}
-                {activeTab === 'vocab' && 'Sổ Tay Từ Vựng & Sổ Tay Lỗi Sai Cá Nhân'}
-                {activeTab === 'account' && 'Cài Đặt Tài Khoản & Quản Lý Dữ Liệu'}
+                {activeTab === 'overview' && (isEn ? 'Holistic Performance & Cambridge Band Projections' : 'Tổng Quan Năng Lực & Dự Phóng Điểm IELTS')}
+                {activeTab === 'submissions' && (isEn ? 'IELTS Writing Essay Submission Archive' : 'Lịch Sử Bài Viết IELTS Writing')}
+                {activeTab === 'reading' && (isEn ? 'IELTS Reading Official Test Log & Analytics' : 'Lịch Sử Làm Đề & Thống Kê IELTS Reading')}
+                {activeTab === 'listening' && (isEn ? 'IELTS Listening Test Log & Audioscript Analytics' : 'Lịch Sử Làm Đề & Thống Kê IELTS Listening')}
+                {activeTab === 'speaking' && (isEn ? 'IELTS Speaking Examiner Mock Test Records' : 'Lịch Sử Thi Thử IELTS Speaking')}
+                {activeTab === 'mastered' && (isEn ? 'Mastered Question Bank & Repertoire' : 'Danh Sách Đề Thi & Bài Luyện Đã Thuần Thục (Đã Thuộc)')}
+                {activeTab === 'resources' && (isEn ? 'User-Authored Tasks & Custom Study Materials' : 'Kho Đề Bài & Tài Nguyên Bạn Đã Tải Lên')}
+                {activeTab === 'vocab' && (isEn ? 'Personal Lexicon & Error Log Journal' : 'Sổ Tay Từ Vựng & Sổ Tay Lỗi Sai Cá Nhân')}
+                {activeTab === 'account' && (isEn ? 'Account Configuration & Data Resilience' : 'Cài Đặt Tài Khoản & Quản Lý Dữ Liệu')}
               </h1>
             </div>
 

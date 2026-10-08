@@ -21,6 +21,7 @@ import {
   initSrsItem, 
   SRS_GRADES 
 } from '../utils/srsService';
+import { useTranslation } from '../i18n';
 
 export default function VocabNotebookModal({
   isOpen,
@@ -31,6 +32,7 @@ export default function VocabNotebookModal({
   onClearAll,
   onUpdateVocab
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'srs'
@@ -113,14 +115,20 @@ export default function VocabNotebookModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-sm sm:text-xl font-bold truncate">Sổ Tay Từ Vựng Vàng (Vocab Vault)</h2>
+                <h2 className="text-sm sm:text-xl font-bold truncate">
+                  {isEn ? 'Personal Lexicon & Vocab Vault' : 'Sổ Tay Từ Vựng Vàng (Vocab Vault)'}
+                </h2>
                 {dueItems.length > 0 && (
                   <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-black animate-pulse shrink-0">
-                    {dueItems.length} cần ôn
+                    {isEn ? `${dueItems.length} due` : `${dueItems.length} cần ôn`}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400">Hệ thống lặp lại ngắt quãng (Spaced Repetition SM-2) bồi dưỡng từ vựng C1/C2</p>
+              <p className="text-xs text-slate-400">
+                {isEn 
+                  ? 'Spaced Repetition (SM-2) system cultivating C1/C2 Academic Collocations'
+                  : 'Hệ thống lặp lại ngắt quãng (Spaced Repetition SM-2) bồi dưỡng từ vựng C1/C2'}
+              </p>
             </div>
           </div>
           <button 
@@ -143,7 +151,7 @@ export default function VocabNotebookModal({
             }`}
           >
             <BookOpen className="w-3.5 h-3.5 text-amber-600" />
-            <span>Danh Sách Từ Vựng ({vocabList.length})</span>
+            <span>{isEn ? `Vocabulary List (${vocabList.length})` : `Danh Sách Từ Vựng (${vocabList.length})`}</span>
           </button>
 
           <button
@@ -159,7 +167,7 @@ export default function VocabNotebookModal({
             }`}
           >
             <Brain className="w-3.5 h-3.5 text-red-500" />
-            <span>Ôn Luyện Flashcard SM-2</span>
+            <span>{isEn ? 'Flashcards & SM-2' : 'Ôn Luyện Flashcard SM-2'}</span>
             {dueItems.length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full bg-red-100 text-red-700 text-[10px] font-black">
                 {dueItems.length}

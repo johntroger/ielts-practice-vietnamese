@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { AlertTriangle, Trash2, Search, X, CheckCircle, BookOpen } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDeleteMistake, onClearAll }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,8 +34,14 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-sm sm:text-xl font-bold truncate">Sổ Tay Lỗi Sai Thường Gặp (Mistake Log)</h2>
-              <p className="text-xs text-slate-400">Ghi nhận các lỗi ngữ pháp & chính tả lặp lại để ôn luyện, tránh tái diễn khi thi thật</p>
+              <h2 className="text-sm sm:text-xl font-bold truncate">
+                {isEn ? 'Academic Mistake Log & Error Journal' : 'Sổ Tay Lỗi Sai Thường Gặp (Mistake Log)'}
+              </h2>
+              <p className="text-xs text-slate-400">
+                {isEn 
+                  ? 'Systematic tracking of recurring grammar, spelling and lexical slips to prevent score penalties'
+                  : 'Ghi nhận các lỗi ngữ pháp & chính tả lặp lại để ôn luyện, tránh tái diễn khi thi thật'}
+              </p>
             </div>
           </div>
           <button 
@@ -53,7 +61,7 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm lỗi sai theo câu hoặc từ..."
+              placeholder={isEn ? "Search errors by phrase, pattern, or explanation..." : "Tìm kiếm lỗi sai theo câu hoặc từ..."}
               className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white"
             />
           </div>
