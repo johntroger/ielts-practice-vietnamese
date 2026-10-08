@@ -20,6 +20,7 @@ import {
   saveRecommendationIndex
 } from '../services/recommendationService';
 import { safeGet, safeSet } from '../utils/storageService';
+import { useTranslation } from '../i18n';
 
 /**
  * SmartRecommendationBanner.jsx
@@ -39,6 +40,7 @@ export default function SmartRecommendationBanner({
   isFocusMode = false,
   writingViewMode = 'pro'
 }) {
+  const { t, isEn } = useTranslation();
   const [isDismissed, setIsDismissed] = useState(() => isRecommendationDismissedToday());
   const [isCollapsed, setIsCollapsed] = useState(() => safeGet('ielts_rec_banner_collapsed', 'false') === 'true');
   const [currentIndex, setCurrentIndex] = useState(() => getSavedRecommendationIndex());
@@ -51,9 +53,10 @@ export default function SmartRecommendationBanner({
       vocabList,
       targetBand,
       allTasks,
-      currentTaskId
+      currentTaskId,
+      isEn
     });
-  }, [submissions, mistakes, vocabList, targetBand, allTasks, currentTaskId]);
+  }, [submissions, mistakes, vocabList, targetBand, allTasks, currentTaskId, isEn]);
 
   // If dismissed or in focus mode, do not render
   if (isDismissed || isFocusMode || recommendations.length === 0) {
@@ -113,7 +116,7 @@ export default function SmartRecommendationBanner({
   if (isCollapsed) {
     return (
       <aside 
-        aria-label="Thanh gợi ý bài tập thông minh thu gọn"
+        aria-label={isEn ? "Collapsed smart practice recommendation bar" : "Thanh gợi ý bài tập thông minh thu gọn"}
         className="bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950 text-white px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs border-b border-slate-800 transition-all shadow-2xs shrink-0 select-none"
       >
         <div 
@@ -124,11 +127,11 @@ export default function SmartRecommendationBanner({
             <Sparkles className="w-3 h-3 animate-pulse" />
           </div>
           <span className="font-semibold text-slate-200 truncate group-hover:text-white transition-colors">
-            <span className="text-amber-300 font-bold mr-1.5">Gợi ý hôm nay:</span>
+            <span className="text-amber-300 font-bold mr-1.5">{isEn ? "Today's Pick:" : "Gợi ý hôm nay:"}</span>
             {activeRec.title}
           </span>
           <span className="hidden md:inline-flex text-[10px] text-slate-400 font-normal">
-            ({activeRec.estimatedMinutes} phút)
+            ({activeRec.estimatedMinutes} {isEn ? "mins" : "phút"})
           </span>
         </div>
 
@@ -136,24 +139,24 @@ export default function SmartRecommendationBanner({
           <button
             onClick={handleExecuteAction}
             className="flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[11px] transition-transform active:scale-95 cursor-pointer shadow-xs"
-            title="Luyện ngay đề thi hoặc công cụ được gợi ý"
+            title={isEn ? "Practice recommended exercise" : "Luyện ngay đề thi hoặc công cụ được gợi ý"}
           >
-            <span>Luyện ngay</span>
+            <span>{isEn ? "Practice now" : "Luyện ngay"}</span>
             <ArrowRight className="w-3 h-3" />
           </button>
           <button
             onClick={handleToggleCollapse}
             className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-            title="Mở rộng chi tiết gợi ý"
-            aria-label="Mở rộng gợi ý bài tập"
+            title={isEn ? "Expand suggestion details" : "Mở rộng chi tiết gợi ý"}
+            aria-label={isEn ? "Expand suggestion details" : "Mở rộng gợi ý bài tập"}
           >
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={handleDismiss}
             className="p-1 rounded-md text-slate-400 hover:text-rose-400 hover:bg-white/10 transition-colors cursor-pointer"
-            title="Đóng gợi ý trong hôm nay"
-            aria-label="Đóng gợi ý trong hôm nay"
+            title={isEn ? "Dismiss suggestion for today" : "Đóng gợi ý trong hôm nay"}
+            aria-label={isEn ? "Dismiss suggestion for today" : "Đóng gợi ý trong hôm nay"}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -165,7 +168,7 @@ export default function SmartRecommendationBanner({
   // EXPANDED VIEW
   return (
     <aside 
-      aria-label="Thẻ gợi ý bài tập thông minh"
+      aria-label={isEn ? "Smart practice recommendation card" : "Thẻ gợi ý bài tập thông minh"}
       className="bg-gradient-to-r from-amber-50/90 via-white to-indigo-50/70 border-b border-slate-200/90 px-3 sm:px-4 lg:px-6 py-2.5 transition-all shadow-2xs shrink-0 relative overflow-hidden"
     >
       {/* Subtle background decoration */}
@@ -186,11 +189,11 @@ export default function SmartRecommendationBanner({
               </span>
               <span className="text-[11px] font-medium text-slate-500 flex items-center gap-1">
                 <Clock className="w-3 h-3 text-slate-400" />
-                ~{activeRec.estimatedMinutes} phút
+                ~{activeRec.estimatedMinutes} {isEn ? "mins" : "phút"}
               </span>
               {recommendations.length > 1 && (
                 <span className="text-[10px] text-slate-400 font-semibold">
-                  (Gợi ý {(currentIndex % recommendations.length) + 1}/{recommendations.length})
+                  ({isEn ? "Suggestion" : "Gợi ý"} {(currentIndex % recommendations.length) + 1}/{recommendations.length})
                 </span>
               )}
             </div>
@@ -211,9 +214,9 @@ export default function SmartRecommendationBanner({
           <button
             onClick={handleExecuteAction}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
-            title="Luyện ngay bài tập được gợi ý"
+            title={isEn ? "Start recommended exercise" : "Luyện ngay bài tập được gợi ý"}
           >
-            <span>{activeRec.actionLabel || 'Luyện ngay'}</span>
+            <span>{activeRec.actionLabel || (isEn ? 'Practice now' : 'Luyện ngay')}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
 
@@ -222,10 +225,10 @@ export default function SmartRecommendationBanner({
             <button
               onClick={handleNextRecommendation}
               className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold transition-all shadow-2xs active:scale-95 cursor-pointer"
-              title="Đổi gợi ý bài tập khác"
+              title={isEn ? "Switch to next suggestion" : "Đổi gợi ý bài tập khác"}
             >
               <RotateCw className="w-3 h-3 text-slate-500" />
-              <span className="hidden md:inline">Đổi gợi ý</span>
+              <span className="hidden md:inline">{isEn ? "Next suggestion" : "Đổi gợi ý"}</span>
             </button>
           )}
 
@@ -233,8 +236,8 @@ export default function SmartRecommendationBanner({
           <button
             onClick={handleToggleCollapse}
             className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-            title="Thu nhỏ thanh gợi ý"
-            aria-label="Thu nhỏ thanh gợi ý"
+            title={isEn ? "Collapse suggestion banner" : "Thu nhỏ thanh gợi ý"}
+            aria-label={isEn ? "Collapse suggestion banner" : "Thu nhỏ thanh gợi ý"}
           >
             <ChevronUp className="w-4 h-4" />
           </button>
@@ -243,8 +246,8 @@ export default function SmartRecommendationBanner({
           <button
             onClick={handleDismiss}
             className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-            title="Ẩn gợi ý trong hôm nay"
-            aria-label="Ẩn gợi ý trong hôm nay"
+            title={isEn ? "Dismiss suggestion for today" : "Ẩn gợi ý trong hôm nay"}
+            aria-label={isEn ? "Dismiss suggestion for today" : "Ẩn gợi ý trong hôm nay"}
           >
             <X className="w-4 h-4" />
           </button>

@@ -70,7 +70,8 @@ export function getSmartDailyRecommendations({
   vocabList = [],
   targetBand = '6.5',
   allTasks = [],
-  currentTaskId = ''
+  currentTaskId = '',
+  isEn = false
 } = {}) {
   const recommendations = [];
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -99,13 +100,17 @@ export function getSmartDailyRecommendations({
       id: 'rec-balance-task1',
       priority: 95,
       type: 'balance_task1',
-      badge: '⚖️ Cân Bằng Kỹ Năng',
+      badge: isEn ? '⚖️ Skill Balance' : '⚖️ Cân Bằng Kỹ Năng',
       badgeColor: 'blue',
-      title: 'Luyện 1 bài Task 1 để bảo toàn 33% tổng điểm',
-      description: `Bạn đã hoàn thành liên tiếp ${recentTask2Count} bài Task 2. Dành 20 phút phân tích ${suggestedTask1.title || 'biểu đồ Task 1'} giúp duy trì phản xạ mô tả số liệu và cấu trúc so sánh.`,
+      title: isEn ? 'Practice 1 Task 1 report to secure 33% score' : 'Luyện 1 bài Task 1 để bảo toàn 33% tổng điểm',
+      description: isEn
+        ? `You completed ${recentTask2Count} consecutive Task 2 essays. Spend 20 minutes analyzing ${suggestedTask1.title || 'Task 1 visual data'} to maintain quantitative precision and comparative structures.`
+        : `Bạn đã hoàn thành liên tiếp ${recentTask2Count} bài Task 2. Dành 20 phút phân tích ${suggestedTask1.title || 'biểu đồ Task 1'} giúp duy trì phản xạ mô tả số liệu và cấu trúc so sánh.`,
       actionType: 'select_task',
       actionPayload: suggestedTask1,
-      actionLabel: `Luyện đề: ${suggestedTask1.title?.slice(0, 24) || 'Task 1'}...`,
+      actionLabel: isEn
+        ? `Practice: ${suggestedTask1.title?.slice(0, 24) || 'Task 1'}...`
+        : `Luyện đề: ${suggestedTask1.title?.slice(0, 24) || 'Task 1'}...`,
       estimatedMinutes: 20
     });
   }
@@ -116,13 +121,17 @@ export function getSmartDailyRecommendations({
       id: 'rec-balance-task2',
       priority: 90,
       type: 'balance_task2',
-      badge: '🏆 Trọng Số 66% Điểm',
+      badge: isEn ? '🏆 66% Score Weight' : '🏆 Trọng Số 66% Điểm',
       badgeColor: 'rose',
-      title: 'Tập trung phát triển luận điểm Task 2',
-      description: `Task 2 chiếm trọng số gấp đôi Task 1. Hãy thử sức với đề "${suggestedTask2.title || 'IELTS Task 2'}" để rèn luyện lập luận đa chiều chuẩn Band ${targetBand}.`,
+      title: isEn ? 'Strengthen Task 2 Argument Coherence' : 'Tập trung phát triển luận điểm Task 2',
+      description: isEn
+        ? `Task 2 carries twice the weighting of Task 1. Tackle "${suggestedTask2.title || 'IELTS Task 2'}" to practice nuanced argumentative progression targeting Band ${targetBand}.`
+        : `Task 2 chiếm trọng số gấp đôi Task 1. Hãy thử sức với đề "${suggestedTask2.title || 'IELTS Task 2'}" để rèn luyện lập luận đa chiều chuẩn Band ${targetBand}.`,
       actionType: 'select_task',
       actionPayload: suggestedTask2,
-      actionLabel: `Luyện đề: ${suggestedTask2.title?.slice(0, 24) || 'Task 2'}...`,
+      actionLabel: isEn
+        ? `Practice: ${suggestedTask2.title?.slice(0, 24) || 'Task 2'}...`
+        : `Luyện đề: ${suggestedTask2.title?.slice(0, 24) || 'Task 2'}...`,
       estimatedMinutes: 40
     });
   }
@@ -133,13 +142,17 @@ export function getSmartDailyRecommendations({
       id: 'rec-fix-mistakes',
       priority: 88,
       type: 'fix_mistakes',
-      badge: '💊 Khắc Phục Điểm Yếu',
+      badge: isEn ? '💊 Remedy Error Traps' : '💊 Khắc Phục Điểm Yếu',
       badgeColor: 'amber',
-      title: `Triệt tiêu ${mistakes.length} bẫy lỗi sai thường gặp`,
-      description: 'Sổ tay ghi nhận các lỗi sai ngữ pháp và dùng từ gần đây. Hoàn thành 1 đơn thuốc lỗi SRS (3 phút) để xóa bỏ hoàn toàn các lỗi này.',
+      title: isEn
+        ? `Eliminate ${mistakes.length} recurring error traps`
+        : `Triệt tiêu ${mistakes.length} bẫy lỗi sai thường gặp`,
+      description: isEn
+        ? 'Recent grammar and lexical slip-ups detected in your error log. Complete a 3-minute SRS prescription clinic to eradicate them permanently.'
+        : 'Sổ tay ghi nhận các lỗi sai ngữ pháp và dùng từ gần đây. Hoàn thành 1 đơn thuốc lỗi SRS (3 phút) để xóa bỏ hoàn toàn các lỗi này.',
       actionType: 'open_modal',
       actionPayload: 'prescription',
-      actionLabel: 'Uống đơn thuốc lỗi SRS (3p)',
+      actionLabel: isEn ? 'Take SRS Prescription (3 mins)' : 'Uống đơn thuốc lỗi SRS (3p)',
       estimatedMinutes: 3
     });
   }
@@ -150,13 +163,17 @@ export function getSmartDailyRecommendations({
       id: 'rec-expand-vocab',
       priority: 82,
       type: 'expand_vocab',
-      badge: '💎 Nâng Cấp Từ Vựng C1/C2',
+      badge: isEn ? '💎 C1/C2 Lexical Upgrades' : '💎 Nâng Cấp Từ Vựng C1/C2',
       badgeColor: 'purple',
-      title: `Luyện Collocations & Paraphrase cho mục tiêu Band ${targetBand}`,
-      description: 'Sử dụng các cấu trúc nâng cao (Họ từ học thuật AWL, liên từ chỉ hệ quả, đảo ngữ) để tạo ấn tượng mạnh với giám khảo.',
+      title: isEn
+        ? `Master Collocations & Paraphrasing for Band ${targetBand}`
+        : `Luyện Collocations & Paraphrase cho mục tiêu Band ${targetBand}`,
+      description: isEn
+        ? 'Deploy high-scoring academic structures (AWL word families, consequential cohesive markers, inversion) to demonstrate examiner-ready range.'
+        : 'Sử dụng các cấu trúc nâng cao (Họ từ học thuật AWL, liên từ chỉ hệ quả, đảo ngữ) để tạo ấn tượng mạnh với giám khảo.',
       actionType: 'open_modal',
       actionPayload: 'vocabGrammar',
-      actionLabel: 'Mở Kho Từ Vựng & Ngữ Pháp',
+      actionLabel: isEn ? 'Open Vocab & Grammar Bank' : 'Mở Kho Từ Vựng & Ngữ Pháp',
       estimatedMinutes: 5
     });
   }
@@ -167,13 +184,15 @@ export function getSmartDailyRecommendations({
       id: 'rec-quick-micro-drill',
       priority: 86,
       type: 'micro_drill',
-      badge: '⚡ Khởi Động Nhanh 3 Phút',
+      badge: isEn ? '⚡ 3-Min Rapid Warm-up' : '⚡ Khởi Động Nhanh 3 Phút',
       badgeColor: 'emerald',
-      title: 'Khởi động phản xạ với Micro-Drills Studio',
-      description: 'Chưa có nhiều thời gian hôm nay? Làm 1 bài phản xạ nhanh 3 phút (Paraphrase câu luận đề hoặc GRA Heatmap) để duy trì mạch học.',
+      title: isEn ? 'Sharpen instincts in Micro-Drills Studio' : 'Khởi động phản xạ với Micro-Drills Studio',
+      description: isEn
+        ? 'Short on time today? Complete a brisk 3-minute reflex drill (Thesis paraphrasing or GRA Heatmap) to sustain study momentum.'
+        : 'Chưa có nhiều thời gian hôm nay? Làm 1 bài phản xạ nhanh 3 phút (Paraphrase câu luận đề hoặc GRA Heatmap) để duy trì mạch học.',
       actionType: 'open_modal',
       actionPayload: 'microDrills',
-      actionLabel: 'Vào Phòng Micro-Drills',
+      actionLabel: isEn ? 'Enter Micro-Drills Studio' : 'Vào Phòng Micro-Drills',
       estimatedMinutes: 3
     });
   }
@@ -183,29 +202,35 @@ export function getSmartDailyRecommendations({
     id: 'rec-adaptive-30min-sprint',
     priority: 89,
     type: 'adaptive_sprint',
-    badge: '🏃 Huấn Luyện Viên 30P',
+    badge: isEn ? '🏃 30-Min Sprint Coach' : '🏃 Huấn Luyện Viên 30P',
     badgeColor: 'amber',
-    title: 'Kích hoạt phiên nước rút 30 phút cá nhân hóa hôm nay',
-    description: 'Chẩn đoán tự động bẫy lỗi sai, kỹ năng trọng tâm và từ vựng C1/C2 theo 3 chặng đếm giờ có hướng dẫn từ Huấn luyện viên AI.',
+    title: isEn
+      ? 'Activate your personalized 30-minute sprint today'
+      : 'Kích hoạt phiên nước rút 30 phút cá nhân hóa hôm nay',
+    description: isEn
+      ? 'Auto-diagnose error traps, core target skills, and C1/C2 lexis across 3 guided, timed intervals with the AI Sprint Coach.'
+      : 'Chẩn đoán tự động bẫy lỗi sai, kỹ năng trọng tâm và từ vựng C1/C2 theo 3 chặng đếm giờ có hướng dẫn từ Huấn luyện viên AI.',
     actionType: 'open_modal',
     actionPayload: 'adaptiveSprint',
-    actionLabel: 'Bắt đầu Sprint 30P',
+    actionLabel: isEn ? 'Start 30-Min Sprint' : 'Bắt đầu Sprint 30P',
     estimatedMinutes: 30
   });
 
-  // RULE F: Full Mock Exam Challenge
+  // RULE G: Full Mock Exam Challenge
   if (recentSubmissions.length >= 3) {
     recommendations.push({
       id: 'rec-mock-exam',
       priority: 75,
       type: 'mock_test',
-      badge: '⏱️ Thử Thách Phòng Thi',
+      badge: isEn ? '⏱️ Exam Simulation Challenge' : '⏱️ Thử Thách Phòng Thi',
       badgeColor: 'red',
-      title: 'Thi thử Writing trọn gói 60 phút (Task 1 + 2)',
-      description: 'Bạn đã có đà luyện tập tốt! Hãy thử thách bản thân với phòng thi mô phỏng CD-IELTS 60 phút để kiểm tra khả năng phân bổ thời gian.',
+      title: isEn ? 'Full 60-minute Writing mock exam (Task 1 + 2)' : 'Thi thử Writing trọn gói 60 phút (Task 1 + 2)',
+      description: isEn
+        ? 'Great study momentum! Test your time-management and stamina under authentic CD-IELTS timed exam conditions.'
+        : 'Bạn đã có đà luyện tập tốt! Hãy thử thách bản thân với phòng thi mô phỏng CD-IELTS 60 phút để kiểm tra khả năng phân bổ thời gian.',
       actionType: 'open_modal',
       actionPayload: 'mockTest',
-      actionLabel: 'Vào Phòng Thi Thử (60p)',
+      actionLabel: isEn ? 'Enter Mock Exam Room (60 mins)' : 'Vào Phòng Thi Thử (60p)',
       estimatedMinutes: 60
     });
   }
@@ -217,15 +242,21 @@ export function getSmartDailyRecommendations({
       id: 'rec-default-daily',
       priority: 70,
       type: 'daily_practice',
-      badge: '🎯 Luyện Tập Trọng Tâm',
+      badge: isEn ? '🎯 Targeted Practice' : '🎯 Luyện Tập Trọng Tâm',
       badgeColor: 'indigo',
-      title: `Bắt đầu bài tập hướng tới Band ${targetBand}`,
+      title: isEn ? `Begin practice session targeting Band ${targetBand}` : `Bắt đầu bài tập hướng tới Band ${targetBand}`,
       description: defaultTask 
-        ? `Luyện viết bài "${defaultTask.title}" để rèn phản xạ viết và nhận điểm chấm chi tiết từ AI.`
-        : 'Chọn một đề bài trong thư viện và bắt đầu bài tập hôm nay.',
+        ? (isEn
+            ? `Write an essay response for "${defaultTask.title}" to hone reflexes and receive examiner-level AI feedback.`
+            : `Luyện viết bài "${defaultTask.title}" để rèn phản xạ viết và nhận điểm chấm chi tiết từ AI.`)
+        : (isEn
+            ? 'Select a prompt from the test library and begin today\'s writing practice.'
+            : 'Chọn một đề bài trong thư viện và bắt đầu bài tập hôm nay.'),
       actionType: defaultTask ? 'select_task' : 'open_modal',
       actionPayload: defaultTask || 'library',
-      actionLabel: defaultTask ? `Bắt đầu viết (${defaultTask.timeLimit || 40}p)` : 'Mở Thư Viện Đề',
+      actionLabel: defaultTask 
+        ? (isEn ? `Start writing (${defaultTask.timeLimit || 40} mins)` : `Bắt đầu viết (${defaultTask.timeLimit || 40}p)`)
+        : (isEn ? 'Open Test Bank' : 'Mở Thư Viện Đề'),
       estimatedMinutes: defaultTask?.timeLimit || 40
     });
   }
