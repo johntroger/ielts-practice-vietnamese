@@ -15,6 +15,7 @@ import {
   Target,
   Split
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 /**
  * SpeakingDrillRoom
@@ -57,6 +58,8 @@ export default function SpeakingDrillRoom({
   isEvaluatingSpeaking,
   speakingEvaluation
 }) {
+  const { t, language, isEn } = useTranslation();
+
   return (
     <div className="space-y-5">
               {/* 1. CÔNG THỨC MỞ RỘNG Ý TƯỞNG A.R.E.A */}
@@ -81,7 +84,7 @@ export default function SpeakingDrillRoom({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2 text-xs font-bold text-emerald-300 uppercase tracking-wider">
                         <Mic className="w-4 h-4 text-emerald-400" />
-                        <span>Giám Khảo Hỏi (Examiner Prompt):</span>
+                        <span>{isEn ? 'Examiner Prompt:' : 'Giám Khảo Hỏi (Examiner Prompt):'}</span>
                       </div>
                       <button
                         type="button"
@@ -91,17 +94,17 @@ export default function SpeakingDrillRoom({
                             ? 'bg-rose-600 hover:bg-rose-700 text-white ring-2 ring-rose-400/50'
                             : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                         }`}
-                        title="Nghe giọng giám khảo đọc chuẩn British Accent"
+                        title={isEn ? 'Listen to examiner prompt in British accent' : 'Nghe giọng giám khảo đọc chuẩn British Accent'}
                       >
                         {playingAudioId === `area-q-${currentArea.id}` ? (
                           <>
                             <VolumeX className="w-4 h-4 animate-pulse" />
-                            <span>Dừng Đọc</span>
+                            <span>{isEn ? 'Stop' : 'Dừng Đọc'}</span>
                           </>
                         ) : (
                           <>
                             <Volume2 className="w-4 h-4" />
-                            <span>Nghe Giám Khảo</span>
+                            <span>{isEn ? 'Listen to Examiner' : 'Nghe Giám Khảo'}</span>
                           </>
                         )}
                       </button>
@@ -114,7 +117,7 @@ export default function SpeakingDrillRoom({
                     {currentArea.tip && (
                       <div className="text-xs text-emerald-200/90 bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-start space-x-2">
                         <Lightbulb className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
-                        <span><strong>Mẹo phản xạ:</strong> {currentArea.tip}</span>
+                        <span><strong>{isEn ? 'Reflex tip:' : 'Mẹo phản xạ:'}</strong> {currentArea.tip}</span>
                       </div>
                     )}
                   </div>
@@ -124,9 +127,9 @@ export default function SpeakingDrillRoom({
                     <div className="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
                       <span className="flex items-center space-x-1.5">
                         <Sparkles className="w-4 h-4 text-emerald-600" />
-                        <span>Khung Trả Lời 4 Bước A.R.E.A (Nhập ý tưởng hoặc bấm từ gợi ý):</span>
+                        <span>{isEn ? '4-Step A.R.E.A Framework (Enter ideas or click keyword suggestions):' : 'Khung Trả Lời 4 Bước A.R.E.A (Nhập ý tưởng hoặc bấm từ gợi ý):'}</span>
                       </span>
-                      <span className="text-slate-500 font-normal hidden sm:inline">Chuẩn Cambridge Speaking</span>
+                      <span className="text-slate-500 font-normal hidden sm:inline">{isEn ? 'Cambridge Speaking Standard' : 'Chuẩn Cambridge Speaking'}</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -151,7 +154,7 @@ export default function SpeakingDrillRoom({
                                 answer: prev.answer ? `${prev.answer} ${kw}` : kw
                               }))}
                               className="px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-medium border border-emerald-200 transition-colors cursor-pointer"
-                              title="Bấm để chèn từ này vào câu trả lời"
+                              title={isEn ? 'Click to insert into your answer' : 'Bấm để chèn từ này vào câu trả lời'}
                             >
                               + {kw}
                             </button>
@@ -162,7 +165,7 @@ export default function SpeakingDrillRoom({
                           rows={2}
                           value={userAreaNotes.answer}
                           onChange={(e) => setUserAreaNotes(prev => ({ ...prev, answer: e.target.value }))}
-                          placeholder="Gõ hoặc bấm từ khóa bên trên để hoàn thiện Answer..."
+                          placeholder={isEn ? 'Type or click keywords above to complete your Answer...' : 'Gõ hoặc bấm từ khóa bên trên để hoàn thiện Answer...'}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 resize-none font-sans"
                         />
                       </div>
@@ -187,7 +190,7 @@ export default function SpeakingDrillRoom({
                                 reason: prev.reason ? `${prev.reason} ${kw}` : kw
                               }))}
                               className="px-2 py-0.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-800 text-[11px] font-medium border border-blue-200 transition-colors cursor-pointer"
-                              title="Bấm để chèn từ này vào câu trả lời"
+                              title={isEn ? 'Click to insert into your answer' : 'Bấm để chèn từ này vào câu trả lời'}
                             >
                               + {kw}
                             </button>
@@ -198,7 +201,7 @@ export default function SpeakingDrillRoom({
                           rows={2}
                           value={userAreaNotes.reason}
                           onChange={(e) => setUserAreaNotes(prev => ({ ...prev, reason: e.target.value }))}
-                          placeholder="Gõ hoặc bấm từ khóa bên trên để giải thích Reason..."
+                          placeholder={isEn ? 'Type or click keywords above to explain your Reason...' : 'Gõ hoặc bấm từ khóa bên trên để giải thích Reason...'}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none font-sans"
                         />
                       </div>
@@ -223,7 +226,7 @@ export default function SpeakingDrillRoom({
                                 example: prev.example ? `${prev.example} ${kw}` : kw
                               }))}
                               className="px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-900 text-[11px] font-medium border border-amber-200 transition-colors cursor-pointer"
-                              title="Bấm để chèn từ này vào câu trả lời"
+                              title={isEn ? 'Click to insert into your answer' : 'Bấm để chèn từ này vào câu trả lời'}
                             >
                               + {kw}
                             </button>
@@ -234,7 +237,7 @@ export default function SpeakingDrillRoom({
                           rows={2}
                           value={userAreaNotes.example}
                           onChange={(e) => setUserAreaNotes(prev => ({ ...prev, example: e.target.value }))}
-                          placeholder="Gõ hoặc kể một ví dụ cụ thể Example..."
+                          placeholder={isEn ? 'Type or give a specific Example...' : 'Gõ hoặc kể một ví dụ cụ thể Example...'}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20 resize-none font-sans"
                         />
                       </div>
@@ -259,7 +262,7 @@ export default function SpeakingDrillRoom({
                                 alternative: prev.alternative ? `${prev.alternative} ${kw}` : kw
                               }))}
                               className="px-2 py-0.5 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-800 text-[11px] font-medium border border-purple-200 transition-colors cursor-pointer"
-                              title="Bấm để chèn từ này vào câu trả lời"
+                              title={isEn ? 'Click to insert into your answer' : 'Bấm để chèn từ này vào câu trả lời'}
                             >
                               + {kw}
                             </button>
@@ -270,7 +273,7 @@ export default function SpeakingDrillRoom({
                           rows={2}
                           value={userAreaNotes.alternative}
                           onChange={(e) => setUserAreaNotes(prev => ({ ...prev, alternative: e.target.value }))}
-                          placeholder="Nêu trường hợp đối chiếu hoặc ngoại lệ Alternative..."
+                          placeholder={isEn ? 'Provide a contrasting point or Alternative...' : 'Nêu trường hợp đối chiếu hoặc ngoại lệ Alternative...'}
                           className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 resize-none font-sans"
                         />
                       </div>
@@ -296,10 +299,10 @@ export default function SpeakingDrillRoom({
                             ? 'bg-rose-600 hover:bg-rose-700 text-white ring-2 ring-rose-400 animate-pulse'
                             : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
                         }`}
-                        title="Bấm để nói trực tiếp, hệ thống sẽ tự động chép lời của bạn vào Answer"
+                        title={isEn ? 'Click to speak directly; speech will be transcribed into Answer' : 'Bấm để nói trực tiếp, hệ thống sẽ tự động chép lời của bạn vào Answer'}
                       >
                         <Mic className="w-3.5 h-3.5 text-rose-500" />
-                        <span>{isRecordingArea ? 'Đang Thu Âm (Nói đi...)' : 'Nói Qua Mic (Voice)'}</span>
+                        <span>{isRecordingArea ? (isEn ? 'Recording (Speak now...)' : 'Đang Thu Âm (Nói đi...)') : (isEn ? 'Voice Dictation' : 'Nói Qua Mic (Voice)')}</span>
                       </button>
 
                       {/* Reset Button */}
@@ -307,10 +310,10 @@ export default function SpeakingDrillRoom({
                         type="button"
                         onClick={() => setUserAreaNotes({ answer: '', reason: '', example: '', alternative: '' })}
                         className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-1 transition-colors cursor-pointer"
-                        title="Xóa trắng các ô ghi chú để làm lại từ đầu"
+                        title={isEn ? 'Clear all notes to start over' : 'Xóa trắng các ô ghi chú để làm lại từ đầu'}
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
-                        <span>Xóa làm lại</span>
+                        <span>{isEn ? 'Clear' : 'Xóa làm lại'}</span>
                       </button>
 
                       {/* Fill Sample Button */}
@@ -323,10 +326,10 @@ export default function SpeakingDrillRoom({
                           alternative: currentArea.formula.alternative.sample
                         })}
                         className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 flex items-center space-x-1 transition-colors cursor-pointer"
-                        title="Nạp nhanh các câu mẫu gợi ý để tham khảo văn phong"
+                        title={isEn ? 'Load model suggestions for reference' : 'Nạp nhanh các câu mẫu gợi ý để tham khảo văn phong'}
                       >
                         <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-                        <span>Nạp gợi ý chuẩn</span>
+                        <span>{isEn ? 'Load Samples' : 'Nạp gợi ý chuẩn'}</span>
                       </button>
                     </div>
 
@@ -337,17 +340,17 @@ export default function SpeakingDrillRoom({
                         onClick={handleEvaluateCurrentSpeaking}
                         disabled={isEvaluatingSpeaking}
                         className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5 cursor-pointer"
-                        title="Nhờ AI thẩm định phản xạ A.R.E.A và ước tính Band Score"
+                        title={isEn ? 'Ask AI to evaluate A.R.E.A reflex and estimate Band Score' : 'Nhờ AI thẩm định phản xạ A.R.E.A và ước tính Band Score'}
                       >
                         {isEvaluatingSpeaking ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>AI Đang Phân Tích...</span>
+                            <span>{isEn ? 'AI Evaluating...' : 'AI Đang Phân Tích...'}</span>
                           </>
                         ) : (
                           <>
                             <Sparkles className="w-3.5 h-3.5" />
-                            <span>AI Đánh Giá A.R.E.A</span>
+                            <span>{isEn ? 'AI A.R.E.A Assessment' : 'AI Đánh Giá A.R.E.A'}</span>
                           </>
                         )}
                       </button>
@@ -363,7 +366,7 @@ export default function SpeakingDrillRoom({
                         }`}
                       >
                         <Award className="w-3.5 h-3.5 text-amber-600" />
-                        <span>{showAreaModel ? 'Ẩn Bài Mẫu Band 8.5' : 'Xem Mẫu Band 8.5'}</span>
+                        <span>{showAreaModel ? (isEn ? 'Hide Band 8.5 Model' : 'Ẩn Bài Mẫu Band 8.5') : (isEn ? 'View Band 8.5 Model' : 'Xem Mẫu Band 8.5')}</span>
                       </button>
                     </div>
                   </div>
@@ -374,7 +377,7 @@ export default function SpeakingDrillRoom({
                       <div className="flex items-center justify-between border-b border-emerald-200 pb-2.5">
                         <div className="flex items-center space-x-2">
                           <Sparkles className="w-5 h-5 text-emerald-600" />
-                          <h4 className="font-bold text-slate-900 text-sm">Kết Quả Phân Tích Speaking Từ AI:</h4>
+                          <h4 className="font-bold text-slate-900 text-sm">{isEn ? 'AI Speaking Evaluation Results:' : 'Kết Quả Phân Tích Speaking Từ AI:'}</h4>
                         </div>
                         <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-black shadow-xs">
                           {speakingEvaluation.bandEstimate || 'Band 7.5 - 8.0'}
@@ -384,21 +387,21 @@ export default function SpeakingDrillRoom({
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
                         <div className="p-2.5 rounded-xl bg-white border border-emerald-100 shadow-2xs">
                           <span className="font-bold text-emerald-800 block mb-1">🌊 Fluency & Coherence:</span>
-                          <p className="text-slate-600">{speakingEvaluation.fluencyFeedback || 'Phản xạ trôi chảy, sử dụng tốt khung A.R.E.A.'}</p>
+                          <p className="text-slate-600">{speakingEvaluation.fluencyFeedback || (isEn ? 'Fluent reflex, excellent use of A.R.E.A framework.' : 'Phản xạ trôi chảy, sử dụng tốt khung A.R.E.A.')}</p>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-emerald-100 shadow-2xs">
                           <span className="font-bold text-emerald-800 block mb-1">💎 Lexical Resource:</span>
-                          <p className="text-slate-600">{speakingEvaluation.lexicalFeedback || 'Sử dụng collocations tự nhiên và chính xác.'}</p>
+                          <p className="text-slate-600">{speakingEvaluation.lexicalFeedback || (isEn ? 'Natural and accurate collocation usage.' : 'Sử dụng collocations tự nhiên và chính xác.')}</p>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-emerald-100 shadow-2xs">
                           <span className="font-bold text-emerald-800 block mb-1">⚖️ Grammatical Range:</span>
-                          <p className="text-slate-600">{speakingEvaluation.grammarFeedback || 'Cấu trúc câu đa dạng, kết hợp mệnh đề điều kiện.'}</p>
+                          <p className="text-slate-600">{speakingEvaluation.grammarFeedback || (isEn ? 'Varied sentence structures with conditional clauses.' : 'Cấu trúc câu đa dạng, kết hợp mệnh đề điều kiện.')}</p>
                         </div>
                       </div>
 
                       {speakingEvaluation.upgradedResponse && (
                         <div className="p-3 rounded-xl bg-white border border-emerald-200 text-xs space-y-1">
-                          <span className="font-bold text-emerald-900 block">⭐ Bản Trả Lời Nâng Cấp Band 8.5+:</span>
+                          <span className="font-bold text-emerald-900 block">{isEn ? '⭐ Upgraded Band 8.5+ Response:' : '⭐ Bản Trả Lời Nâng Cấp Band 8.5+:'}</span>
                           <p className="font-serif italic text-slate-800 leading-relaxed">
                             "{speakingEvaluation.upgradedResponse}"
                           </p>
@@ -407,7 +410,7 @@ export default function SpeakingDrillRoom({
 
                       {speakingEvaluation.recommendations && (
                         <p className="text-xs text-emerald-900 bg-emerald-100/60 p-2.5 rounded-xl border border-emerald-200">
-                          💡 <strong>Lời khuyên phòng thi:</strong> {speakingEvaluation.recommendations}
+                          💡 <strong>{isEn ? 'Exam advice:' : 'Lời khuyên phòng thi:'}</strong> {speakingEvaluation.recommendations}
                         </p>
                       )}
                     </div>
@@ -420,7 +423,7 @@ export default function SpeakingDrillRoom({
                         <div className="flex items-center space-x-2">
                           <Award className="w-5 h-5 text-amber-600" />
                           <h4 className="font-bold text-slate-900 text-sm sm:text-base">
-                            Bài Mẫu Chuẩn Band 8.5 (Cambridge Model Response)
+                            {isEn ? 'Band 8.5 Cambridge Model Response' : 'Bài Mẫu Chuẩn Band 8.5 (Cambridge Model Response)'}
                           </h4>
                         </div>
                         <button
@@ -431,17 +434,17 @@ export default function SpeakingDrillRoom({
                               ? 'bg-rose-600 text-white'
                               : 'bg-amber-600 hover:bg-amber-700 text-white'
                           }`}
-                          title="Nghe phát âm chuẩn toàn bộ bài mẫu Band 8.5"
+                          title={isEn ? 'Listen to authentic Band 8.5 model response' : 'Nghe phát âm chuẩn toàn bộ bài mẫu Band 8.5'}
                         >
                           {playingAudioId === `area-model-${currentArea.id}` ? (
                             <>
                               <VolumeX className="w-3.5 h-3.5 animate-pulse" />
-                              <span>Dừng</span>
+                              <span>{isEn ? 'Stop' : 'Dừng'}</span>
                             </>
                           ) : (
                             <>
                               <Volume2 className="w-3.5 h-3.5" />
-                              <span>Nghe Bài Mẫu</span>
+                              <span>{isEn ? 'Listen to Model' : 'Nghe Bài Mẫu'}</span>
                             </>
                           )}
                         </button>
@@ -456,7 +459,7 @@ export default function SpeakingDrillRoom({
                       {currentArea.lexicalHighlights && (
                         <div className="space-y-1.5">
                           <span className="text-xs font-bold text-amber-900 block">
-                            🔑 Từ vựng & Collocations ăn điểm cao:
+                            {isEn ? '🔑 High-Scoring Vocabulary & Collocations:' : '🔑 Từ vựng & Collocations ăn điểm cao:'}
                           </span>
                           <div className="flex flex-wrap gap-1.5">
                             {currentArea.lexicalHighlights.map((w, idx) => (
@@ -480,7 +483,7 @@ export default function SpeakingDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
-                      {currentFiller.category || 'Natural Fillers'} • Buying Time Reflex
+                      {currentFiller.category || (isEn ? 'Natural Fillers' : 'Từ Đệm Tự Nhiên')} • {isEn ? 'Buying Time Reflex' : 'Phản xạ câu giờ tự nhiên'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {currentFiller.title}
@@ -492,7 +495,7 @@ export default function SpeakingDrillRoom({
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
                         <Clock className="w-4 h-4 text-amber-400" />
-                        <span>Tình huống phòng thi:</span>
+                        <span>{isEn ? 'Exam Situation:' : 'Tình huống phòng thi:'}</span>
                       </span>
                       <button
                         type="button"
@@ -502,24 +505,24 @@ export default function SpeakingDrillRoom({
                             ? 'bg-rose-600 text-white'
                             : 'bg-indigo-600 hover:bg-indigo-500 text-white'
                         }`}
-                        title="Nghe câu hỏi giám khảo"
+                        title={isEn ? 'Listen to examiner question' : 'Nghe câu hỏi giám khảo'}
                       >
                         {playingAudioId === `filler-q-${currentFiller.id}` ? (
                           <>
                             <VolumeX className="w-3.5 h-3.5 animate-pulse" />
-                            <span>Dừng</span>
+                            <span>{isEn ? 'Stop' : 'Dừng'}</span>
                           </>
                         ) : (
                           <>
                             <Volume2 className="w-3.5 h-3.5" />
-                            <span>Nghe Câu Hỏi</span>
+                            <span>{isEn ? 'Listen to Question' : 'Nghe Câu Hỏi'}</span>
                           </>
                         )}
                       </button>
                     </div>
 
                     <div className="text-xs text-slate-300 leading-relaxed bg-white/5 p-3 rounded-xl border border-white/10">
-                      💡 <strong>Ngữ cảnh:</strong> {currentFiller.situation}
+                      💡 <strong>{isEn ? 'Context:' : 'Ngữ cảnh:'}</strong> {currentFiller.situation}
                     </div>
 
                     <div className="text-base sm:text-lg font-bold text-white font-serif">
@@ -529,7 +532,7 @@ export default function SpeakingDrillRoom({
 
                   {/* Task Prompt */}
                   <div className="text-xs font-bold text-slate-700 px-1">
-                    {currentFiller.taskPrompt || 'Chọn cụm từ đệm tự nhiên nhất để mở đầu câu trả lời:'}
+                    {currentFiller.taskPrompt || (isEn ? 'Choose the most natural filler phrase to buy thinking time:' : 'Chọn cụm từ đệm tự nhiên nhất để mở đầu câu trả lời:')}
                   </div>
 
                   {/* Multiple Choice Options */}
@@ -591,12 +594,12 @@ export default function SpeakingDrillRoom({
                           {currentFiller.options[userFillerChoice]?.isCorrect ? (
                             <span className="text-emerald-700 flex items-center space-x-1.5">
                               <CheckCircle2 className="w-4 h-4 inline" />
-                              <span>XUẤT SẮC! Cụm từ đệm tự nhiên chuẩn người bản xứ.</span>
+                              <span>{isEn ? 'EXCELLENT! Highly natural, native-like filler phrase.' : 'XUẤT SẮC! Cụm từ đệm tự nhiên chuẩn người bản xứ.'}</span>
                             </span>
                           ) : (
                             <span className="text-rose-700 flex items-center space-x-1.5">
                               <XCircle className="w-4 h-4 inline" />
-                              <span>CHƯA TỰ NHIÊN! Xem phân tích đáp án chuẩn màu xanh phía trên.</span>
+                              <span>{isEn ? 'NOT NATURAL! Check the correct green option above.' : 'CHƯA TỰ NHIÊN! Xem phân tích đáp án chuẩn màu xanh phía trên.'}</span>
                             </span>
                           )}
 
@@ -606,10 +609,10 @@ export default function SpeakingDrillRoom({
                               setUserFillerChoice(null);
                               setShowFillerResult(false);
                             }}
-                            className="text-slate-500 hover:text-slate-800 font-semibold flex items-center space-x-1"
+                            className="text-slate-500 hover:text-slate-800 font-semibold flex items-center space-x-1 cursor-pointer"
                           >
                             <RotateCcw className="w-3.5 h-3.5" />
-                            <span>Làm lại câu này</span>
+                            <span>{isEn ? 'Retry this question' : 'Làm lại câu này'}</span>
                           </button>
                         </div>
 
@@ -617,7 +620,7 @@ export default function SpeakingDrillRoom({
                           <div className="p-3 rounded-lg bg-white border border-slate-200 space-y-2">
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-slate-800 block">
-                                🎙️ Câu Nói Mẫu Hoàn Chỉnh Khi Áp Dụng Từ Đệm:
+                                {isEn ? '🎙️ Full Model Utterance with Natural Filler:' : '🎙️ Câu Nói Mẫu Hoàn Chỉnh Khi Áp Dụng Từ Đệm:'}
                               </span>
                               <button
                                 type="button"
@@ -625,7 +628,7 @@ export default function SpeakingDrillRoom({
                                 className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center space-x-1 cursor-pointer"
                               >
                                 <Volume2 className="w-3.5 h-3.5" />
-                                <span>Nghe Câu Mẫu</span>
+                                <span>{isEn ? 'Listen to Model' : 'Nghe Câu Mẫu'}</span>
                               </button>
                             </div>
                             <p className="font-serif italic text-slate-800 text-xs sm:text-sm leading-relaxed">
@@ -644,7 +647,7 @@ export default function SpeakingDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[11px] font-bold uppercase">
-                      {currentSpeakingColloc.category || 'Lexical Resource'} • Idiom & Collocation Reflex
+                      {currentSpeakingColloc.category || 'Lexical Resource'} • {isEn ? 'Idiom & Collocation Reflex' : 'Phản xạ thành ngữ & Collocation'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {currentSpeakingColloc.title}
@@ -656,7 +659,7 @@ export default function SpeakingDrillRoom({
                     <div className="flex items-center justify-between text-xs font-bold text-rose-300 uppercase tracking-wider">
                       <span className="flex items-center space-x-1.5">
                         <Flame className="w-4 h-4 text-rose-400" />
-                        <span>Ngữ Cảnh Giao Tiếp:</span>
+                        <span>{isEn ? 'Communicative Context:' : 'Ngữ Cảnh Giao Tiếp:'}</span>
                       </span>
                     </div>
 
@@ -734,12 +737,12 @@ export default function SpeakingDrillRoom({
                           {currentSpeakingColloc.options[userSpeakingCollocChoice]?.isCorrect ? (
                             <span className="text-emerald-700 flex items-center space-x-1.5">
                               <CheckCircle2 className="w-4 h-4 inline" />
-                              <span>CHÍNH XÁC! Bạn đã nắm vững thành ngữ tự nhiên này.</span>
+                              <span>{isEn ? 'CORRECT! You mastered this natural idiom.' : 'CHÍNH XÁC! Bạn đã nắm vững thành ngữ tự nhiên này.'}</span>
                             </span>
                           ) : (
                             <span className="text-rose-700 flex items-center space-x-1.5">
                               <XCircle className="w-4 h-4 inline" />
-                              <span>CẦN ÔN LẠI! Xem giải thích và nghĩa cụ thể bên dưới.</span>
+                              <span>{isEn ? 'NEEDS REVIEW! Check the explanation and exact definition below.' : 'CẦN ÔN LẠI! Xem giải thích và nghĩa cụ thể bên dưới.'}</span>
                             </span>
                           )}
 
@@ -749,22 +752,22 @@ export default function SpeakingDrillRoom({
                               setUserSpeakingCollocChoice(null);
                               setShowSpeakingCollocResult(false);
                             }}
-                            className="text-slate-500 hover:text-slate-800 font-semibold flex items-center space-x-1"
+                            className="text-slate-500 hover:text-slate-800 font-semibold flex items-center space-x-1 cursor-pointer"
                           >
                             <RotateCcw className="w-3.5 h-3.5" />
-                            <span>Làm lại</span>
+                            <span>{isEn ? 'Retry' : 'Làm lại'}</span>
                           </button>
                         </div>
 
                         <div className="p-3 rounded-lg bg-white border border-slate-200 space-y-2">
                           <div className="font-bold text-slate-800">
-                            📖 <strong>Ý nghĩa học thuật:</strong> <span className="text-rose-700">{currentSpeakingColloc.idiom}</span> = {currentSpeakingColloc.meaning}
+                            📖 <strong>{isEn ? 'Academic Meaning:' : 'Ý nghĩa học thuật:'}</strong> <span className="text-rose-700">{currentSpeakingColloc.idiom}</span> = {currentSpeakingColloc.meaning}
                           </div>
                           
                           {currentSpeakingColloc.speakingExample && (
                             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
                               <div className="space-y-1">
-                                <span className="text-[11px] font-bold text-slate-500 block">Ví dụ Speaking Band 8.0+:</span>
+                                <span className="text-[11px] font-bold text-slate-500 block">{isEn ? 'Speaking Band 8.0+ Example:' : 'Ví dụ Speaking Band 8.0+:'}</span>
                                 <p className="font-serif italic text-slate-800">
                                   "{currentSpeakingColloc.speakingExample}"
                                 </p>
@@ -775,7 +778,7 @@ export default function SpeakingDrillRoom({
                                 className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] flex items-center space-x-1 cursor-pointer shrink-0 ml-3"
                               >
                                 <Volume2 className="w-3.5 h-3.5" />
-                                <span>Nghe</span>
+                                <span>{isEn ? 'Listen' : 'Nghe'}</span>
                               </button>
                             </div>
                           )}
@@ -793,7 +796,7 @@ export default function SpeakingDrillRoom({
                     <div>
                       <div className="flex items-center space-x-2">
                         <span className="px-2 py-0.5 rounded bg-teal-100 text-teal-800 text-xs font-bold">
-                          Part 3 Analytical Debate • {currentPart3.difficulty || 'Band 7.5 - 8.5'}
+                          {isEn ? 'Part 3 Analytical Debate' : 'Tranh Biện Đa Chiều Part 3'} • {currentPart3.difficulty || 'Band 7.5 - 8.5'}
                         </span>
                         <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
                           {currentPart3.topic}
@@ -808,7 +811,7 @@ export default function SpeakingDrillRoom({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2 text-xs font-bold text-teal-300 uppercase tracking-wider">
                         <Target className="w-4 h-4 text-teal-400" />
-                        <span>Đề Bài Tranh Biện Part 3:</span>
+                        <span>{isEn ? 'Part 3 Analytical Prompt:' : 'Đề Bài Tranh Biện Part 3:'}</span>
                       </div>
                       <button
                         type="button"
@@ -818,17 +821,17 @@ export default function SpeakingDrillRoom({
                             ? 'bg-rose-600 text-white'
                             : 'bg-teal-600 hover:bg-teal-500 text-white'
                         }`}
-                        title="Nghe giám khảo hỏi Part 3"
+                        title={isEn ? 'Listen to Part 3 prompt' : 'Nghe giám khảo hỏi Part 3'}
                       >
                         {playingAudioId === `part3-q-${currentPart3.id}` ? (
                           <>
                             <VolumeX className="w-4 h-4 animate-pulse" />
-                            <span>Dừng</span>
+                            <span>{isEn ? 'Stop' : 'Dừng'}</span>
                           </>
                         ) : (
                           <>
                             <Volume2 className="w-4 h-4" />
-                            <span>Nghe Giám Khảo</span>
+                            <span>{isEn ? 'Listen to Examiner' : 'Nghe Giám Khảo'}</span>
                           </>
                         )}
                       </button>
@@ -841,7 +844,7 @@ export default function SpeakingDrillRoom({
                     {currentPart3.tip && (
                       <div className="text-xs text-teal-200/90 bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-start space-x-2">
                         <Lightbulb className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
-                        <span><strong>Mẹo phản biện:</strong> {currentPart3.tip}</span>
+                        <span><strong>{isEn ? 'Analytical tip:' : 'Mẹo phản biện:'}</strong> {currentPart3.tip}</span>
                       </div>
                     )}
                   </div>
@@ -850,7 +853,7 @@ export default function SpeakingDrillRoom({
                   <div className="space-y-3">
                     <div className="text-xs font-bold text-slate-700 px-1 flex items-center space-x-1.5">
                       <Split className="w-4 h-4 text-teal-600" />
-                      <span>Cấu Trúc Lập Luận Hai Chiều (Two-Sided Argumentation Structure):</span>
+                      <span>{isEn ? 'Two-Sided Argumentation Structure:' : 'Cấu Trúc Lập Luận Hai Chiều (Two-Sided Argumentation Structure):'}</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -858,7 +861,7 @@ export default function SpeakingDrillRoom({
                       <div className="p-3.5 rounded-xl bg-white border border-rose-200 shadow-2xs space-y-2">
                         <div className="flex items-center space-x-1.5 text-xs font-bold text-rose-800">
                           <span className="w-5 h-5 rounded-full bg-rose-600 text-white text-[11px] font-black flex items-center justify-center">1</span>
-                          <span>Góc Nhìn 1 (Side A)</span>
+                          <span>{isEn ? 'Perspective 1 (Side A)' : 'Góc Nhìn 1 (Side A)'}</span>
                         </div>
                         <p className="text-[11px] font-semibold text-rose-700">{currentPart3.sideA.perspective}</p>
                         <p className="text-xs text-slate-600 bg-rose-50/50 p-2 rounded-lg border border-rose-100 font-sans">
@@ -870,7 +873,7 @@ export default function SpeakingDrillRoom({
                       <div className="p-3.5 rounded-xl bg-white border border-blue-200 shadow-2xs space-y-2">
                         <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-800">
                           <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] font-black flex items-center justify-center">2</span>
-                          <span>Góc Nhìn 2 (Side B)</span>
+                          <span>{isEn ? 'Perspective 2 (Side B)' : 'Góc Nhìn 2 (Side B)'}</span>
                         </div>
                         <p className="text-[11px] font-semibold text-blue-700">{currentPart3.sideB.perspective}</p>
                         <p className="text-xs text-slate-600 bg-blue-50/50 p-2 rounded-lg border border-blue-100 font-sans">
@@ -882,9 +885,9 @@ export default function SpeakingDrillRoom({
                       <div className="p-3.5 rounded-xl bg-white border border-teal-200 shadow-2xs space-y-2">
                         <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-800">
                           <span className="w-5 h-5 rounded-full bg-teal-600 text-white text-[11px] font-black flex items-center justify-center">3</span>
-                          <span>Tổng Hợp / Đa Chiều</span>
+                          <span>{isEn ? 'Synthesis / Multi-Angle' : 'Tổng Hợp / Đa Chiều'}</span>
                         </div>
-                        <p className="text-[11px] font-semibold text-teal-700">Điểm cân bằng (Synthesis)</p>
+                        <p className="text-[11px] font-semibold text-teal-700">{isEn ? 'Balanced Synthesis' : 'Điểm cân bằng (Synthesis)'}</p>
                         <p className="text-xs text-slate-600 bg-teal-50/50 p-2 rounded-lg border border-teal-100 font-sans">
                           <em>"{currentPart3.synthesis.starter}"</em> {currentPart3.synthesis.conclusion}
                         </p>
@@ -897,7 +900,7 @@ export default function SpeakingDrillRoom({
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                         <Mic className="w-4 h-4 text-teal-600" />
-                        <span>Thực Hành Nói Hoặc Gõ Câu Trả Lời Của Bạn:</span>
+                        <span>{isEn ? 'Practice Speaking or Typing Your Answer:' : 'Thực Hành Nói Hoặc Gõ Câu Trả Lời Của Bạn:'}</span>
                       </span>
                       <button
                         type="button"
@@ -913,7 +916,7 @@ export default function SpeakingDrillRoom({
                         }`}
                       >
                         <Mic className="w-3.5 h-3.5 text-rose-500" />
-                        <span>{isRecordingPart3 ? 'Đang Thu Âm...' : 'Nói Qua Mic'}</span>
+                        <span>{isRecordingPart3 ? (isEn ? 'Recording...' : 'Đang Thu Âm...') : (isEn ? 'Voice Dictation' : 'Nói Qua Mic')}</span>
                       </button>
                     </div>
 
@@ -921,7 +924,7 @@ export default function SpeakingDrillRoom({
                       rows={3}
                       value={userPart3SpokenText}
                       onChange={(e) => setUserPart3SpokenText(e.target.value)}
-                      placeholder="Gõ hoặc thu âm câu trả lời phản biện của bạn kết hợp cả 2 góc nhìn..."
+                      placeholder={isEn ? 'Type or record your analytical answer synthesizing both perspectives...' : 'Gõ hoặc thu âm câu trả lời phản biện của bạn kết hợp cả 2 góc nhìn...'}
                       className="w-full p-3 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none font-sans"
                     />
 
@@ -929,10 +932,10 @@ export default function SpeakingDrillRoom({
                       <button
                         type="button"
                         onClick={() => setUserPart3SpokenText('')}
-                        className="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center space-x-1"
+                        className="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center space-x-1 cursor-pointer"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
-                        <span>Xóa chữ</span>
+                        <span>{isEn ? 'Clear' : 'Xóa chữ'}</span>
                       </button>
 
                       <div className="flex items-center space-x-2">
@@ -946,12 +949,12 @@ export default function SpeakingDrillRoom({
                           {isEvaluatingSpeaking ? (
                             <>
                               <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              <span>AI Đang Đánh Giá...</span>
+                              <span>{isEn ? 'AI Assessing...' : 'AI Đang Đánh Giá...'}</span>
                             </>
                           ) : (
                             <>
                               <Sparkles className="w-3.5 h-3.5" />
-                              <span>AI Thẩm Định Lập Luận</span>
+                              <span>{isEn ? 'AI Argument Analysis' : 'AI Thẩm Định Lập Luận'}</span>
                             </>
                           )}
                         </button>
@@ -967,7 +970,7 @@ export default function SpeakingDrillRoom({
                           }`}
                         >
                           <Award className="w-3.5 h-3.5 text-amber-600" />
-                          <span>{showPart3Model ? 'Ẩn Mẫu Band 8.5' : 'Xem Mẫu Band 8.5'}</span>
+                          <span>{showPart3Model ? (isEn ? 'Hide Band 8.5 Model' : 'Ẩn Mẫu Band 8.5') : (isEn ? 'View Band 8.5 Model' : 'Xem Mẫu Band 8.5')}</span>
                         </button>
                       </div>
                     </div>
@@ -979,7 +982,7 @@ export default function SpeakingDrillRoom({
                       <div className="flex items-center justify-between border-b border-teal-200 pb-2.5">
                         <div className="flex items-center space-x-2">
                           <Sparkles className="w-5 h-5 text-teal-600" />
-                          <h4 className="font-bold text-slate-900 text-sm">AI Chẩn Đoán Lập Luận Part 3:</h4>
+                          <h4 className="font-bold text-slate-900 text-sm">{isEn ? 'AI Part 3 Argument Diagnostics:' : 'AI Chẩn Đoán Lập Luận Part 3:'}</h4>
                         </div>
                         <span className="px-3 py-1 rounded-full bg-teal-600 text-white text-xs font-black shadow-xs">
                           {speakingEvaluation.bandEstimate || 'Band 7.5 - 8.0'}
@@ -988,22 +991,22 @@ export default function SpeakingDrillRoom({
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
                         <div className="p-2.5 rounded-xl bg-white border border-teal-100 shadow-2xs">
-                          <span className="font-bold text-teal-800 block mb-1">⚖️ Tư duy phản biện 2 chiều:</span>
-                          <p className="text-slate-600">{speakingEvaluation.fluencyFeedback || 'Lập luận cân bằng và logic.'}</p>
+                          <span className="font-bold text-teal-800 block mb-1">{isEn ? '⚖️ Two-Sided Critical Thinking:' : '⚖️ Tư duy phản biện 2 chiều:'}</span>
+                          <p className="text-slate-600">{speakingEvaluation.fluencyFeedback || (isEn ? 'Balanced and logical argumentation.' : 'Lập luận cân bằng và logic.')}</p>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-teal-100 shadow-2xs">
-                          <span className="font-bold text-teal-800 block mb-1">💎 Vốn từ học thuật:</span>
-                          <p className="text-slate-600">{speakingEvaluation.lexicalFeedback || 'Sử dụng từ vựng phân tích tốt.'}</p>
+                          <span className="font-bold text-teal-800 block mb-1">{isEn ? '💎 Academic Lexical Resource:' : '💎 Vốn từ học thuật:'}</span>
+                          <p className="text-slate-600">{speakingEvaluation.lexicalFeedback || (isEn ? 'Strong analytical vocabulary usage.' : 'Sử dụng từ vựng phân tích tốt.')}</p>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-teal-100 shadow-2xs">
-                          <span className="font-bold text-teal-800 block mb-1">🧩 Độ chính xác ngữ pháp:</span>
-                          <p className="text-slate-600">{speakingEvaluation.grammarFeedback || 'Các cấu trúc phức được duy trì chuẩn xác.'}</p>
+                          <span className="font-bold text-teal-800 block mb-1">{isEn ? '🧩 Grammatical Accuracy:' : '🧩 Độ chính xác ngữ pháp:'}</span>
+                          <p className="text-slate-600">{speakingEvaluation.grammarFeedback || (isEn ? 'Complex structures maintained accurately.' : 'Các cấu trúc phức được duy trì chuẩn xác.')}</p>
                         </div>
                       </div>
 
                       {speakingEvaluation.upgradedResponse && (
                         <div className="p-3 rounded-xl bg-white border border-teal-200 text-xs space-y-1">
-                          <span className="font-bold text-teal-900 block">⭐ Bản Trả Lời Nâng Cấp Band 8.5+:</span>
+                          <span className="font-bold text-teal-900 block">{isEn ? '⭐ Upgraded Band 8.5+ Response:' : '⭐ Bản Trả Lời Nâng Cấp Band 8.5+:'}</span>
                           <p className="font-serif italic text-slate-800 leading-relaxed">
                             "{speakingEvaluation.upgradedResponse}"
                           </p>
@@ -1019,7 +1022,7 @@ export default function SpeakingDrillRoom({
                         <div className="flex items-center space-x-2">
                           <Award className="w-5 h-5 text-amber-600" />
                           <h4 className="font-bold text-slate-900 text-sm sm:text-base">
-                            Bài Mẫu Tranh Luận Part 3 Band 8.5
+                            {isEn ? 'Band 8.5 Part 3 Analytical Model Response' : 'Bài Mẫu Tranh Luận Part 3 Band 8.5'}
                           </h4>
                         </div>
                         <button
@@ -1034,12 +1037,12 @@ export default function SpeakingDrillRoom({
                           {playingAudioId === `part3-model-${currentPart3.id}` ? (
                             <>
                               <VolumeX className="w-3.5 h-3.5 animate-pulse" />
-                              <span>Dừng</span>
+                              <span>{isEn ? 'Stop' : 'Dừng'}</span>
                             </>
                           ) : (
                             <>
                               <Volume2 className="w-3.5 h-3.5" />
-                              <span>Nghe Bài Mẫu</span>
+                              <span>{isEn ? 'Listen to Model' : 'Nghe Bài Mẫu'}</span>
                             </>
                           )}
                         </button>
@@ -1054,7 +1057,7 @@ export default function SpeakingDrillRoom({
                       {currentPart3.highBandVocab && (
                         <div className="space-y-1.5">
                           <span className="text-xs font-bold text-amber-900 block">
-                            🔑 Từ vựng học thuật & cụm từ chuyển mạch:
+                            {isEn ? '🔑 Academic Vocabulary & Transition Signposts:' : '🔑 Từ vựng học thuật & cụm từ chuyển mạch:'}
                           </span>
                           <div className="flex flex-wrap gap-1.5">
                             {currentPart3.highBandVocab.map((w, idx) => (

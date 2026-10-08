@@ -11,10 +11,12 @@ import {
   Sparkles
 } from 'lucide-react';
 import QRCode from 'qrcode';
+import { useTranslation } from '../i18n';
 
 export const WEBSITE_URL = 'https://ielts-practice-vietnamese.vercel.app/';
 
 export default function WebsiteQRCodeModal({ isOpen, onClose }) {
+  const { t, isEn } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState('');
   const canvasRef = useRef(null);
@@ -114,7 +116,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
             type="button"
             onClick={onClose}
             className="absolute top-3.5 sm:top-4 right-3.5 sm:right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
-            aria-label="Đóng"
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -126,7 +128,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
             <div>
               <span className="text-[11px] font-black uppercase tracking-wider text-rose-100 flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-amber-300" />
-                Mã QR Truy Cập Nhanh
+                {isEn ? 'Quick Access QR Code' : 'Mã QR Truy Cập Nhanh'}
               </span>
               <h3 className="text-lg font-black tracking-tight leading-tight">
                 IELTS Studio Academic AI
@@ -138,7 +140,9 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
         {/* Content Body - Scrollable */}
         <div className="p-4 sm:p-6 text-center space-y-4 overflow-y-auto flex-1 overscroll-contain">
           <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
-            Quét mã QR bằng ứng dụng <strong>Camera</strong>, <strong>Zalo</strong> hoặc trình duyệt trên điện thoại để mở ngay website mà không cần gõ tên miền.
+            {isEn 
+              ? 'Scan this QR code with your phone Camera or browser to open the app instantly without typing the domain.'
+              : 'Quét mã QR bằng ứng dụng Camera, Zalo hoặc trình duyệt trên điện thoại để mở ngay website mà không cần gõ tên miền.'}
           </p>
 
           {/* QR Code Container */}
@@ -146,7 +150,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
             {qrDataUrl ? (
               <img 
                 src={qrDataUrl} 
-                alt="IELTS Practice Vietnamese QR Code" 
+                alt="IELTS Practice QR Code" 
                 className="w-56 h-56 sm:w-60 sm:h-60 mx-auto rounded-xl shadow-xs transition-transform duration-300 group-hover:scale-102"
               />
             ) : (
@@ -180,12 +184,12 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
               {copied ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-white" />
-                  <span>Đã chép!</span>
+                  <span>{isEn ? 'Copied!' : 'Đã chép!'}</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Sao chép</span>
+                  <span>{isEn ? 'Copy' : 'Sao chép'}</span>
                 </>
               )}
             </button>
@@ -196,15 +200,23 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
             <div className="p-3 rounded-2xl bg-rose-50/80 border border-rose-100 flex items-start space-x-2.5">
               <Smartphone className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Điện thoại / Tablet</h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">Bật Camera hoặc Zalo hướng vào mã để mở ngay</p>
+                <h4 className="text-xs font-bold text-slate-900">
+                  {isEn ? 'Mobile / Tablet' : 'Điện thoại / Tablet'}
+                </h4>
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  {isEn ? 'Open Camera or browser to scan and launch' : 'Bật Camera hoặc Zalo hướng vào mã để mở ngay'}
+                </p>
               </div>
             </div>
             <div className="p-3 rounded-2xl bg-amber-50/80 border border-amber-100 flex items-start space-x-2.5">
               <Share2 className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Chia sẻ học tập</h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">Lưu ảnh mã QR hoặc gửi link cho bạn bè, học sinh</p>
+                <h4 className="text-xs font-bold text-slate-900">
+                  {isEn ? 'Share with Others' : 'Chia sẻ học tập'}
+                </h4>
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  {isEn ? 'Save QR code or send link to students & peers' : 'Lưu ảnh mã QR hoặc gửi link cho bạn bè, học sinh'}
+                </p>
               </div>
             </div>
           </div>
@@ -217,7 +229,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
               className="flex-1 flex items-center justify-center space-x-1.5 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm cursor-pointer active:scale-98"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Tải Ảnh Mã QR</span>
+              <span>{isEn ? 'Download QR Code' : 'Tải Ảnh Mã QR'}</span>
             </button>
 
             <a
@@ -227,7 +239,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
               className="flex items-center justify-center space-x-1.5 py-2.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition-all cursor-pointer"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>Mở Tab Mới</span>
+              <span>{isEn ? 'Open New Tab' : 'Mở Tab Mới'}</span>
             </a>
           </div>
         </div>

@@ -21,6 +21,7 @@ import {
   FileText
 } from 'lucide-react';
 import { generateSpeakingMockPack } from '../../services/geminiService';
+import { useTranslation } from '../../i18n';
 
 const TRENDING_SPEAKING_TOPICS = [
   { id: 'ai-careers', label: 'AI, Tự Động Hóa & Tương Lai Nghề Nghiệp', en: 'Artificial Intelligence, Automation & Future Careers' },
@@ -108,6 +109,9 @@ export default function SpeakingGeneratorModal({
   onOpenSettings,
   initialMode = 'ai'
 }) {
+  const { t, language } = useTranslation();
+  const isEn = language === 'en';
+
   if (!isOpen) return null;
 
   // Mode Switcher: 'ai' | 'manual'
@@ -217,12 +221,12 @@ export default function SpeakingGeneratorModal({
   // AI GENERATION HANDLER
   const handleGenerateAI = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cài đặt AI API Key trong phần Cài đặt trước khi sinh đề.');
+      setErrorMsg(isEn ? 'Please configure your AI API Key in Settings before generating.' : 'Vui lòng cài đặt AI API Key trong phần Cài đặt trước khi sinh đề.');
       return;
     }
 
     if (!customTopic.trim()) {
-      setErrorMsg('Vui lòng nhập hoặc chọn một chủ đề cho bộ đề thi.');
+      setErrorMsg(isEn ? 'Please enter or select a topic for the speaking test.' : 'Vui lòng nhập hoặc chọn một chủ đề cho bộ đề thi.');
       return;
     }
 
@@ -243,8 +247,8 @@ export default function SpeakingGeneratorModal({
         title: packData.title || `Full Mock Test: ${customTopic}`,
         difficulty: packData.difficulty || selectedDifficulty.difficulty,
         targetBand: packData.targetBand || selectedDifficulty.target,
-        estTime: packData.estTime || '11 - 14 phút',
-        summary: packData.summary || 'Bộ đề thi thử Speaking do AI thiết kế riêng theo chuẩn Cambridge.',
+        estTime: packData.estTime || (isEn ? '11 - 14 mins' : '11 - 14 phút'),
+        summary: packData.summary || (isEn ? 'AI-generated IELTS Speaking mock pack based on Cambridge standards.' : 'Bộ đề thi thử Speaking do AI thiết kế riêng theo chuẩn Cambridge.'),
         isCustom: true,
         isAiGenerated: true,
         isManual: false,
@@ -281,7 +285,7 @@ export default function SpeakingGeneratorModal({
       onClose();
     } catch (err) {
       console.error('Lỗi khi sinh bộ đề Speaking:', err);
-      setErrorMsg(err.message || 'Lỗi khi AI sinh bộ đề Speaking. Vui lòng thử lại.');
+      setErrorMsg(err.message || (isEn ? 'Failed to generate speaking test pack. Please try again.' : 'Lỗi khi AI sinh bộ đề Speaking. Vui lòng thử lại.'));
     } finally {
       setIsGenerating(false);
     }
@@ -293,16 +297,16 @@ export default function SpeakingGeneratorModal({
 
     const validP1Questions = p1Questions.filter(q => q.trim());
     if (validP1Questions.length === 0) {
-      setErrorMsg('Vui lòng nhập ít nhất 1 câu hỏi cho Part 1.');
+      setErrorMsg(isEn ? 'Please enter at least 1 question for Part 1.' : 'Vui lòng nhập ít nhất 1 câu hỏi cho Part 1.');
       return;
     }
     if (!p2Title.trim()) {
-      setErrorMsg('Vui lòng nhập tiêu đề Cue Card Part 2.');
+      setErrorMsg(isEn ? 'Please enter a title for the Part 2 Cue Card.' : 'Vui lòng nhập tiêu đề Cue Card Part 2.');
       return;
     }
     const validP3Questions = p3Questions.filter(q => q.trim());
     if (validP3Questions.length === 0) {
-      setErrorMsg('Vui lòng nhập ít nhất 1 câu hỏi phản biện cho Part 3.');
+      setErrorMsg(isEn ? 'Please enter at least 1 analytical question for Part 3.' : 'Vui lòng nhập ít nhất 1 câu hỏi phản biện cho Part 3.');
       return;
     }
 
@@ -382,27 +386,29 @@ export default function SpeakingGeneratorModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="text-base font-black text-white tracking-tight">
-                  {mode === 'manual' ? 'Tự Tạo Gói Đề Speaking Thủ Công' : 'Sinh Bộ Đề IELTS Speaking (AI)'}
+                  {mode === 'manual' 
+                    ? (isEn ? 'Create Manual Speaking Mock Pack' : 'Tự Tạo Gói Đề Speaking Thủ Công') 
+                    : (isEn ? 'Generate IELTS Speaking Pack (AI)' : 'Sinh Bộ Đề IELTS Speaking (AI)')}
                 </h3>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                   mode === 'manual'
                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                     : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
                 }`}>
-                  {mode === 'manual' ? '✍️ Thủ công' : 'Full 3 Parts'}
+                  {mode === 'manual' ? (isEn ? '✍️ Manual' : '✍️ Thủ công') : 'Full 3 Parts'}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
                 {mode === 'manual' 
-                  ? 'Tự nạp đề từ sách Cambridge thật hoặc tự biên soạn cho đủ Part 1, 2, 3' 
-                  : 'Tạo trọn vẹn Part 1 phỏng vấn, Part 2 Cue Card & Part 3 phản biện chuẩn Cambridge'}
+                  ? (isEn ? 'Enter tests directly from Cambridge past papers or curate full Part 1, 2, 3 questions yourself' : 'Tự nạp đề từ sách Cambridge thật hoặc tự biên soạn cho đủ Part 1, 2, 3') 
+                  : (isEn ? 'Generate full Part 1 interview, Part 2 Cue Card & Part 3 discussion matching Cambridge standards' : 'Tạo trọn vẹn Part 1 phỏng vấn, Part 2 Cue Card & Part 3 phản biện chuẩn Cambridge')}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Đóng"
+            title={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -421,7 +427,7 @@ export default function SpeakingGeneratorModal({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>🤖 AI Sinh Trọn Gói</span>
+              <span>{isEn ? '🤖 Full AI Generator' : '🤖 AI Sinh Trọn Gói'}</span>
             </button>
             <button
               type="button"
@@ -433,7 +439,7 @@ export default function SpeakingGeneratorModal({
               }`}
             >
               <PenTool className="w-3.5 h-3.5" />
-              <span>✍️ Tự Tạo Thủ Công</span>
+              <span>{isEn ? '✍️ Manual Creation' : '✍️ Tự Tạo Thủ Công'}</span>
             </button>
           </div>
         </div>
@@ -443,14 +449,14 @@ export default function SpeakingGeneratorModal({
           <div className="m-4 p-3.5 rounded-2xl bg-amber-950/40 border border-amber-600/40 text-amber-200 text-xs flex items-center justify-between shrink-0">
             <div className="flex items-center space-x-2.5">
               <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Chưa cấu hình AI API Key. Vui lòng cài đặt để dùng tính năng sinh đề.</span>
+              <span>{isEn ? 'AI API Key is not configured. Please configure in settings to generate packs.' : 'Chưa cấu hình AI API Key. Vui lòng cài đặt để dùng tính năng sinh đề.'}</span>
             </div>
             {onOpenSettings && (
               <button
                 onClick={onOpenSettings}
                 className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs whitespace-nowrap cursor-pointer transition-colors"
               >
-                Cài đặt ngay
+                {isEn ? 'Configure now' : 'Cài đặt ngay'}
               </button>
             )}
           </div>
@@ -474,14 +480,16 @@ export default function SpeakingGeneratorModal({
               {/* TOPIC SELECTION */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                  <span>Chủ Đề Thi Thử (Topic)</span>
-                  <span className="text-[11px] text-purple-400 font-medium">Nhập hoặc chọn gợi ý bên dưới</span>
+                  <span>{isEn ? 'Speaking Mock Test Topic' : 'Chủ Đề Thi Thử (Topic)'}</span>
+                  <span className="text-[11px] text-purple-400 font-medium">
+                    {isEn ? 'Type or pick a trending topic below' : 'Nhập hoặc chọn gợi ý bên dưới'}
+                  </span>
                 </label>
                 <input
                   type="text"
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
-                  placeholder="VD: Smart Cities, Social Media, Sustainable Living..."
+                  placeholder={isEn ? "e.g., Smart Cities, Social Media, Sustainable Living..." : "VD: Smart Cities, Social Media, Sustainable Living..."}
                   className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-purple-500 text-sm text-white placeholder-slate-500 focus:outline-none transition-colors"
                 />
 
@@ -498,7 +506,7 @@ export default function SpeakingGeneratorModal({
                           : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
                       }`}
                     >
-                      {item.label}
+                      {isEn ? item.en : item.label}
                     </button>
                   ))}
                 </div>
@@ -507,11 +515,17 @@ export default function SpeakingGeneratorModal({
               {/* DIFFICULTY & TARGET BAND */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                  Mục Tiêu & Độ Khó Của Bộ Đề
+                  {isEn ? 'Target Band & Difficulty' : 'Mục Tiêu & Độ Khó Của Bộ Đề'}
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {DIFFICULTY_PRESETS.map((preset) => {
                     const isSelected = selectedDifficulty.id === preset.id;
+                    const presetLabel = isEn 
+                      ? (preset.id === 'standard' ? 'Standard (Band 6.5 - 7.5)' : 'Advanced (Band 7.5 - 8.5+)')
+                      : preset.label;
+                    const presetDesc = isEn
+                      ? (preset.id === 'standard' ? 'Moderate C1 vocabulary, realistic interview questions' : 'In-depth abstract topics with high critical thinking prompts')
+                      : preset.desc;
                     return (
                       <div
                         key={preset.id}
@@ -523,10 +537,10 @@ export default function SpeakingGeneratorModal({
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-slate-200">{preset.label}</span>
+                          <span className="font-bold text-xs text-slate-200">{presetLabel}</span>
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-purple-400" />}
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{preset.desc}</p>
+                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{presetDesc}</p>
                       </div>
                     );
                   })}
@@ -537,12 +551,12 @@ export default function SpeakingGeneratorModal({
               <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-1.5 text-xs text-slate-400">
                 <div className="flex items-center space-x-1.5 font-bold text-slate-300">
                   <Layers className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Bộ đề AI sinh ra sẽ bao gồm đầy đủ:</span>
+                  <span>{isEn ? 'The generated AI pack will include:' : 'Bộ đề AI sinh ra sẽ bao gồm đầy đủ:'}</span>
                 </div>
                 <ul className="list-disc list-inside space-y-0.5 text-[11px] text-slate-400 pl-1">
-                  <li><strong>Part 1:</strong> 3 câu hỏi phỏng vấn thói quen, góc nhìn + gợi ý từ vựng Band 8.5</li>
-                  <li><strong>Part 2:</strong> 1 Cue Card hoàn chỉnh + 4 ô nháp ma trận 60 giây + bài nói mẫu</li>
-                  <li><strong>Part 3:</strong> 3 câu hỏi phản biện chuyên sâu gắn kết logic với Part 2</li>
+                  <li><strong>Part 1:</strong> {isEn ? '3 habit & perspective interview questions + Band 8.5 vocabulary hints' : '3 câu hỏi phỏng vấn thói quen, góc nhìn + gợi ý từ vựng Band 8.5'}</li>
+                  <li><strong>Part 2:</strong> {isEn ? '1 complete Cue Card + 60s 4-quadrant prep note sheet + model answer' : '1 Cue Card hoàn chỉnh + 4 ô nháp ma trận 60 giây + bài nói mẫu'}</li>
+                  <li><strong>Part 3:</strong> {isEn ? '3 in-depth analytical discussion questions linked logically to Part 2' : '3 câu hỏi phản biện chuyên sâu gắn kết logic với Part 2'}</li>
                 </ul>
               </div>
             </>
@@ -559,9 +573,11 @@ export default function SpeakingGeneratorModal({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Nạp Nhanh Mẫu Gói Đề Chuẩn Cambridge:</span>
+                    <span>{isEn ? 'Quick-Load Cambridge Standard Pack Template:' : 'Nạp Nhanh Mẫu Gói Đề Chuẩn Cambridge:'}</span>
                   </span>
-                  <span className="text-[10px] text-emerald-400">Điền tự động Full Part 1, 2, 3</span>
+                  <span className="text-[10px] text-emerald-400">
+                    {isEn ? 'Auto-fills Part 1, 2, and 3' : 'Điền tự động Full Part 1, 2, 3'}
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {QUICK_SPEAKING_PACK_TEMPLATES.map((tpl, idx) => (
@@ -572,7 +588,7 @@ export default function SpeakingGeneratorModal({
                       className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-emerald-900/60 text-emerald-200 text-xs font-semibold border border-emerald-500/40 shadow-xs transition-all cursor-pointer flex items-center space-x-1.5"
                     >
                       <Sparkles className="w-3 h-3 text-emerald-400" />
-                      <span>{tpl.name}</span>
+                      <span>{isEn ? (tpl.name.includes('Lối Sống') ? '🌿 Eco-Living & Environment' : '🤖 AI & Future of Work') : tpl.name}</span>
                     </button>
                   ))}
                 </div>
@@ -581,17 +597,21 @@ export default function SpeakingGeneratorModal({
               {/* Pack Metadata */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Tên Gói Đề (Mock Pack Title):</label>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">
+                    {isEn ? 'Mock Pack Title:' : 'Tên Gói Đề (Mock Pack Title):'}
+                  </label>
                   <input
                     type="text"
                     value={manualTitle}
                     onChange={(e) => setManualTitle(e.target.value)}
-                    placeholder="VD: Cambridge 18 Test 3 Speaking Pack"
+                    placeholder={isEn ? "e.g., Cambridge 18 Test 3 Speaking Pack" : "VD: Cambridge 18 Test 3 Speaking Pack"}
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Mục Tiêu & Độ Khó:</label>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">
+                    {isEn ? 'Target Band & Difficulty:' : 'Mục Tiêu & Độ Khó:'}
+                  </label>
                   <select
                     value={selectedDifficulty.id}
                     onChange={(e) => {
@@ -601,7 +621,9 @@ export default function SpeakingGeneratorModal({
                     className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-none"
                   >
                     {DIFFICULTY_PRESETS.map(p => (
-                      <option key={p.id} value={p.id}>{p.label}</option>
+                      <option key={p.id} value={p.id}>
+                        {isEn ? (p.id === 'standard' ? 'Standard (Band 6.5 - 7.5)' : 'Advanced (Band 7.5 - 8.5+)') : p.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -612,7 +634,9 @@ export default function SpeakingGeneratorModal({
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div className="flex items-center space-x-2">
                     <span className="w-5 h-5 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30">1</span>
-                    <span className="font-bold text-xs text-white">Part 1: Phỏng Vấn (Warm-up Interview)</span>
+                    <span className="font-bold text-xs text-white">
+                      {isEn ? 'Part 1: Warm-up Interview' : 'Part 1: Phỏng Vấn (Warm-up Interview)'}
+                    </span>
                   </div>
                   <button
                     type="button"
@@ -620,7 +644,7 @@ export default function SpeakingGeneratorModal({
                     className="text-[11px] font-bold text-blue-400 hover:text-blue-300 flex items-center space-x-1 cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>Thêm Câu Hỏi</span>
+                    <span>{isEn ? 'Add Question' : 'Thêm Câu Hỏi'}</span>
                   </button>
                 </div>
 
@@ -629,14 +653,14 @@ export default function SpeakingGeneratorModal({
                     type="text"
                     value={p1Title}
                     onChange={(e) => setP1Title(e.target.value)}
-                    placeholder="Chủ đề Part 1 (VD: Accommodation)"
+                    placeholder={isEn ? "Part 1 Topic (e.g., Accommodation)" : "Chủ đề Part 1 (VD: Accommodation)"}
                     className="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"
                   />
                   <input
                     type="text"
                     value={p1Category}
                     onChange={(e) => setP1Category(e.target.value)}
-                    placeholder="Phân loại (VD: Daily Life)"
+                    placeholder={isEn ? "Category (e.g., Daily Life)" : "Phân loại (VD: Daily Life)"}
                     className="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"
                   />
                 </div>
@@ -649,7 +673,7 @@ export default function SpeakingGeneratorModal({
                         type="text"
                         value={q}
                         onChange={(e) => handleUpdateP1Question(idx, e.target.value)}
-                        placeholder={`Câu hỏi Part 1 số ${idx + 1}...`}
+                        placeholder={isEn ? `Part 1 Question ${idx + 1}...` : `Câu hỏi Part 1 số ${idx + 1}...`}
                         className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-blue-500 focus:outline-none"
                       />
                       {p1Questions.length > 1 && (
@@ -657,7 +681,7 @@ export default function SpeakingGeneratorModal({
                           type="button"
                           onClick={() => handleRemoveP1Question(idx)}
                           className="text-slate-500 hover:text-rose-400 p-1 cursor-pointer"
-                          title="Xóa câu hỏi này"
+                          title={isEn ? "Delete this question" : "Xóa câu hỏi này"}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -671,22 +695,28 @@ export default function SpeakingGeneratorModal({
               <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-2.5">
                 <div className="flex items-center space-x-2 border-b border-slate-800 pb-2">
                   <span className="w-5 h-5 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs border border-amber-500/30">2</span>
-                  <span className="font-bold text-xs text-white">Part 2: Thuyết Trình Cue Card (60s Chuẩn Bị • 2 Phút Nói)</span>
+                  <span className="font-bold text-xs text-white">
+                    {isEn ? 'Part 2: Cue Card Presentation (60s Prep • 2 Min Speaking)' : 'Part 2: Thuyết Trình Cue Card (60s Chuẩn Bị • 2 Phút Nói)'}
+                  </span>
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Tiêu Đề Cue Card:</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    {isEn ? 'Cue Card Title:' : 'Tiêu Đề Cue Card:'}
+                  </label>
                   <input
                     type="text"
                     value={p2Title}
                     onChange={(e) => setP2Title(e.target.value)}
-                    placeholder="VD: Describe an energetic person you know"
+                    placeholder={isEn ? "e.g., Describe an energetic person you know" : "VD: Describe an energetic person you know"}
                     className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-amber-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">4 Điểm Gợi Ý (You should say:):</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    {isEn ? '4 Prompt Bullets (You should say:):' : '4 Điểm Gợi Ý (You should say:):'}
+                  </label>
                   <div className="space-y-1.5">
                     {p2Bullets.map((bullet, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
@@ -695,7 +725,7 @@ export default function SpeakingGeneratorModal({
                           type="text"
                           value={bullet}
                           onChange={(e) => handleUpdateP2Bullet(idx, e.target.value)}
-                          placeholder={`Gợi ý ý ${idx + 1}...`}
+                          placeholder={isEn ? `Prompt bullet ${idx + 1}...` : `Gợi ý ý ${idx + 1}...`}
                           className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-amber-500 focus:outline-none"
                         />
                       </div>
@@ -704,23 +734,27 @@ export default function SpeakingGeneratorModal({
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Từ Vựng Gợi Ý (Tách nhau bằng dấu phẩy):</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    {isEn ? 'Vocabulary Hints (comma separated):' : 'Từ Vựng Gợi Ý (Tách nhau bằng dấu phẩy):'}
+                  </label>
                   <input
                     type="text"
                     value={p2VocabHints}
                     onChange={(e) => setP2VocabHints(e.target.value)}
-                    placeholder="VD: vivacious, dynamic, role model, infectious optimism"
+                    placeholder={isEn ? "e.g., vivacious, dynamic, role model, infectious optimism" : "VD: vivacious, dynamic, role model, infectious optimism"}
                     className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Bài Nói Mẫu Band 8.5 (Tùy chọn):</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    {isEn ? 'Band 8.5 Model Answer (Optional):' : 'Bài Nói Mẫu Band 8.5 (Tùy chọn):'}
+                  </label>
                   <textarea
                     rows={3}
                     value={p2SampleAnswer}
                     onChange={(e) => setP2SampleAnswer(e.target.value)}
-                    placeholder="Dán bài nói mẫu tham khảo tại đây nếu có..."
+                    placeholder={isEn ? "Paste model answer script here if available..." : "Dán bài nói mẫu tham khảo tại đây nếu có..."}
                     className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white font-sans leading-relaxed resize-y focus:outline-none"
                   />
                 </div>
@@ -731,7 +765,9 @@ export default function SpeakingGeneratorModal({
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div className="flex items-center space-x-2">
                     <span className="w-5 h-5 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs border border-purple-500/30">3</span>
-                    <span className="font-bold text-xs text-white">Part 3: Thảo Luận Chuyên Sâu & Phản Biện (Two-way Discussion)</span>
+                    <span className="font-bold text-xs text-white">
+                      {isEn ? 'Part 3: In-depth Two-way Discussion' : 'Part 3: Thảo Luận Chuyên Sâu & Phản Biện (Two-way Discussion)'}
+                    </span>
                   </div>
                   <button
                     type="button"
@@ -739,17 +775,19 @@ export default function SpeakingGeneratorModal({
                     className="text-[11px] font-bold text-purple-400 hover:text-purple-300 flex items-center space-x-1 cursor-pointer"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>Thêm Câu Hỏi</span>
+                    <span>{isEn ? 'Add Question' : 'Thêm Câu Hỏi'}</span>
                   </button>
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-slate-400 block mb-1">Chủ Đề Thảo Luận Part 3:</label>
+                  <label className="text-[11px] font-bold text-slate-400 block mb-1">
+                    {isEn ? 'Part 3 Discussion Topic:' : 'Chủ Đề Thảo Luận Part 3:'}
+                  </label>
                   <input
                     type="text"
                     value={p3Topic}
                     onChange={(e) => setP3Topic(e.target.value)}
-                    placeholder="VD: Personality Traits and Leadership in Modern Workplaces"
+                    placeholder={isEn ? "e.g., Personality Traits and Leadership in Modern Workplaces" : "VD: Personality Traits and Leadership in Modern Workplaces"}
                     className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-purple-500 focus:outline-none"
                   />
                 </div>
@@ -762,7 +800,7 @@ export default function SpeakingGeneratorModal({
                         type="text"
                         value={q}
                         onChange={(e) => handleUpdateP3Question(idx, e.target.value)}
-                        placeholder={`Câu hỏi thảo luận số ${idx + 1}...`}
+                        placeholder={isEn ? `Discussion question ${idx + 1}...` : `Câu hỏi thảo luận số ${idx + 1}...`}
                         className="flex-1 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-purple-500 focus:outline-none"
                       />
                       {p3Questions.length > 1 && (
@@ -770,7 +808,7 @@ export default function SpeakingGeneratorModal({
                           type="button"
                           onClick={() => handleRemoveP3Question(idx)}
                           className="text-slate-500 hover:text-rose-400 p-1 cursor-pointer"
-                          title="Xóa câu hỏi này"
+                          title={isEn ? "Delete this question" : "Xóa câu hỏi này"}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -791,15 +829,21 @@ export default function SpeakingGeneratorModal({
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                  <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                  <span>
+                    {isPublic 
+                      ? (isEn ? 'Auto-share to Community Library' : 'Tự động chia sẻ lên Thư viện Cộng đồng') 
+                      : (isEn ? 'Keep private in your account' : 'Chỉ lưu riêng tư trong tài khoản')}
+                  </span>
                   {isPublic && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300">Tài nguyên chung</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300">
+                      {isEn ? 'Public Resource' : 'Tài nguyên chung'}
+                    </span>
                   )}
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">
                   {isPublic 
-                    ? 'Bộ câu hỏi Speaking sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
-                    : 'Chỉ riêng tài khoản của bạn mới thấy và luyện bộ đề này.'}
+                    ? (isEn ? 'This speaking set will be shared with the community. Turn off to keep it private.' : 'Bộ câu hỏi Speaking sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.') 
+                    : (isEn ? 'Only your account will see and practice this pack.' : 'Chỉ riêng tài khoản của bạn mới thấy và luyện bộ đề này.')}
                 </div>
               </div>
             </div>
@@ -824,7 +868,7 @@ export default function SpeakingGeneratorModal({
             disabled={isGenerating}
             className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
-            Hủy Bỏ
+            {isEn ? 'Cancel' : 'Hủy Bỏ'}
           </button>
           
           {mode === 'manual' ? (
@@ -834,7 +878,7 @@ export default function SpeakingGeneratorModal({
               className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-900/50 flex items-center space-x-2 transition-all cursor-pointer"
             >
               <PenTool className="w-4 h-4" />
-              <span>Lưu Gói Đề Thủ Công & Luyện Ngay</span>
+              <span>{isEn ? 'Save Manual Pack & Start Practice' : 'Lưu Gói Đề Thủ Công & Luyện Ngay'}</span>
             </button>
           ) : (
             <button
@@ -846,12 +890,12 @@ export default function SpeakingGeneratorModal({
               {isGenerating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>AI Đang Thiết Kế Bộ Đề...</span>
+                  <span>{isEn ? 'AI is Generating Pack...' : 'AI Đang Thiết Kế Bộ Đề...'}</span>
                 </>
               ) : (
                 <>
                   <Wand2 className="w-4 h-4" />
-                  <span>Sinh Bộ Đề Ngay</span>
+                  <span>{isEn ? 'Generate Pack Now' : 'Sinh Bộ Đề Ngay'}</span>
                 </>
               )}
             </button>

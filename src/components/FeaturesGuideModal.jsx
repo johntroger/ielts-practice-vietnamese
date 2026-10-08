@@ -44,6 +44,7 @@ import {
   getFeatureGitBookUrl
 } from '../core/featureRegistry';
 import { openModal as storeOpenModal } from '../core/modalStore';
+import { useTranslation } from '../i18n';
 
 const ICON_MAP = {
   Image: ImageIcon,
@@ -76,6 +77,23 @@ const SKILL_ICONS = {
   listening: Headphones
 };
 
+const CATEGORY_LABELS_EN = {
+  all: 'All Categories',
+  ai_evaluation: 'AI & Cambridge Assessment',
+  practice_tools: 'Question Bank & Practice Tools',
+  exam_simulation: 'Official CDI Exam Simulation',
+  theory_vocab: 'Handbooks & Vocabulary Notebook',
+  analytics_profile: 'Progress & Personal Profile',
+  shortcuts_ux: 'Interface & Shortcuts'
+};
+
+const SKILL_DESCS_EN = {
+  writing: 'CDI-standard Writing room, 4-criteria Cambridge AI evaluation, idea matrix, paraphrase & Task 1 visual ingest.',
+  reading: 'Split-screen CDI Reading room, 1-touch vocabulary lookup, True/False/Not Given trap analyzer & instant scoring.',
+  listening: 'Segmented audio player, multi-speed playback (0.8x-1.5x), bolded answer transcript & exact word counter.',
+  speaking: 'Dual-engine speaking studio (⚡ 0.02ms Algorithmic & 🤖 Cambridge AI), 15-minute simulated Cambridge examiner room.'
+};
+
 export default function FeaturesGuideModal({ 
   isOpen, 
   onClose, 
@@ -84,6 +102,8 @@ export default function FeaturesGuideModal({
   onOpenModal
 }) {
   if (!isOpen) return null;
+
+  const { t, isEn } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -153,7 +173,7 @@ export default function FeaturesGuideModal({
   };
 
   const skillFilterItems = [
-    { id: 'all', label: 'Tất Cả Kỹ Năng', icon: GraduationCap, color: 'text-slate-700' },
+    { id: 'all', label: isEn ? 'All Skills' : 'Tất Cả Kỹ Năng', icon: GraduationCap, color: 'text-slate-700' },
     { id: 'writing', label: 'Writing', icon: PenTool, color: 'text-red-600' },
     { id: 'reading', label: 'Reading', icon: BookOpen, color: 'text-blue-600' },
     { id: 'speaking', label: 'Speaking', icon: Mic, color: 'text-emerald-600' },
@@ -176,15 +196,15 @@ export default function FeaturesGuideModal({
               <div className="min-w-0">
                 <div className="flex items-center space-x-1.5 sm:space-x-2">
                   <h2 className="text-sm sm:text-base lg:text-lg font-black tracking-tight text-white truncate">
-                    Trung Tâm Trợ Giúp & Tính Năng
+                    {isEn ? 'Help Center & Feature Guide' : 'Trung Tâm Trợ Giúp & Tính Năng'}
                   </h2>
                   <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-[10px] font-bold uppercase tracking-wider shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
-                    Tự Động Cập Nhật
+                    {isEn ? 'Live Updated' : 'Tự Động Cập Nhật'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-400 hidden sm:block truncate">
-                  Tài liệu tra cứu tức thì & phóng nhanh công cụ luyện thi IELTS Cambridge
+                  {isEn ? 'Instant reference manual & 1-click launcher for Cambridge IELTS preparation tools' : 'Tài liệu tra cứu tức thì & phóng nhanh công cụ luyện thi IELTS Cambridge'}
                 </p>
               </div>
             </div>
@@ -194,8 +214,8 @@ export default function FeaturesGuideModal({
               <button
                 onClick={onClose}
                 className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                title="Đóng cửa sổ (Esc)"
-                aria-label="Đóng"
+                title={isEn ? "Close (Esc)" : "Đóng cửa sổ (Esc)"}
+                aria-label={isEn ? "Close" : "Đóng"}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -214,7 +234,7 @@ export default function FeaturesGuideModal({
                   setSearchQuery(e.target.value);
                   setShowChangelogOnly(false);
                 }}
-                placeholder="Tìm tính năng, phím tắt (vd: chấm máy, task 1, Alt+F)..."
+                placeholder={isEn ? "Search features, shortcuts (e.g. AI scoring, task 1, Alt+F)..." : "Tìm tính năng, phím tắt (vd: chấm máy, task 1, Alt+F)..."}
                 className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all"
               />
               {searchQuery && (
@@ -235,7 +255,7 @@ export default function FeaturesGuideModal({
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
-              title="Mở tài liệu chi tiết trên GitBook"
+              title={isEn ? "Open detailed documentation on GitBook" : "Mở tài liệu chi tiết trên GitBook"}
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>GitBook Docs</span>
@@ -244,15 +264,15 @@ export default function FeaturesGuideModal({
 
             <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-800 text-[11px] font-semibold text-slate-300 border border-slate-700">
               <Keyboard className="w-3.5 h-3.5 text-slate-400" />
-              <span>Phím tắt:</span>
+              <span>{isEn ? 'Shortcut:' : 'Phím tắt:'}</span>
               <kbd className="px-1.5 py-0.5 rounded bg-slate-700 text-slate-200 font-mono text-[10px] font-bold">F1</kbd>
             </div>
 
             <button
               onClick={onClose}
               className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-              title="Đóng cửa sổ (Esc)"
-              aria-label="Đóng"
+              title={isEn ? "Close (Esc)" : "Đóng cửa sổ (Esc)"}
+              aria-label={isEn ? "Close" : "Đóng"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -266,19 +286,19 @@ export default function FeaturesGuideModal({
             className={`flex-1 py-2.5 text-center border-b-2 flex items-center justify-center gap-1.5 ${mobileTab === 'filter' ? 'border-red-600 text-red-600 bg-white' : 'border-transparent'}`}
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Bộ Lọc</span>
+            <span>{isEn ? 'Filters' : 'Bộ Lọc'}</span>
           </button>
           <button
             onClick={() => setMobileTab('list')}
             className={`flex-1 py-2.5 text-center border-b-2 flex items-center justify-center gap-1.5 ${mobileTab === 'list' ? 'border-red-600 text-red-600 bg-white' : 'border-transparent'}`}
           >
-            <span>Danh Sách ({filteredFeatures.length})</span>
+            <span>{isEn ? `List (${filteredFeatures.length})` : `Danh Sách (${filteredFeatures.length})`}</span>
           </button>
           <button
             onClick={() => setMobileTab('detail')}
             className={`flex-1 py-2.5 text-center border-b-2 flex items-center justify-center gap-1.5 ${mobileTab === 'detail' ? 'border-red-600 text-red-600 bg-white' : 'border-transparent'}`}
           >
-            <span>Chi Tiết</span>
+            <span>{isEn ? 'Details' : 'Chi Tiết'}</span>
           </button>
         </div>
 
@@ -292,7 +312,7 @@ export default function FeaturesGuideModal({
             <div>
               <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
                 <GraduationCap className="w-3.5 h-3.5 text-slate-500" />
-                <span>Theo Kỹ Năng IELTS</span>
+                <span>{isEn ? 'By IELTS Skill' : 'Theo Kỹ Năng IELTS'}</span>
               </div>
               <div className="space-y-1">
                 {skillFilterItems.map(item => {
@@ -327,12 +347,13 @@ export default function FeaturesGuideModal({
             <div>
               <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
                 <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
-                <span>Theo Chuyên Đề</span>
+                <span>{isEn ? 'By Category' : 'Theo Chuyên Đề'}</span>
               </div>
               <div className="space-y-1">
                 {FEATURE_CATEGORIES.map(cat => {
                   const CatIcon = ICON_MAP[cat.icon] || Tag;
                   const isSelected = !showChangelogOnly && selectedCategory === cat.id;
+                  const catLabel = isEn ? (CATEGORY_LABELS_EN[cat.id] || cat.label) : cat.label;
                   return (
                     <button
                       key={cat.id}
@@ -349,7 +370,7 @@ export default function FeaturesGuideModal({
                     >
                       <div className="flex items-center space-x-2.5 truncate">
                         <CatIcon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-white' : 'text-slate-400'}`} />
-                        <span className="truncate">{cat.label}</span>
+                        <span className="truncate">{catLabel}</span>
                       </div>
                     </button>
                   );
@@ -374,7 +395,7 @@ export default function FeaturesGuideModal({
               >
                 <div className="flex items-center space-x-2">
                   <Flame className={`w-4 h-4 ${showChangelogOnly ? 'text-white' : 'text-amber-600'}`} />
-                  <span>⚡ Mới Cập Nhật (Changelog)</span>
+                  <span>{isEn ? '⚡ Recent Updates (Changelog)' : '⚡ Mới Cập Nhật (Changelog)'}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 opacity-70" />
               </button>
@@ -383,11 +404,11 @@ export default function FeaturesGuideModal({
             {/* Quick Stats Footnote */}
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/70 text-[11px] text-slate-500 space-y-1">
               <div className="font-bold text-slate-700 flex items-center justify-between">
-                <span>Tổng tính năng:</span>
+                <span>{isEn ? 'Total Features:' : 'Tổng tính năng:'}</span>
                 <span className="text-red-600 font-extrabold">{FEATURE_REGISTRY.length} modules</span>
               </div>
               <div className="text-[10px] text-slate-400 leading-tight">
-                Toàn bộ tính năng đều có tài liệu hướng dẫn và liên kết khởi chạy tự động.
+                {isEn ? 'All modules include comprehensive guides and 1-click launchers.' : 'Toàn bộ tính năng đều có tài liệu hướng dẫn và liên kết khởi chạy tự động.'}
               </div>
             </div>
 
@@ -395,10 +416,10 @@ export default function FeaturesGuideModal({
             <div className="p-3 rounded-xl bg-gradient-to-br from-red-50/80 to-rose-50/80 border border-red-200/80 text-[11px] space-y-2">
               <div className="flex items-center space-x-1.5 font-bold text-red-900">
                 <BookOpen className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                <span>Cẩm Nang GitBook</span>
+                <span>{isEn ? 'GitBook Handbook' : 'Cẩm Nang GitBook'}</span>
               </div>
               <p className="text-[10px] text-slate-600 leading-snug">
-                Đọc cẩm nang toàn diện và hướng dẫn chi tiết trên trang GitBook chính thức.
+                {isEn ? 'Read comprehensive guides and in-depth tutorials on official GitBook.' : 'Đọc cẩm nang toàn diện và hướng dẫn chi tiết trên trang GitBook chính thức.'}
               </p>
               <a
                 href={getFeatureGitBookUrl(selectedCategory)}
@@ -406,7 +427,7 @@ export default function FeaturesGuideModal({
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] sm:text-[11px] shadow-xs transition-colors cursor-pointer"
               >
-                <span>Mở Trên GitBook</span>
+                <span>{isEn ? 'Open on GitBook' : 'Mở Trên GitBook'}</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -418,10 +439,10 @@ export default function FeaturesGuideModal({
             
             {/* Header info bar */}
             <div className="p-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500 font-bold">
-              <span>Tìm thấy {filteredFeatures.length} tính năng</span>
+              <span>{isEn ? `Found ${filteredFeatures.length} features` : `Tìm thấy ${filteredFeatures.length} tính năng`}</span>
               {showChangelogOnly && (
                 <span className="text-amber-600 font-extrabold flex items-center gap-1">
-                  <Flame className="w-3 h-3" /> Mới Nhất
+                  <Flame className="w-3 h-3" /> {isEn ? 'Latest' : 'Mới Nhất'}
                 </span>
               )}
             </div>
@@ -431,8 +452,8 @@ export default function FeaturesGuideModal({
               {filteredFeatures.length === 0 ? (
                 <div className="p-8 text-center text-slate-400 space-y-2">
                   <Search className="w-8 h-8 mx-auto text-slate-300" />
-                  <p className="text-xs font-bold">Không tìm thấy tính năng phù hợp</p>
-                  <p className="text-[11px]">Hãy thử tìm bằng từ khóa khác hoặc xóa bộ lọc.</p>
+                  <p className="text-xs font-bold">{isEn ? 'No matching features found' : 'Không tìm thấy tính năng phù hợp'}</p>
+                  <p className="text-[11px]">{isEn ? 'Try searching with different keywords or reset filters.' : 'Hãy thử tìm bằng từ khóa khác hoặc xóa bộ lọc.'}</p>
                   <button
                     onClick={() => {
                       setSearchQuery('');
@@ -442,7 +463,7 @@ export default function FeaturesGuideModal({
                     }}
                     className="mt-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold"
                   >
-                    Xem Tất Cả
+                    {isEn ? 'View All' : 'Xem Tất Cả'}
                   </button>
                 </div>
               ) : (
@@ -539,7 +560,7 @@ export default function FeaturesGuideModal({
                     {activeFeature.updatedAt && (
                       <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
-                        <span>Cập nhật: {activeFeature.updatedAt}</span>
+                        <span>{isEn ? 'Updated:' : 'Cập nhật:'} {activeFeature.updatedAt}</span>
                       </div>
                     )}
                   </div>
@@ -566,7 +587,7 @@ export default function FeaturesGuideModal({
                         className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs sm:text-sm font-extrabold shadow-lg shadow-red-900/30 flex items-center space-x-2 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                       >
                         <Zap className="w-4 h-4 fill-white" />
-                        <span>{activeFeature.quickAction.label || 'Thử Ngay Tính Năng Này'}</span>
+                        <span>{isEn ? (activeFeature.quickAction.labelEn || 'Launch This Feature') : (activeFeature.quickAction.label || 'Thử Ngay Tính Năng Này')}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     )}
@@ -576,16 +597,16 @@ export default function FeaturesGuideModal({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs sm:text-sm font-bold border border-slate-600/80 flex items-center space-x-2 transition-all cursor-pointer shadow-sm"
-                      title={`Đọc tài liệu chuyên sâu về "${activeFeature.title}" trên GitBook`}
+                      title={isEn ? `Read comprehensive guide on GitBook` : `Đọc tài liệu chuyên sâu về "${activeFeature.title}" trên GitBook`}
                     >
                       <BookOpen className="w-4 h-4 text-rose-400" />
-                      <span>Đọc Trên GitBook</span>
+                      <span>{isEn ? 'Read on GitBook' : 'Đọc Trên GitBook'}</span>
                       <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
                     </a>
 
                     {activeFeature.shortcut && (
                       <span className="text-xs text-slate-400 flex items-center gap-1.5">
-                        <span>hoặc bấm</span>
+                        <span>{isEn ? 'or press' : 'hoặc bấm'}</span>
                         <kbd className="px-2 py-1 rounded-md bg-slate-800 text-white font-mono text-xs font-bold border border-slate-700">
                           {activeFeature.shortcut}
                         </kbd>
@@ -599,7 +620,7 @@ export default function FeaturesGuideModal({
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2">
                     <div className="text-[11px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                       <GraduationCap className="w-4 h-4 text-red-600" />
-                      <span>Bổ trợ trực tiếp cho các kỹ năng IELTS:</span>
+                      <span>{isEn ? 'Directly enhances IELTS skills:' : 'Bổ trợ trực tiếp cho các kỹ năng IELTS:'}</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {activeFeature.targetSkills.map(sk => {
@@ -620,7 +641,7 @@ export default function FeaturesGuideModal({
                                 <span className={`w-1.5 h-1.5 rounded-full ${def.dotColor}`}></span>
                               </div>
                               <div className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                                {def.desc}
+                                {isEn ? (SKILL_DESCS_EN[sk] || def.desc) : def.desc}
                               </div>
                             </div>
                           </div>
@@ -635,7 +656,7 @@ export default function FeaturesGuideModal({
                   <div className="space-y-3">
                     <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
                       <Sparkles className="w-4 h-4 text-amber-500" />
-                      <span>Các Điểm Nổi Bật & Năng Lực Cốt Lõi:</span>
+                      <span>{isEn ? 'Key Highlights & Core Capabilities:' : 'Các Điểm Nổi Bật & Năng Lực Cốt Lõi:'}</span>
                     </h4>
                     <div className="space-y-2.5">
                       {activeFeature.highlights.map((h, i) => (
@@ -656,7 +677,7 @@ export default function FeaturesGuideModal({
                   <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2">
                     <span className="text-xs font-black text-amber-900 flex items-center space-x-2">
                       <span className="text-base">💡</span>
-                      <span>Hướng Dẫn Thao Tác Nhanh:</span>
+                      <span>{isEn ? 'Quick Start Guide:' : 'Hướng Dẫn Thao Tác Nhanh:'}</span>
                     </span>
                     <p className="text-xs sm:text-sm text-amber-900/90 leading-relaxed pl-6">
                       {activeFeature.usageGuide}
@@ -667,9 +688,9 @@ export default function FeaturesGuideModal({
                 {/* 3.5 Quick Action Footer */}
                 <div className="p-4 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div>
-                    <div className="text-xs font-bold">Bạn muốn trải nghiệm ngay tính năng này?</div>
+                    <div className="text-xs font-bold">{isEn ? 'Ready to try this feature right now?' : 'Bạn muốn trải nghiệm ngay tính năng này?'}</div>
                     <div className="text-[11px] text-slate-400">
-                      Bấm nút bên dưới để đóng bảng trợ giúp và mở trực tiếp công cụ.
+                      {isEn ? 'Click below to close the guide and launch the tool directly.' : 'Bấm nút bên dưới để đóng bảng trợ giúp và mở trực tiếp công cụ.'}
                     </div>
                   </div>
                   {activeFeature.quickAction ? (
@@ -677,7 +698,7 @@ export default function FeaturesGuideModal({
                       onClick={() => handleLaunchFeature(activeFeature)}
                       className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all shrink-0 shadow-sm flex items-center justify-center gap-1.5"
                     >
-                      <span>{activeFeature.quickAction.label || 'Bắt Đầu Ngay'}</span>
+                      <span>{isEn ? (activeFeature.quickAction.labelEn || 'Get Started Now') : (activeFeature.quickAction.label || 'Bắt Đầu Ngay')}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   ) : (
@@ -685,7 +706,7 @@ export default function FeaturesGuideModal({
                       onClick={onClose}
                       className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all shrink-0"
                     >
-                      Đóng Trợ Giúp
+                      {isEn ? 'Close Guide' : 'Đóng Trợ Giúp'}
                     </button>
                   )}
                 </div>

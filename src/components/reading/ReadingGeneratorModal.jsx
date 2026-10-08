@@ -12,6 +12,7 @@ import {
   Lock
 } from 'lucide-react';
 import { generateReadingPassage } from '../../services/geminiService';
+import { useTranslation } from '../../i18n';
 
 const READING_TOPICS = [
   { id: 'tech', label: 'Công nghệ, AI & Tương lai kỹ thuật số', en: 'Technology & AI' },
@@ -25,30 +26,36 @@ const READING_TOPICS = [
   { id: 'ling', label: 'Ngôn ngữ học & Giao tiếp nhân loại', en: 'Linguistics & Human Communication' }
 ];
 
-const PASSAGE_OPTIONS = [
+const getPassageOptions = (isEn) => [
   { 
     passageNum: 1, 
     difficulty: 'Easy', 
     label: 'Passage 1 (Band 5.5 - 6.5)', 
-    qRange: 'Câu 1 – 13',
-    timeGuide: '17–20 phút',
-    desc: 'Từ vựng thực tế & khoa học thường thức, câu đơn/ghép, lập luận dễ nắm bắt' 
+    qRange: isEn ? 'Questions 1 – 13' : 'Câu 1 – 13',
+    timeGuide: isEn ? '17–20 mins' : '17–20 phút',
+    desc: isEn 
+      ? 'Factual vocabulary & general science, compound sentences, accessible logic'
+      : 'Từ vựng thực tế & khoa học thường thức, câu đơn/ghép, lập luận dễ nắm bắt' 
   },
   { 
     passageNum: 2, 
     difficulty: 'Medium', 
     label: 'Passage 2 (Band 6.5 - 7.5)', 
-    qRange: 'Câu 14 – 26',
-    timeGuide: '20 phút',
-    desc: 'Văn phong học thuật xã hội & công nghệ, câu phức, cấu trúc paraphrase biến hóa' 
+    qRange: isEn ? 'Questions 14 – 26' : 'Câu 14 – 26',
+    timeGuide: isEn ? '20 mins' : '20 phút',
+    desc: isEn 
+      ? 'Academic prose on social & technological themes, complex syntax, nuanced paraphrasing'
+      : 'Văn phong học thuật xã hội & công nghệ, câu phức, cấu trúc paraphrase biến hóa' 
   },
   { 
     passageNum: 3, 
     difficulty: 'Hard', 
     label: 'Passage 3 (Band 7.5 - 9.0)', 
-    qRange: 'Câu 27 – 40',
-    timeGuide: '23 phút',
-    desc: 'Chủ đề học thuật trừu tượng, bẫy distractors tinh vi, thuật ngữ chuyên sâu' 
+    qRange: isEn ? 'Questions 27 – 40' : 'Câu 27 – 40',
+    timeGuide: isEn ? '23 mins' : '23 phút',
+    desc: isEn 
+      ? 'Abstract academic discourse, subtle distractors, specialized disciplinary lexicon'
+      : 'Chủ đề học thuật trừu tượng, bẫy distractors tinh vi, thuật ngữ chuyên sâu' 
   }
 ];
 
@@ -60,6 +67,7 @@ export default function ReadingGeneratorModal({
   onPassageGenerated,
   onOpenSettings
 }) {
+  const { t, isEn } = useTranslation();
   const [selectedTopic, setSelectedTopic] = useState(READING_TOPICS[0].en);
   const [selectedPassageNum, setSelectedPassageNum] = useState(1);
   // Mặc định tự động chuyển thành tài nguyên chung của web (trừ khi user cấu hình tắt hoặc toggle tắt)
@@ -74,11 +82,12 @@ export default function ReadingGeneratorModal({
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const selectedOpt = PASSAGE_OPTIONS.find(p => p.passageNum === selectedPassageNum) || PASSAGE_OPTIONS[0];
+  const passageOptions = getPassageOptions(isEn);
+  const selectedOpt = passageOptions.find(p => p.passageNum === selectedPassageNum) || passageOptions[0];
 
   const handleGenerate = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      setErrorMsg(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
@@ -100,7 +109,7 @@ export default function ReadingGeneratorModal({
       onClose();
     } catch (err) {
       console.error('Lỗi khi sinh đề đọc:', err);
-      setErrorMsg(err.message || 'Lỗi khi sinh bài đọc bằng AI.');
+      setErrorMsg(err.message || (isEn ? 'Error generating reading passage with AI.' : 'Lỗi khi sinh bài đọc bằng AI.'));
     } finally {
       setIsGenerating(false);
     }
@@ -119,8 +128,12 @@ export default function ReadingGeneratorModal({
               <Sparkles className="w-4 h-4 text-blue-300" />
             </div>
             <div>
-              <h3 className="font-black text-base text-white">Sinh Đề Thi IELTS Reading Bằng AI</h3>
-              <p className="text-[11px] text-blue-200">Chuẩn hóa cấu trúc Cambridge Academic với bằng chứng & giải thích</p>
+              <h3 className="font-black text-base text-white">
+                {isEn ? 'Generate IELTS Reading Passage with AI' : 'Sinh Đề Thi IELTS Reading Bằng AI'}
+              </h3>
+              <p className="text-[11px] text-blue-200">
+                {isEn ? 'Cambridge Academic structure with evidence markers & rationale' : 'Chuẩn hóa cấu trúc Cambridge Academic với bằng chứng & giải thích'}
+              </p>
             </div>
           </div>
           <button 
@@ -137,7 +150,7 @@ export default function ReadingGeneratorModal({
           {/* Topic Select */}
           <div className="space-y-2">
             <label className="font-bold text-slate-800 uppercase tracking-wider text-[11px] block">
-              1. Chọn Chủ Đề Học Thuật (12 IELTS Academic Domains):
+              {isEn ? '1. Select Academic Domain (IELTS Domains):' : '1. Chọn Chủ Đề Học Thuật (12 IELTS Academic Domains):'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {READING_TOPICS.map(topic => (
@@ -151,8 +164,8 @@ export default function ReadingGeneratorModal({
                       : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                   }`}
                 >
-                  <span className="leading-snug">{topic.label}</span>
-                  <span className="text-[10px] text-slate-400 font-normal mt-1">{topic.en}</span>
+                  <span className="leading-snug">{isEn ? topic.en : topic.label}</span>
+                  {!isEn && <span className="text-[10px] text-slate-400 font-normal mt-1">{topic.en}</span>}
                 </button>
               ))}
             </div>
@@ -162,14 +175,14 @@ export default function ReadingGeneratorModal({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="font-bold text-slate-800 uppercase tracking-wider text-[11px] block">
-                2. Chọn Passage Mục Tiêu & Độ Khó (Cambridge Standards):
+                {isEn ? '2. Target Passage & Difficulty Level (Cambridge Standards):' : '2. Chọn Passage Mục Tiêu & Độ Khó (Cambridge Standards):'}
               </label>
               <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                Chuẩn thi thật 3 bài đọc
+                {isEn ? 'Official 3-Passage Standard' : 'Chuẩn thi thật 3 bài đọc'}
               </span>
             </div>
             <div className="space-y-2">
-              {PASSAGE_OPTIONS.map(opt => (
+              {passageOptions.map(opt => (
                 <button
                   key={opt.passageNum}
                   type="button"
@@ -189,7 +202,7 @@ export default function ReadingGeneratorModal({
                       </span>
                       <span className="font-bold text-xs">{opt.label}</span>
                       <span className="text-[10px] text-slate-500 font-normal">
-                        ({opt.qRange} • Gợi ý: {opt.timeGuide})
+                        ({opt.qRange} • {isEn ? 'Suggested:' : 'Gợi ý:'} {opt.timeGuide})
                       </span>
                     </div>
                     <div className="text-[11px] text-slate-500 font-normal leading-relaxed">
@@ -212,15 +225,21 @@ export default function ReadingGeneratorModal({
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                  <span>
+                    {isPublic 
+                      ? (isEn ? 'Automatically share to Community Library' : 'Tự động chia sẻ lên Thư viện Cộng đồng')
+                      : (isEn ? 'Save privately to your account' : 'Chỉ lưu riêng tư trong tài khoản')}
+                  </span>
                   {isPublic && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-700">Tài nguyên chung</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-700">
+                      {isEn ? 'Shared Pool' : 'Tài nguyên chung'}
+                    </span>
                   )}
                 </div>
                 <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
                   {isPublic 
-                    ? 'Bài đọc sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
-                    : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.'}
+                    ? (isEn ? 'Passage will be contributed to the shared pool for all learners. Toggle off to keep private.' : 'Bài đọc sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.')
+                    : (isEn ? 'Only your account can view and attempt this test.' : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.')}
                 </div>
               </div>
             </div>
@@ -249,7 +268,7 @@ export default function ReadingGeneratorModal({
                     }}
                     className="text-blue-600 underline font-bold"
                   >
-                    Mở Cài đặt để nhập API Key
+                    {isEn ? 'Open Settings to enter API Key' : 'Mở Cài đặt để nhập API Key'}
                   </button>
                 )}
               </div>
@@ -264,7 +283,7 @@ export default function ReadingGeneratorModal({
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs"
           >
-            Hủy bỏ
+            {isEn ? 'Cancel' : 'Hủy bỏ'}
           </button>
           <button
             type="button"
@@ -275,17 +294,16 @@ export default function ReadingGeneratorModal({
             {isGenerating ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>AI đang soạn bài đọc...</span>
+                <span>{isEn ? 'AI is drafting passage...' : 'AI đang soạn bài đọc...'}</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Bắt Đầu Sinh Đề Thi</span>
+                <span>{isEn ? 'Generate Reading Test' : 'Bắt Đầu Sinh Đề Thi'}</span>
               </>
             )}
           </button>
         </div>
-
       </div>
     </div>
   );

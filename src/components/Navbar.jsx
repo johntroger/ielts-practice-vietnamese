@@ -210,8 +210,8 @@ export default function Navbar({
               type="button"
               onClick={() => setIsQrModalOpen(true)}
               className="flex items-center space-x-2 shrink-0 group cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-red-500/40 rounded-xl p-0.5 transition-transform active:scale-95"
-              title="Quét mã QR truy cập nhanh website trên điện thoại"
-              aria-label="Mở mã QR website IELTS Studio"
+              title={isEn ? "Scan QR code to access website on phone" : "Quét mã QR truy cập nhanh website trên điện thoại"}
+              aria-label={isEn ? "Open IELTS Studio website QR code" : "Mở mã QR website IELTS Studio"}
             >
               <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-sm text-xs sm:text-sm group-hover:shadow-md group-hover:from-red-700 group-hover:to-rose-600 transition-all">
                 <span>IELTS</span>
@@ -243,7 +243,7 @@ export default function Navbar({
                     ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                     : 'border-purple-200 bg-purple-50 text-purple-700'
                 }`}
-                aria-label="Chọn kỹ năng IELTS"
+                aria-label={isEn ? "Select IELTS skill" : "Chọn kỹ năng IELTS"}
               >
                 <CurrentSkillIcon className="w-3.5 h-3.5 shrink-0" />
                 <span className="font-extrabold">{currentSkillObj.label.replace('IELTS ', '')}</span>
@@ -253,7 +253,7 @@ export default function Navbar({
               {mobileSkillMenuOpen && (
                 <div className="absolute left-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                   <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    Chuyển Kỹ Năng Luyện Thi
+                    {isEn ? 'Switch Practice Skill' : 'Chuyển Kỹ Năng Luyện Thi'}
                   </div>
                   {skills.map(s => {
                     const Icon = s.icon;
@@ -330,14 +330,14 @@ export default function Navbar({
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center gap-1 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
-            {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút (Hiển thị từ màn hình máy tính >= 1280px; trên Tablet có tại Hamburger Drawer) */}
+            {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút */}
             <button
               onClick={doOpenMockTest}
               className="hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
-              title="Vào Phòng Thi Thử IELTS Áp Lực Cao (60 Phút)"
+              title={isEn ? "Enter High-Pressure IELTS Mock Test (60 Minutes)" : "Vào Phòng Thi Thử IELTS Áp Lực Cao (60 Phút)"}
             >
               <ShieldAlert className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-              <span>Thi Thử 60p</span>
+              <span>{isEn ? '60m Mock Test' : 'Thi Thử 60p'}</span>
             </button>
 
             {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px) */}
@@ -345,10 +345,10 @@ export default function Navbar({
               <button
                 onClick={doOpenGenerator}
                 className="hidden min-[1720px]:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
-                title="Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn Cambridge)"
+                title={isEn ? "Generate New Writing Prompt with AI (Task 1 & Task 2 Cambridge)" : "Sinh Đề Thi Writing Mới Bằng AI (Task 1 & Task 2 chuẩn Cambridge)"}
               >
                 <Sparkles className="w-3.5 h-3.5 text-red-600 group-hover:scale-110 transition-transform shrink-0" />
-                <span>Sinh Đề (AI)</span>
+                <span>{isEn ? 'AI Prompt Gen' : 'Sinh Đề (AI)'}</span>
               </button>
             )}
 
@@ -365,17 +365,17 @@ export default function Navbar({
                   className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
                     isPracticeMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                   }`}
-                  title="Luyện tập & Đề thi"
+                  title={isEn ? "Practice & Test Bank" : "Luyện tập & Đề thi"}
                 >
                   <GraduationCap className="w-4 h-4 text-red-600" />
-                  <span>Luyện Tập</span>
+                  <span>{isEn ? 'Practice' : 'Luyện Tập'}</span>
                   <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isPracticeMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isPracticeMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Đề Thi & Chế Độ Luyện
+                      {isEn ? 'Tests & Practice Modes' : 'Đề Thi & Chế Độ Luyện'}
                     </div>
                     <button
                       onClick={() => { doOpenDiagnostic(); setIsPracticeMenuOpen(false); }}
@@ -386,10 +386,10 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span>Định Vị Band & Lộ Trình</span>
-                          <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-[9px] text-white font-black">15p</span>
+                          <span>{isEn ? 'Band Diagnostic & Roadmap' : 'Định Vị Band & Lộ Trình'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-[9px] text-white font-black">{isEn ? '15m' : '15p'}</span>
                         </div>
-                        <div className="text-[10px] text-indigo-700/80 font-normal">Test 16 câu định vị Band & tạo kế hoạch 30 ngày</div>
+                        <div className="text-[10px] text-indigo-700/80 font-normal">{isEn ? '16-question placement test & 30-day plan' : 'Test 16 câu định vị Band & tạo kế hoạch 30 ngày'}</div>
                       </div>
                     </button>
                     <button
@@ -401,10 +401,10 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span>Huấn Luyện Viên 30P</span>
-                          <span className="px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-black">MỚI</span>
+                          <span>{isEn ? '30-Min Sprint Coach' : 'Huấn Luyện Viên 30P'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-black">{isEn ? 'NEW' : 'MỚI'}</span>
                         </div>
-                        <div className="text-[10px] text-amber-700/80 font-normal">Sprint 3 chặng nước rút cá nhân hóa theo điểm yếu</div>
+                        <div className="text-[10px] text-amber-700/80 font-normal">{isEn ? 'Adaptive 3-stage sprint targeting weak spots' : 'Sprint 3 chặng nước rút cá nhân hóa theo điểm yếu'}</div>
                       </div>
                     </button>
                     <button
@@ -415,8 +415,8 @@ export default function Navbar({
                         <BookOpen className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Thư Viện Đề Thi</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Đề Writing, Reading, Listening chuẩn Cambridge</div>
+                        <div className="font-bold">{isEn ? 'Test Library' : 'Thư Viện Đề Thi'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Writing, Reading, Listening Cambridge tests' : 'Đề Writing, Reading, Listening chuẩn Cambridge'}</div>
                       </div>
                     </button>
                     <button
@@ -427,8 +427,8 @@ export default function Navbar({
                         <Sparkles className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Sinh Đề Mới Bằng AI</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Tạo đề thi mới bám sát xu hướng đề thật</div>
+                        <div className="font-bold">{isEn ? 'AI Prompt Generator' : 'Sinh Đề Mới Bằng AI'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Create new prompts following real exam trends' : 'Tạo đề thi mới bám sát xu hướng đề thật'}</div>
                       </div>
                     </button>
                     <button
@@ -439,8 +439,8 @@ export default function Navbar({
                         <Puzzle className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Micro-Drills (Luyện Vi Mô)</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Luyện câu đơn, ghép ý, dictation, scanning</div>
+                        <div className="font-bold">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Vi Mô)'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Sentence structures, dictation, scanning & idea linking' : 'Luyện câu đơn, ghép ý, dictation, scanning'}</div>
                       </div>
                     </button>
                     <button
@@ -451,8 +451,8 @@ export default function Navbar({
                         <FileUp className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Nạp Đề & Bài Mẫu Thô</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Nhập văn bản đề bài hoặc bài mẫu bên ngoài</div>
+                        <div className="font-bold">{isEn ? 'Import Prompts & Raw Samples' : 'Nạp Đề & Bài Mẫu Thô'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Import external prompts or custom sample essays' : 'Nhập văn bản đề bài hoặc bài mẫu bên ngoài'}</div>
                       </div>
                     </button>
                     <button
@@ -464,10 +464,10 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="flex items-center space-x-1.5">
-                          <span className="font-bold">Cẩm Nang Chiến Thuật</span>
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-sky-100 text-sky-700">Bản Web</span>
+                          <span className="font-bold">{isEn ? 'Strategy Handbook' : 'Cẩm Nang Chiến Thuật'}</span>
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-sky-100 text-sky-700">{isEn ? 'Web Edition' : 'Bản Web'}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">Chiến lược 4 kỹ năng & đọc trực tuyến</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? '4-skill strategies & interactive reading' : 'Chiến lược 4 kỹ năng & đọc trực tuyến'}</div>
                       </div>
                     </button>
                   </div>
@@ -485,10 +485,10 @@ export default function Navbar({
                   className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
                     isToolsMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                   }`}
-                  title="Công cụ bổ trợ từ vựng & sửa lỗi"
+                  title={isEn ? "Vocabulary & error correction tools" : "Công cụ bổ trợ từ vựng & sửa lỗi"}
                 >
                   <FolderKanban className="w-4 h-4 text-purple-600" />
-                  <span>Công Cụ</span>
+                  <span>{isEn ? 'Tools' : 'Công Cụ'}</span>
                   {mistakesCount > 0 && (
                     <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
                   )}
@@ -498,7 +498,7 @@ export default function Navbar({
                 {isToolsMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Bộ Công Cụ Bổ Trợ
+                      {isEn ? 'Support Tools' : 'Bộ Công Cụ Bổ Trợ'}
                     </div>
                     <button
                       onClick={() => { doOpenNotebook(); setIsToolsMenuOpen(false); }}
@@ -508,8 +508,8 @@ export default function Navbar({
                         <Bookmark className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Sổ Tay Từ Vựng</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Lưu từ vựng C1-C2 & Collocations</div>
+                        <div className="font-bold">{isEn ? 'Vocabulary Notebook' : 'Sổ Tay Từ Vựng'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Save C1-C2 vocabulary & collocations' : 'Lưu từ vựng C1-C2 & Collocations'}</div>
                       </div>
                     </button>
                     <button
@@ -521,8 +521,8 @@ export default function Navbar({
                           <ShieldAlert className="w-4 h-4" />
                         </div>
                         <div>
-                          <div className="font-bold">Sổ Tay Lỗi Sai Thường Gặp</div>
-                          <div className="text-[10px] text-slate-400 font-normal">Bẫy ngữ pháp & lỗi diễn đạt</div>
+                          <div className="font-bold">{isEn ? 'Common Mistake Log' : 'Sổ Tay Lỗi Sai Thường Gặp'}</div>
+                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Grammar traps & expression errors' : 'Bẫy ngữ pháp & lỗi diễn đạt'}</div>
                         </div>
                       </div>
                       {mistakesCount > 0 && (
@@ -539,8 +539,8 @@ export default function Navbar({
                         <SpellCheck2 className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Vocab, Grammar & Chính Tả</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Flashcards trau dồi từ vựng học thuật</div>
+                        <div className="font-bold">{isEn ? 'Vocab, Grammar & Spelling' : 'Vocab, Grammar & Chính Tả'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Academic vocabulary & grammar flashcards' : 'Flashcards trau dồi từ vựng học thuật'}</div>
                       </div>
                     </button>
                     <button
@@ -551,8 +551,8 @@ export default function Navbar({
                         <SlidersHorizontal className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Trợ Năng Hiển Thị CDI</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Cỡ chữ & màu tương phản IDP/BC</div>
+                        <div className="font-bold">{isEn ? 'CDI Display Accessibility' : 'Trợ Năng Hiển Thị CDI'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'IDP/BC font size & high contrast mode' : 'Cỡ chữ & màu tương phản IDP/BC'}</div>
                       </div>
                     </button>
                   </div>
@@ -570,17 +570,17 @@ export default function Navbar({
                   className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
                     isProgressMenuOpen ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
                   }`}
-                  title="Tiến độ học tập & Hướng dẫn"
+                  title={isEn ? "Learning progress & guides" : "Tiến độ học tập & Hướng dẫn"}
                 >
                   <TrendingUp className="w-4 h-4 text-blue-600" />
-                  <span>Tiến Độ</span>
+                  <span>{isEn ? 'Progress' : 'Tiến Độ'}</span>
                   <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform ${isProgressMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isProgressMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Báo Cáo & Lịch Sử
+                      {isEn ? 'Reports & History' : 'Báo Cáo & Lịch Sử'}
                     </div>
                     <button
                       onClick={() => { doOpenHistory(); setIsProgressMenuOpen(false); }}
@@ -590,8 +590,8 @@ export default function Navbar({
                         <History className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Lịch Sử Nộp Bài & Điểm Số</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Xem lại các bài thi & feedback chi tiết</div>
+                        <div className="font-bold">{isEn ? 'Submission History & Scores' : 'Lịch Sử Nộp Bài & Điểm Số'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Review previous tests & detailed feedback' : 'Xem lại các bài thi & feedback chi tiết'}</div>
                       </div>
                     </button>
                     <button
@@ -602,8 +602,8 @@ export default function Navbar({
                         <TrendingUp className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Báo Cáo Tiến Độ Tuần</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Radar 4 tiêu chí & chẩn đoán học tập</div>
+                        <div className="font-bold">{isEn ? 'Weekly Progress Report' : 'Báo Cáo Tiến Độ Tuần'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? '4-criteria radar & learning diagnostics' : 'Radar 4 tiêu chí & chẩn đoán học tập'}</div>
                       </div>
                     </button>
                     <button
@@ -615,14 +615,14 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="font-bold flex items-center space-x-1.5">
-                          <span>Dự Báo Tăng Trưởng (ETA)</span>
-                          <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-purple-100 text-purple-700">Mới</span>
+                          <span>{isEn ? 'Growth Forecast (ETA)' : 'Dự Báo Tăng Trưởng (ETA)'}</span>
+                          <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-purple-100 text-purple-700">{isEn ? 'New' : 'Mới'}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">Dự báo ngày đạt Target Band theo chuẩn Cambridge</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Forecast target band date based on Cambridge standards' : 'Dự báo ngày đạt Target Band theo chuẩn Cambridge'}</div>
                       </div>
                     </button>
                     <div className="pt-1 border-t border-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Hỗ Trợ & Hướng Dẫn
+                      {isEn ? 'Support & Guides' : 'Hỗ Trợ & Hướng Dẫn'}
                     </div>
                     <button
                       onClick={() => { doOpenFeaturesGuide(); setIsProgressMenuOpen(false); }}
@@ -632,8 +632,8 @@ export default function Navbar({
                         <Compass className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Khám Phá Tính Năng Web</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Hướng dẫn làm quen và tối ưu học tập</div>
+                        <div className="font-bold">{isEn ? 'Explore Features' : 'Khám Phá Tính Năng Web'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Onboarding tour & learning optimization' : 'Hướng dẫn làm quen và tối ưu học tập'}</div>
                       </div>
                     </button>
                     {/* Link đến GitBook Docs: huong-dan-su-dung-and-tinh-nang-he-thong/features */}
@@ -649,10 +649,10 @@ export default function Navbar({
                       </div>
                       <div>
                         <div className="flex items-center space-x-1.5">
-                          <span className="font-bold">Tài Liệu GitBook Live</span>
+                          <span className="font-bold">{isEn ? 'Live GitBook Docs' : 'Tài Liệu GitBook Live'}</span>
                           <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-100 text-emerald-700">Live</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">Đọc hướng dẫn chi tiết & cẩm nang 4 kỹ năng</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Detailed guides & 4-skill handbooks' : 'Đọc hướng dẫn chi tiết & cẩm nang 4 kỹ năng'}</div>
                       </div>
                     </a>
                     <button
@@ -663,8 +663,8 @@ export default function Navbar({
                         <Mail className="w-4 h-4" />
                       </div>
                       <div>
-                        <div className="font-bold">Gửi góp ý</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Hỗ trợ kỹ thuật và góp ý phát triển</div>
+                        <div className="font-bold">{isEn ? 'Send Feedback' : 'Gửi góp ý'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Technical support & feature feedback' : 'Hỗ trợ kỹ thuật và góp ý phát triển'}</div>
                       </div>
                     </button>
                   </div>
@@ -676,10 +676,10 @@ export default function Navbar({
             <button
               onClick={doOpenFeaturesGuide}
               className="hidden 2xl:flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-red-600 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px]"
-              title="Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"
+              title={isEn ? "Help Center & Feature Guide (Public, shortcut: F1)" : "Trung tâm trợ giúp & Hướng dẫn tính năng (Công khai, phím tắt: F1)"}
             >
               <HelpCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
-              <span className="hidden min-[1600px]:inline text-[11px] font-semibold">Trợ Giúp</span>
+              <span className="hidden min-[1600px]:inline text-[11px] font-semibold">{isEn ? 'Help' : 'Trợ Giúp'}</span>
               <kbd className="hidden min-[1700px]:inline-block px-1 py-0.2 rounded bg-slate-200 text-slate-600 font-mono text-[9px] font-bold">F1</kbd>
             </button>
 
@@ -687,11 +687,11 @@ export default function Navbar({
             <button
               onClick={doOpenContact}
               className="hidden 2xl:flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-rose-200/80 bg-rose-50/70 hover:bg-rose-100 text-rose-800 hover:text-rose-900 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer group min-h-[38px] sm:min-h-[40px]"
-              title="Gửi góp ý với tác giả phát triển (Hỗ trợ 24/7)"
-              aria-label="Gửi góp ý"
+              title={isEn ? "Send feedback to development team (24/7 Support)" : "Gửi góp ý với tác giả phát triển (Hỗ trợ 24/7)"}
+              aria-label={isEn ? "Send feedback" : "Gửi góp ý"}
             >
               <Mail className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
-              <span className="hidden min-[1600px]:inline text-[11px] font-bold">Gửi góp ý</span>
+              <span className="hidden min-[1600px]:inline text-[11px] font-bold">{isEn ? 'Feedback' : 'Gửi góp ý'}</span>
             </button>
 
             {/* Language Toggle Switcher (VI / EN) */}
@@ -713,8 +713,8 @@ export default function Navbar({
               type="button"
               onClick={toggleTheme}
               className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
-              title={currentTheme === 'dark' ? "Chuyển sang Giao diện Sáng (Light Mode)" : "Chuyển sang Giao diện Ban Đêm (Dark Mode)"}
-              aria-label="Chuyển đổi giao diện Sáng / Tối"
+              title={currentTheme === 'dark' ? (isEn ? "Switch to Light Mode" : "Chuyển sang Giao diện Sáng (Light Mode)") : (isEn ? "Switch to Dark Mode" : "Chuyển sang Giao diện Ban Đêm (Dark Mode)")}
+              aria-label={isEn ? "Toggle Light / Dark mode" : "Chuyển đổi giao diện Sáng / Tối"}
             >
               {currentTheme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
@@ -731,13 +731,13 @@ export default function Navbar({
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
                   : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 animate-pulse'
               }`}
-              title={apiKey ? "Cài đặt hệ thống & AI API (Đã có Key)" : "Chưa cài đặt AI API Key! Bấm vào để nhập key"}
+              title={apiKey ? (isEn ? "System & AI API Settings (Key configured)" : "Cài đặt hệ thống & AI API (Đã có Key)") : (isEn ? "No AI API Key set! Click to configure" : "Chưa cài đặt AI API Key! Bấm vào để nhập key")}
             >
               <Settings className="w-3.5 h-3.5 text-slate-600 shrink-0" />
               <div className="flex items-center space-x-1">
                 <span className={`w-2 h-2 rounded-full shrink-0 ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
                 <span className="hidden 2xl:inline text-[11px] font-semibold">
-                  {apiKey ? 'API Key' : 'Nhập Key'}
+                  {apiKey ? 'API Key' : (isEn ? 'Add Key' : 'Nhập Key')}
                 </span>
               </div>
             </button>
@@ -756,11 +756,11 @@ export default function Navbar({
                   ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200' 
                   : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-800'
               }`}
-              title={user ? `Xem trang cá nhân: ${user.email}` : "Đăng nhập hoặc đăng ký tài khoản"}
+              title={user ? (isEn ? `View Profile: ${user.email}` : `Xem trang cá nhân: ${user.email}`) : (isEn ? "Sign in or register account" : "Đăng nhập hoặc đăng ký tài khoản")}
             >
               <User className={`w-3.5 h-3.5 shrink-0 ${user ? 'text-red-600' : 'text-slate-300'}`} />
               <span className="max-w-[70px] 2xl:max-w-[100px] truncate text-[11px]">
-                {user ? (user.email.split('@')[0]) : 'Tài Khoản'}
+                {user ? (user.email.split('@')[0]) : (isEn ? 'Account' : 'Tài Khoản')}
               </span>
             </button>
 
@@ -768,7 +768,7 @@ export default function Navbar({
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
               className="xl:hidden flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
-              aria-label="Mở menu đầy đủ"
+              aria-label={isEn ? "Open full menu" : "Mở menu đầy đủ"}
             >
               {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -810,17 +810,17 @@ export default function Navbar({
                   </div>
                   <div className="truncate">
                     <div className="text-xs font-bold text-slate-800 truncate">
-                      {user ? user.email : 'Đăng nhập / Đăng ký tài khoản'}
+                      {user ? user.email : (isEn ? 'Sign in / Sign up' : 'Đăng nhập / Đăng ký tài khoản')}
                     </div>
                     <div className="text-[10px] text-slate-400">
-                      {user ? '👤 Xem trang cá nhân & thống kê' : 'Lưu bài & từ vựng trên mọi thiết bị'}
+                      {user ? (isEn ? '👤 View profile & stats' : '👤 Xem trang cá nhân & thống kê') : (isEn ? 'Sync essays & vocabulary across devices' : 'Lưu bài & từ vựng trên mọi thiết bị')}
                     </div>
                   </div>
                 </button>
                 <button 
                   onClick={() => setIsMobileDrawerOpen(false)}
                   className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer shrink-0"
-                  aria-label="Đóng menu"
+                  aria-label={isEn ? "Close menu" : "Đóng menu"}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -835,12 +835,12 @@ export default function Navbar({
                   <div className="flex items-center space-x-2.5">
                     <ShieldAlert className="w-5 h-5 text-amber-300 animate-pulse" />
                     <div className="text-left">
-                      <div className="text-sm font-black">Phòng Thi Thử IELTS (60p)</div>
-                      <div className="text-[10px] text-red-100 font-normal">Writing 60p, Reading 60p, Listening & Speaking</div>
+                      <div className="text-sm font-black">{isEn ? 'IELTS Mock Test Room (60m)' : 'Phòng Thi Thử IELTS (60p)'}</div>
+                      <div className="text-[10px] text-red-100 font-normal">{isEn ? 'Writing 60m, Reading 60m, Listening & Speaking' : 'Writing 60p, Reading 60p, Listening & Speaking'}</div>
                     </div>
                   </div>
                   <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-wider">
-                    Vào Thi
+                    {isEn ? 'Enter Test' : 'Vào Thi'}
                   </span>
                 </button>
 
@@ -850,8 +850,8 @@ export default function Navbar({
                       <Target className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-black text-slate-900">Mục Tiêu: Band {targetBand}</div>
-                      <div className="text-[10px] text-slate-500">Cá nhân hóa độ khó & chấm điểm AI</div>
+                      <div className="text-xs font-black text-slate-900">{isEn ? `Target: Band ${targetBand}` : `Mục Tiêu: Band ${targetBand}`}</div>
+                      <div className="text-[10px] text-slate-500">{isEn ? 'Personalized difficulty & AI scoring' : 'Cá nhân hóa độ khó & chấm điểm AI'}</div>
                     </div>
                   </div>
                   <button
@@ -861,7 +861,7 @@ export default function Navbar({
                     }}
                     className="px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-700 text-xs font-bold hover:bg-red-50 shadow-2xs cursor-pointer"
                   >
-                    Đổi
+                    {isEn ? 'Change' : 'Đổi'}
                   </button>
                 </div>
               </div>
@@ -869,7 +869,7 @@ export default function Navbar({
               {/* 2. Skill Switcher in Mobile Drawer */}
               <div>
                 <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  Chọn Kỹ Năng Luyện Thi
+                  {isEn ? 'Select Skill to Practice' : 'Chọn Kỹ Năng Luyện Thi'}
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {skills.map(s => {
@@ -883,7 +883,7 @@ export default function Navbar({
                             onSelectSkill?.(s.id);
                             setIsMobileDrawerOpen(false);
                           } else {
-                            alert(`Phân hệ ${s.label} đang được hoàn thiện và sẽ ra mắt trong bản cập nhật tới!`);
+                            alert(isEn ? `${s.label} module is coming soon in the next release!` : `Phân hệ ${s.label} đang được hoàn thiện và sẽ ra mắt trong bản cập nhật tới!`);
                           }
                         }}
                         className={`flex items-center space-x-2 p-2 rounded-xl border text-left text-xs font-bold transition-all min-h-[44px] cursor-pointer ${
@@ -923,7 +923,7 @@ export default function Navbar({
               {/* 3. Luyện Tập & Đề Thi */}
               <div>
                 <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  Luyện Tập & Đề Thi
+                  {isEn ? 'Practice & Tests' : 'Luyện Tập & Đề Thi'}
                 </div>
                 <div className="space-y-1">
                   <button
@@ -932,9 +932,9 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Award className="w-4 h-4 text-indigo-600" />
-                      <span>Định Vị Band & Lộ Trình 30 Ngày</span>
+                      <span>{isEn ? 'Band Diagnostic & 30-Day Plan' : 'Định Vị Band & Lộ Trình 30 Ngày'}</span>
                     </div>
-                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded">15 Phút</span>
+                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded">{isEn ? '15 Min' : '15 Phút'}</span>
                   </button>
 
                   <button
@@ -943,9 +943,9 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Zap className="w-4 h-4 text-amber-600 fill-current" />
-                      <span>Huấn Luyện Viên 30P (Adaptive Sprint)</span>
+                      <span>{isEn ? '30-Min Coach (Adaptive Sprint)' : 'Huấn Luyện Viên 30P (Adaptive Sprint)'}</span>
                     </div>
-                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded">MỚI</span>
+                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded">{isEn ? 'NEW' : 'MỚI'}</span>
                   </button>
 
                   <button
@@ -954,7 +954,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <BookOpen className="w-4 h-4 text-blue-600" />
-                      <span>Thư Viện Đề Thi Chuẩn Cambridge</span>
+                      <span>{isEn ? 'Cambridge Standard Test Library' : 'Thư Viện Đề Thi Chuẩn Cambridge'}</span>
                     </div>
                   </button>
 
@@ -964,7 +964,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Sparkles className="w-4 h-4 text-red-600" />
-                      <span>Sinh Đề Thi Mới Bằng AI</span>
+                      <span>{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
                     </div>
                     <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded">AI</span>
                   </button>
@@ -975,7 +975,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Puzzle className="w-4 h-4 text-amber-600" />
-                      <span>Micro-Drills (Luyện Kỹ Năng Vi Mô)</span>
+                      <span>{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Kỹ Năng Vi Mô)'}</span>
                     </div>
                   </button>
 
@@ -985,9 +985,9 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <BookMarked className="w-4 h-4 text-amber-600" />
-                      <span>Cẩm Nang Lý Thuyết & Chiến Thuật</span>
+                      <span>{isEn ? 'Theory & Strategy Handbook' : 'Cẩm Nang Lý Thuyết & Chiến Thuật'}</span>
                     </div>
-                    <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded">Bản Web Online</span>
+                    <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded">{isEn ? 'Online Web' : 'Bản Web Online'}</span>
                   </button>
 
                   <button
@@ -996,7 +996,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <FileUp className="w-4 h-4 text-purple-600" />
-                      <span>Nạp Đề & Bài Mẫu Thô</span>
+                      <span>{isEn ? 'Import Prompts & Samples' : 'Nạp Đề & Bài Mẫu Thô'}</span>
                     </div>
                   </button>
                 </div>
@@ -1005,7 +1005,7 @@ export default function Navbar({
               {/* 4. Bộ Công Cụ Bổ Trợ */}
               <div>
                 <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  Bộ Công Cụ Bổ Trợ
+                  {isEn ? 'Support Tools' : 'Bộ Công Cụ Bổ Trợ'}
                 </div>
                 <div className="space-y-1">
                   <button
@@ -1014,7 +1014,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Bookmark className="w-4 h-4 text-amber-600" />
-                      <span>Sổ Tay Từ Vựng Cá Nhân</span>
+                      <span>{isEn ? 'Personal Vocabulary Notebook' : 'Sổ Tay Từ Vựng Cá Nhân'}</span>
                     </div>
                   </button>
 
@@ -1024,7 +1024,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <ShieldAlert className="w-4 h-4 text-rose-600" />
-                      <span>Sổ Tay Lỗi Sai Thường Gặp</span>
+                      <span>{isEn ? 'Common Mistake Log' : 'Sổ Tay Lỗi Sai Thường Gặp'}</span>
                     </div>
                     {mistakesCount > 0 && (
                       <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-1.5 py-0.5 rounded-full">
@@ -1039,7 +1039,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <SpellCheck2 className="w-4 h-4 text-emerald-600" />
-                      <span>Vocab, Grammar & Chính Tả</span>
+                      <span>{isEn ? 'Vocab, Grammar & Spelling' : 'Vocab, Grammar & Chính Tả'}</span>
                     </div>
                   </button>
                 </div>
@@ -1048,7 +1048,7 @@ export default function Navbar({
               {/* 5. Tiến Độ & Cài Đặt */}
               <div>
                 <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  Tiến Độ & Cài Đặt
+                  {isEn ? 'Progress & Settings' : 'Tiến Độ & Cài Đặt'}
                 </div>
                 <div className="space-y-1">
                   <button
@@ -1057,7 +1057,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <History className="w-4 h-4 text-blue-600" />
-                      <span>Lịch Sử Bài Viết & Điểm Chấm</span>
+                      <span>{isEn ? 'Submission History & Scores' : 'Lịch Sử Bài Viết & Điểm Chấm'}</span>
                     </div>
                   </button>
 
@@ -1067,7 +1067,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <TrendingUp className="w-4 h-4 text-blue-600" />
-                      <span>Báo Cáo Tiến Độ Tuần</span>
+                      <span>{isEn ? 'Weekly Progress Report' : 'Báo Cáo Tiến Độ Tuần'}</span>
                     </div>
                   </button>
 
@@ -1077,7 +1077,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Settings className="w-4 h-4 text-slate-600" />
-                      <span>Cài Đặt Hệ Thống & AI API Key</span>
+                      <span>{isEn ? 'System & AI API Settings' : 'Cài Đặt Hệ Thống & AI API Key'}</span>
                     </div>
                     <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                   </button>
@@ -1088,7 +1088,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-                      <span>Trợ Năng Hiển Thị CDI (Cỡ Chữ & Màu)</span>
+                      <span>{isEn ? 'CDI Accessibility Display (Font & Colors)' : 'Trợ Năng Hiển Thị CDI (Cỡ Chữ & Màu)'}</span>
                     </div>
                     <span className="text-[10px] text-blue-600 font-bold bg-blue-100 px-1.5 py-0.5 rounded">IDP/BC</span>
                   </button>
@@ -1105,8 +1105,8 @@ export default function Navbar({
                         <Globe className="w-4 h-4" />
                       </div>
                       <div>
-                        <div>{isEn ? 'Ngôn Ngữ (Language): English' : 'Ngôn Ngữ (Language): Tiếng Việt'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Chạm để đổi sang Tiếng Việt' : 'Chạm để đổi sang English'}</div>
+                        <div>{isEn ? 'Language: English' : 'Ngôn Ngữ (Language): Tiếng Việt'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Tap to switch to Tiếng Việt' : 'Chạm để đổi sang English'}</div>
                       </div>
                     </div>
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
@@ -1126,14 +1126,14 @@ export default function Navbar({
                         {currentTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                       </div>
                       <div>
-                        <div>{currentTheme === 'dark' ? 'Giao Diện Ban Đêm (Dark Mode)' : 'Giao Diện Ban Ngày (Light Mode)'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">Chạm để đổi sang chế độ {currentTheme === 'dark' ? 'Sáng' : 'Tối'}</div>
+                        <div>{currentTheme === 'dark' ? (isEn ? 'Dark Mode' : 'Giao Diện Ban Đêm (Dark Mode)') : (isEn ? 'Light Mode' : 'Giao Diện Ban Ngày (Light Mode)')}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? `Tap to switch to ${currentTheme === 'dark' ? 'Light' : 'Dark'} mode` : `Chạm để đổi sang chế độ ${currentTheme === 'dark' ? 'Sáng' : 'Tối'}`}</div>
                       </div>
                     </div>
                     <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                       currentTheme === 'dark' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'
                     }`}>
-                      {currentTheme === 'dark' ? 'ĐANG BẬT' : 'ĐANG TẮT'}
+                      {currentTheme === 'dark' ? (isEn ? 'ON' : 'ĐANG BẬT') : (isEn ? 'OFF' : 'ĐANG TẮT')}
                     </span>
                   </button>
 
@@ -1143,9 +1143,9 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <HelpCircle className="w-4 h-4 text-red-600" />
-                      <span>Trung Tâm Trợ Giúp & Hướng Dẫn</span>
+                      <span>{isEn ? 'Help Center & Guides' : 'Trung Tâm Trợ Giúp & Hướng Dẫn'}</span>
                     </div>
-                    <span className="text-[10px] text-red-600 font-extrabold bg-white border border-red-200 px-1.5 py-0.5 rounded-full">Công Khai</span>
+                    <span className="text-[10px] text-red-600 font-extrabold bg-white border border-red-200 px-1.5 py-0.5 rounded-full">{isEn ? 'Public' : 'Công Khai'}</span>
                   </button>
 
                   <button
@@ -1154,7 +1154,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <QrCode className="w-4 h-4 text-red-600" />
-                      <span>Mã QR Website (Quét Mở Nhanh)</span>
+                      <span>{isEn ? 'Website QR Code' : 'Mã QR Website (Quét Mở Nhanh)'}</span>
                     </div>
                     <span className="text-[10px] text-red-600 font-bold bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">Scan QR</span>
                   </button>
@@ -1165,9 +1165,9 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Mail className="w-4 h-4 text-rose-600" />
-                      <span>Gửi góp ý</span>
+                      <span>{isEn ? 'Send Feedback' : 'Gửi góp ý'}</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-medium">Hỗ trợ 24/7</span>
+                    <span className="text-[10px] text-slate-400 font-medium">{isEn ? '24/7 Support' : 'Hỗ trợ 24/7'}</span>
                   </button>
                 </div>
               </div>

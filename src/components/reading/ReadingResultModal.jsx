@@ -21,6 +21,7 @@ import {
   BookMarked,
   Target
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 export default function ReadingResultModal({
   isOpen,
@@ -31,6 +32,9 @@ export default function ReadingResultModal({
   onJumpToQuestion,
   onSelectPassage
 }) {
+  const { t, language } = useTranslation();
+  const isEn = language === 'en';
+
   if (!isOpen || !bandResult) return null;
 
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'passages' | 'questions' | 'types' | 'distractors'
@@ -54,14 +58,16 @@ export default function ReadingResultModal({
   const formatTime = (secs) => {
     const mins = Math.floor(secs / 60);
     const remainderSecs = secs % 60;
-    return `${mins} phút ${remainderSecs < 10 ? '0' : ''}${remainderSecs} giây`;
+    return isEn 
+      ? `${mins} mins ${remainderSecs < 10 ? '0' : ''}${remainderSecs} secs`
+      : `${mins} phút ${remainderSecs < 10 ? '0' : ''}${remainderSecs} giây`;
   };
 
   // Group performance by question type
   const typeStats = useMemo(() => {
     const map = {};
     questionsBreakdown.forEach(q => {
-      const type = q.questionType || 'Khác';
+      const type = q.questionType || (isEn ? 'Other' : 'Khác');
       if (!map[type]) {
         map[type] = { type, total: 0, correct: 0 };
       }
@@ -72,7 +78,7 @@ export default function ReadingResultModal({
       ...item,
       accuracy: Math.round((item.correct / item.total) * 100)
     }));
-  }, [questionsBreakdown]);
+  }, [questionsBreakdown, isEn]);
 
   // Filtered questions list
   const filteredQuestions = useMemo(() => {
@@ -83,10 +89,10 @@ export default function ReadingResultModal({
 
   // Band Score color & evaluation badge
   const getBandBadge = (score) => {
-    if (score >= 8.0) return { bg: 'bg-emerald-500', text: 'text-emerald-700', border: 'border-emerald-300', level: 'Xuất sắc (Expert User)' };
-    if (score >= 7.0) return { bg: 'bg-blue-600', text: 'text-blue-700', border: 'border-blue-300', level: 'Tốt (Good User)' };
-    if (score >= 6.0) return { bg: 'bg-amber-500', text: 'text-amber-700', border: 'border-amber-300', level: 'Khá (Competent User)' };
-    return { bg: 'bg-rose-500', text: 'text-rose-700', border: 'border-rose-300', level: 'Cần nỗ lực hơn (Modest)' };
+    if (score >= 8.0) return { bg: 'bg-emerald-500', text: 'text-emerald-700', border: 'border-emerald-300', level: isEn ? 'Excellent (Expert User)' : 'Xuất sắc (Expert User)' };
+    if (score >= 7.0) return { bg: 'bg-blue-600', text: 'text-blue-700', border: 'border-blue-300', level: isEn ? 'Good (Good User)' : 'Tốt (Good User)' };
+    if (score >= 6.0) return { bg: 'bg-amber-500', text: 'text-amber-700', border: 'border-amber-300', level: isEn ? 'Competent (Competent User)' : 'Khá (Competent User)' };
+    return { bg: 'bg-rose-500', text: 'text-rose-700', border: 'border-rose-300', level: isEn ? 'Needs Improvement (Modest)' : 'Cần nỗ lực hơn (Modest)' };
   };
 
   const badgeInfo = getBandBadge(band);
@@ -103,20 +109,22 @@ export default function ReadingResultModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-400">Kết Quả Bài Thi Thử</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
+                  {isEn ? 'Practice Test Result' : 'Kết Quả Bài Thi Thử'}
+                </span>
                 <span className="text-slate-400 text-xs">•</span>
                 <span className="text-xs text-slate-300">{testTitle}</span>
               </div>
               <h2 className="text-lg sm:text-xl font-black tracking-tight text-white mt-0.5">
-                Báo Cáo Tổng Kết Điểm IELTS Reading
+                {isEn ? 'IELTS Reading Score Report' : 'Báo Cáo Tổng Kết Điểm IELTS Reading'}
               </h2>
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Đóng bảng kết quả"
-            aria-label="Đóng bảng kết quả"
+            title={isEn ? "Close results" : "Đóng bảng kết quả"}
+            aria-label={isEn ? "Close results" : "Đóng bảng kết quả"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -133,7 +141,7 @@ export default function ReadingResultModal({
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
-            <span>Tổng Quan & Band Score</span>
+            <span>{isEn ? 'Overview & Band Score' : 'Tổng Quan & Band Score'}</span>
           </button>
 
           <button
@@ -145,7 +153,7 @@ export default function ReadingResultModal({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>Hiệu Suất 3 Passages</span>
+            <span>{isEn ? '3 Passages Performance' : 'Hiệu Suất 3 Passages'}</span>
           </button>
 
           <button
@@ -157,7 +165,7 @@ export default function ReadingResultModal({
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Ma Trận 40 Câu Hỏi ({correctCount}/{totalQuestions})</span>
+            <span>{isEn ? `40 Questions Matrix (${correctCount}/${totalQuestions})` : `Ma Trận 40 Câu Hỏi (${correctCount}/${totalQuestions})`}</span>
           </button>
 
           <button
@@ -169,7 +177,7 @@ export default function ReadingResultModal({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Phân Tích Dạng Bài</span>
+            <span>{isEn ? 'Question Type Breakdown' : 'Phân Tích Dạng Bài'}</span>
           </button>
 
           <button
@@ -181,7 +189,7 @@ export default function ReadingResultModal({
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5 text-purple-600" />
-            <span>Bẫy Đề Thi & Distractors {distractorSummary?.totalTrapsIdentified > 0 ? `(${distractorSummary.totalTrapsIdentified})` : ''}</span>
+            <span>{isEn ? 'Exam Traps & Distractors' : 'Bẫy Đề Thi & Distractors'} {distractorSummary?.totalTrapsIdentified > 0 ? `(${distractorSummary.totalTrapsIdentified})` : ''}</span>
           </button>
         </div>
 
@@ -208,7 +216,7 @@ export default function ReadingResultModal({
                 {/* Raw Score & Accuracy */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-center space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500">Số câu trả lời đúng:</span>
+                    <span className="text-xs font-semibold text-slate-500">{isEn ? 'Correct answers:' : 'Số câu trả lời đúng:'}</span>
                     <span className="text-lg font-black text-slate-900">{correctCount} / {totalQuestions}</span>
                   </div>
                   {/* Progress bar */}
@@ -219,8 +227,8 @@ export default function ReadingResultModal({
                     />
                   </div>
                   <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span>Độ chính xác: <strong className="text-slate-800 font-bold">{accuracyPercent}%</strong></span>
-                    <span>Số câu sai / bỏ: <strong className="text-rose-600 font-bold">{totalQuestions - correctCount}</strong></span>
+                    <span>{isEn ? 'Accuracy: ' : 'Độ chính xác: '}<strong className="text-slate-800 font-bold">{accuracyPercent}%</strong></span>
+                    <span>{isEn ? 'Wrong / Skipped: ' : 'Số câu sai / bỏ: '}<strong className="text-rose-600 font-bold">{totalQuestions - correctCount}</strong></span>
                   </div>
                 </div>
 
@@ -228,13 +236,13 @@ export default function ReadingResultModal({
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-center space-y-2 shadow-xs">
                   <div className="flex items-center space-x-2 text-slate-500 text-xs font-semibold">
                     <Clock className="w-4 h-4 text-blue-600" />
-                    <span>Thời gian làm bài:</span>
+                    <span>{isEn ? 'Time spent:' : 'Thời gian làm bài:'}</span>
                   </div>
                   <div className="text-xl sm:text-2xl font-black text-slate-800">
                     {formatTime(timeSpentSeconds)}
                   </div>
                   <div className="text-xs text-slate-500">
-                    Tốc độ trung bình: <strong className="text-slate-800 font-bold">{Math.round((timeSpentSeconds / 40))}s / câu</strong>
+                    {isEn ? 'Average pace: ' : 'Tốc độ trung bình: '}<strong className="text-slate-800 font-bold">{Math.round((timeSpentSeconds / 40))}{isEn ? 's / question' : 's / câu'}</strong>
                   </div>
                 </div>
               </div>
@@ -247,13 +255,17 @@ export default function ReadingResultModal({
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-xs font-black uppercase tracking-wider text-indigo-300">Barem Khảo Thí Cambridge</span>
+                      <span className="text-xs font-black uppercase tracking-wider text-indigo-300">
+                        {isEn ? 'Cambridge Assessment Scale' : 'Barem Khảo Thí Cambridge'}
+                      </span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/30 text-indigo-200 border border-indigo-400/40">
                         {moduleType === 'academic' ? 'Module: Academic' : 'Module: General Training'}
                       </span>
                     </div>
                     <p className="text-xs text-slate-300 mt-1">
-                      Thang điểm IELTS Reading có barem chuyển đổi riêng biệt giữa <strong>Academic</strong> và <strong>General Training</strong> do đặc thù độ dài & độ phức tạp bài đọc.
+                      {isEn 
+                        ? 'IELTS Reading applies separate conversion scales for Academic and General Training due to differences in passage length and linguistic complexity.'
+                        : 'Thang điểm IELTS Reading có barem chuyển đổi riêng biệt giữa Academic và General Training do đặc thù độ dài & độ phức tạp bài đọc.'}
                     </p>
                   </div>
                 </div>
@@ -281,40 +293,40 @@ export default function ReadingResultModal({
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
                     <ShieldCheck className="w-4 h-4 text-blue-600" />
-                    <span>Chẩn Đoán 6 Tầng Lỗi Khảo Thí (Diagnostic Breakdown)</span>
+                    <span>{isEn ? '6-Layer Exam Error Diagnostics' : 'Chẩn Đoán 6 Tầng Lỗi Khảo Thí (Diagnostic Breakdown)'}</span>
                   </h3>
-                  <span className="text-xs text-slate-500 font-semibold">Chuẩn Cambridge Official</span>
+                  <span className="text-xs text-slate-500 font-semibold">{isEn ? 'Cambridge Official Standard' : 'Chuẩn Cambridge Official'}</span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-1">
                   <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-300 text-center">
                     <div className="text-lg font-black text-emerald-800">{errorBreakdown.CORRECT || 0}</div>
-                    <div className="text-[11px] font-semibold text-emerald-700">Đúng Tuyệt Đối</div>
+                    <div className="text-[11px] font-semibold text-emerald-700">{isEn ? 'Accurate' : 'Đúng Tuyệt Đối'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-amber-100/70 border border-amber-300 text-center">
                     <div className="text-lg font-black text-amber-800">{errorBreakdown.WORD_LIMIT_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-amber-700">Lỗi Vượt Từ</div>
+                    <div className="text-[11px] font-semibold text-amber-700">{isEn ? 'Word Limit' : 'Lỗi Vượt Từ'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-orange-100/70 border border-orange-300 text-center">
                     <div className="text-lg font-black text-orange-800">{errorBreakdown.PLURAL_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-orange-700">Lỗi Âm Đuôi (-s)</div>
+                    <div className="text-[11px] font-semibold text-orange-700">{isEn ? 'Plural / -s' : 'Lỗi Âm Đuôi (-s)'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-rose-100/70 border border-rose-300 text-center">
                     <div className="text-lg font-black text-rose-800">{errorBreakdown.SPELLING_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-rose-700">Sai Chính Tả</div>
+                    <div className="text-[11px] font-semibold text-rose-700">{isEn ? 'Spelling' : 'Sai Chính Tả'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-red-100/70 border border-red-300 text-center">
                     <div className="text-lg font-black text-red-800">{errorBreakdown.WRONG_ANSWER || 0}</div>
-                    <div className="text-[11px] font-semibold text-red-700">Trả Lời Sai</div>
+                    <div className="text-[11px] font-semibold text-red-700">{isEn ? 'Wrong' : 'Trả Lời Sai'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-slate-200/80 border border-slate-300 text-center">
                     <div className="text-lg font-black text-slate-800">{errorBreakdown.UNANSWERED || 0}</div>
-                    <div className="text-[11px] font-semibold text-slate-600">Chưa Điền</div>
+                    <div className="text-[11px] font-semibold text-slate-600">{isEn ? 'Unanswered' : 'Chưa Điền'}</div>
                   </div>
                 </div>
               </div>
@@ -323,7 +335,7 @@ export default function ReadingResultModal({
               <div>
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center space-x-1.5">
                   <Layers className="w-4 h-4 text-blue-600" />
-                  <span>Kết Quả Theo Từng Passage</span>
+                  <span>{isEn ? 'Results by Passage' : 'Kết Quả Theo Từng Passage'}</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                   {passageStats.map(stat => (
@@ -333,7 +345,7 @@ export default function ReadingResultModal({
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-black text-blue-800 uppercase">Passage {stat.passageNumber}</span>
-                        <span className="text-xs font-bold text-slate-600">{stat.correct}/{stat.total} câu</span>
+                        <span className="text-xs font-bold text-slate-600">{stat.correct}/{stat.total} {isEn ? 'questions' : 'câu'}</span>
                       </div>
                       <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden mb-2">
                         <div 
@@ -344,15 +356,15 @@ export default function ReadingResultModal({
                         />
                       </div>
                       <div className="flex items-center justify-between text-[11px] text-slate-500">
-                        <span>Chính xác: <strong>{stat.accuracy}%</strong></span>
+                        <span>{isEn ? 'Accuracy: ' : 'Chính xác: '}<strong>{stat.accuracy}%</strong></span>
                         <button
                           onClick={() => {
                             if (onSelectPassage) onSelectPassage(stat.passageNumber);
                             onClose();
                           }}
-                          className="text-blue-600 hover:text-blue-800 font-bold hover:underline flex items-center gap-0.5"
+                          className="text-blue-600 hover:text-blue-800 font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
                         >
-                          <span>Xem lại</span>
+                          <span>{isEn ? 'Review' : 'Xem lại'}</span>
                           <ChevronRight className="w-3 h-3" />
                         </button>
                       </div>
@@ -365,9 +377,11 @@ export default function ReadingResultModal({
               <div className="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex items-start space-x-3 text-xs text-blue-950">
                 <Sparkles className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <p className="font-bold text-blue-900">Chiến Lược Nâng Band Sau Bài Thi:</p>
+                  <p className="font-bold text-blue-900">{isEn ? 'Band Improvement Strategy:' : 'Chiến Lược Nâng Band Sau Bài Thi:'}</p>
                   <p className="text-blue-800 leading-relaxed">
-                    Bấm vào nút <strong>"Xem Lại Bài Thi & Giải Thích"</strong> bên dưới để xem chi tiết vị trí câu bằng chứng (Evidence Locator) và bản dịch phân tích bẫy đề thi cho từng câu sai. Bạn cũng có thể xem giải thích câu hỏi ngay trên màn hình chia đôi.
+                    {isEn 
+                      ? <>Click <strong>"Review Test & Explanations"</strong> below to inspect Evidence Locators, line references, and distractor analyses for every incorrect answer on a split-screen view.</>
+                      : <>Bấm vào nút <strong>"Xem Lại Bài Thi & Giải Thích"</strong> bên dưới để xem chi tiết vị trí câu bằng chứng (Evidence Locator) và bản dịch phân tích bẫy đề thi cho từng câu sai. Bạn cũng có thể xem giải thích câu hỏi ngay trên màn hình chia đôi.</>}
                   </p>
                 </div>
               </div>
@@ -384,20 +398,20 @@ export default function ReadingResultModal({
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-100">
                       <div>
                         <h4 className="font-bold text-slate-900 text-sm sm:text-base">Passage {stat.passageNumber}</h4>
-                        <p className="text-xs text-slate-500 mt-0.5">Số lượng: {stat.total} câu hỏi</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{isEn ? `Quantity: ${stat.total} questions` : `Số lượng: ${stat.total} câu hỏi`}</p>
                       </div>
                       <div className="flex items-center space-x-3">
                         <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
-                          {stat.correct}/{stat.total} đúng ({stat.accuracy}%)
+                          {stat.correct}/{stat.total} {isEn ? 'correct' : 'đúng'} ({stat.accuracy}%)
                         </span>
                         <button
                           onClick={() => {
                             if (onSelectPassage) onSelectPassage(stat.passageNumber);
                             onClose();
                           }}
-                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 hover:underline"
+                          className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 hover:underline cursor-pointer"
                         >
-                          <span>Mở bài đọc</span>
+                          <span>{isEn ? 'Open passage' : 'Mở bài đọc'}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -413,12 +427,12 @@ export default function ReadingResultModal({
                             if (onJumpToQuestion) onJumpToQuestion(q.order);
                             onClose();
                           }}
-                          className={`p-2 rounded-lg text-xs font-bold flex flex-col items-center justify-center border transition-all hover:scale-105 ${
+                          className={`p-2 rounded-lg text-xs font-bold flex flex-col items-center justify-center border transition-all hover:scale-105 cursor-pointer ${
                             q.isCorrect
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
                               : 'bg-rose-50 text-rose-700 border-rose-300 hover:bg-rose-100'
                           }`}
-                          title={`Câu ${q.order}: ${q.isCorrect ? 'Đúng' : 'Sai'}. Nhấp để xem lại`}
+                          title={isEn ? `Question ${q.order}: ${q.isCorrect ? 'Correct' : 'Incorrect'}. Click to review` : `Câu ${q.order}: ${q.isCorrect ? 'Đúng' : 'Sai'}. Nhấp để xem lại`}
                         >
                           <span>{q.order}</span>
                           <span className="text-[10px] mt-0.5">
@@ -444,7 +458,7 @@ export default function ReadingResultModal({
                     filterType === 'all' ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200'
                   }`}
                 >
-                  Tất cả (40)
+                  {isEn ? 'All' : 'Tất cả'} (40)
                 </button>
                 <button
                   onClick={() => setFilterType('correct')}
@@ -452,7 +466,7 @@ export default function ReadingResultModal({
                     filterType === 'correct' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200'
                   }`}
                 >
-                  Đúng ({correctCount})
+                  {isEn ? 'Correct' : 'Đúng'} ({correctCount})
                 </button>
                 <button
                   onClick={() => setFilterType('wrong')}
@@ -460,7 +474,7 @@ export default function ReadingResultModal({
                     filterType === 'wrong' ? 'bg-rose-600 text-white border-rose-600' : 'bg-rose-50 text-rose-700 hover:bg-rose-100 border-rose-200'
                   }`}
                 >
-                  Sai / Bỏ qua ({totalQuestions - correctCount})
+                  {isEn ? 'Wrong / Skipped' : 'Sai / Bỏ qua'} ({totalQuestions - correctCount})
                 </button>
               </div>
 
@@ -484,11 +498,11 @@ export default function ReadingResultModal({
                           {q.questionText}
                         </div>
                         <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
-                          <span className="text-slate-500">Đoạn văn: <strong>Passage {q.passageNumber} (Đoạn {q.evidenceParagraph || 'N/A'})</strong></span>
+                          <span className="text-slate-500">{isEn ? 'Passage: ' : 'Đoạn văn: '}<strong>Passage {q.passageNumber} ({isEn ? 'Para ' : 'Đoạn '}{q.evidenceParagraph || 'N/A'})</strong></span>
                           <span className="text-slate-400">•</span>
-                          <span>Bạn chọn: <strong className={q.isCorrect ? 'text-emerald-700' : 'text-rose-700'}>{q.userAnswer ? String(q.userAnswer) : '(Chưa điền)'}</strong></span>
+                          <span>{isEn ? 'You answered: ' : 'Bạn chọn: '}<strong className={q.isCorrect ? 'text-emerald-700' : 'text-rose-700'}>{q.userAnswer ? String(q.userAnswer) : (isEn ? '(Blank)' : '(Chưa điền)')}</strong></span>
                           <span className="text-slate-400">•</span>
-                          <span>Đáp án chuẩn: <strong className="text-emerald-700 font-bold">{String(q.correctAnswer)}</strong></span>
+                          <span>{isEn ? 'Correct answer: ' : 'Đáp án chuẩn: '}<strong className="text-emerald-700 font-bold">{String(q.correctAnswer)}</strong></span>
                         </div>
 
                         {/* Diagnostic badge and message */}
@@ -496,26 +510,26 @@ export default function ReadingResultModal({
                           <div className="mt-1.5 flex items-start space-x-1.5 text-[11px] font-medium text-slate-700 bg-white/80 p-2 rounded-lg border border-slate-200/80">
                             {q.status === 'WORD_LIMIT_ERROR' && (
                               <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold shrink-0 text-[10px]">
-                                LỖI VƯỢT TỪ
+                                {isEn ? 'WORD LIMIT' : 'LỖI VƯỢT TỪ'}
                               </span>
                             )}
                             {q.status === 'PLURAL_ERROR' && (
                               <span className="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 font-bold shrink-0 text-[10px]">
-                                LỖI SỐ NHIỀU -S
+                                {isEn ? 'PLURAL -S' : 'LỖI SỐ NHIỀU -S'}
                               </span>
                             )}
                             {q.status === 'SPELLING_ERROR' && (
                               <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0 text-[10px]">
-                                SAI CHÍNH TẢ
+                                {isEn ? 'SPELLING' : 'SAI CHÍNH TẢ'}
                               </span>
                             )}
                             {q.status === 'UNANSWERED' && (
                               <span className="px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-bold shrink-0 text-[10px]">
-                                CHƯA ĐIỀN
+                                {isEn ? 'UNANSWERED' : 'CHƯA ĐIỀN'}
                               </span>
                             )}
                             <span className="text-slate-600 leading-snug">
-                              {q.diagnosticMessage || (q.explanation || 'Chưa chính xác')}
+                              {q.diagnosticMessage || (q.explanation || (isEn ? 'Incorrect' : 'Chưa chính xác'))}
                             </span>
                           </div>
                         )}
@@ -527,7 +541,7 @@ export default function ReadingResultModal({
                               </span>
                             </div>
                             <p className="text-purple-800 leading-snug">{q.distractorAnalysis.analysis}</p>
-                            <p className="text-purple-700 italic">💡 Mẹo Cambridge: {q.distractorAnalysis.tip}</p>
+                            <p className="text-purple-700 italic">{isEn ? '💡 Cambridge Tip: ' : '💡 Mẹo Cambridge: '}{q.distractorAnalysis.tip}</p>
                           </div>
                         )}
                         {q.isCorrect && q.diagnosticMessage && q.diagnosticMessage.includes('Lưu ý') && (
@@ -545,9 +559,9 @@ export default function ReadingResultModal({
                         if (onJumpToQuestion) onJumpToQuestion(q.order);
                         onClose();
                       }}
-                      className="self-end sm:self-center shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-blue-600 hover:text-blue-800 font-bold border border-slate-200 shadow-2xs flex items-center gap-1 transition-colors"
+                      className="self-end sm:self-center shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-blue-600 hover:text-blue-800 font-bold border border-slate-200 shadow-2xs flex items-center gap-1 transition-colors cursor-pointer"
                     >
-                      <span>Xem câu hỏi</span>
+                      <span>{isEn ? 'View question' : 'Xem câu hỏi'}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -560,7 +574,9 @@ export default function ReadingResultModal({
           {activeTab === 'types' && (
             <div className="space-y-3">
               <p className="text-xs text-slate-500">
-                Thống kê tỷ lệ chính xác theo từng dạng bài IELTS Reading giúp nhận diện dạng bài bạn đang làm tốt hoặc cần rèn luyện thêm:
+                {isEn 
+                  ? 'Accuracy rate per IELTS Reading question type to help identify areas of strength and areas needing reinforcement:'
+                  : 'Thống kê tỷ lệ chính xác theo từng dạng bài IELTS Reading giúp nhận diện dạng bài bạn đang làm tốt hoặc cần rèn luyện thêm:'}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -568,7 +584,7 @@ export default function ReadingResultModal({
                   <div key={item.type} className="border border-slate-200 rounded-xl p-4 bg-white shadow-xs">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-slate-800 text-xs capitalize">{item.type.replace(/_/g, ' ')}</span>
-                      <span className="text-xs font-black text-slate-700">{item.correct} / {item.total} câu</span>
+                      <span className="text-xs font-black text-slate-700">{item.correct} / {item.total} {isEn ? 'questions' : 'câu'}</span>
                     </div>
                     <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-2">
                       <div
@@ -579,7 +595,7 @@ export default function ReadingResultModal({
                       />
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-slate-500">
-                      <span>Tỷ lệ làm đúng:</span>
+                      <span>{isEn ? 'Accuracy rate:' : 'Tỷ lệ làm đúng:'}</span>
                       <strong className={item.accuracy >= 80 ? 'text-emerald-600' : item.accuracy >= 50 ? 'text-blue-600' : 'text-rose-600'}>
                         {item.accuracy}%
                       </strong>
@@ -599,9 +615,13 @@ export default function ReadingResultModal({
                     <Target className="w-5 h-5 text-purple-300" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-sm sm:text-base text-white">Chẩn Đoán Bẫy Đề Thi & Phương Án Nhiễu (Distractor Analysis)</h3>
+                    <h3 className="font-extrabold text-sm sm:text-base text-white">
+                      {isEn ? 'Exam Traps & Distractor Analysis' : 'Chẩn Đoán Bẫy Đề Thi & Phương Án Nhiễu (Distractor Analysis)'}
+                    </h3>
                     <p className="text-xs text-purple-200 mt-0.5">
-                      Hệ thống tự động phát hiện 5 nhóm bẫy kinh điển của đề thi Cambridge: Phủ định ngầm, Mốc thời gian, Tuyệt đối hóa, Suy diễn Not Given, và Trùng từ khóa bề mặt.
+                      {isEn 
+                        ? 'The system automatically detects 5 classic Cambridge trap categories: Implicit Negation, Temporal Shift, Absolute vs Qualified, Extrapolation (Not Given), and Surface Keyword Matching.'
+                        : 'Hệ thống tự động phát hiện 5 nhóm bẫy kinh điển của đề thi Cambridge: Phủ định ngầm, Mốc thời gian, Tuyệt đối hóa, Suy diễn Not Given, và Trùng từ khóa bề mặt.'}
                     </p>
                   </div>
                 </div>
@@ -609,23 +629,23 @@ export default function ReadingResultModal({
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4 pt-4 border-t border-white/10 text-center">
                   <div className="p-2 rounded-xl bg-white/10 border border-white/10">
                     <div className="text-lg font-black text-rose-300">{distractorSummary?.TRAP_IMPLICIT_NEGATION || 0}</div>
-                    <div className="text-[10px] font-bold text-slate-300">Phủ Định Ngầm</div>
+                    <div className="text-[10px] font-bold text-slate-300">{isEn ? 'Implicit Negation' : 'Phủ Định Ngầm'}</div>
                   </div>
                   <div className="p-2 rounded-xl bg-white/10 border border-white/10">
                     <div className="text-lg font-black text-amber-300">{distractorSummary?.TRAP_TEMPORAL_SHIFT || 0}</div>
-                    <div className="text-[10px] font-bold text-slate-300">Lệch Thì/Thời Gian</div>
+                    <div className="text-[10px] font-bold text-slate-300">{isEn ? 'Temporal Shift' : 'Lệch Thì/Thời Gian'}</div>
                   </div>
                   <div className="p-2 rounded-xl bg-white/10 border border-white/10">
                     <div className="text-lg font-black text-purple-300">{distractorSummary?.TRAP_ABSOLUTE_VS_QUALIFIED || 0}</div>
-                    <div className="text-[10px] font-bold text-slate-300">Tuyệt Đối Hóa</div>
+                    <div className="text-[10px] font-bold text-slate-300">{isEn ? 'Absolute vs Qualified' : 'Tuyệt Đối Hóa'}</div>
                   </div>
                   <div className="p-2 rounded-xl bg-white/10 border border-white/10">
                     <div className="text-lg font-black text-blue-300">{distractorSummary?.TRAP_EXTRAPOLATION_NOT_GIVEN || 0}</div>
-                    <div className="text-[10px] font-bold text-slate-300">Suy Diễn Not Given</div>
+                    <div className="text-[10px] font-bold text-slate-300">{isEn ? 'Extrapolation Not Given' : 'Suy Diễn Not Given'}</div>
                   </div>
                   <div className="p-2 rounded-xl bg-white/10 border border-white/10">
                     <div className="text-lg font-black text-orange-300">{distractorSummary?.TRAP_SURFACE_KEYWORD_MATCH || 0}</div>
-                    <div className="text-[10px] font-bold text-slate-300">Trùng Từ Khóa</div>
+                    <div className="text-[10px] font-bold text-slate-300">{isEn ? 'Keyword Match' : 'Trùng Từ Khóa'}</div>
                   </div>
                 </div>
               </div>
@@ -634,15 +654,21 @@ export default function ReadingResultModal({
               {questionsBreakdown.filter(q => q.distractorAnalysis).length === 0 ? (
                 <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
                   <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-                  <h4 className="font-bold text-slate-900 text-sm">Tuyệt vời! Không phát hiện bẫy đề thi nào</h4>
+                  <h4 className="font-bold text-slate-900 text-sm">
+                    {isEn ? 'Great job! No exam traps triggered' : 'Tuyệt vời! Không phát hiện bẫy đề thi nào'}
+                  </h4>
                   <p className="text-xs text-slate-600 max-w-md mx-auto">
-                    Bạn đã kiểm soát xuất sắc các phương án gây nhiễu và không vướng phải bất kỳ bẫy kinh điển nào của Cambridge trong bài thi này.
+                    {isEn 
+                      ? 'You skillfully handled distractors and avoided all classic Cambridge trap patterns in this test.'
+                      : 'Bạn đã kiểm soát xuất sắc các phương án gây nhiễu và không vướng phải bất kỳ bẫy kinh điển nào của Cambridge trong bài thi này.'}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                    Danh sách các câu hỏi vướng bẫy ({questionsBreakdown.filter(q => q.distractorAnalysis).length} câu):
+                    {isEn 
+                      ? `Trapped questions list (${questionsBreakdown.filter(q => q.distractorAnalysis).length} questions):`
+                      : `Danh sách các câu hỏi vướng bẫy (${questionsBreakdown.filter(q => q.distractorAnalysis).length} câu):`}
                   </div>
 
                   {questionsBreakdown
@@ -662,11 +688,11 @@ export default function ReadingResultModal({
                                 {q.questionText}
                               </div>
                               <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
-                                <span className="text-slate-500">Passage {q.passageNumber} (Đoạn {q.evidenceParagraph || 'N/A'})</span>
+                                <span className="text-slate-500">Passage {q.passageNumber} ({isEn ? 'Para ' : 'Đoạn '}{q.evidenceParagraph || 'N/A'})</span>
                                 <span className="text-slate-400">•</span>
-                                <span>Bạn chọn: <strong className="text-rose-700">{q.userAnswer ? String(q.userAnswer) : '(Chưa điền)'}</strong></span>
+                                <span>{isEn ? 'You answered: ' : 'Bạn chọn: '}<strong className="text-rose-700">{q.userAnswer ? String(q.userAnswer) : (isEn ? '(Blank)' : '(Chưa điền)')}</strong></span>
                                 <span className="text-slate-400">•</span>
-                                <span>Đáp án chuẩn: <strong className="text-emerald-700 font-bold">{String(q.correctAnswer)}</strong></span>
+                                <span>{isEn ? 'Correct answer: ' : 'Đáp án chuẩn: '}<strong className="text-emerald-700 font-bold">{String(q.correctAnswer)}</strong></span>
                               </div>
                             </div>
                           </div>
@@ -681,7 +707,7 @@ export default function ReadingResultModal({
                           <div>
                             <div className="font-bold text-slate-800 flex items-center space-x-1 mb-1">
                               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                              <span>Phân Tích Của Giám Khảo Khảo Thí:</span>
+                              <span>{isEn ? 'Examiner Assessment:' : 'Phân Tích Của Giám Khảo Khảo Thí:'}</span>
                             </div>
                             <p className="text-slate-700 leading-relaxed pl-4">
                               {q.distractorAnalysis.analysis}
@@ -690,12 +716,12 @@ export default function ReadingResultModal({
 
                           {q.evidenceQuote && (
                             <div className="text-[11px] bg-slate-50 p-2 rounded-lg border border-slate-200 text-slate-700">
-                              <strong className="text-slate-900">Bằng chứng trong bài (Evidence):</strong> "{q.evidenceQuote}"
+                              <strong className="text-slate-900">{isEn ? 'Evidence quote: ' : 'Bằng chứng trong bài (Evidence): '}</strong> "{q.evidenceQuote}"
                             </div>
                           )}
 
                           <div className="text-[11px] text-indigo-900 bg-indigo-50/80 p-2 rounded-lg border border-indigo-100 flex items-start space-x-1.5">
-                            <span className="font-bold shrink-0">💡 Chiến thuật hóa giải:</span>
+                            <span className="font-bold shrink-0">{isEn ? '💡 Mitigation strategy:' : '💡 Chiến thuật hóa giải:'}</span>
                             <span>{q.distractorAnalysis.tip}</span>
                           </div>
                         </div>
@@ -707,9 +733,9 @@ export default function ReadingResultModal({
                               if (onJumpToQuestion) onJumpToQuestion(q.order);
                               onClose();
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-white hover:bg-purple-100/60 text-purple-700 font-bold text-xs border border-purple-300 flex items-center gap-1.5 transition-colors shadow-2xs"
+                            className="px-3 py-1.5 rounded-lg bg-white hover:bg-purple-100/60 text-purple-700 font-bold text-xs border border-purple-300 flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
                           >
-                            <span>Mở câu hỏi này trong bài đọc</span>
+                            <span>{isEn ? 'Open question in passage' : 'Mở câu hỏi này trong bài đọc'}</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -729,18 +755,18 @@ export default function ReadingResultModal({
               if (onResetExam) onResetExam();
               onClose();
             }}
-            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition-colors"
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Làm lại đề thi</span>
+            <span>{isEn ? 'Retake test' : 'Làm lại đề thi'}</span>
           </button>
 
           <div className="flex items-center space-x-3">
             <button
               onClick={onClose}
-              className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all hover:scale-102"
+              className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all hover:scale-102 cursor-pointer"
             >
-              <span>Xem lại bài thi & Giải thích</span>
+              <span>{isEn ? 'Review Test & Explanations' : 'Xem lại bài thi & Giải thích'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>

@@ -29,6 +29,7 @@ import {
   CheckCheck
 } from 'lucide-react';
 import { generateListeningDiagnosticEvaluation } from '../../services/geminiService';
+import { useTranslation } from '../../i18n';
 
 export default function ListeningResultModal({
   isOpen,
@@ -42,6 +43,9 @@ export default function ListeningResultModal({
   onSeekAudio,
   onOpenDrills
 }) {
+  const { t, language } = useTranslation();
+  const isEn = language === 'en';
+
   if (!isOpen || !bandResult) return null;
 
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'parts' | 'questions' | 'types' | 'ai_review'
@@ -54,7 +58,7 @@ export default function ListeningResultModal({
 
   const handleFetchAiEvaluation = async () => {
     if (!apiKey) {
-      setAiError('Vui lòng cấu hình AI API Key tại phần Cài đặt góc trên để kích hoạt Giám khảo AI.');
+      setAiError(isEn ? 'Please configure your AI API Key in Settings to activate the AI Examiner.' : 'Vui lòng cấu hình AI API Key tại phần Cài đặt góc trên để kích hoạt Giám khảo AI.');
       return;
     }
     setIsGeneratingAi(true);
@@ -69,7 +73,7 @@ export default function ListeningResultModal({
       setAiEvaluation(res);
     } catch (err) {
       console.error('Lỗi khi AI phân tích kết quả:', err);
-      setAiError(err.message || 'Không thể kết nối đến AI. Vui lòng kiểm tra lại kết nối và thử lại.');
+      setAiError(err.message || (isEn ? 'Failed to connect to AI. Please verify your connection and try again.' : 'Không thể kết nối đến AI. Vui lòng kiểm tra lại kết nối và thử lại.'));
     } finally {
       setIsGeneratingAi(false);
     }
@@ -90,7 +94,9 @@ export default function ListeningResultModal({
   const formatTime = (secs) => {
     const mins = Math.floor(secs / 60);
     const remainderSecs = Math.floor(secs % 60);
-    return mins + " phút " + (remainderSecs < 10 ? '0' : '') + remainderSecs + " giây";
+    return isEn 
+      ? `${mins} mins ${(remainderSecs < 10 ? '0' : '') + remainderSecs} secs`
+      : `${mins} phút ${(remainderSecs < 10 ? '0' : '') + remainderSecs} giây`;
   };
 
   const formatTimestamp = (sec) => {
@@ -110,10 +116,10 @@ export default function ListeningResultModal({
   }, [questionsBreakdown, filterType]);
 
   const getBandBadge = (score) => {
-    if (score >= 8.0) return { bg: 'bg-emerald-600', text: 'text-emerald-700', border: 'border-emerald-300', level: 'Xuất sắc (Very Good / Expert User)' };
-    if (score >= 7.0) return { bg: 'bg-blue-600', text: 'text-blue-700', border: 'border-blue-300', level: 'Tốt (Good User - Chuẩn du học / định cư)' };
-    if (score >= 6.0) return { bg: 'bg-amber-600', text: 'text-amber-700', border: 'border-amber-300', level: 'Khá (Competent User)' };
-    return { bg: 'bg-rose-600', text: 'text-rose-700', border: 'border-rose-300', level: 'Cần củng cố thêm (Modest User)' };
+    if (score >= 8.0) return { bg: 'bg-emerald-600', text: 'text-emerald-700', border: 'border-emerald-300', level: isEn ? 'Excellent (Very Good / Expert User)' : 'Xuất sắc (Very Good / Expert User)' };
+    if (score >= 7.0) return { bg: 'bg-blue-600', text: 'text-blue-700', border: 'border-blue-300', level: isEn ? 'Good (Good User - Study / Migration standard)' : 'Tốt (Good User - Chuẩn du học / định cư)' };
+    if (score >= 6.0) return { bg: 'bg-amber-600', text: 'text-amber-700', border: 'border-amber-300', level: isEn ? 'Competent (Competent User)' : 'Khá (Competent User)' };
+    return { bg: 'bg-rose-600', text: 'text-rose-700', border: 'border-rose-300', level: isEn ? 'Needs reinforcement (Modest User)' : 'Cần củng cố thêm (Modest User)' };
   };
 
   const badgeInfo = getBandBadge(band);
@@ -151,7 +157,9 @@ export default function ListeningResultModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-red-400">Báo Cáo Điểm Khảo Thí</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-red-400">
+                  {isEn ? 'Test Assessment Report' : 'Báo Cáo Điểm Khảo Thí'}
+                </span>
                 <span className="text-slate-400 text-xs">•</span>
                 <span className="text-xs text-slate-300">{testTitle}</span>
               </div>
@@ -163,8 +171,8 @@ export default function ListeningResultModal({
           <button
             onClick={onClose}
             className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
-            title="Đóng bảng kết quả"
-            aria-label="Đóng bảng kết quả"
+            title={isEn ? "Close results" : "Đóng bảng kết quả"}
+            aria-label={isEn ? "Close results" : "Đóng bảng kết quả"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -176,25 +184,25 @@ export default function ListeningResultModal({
             onClick={() => setActiveTab('overview')}
             className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap cursor-pointer " + (activeTab === 'overview' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-600 hover:text-slate-900')}
           >
-            Tổng Quan Band Score
+            {isEn ? 'Band Score Overview' : 'Tổng Quan Band Score'}
           </button>
           <button
             onClick={() => setActiveTab('parts')}
             className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap cursor-pointer " + (activeTab === 'parts' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-600 hover:text-slate-900')}
           >
-            Phân Tích 4 Parts
+            {isEn ? '4 Parts Breakdown' : 'Phân Tích 4 Parts'}
           </button>
           <button
             onClick={() => setActiveTab('types')}
             className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap cursor-pointer " + (activeTab === 'types' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-600 hover:text-slate-900')}
           >
-            Hiệu Suất Dạng Bài
+            {isEn ? 'Question Type Performance' : 'Hiệu Suất Dạng Bài'}
           </button>
           <button
             onClick={() => setActiveTab('questions')}
             className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap cursor-pointer " + (activeTab === 'questions' ? 'border-red-600 text-red-600' : 'border-transparent text-slate-600 hover:text-slate-900')}
           >
-            Chi Tiết & Audio Bằng Chứng (40 Câu)
+            {isEn ? 'Questions & Audio Evidence (40 Questions)' : 'Chi Tiết & Audio Bằng Chứng (40 Câu)'}
           </button>
           <button
             onClick={() => {
@@ -206,7 +214,7 @@ export default function ListeningResultModal({
             className={"py-3 px-3.5 border-b-2 font-bold transition-all whitespace-nowrap flex items-center space-x-1.5 cursor-pointer " + (activeTab === 'ai_review' ? 'border-purple-600 text-purple-700' : 'border-transparent text-purple-600 hover:text-purple-800')}
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-            <span>AI Nhận Xét & Lộ Trình Luyện Tập</span>
+            <span>{isEn ? 'AI Feedback & Practice Roadmap' : 'AI Nhận Xét & Lộ Trình Luyện Tập'}</span>
             <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold">NEW</span>
           </button>
         </div>
@@ -235,53 +243,55 @@ export default function ListeningResultModal({
                 <div className="md:col-span-2 grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col justify-between">
                     <div className="flex items-center justify-between text-emerald-800">
-                      <span className="text-xs font-bold">Số Câu Trả Lời Đúng</span>
+                      <span className="text-xs font-bold">{isEn ? 'Correct Answers' : 'Số Câu Trả Lời Đúng'}</span>
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div className="text-2xl sm:text-3xl font-black text-emerald-900 mt-2">
                       {correctCount} <span className="text-sm font-semibold text-emerald-700">/ {totalQuestions}</span>
                     </div>
                     <div className="text-[11px] text-emerald-700 mt-1 font-medium">
-                      Đạt tỷ lệ chính xác {accuracyPercent}%
+                      {isEn ? `Accuracy rate: ${accuracyPercent}%` : `Đạt tỷ lệ chính xác ${accuracyPercent}%`}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-col justify-between">
                     <div className="flex items-center justify-between text-indigo-800">
-                      <span className="text-xs font-bold">Thời Lượng Làm Bài</span>
+                      <span className="text-xs font-bold">{isEn ? 'Time Spent' : 'Thời Lượng Làm Bài'}</span>
                       <Clock className="w-4 h-4 text-indigo-600" />
                     </div>
                     <div className="text-xl sm:text-2xl font-black text-indigo-900 mt-2">
                       {formatTime(timeSpentSeconds || 1920)}
                     </div>
                     <div className="text-[11px] text-indigo-700 mt-1 font-medium">
-                      Audio 30:00 + 2:00 kiểm tra lại bài
+                      {isEn ? 'Audio 30:00 + 2:00 review time' : 'Audio 30:00 + 2:00 kiểm tra lại bài'}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex flex-col justify-between">
                     <div className="flex items-center justify-between text-amber-800">
-                      <span className="text-xs font-bold">Lỗi Âm Đuôi & Bẫy Đề</span>
+                      <span className="text-xs font-bold">{isEn ? 'Endings & Traps' : 'Lỗi Âm Đuôi & Bẫy Đề'}</span>
                       <AlertCircle className="w-4 h-4 text-amber-600" />
                     </div>
                     <div className="text-2xl font-black text-amber-900 mt-2">
-                      {(errorBreakdown.PLURAL_ERROR || 0) + (errorBreakdown.STEM_REPETITION_ERROR || 0)} <span className="text-xs font-normal">câu</span>
+                      {(errorBreakdown.PLURAL_ERROR || 0) + (errorBreakdown.STEM_REPETITION_ERROR || 0)} <span className="text-xs font-normal">{isEn ? 'items' : 'câu'}</span>
                     </div>
                     <div className="text-[11px] text-amber-700 mt-1 font-medium">
-                      Lỗi số nhiều -s ({errorBreakdown.PLURAL_ERROR || 0}), Lặp từ ({errorBreakdown.STEM_REPETITION_ERROR || 0})
+                      {isEn 
+                        ? `Plural -s (${errorBreakdown.PLURAL_ERROR || 0}), Repetition (${errorBreakdown.STEM_REPETITION_ERROR || 0})`
+                        : `Lỗi số nhiều -s (${errorBreakdown.PLURAL_ERROR || 0}), Lặp từ (${errorBreakdown.STEM_REPETITION_ERROR || 0})`}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex flex-col justify-between">
                     <div className="flex items-center justify-between text-rose-800">
-                      <span className="text-xs font-bold">Lỗi Chính Tả (Spelling)</span>
+                      <span className="text-xs font-bold">{isEn ? 'Spelling Errors' : 'Lỗi Chính Tả (Spelling)'}</span>
                       <XCircle className="w-4 h-4 text-rose-600" />
                     </div>
                     <div className="text-2xl font-black text-rose-900 mt-2">
-                      {errorBreakdown.SPELLING_ERROR || 0} <span className="text-xs font-normal">câu</span>
+                      {errorBreakdown.SPELLING_ERROR || 0} <span className="text-xs font-normal">{isEn ? 'items' : 'câu'}</span>
                     </div>
                     <div className="text-[11px] text-rose-700 mt-1 font-medium">
-                      Sai lệch 1-2 ký tự so với đáp án gốc
+                      {isEn ? '1-2 characters off from canonical answer' : 'Sai lệch 1-2 ký tự so với đáp án gốc'}
                     </div>
                   </div>
                 </div>
@@ -292,45 +302,45 @@ export default function ListeningResultModal({
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
                     <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                    <span>Chẩn Đoán Đa Tầng Lỗi Sai Khảo Thí (Diagnostic Breakdown)</span>
+                    <span>{isEn ? 'Multi-Layer Exam Error Diagnostics' : 'Chẩn Đoán Đa Tầng Lỗi Sai Khảo Thí (Diagnostic Breakdown)'}</span>
                   </h3>
-                  <span className="text-xs text-slate-500 font-semibold">Chuẩn Cambridge Official</span>
+                  <span className="text-xs text-slate-500 font-semibold">{isEn ? 'Cambridge Official Standard' : 'Chuẩn Cambridge Official'}</span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 pt-1">
                   <div className="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-300 text-center">
                     <div className="text-lg font-black text-emerald-800">{errorBreakdown.CORRECT || 0}</div>
-                    <div className="text-[11px] font-semibold text-emerald-700">Đúng Tuyệt Đối</div>
+                    <div className="text-[11px] font-semibold text-emerald-700">{isEn ? 'Accurate' : 'Đúng Tuyệt Đối'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-orange-100/70 border border-orange-300 text-center">
                     <div className="text-lg font-black text-orange-800">{errorBreakdown.WORD_LIMIT_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-orange-700">Quá Số Từ</div>
+                    <div className="text-[11px] font-semibold text-orange-700">{isEn ? 'Word Limit' : 'Quá Số Từ'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-amber-100/70 border border-amber-300 text-center">
                     <div className="text-lg font-black text-amber-800">{errorBreakdown.PLURAL_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-amber-700">Lỗi Âm Đuôi (-s)</div>
+                    <div className="text-[11px] font-semibold text-amber-700">{isEn ? 'Plural / -s' : 'Lỗi Âm Đuôi (-s)'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-purple-100/70 border border-purple-300 text-center">
                     <div className="text-lg font-black text-purple-800">{errorBreakdown.STEM_REPETITION_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-purple-700">Bẫy Lặp Từ Đề</div>
+                    <div className="text-[11px] font-semibold text-purple-700">{isEn ? 'Stem Repeat' : 'Bẫy Lặp Từ Đề'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-rose-100/70 border border-rose-300 text-center">
                     <div className="text-lg font-black text-rose-800">{errorBreakdown.SPELLING_ERROR || 0}</div>
-                    <div className="text-[11px] font-semibold text-rose-700">Sai Chính Tả</div>
+                    <div className="text-[11px] font-semibold text-rose-700">{isEn ? 'Spelling' : 'Sai Chính Tả'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-red-100/70 border border-red-300 text-center">
                     <div className="text-lg font-black text-red-800">{errorBreakdown.WRONG_ANSWER || 0}</div>
-                    <div className="text-[11px] font-semibold text-red-700">Sai Thông Tin</div>
+                    <div className="text-[11px] font-semibold text-red-700">{isEn ? 'Incorrect' : 'Sai Thông Tin'}</div>
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-slate-200/70 border border-slate-300 text-center">
                     <div className="text-lg font-black text-slate-800">{errorBreakdown.UNANSWERED || 0}</div>
-                    <div className="text-[11px] font-semibold text-slate-600">Chưa Điền</div>
+                    <div className="text-[11px] font-semibold text-slate-600">{isEn ? 'Unanswered' : 'Chưa Điền'}</div>
                   </div>
                 </div>
               </div>
@@ -339,7 +349,7 @@ export default function ListeningResultModal({
               <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-2xs">
                 <h3 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
                   <BarChart3 className="w-4 h-4 text-red-600" />
-                  <span>Tiến Độ Đúng Từng Part</span>
+                  <span>{isEn ? 'Progress by Part' : 'Tiến Độ Đúng Từng Part'}</span>
                 </h3>
 
                 <div className="space-y-3">
@@ -347,7 +357,7 @@ export default function ListeningResultModal({
                     <div key={p.partNumber} className="space-y-1">
                       <div className="flex items-center justify-between text-xs font-semibold">
                         <span className="text-slate-800">Part {p.partNumber}: {p.title}</span>
-                        <span className="text-slate-600 font-mono">{p.correct} / {p.total} câu ({p.percent}%)</span>
+                        <span className="text-slate-600 font-mono">{p.correct} / {p.total} {isEn ? 'items' : 'câu'} ({p.percent}%)</span>
                       </div>
                       <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
@@ -370,10 +380,12 @@ export default function ListeningResultModal({
                     </span>
                   </div>
                   <h4 className="text-sm sm:text-base font-bold text-white">
-                    Nhận Phân Tích Chuyên Sâu & Lộ Trình Nâng Band Cùng AI
+                    {isEn ? 'Receive In-Depth AI Analysis & Band Improvement Roadmap' : 'Nhận Phân Tích Chuyên Sâu & Lộ Trình Nâng Band Cùng AI'}
                   </h4>
                   <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-                    AI sẽ phân tích nguyên nhân các bẫy đề bạn gặp phải, chỉ ra bài tập bổ trợ chính xác và xây dựng lộ trình luyện tập 3 giai đoạn để bứt phá lên Band cao hơn.
+                    {isEn 
+                      ? 'AI diagnoses root causes of traps encountered, pinpoints targeted drills, and builds a 3-phase practice roadmap to reach higher bands.'
+                      : 'AI sẽ phân tích nguyên nhân các bẫy đề bạn gặp phải, chỉ ra bài tập bổ trợ chính xác và xây dựng lộ trình luyện tập 3 giai đoạn để bứt phá lên Band cao hơn.'}
                   </p>
                 </div>
                 <button
@@ -387,7 +399,7 @@ export default function ListeningResultModal({
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs shadow-md transition-all active:scale-95 flex items-center space-x-1.5 shrink-0 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />
-                  <span>Xem Nhận Xét & Lộ Trình AI</span>
+                  <span>{isEn ? 'View AI Review & Roadmap' : 'Xem Nhận Xét & Lộ Trình AI'}</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </button>
               </div>
@@ -412,7 +424,7 @@ export default function ListeningResultModal({
                       </div>
                       <div className="text-right">
                         <div className="text-lg font-black text-slate-900">{p.correct} / {p.total}</div>
-                        <div className="text-xs text-emerald-600 font-semibold">{p.percent}% chính xác</div>
+                        <div className="text-xs text-emerald-600 font-semibold">{isEn ? `${p.percent}% accuracy` : `${p.percent}% chính xác`}</div>
                       </div>
                     </div>
 
@@ -423,7 +435,7 @@ export default function ListeningResultModal({
                           className={"p-2 rounded-xl border flex items-center justify-between text-xs " + (q.isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900')}
                         >
                           <span className="font-bold">#{q.order}</span>
-                          <span className="truncate max-w-[80px] font-mono text-[11px]">{q.userAnswer || '(Trống)'}</span>
+                          <span className="truncate max-w-[80px] font-mono text-[11px]">{q.userAnswer || (isEn ? '(Blank)' : '(Trống)')}</span>
                           {q.isCorrect ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <XCircle className="w-3.5 h-3.5 text-rose-600" />}
                         </div>
                       ))}
@@ -438,7 +450,9 @@ export default function ListeningResultModal({
           {activeTab === 'types' && (
             <div className="space-y-3">
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
-                Thống kê giúp bạn xác định dạng bài sở trường và dạng bài cần luyện thêm nhiều hơn trong <strong>Phòng Luyện Bổ Trợ (Micro-Drills)</strong>.
+                {isEn 
+                  ? <>Statistics help you identify strengths and question types needing more practice in the <strong>Micro-Drills Studio</strong>.</>
+                  : <>Thống kê giúp bạn xác định dạng bài sở trường và dạng bài cần luyện thêm nhiều hơn trong <strong>Phòng Luyện Bổ Trợ (Micro-Drills)</strong>.</>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -469,37 +483,37 @@ export default function ListeningResultModal({
                   onClick={() => setFilterType('all')}
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200')}
                 >
-                  Tất cả (40)
+                  {isEn ? 'All' : 'Tất cả'} (40)
                 </button>
                 <button
                   onClick={() => setFilterType('correct')}
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'correct' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100')}
                 >
-                  ✓ Đúng ({errorBreakdown.CORRECT || 0})
+                  {isEn ? '✓ Correct' : '✓ Đúng'} ({errorBreakdown.CORRECT || 0})
                 </button>
                 <button
                   onClick={() => setFilterType('wrong')}
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'wrong' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-700 hover:bg-rose-100')}
                 >
-                  ✗ Sai ({totalQuestions - (errorBreakdown.CORRECT || 0)})
+                  {isEn ? '✗ Wrong' : '✗ Sai'} ({totalQuestions - (errorBreakdown.CORRECT || 0)})
                 </button>
                 <button
                   onClick={() => setFilterType('word_limit')}
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'word_limit' ? 'bg-orange-600 text-white' : 'bg-orange-50 text-orange-800 hover:bg-orange-100')}
                 >
-                  ⚠️ Quá số từ ({errorBreakdown.WORD_LIMIT_ERROR || 0})
+                  {isEn ? '⚠️ Word limit' : '⚠️ Quá số từ'} ({errorBreakdown.WORD_LIMIT_ERROR || 0})
                 </button>
                 <button
                   onClick={() => setFilterType('plural')}
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'plural' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-800 hover:bg-amber-100')}
                 >
-                  ⚠️ Lỗi âm đuôi -s ({errorBreakdown.PLURAL_ERROR || 0})
+                  {isEn ? '⚠️ Plural -s' : '⚠️ Lỗi âm đuôi -s'} ({errorBreakdown.PLURAL_ERROR || 0})
                 </button>
                 <button
                   onClick={() => setFilterType('spelling')}
                   className={"px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer " + (filterType === 'spelling' ? 'bg-purple-600 text-white' : 'bg-purple-50 text-purple-800 hover:bg-purple-100')}
                 >
-                  ✍️ Sai chính tả ({errorBreakdown.SPELLING_ERROR || 0})
+                  {isEn ? '✍️ Spelling' : '✍️ Sai chính tả'} ({errorBreakdown.SPELLING_ERROR || 0})
                 </button>
               </div>
 
@@ -527,10 +541,10 @@ export default function ListeningResultModal({
                           <button
                             onClick={() => onSeekAudio(q.evidenceTimestamp)}
                             className="px-2.5 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] flex items-center space-x-1 transition-colors cursor-pointer"
-                            title="Nghe đúng đoạn audio chứa đáp án"
+                            title={isEn ? "Listen to exact audio segment with answer" : "Nghe đúng đoạn audio chứa đáp án"}
                           >
                             <Volume2 className="w-3 h-3" />
-                            <span>Nghe lại ({formatTimestamp(q.evidenceTimestamp)})</span>
+                            <span>{isEn ? "Replay" : "Nghe lại"} ({formatTimestamp(q.evidenceTimestamp)})</span>
                           </button>
                         )}
                         {onJumpToQuestion && (
@@ -540,7 +554,7 @@ export default function ListeningResultModal({
                               onJumpToQuestion(q.order);
                             }}
                             className="p-1 rounded-md hover:bg-slate-100 text-slate-500 transition-colors cursor-pointer"
-                            title="Đến vị trí câu này trong đề"
+                            title={isEn ? "Jump to this question in the test" : "Đến vị trí câu này trong đề"}
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
                           </button>
@@ -555,20 +569,20 @@ export default function ListeningResultModal({
                     {/* Answer comparison */}
                     <div className="flex flex-wrap items-center gap-3 text-xs pt-1 border-t border-slate-100">
                       <div>
-                        <span className="text-slate-500 font-medium">Bạn chọn: </span>
+                        <span className="text-slate-500 font-medium">{isEn ? 'You answered: ' : 'Bạn chọn: '}</span>
                         <span className={"font-bold " + (q.isCorrect ? 'text-emerald-700' : 'text-rose-700')}>
-                          {q.userAnswer || '(Để trống)'}
+                          {q.userAnswer || (isEn ? '(Blank)' : '(Để trống)')}
                         </span>
                       </div>
                       <div className="text-slate-300">|</div>
                       <div>
-                        <span className="text-slate-500 font-medium">Đáp án chuẩn: </span>
+                        <span className="text-slate-500 font-medium">{isEn ? 'Correct answer: ' : 'Đáp án chuẩn: '}</span>
                         <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-sm border border-emerald-200">
                           {q.correctAnswer}
                         </span>
                         {q.acceptableAnswers && q.acceptableAnswers.length > 1 && (
                           <span className="text-[11px] text-slate-400 ml-1">
-                            (Chấp nhận: {q.acceptableAnswers.join(', ')})
+                            ({isEn ? 'Accepted: ' : 'Chấp nhận: '}{q.acceptableAnswers.join(', ')})
                           </span>
                         )}
                       </div>
@@ -584,15 +598,15 @@ export default function ListeningResultModal({
                     {/* Audio quote */}
                     {q.evidenceQuote && (
                       <div className="text-xs text-slate-600">
-                        <span className="font-bold text-slate-500">Trích dẫn audio: </span>
+                        <span className="font-bold text-slate-500">{isEn ? 'Audio quote: ' : 'Trích dẫn audio: '}</span>
                         <span className="italic font-serif text-slate-800">"{q.evidenceQuote}"</span>
                       </div>
                     )}
 
-                    {/* Vietnamese explanation */}
+                    {/* Explanation */}
                     {q.explanation && (
                       <div className="text-xs text-slate-500">
-                        <span className="font-bold">Giải thích: </span>
+                        <span className="font-bold">{isEn ? 'Explanation: ' : 'Giải thích: '}</span>
                         <span>{q.explanation}</span>
                       </div>
                     )}
@@ -614,13 +628,15 @@ export default function ListeningResultModal({
                   </div>
                   <div>
                     <h3 className="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
-                      <span>Đánh Giá Giám Khảo & Lộ Trình Luyện Tập Cá Nhân Hóa</span>
+                      <span>{isEn ? 'Examiner Evaluation & Personalized Practice Roadmap' : 'Đánh Giá Giám Khảo & Lộ Trình Luyện Tập Cá Nhân Hóa'}</span>
                       <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold">
                         Band {band.toFixed(1)} Focus
                       </span>
                     </h3>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-2xl">
-                      Hệ thống kết hợp dữ liệu 40 câu hỏi, thời gian nghe và 4 tầng lỗi sai để đưa ra chẩn đoán nguyên nhân gốc rễ (phát âm nối âm, bẫy distractors, hay thiếu vốn từ học thuật) và các bài tập khắc phục tức thì.
+                      {isEn 
+                        ? 'The system combines 40-question data, listening duration, and 4 error layers to identify root causes and provide immediate corrective drills.'
+                        : 'Hệ thống kết hợp dữ liệu 40 câu hỏi, thời gian nghe và 4 tầng lỗi sai để đưa ra chẩn đoán nguyên nhân gốc rễ (phát âm nối âm, bẫy distractors, hay thiếu vốn từ học thuật) và các bài tập khắc phục tức thì.'}
                     </p>
                   </div>
                 </div>
@@ -632,7 +648,13 @@ export default function ListeningResultModal({
                   className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold text-xs shadow-sm transition-all flex items-center space-x-2 shrink-0 cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingAi ? 'animate-spin' : ''}`} />
-                  <span>{isGeneratingAi ? 'AI Đang Phân Tích...' : aiEvaluation ? 'Phân Tích Lại' : 'Bắt Đầu Nhận Xét AI'}</span>
+                  <span>
+                    {isGeneratingAi 
+                      ? (isEn ? 'AI Analyzing...' : 'AI Đang Phân Tích...') 
+                      : aiEvaluation 
+                        ? (isEn ? 'Re-analyze' : 'Phân Tích Lại') 
+                        : (isEn ? 'Start AI Review' : 'Bắt Đầu Nhận Xét AI')}
+                  </span>
                 </button>
               </div>
 
@@ -649,8 +671,12 @@ export default function ListeningResultModal({
                 <div className="p-12 text-center space-y-4 rounded-2xl bg-white border border-purple-100 shadow-2xs">
                   <div className="w-12 h-12 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto" />
                   <div>
-                    <h4 className="font-bold text-slate-900 text-sm">Giám khảo AI đang đối chiếu bài làm với chuẩn Cambridge...</h4>
-                    <p className="text-xs text-slate-500 mt-1">Đang phân tích các tầng lỗi phát âm nối âm, bẫy tự sửa và thiết kế bài tập bổ trợ (khoảng 3-5 giây)...</p>
+                    <h4 className="font-bold text-slate-900 text-sm">
+                      {isEn ? 'AI Examiner is benchmarking your performance against Cambridge standards...' : 'Giám khảo AI đang đối chiếu bài làm với chuẩn Cambridge...'}
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {isEn ? 'Analyzing connected speech, self-correction traps, and tailoring supplementary drills (approx. 3-5s)...' : 'Đang phân tích các tầng lỗi phát âm nối âm, bẫy tự sửa và thiết kế bài tập bổ trợ (khoảng 3-5 giây)...'}
+                    </p>
                   </div>
                 </div>
               )}
@@ -659,16 +685,20 @@ export default function ListeningResultModal({
               {!isGeneratingAi && !aiEvaluation && !aiError && (
                 <div className="p-12 text-center rounded-2xl border-2 border-dashed border-purple-200 bg-purple-50/20 space-y-3">
                   <Lightbulb className="w-10 h-10 text-purple-400 mx-auto" />
-                  <h4 className="font-bold text-slate-800 text-sm">Chưa có dữ liệu nhận xét AI cho bài thi này</h4>
+                  <h4 className="font-bold text-slate-800 text-sm">
+                    {isEn ? 'No AI review generated for this test yet' : 'Chưa có dữ liệu nhận xét AI cho bài thi này'}
+                  </h4>
                   <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-                    Bấm nút <strong>"Bắt Đầu Nhận Xét AI"</strong> ở trên để AI tổng hợp hiệu suất làm bài và đưa ra kế hoạch cải thiện điểm số chi tiết.
+                    {isEn 
+                      ? <>Click <strong>"Start AI Review"</strong> above to synthesize exam performance and generate a targeted band booster plan.</>
+                      : <>Bấm nút <strong>"Bắt Đầu Nhận Xét AI"</strong> ở trên để AI tổng hợp hiệu suất làm bài và đưa ra kế hoạch cải thiện điểm số chi tiết.</>}
                   </p>
                   <button
                     type="button"
                     onClick={handleFetchAiEvaluation}
                     className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
                   >
-                    Bắt Đầu Phân Tích Ngay
+                    {isEn ? 'Start AI Analysis Now' : 'Bắt Đầu Phân Tích Ngay'}
                   </button>
                 </div>
               )}
@@ -681,7 +711,9 @@ export default function ListeningResultModal({
                   <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-2xs">
                     <div className="flex items-center space-x-2">
                       <Target className="w-4 h-4 text-purple-600" />
-                      <h4 className="font-bold text-slate-900 text-sm">Đánh Giá Tổng Quan Năng Lực Phản Xạ Âm Thanh</h4>
+                      <h4 className="font-bold text-slate-900 text-sm">
+                        {isEn ? 'Overall Acoustic Reflex & Comprehension Assessment' : 'Đánh Giá Tổng Quan Năng Lực Phản Xạ Âm Thanh'}
+                      </h4>
                     </div>
                     <div className="text-xs text-slate-700 leading-relaxed whitespace-pre-line space-y-2">
                       {aiEvaluation.overallSummary}
@@ -695,7 +727,9 @@ export default function ListeningResultModal({
                     <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
                       <div className="flex items-center space-x-2">
                         <CheckCheck className="w-4 h-4 text-emerald-700" />
-                        <h4 className="font-bold text-emerald-950 text-xs sm:text-sm">Điểm Mạnh Nổi Bật</h4>
+                        <h4 className="font-bold text-emerald-950 text-xs sm:text-sm">
+                          {isEn ? 'Key Strengths' : 'Điểm Mạnh Nổi Bật'}
+                        </h4>
                       </div>
                       <ul className="space-y-2">
                         {aiEvaluation.strengths && aiEvaluation.strengths.map((str, idx) => (
@@ -711,7 +745,9 @@ export default function ListeningResultModal({
                     <div className="p-5 rounded-2xl bg-rose-50/70 border border-rose-200 space-y-3">
                       <div className="flex items-center space-x-2">
                         <Flame className="w-4 h-4 text-rose-700" />
-                        <h4 className="font-bold text-rose-950 text-xs sm:text-sm">Lỗ Hổng Cốt Lõi Cần Khắc Phục</h4>
+                        <h4 className="font-bold text-rose-950 text-xs sm:text-sm">
+                          {isEn ? 'Critical Weaknesses to Address' : 'Lỗ Hổng Cốt Lõi Cần Khắc Phục'}
+                        </h4>
                       </div>
                       <div className="space-y-2.5">
                         {aiEvaluation.criticalWeaknesses && aiEvaluation.criticalWeaknesses.map((w, idx) => (
@@ -719,12 +755,12 @@ export default function ListeningResultModal({
                             <div className="font-bold text-rose-900">{w.issue}</div>
                             {w.example && (
                               <div className="text-[11px] text-slate-600 italic">
-                                Ví dụ bài làm: "{w.example}"
+                                {isEn ? 'Exam example: ' : 'Ví dụ bài làm: '}"{w.example}"
                               </div>
                             )}
                             {w.solution && (
                               <div className="text-[11px] text-slate-800 font-semibold">
-                                👉 Giải pháp: {w.solution}
+                                {isEn ? '👉 Solution: ' : '👉 Giải pháp: '}{w.solution}
                               </div>
                             )}
                           </div>
@@ -740,11 +776,11 @@ export default function ListeningResultModal({
                       <div className="flex items-center space-x-2">
                         <Compass className="w-5 h-5 text-indigo-400" />
                         <h4 className="font-black text-sm sm:text-base text-white">
-                          Lộ Trình Luyện Tập 3 Giai Đoạn Nâng Band (Actionable Practice Roadmap)
+                          {isEn ? '3-Phase Actionable Band Booster Practice Roadmap' : 'Lộ Trình Luyện Tập 3 Giai Đoạn Nâng Band (Actionable Practice Roadmap)'}
                         </h4>
                       </div>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300 border border-indigo-400/40">
-                        Chiến Lược Tối Ưu
+                        {isEn ? 'Optimal Strategy' : 'Chiến Lược Tối Ưu'}
                       </span>
                     </div>
 
@@ -753,9 +789,9 @@ export default function ListeningResultModal({
                       {/* Phase 1 */}
                       <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
                         <div className="flex items-center space-x-1.5 text-amber-400 text-xs font-black uppercase tracking-wider">
-                          <span>Giai đoạn 1 (48 Giờ Đầu)</span>
+                          <span>{isEn ? 'Phase 1 (First 48 Hours)' : 'Giai đoạn 1 (48 Giờ Đầu)'}</span>
                         </div>
-                        <div className="text-xs font-bold text-white">Khắc Phục Thói Quen Lỗi</div>
+                        <div className="text-xs font-bold text-white">{isEn ? 'Error Habit Fix' : 'Khắc Phục Thói Quen Lỗi'}</div>
                         <p className="text-[11px] text-slate-300 leading-relaxed">
                           {aiEvaluation.actionablePracticePlan?.phase1_ImmediateFix}
                         </p>
@@ -764,9 +800,9 @@ export default function ListeningResultModal({
                       {/* Phase 2 */}
                       <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
                         <div className="flex items-center space-x-1.5 text-emerald-400 text-xs font-black uppercase tracking-wider">
-                          <span>Giai đoạn 2 (2–3 Tuần)</span>
+                          <span>{isEn ? 'Phase 2 (2–3 Weeks)' : 'Giai đoạn 2 (2–3 Tuần)'}</span>
                         </div>
-                        <div className="text-xs font-bold text-white">Xây Dựng Phản Xạ Nghe Sâu</div>
+                        <div className="text-xs font-bold text-white">{isEn ? 'Deep Listening Reflex' : 'Xây Dựng Phản Xạ Nghe Sâu'}</div>
                         <p className="text-[11px] text-slate-300 leading-relaxed">
                           {aiEvaluation.actionablePracticePlan?.phase2_SkillBuilding}
                         </p>
@@ -775,9 +811,9 @@ export default function ListeningResultModal({
                       {/* Phase 3 */}
                       <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
                         <div className="flex items-center space-x-1.5 text-purple-400 text-xs font-black uppercase tracking-wider">
-                          <span>Giai đoạn 3 (Bứt Phá Band)</span>
+                          <span>{isEn ? 'Phase 3 (Band Mastery)' : 'Giai đoạn 3 (Bứt Phá Band)'}</span>
                         </div>
-                        <div className="text-xs font-bold text-white">Làm Chủ Đề Thi Cambridge</div>
+                        <div className="text-xs font-bold text-white">{isEn ? 'Cambridge Exam Mastery' : 'Làm Chủ Đề Thi Cambridge'}</div>
                         <p className="text-[11px] text-slate-300 leading-relaxed">
                           {aiEvaluation.actionablePracticePlan?.phase3_ExamMastery}
                         </p>
@@ -791,7 +827,9 @@ export default function ListeningResultModal({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center space-x-2">
                         <Zap className="w-4 h-4 text-amber-500" />
-                        <h4 className="font-bold text-slate-900 text-sm">Bài Tập Bổ Trợ Khuyên Dùng Ngay Hôm Nay</h4>
+                        <h4 className="font-bold text-slate-900 text-sm">
+                          {isEn ? 'Recommended Supplementary Drills for Today' : 'Bài Tập Bổ Trợ Khuyên Dùng Ngay Hôm Nay'}
+                        </h4>
                       </div>
                       {onOpenDrills && (
                         <button
@@ -800,9 +838,9 @@ export default function ListeningResultModal({
                             onOpenDrills();
                           }}
                           className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer self-start sm:self-auto"
-                          title="Chuyển đến 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills)"
+                          title={isEn ? "Go to 5 intensive listening supplementary practice rooms (Micro-Drills)" : "Chuyển đến 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills)"}
                         >
-                          <span>🎯 Mở Phòng Micro-Drills Ngay</span>
+                          <span>{isEn ? '🎯 Open Micro-Drills Studio' : '🎯 Mở Phòng Micro-Drills Ngay'}</span>
                         </button>
                       )}
                     </div>
@@ -818,11 +856,11 @@ export default function ListeningResultModal({
                           </div>
                           {drill.purpose && (
                             <p className="text-[11px] text-purple-800 font-medium">
-                              🎯 <strong>Mục đích:</strong> {drill.purpose}
+                              🎯 <strong>{isEn ? 'Purpose:' : 'Mục đích:'}</strong> {drill.purpose}
                             </p>
                           )}
                           <p className="text-[11px] text-slate-600 leading-relaxed">
-                            📝 <strong>Cách thực hiện:</strong> {drill.stepByStep}
+                            📝 <strong>{isEn ? 'How to practice:' : 'Cách thực hiện:'}</strong> {drill.stepByStep}
                           </p>
                         </div>
                       ))}
@@ -855,13 +893,13 @@ export default function ListeningResultModal({
               className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 flex items-center space-x-1.5 transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5 text-slate-500" />
-              <span>In / Xuất Báo Cáo</span>
+              <span>{isEn ? 'Print / Export Report' : 'In / Xuất Báo Cáo'}</span>
             </button>
 
             {onResetExam && (
               <button
                 onClick={() => {
-                  if (window.confirm('Bạn có chắc chắn muốn làm lại đề này từ đầu không?')) {
+                  if (window.confirm(isEn ? 'Are you sure you want to retake this test from the beginning?' : 'Bạn có chắc chắn muốn làm lại đề này từ đầu không?')) {
                     onResetExam();
                     onClose();
                   }
@@ -869,7 +907,7 @@ export default function ListeningResultModal({
                 className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 flex items-center space-x-1.5 transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-                <span>Làm Lại Đề Này</span>
+                <span>{isEn ? 'Retake This Test' : 'Làm Lại Đề Này'}</span>
               </button>
             )}
           </div>
@@ -878,7 +916,7 @@ export default function ListeningResultModal({
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
           >
-            <span>Xem Lại Đề Bài & Lời Thoại (Review View)</span>
+            <span>{isEn ? 'Review Test Questions & Audioscript' : 'Xem Lại Đề Bài & Lời Thoại (Review View)'}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>

@@ -20,11 +20,12 @@ import { IELTS_TOPICS, TASK1_TYPES, TASK2_TYPES, TIME_FRAME_TYPES } from '../dat
 import { generateNewTask } from '../services/geminiService';
 import TaskImageUploader from './TaskImageUploader';
 import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../utils/userPermissions';
+import { useTranslation } from '../i18n';
 
-const QUICK_MANUAL_TEMPLATES = {
+const getQuickManualTemplates = (isEn) => ({
   task1: [
     {
-      label: 'Line Graph: Mức tiêu thụ nước sạch (2000–2025)',
+      label: isEn ? 'Line Graph: Clean Water Consumption (2000–2025)' : 'Line Graph: Mức tiêu thụ nước sạch (2000–2025)',
       type: 'line',
       timeFrame: 'dynamic',
       title: 'Water Consumption Trends in Three Continents (2000–2025)',
@@ -32,7 +33,7 @@ const QUICK_MANUAL_TEMPLATES = {
       sampleAnswer: 'The line graph illustrates clean water consumption across three distinct global regions from 2000 to 2025, alongside projected figures up to 2030.\n\nOverall, water consumption in all three regions experienced an upward trajectory over the entire timeframe, with North America consistently registering the highest figures, while Asia-Pacific recorded the most dramatic growth.\n\nIn 2000, North America consumed approximately 450 million cubic meters of water, followed by Europe at 320 million and Asia-Pacific at roughly 200 million. Over the next two decades, demand in North America climbed steadily to reach 580 million cubic meters in 2025. Projections indicate a continuation of this trend, peaking at around 620 million by 2030.\n\nConversely, Asia-Pacific underwent a steep acceleration, overtaking Europe around 2018 and achieving parity with North America by 2025 at nearly 570 million cubic meters. Europe exhibited a much more moderate climb, leveling off near 390 million cubic meters towards 2030.'
     },
     {
-      label: 'Process: Quy trình sản xuất & đóng gói cà phê xuất khẩu',
+      label: isEn ? 'Process: Production & Packaging of Export Coffee' : 'Process: Quy trình sản xuất & đóng gói cà phê xuất khẩu',
       type: 'process',
       timeFrame: 'any',
       title: 'The Industrial Production and Packaging of Coffee Beans',
@@ -40,7 +41,7 @@ const QUICK_MANUAL_TEMPLATES = {
       sampleAnswer: 'The flow chart outlines the comprehensive sequence of operations involved in the commercial manufacturing and global distribution of organic coffee beans.\n\nOverall, the industrial process consists of seven sequential stages, beginning with the cultivation and manual harvesting of ripe coffee cherries, progressing through fermentation, roasting, and quality inspection, and culminating in airtight vacuum packaging for export.\n\nInitially, mature coffee berries are harvested by hand and subjected to mechanical wet-processing to separate the pulp from the beans. Following this, the beans undergo a 48-hour fermentation cycle before being sun-dried on elevated raised beds. Once the moisture level is stabilized below 12%, the outer husk is removed through milling.\n\nIn the final phases, the raw green beans are roasted at temperatures exceeding 220°C to unlock their characteristic aroma. After rapid cooling and optical sorting to discard defective items, the beans are sealed in vacuum foil bags and dispatched to maritime shipping containers.'
     },
     {
-      label: 'Map: Chuyển đổi trung tâm thị trấn (2015 vs Hiện nay)',
+      label: isEn ? 'Map: Town Center Redevelopment (2015 vs Present)' : 'Map: Chuyển đổi trung tâm thị trấn (2015 vs Hiện nay)',
       type: 'map',
       timeFrame: 'dynamic',
       title: 'Town Center Redevelopment and Pedestrianization',
@@ -50,7 +51,7 @@ const QUICK_MANUAL_TEMPLATES = {
   ],
   task2: [
     {
-      label: 'Opinion: Trí tuệ nhân tạo (AI) trong thị trường lao động',
+      label: isEn ? 'Opinion: Artificial Intelligence (AI) in the Labor Market' : 'Opinion: Trí tuệ nhân tạo (AI) trong thị trường lao động',
       type: 'opinion',
       topic: 'tech',
       title: 'Impact of Artificial Intelligence on Future Employment',
@@ -58,7 +59,7 @@ const QUICK_MANUAL_TEMPLATES = {
       sampleAnswer: 'The advent of artificial intelligence (AI) has sparked vigorous debates concerning its ramifications on global employment. While alarmists contend that autonomous algorithms will displace human labor on an unprecedented scale, I firmly believe that AI acts primarily as an augmenting catalyst that will ultimately foster more sophisticated employment opportunities rather than trigger irreversible mass unemployment.\n\nUndeniably, automated technologies have demonstrated superior efficiency in executing repetitive, rule-based operations. Factory assembly lines, standardized bookkeeping, and basic customer service inquiries are increasingly mediated by intelligent software agents. However, historical precedents such as the Industrial and Digital Revolutions illustrate that automation consistently dismantles archaic manual positions while simultaneously giving birth to burgeoning sectors requiring higher-order cognitive competencies.\n\nFurthermore, essential professional domains inherently depend upon human empathy, ethical discernment, and strategic creativity—attributes that probabilistic algorithmic models cannot genuinely replicate. In healthcare, education, and legal governance, AI functions as a diagnostic and preparatory instrument, empowering professionals to make more informed decisions without eliminating human oversight.\n\nIn conclusion, while transient frictional unemployment is inevitable, AI should be regarded as a transformative tool that refines the workplace rather than an existential threat to human employment.'
     },
     {
-      label: 'Discussion: Học trực tuyến so với Học trên giảng đường',
+      label: isEn ? 'Discussion: Online Learning vs Traditional Lecture Hall' : 'Discussion: Học trực tuyến so với Học trên giảng đường',
       type: 'discussion',
       topic: 'edu',
       title: 'Online Learning Platforms vs Traditional Classrooms',
@@ -66,7 +67,7 @@ const QUICK_MANUAL_TEMPLATES = {
       sampleAnswer: 'The proliferation of digital education platforms has ignited discussion over whether virtual learning will render brick-and-mortar universities obsolete. While digital learning offers unparalleled convenience and egalitarian access to knowledge, I maintain that traditional physical campuses provide crucial interpersonal development that online modalities cannot duplicate.\n\nOn the one hand, proponents of online education emphasize geographical and economic accessibility. Students in developing regions can now enroll in premier lecture courses from elite institutions without incurring relocation costs or exorbitant campus fees. Furthermore, asynchronous study schedules empower working professionals to upskill at their self-determined pace, making lifelong education genuinely democratized.\n\nOn the other hand, traditional academic campuses foster spontaneous dialectical exchanges, collaborative lab investigations, and non-verbal socialization. The subtle social dynamics developed through face-to-face debates, extracurricular teamwork, and direct mentorship are integral to holistic character formation. Relying solely on video conferences often induces cognitive fatigue and diminishes sustained student engagement.\n\nIn conclusion, while virtual platforms are indispensable supplements for disseminating technical curricula, traditional classrooms will persist as the cornerstone of transformative tertiary education.'
     },
     {
-      label: 'Problem & Solution: Ùn tắc giao thông & Ô nhiễm đô thị',
+      label: isEn ? 'Problem & Solution: Traffic Congestion & Urban Pollution' : 'Problem & Solution: Ùn tắc giao thông & Ô nhiễm đô thị',
       type: 'problem_solution',
       topic: 'environment',
       title: 'Urban Traffic Congestion and Atmospheric Pollution',
@@ -74,6 +75,32 @@ const QUICK_MANUAL_TEMPLATES = {
       sampleAnswer: 'In modern metropolises worldwide, deteriorating air quality and pervasive traffic paralysis represent severe threats to public health and economic vigor. This essay will examine rapid suburban sprawl and inadequate public transit infrastructure as principal drivers of this dilemma before proposing viable countermeasures centered on green mass transit and urban congestion pricing.\n\nThe core origin of urban congestion lies in poorly coordinated municipal planning and car-dependent urban design. Over recent decades, burgeoning population growth in peripheral suburbs has forced millions of daily commuters to rely on personal combustion-engine automobiles. Compounding this issue is the underfunding of public transportation networks, which frequently leaves subway and bus lines overcrowded, erratic, and unappealing to the middle class.\n\nTo remediate this environmental and infrastructural impasse, municipal administrations must deploy a synchronized twofold strategy. First, governments should invest decisively in expanding clean electric rail systems and dedicated bus rapid transit (BRT) routes, ensuring seamless, affordable transit between peripheral residential districts and central commercial hubs. Second, cities should enact strict congestion toll zones, as successfully demonstrated in London and Singapore, while earmarking collected revenues toward subsidizing pedestrian corridors and zero-emission vehicles.\n\nIn conclusion, combating urban traffic bottlenecks requires shifting public priorities away from private car usage toward robust, clean, and accessible public mass transit systems.'
     }
   ]
+});
+
+export const QUICK_MANUAL_TEMPLATES = getQuickManualTemplates(false);
+
+const getTask1TypeLabel = (t, isEn) => {
+  if (!isEn) return `${t.label} (${t.desc})`;
+  const enLabels = {
+    line: 'Line Graph (Trend over time)',
+    bar: 'Bar Chart (Comparative / Trends)',
+    pie: 'Pie Chart (Proportions & Shares)',
+    table: 'Data Table (Statistical Breakdown)',
+    mixed: 'Combined Charts (Multi-chart Synthesis)',
+    process: 'Process Diagram (Stages & Operations)',
+    map: 'Map / Spatial Layout (Development & Changes)'
+  };
+  return enLabels[t.id] || t.label;
+};
+
+const getTimeFrameLabel = (tf, isEn) => {
+  if (!isEn) return `${tf.label} — ${tf.desc}`;
+  const enLabels = {
+    any: 'Automatic (AI Decision) — Optimal timeframe for selected visual',
+    dynamic: 'Dynamic (Changes over time) — Trend description across 2+ periods',
+    static: 'Static (Single point in time) — Relative comparison & proportions'
+  };
+  return enLabels[tf.id] || tf.label;
 };
 
 export default function TaskGeneratorModal({
@@ -88,6 +115,9 @@ export default function TaskGeneratorModal({
   initialMode = 'ai'
 }) {
   if (!isOpen) return null;
+
+  const { t, isEn } = useTranslation();
+  const quickManualTemplates = getQuickManualTemplates(isEn);
 
   // Mode Switcher: 'ai' (AI Sinh Tự Động) | 'manual' (Nạp Đề Thủ Công)
   const [generatorMode, setGeneratorMode] = useState(initialMode);
@@ -150,7 +180,7 @@ export default function TaskGeneratorModal({
   // AI Generation Handler
   const handleGenerateAI = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cài đặt AI API Key trước khi sinh đề.');
+      setErrorMsg(isEn ? 'Please configure your AI API Key before generating tasks.' : 'Vui lòng cài đặt AI API Key trước khi sinh đề.');
       return;
     }
 
@@ -178,7 +208,7 @@ export default function TaskGeneratorModal({
       });
 
       newTask.isPublic = isPublic;
-      newTask.creatorEmail = user?.email || 'Thành viên';
+      newTask.creatorEmail = user?.email || (isEn ? 'Member' : 'Thành viên');
       newTask.isCustom = true;
       newTask.isAiGenerated = true;
       newTask.isManual = false;
@@ -187,7 +217,7 @@ export default function TaskGeneratorModal({
       onTaskCreated(newTask, isPublic);
       onClose();
     } catch (err) {
-      setErrorMsg(err.message || 'Lỗi khi sinh đề từ AI. Vui lòng kiểm tra API Key.');
+      setErrorMsg(err.message || (isEn ? 'Error while generating task from AI. Please check your API Key.' : 'Lỗi khi sinh đề từ AI. Vui lòng kiểm tra API Key.'));
     } finally {
       setIsGenerating(false);
     }
@@ -198,7 +228,7 @@ export default function TaskGeneratorModal({
     if (e) e.preventDefault();
 
     if (!manualPrompt.trim()) {
-      setErrorMsg('Vui lòng điền nội dung đề bài (Prompt).');
+      setErrorMsg(isEn ? 'Please enter task prompt content.' : 'Vui lòng điền nội dung đề bài (Prompt).');
       return;
     }
 
@@ -208,9 +238,17 @@ export default function TaskGeneratorModal({
       return;
     }
 
+    const t1Obj = TASK1_TYPES.find(t => t.id === task1Type);
+    const t1TitleLabel = isEn ? (t1Obj ? t1Obj.label.replace(/\s*\([^)]*\)/g, '') : 'Report') : (t1Obj?.label || 'Report');
+    const t2Obj = TASK2_TYPES.find(t => t.id === task2Type);
+
     const defaultTitle = taskNumber === 1 
-      ? `Task 1: Biểu đồ ${TASK1_TYPES.find(t => t.id === task1Type)?.label || 'Report'}`
-      : `Task 2: Bài luận ${TASK2_TYPES.find(t => t.id === task2Type)?.label || 'Essay'}`;
+      ? (isEn 
+          ? `Task 1: ${t1TitleLabel} Report` 
+          : `Task 1: Biểu đồ ${t1Obj?.label || 'Report'}`)
+      : (isEn 
+          ? `Task 2: ${t2Obj?.label || 'Essay'} Essay` 
+          : `Task 2: Bài luận ${t2Obj?.label || 'Essay'}`);
 
     const newTask = {
       id: `manual-task-${Date.now()}`,
@@ -228,7 +266,7 @@ export default function TaskGeneratorModal({
       isAiGenerated: false,
       source: 'manual',
       isPublic: Boolean(isPublic),
-      creatorEmail: user?.email || 'Thành viên',
+      creatorEmail: user?.email || (isEn ? 'Member' : 'Thành viên'),
       createdAt: new Date().toISOString()
     };
 
@@ -257,27 +295,29 @@ export default function TaskGeneratorModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight">
-                  {generatorMode === 'manual' ? 'Nạp Đề Writing Thủ Công' : 'AI Sinh Đề Mới Tự Động'}
+                  {generatorMode === 'manual' 
+                    ? (isEn ? 'Manual Writing Task Entry' : 'Nạp Đề Writing Thủ Công') 
+                    : (isEn ? 'AI Automatic Task Generator' : 'AI Sinh Đề Mới Tự Động')}
                 </h3>
                 <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
                   generatorMode === 'manual'
                     ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                     : 'bg-rose-100 text-rose-800 border border-rose-300'
                 }`}>
-                  {generatorMode === 'manual' ? '✍️ Thủ công' : '🤖 AI Engine'}
+                  {generatorMode === 'manual' ? (isEn ? '✍️ Manual' : '✍️ Thủ công') : (isEn ? '🤖 AI Engine' : '🤖 AI Engine')}
                 </span>
               </div>
               <p className="text-[11px] text-slate-500">
                 {generatorMode === 'manual'
-                  ? 'Tự nạp đề từ sách Cambridge, ảnh chụp đề thi thật hoặc tài liệu cá nhân'
-                  : 'Cập nhật xu hướng thi thật IELTS Writing 2025–2026 với biểu đồ sống'}
+                  ? (isEn ? 'Input tasks from Cambridge books, actual exam photos, or personal study materials' : 'Tự nạp đề từ sách Cambridge, ảnh chụp đề thi thật hoặc tài liệu cá nhân')
+                  : (isEn ? 'Up-to-date IELTS Writing 2025–2026 test trends with dynamic interactive charts' : 'Cập nhật xu hướng thi thật IELTS Writing 2025–2026 với biểu đồ sống')}
               </p>
             </div>
           </div>
           <button 
             onClick={onClose} 
             className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-            title="Đóng (Esc)"
+            title={isEn ? "Close (Esc)" : "Đóng (Esc)"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -296,7 +336,7 @@ export default function TaskGeneratorModal({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>🤖 AI Sinh Tự Động</span>
+              <span>{isEn ? '🤖 AI Auto Generate' : '🤖 AI Sinh Tự Động'}</span>
             </button>
             <button
               type="button"
@@ -308,7 +348,7 @@ export default function TaskGeneratorModal({
               }`}
             >
               <PenTool className="w-3.5 h-3.5" />
-              <span>✍️ Nạp Đề Thủ Công</span>
+              <span>{isEn ? '✍️ Manual Entry' : '✍️ Nạp Đề Thủ Công'}</span>
             </button>
           </div>
         </div>
@@ -321,13 +361,13 @@ export default function TaskGeneratorModal({
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>Chưa cài đặt AI API Key.</span>
+                <span>{isEn ? 'AI API Key not configured.' : 'Chưa cài đặt AI API Key.'}</span>
               </div>
               <button
                 onClick={onOpenSettings}
                 className="text-red-600 font-bold hover:underline cursor-pointer"
               >
-                Cài đặt ngay →
+                {isEn ? 'Configure now →' : 'Cài đặt ngay →'}
               </button>
             </div>
           )}
@@ -341,7 +381,9 @@ export default function TaskGeneratorModal({
 
           {/* Task Choice (Task 1 vs Task 2) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700">Chọn phần thi IELTS Writing:</label>
+            <label className="text-xs font-bold text-slate-700">
+              {isEn ? 'Select IELTS Writing Task:' : 'Chọn phần thi IELTS Writing:'}
+            </label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -356,7 +398,9 @@ export default function TaskGeneratorModal({
                 <div>
                   <span className="font-bold text-xs block">Task 1 (Report)</span>
                   <span className="text-[10px] text-slate-500 block">
-                    {generatorMode === 'manual' ? 'Nạp đề kèm ảnh biểu đồ / quy trình' : 'Sinh số liệu & vẽ biểu đồ sống'}
+                    {generatorMode === 'manual' 
+                      ? (isEn ? 'Import prompt with chart / process diagram' : 'Nạp đề kèm ảnh biểu đồ / quy trình') 
+                      : (isEn ? 'Generate dynamic data & live charts' : 'Sinh số liệu & vẽ biểu đồ sống')}
                   </span>
                 </div>
               </button>
@@ -374,7 +418,9 @@ export default function TaskGeneratorModal({
                 <div>
                   <span className="font-bold text-xs block">Task 2 (Essay)</span>
                   <span className="text-[10px] text-slate-500 block">
-                    {generatorMode === 'manual' ? 'Nạp câu hỏi luận từ sách hoặc thi thật' : 'Đề thi xu hướng 2025–2026'}
+                    {generatorMode === 'manual' 
+                      ? (isEn ? 'Import essay question from Cambridge or past exams' : 'Nạp câu hỏi luận từ sách hoặc thi thật') 
+                      : (isEn ? '2025–2026 trending exam prompts' : 'Đề thi xu hướng 2025–2026')}
                   </span>
                 </div>
               </button>
@@ -390,7 +436,9 @@ export default function TaskGeneratorModal({
               {taskNumber === 1 ? (
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700">Dạng Đề Task 1 (7 dạng chuẩn Cambridge):</label>
+                    <label className="text-xs font-bold text-slate-700">
+                      {isEn ? 'Task 1 Chart Type (7 Cambridge Standards):' : 'Dạng Đề Task 1 (7 dạng chuẩn Cambridge):'}
+                    </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {TASK1_TYPES.map(t => (
                         <button
@@ -404,7 +452,7 @@ export default function TaskGeneratorModal({
                           }`}
                         >
                           <span className="block font-bold">{t.label}</span>
-                          <span className="block text-[10px] text-slate-400 font-normal truncate">{t.desc}</span>
+                          <span className="block text-[10px] text-slate-400 font-normal truncate">{isEn ? t.label : t.desc}</span>
                         </button>
                       ))}
                     </div>
@@ -418,13 +466,19 @@ export default function TaskGeneratorModal({
                       </div>
                       <div className="text-xs">
                         <div className="flex items-center space-x-1.5">
-                          <strong className="text-amber-950 font-black">Tạo hình trực tiếp bằng Google Banana (AI Image):</strong>
+                          <strong className="text-amber-950 font-black">
+                            {isEn ? 'Generate Authentic Visuals with Google Banana (AI Image):' : 'Tạo hình trực tiếp bằng Google Banana (AI Image):'}
+                          </strong>
                           <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-200 text-amber-900">AI Image</span>
                         </div>
                         <span className="text-[11px] text-amber-900 block mt-0.5 leading-relaxed">
                           {task1Type === 'process' 
-                            ? 'Google Banana AI sẽ vẽ trực tiếp sơ đồ quy trình / vòng đời độc bản chân thực, không bao giờ bị trùng lặp.' 
-                            : 'Google Banana AI sẽ vẽ trực tiếp bản đồ kép đối chiếu 2 thời kỳ chân thực, sống động chuẩn bài thi thật.'}
+                            ? (isEn 
+                                ? 'Google Banana AI will generate an authentic, unique process / lifecycle diagram calibrated for IELTS.' 
+                                : 'Google Banana AI sẽ vẽ trực tiếp sơ đồ quy trình / vòng đời độc bản chân thực, không bao giờ bị trùng lặp.') 
+                            : (isEn 
+                                ? 'Google Banana AI will generate authentic comparative dual-period maps matching real exam conditions.' 
+                                : 'Google Banana AI sẽ vẽ trực tiếp bản đồ kép đối chiếu 2 thời kỳ chân thực, sống động chuẩn bài thi thật.')}
                         </span>
                       </div>
                     </div>
@@ -435,7 +489,9 @@ export default function TaskGeneratorModal({
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
                       <div className="flex items-center space-x-1.5">
                         <Clock className="w-3.5 h-3.5 text-blue-600" />
-                        <label className="text-xs font-bold text-slate-700">Khung thời gian (Dynamic vs Static):</label>
+                        <label className="text-xs font-bold text-slate-700">
+                          {isEn ? 'Time Frame (Dynamic vs Static):' : 'Khung thời gian (Dynamic vs Static):'}
+                        </label>
                       </div>
                       <div className="grid grid-cols-3 gap-1.5">
                         {TIME_FRAME_TYPES.map(tf => (
@@ -458,14 +514,16 @@ export default function TaskGeneratorModal({
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700">Dạng Bài Luận Task 2:</label>
+                  <label className="text-xs font-bold text-slate-700">
+                    {isEn ? 'Task 2 Essay Type:' : 'Dạng Bài Luận Task 2:'}
+                  </label>
                   <select
                     value={task2Type}
                     onChange={(e) => setTask2Type(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 bg-white cursor-pointer"
                   >
                     {TASK2_TYPES.map(t => (
-                      <option key={t.id} value={t.id}>{t.label} ({t.vi})</option>
+                      <option key={t.id} value={t.id}>{t.label} ({isEn ? t.label : t.vi})</option>
                     ))}
                   </select>
                 </div>
@@ -473,14 +531,16 @@ export default function TaskGeneratorModal({
 
               {/* Topic Selection */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Chủ Đề (Topic Category):</label>
+                <label className="text-xs font-bold text-slate-700">
+                  {isEn ? 'Topic Category:' : 'Chủ Đề (Topic Category):'}
+                </label>
                 <select
                   value={selectedTopic}
                   onChange={(e) => setSelectedTopic(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 bg-white cursor-pointer"
                 >
                   {IELTS_TOPICS.map(t => (
-                    <option key={t.id} value={t.id}>{t.name} — {t.vi}</option>
+                    <option key={t.id} value={t.id}>{t.name} {isEn ? '' : `— ${t.vi}`}</option>
                   ))}
                 </select>
               </div>
@@ -498,12 +558,14 @@ export default function TaskGeneratorModal({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>Nạp Nhanh Mẫu Đề Chuẩn Cambridge:</span>
+                    <span>{isEn ? 'Cambridge Standard Quick-Fill Templates:' : 'Nạp Nhanh Mẫu Đề Chuẩn Cambridge:'}</span>
                   </span>
-                  <span className="text-[10px] text-emerald-700 font-medium">Bấm để tự động điền cấu trúc</span>
+                  <span className="text-[10px] text-emerald-700 font-medium">
+                    {isEn ? 'Click to auto-populate prompt & model answer' : 'Bấm để tự động điền cấu trúc'}
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {(taskNumber === 1 ? QUICK_MANUAL_TEMPLATES.task1 : QUICK_MANUAL_TEMPLATES.task2).map((tpl, idx) => (
+                  {(taskNumber === 1 ? quickManualTemplates.task1 : quickManualTemplates.task2).map((tpl, idx) => (
                     <button
                       key={idx}
                       type="button"
@@ -521,7 +583,9 @@ export default function TaskGeneratorModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-bold text-slate-700 block mb-1">
-                    {taskNumber === 1 ? 'Dạng Đề Task 1:' : 'Dạng Bài Task 2:'}
+                    {taskNumber === 1 
+                      ? (isEn ? 'Task 1 Visual Type:' : 'Dạng Đề Task 1:') 
+                      : (isEn ? 'Task 2 Essay Type:' : 'Dạng Bài Task 2:')}
                   </label>
                   {taskNumber === 1 ? (
                     <select
@@ -530,7 +594,7 @@ export default function TaskGeneratorModal({
                       className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white"
                     >
                       {TASK1_TYPES.map(t => (
-                        <option key={t.id} value={t.id}>{t.label} ({t.desc})</option>
+                        <option key={t.id} value={t.id}>{getTask1TypeLabel(t, isEn)}</option>
                       ))}
                     </select>
                   ) : (
@@ -540,7 +604,7 @@ export default function TaskGeneratorModal({
                       className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white"
                     >
                       {TASK2_TYPES.map(t => (
-                        <option key={t.id} value={t.id}>{t.label} ({t.vi})</option>
+                        <option key={t.id} value={t.id}>{t.label} {isEn ? '' : `(${t.vi})`}</option>
                       ))}
                     </select>
                   )}
@@ -548,7 +612,9 @@ export default function TaskGeneratorModal({
 
                 <div>
                   <label className="text-xs font-bold text-slate-700 block mb-1">
-                    {taskNumber === 1 ? 'Khung Thời Gian:' : 'Chủ Đề (Topic):'}
+                    {taskNumber === 1 
+                      ? (isEn ? 'Time Horizon:' : 'Khung Thời Gian:') 
+                      : (isEn ? 'Topic Category:' : 'Chủ Đề (Topic):')}
                   </label>
                   {taskNumber === 1 ? (
                     <select
@@ -557,7 +623,7 @@ export default function TaskGeneratorModal({
                       className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white"
                     >
                       {TIME_FRAME_TYPES.map(tf => (
-                        <option key={tf.id} value={tf.id}>{tf.label} — {tf.desc}</option>
+                        <option key={tf.id} value={tf.id}>{getTimeFrameLabel(tf, isEn)}</option>
                       ))}
                     </select>
                   ) : (
@@ -567,7 +633,7 @@ export default function TaskGeneratorModal({
                       className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white"
                     >
                       {IELTS_TOPICS.map(t => (
-                        <option key={t.id} value={t.id}>{t.name} — {t.vi}</option>
+                        <option key={t.id} value={t.id}>{t.name} {isEn ? '' : `— ${t.vi}`}</option>
                       ))}
                     </select>
                   )}
@@ -580,12 +646,12 @@ export default function TaskGeneratorModal({
                   <TaskImageUploader
                     imageUrl={manualImageUrl}
                     onImageChange={setManualImageUrl}
-                    label="Hình ảnh biểu đồ / Bản đồ / Quy trình Task 1 (Tùy chọn):"
+                    label={isEn ? "Task 1 Chart / Map / Process Diagram Image (Optional):" : "Hình ảnh biểu đồ / Bản đồ / Quy trình Task 1 (Tùy chọn):"}
                     user={user}
                   />
                   {manualImageUrl && (
                     <p className="text-[11px] text-blue-800 font-medium mt-1.5 flex items-center gap-1">
-                      <span>✓ Đã nạp ảnh thành công. Ảnh sẽ được hiển thị trực tiếp khi bạn làm bài thi.</span>
+                      <span>{isEn ? '✓ Image loaded successfully. It will be displayed during your writing session.' : '✓ Đã nạp ảnh thành công. Ảnh sẽ được hiển thị trực tiếp khi bạn làm bài thi.'}</span>
                     </p>
                   )}
                 </div>
@@ -594,13 +660,13 @@ export default function TaskGeneratorModal({
               {/* Task Title */}
               <div>
                 <label className="text-xs font-bold text-slate-700 block mb-1">
-                  Tiêu Đề Đề Bài (Task Title):
+                  {isEn ? 'Task Title:' : 'Tiêu Đề Đề Bài (Task Title):'}
                 </label>
                 <input
                   type="text"
                   value={manualTitle}
                   onChange={(e) => setManualTitle(e.target.value)}
-                  placeholder={taskNumber === 1 ? "Ví dụ: Cambridge 18 Test 2 Task 1: Water Consumption" : "Ví dụ: Cambridge 19 Test 1 Task 2: Artificial Intelligence"}
+                  placeholder={taskNumber === 1 ? (isEn ? "e.g. Cambridge 18 Test 2 Task 1: Water Consumption" : "Ví dụ: Cambridge 18 Test 2 Task 1: Water Consumption") : (isEn ? "e.g. Cambridge 19 Test 1 Task 2: Artificial Intelligence" : "Ví dụ: Cambridge 19 Test 1 Task 2: Artificial Intelligence")}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white font-medium"
                 />
               </div>
@@ -609,15 +675,17 @@ export default function TaskGeneratorModal({
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-bold text-slate-700">
-                    Nội dung câu hỏi đề thi (Prompt) <span className="text-red-500">*</span>:
+                    {isEn ? 'Exam Question Prompt' : 'Nội dung câu hỏi đề thi (Prompt)'} <span className="text-red-500">*</span>:
                   </label>
-                  <span className="text-[10px] text-slate-500">Dán nguyên văn đề thi IELTS thật</span>
+                  <span className="text-[10px] text-slate-500">
+                    {isEn ? 'Paste authentic IELTS exam prompt' : 'Dán nguyên văn đề thi IELTS thật'}
+                  </span>
                 </div>
                 <textarea
                   rows={4}
                   value={manualPrompt}
                   onChange={(e) => setManualPrompt(e.target.value)}
-                  placeholder="Dán toàn bộ đề bài ở đây... Ví dụ: The chart below shows... Summarise the information by selecting and reporting the main features..."
+                  placeholder={isEn ? "Paste the complete prompt here... e.g., The chart below shows... Summarise the information by selecting and reporting the main features..." : "Dán toàn bộ đề bài ở đây... Ví dụ: The chart below shows... Summarise the information by selecting and reporting the main features..."}
                   className="w-full p-3 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white font-sans leading-relaxed resize-y"
                   required
                 />
@@ -626,7 +694,9 @@ export default function TaskGeneratorModal({
               {/* Word Targets & Timing */}
               <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
                 <div>
-                  <label className="text-[11px] font-bold text-slate-700 block mb-1">Số từ tối thiểu:</label>
+                  <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                    {isEn ? 'Minimum words:' : 'Số từ tối thiểu:'}
+                  </label>
                   <input
                     type="number"
                     value={manualMinWords}
@@ -635,7 +705,9 @@ export default function TaskGeneratorModal({
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold text-slate-700 block mb-1">Thời gian gợi ý (phút):</label>
+                  <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                    {isEn ? 'Recommended time (minutes):' : 'Thời gian gợi ý (phút):'}
+                  </label>
                   <input
                     type="number"
                     value={manualTimeLimit}
@@ -650,15 +722,17 @@ export default function TaskGeneratorModal({
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                     <FileCheck className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Bài mẫu tham khảo Band 8.0+ (Tùy chọn):</span>
+                    <span>{isEn ? 'Band 8.0+ Model Reference Answer (Optional):' : 'Bài mẫu tham khảo Band 8.0+ (Tùy chọn):'}</span>
                   </label>
-                  <span className="text-[10px] text-slate-500">Giúp đối chiếu và học từ vựng</span>
+                  <span className="text-[10px] text-slate-500">
+                    {isEn ? 'Useful for post-writing benchmark and vocabulary review' : 'Giúp đối chiếu và học từ vựng'}
+                  </span>
                 </div>
                 <textarea
                   rows={4}
                   value={manualSampleAnswer}
                   onChange={(e) => setManualSampleAnswer(e.target.value)}
-                  placeholder="Dán bài văn mẫu Band 8.0+ từ sách hoặc giảng viên nếu có để tiện đối chiếu sau khi viết xong..."
+                  placeholder={isEn ? "Paste high-band model answer here to review and contrast after completing your essay..." : "Dán bài văn mẫu Band 8.0+ từ sách hoặc giảng viên nếu có để tiện đối chiếu sau khi viết xong..."}
                   className="w-full p-3 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white font-sans leading-relaxed resize-y"
                 />
               </div>
@@ -674,15 +748,21 @@ export default function TaskGeneratorModal({
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                  <span>
+                    {isPublic 
+                      ? (isEn ? 'Share with Global Community Library' : 'Tự động chia sẻ lên Thư viện Cộng đồng') 
+                      : (isEn ? 'Save Privately in Your Account' : 'Chỉ lưu riêng tư trong tài khoản')}
+                  </span>
                   {isPublic && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-700">Tài nguyên chung</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-700">
+                      {isEn ? 'Public Resource' : 'Tài nguyên chung'}
+                    </span>
                   )}
                 </div>
                 <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
                   {isPublic 
-                    ? 'Đề thi sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
-                    : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.'}
+                    ? (isEn ? 'The task will be automatically contributed to the community library for all learners. Toggle off to keep it private.' : 'Đề thi sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.') 
+                    : (isEn ? 'Only visible and accessible within your personal account.' : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.')}
                 </div>
               </div>
             </div>
@@ -707,7 +787,7 @@ export default function TaskGeneratorModal({
             onClick={onClose}
             className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
           >
-            Hủy bỏ
+            {isEn ? 'Cancel' : 'Hủy bỏ'}
           </button>
           
           {generatorMode === 'manual' ? (
@@ -717,7 +797,7 @@ export default function TaskGeneratorModal({
               className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <PenTool className="w-4 h-4" />
-              <span>Lưu Đề Thủ Công & Luyện Ngay</span>
+              <span>{isEn ? 'Save Custom Task & Start Practice' : 'Lưu Đề Thủ Công & Luyện Ngay'}</span>
             </button>
           ) : (
             <button
@@ -731,14 +811,14 @@ export default function TaskGeneratorModal({
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>
                     {taskNumber === 1 && (task1Type === 'process' || task1Type === 'map')
-                      ? 'Google Banana Đang Vẽ Ảnh Minh Họa...'
-                      : 'AI Đang Soạn Đề & Vẽ Biểu Đồ...'}
+                      ? (isEn ? 'Google Banana Generating Diagram...' : 'Google Banana Đang Vẽ Ảnh Minh Họa...')
+                      : (isEn ? 'AI Generating Prompt & Visual Data...' : 'AI Đang Soạn Đề & Vẽ Biểu Đồ...')}
                   </span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Sinh Đề Mới Ngay</span>
+                  <span>{isEn ? 'Generate Task with AI' : 'Sinh Đề Mới Ngay'}</span>
                 </>
               )}
             </button>

@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Sparkles, Compass, Check, Copy, X, Lightbulb, ArrowRight, ExternalLink, BookOpen, Layers } from 'lucide-react';
 import { callGeminiApi } from '../services/geminiService';
 import { getGitBookBaseUrl } from '../core/featureRegistry';
+import { useTranslation } from '../i18n';
 
 export default function IdeaMatrixModal({ isOpen, onClose, promptText, onInsertToOutline, apiKey, model }) {
   if (!isOpen) return null;
+
+  const { t, language, isEn } = useTranslation();
 
   const [activeTab, setActiveTab] = useState('pestle'); // 'pestle' | 'stakeholders'
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -16,73 +19,109 @@ export default function IdeaMatrixModal({ isOpen, onClose, promptText, onInsertT
   const defaultPestleDimensions = [
     {
       code: 'P',
-      title: 'P - Political & Institutional (Chính Trị & Thể Chế)',
+      title: isEn ? 'P - Political & Institutional' : 'P - Political & Institutional (Chính Trị & Thể Chế)',
       color: 'border-rose-500/50 bg-rose-500/10 text-rose-300',
       badge: 'bg-rose-500/20 text-rose-200 border-rose-500/40',
-      question: 'Chính phủ có nên can thiệp? Chính sách thuế, trợ cấp hay quan hệ quốc tế tác động ra sao?',
+      question: isEn
+        ? 'Should the government intervene? How do tax policies, subsidies, or international relations affect this?'
+        : 'Chính phủ có nên can thiệp? Chính sách thuế, trợ cấp hay quan hệ quốc tế tác động ra sao?',
       ideas: [
-        'Chính phủ cần đóng vai trò điều tiết chính thông qua các gói trợ cấp và chính sách ưu đãi.',
-        'Sự hợp tác đa phương giữa các quốc gia là điều kiện tiên quyết để giải quyết tận gốc vấn đề.'
+        isEn
+          ? 'Governments should play a primary regulatory role via subsidy packages and preferential policies.'
+          : 'Chính phủ cần đóng vai trò điều tiết chính thông qua các gói trợ cấp và chính sách ưu đãi.',
+        isEn
+          ? 'Multilateral cooperation between sovereign states is a prerequisite to resolving root causes.'
+          : 'Sự hợp tác đa phương giữa các quốc gia là điều kiện tiên quyết để giải quyết tận gốc vấn đề.'
       ],
       collocations: ['regulatory framework', 'state intervention', 'multilateral treaty', 'fiscal subsidies']
     },
     {
       code: 'E',
-      title: 'E - Economic & Financial (Kinh Tế & Thị Trường)',
+      title: isEn ? 'E - Economic & Financial' : 'E - Economic & Financial (Kinh Tế & Thị Trường)',
       color: 'border-amber-500/50 bg-amber-500/10 text-amber-300',
       badge: 'bg-amber-500/20 text-amber-200 border-amber-500/40',
-      question: 'Tác động đến ngân sách công, việc làm, chi tiêu hộ gia đình hay tăng trưởng kinh tế?',
+      question: isEn
+        ? 'What is the impact on public budgets, employment, household expenditure, or economic growth?'
+        : 'Tác động đến ngân sách công, việc làm, chi tiêu hộ gia đình hay tăng trưởng kinh tế?',
       ideas: [
-        'Tạo ra thêm công ăn việc làm mới và kích cầu tiêu dùng nội địa trong trung và dài hạn.',
-        'Đặt gánh nặng tài chính khổng lồ lên ngân sách quốc gia và người nộp thuế.'
+        isEn
+          ? 'Creates new employment opportunities and stimulates domestic consumer demand in the medium to long term.'
+          : 'Tạo ra thêm công ăn việc làm mới và kích cầu tiêu dùng nội địa trong trung và dài hạn.',
+        isEn
+          ? 'Imposes a massive financial burden on public coffers and taxpayers.'
+          : 'Đặt gánh nặng tài chính khổng lồ lên ngân sách quốc gia và người nộp thuế.'
       ],
       collocations: ['fiscal burden', 'commercial viability', 'job creation', 'market incentive']
     },
     {
       code: 'S',
-      title: 'S - Social & Cultural (Xã Hội & Lối Sống)',
+      title: isEn ? 'S - Social & Cultural' : 'S - Social & Cultural (Xã Hội & Lối Sống)',
       color: 'border-blue-500/50 bg-blue-500/10 text-blue-300',
       badge: 'bg-blue-500/20 text-blue-200 border-blue-500/40',
-      question: 'Hiện tượng này ảnh hưởng đến sự gắn kết xã hội, bình đẳng hay lối sống của người dân?',
+      question: isEn
+        ? 'Does this phenomenon impact social cohesion, equity, lifestyle, or demographic well-being?'
+        : 'Hiện tượng này ảnh hưởng đến sự gắn kết xã hội, bình đẳng hay lối sống của người dân?',
       ideas: [
-        'Góp phần thu hẹp khoảng cách giàu nghèo và nâng cao chất lượng cuộc sống cho người yếu thế.',
-        'Nguy cơ làm xói mòn các giá trị văn hóa truyền thống và sự gắn kết gia đình.'
+        isEn
+          ? 'Helps narrow the wealth gap and elevates the standard of living for vulnerable demographics.'
+          : 'Góp phần thu hẹp khoảng cách giàu nghèo và nâng cao chất lượng cuộc sống cho người yếu thế.',
+        isEn
+          ? 'Risks eroding traditional cultural values and familial bonds.'
+          : 'Nguy cơ làm xói mòn các giá trị văn hóa truyền thống và sự gắn kết gia đình.'
       ],
       collocations: ['social cohesion', 'cultural erosion', 'marginalized communities', 'quality of life']
     },
     {
       code: 'T',
-      title: 'T - Technological & Digital (Công Nghệ & Kỹ Thuật Số)',
+      title: isEn ? 'T - Technological & Digital' : 'T - Technological & Digital (Công Nghệ & Kỹ Thuật Số)',
       color: 'border-cyan-500/50 bg-cyan-500/10 text-cyan-300',
       badge: 'bg-cyan-500/20 text-cyan-200 border-cyan-500/40',
-      question: 'Ứng dụng AI, tự động hóa hay chuyển đổi số mang lại đột phá gì và rủi ro gì?',
+      question: isEn
+        ? 'How do AI applications, automation, or digital transformation bring breakthroughs or risks?'
+        : 'Ứng dụng AI, tự động hóa hay chuyển đổi số mang lại đột phá gì và rủi ro gì?',
       ideas: [
-        'Tối ưu hóa năng suất lao động và xóa bỏ rào cản địa lý trong học tập, làm việc.',
-        'Nguy cơ gia tăng khoảng cách kỹ thuật số và đe dọa an ninh dữ liệu cá nhân.'
+        isEn
+          ? 'Optimizes labor productivity and eliminates geographical barriers in learning and working.'
+          : 'Tối ưu hóa năng suất lao động và xóa bỏ rào cản địa lý trong học tập, làm việc.',
+        isEn
+          ? 'Exacerbates the digital divide and threatens personal data privacy.'
+          : 'Nguy cơ gia tăng khoảng cách kỹ thuật số và đe dọa an ninh dữ liệu cá nhân.'
       ],
       collocations: ['disruptive innovation', 'digital divide', 'technological breakthrough', 'automation']
     },
     {
       code: 'L',
-      title: 'L - Legal & Compliance (Luật Pháp & Chế Tài)',
+      title: isEn ? 'L - Legal & Compliance' : 'L - Legal & Compliance (Luật Pháp & Chế Tài)',
       color: 'border-purple-500/50 bg-purple-500/10 text-purple-300',
       badge: 'bg-purple-500/20 text-purple-200 border-purple-500/40',
-      question: 'Có cần ban hành luật mới? Chế tài phạt và hành lang pháp lý đã đủ tính răn đe chưa?',
+      question: isEn
+        ? 'Is new legislation required? Are statutory penalties and regulatory frameworks sufficiently deterrent?'
+        : 'Có cần ban hành luật mới? Chế tài phạt và hành lang pháp lý đã đủ tính răn đe chưa?',
       ideas: [
-        'Cần thiết lập khung pháp lý chặt chẽ với các mức phạt mang tính răn đe cao đối với hành vi vi phạm.',
-        'Bảo vệ quyền lợi hợp pháp và quyền riêng tư của công dân trước các hành vi trục lợi.'
+        isEn
+          ? 'Demands a rigorous statutory framework with severe punitive sanctions for non-compliance.'
+          : 'Cần thiết lập khung pháp lý chặt chẽ với các mức phạt mang tính răn đe cao đối với hành vi vi phạm.',
+        isEn
+          ? 'Safeguards citizens legitimate rights and privacy against exploitative practices.'
+          : 'Bảo vệ quyền lợi hợp pháp và quyền riêng tư của công dân trước các hành vi trục lợi.'
       ],
       collocations: ['punitive measures', 'statutory regulations', 'legal deterrence', 'stringent enforcement']
     },
     {
       code: 'E',
-      title: 'E - Environmental & Ecological (Môi Trường & Sinh Thái)',
+      title: isEn ? 'E - Environmental & Ecological' : 'E - Environmental & Ecological (Môi Trường & Sinh Thái)',
       color: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300',
       badge: 'bg-emerald-500/20 text-emerald-200 border-emerald-500/40',
-      question: 'Lợi ích thu về có đánh đổi phát thải carbon, ô nhiễm hay cạn kiệt tài nguyên thiên nhiên?',
+      question: isEn
+        ? 'Are benefits traded off against carbon footprint, environmental pollution, or resource depletion?'
+        : 'Lợi ích thu về có đánh đổi phát thải carbon, ô nhiễm hay cạn kiệt tài nguyên thiên nhiên?',
       ideas: [
-        'Thúc đẩy quá trình chuyển dịch xanh và giảm thiểu lượng khí thải nhà kính ra khí quyển.',
-        'Khai thác quá mức tài nguyên thiên nhiên dẫn đến suy giảm đa dạng sinh học trầm trọng.'
+        isEn
+          ? 'Accelerates the green transition and curtails greenhouse gas emissions into the atmosphere.'
+          : 'Thúc đẩy quá trình chuyển dịch xanh và giảm thiểu lượng khí thải nhà kính ra khí quyển.',
+        isEn
+          ? 'Excessive exploitation of natural resources precipitates severe biodiversity loss.'
+          : 'Khai thác quá mức tài nguyên thiên nhiên dẫn đến suy giảm đa dạng sinh học trầm trọng.'
       ],
       collocations: ['ecological footprint', 'carbon emissions', 'sustainable transition', 'depletion of resources']
     }
@@ -92,49 +131,73 @@ export default function IdeaMatrixModal({ isOpen, onClose, promptText, onInsertT
   const defaultStakeholderDimensions = [
     {
       code: '1',
-      title: '1. Cá Nhân vs Xã Hội (Micro vs Macro)',
+      title: isEn ? '1. Individual vs Society (Micro vs Macro)' : '1. Cá Nhân vs Xã Hội (Micro vs Macro)',
       color: 'border-indigo-500/50 bg-indigo-500/10 text-indigo-300',
       badge: 'bg-indigo-500/20 text-indigo-200 border-indigo-500/40',
-      question: 'Chính sách/hiện tượng này tác động đến quyền lợi từng cá nhân ra sao? Đến sự ổn định của toàn xã hội ra sao?',
+      question: isEn
+        ? 'How does this policy or trend affect individual rights versus overall societal stability?'
+        : 'Chính sách/hiện tượng này tác động đến quyền lợi từng cá nhân ra sao? Đến sự ổn định của toàn xã hội ra sao?',
       ideas: [
-        'Cá nhân: Tăng sự tự do lựa chọn, nâng cao kỹ năng mềm và giảm áp lực tài chính gia đình.',
-        'Xã hội: Nâng cao mặt bằng dân trí tổng thể, giảm thiểu tỷ lệ tội phạm phát sinh do thất nghiệp.'
+        isEn
+          ? 'Individual: Expands personal autonomy, hones soft skills, and relieves household financial strains.'
+          : 'Cá nhân: Tăng sự tự do lựa chọn, nâng cao kỹ năng mềm và giảm áp lực tài chính gia đình.',
+        isEn
+          ? 'Society: Elevates overall civic literacy and reduces crime rates stemming from unemployment.'
+          : 'Xã hội: Nâng cao mặt bằng dân trí tổng thể, giảm thiểu tỷ lệ tội phạm phát sinh do thất nghiệp.'
       ],
       collocations: ['individual autonomy', 'societal welfare', 'collective consciousness', 'civic duty']
     },
     {
       code: '2',
-      title: '2. Kinh Tế vs Môi Trường (Financial vs Ecological)',
+      title: isEn ? '2. Economy vs Environment (Financial vs Ecological)' : '2. Kinh Tế vs Môi Trường (Financial vs Ecological)',
       color: 'border-amber-500/50 bg-amber-500/10 text-amber-300',
       badge: 'bg-amber-500/20 text-amber-200 border-amber-500/40',
-      question: 'Lợi ích kinh tế thu về có bù đắp được các tổn hại về môi trường và cạn kiệt tài nguyên hay không?',
+      question: isEn
+        ? 'Do economic revenues compensate for environmental degradation and resource depletion?'
+        : 'Lợi ích kinh tế thu về có bù đắp được các tổn hại về môi trường và cạn kiệt tài nguyên hay không?',
       ideas: [
-        'Kinh tế: Kích thích tiêu dùng, tạo thêm nguồn thu thuế dồi dào và nhiều việc làm trong ngành dịch vụ.',
-        'Môi trường: Tăng lượng rác thải sinh hoạt, ô nhiễm nguồn nước ngầm và tăng tốc độ biến đổi khí hậu.'
+        isEn
+          ? 'Economy: Stimulates consumer spending, generates abundant tax revenues, and creates service jobs.'
+          : 'Kinh tế: Kích thích tiêu dùng, tạo thêm nguồn thu thuế dồi dào và nhiều việc làm trong ngành dịch vụ.',
+        isEn
+          ? 'Environment: Increases municipal waste, contaminates groundwater, and accelerates climate change.'
+          : 'Môi trường: Tăng lượng rác thải sinh hoạt, ô nhiễm nguồn nước ngầm và tăng tốc độ biến đổi khí hậu.'
       ],
       collocations: ['economic boon', 'ecological toll', 'unsustainable exploitation', 'green growth']
     },
     {
       code: '3',
-      title: '3. Ngắn Hạn vs Dài Hạn (Short-Term vs Sustainable Horizon)',
+      title: isEn ? '3. Short-Term vs Long-Term (Immediate vs Sustainable)' : '3. Ngắn Hạn vs Dài Hạn (Short-Term vs Sustainable Horizon)',
       color: 'border-teal-500/50 bg-teal-500/10 text-teal-300',
       badge: 'bg-teal-500/20 text-teal-200 border-teal-500/40',
-      question: 'Hiệu quả đạt được ngay lập tức là gì? Sau 10-20 năm tới sẽ để lại hệ lụy hoặc chuyển biến gì?',
+      question: isEn
+        ? 'What are immediate effects versus consequences or systemic shifts over the next 10-20 years?'
+        : 'Hiệu quả đạt được ngay lập tức là gì? Sau 10-20 năm tới sẽ để lại hệ lụy hoặc chuyển biến gì?',
       ideas: [
-        'Ngắn hạn: Giúp giải quyết nhanh bài toán áp lực ngân sách trước mắt và xoa dịu dư luận.',
-        'Dài hạn: Nguy cơ phụ thuộc thái quá vào công nghệ ngoại lai và làm suy giảm năng lực tự chủ quốc gia.'
+        isEn
+          ? 'Short-term: Quickly relieves immediate fiscal pressures and assuages public concern.'
+          : 'Ngắn hạn: Giúp giải quyết nhanh bài toán áp lực ngân sách trước mắt và xoa dịu dư luận.',
+        isEn
+          ? 'Long-term: Risks excessive reliance on external technologies and diminishes national sovereignty.'
+          : 'Dài hạn: Nguy cơ phụ thuộc thái quá vào công nghệ ngoại lai và làm suy giảm năng lực tự chủ quốc gia.'
       ],
       collocations: ['stopgap measure', 'long-term ramifications', 'sustainable trajectory', 'lasting legacy']
     },
     {
       code: '4',
-      title: '4. Chính Phủ vs Doanh Nghiệp (State vs Private Sector)',
+      title: isEn ? '4. Government vs Private Sector (State vs Enterprise)' : '4. Chính Phủ vs Doanh Nghiệp (State vs Private Sector)',
       color: 'border-purple-500/50 bg-purple-500/10 text-purple-300',
       badge: 'bg-purple-500/20 text-purple-200 border-purple-500/40',
-      question: 'Nhà nước có trách nhiệm gì (luật pháp, định hướng)? Doanh nghiệp tư nhân đóng vai trò gì?',
+      question: isEn
+        ? 'What is the role of the state (legislation, oversight) versus private corporate responsibility?'
+        : 'Nhà nước có trách nhiệm gì (luật pháp, định hướng)? Doanh nghiệp tư nhân đóng vai trò gì?',
       ideas: [
-        'Chính phủ: Ban hành hành lang pháp lý nghiêm ngặt, thanh tra độc lập và đánh thuế đánh mạnh vào ô nhiễm.',
-        'Doanh nghiệp: Tăng cường trách nhiệm xã hội (CSR), đầu tư R&D để đổi mới giải pháp xanh.'
+        isEn
+          ? 'Government: Enacts stringent legal standards, independent audits, and heavy levies on pollution.'
+          : 'Chính phủ: Ban hành hành lang pháp lý nghiêm ngặt, thanh tra độc lập và đánh thuế đánh mạnh vào ô nhiễm.',
+        isEn
+          ? 'Enterprises: Strengthen corporate social responsibility (CSR) and invest in green innovation.'
+          : 'Doanh nghiệp: Tăng cường trách nhiệm xã hội (CSR), đầu tư R&D để đổi mới giải pháp xanh.'
       ],
       collocations: ['statutory oversight', 'corporate social responsibility', 'public-private partnership', 'ethical conduct']
     }
@@ -142,7 +205,7 @@ export default function IdeaMatrixModal({ isOpen, onClose, promptText, onInsertT
 
   const handleFetchAiMatrix = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      alert(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     setIsAiLoading(true);
@@ -161,18 +224,18 @@ Analyze across 6 academic dimensions:
 
 For each dimension, provide:
 - code: "P", "E", "S", "T", "L", or "E"
-- title: clear Vietnamese + English label
-- question: 1 reflective critical trigger question in Vietnamese
-- ideas: 2 sharply developed arguments (in Vietnamese, suitable for essay main points)
+- title: clear ${isEn ? 'English' : 'Vietnamese + English'} label
+- question: 1 reflective critical trigger question in ${isEn ? 'English' : 'Vietnamese'}
+- ideas: 2 sharply developed arguments (in ${isEn ? 'academic English' : 'Vietnamese'}, suitable for essay main points)
 - collocations: 3-4 Band 7.5+ English academic collocations related to that angle
 
 Return ONLY valid JSON matching this schema:
 [
   {
     "code": "P",
-    "title": "P - Chính Trị & Thể Chế",
+    "title": "${isEn ? 'P - Political & Institutional' : 'P - Chính Trị & Thể Chế'}",
     "question": "...",
-    "ideas": ["Ý 1...", "Ý 2..."],
+    "ideas": ["${isEn ? 'Idea 1...' : 'Ý 1...'}", "${isEn ? 'Idea 2...' : 'Ý 2...'}"],
     "collocations": ["regulatory framework", "state intervention"]
   },
   ...
@@ -204,10 +267,10 @@ Generate ideas under 4 lenses:
 
 Return ONLY valid JSON in this schema:
 [
-  { "code": "1", "title": "1. Cá Nhân vs Xã Hội", "question": "...", "ideas": ["Ý 1 cá nhân...", "Ý 2 xã hội..."], "collocations": ["individual autonomy", "societal welfare"] },
-  { "code": "2", "title": "2. Kinh Tế vs Môi Trường", "question": "...", "ideas": ["Ý 1 kinh tế...", "Ý 2 môi trường..."], "collocations": ["economic boon", "ecological toll"] },
-  { "code": "3", "title": "3. Ngắn Hạn vs Dài Hạn", "question": "...", "ideas": ["Ý 1 ngắn hạn...", "Ý 2 dài hạn..."], "collocations": ["stopgap measure", "long-term ramifications"] },
-  { "code": "4", "title": "4. Nhà Nước vs Doanh Nghiệp", "question": "...", "ideas": ["Ý 1 nhà nước...", "Ý 2 doanh nghiệp..."], "collocations": ["statutory oversight", "corporate responsibility"] }
+  { "code": "1", "title": "${isEn ? '1. Individual vs Society' : '1. Cá Nhân vs Xã Hội'}", "question": "...", "ideas": ["${isEn ? 'Idea 1 individual...' : 'Ý 1 cá nhân...'}", "${isEn ? 'Idea 2 society...' : 'Ý 2 xã hội...'}"], "collocations": ["individual autonomy", "societal welfare"] },
+  { "code": "2", "title": "${isEn ? '2. Economy vs Environment' : '2. Kinh Tế vs Môi Trường'}", "question": "...", "ideas": ["${isEn ? 'Idea 1 economic...' : 'Ý 1 kinh tế...'}", "${isEn ? 'Idea 2 ecological...' : 'Ý 2 môi trường...'}"], "collocations": ["economic boon", "ecological toll"] },
+  { "code": "3", "title": "${isEn ? '3. Short-Term vs Long-Term' : '3. Ngắn Hạn vs Dài Hạn'}", "question": "...", "ideas": ["${isEn ? 'Idea 1 short-term...' : 'Ý 1 ngắn hạn...'}", "${isEn ? 'Idea 2 long-term...' : 'Ý 2 dài hạn...'}"], "collocations": ["stopgap measure", "long-term ramifications"] },
+  { "code": "4", "title": "${isEn ? '4. State vs Enterprise' : '4. Nhà Nước vs Doanh Nghiệp'}", "question": "...", "ideas": ["${isEn ? 'Idea 1 state...' : 'Ý 1 nhà nước...'}", "${isEn ? 'Idea 2 enterprise...' : 'Ý 2 doanh nghiệp...'}"], "collocations": ["statutory oversight", "corporate responsibility"] }
 ]`;
 
         const response = await callGeminiApi({
@@ -226,7 +289,7 @@ Return ONLY valid JSON in this schema:
         setStakeholderData(parsed);
       }
     } catch (err) {
-      alert('Không thể tạo ma trận bằng AI lúc này. Hệ thống đang hiển thị khung gợi ý chuẩn theo cẩm nang.');
+      alert(isEn ? 'Cannot generate matrix via AI at this time. Displaying standard guidebook framework.' : 'Không thể tạo ma trận bằng AI lúc này. Hệ thống đang hiển thị khung gợi ý chuẩn theo cẩm nang.');
       if (activeTab === 'pestle') {
         setPestleData(defaultPestleDimensions);
       } else {
@@ -264,14 +327,14 @@ Return ONLY valid JSON in this schema:
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-base sm:text-lg font-black text-white">
-                  Kho Lăng Kính Ý Tưởng Task 2 (Ideation Matrix)
+                  {isEn ? 'Task 2 Ideation Matrix' : 'Kho Lăng Kính Ý Tưởng Task 2 (Ideation Matrix)'}
                 </h2>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                  Chuẩn Band 8.0+
+                  {isEn ? 'Band 8.0+ Standard' : 'Chuẩn Band 8.0+'}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Đập tan bế tắc ý tưởng bằng 6 lăng kính P.E.S.T.L.E hoặc 4 góc nhìn Stakeholder đa chiều
+                {isEn ? 'Overcome ideation blocks with the 6 P.E.S.T.L.E lenses or 4 multi-dimensional Stakeholder perspectives' : 'Đập tan bế tắc ý tưởng bằng 6 lăng kính P.E.S.T.L.E hoặc 4 góc nhìn Stakeholder đa chiều'}
               </p>
             </div>
           </div>
@@ -282,17 +345,17 @@ Return ONLY valid JSON in this schema:
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
-              title="Đọc cẩm nang chi tiết trên GitBook"
+              title={isEn ? 'Read comprehensive guide on GitBook' : 'Đọc cẩm nang chi tiết trên GitBook'}
             >
               <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-              <span>Cẩm Nang PESTLE</span>
+              <span>{isEn ? 'PESTLE Guide' : 'Cẩm Nang PESTLE'}</span>
               <ExternalLink className="w-3 h-3 text-slate-400" />
             </a>
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
-              aria-label="Đóng modal"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              aria-label={isEn ? 'Close modal' : 'Đóng modal'}
             >
               <X className="w-5 h-5" />
             </button>
@@ -306,33 +369,33 @@ Return ONLY valid JSON in this schema:
             <button
               type="button"
               onClick={() => setActiveTab('pestle')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                 activeTab === 'pestle'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>Ma Trận 6 Lăng Kính P.E.S.T.L.E</span>
+              <span>{isEn ? '6-Dimension P.E.S.T.L.E Matrix' : 'Ma Trận 6 Lăng Kính P.E.S.T.L.E'}</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('stakeholders')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                 activeTab === 'stakeholders'
                   ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Ma Trận 4 Stakeholder</span>
+              <span>{isEn ? '4 Stakeholders Matrix' : 'Ma Trận 4 Stakeholder'}</span>
             </button>
           </div>
 
           {/* Prompt context & AI trigger */}
           <div className="flex items-center justify-between md:justify-end gap-3 flex-1 min-w-0">
             <div className="text-xs text-slate-300 truncate max-w-md hidden lg:block" title={promptText}>
-              <strong className="text-slate-400">Đề bài: </strong> {promptText || 'Chưa chọn đề bài cụ thể'}
+              <strong className="text-slate-400">{isEn ? 'Prompt: ' : 'Đề bài: '}</strong> {promptText || (isEn ? 'No specific prompt selected' : 'Chưa chọn đề bài cụ thể')}
             </div>
 
             <button
@@ -341,7 +404,7 @@ Return ONLY valid JSON in this schema:
               className="w-full md:w-auto flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-90 text-white text-xs font-bold shadow-md transition-all shrink-0 disabled:opacity-50 active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>{isAiLoading ? 'AI Đang Phân Tích Ma Trận...' : `AI Điền ${activeTab === 'pestle' ? '6 Lăng Kính PESTLE' : '4 Góc Nhìn'}`}</span>
+              <span>{isAiLoading ? (isEn ? 'AI Analyzing Matrix...' : 'AI Đang Phân Tích Ma Trận...') : (isEn ? `AI Generate ${activeTab === 'pestle' ? '6 PESTLE Lenses' : '4 Perspectives'}` : `AI Điền ${activeTab === 'pestle' ? '6 Lăng Kính PESTLE' : '4 Góc Nhìn'}`)}</span>
             </button>
           </div>
         </div>
@@ -371,7 +434,7 @@ Return ONLY valid JSON in this schema:
                   {/* Bullet Ideas */}
                   <div className="space-y-1.5 pt-1">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-                      Luận điểm gợi ý:
+                      {isEn ? 'Suggested Arguments:' : 'Luận điểm gợi ý:'}
                     </span>
                     {(item.ideas || []).map((idea, i) => (
                       <div
@@ -384,17 +447,17 @@ Return ONLY valid JSON in this schema:
                             type="button"
                             onClick={() => handleInsert(idea)}
                             className="px-2 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-blue-200 text-[10px] font-bold border border-blue-500/30 shrink-0 transition-colors cursor-pointer flex items-center space-x-1"
-                            title="Chèn luận điểm này vào dàn ý"
+                            title={isEn ? 'Insert this argument into outline' : 'Chèn luận điểm này vào dàn ý'}
                           >
                             {copiedItem === idea ? (
                               <>
                                 <Check className="w-3 h-3 text-emerald-400" />
-                                <span className="text-emerald-300">Đã chèn</span>
+                                <span className="text-emerald-300">{isEn ? 'Inserted' : 'Đã chèn'}</span>
                               </>
                             ) : (
                               <>
                                 <ArrowRight className="w-3 h-3" />
-                                <span>+ Dàn ý</span>
+                                <span>{isEn ? '+ Outline' : '+ Dàn ý'}</span>
                               </>
                             )}
                           </button>
@@ -407,7 +470,7 @@ Return ONLY valid JSON in this schema:
                   {Array.isArray(item.collocations) && item.collocations.length > 0 && (
                     <div className="pt-2">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block mb-1">
-                        Collocations C1/C2 gợi ý:
+                        {isEn ? 'Suggested C1/C2 Collocations:' : 'Collocations C1/C2 gợi ý:'}
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {item.collocations.map((colloc, cIdx) => (
@@ -416,7 +479,7 @@ Return ONLY valid JSON in this schema:
                             type="button"
                             onClick={() => handleInsert(colloc)}
                             className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-indigo-950/80 text-indigo-300 border border-indigo-800/60 hover:bg-indigo-900 transition-colors cursor-pointer flex items-center space-x-1"
-                            title="Bấm để chèn Collocation này vào dàn ý"
+                            title={isEn ? 'Click to insert this collocation into outline' : 'Bấm để chèn Collocation này vào dàn ý'}
                           >
                             <span>{colloc}</span>
                             <span className="text-indigo-400 text-[8px]">+</span>
@@ -428,8 +491,8 @@ Return ONLY valid JSON in this schema:
                 </div>
 
                 <div className="pt-1 text-[10px] text-slate-500 flex items-center justify-between border-t border-slate-850">
-                  <span>Góc nhìn #{idx + 1}</span>
-                  <span className="text-slate-400">Bấm "+ Dàn ý" để chèn</span>
+                  <span>{isEn ? `Angle #${idx + 1}` : `Góc nhìn #${idx + 1}`}</span>
+                  <span className="text-slate-400">{isEn ? 'Click "+ Outline" to insert' : 'Bấm "+ Dàn ý" để chèn'}</span>
                 </div>
               </div>
             ))}
@@ -441,14 +504,14 @@ Return ONLY valid JSON in this schema:
           <div className="flex items-center space-x-2">
             <Lightbulb className="w-4 h-4 text-amber-400 shrink-0" />
             <span>
-              <strong>Mẹo phòng thi:</strong> Không cần nhồi nhét cả 6 lăng kính vào 1 bài. Chỉ cần chọn 2-3 lăng kính tương phản rõ nét nhất để phát triển thành 2 thân bài (Body 1 & Body 2).
+              <strong>{isEn ? 'Exam Tip:' : 'Mẹo phòng thi:'}</strong> {isEn ? 'Do not cram all 6 lenses into one essay. Pick the 2-3 most contrasting lenses to develop into Body 1 & Body 2.' : 'Không cần nhồi nhét cả 6 lăng kính vào 1 bài. Chỉ cần chọn 2-3 lăng kính tương phản rõ nét nhất để phát triển thành 2 thân bài (Body 1 & Body 2).'}
             </span>
           </div>
           <button
             onClick={onClose}
             className="w-full sm:w-auto px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-colors cursor-pointer text-xs"
           >
-            Đóng Ma Trận
+            {isEn ? 'Close Matrix' : 'Đóng Ma Trận'}
           </button>
         </div>
 

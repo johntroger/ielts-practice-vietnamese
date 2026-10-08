@@ -299,9 +299,11 @@ export default function MicroDrillsModal({
         }
       } catch (e) {}
 
-      alert('Đồng bộ thành công! Toàn bộ câu hỏi và bài luyện đã được cập nhật từ Cloud.');
+      alert(isEn 
+        ? 'Sync successful! All questions and drills have been updated from Cloud.' 
+        : 'Đồng bộ thành công! Toàn bộ câu hỏi và bài luyện đã được cập nhật từ Cloud.');
     } catch (e) {
-      alert('Đồng bộ hoàn tất.');
+      alert(isEn ? 'Sync completed.' : 'Đồng bộ hoàn tất.');
     } finally {
       setIsSyncing(false);
     }
@@ -499,7 +501,7 @@ export default function MicroDrillsModal({
 
   const handleEvaluateCurrentListening = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      alert(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
@@ -543,7 +545,7 @@ export default function MicroDrillsModal({
         res.trapAnalysis
       );
     } catch (err) {
-      alert(err.message || 'Lỗi khi AI phân tích kết quả.');
+      alert(err.message || (isEn ? 'Error while AI analyzing results.' : 'Lỗi khi AI phân tích kết quả.'));
     } finally {
       setIsEvaluatingListening(false);
     }
@@ -580,7 +582,9 @@ export default function MicroDrillsModal({
   const handleToggleVoiceDictation = (onTranscript, setIsRecording, currentRecordingState) => {
     const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     if (!SpeechRecognition) {
-      alert('Trình duyệt của bạn chưa hỗ trợ Web Speech API nhận diện giọng nói trực tiếp. Bạn có thể gõ câu trả lời vào ô văn bản.');
+      alert(isEn 
+        ? 'Your browser does not support the Web Speech API for direct voice dictation. You can type your answer into the text box.' 
+        : 'Trình duyệt của bạn chưa hỗ trợ Web Speech API nhận diện giọng nói trực tiếp. Bạn có thể gõ câu trả lời vào ô văn bản.');
       return;
     }
 
@@ -633,7 +637,7 @@ export default function MicroDrillsModal({
 
   const handleEvaluateCurrentSpeaking = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      alert(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
@@ -652,7 +656,9 @@ export default function MicroDrillsModal({
     }
 
     if (!userResponseText.trim()) {
-      alert('Vui lòng ghi âm hoặc gõ câu trả lời của bạn trước khi nhờ AI nhận xét.');
+      alert(isEn 
+        ? 'Please record or type your answer before requesting AI feedback.' 
+        : 'Vui lòng ghi âm hoặc gõ câu trả lời của bạn trước khi nhờ AI nhận xét.');
       return;
     }
 
@@ -671,7 +677,7 @@ export default function MicroDrillsModal({
       });
       setSpeakingEvaluation(res);
     } catch (err) {
-      alert(err.message || 'Lỗi khi AI phân tích câu trả lời Speaking.');
+      alert(err.message || (isEn ? 'Error while AI analyzing speaking answer.' : 'Lỗi khi AI phân tích câu trả lời Speaking.'));
     } finally {
       setIsEvaluatingSpeaking(false);
     }
@@ -869,10 +875,16 @@ export default function MicroDrillsModal({
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
             <div className="flex items-center justify-center space-x-2 text-emerald-800 font-bold">
               <GraduationCap className="w-5 h-5 text-emerald-600" />
-              <span>Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredInThisTab} bài tập trong dạng này.</span>
+              <span>
+                {isEn 
+                  ? `Great job! You have marked all ${totalMasteredInThisTab} exercises in this type as "Mastered".` 
+                  : `Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ ${totalMasteredInThisTab} bài tập trong dạng này.`}
+              </span>
             </div>
             <p className="text-xs text-emerald-700">
-              Các bài đã thuộc được tự động ẩn khỏi danh sách luyện tập. Bạn có thể bấm nút bên dưới để ôn tập lại bất kỳ lúc nào.
+              {isEn 
+                ? 'Mastered exercises are automatically hidden from the practice list. You can click the button below to review anytime.' 
+                : 'Các bài đã thuộc được tự động ẩn khỏi danh sách luyện tập. Bạn có thể bấm nút bên dưới để ôn tập lại bất kỳ lúc nào.'}
             </p>
             <button
               type="button"
@@ -880,7 +892,7 @@ export default function MicroDrillsModal({
               className="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Hiện lại tất cả bài đã thuộc để ôn tập</span>
+              <span>{isEn ? 'Unhide all mastered exercises to review' : 'Hiện lại tất cả bài đã thuộc để ôn tập'}</span>
             </button>
           </div>
         );
@@ -889,7 +901,7 @@ export default function MicroDrillsModal({
         return (
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-2 text-xs">
             <p className="text-slate-600 font-semibold">
-              Không tìm thấy bài tập phù hợp với bộ lọc hiện tại.
+              {isEn ? 'No exercises found matching the current filter.' : 'Không tìm thấy bài tập phù hợp với bộ lọc hiện tại.'}
             </p>
             <button
               type="button"
@@ -900,7 +912,7 @@ export default function MicroDrillsModal({
               }}
               className="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-bold cursor-pointer hover:bg-slate-800 transition"
             >
-              Đặt lại bộ lọc
+              {isEn ? 'Reset Filters' : 'Đặt lại bộ lọc'}
             </button>
           </div>
         );
@@ -924,7 +936,7 @@ export default function MicroDrillsModal({
                 setIndex(0);
                 onReset();
               }}
-              placeholder="Tìm bài tập, chủ đề..."
+              placeholder={isEn ? "Search exercises, topics..." : "Tìm bài tập, chủ đề..."}
               className="pl-8 pr-7 py-1 text-xs bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 w-40 sm:w-52 font-medium text-slate-800 shadow-2xs placeholder:text-slate-400"
             />
             {drillSearchQuery && (
@@ -937,7 +949,7 @@ export default function MicroDrillsModal({
                   onReset();
                 }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                title="Xóa tìm kiếm"
+                title={isEn ? "Clear search" : "Xóa tìm kiếm"}
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -954,7 +966,7 @@ export default function MicroDrillsModal({
                   drillQuickFilter === 'all' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Tất cả
+                {isEn ? 'All' : 'Tất cả'}
               </button>
               <button
                 type="button"
@@ -962,7 +974,7 @@ export default function MicroDrillsModal({
                 className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
                   drillQuickFilter === 'top_rated' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
-                title="Đánh giá từ 4.8★ trở lên"
+                title={isEn ? "Rated 4.8★ and above" : "Đánh giá từ 4.8★ trở lên"}
               >
                 ⭐ 4.8★+
               </button>
@@ -972,7 +984,7 @@ export default function MicroDrillsModal({
                 className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
                   drillQuickFilter === 'trending' ? 'bg-rose-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
-                title="Nhiều lượt luyện tập nhất"
+                title={isEn ? "Most practiced" : "Nhiều lượt luyện tập nhất"}
               >
                 🔥 Hot
               </button>
@@ -982,10 +994,10 @@ export default function MicroDrillsModal({
                 className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center space-x-1 ${
                   drillQuickFilter === 'manual' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
-                title="Chỉ hiển thị bài tập tạo thủ công"
+                title={isEn ? "Show manually created exercises only" : "Chỉ hiển thị bài tập tạo thủ công"}
               >
                 <PenTool className="w-2.5 h-2.5" />
-                <span>✍️ Thủ công</span>
+                <span>{isEn ? '✍️ Manual' : '✍️ Thủ công'}</span>
               </button>
               <button
                 type="button"
@@ -993,10 +1005,10 @@ export default function MicroDrillsModal({
                 className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center space-x-1 ${
                   drillQuickFilter === 'ai' ? 'bg-purple-600 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
-                title="Chỉ hiển thị bài tập do AI sinh"
+                title={isEn ? "Show AI-generated exercises only" : "Chỉ hiển thị bài tập do AI sinh"}
               >
                 <Sparkles className="w-2.5 h-2.5 text-amber-300" />
-                <span>🤖 AI sinh</span>
+                <span>{isEn ? '🤖 AI Generated' : '🤖 AI sinh'}</span>
               </button>
             </div>
 
@@ -1006,11 +1018,11 @@ export default function MicroDrillsModal({
               onChange={(e) => setDrillSortBy(e.target.value)}
               className="px-2 py-1 text-[11px] font-bold bg-white text-slate-700 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs cursor-pointer"
             >
-              <option value="rating_desc">⭐ Rating cao nhất</option>
-              <option value="attempts_desc">🔥 Luyện nhiều nhất</option>
-              <option value="difficulty_desc">💎 Độ khó cao</option>
-              <option value="difficulty_asc">🌱 Độ khó cơ bản</option>
-              <option value="title_asc">🔤 Tên A-Z</option>
+              <option value="rating_desc">{isEn ? '⭐ Highest Rated' : '⭐ Rating cao nhất'}</option>
+              <option value="attempts_desc">{isEn ? '🔥 Most Practiced' : '🔥 Luyện nhiều nhất'}</option>
+              <option value="difficulty_desc">{isEn ? '💎 Advanced' : '💎 Độ khó cao'}</option>
+              <option value="difficulty_asc">{isEn ? '🌱 Basic' : '🌱 Độ khó cơ bản'}</option>
+              <option value="title_asc">{isEn ? '🔤 Title A-Z' : '🔤 Tên A-Z'}</option>
             </select>
           </div>
         </div>
@@ -1019,7 +1031,7 @@ export default function MicroDrillsModal({
         <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-200/70">
           <div className="flex items-center flex-wrap gap-2">
             <span className="font-bold text-slate-700 whitespace-nowrap">
-              Bài tập: <span className="text-red-600 font-extrabold text-sm">{index + 1}</span> / {total}
+              {isEn ? 'Exercise:' : 'Bài tập:'} <span className="text-red-600 font-extrabold text-sm">{index + 1}</span> / {total}
             </span>
             {total > 1 && (
               <div className="flex items-center space-x-1">
@@ -1028,7 +1040,7 @@ export default function MicroDrillsModal({
                   onClick={() => handleSelectDrill(index - 1)}
                   disabled={index === 0}
                   className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs cursor-pointer"
-                  title="Bài trước"
+                  title={isEn ? "Previous exercise" : "Bài trước"}
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -1037,7 +1049,7 @@ export default function MicroDrillsModal({
                   onClick={() => handleSelectDrill(index + 1)}
                   disabled={index === total - 1}
                   className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs cursor-pointer"
-                  title="Bài tiếp theo"
+                  title={isEn ? "Next exercise" : "Bài tiếp theo"}
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -1053,7 +1065,9 @@ export default function MicroDrillsModal({
                   onChange={(e) => handleToggleHideMastered(e.target.checked)}
                   className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                 />
-                <span className="font-semibold text-emerald-800 text-[11px]">Ẩn câu đã thuộc ({totalMasteredInThisTab})</span>
+                <span className="font-semibold text-emerald-800 text-[11px]">
+                  {isEn ? `Hide mastered (${totalMasteredInThisTab})` : `Ẩn câu đã thuộc (${totalMasteredInThisTab})`}
+                </span>
               </label>
             )}
           </div>
@@ -1068,12 +1082,14 @@ export default function MicroDrillsModal({
                 showAttempts={true}
               />
 
-              {/* Mastered / Đã Thuộc Toggle Button */}
+              {/* Mastered Toggle Button */}
               <button
                 type="button"
                 onClick={() => {
                   if (!currentUser) {
-                    alert('Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
+                    alert(isEn 
+                      ? 'The "Mastered" feature hides mastered exercises from your practice list. Please sign in to save your progress!' 
+                      : 'Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
                     onOpenAuth?.();
                     return;
                   }
@@ -1085,28 +1101,28 @@ export default function MicroDrillsModal({
                     : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
                 }`}
                 title={masteredIds.includes(currentItem.id)
-                  ? "Bài này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
-                  : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập nếu bạn bật 'Ẩn câu đã thuộc')"}
+                  ? (isEn ? "This drill is mastered. Click to unmark (Review)" : "Bài này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)")
+                  : (isEn ? "Mark as 'Mastered' (Will be hidden if 'Hide mastered' is checked)" : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập nếu bạn bật 'Ẩn câu đã thuộc')")}
               >
                 <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
-                <span>{masteredIds.includes(currentItem.id) ? 'Đã thuộc' : 'Thuộc bài'}</span>
+                <span>{masteredIds.includes(currentItem.id) ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Master Drill' : 'Thuộc bài')}</span>
               </button>
 
               {currentItem.isCommunity || currentItem.isPublic ? (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
                   <Globe className="w-3 h-3 text-emerald-600" />
-                  <span>🌐 Cộng Đồng</span>
+                  <span>{isEn ? '🌐 Community' : '🌐 Cộng Đồng'}</span>
                 </span>
               ) : (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
                   <Lock className="w-3 h-3 text-amber-600" />
-                  <span>🔒 Riêng tư</span>
+                  <span>{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
                 </span>
               )}
               {(currentItem.isManual || (currentItem.isCustom && !currentItem.isAiGenerated)) && (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
                   <PenTool className="w-3 h-3 text-emerald-700" />
-                  <span>✍️ Thủ Công</span>
+                  <span>{isEn ? '✍️ Manual' : '✍️ Thủ Công'}</span>
                 </span>
               )}
               {currentItem.isAiGenerated && (
@@ -1114,9 +1130,11 @@ export default function MicroDrillsModal({
                   type="button"
                   onClick={() => handleToggleDrillPublic(currentItem.id)}
                   className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                  title={currentItem.isPublic ? 'Chuyển bài tập này sang Riêng tư' : 'Chia sẻ bài tập này thành tài nguyên chung của web'}
+                  title={currentItem.isPublic 
+                    ? (isEn ? 'Make this drill Private' : 'Chuyển bài tập này sang Riêng tư') 
+                    : (isEn ? 'Share this drill with the IELTS Community' : 'Chia sẻ bài tập này thành tài nguyên chung của web')}
                 >
-                  {currentItem.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+                  {currentItem.isPublic ? (isEn ? 'Make Private' : 'Khóa riêng') : (isEn ? 'Share Public' : 'Mở chia sẻ')}
                 </button>
               )}
             </div>
@@ -1126,7 +1144,7 @@ export default function MicroDrillsModal({
           <div className="flex items-center space-x-2 overflow-x-auto max-w-full py-1">
             {total > 12 ? (
               <div className="flex items-center space-x-1.5">
-                <span className="text-slate-500 font-medium whitespace-nowrap">Chuyển nhanh:</span>
+                <span className="text-slate-500 font-medium whitespace-nowrap">{isEn ? 'Jump to:' : 'Chuyển nhanh:'}</span>
                 <select
                   value={index}
                   onChange={(e) => handleSelectDrill(Number(e.target.value))}
@@ -1134,7 +1152,7 @@ export default function MicroDrillsModal({
                 >
                   {list.map((d, i) => (
                     <option key={d.id || i} value={i}>
-                      Bài {i + 1}: {d.title || d.category || `Bài tập ${i + 1}`}
+                      {isEn ? `Drill ${i + 1}: ` : `Bài ${i + 1}: `}{d.title || d.category || (isEn ? `Exercise ${i + 1}` : `Bài tập ${i + 1}`)}
                     </option>
                   ))}
                 </select>
@@ -1164,7 +1182,7 @@ export default function MicroDrillsModal({
 
   const handleEvaluateParaphrase = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      alert(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     if (!candidateParaText.trim()) return;
@@ -1183,7 +1201,7 @@ export default function MicroDrillsModal({
       });
       setParaEvaluation(res);
     } catch (err) {
-      alert(err.message || 'Lỗi khi chấm câu.');
+      alert(err.message || (isEn ? 'Error while evaluating paraphrase.' : 'Lỗi khi chấm câu.'));
     } finally {
       setIsEvaluatingPara(false);
     }
@@ -1191,12 +1209,14 @@ export default function MicroDrillsModal({
 
   const handleGenerateDrill = async () => {
     if (!apiKey) {
-      alert('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      alert(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
 
     setIsGeneratingDrill(true);
-    setDrillGenMessage('AI đang tạo bài tập mới chuẩn Cambridge IELTS...');
+    setDrillGenMessage(isEn 
+      ? 'AI is generating a new Cambridge IELTS practice drill...' 
+      : 'AI đang tạo bài tập mới chuẩn Cambridge IELTS...');
 
     try {
       const newDrill = await generateMicroDrill({
@@ -1212,7 +1232,7 @@ export default function MicroDrillsModal({
         isPublic: isPub,
         isCommunity: isPub,
         isAiGenerated: true,
-        creatorEmail: isPub ? 'Cộng Đồng IELTS' : 'Tôi',
+        creatorEmail: isPub ? (isEn ? 'IELTS Community' : 'Cộng Đồng IELTS') : (isEn ? 'Me' : 'Tôi'),
         audioText: newDrill.audioText || newDrill.ttsText || newDrill.promptAudioText || newDrill.audioSnippetText || newDrill.audioDirectionsText || ''
       };
 
@@ -1247,7 +1267,7 @@ export default function MicroDrillsModal({
       setIndex(newIdx);
       onReset();
     } catch (err) {
-      alert(err.message || 'Lỗi khi tạo bài tập mới từ AI.');
+      alert(err.message || (isEn ? 'Error while generating new drill from AI.' : 'Lỗi khi tạo bài tập mới từ AI.'));
     } finally {
       setIsGeneratingDrill(false);
       setDrillGenMessage('');
@@ -1305,14 +1325,20 @@ export default function MicroDrillsModal({
             <div className="min-w-0">
               <div className="flex items-center space-x-2">
                 <h2 className="text-base sm:text-xl font-bold truncate">
-                  {t('modals.microDrills.title', null, 'Phòng Luyện Bổ Trợ (Micro-Drills)')}
+                  {isEn 
+                    ? t('modals.microDrills.title', null, 'Targeted Reflex Studio (Micro-Drills)') 
+                    : t('modals.microDrills.title', null, 'Phòng Luyện Bổ Trợ (Micro-Drills)')}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide shrink-0">
-                  {t('modals.microDrills.multiSkillBadge', null, 'Đa Kỹ Năng')}
+                  {isEn 
+                    ? t('modals.microDrills.multiSkillBadge', null, 'Multi-Skill') 
+                    : t('modals.microDrills.multiSkillBadge', null, 'Đa Kỹ Năng')}
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5 hidden sm:block truncate">
-                {t('modals.microDrills.subtitle', null, 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật')}
+                {isEn 
+                  ? t('modals.microDrills.subtitle', null, 'Sharpen language reflexes and conquer classic trap patterns before test day') 
+                  : t('modals.microDrills.subtitle', null, 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật')}
               </p>
             </div>
           </div>
@@ -1343,14 +1369,14 @@ export default function MicroDrillsModal({
           </div>
         </div>
 
-        {/* Level 1: Room Selector Bar (Phòng Chuyên Môn) */}
+        {/* Level 1: Room Selector Bar */}
         <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar touch-pan-x shrink-0">
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:inline">
-              {t('modals.microDrills.roomLabel', null, 'Phòng Luyện:')}
+              {isEn ? t('modals.microDrills.roomLabel', null, 'Practice Room:') : t('modals.microDrills.roomLabel', null, 'Phòng Luyện:')}
             </span>
 
-            {/* Room 1: Chung */}
+            {/* Room 1: General */}
             <button
               onClick={() => handleRoomChange('general')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
@@ -1360,10 +1386,10 @@ export default function MicroDrillsModal({
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>{t('modals.microDrills.roomGeneral', null, 'Phòng Chung')}</span>
+              <span>{isEn ? t('modals.microDrills.roomGeneral', null, 'General Studio') : t('modals.microDrills.roomGeneral', null, 'Phòng Chung')}</span>
             </button>
 
-            {/* Room 2: Chuyên Writing */}
+            {/* Room 2: Writing */}
             <button
               onClick={() => handleRoomChange('writing')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
@@ -1373,10 +1399,10 @@ export default function MicroDrillsModal({
               }`}
             >
               <FileText className="w-3.5 h-3.5" />
-              <span>{t('modals.microDrills.roomWriting', null, 'Chuyên Writing')}</span>
+              <span>{isEn ? t('modals.microDrills.roomWriting', null, 'Writing Drills') : t('modals.microDrills.roomWriting', null, 'Chuyên Writing')}</span>
             </button>
 
-            {/* Room 3: Chuyên Reading */}
+            {/* Room 3: Reading */}
             <button
               onClick={() => handleRoomChange('reading')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
@@ -1386,13 +1412,13 @@ export default function MicroDrillsModal({
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>{t('modals.microDrills.roomReading', null, 'Chuyên Reading')}</span>
+              <span>{isEn ? t('modals.microDrills.roomReading', null, 'Reading Drills') : t('modals.microDrills.roomReading', null, 'Chuyên Reading')}</span>
               <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black">
                 {isEn ? 'NEW' : 'MỚI'}
               </span>
             </button>
 
-            {/* Room 4: Chuyên Listening */}
+            {/* Room 4: Listening */}
             <button
               onClick={() => handleRoomChange('listening')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
@@ -1402,13 +1428,13 @@ export default function MicroDrillsModal({
               }`}
             >
               <Headphones className="w-3.5 h-3.5" />
-              <span>{t('modals.microDrills.roomListening', null, 'Chuyên Listening')}</span>
+              <span>{isEn ? t('modals.microDrills.roomListening', null, 'Listening Drills') : t('modals.microDrills.roomListening', null, 'Chuyên Listening')}</span>
               <span className="px-1.5 py-0.2 rounded bg-purple-400 text-slate-900 text-[9px] font-black">
                 {isEn ? 'NEW' : 'MỚI'}
               </span>
             </button>
 
-            {/* Room 5: Chuyên Speaking */}
+            {/* Room 5: Speaking */}
             <button
               onClick={() => handleRoomChange('speaking')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
@@ -1418,7 +1444,7 @@ export default function MicroDrillsModal({
               }`}
             >
               <Mic className="w-3.5 h-3.5" />
-              <span>{t('modals.microDrills.roomSpeaking', null, 'Chuyên Speaking')}</span>
+              <span>{isEn ? t('modals.microDrills.roomSpeaking', null, 'Speaking Drills') : t('modals.microDrills.roomSpeaking', null, 'Chuyên Speaking')}</span>
               <span className="px-1.5 py-0.2 rounded bg-emerald-400 text-slate-900 text-[9px] font-black">
                 {isEn ? 'NEW' : 'MỚI'}
               </span>
@@ -1439,7 +1465,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Layers className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Collocations C1-C2 ({collocDrills.length})</span>
+                    <span>{isEn ? `C1-C2 Collocations (${collocDrills.length})` : `Collocations C1-C2 (${collocDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('context-vocab')}
@@ -1448,7 +1474,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Search className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Đoán Nghĩa Từ Ngữ Cảnh ({contextVocabDrills.length})</span>
+                    <span>{isEn ? `Context Vocab Inference (${contextVocabDrills.length})` : `Đoán Nghĩa Từ Ngữ Cảnh (${contextVocabDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('sentence-chunking')}
@@ -1457,7 +1483,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Split className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Giải Phẫu Câu Phức S-V-O ({chunkDrills.length})</span>
+                    <span>{isEn ? `Complex Sentence S-V-O (${chunkDrills.length})` : `Giải Phẫu Câu Phức S-V-O (${chunkDrills.length})`}</span>
                   </button>
                 </>
               )}
@@ -1471,7 +1497,7 @@ export default function MicroDrillsModal({
                       activeTab === 'fill-blanks' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
                     }`}
                   >
-                    1. Điền Chỗ Trống ({fillDrills.length})
+                    {isEn ? `1. Sentence Gap Fill (${fillDrills.length})` : `1. Điền Chỗ Trống (${fillDrills.length})`}
                   </button>
                   <button
                     onClick={() => setActiveTab('true-false')}
@@ -1479,7 +1505,7 @@ export default function MicroDrillsModal({
                       activeTab === 'true-false' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
                     }`}
                   >
-                    2. Đọc Số Liệu Task 1 ({tfDrills.length})
+                    {isEn ? `2. Task 1 Data Interpretation (${tfDrills.length})` : `2. Đọc Số Liệu Task 1 (${tfDrills.length})`}
                   </button>
                   <button
                     onClick={() => setActiveTab('paraphrase')}
@@ -1487,7 +1513,7 @@ export default function MicroDrillsModal({
                       activeTab === 'paraphrase' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
                     }`}
                   >
-                    <span>3. Paraphrase Mở/Thân Bài ({paraDrills.length})</span>
+                    <span>{isEn ? `3. Intro/Body Paraphrase (${paraDrills.length})` : `3. Paraphrase Mở/Thân Bài (${paraDrills.length})`}</span>
                     <Sparkles className="w-3 h-3 text-amber-500" />
                   </button>
                   <button
@@ -1496,7 +1522,7 @@ export default function MicroDrillsModal({
                       activeTab === 'error-spotting' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
                     }`}
                   >
-                    4. Tìm Sửa Lỗi ({errorDrills.length})
+                    {isEn ? `4. Error Spotting (${errorDrills.length})` : `4. Tìm Sửa Lỗi (${errorDrills.length})`}
                   </button>
                 </>
               )}
@@ -1511,7 +1537,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Target className="w-3.5 h-3.5 text-blue-600" />
-                    <span>1. Bẫy True / False / Not Given ({readingTfngDrills.length})</span>
+                    <span>{isEn ? `1. True / False / Not Given Traps (${readingTfngDrills.length})` : `1. Bẫy True / False / Not Given (${readingTfngDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('reading-paraphrase')}
@@ -1520,7 +1546,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Search className="w-3.5 h-3.5 text-amber-500" />
-                    <span>2. Săn Paraphrase Bài Đọc ({readingParaDrills.length})</span>
+                    <span>{isEn ? `2. Reading Paraphrase Hunter (${readingParaDrills.length})` : `2. Săn Paraphrase Bài Đọc (${readingParaDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('reading-headings')}
@@ -1529,7 +1555,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <BookOpen className="w-3.5 h-3.5 text-purple-600" />
-                    <span>3. Phá Bẫy Matching Headings ({readingHeadingsDrills.length})</span>
+                    <span>{isEn ? `3. Matching Headings Trap Decoder (${readingHeadingsDrills.length})` : `3. Phá Bẫy Matching Headings (${readingHeadingsDrills.length})`}</span>
                   </button>
                 </>
               )}
@@ -1544,7 +1570,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Headphones className="w-3.5 h-3.5 text-purple-600" />
-                    <span>1. Chép Chính Tả 3 Cấp ({listeningDictationDrills.length})</span>
+                    <span>{isEn ? `1. 3-Tier Dictation (${listeningDictationDrills.length})` : `1. Chép Chính Tả 3 Cấp (${listeningDictationDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('listening-spelling')}
@@ -1553,7 +1579,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <FileText className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>2. Đánh Vần & Con Số ({listeningSpellingDrills.length})</span>
+                    <span>{isEn ? `2. Spelling & Numbers (${listeningSpellingDrills.length})` : `2. Đánh Vần & Con Số (${listeningSpellingDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('listening-distractor')}
@@ -1562,7 +1588,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>3. Phá Bẫy Đổi Ý ({listeningDistractorDrills.length})</span>
+                    <span>{isEn ? `3. Mind-Change Distractor Hunter (${listeningDistractorDrills.length})` : `3. Phá Bẫy Đổi Ý (${listeningDistractorDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('listening-map')}
@@ -1571,7 +1597,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Compass className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>4. Bản Đồ & Hướng Đi ({listeningMapDrills.length})</span>
+                    <span>{isEn ? `4. Maps & Directions Reflex (${listeningMapDrills.length})` : `4. Bản Đồ & Hướng Đi (${listeningMapDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('listening-signposting')}
@@ -1580,7 +1606,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Target className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>5. Bắt Tín Hiệu Part 4 ({listeningSignDrills.length})</span>
+                    <span>{isEn ? `5. Part 4 Signposting Signals (${listeningSignDrills.length})` : `5. Bắt Tín Hiệu Part 4 (${listeningSignDrills.length})`}</span>
                   </button>
                 </>
               )}
@@ -1595,7 +1621,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>1. Mở Rộng Ý A.R.E.A ({speakingAreaDrills.length})</span>
+                    <span>{isEn ? `1. A.R.E.A Expansion Formula (${speakingAreaDrills.length})` : `1. Mở Rộng Ý A.R.E.A (${speakingAreaDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('speaking-fillers')}
@@ -1604,7 +1630,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Clock className="w-3.5 h-3.5 text-amber-500" />
-                    <span>2. Từ Đệm Mua Thời Gian ({speakingFillersDrills.length})</span>
+                    <span>{isEn ? `2. Fillers & Thinking Time (${speakingFillersDrills.length})` : `2. Từ Đệm Mua Thời Gian (${speakingFillersDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('speaking-collocations')}
@@ -1613,7 +1639,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Flame className="w-3.5 h-3.5 text-rose-500" />
-                    <span>3. Collocations Tự Nhiên ({speakingCollocDrills.length})</span>
+                    <span>{isEn ? `3. Natural Collocations Reflex (${speakingCollocDrills.length})` : `3. Collocations Tự Nhiên (${speakingCollocDrills.length})`}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('speaking-part3-counter')}
@@ -1622,7 +1648,7 @@ export default function MicroDrillsModal({
                     }`}
                   >
                     <Target className="w-3.5 h-3.5 text-teal-600" />
-                    <span>4. Phản Biện Đa Chiều Part 3 ({speakingPart3Drills.length})</span>
+                    <span>{isEn ? `4. Part 3 Two-Sided Debate (${speakingPart3Drills.length})` : `4. Phản Biện Đa Chiều Part 3 (${speakingPart3Drills.length})`}</span>
                   </button>
                 </>
               )}
@@ -1644,20 +1670,20 @@ export default function MicroDrillsModal({
                     : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                 }`}
                 title={isAutoShare 
-                  ? 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.' 
-                  : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.'}
+                  ? (isEn ? 'Enabled: AI-generated drills will be shared with the community (Default). Click to make private.' : 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.') 
+                  : (isEn ? 'Disabled: AI-generated drills are stored locally. Click to share with the community.' : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.')}
               >
                 {isAutoShare ? (
                   <>
                     <Globe className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="hidden sm:inline">🌐 Chia sẻ web</span>
-                    <span className="sm:hidden">🌐 Web</span>
+                    <span className="hidden sm:inline">{isEn ? '🌐 Community' : '🌐 Chia sẻ web'}</span>
+                    <span className="sm:hidden">{isEn ? '🌐 Shared' : '🌐 Web'}</span>
                   </>
                 ) : (
                   <>
                     <Lock className="w-3.5 h-3.5 text-amber-600" />
-                    <span className="hidden sm:inline">🔒 Riêng tư</span>
-                    <span className="sm:hidden">🔒 Riêng</span>
+                    <span className="hidden sm:inline">{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
+                    <span className="sm:hidden">{isEn ? '🔒 Private' : '🔒 Riêng'}</span>
                   </>
                 )}
               </button>
@@ -1668,10 +1694,10 @@ export default function MicroDrillsModal({
                 onClick={handleManualSync}
                 disabled={isSyncing}
                 className="px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition-all cursor-pointer shadow-2xs"
-                title="Bấm để đồng bộ tức thời tất cả câu hỏi từ Cloud & giữa các tab"
+                title={isEn ? "Click to instantly sync all questions from Cloud and across tabs" : "Bấm để đồng bộ tức thời tất cả câu hỏi từ Cloud & giữa các tab"}
               >
                 <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSyncing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">{isSyncing ? 'Đang đồng bộ...' : 'Đồng bộ'}</span>
+                <span className="hidden sm:inline">{isSyncing ? (isEn ? 'Syncing...' : 'Đang đồng bộ...') : (isEn ? 'Sync' : 'Đồng bộ')}</span>
               </button>
 
               {/* Manual Drill Creator Button */}
@@ -1679,10 +1705,10 @@ export default function MicroDrillsModal({
                 type="button"
                 onClick={() => setIsManualDrillModalOpen(true)}
                 className="px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 transition-all active:scale-95 cursor-pointer"
-                title="Tự tay tạo thêm 1 bài tập mới theo đúng dạng đang xem"
+                title={isEn ? "Manually create a new practice drill for this exercise type" : "Tự tay tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
               >
                 <PenTool className="w-3 h-3" />
-                <span>✍️ Tạo Bài Thủ Công</span>
+                <span>{isEn ? '✍️ Create Drill' : '✍️ Tạo Bài Thủ Công'}</span>
               </button>
 
               {/* AI Generator Button */}
@@ -1690,17 +1716,17 @@ export default function MicroDrillsModal({
                 onClick={handleGenerateDrill}
                 disabled={isGeneratingDrill}
                 className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
-                title="Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"
+                title={isEn ? "Ask AI to generate a new practice drill for this exercise type" : "Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
               >
                 {isGeneratingDrill ? (
                   <>
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    <span>Đang tạo...</span>
+                    <span>{isEn ? 'Generating...' : 'Đang tạo...'}</span>
                   </>
                 ) : (
                   <>
                     <PlusCircle className="w-3 h-3" />
-                    <span>AI Tạo Bài Mới</span>
+                    <span>{isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới'}</span>
                   </>
                 )}
               </button>

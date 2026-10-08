@@ -10,11 +10,12 @@ import {
   Trophy, 
   CheckCheck, 
   ChevronRight, 
-  Sparkles,
+  Sparkles, 
   Printer 
 } from 'lucide-react';
 import { generateTrfData } from '../services/trfExportService.js';
 import TRFSimulatorModal from './TRFSimulatorModal.jsx';
+import { useTranslation } from '../context/LanguageContext';
 
 /**
  * MarathonTRFScorecard - Official Cambridge Test Report Form (Simulation) Component
@@ -35,8 +36,11 @@ export default function MarathonTRFScorecard({
   calculatedOverallBand,
   cefrEvaluation = { level: 'N/A', title: '', desc: '' },
   onClose,
+  onSelectSkill,
   setActiveMockTab
 }) {
+  const { language } = useTranslation();
+  const isEn = language === 'en';
   const [isTrfModalOpen, setIsTrfModalOpen] = useState(false);
 
   const trfData = useMemo(() => {
@@ -63,7 +67,9 @@ export default function MarathonTRFScorecard({
             </h4>
           </div>
           <p className="text-xs text-slate-500 font-medium">
-            Chứng chỉ đánh giá năng lực ngôn ngữ dựa trên kết quả thi gần nhất
+            {isEn 
+              ? 'Language proficiency certification based on latest examination results' 
+              : 'Chứng chỉ đánh giá năng lực ngôn ngữ dựa trên kết quả thi gần nhất'}
           </p>
         </div>
 
@@ -72,13 +78,13 @@ export default function MarathonTRFScorecard({
           <div className="flex items-center space-x-1.5 text-slate-700">
             <User className="w-3.5 h-3.5 text-slate-400" />
             <span className="font-bold text-slate-900">
-              {currentUser?.name || currentUser?.email?.split('@')[0] || 'Thí sinh IELTS Web'}
+              {currentUser?.name || currentUser?.email?.split('@')[0] || (isEn ? 'IELTS Candidate' : 'Thí sinh IELTS Web')}
             </span>
           </div>
           <span className="text-slate-300">•</span>
           <div className="flex items-center space-x-1.5 text-slate-600">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
-            <span>{new Date().toLocaleDateString('vi-VN')}</span>
+            <span>{new Date().toLocaleDateString(isEn ? 'en-US' : 'vi-VN')}</span>
           </div>
           <span className="text-slate-300">•</span>
           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -86,7 +92,9 @@ export default function MarathonTRFScorecard({
               ? 'bg-emerald-100 text-emerald-800' 
               : 'bg-amber-100 text-amber-800'
           }`}>
-            {validBands.length === 4 ? 'Đủ 4 Kỹ Năng' : `Đã có ${validBands.length}/4 Kỹ Năng`}
+            {validBands.length === 4 
+              ? (isEn ? 'All 4 Skills' : 'Đủ 4 Kỹ Năng') 
+              : (isEn ? `${validBands.length}/4 Skills Recorded` : `Đã có ${validBands.length}/4 Kỹ Năng`)}
           </span>
         </div>
       </div>
@@ -115,13 +123,13 @@ export default function MarathonTRFScorecard({
                 <>
                   <div className="font-semibold">
                     {latestListening.correctCount !== undefined 
-                      ? `${latestListening.correctCount}/40 câu đúng` 
-                      : (latestListening.accuracyPercent ? `${latestListening.accuracyPercent}% chính xác` : 'Đã hoàn thành')}
+                      ? (isEn ? `${latestListening.correctCount}/40 correct` : `${latestListening.correctCount}/40 câu đúng`) 
+                      : (latestListening.accuracyPercent ? `${latestListening.accuracyPercent}% ${isEn ? 'accuracy' : 'chính xác'}` : (isEn ? 'Completed' : 'Đã hoàn thành'))}
                   </div>
-                  <div className="text-[10px] text-purple-600">{latestListening.date || 'Gần đây'}</div>
+                  <div className="text-[10px] text-purple-600">{latestListening.date || (isEn ? 'Recent' : 'Gần đây')}</div>
                 </>
               ) : (
-                <div className="text-slate-400 italic">Chưa có bài thi</div>
+                <div className="text-slate-400 italic">{isEn ? 'No tests yet' : 'Chưa có bài thi'}</div>
               )}
             </div>
           </div>
@@ -133,7 +141,7 @@ export default function MarathonTRFScorecard({
             }}
             className="w-full mt-2 py-1.5 px-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
           >
-            <span>{listeningBand ? 'Thi Lại' : 'Thi Ngay'}</span>
+            <span>{listeningBand ? (isEn ? 'Retake' : 'Thi Lại') : (isEn ? 'Take Test' : 'Thi Ngay')}</span>
             <ChevronRight className="w-3 h-3" />
           </button>
         </div>
@@ -160,13 +168,13 @@ export default function MarathonTRFScorecard({
                 <>
                   <div className="font-semibold">
                     {latestReading.correctAnswers !== undefined 
-                      ? `${latestReading.correctAnswers}/40 câu đúng` 
-                      : (latestReading.accuracyPercent ? `${latestReading.accuracyPercent}% chính xác` : 'Đã hoàn thành')}
+                      ? (isEn ? `${latestReading.correctAnswers}/40 correct` : `${latestReading.correctAnswers}/40 câu đúng`) 
+                      : (latestReading.accuracyPercent ? `${latestReading.accuracyPercent}% ${isEn ? 'accuracy' : 'chính xác'}` : (isEn ? 'Completed' : 'Đã hoàn thành'))}
                   </div>
-                  <div className="text-[10px] text-blue-600">{latestReading.date || 'Gần đây'}</div>
+                  <div className="text-[10px] text-blue-600">{latestReading.date || (isEn ? 'Recent' : 'Gần đây')}</div>
                 </>
               ) : (
-                <div className="text-slate-400 italic">Chưa có bài thi</div>
+                <div className="text-slate-400 italic">{isEn ? 'No tests yet' : 'Chưa có bài thi'}</div>
               )}
             </div>
           </div>
@@ -175,7 +183,7 @@ export default function MarathonTRFScorecard({
             onClick={() => setActiveMockTab?.('reading')}
             className="w-full mt-2 py-1.5 px-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
           >
-            <span>{readingBand ? 'Chọn Đề Thi' : 'Thi 3 Passages'}</span>
+            <span>{readingBand ? (isEn ? 'Select Test' : 'Chọn Đề Thi') : (isEn ? 'Take 3 Passages' : 'Thi 3 Passages')}</span>
             <ChevronRight className="w-3 h-3" />
           </button>
         </div>
@@ -203,12 +211,12 @@ export default function MarathonTRFScorecard({
                   <div className="font-semibold">
                     {latestWriting.task?.taskNumber 
                       ? `Task ${latestWriting.task.taskNumber}` 
-                      : 'Bài thi Writing'}
+                      : (isEn ? 'Writing Exam' : 'Bài thi Writing')}
                   </div>
-                  <div className="text-[10px] text-red-600">{latestWriting.date || 'Gần đây'}</div>
+                  <div className="text-[10px] text-red-600">{latestWriting.date || (isEn ? 'Recent' : 'Gần đây')}</div>
                 </>
               ) : (
-                <div className="text-slate-400 italic">Chưa có bài thi</div>
+                <div className="text-slate-400 italic">{isEn ? 'No tests yet' : 'Chưa có bài thi'}</div>
               )}
             </div>
           </div>
@@ -217,7 +225,7 @@ export default function MarathonTRFScorecard({
             onClick={() => setActiveMockTab?.('writing')}
             className="w-full mt-2 py-1.5 px-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
           >
-            <span>{writingBand ? 'Thi 60 Phút' : 'Làm Đề Viết'}</span>
+            <span>{writingBand ? (isEn ? '60m Mock Test' : 'Thi 60 Phút') : (isEn ? 'Write Essay' : 'Làm Đề Viết')}</span>
             <ChevronRight className="w-3 h-3" />
           </button>
         </div>
@@ -244,13 +252,13 @@ export default function MarathonTRFScorecard({
                 <>
                   <div className="font-semibold">
                     {latestSpeaking.evaluation?.wpm 
-                      ? `Tốc độ: ~${latestSpeaking.evaluation.wpm} WPM` 
+                      ? (isEn ? `Speed: ~${latestSpeaking.evaluation.wpm} WPM` : `Tốc độ: ~${latestSpeaking.evaluation.wpm} WPM`) 
                       : '3 Parts Live AI'}
                   </div>
-                  <div className="text-[10px] text-emerald-600">{latestSpeaking.date || 'Gần đây'}</div>
+                  <div className="text-[10px] text-emerald-600">{latestSpeaking.date || (isEn ? 'Recent' : 'Gần đây')}</div>
                 </>
               ) : (
-                <div className="text-slate-400 italic">Chưa có bài thi</div>
+                <div className="text-slate-400 italic">{isEn ? 'No tests yet' : 'Chưa có bài thi'}</div>
               )}
             </div>
           </div>
@@ -262,7 +270,7 @@ export default function MarathonTRFScorecard({
             }}
             className="w-full mt-2 py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
           >
-            <span>{speakingBand ? 'Gặp Giám Khảo' : 'Thi Nói AI'}</span>
+            <span>{speakingBand ? (isEn ? 'Meet Examiner' : 'Gặp Giám Khảo') : (isEn ? 'AI Speaking Test' : 'Thi Nói AI')}</span>
             <ChevronRight className="w-3 h-3" />
           </button>
         </div>
@@ -293,10 +301,10 @@ export default function MarathonTRFScorecard({
             {validBands.length === 4 ? (
               <span className="text-emerald-950 font-bold flex items-center justify-center space-x-1">
                 <CheckCheck className="w-3.5 h-3.5 text-emerald-800" />
-                <span>Chứng chỉ hoàn tất</span>
+                <span>{isEn ? 'Certificate Complete' : 'Chứng chỉ hoàn tất'}</span>
               </span>
             ) : (
-              <span>Đạt {validBands.length}/4 kỹ năng</span>
+              <span>{isEn ? `${validBands.length}/4 Skills recorded` : `Đạt ${validBands.length}/4 kỹ năng`}</span>
             )}
           </div>
         </div>
@@ -307,10 +315,12 @@ export default function MarathonTRFScorecard({
         <div className="space-y-0.5">
           <div className="font-bold text-slate-900 flex items-center space-x-1.5">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <span>Quy chuẩn khảo thí Cambridge Assessment English:</span>
+            <span>{isEn ? 'Cambridge Assessment English Standards:' : 'Quy chuẩn khảo thí Cambridge Assessment English:'}</span>
           </div>
           <p className="text-[11px] text-slate-500">
-            Điểm Overall = Trung bình cộng (Listening + Reading + Writing + Speaking). Phần thập phân &ge; 0.75 làm tròn lên 1.0; từ 0.25 đến 0.74 làm tròn thành 0.5; nhỏ hơn 0.25 làm tròn xuống số nguyên.
+            {isEn 
+              ? 'Overall Band = Average of (Listening + Reading + Writing + Speaking). Fractional part >= 0.75 rounds up to next whole band; 0.25 to 0.74 rounds to .5; under 0.25 rounds down.' 
+              : 'Điểm Overall = Trung bình cộng (Listening + Reading + Writing + Speaking). Phần thập phân ≥ 0.75 làm tròn lên 1.0; từ 0.25 đến 0.74 làm tròn thành 0.5; nhỏ hơn 0.25 làm tròn xuống số nguyên.'}
           </p>
         </div>
 
@@ -326,8 +336,12 @@ export default function MarathonTRFScorecard({
         <div className="flex items-center space-x-2.5">
           <Award className="w-5 h-5 text-amber-400 shrink-0" />
           <div className="text-xs">
-            <span className="font-bold block text-sm">Xuất Phiếu Điểm Chuẩn Khảo Thí (IELTS TRF)</span>
-            <span className="text-slate-400">Xem trước chứng chỉ chính thức, mã bảo mật QR và in / tải file PDF</span>
+            <span className="font-bold block text-sm">
+              {isEn ? 'Export Official Test Report Form (IELTS TRF)' : 'Xuất Phiếu Điểm Chuẩn Khảo Thí (IELTS TRF)'}
+            </span>
+            <span className="text-slate-400">
+              {isEn ? 'Preview official certificate, security QR code, and print / download PDF' : 'Xem trước chứng chỉ chính thức, mã bảo mật QR và in / tải file PDF'}
+            </span>
           </div>
         </div>
 
@@ -337,7 +351,7 @@ export default function MarathonTRFScorecard({
           className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 cursor-pointer min-h-[40px] shrink-0"
         >
           <Printer className="w-4 h-4" />
-          <span>Xem & Tải Phiếu Điểm (PDF)</span>
+          <span>{isEn ? 'View & Download TRF (PDF)' : 'Xem & Tải Phiếu Điểm (PDF)'}</span>
         </button>
       </div>
 

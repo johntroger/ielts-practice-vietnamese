@@ -14,6 +14,7 @@ import {
   Pill,
   ArrowRight
 } from 'lucide-react';
+import { useTranslation } from '../i18n';
 import { generateDailyPrescription, recordPrescriptionCompletion } from '../services/prescriptionService';
 
 export default function DailyErrorPrescriptionModal({
@@ -22,6 +23,7 @@ export default function DailyErrorPrescriptionModal({
   mistakes = [],
   submissions = []
 }) {
+  const { t, isEn } = useTranslation();
   const [prescription, setPrescription] = useState(() => generateDailyPrescription(mistakes, submissions));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -82,14 +84,14 @@ export default function DailyErrorPrescriptionModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-sm sm:text-lg font-black text-slate-900 tracking-tight truncate">
-                  Đơn Thuốc Sửa Lỗi Mỗi Ngày
+                  {isEn ? 'Daily Error Prescription' : 'Đơn Thuốc Sửa Lỗi Mỗi Ngày'}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 shrink-0">
-                  SRS 3 Phút
+                  {isEn ? '3-Min SRS' : 'SRS 3 Phút'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium">
-                Vòng lặp khắc phục lỗi sai kinh điển & bẫy ngữ pháp Cambridge
+                {isEn ? 'Targeted loop to eliminate classic mistakes & Cambridge grammar traps' : 'Vòng lặp khắc phục lỗi sai kinh điển & bẫy ngữ pháp Cambridge'}
               </p>
             </div>
           </div>
@@ -97,7 +99,7 @@ export default function DailyErrorPrescriptionModal({
           <button
             onClick={onClose}
             className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer shrink-0"
-            title="Đóng (Esc)"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -113,7 +115,7 @@ export default function DailyErrorPrescriptionModal({
               {/* Progress & Badge */}
               <div className="flex items-center justify-between text-xs text-slate-500">
                 <span className="font-bold text-slate-700">
-                  Câu hỏi {currentIndex + 1} / {total}
+                  {isEn ? `Question ${currentIndex + 1} / ${total}` : `Câu hỏi ${currentIndex + 1} / ${total}`}
                 </span>
                 <span className="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 text-[11px]">
                   {currentItem.type}
@@ -142,7 +144,7 @@ export default function DailyErrorPrescriptionModal({
               {/* Options */}
               <div className="space-y-2 pt-1">
                 <span className="text-xs font-bold text-slate-600">
-                  Chọn câu sửa chuẩn xác nhất:
+                  {isEn ? 'Select the most accurate revision:' : 'Chọn câu sửa chuẩn xác nhất:'}
                 </span>
 
                 {currentItem.options.map((opt, idx) => {
@@ -191,12 +193,16 @@ export default function DailyErrorPrescriptionModal({
                     {selectedOption === currentItem.correctIndex ? (
                       <>
                         <CheckCircle className="w-4 h-4 text-emerald-600" />
-                        <span className="text-emerald-800">Chính xác! Bạn đã phát hiện đúng lỗi.</span>
+                        <span className="text-emerald-800">
+                          {isEn ? 'Correct! You spotted the mistake precisely.' : 'Chính xác! Bạn đã phát hiện đúng lỗi.'}
+                        </span>
                       </>
                     ) : (
                       <>
                         <AlertCircle className="w-4 h-4 text-rose-600" />
-                        <span className="text-rose-800">Chưa chính xác! Hãy lưu ý lời giải bên dưới:</span>
+                        <span className="text-rose-800">
+                          {isEn ? 'Not quite right! Review the explanation below:' : 'Chưa chính xác! Hãy lưu ý lời giải bên dưới:'}
+                        </span>
                       </>
                     )}
                   </div>
@@ -207,7 +213,7 @@ export default function DailyErrorPrescriptionModal({
 
                   <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200/60 text-[11px] font-medium text-slate-800 flex items-start space-x-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                    <span><strong>Quy tắc vàng:</strong> {currentItem.ruleTip}</span>
+                    <span><strong>{isEn ? 'Golden Rule:' : 'Quy tắc vàng:'}</strong> {currentItem.ruleTip}</span>
                   </div>
                 </div>
               )}
@@ -224,10 +230,10 @@ export default function DailyErrorPrescriptionModal({
 
               <div className="space-y-1">
                 <h3 className="text-xl font-black text-slate-900">
-                  🎉 Hoàn Thành Đơn Thuốc Hôm Nay!
+                  {isEn ? '🎉 Today\'s Prescription Completed!' : '🎉 Hoàn Thành Đơn Thuốc Hôm Nay!'}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Bạn đã hoàn thành cữ luyện tập 3 phút nhằm triệt tiêu các lỗi sai cố hữu.
+                  {isEn ? 'You completed today\'s 3-minute targeted drill to eliminate recurring grammar errors.' : 'Bạn đã hoàn thành cữ luyện tập 3 phút nhằm triệt tiêu các lỗi sai cố hữu.'}
                 </p>
               </div>
 
@@ -237,14 +243,14 @@ export default function DailyErrorPrescriptionModal({
                   {score} / {total}
                 </div>
                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
-                  Điểm chính xác ({Math.round((score / total) * 100)}%)
+                  {isEn ? `Accuracy Score (${Math.round((score / total) * 100)}%)` : `Điểm chính xác (${Math.round((score / total) * 100)}%)`}
                 </div>
               </div>
 
               <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
                 {score === total
-                  ? 'Tuyệt vời! Bạn không mắc một lỗi nào. Hãy tiếp tục duy trì phản xạ ngữ pháp chuẩn xác này trong các bài thi thử.'
-                  : 'Rất tốt! Việc nhận diện và ghi nhớ lời giải sẽ giúp bạn không còn lặp lại các lỗi tương tự khi bước vào phòng thi thật.'}
+                  ? (isEn ? 'Outstanding! Zero mistakes recorded. Maintain this grammatical precision in your full-length practice tests.' : 'Tuyệt vời! Bạn không mắc một lỗi nào. Hãy tiếp tục duy trì phản xạ ngữ pháp chuẩn xác này trong các bài thi thử.')
+                  : (isEn ? 'Well done! Identifying and memorizing these key rules will ensure you avoid repeating them under real exam conditions.' : 'Rất tốt! Việc nhận diện và ghi nhớ lời giải sẽ giúp bạn không còn lặp lại các lỗi tương tự khi bước vào phòng thi thật.')}
               </p>
 
               <div className="flex items-center justify-center space-x-3 pt-2">
@@ -253,14 +259,14 @@ export default function DailyErrorPrescriptionModal({
                   className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Luyện Tập Lại</span>
+                  <span>{isEn ? 'Practice Again' : 'Luyện Tập Lại'}</span>
                 </button>
 
                 <button
                   onClick={onClose}
                   className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
                 >
-                  Đã Uống Thuốc Xong!
+                  {isEn ? 'Completed for Today!' : 'Đã Uống Thuốc Xong!'}
                 </button>
               </div>
             </div>
@@ -273,7 +279,7 @@ export default function DailyErrorPrescriptionModal({
         {!isCompleted && (
           <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500 shrink-0">
             <span className="text-[11px] text-slate-400">
-              Mỗi ngày 1 đơn thuốc • Nâng +0.5 Band ngữ pháp
+              {isEn ? '1 prescription daily • Boost +0.5 Grammar Band' : 'Mỗi ngày 1 đơn thuốc • Nâng +0.5 Band ngữ pháp'}
             </span>
 
             {hasAnswered && (
@@ -281,7 +287,7 @@ export default function DailyErrorPrescriptionModal({
                 onClick={handleNext}
                 className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs transition-all shadow-md shadow-rose-900/30 flex items-center space-x-1.5 cursor-pointer animate-in fade-in"
               >
-                <span>{currentIndex + 1 < total ? 'Câu Tiếp Theo' : 'Xem Kết Quả'}</span>
+                <span>{currentIndex + 1 < total ? (isEn ? 'Next Question' : 'Câu Tiếp Theo') : (isEn ? 'View Results' : 'Xem Kết Quả')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             )}

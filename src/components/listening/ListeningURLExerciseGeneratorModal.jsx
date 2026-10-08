@@ -35,6 +35,7 @@ import {
 } from '../../services/geminiService';
 import { CURATED_LISTENING_AUDIO_SOURCES } from '../../data/listening/curatedAudioSources';
 import { isOwnerUser, OWNER_AUDIO_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../../utils/userPermissions';
+import { useTranslation } from '../../i18n';
 
 export default function ListeningURLExerciseGeneratorModal({
   isOpen,
@@ -45,6 +46,9 @@ export default function ListeningURLExerciseGeneratorModal({
   onOpenSettings,
   user = null
 }) {
+  const { t, language } = useTranslation();
+  const isEn = language === 'en';
+
   if (!isOpen) return null;
 
   const isOwner = isOwnerUser(user);
@@ -197,7 +201,7 @@ export default function ListeningURLExerciseGeneratorModal({
   // Dynamically trigger AI to search & discover new audio sources
   const handleDiscoverMoreSources = async (prefPart = null, topicOverride = null) => {
     if (!apiKey) {
-      setErrorMessage('Vui lòng cấu hình AI API Key trước khi sử dụng AI tìm kiếm nguồn.');
+      setErrorMessage(isEn ? 'Please configure your AI API Key before searching for sources.' : 'Vui lòng cấu hình AI API Key trước khi sử dụng AI tìm kiếm nguồn.');
       return;
     }
 
@@ -219,10 +223,10 @@ export default function ListeningURLExerciseGeneratorModal({
       });
 
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const timeStr = now.toLocaleTimeString(isEn ? 'en-US' : 'vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       if (newSources.length === 0) {
-        setErrorMessage('AI không tìm thấy thêm nguồn mới phù hợp. Hãy thử thay đổi từ khóa chủ đề.');
+        setErrorMessage(isEn ? 'AI could not find suitable new sources. Try changing the topic keywords.' : 'AI không tìm thấy thêm nguồn mới phù hợp. Hãy thử thay đổi từ khóa chủ đề.');
       } else {
         const taggedSources = newSources.map(s => ({
           ...s,
@@ -252,8 +256,8 @@ export default function ListeningURLExerciseGeneratorModal({
         }, 120);
       }
     } catch (err) {
-      console.error('Lỗi khi AI tìm nguồn âm thanh:', err);
-      setErrorMessage(err.message || 'Lỗi khi AI tìm kiếm nguồn âm thanh. Vui lòng thử lại.');
+      console.error('Error in AI audio search:', err);
+      setErrorMessage(err.message || (isEn ? 'Error searching for audio sources with AI. Please try again.' : 'Lỗi khi AI tìm kiếm nguồn âm thanh. Vui lòng thử lại.'));
     } finally {
       setIsDiscovering(false);
     }
@@ -322,13 +326,13 @@ export default function ListeningURLExerciseGeneratorModal({
     const isValidExt = ['mp3', 'm4a', 'wav', 'ogg'].includes(ext);
 
     if (!validTypes.includes(file.type) && !isValidExt) {
-      setErrorMessage('Định dạng tệp không được hỗ trợ. Vui lòng chọn tệp .mp3, .m4a, .wav hoặc .ogg.');
+      setErrorMessage(isEn ? 'Unsupported file format. Please select a .mp3, .m4a, .wav, or .ogg file.' : 'Định dạng tệp không được hỗ trợ. Vui lòng chọn tệp .mp3, .m4a, .wav hoặc .ogg.');
       return;
     }
 
     const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
     if (file.size > 30 * 1024 * 1024) {
-      setErrorMessage('Tệp âm thanh quá lớn (tối đa 30MB). Vui lòng nén hoặc chọn file nhẹ hơn.');
+      setErrorMessage(isEn ? 'Audio file too large (max 30MB). Please compress or choose a smaller file.' : 'Tệp âm thanh quá lớn (tối đa 30MB). Vui lòng nén hoặc chọn file nhẹ hơn.');
       return;
     }
 
@@ -370,7 +374,7 @@ export default function ListeningURLExerciseGeneratorModal({
       // Auto-set title from filename
       const rawName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
       setTestTitle(`${rawName} (Part ${selectedPart})`);
-      setTopicDescription(`File ghi âm: ${file.name}`);
+      setTopicDescription(isEn ? `Audio recording: ${file.name}` : `File ghi âm: ${file.name}`);
 
       // If Gemini API Key is available, automatically trigger AI to listen & analyze suitable Parts
       if (apiKey) {
@@ -399,7 +403,7 @@ export default function ListeningURLExerciseGeneratorModal({
       }
     } catch (err) {
       console.error('Error handling local audio upload:', err);
-      setErrorMessage('Không thể đọc file âm thanh từ máy tính. Vui lòng thử lại.');
+      setErrorMessage(isEn ? 'Could not read audio file from computer. Please try again.' : 'Không thể đọc file âm thanh từ máy tính. Vui lòng thử lại.');
     }
   };
 
@@ -432,7 +436,7 @@ export default function ListeningURLExerciseGeneratorModal({
   // Test URL reachability
   const handleTestAudioUrl = () => {
     if (!audioUrl.trim()) {
-      setErrorMessage('Vui lòng nhập đường dẫn URL tệp âm thanh.');
+      setErrorMessage(isEn ? 'Please enter an audio file URL.' : 'Vui lòng nhập đường dẫn URL tệp âm thanh.');
       return;
     }
     setAudioTestStatus('testing');
@@ -443,7 +447,7 @@ export default function ListeningURLExerciseGeneratorModal({
 
     const timer = setTimeout(() => {
       setAudioTestStatus('invalid');
-      setErrorMessage('URL phản hồi chậm hoặc không hỗ trợ phát trực tiếp qua CORS. Bạn vẫn có thể tiếp tục nếu link chạy được trên trình duyệt.');
+      setErrorMessage(isEn ? 'URL is slow to respond or does not support CORS direct streaming. You can still proceed if the link works in your browser.' : 'URL phản hồi chậm hoặc không hỗ trợ phát trực tiếp qua CORS. Bạn vẫn có thể tiếp tục nếu link chạy được trên trình duyệt.');
     }, 8000);
 
     testAudio.onloadedmetadata = () => {
@@ -458,18 +462,18 @@ export default function ListeningURLExerciseGeneratorModal({
     testAudio.onerror = () => {
       clearTimeout(timer);
       setAudioTestStatus('invalid');
-      setErrorMessage('Không thể phát âm thanh từ link này. Vui lòng kiểm tra lại định dạng tệp (hỗ trợ .mp3, .m4a, .ogg) hoặc quyền truy cập.');
+      setErrorMessage(isEn ? 'Cannot play audio from this link. Please check the file format (.mp3, .m4a, .ogg) or access permissions.' : 'Không thể phát âm thanh từ link này. Vui lòng kiểm tra lại định dạng tệp (hỗ trợ .mp3, .m4a, .ogg) hoặc quyền truy cập.');
     };
   };
 
   // Analyze Custom URL or Topic with AI
   const handleAnalyzeCustomInput = async () => {
     if (!apiKey) {
-      setErrorMessage('Vui lòng cấu hình AI API Key trước khi sử dụng AI.');
+      setErrorMessage(isEn ? 'Please configure your AI API Key before using AI.' : 'Vui lòng cấu hình AI API Key trước khi sử dụng AI.');
       return;
     }
     if (!audioUrl.trim() && !topicDescription.trim() && !testTitle.trim()) {
-      setErrorMessage('Vui lòng nhập URL âm thanh hoặc nhập tiêu đề/bối cảnh đề thi để AI phân tích.');
+      setErrorMessage(isEn ? 'Please enter an audio URL or title/topic description for AI analysis.' : 'Vui lòng nhập URL âm thanh hoặc nhập tiêu đề/bối cảnh đề thi để AI phân tích.');
       return;
     }
     setIsAnalyzing(true);
@@ -487,8 +491,8 @@ export default function ListeningURLExerciseGeneratorModal({
         handleSwitchPart(Number(res.primaryPart));
       }
     } catch (err) {
-      console.error('Lỗi khi AI phân tích nguồn:', err);
-      setErrorMessage(err.message || 'Không thể phân tích âm thanh. Vui lòng thử lại.');
+      console.error('Error in AI analysis of audio source:', err);
+      setErrorMessage(err.message || (isEn ? 'Could not analyze audio. Please try again.' : 'Không thể phân tích âm thanh. Vui lòng thử lại.'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -497,12 +501,12 @@ export default function ListeningURLExerciseGeneratorModal({
   // Generate Single-Part Listening Test
   const handleGenerate = async () => {
     if (!apiKey) {
-      setErrorMessage('Vui lòng cấu hình AI API Key trước khi sử dụng AI.');
+      setErrorMessage(isEn ? 'Please configure your AI API Key before using AI.' : 'Vui lòng cấu hình AI API Key trước khi sử dụng AI.');
       return;
     }
 
     if (!audioUrl.trim()) {
-      setErrorMessage('Vui lòng chọn 1 nguồn âm thanh hoặc nhập URL tệp âm thanh.');
+      setErrorMessage(isEn ? 'Please select an audio source or enter an audio file URL.' : 'Vui lòng chọn 1 nguồn âm thanh hoặc nhập URL tệp âm thanh.');
       return;
     }
 
@@ -549,8 +553,8 @@ export default function ListeningURLExerciseGeneratorModal({
       }
       onClose();
     } catch (err) {
-      console.error('Lỗi khi sinh đề nghe AI:', err);
-      setErrorMessage(err.message || 'Lỗi hệ thống khi sinh đề nghe. Vui lòng thử lại.');
+      console.error('Error generating AI listening test:', err);
+      setErrorMessage(err.message || (isEn ? 'System error while generating listening test. Please try again.' : 'Lỗi hệ thống khi sinh đề nghe. Vui lòng thử lại.'));
     } finally {
       setIsGenerating(false);
     }
@@ -560,27 +564,27 @@ export default function ListeningURLExerciseGeneratorModal({
   const PART_SPECS = [
     {
       num: 1,
-      title: 'Part 1: Hội Thoại Đời Thường',
-      tag: '2 người • Điền từ / số',
-      desc: 'Hỏi đáp dịch vụ, đặt vé, bảo hiểm, thuê nhà (Note/Form completion).'
+      title: isEn ? 'Part 1: Everyday Social Conversation' : 'Part 1: Hội Thoại Đời Thường',
+      tag: isEn ? '2 speakers • Notes/Form completion' : '2 người • Điền từ / số',
+      desc: isEn ? 'Enquiry, booking, insurance, renting (Note/Form completion).' : 'Hỏi đáp dịch vụ, đặt vé, bảo hiểm, thuê nhà (Note/Form completion).'
     },
     {
       num: 2,
-      title: 'Part 2: Độc Thoại Hướng Dẫn',
-      tag: '1 người • Trắc nghiệm / Bản đồ',
-      desc: 'Giới thiệu bảo tàng, nông trại, tiện ích công cộng (Multiple Choice/Map).'
+      title: isEn ? 'Part 2: Informational Monologue' : 'Part 2: Độc Thoại Hướng Dẫn',
+      tag: isEn ? '1 speaker • Multiple Choice / Map' : '1 người • Trắc nghiệm / Bản đồ',
+      desc: isEn ? 'Guide to museum, park, community facilities (Multiple Choice/Map).' : 'Giới thiệu bảo tàng, nông trại, tiện ích công cộng (Multiple Choice/Map).'
     },
     {
       num: 3,
-      title: 'Part 3: Thảo Luận Học Thuật',
-      tag: '2-4 người • Trắc nghiệm / Matching',
-      desc: 'Sinh viên & giảng viên trao đổi đề tài nghiên cứu, phản biện đề cương.'
+      title: isEn ? 'Part 3: Academic Discussion' : 'Part 3: Thảo Luận Học Thuật',
+      tag: isEn ? '2-4 speakers • Multiple Choice / Matching' : '2-4 người • Trắc nghiệm / Matching',
+      desc: isEn ? 'Students & tutor discussing research project, proposal review.' : 'Sinh viên & giảng viên trao đổi đề tài nghiên cứu, phản biện đề cương.'
     },
     {
       num: 4,
-      title: 'Part 4: Bài Giảng Đại Học',
-      tag: '1 người • ONE WORD ONLY',
-      desc: 'Bài giảng học thuật chuyên sâu về khoa học, địa lý, lịch sử, sinh thái.'
+      title: isEn ? 'Part 4: University Lecture' : 'Part 4: Bài Giảng Đại Học',
+      tag: isEn ? '1 speaker • ONE WORD ONLY' : '1 người • ONE WORD ONLY',
+      desc: isEn ? 'In-depth academic lecture on science, history, ecology.' : 'Bài giảng học thuật chuyên sâu về khoa học, địa lý, lịch sử, sinh thái.'
     }
   ];
 
@@ -599,17 +603,17 @@ export default function ListeningURLExerciseGeneratorModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="font-black text-slate-900 text-sm sm:text-base">
-                  Sinh Đề Nghe IELTS Bằng AI
+                  {isEn ? 'AI IELTS Listening Test Generator' : 'Sinh Đề Nghe IELTS Bằng AI'}
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold uppercase tracking-wider">
-                  Single-Part Mode (10 Câu)
+                  {isEn ? 'Single-Part Mode (10 Questions)' : 'Single-Part Mode (10 Câu)'}
                 </span>
                 <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                   ⚡ 5-8s
                 </span>
               </div>
               <p className="text-[11px] text-slate-500">
-                Chọn nguồn audio & click bất kỳ Part nào để AI sinh đề độc lập chuẩn Cambridge
+                {isEn ? 'Select an audio source and click any Part to generate an independent Cambridge-standard test' : 'Chọn nguồn audio & click bất kỳ Part nào để AI sinh đề độc lập chuẩn Cambridge'}
               </p>
             </div>
           </div>
@@ -637,7 +641,7 @@ export default function ListeningURLExerciseGeneratorModal({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                📚 Kho Audio Bản Xứ Tuyển Chọn ({allSources.length})
+                {isEn ? `📚 Curated Native Audio Library (${allSources.length})` : `📚 Kho Audio Bản Xứ Tuyển Chọn (${allSources.length})`}
               </button>
               <button
                 type="button"
@@ -648,7 +652,7 @@ export default function ListeningURLExerciseGeneratorModal({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <span>📁 Tải File Từ Máy Tính</span>
+                <span>{isEn ? '📁 Upload File from Computer' : '📁 Tải File Từ Máy Tính'}</span>
                 {isOwner ? (
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold">Owner</span>
                 ) : (
@@ -672,7 +676,7 @@ export default function ListeningURLExerciseGeneratorModal({
                     setTestTitle('');
                   }}
                   className="text-slate-400 hover:text-rose-600 ml-1"
-                  title="Bỏ chọn"
+                  title={isEn ? 'Deselect' : 'Bỏ chọn'}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -697,7 +701,7 @@ export default function ListeningURLExerciseGeneratorModal({
                       setDiscoveryTopic(e.target.value);
                       setCuratedSearch(e.target.value);
                     }}
-                    placeholder="Tìm nhanh theo chủ đề (Du lịch, Phỏng vấn, Sinh học...)"
+                    placeholder={isEn ? 'Quick search by topic (Travel, Interview, Biology...)' : 'Tìm nhanh theo chủ đề (Du lịch, Phỏng vấn, Sinh học...)'}
                     className="w-full pl-8 pr-2.5 py-1 rounded-lg bg-white border border-purple-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
@@ -705,7 +709,7 @@ export default function ListeningURLExerciseGeneratorModal({
                 {/* Filter Part Pills with Counts */}
                 <div className="flex items-center space-x-1 shrink-0 overflow-x-auto scrollbar-none py-0.5">
                   {[
-                    { key: 'all', label: `Tất cả (${partCounts.all})` },
+                    { key: 'all', label: isEn ? `All (${partCounts.all})` : `Tất cả (${partCounts.all})` },
                     { key: 1, label: `P1 (${partCounts[1]})` },
                     { key: 2, label: `P2 (${partCounts[2]})` },
                     { key: 3, label: `P3 (${partCounts[3]})` },
@@ -732,17 +736,17 @@ export default function ListeningURLExerciseGeneratorModal({
                   onClick={() => handleDiscoverMoreSources()}
                   disabled={isDiscovering}
                   className="px-3 py-1 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 text-white text-xs font-bold shrink-0 flex items-center justify-center space-x-1 shadow-xs cursor-pointer active:scale-95"
-                  title="Để AI quét tìm thêm các nguồn audio hội thoại mới trên mạng"
+                  title={isEn ? 'Let AI search for more conversational audio sources online' : 'Để AI quét tìm thêm các nguồn audio hội thoại mới trên mạng'}
                 >
                   {isDiscovering ? (
                     <>
                       <div className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      <span>Đang quét...</span>
+                      <span>{isEn ? 'Scanning...' : 'Đang quét...'}</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                      <span>✨ AI Tìm Nguồn Mới</span>
+                      <span>{isEn ? '✨ AI Discover Sources' : '✨ AI Tìm Nguồn Mới'}</span>
                     </>
                   )}
                 </button>
@@ -753,9 +757,9 @@ export default function ListeningURLExerciseGeneratorModal({
                 <div className="px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center justify-between animate-in fade-in">
                   <div className="flex items-center space-x-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>AI đã nạp thêm <strong>{lastDiscoveryResult.count}</strong> nguồn mới lúc {lastDiscoveryResult.timeStr}.</span>
+                    <span>{isEn ? <>AI loaded <strong>{lastDiscoveryResult.count}</strong> new sources at {lastDiscoveryResult.timeStr}.</> : <>AI đã nạp thêm <strong>{lastDiscoveryResult.count}</strong> nguồn mới lúc {lastDiscoveryResult.timeStr}.</>}</span>
                   </div>
-                  <span className="text-[11px] text-emerald-700">Đã xếp lên đầu danh sách ↓</span>
+                  <span className="text-[11px] text-emerald-700">{isEn ? 'Ranked to top of list ↓' : 'Đã xếp lên đầu danh sách ↓'}</span>
                 </div>
               )}
 
@@ -768,7 +772,7 @@ export default function ListeningURLExerciseGeneratorModal({
                 {isDiscovering && (
                   <div className="p-2.5 rounded-xl border border-dashed border-purple-300 bg-purple-50/50 flex items-center justify-center space-x-2 text-xs text-purple-800 font-bold animate-pulse">
                     <div className="w-3.5 h-3.5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
-                    <span>AI đang tìm kiếm & phân loại nguồn âm thanh mới... Vui lòng đợi ~3-5 giây</span>
+                    <span>{isEn ? 'AI is discovering and classifying new audio sources... Please wait ~3-5s' : 'AI đang tìm kiếm & phân loại nguồn âm thanh mới... Vui lòng đợi ~3-5 giây'}</span>
                   </div>
                 )}
 
@@ -803,7 +807,7 @@ export default function ListeningURLExerciseGeneratorModal({
                               ? 'bg-emerald-600 text-white animate-pulse'
                               : 'bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-700'
                           }`}
-                          title={isPreviewing ? 'Tạm dừng nghe thử' : 'Nghe thử 5-10s'}
+                          title={isPreviewing ? (isEn ? 'Pause preview' : 'Tạm dừng nghe thử') : (isEn ? 'Preview 5-10s' : 'Nghe thử 5-10s')}
                         >
                           {isPreviewing ? <Pause className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
                         </button>
@@ -821,7 +825,7 @@ export default function ListeningURLExerciseGeneratorModal({
                             </span>
                             {isNewlyDiscovered && (
                               <span className="px-1.5 py-0.2 rounded bg-emerald-600 text-white text-[9px] font-black uppercase shrink-0">
-                                Mới Tìm
+                                {isEn ? 'Newly Found' : 'Mới Tìm'}
                               </span>
                             )}
                           </div>
@@ -836,7 +840,7 @@ export default function ListeningURLExerciseGeneratorModal({
                       <div className="flex items-center space-x-2 shrink-0">
                         {src.suggestedParts && src.suggestedParts.length > 0 && (
                           <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-bold">
-                            Gợi ý: Part {src.suggestedParts.join(', ')}
+                            {isEn ? `Suggested: Part ${src.suggestedParts.join(', ')}` : `Gợi ý: Part ${src.suggestedParts.join(', ')}`}
                           </span>
                         )}
 
@@ -851,15 +855,15 @@ export default function ListeningURLExerciseGeneratorModal({
                               ? 'bg-purple-600 text-white shadow-xs hover:bg-purple-700 ring-1 ring-purple-400'
                               : 'bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-800 border border-slate-200 hover:border-purple-300'
                           }`}
-                          title={isSelectedSource ? 'Nhấn để bỏ chọn nguồn này' : 'Chọn nguồn âm thanh này'}
+                          title={isSelectedSource ? (isEn ? 'Click to deselect this source' : 'Nhấn để bỏ chọn nguồn này') : (isEn ? 'Select this audio source' : 'Chọn nguồn âm thanh này')}
                         >
                           {isSelectedSource ? (
                             <>
                               <Check className="w-3.5 h-3.5 stroke-[3]" />
-                              <span>Đang chọn</span>
+                              <span>{isEn ? 'Selected' : 'Đang chọn'}</span>
                             </>
                           ) : (
-                            <span>Chọn nguồn</span>
+                            <span>{isEn ? 'Select source' : 'Chọn nguồn'}</span>
                           )}
                         </button>
                       </div>
@@ -883,28 +887,32 @@ export default function ListeningURLExerciseGeneratorModal({
                     <div className="space-y-1.5">
                       <div className="flex items-center space-x-2 flex-wrap gap-y-1">
                         <h4 className="text-xs sm:text-sm font-bold text-amber-950">
-                          Tính năng tải âm thanh từ máy tính chỉ dành riêng cho Quản trị viên
+                          {isEn ? 'Upload Audio from Computer is restricted to Administrator' : 'Tính năng tải âm thanh từ máy tính chỉ dành riêng cho Quản trị viên'}
                         </h4>
                         <span className="text-[10px] px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-extrabold font-mono">
                           {OWNER_EMAIL}
                         </span>
                       </div>
                       <p className="text-xs text-amber-900/90 leading-relaxed">
-                        Do dung lượng website giới hạn nên không hỗ trợ tính năng này khi user sử dụng. Bạn vui lòng chuyển sang tab <strong>Kho Audio Bản Xứ Tuyển Chọn</strong> để luyện tập ngay với hơn {allSources.length} bài nghe chuẩn Cambridge!
+                        {isEn ? (
+                          <>Due to website storage limitations, this feature is restricted to administrator. Please switch to the <strong>Curated Native Audio Library</strong> to practice immediately with over {allSources.length} Cambridge-standard tracks!</>
+                        ) : (
+                          <>Do dung lượng website giới hạn nên không hỗ trợ tính năng này khi user sử dụng. Bạn vui lòng chuyển sang tab <strong>Kho Audio Bản Xứ Tuyển Chọn</strong> để luyện tập ngay với hơn {allSources.length} bài nghe chuẩn Cambridge!</>
+                        )}
                       </p>
                     </div>
                   </div>
 
                   <div className="pt-2 flex items-center justify-between border-t border-amber-200/60">
                     <span className="text-[11px] text-amber-800">
-                      {user?.email ? `Tài khoản: ${user.email}` : 'Tài khoản học viên'}
+                      {user?.email ? (isEn ? `Account: ${user.email}` : `Tài khoản: ${user.email}`) : (isEn ? 'Student account' : 'Tài khoản học viên')}
                     </span>
                     <button
                       type="button"
                       onClick={() => setActiveTab('curated')}
                       className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
-                      Chuyển sang Kho Audio Tuyển Chọn →
+                      {isEn ? 'Switch to Curated Audio Library →' : 'Chuyển sang Kho Audio Tuyển Chọn →'}
                     </button>
                   </div>
                 </div>
@@ -938,10 +946,10 @@ export default function ListeningURLExerciseGeneratorModal({
 
                 <div>
                   <p className="text-xs font-bold text-slate-800">
-                    Kéo thả file âm thanh vào đây hoặc <span className="text-purple-600 underline font-extrabold">chọn từ máy tính</span>
+                    {isEn ? <>Drag & drop audio file here or <span className="text-purple-600 underline font-extrabold">browse from computer</span></> : <>Kéo thả file âm thanh vào đây hoặc <span className="text-purple-600 underline font-extrabold">chọn từ máy tính</span></>}
                   </p>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    Hỗ trợ file .mp3, .m4a, .wav, .ogg (Tối đa 25MB). AI tự động nghe trực tiếp file!
+                    {isEn ? 'Supports .mp3, .m4a, .wav, .ogg (Max 25MB). AI listens directly to the file!' : 'Hỗ trợ file .mp3, .m4a, .wav, .ogg (Tối đa 25MB). AI tự động nghe trực tiếp file!'}
                   </p>
                 </div>
               </div>
@@ -955,7 +963,7 @@ export default function ListeningURLExerciseGeneratorModal({
                         type="button"
                         onClick={() => handleTogglePreview('local-upload', uploadedAudioInfo.objectUrl)}
                         className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 cursor-pointer shadow-xs"
-                        title={previewingId === 'local-upload' ? 'Dừng nghe thử' : 'Nghe thử âm thanh'}
+                        title={previewingId === 'local-upload' ? (isEn ? 'Stop preview' : 'Dừng nghe thử') : (isEn ? 'Preview audio' : 'Nghe thử âm thanh')}
                       >
                         {previewingId === 'local-upload' ? <Pause className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current ml-0.5" />}
                       </button>
@@ -969,7 +977,7 @@ export default function ListeningURLExerciseGeneratorModal({
                           </span>
                         </div>
                         <p className="text-[10px] text-emerald-700 font-semibold">
-                          ✓ Đã nạp thành công • AI đang nghe trực tiếp file để đề xuất Part phù hợp bên dưới
+                          {isEn ? '✓ Successfully loaded • AI is analyzing file to suggest optimal Part below' : '✓ Đã nạp thành công • AI đang nghe trực tiếp file để đề xuất Part phù hợp bên dưới'}
                         </p>
                       </div>
                     </div>
@@ -999,13 +1007,13 @@ export default function ListeningURLExerciseGeneratorModal({
                         className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center space-x-1 cursor-pointer disabled:opacity-50"
                       >
                         <Wand2 className="w-3 h-3" />
-                        <span>{isAnalyzing ? 'Đang phân tích...' : 'Phân tích lại'}</span>
+                        <span>{isAnalyzing ? (isEn ? 'Analyzing...' : 'Đang phân tích...') : (isEn ? 'Re-analyze' : 'Phân tích lại')}</span>
                       </button>
                       <button
                         type="button"
                         onClick={handleClearUploadedAudio}
                         className="p-1 rounded-lg text-slate-400 hover:text-rose-600 cursor-pointer"
-                        title="Xóa tệp này"
+                        title={isEn ? 'Remove this file' : 'Xóa tệp này'}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -1016,7 +1024,7 @@ export default function ListeningURLExerciseGeneratorModal({
                   {isAnalyzing && (
                     <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-purple-700/40 border-t-purple-700 rounded-full animate-spin shrink-0" />
-                      <span>AI đang nghe và phân tích nội dung audio để gợi ý Part phù hợp nhất...</span>
+                      <span>{isEn ? 'AI is listening and analyzing audio content to suggest the best Part...' : 'AI đang nghe và phân tích nội dung audio để gợi ý Part phù hợp nhất...'}</span>
                     </div>
                   )}
 
@@ -1025,7 +1033,7 @@ export default function ListeningURLExerciseGeneratorModal({
                       <div className="flex items-center justify-between">
                         <span className="font-bold flex items-center space-x-1.5 text-purple-900">
                           <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                          <span>AI Gợi Ý Part Phù Hợp:</span>
+                          <span>{isEn ? 'AI Suggested Part:' : 'AI Gợi Ý Part Phù Hợp:'}</span>
                         </span>
                         <div className="flex items-center space-x-1">
                           {analysisResult.suggestedParts && analysisResult.suggestedParts.map(p => (
@@ -1039,19 +1047,19 @@ export default function ListeningURLExerciseGeneratorModal({
                                   : 'bg-white text-purple-800 border border-purple-300 hover:bg-purple-100'
                               }`}
                             >
-                              Part {p} {selectedPart === p ? '✓ Đang chọn' : ''}
+                              Part {p} {selectedPart === p ? (isEn ? '✓ Selected' : '✓ Đang chọn') : ''}
                             </button>
                           ))}
                         </div>
                       </div>
                       {analysisResult.reasoning && (
                         <p className="text-[11px] text-purple-800 leading-relaxed">
-                          <strong>Lý do:</strong> {analysisResult.reasoning}
+                          <strong>{isEn ? 'Reason:' : 'Lý do:'}</strong> {analysisResult.reasoning}
                         </p>
                       )}
                       {analysisResult.detectedSpeakers && (
                         <p className="text-[10px] text-slate-600">
-                          <strong>Người nói nhận diện được:</strong> {analysisResult.detectedSpeakers}
+                          <strong>{isEn ? 'Detected speakers:' : 'Người nói nhận diện được:'}</strong> {analysisResult.detectedSpeakers}
                         </p>
                       )}
                     </div>
@@ -1063,7 +1071,7 @@ export default function ListeningURLExerciseGeneratorModal({
               <div className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-[11px] flex items-center space-x-2">
                 <Info className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>
-                  <strong>Chế độ tiết kiệm dung lượng</strong>: Tệp âm thanh và đề thi sẽ tự động được giải phóng bộ nhớ ngay sau khi bạn làm bài xong. Báo cáo kết quả và đánh giá chi tiết vẫn được lưu giữ an toàn.
+                  <strong>{isEn ? 'Zero-Storage Privacy Mode' : 'Chế độ tiết kiệm dung lượng'}</strong>: {isEn ? 'Audio file and exam will automatically be released from memory immediately after you submit. Detailed score report and analysis are safely retained.' : 'Tệp âm thanh và đề thi sẽ tự động được giải phóng bộ nhớ ngay sau khi bạn làm bài xong. Báo cáo kết quả và đánh giá chi tiết vẫn được lưu giữ an toàn.'}
                 </span>
               </div>
             </>
@@ -1076,10 +1084,10 @@ export default function ListeningURLExerciseGeneratorModal({
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-900 flex items-center space-x-1">
                 <Compass className="w-3.5 h-3.5 text-purple-600" />
-                <span>Chọn Part Để Sinh Đề (Chỉ chọn 1 Part để tối ưu tốc độ & chất lượng):</span>
+                <span>{isEn ? 'Select Part to Generate (Choose 1 Part for optimal speed & quality):' : 'Chọn Part Để Sinh Đề (Chỉ chọn 1 Part để tối ưu tốc độ & chất lượng):'}</span>
               </label>
               <span className="text-[11px] text-purple-700 font-bold">
-                10 Câu • ~10 Phút
+                {isEn ? '10 Questions • ~10 Mins' : '10 Câu • ~10 Phút'}
               </span>
             </div>
 
@@ -1123,7 +1131,7 @@ export default function ListeningURLExerciseGeneratorModal({
                       {/* Small subtle badge - purely informative, unselected parts stay neutral */}
                       {isRecommendedForAudio && (
                         <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 border border-amber-200">
-                          AI khuyên dùng
+                          {isEn ? 'AI Recommended' : 'AI khuyên dùng'}
                         </span>
                       )}
                     </div>
@@ -1151,7 +1159,7 @@ export default function ListeningURLExerciseGeneratorModal({
           {/* STEP 3: TITLE & TOPIC (COMPACT 1-LINE) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="space-y-0.5">
-              <label className="text-[11px] font-bold text-slate-700">Tên bài luyện nghe:</label>
+              <label className="text-[11px] font-bold text-slate-700">{isEn ? 'Test Title:' : 'Tên bài luyện nghe:'}</label>
               <input
                 type="text"
                 value={testTitle}
@@ -1162,12 +1170,12 @@ export default function ListeningURLExerciseGeneratorModal({
             </div>
 
             <div className="space-y-0.5">
-              <label className="text-[11px] font-bold text-slate-700">Bối cảnh âm thanh:</label>
+              <label className="text-[11px] font-bold text-slate-700">{isEn ? 'Audio Context / Topic:' : 'Bối cảnh âm thanh:'}</label>
               <input
                 type="text"
                 value={topicDescription}
                 onChange={(e) => setTopicDescription(e.target.value)}
-                placeholder="Ví dụ: Hội thoại hỏi đáp dịch vụ, du lịch, bài giảng sinh học..."
+                placeholder={isEn ? 'E.g.: Service enquiry conversation, travel, biology lecture...' : 'Ví dụ: Hội thoại hỏi đáp dịch vụ, du lịch, bài giảng sinh học...'}
                 className="w-full px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-500"
               />
             </div>
@@ -1180,29 +1188,29 @@ export default function ListeningURLExerciseGeneratorModal({
               onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
               className="text-[11px] font-bold text-purple-700 hover:text-purple-900 flex items-center space-x-1 cursor-pointer"
             >
-              <span>{showAdvancedOptions ? '▾ Thu gọn tùy chọn nâng cao' : '▸ Tùy chọn nâng cao (Link mirror dự phòng, Lời thoại transcript)'}</span>
+              <span>{showAdvancedOptions ? (isEn ? '▾ Collapse advanced options' : '▾ Thu gọn tùy chọn nâng cao') : (isEn ? '▸ Advanced options (Fallback mirror URL, Transcript)' : '▸ Tùy chọn nâng cao (Link mirror dự phòng, Lời thoại transcript)')}</span>
             </button>
 
             {showAdvancedOptions && (
               <div className="mt-1.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 animate-in fade-in">
                 <div className="space-y-0.5">
-                  <label className="text-[11px] font-semibold text-slate-600">Link dự phòng (Fallback URL):</label>
+                  <label className="text-[11px] font-semibold text-slate-600">{isEn ? 'Fallback Mirror URL:' : 'Link dự phòng (Fallback URL):'}</label>
                   <input
                     type="url"
                     value={fallbackAudioUrl}
                     onChange={(e) => setFallbackAudioUrl(e.target.value)}
-                    placeholder="Link mirror dự phòng nếu link chính bị chặn (CORS/404)"
+                    placeholder={isEn ? 'Fallback mirror link if primary link is blocked (CORS/404)' : 'Link mirror dự phòng nếu link chính bị chặn (CORS/404)'}
                     className="w-full px-2.5 py-1 rounded-lg border border-slate-200 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
 
                 <div className="space-y-0.5">
-                  <label className="text-[11px] font-semibold text-slate-600">Lời thoại (Transcript có sẵn nếu có):</label>
+                  <label className="text-[11px] font-semibold text-slate-600">{isEn ? 'Transcript (if available):' : 'Lời thoại (Transcript có sẵn nếu có):'}</label>
                   <textarea
                     rows={2}
                     value={transcriptText}
                     onChange={(e) => setTranscriptText(e.target.value)}
-                    placeholder="Dán một phần hoặc toàn bộ lời thoại nếu có sẵn..."
+                    placeholder={isEn ? 'Paste partial or full transcript if available...' : 'Dán một phần hoặc toàn bộ lời thoại nếu có sẵn...'}
                     className="w-full p-2 rounded-lg border border-slate-200 text-xs text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
@@ -1224,25 +1232,25 @@ export default function ListeningURLExerciseGeneratorModal({
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                   {uploadedAudioInfo ? (
                     <>
-                      <span>Âm thanh cá nhân: Bảo mật riêng tư 100%</span>
+                      <span>{isEn ? 'Personal Audio: 100% Private' : 'Âm thanh cá nhân: Bảo mật riêng tư 100%'}</span>
                       <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800">Zero-Storage</span>
                     </>
                   ) : (
                     <>
-                      <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                      <span>{isPublic ? (isEn ? 'Auto-share to Community Library' : 'Tự động chia sẻ lên Thư viện Cộng đồng') : (isEn ? 'Save privately in your account' : 'Chỉ lưu riêng tư trong tài khoản')}</span>
                       {isPublic && (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-100 text-purple-700">Tài nguyên chung</span>
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-100 text-purple-700">{isEn ? 'Shared Resource' : 'Tài nguyên chung'}</span>
                       )}
                     </>
                   )}
                 </div>
                 <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
                   {uploadedAudioInfo ? (
-                    'Tệp âm thanh tải lên từ máy tính của bạn sẽ tự động hủy ngay sau khi thi xong theo chính sách bảo mật.'
+                    isEn ? 'Audio file uploaded from your device is automatically purged after exam completion per privacy policy.' : 'Tệp âm thanh tải lên từ máy tính của bạn sẽ tự động hủy ngay sau khi thi xong theo chính sách bảo mật.'
                   ) : (
                     isPublic 
-                      ? 'Đề thi từ URL công khai sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
-                      : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.'
+                      ? (isEn ? 'Exam generated from public URL is contributed to community library. Turn off if you wish to keep it private.' : 'Đề thi từ URL công khai sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.')
+                      : (isEn ? 'Only your account can view and practice this exam.' : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.')
                   )}
                 </div>
               </div>
@@ -1275,7 +1283,7 @@ export default function ListeningURLExerciseGeneratorModal({
           <div className="flex items-center space-x-2 text-xs text-slate-500">
             <Radio className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
             <span className="hidden sm:inline">
-              Sinh đề Part {selectedPart} (10 câu) • Tiết kiệm 100% tài nguyên
+              {isEn ? `Generate Part ${selectedPart} (10 questions) • 100% Resource-efficient` : `Sinh đề Part ${selectedPart} (10 câu) • Tiết kiệm 100% tài nguyên`}
             </span>
           </div>
 
@@ -1284,7 +1292,7 @@ export default function ListeningURLExerciseGeneratorModal({
               onClick={onClose}
               className="px-3.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
             >
-              Hủy
+              {isEn ? 'Cancel' : 'Hủy'}
             </button>
 
             <button
@@ -1295,12 +1303,12 @@ export default function ListeningURLExerciseGeneratorModal({
               {isGenerating ? (
                 <>
                   <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  <span>AI Đang Sinh Part {selectedPart} (5-8s)...</span>
+                  <span>{isEn ? `AI Generating Part ${selectedPart} (5-8s)...` : `AI Đang Sinh Part ${selectedPart} (5-8s)...`}</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Tạo Đề Part {selectedPart} (10 Câu)</span>
+                  <span>{isEn ? `Generate Part ${selectedPart} (10 Questions)` : `Tạo Đề Part ${selectedPart} (10 Câu)`}</span>
                 </>
               )}
             </button>

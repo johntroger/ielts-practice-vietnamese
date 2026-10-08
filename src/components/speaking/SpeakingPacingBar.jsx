@@ -5,6 +5,7 @@ import {
   getActivePacingPhase, 
   getFluencySafeZone 
 } from '../../services/speakingFluencyService.js';
+import { useTranslation } from '../../context/LanguageContext.jsx';
 
 export { PACING_PHASES, getActivePacingPhase, getFluencySafeZone };
 
@@ -20,6 +21,7 @@ export default function SpeakingPacingBar({
   showStrategyTip = true,
   theme = 'dark'
 }) {
+  const { isEn } = useTranslation();
   const sec = Math.max(0, Math.min(130, Number(secondsElapsed) || 0));
   const activePhase = useMemo(() => getActivePacingPhase(sec), [sec]);
   const safeZone = useMemo(() => getFluencySafeZone(sec), [sec]);
@@ -52,15 +54,17 @@ export default function SpeakingPacingBar({
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-xs font-black uppercase tracking-wider text-white">
-                Thanh Căn Nhịp 2 Phút (Pacing Bar)
+                {isEn ? '2-Minute Pacing Bar' : 'Thanh Căn Nhịp 2 Phút (Pacing Bar)'}
               </span>
               <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border ${safeZone.badgeClass}`}>
-                {safeZone.label}
+                {isEn ? (safeZone.labelEn || safeZone.label) : safeZone.label}
               </span>
             </div>
             {!compact && (
               <p className="text-[11px] text-slate-400 font-medium">
-                4 Chặng Vàng Cambridge: Giữ nhịp 1:45 - 2:00 không lo hụt ý hay cháy giờ
+                {isEn
+                  ? '4 Cambridge Milestones: Maintain 1:45 - 2:00 pace with full coherence'
+                  : '4 Chặng Vàng Cambridge: Giữ nhịp 1:45 - 2:00 không lo hụt ý hay cháy giờ'}
               </p>
             )}
           </div>
@@ -79,7 +83,7 @@ export default function SpeakingPacingBar({
           </span>
           {isWrapUpWarning && (
             <span className="block text-[10px] font-extrabold text-rose-400 uppercase tracking-wider">
-              ⚠️ Đang về đích ({120 - sec}s)
+              ⚠️ {isEn ? 'Wrap-up window' : 'Đang về đích'} ({120 - sec}s)
             </span>
           )}
         </div>
@@ -93,61 +97,61 @@ export default function SpeakingPacingBar({
           <div 
             className="bg-emerald-500 transition-all duration-300 h-full relative"
             style={{ width: `${percentPhase1}%` }}
-            title="Chặng 1 (0 - 30s): Mở đầu & bối cảnh"
+            title={isEn ? 'Phase 1 (0 - 30s): Context & Hook' : 'Chặng 1 (0 - 30s): Mở đầu & bối cảnh'}
           />
 
           {/* Phase 2: 30 - 75s (37.5%) */}
           <div 
             className="bg-blue-500 transition-all duration-300 h-full relative"
             style={{ width: `${percentPhase2}%` }}
-            title="Chặng 2 (30 - 75s): Diễn biến chi tiết"
+            title={isEn ? 'Phase 2 (30 - 75s): Core narrative & details' : 'Chặng 2 (30 - 75s): Diễn biến chi tiết'}
           />
 
           {/* Phase 3: 75 - 105s (25%) */}
           <div 
             className="bg-amber-500 transition-all duration-300 h-full relative"
             style={{ width: `${percentPhase3}%` }}
-            title="Chặng 3 (75 - 105s): Cao trào & điểm nhấn"
+            title={isEn ? 'Phase 3 (75 - 105s): Climax & turning point' : 'Chặng 3 (75 - 105s): Cao trào & điểm nhấn'}
           />
 
           {/* Phase 4: 105 - 120s (12.5%) */}
           <div 
             className="bg-rose-500 transition-all duration-300 h-full relative"
             style={{ width: `${percentPhase4}%` }}
-            title="Chặng 4 (105 - 120s): Bài học & đúc kết"
+            title={isEn ? 'Phase 4 (105 - 120s): Reflection & wrap-up' : 'Chặng 4 (105 - 120s): Bài học & đúc kết'}
           />
 
           {/* 75s Safe Zone Marker Line */}
           <div 
             className="absolute top-0 bottom-0 w-0.5 bg-white/60 z-10 pointer-events-none" 
             style={{ left: '62.5%' }}
-            title="Mốc 1:15 (Tối thiểu không bị non giờ)"
+            title={isEn ? '1:15 marker (Minimum safe duration)' : 'Mốc 1:15 (Tối thiểu không bị non giờ)'}
           />
 
           {/* 105s Mastery Marker Line */}
           <div 
             className="absolute top-0 bottom-0 w-0.5 bg-yellow-300/80 z-10 pointer-events-none" 
             style={{ left: '87.5%' }}
-            title="Mốc 1:45 (Bắt đầu kết bài)"
+            title={isEn ? '1:45 marker (Begin conclusion)' : 'Mốc 1:45 (Bắt đầu kết bài)'}
           />
         </div>
 
         {/* Milestone Labels Under Bar */}
         <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 px-0.5">
           <span className={sec <= 30 ? 'text-emerald-400 font-extrabold' : ''}>
-            0s <span className="hidden sm:inline font-normal">(Bắt đầu)</span>
+            0s <span className="hidden sm:inline font-normal">({isEn ? 'Start' : 'Bắt đầu'})</span>
           </span>
           <span className={sec > 30 && sec <= 75 ? 'text-blue-400 font-extrabold' : ''}>
-            30s <span className="hidden sm:inline font-normal">(Chi tiết)</span>
+            30s <span className="hidden sm:inline font-normal">({isEn ? 'Details' : 'Chi tiết'})</span>
           </span>
           <span className={sec > 75 && sec <= 105 ? 'text-amber-400 font-extrabold' : 'text-slate-400'}>
-            1:15 <span className="hidden sm:inline font-normal">(Cao trào)</span>
+            1:15 <span className="hidden sm:inline font-normal">({isEn ? 'Climax' : 'Cao trào'})</span>
           </span>
           <span className={sec > 105 && sec <= 120 ? 'text-rose-400 font-extrabold' : 'text-slate-400'}>
-            1:45 <span className="hidden sm:inline font-normal">(Kết bài)</span>
+            1:45 <span className="hidden sm:inline font-normal">({isEn ? 'Conclusion' : 'Kết bài'})</span>
           </span>
           <span className="text-purple-400 font-extrabold">
-            2:00 <span className="hidden sm:inline font-normal">(Chạm đích)</span>
+            2:00 <span className="hidden sm:inline font-normal">({isEn ? 'Finish' : 'Chạm đích'})</span>
           </span>
         </div>
       </div>
@@ -169,16 +173,16 @@ export default function SpeakingPacingBar({
             </div>
             <div className="min-w-0">
               <span className="font-black text-[11px] uppercase tracking-wider block">
-                {activePhase.titleVi}:
+                {isEn ? (activePhase.titleEn || activePhase.titleVi) : activePhase.titleVi}:
               </span>
               <p className="text-[11px] opacity-90 leading-snug">
-                {activePhase.strategyVi}
+                {isEn ? (activePhase.strategyEn || activePhase.strategyVi) : activePhase.strategyVi}
               </p>
             </div>
           </div>
 
           <div className="shrink-0 text-right hidden sm:block">
-            <span className="text-[10px] font-bold opacity-75 uppercase block">Trọng tâm:</span>
+            <span className="text-[10px] font-bold opacity-75 uppercase block">{isEn ? 'Focus:' : 'Trọng tâm:'}</span>
             <span className="text-[11px] font-black bg-white/10 px-2 py-0.5 rounded-md">
               {activePhase.bulletTarget}
             </span>

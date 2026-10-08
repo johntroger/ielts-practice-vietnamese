@@ -52,6 +52,7 @@ import ProcessMapRenderer from './ProcessMapRenderer';
 import MarathonTRFScorecard from './MarathonTRFScorecard';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
 import { createRandomFullTest } from '../utils/readingTestAssembler';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function MockTestModal({
   isOpen,
@@ -72,6 +73,9 @@ export default function MockTestModal({
   onStartMarathon,
   onCancelMarathon
 }) {
+  const { language } = useTranslation();
+  const isEn = language === 'en';
+
   if (!isOpen) return null;
 
   // Active Tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'full4skills'
@@ -247,14 +251,38 @@ export default function MockTestModal({
   }, [validBands]);
 
   const cefrEvaluation = useMemo(() => {
-    if (!calculatedOverallBand) return { level: 'N/A', title: 'Chưa đủ dữ liệu thi thử', desc: 'Hãy hoàn thành ít nhất 1 bài tập hoặc bài thi thử để kích hoạt đánh giá CEFR.' };
+    if (!calculatedOverallBand) return { 
+      level: 'N/A', 
+      title: isEn ? 'Insufficient data' : 'Chưa đủ dữ liệu thi thử', 
+      desc: isEn ? 'Complete at least 1 practice session or mock exam to activate CEFR assessment.' : 'Hãy hoàn thành ít nhất 1 bài tập hoặc bài thi thử để kích hoạt đánh giá CEFR.' 
+    };
     const num = Number(calculatedOverallBand);
-    if (num >= 8.5) return { level: 'C2', title: 'Expert Mastery (Bản Ngữ)', desc: 'Khả năng sử dụng ngôn ngữ hoàn toàn tự nhiên, chuẩn xác và tư duy học thuật sắc sảo.' };
-    if (num >= 7.5) return { level: 'C1', title: 'Very Good User (Xuất Sắc)', desc: 'Sử dụng ngôn ngữ lưu loát, làm chủ hoàn toàn các lập luận phức tạp và từ vựng chuyên sâu.' };
-    if (num >= 6.5) return { level: 'B2', title: 'Good / Competent User (Khá Giỏi)', desc: 'Đạt chuẩn du học và định cư quốc tế, nắm chắc cấu trúc và phản xạ giao tiếp tự tin.' };
-    if (num >= 5.5) return { level: 'B2-', title: 'Modest User (Trung Bình Khá)', desc: 'Có khả năng truyền đạt cơ bản, cần trau dồi thêm chiều sâu ý tưởng và kiểm soát lỗi ngữ pháp.' };
-    return { level: 'B1', title: 'Intermediate / Foundation', desc: 'Nắm được các ngữ cảnh quen thuộc, cần tập trung củng cố nền tảng ngữ pháp và từ vựng cốt lõi.' };
-  }, [calculatedOverallBand]);
+    if (num >= 8.5) return { 
+      level: 'C2', 
+      title: isEn ? 'Expert Mastery (Native-like)' : 'Expert Mastery (Bản Ngữ)', 
+      desc: isEn ? 'Fully natural, accurate language use with sharp academic thinking.' : 'Khả năng sử dụng ngôn ngữ hoàn toàn tự nhiên, chuẩn xác và tư duy học thuật sắc sảo.' 
+    };
+    if (num >= 7.5) return { 
+      level: 'C1', 
+      title: isEn ? 'Very Good User (Excellent)' : 'Very Good User (Xuất Sắc)', 
+      desc: isEn ? 'Fluent language use, full command of complex arguments and specialized vocabulary.' : 'Sử dụng ngôn ngữ lưu loát, làm chủ hoàn toàn các lập luận phức tạp và từ vựng chuyên sâu.' 
+    };
+    if (num >= 6.5) return { 
+      level: 'B2', 
+      title: isEn ? 'Good / Competent User' : 'Good / Competent User (Khá Giỏi)', 
+      desc: isEn ? 'Meets international study and immigration standards with confident communicative reflexes.' : 'Đạt chuẩn du học và định cư quốc tế, nắm chắc cấu trúc và phản xạ giao tiếp tự tin.' 
+    };
+    if (num >= 5.5) return { 
+      level: 'B2-', 
+      title: isEn ? 'Modest User' : 'Modest User (Trung Bình Khá)', 
+      desc: isEn ? 'Basic communicative competence; needs deeper ideas and tighter grammar control.' : 'Có khả năng truyền đạt cơ bản, cần trau dồi thêm chiều sâu ý tưởng và kiểm soát lỗi ngữ pháp.' 
+    };
+    return { 
+      level: 'B1', 
+      title: 'Intermediate / Foundation', 
+      desc: isEn ? 'Handles familiar contexts; focus on strengthening core grammar and vocabulary foundations.' : 'Nắm được các ngữ cảnh quen thuộc, cần tập trung củng cố nền tảng ngữ pháp và từ vựng cốt lõi.' 
+    };
+  }, [calculatedOverallBand, isEn]);
 
   // Writing Timer countdown
   useEffect(() => {
@@ -377,15 +405,27 @@ export default function MockTestModal({
           eval1,
           eval2,
           pacingFeedback: currentT1Words >= 150 && currentT2Words >= 250
-            ? 'Quản lý thời gian và dung lượng xuất sắc! Cả Task 1 và Task 2 đều vượt ngưỡng số từ tối thiểu quy định.'
-            : 'Cần phân bổ thời gian hợp lý hơn: Tỷ lệ chuẩn là 20 phút cho Task 1 (tối thiểu 150 từ) và 40 phút cho Task 2 (tối thiểu 250 từ).',
+            ? (isEn
+                ? 'Excellent pacing and word count management! Both Task 1 and Task 2 exceeded the minimum required lengths.'
+                : 'Quản lý thời gian và dung lượng xuất sắc! Cả Task 1 và Task 2 đều vượt ngưỡng số từ tối thiểu quy định.')
+            : (isEn
+                ? 'Time allocation needs improvement: standard pacing is 20 minutes for Task 1 (150+ words) and 40 minutes for Task 2 (250+ words).'
+                : 'Cần phân bổ thời gian hợp lý hơn: Tỷ lệ chuẩn là 20 phút cho Task 1 (tối thiểu 150 từ) và 40 phút cho Task 2 (tối thiểu 250 từ).'),
           executiveSummary: {
-            strongerTask: b1 > b2 ? 'Task 1' : b2 > b1 ? 'Task 2' : 'Cả hai đồng đều',
-            t1LengthStatus: currentT1Words >= 150 ? 'Đạt chuẩn (150+ từ)' : `Thiếu ${150 - currentT1Words} từ`,
-            t2LengthStatus: currentT2Words >= 250 ? 'Đạt chuẩn (250+ từ)' : `Thiếu ${250 - currentT2Words} từ`,
+            strongerTask: b1 > b2 ? 'Task 1' : b2 > b1 ? 'Task 2' : (isEn ? 'Both balanced' : 'Cả hai đồng đều'),
+            t1LengthStatus: currentT1Words >= 150 
+              ? (isEn ? 'Standard met (150+ words)' : 'Đạt chuẩn (150+ từ)') 
+              : (isEn ? `Under by ${150 - currentT1Words} words` : `Thiếu ${150 - currentT1Words} từ`),
+            t2LengthStatus: currentT2Words >= 250 
+              ? (isEn ? 'Standard met (250+ words)' : 'Đạt chuẩn (250+ từ)') 
+              : (isEn ? `Under by ${250 - currentT2Words} words` : `Thiếu ${250 - currentT2Words} từ`),
             combinedAdvice: b2 < b1
-              ? 'Task 2 là trọng số quyết định (chiếm 66.7% điểm). Hãy tập trung nâng cao cấu trúc lập luận và tính cân bằng của Task 2 để kéo điểm Overall lên mạnh mẽ.'
-              : 'Task 1 hoàn thành tốt vai trò hỗ trợ. Duy trì phong độ Task 2 và tiếp tục đa dạng hóa liên từ so sánh cho Task 1.'
+              ? (isEn
+                  ? 'Task 2 holds double weighting (66.7% of the score). Focus on bolstering your Task 2 argument structure to boost your overall band.'
+                  : 'Task 2 là trọng số quyết định (chiếm 66.7% điểm). Hãy tập trung nâng cao cấu trúc lập luận và tính cân bằng của Task 2 để kéo điểm Overall lên mạnh mẽ.')
+              : (isEn
+                  ? 'Task 1 served its supporting role well. Maintain Task 2 performance and continue diversifying comparative linkers for Task 1.'
+                  : 'Task 1 hoàn thành tốt vai trò hỗ trợ. Duy trì phong độ Task 2 và tiếp tục đa dạng hóa liên từ so sánh cho Task 1.')
           }
         };
       } else {
@@ -407,7 +447,7 @@ export default function MockTestModal({
 
       if (onSaveMockResult) onSaveMockResult(report);
     } catch (err) {
-      alert('Lỗi khi chấm điểm bài thi thử: ' + (err?.message || 'Vui lòng thử lại.'));
+      alert((isEn ? 'Error grading mock exam: ' : 'Lỗi khi chấm điểm bài thi thử: ') + (err?.message || (isEn ? 'Please try again.' : 'Vui lòng thử lại.')));
     } finally {
       setIsGrading(false);
     }
@@ -416,7 +456,7 @@ export default function MockTestModal({
   // Start Reading Mock Exam Handler
   const handleLaunchReadingMock = (testId) => {
     if (!testId) {
-      alert('Vui lòng chọn một đề thi 3 Passages.');
+      alert(isEn ? 'Please select a 3-passage test.' : 'Vui lòng chọn một đề thi 3 Passages.');
       return;
     }
     if (onStartReadingMockExam) {
@@ -431,11 +471,11 @@ export default function MockTestModal({
     try {
       const fullTest = createRandomFullTest({
         allReadingTests,
-        userEmail: currentUser?.email || 'Thành viên'
+        userEmail: currentUser?.email || (isEn ? 'Member' : 'Thành viên')
       });
 
       if (!fullTest) {
-        alert('Chưa có đủ số lượng bài đọc trong ngân hàng đề để tạo Full Test 3 Passages.');
+        alert(isEn ? 'Not enough reading passages in test bank to assemble a 3-Passage Full Test.' : 'Chưa có đủ số lượng bài đọc trong ngân hàng đề để tạo Full Test 3 Passages.');
         return;
       }
 
@@ -450,7 +490,7 @@ export default function MockTestModal({
       // Launch exam
       handleLaunchReadingMock(fullTest.id);
     } catch (err) {
-      alert('Lỗi khi tạo đề thi ngẫu nhiên: ' + err.message);
+      alert((isEn ? 'Error creating random test: ' : 'Lỗi khi tạo đề thi ngẫu nhiên: ') + err.message);
     } finally {
       setIsCreatingRandomReading(false);
     }
@@ -474,13 +514,17 @@ export default function MockTestModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold">Phòng Thi Thử IELTS Áp Lực Cao (Mock Test Vault)</h2>
+                <h2 className="text-base sm:text-lg font-bold">
+                  {isEn ? 'IELTS High-Pressure Mock Test Vault' : 'Phòng Thi Thử IELTS Áp Lực Cao (Mock Test Vault)'}
+                </h2>
                 <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black uppercase tracking-wide">
-                  Chuẩn Quốc Tế
+                  {isEn ? 'Official Standard' : 'Chuẩn Quốc Tế'}
                 </span>
               </div>
               <span className="text-[11px] text-slate-400 hidden sm:inline">
-                Mô phỏng 100% quy trình thi thật: Writing (60p), Reading (60p), Listening (40p), Speaking (15p) & ĐẠI THI THỬ 4 KỸ NĂNG
+                {isEn 
+                  ? '100% authentic exam simulation: Writing (60m), Reading (60m), Listening (40m), Speaking (15m) & 4-SKILL FULL MOCK'
+                  : 'Mô phỏng 100% quy trình thi thật: Writing (60p), Reading (60p), Listening (40p), Speaking (15p) & ĐẠI THI THỬ 4 KỸ NĂNG'}
               </span>
             </div>
           </div>
@@ -495,8 +539,8 @@ export default function MockTestModal({
           <button
             onClick={onClose}
             className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-            title="Đóng phòng thi thử"
-            aria-label="Đóng phòng thi thử"
+            title={isEn ? 'Close mock exam room' : 'Đóng phòng thi thử'}
+            aria-label={isEn ? 'Close mock exam room' : 'Đóng phòng thi thử'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -507,7 +551,7 @@ export default function MockTestModal({
           <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar touch-pan-x shrink-0">
             <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
               <span className="text-[11px] font-bold text-slate-400 mr-1 uppercase tracking-wider hidden lg:inline">
-                Chế Độ Thi:
+                {isEn ? 'Test Mode:' : 'Chế Độ Thi:'}
               </span>
               
               {/* Tab 1: Writing */}
@@ -520,7 +564,7 @@ export default function MockTestModal({
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>✍️ Writing (60p)</span>
+                <span>✍️ Writing ({isEn ? '60m' : '60p'})</span>
               </button>
 
               {/* Tab 2: Reading */}
@@ -533,9 +577,9 @@ export default function MockTestModal({
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>📖 Reading (60p)</span>
+                <span>📖 Reading ({isEn ? '60m' : '60p'})</span>
                 <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black">
-                  MỚI
+                  {isEn ? 'NEW' : 'MỚI'}
                 </span>
               </button>
 
@@ -549,9 +593,9 @@ export default function MockTestModal({
                 }`}
               >
                 <Headphones className="w-3.5 h-3.5" />
-                <span>🎧 Listening (40p)</span>
+                <span>🎧 Listening ({isEn ? '40m' : '40p'})</span>
                 <span className="px-1.5 py-0.2 rounded bg-purple-500/30 text-purple-200 text-[9px] font-bold">
-                  Phòng Thi
+                  {isEn ? 'Exam Room' : 'Phòng Thi'}
                 </span>
               </button>
 
@@ -565,7 +609,7 @@ export default function MockTestModal({
                 }`}
               >
                 <Mic className="w-3.5 h-3.5" />
-                <span>🗣️ Speaking (15p)</span>
+                <span>🗣️ Speaking ({isEn ? '15m' : '15p'})</span>
                 <span className="px-1.5 py-0.2 rounded bg-emerald-500/30 text-emerald-200 text-[9px] font-bold">
                   Live AI
                 </span>
@@ -581,7 +625,7 @@ export default function MockTestModal({
                 }`}
               >
                 <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                <span>🏆 Bảng Điểm TRF 4 Kỹ Năng</span>
+                <span>{isEn ? '🏆 4-Skill TRF Scorecard' : '🏆 Bảng Điểm TRF 4 Kỹ Năng'}</span>
                 <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-950 text-[9px] font-black">
                   {calculatedOverallBand ? `Band ${calculatedOverallBand}` : 'Marathon'}
                 </span>
@@ -602,33 +646,43 @@ export default function MockTestModal({
 
             <div className="space-y-2">
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Phòng Thi Thử IELTS Reading 60 Phút
+                {isEn ? 'IELTS Reading 60-Minute Mock Test Room' : 'Phòng Thi Thử IELTS Reading 60 Phút'}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
-                Bạn sẽ làm trọn vẹn <strong>3 Bài đọc học thuật (Passage 1, 2, 3)</strong> với đầy đủ <strong>40 câu hỏi</strong> trong đúng <strong>60 phút</strong>. Toàn bộ giải thích, manh mối và từ điển sẽ bị khóa để mô phỏng 100% áp lực phòng thi thật trên máy tính.
+                {isEn ? (
+                  <>You will complete <strong>3 Academic Passages (Passage 1, 2, 3)</strong> with all <strong>40 questions</strong> in exactly <strong>60 minutes</strong>. All explanations, clues, and dictionaries are locked to simulate 100% real computer-delivered exam conditions.</>
+                ) : (
+                  <>Bạn sẽ làm trọn vẹn <strong>3 Bài đọc học thuật (Passage 1, 2, 3)</strong> với đầy đủ <strong>40 câu hỏi</strong> trong đúng <strong>60 phút</strong>. Toàn bộ giải thích, manh mối và từ điển sẽ bị khóa để mô phỏng 100% áp lực phòng thi thật trên máy tính.</>
+                )}
               </p>
             </div>
 
             {/* Exam Conditions Badges */}
             <div className="grid grid-cols-3 gap-3 w-full text-left">
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase block">Thời gian thi</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                  {isEn ? 'Duration' : 'Thời gian thi'}
+                </span>
                 <div className="flex items-center space-x-1.5 text-blue-600 font-bold text-sm">
                   <Clock className="w-4 h-4" />
-                  <span>60:00 Phút</span>
+                  <span>{isEn ? '60:00 Mins' : '60:00 Phút'}</span>
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase block">Quy mô đề</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                  {isEn ? 'Test Scope' : 'Quy mô đề'}
+                </span>
                 <div className="flex items-center space-x-1.5 text-emerald-600 font-bold text-sm">
                   <Layers className="w-4 h-4" />
-                  <span>3 Passages / 40 Câu</span>
+                  <span>{isEn ? '3 Passages / 40 Questions' : '3 Passages / 40 Câu'}</span>
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase block">Đánh giá</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                  {isEn ? 'Evaluation' : 'Đánh giá'}
+                </span>
                 <div className="flex items-center space-x-1.5 text-amber-600 font-bold text-sm">
                   <Award className="w-4 h-4" />
                   <span>Band 1.0 - 9.0</span>
@@ -640,10 +694,10 @@ export default function MockTestModal({
             <div className="w-full text-left space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs">
               <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                 <label className="font-bold text-slate-800 text-xs">
-                  Chọn Bộ Đề 3 Passages (40 câu) để thi:
+                  {isEn ? 'Select a 3-Passage Test (40 questions) to take:' : 'Chọn Bộ Đề 3 Passages (40 câu) để thi:'}
                 </label>
                 <span className="text-slate-500 font-medium">
-                  {availableFullReadingTests.length} bộ đề sẵn sàng
+                  {availableFullReadingTests.length} {isEn ? 'tests ready' : 'bộ đề sẵn sàng'}
                 </span>
               </div>
 
@@ -656,19 +710,25 @@ export default function MockTestModal({
                   >
                     {availableFullReadingTests.map(t => (
                       <option key={t.id} value={t.id}>
-                        {t.title} ({t.passages?.length || 3} Passages - {t.totalQuestions || 40} câu)
+                        {t.title} ({t.passages?.length || 3} Passages - {t.totalQuestions || 40} {isEn ? 'questions' : 'câu'})
                       </option>
                     ))}
                   </select>
 
                   <div className="p-2.5 rounded-lg bg-blue-50/70 border border-blue-100 text-[11px] text-blue-900">
-                    💡 Đề này bao gồm 3 bài đọc liên hoàn, câu hỏi được đánh số thứ tự từ 1 đến 40.
+                    {isEn 
+                      ? '💡 This test includes 3 consecutive reading passages with questions numbered from 1 to 40.' 
+                      : '💡 Đề này bao gồm 3 bài đọc liên hoàn, câu hỏi được đánh số thứ tự từ 1 đến 40.'}
                   </div>
                 </div>
               ) : (
                 <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-1">
-                  <strong>Chưa có bộ đề 3 Passages sẵn:</strong>
-                  <p>Hãy bấm nút "🎲 Bốc Đề Thi Thử Ngẫu Nhiên" bên dưới, hệ thống sẽ tự động ghép 3 bài đọc Passage 1, 2, 3 thành 1 bài thi hoàn chỉnh cho bạn.</p>
+                  <strong>{isEn ? 'No 3-Passage tests available yet:' : 'Chưa có bộ đề 3 Passages sẵn:'}</strong>
+                  <p>
+                    {isEn 
+                      ? 'Click "🎲 Assemble Random Test" below, the system will automatically assemble 3 passages into a complete exam for you.' 
+                      : 'Hãy bấm nút "🎲 Bốc Đề Thi Thử Ngẫu Nhiên" bên dưới, hệ thống sẽ tự động ghép 3 bài đọc Passage 1, 2, 3 thành 1 bài thi hoàn chỉnh cho bạn.'}
+                  </p>
                 </div>
               )}
             </div>
@@ -681,7 +741,7 @@ export default function MockTestModal({
                 className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
               >
                 <Shuffle className="w-4 h-4" />
-                <span>🎲 Bốc Đề Thi Ngẫu Nhiên (Random 3 Passages)</span>
+                <span>{isEn ? '🎲 Assemble Random Test (Random 3 Passages)' : '🎲 Bốc Đề Thi Ngẫu Nhiên (Random 3 Passages)'}</span>
               </button>
 
               <button
@@ -690,7 +750,7 @@ export default function MockTestModal({
                 className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center space-x-2 active:scale-95 disabled:opacity-50"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>Bắt Đầu Thi Đề Này (60:00)</span>
+                <span>{isEn ? 'Start This Test (60:00)' : 'Bắt Đầu Thi Đề Này (60:00)'}</span>
               </button>
             </div>
           </div>
@@ -709,10 +769,14 @@ export default function MockTestModal({
 
             <div className="space-y-1.5">
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Phòng Thi Thử IELTS Writing 60 Phút
+                {isEn ? 'IELTS Writing 60-Minute Mock Test Room' : 'Phòng Thi Thử IELTS Writing 60 Phút'}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl mx-auto">
-                Mô phỏng 100% ca thi viết chính thức: Làm liên tục cả <strong>Task 1 (tối thiểu 150 từ)</strong> và <strong>Task 2 (tối thiểu 250 từ)</strong> trong vòng 60 phút. Điểm tổng kết tính theo đúng <strong>công thức trọng số chuẩn Cambridge</strong>: <span className="font-semibold text-slate-800">[(Task 1 × 1) + (Task 2 × 2)] / 3</span>.
+                {isEn ? (
+                  <>Simulates 100% of the official writing session: Complete both <strong>Task 1 (min 150 words)</strong> and <strong>Task 2 (min 250 words)</strong> within 60 minutes. Final score calculated using the <strong>Cambridge weighting formula</strong>: <span className="font-semibold text-slate-800">[(Task 1 × 1) + (Task 2 × 2)] / 3</span>.</>
+                ) : (
+                  <>Mô phỏng 100% ca thi viết chính thức: Làm liên tục cả <strong>Task 1 (tối thiểu 150 từ)</strong> và <strong>Task 2 (tối thiểu 250 từ)</strong> trong vòng 60 phút. Điểm tổng kết tính theo đúng <strong>công thức trọng số chuẩn Cambridge</strong>: <span className="font-semibold text-slate-800">[(Task 1 × 1) + (Task 2 × 2)] / 3</span>.</>
+                )}
               </p>
             </div>
 
@@ -721,10 +785,16 @@ export default function MockTestModal({
               <div className="w-full text-left p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 space-y-2.5 shadow-sm animate-in fade-in duration-200">
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-                  <span className="font-bold text-xs sm:text-sm">Phát hiện ca thi Writing chưa nộp trước đó!</span>
+                  <span className="font-bold text-xs sm:text-sm">
+                    {isEn ? 'Unsubmitted Writing mock test session detected!' : 'Phát hiện ca thi Writing chưa nộp trước đó!'}
+                  </span>
                 </div>
                 <p className="text-xs text-amber-900">
-                  Thời gian còn lại: <strong>{formatTimer(savedSession.timeRemaining)}</strong> • Task 1: <strong>{countWords(savedSession.t1Text)}/150 từ</strong> • Task 2: <strong>{countWords(savedSession.t2Text)}/250 từ</strong>.
+                  {isEn ? (
+                    <>Time remaining: <strong>{formatTimer(savedSession.timeRemaining)}</strong> • Task 1: <strong>{countWords(savedSession.t1Text)}/150 words</strong> • Task 2: <strong>{countWords(savedSession.t2Text)}/250 words</strong>.</>
+                  ) : (
+                    <>Thời gian còn lại: <strong>{formatTimer(savedSession.timeRemaining)}</strong> • Task 1: <strong>{countWords(savedSession.t1Text)}/150 từ</strong> • Task 2: <strong>{countWords(savedSession.t2Text)}/250 từ</strong>.</>
+                  )}
                 </p>
                 <div className="flex items-center gap-2 pt-1">
                   <button
@@ -732,13 +802,13 @@ export default function MockTestModal({
                     className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 flex items-center space-x-1.5 cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Khôi Phục Bài Làm & Thi Tiếp</span>
+                    <span>{isEn ? 'Restore Essay & Continue' : 'Khôi Phục Bài Làm & Thi Tiếp'}</span>
                   </button>
                   <button
                     onClick={handleDiscardWritingSession}
                     className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-amber-300 font-bold text-xs transition-all active:scale-95 cursor-pointer"
                   >
-                    Bỏ qua & thi đề mới
+                    {isEn ? 'Discard & Start Fresh' : 'Bỏ qua & thi đề mới'}
                   </button>
                 </div>
               </div>
@@ -747,49 +817,65 @@ export default function MockTestModal({
             {/* Exam Conditions Badges */}
             <div className="grid grid-cols-3 gap-3 w-full text-left">
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase block">Thời gian thi</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                  {isEn ? 'Duration' : 'Thời gian thi'}
+                </span>
                 <div className="flex items-center space-x-1.5 text-red-600 font-bold text-xs sm:text-sm">
                   <Clock className="w-4 h-4 shrink-0" />
-                  <span>60:00 Phút</span>
+                  <span>{isEn ? '60:00 Mins' : '60:00 Phút'}</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">T1: ~20p | T2: ~40p</span>
+                <span className="text-[10px] text-slate-400 block">
+                  {isEn ? 'T1: ~20m | T2: ~40m' : 'T1: ~20p | T2: ~40p'}
+                </span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase block">Dung lượng chuẩn</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                  {isEn ? 'Target Length' : 'Dung lượng chuẩn'}
+                </span>
                 <div className="flex items-center space-x-1.5 text-blue-600 font-bold text-xs sm:text-sm">
                   <FileText className="w-4 h-4 shrink-0" />
                   <span>150w + 250w</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">Thiếu từ bị trừ điểm</span>
+                <span className="text-[10px] text-slate-400 block">
+                  {isEn ? 'Underlength penalized' : 'Thiếu từ bị trừ điểm'}
+                </span>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase block">Trọng số tính điểm</span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                  {isEn ? 'Weighting' : 'Trọng số tính điểm'}
+                </span>
                 <div className="flex items-center space-x-1.5 text-emerald-600 font-bold text-xs sm:text-sm">
                   <Award className="w-4 h-4 shrink-0" />
                   <span>T1: 1/3 | T2: 2/3</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">Chuẩn Cambridge</span>
+                <span className="text-[10px] text-slate-400 block">
+                  {isEn ? 'Cambridge Standard' : 'Chuẩn Cambridge'}
+                </span>
               </div>
             </div>
 
             {/* Task selector */}
             <div className="w-full text-left space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-xs">
               <div className="flex items-center justify-between pb-1 border-b border-slate-200">
-                <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Cặp đề thi Writing:</span>
+                <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                  {isEn ? 'Writing Task Pair:' : 'Cặp đề thi Writing:'}
+                </span>
                 <button
                   onClick={handleRandomizeWritingTasks}
                   className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-[11px] flex items-center space-x-1 shadow-2xs transition-all active:scale-95 cursor-pointer"
                 >
                   <Shuffle className="w-3 h-3 text-red-600" />
-                  <span>🎲 Ghép Đề Ngẫu Nhiên</span>
+                  <span>{isEn ? '🎲 Randomize Pair' : '🎲 Ghép Đề Ngẫu Nhiên'}</span>
                 </button>
               </div>
 
               <div>
                 <label className="font-bold text-slate-700 block mb-1">
-                  Đề Task 1 cho ca thi này (Report - Biểu đồ / Bản đồ / Quy trình):
+                  {isEn 
+                    ? 'Task 1 Prompt for this session (Report - Chart / Map / Process):' 
+                    : 'Đề Task 1 cho ca thi này (Report - Biểu đồ / Bản đồ / Quy trình):'}
                 </label>
                 <select 
                   value={t1Id} 
@@ -802,7 +888,9 @@ export default function MockTestModal({
 
               <div>
                 <label className="font-bold text-slate-700 block mb-1">
-                  Đề Task 2 cho ca thi này (Discursive Essay - Tối thiểu 250 từ):
+                  {isEn 
+                    ? 'Task 2 Prompt for this session (Discursive Essay - Min 250 words):' 
+                    : 'Đề Task 2 cho ca thi này (Discursive Essay - Tối thiểu 250 từ):'}
                 </label>
                 <select 
                   value={t2Id} 
@@ -815,7 +903,9 @@ export default function MockTestModal({
 
               {/* Grading Engine Option */}
               <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <span className="font-bold text-slate-700 text-[11px]">Động cơ chấm điểm sau khi thi:</span>
+                <span className="font-bold text-slate-700 text-[11px]">
+                  {isEn ? 'Grading engine upon submission:' : 'Động cơ chấm điểm sau khi thi:'}
+                </span>
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setWritingGradingEngine('algorithmic')}
@@ -825,7 +915,7 @@ export default function MockTestModal({
                         : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    ⚡ Thuật toán Cambridge (Tức thì, 0s)
+                    {isEn ? '⚡ Cambridge Algorithm (Instant, 0s)' : '⚡ Thuật toán Cambridge (Tức thì, 0s)'}
                   </button>
                   {apiKey && (
                     <button
@@ -836,7 +926,7 @@ export default function MockTestModal({
                           : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                       }`}
                     >
-                      🤖 Giám Khảo AI
+                      {isEn ? '🤖 AI Examiner' : '🤖 Giám Khảo AI'}
                     </button>
                   )}
                 </div>
@@ -848,7 +938,7 @@ export default function MockTestModal({
               className="w-full sm:w-auto px-10 py-3.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 text-white font-bold text-xs sm:text-sm shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current" />
-              <span>BẮT ĐẦU TÍNH GIỜ WRITING 60 PHÚT</span>
+              <span>{isEn ? 'START 60-MINUTE WRITING EXAM' : 'BẮT ĐẦU TÍNH GIỜ WRITING 60 PHÚT'}</span>
             </button>
           </div>
         </div>
@@ -865,13 +955,15 @@ export default function MockTestModal({
               </div>
               <div>
                 <span className="px-3 py-1 rounded-full bg-purple-500/30 text-purple-300 text-xs font-black uppercase tracking-wider border border-purple-400/30">
-                  Dự Phòng Kiến Trúc Thi Thử
+                  {isEn ? 'Mock Architecture Preview' : 'Dự Phòng Kiến Trúc Thi Thử'}
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold mt-2">
-                  Phòng Thi Thử IELTS Listening (40 Phút - 40 Câu)
+                  {isEn ? 'IELTS Listening Mock Test Room (40 Mins - 40 Questions)' : 'Phòng Thi Thử IELTS Listening (40 Phút - 40 Câu)'}
                 </h3>
                 <p className="text-xs sm:text-sm text-purple-200 max-w-xl mx-auto mt-1">
-                  Mô phỏng 100% bài thi nghe trên máy tính (Computer-delivered): Audio chỉ nghe 1 lần duy nhất, câu hỏi đồng bộ theo thời gian thực.
+                  {isEn 
+                    ? '100% Computer-delivered exam simulation: Audio plays once only, questions synchronized in real time.' 
+                    : 'Mô phỏng 100% bài thi nghe trên máy tính (Computer-delivered): Audio chỉ nghe 1 lần duy nhất, câu hỏi đồng bộ theo thời gian thực.'}
                 </p>
               </div>
             </div>
@@ -880,26 +972,34 @@ export default function MockTestModal({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
               <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
                 <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 1</span>
-                <h5 className="font-bold text-xs text-slate-800">Hội Thoại Xã Hội</h5>
-                <p className="text-[11px] text-slate-500">2 người nói (Đặt phòng, đăng ký khoá học, hỏi đường...)</p>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'Social Conversation' : 'Hội Thoại Xã Hội'}</h5>
+                <p className="text-[11px] text-slate-500">
+                  {isEn ? '2 speakers (Hotel booking, course registration, directions...)' : '2 người nói (Đặt phòng, đăng ký khoá học, hỏi đường...)'}
+                </p>
               </div>
 
               <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
                 <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 2</span>
-                <h5 className="font-bold text-xs text-slate-800">Độc Thoại Thường Thức</h5>
-                <p className="text-[11px] text-slate-500">1 người nói (Hướng dẫn du lịch, giới thiệu bảo tàng...)</p>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'General Monologue' : 'Độc Thoại Thường Thức'}</h5>
+                <p className="text-[11px] text-slate-500">
+                  {isEn ? '1 speaker (Tour guide, museum intro...)' : '1 người nói (Hướng dẫn du lịch, giới thiệu bảo tàng...)'}
+                </p>
               </div>
 
               <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
                 <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 3</span>
-                <h5 className="font-bold text-xs text-slate-800">Thảo Luận Học Thuật</h5>
-                <p className="text-[11px] text-slate-500">2–4 sinh viên / giáo sư thảo luận đề tài nghiên cứu</p>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'Academic Discussion' : 'Thảo Luận Học Thuật'}</h5>
+                <p className="text-[11px] text-slate-500">
+                  {isEn ? '2–4 students / professors discussing research' : '2–4 sinh viên / giáo sư thảo luận đề tài nghiên cứu'}
+                </p>
               </div>
 
               <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-1">
                 <span className="text-[11px] font-bold text-purple-700 uppercase block">Part 4</span>
-                <h5 className="font-bold text-xs text-slate-800">Bài Giảng Chuyên Ngành</h5>
-                <p className="text-[11px] text-slate-500">Độc thoại đại học (Khoa học, Lịch sử, Sinh học...)</p>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'Academic Lecture' : 'Bài Giảng Chuyên Ngành'}</h5>
+                <p className="text-[11px] text-slate-500">
+                  {isEn ? 'University monologue (Science, History, Biology...)' : 'Độc thoại đại học (Khoa học, Lịch sử, Sinh học...)'}
+                </p>
               </div>
             </div>
 
@@ -908,7 +1008,9 @@ export default function MockTestModal({
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div className="flex items-center space-x-2">
                   <Volume2 className="w-5 h-5 text-purple-600 animate-pulse" />
-                  <span className="font-bold text-xs text-slate-800">Bộ Điều Khiển Âm Thanh Ca Thi (Soundcheck)</span>
+                  <span className="font-bold text-xs text-slate-800">
+                    {isEn ? 'Exam Audio Control (Soundcheck)' : 'Bộ Điều Khiển Âm Thanh Ca Thi (Soundcheck)'}
+                  </span>
                 </div>
                 <span className="text-xs text-slate-500 font-mono">30:00 audio + 2:00 review</span>
               </div>
@@ -922,14 +1024,18 @@ export default function MockTestModal({
                   <div className="w-1/3 h-full bg-purple-600 rounded-full" />
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>⚠️ Quy chế: Audio không thể tua lại hoặc tạm dừng</span>
-                  <span className="text-emerald-600 font-bold">✓ Âm lượng chuẩn</span>
+                  <span>{isEn ? '⚠️ Rule: Audio cannot be rewound or paused' : '⚠️ Quy chế: Audio không thể tua lại hoặc tạm dừng'}</span>
+                  <span className="text-emerald-600 font-bold">{isEn ? '✓ Optimal volume' : '✓ Âm lượng chuẩn'}</span>
                 </div>
               </div>
 
               <div className="p-4 rounded-xl bg-purple-50 border border-purple-200 text-xs text-purple-950 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div>
-                  <strong>Trạng thái:</strong> Đề Cambridge 18 Test 1 hoàn chỉnh 40 câu đã sẵn sàng!
+                  {isEn ? (
+                    <><strong>Status:</strong> Complete 40-question Cambridge 18 Test 1 is ready!</>
+                  ) : (
+                    <><strong>Trạng thái:</strong> Đề Cambridge 18 Test 1 hoàn chỉnh 40 câu đã sẵn sàng!</>
+                  )}
                 </div>
                 <button
                   onClick={() => {
@@ -939,7 +1045,7 @@ export default function MockTestModal({
                   className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 flex items-center space-x-2 shrink-0 cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  <span>Vào Phòng Thi Listening Ngay</span>
+                  <span>{isEn ? 'Enter Listening Exam Room Now' : 'Vào Phòng Thi Listening Ngay'}</span>
                 </button>
               </div>
             </div>
@@ -957,13 +1063,15 @@ export default function MockTestModal({
               </div>
               <div>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/30 text-emerald-300 text-xs font-black uppercase tracking-wider border border-emerald-400/30">
-                  Đã Kích Hoạt Hoạt Động • Live AI Examiner
+                  {isEn ? 'Active & Ready • Live AI Examiner' : 'Đã Kích Hoạt Hoạt Động • Live AI Examiner'}
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold mt-2">
-                  Phòng Thi Thử IELTS Speaking Với Giám Khảo Ảo AI (11–14 Phút)
+                  {isEn ? 'IELTS Speaking Mock Test Room with Live AI Examiner (11–14 Mins)' : 'Phòng Thi Thử IELTS Speaking Với Giám Khảo Ảo AI (11–14 Phút)'}
                 </h3>
                 <p className="text-xs sm:text-sm text-emerald-200 max-w-xl mx-auto mt-1">
-                  Mô phỏng 1:1 phòng thi vấn đáp trực tiếp với giám khảo bản xứ: Tự động ghi âm, nhận diện phát âm và chấm điểm 4 tiêu chí FC, LR, GRA, PR.
+                  {isEn 
+                    ? '1:1 authentic simulation with native examiner: Automated recording, speech recognition, and 4-criteria assessment (FC, LR, GRA, PR).' 
+                    : 'Mô phỏng 1:1 phòng thi vấn đáp trực tiếp với giám khảo bản xứ: Tự động ghi âm, nhận diện phát âm và chấm điểm 4 tiêu chí FC, LR, GRA, PR.'}
                 </p>
               </div>
             </div>
@@ -971,26 +1079,38 @@ export default function MockTestModal({
             {/* Speaking 3 Parts Breakdown */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left">
               <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                <span className="text-[11px] font-bold text-emerald-700 uppercase block">Part 1: Phỏng Vấn (4–5 phút)</span>
-                <h5 className="font-bold text-xs text-slate-800">Chủ đề quen thuộc</h5>
+                <span className="text-[11px] font-bold text-emerald-700 uppercase block">
+                  {isEn ? 'Part 1: Interview (4–5 mins)' : 'Part 1: Phỏng Vấn (4–5 phút)'}
+                </span>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'Familiar Topics' : 'Chủ đề quen thuộc'}</h5>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Hometown, Work/Study, Hobbies, Weather, Technology... Rèn phản xạ trả lời tự nhiên, trôi chảy.
+                  {isEn 
+                    ? 'Hometown, Work/Study, Hobbies, Weather, Technology... Build natural, fluent responses.' 
+                    : 'Hometown, Work/Study, Hobbies, Weather, Technology... Rèn phản xạ trả lời tự nhiên, trôi chảy.'}
                 </p>
               </div>
 
               <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                <span className="text-[11px] font-bold text-emerald-700 uppercase block">Part 2: Thuyết Trình (3–4 phút)</span>
-                <h5 className="font-bold text-xs text-slate-800">Thẻ bài nói (Cue Card)</h5>
+                <span className="text-[11px] font-bold text-emerald-700 uppercase block">
+                  {isEn ? 'Part 2: Long Turn (3–4 mins)' : 'Part 2: Thuyết Trình (3–4 phút)'}
+                </span>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'Cue Card' : 'Thẻ bài nói (Cue Card)'}</h5>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  1:00 phút chuẩn bị ghi chú (Note-taking) và đúng 2:00 phút nói liên tục theo 4 gợi ý trên thẻ.
+                  {isEn 
+                    ? '1:00 min note-taking preparation and 2:00 mins continuous speaking on 4 cues.' 
+                    : '1:00 phút chuẩn bị ghi chú (Note-taking) và đúng 2:00 phút nói liên tục theo 4 gợi ý trên thẻ.'}
                 </p>
               </div>
 
               <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs">
-                <span className="text-[11px] font-bold text-emerald-700 uppercase block">Part 3: Thảo Luận (4–5 phút)</span>
-                <h5 className="font-bold text-xs text-slate-800">Tư duy phản biện</h5>
+                <span className="text-[11px] font-bold text-emerald-700 uppercase block">
+                  {isEn ? 'Part 3: Discussion (4–5 mins)' : 'Part 3: Thảo Luận (4–5 phút)'}
+                </span>
+                <h5 className="font-bold text-xs text-slate-800">{isEn ? 'Critical Thinking' : 'Tư duy phản biện'}</h5>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Các câu hỏi mở rộng mang tính trừu tượng, phân tích nguyên nhân - hậu quả và xu hướng tương lai.
+                  {isEn 
+                    ? 'Abstract follow-up questions analyzing cause-and-effect and future trends.' 
+                    : 'Các câu hỏi mở rộng mang tính trừu tượng, phân tích nguyên nhân - hậu quả và xu hướng tương lai.'}
                 </p>
               </div>
             </div>
@@ -1015,7 +1135,11 @@ export default function MockTestModal({
 
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div>
-                  <strong>Trạng thái:</strong> Phòng thi 3 Parts với Giám khảo AI bản xứ & chấm điểm 4 tiêu chí đã sẵn sàng!
+                  {isEn ? (
+                    <><strong>Status:</strong> 3-Part room with native AI examiner & 4-criteria scoring is ready!</>
+                  ) : (
+                    <><strong>Trạng thái:</strong> Phòng thi 3 Parts với Giám khảo AI bản xứ & chấm điểm 4 tiêu chí đã sẵn sàng!</>
+                  )}
                 </div>
                 <button
                   onClick={() => {
@@ -1025,7 +1149,7 @@ export default function MockTestModal({
                   className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 flex items-center space-x-2 shrink-0 cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  <span>Vào Phòng Thi Speaking Ngay</span>
+                  <span>{isEn ? 'Enter Speaking Exam Room Now' : 'Vào Phòng Thi Speaking Ngay'}</span>
                 </button>
               </div>
             </div>
@@ -1046,16 +1170,20 @@ export default function MockTestModal({
                   <div className="flex items-center space-x-2">
                     <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider border border-amber-400/30 flex items-center space-x-1.5">
                       <Trophy className="w-3.5 h-3.5" />
-                      <span>Hồ Sơ Khảo Thí Quốc Tế TRF</span>
+                      <span>{isEn ? 'Official TRF International Assessment' : 'Hồ Sơ Khảo Thí Quốc Tế TRF'}</span>
                     </span>
-                    <span className="text-xs text-slate-400">Thời lượng tiêu chuẩn: 2 Giờ 45 Phút</span>
+                    <span className="text-xs text-slate-400">
+                      {isEn ? 'Standard Duration: 2 Hours 45 Mins' : 'Thời lượng tiêu chuẩn: 2 Giờ 45 Phút'}
+                    </span>
                   </div>
                   
                   <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center space-x-2">
-                    <span>Đại Thi Thử 4 Kỹ Năng & Chứng Chỉ TRF</span>
+                    <span>{isEn ? '4-Skill Mock Marathon & TRF Certificate' : 'Đại Thi Thử 4 Kỹ Năng & Chứng Chỉ TRF'}</span>
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    Bảng điểm tổng hợp tự động năng lực thực tế của bạn từ các bài thi Listening, Reading, Writing và Speaking. Tính điểm chuẩn xác theo công thức làm tròn khảo thí Cambridge Assessment English.
+                    {isEn 
+                      ? 'Aggregated scorecard dynamically compiled from your Listening, Reading, Writing, and Speaking exams. Accurately rounded using official Cambridge Assessment English formulas.' 
+                      : 'Bảng điểm tổng hợp tự động năng lực thực tế của bạn từ các bài thi Listening, Reading, Writing và Speaking. Tính điểm chuẩn xác theo công thức làm tròn khảo thí Cambridge Assessment English.'}
                   </p>
                 </div>
 
@@ -1071,7 +1199,11 @@ export default function MockTestModal({
                         className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-emerald-300/40"
                       >
                         <Play className="w-4 h-4 fill-current" />
-                        <span>Tiếp Tục Chặng {marathonSession.stage?.toUpperCase()}</span>
+                        <span>
+                          {isEn 
+                            ? `Continue Stage: ${marathonSession.stage?.toUpperCase()}` 
+                            : `Tiếp Tục Chặng ${marathonSession.stage?.toUpperCase()}`}
+                        </span>
                       </button>
                       <button
                         onClick={() => {
@@ -1079,7 +1211,7 @@ export default function MockTestModal({
                         }}
                         className="text-[11px] text-center text-slate-400 hover:text-rose-400 underline transition-colors cursor-pointer"
                       >
-                        Hủy phiên thi Marathon đang chạy
+                        {isEn ? 'Cancel ongoing Marathon session' : 'Hủy phiên thi Marathon đang chạy'}
                       </button>
                     </div>
                   ) : (
@@ -1095,11 +1227,11 @@ export default function MockTestModal({
                       className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-400 hover:to-red-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl hover:shadow-amber-500/25 transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-amber-300/40"
                     >
                       <Play className="w-4 h-4 fill-current" />
-                      <span>Khởi Động Marathon (3 Kỹ Năng)</span>
+                      <span>{isEn ? 'Start 4-Skill Marathon' : 'Khởi Động Marathon (3 Kỹ Năng)'}</span>
                     </button>
                   )}
                   <span className="text-[11px] text-center text-slate-400">
-                    Mô phỏng 100% áp lực phòng thi máy tính IDP/BC
+                    {isEn ? '100% computer-delivered IDP/BC test pressure simulation' : 'Mô phỏng 100% áp lực phòng thi máy tính IDP/BC'}
                   </span>
                 </div>
               </div>
@@ -1129,9 +1261,15 @@ export default function MockTestModal({
               <div className="flex items-center justify-between">
                 <h4 className="font-black text-sm sm:text-base text-slate-900 flex items-center space-x-2">
                   <Layers className="w-4 h-4 text-blue-600" />
-                  <span>Quy Trình 4 Chặng Thi Liên Hoàn (Grand Mock Marathon - 2h45p):</span>
+                  <span>
+                    {isEn 
+                      ? 'Sequential 4-Stage Examination Flow (Grand Mock Marathon - 2h45m):' 
+                      : 'Quy Trình 4 Chặng Thi Liên Hoàn (Grand Mock Marathon - 2h45p):'}
+                  </span>
                 </h4>
-                <span className="text-xs text-slate-500 hidden sm:inline">Không nghỉ giữa các chặng như phòng thi thật</span>
+                <span className="text-xs text-slate-500 hidden sm:inline">
+                  {isEn ? 'No breaks between stages just like the real exam' : 'Không nghỉ giữa các chặng như phòng thi thật'}
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -1140,14 +1278,16 @@ export default function MockTestModal({
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="w-6 h-6 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center">1</span>
-                      <span className="text-xs font-bold text-purple-700">40 Phút</span>
+                      <span className="text-xs font-bold text-purple-700">{isEn ? '40 Mins' : '40 Phút'}</span>
                     </div>
                     <h5 className="font-bold text-sm text-purple-950 flex items-center space-x-1.5">
                       <Headphones className="w-4 h-4 text-purple-600" />
-                      <span>Chặng 1: Listening</span>
+                      <span>{isEn ? 'Stage 1: Listening' : 'Chặng 1: Listening'}</span>
                     </h5>
                     <p className="text-[11px] text-purple-900 leading-relaxed">
-                      4 Parts • 40 câu hỏi. Audio phát tự động liên tục, học cách bắt keyword và ghi chú chính xác.
+                      {isEn 
+                        ? '4 Parts • 40 questions. Audio plays continuously, train keyword spotting and exact note-taking.' 
+                        : '4 Parts • 40 câu hỏi. Audio phát tự động liên tục, học cách bắt keyword và ghi chú chính xác.'}
                     </p>
                   </div>
                   <button
@@ -1158,7 +1298,7 @@ export default function MockTestModal({
                     className="w-full mt-2 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-2xs transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>Bắt Đầu Chặng 1</span>
+                    <span>{isEn ? 'Start Stage 1' : 'Bắt Đầu Chặng 1'}</span>
                   </button>
                 </div>
 
@@ -1167,14 +1307,16 @@ export default function MockTestModal({
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">2</span>
-                      <span className="text-xs font-bold text-blue-700">60 Phút</span>
+                      <span className="text-xs font-bold text-blue-700">{isEn ? '60 Mins' : '60 Phút'}</span>
                     </div>
                     <h5 className="font-bold text-sm text-blue-950 flex items-center space-x-1.5">
                       <BookOpen className="w-4 h-4 text-blue-600" />
-                      <span>Chặng 2: Reading</span>
+                      <span>{isEn ? 'Stage 2: Reading' : 'Chặng 2: Reading'}</span>
                     </h5>
                     <p className="text-[11px] text-blue-900 leading-relaxed">
-                      3 Passages • 40 câu hỏi. Chuyển tiếp ngay lập tức khi hết giờ nghe, rèn luyện kỹ năng Skimming & Scanning.
+                      {isEn 
+                        ? '3 Passages • 40 questions. Seamless transition after listening, sharpen skimming & scanning skills.' 
+                        : '3 Passages • 40 câu hỏi. Chuyển tiếp ngay lập tức khi hết giờ nghe, rèn luyện kỹ năng Skimming & Scanning.'}
                     </p>
                   </div>
                   <button
@@ -1182,7 +1324,7 @@ export default function MockTestModal({
                     className="w-full mt-2 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>Bắt Đầu Chặng 2</span>
+                    <span>{isEn ? 'Start Stage 2' : 'Bắt Đầu Chặng 2'}</span>
                   </button>
                 </div>
 
@@ -1191,14 +1333,16 @@ export default function MockTestModal({
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="w-6 h-6 rounded-full bg-red-600 text-white text-xs font-black flex items-center justify-center">3</span>
-                      <span className="text-xs font-bold text-red-700">60 Phút</span>
+                      <span className="text-xs font-bold text-red-700">{isEn ? '60 Mins' : '60 Phút'}</span>
                     </div>
                     <h5 className="font-bold text-sm text-red-950 flex items-center space-x-1.5">
                       <FileText className="w-4 h-4 text-red-600" />
-                      <span>Chặng 3: Writing</span>
+                      <span>{isEn ? 'Stage 3: Writing' : 'Chặng 3: Writing'}</span>
                     </h5>
                     <p className="text-[11px] text-red-900 leading-relaxed">
-                      Task 1 (150 từ) + Task 2 (250 từ). Áp lực viết liên tục 60 phút hoàn tất bài thi viết học thuật.
+                      {isEn 
+                        ? 'Task 1 (150 words) + Task 2 (250 words). Continuous 60-minute pressure to complete academic writing.' 
+                        : 'Task 1 (150 từ) + Task 2 (250 từ). Áp lực viết liên tục 60 phút hoàn tất bài thi viết học thuật.'}
                     </p>
                   </div>
                   <button
@@ -1206,7 +1350,7 @@ export default function MockTestModal({
                     className="w-full mt-2 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-2xs transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>Bắt Đầu Chặng 3</span>
+                    <span>{isEn ? 'Start Stage 3' : 'Bắt Đầu Chặng 3'}</span>
                   </button>
                 </div>
 
@@ -1215,14 +1359,16 @@ export default function MockTestModal({
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <span className="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-black flex items-center justify-center">4</span>
-                      <span className="text-xs font-bold text-emerald-700">15 Phút</span>
+                      <span className="text-xs font-bold text-emerald-700">{isEn ? '15 Mins' : '15 Phút'}</span>
                     </div>
                     <h5 className="font-bold text-sm text-emerald-950 flex items-center space-x-1.5">
                       <Mic className="w-4 h-4 text-emerald-600" />
-                      <span>Chặng 4: Speaking</span>
+                      <span>{isEn ? 'Stage 4: Speaking' : 'Chặng 4: Speaking'}</span>
                     </h5>
                     <p className="text-[11px] text-emerald-900 leading-relaxed">
-                      3 Parts trực tiếp với Giám khảo ảo AI. Đàm thoại tương tác 1:1 và nhận feedback 4 tiêu chí chấm điểm ngay.
+                      {isEn 
+                        ? '3 Parts live with AI Examiner. Interactive 1:1 conversation and instant 4-criteria feedback.' 
+                        : '3 Parts trực tiếp với Giám khảo ảo AI. Đàm thoại tương tác 1:1 và nhận feedback 4 tiêu chí chấm điểm ngay.'}
                     </p>
                   </div>
                   <button
@@ -1233,7 +1379,7 @@ export default function MockTestModal({
                     className="w-full mt-2 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition-all active:scale-95 flex items-center justify-center space-x-1 cursor-pointer"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>Bắt Đầu Chặng 4</span>
+                    <span>{isEn ? 'Start Stage 4' : 'Bắt Đầu Chặng 4'}</span>
                   </button>
                 </div>
               </div>
@@ -1256,10 +1402,12 @@ export default function MockTestModal({
               <div className="space-y-1.5">
                 <div className="flex items-center space-x-2">
                   <span className="px-2.5 py-0.5 rounded-full bg-red-600/30 text-red-400 border border-red-500/30 text-[10px] font-black uppercase tracking-wider">
-                    Kết Quả Khảo Thí Cambridge
+                    {isEn ? 'Cambridge Assessment Result' : 'Kết Quả Khảo Thí Cambridge'}
                   </span>
                   <span className="text-xs text-slate-400">
-                    Thời gian: {mockReport.minutesSpent || Math.round((3600 - timeRemaining) / 60)}/60 phút • Tổng {mockReport.totalWords} từ
+                    {isEn 
+                      ? `Time: ${mockReport.minutesSpent || Math.round((3600 - timeRemaining) / 60)}/60 mins • Total ${mockReport.totalWords} words`
+                      : `Thời gian: ${mockReport.minutesSpent || Math.round((3600 - timeRemaining) / 60)}/60 phút • Tổng ${mockReport.totalWords} từ`}
                   </span>
                 </div>
                 
@@ -1275,7 +1423,7 @@ export default function MockTestModal({
 
                 {/* Cambridge Weighting formula demonstration */}
                 <div className="text-xs text-slate-300 font-mono bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-800 inline-block">
-                  Công thức Cambridge: (Task 1 × 1 + Task 2 × 2) / 3 = ({mockReport.t1Band.toFixed(1)} × 1 + {mockReport.t2Band.toFixed(1)} × 2) / 3 = {mockReport.rawWeighted?.toFixed(2) || ((mockReport.t1Band + mockReport.t2Band * 2) / 3).toFixed(2)} → <span className="text-amber-400 font-bold">Band {mockReport.finalOverall.toFixed(1)}</span>
+                  {isEn ? 'Cambridge formula: ' : 'Công thức Cambridge: '}(Task 1 × 1 + Task 2 × 2) / 3 = ({mockReport.t1Band.toFixed(1)} × 1 + {mockReport.t2Band.toFixed(1)} × 2) / 3 = {mockReport.rawWeighted?.toFixed(2) || ((mockReport.t1Band + mockReport.t2Band * 2) / 3).toFixed(2)} → <span className="text-amber-400 font-bold">Band {mockReport.finalOverall.toFixed(1)}</span>
                 </div>
               </div>
 
@@ -1284,12 +1432,16 @@ export default function MockTestModal({
                 <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 text-center min-w-[110px]">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">Task 1 (1/3)</span>
                   <strong className="text-xl text-blue-400 font-black block">Band {mockReport.t1Band.toFixed(1)}</strong>
-                  <span className="text-[10px] text-slate-400 block">{mockReport.t1Words} từ {mockReport.t1Words >= 150 ? '✓' : '⚠️'}</span>
+                  <span className="text-[10px] text-slate-400 block">
+                    {mockReport.t1Words} {isEn ? 'words' : 'từ'} {mockReport.t1Words >= 150 ? '✓' : '⚠️'}
+                  </span>
                 </div>
                 <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 text-center min-w-[110px]">
                   <span className="text-[11px] text-slate-400 font-semibold block uppercase">Task 2 (2/3)</span>
                   <strong className="text-xl text-red-400 font-black block">Band {mockReport.t2Band.toFixed(1)}</strong>
-                  <span className="text-[10px] text-slate-400 block">{mockReport.t2Words} từ {mockReport.t2Words >= 250 ? '✓' : '⚠️'}</span>
+                  <span className="text-[10px] text-slate-400 block">
+                    {mockReport.t2Words} {isEn ? 'words' : 'từ'} {mockReport.t2Words >= 250 ? '✓' : '⚠️'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1305,7 +1457,7 @@ export default function MockTestModal({
                 }`}
               >
                 <BarChart2 className="w-3.5 h-3.5" />
-                <span>📊 Tổng Quan & Phân Tích Chiến Lược</span>
+                <span>{isEn ? '📊 Overview & Strategy' : '📊 Tổng Quan & Phân Tích Chiến Lược'}</span>
               </button>
 
               <button
@@ -1317,7 +1469,7 @@ export default function MockTestModal({
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>📈 Chi Tiết Task 1 (Band {mockReport.t1Band.toFixed(1)})</span>
+                <span>{isEn ? `📈 Task 1 Details (Band ${mockReport.t1Band.toFixed(1)})` : `📈 Chi Tiết Task 1 (Band ${mockReport.t1Band.toFixed(1)})`}</span>
               </button>
 
               <button
@@ -1329,7 +1481,7 @@ export default function MockTestModal({
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>📝 Chi Tiết Task 2 (Band {mockReport.t2Band.toFixed(1)})</span>
+                <span>{isEn ? `📝 Task 2 Details (Band ${mockReport.t2Band.toFixed(1)})` : `📝 Chi Tiết Task 2 (Band ${mockReport.t2Band.toFixed(1)})`}</span>
               </button>
 
               <button
@@ -1341,7 +1493,7 @@ export default function MockTestModal({
                 }`}
               >
                 <Eye className="w-3.5 h-3.5" />
-                <span>📄 Xem Lại Cả 2 Bài Viết Đã Nộp</span>
+                <span>{isEn ? '📄 Review Submitted Essays' : '📄 Xem Lại Cả 2 Bài Viết Đã Nộp'}</span>
               </button>
             </div>
 
@@ -1351,39 +1503,47 @@ export default function MockTestModal({
                 {/* Executive Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase block">Kỹ Năng Dẫn Điểm</span>
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                      {isEn ? 'Stronger Task' : 'Kỹ Năng Dẫn Điểm'}
+                    </span>
                     <strong className="text-sm font-bold text-slate-900 block">
                       {mockReport.executiveSummary?.strongerTask || (mockReport.t1Band > mockReport.t2Band ? 'Task 1' : 'Task 2')}
                     </strong>
                     <p className="text-[11px] text-slate-500">
                       {mockReport.t1Band !== mockReport.t2Band
-                        ? `Chênh lệch ${Math.abs(mockReport.t1Band - mockReport.t2Band).toFixed(1)} band giữa 2 phần thi.`
-                        : 'Điểm số cả hai task cân bằng tuyệt đối.'}
+                        ? (isEn
+                            ? `${Math.abs(mockReport.t1Band - mockReport.t2Band).toFixed(1)} band gap between the two tasks.`
+                            : `Chênh lệch ${Math.abs(mockReport.t1Band - mockReport.t2Band).toFixed(1)} band giữa 2 phần thi.`)
+                        : (isEn ? 'Both tasks are perfectly balanced.' : 'Điểm số cả hai task cân bằng tuyệt đối.')}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase block">Kiểm Soát Dung Lượng</span>
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                      {isEn ? 'Length Management' : 'Kiểm Soát Dung Lượng'}
+                    </span>
                     <div className="space-y-0.5">
                       <div className="flex items-center justify-between">
                         <span>Task 1 (150w):</span>
                         <span className={`font-bold ${mockReport.t1Words >= 150 ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {mockReport.t1Words} từ ({mockReport.t1Words >= 150 ? 'Đạt' : 'Thiếu ' + (150 - mockReport.t1Words)})
+                          {mockReport.t1Words} {isEn ? 'words' : 'từ'} ({mockReport.t1Words >= 150 ? (isEn ? 'Met' : 'Đạt') : (isEn ? `Short ${150 - mockReport.t1Words}` : `Thiếu ${150 - mockReport.t1Words}`)})
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Task 2 (250w):</span>
                         <span className={`font-bold ${mockReport.t2Words >= 250 ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {mockReport.t2Words} từ ({mockReport.t2Words >= 250 ? 'Đạt' : 'Thiếu ' + (250 - mockReport.t2Words)})
+                          {mockReport.t2Words} {isEn ? 'words' : 'từ'} ({mockReport.t2Words >= 250 ? (isEn ? 'Met' : 'Đạt') : (isEn ? `Short ${250 - mockReport.t2Words}` : `Thiếu ${250 - mockReport.t2Words}`)})
                         </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase block">Nhịp Độ Thời Gian (Pacing)</span>
+                    <span className="text-[11px] font-bold text-slate-500 uppercase block">
+                      {isEn ? 'Pacing & Time Control' : 'Nhịp Độ Thời Gian (Pacing)'}
+                    </span>
                     <p className="text-[11px] text-slate-700 leading-relaxed">
-                      {mockReport.pacingFeedback || 'Đã phân bổ thời gian hợp lý cho cả 2 phần thi.'}
+                      {mockReport.pacingFeedback || (isEn ? 'Well-balanced time allocation across both tasks.' : 'Đã phân bổ thời gian hợp lý cho cả 2 phần thi.')}
                     </p>
                   </div>
                 </div>
@@ -1392,10 +1552,10 @@ export default function MockTestModal({
                 <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-950 space-y-1.5">
                   <div className="flex items-center space-x-2 font-bold text-xs text-amber-900">
                     <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
-                    <span>Chiến Lược Tối Ưu TRF từ Giám Khảo Khảo Thí:</span>
+                    <span>{isEn ? 'TRF Optimization Strategy from Examiner:' : 'Chiến Lược Tối Ưu TRF từ Giám Khảo Khảo Thí:'}</span>
                   </div>
                   <p className="text-xs text-amber-900/90 leading-relaxed">
-                    {mockReport.executiveSummary?.combinedAdvice || 'Task 2 quyết định 66.7% kết quả cuối cùng. Khi luyện đề, hãy ưu tiên hoàn thiện cấu trúc lập luận Task 2 trước, sau đó rèn luyện tốc độ hoàn thành Task 1 dưới 20 phút.'}
+                    {mockReport.executiveSummary?.combinedAdvice || (isEn ? 'Task 2 accounts for 66.7% of the total score. When practicing, prioritize solid Task 2 argument structure first, then sharpen Task 1 completion speed to under 20 minutes.' : 'Task 2 quyết định 66.7% kết quả cuối cùng. Khi luyện đề, hãy ưu tiên hoàn thiện cấu trúc lập luận Task 2 trước, sau đó rèn luyện tốc độ hoàn thành Task 1 dưới 20 phút.')}
                   </p>
                 </div>
 
@@ -1403,17 +1563,17 @@ export default function MockTestModal({
                 <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
                   <h4 className="font-bold text-slate-900 text-sm flex items-center space-x-1.5">
                     <Award className="w-4 h-4 text-red-600" />
-                    <span>Đối Chiếu 4 Tiêu Chí Chấm Điểm Cambridge (Task 1 vs Task 2)</span>
+                    <span>{isEn ? 'Cambridge 4-Criteria Comparative Matrix (Task 1 vs Task 2)' : 'Đối Chiếu 4 Tiêu Chí Chấm Điểm Cambridge (Task 1 vs Task 2)'}</span>
                   </h4>
 
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
                         <tr className="border-b border-slate-200 text-slate-500 text-[11px]">
-                          <th className="py-2 px-3 font-semibold">Tiêu Chí Khảo Thí</th>
+                          <th className="py-2 px-3 font-semibold">{isEn ? 'Assessment Criteria' : 'Tiêu Chí Khảo Thí'}</th>
                           <th className="py-2 px-3 font-semibold text-blue-700">Task 1: Report</th>
                           <th className="py-2 px-3 font-semibold text-red-700">Task 2: Essay</th>
-                          <th className="py-2 px-3 font-semibold">Tác Động Lên Điểm Overall</th>
+                          <th className="py-2 px-3 font-semibold">{isEn ? 'Impact on Overall Band' : 'Tác Động Lên Điểm Overall'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
@@ -1421,25 +1581,25 @@ export default function MockTestModal({
                           <td className="py-2.5 px-3 font-bold text-slate-800">Task Achievement / Response (TA/TR)</td>
                           <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.tr?.band?.toFixed(1) || '--'}</td>
                           <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.tr?.band?.toFixed(1) || '--'}</td>
-                          <td className="py-2.5 px-3 text-slate-600">Overview chuẩn vs Luận điểm cân bằng</td>
+                          <td className="py-2.5 px-3 text-slate-600">{isEn ? 'Clear Overview vs Balanced Arguments' : 'Overview chuẩn vs Luận điểm cân bằng'}</td>
                         </tr>
                         <tr>
                           <td className="py-2.5 px-3 font-bold text-slate-800">Coherence & Cohesion (CC)</td>
                           <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.cc?.band?.toFixed(1) || '--'}</td>
                           <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.cc?.band?.toFixed(1) || '--'}</td>
-                          <td className="py-2.5 px-3 text-slate-600">Mạch văn logic & liên kết đoạn</td>
+                          <td className="py-2.5 px-3 text-slate-600">{isEn ? 'Logical flow & paragraph progression' : 'Mạch văn logic & liên kết đoạn'}</td>
                         </tr>
                         <tr>
                           <td className="py-2.5 px-3 font-bold text-slate-800">Lexical Resource (LR)</td>
                           <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.lr?.band?.toFixed(1) || '--'}</td>
                           <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.lr?.band?.toFixed(1) || '--'}</td>
-                          <td className="py-2.5 px-3 text-slate-600">Từ vựng học thuật & cụm collocations</td>
+                          <td className="py-2.5 px-3 text-slate-600">{isEn ? 'Academic lexicon & collocations' : 'Từ vựng học thuật & cụm collocations'}</td>
                         </tr>
                         <tr>
                           <td className="py-2.5 px-3 font-bold text-slate-800">Grammatical Range & Accuracy (GRA)</td>
                           <td className="py-2.5 px-3 font-bold text-blue-600">Band {mockReport.eval1?.criteria?.gra?.band?.toFixed(1) || '--'}</td>
                           <td className="py-2.5 px-3 font-bold text-red-600">Band {mockReport.eval2?.criteria?.gra?.band?.toFixed(1) || '--'}</td>
-                          <td className="py-2.5 px-3 text-slate-600">Độ chuẩn xác ngữ pháp & câu phức</td>
+                          <td className="py-2.5 px-3 text-slate-600">{isEn ? 'Grammar accuracy & sentence complexity' : 'Độ chuẩn xác ngữ pháp & câu phức'}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -1453,12 +1613,14 @@ export default function MockTestModal({
               <div className="space-y-4 text-xs">
                 <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-blue-700 uppercase block">Đề thi Task 1:</span>
+                    <span className="text-[10px] font-bold text-blue-700 uppercase block">{isEn ? 'Task 1 Prompt:' : 'Đề thi Task 1:'}</span>
                     <h4 className="font-bold text-sm text-blue-950">{currentTask1.title}</h4>
                   </div>
                   <div className="text-right">
                     <span className="text-xl font-black text-blue-700 block">Band {mockReport.t1Band.toFixed(1)}</span>
-                    <span className="text-[10px] text-blue-600 font-medium">{mockReport.t1Words} từ ({mockReport.t1Words >= 150 ? 'Đạt chuẩn' : 'Dưới chuẩn'})</span>
+                    <span className="text-[10px] text-blue-600 font-medium">
+                      {mockReport.t1Words} {isEn ? 'words' : 'từ'} ({mockReport.t1Words >= 150 ? (isEn ? 'Standard met' : 'Đạt chuẩn') : (isEn ? 'Below standard' : 'Dưới chuẩn')})
+                    </span>
                   </div>
                 </div>
 
@@ -1514,12 +1676,12 @@ export default function MockTestModal({
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <h5 className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
                       <Target className="w-4 h-4 text-blue-600" />
-                      <span>Top 3 Hành Động Cải Thiện Cho Task 1:</span>
+                      <span>{isEn ? 'Top 3 Actionable Priorities for Task 1:' : 'Top 3 Hành Động Cải Thiện Cho Task 1:'}</span>
                     </h5>
                     <ul className="space-y-1.5 text-slate-700 text-[11px]">
-                      {mockReport.eval1.actionPlan.priority1 && <li>• <strong>Ưu tiên 1:</strong> {mockReport.eval1.actionPlan.priority1}</li>}
-                      {mockReport.eval1.actionPlan.priority2 && <li>• <strong>Ưu tiên 2:</strong> {mockReport.eval1.actionPlan.priority2}</li>}
-                      {mockReport.eval1.actionPlan.priority3 && <li>• <strong>Ưu tiên 3:</strong> {mockReport.eval1.actionPlan.priority3}</li>}
+                      {mockReport.eval1.actionPlan.priority1 && <li>• <strong>{isEn ? 'Priority 1:' : 'Ưu tiên 1:'}</strong> {mockReport.eval1.actionPlan.priority1}</li>}
+                      {mockReport.eval1.actionPlan.priority2 && <li>• <strong>{isEn ? 'Priority 2:' : 'Ưu tiên 2:'}</strong> {mockReport.eval1.actionPlan.priority2}</li>}
+                      {mockReport.eval1.actionPlan.priority3 && <li>• <strong>{isEn ? 'Priority 3:' : 'Ưu tiên 3:'}</strong> {mockReport.eval1.actionPlan.priority3}</li>}
                     </ul>
                   </div>
                 )}
@@ -1531,12 +1693,14 @@ export default function MockTestModal({
               <div className="space-y-4 text-xs">
                 <div className="p-4 rounded-xl bg-red-50/70 border border-red-200 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-red-700 uppercase block">Đề thi Task 2:</span>
+                    <span className="text-[10px] font-bold text-red-700 uppercase block">{isEn ? 'Task 2 Prompt:' : 'Đề thi Task 2:'}</span>
                     <h4 className="font-bold text-sm text-red-950">{currentTask2.title}</h4>
                   </div>
                   <div className="text-right">
                     <span className="text-xl font-black text-red-700 block">Band {mockReport.t2Band.toFixed(1)}</span>
-                    <span className="text-[10px] text-red-600 font-medium">{mockReport.t2Words} từ ({mockReport.t2Words >= 250 ? 'Đạt chuẩn' : 'Dưới chuẩn'})</span>
+                    <span className="text-[10px] text-red-600 font-medium">
+                      {mockReport.t2Words} {isEn ? 'words' : 'từ'} ({mockReport.t2Words >= 250 ? (isEn ? 'Standard met' : 'Đạt chuẩn') : (isEn ? 'Below standard' : 'Dưới chuẩn')})
+                    </span>
                   </div>
                 </div>
 
@@ -1592,12 +1756,12 @@ export default function MockTestModal({
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                     <h5 className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
                       <Target className="w-4 h-4 text-red-600" />
-                      <span>Top 3 Hành Động Cải Thiện Cho Task 2:</span>
+                      <span>{isEn ? 'Top 3 Actionable Priorities for Task 2:' : 'Top 3 Hành Động Cải Thiện Cho Task 2:'}</span>
                     </h5>
                     <ul className="space-y-1.5 text-slate-700 text-[11px]">
-                      {mockReport.eval2.actionPlan.priority1 && <li>• <strong>Ưu tiên 1:</strong> {mockReport.eval2.actionPlan.priority1}</li>}
-                      {mockReport.eval2.actionPlan.priority2 && <li>• <strong>Ưu tiên 2:</strong> {mockReport.eval2.actionPlan.priority2}</li>}
-                      {mockReport.eval2.actionPlan.priority3 && <li>• <strong>Ưu tiên 3:</strong> {mockReport.eval2.actionPlan.priority3}</li>}
+                      {mockReport.eval2.actionPlan.priority1 && <li>• <strong>{isEn ? 'Priority 1:' : 'Ưu tiên 1:'}</strong> {mockReport.eval2.actionPlan.priority1}</li>}
+                      {mockReport.eval2.actionPlan.priority2 && <li>• <strong>{isEn ? 'Priority 2:' : 'Ưu tiên 2:'}</strong> {mockReport.eval2.actionPlan.priority2}</li>}
+                      {mockReport.eval2.actionPlan.priority3 && <li>• <strong>{isEn ? 'Priority 3:' : 'Ưu tiên 3:'}</strong> {mockReport.eval2.actionPlan.priority3}</li>}
                     </ul>
                   </div>
                 )}
@@ -1611,15 +1775,15 @@ export default function MockTestModal({
                 <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2.5 flex flex-col">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <div>
-                      <span className="text-[10px] font-bold text-blue-600 uppercase">Bài Làm Task 1</span>
+                      <span className="text-[10px] font-bold text-blue-600 uppercase">{isEn ? 'Task 1 Submission' : 'Bài Làm Task 1'}</span>
                       <h5 className="font-bold text-slate-900">{currentTask1.title}</h5>
                     </div>
                     <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-bold">
-                      {mockReport.t1Words} từ
+                      {mockReport.t1Words} {isEn ? 'words' : 'từ'}
                     </span>
                   </div>
                   <div className="p-3 bg-slate-50 rounded-lg text-slate-700 whitespace-pre-wrap leading-relaxed font-sans flex-1 max-h-96 overflow-y-auto">
-                    {t1Text || 'Không có bài làm nào được nộp cho Task 1.'}
+                    {t1Text || (isEn ? 'No essay was submitted for Task 1.' : 'Không có bài làm nào được nộp cho Task 1.')}
                   </div>
                 </div>
 
@@ -1627,15 +1791,15 @@ export default function MockTestModal({
                 <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2.5 flex flex-col">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <div>
-                      <span className="text-[10px] font-bold text-red-600 uppercase">Bài Làm Task 2</span>
+                      <span className="text-[10px] font-bold text-red-600 uppercase">{isEn ? 'Task 2 Submission' : 'Bài Làm Task 2'}</span>
                       <h5 className="font-bold text-slate-900">{currentTask2.title}</h5>
                     </div>
                     <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-bold">
-                      {mockReport.t2Words} từ
+                      {mockReport.t2Words} {isEn ? 'words' : 'từ'}
                     </span>
                   </div>
                   <div className="p-3 bg-slate-50 rounded-lg text-slate-700 whitespace-pre-wrap leading-relaxed font-sans flex-1 max-h-96 overflow-y-auto">
-                    {t2Text || 'Không có bài làm nào được nộp cho Task 2.'}
+                    {t2Text || (isEn ? 'No essay was submitted for Task 2.' : 'Không có bài làm nào được nộp cho Task 2.')}
                   </div>
                 </div>
               </div>
@@ -1648,13 +1812,13 @@ export default function MockTestModal({
                 className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all active:scale-95 cursor-pointer flex items-center space-x-1.5"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Làm Ca Thi Thử Mới (Reset)</span>
+                <span>{isEn ? 'Take New Mock Test (Reset)' : 'Làm Ca Thi Thử Mới (Reset)'}</span>
               </button>
               <button
                 onClick={onClose}
                 className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
               >
-                Đóng Phòng Thi
+                {isEn ? 'Close Exam Room' : 'Đóng Phòng Thi'}
               </button>
             </div>
           </div>
@@ -1672,27 +1836,32 @@ export default function MockTestModal({
                 <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl border border-red-200 space-y-4 animate-in fade-in zoom-in-95 duration-150 text-left">
                   <div className="flex items-center space-x-2.5 text-red-600">
                     <AlertCircle className="w-6 h-6 shrink-0" />
-                    <h4 className="font-bold text-base text-slate-900">Cảnh Báo Nộp Bài Khi Chưa Đủ Từ!</h4>
+                    <h4 className="font-bold text-base text-slate-900">
+                      {isEn ? 'Early Submission Warning: Minimum Word Count Not Met!' : 'Cảnh Báo Nộp Bài Khi Chưa Đủ Từ!'}
+                    </h4>
                   </div>
                   
                   <div className="space-y-2 text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                     <div>
-                      Thời gian ca thi còn lại: <strong className="text-red-600 font-mono font-bold">{formatTimer(timeRemaining)}</strong>
+                      {isEn ? 'Time remaining: ' : 'Thời gian ca thi còn lại: '}
+                      <strong className="text-red-600 font-mono font-bold">{formatTimer(timeRemaining)}</strong>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Task 1 ({t1Words}/150 từ):</span>
+                      <span>Task 1 ({t1Words}/150 {isEn ? 'words' : 'từ'}):</span>
                       <span className={`font-bold ${t1Words >= 150 ? 'text-emerald-600' : 'text-red-600'}`}>
-                        {t1Words >= 150 ? '✓ Đạt chuẩn' : `⚠️ Thiếu ${150 - t1Words} từ`}
+                        {t1Words >= 150 ? (isEn ? '✓ Standard met' : '✓ Đạt chuẩn') : (isEn ? `⚠️ Under by ${150 - t1Words} words` : `⚠️ Thiếu ${150 - t1Words} từ`)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Task 2 ({t2Words}/250 từ):</span>
+                      <span>Task 2 ({t2Words}/250 {isEn ? 'words' : 'từ'}):</span>
                       <span className={`font-bold ${t2Words >= 250 ? 'text-emerald-600' : 'text-red-600'}`}>
-                        {t2Words >= 250 ? '✓ Đạt chuẩn' : `⚠️ Thiếu ${250 - t2Words} từ`}
+                        {t2Words >= 250 ? (isEn ? '✓ Standard met' : '✓ Đạt chuẩn') : (isEn ? `⚠️ Under by ${250 - t2Words} words` : `⚠️ Thiếu ${250 - t2Words} từ`)}
                       </span>
                     </div>
                     <p className="text-[11px] text-red-700 pt-1 border-t border-slate-200">
-                      Theo quy chế khảo thí Cambridge, bài viết thiếu dung lượng tối thiểu sẽ bị trừ điểm rất nặng ở tiêu chí Task Response / Achievement (khống chế Band 2.0 - 5.0).
+                      {isEn 
+                        ? 'According to Cambridge assessment criteria, underlength essays face severe penalties in Task Response / Achievement (typically capped at Band 2.0 - 5.0).'
+                        : 'Theo quy chế khảo thí Cambridge, bài viết thiếu dung lượng tối thiểu sẽ bị trừ điểm rất nặng ở tiêu chí Task Response / Achievement (khống chế Band 2.0 - 5.0).'}
                     </p>
                   </div>
 
@@ -1701,13 +1870,13 @@ export default function MockTestModal({
                       onClick={() => setShowSubmitSafeguard(false)}
                       className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
                     >
-                      Tiếp Tục Viết Thêm (Khuyên dùng)
+                      {isEn ? 'Keep Writing (Recommended)' : 'Tiếp Tục Viết Thêm (Khuyên dùng)'}
                     </button>
                     <button
                       onClick={handleAutoSubmitWriting}
                       className="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition-all active:scale-95 cursor-pointer"
                     >
-                      Vẫn Nộp Bài
+                      {isEn ? 'Submit Anyway' : 'Vẫn Nộp Bài'}
                     </button>
                   </div>
                 </div>
@@ -1720,14 +1889,14 @@ export default function MockTestModal({
                 <Clock className="w-3.5 h-3.5 text-amber-400" />
                 <span>
                   {timeRemaining > 2400
-                    ? '⏱️ Chặng 1 (20 phút đầu): Khuyến nghị tập trung hoàn thành Task 1 (tối thiểu 150 từ)'
+                    ? (isEn ? '⏱️ Stage 1 (First 20m): Recommended to focus on completing Task 1 (min 150 words)' : '⏱️ Chặng 1 (20 phút đầu): Khuyến nghị tập trung hoàn thành Task 1 (tối thiểu 150 từ)')
                     : timeRemaining > 300
-                    ? '⏱️ Chặng 2 (35-40 phút tiếp theo): Tập trung dồn sức cho Task 2 (tối thiểu 250 từ, chiếm 2/3 tổng điểm)'
-                    : '⏱️ Chặng 3 (5 phút cuối): Dành thời gian rà soát chính tả, mạo từ và tính liên kết câu'}
+                    ? (isEn ? '⏱️ Stage 2 (Next 35-40m): Dedicate full effort to Task 2 (min 250 words, 2/3 of total band)' : '⏱️ Chặng 2 (35-40 phút tiếp theo): Tập trung dồn sức cho Task 2 (tối thiểu 250 từ, chiếm 2/3 tổng điểm)')
+                    : (isEn ? '⏱️ Stage 3 (Final 5m): Review spelling, articles, and sentence cohesion' : '⏱️ Chặng 3 (5 phút cuối): Dành thời gian rà soát chính tả, mạo từ và tính liên kết câu')}
                 </span>
               </div>
               <span className="text-[10px] text-emerald-400 font-semibold hidden sm:inline">
-                💾 Tự động lưu tiến độ
+                {isEn ? '💾 Autosaving progress' : '💾 Tự động lưu tiến độ'}
               </span>
             </div>
 
@@ -1785,7 +1954,7 @@ export default function MockTestModal({
                     mobileWritingView === 'prompt' ? 'bg-blue-100 text-blue-800' : 'text-slate-600'
                   }`}
                 >
-                  Đề Bài
+                  {isEn ? 'Prompt' : 'Đề Bài'}
                 </button>
                 <button
                   onClick={() => setMobileWritingView('editor')}
@@ -1793,7 +1962,7 @@ export default function MockTestModal({
                     mobileWritingView === 'editor' ? 'bg-red-100 text-red-800' : 'text-slate-600'
                   }`}
                 >
-                  Soạn Bài
+                  {isEn ? 'Editor' : 'Soạn Bài'}
                 </button>
               </div>
 
@@ -1803,7 +1972,7 @@ export default function MockTestModal({
                 className="flex items-center space-x-1.5 px-3.5 sm:px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-all active:scale-95 disabled:opacity-50 text-[11px] sm:text-xs cursor-pointer"
               >
                 {isGrading ? <Sparkles className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                <span>{isGrading ? 'Đang Chấm...' : 'Nộp Bài Thi'}</span>
+                <span>{isGrading ? (isEn ? 'Grading...' : 'Đang Chấm...') : (isEn ? 'Submit Exam' : 'Nộp Bài Thi')}</span>
               </button>
             </div>
 
@@ -1820,7 +1989,7 @@ export default function MockTestModal({
                       <div className="flex items-center space-x-2">
                         <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">IELTS Task 1</span>
                         <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold uppercase">
-                          Trọng số 1/3 điểm
+                          {isEn ? 'Weighting: 1/3 band' : 'Trọng số 1/3 điểm'}
                         </span>
                       </div>
                       <h3 className="font-bold text-base text-slate-900">{currentTask1.title}</h3>
@@ -1835,7 +2004,7 @@ export default function MockTestModal({
                       <div className="flex items-center space-x-2">
                         <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 text-xs font-bold">IELTS Task 2</span>
                         <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-black uppercase">
-                          Trọng số 2/3 điểm (Gấp đôi)
+                          {isEn ? 'Weighting: 2/3 band (Double)' : 'Trọng số 2/3 điểm (Gấp đôi)'}
                         </span>
                       </div>
                       <h3 className="font-bold text-base text-slate-900">{currentTask2.title}</h3>
@@ -1851,22 +2020,24 @@ export default function MockTestModal({
               }`}>
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <div className="flex items-center space-x-2">
-                    <span>Số từ hiện tại:</span>
+                    <span>{isEn ? 'Current words:' : 'Số từ hiện tại:'}</span>
                     <strong className={`font-mono text-sm ${
                       (activeTaskTab === 1 ? t1Words >= 150 : t2Words >= 250) ? 'text-emerald-600' : 'text-slate-800'
                     }`}>
-                      {activeTaskTab === 1 ? t1Words : t2Words} từ
+                      {activeTaskTab === 1 ? t1Words : t2Words} {isEn ? 'words' : 'từ'}
                     </strong>
                   </div>
                   <span className="text-[11px] text-slate-400">
-                    Mục tiêu: {activeTaskTab === 1 ? '150+ từ (khoảng 20p)' : '250+ từ (khoảng 40p)'}
+                    {isEn ? 'Target: ' : 'Mục tiêu: '}{activeTaskTab === 1 ? (isEn ? '150+ words (~20m)' : '150+ từ (khoảng 20p)') : (isEn ? '250+ words (~40m)' : '250+ từ (khoảng 40p)')}
                   </span>
                 </div>
 
                 <textarea
                   value={activeTaskTab === 1 ? t1Text : t2Text}
                   onChange={(e) => activeTaskTab === 1 ? setT1Text(e.target.value) : setT2Text(e.target.value)}
-                  placeholder={`Gõ bài viết cho Task ${activeTaskTab} tại đây... Toàn bộ tiến độ sẽ được tự động sao lưu an toàn.`}
+                  placeholder={isEn 
+                    ? `Type your essay for Task ${activeTaskTab} here... All progress is automatically backed up.` 
+                    : `Gõ bài viết cho Task ${activeTaskTab} tại đây... Toàn bộ tiến độ sẽ được tự động sao lưu an toàn.`}
                   className="flex-1 w-full p-4 rounded-xl border border-slate-200 bg-white text-sm font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-500/20 resize-none min-h-[300px]"
                 />
               </div>

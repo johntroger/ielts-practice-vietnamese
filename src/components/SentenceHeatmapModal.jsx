@@ -12,6 +12,69 @@ import {
   Filter,
   Check
 } from 'lucide-react';
+import { useTranslation } from '../i18n';
+
+const getGoldenGraTemplates = (isEn) => [
+  {
+    title: isEn ? 'Concessive Contrast Clause' : 'Mệnh đề nhượng bộ tương phản (Concessive Clause)',
+    band: 'Band 7.0+',
+    template: isEn 
+      ? 'Although many argue that [Perspective A], it is undeniable that [Perspective B].'
+      : 'Although many argue that [Quan điểm A], it is undeniable that [Quan điểm B].',
+    example: 'Although many argue that higher education should be free, it is undeniable that funding constraints often compromise teaching quality.'
+  },
+  {
+    title: isEn ? 'Relative Clause of Result' : 'Mệnh đề quan hệ chỉ hệ quả (Relative Clause of Result)',
+    band: 'Band 7.5+',
+    template: isEn
+      ? '[Main clause], which in turn exerts a detrimental impact on [Subject/Target].'
+      : '[Mệnh đề chính], which in turn exerts a detrimental impact on [Đối tượng].',
+    example: 'Fossil fuel combustion generates massive carbon emissions, which in turn exerts a detrimental impact on global climate stability.'
+  },
+  {
+    title: isEn ? 'Negative Inversion for Emphasis' : 'Đảo ngữ nhấn mạnh (Negative Inversion)',
+    band: 'Band 8.0+',
+    template: isEn
+      ? 'Not only does/do [Subject] [Infinitive verb], but it also [Secondary action].'
+      : 'Not only does/do [Chủ ngữ] [Động từ nguyên mẫu], but it also [Hành động phụ].',
+    example: 'Not only does public transport alleviate urban gridlock, but it also fosters sustainable socioeconomic development.'
+  },
+  {
+    title: isEn ? 'Participial Prepositional Clause' : 'Mệnh đề phân từ rút gọn (Participial Clause)',
+    band: 'Band 8.0+',
+    template: isEn
+      ? 'Given the rapid pace of [Phenomenon], governments should [Strategic action].'
+      : 'Given the rapid pace of [Hiện tượng], governments should [Hành động giải pháp].',
+    example: 'Given the rapid pace of technological automation, governments should provide comprehensive reskilling programs for the workforce.'
+  }
+];
+
+export const GOLDEN_GRA_TEMPLATES = getGoldenGraTemplates(false);
+
+const getFeedbackMessage = (msg, status, isEn) => {
+  if (!isEn || !msg) return msg;
+  if (status === 'optimal') {
+    return 'Outstanding grammatical variety! Your essay features an optimal proportion of complex and compound sentences with sustained academic syntax, meeting Band 7.5–8.5 GRA requirements.';
+  }
+  if (status === 'warning') {
+    return 'Moderate syntactic variety. While compound sentences are present, consider upgrading simple sentences into complex structures (concessive clauses, inversion, relative pronouns) to reach Band 7.0+.';
+  }
+  return 'High density of simple sentences detected. Over-reliance on short clauses restricts your Grammatical Range & Accuracy to Band 5.5–6.0. Incorporate more subordinating conjunctions and complex links.';
+};
+
+const getSentenceExplanation = (expl, isEn) => {
+  if (!isEn || !expl) return expl;
+  if (expl.includes('phức') || expl.includes('subordinating')) {
+    return 'Complex sentence with subordinating clause or relative marker.';
+  }
+  if (expl.includes('ghép') || expl.includes('coordinating')) {
+    return 'Compound sentence joined with coordinating conjunction.';
+  }
+  if (expl.includes('đơn') || expl.includes('single')) {
+    return 'Simple sentence with a single independent clause.';
+  }
+  return expl;
+};
 
 export default function SentenceHeatmapModal({
   isOpen,
@@ -19,6 +82,7 @@ export default function SentenceHeatmapModal({
   analysisData,
   onInsertTemplate
 }) {
+  const { t, isEn } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'complex' | 'compound' | 'simple'
   const [copiedId, setCopiedId] = useState(null);
 
@@ -43,32 +107,7 @@ export default function SentenceHeatmapModal({
     return s.type === activeFilter;
   });
 
-  const GOLDEN_GRA_TEMPLATES = [
-    {
-      title: 'Mệnh đề nhượng bộ tương phản (Concessive Clause)',
-      band: 'Band 7.0+',
-      template: 'Although many argue that [Quan điểm A], it is undeniable that [Quan điểm B].',
-      example: 'Although many argue that higher education should be free, it is undeniable that funding constraints often compromise teaching quality.'
-    },
-    {
-      title: 'Mệnh đề quan hệ chỉ hệ quả (Relative Clause of Result)',
-      band: 'Band 7.5+',
-      template: '[Mệnh đề chính], which in turn exerts a detrimental impact on [Đối tượng].',
-      example: 'Fossil fuel combustion generates massive carbon emissions, which in turn exerts a detrimental impact on global climate stability.'
-    },
-    {
-      title: 'Đảo ngữ nhấn mạnh (Negative Inversion)',
-      band: 'Band 8.0+',
-      template: 'Not only does/do [Chủ ngữ] [Động từ nguyên mẫu], but it also [Hành động phụ].',
-      example: 'Not only does public transport alleviate urban gridlock, but it also fosters sustainable socioeconomic development.'
-    },
-    {
-      title: 'Mệnh đề phân từ rút gọn (Participial Clause)',
-      band: 'Band 8.0+',
-      template: 'Given the rapid pace of [Hiện tượng], governments should [Hành động giải pháp].',
-      example: 'Given the rapid pace of technological automation, governments should provide comprehensive reskilling programs for the workforce.'
-    }
-  ];
+  const goldenGraTemplates = getGoldenGraTemplates(isEn);
 
   const handleCopyTemplate = (text, id) => {
     navigator.clipboard?.writeText(text);
@@ -97,14 +136,16 @@ export default function SentenceHeatmapModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                  Bản Đồ Nhiệt Cấu Trúc Câu (GRA Heatmap)
+                  {isEn ? 'Sentence Structure Heatmap (GRA Spectrum)' : 'Bản Đồ Nhiệt Cấu Trúc Câu (GRA Heatmap)'}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">
                   Cambridge GRA
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium">
-                Kiểm định phổ cấu trúc ngữ pháp thời gian thực: Câu Đơn, Câu Ghép & Câu Phức
+                {isEn 
+                  ? 'Real-time syntactic distribution audit: Simple, Compound & Complex Sentences' 
+                  : 'Kiểm định phổ cấu trúc ngữ pháp thời gian thực: Câu Đơn, Câu Ghép & Câu Phức'}
               </p>
             </div>
           </div>
@@ -112,7 +153,7 @@ export default function SentenceHeatmapModal({
           <button
             onClick={onClose}
             className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
-            title="Đóng (Esc)"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -128,10 +169,10 @@ export default function SentenceHeatmapModal({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">
-                  Đánh giá tiêu chí Grammatical Range & Accuracy:
+                  {isEn ? 'Grammatical Range & Accuracy (GRA) Assessment:' : 'Đánh giá tiêu chí Grammatical Range & Accuracy:'}
                 </span>
                 <div className="text-lg sm:text-xl font-black text-white flex items-center space-x-2 mt-0.5">
-                  <span>Dự phóng Band:</span>
+                  <span>{isEn ? 'Projected Band:' : 'Dự phóng Band:'}</span>
                   <span className={`px-2.5 py-0.5 rounded-xl font-black text-sm sm:text-base ${
                     status === 'optimal' 
                       ? 'bg-emerald-500 text-slate-950 shadow-sm shadow-emerald-400/30' 
@@ -147,16 +188,16 @@ export default function SentenceHeatmapModal({
               {/* Counts Badge Group */}
               <div className="flex items-center space-x-2 text-xs font-bold">
                 <span className="px-2.5 py-1 rounded-xl bg-slate-800 text-slate-300 border border-slate-700">
-                  Tổng: <strong className="text-white">{totalSentences}</strong> câu
+                  {isEn ? 'Total:' : 'Tổng:'} <strong className="text-white">{totalSentences}</strong> {isEn ? (totalSentences === 1 ? 'sentence' : 'sentences') : 'câu'}
                 </span>
                 <span className="px-2.5 py-1 rounded-xl bg-emerald-950/80 text-emerald-300 border border-emerald-800/80">
-                  Phức: <strong>{complexCount}</strong> ({complexPercentage}%)
+                  {isEn ? 'Complex:' : 'Phức:'} <strong>{complexCount}</strong> ({complexPercentage}%)
                 </span>
                 <span className="px-2.5 py-1 rounded-xl bg-indigo-950/80 text-indigo-300 border border-indigo-800/80">
-                  Ghép: <strong>{compoundCount}</strong> ({compoundPercentage}%)
+                  {isEn ? 'Compound:' : 'Ghép:'} <strong>{compoundCount}</strong> ({compoundPercentage}%)
                 </span>
                 <span className="px-2.5 py-1 rounded-xl bg-amber-950/80 text-amber-300 border border-amber-800/80">
-                  Đơn: <strong>{simpleCount}</strong> ({simplePercentage}%)
+                  {isEn ? 'Simple:' : 'Đơn:'} <strong>{simpleCount}</strong> ({simplePercentage}%)
                 </span>
               </div>
             </div>
@@ -164,44 +205,44 @@ export default function SentenceHeatmapModal({
             {/* 3-Color Visual Progress Bar */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
-                <span>Tỷ trọng phân bố loại câu trong bài</span>
-                <span className="text-emerald-400 font-semibold">Mục tiêu Band 7.0+: Câu phức &ge; 50%, Câu đơn &le; 35%</span>
+                <span>{isEn ? 'Syntactic distribution across the essay' : 'Tỷ trọng phân bố loại câu trong bài'}</span>
+                <span className="text-emerald-400 font-semibold">{isEn ? 'Band 7.0+ Target: Complex ≥ 50%, Simple ≤ 35%' : 'Mục tiêu Band 7.0+: Câu phức ≥ 50%, Câu đơn ≤ 35%'}</span>
               </div>
               <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
                 {complexPercentage > 0 && (
                   <div 
                     className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500" 
                     style={{ width: `${complexPercentage}%` }}
-                    title={`Câu Phức: ${complexPercentage}%`}
+                    title={isEn ? `Complex: ${complexPercentage}%` : `Câu Phức: ${complexPercentage}%`}
                   />
                 )}
                 {compoundPercentage > 0 && (
                   <div 
                     className="h-full bg-gradient-to-r from-indigo-500 to-blue-400 transition-all duration-500" 
                     style={{ width: `${compoundPercentage}%` }}
-                    title={`Câu Ghép: ${compoundPercentage}%`}
+                    title={isEn ? `Compound: ${compoundPercentage}%` : `Câu Ghép: ${compoundPercentage}%`}
                   />
                 )}
                 {simplePercentage > 0 && (
                   <div 
                     className="h-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-500" 
                     style={{ width: `${simplePercentage}%` }}
-                    title={`Câu Đơn: ${simplePercentage}%`}
+                    title={isEn ? `Simple: ${simplePercentage}%` : `Câu Đơn: ${simplePercentage}%`}
                   />
                 )}
               </div>
               <div className="flex items-center space-x-4 text-[10px] sm:text-[11px] font-bold text-slate-300 pt-0.5">
                 <span className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                  <span>Câu Phức: {complexPercentage}%</span>
+                  <span>{isEn ? 'Complex:' : 'Câu Phức:'} {complexPercentage}%</span>
                 </span>
                 <span className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
-                  <span>Câu Ghép: {compoundPercentage}%</span>
+                  <span>{isEn ? 'Compound:' : 'Câu Ghép:'} {compoundPercentage}%</span>
                 </span>
                 <span className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                  <span>Câu Đơn: {simplePercentage}%</span>
+                  <span>{isEn ? 'Simple:' : 'Câu Đơn:'} {simplePercentage}%</span>
                 </span>
               </div>
             </div>
@@ -214,7 +255,7 @@ export default function SentenceHeatmapModal({
                   ? 'bg-amber-950/40 border-amber-600/40 text-amber-200'
                   : 'bg-rose-950/40 border-rose-600/40 text-rose-200'
             }`}>
-              {feedbackMessage}
+              {getFeedbackMessage(feedbackMessage, status, isEn)}
             </div>
           </div>
 
@@ -224,7 +265,9 @@ export default function SentenceHeatmapModal({
               <div className="flex items-center space-x-2">
                 <Filter className="w-4 h-4 text-slate-500" />
                 <h3 className="text-sm font-bold text-slate-900">
-                  Chi Tiết Từng Câu Trong Bài Viết ({filteredSentences.length}/{totalSentences})
+                  {isEn 
+                    ? `Sentence-by-Sentence Breakdown (${filteredSentences.length}/${totalSentences})` 
+                    : `Chi Tiết Từng Câu Trong Bài Viết (${filteredSentences.length}/${totalSentences})`}
                 </h3>
               </div>
 
@@ -238,7 +281,7 @@ export default function SentenceHeatmapModal({
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Tất cả ({totalSentences})
+                  {isEn ? 'All' : 'Tất cả'} ({totalSentences})
                 </button>
                 <button
                   onClick={() => setActiveFilter('complex')}
@@ -248,7 +291,7 @@ export default function SentenceHeatmapModal({
                       : 'text-emerald-700 hover:bg-emerald-100/60'
                   }`}
                 >
-                  <span>🟢 Phức</span>
+                  <span>🟢 {isEn ? 'Complex' : 'Phức'}</span>
                   <span>({complexCount})</span>
                 </button>
                 <button
@@ -259,7 +302,7 @@ export default function SentenceHeatmapModal({
                       : 'text-indigo-700 hover:bg-indigo-100/60'
                   }`}
                 >
-                  <span>🔵 Ghép</span>
+                  <span>🔵 {isEn ? 'Compound' : 'Ghép'}</span>
                   <span>({compoundCount})</span>
                 </button>
                 <button
@@ -270,7 +313,7 @@ export default function SentenceHeatmapModal({
                       : 'text-amber-800 hover:bg-amber-100/60'
                   }`}
                 >
-                  <span>🟡 Đơn</span>
+                  <span>🟡 {isEn ? 'Simple' : 'Đơn'}</span>
                   <span>({simpleCount})</span>
                 </button>
               </div>
@@ -279,7 +322,7 @@ export default function SentenceHeatmapModal({
             {/* Sentences List */}
             {filteredSentences.length === 0 ? (
               <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
-                Không tìm thấy câu nào theo bộ lọc đã chọn.
+                {isEn ? 'No sentences match the selected filter.' : 'Không tìm thấy câu nào theo bộ lọc đã chọn.'}
               </div>
             ) : (
               <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
@@ -306,21 +349,21 @@ export default function SentenceHeatmapModal({
                               ? 'bg-indigo-100 text-indigo-800'
                               : 'bg-amber-100 text-amber-800'
                         }`}>
-                          {item.type === 'complex' ? 'Câu Phức' : item.type === 'compound' ? 'Câu Ghép' : 'Câu Đơn'}
+                          {item.type === 'complex' ? (isEn ? 'Complex' : 'Câu Phức') : item.type === 'compound' ? (isEn ? 'Compound' : 'Câu Ghép') : (isEn ? 'Simple' : 'Câu Đơn')}
                         </span>
                         {item.isCompoundComplex && (
                           <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800">
-                            Phức - Ghép
+                            {isEn ? 'Compound-Complex' : 'Phức - Ghép'}
                           </span>
                         )}
                         <span className="text-[10px] text-slate-400">
-                          {item.wordCount} từ
+                          {item.wordCount} {isEn ? 'words' : 'từ'}
                         </span>
                       </div>
 
                       {item.type === 'simple' && (
                         <span className="text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded">
-                          Nên nâng cấp ⚡
+                          {isEn ? 'Upgrade advised ⚡' : 'Nên nâng cấp ⚡'}
                         </span>
                       )}
                     </div>
@@ -330,7 +373,7 @@ export default function SentenceHeatmapModal({
                     </p>
 
                     <div className="text-[11px] text-slate-500 font-medium">
-                      💡 {item.explanation}
+                      💡 {getSentenceExplanation(item.explanation, isEn)}
                     </div>
                   </div>
                 ))}
@@ -342,11 +385,11 @@ export default function SentenceHeatmapModal({
           <div className="space-y-3 pt-2 border-t border-slate-100">
             <div className="flex items-center space-x-2 text-slate-900 font-bold text-sm">
               <Sparkles className="w-4 h-4 text-amber-500" />
-              <h3>Cẩm Nang 4 Mẫu Câu Vàng Nâng Bứt Phá Band 7.5 - 8.0+ GRA</h3>
+              <h3>{isEn ? '4 Golden Syntactic Structures for Band 7.5–8.0+ GRA' : 'Cẩm Nang 4 Mẫu Câu Vàng Nâng Bứt Phá Band 7.5 - 8.0+ GRA'}</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {GOLDEN_GRA_TEMPLATES.map((tmpl, index) => (
+              {goldenGraTemplates.map((tmpl, index) => (
                 <div 
                   key={index}
                   className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-50 hover:border-slate-300 transition-all space-y-2"
@@ -365,7 +408,7 @@ export default function SentenceHeatmapModal({
                   </div>
 
                   <p className="text-[11px] text-slate-600 italic">
-                    VD: "{tmpl.example}"
+                    {isEn ? 'e.g.' : 'VD:'} "{tmpl.example}"
                   </p>
 
                   <button
@@ -375,11 +418,11 @@ export default function SentenceHeatmapModal({
                     {copiedId === index ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        <span className="text-emerald-700">Đã Sao Chép!</span>
+                        <span className="text-emerald-700">{isEn ? 'Copied!' : 'Đã Sao Chép!'}</span>
                       </>
                     ) : (
                       <>
-                        <span>Sao Chép Mẫu Câu</span>
+                        <span>{isEn ? 'Copy Structure' : 'Sao Chép Mẫu Câu'}</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </>
                     )}
@@ -397,14 +440,14 @@ export default function SentenceHeatmapModal({
         <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500 shrink-0">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Thuật toán phân tích cú pháp chạy 100% ngoại tuyến (Offline-First)</span>
+            <span>{isEn ? 'Syntactic parsing algorithm executes 100% offline (Offline-First)' : 'Thuật toán phân tích cú pháp chạy 100% ngoại tuyến (Offline-First)'}</span>
           </div>
 
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
           >
-            Đóng Lại
+            {isEn ? 'Close' : 'Đóng Lại'}
           </button>
         </div>
 

@@ -18,6 +18,7 @@ import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
 import SpeakingPart1Room from './subrooms/SpeakingPart1Room';
 import SpeakingPart2Room from './subrooms/SpeakingPart2Room';
 import SpeakingPart3Room from './subrooms/SpeakingPart3Room';
+import { useTranslation } from '../../context/LanguageContext.jsx';
 
 export default function SpeakingPracticePane({
   practicePart = 1,
@@ -60,6 +61,7 @@ export default function SpeakingPracticePane({
   masteredIds = [],
   onToggleMastered
 }) {
+  const { isEn } = useTranslation();
   // Common state
   const [showVocabHints, setShowVocabHints] = useState(true);
   const [showSampleAnswer, setShowSampleAnswer] = useState(false);
@@ -286,7 +288,9 @@ export default function SpeakingPracticePane({
         console.warn('Part 2 mic error:', err);
         setIsPart2Speaking(false);
         setActiveRecordClipKey('');
-        alert('⚠️ Trình duyệt chưa cấp quyền truy cập Micro!\n\nVui lòng bấm vào biểu tượng Ổ khóa (🔒) trên thanh địa chỉ URL của trình duyệt và chọn "Cho phép (Allow)" Micro.');
+        alert(isEn 
+          ? '⚠️ Microphone permission denied!\n\nPlease click the Lock (🔒) icon on your browser URL bar and choose "Allow" for Microphone.' 
+          : '⚠️ Trình duyệt chưa cấp quyền truy cập Micro!\n\nVui lòng bấm vào biểu tượng Ổ khóa (🔒) trên thanh địa chỉ URL của trình duyệt và chọn "Cho phép (Allow)" Micro.');
       } finally {
         setIsMicConnecting(false);
       }
@@ -345,16 +349,16 @@ export default function SpeakingPracticePane({
   const handleRefineTranscriptWithAI = async (clipKey) => {
     const clip = speechEngine.audioClips?.[clipKey];
     if (!clip?.blob) {
-      alert('Chưa tìm thấy bản ghi âm trong bộ nhớ RAM. Vui lòng ghi âm câu trả lời trước.');
+      alert(isEn ? 'No audio recording found in RAM. Please record your answer first.' : 'Chưa tìm thấy bản ghi âm trong bộ nhớ RAM. Vui lòng ghi âm câu trả lời trước.');
       return null;
     }
     if (!apiKey) {
       if (onOpenSettings) {
-        if (window.confirm('Vui lòng nhập AI API Key trong Cài đặt để AI nhận diện giọng nói chính xác cao (Multimodal Audio). Mở Cài đặt ngay?')) {
+        if (window.confirm(isEn ? 'Please enter an AI API Key in Settings for high-precision multimodal speech recognition. Open Settings now?' : 'Vui lòng nhập AI API Key trong Cài đặt để AI nhận diện giọng nói chính xác cao (Multimodal Audio). Mở Cài đặt ngay?')) {
           onOpenSettings();
         }
       } else {
-        alert('Vui lòng cấu hình AI API Key trong Cài đặt.');
+        alert(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong Cài đặt.');
       }
       return null;
     }
@@ -376,7 +380,7 @@ export default function SpeakingPracticePane({
       return accurateTranscript;
     } catch (err) {
       console.error('AI Audio STT error:', err);
-      alert('Không thể nhận diện âm thanh qua AI: ' + (err.message || 'Lỗi không xác định'));
+      alert((isEn ? 'Failed to recognize audio with AI: ' : 'Không thể nhận diện âm thanh qua AI: ') + (err.message || (isEn ? 'Unknown error' : 'Lỗi không xác định')));
       return null;
     } finally {
       setIsRefiningTranscript(false);
@@ -397,7 +401,9 @@ export default function SpeakingPracticePane({
     const clip = clipKey ? speechEngine.audioClips?.[clipKey] : null;
 
     if (!currentTranscript || currentTranscript.split(/\s+/).filter(Boolean).length < 3) {
-      alert('Câu trả lời của bạn quá ngắn hoặc micro chưa thu âm được từ ngữ. Vui lòng nói ít nhất vài câu để thuật toán có thể phân tích độ trôi chảy, ngữ pháp và từ vựng.');
+      alert(isEn 
+        ? 'Your answer is too short or the microphone did not capture speech. Please say at least a few sentences so the algorithm can analyze fluency, grammar, and vocabulary.' 
+        : 'Câu trả lời của bạn quá ngắn hoặc micro chưa thu âm được từ ngữ. Vui lòng nói ít nhất vài câu để thuật toán có thể phân tích độ trôi chảy, ngữ pháp và từ vựng.');
       return;
     }
 
@@ -428,7 +434,7 @@ export default function SpeakingPracticePane({
       setIsEvaluationModalOpen(true);
     } catch (err) {
       console.error('Error in algorithmic evaluation:', err);
-      alert('Lỗi khi chấm bài bằng thuật toán máy tính: ' + (err.message || 'Vui lòng thử lại.'));
+      alert((isEn ? 'Error during algorithmic evaluation: ' : 'Lỗi khi chấm bài bằng thuật toán máy tính: ') + (err.message || (isEn ? 'Please try again.' : 'Vui lòng thử lại.')));
     }
   };
 
@@ -436,11 +442,11 @@ export default function SpeakingPracticePane({
   const handleEvaluateWithAI = async (clipKey, questionText, topicTitle, partNum) => {
     if (!apiKey) {
       if (onOpenSettings) {
-        if (window.confirm('Vui lòng nhập AI API Key trong phần Cài đặt để sử dụng tính năng Chấm điểm bằng AI. Mở Cài đặt ngay?')) {
+        if (window.confirm(isEn ? 'Please enter your AI API Key in Settings to use AI grading. Open Settings now?' : 'Vui lòng nhập AI API Key trong phần Cài đặt để sử dụng tính năng Chấm điểm bằng AI. Mở Cài đặt ngay?')) {
           onOpenSettings();
         }
       } else {
-        alert('Vui lòng cấu hình AI API Key trong Cài đặt để chấm điểm bài nói.');
+        alert(isEn ? 'Please configure your AI API Key in Settings to evaluate speaking.' : 'Vui lòng cấu hình AI API Key trong Cài đặt để chấm điểm bài nói.');
       }
       return;
     }
@@ -477,7 +483,9 @@ export default function SpeakingPracticePane({
     }
 
     if (!currentTranscript || currentTranscript.split(/\s+/).filter(Boolean).length < 3) {
-      alert('Câu trả lời của bạn quá ngắn hoặc mic chưa nhận diện được từ ngữ. Vui lòng bấm "Bật Micro Luyện Nói" và trả lời ít nhất vài câu trước khi yêu cầu AI chấm điểm.');
+      alert(isEn 
+        ? 'Your answer is too short or the microphone did not detect words. Please turn on the microphone and answer a few sentences before submitting for AI grading.' 
+        : 'Câu trả lời của bạn quá ngắn hoặc mic chưa nhận diện được từ ngữ. Vui lòng bấm "Bật Micro Luyện Nói" và trả lời ít nhất vài câu trước khi yêu cầu AI chấm điểm.');
       return;
     }
 
@@ -661,10 +669,10 @@ export default function SpeakingPracticePane({
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-white flex items-center space-x-1.5">
             <Volume2 className="w-3.5 h-3.5 text-purple-400" />
-            <span>Nghe lại & Đánh giá câu trả lời ({clip?.duration || 1}s):</span>
+            <span>{isEn ? `Playback & Evaluate (${clip?.duration || 1}s):` : `Nghe lại & Đánh giá câu trả lời (${clip?.duration || 1}s):`}</span>
           </span>
           <span className="text-[10px] text-purple-300 font-semibold bg-purple-900/50 px-2 py-0.5 rounded border border-purple-700/40">
-            RAM-Only (Tự hủy khi lưu)
+            {isEn ? 'RAM-Only (Cleared on save)' : 'RAM-Only (Tự hủy khi lưu)'}
           </span>
         </div>
 
@@ -690,20 +698,26 @@ export default function SpeakingPracticePane({
               <div className="flex-1 space-y-1 text-xs">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold text-white text-xs">
-                    {isClipAiRefined ? 'Transcript Đã Được Chuẩn Hóa Bằng AI' : 'Khuyên dùng: Chuẩn Hóa Lời Thoại Bằng AI'}
+                    {isEn 
+                      ? (isClipAiRefined ? 'Transcript Refined with AI' : 'Recommended: Refine Transcript with AI') 
+                      : (isClipAiRefined ? 'Transcript Đã Được Chuẩn Hóa Bằng AI' : 'Khuyên dùng: Chuẩn Hóa Lời Thoại Bằng AI')}
                   </span>
                   <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
                     isClipAiRefined 
                       ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40' 
                       : 'bg-amber-500/20 text-amber-300 border-amber-400/40 animate-pulse'
                   }`}>
-                    {isClipAiRefined ? '✨ Độ chính xác 98%+' : '⚡ Khuyên Dùng'}
+                    {isEn ? (isClipAiRefined ? '✨ 98%+ Accuracy' : '⚡ Recommended') : (isClipAiRefined ? '✨ Độ chính xác 98%+' : '⚡ Khuyên Dùng')}
                   </span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-300">
-                  {isClipAiRefined
-                    ? 'Văn bản lời nói đã được AI Multimodal Audio nghe trực tiếp từ file âm thanh gốc và chuẩn hóa chính xác từng từ ngữ.'
-                    : 'Nhận diện thời gian thực của trình duyệt có thể nghe nhầm hoặc thiếu âm đuôi. Bạn nên bấm nút "✨ AI Nhận Diện Lại" bên dưới để AI nghe trực tiếp file ghi âm, giúp kết quả chấm điểm chuẩn xác nhất.'}
+                  {isEn
+                    ? (isClipAiRefined
+                        ? 'Spoken words have been directly transcribed from original audio and normalized accurately word-for-word.'
+                        : 'Browser live recognition may mishear word endings. Click "✨ AI Refine" below to transcribe the exact audio recording for best evaluation results.')
+                    : (isClipAiRefined
+                        ? 'Văn bản lời nói đã được AI Multimodal Audio nghe trực tiếp từ file âm thanh gốc và chuẩn hóa chính xác từng từ ngữ.'
+                        : 'Nhận diện thời gian thực của trình duyệt có thể nghe nhầm hoặc thiếu âm đuôi. Bạn nên bấm nút "✨ AI Nhận Diện Lại" bên dưới để AI nghe trực tiếp file ghi âm, giúp kết quả chấm điểm chuẩn xác nhất.')}
                 </p>
               </div>
             </div>
@@ -715,7 +729,7 @@ export default function SpeakingPracticePane({
           <div className="p-3 rounded-xl bg-slate-900/95 border border-purple-800/40 text-xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-300 flex items-center space-x-1.5">
-                <span>📝 Lời thoại thu được (Transcript):</span>
+                <span>{isEn ? '📝 Captured Transcript:' : '📝 Lời thoại thu được (Transcript):'}</span>
               </span>
               <button
                 onClick={() => {
@@ -727,10 +741,10 @@ export default function SpeakingPracticePane({
                   }
                 }}
                 className="px-2 py-0.5 rounded text-[11px] font-bold text-purple-300 hover:text-white bg-purple-950/70 hover:bg-purple-900 border border-purple-700/50 flex items-center space-x-1 cursor-pointer transition-colors"
-                title="Tự sửa nhanh từ ngữ nếu máy nghe nhầm"
+                title={isEn ? 'Manually edit words if recognition misheard' : 'Tự sửa nhanh từ ngữ nếu máy nghe nhầm'}
               >
                 <Edit3 className="w-3 h-3 text-purple-400" />
-                <span>{editingTranscriptKey === clipKey ? 'Đóng' : '✏️ Sửa Lời Thoại'}</span>
+                <span>{editingTranscriptKey === clipKey ? (isEn ? 'Close' : 'Đóng') : (isEn ? '✏️ Edit Transcript' : '✏️ Sửa Lời Thoại')}</span>
               </button>
             </div>
 
@@ -741,14 +755,14 @@ export default function SpeakingPracticePane({
                   onChange={(e) => setEditedTranscriptText(e.target.value)}
                   rows={3}
                   className="w-full bg-slate-950 border border-purple-500/60 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-400 leading-relaxed font-sans"
-                  placeholder="Sửa lại đúng từ ngữ bạn vừa nói..."
+                  placeholder={isEn ? 'Correct any words you spoke...' : 'Sửa lại đúng từ ngữ bạn vừa nói...'}
                 />
                 <div className="flex items-center justify-end space-x-2">
                   <button
                     onClick={() => setEditingTranscriptKey('')}
                     className="px-2.5 py-1 rounded-md text-[11px] text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
                   >
-                    Hủy
+                    {isEn ? 'Cancel' : 'Hủy'}
                   </button>
                   <button
                     onClick={() => {
@@ -760,7 +774,7 @@ export default function SpeakingPracticePane({
                     className="px-3 py-1 rounded-md text-[11px] font-bold text-white bg-purple-600 hover:bg-purple-500 shadow cursor-pointer flex items-center space-x-1"
                   >
                     <Check className="w-3 h-3" />
-                    <span>Lưu Lời Thoại</span>
+                    <span>{isEn ? 'Save Transcript' : 'Lưu Lời Thoại'}</span>
                   </button>
                 </div>
               </div>
@@ -785,12 +799,12 @@ export default function SpeakingPracticePane({
               {isPlayingPracticeAudio ? (
                 <>
                   <Pause className="w-3.5 h-3.5 fill-current" />
-                  <span>Tạm Dừng</span>
+                  <span>{isEn ? 'Pause' : 'Tạm Dừng'}</span>
                 </>
               ) : (
                 <>
                   <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>🔊 Nghe Lại Giọng</span>
+                  <span>{isEn ? '🔊 Play Audio' : '🔊 Nghe Lại Giọng'}</span>
                 </>
               )}
             </button>
@@ -806,24 +820,24 @@ export default function SpeakingPracticePane({
                   ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 border-emerald-600/50'
                   : 'bg-gradient-to-r from-indigo-900/90 to-purple-900/90 hover:from-indigo-800 hover:to-purple-800 text-indigo-200 hover:text-white border-indigo-500/60 shadow-sm shadow-indigo-950/50'
               }`}
-              title="Dùng AI Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 98%+"
+              title={isEn ? 'Use AI Multimodal Audio on RAM audio for 98%+ transcription accuracy' : 'Dùng AI Multimodal Audio nghe file âm thanh từ RAM để phiên âm chuẩn xác 98%+'}
             >
               {isRefiningTranscript && refiningClipKey === clipKey ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
-                  <span>AI Đang Nghe...</span>
+                  <span>{isEn ? 'AI Listening...' : 'AI Đang Nghe...'}</span>
                 </>
               ) : isClipAiRefined ? (
                 <>
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Đã Chuẩn Hóa AI</span>
+                  <span>{isEn ? 'AI Refined' : 'Đã Chuẩn Hóa AI'}</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-amber-300/30" />
-                  <span>✨ AI Nhận Diện Lại</span>
+                  <span>{isEn ? '✨ AI Refine' : '✨ AI Nhận Diện Lại'}</span>
                   <span className="ml-1 text-[9px] font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-full border border-amber-400/40">
-                    Khuyên Dùng
+                    {isEn ? 'Recommended' : 'Khuyên Dùng'}
                   </span>
                 </>
               )}
@@ -834,27 +848,27 @@ export default function SpeakingPracticePane({
           <button
             onClick={() => handleEvaluateAlgorithmically(clipKey, questionText, topicTitle, partNum)}
             className="flex-1 min-w-[140px] py-2.5 px-3 rounded-lg bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black shadow-md shadow-emerald-950/40 flex items-center justify-center space-x-1.5 cursor-pointer transition-all hover:scale-[1.01]"
-            title="Chấm điểm tức thì (0.02ms) bằng thuật toán 4 tiêu chí Cambridge, 100% Offline & Miễn phí"
+            title={isEn ? 'Instant grading (0.02ms) with 4 Cambridge criteria, 100% Offline & Free' : 'Chấm điểm tức thì (0.02ms) bằng thuật toán 4 tiêu chí Cambridge, 100% Offline & Miễn phí'}
           >
             <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
-            <span>⚡ Chấm Máy (Tức Thì)</span>
+            <span>{isEn ? '⚡ Algorithmic (Instant)' : '⚡ Chấm Máy (Tức Thì)'}</span>
           </button>
 
           <button
             onClick={() => handleEvaluateWithAI(clipKey, questionText, topicTitle, partNum)}
             disabled={isEvaluatingSingle}
             className="flex-1 min-w-[140px] py-2.5 px-3 rounded-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-md shadow-purple-950/50 flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-60 transition-all hover:scale-[1.01]"
-            title="Giám khảo AI chấm phân tích sâu, sửa câu & viết lại bản Band 8.5+"
+            title={isEn ? 'AI Examiner evaluates in-depth, rewrites and provides Band 8.5+ model answer' : 'Giám khảo AI chấm phân tích sâu, sửa câu & viết lại bản Band 8.5+'}
           >
             {isEvaluatingSingle && evaluatingClipKey === clipKey ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>AI Đang Chấm...</span>
+                <span>{isEn ? 'AI Grading...' : 'AI Đang Chấm...'}</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-                <span>🤖 Chấm Bằng AI</span>
+                <span>{isEn ? '🤖 AI Examiner Grade' : '🤖 Chấm Bằng AI'}</span>
               </>
             )}
           </button>
@@ -862,10 +876,10 @@ export default function SpeakingPracticePane({
           <button
             onClick={handleClearClip}
             className="py-2 px-2.5 sm:px-3 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-rose-300 text-xs font-bold border border-slate-700 flex items-center justify-center space-x-1 cursor-pointer transition-colors"
-            title="Xóa âm thanh ngay khỏi bộ nhớ RAM để tiết kiệm tài nguyên"
+            title={isEn ? 'Clear audio from RAM immediately to save memory' : 'Xóa âm thanh ngay khỏi bộ nhớ RAM để tiết kiệm tài nguyên'}
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Xóa File Tạm</span>
+            <span className="hidden sm:inline">{isEn ? 'Clear Clip' : 'Xóa File Tạm'}</span>
           </button>
         </div>
       </div>
@@ -890,7 +904,7 @@ export default function SpeakingPracticePane({
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>Part 1<span className="hidden sm:inline">: Phỏng Vấn (A.R.E.A)</span></span>
+            <span>Part 1<span className="hidden sm:inline">: {isEn ? 'Interview (A.R.E.A)' : 'Phỏng Vấn (A.R.E.A)'}</span></span>
           </button>
 
           <button
@@ -905,7 +919,7 @@ export default function SpeakingPracticePane({
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>Part 2<span className="hidden sm:inline">: Cue Card & Pacing</span></span>
+            <span>Part 2<span className="hidden sm:inline">: {isEn ? 'Cue Card & Pacing' : 'Cue Card & Pacing'}</span></span>
           </button>
 
           <button
@@ -920,7 +934,7 @@ export default function SpeakingPracticePane({
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <span>Part 3<span className="hidden sm:inline">: Thảo Luận (PEEL)</span></span>
+            <span>Part 3<span className="hidden sm:inline">: {isEn ? 'Discussion (PEEL)' : 'Thảo Luận (PEEL)'}</span></span>
           </button>
         </div>
 
@@ -932,16 +946,16 @@ export default function SpeakingPracticePane({
               setIsTopicModalOpen(true);
             }}
             className="flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40 shrink-0 whitespace-nowrap"
-            title="Dùng AI để tạo chủ đề và câu hỏi mới cho Part này"
+            title={isEn ? 'Use AI to generate new topics and questions for this Part' : 'Dùng AI để tạo chủ đề và câu hỏi mới cho Part này'}
           >
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            <span>✨ Sinh Chủ Đề (AI)</span>
+            <span>{isEn ? '✨ Generate Topic (AI)' : '✨ Sinh Chủ Đề (AI)'}</span>
           </button>
 
           <button
             onClick={onOpenIdeaMatrix}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 hover:text-purple-200 border border-purple-700/50 text-[11px] sm:text-xs font-bold transition-all cursor-pointer shadow-sm shrink-0 whitespace-nowrap"
-            title="Mở bảng ma trận gợi ý ý tưởng 5W1H & Đa góc nhìn"
+            title={isEn ? 'Open 5W1H & multi-perspective brainstorm matrix' : 'Mở bảng ma trận gợi ý ý tưởng 5W1H & Đa góc nhìn'}
           >
             <Compass className="w-3.5 h-3.5 shrink-0" />
             <span>Idea Matrix</span>
@@ -950,7 +964,7 @@ export default function SpeakingPracticePane({
           <button
             onClick={onOpenShadowing}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white border border-slate-700 text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap"
-            title="Luyện nghe và nhại lại giọng đọc chuẩn Band 8.5+"
+            title={isEn ? 'Listen and shadow Band 8.5+ model pronunciation' : 'Luyện nghe và nhại lại giọng đọc chuẩn Band 8.5+'}
           >
             <Headphones className="w-3.5 h-3.5 shrink-0" />
             <span>Shadowing 8.5</span>
@@ -963,9 +977,13 @@ export default function SpeakingPracticePane({
         <div className="p-4 rounded-2xl bg-rose-950/90 border-2 border-rose-500/70 text-rose-200 flex items-start space-x-3 shadow-xl animate-in fade-in duration-200">
           <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
           <div className="text-xs space-y-1">
-            <h4 className="font-bold text-white text-sm">Trình duyệt chưa cho phép truy cập Micro!</h4>
+            <h4 className="font-bold text-white text-sm">
+              {isEn ? 'Microphone Access Denied by Browser!' : 'Trình duyệt chưa cho phép truy cập Micro!'}
+            </h4>
             <p className="text-rose-200 leading-relaxed">
-              Để luyện nói và chấm điểm, bạn vui lòng nhấp vào biểu tượng <strong>Ổ khóa (🔒)</strong> hoặc <strong>Cài đặt trang web</strong> trên thanh địa chỉ URL của trình duyệt, chọn <strong>Cho phép (Allow)</strong> Microphone, sau đó bấm nút Bật Micro lại.
+              {isEn
+                ? 'To practice and evaluate your speech, please click the Lock (🔒) icon or Site Settings on your browser URL bar, choose Allow for Microphone, and click Start Microphone again.'
+                : 'Để luyện nói và chấm điểm, bạn vui lòng nhấp vào biểu tượng Ổ khóa (🔒) hoặc Cài đặt trang web trên thanh địa chỉ URL của trình duyệt, chọn Cho phép (Allow) Microphone, sau đó bấm nút Bật Micro lại.'}
             </p>
           </div>
         </div>
@@ -976,12 +994,14 @@ export default function SpeakingPracticePane({
         <div className="space-y-1">
           <div className="flex items-center space-x-2">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Luyện Tập Tự Do Không Giới Hạn
+              {isEn ? 'Unlimited Free Practice' : 'Luyện Tập Tự Do Không Giới Hạn'}
             </span>
-            <span className="text-xs text-slate-400 font-semibold">• Tích hợp chấm điểm AI Cambridge</span>
+            <span className="text-xs text-slate-400 font-semibold">• {isEn ? 'Integrated Cambridge AI Evaluation' : 'Tích hợp chấm điểm AI Cambridge'}</span>
           </div>
           <p className="text-xs text-slate-300">
-            Luyện từng câu hỏi độc lập, nhận ngay nhận xét 4 tiêu chí khảo thí & bản nâng cấp Band 8.5+. Bạn có thể sinh thêm bất kỳ chủ đề/câu hỏi nào bằng AI!
+            {isEn
+              ? 'Practice questions individually, get 4 Cambridge criteria analysis and Band 8.5+ upgrades. You can generate unlimited custom topics with AI!'
+              : 'Luyện từng câu hỏi độc lập, nhận ngay nhận xét 4 tiêu chí khảo thí & bản nâng cấp Band 8.5+. Bạn có thể sinh thêm bất kỳ chủ đề/câu hỏi nào bằng AI!'}
           </p>
         </div>
 
@@ -993,7 +1013,7 @@ export default function SpeakingPracticePane({
           className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-lg shadow-purple-950/60 flex items-center space-x-2 cursor-pointer transition-all hover:scale-[1.02] shrink-0"
         >
           <Sparkles className="w-4 h-4 text-purple-200" />
-          <span>✨ Sinh Chủ Đề Bằng AI</span>
+          <span>{isEn ? '✨ Generate Topic with AI' : '✨ Sinh Chủ Đề Bằng AI'}</span>
         </button>
       </div>
 
@@ -1145,7 +1165,10 @@ export default function SpeakingPracticePane({
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="font-bold text-sm text-white flex items-center space-x-2">
                 <Plus className="w-4 h-4 text-purple-400" />
-                <span>Thêm Câu Hỏi Mới Vào Chủ Đề: {practicePart === 1 ? activeP1Topic?.title : currentP3Set?.topic}</span>
+                <span>
+                  {isEn ? 'Add New Question to: ' : 'Thêm Câu Hỏi Mới Vào Chủ Đề: '}
+                  {practicePart === 1 ? activeP1Topic?.title : currentP3Set?.topic}
+                </span>
               </h3>
               <button
                 onClick={() => setIsQuickAddQOpen(false)}
@@ -1157,23 +1180,27 @@ export default function SpeakingPracticePane({
 
             <div className="space-y-3 text-xs">
               <div className="space-y-1">
-                <label className="font-bold text-slate-300">Nội Dung Câu Hỏi Tiếng Anh:</label>
+                <label className="font-bold text-slate-300">
+                  {isEn ? 'English Question Text:' : 'Nội Dung Câu Hỏi Tiếng Anh:'}
+                </label>
                 <textarea
                   rows={3}
                   value={quickQText}
                   onChange={(e) => setQuickQText(e.target.value)}
-                  placeholder="Ví dụ: How do you think artificial intelligence will change the way people work in the next ten years?"
+                  placeholder={isEn ? 'e.g. How do you think artificial intelligence will change the way people work in the next ten years?' : 'Ví dụ: How do you think artificial intelligence will change the way people work in the next ten years?'}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-300">Mẹo / Chiến Lược Trả Lời (Tùy chọn):</label>
+                <label className="font-bold text-slate-300">
+                  {isEn ? 'Tip / Answer Strategy (Optional):' : 'Mẹo / Chiến Lược Trả Lời (Tùy chọn):'}
+                </label>
                 <input
                   type="text"
                   value={quickQStrategy}
                   onChange={(e) => setQuickQStrategy(e.target.value)}
-                  placeholder="Ví dụ: Áp dụng công thức PEEL, nêu tác động tích cực và rủi ro..."
+                  placeholder={isEn ? 'e.g. Apply PEEL formula, state positive impacts and risks...' : 'Ví dụ: Áp dụng công thức PEEL, nêu tác động tích cực và rủi ro...'}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
                 />
               </div>
@@ -1184,14 +1211,14 @@ export default function SpeakingPracticePane({
                 onClick={() => setIsQuickAddQOpen(false)}
                 className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
               >
-                Hủy
+                {isEn ? 'Cancel' : 'Hủy'}
               </button>
               <button
                 onClick={handleQuickAddQuestion}
                 disabled={!quickQText.trim()}
                 className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md cursor-pointer disabled:opacity-50"
               >
-                + Thêm Câu Hỏi Này
+                {isEn ? '+ Add Question' : '+ Thêm Câu Hỏi Này'}
               </button>
             </div>
           </div>

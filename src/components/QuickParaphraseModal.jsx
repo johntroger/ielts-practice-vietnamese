@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Sparkles, Copy, Check, Search, BookMarked } from 'lucide-react';
 import { lookupSynonyms, ACADEMIC_THESAURUS } from '../data/academicThesaurus';
+import { useTranslation } from '../i18n';
 
 export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onSaveToNotebook }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [searchTerm, setSearchTerm] = useState(initialWord || 'increase');
@@ -29,13 +31,19 @@ export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onS
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Từ Điển Paraphrase Học Thuật</h3>
-              <p className="text-xs text-slate-500">Tìm từ đồng nghĩa Band 7.5+ thay thế cho các từ thông dụng</p>
+              <h3 className="font-bold text-slate-900 text-base">
+                {isEn ? 'Academic Paraphrase Thesaurus' : 'Từ Điển Paraphrase Học Thuật'}
+              </h3>
+              <p className="text-xs text-slate-500">
+                {isEn ? 'Find Band 7.5+ academic synonyms to replace common vocabulary' : 'Tìm từ đồng nghĩa Band 7.5+ thay thế cho các từ thông dụng'}
+              </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg"
+            className="text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg cursor-pointer"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             ✕
           </button>
@@ -48,14 +56,16 @@ export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onS
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Gõ từ cần tìm (vd: increase, problem, important...)"
+            placeholder={isEn ? 'Type a word (e.g. increase, problem, important...)' : 'Gõ từ cần tìm (vd: increase, problem, important...)'}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-medium"
           />
         </div>
 
         {/* Quick pills */}
         <div className="flex flex-wrap gap-1.5 pt-1">
-          <span className="text-[11px] font-semibold text-slate-400 self-center mr-1">Gợi ý nhanh:</span>
+          <span className="text-[11px] font-semibold text-slate-400 self-center mr-1">
+            {isEn ? 'Quick suggestions:' : 'Gợi ý nhanh:'}
+          </span>
           {commonWords.slice(0, 7).map(w => (
             <button
               key={w}
@@ -95,8 +105,8 @@ export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onS
                   <div className="flex items-center space-x-1">
                     <button
                       onClick={() => handleCopy(s.word)}
-                      className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
-                      title="Copy từ này"
+                      className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors cursor-pointer"
+                      title={isEn ? 'Copy this term' : 'Copy từ này'}
                     >
                       {copiedWord === s.word ? (
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
@@ -107,8 +117,8 @@ export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onS
                     {onSaveToNotebook && (
                       <button
                         onClick={() => onSaveToNotebook({ phrase: s.word, meaningVi: s.meaningVi, example: s.example })}
-                        className="p-1 text-slate-400 hover:text-amber-600 rounded transition-colors"
-                        title="Lưu vào sổ từ vựng"
+                        className="p-1 text-slate-400 hover:text-amber-600 rounded transition-colors cursor-pointer"
+                        title={isEn ? 'Save to Vocab Notebook' : 'Lưu vào sổ từ vựng'}
                       >
                         <BookMarked className="w-3.5 h-3.5" />
                       </button>
@@ -123,7 +133,7 @@ export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onS
             ))
           ) : (
             <div className="text-center py-6 text-slate-400 text-xs">
-              Chưa có dữ liệu cho từ này. Thử chọn các từ gợi ý nhanh ở trên!
+              {isEn ? 'No entries found for this word. Try selecting one of the quick suggestions above!' : 'Chưa có dữ liệu cho từ này. Thử chọn các từ gợi ý nhanh ở trên!'}
             </div>
           )}
         </div>

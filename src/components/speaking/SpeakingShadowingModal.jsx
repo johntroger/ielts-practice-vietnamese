@@ -4,6 +4,7 @@ import {
   Sparkles, Headphones, ArrowRight, BookOpen, Layers, ShieldCheck 
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
+import { useTranslation } from '../../i18n';
 
 export default function SpeakingShadowingModal({
   isOpen,
@@ -13,6 +14,7 @@ export default function SpeakingShadowingModal({
   examiner,
   speechEngine
 }) {
+  const { t, isEn } = useTranslation();
   const [activeSentenceIndex, setActiveSentenceIndex] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState(0.9); // 0.8 | 0.9 | 1.0
   const [isRecordingShadow, setIsRecordingShadow] = useState(false);
@@ -115,12 +117,16 @@ export default function SpeakingShadowingModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h3 className="text-base font-black text-white">Shadowing Studio (Luyện Ngữ Điệu 8.5)</h3>
+                <h3 className="text-base font-black text-white">
+                  {isEn ? 'Shadowing Studio (Band 8.5+ Intonation)' : 'Shadowing Studio (Luyện Ngữ Điệu 8.5)'}
+                </h3>
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  Pronunciation & Intonation
+                  {isEn ? 'Pronunciation & Intonation' : 'Pronunciation & Intonation'}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Nghe từng câu mẫu chuẩn bản xứ và nhại lại theo ngữ điệu</p>
+              <p className="text-xs text-slate-400">
+                {isEn ? 'Listen to native-paced sentences and shadow with natural intonation' : 'Nghe từng câu mẫu chuẩn bản xứ và nhại lại theo ngữ điệu'}
+              </p>
             </div>
           </div>
           <button
@@ -134,10 +140,12 @@ export default function SpeakingShadowingModal({
         {/* Sentence Progress Bar */}
         <div className="px-6 py-2 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-xs">
           <span className="text-slate-400 font-semibold">
-            Câu {activeSentenceIndex + 1} / {sentences.length}
+            {isEn ? `Sentence ${activeSentenceIndex + 1} / ${sentences.length}` : `Câu ${activeSentenceIndex + 1} / ${sentences.length}`}
           </span>
           <div className="flex items-center space-x-1.5">
-            <span className="text-slate-400 text-[11px]">Tốc độ đọc:</span>
+            <span className="text-slate-400 text-[11px]">
+              {isEn ? 'Playback speed:' : 'Tốc độ đọc:'}
+            </span>
             {[0.8, 0.9, 1.0].map(speed => (
               <button
                 key={speed}
@@ -160,7 +168,7 @@ export default function SpeakingShadowingModal({
           {/* Sentence Display Card */}
           <div className="p-5 rounded-2xl bg-slate-950 border border-purple-500/30 space-y-3">
             <span className="text-[10px] font-black uppercase tracking-wider text-purple-400 block">
-              Câu đang luyện phát âm:
+              {isEn ? 'Target Sentence for Pronunciation:' : 'Câu đang luyện phát âm:'}
             </span>
             <p className="text-sm sm:text-base font-bold text-white leading-relaxed">
               "{currentSentence}"
@@ -173,7 +181,11 @@ export default function SpeakingShadowingModal({
                 className="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md disabled:opacity-50"
               >
                 <Volume2 className="w-4 h-4" />
-                <span>{speechEngine.isSpeaking ? 'Giám khảo đang đọc...' : '1. Nghe Giám Khảo Đọc'}</span>
+                <span>
+                  {speechEngine.isSpeaking 
+                    ? (isEn ? 'Examiner is speaking...' : 'Giám khảo đang đọc...')
+                    : (isEn ? '1. Listen to Examiner' : '1. Nghe Giám Khảo Đọc')}
+                </span>
               </button>
             </div>
           </div>
@@ -186,16 +198,16 @@ export default function SpeakingShadowingModal({
           }`}>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-white uppercase tracking-wider">
-                2. Nhại Lại Câu Này (Shadowing):
+                {isEn ? '2. Shadow This Sentence:' : '2. Nhại Lại Câu Này (Shadowing):'}
               </span>
               <div className="flex items-center space-x-2">
                 {isRecordingShadow ? (
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold animate-pulse">
-                    REC • ĐANG GHI ÂM
+                    {isEn ? 'REC • RECORDING' : 'REC • ĐANG GHI ÂM'}
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px] font-semibold">
-                    ĐÃ TẮT MIC
+                    {isEn ? 'MIC OFF' : 'ĐÃ TẮT MIC'}
                   </span>
                 )}
               </div>
@@ -220,7 +232,11 @@ export default function SpeakingShadowingModal({
               }`}
             >
               <Mic className="w-3.5 h-3.5" />
-              <span>{isRecordingShadow ? 'Dừng Thu Âm Nhại Lại' : 'Bật Mic Để Nhại Lại'}</span>
+              <span>
+                {isRecordingShadow 
+                  ? (isEn ? 'Stop Shadow Recording' : 'Dừng Thu Âm Nhại Lại') 
+                  : (isEn ? 'Start Mic to Shadow' : 'Bật Mic Để Nhại Lại')}
+              </span>
             </button>
 
             {/* Playback Voice Shadow Clip */}
@@ -229,7 +245,9 @@ export default function SpeakingShadowingModal({
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-white flex items-center space-x-1.5">
                     <Volume2 className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Giọng bạn vừa nhại lại ({shadowClip.duration || 1}s):</span>
+                    <span>
+                      {isEn ? `Your shadow recording (${shadowClip.duration || 1}s):` : `Giọng bạn vừa nhại lại (${shadowClip.duration || 1}s):`}
+                    </span>
                   </span>
                   <span className="text-[10px] text-purple-300 font-semibold bg-purple-900/50 px-2 py-0.5 rounded">
                     RAM-Only
@@ -248,12 +266,12 @@ export default function SpeakingShadowingModal({
                     {isPlayingUserAudio ? (
                       <>
                         <Pause className="w-3 h-3 fill-current" />
-                        <span>Tạm Dừng</span>
+                        <span>{isEn ? 'Pause' : 'Tạm Dừng'}</span>
                       </>
                     ) : (
                       <>
                         <Play className="w-3 h-3 fill-current" />
-                        <span>🔊 Nghe Lại & So Sánh Ngữ Điệu</span>
+                        <span>{isEn ? '🔊 Replay & Compare Intonation' : '🔊 Nghe Lại & So Sánh Ngữ Điệu'}</span>
                       </>
                     )}
                   </button>
@@ -265,10 +283,10 @@ export default function SpeakingShadowingModal({
                       if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(shadowClipKey);
                     }}
                     className="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold border border-emerald-500/30 flex items-center space-x-1 cursor-pointer"
-                    title="Xóa âm thanh tạm"
+                    title={isEn ? "Clear temporary clip" : "Xóa âm thanh tạm"}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>OK & Xóa File Tạm</span>
+                    <span>{isEn ? 'OK & Clear Clip' : 'OK & Xóa File Tạm'}</span>
                   </button>
                 </div>
               </div>
@@ -289,11 +307,11 @@ export default function SpeakingShadowingModal({
             }}
             className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
-            ← Câu Trước
+            {isEn ? '← Previous' : '← Câu Trước'}
           </button>
 
           <span className="text-[11px] text-slate-500">
-            Lặp lại 2-3 lần mỗi câu để hình thành phản xạ ngữ điệu
+            {isEn ? 'Repeat 2–3 times per sentence to build natural prosodic reflexes' : 'Lặp lại 2-3 lần mỗi câu để hình thành phản xạ ngữ điệu'}
           </span>
 
           <button
@@ -305,10 +323,9 @@ export default function SpeakingShadowingModal({
             }}
             className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
-            Câu Kế Tiếp →
+            {isEn ? 'Next →' : 'Câu Kế Tiếp →'}
           </button>
         </div>
-
       </div>
     </div>
   );

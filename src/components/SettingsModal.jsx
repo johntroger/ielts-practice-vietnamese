@@ -135,9 +135,9 @@ export default function SettingsModal({
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      setStorageMessage('✅ Đã xuất bản sao lưu thành công!');
+      setStorageMessage(isEn ? '✅ Backup exported successfully!' : '✅ Đã xuất bản sao lưu thành công!');
     } catch (e) {
-      setStorageMessage(`❌ Lỗi xuất dữ liệu: ${e.message}`);
+      setStorageMessage(isEn ? `❌ Data export error: ${e.message}` : `❌ Lỗi xuất dữ liệu: ${e.message}`);
     }
   };
 
@@ -166,7 +166,7 @@ export default function SettingsModal({
     pruneVolatileData();
     const metrics = getStorageMetrics();
     setStorageMetrics(metrics);
-    setStorageMessage('✅ Đã dọn dẹp các cache và lịch sử cũ để tối ưu bộ nhớ!');
+    setStorageMessage(isEn ? '✅ Cleared cache and old history to optimize memory!' : '✅ Đã dọn dẹp các cache và lịch sử cũ để tối ưu bộ nhớ!');
   };
 
   useEffect(() => {
@@ -228,7 +228,7 @@ export default function SettingsModal({
   };
 
   const handleRemoveKey = () => {
-    if (window.confirm('Bạn có chắc muốn xóa API Key khỏi thiết bị này? Bạn sẽ cần nhập lại để sử dụng AI.')) {
+    if (window.confirm(isEn ? 'Are you sure you want to remove the API Key from this device? You will need to enter it again to use AI.' : 'Bạn có chắc muốn xóa API Key khỏi thiết bị này? Bạn sẽ cần nhập lại để sử dụng AI.')) {
       if (activeProvider === 'gemini') {
         setInputKey('');
         setApiKey('');
@@ -253,17 +253,17 @@ export default function SettingsModal({
     if (activeProvider === 'gemini') {
       if (!inputKey.trim()) {
         setTestStatus('error');
-        setTestMessage('Vui lòng nhập Google AI API Key trước khi kiểm tra.');
+        setTestMessage(isEn ? 'Please enter a Google AI API Key before testing.' : 'Vui lòng nhập Google AI API Key trước khi kiểm tra.');
         return;
       }
-      setTestMessage('Đang kết nối thử nghiệm với Google AI...');
+      setTestMessage(isEn ? 'Testing connection to Google AI...' : 'Đang kết nối thử nghiệm với Google AI...');
       try {
         await testApiKey(inputKey.trim(), targetModel);
         setTestStatus('success');
-        setTestMessage(`Khóa API hợp lệ! Model [${targetModel}] phản hồi tốt.`);
+        setTestMessage(isEn ? `Valid API Key! Model [${targetModel}] responded successfully.` : `Khóa API hợp lệ! Model [${targetModel}] phản hồi tốt.`);
       } catch (err) {
         setTestStatus('error');
-        setTestMessage(err.message || 'Không thể kết nối. Vui lòng kiểm tra lại Key hoặc hạn ngạch Google.');
+        setTestMessage(err.message || (isEn ? 'Could not connect. Please check your Key or Google quota.' : 'Không thể kết nối. Vui lòng kiểm tra lại Key hoặc hạn ngạch Google.'));
       }
     } else {
       const cfg = {
@@ -277,14 +277,14 @@ export default function SettingsModal({
         customModel: customModelName.trim(),
         customBaseUrl: customBaseUrl.trim()
       };
-      setTestMessage(`Đang kết nối thử nghiệm với ${activeProvider.toUpperCase()}...`);
+      setTestMessage(isEn ? `Testing connection to ${activeProvider.toUpperCase()}...` : `Đang kết nối thử nghiệm với ${activeProvider.toUpperCase()}...`);
       const res = await testProviderConnection(activeProvider, cfg);
       if (res.success) {
         setTestStatus('success');
-        setTestMessage(`Kết nối ${activeProvider.toUpperCase()} thành công (${res.latencyMs}ms)! Phản hồi: "${res.response || 'OK'}"`);
+        setTestMessage(isEn ? `${activeProvider.toUpperCase()} connected successfully (${res.latencyMs}ms)! Response: "${res.response || 'OK'}"` : `Kết nối ${activeProvider.toUpperCase()} thành công (${res.latencyMs}ms)! Phản hồi: "${res.response || 'OK'}"`);
       } else {
         setTestStatus('error');
-        setTestMessage(res.error || `Không thể kết nối đến ${activeProvider}.`);
+        setTestMessage(res.error || (isEn ? `Could not connect to ${activeProvider}.` : `Không thể kết nối đến ${activeProvider}.`));
       }
     }
   };
@@ -306,8 +306,8 @@ export default function SettingsModal({
               <Key className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Cài Đặt Nhà Cung Cấp AI & API Key</h3>
-              <p className="text-xs text-slate-500">Mô hình BYOK (Bring Your Own Key) - Đa nền tảng & Bảo mật 100%</p>
+              <h3 className="font-bold text-slate-900 text-base">{isEn ? 'AI Provider & API Key Settings' : 'Cài Đặt Nhà Cung Cấp AI & API Key'}</h3>
+              <p className="text-xs text-slate-500">{isEn ? 'BYOK (Bring Your Own Key) Model - Multi-platform & 100% Private' : 'Mô hình BYOK (Bring Your Own Key) - Đa nền tảng & Bảo mật 100%'}</p>
             </div>
           </div>
           <button 
@@ -323,9 +323,12 @@ export default function SettingsModal({
           <div className="p-3.5 rounded-xl bg-emerald-50/90 border border-emerald-200 text-xs text-emerald-950 flex items-start space-x-2.5 leading-relaxed">
             <Shield className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <strong className="font-bold block text-emerald-900 mb-0.5">Cam Kết Quyền Riêng Tư & An Toàn:</strong>
-              API Key của bạn <strong>chỉ lưu trên trình duyệt của máy bạn</strong> (LocalStorage). 
-              Mỗi khi chấm bài, web kết nối trực tiếp đến Google AI. Chúng tôi <strong>tuyệt đối không thu thập hoặc lưu trữ</strong> mã của bạn.
+              <strong className="font-bold block text-emerald-900 mb-0.5">{isEn ? 'Privacy & Security Guarantee:' : 'Cam Kết Quyền Riêng Tư & An Toàn:'}</strong>
+              {isEn ? (
+                <>Your API Key is <strong>only stored locally in your browser</strong> (LocalStorage). Each time an essay is evaluated, the web connects directly to Google AI. We <strong>never collect or store</strong> your key.</>
+              ) : (
+                <>API Key của bạn <strong>chỉ lưu trên trình duyệt của máy bạn</strong> (LocalStorage). Mỗi khi chấm bài, web kết nối trực tiếp đến Google AI. Chúng tôi <strong>tuyệt đối không thu thập hoặc lưu trữ</strong> mã của bạn.</>
+              )}
             </div>
           </div>
 
@@ -333,7 +336,7 @@ export default function SettingsModal({
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
               <Cpu className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Chọn Nhà Cung Cấp AI (AI Provider):</span>
+              <span>{isEn ? 'Select AI Provider:' : 'Chọn Nhà Cung Cấp AI (AI Provider):'}</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 p-1 bg-slate-100 rounded-xl">
               {AI_PROVIDERS.map((p) => {
@@ -371,7 +374,7 @@ export default function SettingsModal({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                     <Key className="w-3.5 h-3.5 text-red-600" />
-                    <span>Mã Google AI API Key:</span>
+                    <span>{isEn ? 'Google AI API Key:' : 'Mã Google AI API Key:'}</span>
                   </label>
                   <button
                     type="button"
@@ -379,7 +382,7 @@ export default function SettingsModal({
                     className="text-[11px] text-red-600 hover:text-red-700 font-semibold flex items-center space-x-1"
                   >
                     <HelpCircle className="w-3.5 h-3.5" />
-                    <span>{showGuide ? 'Ẩn hướng dẫn' : 'Cách lấy key miễn phí?'}</span>
+                    <span>{showGuide ? (isEn ? 'Hide guide' : 'Ẩn hướng dẫn') : (isEn ? 'How to get free key?' : 'Cách lấy key miễn phí?')}</span>
                   </button>
                 </div>
 
@@ -387,23 +390,23 @@ export default function SettingsModal({
                 {showGuide && (
                   <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-2 animate-in fade-in duration-150">
                     <div className="font-bold text-slate-900 flex items-center justify-between">
-                      <span>3 Bước Lấy Key Miễn Phí (Mất 30 giây):</span>
+                      <span>{isEn ? '3 Steps to Get Free Key (30 seconds):' : '3 Bước Lấy Key Miễn Phí (Mất 30 giây):'}</span>
                       <button
                         type="button"
                         onClick={handleCopyLink}
                         className="text-[11px] text-slate-500 hover:text-slate-800 flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-slate-200"
                       >
                         {copiedLink ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                        <span>{copiedLink ? 'Đã copy link' : 'Copy link'}</span>
+                        <span>{copiedLink ? (isEn ? 'Copied link' : 'Đã copy link') : (isEn ? 'Copy link' : 'Copy link')}</span>
                       </button>
                     </div>
                     <ol className="list-decimal pl-4 space-y-1 text-slate-600">
-                      <li>Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-red-600 font-semibold underline inline-flex items-center gap-0.5">Google AI Studio <ExternalLink className="w-2.5 h-2.5 inline" /></a> bằng tài khoản Gmail của bạn.</li>
-                      <li>Bấm vào nút màu xanh <strong>"Create API key"</strong>.</li>
-                      <li>Copy mã bắt đầu bằng <code>AIzaSy...</code> và dán vào ô bên dưới.</li>
+                      <li>{isEn ? <>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-red-600 font-semibold underline inline-flex items-center gap-0.5">Google AI Studio <ExternalLink className="w-2.5 h-2.5 inline" /></a> using your Google account.</> : <>Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-red-600 font-semibold underline inline-flex items-center gap-0.5">Google AI Studio <ExternalLink className="w-2.5 h-2.5 inline" /></a> bằng tài khoản Gmail của bạn.</>}</li>
+                      <li>{isEn ? <>Click the blue button <strong>"Create API key"</strong>.</> : <>Bấm vào nút màu xanh <strong>"Create API key"</strong>.</>}</li>
+                      <li>{isEn ? <>Copy the key starting with <code>AIzaSy...</code> and paste into the box below.</> : <>Copy mã bắt đầu bằng <code>AIzaSy...</code> và dán vào ô bên dưới.</>}</li>
                     </ol>
                     <p className="text-[11px] text-slate-500 italic pt-1 border-t border-slate-200">
-                      * Miễn phí hoàn toàn hạn ngạch từ Google cho nhu cầu học và luyện viết cá nhân.
+                      {isEn ? '* Completely free quota from Google for personal study and writing practice.' : '* Miễn phí hoàn toàn hạn ngạch từ Google cho nhu cầu học và luyện viết cá nhân.'}
                     </p>
                   </div>
                 )}
@@ -416,7 +419,7 @@ export default function SettingsModal({
                       setInputKey(e.target.value);
                       setTestStatus(null);
                     }}
-                    placeholder="Dán mã AIzaSy... của bạn vào đây"
+                    placeholder={isEn ? 'Paste your AIzaSy... key here' : 'Dán mã AIzaSy... của bạn vào đây'}
                     className="w-full pl-3.5 pr-20 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-mono"
                   />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-1">
@@ -424,7 +427,7 @@ export default function SettingsModal({
                       type="button"
                       onClick={() => setShowKey(!showKey)}
                       className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
-                      title={showKey ? 'Ẩn mã key' : 'Hiện mã key'}
+                      title={showKey ? (isEn ? 'Hide key' : 'Ẩn mã key') : (isEn ? 'Show key' : 'Hiện mã key')}
                     >
                       {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -433,7 +436,7 @@ export default function SettingsModal({
                         type="button"
                         onClick={handleRemoveKey}
                         className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
-                        title="Xóa key khỏi máy"
+                        title={isEn ? 'Remove key from device' : 'Xóa key khỏi máy'}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -447,14 +450,14 @@ export default function SettingsModal({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                     <Cpu className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Mô hình Google AI:</span>
+                    <span>{isEn ? 'Google AI Model:' : 'Mô hình Google AI:'}</span>
                   </label>
                   <button
                     type="button"
                     onClick={() => setIsCustom(!isCustom)}
                     className="text-[11px] text-indigo-600 hover:underline font-semibold"
                   >
-                    {isCustom ? '← Chọn từ danh sách có sẵn' : '✏️ Tự nhập model'}
+                    {isCustom ? (isEn ? '← Choose from curated list' : '← Chọn từ danh sách có sẵn') : (isEn ? '✏️ Custom model name' : '✏️ Tự nhập model')}
                   </button>
                 </div>
 
@@ -473,11 +476,11 @@ export default function SettingsModal({
                       ))}
                     </select>
                     {isLoadingModels ? (
-                      <p className="text-[11px] text-slate-400 mt-1">Đang tải danh sách model Google cấp phép...</p>
+                      <p className="text-[11px] text-slate-400 mt-1">{isEn ? 'Loading authorized Google model list...' : 'Đang tải danh sách model Google cấp phép...'}</p>
                     ) : (
                       <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        <span>Đã tự động lọc danh sách model hoạt động ổn định nhất.</span>
+                        <span>{isEn ? 'Automatically filtered the most reliable model list.' : 'Đã tự động lọc danh sách model hoạt động ổn định nhất.'}</span>
                       </p>
                     )}
                   </div>
@@ -487,7 +490,7 @@ export default function SettingsModal({
                       type="text"
                       value={customModel}
                       onChange={(e) => setCustomModel(e.target.value)}
-                      placeholder="Nhập mã model (vd: gemini-2.5-flash, gemini-2.5-pro, ...)"
+                      placeholder={isEn ? 'Enter model code (e.g. gemini-2.5-flash, gemini-2.5-pro, ...)' : 'Nhập mã model (vd: gemini-2.5-flash, gemini-2.5-pro, ...)'}
                       className="w-full px-3 py-2 rounded-xl border border-indigo-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-indigo-50/30"
                     />
                   </div>
@@ -503,7 +506,7 @@ export default function SettingsModal({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                     <Key className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Mã DeepSeek API Key:</span>
+                    <span>{isEn ? 'DeepSeek API Key:' : 'Mã DeepSeek API Key:'}</span>
                   </label>
                   <a
                     href="https://platform.deepseek.com/api_keys"
@@ -511,7 +514,7 @@ export default function SettingsModal({
                     rel="noreferrer"
                     className="text-[11px] text-blue-600 hover:text-blue-700 font-semibold flex items-center space-x-0.5"
                   >
-                    <span>Lấy key tại DeepSeek</span>
+                    <span>{isEn ? 'Get key at DeepSeek' : 'Lấy key tại DeepSeek'}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </div>
@@ -549,15 +552,15 @@ export default function SettingsModal({
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                   <Cpu className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Mô hình DeepSeek:</span>
+                  <span>{isEn ? 'DeepSeek Model:' : 'Mô hình DeepSeek:'}</span>
                 </label>
                 <select
                   value={deepseekModel}
                   onChange={(e) => setDeepseekModel(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 >
-                  <option value="deepseek-chat">deepseek-chat (V3 - Đề xuất cho Writing & Đọc hiểu)</option>
-                  <option value="deepseek-reasoner">deepseek-reasoner (R1 - Suy luận logic chuyên sâu)</option>
+                  <option value="deepseek-chat">{isEn ? 'deepseek-chat (V3 - Recommended for Writing & Reading)' : 'deepseek-chat (V3 - Đề xuất cho Writing & Đọc hiểu)'}</option>
+                  <option value="deepseek-reasoner">{isEn ? 'deepseek-reasoner (R1 - Deep logical reasoning)' : 'deepseek-reasoner (R1 - Suy luận logic chuyên sâu)'}</option>
                 </select>
               </div>
             </div>
@@ -570,7 +573,7 @@ export default function SettingsModal({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                     <Key className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Mã OpenAI API Key:</span>
+                    <span>{isEn ? 'OpenAI API Key:' : 'Mã OpenAI API Key:'}</span>
                   </label>
                   <a
                     href="https://platform.openai.com/api-keys"
@@ -578,7 +581,7 @@ export default function SettingsModal({
                     rel="noreferrer"
                     className="text-[11px] text-emerald-600 hover:text-emerald-700 font-semibold flex items-center space-x-0.5"
                   >
-                    <span>Lấy key tại OpenAI</span>
+                    <span>{isEn ? 'Get key at OpenAI' : 'Lấy key tại OpenAI'}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </div>
@@ -616,16 +619,16 @@ export default function SettingsModal({
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                   <Cpu className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Mô hình OpenAI:</span>
+                  <span>{isEn ? 'OpenAI Model:' : 'Mô hình OpenAI:'}</span>
                 </label>
                 <select
                   value={openaiModel}
                   onChange={(e) => setOpenaiModel(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
-                  <option value="gpt-4o-mini">gpt-4o-mini (Cực nhanh & chi phí tối ưu - Khuyên dùng)</option>
-                  <option value="gpt-4o">gpt-4o (Thông minh và toàn diện nhất)</option>
-                  <option value="o3-mini">o3-mini (Lý luận cao cấp mới)</option>
+                  <option value="gpt-4o-mini">{isEn ? 'gpt-4o-mini (Ultra fast & cost-efficient - Recommended)' : 'gpt-4o-mini (Cực nhanh & chi phí tối ưu - Khuyên dùng)'}</option>
+                  <option value="gpt-4o">{isEn ? 'gpt-4o (Most intelligent & comprehensive)' : 'gpt-4o (Thông minh và toàn diện nhất)'}</option>
+                  <option value="o3-mini">{isEn ? 'o3-mini (New advanced reasoning)' : 'o3-mini (Lý luận cao cấp mới)'}</option>
                 </select>
               </div>
             </div>
@@ -638,7 +641,7 @@ export default function SettingsModal({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                     <Key className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Mã Anthropic Claude API Key:</span>
+                    <span>{isEn ? 'Anthropic Claude API Key:' : 'Mã Anthropic Claude API Key:'}</span>
                   </label>
                   <a
                     href="https://console.anthropic.com/settings/keys"
@@ -646,7 +649,7 @@ export default function SettingsModal({
                     rel="noreferrer"
                     className="text-[11px] text-amber-600 hover:text-amber-700 font-semibold flex items-center space-x-0.5"
                   >
-                    <span>Lấy key tại Anthropic</span>
+                    <span>{isEn ? 'Get key at Anthropic' : 'Lấy key tại Anthropic'}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </div>
@@ -684,15 +687,15 @@ export default function SettingsModal({
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                   <Cpu className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Mô hình Claude:</span>
+                  <span>{isEn ? 'Claude Model:' : 'Mô hình Claude:'}</span>
                 </label>
                 <select
                   value={claudeModel}
                   onChange={(e) => setClaudeModel(e.target.value)}
                   className="w-full p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
                 >
-                  <option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet (Văn phong giám khảo tự nhiên nhất)</option>
-                  <option value="claude-3-5-haiku-20241022">claude-3-5-haiku (Tốc độ cực nhanh)</option>
+                  <option value="claude-3-5-sonnet-20241022">{isEn ? 'claude-3-5-sonnet (Most natural examiner phrasing)' : 'claude-3-5-sonnet (Văn phong giám khảo tự nhiên nhất)'}</option>
+                  <option value="claude-3-5-haiku-20241022">{isEn ? 'claude-3-5-haiku (Ultra fast speed)' : 'claude-3-5-haiku (Tốc độ cực nhanh)'}</option>
                 </select>
               </div>
             </div>
@@ -713,13 +716,13 @@ export default function SettingsModal({
                   placeholder="http://localhost:11434/v1 hoặc https://openrouter.ai/api/v1"
                   className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
                 />
-                <p className="text-[10px] text-slate-400">Chuẩn tương thích OpenAI API (Ollama, LM Studio, vLLM, OpenRouter, v.v.)</p>
+                <p className="text-[10px] text-slate-400">{isEn ? 'OpenAI API compatible standard (Ollama, LM Studio, vLLM, OpenRouter, etc.)' : 'Chuẩn tương thích OpenAI API (Ollama, LM Studio, vLLM, OpenRouter, v.v.)'}</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                     <Cpu className="w-3.5 h-3.5 text-purple-600" />
-                    <span>Tên Model:</span>
+                    <span>{isEn ? 'Model Name:' : 'Tên Model:'}</span>
                   </label>
                   <input
                     type="text"
@@ -732,13 +735,13 @@ export default function SettingsModal({
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
                     <Key className="w-3.5 h-3.5 text-purple-600" />
-                    <span>API Key (tùy chọn):</span>
+                    <span>{isEn ? 'API Key (optional):' : 'API Key (tùy chọn):'}</span>
                   </label>
                   <input
                     type="password"
                     value={customKey}
                     onChange={(e) => setCustomKey(e.target.value)}
-                    placeholder="Để trống nếu chạy local"
+                    placeholder={isEn ? 'Leave blank for local server' : 'Để trống nếu chạy local'}
                     className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                   />
                 </div>
@@ -769,11 +772,11 @@ export default function SettingsModal({
                 }`}
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${testStatus === 'testing' ? 'animate-spin text-red-600' : ''}`} />
-                <span>{testStatus === 'testing' ? 'Đang kiểm tra...' : `Kiểm tra kết nối (${activeProvider.toUpperCase()})`}</span>
+                <span>{testStatus === 'testing' ? (isEn ? 'Testing...' : 'Đang kiểm tra...') : `${isEn ? 'Test Connection' : 'Kiểm tra kết nối'} (${activeProvider.toUpperCase()})`}</span>
               </button>
 
               <span className="text-[11px] text-slate-400">
-                {activeProvider === 'gemini' && inputKey.trim() && apiKey === inputKey.trim() ? 'Đã lưu trên máy' : ''}
+                {activeProvider === 'gemini' && inputKey.trim() && apiKey === inputKey.trim() ? (isEn ? 'Saved on device' : 'Đã lưu trên máy') : ''}
               </span>
             </div>
 
@@ -793,11 +796,11 @@ export default function SettingsModal({
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div className="pr-3">
               <div className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                <span>Tự động chuyển tiếp phòng vệ (Auto-Fallback)</span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Khuyên dùng</span>
+                <span>{isEn ? 'Resilience Auto-Fallback' : 'Tự động chuyển tiếp phòng vệ (Auto-Fallback)'}</span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">{isEn ? 'Recommended' : 'Khuyên dùng'}</span>
               </div>
               <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                Tự động chuyển sang Google AI hoặc thuật toán Offline nếu nhà cung cấp gặp sự cố hoặc vượt hạn ngạch.
+                {isEn ? 'Automatically fallback to Google AI or Offline algorithms if primary provider encounters errors or quota limits.' : 'Tự động chuyển sang Google AI hoặc thuật toán Offline nếu nhà cung cấp gặp sự cố hoặc vượt hạn ngạch.'}
               </p>
             </div>
 
@@ -816,7 +819,7 @@ export default function SettingsModal({
           <div className="pt-2 border-t border-slate-100 space-y-2.5">
             <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
               <Globe className="w-3.5 h-3.5 text-blue-600" />
-              <span>{isEn ? 'Display Language (Ngôn Ngữ Hiển Thị)' : 'Ngôn Ngữ Hiển Thị (Display Language)'}</span>
+              <span>{isEn ? 'Display Language' : 'Ngôn Ngữ Hiển Thị (Display Language)'}</span>
             </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -839,7 +842,7 @@ export default function SettingsModal({
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
-                  Giao diện tiếng Việt, giải thích mẹo thi và nhận xét AI bằng tiếng Việt quen thuộc.
+                  {isEn ? 'Vietnamese interface, exam tips and AI explanations in familiar Vietnamese.' : 'Giao diện tiếng Việt, giải thích mẹo thi và nhận xét AI bằng tiếng Việt quen thuộc.'}
                 </p>
               </div>
 
@@ -862,7 +865,7 @@ export default function SettingsModal({
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
-                  Full English interface, academic Cambridge terminology, and English examiner grading.
+                  {isEn ? 'Full English interface, academic Cambridge terminology, and English examiner grading.' : 'Toàn bộ giao diện bằng tiếng Anh, thuật ngữ khảo thí Cambridge và nhận xét tiếng Anh.'}
                 </p>
               </div>
             </div>
@@ -872,7 +875,7 @@ export default function SettingsModal({
           <div className="pt-2 border-t border-slate-100 space-y-2.5">
             <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
               {currentTheme === 'dark' ? <Moon className="w-3.5 h-3.5 text-indigo-400" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
-              <span>Chế Độ Giao Diện (Theme & Appearance)</span>
+              <span>{isEn ? 'Theme & Appearance' : 'Chế Độ Giao Diện (Theme & Appearance)'}</span>
             </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -890,14 +893,14 @@ export default function SettingsModal({
                     <div className="w-6 h-6 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
                       <Sun className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-black text-slate-900">Giao Diện Sáng (Light)</span>
+                    <span className="text-xs font-black text-slate-900">{isEn ? 'Light Mode' : 'Giao Diện Sáng (Light)'}</span>
                   </div>
                   {currentTheme === 'light' && (
                     <span className="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
-                  ☀️ Tươi sáng, độ tương phản cao chuẩn tài liệu khảo thí Cambridge Academic.
+                  {isEn ? '☀️ Crisp, high-contrast style aligned with official Cambridge Academic papers.' : '☀️ Tươi sáng, độ tương phản cao chuẩn tài liệu khảo thí Cambridge Academic.'}
                 </p>
               </div>
 
@@ -915,14 +918,14 @@ export default function SettingsModal({
                     <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
                       <Moon className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-black text-slate-900">Giao Diện Tối (Dark)</span>
+                    <span className="text-xs font-black text-slate-900">{isEn ? 'Dark Mode' : 'Giao Diện Tối (Dark)'}</span>
                   </div>
                   {currentTheme === 'dark' && (
                     <span className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
-                  🌙 Dịu mắt khi luyện đề ban đêm, phong cách Dark-Tech sang trọng và hiện đại.
+                  {isEn ? '🌙 Easy on eyes for late-night study, sleek and modern Dark-Tech aesthetic.' : '🌙 Dịu mắt khi luyện đề ban đêm, phong cách Dark-Tech sang trọng và hiện đại.'}
                 </p>
               </div>
             </div>
@@ -932,17 +935,17 @@ export default function SettingsModal({
           <div className="pt-2 border-t border-slate-100 space-y-2.5">
             <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
               <Globe className="w-3.5 h-3.5 text-blue-600" />
-              <span>Quyền Riêng Tư & Chia Sẻ Cộng Đồng</span>
+              <span>{isEn ? 'Privacy & Community Sharing' : 'Quyền Riêng Tư & Chia Sẻ Cộng Đồng'}</span>
             </label>
 
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
               <div className="pr-3">
                 <div className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                  <span>Tự động chia sẻ đề thi AI lên cộng đồng</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">Mặc định</span>
+                  <span>{isEn ? 'Auto-share AI-generated exams to community' : 'Tự động chia sẻ đề thi AI lên cộng đồng'}</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">{isEn ? 'Default' : 'Mặc định'}</span>
                 </div>
                 <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                  Đề thi & bài đọc do AI sinh tự động thành tài nguyên chung của web. Tắt nếu bạn muốn mặc định lưu riêng tư cho tài khoản.
+                  {isEn ? 'Exams generated by AI automatically become shared resources. Turn off if you wish to default to private storage.' : 'Đề thi & bài đọc do AI sinh tự động thành tài nguyên chung của web. Tắt nếu bạn muốn mặc định lưu riêng tư cho tài khoản.'}
                 </p>
               </div>
 
@@ -960,7 +963,7 @@ export default function SettingsModal({
             <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-200/80 text-[11px] text-emerald-950 flex items-start space-x-2">
               <Shield className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
               <span>
-                <strong>Chính sách bảo mật:</strong> Hình ảnh & file âm thanh cá nhân bạn tải lên luôn được giữ riêng tư 100% và tự hủy sau khi làm bài (Zero-Storage), không bao giờ bị chia sẻ ra ngoài.
+                <strong>{isEn ? 'Privacy Policy:' : 'Chính sách bảo mật:'}</strong> {isEn ? 'Personal images and audio files uploaded from your device are strictly 100% private and automatically deleted after exam completion (Zero-Storage), never shared.' : 'Hình ảnh & file âm thanh cá nhân bạn tải lên luôn được giữ riêng tư 100% và tự hủy sau khi làm bài (Zero-Storage), không bao giờ bị chia sẻ ra ngoài.'}
               </span>
             </div>
           </div>
@@ -969,7 +972,7 @@ export default function SettingsModal({
           <div className="pt-2 border-t border-slate-100 space-y-2.5">
             <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
               <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-              <span>Động Cơ Chấm Điểm IELTS Speaking Mặc Định</span>
+              <span>{isEn ? 'Default IELTS Speaking Evaluation Engine' : 'Động Cơ Chấm Điểm IELTS Speaking Mặc Định'}</span>
             </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -987,14 +990,18 @@ export default function SettingsModal({
                     <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
                       <Zap className="w-3.5 h-3.5 fill-current" />
                     </div>
-                    <span className="text-xs font-black text-slate-900">Thuật Toán Máy Tính</span>
+                    <span className="text-xs font-black text-slate-900">{isEn ? 'Algorithmic Engine' : 'Thuật Toán Máy Tính'}</span>
                   </div>
                   {speakingPreferredEngine === 'algorithmic' && (
                     <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
-                  ⚡ <strong>100% Offline, tức thì (0.02ms)</strong>, chi phí 0đ. Đo định lượng WPM, Type-Token Ratio, câu phức và áp dụng luật trần Cambridge.
+                  {isEn ? (
+                    <>⚡ <strong>100% Offline, instant (0.02ms)</strong>, free. Quantifies WPM, Type-Token Ratio, complex structures, and applies Cambridge band caps.</>
+                  ) : (
+                    <>⚡ <strong>100% Offline, tức thì (0.02ms)</strong>, chi phí 0đ. Đo định lượng WPM, Type-Token Ratio, câu phức và áp dụng luật trần Cambridge.</>
+                  )}
                 </p>
               </div>
 
@@ -1012,14 +1019,18 @@ export default function SettingsModal({
                     <div className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center shrink-0">
                       <Cpu className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-xs font-black text-slate-900">Giám Khảo AI Chuyên Gia</span>
+                    <span className="text-xs font-black text-slate-900">{isEn ? 'Expert AI Examiner' : 'Giám Khảo AI Chuyên Gia'}</span>
                   </div>
                   {speakingPreferredEngine === 'ai' && (
                     <span className="w-4 h-4 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] font-bold">✓</span>
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
-                  🤖 <strong>Phân tích định tính chuyên sâu</strong>, phát hiện sắc thái ngữ cảnh và viết lại bản mẫu Band 8.5+ từng câu (Yêu cầu API Key).
+                  {isEn ? (
+                    <>🤖 <strong>Deep qualitative analysis</strong>, detects contextual nuances, and writes Band 8.5+ sentence rewrites (Requires API Key).</>
+                  ) : (
+                    <>🤖 <strong>Phân tích định tính chuyên sâu</strong>, phát hiện sắc thái ngữ cảnh và viết lại bản mẫu Band 8.5+ từng câu (Yêu cầu API Key).</>
+                  )}
                 </p>
               </div>
             </div>
@@ -1030,7 +1041,7 @@ export default function SettingsModal({
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                 <HardDrive className="w-3.5 h-3.5 text-blue-600" />
-                <span>Bộ Nhớ Trình Duyệt & Sao Lưu</span>
+                <span>{isEn ? 'Browser Storage & Backup' : 'Bộ Nhớ Trình Duyệt & Sao Lưu'}</span>
               </label>
               <span className="text-[10px] font-mono text-slate-400">
                 {storageMetrics.usedBytes ? `${(storageMetrics.usedBytes / 1024).toFixed(0)} KB` : '0 KB'} / 5 MB ({storageMetrics.usagePercent}%)
@@ -1058,15 +1069,15 @@ export default function SettingsModal({
                 type="button"
                 onClick={handleExportBackup}
                 className="flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors"
-                title="Tải toàn bộ bài viết, lịch sử thi và ghi chú về máy"
+                title={isEn ? 'Download all essays, test history, and notes to device' : 'Tải toàn bộ bài viết, lịch sử thi và ghi chú về máy'}
               >
                 <Download className="w-3.5 h-3.5 text-blue-600" />
-                <span>Xuất Bản Sao Lưu</span>
+                <span>{isEn ? 'Export Backup' : 'Xuất Bản Sao Lưu'}</span>
               </button>
 
               <label className="flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer">
                 <Upload className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Nhập Bản Sao Lưu</span>
+                <span>{isEn ? 'Import Backup' : 'Nhập Bản Sao Lưu'}</span>
                 <input
                   type="file"
                   accept=".json"
@@ -1079,10 +1090,10 @@ export default function SettingsModal({
                 type="button"
                 onClick={handlePruneStorage}
                 className="flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-amber-100/60 text-slate-700 hover:text-amber-800 font-bold text-xs transition-colors"
-                title="Giải phóng bộ nhớ bằng cách dọn dẹp các cache tạm thời"
+                title={isEn ? 'Free up memory by clearing temporary caches' : 'Giải phóng bộ nhớ bằng cách dọn dẹp các cache tạm thời'}
               >
                 <RefreshCw className="w-3.5 h-3.5 text-amber-600" />
-                <span>Dọn Dẹp Cache</span>
+                <span>{isEn ? 'Prune Cache' : 'Dọn Dẹp Cache'}</span>
               </button>
             </div>
           </div>
@@ -1093,14 +1104,14 @@ export default function SettingsModal({
           <button
             type="button"
             onClick={() => {
-              if (confirm('Bạn có chắc muốn đặt lại toàn bộ dữ liệu ứng dụng về mặc định?')) {
+              if (confirm(isEn ? 'Are you sure you want to reset all application data to default?' : 'Bạn có chắc muốn đặt lại toàn bộ dữ liệu ứng dụng về mặc định?')) {
                 onClearAllLocalData();
                 onClose();
               }
             }}
             className="text-xs text-slate-400 hover:text-red-600 transition-colors"
           >
-            Khôi phục mặc định
+            {isEn ? 'Reset to Default' : 'Khôi phục mặc định'}
           </button>
 
           <div className="flex space-x-2">
@@ -1109,14 +1120,14 @@ export default function SettingsModal({
               onClick={onClose}
               className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
             >
-              Hủy
+              {isEn ? 'Cancel' : 'Hủy'}
             </button>
             <button
               type="button"
               onClick={handleSave}
               className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md transition-all active:scale-95"
             >
-              Lưu Cài Đặt
+              {isEn ? 'Save Settings' : 'Lưu Cài Đặt'}
             </button>
           </div>
         </div>

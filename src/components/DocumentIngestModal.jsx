@@ -3,8 +3,10 @@ import { FileUp, Sparkles, CheckCircle2, AlertCircle, X, Loader2, ArrowRight } f
 import { parseDocumentToTask } from '../services/geminiService';
 import TaskImageUploader from './TaskImageUploader';
 import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE } from '../utils/userPermissions';
+import { useTranslation } from '../i18n';
 
 export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, apiKey, model, user }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [rawText, setRawText] = useState('');
@@ -27,11 +29,11 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
 
   const handleProcessDocument = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      setErrorMsg(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     if (!rawText.trim() || rawText.trim().length < 30) {
-      setErrorMsg('Vui lòng dán nội dung tài liệu (tối thiểu 30 ký tự).');
+      setErrorMsg(isEn ? 'Please paste document text (minimum 30 characters).' : 'Vui lòng dán nội dung tài liệu (tối thiểu 30 ký tự).');
       return;
     }
 
@@ -53,12 +55,12 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
       }
 
       onTaskImported(parsedTask);
-      alert(`Đã trích xuất thành công: "${parsedTask.title}"! Đề thi đã được thêm vào Thư viện cá nhân của bạn.`);
+      alert(isEn ? `Successfully extracted: "${parsedTask.title}"! The task has been added to your Library.` : `Đã trích xuất thành công: "${parsedTask.title}"! Đề thi đã được thêm vào Thư viện cá nhân của bạn.`);
       setRawText('');
       setImageUrl('');
       onClose();
     } catch (err) {
-      setErrorMsg(err.message || 'Lỗi khi trích xuất tài liệu bằng AI.');
+      setErrorMsg(err.message || (isEn ? 'Error extracting document with AI.' : 'Lỗi khi trích xuất tài liệu bằng AI.'));
     } finally {
       setIsProcessing(false);
     }
@@ -75,11 +77,19 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
               <FileUp className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold">Nạp Tài Liệu Nhanh Bằng AI (Smart Ingestion)</h2>
-              <p className="text-xs text-slate-400">Dán bất kỳ đoạn văn bản thô từ sách Cambridge, file Word hoặc bài giảng của thầy cô</p>
+              <h2 className="text-lg sm:text-xl font-bold">
+                {isEn ? 'Fast AI Document Ingestion (Smart Ingestion)' : 'Nạp Tài Liệu Nhanh Bằng AI (Smart Ingestion)'}
+              </h2>
+              <p className="text-xs text-slate-400">
+                {isEn ? 'Paste raw excerpts from Cambridge books, Word docs, or lecture handouts' : 'Dán bất kỳ đoạn văn bản thô từ sách Cambridge, file Word hoặc bài giảng của thầy cô'}
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">
+          <button 
+            onClick={onClose} 
+            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -88,8 +98,14 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
         <div className="p-5 sm:p-6 space-y-4 flex-1 overflow-y-auto">
           
           <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-xs text-purple-950">
-            <strong className="block font-bold mb-0.5">AI sẽ tự động làm gì?</strong>
-            <span>AI sẽ tự đọc văn bản của bạn, nhận diện đâu là Đề bài, Task mấy, Dạng bài gì, trích xuất Bài mẫu Band 8.5+ và tạo danh sách Collocations hay mà không cần bạn phải copy/paste thủ công từng ô!</span>
+            <strong className="block font-bold mb-0.5">
+              {isEn ? 'What does AI automatically do?' : 'AI sẽ tự động làm gì?'}
+            </strong>
+            <span>
+              {isEn 
+                ? 'AI parses your raw text, detects Task number & essay format, extracts Band 8.5+ sample answers, and compiles high-yield collocations without manual copy-pasting!' 
+                : 'AI sẽ tự đọc văn bản của bạn, nhận diện đâu là Đề bài, Task mấy, Dạng bài gì, trích xuất Bài mẫu Band 8.5+ và tạo danh sách Collocations hay mà không cần bạn phải copy/paste thủ công từng ô!'}
+            </span>
           </div>
 
           {errorMsg && (
@@ -101,9 +117,11 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-700">Dán nội dung hoặc chọn tệp (.txt, .md):</label>
+              <label className="text-xs font-bold text-slate-700">
+                {isEn ? 'Paste content or choose file (.txt, .md):' : 'Dán nội dung hoặc chọn tệp (.txt, .md):'}
+              </label>
               <label className="cursor-pointer text-xs font-semibold text-purple-600 hover:text-purple-700 flex items-center space-x-1">
-                <span>📁 Tải tệp từ máy</span>
+                <span>{isEn ? '📁 Upload file from device' : '📁 Tải tệp từ máy'}</span>
                 <input
                   type="file"
                   accept=".txt,.md,.doc,.json"
@@ -116,7 +134,9 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
               rows={8}
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder="Dán toàn bộ bài đọc, đề bài hoặc bài mẫu bạn có vào đây (Ví dụ: Cambridge 18 Test 3 Writing Task 2... Some people argue that... Sample Answer: In the contemporary era...)"
+              placeholder={isEn 
+                ? 'Paste full reading article, writing task prompt, or sample answer here (e.g., Cambridge 18 Test 3 Writing Task 2... Some people argue that... Sample Answer: In the contemporary era...)'
+                : 'Dán toàn bộ bài đọc, đề bài hoặc bài mẫu bạn có vào đây (Ví dụ: Cambridge 18 Test 3 Writing Task 2... Some people argue that... Sample Answer: In the contemporary era...)'}
               className="w-full p-4 rounded-xl border border-slate-200 text-xs text-slate-800 font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 resize-none bg-slate-50/50"
             />
           </div>
@@ -126,40 +146,40 @@ export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, a
             <TaskImageUploader
               imageUrl={imageUrl}
               onImageChange={setImageUrl}
-              label="Ảnh Đề Bài Đi Kèm (Dành cho Task 1 - Biểu đồ / Bản đồ / Sơ đồ quy trình):"
+              label={isEn ? 'Attached Task Visual (For Task 1 - Chart / Map / Process Diagram):' : 'Ảnh Đề Bài Đi Kèm (Dành cho Task 1 - Biểu đồ / Bản đồ / Sơ đồ quy trình):'}
               user={user}
             />
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-100">
             <span className="text-xs text-slate-400">
-              Độ dài ký tự: {rawText.length}
+              {isEn ? 'Character count:' : 'Độ dài ký tự:'} {rawText.length}
             </span>
 
             <div className="flex space-x-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
               >
-                Hủy
+                {isEn ? 'Cancel' : 'Hủy'}
               </button>
 
               <button
                 type="button"
                 onClick={handleProcessDocument}
                 disabled={isProcessing || !rawText.trim()}
-                className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isProcessing ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>AI Đang Phân Tích & Phân Loại...</span>
+                    <span>{isEn ? 'AI Analyzing & Classifying...' : 'AI Đang Phân Tích & Phân Loại...'}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    <span>AI Trích Xuất & Lưu Đề</span>
+                    <span>{isEn ? 'AI Extract & Save Task' : 'AI Trích Xuất & Lưu Đề'}</span>
                   </>
                 )}
               </button>

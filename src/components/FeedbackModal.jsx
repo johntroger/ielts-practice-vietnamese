@@ -273,7 +273,7 @@ export default function FeedbackModal({
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
                 <h2 className="text-sm sm:text-lg lg:text-xl font-bold truncate">
-                  Báo Cáo Đánh Giá Bài Thi
+                  {isEn ? 'Assessment & Diagnostic Report' : 'Báo Cáo Đánh Giá Bài Thi'}
                   <span className="hidden sm:inline font-normal text-slate-400 text-xs ml-1.5">(Cambridge Rubric)</span>
                 </h2>
                 <span className="px-2 py-0.5 rounded-md bg-red-600 text-white font-extrabold text-xs sm:text-sm tracking-wide shrink-0">
@@ -282,17 +282,17 @@ export default function FeedbackModal({
               </div>
               <div className="flex flex-wrap items-center gap-2 mt-1">
                 <p className="text-[11px] sm:text-xs text-slate-400 truncate">
-                  Task {task.taskNumber}: {task.title} • {stats?.wordCount || 0} từ • Thời gian: {stats?.timeSpent || 'N/A'}
+                  Task {task.taskNumber}: {task.title} • {stats?.wordCount || 0} {isEn ? 'words' : 'từ'} • {isEn ? 'Time' : 'Thời gian'}: {stats?.timeSpent || 'N/A'}
                 </p>
                 {evaluation.evaluationMethod === 'algorithmic' ? (
                   <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] sm:text-[11px] font-semibold">
                     <Zap className="w-3 h-3 text-amber-400" />
-                    <span>Chấm Bằng Máy (Cambridge Algorithm)</span>
+                    <span>{isEn ? 'Algorithmic Engine (Cambridge Standard)' : 'Chấm Bằng Máy (Cambridge Algorithm)'}</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] sm:text-[11px] font-semibold">
                     <Sparkles className="w-3 h-3 text-blue-400" />
-                    <span>Chấm Bởi Giám Khảo AI</span>
+                    <span>{isEn ? 'Cambridge AI Examiner' : 'Chấm Bởi Giám Khảo AI'}</span>
                   </span>
                 )}
               </div>
@@ -305,11 +305,11 @@ export default function FeedbackModal({
               <button
                 onClick={onReEvaluateWithAI}
                 className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 text-white text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
-                title="Chấm lại bài viết này bằng Trí tuệ nhân tạo AI"
+                title={isEn ? "Re-evaluate with Cambridge AI" : "Chấm lại bài viết này bằng Trí tuệ nhân tạo AI"}
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span className="sm:hidden">Chấm Lại AI</span>
-                <span className="hidden sm:inline">Chấm Lại Bằng AI</span>
+                <span className="sm:hidden">{isEn ? 'AI Regrade' : 'Chấm Lại AI'}</span>
+                <span className="hidden sm:inline">{isEn ? 'Re-Evaluate with AI' : 'Chấm Lại Bằng AI'}</span>
               </button>
             )}
 
@@ -487,14 +487,14 @@ export default function FeedbackModal({
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-extrabold text-sm sm:text-base lg:text-lg tracking-wide text-white">
-                          Kế Hoạch Hành Động 3 Giây (3-Second Action Plan)
+                          {isEn ? '3-Second Action Plan' : 'Kế Hoạch Hành Động 3 Giây (3-Second Action Plan)'}
                         </h3>
                         <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 text-[10px] font-bold">
-                          Chiến Lược Tăng Band
+                          {isEn ? 'Band Upgrade Strategy' : 'Chiến Lược Tăng Band'}
                         </span>
                       </div>
                       <p className="text-xs text-slate-300 font-normal">
-                        3 điểm mấu chốt cần sửa ngay để nâng từ +0.5 đến 1.0 Band điểm
+                        {isEn ? '3 pivotal bottlenecks to fix immediately for a +0.5 to 1.0 Band leap' : '3 điểm mấu chốt cần sửa ngay để nâng từ +0.5 đến 1.0 Band điểm'}
                       </p>
                     </div>
                   </div>
@@ -502,12 +502,12 @@ export default function FeedbackModal({
                   {/* Band Leap Progress Pill */}
                   <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 shrink-0 self-start sm:self-auto">
                     <div className="text-left">
-                      <span className="text-[10px] text-slate-400 block font-medium">Hiện tại</span>
+                      <span className="text-[10px] text-slate-400 block font-medium">{isEn ? 'Current' : 'Hiện tại'}</span>
                       <strong className="text-xs sm:text-sm text-white font-extrabold">Band {actionTakeaway.currentOverall.toFixed(1)}</strong>
                     </div>
                     <ArrowRight className="w-4 h-4 text-emerald-400 shrink-0 animate-pulse" />
                     <div className="text-left">
-                      <span className="text-[10px] text-emerald-400 block font-medium">Tiềm năng</span>
+                      <span className="text-[10px] text-emerald-400 block font-medium">{isEn ? 'Target Potential' : 'Tiềm năng'}</span>
                       <strong className="text-xs sm:text-sm text-emerald-300 font-extrabold">
                         Band {actionTakeaway.potentialBand.toFixed(1)} - {(actionTakeaway.potentialBand + 0.5).toFixed(1)}
                       </strong>
@@ -522,7 +522,7 @@ export default function FeedbackModal({
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="px-2 py-0.5 rounded bg-red-600 text-white font-black text-[9px] uppercase tracking-wider">
-                          ƯU TIÊN 1 • CHẶN TRẦN ĐIỂM
+                          {isEn ? 'PRIORITY 1 • SCORE CEILING BOTTLENECK' : 'ƯU TIÊN 1 • CHẶN TRẦN ĐIỂM'}
                         </span>
                         <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                       </div>
@@ -535,7 +535,7 @@ export default function FeedbackModal({
                       onClick={() => setActiveTab('corrections')}
                       className="inline-flex items-center space-x-1 text-[11px] font-bold text-red-300 hover:text-white transition-colors cursor-pointer pt-1"
                     >
-                      <span>Xem lỗi cần sửa</span>
+                      <span>{isEn ? 'Inspect error breakdown' : 'Xem lỗi cần sửa'}</span>
                       <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
@@ -545,7 +545,7 @@ export default function FeedbackModal({
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="px-2 py-0.5 rounded bg-amber-600 text-white font-black text-[9px] uppercase tracking-wider">
-                          ƯU TIÊN 2 • MẠCH LẠC & TỪ VỰNG
+                          {isEn ? 'PRIORITY 2 • COHESION & VOCABULARY' : 'ƯU TIÊN 2 • MẠCH LẠC & TỪ VỰNG'}
                         </span>
                         <TrendingUp className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                       </div>
@@ -558,7 +558,7 @@ export default function FeedbackModal({
                       onClick={() => setActiveTab('rewrite')}
                       className="inline-flex items-center space-x-1 text-[11px] font-bold text-amber-300 hover:text-white transition-colors cursor-pointer pt-1"
                     >
-                      <span>Học bài mẫu 8.5+</span>
+                      <span>{isEn ? 'Study Band 8.5+ model' : 'Học bài mẫu 8.5+'}</span>
                       <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
@@ -568,7 +568,7 @@ export default function FeedbackModal({
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-black text-[9px] uppercase tracking-wider">
-                          ƯU TIÊN 3 • TINH TẾ HÓA CÂU
+                          {isEn ? 'PRIORITY 3 • ADVANCED SYNTAX REFINEMENT' : 'ƯU TIÊN 3 • TINH TẾ HÓA CÂU'}
                         </span>
                         <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       </div>
@@ -585,7 +585,7 @@ export default function FeedbackModal({
                         }}
                         className="inline-flex items-center space-x-1 text-[11px] font-bold text-emerald-300 hover:text-white transition-colors cursor-pointer pt-1"
                       >
-                        <span>Viết lại bản v2</span>
+                        <span>{isEn ? 'Write version 2 draft' : 'Viết lại bản v2'}</span>
                         <ChevronRight className="w-3 h-3" />
                       </button>
                     ) : (
@@ -594,7 +594,7 @@ export default function FeedbackModal({
                         onClick={() => setActiveTab('rewrite')}
                         className="inline-flex items-center space-x-1 text-[11px] font-bold text-emerald-300 hover:text-white transition-colors cursor-pointer pt-1"
                       >
-                        <span>Xem đối chiếu bản sửa</span>
+                        <span>{isEn ? 'View side-by-side comparison' : 'Xem đối chiếu bản sửa'}</span>
                         <ChevronRight className="w-3 h-3" />
                       </button>
                     )}
@@ -614,14 +614,14 @@ export default function FeedbackModal({
                       onClick={() => setActiveTab('corrections')}
                       className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px] transition-colors cursor-pointer"
                     >
-                      🔍 Soi {evaluation.corrections?.length || 0} Lỗi Chi Tiết
+                      {isEn ? `🔍 Inspect ${evaluation.corrections?.length || 0} Line Errors` : `🔍 Soi ${evaluation.corrections?.length || 0} Lỗi Chi Tiết`}
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveTab('rewrite')}
                       className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px] transition-colors cursor-pointer"
                     >
-                      📖 Đọc Bài Mẫu Band 8.5+
+                      {isEn ? '📖 Read Band 8.5+ Model' : '📖 Đọc Bài Mẫu Band 8.5+'}
                     </button>
                     {onOpenRevision && (
                       <button
@@ -633,7 +633,7 @@ export default function FeedbackModal({
                         className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-[11px] transition-all shadow-xs cursor-pointer flex items-center space-x-1"
                       >
                         <RefreshCw className="w-3 h-3" />
-                        <span>Viết Lại Bản v2</span>
+                        <span>{isEn ? 'Draft Revision v2' : 'Viết Lại Bản v2'}</span>
                       </button>
                     )}
                   </div>
@@ -647,10 +647,10 @@ export default function FeedbackModal({
                 <div className="flex items-center justify-between">
                   <h4 className="font-bold text-slate-900 text-sm flex items-center space-x-2">
                     <Award className="w-4 h-4 text-red-600" />
-                    <span>Chi Tiết 4 Tiêu Chí Chấm Khảo Thí Cambridge:</span>
+                    <span>{isEn ? 'Detailed Cambridge Assessment Breakdown:' : 'Chi Tiết 4 Tiêu Chí Chấm Khảo Thí Cambridge:'}</span>
                   </h4>
                   <span className="text-[11px] text-slate-500 hidden sm:inline">
-                    Thang điểm tối đa 9.0 • Vạch mốc chuẩn 6.0 & 7.0
+                    {isEn ? 'Band scale 0 - 9.0 • Standard benchmarks at 6.0 & 7.0' : 'Thang điểm tối đa 9.0 • Vạch mốc chuẩn 6.0 & 7.0'}
                   </span>
                 </div>
 
@@ -697,8 +697,8 @@ export default function FeedbackModal({
                             </div>
                             <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold px-0.5">
                               <span>0.0</span>
-                              <span className="text-slate-500">Mốc 6.0</span>
-                              <span className="text-slate-500">Mốc 7.0</span>
+                              <span className="text-slate-500">{isEn ? 'Band 6.0' : 'Mốc 6.0'}</span>
+                              <span className="text-slate-500">{isEn ? 'Band 7.0' : 'Mốc 7.0'}</span>
                               <span>9.0</span>
                             </div>
                           </div>
@@ -714,7 +714,7 @@ export default function FeedbackModal({
                           <div className="pt-2.5 border-t border-slate-100 text-[11px] space-y-1.5 bg-slate-50/60 p-2.5 rounded-lg">
                             <span className="font-bold block text-slate-800 flex items-center space-x-1">
                               <TrendingUp className="w-3 h-3 text-amber-600" />
-                              <span>Điểm cần hoàn thiện để lên band:</span>
+                              <span>{isEn ? 'Key areas for band growth:' : 'Điểm cần hoàn thiện để lên band:'}</span>
                             </span>
                             <ul className="space-y-1 text-slate-600">
                               {data.improvements.map((imp, i) => (
@@ -731,12 +731,12 @@ export default function FeedbackModal({
                           const getCriteriaGuide = (cKey) => {
                             if (cKey === 'tr') {
                               return task?.taskNumber === 1
-                                ? { topicId: 'task1-mastery', skill: 'writing', category: 'task1', title: 'Master Toàn Diện Task 1 (Overview & Band Descriptors)', label: 'Cẩm Nang Overview & TA' }
-                                : { topicId: 'task2-peel-structure', skill: 'writing', category: 'task2', title: 'Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2', label: 'Cẩm Nang Lập Luận TR' };
+                                ? { topicId: 'task1-mastery', skill: 'writing', category: 'task1', title: 'Master Toàn Diện Task 1 (Overview & Band Descriptors)', label: 'Cẩm Nang Overview & TA', labelEn: 'Overview & TA Handbook' }
+                                : { topicId: 'task2-peel-structure', skill: 'writing', category: 'task2', title: 'Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2', label: 'Cẩm Nang Lập Luận TR', labelEn: 'TR Argumentation Handbook' };
                             }
-                            if (cKey === 'cc') return { topicId: 'writing-cc-thematic-progression', skill: 'writing', category: 'strategy', title: 'Tiêu Chí Coherence & Cohesion 8.0+', label: 'Cẩm Nang Liên Kết CC 8.0+' };
-                            if (cKey === 'lr') return { topicId: 'writing-academic-collocations-topics', skill: 'writing', category: 'strategy', title: 'Top 60 Academic Collocations "Ăn Điểm"', label: 'Cẩm Nang Collocations LR' };
-                            if (cKey === 'gra') return { topicId: 'academic-hedging', skill: 'writing', category: 'strategy', title: 'Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+', label: 'Cẩm Nang Ngữ Pháp GRA 8.0+' };
+                            if (cKey === 'cc') return { topicId: 'writing-cc-thematic-progression', skill: 'writing', category: 'strategy', title: 'Tiêu Chí Coherence & Cohesion 8.0+', label: 'Cẩm Nang Liên Kết CC 8.0+', labelEn: 'Cohesion 8.0+ Handbook' };
+                            if (cKey === 'lr') return { topicId: 'writing-academic-collocations-topics', skill: 'writing', category: 'strategy', title: 'Top 60 Academic Collocations "Ăn Điểm"', label: 'Cẩm Nang Collocations LR', labelEn: 'Collocations Handbook' };
+                            if (cKey === 'gra') return { topicId: 'academic-hedging', skill: 'writing', category: 'strategy', title: 'Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+', label: 'Cẩm Nang Ngữ Pháp GRA 8.0+', labelEn: 'Grammar 8.0+ Handbook' };
                             return null;
                           };
                           const guide = getCriteriaGuide(key);
@@ -747,10 +747,10 @@ export default function FeedbackModal({
                                 type="button"
                                 onClick={() => openTheoryModalWithContext(guide)}
                                 className="inline-flex items-center space-x-1 text-[11px] font-bold text-blue-700 hover:text-blue-900 hover:underline cursor-pointer"
-                                title="Xem cẩm nang chuyên sâu khắc phục điểm nghẽn tiêu chí này"
+                                title={isEn ? "View deep strategy handbook for this criterion" : "Xem cẩm nang chuyên sâu khắc phục điểm nghẽn tiêu chí này"}
                               >
                                 <BookOpen className="w-3 h-3 text-blue-600 shrink-0" />
-                                <span>Bí kíp nâng band: {guide.label} ➔</span>
+                                <span>{isEn ? `Band boost handbook: ${guide.labelEn || guide.label} ➔` : `Bí kíp nâng band: ${guide.label} ➔`}</span>
                               </button>
                             </div>
                           );
@@ -785,10 +785,10 @@ export default function FeedbackModal({
                       )}
                       <span className="font-bold text-sm">
                         {!evaluation.task1OverviewStats.hasOverview
-                          ? 'CẢNH BÁO BAREM CAMBRIDGE: THIẾU ĐOẠN TỔNG QUAN (OVERVIEW)'
+                          ? (isEn ? 'CAMBRIDGE RUBRIC WARNING: MISSING OVERVIEW' : 'CẢNH BÁO BAREM CAMBRIDGE: THIẾU ĐOẠN TỔNG QUAN (OVERVIEW)')
                           : evaluation.task1OverviewStats.hasRawData
-                          ? 'BẪY SỐ LIỆU ĐOẠN OVERVIEW: KHỐNG CHẾ TRẦN BAND 5.5 - 6.0'
-                          : 'ĐOẠN TỔNG QUAN (OVERVIEW) ĐẠT CHUẨN KHẢO THÍ (BAND 7.0+)'}
+                          ? (isEn ? 'DATA TRAP IN OVERVIEW: BAND 5.5 - 6.0 CEILING' : 'BẪY SỐ LIỆU ĐOẠN OVERVIEW: KHỐNG CHẾ TRẦN BAND 5.5 - 6.0')
+                          : (isEn ? 'STANDARD CAMBRIDGE OVERVIEW (BAND 7.0+)' : 'ĐOẠN TỔNG QUAN (OVERVIEW) ĐẠT CHUẨN KHẢO THÍ (BAND 7.0+)')}
                       </span>
                     </div>
                     <span className={`px-2.5 py-0.5 rounded text-[11px] font-extrabold ${
@@ -798,15 +798,25 @@ export default function FeedbackModal({
                         ? 'bg-amber-200 text-amber-900'
                         : 'bg-emerald-200 text-emerald-900'
                     }`}>
-                      {!evaluation.task1OverviewStats.hasOverview ? 'Tối đa Band 5.0' : evaluation.task1OverviewStats.hasRawData ? 'Tối đa Band 6.0' : 'Band 7.0+'}
+                      {!evaluation.task1OverviewStats.hasOverview 
+                        ? (isEn ? 'Max Band 5.0' : 'Tối đa Band 5.0') 
+                        : evaluation.task1OverviewStats.hasRawData 
+                        ? (isEn ? 'Max Band 6.0' : 'Tối đa Band 6.0') 
+                        : 'Band 7.0+'}
                     </span>
                   </div>
                   <p className="text-xs leading-relaxed">
                     {!evaluation.task1OverviewStats.hasOverview
-                      ? 'Theo quy định chính thức của Cambridge IELTS Task 1, bài viết không có câu hoặc đoạn Overview rõ ràng sẽ bị khống chế điểm Task Achievement ở mức tối đa Band 5.0 (Presents no overview). Hãy luôn mở đầu đoạn tổng quan bằng "Overall, it is clear that..." và nêu 2 đặc điểm cốt lõi nhất.'
+                      ? (isEn 
+                          ? 'Per official Cambridge Task 1 criteria, essays with no clear Overview are capped at Band 5.0 Task Achievement ("Presents no overview"). Always begin the overview with "Overall, it is clear that..." and highlight 2 key prominent features.' 
+                          : 'Theo quy định chính thức của Cambridge IELTS Task 1, bài viết không có câu hoặc đoạn Overview rõ ràng sẽ bị khống chế điểm Task Achievement ở mức tối đa Band 5.0 (Presents no overview). Hãy luôn mở đầu đoạn tổng quan bằng "Overall, it is clear that..." và nêu 2 đặc điểm cốt lõi nhất.')
                       : evaluation.task1OverviewStats.hasRawData
-                      ? `Đoạn Overview đã được nhận diện nhưng có chứa số liệu chi tiết cụ thể (${evaluation.task1OverviewStats.rawDataList?.slice(0, 3).join(', ')}). Barem Cambridge quy định Overview chỉ được khái quát xu hướng/điểm đối lập, TUYỆT ĐỐI KHÔNG ĐƯA SỐ LIỆU VỤN VẶT khiến điểm Task Achievement bị chặn ở Band 5.5 - 6.0.`
-                      : 'Đoạn Overview được viết chuẩn mực: Khái quát thành công các xu hướng và đặc điểm chủ đạo của biểu đồ mà không bị sa đà vào số liệu vụn vặt, đáp ứng hoàn hảo tiêu chí Task Achievement Band 7.0+.'}
+                      ? (isEn 
+                          ? `An overview was identified but includes specific data figures (${evaluation.task1OverviewStats.rawDataList?.slice(0, 3).join(', ')}). Cambridge rubrics mandate that overviews only summarize overarching trends or contrasts without granular statistics, capping Task Achievement at Band 5.5 - 6.0.` 
+                          : `Đoạn Overview đã được nhận diện nhưng có chứa số liệu chi tiết cụ thể (${evaluation.task1OverviewStats.rawDataList?.slice(0, 3).join(', ')}). Barem Cambridge quy định Overview chỉ được khái quát xu hướng/điểm đối lập, TUYỆT ĐỐI KHÔNG ĐƯA SỐ LIỆU VỤN VẶT khiến điểm Task Achievement bị chặn ở Band 5.5 - 6.0.`)
+                      : (isEn 
+                          ? 'Exemplary Overview: Effectively summarizes major trends and key features without getting bogged down in granular data, meeting Band 7.0+ Task Achievement standards.' 
+                          : 'Đoạn Overview được viết chuẩn mực: Khái quát thành công các xu hướng và đặc điểm chủ đạo của biểu đồ mà không bị sa đà vào số liệu vụn vặt, đáp ứng hoàn hảo tiêu chí Task Achievement Band 7.0+.')}
                   </p>
                 </div>
               )}
@@ -824,19 +834,19 @@ export default function FeedbackModal({
                     <div className="flex items-center space-x-2">
                       <Target className="w-5 h-5 text-indigo-600 shrink-0" />
                       <span className="font-bold text-sm">
-                        Thước Đo Văn Phong Cẩn Trọng Học Thuật (Academic Hedging)
+                        {isEn ? 'Academic Hedging & Tentative Language Meter' : 'Thước Đo Văn Phong Cẩn Trọng Học Thuật (Academic Hedging)'}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2 text-[11px] font-semibold">
                       <span className="px-2 py-0.5 rounded bg-white/80 border border-slate-200 text-slate-800">
-                        Ngôn ngữ dè dặt: <strong>{evaluation.hedgingStats.hedgingCount}</strong>
+                        {isEn ? 'Hedging expressions:' : 'Ngôn ngữ dè dặt:'} <strong>{evaluation.hedgingStats.hedgingCount}</strong>
                       </span>
                       <span className={`px-2 py-0.5 rounded border ${
                         evaluation.hedgingStats.hasOvergeneralisation 
                           ? 'bg-red-100 border-red-300 text-red-800' 
                           : 'bg-emerald-100 border-emerald-300 text-emerald-800'
                       }`}>
-                        Quy chụp tuyệt đối: <strong>{evaluation.hedgingStats.overgeneralisationCount}</strong>
+                        {isEn ? 'Overgeneralisations:' : 'Quy chụp tuyệt đối:'} <strong>{evaluation.hedgingStats.overgeneralisationCount}</strong>
                       </span>
                     </div>
                   </div>
@@ -844,19 +854,25 @@ export default function FeedbackModal({
                     {evaluation.hedgingStats.hasOvergeneralisation ? (
                       <div>
                         <p className="font-semibold text-red-900">
-                          ⚠️ Cảnh báo bẫy quy chụp cực đoan (Overgeneralisation - Band 6.0 Ceiling):
+                          {isEn ? '⚠️ Overgeneralisation Trap Warning (Band 6.0 Ceiling):' : '⚠️ Cảnh báo bẫy quy chụp cực đoan (Overgeneralisation - Band 6.0 Ceiling):'}
                         </p>
                         <p className="text-red-800">
-                          Bài viết có phát ngôn khẳng định tuyệt đối (ví dụ: {evaluation.hedgingStats.overgeneralisedStatements?.slice(0, 2).map(s => `'${s}'`).join(', ')}). Trong văn cảnh học thuật quốc tế, giám khảo đánh giá cao tư duy đa chiều và ngôn ngữ dè dặt. Thay vì dùng <em>always, never, undeniable</em>, hãy chuyển sang cấu trúc <em>tends to, appears to, is arguably the case that</em>.
+                          {isEn 
+                            ? `Essay contains absolute generalisations (e.g., ${evaluation.hedgingStats.overgeneralisedStatements?.slice(0, 2).map(s => `'${s}'`).join(', ')}). Cambridge examiners prize academic hedging and nuanced perspective. Instead of 'always', 'never', 'undeniable', adopt tentative constructions like 'tends to', 'appears to', 'is arguably the case that'.` 
+                            : `Bài viết có phát ngôn khẳng định tuyệt đối (ví dụ: ${evaluation.hedgingStats.overgeneralisedStatements?.slice(0, 2).map(s => `'${s}'`).join(', ')}). Trong văn cảnh học thuật quốc tế, giám khảo đánh giá cao tư duy đa chiều và ngôn ngữ dè dặt. Thay vì dùng always, never, undeniable, hãy chuyển sang cấu trúc tends to, appears to, is arguably the case that.`}
                         </p>
                       </div>
                     ) : evaluation.hedgingStats.hedgingCount >= 3 ? (
                       <p className="text-emerald-900">
-                        ✨ <strong>Văn phong học thuật chín chắn (Band 7.5+):</strong> Bạn đã sử dụng thành thạo ngôn ngữ dè dặt khách quan ({evaluation.hedgingStats.matchedHedging?.slice(0, 3).map(h => `'${h}'`).join(', ')}), tránh được bẫy khẳng định chủ quan của Band 6.0.
+                        ✨ <strong>{isEn ? 'Mature Academic Register (Band 7.5+):' : 'Văn phong học thuật chín chắn (Band 7.5+):'}</strong> {isEn 
+                          ? `You skillfully applied objective hedging language (${evaluation.hedgingStats.matchedHedging?.slice(0, 3).map(h => `'${h}'`).join(', ')}), avoiding subjective Band 6.0 assertions.` 
+                          : `Bạn đã sử dụng thành thạo ngôn ngữ dè dặt khách quan (${evaluation.hedgingStats.matchedHedging?.slice(0, 3).map(h => `'${h}'`).join(', ')}), tránh được bẫy khẳng định chủ quan của Band 6.0.`}
                       </p>
                     ) : (
                       <p className="text-indigo-900">
-                        💡 <strong>Khuyến nghị nâng cấp Band 7.5+:</strong> Các câu lập luận còn hơi trực diện. Hãy lồng ghép thêm 2-3 cấu trúc cẩn trọng như <em>"evidence suggests that"</em>, <em>"is likely to result in"</em> hoặc <em>"tend to be"</em> để tăng sức thuyết phục học thuật.
+                        💡 <strong>{isEn ? 'Recommendation for Band 7.5+:' : 'Khuyến nghị nâng cấp Band 7.5+:'}</strong> {isEn 
+                          ? 'Arguments are slightly direct. Incorporate 2-3 tentative phrases like "evidence suggests that", "is likely to result in", or "tend to be" to heighten academic authority.' 
+                          : 'Các câu lập luận còn hơi trực diện. Hãy lồng ghép thêm 2-3 cấu trúc cẩn trọng như "evidence suggests that", "is likely to result in" hoặc "tend to be" để tăng sức thuyết phục học thuật.'}
                       </p>
                     )}
                   </div>
@@ -873,7 +889,7 @@ export default function FeedbackModal({
                 <div className="space-y-3">
                   <h4 className="font-bold text-slate-800 text-sm flex items-center space-x-1.5">
                     <TrendingUp className="w-4 h-4 text-red-600" />
-                    <span>Tổng quan Band Score theo Cambridge:</span>
+                    <span>{isEn ? 'Overall Cambridge Band Score Breakdown:' : 'Tổng quan Band Score theo Cambridge:'}</span>
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 rounded-lg bg-white border border-slate-200">
@@ -901,10 +917,12 @@ export default function FeedbackModal({
                 <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs space-y-1 shadow-2xs">
                   <div className="font-bold flex items-center space-x-1.5 text-amber-900">
                     <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                    <span>Lộ trình trọng tâm Band 5.5 - 6.5: Chuẩn hóa ngữ pháp & tránh mất điểm oan</span>
+                    <span>{isEn ? 'Core Pathway for Band 5.5 - 6.5: Standardize Grammar & Eliminate Careless Errors' : 'Lộ trình trọng tâm Band 5.5 - 6.5: Chuẩn hóa ngữ pháp & tránh mất điểm oan'}</span>
                   </div>
                   <p className="text-amber-800 leading-relaxed">
-                    Ưu tiên số 1 của bạn là độ chuẩn xác ngữ pháp (GRA): Chia thì chuẩn, chia động từ số ít/nhiều ăn khớp chủ ngữ, tránh lỗi ngắt câu (run-on/fragments). Tuyệt đối không nhồi nhét từ C2 khi chưa rõ collocation, hãy viết câu rõ nghĩa trước tiên!
+                    {isEn 
+                      ? 'Priority #1 is grammatical accuracy (GRA): correct tenses, subject-verb agreement, avoid run-ons and sentence fragments. Focus on clear, robust sentence structures before attempting C2 vocabulary.' 
+                      : 'Ưu tiên số 1 của bạn là độ chuẩn xác ngữ pháp (GRA): Chia thì chuẩn, chia động từ số ít/nhiều ăn khớp chủ ngữ, tránh lỗi ngắt câu (run-on/fragments). Tuyệt đối không nhồi nhét từ C2 khi chưa rõ collocation, hãy viết câu rõ nghĩa trước tiên!'}
                   </p>
                 </div>
               )}
@@ -913,10 +931,12 @@ export default function FeedbackModal({
                 <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs space-y-1 shadow-2xs">
                   <div className="font-bold flex items-center space-x-1.5 text-indigo-900">
                     <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span>Lộ trình bứt phá Band 7.5+: Tinh tế hóa lập luận & liên kết tự nhiên</span>
+                    <span>{isEn ? 'Advanced Pathway for Band 7.5+: Sophisticated Argumentation & Natural Cohesion' : 'Lộ trình bứt phá Band 7.5+: Tinh tế hóa lập luận & liên kết tự nhiên'}</span>
                   </div>
                   <p className="text-indigo-800 leading-relaxed">
-                    Để vượt ngưỡng 7.0 lên 8.0+, hãy rèn luyện văn phong dè dặt học thuật (academic hedging: <em>tends to, arguably, indicates that</em>), hạn chế từ nối cơ học rập khuôn (như <em>Furthermore, In conclusion</em>), và đẩy mạnh cụm từ cố định tự nhiên (collocations C1-C2).
+                    {isEn 
+                      ? 'To advance from 7.0 to 8.0+, master academic hedging (tends to, arguably, indicates that), avoid mechanical template linkers (Furthermore, In conclusion), and deploy idiomatic C1-C2 collocations.' 
+                      : 'Để vượt ngưỡng 7.0 lên 8.0+, hãy rèn luyện văn phong dè dặt học thuật (academic hedging: tends to, arguably, indicates that), hạn chế từ nối cơ học rập khuôn (như Furthermore, In conclusion), và đẩy mạnh cụm từ cố định tự nhiên (collocations C1-C2).'}
                   </p>
                 </div>
               )}
@@ -930,10 +950,14 @@ export default function FeedbackModal({
               <div className="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white border border-indigo-900 shadow-xs">
                 <div className="flex items-center space-x-2 mb-1">
                   <Layers className="w-4 h-4 text-indigo-400" />
-                  <h4 className="font-bold text-sm">Chẩn Đoán Cấu Trúc Khảo Thí Cambridge</h4>
+                  <h4 className="font-bold text-sm">
+                    {isEn ? 'Cambridge Structural Paragraph Diagnostics' : 'Chẩn Đoán Cấu Trúc Khảo Thí Cambridge'}
+                  </h4>
                 </div>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Mổ xẻ từng đoạn văn theo tiêu chuẩn khảo thí Cambridge: Rà soát phát hiện câu mở bài sáo rỗng (Cliche), bẫy dẫn chứng trải nghiệm cá nhân (Anecdotes) và đánh giá độ sâu phát triển ý theo mô hình chuẩn P.E.E.L.
+                  {isEn 
+                    ? 'Deconstruct each paragraph against Cambridge benchmarks: detect cliches, anecdotal traps, and evaluate topic sentence and idea progression under the P.E.E.L model.' 
+                    : 'Mổ xẻ từng đoạn văn theo tiêu chuẩn khảo thí Cambridge: Rà soát phát hiện câu mở bài sáo rỗng (Cliche), bẫy dẫn chứng trải nghiệm cá nhân (Anecdotes) và đánh giá độ sâu phát triển ý theo mô hình chuẩn P.E.E.L.'}
                 </p>
               </div>
 
@@ -950,13 +974,15 @@ export default function FeedbackModal({
                         </span>
                       </div>
                       <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                        {p.wordCount} từ
+                        {p.wordCount} {isEn ? 'words' : 'từ'}
                       </span>
                     </div>
 
                     {/* Verdict */}
                     <div className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200/80">
-                      <strong className="text-slate-900 font-semibold block mb-1">Đánh giá của Giám khảo:</strong>
+                      <strong className="text-slate-900 font-semibold block mb-1">
+                        {isEn ? 'Examiner Verdict:' : 'Đánh giá của Giám khảo:'}
+                      </strong>
                       {p.verdict}
                     </div>
 
@@ -965,7 +991,9 @@ export default function FeedbackModal({
                       <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-900 flex items-start space-x-2">
                         <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                         <div>
-                          <strong className="font-bold text-red-700 block">CẢNH BÁO BẪY CÂU SÁO RỖNG:</strong>
+                          <strong className="font-bold text-red-700 block">
+                            {isEn ? 'CLICHE & FORMULAIC TRAP WARNING:' : 'CẢNH BÁO BẪY CÂU SÁO RỖNG:'}
+                          </strong>
                           <span>{p.clicheWarning}</span>
                         </div>
                       </div>
@@ -976,7 +1004,9 @@ export default function FeedbackModal({
                       <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start space-x-2">
                         <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                         <div>
-                          <strong className="font-bold text-amber-800 block">CẢNH BÁO DẪN CHỨNG CÁ NHÂN:</strong>
+                          <strong className="font-bold text-amber-800 block">
+                            {isEn ? 'PERSONAL ANECDOTE TRAP WARNING:' : 'CẢNH BÁO DẪN CHỨNG CÁ NHÂN:'}
+                          </strong>
                           <span>{p.anecdoteWarning}</span>
                         </div>
                       </div>
@@ -985,7 +1015,9 @@ export default function FeedbackModal({
                     {/* Recommendation */}
                     {p.recommendation && (
                       <div className="text-xs text-indigo-900 bg-indigo-50/60 p-3 rounded-lg border border-indigo-100">
-                        <strong className="font-semibold text-indigo-950 block mb-0.5">Khuyến nghị phát triển:</strong>
+                        <strong className="font-semibold text-indigo-950 block mb-0.5">
+                          {isEn ? 'Development Recommendation:' : 'Khuyến nghị phát triển:'}
+                        </strong>
                         {p.recommendation}
                       </div>
                     )}
@@ -993,7 +1025,7 @@ export default function FeedbackModal({
                 ))
               ) : (
                 <div className="text-center py-10 text-slate-400 text-xs">
-                  Chưa có dữ liệu phân tích từng đoạn văn.
+                  {isEn ? 'No paragraph analysis data available.' : 'Chưa có dữ liệu phân tích từng đoạn văn.'}
                 </div>
               )}
             </div>
@@ -1005,11 +1037,11 @@ export default function FeedbackModal({
               <div className="flex items-center justify-between">
                 <span className="text-xs text-slate-500">
                   {pedagogicalFocus === 'foundation' ? (
-                    <span>🎯 Ưu tiên hiển thị <strong>lỗi Ngữ pháp & Cấu trúc nền tảng</strong> ({filteredCorrections.length} gợi ý):</span>
+                    <span>🎯 {isEn ? 'Prioritizing ' : 'Ưu tiên hiển thị '}<strong>{isEn ? 'Foundational Grammar & Sentence Structure errors' : 'lỗi Ngữ pháp & Cấu trúc nền tảng'}</strong> ({filteredCorrections.length} {isEn ? 'suggestions' : 'gợi ý'}):</span>
                   ) : pedagogicalFocus === 'advanced' ? (
-                    <span>🚀 Ưu tiên hiển thị <strong>tinh chỉnh Học thuật & Từ vựng C1-C2</strong> ({filteredCorrections.length} gợi ý):</span>
+                    <span>🚀 {isEn ? 'Prioritizing ' : 'Ưu tiên hiển thị '}<strong>{isEn ? 'Academic Style & C1-C2 Lexical refinements' : 'tinh chỉnh Học thuật & Từ vựng C1-C2'}</strong> ({filteredCorrections.length} {isEn ? 'suggestions' : 'gợi ý'}):</span>
                   ) : (
-                    <span>Tìm thấy <strong>{filteredCorrections.length}</strong> vị trí có thể cải thiện ngữ pháp & từ vựng:</span>
+                    <span>{isEn ? 'Identified ' : 'Tìm thấy '}<strong>{filteredCorrections.length}</strong> {isEn ? 'sentence improvements across grammar & vocabulary:' : 'vị trí có thể cải thiện ngữ pháp & từ vựng:'}</span>
                   )}
                 </span>
               </div>
@@ -1032,12 +1064,12 @@ export default function FeedbackModal({
                           {savedMistakes[idx] ? (
                             <>
                               <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              <span className="text-emerald-600">Đã lưu lỗi</span>
+                              <span className="text-emerald-600">{isEn ? 'Saved' : 'Đã lưu lỗi'}</span>
                             </>
                           ) : (
                             <>
                               <BookMarked className="w-3.5 h-3.5" />
-                              <span>Lưu vào Sổ tay lỗi sai</span>
+                              <span>{isEn ? 'Save to Mistake Log' : 'Lưu vào Sổ tay lỗi sai'}</span>
                             </>
                           )}
                         </button>
@@ -1046,17 +1078,17 @@ export default function FeedbackModal({
 
                     <div className="space-y-1 text-xs">
                       <div className="p-2 rounded bg-red-50/60 border border-red-100 text-red-900">
-                        <span className="font-bold text-red-700">Câu gốc: </span>
+                        <span className="font-bold text-red-700">{isEn ? 'Original: ' : 'Câu gốc: '}</span>
                         <strike>{c.original}</strike>
                       </div>
                       <div className="p-2 rounded bg-emerald-50/60 border border-emerald-100 text-emerald-900">
-                        <span className="font-bold text-emerald-700">Gợi ý sửa: </span>
+                        <span className="font-bold text-emerald-700">{isEn ? 'Suggested revision: ' : 'Gợi ý sửa: '}</span>
                         <strong>{c.corrected}</strong>
                       </div>
                     </div>
 
                     <p className="text-xs text-slate-600 italic bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                      <strong>Giải thích:</strong> {c.explanation}
+                      <strong>{isEn ? 'Explanation:' : 'Giải thích:'}</strong> {c.explanation}
                     </p>
 
                     {/* Interactive Inline Rewrite & Instant Re-score */}
@@ -1068,20 +1100,20 @@ export default function FeedbackModal({
                           className="flex items-center space-x-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
-                          <span>{expandedRewrites[idx] ? 'Đóng hộp thử viết lại' : '✍️ Thử viết lại câu này (Chấm điểm ngay)'}</span>
+                          <span>{expandedRewrites[idx] ? (isEn ? 'Close interactive rewrite' : 'Đóng hộp thử viết lại') : (isEn ? '✍️ Practice rewriting this sentence (Instant AI Score)' : '✍️ Thử viết lại câu này (Chấm điểm ngay)')}</span>
                         </button>
                       </div>
 
                       {expandedRewrites[idx] && (
                         <div className="mt-2.5 p-3 rounded-xl bg-indigo-50/40 border border-indigo-100 space-y-2.5 text-xs">
                           <label className="block text-slate-700 font-medium">
-                            Viết lại câu của bạn để hệ thống tự động kiểm tra và chấm điểm tức thì:
+                            {isEn ? 'Rewrite your sentence for automated instant scoring:' : 'Viết lại câu của bạn để hệ thống tự động kiểm tra và chấm điểm tức thì:'}
                           </label>
                           <textarea
                             rows={2}
                             value={userRewrites[idx] || ''}
                             onChange={(e) => handleRewriteChange(idx, e.target.value)}
-                            placeholder="Nhập phiên bản viết lại của bạn vào đây..."
+                            placeholder={isEn ? "Enter your revised sentence here..." : "Nhập phiên bản viết lại của bạn vào đây..."}
                             className="w-full px-3 py-2 text-xs text-slate-800 bg-white rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-hidden resize-y"
                           />
                           <div className="flex items-center justify-between gap-2">
@@ -1092,14 +1124,14 @@ export default function FeedbackModal({
                                 className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors flex items-center space-x-1"
                               >
                                 <Sparkles className="w-3.5 h-3.5" />
-                                <span>Kiểm tra viết lại</span>
+                                <span>{isEn ? 'Check Rewrite' : 'Kiểm tra viết lại'}</span>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleCopySuggestion(c, idx)}
                                 className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition-colors"
                               >
-                                Điền gợi ý mẫu
+                                {isEn ? 'Insert model' : 'Điền gợi ý mẫu'}
                               </button>
                             </div>
                             {rewriteResults[idx] && rewriteResults[idx].score > 0 && (
@@ -1108,7 +1140,7 @@ export default function FeedbackModal({
                                 rewriteResults[idx].score >= 7 ? 'bg-blue-100 text-blue-800' :
                                 'bg-amber-100 text-amber-800'
                               }`}>
-                                Điểm: {rewriteResults[idx].score}/10
+                                {isEn ? 'Score' : 'Điểm'}: {rewriteResults[idx].score}/10
                               </span>
                             )}
                           </div>
@@ -1124,7 +1156,7 @@ export default function FeedbackModal({
                               <p className="font-semibold">{rewriteResults[idx].message}</p>
                               {rewriteResults[idx].similarity > 0 && (
                                 <p className="text-[11px] text-slate-500 mt-1">
-                                  Độ tương đồng cấu trúc học thuật: {rewriteResults[idx].similarity}%
+                                  {isEn ? 'Academic structural similarity' : 'Độ tương đồng cấu trúc học thuật'}: {rewriteResults[idx].similarity}%
                                 </p>
                               )}
                             </div>
@@ -1136,7 +1168,7 @@ export default function FeedbackModal({
                 ))
               ) : (
                 <div className="text-center py-10 text-slate-400 text-xs">
-                  Không phát hiện lỗi nghiêm trọng nào. Bài viết của bạn rất chính xác!
+                  {isEn ? 'No major errors detected. Your essay demonstrates excellent accuracy!' : 'Không phát hiện lỗi nghiêm trọng nào. Bài viết của bạn rất chính xác!'}
                 </div>
               )}
             </div>
@@ -1148,10 +1180,12 @@ export default function FeedbackModal({
               <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <span className="font-bold block text-emerald-900 mb-0.5">
-                    Đặc điểm của bản viết lại Band 8.5+ (Side-by-Side Comparison):
+                    {isEn ? 'Band 8.5+ Side-by-Side Model Upgrade:' : 'Đặc điểm của bản viết lại Band 8.5+ (Side-by-Side Comparison):'}
                   </span>
                   <p>
-                    Giữ nguyên 100% quan điểm và hướng lập luận ban đầu của bạn, nhưng nâng tầm cấu trúc câu phức, mệnh đề quan hệ và các collocations học thuật đắt giá theo chuẩn C1/C2.
+                    {isEn 
+                      ? 'Preserves 100% of your original thesis and viewpoints, while elevating complex clause syntax, relative clauses, and C1/C2 academic collocations.' 
+                      : 'Giữ nguyên 100% quan điểm và hướng lập luận ban đầu của bạn, nhưng nâng tầm cấu trúc câu phức, mệnh đề quan hệ và các collocations học thuật đắt giá theo chuẩn C1/C2.'}
                   </p>
                 </div>
                 {onOpenRevision && (
@@ -1163,7 +1197,7 @@ export default function FeedbackModal({
                     className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 flex items-center space-x-1 shadow-2xs cursor-pointer transition-colors"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
-                    <span>Mở Phòng Viết Lại (v1 ➔ v2)</span>
+                    <span>{isEn ? 'Open Revision Studio (v1 ➔ v2)' : 'Mở Phòng Viết Lại (v1 ➔ v2)'}</span>
                   </button>
                 )}
               </div>
@@ -1175,14 +1209,14 @@ export default function FeedbackModal({
                   <div className="flex items-center justify-between px-1">
                     <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-slate-400"></span>
-                      Bài viết gốc của bạn ({stats?.wordCount || 0} từ)
+                      {isEn ? `Your Original Essay (${stats?.wordCount || 0} words)` : `Bài viết gốc của bạn (${stats?.wordCount || 0} từ)`}
                     </span>
                     <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">
                       Band {evaluation.overallBand ? evaluation.overallBand.toFixed(1) : '6.5'}
                     </span>
                   </div>
                   <div className="p-4 sm:p-5 rounded-xl bg-slate-50/80 border border-slate-200 text-xs sm:text-sm text-slate-700 whitespace-pre-line leading-relaxed font-serif academic-reading-text shadow-2xs h-full max-h-[60vh] overflow-y-auto">
-                    {essayText || 'Không có bài làm.'}
+                    {essayText || (isEn ? 'No essay submitted.' : 'Không có bài làm.')}
                   </div>
                 </div>
 
@@ -1199,9 +1233,9 @@ export default function FeedbackModal({
                             ? 'bg-blue-600 text-white shadow-xs'
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
-                        title="Bản mẫu Band 6.5 - 7.0: Ngữ pháp chuẩn hóa, câu cú rõ ràng, dễ áp dụng cho học viên đang ở band 5.0 - 6.0"
+                        title={isEn ? "Band 6.5 - 7.0 Model: Standardized grammar, clear sentence structure, accessible for Band 5.0 - 6.0 candidates" : "Bản mẫu Band 6.5 - 7.0: Ngữ pháp chuẩn hóa, câu cú rõ ràng, dễ áp dụng cho học viên đang ở band 5.0 - 6.0"}
                       >
-                        🌟 Band 6.5 - 7.0 (Vừa sức)
+                        {isEn ? '🌟 Band 6.5 - 7.0 (Accessible)' : '🌟 Band 6.5 - 7.0 (Vừa sức)'}
                       </button>
                       <button
                         type="button"
@@ -1211,9 +1245,9 @@ export default function FeedbackModal({
                             ? 'bg-emerald-600 text-white shadow-xs'
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
-                        title="Bản mẫu Band 8.5+: Nâng cấp từ vựng học thuật C1/C2, ngữ pháp phức hợp, sắc thái nghĩa tinh tế"
+                        title={isEn ? "Band 8.5+ Model: Advanced C1/C2 vocabulary, complex syntax, nuanced academic tone" : "Bản mẫu Band 8.5+: Nâng cấp từ vựng học thuật C1/C2, ngữ pháp phức hợp, sắc thái nghĩa tinh tế"}
                       >
-                        💎 Band 8.5+ (Nâng cao)
+                        {isEn ? '💎 Band 8.5+ (Advanced)' : '💎 Band 8.5+ (Nâng cao)'}
                       </button>
                     </div>
 
@@ -1224,13 +1258,13 @@ export default function FeedbackModal({
                           : (evaluation.band8Rewrite || evaluation.band65Rewrite);
                         if (targetText) {
                           navigator.clipboard.writeText(targetText);
-                          alert(`Đã sao chép bản nâng cấp Band ${selectedRewriteBand === '6.5' ? '6.5 - 7.0' : '8.5+'} vào clipboard!`);
+                          alert(isEn ? `Copied Band ${selectedRewriteBand === '6.5' ? '6.5 - 7.0' : '8.5+'} model essay to clipboard!` : `Đã sao chép bản nâng cấp Band ${selectedRewriteBand === '6.5' ? '6.5 - 7.0' : '8.5+'} vào clipboard!`);
                         }
                       }}
                       className="text-[11px] font-bold px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition-colors cursor-pointer flex items-center gap-1 shrink-0"
                     >
                       <Check className="w-3 h-3 text-emerald-600" />
-                      <span>Sao chép</span>
+                      <span>{isEn ? 'Copy' : 'Sao chép'}</span>
                     </button>
                   </div>
 
@@ -1242,8 +1276,12 @@ export default function FeedbackModal({
                   }`}>
                     <span>
                       {selectedRewriteBand === '6.5'
-                        ? '💡 Bản mẫu 6.5: Chuẩn hóa 100% ngữ pháp, phân đoạn rõ ràng, sử dụng câu ghép & câu phức thông dụng, dễ học và áp dụng ngay.'
-                        : '💡 Bản mẫu 8.5+: Nâng cấp từ vựng học thuật C1/C2 (AWL), ngữ pháp phức hợp, kiểm soát sắc thái nghĩa và cấu trúc câu linh hoạt.'}
+                        ? (isEn 
+                            ? '💡 Band 6.5 Model: 100% accurate grammar, lucid paragraphing, natural compound & complex sentences, immediately applicable.' 
+                            : '💡 Bản mẫu 6.5: Chuẩn hóa 100% ngữ pháp, phân đoạn rõ ràng, sử dụng câu ghép & câu phức thông dụng, dễ học và áp dụng ngay.')
+                        : (isEn 
+                            ? '💡 Band 8.5+ Model: Elevated C1/C2 Academic Word List vocabulary, sophisticated syntactic range, nuanced tone, and agile cohesive flow.' 
+                            : '💡 Bản mẫu 8.5+: Nâng cấp từ vựng học thuật C1/C2 (AWL), ngữ pháp phức hợp, kiểm soát sắc thái nghĩa và cấu trúc câu linh hoạt.')}
                     </span>
                   </div>
 
@@ -1253,8 +1291,8 @@ export default function FeedbackModal({
                       : 'bg-emerald-50/30 border-emerald-200 text-slate-900'
                   }`}>
                     {selectedRewriteBand === '6.5'
-                      ? (evaluation.band65Rewrite || evaluation.band8Rewrite || 'Đang cập nhật bài viết lại...')
-                      : (evaluation.band8Rewrite || evaluation.band65Rewrite || 'Đang cập nhật bài viết lại...')}
+                      ? (evaluation.band65Rewrite || evaluation.band8Rewrite || (isEn ? 'Model essay is being generated...' : 'Đang cập nhật bài viết lại...'))
+                      : (evaluation.band8Rewrite || evaluation.band65Rewrite || (isEn ? 'Model essay is being generated...' : 'Đang cập nhật bài viết lại...'))}
                   </div>
                 </div>
               </div>
@@ -1268,8 +1306,12 @@ export default function FeedbackModal({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-indigo-50/80 border border-indigo-200 gap-2">
                   <div className="flex items-center space-x-2">
                     <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
-                    <span className="text-xs font-semibold text-indigo-950">Chủ đề bài thi nhận diện:</span>
-                    <span className="text-xs font-bold text-indigo-700">{evaluation.detectedTopic.topicNameVi}</span>
+                    <span className="text-xs font-semibold text-indigo-950">
+                      {isEn ? 'Detected Topic Area:' : 'Chủ đề bài thi nhận diện:'}
+                    </span>
+                    <span className="text-xs font-bold text-indigo-700">
+                      {isEn ? (evaluation.detectedTopic.topicNameEn || evaluation.detectedTopic.topicNameVi) : evaluation.detectedTopic.topicNameVi}
+                    </span>
                   </div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 w-fit">
                     Cambridge C1/C2 Collocations
@@ -1283,29 +1325,31 @@ export default function FeedbackModal({
                   <div className="flex items-center space-x-2">
                     <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                     <h5 className="text-xs font-bold text-amber-950">
-                      Cảnh Báo Lặp Từ & Gợi Ý Thay Thế Học Thuật (Academic Thesaurus)
+                      {isEn ? 'Word Repetition Warning & Academic Thesaurus' : 'Cảnh Báo Lặp Từ & Gợi Ý Thay Thế Học Thuật (Academic Thesaurus)'}
                     </h5>
                   </div>
                   <p className="text-[11px] text-amber-800 leading-relaxed">
-                    Bài viết lặp lại nhiều lần các từ dưới đây. Tiêu chuẩn Cambridge Lexical Resource đòi hỏi sự linh hoạt và biến hóa từ vựng. Bạn hãy thay thế bằng các từ đồng nghĩa học thuật C1/C2:
+                    {isEn 
+                      ? 'The following words are frequently repeated. Cambridge Lexical Resource rewards lexical variety. Replace them with advanced C1/C2 synonyms:' 
+                      : 'Bài viết lặp lại nhiều lần các từ dưới đây. Tiêu chuẩn Cambridge Lexical Resource đòi hỏi sự linh hoạt và biến hóa từ vựng. Bạn hãy thay thế bằng các từ đồng nghĩa học thuật C1/C2:'}
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {evaluation.wordOveruseStats.suggestions.map((sug, sIdx) => (
                       <div key={sIdx} className="p-3 rounded-lg bg-white border border-amber-200/80 shadow-2xs space-y-2">
                         <div className="flex items-center justify-between border-b border-amber-100 pb-1.5">
                           <span className="text-xs font-bold text-red-700">
-                            Từ gốc: <span className="underline font-mono">'{sug.word}'</span> ({sug.count} lần)
+                            {isEn ? 'Original word: ' : 'Từ gốc: '}<span className="underline font-mono">'{sug.word}'</span> ({sug.count} {isEn ? 'times' : 'lần'})
                           </span>
-                          <span className="text-[10px] text-amber-700 font-semibold">Gợi ý C1/C2:</span>
+                          <span className="text-[10px] text-amber-700 font-semibold">{isEn ? 'C1/C2 Alternatives:' : 'Gợi ý C1/C2:'}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {sug.alternatives.map((alt, aIdx) => (
                             <span
                               key={aIdx}
                               className="px-2 py-1 rounded bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-medium leading-tight"
-                              title={`${alt.meaningVi} (${alt.type || 'adj/verb/noun'})${alt.example ? ' | VD: ' + alt.example : ''}`}
+                              title={`${isEn ? (alt.meaningEn || alt.meaningVi) : alt.meaningVi} (${alt.type || 'adj/verb/noun'})${alt.example ? ' | Ex: ' + alt.example : ''}`}
                             >
-                              <strong>{alt.word}</strong> <span className="text-[10px] text-slate-500 font-normal">({alt.meaningVi})</span>
+                              <strong>{alt.word}</strong> <span className="text-[10px] text-slate-500 font-normal">({isEn ? (alt.meaningEn || alt.meaningVi) : alt.meaningVi})</span>
                             </span>
                           ))}
                         </div>
@@ -1316,7 +1360,7 @@ export default function FeedbackModal({
               )}
 
               <span className="text-xs text-slate-500 block">
-                Các cụm từ vựng học thuật (Collocations) trọng điểm theo chủ đề:
+                {isEn ? 'Key topic-specific Academic Collocations:' : 'Các cụm từ vựng học thuật (Collocations) trọng điểm theo chủ đề:'}
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -1330,7 +1374,7 @@ export default function FeedbackModal({
                         <button
                           onClick={() => handleSaveVocab(v, idx)}
                           className="p-1 text-slate-400 hover:text-amber-600 transition-colors"
-                          title="Lưu vào sổ từ vựng"
+                          title={isEn ? "Save to Vocab Notebook" : "Lưu vào sổ từ vựng"}
                         >
                           {savedVocabs[idx] ? (
                             <Check className="w-4 h-4 text-emerald-600" />
@@ -1340,7 +1384,7 @@ export default function FeedbackModal({
                         </button>
                       </div>
                       <p className="text-xs text-slate-600">
-                        {v.meaningVi || v.meaning}
+                        {isEn ? (v.meaningEn || v.meaningVi || v.meaning) : (v.meaningVi || v.meaning)}
                       </p>
                       {v.example && (
                         <p className="text-[11px] text-slate-400 italic">
@@ -1351,7 +1395,7 @@ export default function FeedbackModal({
                   ))
                 ) : (
                   <div className="col-span-2 text-center py-6 text-slate-400 text-xs">
-                    Không có danh sách từ vựng bổ sung.
+                    {isEn ? 'No additional vocabulary available.' : 'Không có danh sách từ vựng bổ sung.'}
                   </div>
                 )}
               </div>

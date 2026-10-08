@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { evaluateRevisionComparison } from '../services/geminiService';
 import { countWords } from '../utils/textAnalytics';
+import { useTranslation } from '../i18n';
 
 export default function RevisionModal({
   isOpen,
@@ -31,6 +32,7 @@ export default function RevisionModal({
   apiKey,
   model
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen || !task) return null;
 
   const [v2Text, setV2Text] = useState(v1Essay || '');
@@ -57,11 +59,11 @@ export default function RevisionModal({
 
   const handleGradeV2 = async () => {
     if (!apiKey) {
-      alert('Vui lòng vào phần Cài đặt để cấu hình AI API Key trước.');
+      alert(isEn ? 'Please configure your AI API Key in Settings first.' : 'Vui lòng vào phần Cài đặt để cấu hình AI API Key trước.');
       return;
     }
     if (wordCount < 20) {
-      alert('Vui lòng viết ít nhất 20 từ để giám khảo chấm điểm.');
+      alert(isEn ? 'Please write at least 20 words for the examiner to evaluate.' : 'Vui lòng viết ít nhất 20 từ để giám khảo chấm điểm.');
       return;
     }
 
@@ -85,12 +87,12 @@ export default function RevisionModal({
           essayText: v2Text,
           evaluation,
           stats: { wordCount, version: 2 },
-          date: new Date().toLocaleDateString('vi-VN')
+          date: new Date().toLocaleDateString(isEn ? 'en-US' : 'vi-VN')
         });
       }
     } catch (err) {
       console.error(err);
-      alert(err.message || 'Lỗi khi so sánh và chấm bản v2.');
+      alert(err.message || (isEn ? 'Error comparing and grading revision v2.' : 'Lỗi khi so sánh và chấm bản v2.'));
     } finally {
       setIsSubmittingV2(false);
     }
@@ -112,18 +114,27 @@ export default function RevisionModal({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold">Phòng Viết Lại Nâng Band (Revision Studio v1 ➔ v2)</h2>
+                <h2 className="text-base sm:text-lg font-bold">
+                  {isEn ? 'Score-Boosting Revision Studio (v1 ➔ v2)' : 'Phòng Viết Lại Nâng Band (Revision Studio v1 ➔ v2)'}
+                </h2>
                 <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   Task {task.taskNumber}: {task.title}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Đối chiếu trực tiếp bản v1 với v2, sửa từng lỗi sai để bứt phá mục tiêu Band 6.0 – 7.5+
+                {isEn 
+                  ? 'Side-by-side comparison of draft v1 with v2, correcting errors to break into Band 6.5 – 7.5+'
+                  : 'Đối chiếu trực tiếp bản v1 với v2, sửa từng lỗi sai để bứt phá mục tiêu Band 6.0 – 7.5+'}
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+          <button 
+            onClick={onClose} 
+            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -143,7 +154,9 @@ export default function RevisionModal({
                 <div>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm sm:text-base font-black">
-                      Bản v1: Band {v1Band.toFixed(1)} ➔ Bản v2: Band {Number(v2Band).toFixed(1)}
+                      {isEn 
+                        ? `Draft v1: Band ${v1Band.toFixed(1)} ➔ Draft v2: Band ${Number(v2Band).toFixed(1)}`
+                        : `Bản v1: Band ${v1Band.toFixed(1)} ➔ Bản v2: Band ${Number(v2Band).toFixed(1)}`}
                     </span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-black ${
                       isImproved ? 'bg-emerald-200 text-emerald-900' : 'bg-slate-200 text-slate-800'
@@ -152,7 +165,7 @@ export default function RevisionModal({
                     </span>
                   </div>
                   <p className="text-xs mt-0.5 text-slate-600 font-medium">
-                    {v2Evaluation.examinerVerdict || 'Bạn đã có sự cải thiện rõ rệt so với bản viết đầu tiên!'}
+                    {v2Evaluation.examinerVerdict || (isEn ? 'You have demonstrated noticeable improvement over your initial draft!' : 'Bạn đã có sự cải thiện rõ rệt so với bản viết đầu tiên!')}
                   </p>
                 </div>
               </div>
@@ -187,7 +200,7 @@ export default function RevisionModal({
                   <div className="space-y-1">
                     <span className="font-bold text-emerald-800 flex items-center space-x-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Các điểm đã sửa thành công:</span>
+                      <span>{isEn ? 'Successfully resolved areas:' : 'Các điểm đã sửa thành công:'}</span>
                     </span>
                     <ul className="list-disc list-inside text-emerald-900 space-y-0.5">
                       {v2Evaluation.fixedItems.map((item, i) => (
@@ -201,7 +214,7 @@ export default function RevisionModal({
                   <div className="space-y-1">
                     <span className="font-bold text-amber-800 flex items-center space-x-1">
                       <AlertTriangle className="w-3.5 h-3.5" />
-                      <span>Điểm cần tiếp tục cải thiện:</span>
+                      <span>{isEn ? 'Points for further refinement:' : 'Điểm cần tiếp tục cải thiện:'}</span>
                     </span>
                     <ul className="list-disc list-inside text-amber-900 space-y-0.5">
                       {v2Evaluation.remainingIssues.map((item, i) => (
@@ -223,10 +236,10 @@ export default function RevisionModal({
             <div className="flex items-center justify-between border-b pb-2">
               <span className="font-bold text-xs text-slate-800 flex items-center space-x-1.5">
                 <FileText className="w-4 h-4 text-slate-500" />
-                <span>Bản gốc v1 (Band {v1Band.toFixed(1)}) & Checklist Cần Sửa</span>
+                <span>{isEn ? `Draft v1 (Band ${v1Band.toFixed(1)}) & Checklist` : `Bản gốc v1 (Band ${v1Band.toFixed(1)}) & Checklist Cần Sửa`}</span>
               </span>
               <span className="text-[11px] font-semibold text-slate-500">
-                Đã sửa: {Object.values(checkedFixes).filter(Boolean).length} / {v1Evaluation?.corrections?.length || 0}
+                {isEn ? `Corrected: ${Object.values(checkedFixes).filter(Boolean).length} / ${v1Evaluation?.corrections?.length || 0}` : `Đã sửa: ${Object.values(checkedFixes).filter(Boolean).length} / ${v1Evaluation?.corrections?.length || 0}`}
               </span>
             </div>
 
@@ -235,9 +248,11 @@ export default function RevisionModal({
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-red-700 uppercase tracking-wider block">
-                    Danh sách câu cần tinh chỉnh trong bản v2:
+                    {isEn ? 'Targeted sentences to polish in Draft v2:' : 'Danh sách câu cần tinh chỉnh trong bản v2:'}
                   </span>
-                  <span className="text-[11px] text-slate-400">Bấm ô vuông để đánh dấu khi đã sửa</span>
+                  <span className="text-[11px] text-slate-400">
+                    {isEn ? 'Check box once incorporated' : 'Bấm ô vuông để đánh dấu khi đã sửa'}
+                  </span>
                 </div>
 
                 {v1Evaluation.corrections.map((c, i) => {
@@ -254,7 +269,7 @@ export default function RevisionModal({
                       <div className="flex items-start justify-between gap-2">
                         <button 
                           onClick={() => toggleCheck(i)}
-                          className="flex items-center space-x-1.5 text-slate-700 hover:text-slate-900 font-medium text-left"
+                          className="flex items-center space-x-1.5 text-slate-700 hover:text-slate-900 font-medium text-left cursor-pointer"
                         >
                           {isChecked ? (
                             <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -269,12 +284,12 @@ export default function RevisionModal({
 
                       <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200/70 text-emerald-950 flex items-center justify-between gap-2">
                         <div className="font-bold">
-                          ➔ Sửa thành: <span className="font-serif font-bold text-emerald-900">"{c.corrected}"</span>
+                          ➔ {isEn ? 'Revised to:' : 'Sửa thành:'} <span className="font-serif font-bold text-emerald-900">"{c.corrected}"</span>
                         </div>
                         <button
                           onClick={() => handleApplyFix(c.corrected)}
-                          title="Sao chép câu gợi ý"
-                          className="p-1 rounded bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0 transition-colors"
+                          title={isEn ? 'Copy suggested sentence' : 'Sao chép câu gợi ý'}
+                          className="p-1 rounded bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0 transition-colors cursor-pointer"
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
@@ -289,14 +304,16 @@ export default function RevisionModal({
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-white border border-slate-200 text-xs text-slate-500 text-center">
-                Không tìm thấy danh sách lỗi cụ thể từ bản chấm trước. Bạn có thể tự do viết lại để tối ưu hóa từ vựng và câu văn.
+                {isEn 
+                  ? 'No specific error itemization from previous report. Feel free to revise freely to elevate vocabulary and syntactic variety.'
+                  : 'Không tìm thấy danh sách lỗi cụ thể từ bản chấm trước. Bạn có thể tự do viết lại để tối ưu hóa từ vựng và câu văn.'}
               </div>
             )}
 
             {/* Original V1 Full Text View */}
             <div className="space-y-1.5 pt-2">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                Toàn văn bản viết v1 ({countWords(v1Essay)} từ):
+                {isEn ? `Draft v1 full response (${countWords(v1Essay)} words):` : `Toàn văn bản viết v1 (${countWords(v1Essay)} từ):`}
               </span>
               <div className="p-4 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 font-mono whitespace-pre-wrap leading-relaxed select-text">
                 {v1Essay}
@@ -309,52 +326,54 @@ export default function RevisionModal({
             <div className="flex items-center justify-between border-b pb-2">
               <span className="font-bold text-xs text-emerald-800 flex items-center space-x-1.5">
                 <Sparkles className="w-4 h-4 text-emerald-600" />
-                <span>Khung Soạn Thảo Bản v2</span>
+                <span>{isEn ? 'Interactive Revision Editor (Draft v2)' : 'Khung Soạn Thảo Bản v2'}</span>
               </span>
               <div className="flex items-center space-x-2 text-xs">
-                <span className="font-bold text-slate-700">{wordCount} từ</span>
+                <span className="font-bold text-slate-700">{wordCount} {isEn ? 'words' : 'từ'}</span>
                 <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
                   wordCount >= task.minWords ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                 }`}>
-                  (Tối thiểu: {task.minWords} từ)
+                  ({isEn ? 'Min target' : 'Tối thiểu'}: {task.minWords} {isEn ? 'words' : 'từ'})
                 </span>
               </div>
             </div>
 
             <p className="text-[11px] text-slate-500">
-              Mẹo: Giữ nguyên cấu trúc luận điểm của bản v1, tập trung thay thế các từ vựng lặp, sửa lỗi chia thì và áp dụng các cấu trúc câu ghép/phân từ mượt mà hơn.
+              {isEn 
+                ? 'Tip: Retain the thesis structure of v1; focus on eliminating lexical repetition, correcting tense errors, and weaving participial clauses & compound-complex syntax smoothly.'
+                : 'Mẹo: Giữ nguyên cấu trúc luận điểm của bản v1, tập trung thay thế các từ vựng lặp, sửa lỗi chia thì và áp dụng các cấu trúc câu ghép/phân từ mượt mà hơn.'}
             </p>
 
             <textarea
               value={v2Text}
               onChange={(e) => setV2Text(e.target.value)}
-              placeholder="Chỉnh sửa hoặc gõ lại bài viết hoàn chỉnh bản v2 tại đây..."
+              placeholder={isEn ? 'Refine or compose your complete draft v2 here...' : 'Chỉnh sửa hoặc gõ lại bài viết hoàn chỉnh bản v2 tại đây...'}
               className="flex-1 w-full p-4 rounded-xl border border-slate-200 text-sm font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none min-h-[380px]"
             />
 
             <div className="flex items-center justify-between pt-2">
               <button
                 onClick={() => setV2Text(v1Essay)}
-                className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
-                title="Khôi phục lại nội dung bản v1 ban đầu"
+                className="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+                title={isEn ? 'Restore original draft v1 content' : 'Khôi phục lại nội dung bản v1 ban đầu'}
               >
-                Khôi phục lại bản v1
+                {isEn ? 'Restore draft v1' : 'Khôi phục lại bản v1'}
               </button>
 
               <button
                 onClick={handleGradeV2}
                 disabled={isSubmittingV2}
-                className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50"
+                className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isSubmittingV2 ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>AI Đang So Sánh v1 & v2...</span>
+                    <span>{isEn ? 'AI Comparing v1 & v2...' : 'AI Đang So Sánh v1 & v2...'}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    <span>Chấm Bản v2 & Đo Mức Tăng Band</span>
+                    <span>{isEn ? 'Grade Draft v2 & Measure Band Gain' : 'Chấm Bản v2 & Đo Mức Tăng Band'}</span>
                   </>
                 )}
               </button>

@@ -291,7 +291,7 @@ export default function EditorPane({
             ) : (
               <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
             )}
-            <span>{totalWords}/{task.minWords} từ</span>
+            <span>{totalWords}/{task.minWords} {isEn ? 'words' : 'từ'}</span>
           </div>
 
           {/* Minimal Mode vs Pro Studio Mode auxiliary indicators */}
@@ -306,26 +306,26 @@ export default function EditorPane({
                     ? 'bg-indigo-50 border-indigo-300 text-indigo-700 shadow-inner'
                     : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                 }`}
-                title="Mở bảng tóm tắt chỉ số phân tích bài viết"
+                title={isEn ? "Open essay analysis metrics overview" : "Mở bảng tóm tắt chỉ số phân tích bài viết"}
               >
                 <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                <span className="font-medium hidden sm:inline">Chỉ Số Phân Tích</span>
-                <span className="font-medium sm:hidden">Chỉ số</span>
+                <span className="font-medium hidden sm:inline">{isEn ? "Analytics Metrics" : "Chỉ Số Phân Tích"}</span>
+                <span className="font-medium sm:hidden">{isEn ? "Metrics" : "Chỉ số"}</span>
                 <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isMetricsMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isMetricsMenuOpen && (
                 <div className="absolute right-0 top-full mt-1.5 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-2 text-xs">
                   <div className="text-[11px] font-bold text-slate-400 px-1 uppercase tracking-wider">
-                    Chỉ số phân tích trực tiếp
+                    {isEn ? "Real-time Essay Analytics" : "Chỉ số phân tích trực tiếp"}
                   </div>
                   
                   {/* Lexical Diversity (TTR) */}
                   <div 
                     className="flex items-center justify-between p-2 rounded-lg bg-slate-50 text-slate-700 font-medium"
-                    title="Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"
+                    title={isEn ? "Type-Token Ratio: Vocabulary diversity, non-repetition (Target: > 50%)" : "Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"}
                   >
-                    <span className="text-slate-500 font-bold">Từ vựng (TTR):</span>
+                    <span className="text-slate-500 font-bold">{isEn ? "Lexical (TTR):" : "Từ vựng (TTR):"}</span>
                     <span className={`font-bold ${lexicalData.ttr >= 50 ? 'text-emerald-700' : 'text-slate-700'}`}>
                       {lexicalData.ttr}%
                     </span>
@@ -343,18 +343,18 @@ export default function EditorPane({
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                           : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                       }`}
-                      title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
+                      title={isEn ? "Check Task 1 data coverage & Overview paragraph (Cambridge standard)" : "Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"}
                     >
                       <div className="flex items-center space-x-1.5">
                         <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                        <span>Phủ Số Liệu Task 1</span>
+                        <span>{isEn ? "Task 1 Coverage" : "Phủ Số Liệu Task 1"}</span>
                       </div>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-black ${
                         task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
                           ? 'bg-emerald-200 text-emerald-900'
                           : 'bg-amber-200 text-amber-900'
                       }`}>
-                        {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
+                        {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? (isEn ? 'Raw Data Found' : 'Dính số liệu') : (isEn ? 'OV Pass ✓' : 'OV Đạt ✓')) : (isEn ? 'Missing OV ⚠️' : 'Thiếu OV ⚠️')}
                       </span>
                     </button>
                   )}
@@ -371,18 +371,18 @@ export default function EditorPane({
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                           : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
                       }`}
-                      title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
+                      title={isEn ? "Analyze Task 2 argument flow, Thesis sentence & paragraph coherence (Cambridge standard)" : "Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"}
                     >
                       <div className="flex items-center space-x-1.5">
                         <GitCommit className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                        <span>Lập Luận Task 2</span>
+                        <span>{isEn ? "Task 2 Reasoning" : "Lập Luận Task 2"}</span>
                       </div>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-black ${
                         task2CoherenceCheck?.status === 'optimal'
                           ? 'bg-emerald-200 text-emerald-900'
                           : 'bg-indigo-200 text-indigo-900'
                       }`}>
-                        {task2CoherenceCheck?.statusLabel || 'Kiểm tra'}
+                        {task2CoherenceCheck?.statusLabel || (isEn ? 'Check' : 'Kiểm tra')}
                       </span>
                     </button>
                   )}
@@ -400,11 +400,11 @@ export default function EditorPane({
                           ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
-                    title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
+                    title={isEn ? "Open Sentence Heatmap (Sentence structure ratio analysis - Cambridge GRA standard)" : "Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"}
                   >
                     <div className="flex items-center space-x-1.5">
                       <Layers className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                      <span>Cấu Trúc GRA</span>
+                      <span>{isEn ? "GRA Structures" : "Cấu Trúc GRA"}</span>
                     </div>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded font-black ${
                       sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
@@ -413,7 +413,7 @@ export default function EditorPane({
                           ? 'bg-amber-200 text-amber-900'
                           : 'bg-slate-200 text-slate-800'
                     }`}>
-                      {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
+                      {sentenceAnalysis.totalSentences > 0 ? (isEn ? `${sentenceAnalysis.complexPercentage}% Complex` : `${sentenceAnalysis.complexPercentage}% Phức`) : 'GRA'}
                     </span>
                   </button>
 
@@ -425,10 +425,10 @@ export default function EditorPane({
                       else onOpenParaphrase?.();
                     }}
                     className="w-full flex items-center space-x-2 p-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold transition-colors cursor-pointer"
-                    title="Mở bảng tra cứu Paraphrase cạnh bài viết"
+                    title={isEn ? "Open Paraphrase lookup panel" : "Mở bảng tra cứu Paraphrase cạnh bài viết"}
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span>Tra Cứu Paraphrase C1-C2</span>
+                    <span>{isEn ? "Look up C1-C2 Paraphrase" : "Tra Cứu Paraphrase C1-C2"}</span>
                   </button>
 
                   {/* Quick In-Situ Lexical Upgrader */}
@@ -442,15 +442,15 @@ export default function EditorPane({
                       }
                     }}
                     className="w-full flex items-center justify-between p-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-semibold transition-colors cursor-pointer"
-                    title="Nâng cấp từ vựng C1/C2 tức thì tại chỗ (1-Click Replace)"
+                    title={isEn ? "Upgrade vocabulary in-situ to C1/C2 instantly (1-Click Replace)" : "Nâng cấp từ vựng C1/C2 tức thì tại chỗ (1-Click Replace)"}
                   >
                     <div className="flex items-center space-x-2">
                       <Zap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                      <span>Nâng Cấp Từ Vựng C1/C2</span>
+                      <span>{isEn ? "Upgrade Vocab to C1/C2" : "Nâng Cấp Từ Vựng C1/C2"}</span>
                     </div>
                     {lexicalData.overusedWords?.length > 0 && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded font-black bg-amber-200 text-amber-900">
-                        {lexicalData.overusedWords.length} từ lặp
+                        {lexicalData.overusedWords.length} {isEn ? 'repeated' : 'từ lặp'}
                       </span>
                     )}
                   </button>
@@ -465,7 +465,7 @@ export default function EditorPane({
               {/* Lexical Diversity (TTR) */}
               <div 
                 className="flex items-center space-x-1 px-1.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-medium cursor-help shrink-0 text-xs"
-                title="Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"
+                title={isEn ? "Type-Token Ratio: Vocabulary diversity, non-repetition (Target: > 50%)" : "Type-Token Ratio: Tỷ lệ từ vựng phong phú, không lặp lại (Mục tiêu: > 50%)"}
               >
                 <span className="text-slate-400 font-bold">TTR:</span>
                 <span className={`font-bold ${lexicalData.ttr >= 50 ? 'text-emerald-700' : 'text-slate-700'}`}>
@@ -482,16 +482,16 @@ export default function EditorPane({
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                       : 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                   }`}
-                  title="Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"
+                  title={isEn ? "Check Task 1 data coverage & Overview paragraph (Cambridge standard)" : "Kiểm tra mức độ bao phủ số liệu & đoạn Overview Task 1 theo chuẩn Cambridge"}
                 >
                   <BarChart2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                  <span className="hidden min-[1600px]:inline">Phủ Số Liệu Task 1</span>
+                  <span className="hidden min-[1600px]:inline">{isEn ? "Task 1 Coverage" : "Phủ Số Liệu Task 1"}</span>
                   <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
                     task1OverviewCheck?.hasOverview && !task1OverviewCheck?.hasRawData
                       ? 'bg-emerald-200 text-emerald-900'
                       : 'bg-amber-200 text-amber-900'
                   }`}>
-                    {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? 'Dính số liệu' : 'OV Đạt ✓') : 'Thiếu OV ⚠️'}
+                    {task1OverviewCheck?.hasOverview ? (task1OverviewCheck?.hasRawData ? (isEn ? 'Raw Data Found' : 'Dính số liệu') : (isEn ? 'OV Pass ✓' : 'OV Đạt ✓')) : (isEn ? 'Missing OV ⚠️' : 'Thiếu OV ⚠️')}
                   </span>
                 </button>
               )}
@@ -505,16 +505,16 @@ export default function EditorPane({
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                       : 'bg-indigo-50 text-indigo-800 border-indigo-300 hover:bg-indigo-100'
                   }`}
-                  title="Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"
+                  title={isEn ? "Analyze Task 2 argument flow, Thesis sentence & paragraph coherence (Cambridge standard)" : "Phân tích cấu trúc lập luận, câu Thesis & tính mạch lạc từng đoạn Task 2 theo chuẩn Cambridge"}
                 >
                   <GitCommit className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                  <span className="hidden min-[1600px]:inline">Lập Luận Task 2</span>
+                  <span className="hidden min-[1600px]:inline">{isEn ? "Task 2 Reasoning" : "Lập Luận Task 2"}</span>
                   <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
                     task2CoherenceCheck?.status === 'optimal'
                       ? 'bg-emerald-200 text-emerald-900'
                       : 'bg-indigo-200 text-indigo-900'
                   }`}>
-                    {task2CoherenceCheck?.statusLabel || 'Kiểm tra'}
+                    {task2CoherenceCheck?.statusLabel || (isEn ? 'Check' : 'Kiểm tra')}
                   </span>
                 </button>
               )}
@@ -529,10 +529,10 @@ export default function EditorPane({
                       ? 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                 }`}
-                title="Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"
+                title={isEn ? "Open Sentence Heatmap (Sentence structure ratio analysis - Cambridge GRA standard)" : "Mở Bản Đồ Nhiệt Cấu Trúc Câu (Phân tích tỷ lệ câu đơn, câu ghép và câu phức chuẩn Cambridge GRA)"}
               >
                 <Layers className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                <span className="hidden min-[1600px]:inline">Cấu Trúc GRA</span>
+                <span className="hidden min-[1600px]:inline">{isEn ? "GRA Structures" : "Cấu Trúc GRA"}</span>
                 <span className={`text-[10px] px-1 py-0.2 rounded font-black ${
                   sentenceAnalysis.totalSentences > 0 && sentenceAnalysis.complexPercentage >= 45
                     ? 'bg-emerald-200 text-emerald-900'
@@ -540,7 +540,7 @@ export default function EditorPane({
                       ? 'bg-amber-200 text-amber-900'
                       : 'bg-slate-200 text-slate-800'
                 }`}>
-                  {sentenceAnalysis.totalSentences > 0 ? `${sentenceAnalysis.complexPercentage}% Phức` : 'GRA'}
+                  {sentenceAnalysis.totalSentences > 0 ? (isEn ? `${sentenceAnalysis.complexPercentage}% Complex` : `${sentenceAnalysis.complexPercentage}% Phức`) : 'GRA'}
                 </span>
               </button>
 
@@ -558,10 +558,10 @@ export default function EditorPane({
                     ? 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300'
                     : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border-indigo-200'
                 }`}
-                title="Nâng cấp từ vựng C1/C2 tức thì tại chỗ (1-Click Replace)"
+                title={isEn ? "Upgrade vocabulary in-situ to C1/C2 instantly (1-Click Replace)" : "Nâng cấp từ vựng C1/C2 tức thì tại chỗ (1-Click Replace)"}
               >
                 <Zap className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span className="hidden sm:inline">Nâng Cấp C1/C2</span>
+                <span className="hidden sm:inline">{isEn ? "Upgrade C1/C2" : "Nâng Cấp C1/C2"}</span>
                 {lexicalData.overusedWords?.length > 0 && (
                   <span className="text-[10px] px-1 py-0.2 rounded font-black bg-amber-200 text-amber-900">
                     {lexicalData.overusedWords.length}
@@ -573,7 +573,7 @@ export default function EditorPane({
               <button
                 onClick={() => onOpenSlideOver ? onOpenSlideOver('paraphrase') : onOpenParaphrase?.()}
                 className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors cursor-pointer shrink-0 text-xs"
-                title="Mở bảng tra cứu Paraphrase cạnh bài viết"
+                title={isEn ? "Open Paraphrase lookup panel" : "Mở bảng tra cứu Paraphrase cạnh bài viết"}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 <span className="hidden sm:inline">Paraphrase</span>
@@ -590,10 +590,10 @@ export default function EditorPane({
                   ? 'bg-slate-200 text-slate-900 shadow-inner' 
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
               }`}
-              title="Mở rộng tiện ích: Sổ từ vựng, Tốc độ gõ WPM & Kiểm tra chính tả"
+              title={isEn ? "More utilities: Vocab notebook, Typing speed & Spellcheck" : "Mở rộng tiện ích: Sổ từ vựng, Tốc độ gõ WPM & Kiểm tra chính tả"}
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-              <span className="hidden min-[1600px]:inline text-[11px]">Tiện ích</span>
+              <span className="hidden min-[1600px]:inline text-[11px]">{isEn ? "Utilities" : "Tiện ích"}</span>
               <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isMoreToolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -608,7 +608,7 @@ export default function EditorPane({
                   className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-50 text-left text-slate-700 font-semibold cursor-pointer"
                 >
                   <Bookmark className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span>Sổ Từ Vựng C1-C2</span>
+                  <span>{isEn ? "C1-C2 Vocab Notebook" : "Sổ Từ Vựng C1-C2"}</span>
                 </button>
 
                 {/* Sổ lỗi sai thường gặp */}
@@ -712,10 +712,12 @@ export default function EditorPane({
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-bold text-slate-900">
-                    Khung Dàn Ý Tương Tác & Bản Nháp
+                    {isEn ? "Interactive Outlining & Scratchpad" : "Khung Dàn Ý Tương Tác & Bản Nháp"}
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    {isTask1 ? 'Dàn ý Task 1: Mở bài, Overview xu hướng & Thân bài đối chiếu' : 'Dàn ý Task 2: Mô hình P.E.E.L & Thesis Statement chuẩn Cambridge'}
+                    {isTask1 
+                      ? (isEn ? 'Task 1 Outline: Introduction, Trend Overview & Comparative Body' : 'Dàn ý Task 1: Mở bài, Overview xu hướng & Thân bài đối chiếu') 
+                      : (isEn ? 'Task 2 Outline: P.E.E.L Structure & Cambridge Thesis Statement' : 'Dàn ý Task 2: Mô hình P.E.E.L & Thesis Statement chuẩn Cambridge')}
                   </p>
                 </div>
               </div>
@@ -732,7 +734,7 @@ export default function EditorPane({
                   }`}
                 >
                   <ListOrdered className="w-3.5 h-3.5" />
-                  <span>Khung PEEL chuẩn</span>
+                  <span>{isEn ? "Standard PEEL Framework" : "Khung PEEL chuẩn"}</span>
                 </button>
                 <button
                   type="button"
@@ -743,7 +745,7 @@ export default function EditorPane({
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <span>Ghi chú tự do</span>
+                  <span>{isEn ? "Freeform Scratchpad" : "Ghi chú tự do"}</span>
                 </button>
               </div>
             </div>
@@ -754,15 +756,17 @@ export default function EditorPane({
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-800">
-                      1. Mở bài (Introduction)
+                      1. {isEn ? 'Introduction' : 'Mở bài (Introduction)'}
                     </label>
-                    <span className="text-[10px] text-slate-400">Paraphrase đề bài</span>
+                    <span className="text-[10px] text-slate-400">{isEn ? 'Paraphrase prompt' : 'Paraphrase đề bài'}</span>
                   </div>
                   <textarea
                     rows={2}
                     value={scaffold.intro}
                     onChange={(e) => handleScaffoldChange('intro', e.target.value)}
-                    placeholder={isTask1 ? "Ví dụ: The provided line graph illustrates the consumption of three types of fast food in the UK from 1990 to 2010..." : "Ví dụ: It is often argued that universities should focus on practical career skills rather than theoretical knowledge..."}
+                    placeholder={isTask1 
+                      ? (isEn ? "E.g.: The provided line graph illustrates the consumption of three types of fast food in the UK from 1990 to 2010..." : "Ví dụ: The provided line graph illustrates the consumption of three types of fast food in the UK from 1990 to 2010...") 
+                      : (isEn ? "E.g.: It is often argued that universities should focus on practical career skills rather than theoretical knowledge..." : "Ví dụ: It is often argued that universities should focus on practical career skills rather than theoretical knowledge...")}
                     className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
                   />
                 </div>
@@ -771,17 +775,19 @@ export default function EditorPane({
                 <div className="p-3 rounded-xl bg-indigo-50/40 border border-indigo-100 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-indigo-950">
-                      {isTask1 ? '2. Đoạn Tổng Quan (Overview - Bắt buộc Band 7.0+)' : '2. Luận Điểm Cốt Lõi (Thesis Statement)'}
+                      {isTask1 ? (isEn ? '2. Overview Paragraph (Essential for Band 7.0+)' : '2. Đoạn Tổng Quan (Overview - Bắt buộc Band 7.0+)') : (isEn ? '2. Core Thesis Statement' : '2. Luận Điểm Cốt Lõi (Thesis Statement)')}
                     </label>
                     <span className="text-[10px] text-indigo-600 font-medium">
-                      {isTask1 ? 'Không đưa số liệu chi tiết' : 'Lập trường xuyên suốt'}
+                      {isTask1 ? (isEn ? 'No raw data' : 'Không đưa số liệu chi tiết') : (isEn ? 'Consistent stance throughout' : 'Lập trường xuyên suốt')}
                     </span>
                   </div>
                   <textarea
                     rows={2}
                     value={scaffold.overviewOrThesis}
                     onChange={(e) => handleScaffoldChange('overviewOrThesis', e.target.value)}
-                    placeholder={isTask1 ? "Bắt đầu bằng: 'Overall, it is clear that pizza experienced a marked upward trend, whereas fish and chips saw a dramatic decline...'" : "Ví dụ: While academic theory has certain merits, I firmly agree that modern education must prioritize vocational readiness..."}
+                    placeholder={isTask1 
+                      ? (isEn ? "Start with: 'Overall, it is clear that pizza experienced a marked upward trend, whereas fish and chips saw a dramatic decline...'" : "Bắt đầu bằng: 'Overall, it is clear that pizza experienced a marked upward trend, whereas fish and chips saw a dramatic decline...'") 
+                      : (isEn ? "E.g.: While academic theory has certain merits, I firmly agree that modern education must prioritize vocational readiness..." : "Ví dụ: While academic theory has certain merits, I firmly agree that modern education must prioritize vocational readiness...")}
                     className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-indigo-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
                   />
                 </div>
@@ -790,17 +796,19 @@ export default function EditorPane({
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-800">
-                      {isTask1 ? '3. Thân bài 1: Nhóm đối tượng / số liệu thứ nhất' : '3. Thân bài 1 (Mô hình P.E.E.L)'}
+                      {isTask1 ? (isEn ? '3. Body 1: First group / key trends' : '3. Thân bài 1: Nhóm đối tượng / số liệu thứ nhất') : (isEn ? '3. Body Paragraph 1 (PEEL)' : '3. Thân bài 1 (Mô hình P.E.E.L)')}
                     </label>
                     <span className="text-[10px] text-slate-400">
-                      {isTask1 ? 'Chọn lọc đặc điểm & so sánh' : 'Point -> Explain -> Example'}
+                      {isTask1 ? (isEn ? 'Key features & comparisons' : 'Chọn lọc đặc điểm & so sánh') : 'Point -> Explain -> Example'}
                     </span>
                   </div>
                   <textarea
                     rows={3}
                     value={scaffold.body1}
                     onChange={(e) => handleScaffoldChange('body1', e.target.value)}
-                    placeholder={isTask1 ? "Tập trung phân tích các số liệu cao nhất, mốc khởi đầu, đỉnh điểm và lồng ghép so sánh tương quan..." : "P: Luận điểm thứ nhất...\nE: Giải thích cơ chế vì sao...\nE: Dẫn chứng hoặc ví dụ cụ thể..."}
+                    placeholder={isTask1 
+                      ? (isEn ? "Focus on highest figures, initial points, peaks, and incorporate comparative analysis..." : "Tập trung phân tích các số liệu cao nhất, mốc khởi đầu, đỉnh điểm và lồng ghép so sánh tương quan...") 
+                      : (isEn ? "P: First main point...\nE: Explanation of mechanism...\nE: Concrete evidence or example..." : "P: Luận điểm thứ nhất...\nE: Giải thích cơ chế vì sao...\nE: Dẫn chứng hoặc ví dụ cụ thể...")}
                     className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
                   />
                 </div>
@@ -809,17 +817,19 @@ export default function EditorPane({
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-slate-800">
-                      {isTask1 ? '4. Thân bài 2: Nhóm đối tượng / số liệu thứ hai' : '4. Thân bài 2 (Mô hình P.E.E.L)'}
+                      {isTask1 ? (isEn ? '4. Body 2: Remaining trends / groups' : '4. Thân bài 2: Nhóm đối tượng / số liệu thứ hai') : (isEn ? '4. Body Paragraph 2 (PEEL)' : '4. Thân bài 2 (Mô hình P.E.E.L)')}
                     </label>
                     <span className="text-[10px] text-slate-400">
-                      {isTask1 ? 'Phân tích các đối tượng còn lại' : 'Point -> Explain -> Example'}
+                      {isTask1 ? (isEn ? 'Remaining data & contrasts' : 'Phân tích các đối tượng còn lại') : 'Point -> Explain -> Example'}
                     </span>
                   </div>
                   <textarea
                     rows={3}
                     value={scaffold.body2}
                     onChange={(e) => handleScaffoldChange('body2', e.target.value)}
-                    placeholder={isTask1 ? "Phân tích các xu hướng đối lập hoặc các nhóm số liệu còn lại với liên từ so sánh (in contrast, conversely)..." : "P: Luận điểm phản biện hoặc khía cạnh thứ hai...\nE: Giải thích sâu hơn...\nE: Dẫn chứng hoặc hệ quả..."}
+                    placeholder={isTask1 
+                      ? (isEn ? "Analyze opposing trends or remaining data groups using transitional linkers (in contrast, conversely)..." : "Phân tích các xu hướng đối lập hoặc các nhóm số liệu còn lại với liên từ so sánh (in contrast, conversely)...") 
+                      : (isEn ? "P: Counter-argument or second facet...\nE: In-depth explanation...\nE: Evidence or consequence..." : "P: Luận điểm phản biện hoặc khía cạnh thứ hai...\nE: Giải thích sâu hơn...\nE: Dẫn chứng hoặc hệ quả...")}
                     className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
                   />
                 </div>
@@ -829,15 +839,17 @@ export default function EditorPane({
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-bold text-slate-800">
-                        5. Kết bài (Conclusion)
+                        5. {isEn ? 'Conclusion' : 'Kết bài (Conclusion)'}
                       </label>
-                      <span className="text-[10px] text-slate-400">Đúc kết lập trường</span>
+                      <span className="text-[10px] text-slate-400">{isEn ? 'Summarize stance' : 'Đúc kết lập trường'}</span>
                     </div>
                     <textarea
                       rows={2}
                       value={scaffold.conclusion}
                       onChange={(e) => handleScaffoldChange('conclusion', e.target.value)}
-                      placeholder="Bắt đầu bằng: 'In conclusion, although theoretical studies maintain importance, practical training ultimately provides greater societal benefits...'"
+                      placeholder={isEn 
+                        ? "Start with: 'In conclusion, although theoretical studies maintain importance, practical training ultimately provides greater societal benefits...'" 
+                        : "Bắt đầu bằng: 'In conclusion, although theoretical studies maintain importance, practical training ultimately provides greater societal benefits...'"}
                       className="w-full text-xs text-slate-800 p-2.5 rounded-lg border border-slate-200 bg-white focus:ring-1 focus:ring-indigo-500 outline-hidden"
                     />
                   </div>
@@ -846,7 +858,7 @@ export default function EditorPane({
                 {/* Scaffold Action Bar */}
                 <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
                   <span className="text-[11px] text-slate-500">
-                    💡 Dàn ý rõ ràng giúp đạt tối thiểu <strong>Band 7.0 Task Response</strong>.
+                    {isEn ? <>💡 A clear outline helps secure at least <strong>Band 7.0 Task Response</strong>.</> : <>💡 Dàn ý rõ ràng giúp đạt tối thiểu <strong>Band 7.0 Task Response</strong>.</>}
                   </span>
                   <div className="flex items-center space-x-2">
                     <button
@@ -857,12 +869,12 @@ export default function EditorPane({
                       {scaffoldInserted ? (
                         <>
                           <Check className="w-3.5 h-3.5 text-emerald-300" />
-                          <span>Đã chèn vào bài!</span>
+                          <span>{isEn ? "Inserted into essay!" : "Đã chèn vào bài!"}</span>
                         </>
                       ) : (
                         <>
                           <Plus className="w-3.5 h-3.5" />
-                          <span>Chèn dàn ý vào Bài Viết</span>
+                          <span>{isEn ? "Insert outline into Essay" : "Chèn dàn ý vào Bài Viết"}</span>
                         </>
                       )}
                     </button>
@@ -874,11 +886,11 @@ export default function EditorPane({
                 <textarea
                   value={outlineText}
                   onChange={(e) => setOutlineText(e.target.value)}
-                  placeholder="Ghi nhanh các ý tưởng, từ vựng hay hoặc dàn ý tự do trước khi viết bài chính..."
+                  placeholder={isEn ? "Jot down ideas, collocations, or free-form notes before writing..." : "Ghi nhanh các ý tưởng, từ vựng hay hoặc dàn ý tự do trước khi viết bài chính..."}
                   className="flex-1 w-full min-h-[220px] md:min-h-0 p-3 resize-none focus:outline-none text-slate-700 font-mono text-sm leading-relaxed rounded-lg border border-slate-200"
                 />
                 <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t">
-                  <span>Ghi chú tự do không tính vào bài nộp chính thức</span>
+                  <span>{isEn ? "Freeform notes are not counted towards official submission" : "Ghi chú tự do không tính vào bài nộp chính thức"}</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -888,7 +900,7 @@ export default function EditorPane({
                     }}
                     className="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer"
                   >
-                    Chèn nội dung nháp vào bài viết →
+                    {isEn ? "Insert scratchpad into essay →" : "Chèn nội dung nháp vào bài viết →"}
                   </button>
                 </div>
               </div>
@@ -902,8 +914,8 @@ export default function EditorPane({
         <div className="mx-2.5 sm:mx-4 lg:mx-6 mb-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-900 shadow-2xs">
           <div className="flex items-center space-x-1.5 flex-wrap gap-1.5">
             <Info className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span className="font-semibold text-amber-950">Cảnh báo lặp từ (LR):</span>
-            <span className="text-amber-800 text-[11px] hidden sm:inline">Nhấp từ để nâng cấp C1/C2:</span>
+            <span className="font-semibold text-amber-950">{isEn ? "Lexical Repetition Warning (LR):" : "Cảnh báo lặp từ (LR):"}</span>
+            <span className="text-amber-800 text-[11px] hidden sm:inline">{isEn ? "Click word to upgrade to C1/C2:" : "Nhấp từ để nâng cấp C1/C2:"}</span>
             {lexicalData.overusedWords.map((w, idx) => (
               <button
                 key={idx}
@@ -914,7 +926,7 @@ export default function EditorPane({
                     ? 'bg-amber-600 text-white border-amber-700 ring-2 ring-amber-300'
                     : 'bg-white hover:bg-amber-100 text-amber-900 border-amber-300 hover:border-amber-400 active:scale-95'
                 }`}
-                title={`Nhấp để mở bảng gợi ý collocations C1/C2 thay thế cho "${w.word}"`}
+                title={isEn ? `Click to see C1/C2 collocations to replace "${w.word}"` : `Nhấp để mở bảng gợi ý collocations C1/C2 thay thế cho "${w.word}"`}
               >
                 <span>"{w.word}"</span>
                 <span className="text-[10px] opacity-80 font-normal">({w.count}x)</span>
@@ -934,8 +946,8 @@ export default function EditorPane({
               }}
               className="text-[11px] font-bold text-amber-900 hover:text-amber-950 hover:underline flex items-center space-x-1 cursor-pointer"
             >
-              <span>Nâng cấp từ vựng ngay</span>
-              <ArrowRight className="w-3 h-3" />
+              <span>{isEn ? "Upgrade vocabulary now" : "Nâng cấp từ vựng ngay"}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -951,7 +963,7 @@ export default function EditorPane({
             className="flex items-center space-x-1 font-semibold text-slate-700 hover:text-red-600 transition-colors"
           >
             <BarChart2 className="w-3.5 h-3.5 text-slate-400" />
-            <span>Phân bổ {paragraphs.length} đoạn văn</span>
+            <span>{isEn ? `Paragraph breakdown (${paragraphs.length})` : `Phân bổ ${paragraphs.length} đoạn văn`}</span>
             <ChevronDown className={`w-3 h-3 transition-transform ${showParagraphDetails ? 'rotate-180' : ''}`} />
           </button>
 
@@ -959,7 +971,7 @@ export default function EditorPane({
           <div className="hidden sm:flex items-center space-x-1.5 pl-2 border-l border-slate-200">
             {paragraphs.map((p, i) => (
               <span key={i} className="px-1.5 py-0.5 rounded bg-slate-100 text-[11px] font-medium text-slate-600">
-                Đ{i + 1}: <strong>{p.words}w</strong>
+                {isEn ? 'P' : 'Đ'}{i + 1}: <strong>{p.words}w</strong>
               </span>
             ))}
           </div>
@@ -968,7 +980,7 @@ export default function EditorPane({
         {/* Auto-save timestamp */}
         <div className="flex items-center space-x-1 text-slate-400 text-[11px]">
           <Save className="w-3 h-3" />
-          <span>Tự động lưu: {lastSaved ? lastSaved.toLocaleTimeString('vi-VN') : 'Đang đồng bộ...'}</span>
+          <span>{isEn ? `Auto-saved: ${lastSaved ? lastSaved.toLocaleTimeString('en-US') : 'Syncing...'}` : `Tự động lưu: ${lastSaved ? lastSaved.toLocaleTimeString('vi-VN') : 'Đang đồng bộ...'}`}</span>
         </div>
 
       </div>
@@ -980,11 +992,11 @@ export default function EditorPane({
             <div key={idx} className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs space-y-1">
               <span className="font-bold text-slate-800 block truncate">{p.label}</span>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500">Thực tế:</span>
-                <span className="font-bold text-red-600">{p.words} từ</span>
+                <span className="text-slate-500">{isEn ? "Actual:" : "Thực tế:"}</span>
+                <span className="font-bold text-red-600">{p.words} {isEn ? 'words' : 'từ'}</span>
               </div>
               <div className="flex items-center justify-between text-[11px] text-slate-400">
-                <span>Khuyên dùng:</span>
+                <span>{isEn ? "Recommended:" : "Khuyên dùng:"}</span>
                 <span>{p.recommended}</span>
               </div>
             </div>

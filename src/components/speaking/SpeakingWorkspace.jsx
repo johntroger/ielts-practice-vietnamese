@@ -444,7 +444,7 @@ export default function SpeakingWorkspace({
 
   const handleDeleteCustomPack = (packId, e) => {
     e.stopPropagation();
-    if (!window.confirm('Bạn có chắc chắn muốn xóa bộ đề thi Speaking tự sinh này?')) return;
+    if (!window.confirm(isEn ? 'Are you sure you want to delete this custom speaking test pack?' : 'Bạn có chắc chắn muốn xóa bộ đề thi Speaking tự sinh này?')) return;
     setAllMockPacks(prev => {
       const updated = prev.filter(p => p.id !== packId);
       try {
@@ -546,7 +546,7 @@ export default function SpeakingWorkspace({
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-medium hidden lg:block">
-                Khảo thí 1-on-1 • 4 Tiêu chí Cambridge
+                {isEn ? "1-on-1 Interview • 4 Cambridge Criteria" : "Khảo thí 1-on-1 • 4 Tiêu chí Cambridge"}
               </span>
             </div>
           </div>
@@ -639,7 +639,7 @@ export default function SpeakingWorkspace({
             <button
               onClick={onOpenSettings}
               className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer shrink-0"
-              title="Cài đặt API & Âm thanh"
+              title={isEn ? "API & Audio Settings" : "Cài đặt API & Âm thanh"}
             >
               <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
@@ -655,17 +655,17 @@ export default function SpeakingWorkspace({
                   ? 'bg-amber-500 text-slate-950 border-amber-400 hover:bg-amber-400'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
               }`}
-              title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa phòng thi Speaking, ẩn thanh menu trên (Alt + Z)"}
+              title={isSlimHeader ? (isEn ? "Exit expanded mode, show navigation bar (Alt + Z)" : "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)") : (isEn ? "Maximize speaking workspace, hide top navigation (Alt + Z)" : "Mở rộng tối đa phòng thi Speaking, ẩn thanh menu trên (Alt + Z)")}
             >
               {isSlimHeader ? (
                 <>
                   <Minimize2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Thu gọn</span>
+                  <span className="hidden sm:inline">{isEn ? "Collapse" : "Thu gọn"}</span>
                 </>
               ) : (
                 <>
                   <Maximize2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Mở rộng</span>
+                  <span className="hidden sm:inline">{isEn ? "Expand" : "Mở rộng"}</span>
                 </>
               )}
             </button>
@@ -678,34 +678,38 @@ export default function SpeakingWorkspace({
         <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-amber-950 border-b border-amber-500/50 px-4 py-2.5 flex items-center justify-between text-xs text-amber-100 shrink-0 shadow-md">
           <div className="flex items-center space-x-2.5 max-w-4xl">
             <span className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black text-[10px] uppercase shrink-0">
-              Khuyên dùng Chrome
+              {isEn ? "Chrome Recommended" : "Khuyên dùng Chrome"}
             </span>
             <span className="leading-snug">
-              Bạn đang duyệt bằng <strong>Microsoft Edge</strong>. Trình duyệt Edge có thể gặp lỗi ngắt tiếng (không nghe thấy giám khảo). <strong>Khuyến nghị mở website bằng Google Chrome</strong> để có trải nghiệm giọng đọc và micro ổn định nhất!
+              {isEn 
+                ? <>You are browsing with <strong>Microsoft Edge</strong>. Edge may cause audio cut-offs. <strong>We recommend opening the website in Google Chrome</strong> for the most stable voice & microphone experience!</>
+                : <>Bạn đang duyệt bằng <strong>Microsoft Edge</strong>. Trình duyệt Edge có thể gặp lỗi ngắt tiếng (không nghe thấy giám khảo). <strong>Khuyến nghị mở website bằng Google Chrome</strong> để có trải nghiệm giọng đọc và micro ổn định nhất!</>}
             </span>
           </div>
           <button
             onClick={() => setIsSoundcheckOpen(true)}
             className="ml-3 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-white border border-amber-500/40 font-bold text-[11px] whitespace-nowrap cursor-pointer transition-colors shrink-0"
           >
-            Kiểm tra âm thanh ngay
+            {isEn ? "Soundcheck now" : "Kiểm tra âm thanh ngay"}
           </button>
         </div>
       ) : !isChrome ? (
         <div className="bg-gradient-to-r from-rose-950 via-slate-900 to-rose-950 border-b border-rose-500/50 px-4 py-2.5 flex items-center justify-between text-xs text-rose-100 shrink-0 shadow-md">
           <div className="flex items-center space-x-2.5 max-w-4xl">
             <span className="px-2 py-0.5 rounded bg-rose-500 text-white font-black text-[10px] uppercase shrink-0">
-              Khuyên dùng Chrome
+              {isEn ? "Chrome Recommended" : "Khuyên dùng Chrome"}
             </span>
             <span>
-              Trình duyệt này có thể không hỗ trợ ghi âm trực tiếp. <strong>Vui lòng sử dụng Google Chrome</strong> để đảm bảo thi Speaking mượt mà.
+              {isEn 
+                ? <>This browser may not support direct audio recording. <strong>Please use Google Chrome</strong> to ensure a smooth Speaking test.</>
+                : <>Trình duyệt này có thể không hỗ trợ ghi âm trực tiếp. <strong>Vui lòng sử dụng Google Chrome</strong> để đảm bảo thi Speaking mượt mà.</>}
             </span>
           </div>
           <button
             onClick={() => setIsSoundcheckOpen(true)}
             className="ml-3 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 hover:text-white border border-rose-500/40 font-bold text-[11px] whitespace-nowrap cursor-pointer transition-colors shrink-0"
           >
-            Kiểm tra thiết bị
+            {isEn ? "Check equipment" : "Kiểm tra thiết bị"}
           </button>
         </div>
       ) : null}
@@ -727,15 +731,17 @@ export default function SpeakingWorkspace({
                 <div className="space-y-1.5 max-w-xl">
                   <div className="flex items-center space-x-2">
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                      Mô Phỏng 100% Khảo Thí IDP / BC
+                      {isEn ? '100% IDP / BC Exam Simulation' : 'Mô Phỏng 100% Khảo Thí IDP / BC'}
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">• 11 – 14 Phút Chuẩn Mực</span>
+                    <span className="text-xs text-slate-400 font-semibold">• {isEn ? '11 – 14 Min Standard' : '11 – 14 Phút Chuẩn Mực'}</span>
                   </div>
                   <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                    Phòng Thi Thử IELTS Speaking Với Giám Khảo AI
+                    {isEn ? 'IELTS Speaking Mock Exam Room with AI Examiner' : 'Phòng Thi Thử IELTS Speaking Với Giám Khảo AI'}
                   </h1>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    Trải nghiệm tương tác giọng nói 1-on-1 trực tiếp với Giám khảo AI: hỏi đáp Part 1, 60s nháp ghi chú Part 2, và câu hỏi follow-up phản biện chuyên sâu ở Part 3.
+                    {isEn
+                      ? 'Live 1-on-1 voice interaction with AI Examiner: Part 1 interview, 60s Part 2 cue card scratchpad, and deep analytical follow-up questions in Part 3.'
+                      : 'Trải nghiệm tương tác giọng nói 1-on-1 trực tiếp với Giám khảo AI: hỏi đáp Part 1, 60s nháp ghi chú Part 2, và câu hỏi follow-up phản biện chuyên sâu ở Part 3.'}
                   </p>
 
                   {/* Persistent Browser Advice Box */}
@@ -747,10 +753,10 @@ export default function SpeakingWorkspace({
                     <span className="text-base">{isChrome ? '🚀' : '💡'}</span>
                     <div className="leading-snug">
                       {isChrome ? (
-                        <span><strong>Trình duyệt tối ưu:</strong> Bạn đang dùng Google Chrome chuẩn 100% cho Web Speech & Audio.</span>
+                        <span><strong>{isEn ? 'Optimal browser:' : 'Trình duyệt tối ưu:'}</strong> {isEn ? 'You are using Google Chrome, fully optimized for Web Speech & Audio.' : 'Bạn đang dùng Google Chrome chuẩn 100% cho Web Speech & Audio.'}</span>
                       ) : (
                         <span>
-                          <strong>Khuyên dùng Google Chrome:</strong> Nếu bạn đang dùng {isEdge ? 'Microsoft Edge' : 'trình duyệt khác'} và không nghe thấy tiếng Giám khảo đọc, vui lòng mở trang này trên <strong>Google Chrome</strong> để chạy ổn định nhất.
+                          <strong>{isEn ? 'Google Chrome recommended:' : 'Khuyên dùng Google Chrome:'}</strong> {isEn ? `If you are using ${isEdge ? 'Microsoft Edge' : 'another browser'} and do not hear examiner audio, please open in ` : `Nếu bạn đang dùng ${isEdge ? 'Microsoft Edge' : 'trình duyệt khác'} và không nghe thấy tiếng Giám khảo đọc, vui lòng mở trang này trên `}<strong>Google Chrome</strong>{isEn ? ' for the most stable experience.' : ' để chạy ổn định nhất.'}
                         </span>
                       )}
                     </div>
@@ -765,7 +771,7 @@ export default function SpeakingWorkspace({
                     </div>
                     <div>
                       <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider block">
-                        Giám Khảo Khảo Thí
+                        {isEn ? 'Exam Examiner' : 'Giám Khảo Khảo Thí'}
                       </span>
                       <span className="font-extrabold text-sm text-white block">{activeExaminer.name}</span>
                       <button
@@ -773,7 +779,7 @@ export default function SpeakingWorkspace({
                         className="text-[11px] text-purple-300 hover:text-purple-200 font-bold flex items-center space-x-1 mt-0.5 cursor-pointer"
                       >
                         <Volume2 className="w-3 h-3" />
-                        <span>{speechEngine.isSpeaking ? 'Đang đọc...' : 'Nghe giọng đọc'}</span>
+                        <span>{speechEngine.isSpeaking ? (isEn ? 'Speaking...' : 'Đang đọc...') : (isEn ? 'Voice sample' : 'Nghe giọng đọc')}</span>
                       </button>
                     </div>
                   </div>
@@ -782,10 +788,10 @@ export default function SpeakingWorkspace({
                   <button
                     onClick={handleEnterExamRoom}
                     className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-xl shadow-purple-950/70 flex items-center justify-center space-x-2 transition-all cursor-pointer hover:scale-[1.02]"
-                    title="Bắt đầu buổi thi thử trực tiếp với Giám khảo AI"
+                    title={isEn ? 'Start live mock exam with AI examiner' : 'Bắt đầu buổi thi thử trực tiếp với Giám khảo AI'}
                   >
                     <Play className="w-4 h-4 fill-current" />
-                    <span>Bắt Đầu Thi Thử</span>
+                    <span>{isEn ? 'Start Mock Exam' : 'Bắt Đầu Thi Thử'}</span>
                   </button>
                 </div>
               </div>
@@ -797,10 +803,10 @@ export default function SpeakingWorkspace({
                 <div>
                   <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
                     <Layers className="w-4 h-4 text-purple-400" />
-                    <span>Chọn Bộ Đề Thi Thử (Mock Test Pack)</span>
+                    <span>{isEn ? 'Select Mock Test Pack' : 'Chọn Bộ Đề Thi Thử (Mock Test Pack)'}</span>
                   </h3>
                   <span className="text-xs text-slate-400 font-medium">
-                    {allMockPacks.length} Gói đề thi (Chuẩn Cambridge, Thủ công & AI Tự Sinh)
+                    {allMockPacks.length} {isEn ? 'Test Packs (Cambridge Standard, Manual & AI Generated)' : 'Gói đề thi (Chuẩn Cambridge, Thủ công & AI Tự Sinh)'}
                   </span>
                 </div>
 
@@ -812,10 +818,10 @@ export default function SpeakingWorkspace({
                       setIsGeneratorOpen(true);
                     }}
                     className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
-                    title="Tự tay tạo bộ đề Speaking mới theo chủ đề mong muốn"
+                    title={isEn ? 'Create custom Speaking test pack manually' : 'Tự tay tạo bộ đề Speaking mới theo chủ đề mong muốn'}
                   >
                     <PenTool className="w-4 h-4" />
-                    <span>✍️ Tạo Đề Thủ Công</span>
+                    <span>{isEn ? '✍️ Create Manually' : '✍️ Tạo Đề Thủ Công'}</span>
                   </button>
 
                   <button
@@ -824,10 +830,10 @@ export default function SpeakingWorkspace({
                       setIsGeneratorOpen(true);
                     }}
                     className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
-                    title="Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn"
+                    title={isEn ? 'Use AI to generate new Speaking test pack' : 'Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn'}
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span>Sinh Bộ Đề Mới (AI)</span>
+                    <span>{isEn ? 'Generate Pack (AI)' : 'Sinh Bộ Đề Mới (AI)'}</span>
                   </button>
                 </div>
               </div>
@@ -843,7 +849,7 @@ export default function SpeakingWorkspace({
                       : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
                   }`}
                 >
-                  Tất Cả ({mockPackCounts.all})
+                  {isEn ? 'All' : 'Tất Cả'} ({mockPackCounts.all})
                 </button>
                 <button
                   type="button"
@@ -854,7 +860,7 @@ export default function SpeakingWorkspace({
                       : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
                   }`}
                 >
-                  <span>🏛️ Chuẩn Cambridge ({mockPackCounts.cambridge})</span>
+                  <span>🏛️ {isEn ? 'Cambridge Standard' : 'Chuẩn Cambridge'} ({mockPackCounts.cambridge})</span>
                 </button>
                 <button
                   type="button"
@@ -866,7 +872,7 @@ export default function SpeakingWorkspace({
                   }`}
                 >
                   <PenTool className="w-3 h-3" />
-                  <span>✍️ Thủ Công ({mockPackCounts.manual})</span>
+                  <span>✍️ {isEn ? 'Manual' : 'Thủ Công'} ({mockPackCounts.manual})</span>
                 </button>
                 <button
                   type="button"
@@ -878,7 +884,7 @@ export default function SpeakingWorkspace({
                   }`}
                 >
                   <Sparkles className="w-3 h-3" />
-                  <span>🤖 AI Sinh ({mockPackCounts.ai})</span>
+                  <span>🤖 {isEn ? 'AI Generated' : 'AI Sinh'} ({mockPackCounts.ai})</span>
                 </button>
               </div>
 
@@ -888,7 +894,7 @@ export default function SpeakingWorkspace({
                     📂
                   </div>
                   <p className="text-xs text-slate-400">
-                    Chưa có bộ đề nào trong mục này.
+                    {isEn ? 'No test packs found in this category.' : 'Chưa có bộ đề nào trong mục này.'}
                   </p>
                   <button
                     type="button"
@@ -898,7 +904,7 @@ export default function SpeakingWorkspace({
                     }}
                     className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 cursor-pointer"
                   >
-                    ✍️ Tạo đề thủ công đầu tiên
+                    {isEn ? '✍️ Create First Manual Pack' : '✍️ Tạo đề thủ công đầu tiên'}
                   </button>
                 </div>
               ) : (
@@ -926,24 +932,24 @@ export default function SpeakingWorkspace({
                               {masteredIds.includes(pack.id) && (
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
                                   <GraduationCap className="w-3 h-3 text-emerald-400" />
-                                  <span>Đã thuộc</span>
+                                  <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
                                 </span>
                               )}
                               {(pack.isCambridge || !pack.isCustom) && (
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                                  🏛️ {pack.cambridgeBook ? `Chuẩn Cam ${pack.cambridgeBook}` : 'Cambridge'}
+                                  🏛️ {pack.cambridgeBook ? (isEn ? `Cam ${pack.cambridgeBook}` : `Chuẩn Cam ${pack.cambridgeBook}`) : 'Cambridge'}
                                 </span>
                               )}
                               {isManual && (
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
                                   <PenTool className="w-2.5 h-2.5" />
-                                  <span>✍️ Thủ Công</span>
+                                  <span>{isEn ? '✍️ Manual' : '✍️ Thủ Công'}</span>
                                 </span>
                               )}
                               {isAi && (
                                 <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center space-x-1">
                                   <Sparkles className="w-2.5 h-2.5 text-purple-400" />
-                                  <span>AI Sinh</span>
+                                  <span>{isEn ? 'AI Gen' : 'AI Sinh'}</span>
                                 </span>
                               )}
                             </div>
@@ -957,7 +963,7 @@ export default function SpeakingWorkspace({
                         </div>
 
                         <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                          <span>Đủ Part 1, 2, 3</span>
+                          <span>{isEn ? 'Parts 1, 2, 3 included' : 'Đủ Part 1, 2, 3'}</span>
                           <div className="flex items-center space-x-2">
                             {onToggleMastered && (
                               <button
@@ -973,25 +979,25 @@ export default function SpeakingWorkspace({
                                 }`}
                                 title={
                                   masteredIds.includes(pack.id)
-                                    ? 'Bỏ đánh dấu đã thuộc'
-                                    : 'Đánh dấu đã thuộc gói đề này'
+                                    ? (isEn ? 'Unmark mastered' : 'Bỏ đánh dấu đã thuộc')
+                                    : (isEn ? 'Mark this pack as mastered' : 'Đánh dấu đã thuộc gói đề này')
                                 }
                               >
                                 <GraduationCap className="w-3 h-3" />
-                                <span>{masteredIds.includes(pack.id) ? 'Đã thuộc' : 'Thuộc đề'}</span>
+                                <span>{isEn ? (masteredIds.includes(pack.id) ? 'Mastered' : 'Master') : (masteredIds.includes(pack.id) ? 'Đã thuộc' : 'Thuộc đề')}</span>
                               </button>
                             )}
                             {pack.isCustom && (
                               <button
                                 onClick={(e) => handleDeleteCustomPack(pack.id, e)}
                                 className="text-slate-500 hover:text-rose-400 px-1.5 py-0.5 rounded transition-colors text-[10px] font-bold"
-                                title="Xóa bộ đề tự sinh này"
+                                title={isEn ? 'Delete this generated pack' : 'Xóa bộ đề tự sinh này'}
                               >
-                                Xóa đề
+                                {isEn ? 'Delete' : 'Xóa đề'}
                               </button>
                             )}
                             <div className="flex items-center space-x-1 text-purple-400 font-bold">
-                              <span>{isSelected ? 'Đang chọn đề này' : 'Bấm để chọn'}</span>
+                              <span>{isEn ? (isSelected ? 'Selected' : 'Select') : (isSelected ? 'Đang chọn đề này' : 'Bấm để chọn')}</span>
                               <ChevronRight className="w-3.5 h-3.5" />
                             </div>
                           </div>
@@ -1007,38 +1013,38 @@ export default function SpeakingWorkspace({
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-2">
                 <Info className="w-3.5 h-3.5 text-purple-400" />
-                <span>Cấu Trúc Chi Tiết Của Gói Đề Đang Chọn</span>
+                <span>{isEn ? 'Detailed Structure of Selected Pack' : 'Cấu Trúc Chi Tiết Của Gói Đề Đang Chọn'}</span>
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {/* Part 1 */}
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-bold text-purple-400">
-                    <span>PART 1: Phỏng Vấn</span>
-                    <span>4 - 5 phút</span>
+                    <span>{isEn ? 'PART 1: Interview' : 'PART 1: Phỏng Vấn'}</span>
+                    <span>{isEn ? '4 - 5 mins' : '4 - 5 phút'}</span>
                   </div>
                   <h5 className="text-xs font-bold text-slate-200">{mockP1.title}</h5>
-                  <p className="text-[11px] text-slate-400">{mockP1.questions?.length || 3} câu hỏi về thói quen, góc nhìn cá nhân</p>
+                  <p className="text-[11px] text-slate-400">{mockP1.questions?.length || 3} {isEn ? 'questions on daily habits & personal perspectives' : 'câu hỏi về thói quen, góc nhìn cá nhân'}</p>
                 </div>
 
                 {/* Part 2 */}
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-bold text-purple-400">
-                    <span>PART 2: Cue Card</span>
-                    <span>3 - 4 phút</span>
+                    <span>{isEn ? 'PART 2: Cue Card' : 'PART 2: Cue Card'}</span>
+                    <span>{isEn ? '3 - 4 mins' : '3 - 4 phút'}</span>
                   </div>
                   <h5 className="text-xs font-bold text-slate-200 line-clamp-1">{mockP2.title}</h5>
-                  <p className="text-[11px] text-slate-400">1 phút nháp 4 ô ma trận + 2 phút nói liên tục</p>
+                  <p className="text-[11px] text-slate-400">{isEn ? '1 min 4-box matrix scratchpad + 2 mins continuous speaking' : '1 phút nháp 4 ô ma trận + 2 phút nói liên tục'}</p>
                 </div>
 
                 {/* Part 3 */}
                 <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-bold text-purple-400">
-                    <span>PART 3: Thảo Luận</span>
-                    <span>4 - 5 phút</span>
+                    <span>{isEn ? 'PART 3: Discussion' : 'PART 3: Thảo Luận'}</span>
+                    <span>{isEn ? '4 - 5 mins' : '4 - 5 phút'}</span>
                   </div>
                   <h5 className="text-xs font-bold text-slate-200">{mockP3.topic}</h5>
-                  <p className="text-[11px] text-slate-400">{mockP3.questions?.length || 3} câu hỏi phản biện & câu hỏi follow-up</p>
+                  <p className="text-[11px] text-slate-400">{mockP3.questions?.length || 3} {isEn ? 'analytical & follow-up questions' : 'câu hỏi phản biện & câu hỏi follow-up'}</p>
                 </div>
               </div>
 
@@ -1046,10 +1052,12 @@ export default function SpeakingWorkspace({
               <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/40 border border-purple-800/50 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3.5 sm:gap-4 overflow-hidden">
                 <div className="text-xs text-slate-300 text-left min-w-0 flex-1 space-y-1">
                   <span className="font-bold text-white block text-sm sm:text-base leading-snug">
-                    Sẵn sàng thi với gói: <span className="text-purple-300 font-extrabold">{activeMockPack.title}</span>?
+                    {isEn ? 'Ready to test with: ' : 'Sẵn sàng thi với gói: '}<span className="text-purple-300 font-extrabold">{activeMockPack.title}</span>?
                   </span>
                   <span className="text-slate-400 text-xs block leading-relaxed">
-                    Giám khảo {activeExaminer.name} ({activeExaminer.accent}) • 11 – 14 phút • Đầy đủ 3 Parts chuẩn Cambridge
+                    {isEn
+                      ? `Examiner ${activeExaminer.name} (${activeExaminer.accent}) • 11 – 14 mins • Full 3 Parts Cambridge standard`
+                      : `Giám khảo ${activeExaminer.name} (${activeExaminer.accent}) • 11 – 14 phút • Đầy đủ 3 Parts chuẩn Cambridge`}
                   </span>
                 </div>
 
@@ -1065,8 +1073,8 @@ export default function SpeakingWorkspace({
                       }`}
                       title={
                         masteredIds.includes(selectedMockId)
-                          ? 'Đã thuộc gói đề này (Bấm để bỏ đánh dấu)'
-                          : 'Đánh dấu đã thuộc gói đề này'
+                          ? (isEn ? 'Mastered pack (Click to unmark)' : 'Đã thuộc gói đề này (Bấm để bỏ đánh dấu)')
+                          : (isEn ? 'Mark this pack as mastered' : 'Đánh dấu đã thuộc gói đề này')
                       }
                     >
                       <GraduationCap
@@ -1074,26 +1082,26 @@ export default function SpeakingWorkspace({
                           masteredIds.includes(selectedMockId) ? 'text-emerald-400' : 'text-slate-400'
                         }`}
                       />
-                      <span>{masteredIds.includes(selectedMockId) ? 'Đã Thuộc' : 'Thuộc Đề'}</span>
+                      <span>{isEn ? (masteredIds.includes(selectedMockId) ? 'Mastered' : 'Master') : (masteredIds.includes(selectedMockId) ? 'Đã Thuộc' : 'Thuộc Đề')}</span>
                     </button>
                   )}
 
                   <button
                     onClick={() => setIsSoundcheckOpen(true)}
                     className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white font-bold text-xs border border-purple-500/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0"
-                    title="Kiểm tra loa và mic trước khi vào thi"
+                    title={isEn ? 'Check speakers and microphone before testing' : 'Kiểm tra loa và mic trước khi vào thi'}
                   >
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Kiểm Tra Thiết Bị</span>
+                    <span>{isEn ? 'Check Equipment' : 'Kiểm Tra Thiết Bị'}</span>
                   </button>
 
                   <button
                     onClick={handleEnterExamRoom}
                     className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/30 flex items-center space-x-1.5 transition-all cursor-pointer shrink-0 active:scale-95"
-                    title="Bắt đầu làm gói đề thi đang chọn"
+                    title={isEn ? 'Start selected mock test' : 'Bắt đầu làm gói đề thi đang chọn'}
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>Vào Thi Đề Này</span>
+                    <span>{isEn ? 'Start This Test' : 'Vào Thi Đề Này'}</span>
                   </button>
                 </div>
               </div>
@@ -1319,14 +1327,16 @@ export default function SpeakingWorkspace({
             <Sparkles className="w-8 h-8 animate-spin" />
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            Giám Khảo AI Đang Chấm Điểm 4 Tiêu Chí...
+            {isEn ? 'AI Examiner Evaluating 4 Cambridge Criteria...' : 'Giám Khảo AI Đang Chấm Điểm 4 Tiêu Chí...'}
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 max-w-md mt-2 leading-relaxed">
-            Hệ thống đang phân tích chi tiết Fluency & Coherence, Lexical Resource, Grammatical Range & Accuracy và Pronunciation theo chuẩn khảo thí Cambridge IDP / BC.
+            {isEn
+              ? 'Analyzing Fluency & Coherence, Lexical Resource, Grammatical Range & Accuracy, and Pronunciation according to official Cambridge IDP / BC criteria.'
+              : 'Hệ thống đang phân tích chi tiết Fluency & Coherence, Lexical Resource, Grammatical Range & Accuracy và Pronunciation theo chuẩn khảo thí Cambridge IDP / BC.'}
           </p>
           <div className="mt-6 flex items-center space-x-2 text-xs text-purple-300 font-bold bg-purple-950/60 px-4 py-2 rounded-full border border-purple-800/60">
             <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-            <span>Đang tạo báo cáo chẩn đoán & câu mẫu Band 8.5+...</span>
+            <span>{isEn ? 'Generating diagnostic report & Band 8.5+ model answers...' : 'Đang tạo báo cáo chẩn đoán & câu mẫu Band 8.5+...'}</span>
           </div>
         </div>
       )}

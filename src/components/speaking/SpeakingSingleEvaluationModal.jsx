@@ -17,6 +17,7 @@ import {
   Target,
   Loader2
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 export default function SpeakingSingleEvaluationModal({
   isOpen,
@@ -31,6 +32,7 @@ export default function SpeakingSingleEvaluationModal({
   onReEvaluateAlgorithmically,
   isEvaluatingAI = false
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen || !evaluation) return null;
 
   const [copiedIdx, setCopiedIdx] = useState(null);
@@ -81,17 +83,17 @@ export default function SpeakingSingleEvaluationModal({
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-base font-black text-white tracking-tight">
-                  Đánh Giá Câu Trả Lời • Part {part}
+                  {isEn ? `Response Evaluation • Part ${part}` : `Đánh Giá Câu Trả Lời • Part ${part}`}
                 </h3>
                 {isAlgorithmic ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
                     <Zap className="w-3 h-3 text-amber-300 fill-amber-300 inline" />
-                    <span>Máy Chấm Offline (0.02ms)</span>
+                    <span>{isEn ? 'Offline Algorithm (0.02ms)' : 'Máy Chấm Offline (0.02ms)'}</span>
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center space-x-1">
                     <Sparkles className="w-3 h-3 text-purple-300 inline" />
-                    <span>AI Cambridge</span>
+                    <span>{isEn ? 'AI Cambridge Examiner' : 'AI Cambridge'}</span>
                   </span>
                 )}
               </div>
@@ -119,7 +121,7 @@ export default function SpeakingSingleEvaluationModal({
               <span className={`text-[11px] font-bold uppercase tracking-wider block ${
                 isAlgorithmic ? 'text-emerald-300' : 'text-purple-300'
               }`}>
-                Điểm Đánh Giá Dự Kiến
+                {isEn ? 'Predicted Overall Band' : 'Điểm Đánh Giá Dự Kiến'}
               </span>
               <div className="flex items-baseline space-x-2 mt-0.5">
                 <span className="text-3xl font-black text-white">Band {overallBand.toFixed(1)}</span>
@@ -128,7 +130,7 @@ export default function SpeakingSingleEvaluationModal({
             </div>
             <div className="text-right max-w-xs">
               <p className="text-[11px] text-slate-300 leading-relaxed italic">
-                "{evaluation.examinerComment || 'Câu trả lời thể hiện tư duy tốt, phản xạ tự nhiên.'}"
+                "{evaluation.examinerComment || (isEn ? 'Response demonstrates solid reasoning and natural reflexes.' : 'Câu trả lời thể hiện tư duy tốt, phản xạ tự nhiên.')}"
               </p>
             </div>
           </div>
@@ -148,9 +150,13 @@ export default function SpeakingSingleEvaluationModal({
                 )}
                 <p className="text-[11px] text-slate-300">
                   {isAlgorithmic ? (
-                    <>Bạn đang xem kết quả <strong>Thuật Toán Máy Tính</strong>. Muốn Giám Khảo AI nhận xét chi tiết hơn & viết lại bản mẫu Band 8.5+?</>
+                    isEn 
+                      ? <>Viewing <strong>Algorithmic Score</strong>. Want detailed AI examiner critique and Band 8.5+ model response?</>
+                      : <>Bạn đang xem kết quả <strong>Thuật Toán Máy Tính</strong>. Muốn Giám Khảo AI nhận xét chi tiết hơn & viết lại bản mẫu Band 8.5+?</>
                   ) : (
-                    <>Bạn đang xem kết quả <strong>Giám Khảo AI</strong>. Muốn xem các chỉ số định lượng máy tính (WPM, fillers, thì ngữ pháp)?</>
+                    isEn 
+                      ? <>Viewing <strong>AI Examiner Score</strong>. Want quantitative metrics (WPM, fillers, tenses)?</>
+                      : <>Bạn đang xem kết quả <strong>Giám Khảo AI</strong>. Muốn xem các chỉ số định lượng máy tính (WPM, fillers, thì ngữ pháp)?</>
                   )}
                 </p>
               </div>
@@ -165,12 +171,12 @@ export default function SpeakingSingleEvaluationModal({
                     {isEvaluatingAI ? (
                       <>
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>AI Đang Chấm...</span>
+                        <span>{isEn ? 'AI Evaluating...' : 'AI Đang Chấm...'}</span>
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>🤖 Chấm Bằng AI Ngay</span>
+                        <span>{isEn ? '🤖 Evaluate with AI Now' : '🤖 Chấm Bằng AI Ngay'}</span>
                       </>
                     )}
                   </button>
@@ -182,7 +188,7 @@ export default function SpeakingSingleEvaluationModal({
                     className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shrink-0 flex items-center space-x-1.5 shadow cursor-pointer transition-all hover:scale-[1.02]"
                   >
                     <Zap className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
-                    <span>⚡ Xem Điểm Thuật Toán Máy</span>
+                    <span>{isEn ? '⚡ View Algorithmic Score' : '⚡ Xem Điểm Thuật Toán Máy'}</span>
                   </button>
                 )
               )}
@@ -194,36 +200,52 @@ export default function SpeakingSingleEvaluationModal({
             <div className="space-y-2">
               <span className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
                 <Activity className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Chỉ Số Tốc Độ & Độ Trôi Chảy Định Lượng:</span>
+                <span>{isEn ? 'Quantitative Speed & Fluency Metrics:' : 'Chỉ Số Tốc Độ & Độ Trôi Chảy Định Lượng:'}</span>
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Tốc Độ Nói</span>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                    {isEn ? 'Speaking Rate' : 'Tốc Độ Nói'}
+                  </span>
                   <div className="text-base font-black text-white mt-0.5">
                     {evaluation.speechAnalytics.wordsPerMinute} <span className="text-[10px] font-normal text-slate-400">wpm</span>
                   </div>
-                  <span className="text-[9px] text-slate-500 block">Chuẩn: 110-150 wpm</span>
+                  <span className="text-[9px] text-slate-500 block">
+                    {isEn ? 'Target: 110-150 wpm' : 'Chuẩn: 110-150 wpm'}
+                  </span>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Tổng Số Từ</span>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                    {isEn ? 'Total Words' : 'Tổng Số Từ'}
+                  </span>
                   <div className="text-base font-black text-white mt-0.5">
-                    {evaluation.speechAnalytics.wordCount} <span className="text-[10px] font-normal text-slate-400">từ</span>
+                    {evaluation.speechAnalytics.wordCount} <span className="text-[10px] font-normal text-slate-400">{isEn ? 'words' : 'từ'}</span>
                   </div>
-                  <span className="text-[9px] text-slate-500 block">Độ dài thực tế</span>
+                  <span className="text-[9px] text-slate-500 block">
+                    {isEn ? 'Actual length' : 'Độ dài thực tế'}
+                  </span>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Độ Do Dự</span>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                    {isEn ? 'Hesitation' : 'Độ Do Dự'}
+                  </span>
                   <div className="text-base font-black text-white mt-0.5">
                     {evaluation.speechAnalytics.fillerCount} <span className="text-[10px] font-normal text-slate-400">({evaluation.speechAnalytics.fillerDensityPercent}%)</span>
                   </div>
-                  <span className="text-[9px] text-slate-500 block">Từ chêm / uhm...</span>
+                  <span className="text-[9px] text-slate-500 block">
+                    {isEn ? 'Filler words / uhm...' : 'Từ chêm / uhm...'}
+                  </span>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Thời Lượng</span>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
+                    {isEn ? 'Duration' : 'Thời Lượng'}
+                  </span>
                   <div className="text-base font-black text-white mt-0.5">
-                    {evaluation.speechAnalytics.durationSec} <span className="text-[10px] font-normal text-slate-400">giây</span>
+                    {evaluation.speechAnalytics.durationSec} <span className="text-[10px] font-normal text-slate-400">{isEn ? 'sec' : 'giây'}</span>
                   </div>
-                  <span className="text-[9px] text-slate-500 block">Thời gian phát biểu</span>
+                  <span className="text-[9px] text-slate-500 block">
+                    {isEn ? 'Speaking duration' : 'Thời gian phát biểu'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -233,7 +255,7 @@ export default function SpeakingSingleEvaluationModal({
           <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
             <div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                Câu Hỏi Đã Luyện Tập:
+                {isEn ? 'Practice Prompt:' : 'Câu Hỏi Đã Luyện Tập:'}
               </span>
               <p className="text-xs font-bold text-white mt-0.5">{questionText}</p>
             </div>
@@ -241,7 +263,7 @@ export default function SpeakingSingleEvaluationModal({
               <span className={`text-[10px] font-bold uppercase tracking-wider block ${
                 isAlgorithmic ? 'text-emerald-400' : 'text-purple-400'
               }`}>
-                Nội Dung Bạn Vừa Trả Lời:
+                {isEn ? 'Your Spoken Response:' : 'Nội Dung Bạn Vừa Trả Lời:'}
               </span>
               <p className="text-xs text-slate-200 mt-0.5 italic">"{candidateTranscript}"</p>
             </div>
@@ -250,7 +272,7 @@ export default function SpeakingSingleEvaluationModal({
           {/* 4. FOUR CAMBRIDGE CRITERIA BREAKDOWN */}
           <div className="space-y-2">
             <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
-              Phân Tích 4 Tiêu Chí Khảo Thí:
+              {isEn ? '4 Cambridge Criteria Breakdown:' : 'Phân Tích 4 Tiêu Chí Khảo Thí:'}
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               
@@ -262,7 +284,9 @@ export default function SpeakingSingleEvaluationModal({
                     Band {criteria.fc?.band || overallBand}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">{criteria.fc?.feedback || 'Tốc độ nói ổn định, mạch lạc.'}</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  {criteria.fc?.feedback || (isEn ? 'Stable speaking rate, coherent flow.' : 'Tốc độ nói ổn định, mạch lạc.')}
+                </p>
               </div>
 
               {/* LR */}
@@ -273,7 +297,9 @@ export default function SpeakingSingleEvaluationModal({
                     Band {criteria.lr?.band || overallBand}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">{criteria.lr?.feedback || 'Từ vựng diễn đạt đúng trọng tâm.'}</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  {criteria.lr?.feedback || (isEn ? 'Vocabulary appropriately addresses the topic.' : 'Từ vựng diễn đạt đúng trọng tâm.')}
+                </p>
               </div>
 
               {/* GRA */}
@@ -284,7 +310,9 @@ export default function SpeakingSingleEvaluationModal({
                     Band {criteria.gra?.band || overallBand}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">{criteria.gra?.feedback || 'Kiểm soát tốt thì và mệnh đề chính.'}</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  {criteria.gra?.feedback || (isEn ? 'Good control of tenses and complex structures.' : 'Kiểm soát tốt thì và mệnh đề chính.')}
+                </p>
               </div>
 
               {/* PR */}
@@ -295,7 +323,9 @@ export default function SpeakingSingleEvaluationModal({
                     Band {criteria.pr?.band || overallBand}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">{criteria.pr?.feedback || 'Phát âm rõ âm, nhịp thở tự nhiên.'}</p>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  {criteria.pr?.feedback || (isEn ? 'Clear articulation, natural breathing pace.' : 'Phát âm rõ âm, nhịp thở tự nhiên.')}
+                </p>
               </div>
 
             </div>
@@ -306,25 +336,34 @@ export default function SpeakingSingleEvaluationModal({
             <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/30 to-slate-950 border border-amber-800/40 space-y-2">
               <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-1.5">
                 <Target className="w-3.5 h-3.5 text-amber-400" />
-                <span>Top 3 Hành Động Cải Thiện Ngay:</span>
+                <span>{isEn ? 'Top 3 Actionable Priorities for Immediate Growth:' : 'Top 3 Hành Động Cải Thiện Ngay:'}</span>
               </span>
               <div className="space-y-1.5 text-xs text-slate-300">
                 {evaluation.top3ActionPlan.priority1 && (
                   <div className="flex items-start space-x-2">
                     <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
-                    <p className="leading-relaxed"><strong className="text-white">Trôi chảy:</strong> {evaluation.top3ActionPlan.priority1}</p>
+                    <p className="leading-relaxed">
+                      <strong className="text-white">{isEn ? 'Fluency: ' : 'Trôi chảy: '}</strong> 
+                      {evaluation.top3ActionPlan.priority1}
+                    </p>
                   </div>
                 )}
                 {evaluation.top3ActionPlan.priority2 && (
                   <div className="flex items-start space-x-2">
                     <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
-                    <p className="leading-relaxed"><strong className="text-white">Từ vựng:</strong> {evaluation.top3ActionPlan.priority2}</p>
+                    <p className="leading-relaxed">
+                      <strong className="text-white">{isEn ? 'Vocabulary: ' : 'Từ vựng: '}</strong> 
+                      {evaluation.top3ActionPlan.priority2}
+                    </p>
                   </div>
                 )}
                 {evaluation.top3ActionPlan.priority3 && (
                   <div className="flex items-start space-x-2">
                     <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
-                    <p className="leading-relaxed"><strong className="text-white">Ngữ pháp:</strong> {evaluation.top3ActionPlan.priority3}</p>
+                    <p className="leading-relaxed">
+                      <strong className="text-white">{isEn ? 'Grammar: ' : 'Ngữ pháp: '}</strong> 
+                      {evaluation.top3ActionPlan.priority3}
+                    </p>
                   </div>
                 )}
               </div>
@@ -335,7 +374,7 @@ export default function SpeakingSingleEvaluationModal({
           {evaluation.corrections && evaluation.corrections.length > 0 && (
             <div className="space-y-2">
               <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
-                Sửa Lỗi & Nâng Cấp Câu Trực Tiếp:
+                {isEn ? 'Direct Sentence Corrections & Band Upgrades:' : 'Sửa Lỗi & Nâng Cấp Câu Trực Tiếp:'}
               </span>
               <div className="space-y-2">
                 {evaluation.corrections.map((corr, i) => (
@@ -360,14 +399,14 @@ export default function SpeakingSingleEvaluationModal({
               <div className="flex items-center justify-between">
                 <span className="font-bold text-xs text-purple-300 flex items-center space-x-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Phiên Bản Viết Lại Chuẩn Bản Xứ Band 8.5+:</span>
+                  <span>{isEn ? 'Native-Level Band 8.5+ Rephrase:' : 'Phiên Bản Viết Lại Chuẩn Bản Xứ Band 8.5+:'}</span>
                 </span>
                 <button
                   onClick={() => handleCopy(evaluation.upgradedBand8, 'b8')}
                   className="text-[11px] font-bold text-purple-400 hover:text-purple-300 flex items-center space-x-1 cursor-pointer"
                 >
                   {copiedIdx === 'b8' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedIdx === 'b8' ? 'Đã chép' : 'Sao chép'}</span>
+                  <span>{copiedIdx === 'b8' ? (isEn ? 'Copied' : 'Đã chép') : (isEn ? 'Copy' : 'Sao chép')}</span>
                 </button>
               </div>
               <p className="text-xs text-slate-200 leading-relaxed font-sans font-medium italic">
@@ -380,7 +419,7 @@ export default function SpeakingSingleEvaluationModal({
           {evaluation.goldenCollocations && evaluation.goldenCollocations.length > 0 && (
             <div className="space-y-1.5">
               <span className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
-                Collocations Đắt Giá Nên Ghi Nhớ:
+                {isEn ? 'Golden High-Band Collocations:' : 'Collocations Đắt Giá Nên Ghi Nhớ:'}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {evaluation.goldenCollocations.map((col, idx) => {
@@ -392,7 +431,7 @@ export default function SpeakingSingleEvaluationModal({
                       className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-[11px] text-purple-300 font-medium flex items-center space-x-1"
                     >
                       <span className="font-bold text-white">{phrase}</span>
-                      {meaning && <span className="text-slate-400">({meaning})</span>}
+                      {!isEn && meaning && <span className="text-slate-400">({meaning})</span>}
                     </span>
                   );
                 })}
@@ -404,7 +443,11 @@ export default function SpeakingSingleEvaluationModal({
           <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 text-[11px] text-slate-400 flex items-center space-x-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>
-              <strong>Bảo mật giọng nói:</strong> Khi bấm lưu lịch sử bên dưới, đoạn ghi âm tạm thời trong RAM sẽ bị hủy bỏ vĩnh viễn và chỉ lưu lại bản đánh giá chữ.
+              {isEn ? (
+                <><strong>Voice privacy protection:</strong> Saving to history permanently clears temporary audio from RAM, persisting textual diagnostic data only.</>
+              ) : (
+                <><strong>Bảo mật giọng nói:</strong> Khi bấm lưu lịch sử bên dưới, đoạn ghi âm tạm thời trong RAM sẽ bị hủy bỏ vĩnh viễn và chỉ lưu lại bản đánh giá chữ.</>
+              )}
             </span>
           </div>
         </div>
@@ -415,7 +458,7 @@ export default function SpeakingSingleEvaluationModal({
             onClick={onClose}
             className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
-            Đóng
+            {isEn ? 'Close' : 'Đóng'}
           </button>
 
           <button
@@ -426,17 +469,16 @@ export default function SpeakingSingleEvaluationModal({
             {isSaved ? (
               <>
                 <Check className="w-4 h-4" />
-                <span>Đã Lưu Vào Lịch Sử & Xóa Voice!</span>
+                <span>{isEn ? 'Saved to History & Voice Cleared!' : 'Đã Lưu Vào Lịch Sử & Xóa Voice!'}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                <span>Lưu Đánh Giá Vào Lịch Sử & Xóa Voice</span>
+                <span>{isEn ? 'Save Evaluation to History & Clear Voice' : 'Lưu Đánh Giá Vào Lịch Sử & Xóa Voice'}</span>
               </>
             )}
           </button>
         </div>
-
       </div>
     </div>
   );

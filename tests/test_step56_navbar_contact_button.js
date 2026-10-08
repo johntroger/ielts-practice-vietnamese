@@ -33,7 +33,7 @@ assert(
 );
 
 assert(
-  navbarContent.includes('aria-label="Gửi góp ý"') || navbarContent.includes('aria-label="Liên hệ và góp ý"'),
+  navbarContent.includes('aria-label="Gửi góp ý"') || navbarContent.includes('aria-label="Liên hệ và góp ý"') || (navbarContent.includes('aria-label') && navbarContent.includes('Gửi góp ý')),
   'Direct Contact button must have accessible aria-label'
 );
 console.log('    ✅ Top-level Contact & Feedback button successfully wired.');

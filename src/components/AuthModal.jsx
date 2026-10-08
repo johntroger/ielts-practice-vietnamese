@@ -4,8 +4,10 @@ import {
   AlertCircle, ShieldCheck, User, Sparkles, RefreshCw
 } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
+import { useTranslation } from '../i18n';
 
 export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [mode, setMode] = useState('login'); // 'login' | 'register'
@@ -31,12 +33,12 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
-      setErrorMsg('Vui lòng điền đầy đủ Email và Mật khẩu.');
+      setErrorMsg(isEn ? 'Please enter both Email and Password.' : 'Vui lòng điền đầy đủ Email và Mật khẩu.');
       return;
     }
 
     if (password.length < 6) {
-      setErrorMsg('Mật khẩu cần có tối thiểu 6 ký tự.');
+      setErrorMsg(isEn ? 'Password must contain at least 6 characters.' : 'Mật khẩu cần có tối thiểu 6 ký tự.');
       return;
     }
 
@@ -58,11 +60,11 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
         if (error) throw error;
 
         if (data?.user && data?.session) {
-          setSuccessMsg('Đăng ký tài khoản thành công!');
+          setSuccessMsg(isEn ? 'Account created successfully!' : 'Đăng ký tài khoản thành công!');
           if (onAuthSuccess) onAuthSuccess(data.user);
           setTimeout(() => onClose(), 1200);
         } else {
-          setSuccessMsg('Đăng ký thành công! Hãy kiểm tra hộp thư email của bạn để xác thực (hoặc đăng nhập ngay nếu không yêu cầu xác nhận).');
+          setSuccessMsg(isEn ? 'Registration successful! Please check your email inbox to verify your account.' : 'Đăng ký thành công! Hãy kiểm tra hộp thư email của bạn để xác thực (hoặc đăng nhập ngay nếu không yêu cầu xác nhận).');
           setTimeout(() => setMode('login'), 2000);
         }
       } else {
@@ -73,17 +75,17 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
 
         if (error) throw error;
 
-        setSuccessMsg('Đăng nhập thành công!');
+        setSuccessMsg(isEn ? 'Signed in successfully!' : 'Đăng nhập thành công!');
         if (onAuthSuccess) onAuthSuccess(data.user);
         setTimeout(() => onClose(), 800);
       }
     } catch (err) {
       console.error('Supabase Auth error:', err);
-      let msg = err.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+      let msg = err.message || (isEn ? 'An error occurred. Please try again.' : 'Đã có lỗi xảy ra. Vui lòng thử lại.');
       if (msg.includes('Invalid login credentials')) {
-        msg = 'Email hoặc mật khẩu không chính xác.';
+        msg = isEn ? 'Invalid email or password.' : 'Email hoặc mật khẩu không chính xác.';
       } else if (msg.includes('User already registered')) {
-        msg = 'Email này đã được đăng ký trước đó. Vui lòng đăng nhập.';
+        msg = isEn ? 'This email is already registered. Please sign in.' : 'Email này đã được đăng ký trước đó. Vui lòng đăng nhập.';
       }
       setErrorMsg(msg);
     } finally {
@@ -105,7 +107,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
       if (error) throw error;
     } catch (err) {
       console.error('Google login error:', err);
-      setErrorMsg(err.message || 'Chưa thể kết nối Google Login. Vui lòng kiểm tra cài đặt Google Provider trên Supabase.');
+      setErrorMsg(err.message || (isEn ? 'Unable to connect Google Login. Please verify Supabase provider settings.' : 'Chưa thể kết nối Google Login. Vui lòng kiểm tra cài đặt Google Provider trên Supabase.'));
       setLoading(false);
     }
   };
@@ -137,17 +139,19 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
             </div>
             <div>
               <h3 className="font-bold text-base sm:text-lg">
-                {user ? 'Tài Khoản Của Bạn' : mode === 'login' ? 'Đăng Nhập Tài Khoản' : 'Đăng Ký Tài Khoản'}
+                {user ? (isEn ? 'Your Account' : 'Tài Khoản Của Bạn') : mode === 'login' ? (isEn ? 'Account Sign In' : 'Đăng Nhập Tài Khoản') : (isEn ? 'Create an Account' : 'Đăng Ký Tài Khoản')}
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                {user ? user.email : 'Lưu trữ tiến độ học & lịch sử chấm thi'}
+                {user ? user.email : (isEn ? 'Sync study progress & AI grading history' : 'Lưu trữ tiến độ học & lịch sử chấm thi')}
               </p>
             </div>
           </div>
 
           <button 
             onClick={onClose} 
-            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors z-10"
+            className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors z-10 cursor-pointer"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -166,35 +170,35 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
               <div>
                 <h4 className="font-bold text-slate-900 text-base">{user.email}</h4>
                 <p className="text-xs text-slate-500 mt-1">
-                  Đã kích hoạt đồng bộ đám mây Supabase an toàn.
+                  {isEn ? 'Secure cloud synchronization enabled via Supabase.' : 'Đã kích hoạt đồng bộ đám mây Supabase an toàn.'}
                 </p>
               </div>
 
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 text-left space-y-1.5">
                 <div className="flex items-center space-x-2 text-slate-900 font-bold">
                   <Sparkles className="w-4 h-4 text-amber-500" />
-                  <span>Quyền lợi tài khoản:</span>
+                  <span>{isEn ? 'Account Privileges:' : 'Quyền lợi tài khoản:'}</span>
                 </div>
-                <p>• Tự động đồng bộ bài viết và lịch sử chấm điểm khi đổi máy tính.</p>
-                <p>• Lưu trữ sổ tay từ vựng & checklist lỗi sai cá nhân bền vững.</p>
+                <p>{isEn ? '• Automatically syncs essays and AI evaluation history across computers.' : '• Tự động đồng bộ bài viết và lịch sử chấm điểm khi đổi máy tính.'}</p>
+                <p>{isEn ? '• Persistently preserves your Vocabulary Notebook & personal mistake logs.' : '• Lưu trữ sổ tay từ vựng & checklist lỗi sai cá nhân bền vững.'}</p>
               </div>
 
               <div className="pt-2 flex justify-center space-x-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors"
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                 >
-                  Đóng
+                  {isEn ? 'Close' : 'Đóng'}
                 </button>
                 <button
                   type="button"
                   onClick={handleLogout}
                   disabled={loading}
-                  className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold border border-red-200 transition-colors"
+                  className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold border border-red-200 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>{loading ? 'Đang thoát...' : 'Đăng Xuất'}</span>
+                  <span>{loading ? (isEn ? 'Signing out...' : 'Đang thoát...') : (isEn ? 'Sign Out' : 'Đăng Xuất')}</span>
                 </button>
               </div>
             </div>
@@ -223,7 +227,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full py-2.5 px-4 rounded-xl border border-slate-300 hover:bg-slate-50 active:scale-[0.99] text-slate-700 text-xs font-bold shadow-2xs flex items-center justify-center space-x-2.5 transition-all bg-white"
+                className="w-full py-2.5 px-4 rounded-xl border border-slate-300 hover:bg-slate-50 active:scale-[0.99] text-slate-700 text-xs font-bold shadow-2xs flex items-center justify-center space-x-2.5 transition-all bg-white cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
@@ -231,14 +235,14 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
                   <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
                   <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                 </svg>
-                <span>{mode === 'login' ? 'Đăng nhập nhanh với Google' : 'Đăng ký nhanh với Google'}</span>
+                <span>{mode === 'login' ? (isEn ? 'Quick sign in with Google' : 'Đăng nhập nhanh với Google') : (isEn ? 'Quick sign up with Google' : 'Đăng ký nhanh với Google')}</span>
               </button>
 
               {/* Divider */}
               <div className="relative flex items-center justify-center my-3">
                 <div className="border-t border-slate-200 w-full" />
                 <span className="bg-white px-3 text-[11px] text-slate-400 uppercase font-bold tracking-wider absolute">
-                  Hoặc bằng Email
+                  {isEn ? 'Or with Email' : 'Hoặc bằng Email'}
                 </span>
               </div>
 
@@ -251,7 +255,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tenban@email.com"
+                    placeholder={isEn ? 'yourname@email.com' : 'tenban@email.com'}
                     required
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white"
                   />
@@ -260,14 +264,14 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
 
               {/* Password Input */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 block">Mật khẩu:</label>
+                <label className="text-xs font-bold text-slate-700 block">{isEn ? 'Password:' : 'Mật khẩu:'}</label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Tối thiểu 6 ký tự"
+                    placeholder={isEn ? 'Minimum 6 characters' : 'Tối thiểu 6 ký tự'}
                     required
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 bg-white font-mono"
                   />
@@ -278,22 +282,22 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white text-xs font-bold shadow-md shadow-red-600/10 flex items-center justify-center space-x-1.5 transition-all mt-2"
+                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white text-xs font-bold shadow-md shadow-red-600/10 flex items-center justify-center space-x-1.5 transition-all mt-2 cursor-pointer"
               >
                 {loading ? (
                   <>
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Đang xử lý...</span>
+                    <span>{isEn ? 'Processing...' : 'Đang xử lý...'}</span>
                   </>
                 ) : mode === 'login' ? (
                   <>
                     <LogIn className="w-3.5 h-3.5" />
-                    <span>Đăng Nhập</span>
+                    <span>{isEn ? 'Sign In' : 'Đăng Nhập'}</span>
                   </>
                 ) : (
                   <>
                     <UserPlus className="w-3.5 h-3.5" />
-                    <span>Tạo Tài Khoản</span>
+                    <span>{isEn ? 'Create Account' : 'Tạo Tài Khoản'}</span>
                   </>
                 )}
               </button>
@@ -302,24 +306,24 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
               <div className="pt-2 text-center text-xs text-slate-500 border-t border-slate-100">
                 {mode === 'login' ? (
                   <span>
-                    Chưa có tài khoản?{' '}
+                    {isEn ? "Don't have an account? " : 'Chưa có tài khoản? '}
                     <button
                       type="button"
                       onClick={() => handleSwitchMode('register')}
-                      className="text-red-600 font-bold hover:underline"
+                      className="text-red-600 font-bold hover:underline cursor-pointer"
                     >
-                      Đăng ký ngay
+                      {isEn ? 'Sign up now' : 'Đăng ký ngay'}
                     </button>
                   </span>
                 ) : (
                   <span>
-                    Đã có tài khoản?{' '}
+                    {isEn ? 'Already have an account? ' : 'Đã có tài khoản? '}
                     <button
                       type="button"
                       onClick={() => handleSwitchMode('login')}
-                      className="text-red-600 font-bold hover:underline"
+                      className="text-red-600 font-bold hover:underline cursor-pointer"
                     >
-                      Đăng nhập
+                      {isEn ? 'Sign in' : 'Đăng nhập'}
                     </button>
                   </span>
                 )}

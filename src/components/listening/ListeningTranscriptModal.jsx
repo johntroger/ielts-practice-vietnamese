@@ -13,6 +13,7 @@ import {
   Layers,
   ChevronRight
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 export default function ListeningTranscriptModal({
   isOpen,
@@ -23,6 +24,7 @@ export default function ListeningTranscriptModal({
   onSelectPart,
   onSaveToVocabNotebook
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen || !currentTest) return null;
 
   const [selectedPartNum, setSelectedPartNum] = useState(activePart);
@@ -91,11 +93,11 @@ export default function ListeningTranscriptModal({
                   Karaoke Interactive Transcript
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold uppercase">
-                  Đồng Bộ Thời Gian Thực
+                  {isEn ? 'Real-Time Sync' : 'Đồng Bộ Thời Gian Thực'}
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Bấm vào câu bất kỳ để nghe lại tức thì • Nhấp nháy theo nhịp audio
+                {isEn ? 'Click any sentence to replay instantly • Synchronized audio tracking' : 'Bấm vào câu bất kỳ để nghe lại tức thì • Nhấp nháy theo nhịp audio'}
               </p>
             </div>
           </div>
@@ -135,7 +137,7 @@ export default function ListeningTranscriptModal({
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Tìm từ khóa trong lời thoại..."
+              placeholder={isEn ? "Search transcript keywords..." : "Tìm từ khóa trong lời thoại..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-8 pr-3 py-1 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-slate-800"
@@ -150,13 +152,29 @@ export default function ListeningTranscriptModal({
               <FileText className="w-10 h-10 mx-auto mb-3 text-slate-300" />
               {searchTerm ? (
                 <>
-                  <p className="text-xs font-semibold text-slate-600">Không tìm thấy đoạn hội thoại nào phù hợp với từ khóa "{searchTerm}".</p>
-                  <p className="text-[11px] text-slate-400 mt-1">Hãy thử xóa bộ lọc tìm kiếm để xem toàn bộ lời thoại.</p>
+                  <p className="text-xs font-semibold text-slate-600">
+                    {isEn 
+                      ? `No dialogue lines matched keyword "${searchTerm}".`
+                      : `Không tìm thấy đoạn hội thoại nào phù hợp với từ khóa "${searchTerm}".`}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    {isEn ? 'Try clearing your search query to view full transcripts.' : 'Hãy thử xóa bộ lọc tìm kiếm để xem toàn bộ lời thoại.'}
+                  </p>
                 </>
               ) : (
                 <>
-                  <p className="text-xs font-semibold text-slate-600">Lời thoại (Transcript) của Part {selectedPartNum} đang được hoàn thiện.</p>
-                  <p className="text-[11px] text-slate-400 mt-1">Bạn có thể chuyển sang <strong>Part 1</strong> để trải nghiệm tính năng Karaoke Transcript đồng bộ âm thanh thời gian thực.</p>
+                  <p className="text-xs font-semibold text-slate-600">
+                    {isEn 
+                      ? `Audio transcript for Part ${selectedPartNum} is being compiled.`
+                      : `Lời thoại (Transcript) của Part ${selectedPartNum} đang được hoàn thiện.`}
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    {isEn ? (
+                      <>You can switch to <strong>Part 1</strong> to experience real-time synchronized karaoke transcripts.</>
+                    ) : (
+                      <>Bạn có thể chuyển sang <strong>Part 1</strong> để trải nghiệm tính năng Karaoke Transcript đồng bộ âm thanh thời gian thực.</>
+                    )}
+                  </p>
                 </>
               )}
             </div>
@@ -200,7 +218,9 @@ export default function ListeningTranscriptModal({
                       {hasEvidence && (
                         <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] font-extrabold flex items-center space-x-1">
                           <Sparkles className="w-3 h-3 text-amber-700" />
-                          <span>BẰNG CHỨNG CÂU {item.targetQuestion}</span>
+                          <span>
+                            {isEn ? `EVIDENCE FOR Q${item.targetQuestion}` : `BẰNG CHỨNG CÂU ${item.targetQuestion}`}
+                          </span>
                         </span>
                       )}
                     </div>
@@ -208,7 +228,7 @@ export default function ListeningTranscriptModal({
                     <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <span className="text-[11px] text-purple-600 font-bold flex items-center space-x-1">
                         <Play className="w-3 h-3 fill-current" />
-                        <span>Nghe</span>
+                        <span>{isEn ? 'Listen' : 'Nghe'}</span>
                       </span>
                     </div>
                   </div>
@@ -241,14 +261,16 @@ export default function ListeningTranscriptModal({
         <div className="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center space-x-2">
             <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse" />
-            <span>Mẹo: Click chuột vào bất kỳ câu nào để tua audio và nghe lại lập tức</span>
+            <span>
+              {isEn ? 'Tip: Click any sentence to jump audio and replay immediately' : 'Mẹo: Click chuột vào bất kỳ câu nào để tua audio và nghe lại lập tức'}
+            </span>
           </div>
 
           <button
             onClick={onClose}
             className="px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer"
           >
-            Đóng Lời Thoại
+            {isEn ? 'Close Transcript' : 'Đóng Lời Thoại'}
           </button>
         </div>
 

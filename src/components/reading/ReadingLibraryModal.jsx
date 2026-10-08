@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import StarRatingWidget from '../common/StarRatingWidget';
 import { getItemMetrics, recordAttempt } from '../../services/ratingPopularityService';
+import { useTranslation } from '../../i18n';
 import { 
   BookOpen, 
   Search, 
@@ -38,6 +39,8 @@ export default function ReadingLibraryModal({
   masteredIds = [],
   onToggleMastered
 }) {
+  const { t, language } = useTranslation();
+  const isEn = language === 'en';
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'ingest' | 'public' | 'mastered' | 'custom_builder'
   const [passageFilter, setPassageFilter] = useState('all'); // 'all' | 'full' | 'p1' | 'p2' | 'p3'
   const [sortBy, setSortBy] = useState('default'); // 'default' | 'rating-desc' | 'attempts-desc'
@@ -186,7 +189,7 @@ export default function ReadingLibraryModal({
   // Handler: Assemble and build the full test
   const handleAssembleTest = () => {
     if (!builderP1 || !builderP2 || !builderP3) {
-      alert('Vui lòng chọn đủ 3 Passages (Passage 1, Passage 2 và Passage 3) hoặc bấm nút "🎲 Chọn Ngẫu Nhiên"!');
+      alert(isEn ? 'Please select all 3 Passages (Passage 1, Passage 2, and Passage 3) or click "🎲 Random 3 Passages"!' : 'Vui lòng chọn đủ 3 Passages (Passage 1, Passage 2 và Passage 3) hoặc bấm nút "🎲 Chọn Ngẫu Nhiên"!');
       return;
     }
 
@@ -208,12 +211,14 @@ export default function ReadingLibraryModal({
     const fullTest = {
       id: `custom-test-full-${Date.now()}`,
       title: finalTitle,
-      description: `Bộ đề thi thử 3 Passages tự lắp ghép từ ngân hàng đề (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). Chuẩn thi thật 60 phút.`,
+      description: isEn 
+        ? `Assembled 3-Passage mock test from library (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). Cambridge 60-min standard.`
+        : `Bộ đề thi thử 3 Passages tự lắp ghép từ ngân hàng đề (${cleanTitle(builderP1.passage.title)} + ${cleanTitle(builderP2.passage.title)} + ${cleanTitle(builderP3.passage.title)}). Chuẩn thi thật 60 phút.`,
       totalQuestions: totalQ,
       timeLimitMinutes: 60,
       isCustom: true,
       isPublic: assemblerIsPublic,
-      creatorEmail: user?.email || 'Thành viên',
+      creatorEmail: user?.email || (isEn ? 'Member' : 'Thành viên'),
       passages: [newP1, newP2, newP3]
     };
 
@@ -315,20 +320,20 @@ export default function ReadingLibraryModal({
             </div>
             <div>
               <h2 className="text-base sm:text-xl font-bold flex items-center gap-2">
-                Kho Đề Thi IELTS Reading
+                {isEn ? 'IELTS Reading Test Library' : 'Kho Đề Thi IELTS Reading'}
                 <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-medium">
-                  {stats.total} Đề • {stats.totalPassages} Bài
+                  {isEn ? `${stats.total} Tests • ${stats.totalPassages} Passages` : `${stats.total} Đề • ${stats.totalPassages} Bài`}
                 </span>
               </h2>
               <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">
-                Quản lý thư viện đề chuẩn hóa tên gọi, AI sinh & Lắp ghép đề thi 3 Passages chuẩn 60 phút
+                {isEn ? 'Standardized Cambridge naming, AI generated & 3-Passage 60-minute mock test builder' : 'Quản lý thư viện đề chuẩn hóa tên gọi, AI sinh & Lắp ghép đề thi 3 Passages chuẩn 60 phút'}
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
             className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-1.5"
-            aria-label="Đóng thư viện reading"
+            aria-label={isEn ? "Close reading library" : "Đóng thư viện reading"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -347,7 +352,7 @@ export default function ReadingLibraryModal({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Tất cả ({stats.total})
+                {isEn ? `All (${stats.total})` : `Tất cả (${stats.total})`}
               </button>
               <button
                 onClick={() => setActiveTab('custom_builder')}
@@ -358,7 +363,7 @@ export default function ReadingLibraryModal({
                 }`}
               >
                 <Shuffle className="w-3.5 h-3.5" />
-                <span>🎲 Ghép Đề 3 Passages</span>
+                <span>{isEn ? '🎲 3-Passage Assembler' : '🎲 Ghép Đề 3 Passages'}</span>
               </button>
               <button
                 onClick={() => setActiveTab('cambridge')}
@@ -378,7 +383,7 @@ export default function ReadingLibraryModal({
                     : 'text-slate-600 hover:text-purple-600'
                 }`}
               >
-                ✨ AI Sinh ({stats.ai})
+                {isEn ? `✨ AI Gen (${stats.ai})` : `✨ AI Sinh (${stats.ai})`}
               </button>
               <button
                 onClick={() => setActiveTab('ingest')}
@@ -388,7 +393,7 @@ export default function ReadingLibraryModal({
                     : 'text-slate-600 hover:text-amber-600'
                 }`}
               >
-                📰 Nạp Từ Báo ({stats.ingest})
+                {isEn ? `📰 From Articles (${stats.ingest})` : `📰 Nạp Từ Báo (${stats.ingest})`}
               </button>
               <button
                 onClick={() => setActiveTab('public')}
@@ -398,7 +403,7 @@ export default function ReadingLibraryModal({
                     : 'text-slate-600 hover:text-emerald-600'
                 }`}
               >
-                🌐 Cộng đồng ({stats.public})
+                {isEn ? `🌐 Community (${stats.public})` : `🌐 Cộng đồng (${stats.public})`}
               </button>
               <button
                 onClick={() => setActiveTab('mastered')}
@@ -409,7 +414,7 @@ export default function ReadingLibraryModal({
                 }`}
               >
                 <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Đã thuộc ({stats.mastered})</span>
+                <span>{isEn ? `Mastered (${stats.mastered})` : `Đã thuộc (${stats.mastered})`}</span>
               </button>
             </div>
 
@@ -420,10 +425,10 @@ export default function ReadingLibraryModal({
                   type="button"
                   onClick={onOpenGenerator}
                   className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-all shadow-2xs cursor-pointer shrink-0"
-                  title="Mở bảng sinh bài đọc & câu hỏi IELTS Reading mới bằng AI"
+                  title={isEn ? "Open AI generator for new IELTS Reading passages & questions" : "Mở bảng sinh bài đọc & câu hỏi IELTS Reading mới bằng AI"}
                 >
                   <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                  <span>Sinh Đề (AI)</span>
+                  <span>{isEn ? 'AI Gen' : 'Sinh Đề (AI)'}</span>
                 </button>
               )}
 
@@ -432,10 +437,10 @@ export default function ReadingLibraryModal({
                   type="button"
                   onClick={onOpenIngest}
                   className="hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-                  title="Nạp một bài báo bất kỳ để AI tạo đề thi Reading"
+                  title={isEn ? "Ingest an article to create a Reading test with AI" : "Nạp một bài báo bất kỳ để AI tạo đề thi Reading"}
                 >
                   <FileText className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Nạp Báo</span>
+                  <span>{isEn ? 'Ingest Article' : 'Nạp Báo'}</span>
                 </button>
               )}
 
@@ -445,7 +450,7 @@ export default function ReadingLibraryModal({
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    placeholder="Tìm tên, mã #01..."
+                    placeholder={isEn ? "Search title, code #01..." : "Tìm tên, mã #01..."}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder-slate-400 shadow-2xs"
@@ -460,7 +465,7 @@ export default function ReadingLibraryModal({
             <div className="flex items-center gap-2 pt-1 border-t border-slate-200/60 overflow-x-auto text-[11px]">
               <span className="text-slate-500 font-bold flex items-center gap-1 shrink-0">
                 <Filter className="w-3 h-3 text-slate-400" />
-                Dạng bài:
+                {isEn ? 'Format:' : 'Dạng bài:'}
               </span>
               <div className="flex items-center space-x-1.5">
                 <button
@@ -471,7 +476,7 @@ export default function ReadingLibraryModal({
                       : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
                   }`}
                 >
-                  Tất cả dạng
+                  {isEn ? 'All Formats' : 'Tất cả dạng'}
                 </button>
                 <button
                   onClick={() => setPassageFilter('full')}
@@ -491,7 +496,7 @@ export default function ReadingLibraryModal({
                       : 'bg-white border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'
                   }`}
                 >
-                  Passage 1 (Câu 1–13)
+                  {isEn ? 'Passage 1 (Q1–13)' : 'Passage 1 (Câu 1–13)'}
                 </button>
                 <button
                   onClick={() => setPassageFilter('p2')}
@@ -501,7 +506,7 @@ export default function ReadingLibraryModal({
                       : 'bg-white border border-slate-200 text-slate-600 hover:bg-amber-50 hover:text-amber-700'
                   }`}
                 >
-                  Passage 2 (Câu 14–26)
+                  {isEn ? 'Passage 2 (Q14–26)' : 'Passage 2 (Câu 14–26)'}
                 </button>
                 <button
                   onClick={() => setPassageFilter('p3')}
@@ -511,7 +516,7 @@ export default function ReadingLibraryModal({
                       : 'bg-white border border-slate-200 text-slate-600 hover:bg-rose-50 hover:text-rose-700'
                   }`}
                 >
-                  Passage 3 (Câu 27–40)
+                  {isEn ? 'Passage 3 (Q27–40)' : 'Passage 3 (Câu 27–40)'}
                 </button>
               </div>
 
@@ -522,11 +527,11 @@ export default function ReadingLibraryModal({
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="bg-white border border-slate-200 text-slate-700 text-[11px] font-bold py-1 px-2 rounded-md shadow-2xs focus:ring-1 focus:ring-blue-500 cursor-pointer"
-                  title="Sắp xếp danh sách đề thi Reading"
+                  title={isEn ? "Sort Reading test list" : "Sắp xếp danh sách đề thi Reading"}
                 >
-                  <option value="default">Sắp xếp: Mặc định</option>
-                  <option value="rating-desc">⭐ Đánh giá cao nhất</option>
-                  <option value="attempts-desc">🔥 Nhiều người làm nhất</option>
+                  <option value="default">{isEn ? 'Sort: Default' : 'Sắp xếp: Mặc định'}</option>
+                  <option value="rating-desc">{isEn ? '⭐ Highest Rated' : '⭐ Đánh giá cao nhất'}</option>
+                  <option value="attempts-desc">{isEn ? '🔥 Most Attempted' : '🔥 Nhiều người làm nhất'}</option>
                 </select>
               </div>
 
@@ -543,7 +548,7 @@ export default function ReadingLibraryModal({
                   }}
                   className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer"
                 />
-                <span className="text-[11px] text-slate-600">Ẩn đề đã thuộc</span>
+                <span className="text-[11px] text-slate-600">{isEn ? 'Hide mastered' : 'Ẩn đề đã thuộc'}</span>
               </label>
             </div>
           )}
@@ -557,10 +562,12 @@ export default function ReadingLibraryModal({
               <div className="space-y-1">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-indigo-600" />
-                  Tự Do Ghép 3 Passages Thành Đề Thi Thử Chuẩn 60 Phút
+                  {isEn ? 'Custom Assemble 3 Passages Into 60-Minute Mock Test' : 'Tự Do Ghép 3 Passages Thành Đề Thi Thử Chuẩn 60 Phút'}
                 </h3>
                 <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
-                  Bạn có thể chọn 3 bài đọc bất kỳ từ ngân hàng đề để ghép thành một bài thi hoàn chỉnh (40 câu, tự động đánh lại số thứ tự câu hỏi từ 1 đến 40), hoặc bấm <strong>"Chọn Ngẫu Nhiên"</strong> để hệ thống tự động bốc 3 bài phù hợp cho bạn!
+                  {isEn 
+                    ? 'Select any 3 passages from your bank to assemble a complete test (40 questions, automatically renumbered 1 to 40), or click "Random 3 Passages" to let the system pick for you!' 
+                    : 'Bạn có thể chọn 3 bài đọc bất kỳ từ ngân hàng đề để ghép thành một bài thi hoàn chỉnh (40 câu, tự động đánh lại số thứ tự câu hỏi từ 1 đến 40), hoặc bấm "Chọn Ngẫu Nhiên" để hệ thống tự động bốc 3 bài phù hợp cho bạn!'}
                 </p>
               </div>
 
@@ -571,7 +578,7 @@ export default function ReadingLibraryModal({
                   className="px-4 py-2.5 bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
                   <Shuffle className="w-4 h-4" />
-                  <span>🎲 Chọn Ngẫu Nhiên 3 Passages</span>
+                  <span>{isEn ? '🎲 Random 3 Passages' : '🎲 Chọn Ngẫu Nhiên 3 Passages'}</span>
                 </button>
               </div>
             </div>
@@ -580,13 +587,15 @@ export default function ReadingLibraryModal({
             <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-700 block">
-                  Tên bài thi ghép (Chuẩn hóa tự động theo 3 Passages):
+                  {isEn ? 'Assembled Test Title (auto-generated from 3 Passages):' : 'Tên bài thi ghép (Chuẩn hóa tự động theo 3 Passages):'}
                 </label>
-                <span className="text-[10px] text-slate-400 font-mono">Định dạng chuẩn: [Full Test #STT] P1 • P2 • P3</span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {isEn ? 'Standard format: [Full Test #No] P1 • P2 • P3' : 'Định dạng chuẩn: [Full Test #STT] P1 • P2 • P3'}
+                </span>
               </div>
               <input
                 type="text"
-                placeholder="VD: 📚 [Full Test #02] Roman Shipwrecks • Neuroscience • Climate Crisis..."
+                placeholder={isEn ? "e.g., 📚 [Full Test #02] Roman Shipwrecks • Neuroscience • Climate Crisis..." : "VD: 📚 [Full Test #02] Roman Shipwrecks • Neuroscience • Climate Crisis..."}
                 value={customTestTitle}
                 onChange={(e) => setCustomTestTitle(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:outline-none focus:bg-white"
@@ -603,13 +612,13 @@ export default function ReadingLibraryModal({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">
-                      Passage 1 (Câu 1–13)
+                      {isEn ? 'Passage 1 (Q1–13)' : 'Passage 1 (Câu 1–13)'}
                     </span>
                     {builderP1 && (
                       <button
                         onClick={() => setBuilderP1(null)}
                         className="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"
-                        title="Bỏ chọn passage này"
+                        title={isEn ? "Deselect this passage" : "Bỏ chọn passage này"}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -618,7 +627,7 @@ export default function ReadingLibraryModal({
 
                   <div>
                     <label className="text-[11px] font-bold text-slate-600 block mb-1">
-                      Chọn bài đọc cho Passage 1:
+                      {isEn ? 'Select reading for Passage 1:' : 'Chọn bài đọc cho Passage 1:'}
                     </label>
                     <select
                       value={builderP1?.passageKey || ''}
@@ -628,10 +637,10 @@ export default function ReadingLibraryModal({
                       }}
                       className="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 truncate"
                     >
-                      <option value="">-- Bấm chọn bài đọc --</option>
+                      <option value="">{isEn ? '-- Select a passage --' : '-- Bấm chọn bài đọc --'}</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} câu)
+                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
                         </option>
                       ))}
                     </select>
@@ -644,13 +653,13 @@ export default function ReadingLibraryModal({
                         {builderP1.passage.paragraphs?.[0]?.text?.substring(0, 100)}...
                       </p>
                       <div className="pt-1 flex items-center justify-between text-[11px] text-emerald-700 font-semibold">
-                        <span>{builderP1.qCount} câu hỏi</span>
-                        <span className="text-slate-400 truncate max-w-[120px]">Từ: {cleanTitle(builderP1.testTitle)}</span>
+                        <span>{builderP1.qCount} {isEn ? 'questions' : 'câu hỏi'}</span>
+                        <span className="text-slate-400 truncate max-w-[120px]">{isEn ? 'From:' : 'Từ:'} {cleanTitle(builderP1.testTitle)}</span>
                       </div>
                     </div>
                   ) : (
                     <div className="py-6 text-center text-slate-400 text-xs italic">
-                      Chưa chọn bài đọc cho Passage 1
+                      {isEn ? 'No passage selected for Passage 1' : 'Chưa chọn bài đọc cho Passage 1'}
                     </div>
                   )}
                 </div>
@@ -663,13 +672,13 @@ export default function ReadingLibraryModal({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-300">
-                      Passage 2 (Câu 14–26)
+                      {isEn ? 'Passage 2 (Q14–26)' : 'Passage 2 (Câu 14–26)'}
                     </span>
                     {builderP2 && (
                       <button
                         onClick={() => setBuilderP2(null)}
                         className="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"
-                        title="Bỏ chọn passage này"
+                        title={isEn ? "Deselect this passage" : "Bỏ chọn passage này"}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -678,7 +687,7 @@ export default function ReadingLibraryModal({
 
                   <div>
                     <label className="text-[11px] font-bold text-slate-600 block mb-1">
-                      Chọn bài đọc cho Passage 2:
+                      {isEn ? 'Select reading for Passage 2:' : 'Chọn bài đọc cho Passage 2:'}
                     </label>
                     <select
                       value={builderP2?.passageKey || ''}
@@ -688,10 +697,10 @@ export default function ReadingLibraryModal({
                       }}
                       className="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-amber-500 truncate"
                     >
-                      <option value="">-- Bấm chọn bài đọc --</option>
+                      <option value="">{isEn ? '-- Select a passage --' : '-- Bấm chọn bài đọc --'}</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} câu)
+                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
                         </option>
                       ))}
                     </select>
@@ -704,13 +713,13 @@ export default function ReadingLibraryModal({
                         {builderP2.passage.paragraphs?.[0]?.text?.substring(0, 100)}...
                       </p>
                       <div className="pt-1 flex items-center justify-between text-[11px] text-amber-700 font-semibold">
-                        <span>{builderP2.qCount} câu hỏi</span>
-                        <span className="text-slate-400 truncate max-w-[120px]">Từ: {cleanTitle(builderP2.testTitle)}</span>
+                        <span>{builderP2.qCount} {isEn ? 'questions' : 'câu hỏi'}</span>
+                        <span className="text-slate-400 truncate max-w-[120px]">{isEn ? 'From:' : 'Từ:'} {cleanTitle(builderP2.testTitle)}</span>
                       </div>
                     </div>
                   ) : (
                     <div className="py-6 text-center text-slate-400 text-xs italic">
-                      Chưa chọn bài đọc cho Passage 2
+                      {isEn ? 'No passage selected for Passage 2' : 'Chưa chọn bài đọc cho Passage 2'}
                     </div>
                   )}
                 </div>
@@ -723,13 +732,13 @@ export default function ReadingLibraryModal({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 border border-rose-300">
-                      Passage 3 (Câu 27–40)
+                      {isEn ? 'Passage 3 (Q27–40)' : 'Passage 3 (Câu 27–40)'}
                     </span>
                     {builderP3 && (
                       <button
                         onClick={() => setBuilderP3(null)}
                         className="text-slate-400 hover:text-red-600 p-1 rounded transition-colors"
-                        title="Bỏ chọn passage này"
+                        title={isEn ? "Deselect this passage" : "Bỏ chọn passage này"}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -738,7 +747,7 @@ export default function ReadingLibraryModal({
 
                   <div>
                     <label className="text-[11px] font-bold text-slate-600 block mb-1">
-                      Chọn bài đọc cho Passage 3:
+                      {isEn ? 'Select reading for Passage 3:' : 'Chọn bài đọc cho Passage 3:'}
                     </label>
                     <select
                       value={builderP3?.passageKey || ''}
@@ -748,10 +757,10 @@ export default function ReadingLibraryModal({
                       }}
                       className="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-rose-500 truncate"
                     >
-                      <option value="">-- Bấm chọn bài đọc --</option>
+                      <option value="">{isEn ? '-- Select a passage --' : '-- Bấm chọn bài đọc --'}</option>
                       {passageBank.map(item => (
                         <option key={item.passageKey} value={item.passageKey}>
-                          [{item.testIsCustom ? 'Tự tạo' : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} câu)
+                          [{item.testIsCustom ? (isEn ? 'Custom' : 'Tự tạo') : 'Cambridge'}] {cleanTitle(item.passage.title)} ({item.qCount} {isEn ? 'questions' : 'câu'})
                         </option>
                       ))}
                     </select>
@@ -764,13 +773,13 @@ export default function ReadingLibraryModal({
                         {builderP3.passage.paragraphs?.[0]?.text?.substring(0, 100)}...
                       </p>
                       <div className="pt-1 flex items-center justify-between text-[11px] text-rose-700 font-semibold">
-                        <span>{builderP3.qCount} câu hỏi</span>
-                        <span className="text-slate-400 truncate max-w-[120px]">Từ: {cleanTitle(builderP3.testTitle)}</span>
+                        <span>{builderP3.qCount} {isEn ? 'questions' : 'câu hỏi'}</span>
+                        <span className="text-slate-400 truncate max-w-[120px]">{isEn ? 'From:' : 'Từ:'} {cleanTitle(builderP3.testTitle)}</span>
                       </div>
                     </div>
                   ) : (
                     <div className="py-6 text-center text-slate-400 text-xs italic">
-                      Chưa chọn bài đọc cho Passage 3
+                      {isEn ? 'No passage selected for Passage 3' : 'Chưa chọn bài đọc cho Passage 3'}
                     </div>
                   )}
                 </div>
@@ -783,10 +792,12 @@ export default function ReadingLibraryModal({
               <div className="space-y-1">
                 <h4 className="text-sm font-bold flex items-center gap-2">
                   <CheckCircle2 className={`w-4 h-4 ${builderP1 && builderP2 && builderP3 ? 'text-emerald-400' : 'text-slate-500'}`} />
-                  Tình trạng lắp ghép: {builderP1 && builderP2 && builderP3 ? 'Đã đủ 3 Passages' : 'Cần chọn đủ 3 Passages'}
+                  {isEn 
+                    ? `Assembly status: ${builderP1 && builderP2 && builderP3 ? 'Ready (3 Passages selected)' : 'Select all 3 Passages'}`
+                    : `Tình trạng lắp ghép: ${builderP1 && builderP2 && builderP3 ? 'Đã đủ 3 Passages' : 'Cần chọn đủ 3 Passages'}`}
                 </h4>
                 <p className="text-xs text-slate-400">
-                  Hệ thống sẽ chuẩn hóa dải câu hỏi từ 1–40 và gán thời gian làm bài chuẩn 60 phút.
+                  {isEn ? 'Questions will be renumbered 1–40 with 60-minute exam timer.' : 'Hệ thống sẽ chuẩn hóa dải câu hỏi từ 1–40 và gán thời gian làm bài chuẩn 60 phút.'}
                 </p>
               </div>
 
@@ -802,9 +813,9 @@ export default function ReadingLibraryModal({
                   <div className="text-left text-xs">
                     <span className="font-semibold text-slate-200 flex items-center gap-1.5">
                       {assemblerIsPublic ? <Globe className="w-3.5 h-3.5 text-blue-400" /> : <Lock className="w-3.5 h-3.5 text-slate-400" />}
-                      <span>{assemblerIsPublic ? 'Tự động chia sẻ' : 'Lưu riêng tư'}</span>
+                      <span>{assemblerIsPublic ? (isEn ? 'Auto share' : 'Tự động chia sẻ') : (isEn ? 'Keep private' : 'Lưu riêng tư')}</span>
                       {assemblerIsPublic && (
-                        <span className="text-[9px] bg-blue-500/20 text-blue-300 px-1 rounded">Chung</span>
+                        <span className="text-[9px] bg-blue-500/20 text-blue-300 px-1 rounded">{isEn ? 'Public' : 'Chung'}</span>
                       )}
                     </span>
                   </div>
@@ -820,7 +831,7 @@ export default function ReadingLibraryModal({
                       : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                   }`}
                 >
-                  <span>Tạo & Bắt Đầu Làm Bài Ngay</span>
+                  <span>{isEn ? 'Create & Start Test Now' : 'Tạo & Bắt Đầu Làm Bài Ngay'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -838,10 +849,12 @@ export default function ReadingLibraryModal({
                   </div>
                   <div>
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                      <span>Sinh bài đọc IELTS Reading theo yêu cầu bằng AI</span>
+                      <span>{isEn ? 'Generate on-demand IELTS Reading tests with AI' : 'Sinh bài đọc IELTS Reading theo yêu cầu bằng AI'}</span>
                       <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-black">AI</span>
                     </h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Tùy chọn 12 chủ đề học thuật, độ khó Passage 1/2/3, bẫy distractors và câu hỏi chuẩn Cambridge.</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      {isEn ? 'Choose from 12 academic topics, difficulty Passage 1/2/3, distractor traps and Cambridge standard questions.' : 'Tùy chọn 12 chủ đề học thuật, độ khó Passage 1/2/3, bẫy distractors và câu hỏi chuẩn Cambridge.'}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -850,7 +863,7 @@ export default function ReadingLibraryModal({
                   className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>+ Sinh Đề Mới</span>
+                  <span>{isEn ? '+ Generate New Test' : '+ Sinh Đề Mới'}</span>
                 </button>
               </div>
             )}
@@ -864,10 +877,12 @@ export default function ReadingLibraryModal({
                   </div>
                   <div>
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                      <span>Nạp bài báo tiếng Anh để AI tự động chuyển thành đề thi Reading</span>
-                      <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-black">Báo chí</span>
+                      <span>{isEn ? 'Ingest English article to auto-convert into Reading test' : 'Nạp bài báo tiếng Anh để AI tự động chuyển thành đề thi Reading'}</span>
+                      <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-black">{isEn ? 'Articles' : 'Báo chí'}</span>
                     </h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Dán bài báo từ BBC, CNN, National Geographic, The Economist... AI sẽ phân tích và trích xuất thành bài đọc chuẩn.</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      {isEn ? 'Paste articles from BBC, CNN, National Geographic, The Economist... AI will extract and structure into authentic tests.' : 'Dán bài báo từ BBC, CNN, National Geographic, The Economist... AI sẽ phân tích và trích xuất thành bài đọc chuẩn.'}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -876,7 +891,7 @@ export default function ReadingLibraryModal({
                   className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>+ Nạp Bài Báo</span>
+                  <span>{isEn ? '+ Ingest Article' : '+ Nạp Bài Báo'}</span>
                 </button>
               </div>
             )}
@@ -884,8 +899,8 @@ export default function ReadingLibraryModal({
             {sortedTests.length === 0 ? (
               <div className="text-center py-16">
                 <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3 stroke-[1.5]" />
-                <p className="text-sm font-semibold text-slate-600">Không tìm thấy bài đọc nào phù hợp</p>
-                <p className="text-xs text-slate-400 mt-1">Hãy thử tìm từ khóa khác hoặc chuyển sang tab/dạng bài khác.</p>
+                <p className="text-sm font-semibold text-slate-600">{isEn ? 'No matching reading tests found' : 'Không tìm thấy bài đọc nào phù hợp'}</p>
+                <p className="text-xs text-slate-400 mt-1">{isEn ? 'Try another keyword or switch category / format.' : 'Hãy thử tìm từ khóa khác hoặc chuyển sang tab/dạng bài khác.'}</p>
                 {activeTab === 'ai' && onOpenGenerator && (
                   <button
                     type="button"
@@ -893,7 +908,7 @@ export default function ReadingLibraryModal({
                     className="mt-4 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span>Sinh Đề Thi Mới Bằng AI Ngay</span>
+                    <span>{isEn ? 'Generate New Test with AI Now' : 'Sinh Đề Thi Mới Bằng AI Ngay'}</span>
                   </button>
                 )}
                 {activeTab === 'ingest' && onOpenIngest && (
@@ -903,7 +918,7 @@ export default function ReadingLibraryModal({
                     className="mt-4 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer"
                   >
                     <FileText className="w-4 h-4" />
-                    <span>Nạp Bài Báo Để AI Tạo Đề Ngay</span>
+                    <span>{isEn ? 'Ingest Article to Generate Now' : 'Nạp Bài Báo Để AI Tạo Đề Ngay'}</span>
                   </button>
                 )}
               </div>
@@ -944,19 +959,19 @@ export default function ReadingLibraryModal({
                           {/* Source Badge */}
                           {(test.isCambridge || !test.isCustom) ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
-                              🏛️ {test.cambridgeBook ? `Chuẩn Cambridge (Cam ${test.cambridgeBook})` : 'Cambridge Academic'}
+                              🏛️ {test.cambridgeBook ? (isEn ? `Cambridge Official (Cam ${test.cambridgeBook})` : `Chuẩn Cambridge (Cam ${test.cambridgeBook})`) : 'Cambridge Academic'}
                             </span>
                           ) : test.title?.includes('[Full Test') ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
-                              📚 Đề Ghép 3 Passages
+                              {isEn ? '📚 3-Passage Assembled' : '📚 Đề Ghép 3 Passages'}
                             </span>
                           ) : test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí') ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
-                              📰 Nạp bài báo
+                              {isEn ? '📰 Ingested Article' : '📰 Nạp bài báo'}
                             </span>
                           ) : (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200">
-                              ✨ AI Sinh
+                              {isEn ? '✨ AI Gen' : '✨ AI Sinh'}
                             </span>
                           )}
 
@@ -970,17 +985,17 @@ export default function ReadingLibraryModal({
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
                                   : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
                               }`}
-                              title="Bấm để chuyển đổi trạng thái Công khai / Riêng tư"
+                              title={isEn ? "Click to toggle Public / Private status" : "Bấm để chuyển đổi trạng thái Công khai / Riêng tư"}
                             >
                               {test.isPublic ? (
                                 <>
                                   <Globe className="w-3 h-3 text-emerald-600" />
-                                  <span>Cộng đồng</span>
+                                  <span>{isEn ? 'Community' : 'Cộng đồng'}</span>
                                 </>
                               ) : (
                                 <>
                                   <Lock className="w-3 h-3 text-slate-500" />
-                                  <span>Riêng tư</span>
+                                  <span>{isEn ? 'Private' : 'Riêng tư'}</span>
                                 </>
                               )}
                             </button>
@@ -989,7 +1004,7 @@ export default function ReadingLibraryModal({
                           {masteredIds.includes(test.id) && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
                               <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                              <span>Đã thuộc</span>
+                              <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
                             </span>
                           )}
                         </div>
@@ -999,7 +1014,7 @@ export default function ReadingLibraryModal({
                         </h3>
                         
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                          {test.description || 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.'}
+                          {test.description || (isEn ? 'Multiple-choice and fill-in-the-blank questions under IELTS Reading standards.' : 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.')}
                         </p>
 
                         {/* Star Rating & Social Proof */}
@@ -1011,11 +1026,11 @@ export default function ReadingLibraryModal({
                         <div className="flex items-center gap-3 text-[11px] text-slate-500 pt-1">
                           <span className="flex items-center gap-1">
                             <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                            {totalQ} câu
+                            {totalQ} {isEn ? 'questions' : 'câu'}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock className="w-3.5 h-3.5 text-slate-400" />
-                            {test.timeLimitMinutes || (passageCount > 1 ? 60 : 20)}p
+                            {test.timeLimitMinutes || (passageCount > 1 ? 60 : 20)}{isEn ? 'm' : 'p'}
                           </span>
                         </div>
                       </div>
@@ -1027,7 +1042,7 @@ export default function ReadingLibraryModal({
                             <button
                               onClick={() => onDeleteTest(test.id)}
                               className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
-                              title="Xóa đề thi này khỏi danh sách cá nhân"
+                              title={isEn ? "Delete this test from personal list" : "Xóa đề thi này khỏi danh sách cá nhân"}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1045,12 +1060,12 @@ export default function ReadingLibraryModal({
                                   : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
                               }`}
                               title={masteredIds.includes(test.id) 
-                                ? 'Đã thuộc! Bấm để bỏ đánh dấu' 
-                                : 'Đánh dấu bài đọc này là "Đã thuộc"'}
+                                ? (isEn ? 'Mastered! Click to unmark' : 'Đã thuộc! Bấm để bỏ đánh dấu') 
+                                : (isEn ? 'Mark this reading as "Mastered"' : 'Đánh dấu bài đọc này là "Đã thuộc"')}
                             >
                               <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(test.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
                               <span className="text-[11px] hidden sm:inline">
-                                {masteredIds.includes(test.id) ? 'Đã thuộc' : 'Thuộc bài'}
+                                {masteredIds.includes(test.id) ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Master' : 'Thuộc bài')}
                               </span>
                             </button>
                           )}
@@ -1068,7 +1083,7 @@ export default function ReadingLibraryModal({
                               : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white'
                           }`}
                         >
-                          {isSelected ? 'Đang Luyện' : 'Luyện Đề Này'}
+                          {isSelected ? (isEn ? 'Practicing' : 'Đang Luyện') : (isEn ? 'Practice Test' : 'Luyện Đề Này')}
                         </button>
                       </div>
                     </div>
@@ -1082,13 +1097,13 @@ export default function ReadingLibraryModal({
         {/* Modal Footer */}
         <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 shrink-0">
           <span>
-            💡 Mẹo: Chuyển sang tab <strong className="text-indigo-600">"🎲 Ghép Đề 3 Passages"</strong> để tạo bài thi thử 60 phút từ ngân hàng bài đọc của bạn.
+            💡 {isEn ? 'Tip: Switch to' : 'Mẹo: Chuyển sang tab'} <strong className="text-indigo-600">"{isEn ? '🎲 3-Passage Assembler' : '🎲 Ghép Đề 3 Passages'}"</strong> {isEn ? 'to assemble a 60-minute mock exam from your reading bank.' : 'để tạo bài thi thử 60 phút từ ngân hàng bài đọc của bạn.'}
           </span>
           <button
             onClick={onClose}
             className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-colors cursor-pointer"
           >
-            Đóng
+            {isEn ? 'Close' : 'Đóng'}
           </button>
         </div>
 

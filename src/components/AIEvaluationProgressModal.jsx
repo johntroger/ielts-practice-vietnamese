@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   CheckCircle2, 
@@ -8,12 +8,14 @@ import {
   Layers, 
   FileText 
 } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 const EVALUATION_STEPS = [
   {
     id: 'tr',
     title: 'Task Achievement / Task Response',
     desc: 'Đọc hiểu đề bài, rà soát lập trường Thesis & tính bao quát của Overview...',
+    descEn: 'Assessing prompt comprehension, thesis stance, and overview coverage...',
     icon: Target,
     weight: '25%'
   },
@@ -21,6 +23,7 @@ const EVALUATION_STEPS = [
     id: 'cc',
     title: 'Coherence & Cohesion',
     desc: 'Phân tích liên kết ẩn Given-New, bọc khái niệm & mạch lạc giữa các đoạn...',
+    descEn: 'Analyzing given-new information flow, concept packaging, and paragraph cohesion...',
     icon: Layers,
     weight: '25%'
   },
@@ -28,6 +31,7 @@ const EVALUATION_STEPS = [
     id: 'lr',
     title: 'Lexical Resource',
     desc: 'Đo lường Collocations học thuật, từ vựng theo chủ đề & rà lỗi chính tả...',
+    descEn: 'Measuring academic collocations, topic-specific vocabulary, and spelling accuracy...',
     icon: BookOpen,
     weight: '25%'
   },
@@ -35,6 +39,7 @@ const EVALUATION_STEPS = [
     id: 'gra',
     title: 'Grammatical Range & Accuracy',
     desc: 'Quét câu phức, đảo ngữ, bị động & tính toán tỷ lệ câu không lỗi ngữ pháp...',
+    descEn: 'Scanning complex structures, inversions, passives, and error-free sentence ratio...',
     icon: FileText,
     weight: '25%'
   }
@@ -48,10 +53,21 @@ const ROTATING_TIPS = [
   '💡 Mẹo Task 2: Dành 5 phút lập dàn ý theo mô hình P.E.S.T.L.E giúp bạn không bao giờ bí ý tưởng giữa chừng.'
 ];
 
+const ROTATING_TIPS_EN = [
+  '💡 Task 1 Tip: Always compose 2 clear Overview sentences to ensure your score stays above Band 5.0!',
+  '💡 CC Tip: Instead of overusing mechanical linkers like "Firstly/Secondly", employ demonstrative noun phrases for cohesion.',
+  '💡 LR Tip: Natural collocations (metropolitan areas, alleviate congestion) score much higher than archaic dictionary words.',
+  '💡 GRA Tip: Maintaining over 70% error-free sentences is essential for breaking into Band 7.0+.',
+  '💡 Task 2 Tip: Spend 5 minutes brainstorming with the P.E.S.T.L.E framework to avoid writer\'s block halfway through.'
+];
+
 export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skill = 'writing' }) {
+  const { t, isEn } = useTranslation();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [progress, setProgress] = useState(12);
   const [tipIndex, setTipIndex] = useState(0);
+
+  const tips = isEn ? ROTATING_TIPS_EN : ROTATING_TIPS;
 
   useEffect(() => {
     if (!isOpen) {
@@ -74,7 +90,7 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
     const stepTimer3 = setTimeout(() => setCurrentStepIndex(3), 5800);
 
     const tipTimer = setInterval(() => {
-      setTipIndex(prev => (prev + 1) % ROTATING_TIPS.length);
+      setTipIndex(prev => (prev + 1) % tips.length);
     }, 2800);
 
     return () => {
@@ -84,7 +100,7 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
       clearTimeout(stepTimer2);
       clearTimeout(stepTimer3);
     };
-  }, [isOpen]);
+  }, [isOpen, tips.length]);
 
   if (!isOpen) return null;
 
@@ -102,10 +118,10 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
           </div>
 
           <h3 className="text-lg sm:text-xl font-black tracking-tight leading-snug">
-            Giám Khảo AI Đang Chấm Điểm Bài Thi...
+            {isEn ? 'AI Examiner Is Evaluating Your Response...' : 'Giám Khảo AI Đang Chấm Điểm Bài Thi...'}
           </h3>
           <p className="text-xs sm:text-sm text-red-100/90 mt-1 font-medium">
-            Phân tích chuyên sâu 4 tiêu chí chuẩn khảo thí Cambridge Assessment English
+            {isEn ? 'In-depth assessment across 4 official Cambridge English criteria' : 'Phân tích chuyên sâu 4 tiêu chí chuẩn khảo thí Cambridge Assessment English'}
           </p>
 
           {/* Progress Bar */}
@@ -116,7 +132,7 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
             />
           </div>
           <div className="flex justify-between items-center text-[11px] font-bold text-red-100 mt-1.5 px-1">
-            <span>Tiến trình khảo thí</span>
+            <span>{isEn ? 'Assessment Progress' : 'Tiến trình khảo thí'}</span>
             <span>{progress}%</span>
           </div>
         </div>
@@ -171,7 +187,7 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 mt-0.5 leading-snug line-clamp-1">
-                    {step.desc}
+                    {isEn ? step.descEn : step.desc}
                   </p>
                 </div>
               </div>
@@ -184,11 +200,11 @@ export default function AIEvaluationProgressModal({ isOpen, taskNumber = 2, skil
           <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-3 flex items-start space-x-2.5 transition-all">
             <span className="text-sm shrink-0">💡</span>
             <p className="text-xs text-amber-900 font-medium leading-relaxed animate-in fade-in duration-300">
-              {ROTATING_TIPS[tipIndex]}
+              {tips[tipIndex]}
             </p>
           </div>
           <div className="text-center mt-3 text-[11px] text-slate-400 font-medium">
-            Thời gian phản hồi trung bình: 6 – 9 giây • Vui lòng không đóng trang
+            {isEn ? 'Average turnaround: 6 – 9 seconds • Please do not close this window' : 'Thời gian phản hồi trung bình: 6 – 9 giây • Vui lòng không đóng trang'}
           </div>
         </div>
 

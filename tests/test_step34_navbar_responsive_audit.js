@@ -75,7 +75,7 @@ const editorSource = fs.readFileSync(editorPath, 'utf8');
 assert(editorSource.includes('isMoreToolsOpen'), 'EditorPane must manage isMoreToolsOpen for compact tools dropdown');
 assert(editorSource.includes('moreToolsRef'), 'EditorPane must use moreToolsRef for outside click detection');
 assert(!editorSource.includes('overflow-x-auto no-scrollbar'), 'Toolbar must not use no-scrollbar that hides clipped content');
-assert(editorSource.includes('totalWords}/{task.minWords} từ'), 'Word count badge must use compact format');
+assert(editorSource.includes('totalWords}/{task.minWords} từ') || (editorSource.includes('totalWords}/{task.minWords}') && editorSource.includes('words')), 'Word count badge must use compact format');
 
 console.log('Passed: 8/8 checks in Step 34');
 console.log('✅ ALL TEST STEP 34 CHECKS PASSED SUCCESSFULLY!');

@@ -17,6 +17,7 @@ import {
 import SpeechWaveVisualizer from '../SpeechWaveVisualizer';
 import SpeakingFillerTracker from '../SpeakingFillerTracker';
 import { openTheoryModalWithContext } from '../../../services/theoryContextService';
+import { useTranslation } from '../../../context/LanguageContext';
 
 /**
  * SpeakingPart1Room Sub-component
@@ -64,14 +65,15 @@ export default function SpeakingPart1Room({
   onSaveToVocabNotebook,
   renderAudioPlayback
 }) {
+  const { isEn } = useTranslation();
   return (
     <div className="space-y-4 animate-in fade-in duration-150">
       {/* Part 1 Topic Control Bar with AI Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-900 p-3 rounded-2xl border border-slate-800">
         <div className="flex items-center space-x-2.5 flex-wrap">
-          <span className="text-xs font-bold text-slate-200">Chủ đề phỏng vấn:</span>
+          <span className="text-xs font-bold text-slate-200">{isEn ? 'Interview Topics:' : 'Chủ đề phỏng vấn:'}</span>
           <span className="text-[11px] text-purple-300 font-semibold bg-purple-950/80 px-2.5 py-0.5 rounded-full border border-purple-800/40">
-            {part1Topics.length} chủ đề
+            {part1Topics.length} {isEn ? 'topics' : 'chủ đề'}
           </span>
 
           {/* Ẩn chủ đề đã thuộc Checkbox */}
@@ -82,7 +84,7 @@ export default function SpeakingPart1Room({
               onChange={handleToggleHideMastered}
               className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-800 text-purple-600 focus:ring-purple-500 cursor-pointer"
             />
-            <span className="whitespace-nowrap font-medium text-[11px]">Ẩn chủ đề đã thuộc</span>
+            <span className="whitespace-nowrap font-medium text-[11px]">{isEn ? 'Hide mastered topics' : 'Ẩn chủ đề đã thuộc'}</span>
           </label>
         </div>
 
@@ -91,7 +93,7 @@ export default function SpeakingPart1Room({
           className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/40 cursor-pointer transition-all hover:scale-[1.01]"
         >
           <Sparkles className="w-4 h-4 text-purple-200" />
-          <span>+ Sinh Chủ Đề & Câu Hỏi Part 1 Bằng AI</span>
+          <span>{isEn ? '+ Generate Part 1 Topics with AI' : '+ Sinh Chủ Đề & Câu Hỏi Part 1 Bằng AI'}</span>
         </button>
       </div>
 
@@ -101,10 +103,10 @@ export default function SpeakingPart1Room({
         <button
           onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
           className="px-3.5 py-1.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-purple-300 hover:text-white border border-purple-600/50 text-xs font-bold whitespace-nowrap flex items-center space-x-1 cursor-pointer shrink-0"
-          title="Sinh chủ đề luyện tập Part 1 mới bằng AI"
+          title={isEn ? 'Generate new Part 1 topics with AI' : 'Sinh chủ đề luyện tập Part 1 mới bằng AI'}
         >
           <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-          <span>+ Tạo Mới (AI)</span>
+          <span>{isEn ? '+ New (AI)' : '+ Tạo Mới (AI)'}</span>
         </button>
 
         {(hideMastered ? part1Topics.filter(t => !masteredIds.includes(t.id)) : part1Topics).map(topic => (
@@ -124,15 +126,15 @@ export default function SpeakingPart1Room({
             >
               <span>{topic.title}</span>
               {masteredIds.includes(topic.id) && (
-                <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0" title="Chủ đề đã thuộc" />
+                <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0" title={isEn ? 'Mastered topic' : 'Chủ đề đã thuộc'} />
               )}
               {topic.isCommunity || (topic.isPublic && topic.isCustom) ? (
                 <span className="text-[9px] px-1.5 py-0.2 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40">
-                  🌐 Cộng Đồng
+                  {isEn ? '🌐 Community' : '🌐 Cộng Đồng'}
                 </span>
               ) : topic.isCustom ? (
                 <span className="text-[9px] px-1.5 py-0.2 bg-amber-950/80 rounded text-amber-300 border border-amber-500/40">
-                  🔒 Riêng
+                  {isEn ? '🔒 Custom' : '🔒 Riêng'}
                 </span>
               ) : null}
             </button>
@@ -146,7 +148,7 @@ export default function SpeakingPart1Room({
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center space-x-2">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                Câu {activeP1QuestionIndex + 1} / {activeP1Topic.questions?.length || 1}
+                {isEn ? 'Question' : 'Câu'} {activeP1QuestionIndex + 1} / {activeP1Topic.questions?.length || 1}
               </span>
               <span className="text-xs text-slate-400 font-semibold">{activeP1Topic.title}</span>
               {onToggleMastered && activeP1Topic.id && (
@@ -160,23 +162,23 @@ export default function SpeakingPart1Room({
                   }`}
                   title={
                     masteredIds.includes(activeP1Topic.id)
-                      ? 'Đã thuộc chủ đề này (Bấm để bỏ đánh dấu)'
-                      : 'Đánh dấu đã thuộc chủ đề này'
+                      ? (isEn ? 'Mastered topic (Click to unmark)' : 'Đã thuộc chủ đề này (Bấm để bỏ đánh dấu)')
+                      : (isEn ? 'Mark this topic as mastered' : 'Đánh dấu đã thuộc chủ đề này')
                   }
                 >
                   <GraduationCap className="w-3 h-3" />
-                  <span>{masteredIds.includes(activeP1Topic.id) ? 'Đã thuộc' : 'Thuộc chủ đề'}</span>
+                  <span>{isEn ? (masteredIds.includes(activeP1Topic.id) ? 'Mastered' : 'Master') : (masteredIds.includes(activeP1Topic.id) ? 'Đã thuộc' : 'Thuộc chủ đề')}</span>
                 </button>
               )}
               {activeP1Topic.isCustom && onDeleteP1Topic && (
                 <button
                   onClick={() => {
-                    if (window.confirm(`Bạn có chắc muốn xóa chủ đề "${activeP1Topic.title}"?`)) {
+                    if (window.confirm(isEn ? `Are you sure you want to delete topic "${activeP1Topic.title}"?` : `Bạn có chắc muốn xóa chủ đề "${activeP1Topic.title}"?`)) {
                       onDeleteP1Topic(activeP1Topic.id);
                     }
                   }}
                   className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer ml-1"
-                  title="Xóa chủ đề tự tạo này"
+                  title={isEn ? 'Delete this custom topic' : 'Xóa chủ đề tự tạo này'}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -187,22 +189,22 @@ export default function SpeakingPart1Room({
               <button
                 onClick={() => onOpenQuickAddQ && onOpenQuickAddQ()}
                 className="px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 transition-colors cursor-pointer flex items-center space-x-1"
-                title="Thêm câu hỏi mới vào chủ đề hiện tại"
+                title={isEn ? 'Add new question to current topic' : 'Thêm câu hỏi mới vào chủ đề hiện tại'}
               >
                 <Plus className="w-3 h-3" />
-                <span>+ Thêm Câu Hỏi</span>
+                <span>{isEn ? '+ Add Question' : '+ Thêm Câu Hỏi'}</span>
               </button>
               <button
                 onClick={() => setShowVocabHints(!showVocabHints)}
                 className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
               >
-                {showVocabHints ? 'Ẩn Gợi Ý Từ Vựng' : 'Hiện Từ Vựng Band 7+'}
+                {showVocabHints ? (isEn ? 'Hide Vocab Hints' : 'Ẩn Gợi Ý Từ Vựng') : (isEn ? 'Show Band 7+ Vocab' : 'Hiện Từ Vựng Band 7+')}
               </button>
               <button
                 onClick={() => setShowSampleAnswer(!showSampleAnswer)}
                 className="px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 transition-colors cursor-pointer"
               >
-                {showSampleAnswer ? 'Ẩn Bài Mẫu' : 'Xem Bài Mẫu 8.5'}
+                {showSampleAnswer ? (isEn ? 'Hide Model Answer' : 'Ẩn Bài Mẫu') : (isEn ? 'View Band 8.5 Model' : 'Xem Bài Mẫu 8.5')}
               </button>
               <button
                 type="button"
@@ -214,10 +216,10 @@ export default function SpeakingPart1Room({
                   title: 'Khung A.R.E.A - Trả Lời Tự Nhiên & Chuẩn Độ Dài Part 1'
                 })}
                 className="px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 text-xs font-bold border border-indigo-700/50 transition-colors cursor-pointer flex items-center space-x-1"
-                title="Mở cẩm nang khung phản xạ 3 câu A.R.E.A Part 1"
+                title={isEn ? 'Open A.R.E.A reflex handbook for Part 1' : 'Mở cẩm nang khung phản xạ 3 câu A.R.E.A Part 1'}
               >
                 <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="hidden sm:inline">Cẩm Nang A.R.E.A</span>
+                <span className="hidden sm:inline">{isEn ? 'A.R.E.A Guide' : 'Cẩm Nang A.R.E.A'}</span>
                 <span className="sm:hidden">A.R.E.A</span>
               </button>
             </div>
@@ -226,26 +228,26 @@ export default function SpeakingPart1Room({
           {/* The Question Text with Examiner Voice */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Câu hỏi khảo thí:</span>
+              <span className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">{isEn ? 'Exam Question:' : 'Câu hỏi khảo thí:'}</span>
               <div className="flex items-center space-x-1.5">
                 <button
                   onClick={() => handleReadText && handleReadText(currentP1Question.question)}
                   className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
                 >
                   <Volume2 className="w-3.5 h-3.5" />
-                  <span>{speechEngine?.isSpeaking ? 'Đang đọc...' : 'Nghe Giám khảo đọc câu hỏi'}</span>
+                  <span>{speechEngine?.isSpeaking ? (isEn ? 'Reading...' : 'Đang đọc...') : (isEn ? 'Listen to Examiner' : 'Nghe Giám khảo đọc câu hỏi')}</span>
                 </button>
                 {(currentP1Question?.qId?.includes('user') || activeP1Topic.isCustom || (activeP1Topic.questions && activeP1Topic.questions.length > 1)) && onDeleteP1Question && (
                   <button
                     onClick={() => {
-                      if (window.confirm(`Bạn có chắc muốn xóa câu hỏi này khỏi chủ đề ("${(currentP1Question.question || '').substring(0, 45)}...")?`)) {
+                      if (window.confirm(isEn ? `Are you sure you want to delete this question ("${(currentP1Question.question || '').substring(0, 45)}...")?` : `Bạn có chắc muốn xóa câu hỏi này khỏi chủ đề ("${(currentP1Question.question || '').substring(0, 45)}...")?`)) {
                         const targetQId = currentP1Question.qId || currentP1Question.id;
                         onDeleteP1Question(activeP1Topic.id, targetQId);
                         setActiveP1QuestionIndex(prev => Math.max(0, prev - 1));
                       }
                     }}
                     className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-rose-900/40"
-                    title="Xóa câu hỏi này khỏi chủ đề"
+                    title={isEn ? 'Delete this question from topic' : 'Xóa câu hỏi này khỏi chủ đề'}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -283,14 +285,14 @@ export default function SpeakingPart1Room({
                 </div>
                 <div>
                   <span className="text-xs font-black uppercase tracking-wider block text-white">
-                    {speechEngine?.isListening ? '🔴 Đang Thu Âm Trả Lời' : isMicConnecting ? '⏳ Đang Kích Hoạt Micro...' : 'Luyện Nói Cho Câu Này'}
+                    {speechEngine?.isListening ? (isEn ? '🔴 Recording Answer' : '🔴 Đang Thu Âm Trả Lời') : isMicConnecting ? (isEn ? '⏳ Connecting Microphone...' : '⏳ Đang Kích Hoạt Micro...') : (isEn ? 'Practice Speaking this Question' : 'Luyện Nói Cho Câu Này')}
                   </span>
                   <span className="text-[11px] text-slate-400">
                     {speechEngine?.isListening 
-                      ? 'Giọng bạn đang được phân tích trực tiếp' 
+                      ? (isEn ? 'Your voice is being analyzed live' : 'Giọng bạn đang được phân tích trực tiếp') 
                       : isMicConnecting
-                      ? 'Vui lòng bấm Cho Phép nếu trình duyệt yêu cầu'
-                      : 'Bấm nút "Bật Micro Luyện Nói" bên dưới để trả lời'}
+                      ? (isEn ? 'Please click Allow if requested by browser' : 'Vui lòng bấm Cho Phép nếu trình duyệt yêu cầu')
+                      : (isEn ? 'Click "Turn On Microphone" below to answer' : 'Bấm nút "Bật Micro Luyện Nói" bên dưới để trả lời')}
                   </span>
                 </div>
               </div>
@@ -299,16 +301,16 @@ export default function SpeakingPart1Room({
                 {speechEngine?.isListening ? (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[11px] font-black animate-pulse">
                     <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                    <span>REC<span className="hidden sm:inline"> • MICRO ĐANG BẬT</span></span>
+                    <span>REC<span className="hidden sm:inline"> • {isEn ? 'MIC ACTIVE' : 'MICRO ĐANG BẬT'}</span></span>
                   </span>
                 ) : isMicConnecting ? (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[11px] font-bold">
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    <span>ĐANG KẾT NỐI</span>
+                    <span>{isEn ? 'CONNECTING' : 'ĐANG KẾT NỐI'}</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-[11px] font-bold">
-                    <span>ĐÃ TẮT MIC</span>
+                    <span>{isEn ? 'MIC OFF' : 'ĐÃ TẮT MIC'}</span>
                   </span>
                 )}
                 {speechEngine?.isListening && (
@@ -339,9 +341,9 @@ export default function SpeakingPart1Room({
                 {speechEngine?.transcript || speechEngine?.interimTranscript ? (
                   <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic font-semibold">{speechEngine.interimTranscript}</strong>"</span>
                 ) : isMicConnecting ? (
-                  <span className="text-amber-400">Đang bật micro... Vui lòng chuẩn bị nói.</span>
+                  <span className="text-amber-400">{isEn ? 'Activating microphone... Please get ready to speak.' : 'Đang bật micro... Vui lòng chuẩn bị nói.'}</span>
                 ) : (
-                  <span className="text-slate-500">Bấm nút "Bật Micro Luyện Nói" bên dưới và bắt đầu trả lời bằng tiếng Anh...</span>
+                  <span className="text-slate-500">{isEn ? 'Click "Turn On Microphone" below and start answering in English...' : 'Bấm nút "Bật Micro Luyện Nói" bên dưới và bắt đầu trả lời bằng tiếng Anh...'}</span>
                 )}
               </p>
               <div className="flex items-center space-x-1.5 ml-2 shrink-0">
@@ -354,7 +356,7 @@ export default function SpeakingPart1Room({
                         ? 'bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-700/60'
                         : 'bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 hover:text-white border-indigo-600/60 shadow-sm shadow-indigo-950/50'
                     }`}
-                    title="AI nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+"
+                    title={isEn ? 'AI listens directly to audio for 98%+ transcription accuracy' : 'AI nghe trực tiếp file ghi âm để phiên âm chuẩn xác 98%+'}
                   >
                     {isRefiningTranscript && refiningClipKey === `p1_${activeP1Topic.id}_${activeP1QuestionIndex}` ? (
                       <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
@@ -364,11 +366,11 @@ export default function SpeakingPart1Room({
                       <Sparkles className="w-3 h-3 text-amber-300" />
                     )}
                     <span className="hidden sm:inline">
-                      {refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`] ? 'Đã Chuẩn Hóa AI' : 'AI Chuẩn Hóa'}
+                      {refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`] ? (isEn ? 'AI Refined' : 'Đã Chuẩn Hóa AI') : (isEn ? 'AI Refine' : 'AI Chuẩn Hóa')}
                     </span>
                     {!refinedClips[`p1_${activeP1Topic.id}_${activeP1QuestionIndex}`] && (
                       <span className="hidden md:inline text-[9px] bg-amber-400/20 text-amber-300 px-1 py-0.2 rounded border border-amber-400/30">
-                        Khuyên Dùng
+                        {isEn ? 'Recommended' : 'Khuyên Dùng'}
                       </span>
                     )}
                   </button>
@@ -381,7 +383,7 @@ export default function SpeakingPart1Room({
                       if (speechEngine.deleteAudioClip) speechEngine.deleteAudioClip(key);
                     }}
                     className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
-                    title="Xóa làm lại câu này"
+                    title={isEn ? 'Reset and retry this question' : 'Xóa làm lại câu này'}
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
@@ -401,11 +403,11 @@ export default function SpeakingPart1Room({
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">
               <span className="text-[11px] text-slate-400">
                 {speechEngine?.transcript ? (
-                  <span className="text-purple-300 font-semibold">Đã nói: {speechEngine.transcript.split(' ').filter(Boolean).length} từ</span>
+                  <span className="text-purple-300 font-semibold">{isEn ? `Spoken: ${speechEngine.transcript.split(' ').filter(Boolean).length} words` : `Đã nói: ${speechEngine.transcript.split(' ').filter(Boolean).length} từ`}</span>
                 ) : (
                   <span>
-                    <span className="hidden sm:inline">💡 Mẹo: Nhấn phím Space để bật/tắt mic nhanh</span>
-                    <span className="sm:hidden">💡 Chạm nút bên dưới để bật/tắt micro luyện nói</span>
+                    <span className="hidden sm:inline">{isEn ? '💡 Tip: Press Spacebar to toggle mic quickly' : '💡 Mẹo: Nhấn phím Space để bật/tắt mic nhanh'}</span>
+                    <span className="sm:hidden">{isEn ? '💡 Tap button below to toggle microphone' : '💡 Chạm nút bên dưới để bật/tắt micro luyện nói'}</span>
                   </span>
                 )}
               </span>
@@ -424,17 +426,17 @@ export default function SpeakingPart1Room({
                 {isMicConnecting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin text-white" />
-                    <span>ĐANG KẾT NỐI MICRO...</span>
+                    <span>{isEn ? 'CONNECTING MICROPHONE...' : 'ĐANG KẾT NỐI MICRO...'}</span>
                   </>
                 ) : speechEngine?.isListening ? (
                   <>
                     <Square className="w-3.5 h-3.5 fill-current text-white" />
-                    <span>🔴 DỪNG THU ÂM (HOÀN TẤT)</span>
+                    <span>{isEn ? '🔴 STOP RECORDING' : '🔴 DỪNG THU ÂM (HOÀN TẤT)'}</span>
                   </>
                 ) : (
                   <>
                     <Mic className="w-3.5 h-3.5" />
-                    <span>BẬT MICRO LUYỆN NÓI</span>
+                    <span>{isEn ? 'TURN ON MICROPHONE' : 'BẬT MICRO LUYỆN NÓI'}</span>
                   </>
                 )}
               </button>
@@ -447,17 +449,17 @@ export default function SpeakingPart1Room({
                 <div className="flex-1 space-y-1.5">
                   <p className="font-bold text-white text-xs leading-snug">{micErrorDetail}</p>
                   <div className="text-[11px] text-rose-300 leading-relaxed bg-rose-900/40 p-2 rounded-lg border border-rose-800/50 space-y-1">
-                    <p><strong>👉 Cách cấp quyền Micro trên trình duyệt:</strong></p>
-                    <p>1. Bấm vào biểu tượng <strong>Ổ khóa (🔒)</strong> hoặc <strong>Cài đặt trang web</strong> ở đầu thanh địa chỉ URL.</p>
-                    <p>2. Chuyển mục <strong>Microphone</strong> sang <strong>Cho phép (Allow)</strong>.</p>
-                    <p>3. Bấm nút <strong>"Kích Hoạt Lại Micro"</strong> bên dưới hoặc tải lại trang (F5).</p>
+                    <p><strong>{isEn ? '👉 How to enable Microphone in browser:' : '👉 Cách cấp quyền Micro trên trình duyệt:'}</strong></p>
+                    <p>{isEn ? '1. Click the Lock (🔒) or Site Settings icon at the start of URL bar.' : '1. Bấm vào biểu tượng Ổ khóa (🔒) hoặc Cài đặt trang web ở đầu thanh địa chỉ URL.'}</p>
+                    <p>{isEn ? '2. Switch Microphone permission to Allow.' : '2. Chuyển mục Microphone sang Cho phép (Allow).'}</p>
+                    <p>{isEn ? '3. Click "Reactivate Microphone Now" below or reload page (F5).' : '3. Bấm nút "Kích Hoạt Lại Micro" bên dưới hoặc tải lại trang (F5).'}</p>
                   </div>
                   <button
                     onClick={handleRequestMicPermissionDirectly}
                     className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] flex items-center space-x-1.5 cursor-pointer shadow-md transition-all"
                   >
                     <Mic className="w-3.5 h-3.5" />
-                    <span>Kích Hoạt Lại Micro Ngay</span>
+                    <span>{isEn ? 'Reactivate Microphone Now' : 'Kích Hoạt Lại Micro Ngay'}</span>
                   </button>
                 </div>
                 <button
@@ -482,7 +484,7 @@ export default function SpeakingPart1Room({
           {showVocabHints && currentP1Question.vocabHints?.length > 0 && (
             <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                Gợi ý Collocations & Idioms Band 7.5+:
+                {isEn ? 'Band 7.5+ Collocations & Idioms Suggestions:' : 'Gợi ý Collocations & Idioms Band 7.5+:'}
               </span>
               <div className="flex flex-wrap gap-2">
                 {currentP1Question.vocabHints.map((v, idx) => (
@@ -499,9 +501,9 @@ export default function SpeakingPart1Room({
                           topic: 'speaking'
                         })}
                         className="ml-1 text-[10px] text-purple-400 hover:text-purple-200 cursor-pointer font-bold"
-                        title="Lưu vào Sổ tay từ vựng"
+                        title={isEn ? 'Save to Vocabulary Notebook' : 'Lưu vào Sổ tay từ vựng'}
                       >
-                        +Lưu
+                        {isEn ? '+Save' : '+Lưu'}
                       </button>
                     )}
                   </div>
@@ -515,14 +517,14 @@ export default function SpeakingPart1Room({
             <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-800/40 space-y-2 animate-in fade-in duration-150">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">
-                  Câu trả lời mẫu Band 8.5+ (Theo công thức A.R.E.A):
+                  {isEn ? 'Band 8.5+ Model Answer (A.R.E.A Formula):' : 'Câu trả lời mẫu Band 8.5+ (Theo công thức A.R.E.A):'}
                 </span>
                 <button
                   onClick={() => handleReadText && handleReadText(currentP1Question.sampleAnswer)}
                   className="text-xs text-purple-300 hover:text-white font-bold flex items-center space-x-1 cursor-pointer"
                 >
                   <Volume2 className="w-3 h-3" />
-                  <span>Nghe đọc mẫu</span>
+                  <span>{isEn ? 'Listen to sample' : 'Nghe đọc mẫu'}</span>
                 </button>
               </div>
               <p className="text-xs sm:text-sm text-slate-200 leading-relaxed italic">
@@ -543,7 +545,7 @@ export default function SpeakingPart1Room({
               }}
               className="px-3.5 py-1.5 rounded-xl bg-slate-800 text-xs font-bold text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              ← Câu Trước
+              {isEn ? '← Previous' : '← Câu Trước'}
             </button>
             <button
               disabled={activeP1QuestionIndex >= (activeP1Topic.questions?.length || 1) - 1}
@@ -555,7 +557,7 @@ export default function SpeakingPart1Room({
               }}
               className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              Câu Kế Tiếp →
+              {isEn ? 'Next Question →' : 'Câu Kế Tiếp →'}
             </button>
           </div>
         </div>

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import SpeechWaveVisualizer from '../SpeechWaveVisualizer';
 import { openTheoryModalWithContext } from '../../../services/theoryContextService';
+import { useTranslation } from '../../../context/LanguageContext';
 
 /**
  * SpeakingPart3Room Sub-component
@@ -42,6 +43,8 @@ export default function SpeakingPart3Room({
   renderAudioPlayback,
   onOpenQuickAddQ
 }) {
+  const { language } = useTranslation();
+  const isEn = language === 'en';
   if (!currentP3Set) return null;
 
   return (
@@ -52,7 +55,7 @@ export default function SpeakingPart3Room({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="flex items-center space-x-2 flex-wrap gap-y-1">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Part 3: Thảo Luận Hai Chiều (Chuyên Sâu)
+              {isEn ? 'Part 3: Two-Way Discussion (In-Depth)' : 'Part 3: Thảo Luận Hai Chiều (Chuyên Sâu)'}
             </span>
             <span className="text-xs font-bold text-slate-300">{currentP3Set.topic}</span>
             {onToggleMastered && (currentP3Set.linkedPart2Id || currentP3Set.id) && (
@@ -66,27 +69,27 @@ export default function SpeakingPart3Room({
                 }`}
                 title={
                   masteredIds.includes(currentP3Set.linkedPart2Id || currentP3Set.id)
-                    ? 'Đã thuộc bộ thảo luận này (Bấm để bỏ đánh dấu)'
-                    : 'Đánh dấu đã thuộc bộ thảo luận này'
+                    ? (isEn ? 'Mastered this discussion set (Click to unmark)' : 'Đã thuộc bộ thảo luận này (Bấm để bỏ đánh dấu)')
+                    : (isEn ? 'Mark this discussion set as mastered' : 'Đánh dấu đã thuộc bộ thảo luận này')
                 }
               >
                 <GraduationCap className="w-3 h-3" />
                 <span>
                   {masteredIds.includes(currentP3Set.linkedPart2Id || currentP3Set.id)
-                    ? 'Đã thuộc'
-                    : 'Thuộc bộ câu hỏi'}
+                    ? (isEn ? 'Mastered' : 'Đã thuộc')
+                    : (isEn ? 'Master set' : 'Thuộc bộ câu hỏi')}
                 </span>
               </button>
             )}
             {currentP3Set.isCustom && onDeleteP3Set && (
               <button
                 onClick={() => {
-                  if (window.confirm(`Bạn có chắc muốn xóa bộ thảo luận "${currentP3Set.topic}"?`)) {
+                  if (window.confirm(isEn ? `Are you sure you want to delete discussion set "${currentP3Set.topic}"?` : `Bạn có chắc muốn xóa bộ thảo luận "${currentP3Set.topic}"?`)) {
                     onDeleteP3Set(currentP3Set.linkedPart2Id || currentP3Set.id);
                   }
                 }}
                 className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
-                title="Xóa bộ thảo luận tự tạo này"
+                title={isEn ? 'Delete this custom discussion set' : 'Xóa bộ thảo luận tự tạo này'}
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -101,23 +104,23 @@ export default function SpeakingPart3Room({
                 category: 'part3',
                 subType: 'critical-thinking',
                 topicId: 'critical-thinking-part3',
-                title: 'Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3'
+                title: isEn ? 'Critical Thinking & PEEL Matrix in Part 3' : 'Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3'
               })}
               className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-purple-300 text-xs font-bold border border-purple-800/60 transition-colors cursor-pointer flex items-center space-x-1.5 shadow-xs"
-              title="Mở cẩm nang khung tư duy phản biện PEEL mở rộng tầm xã hội cho Speaking Part 3"
+              title={isEn ? 'Open PEEL critical thinking framework guide for Speaking Part 3' : 'Mở cẩm nang khung tư duy phản biện PEEL mở rộng tầm xã hội cho Speaking Part 3'}
             >
               <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-              <span>Cẩm Nang PEEL Part 3</span>
+              <span>{isEn ? 'Part 3 PEEL Guide' : 'Cẩm Nang PEEL Part 3'}</span>
             </button>
 
             {/* ADD PART 3 TOPIC BUTTON */}
             <button
               onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
               className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
-              title="Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI"
+              title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-              <span>+ Sinh Bộ Thảo Luận Bằng AI</span>
+              <span>{isEn ? '+ Generate Discussion Set (AI)' : '+ Sinh Bộ Thảo Luận Bằng AI'}</span>
             </button>
           </div>
         </div>
@@ -125,14 +128,18 @@ export default function SpeakingPart3Room({
         {/* Topic Selection Bar */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-950/70 p-2.5 sm:p-3 rounded-xl border border-slate-800/80">
           <div className="flex-1 min-w-0 pr-0 sm:pr-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Chủ đề thảo luận Part 3:</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+              {isEn ? 'Part 3 Discussion Topic:' : 'Chủ đề thảo luận Part 3:'}
+            </span>
             <h3 className="text-sm sm:text-base font-black text-white truncate" title={currentP3Set.topic}>
               {currentP3Set.topic}
             </h3>
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
-            <span className="text-xs text-slate-400 font-medium hidden md:inline">Đổi chủ đề:</span>
+            <span className="text-xs text-slate-400 font-medium hidden md:inline">
+              {isEn ? 'Change topic:' : 'Đổi chủ đề:'}
+            </span>
             <select
               value={selectedP3Id}
               onChange={(e) => setSelectedP3Id(e.target.value)}
@@ -140,7 +147,7 @@ export default function SpeakingPart3Room({
             >
               {(hideMastered ? part3Sets.filter(s => !masteredIds.includes(s.linkedPart2Id || s.id)) : part3Sets).map((s, idx) => (
                 <option key={s.linkedPart2Id || s.id || idx} value={s.linkedPart2Id || s.id || idx}>
-                  {masteredIds.includes(s.linkedPart2Id || s.id) ? '🎓 ' : ''}{s.topic} {s.isCommunity || (s.isPublic && s.isCustom) ? '(🌐 Cộng Đồng)' : s.isCustom ? '(🔒 Riêng)' : ''}
+                  {masteredIds.includes(s.linkedPart2Id || s.id) ? '🎓 ' : ''}{s.topic} {s.isCommunity || (s.isPublic && s.isCustom) ? (isEn ? '(🌐 Community)' : '(🌐 Cộng Đồng)') : s.isCustom ? (isEn ? '(🔒 Custom)' : '(🔒 Riêng)') : ''}
                 </option>
               ))}
             </select>
@@ -155,7 +162,7 @@ export default function SpeakingPart3Room({
             <div key={q.qId || idx} className="p-3.5 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black text-purple-400 uppercase tracking-wider">
-                  Câu hỏi {idx + 1} ({q.analysisType || 'Thảo luận'})
+                  {isEn ? `Question ${idx + 1} (${q.analysisType || 'Discussion'})` : `Câu hỏi ${idx + 1} (${q.analysisType || 'Thảo luận'})`}
                 </span>
                 <div className="flex items-center space-x-1.5">
                   <button
@@ -163,18 +170,18 @@ export default function SpeakingPart3Room({
                     className="flex items-center space-x-1 text-xs text-purple-300 hover:text-purple-200 font-bold bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-800/40 cursor-pointer"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
-                    <span>Nghe đọc</span>
+                    <span>{isEn ? 'Listen' : 'Nghe đọc'}</span>
                   </button>
                   {(q.qId?.includes('user') || currentP3Set.isCustom || (currentP3Set.questions && currentP3Set.questions.length > 1)) && onDeleteP3Question && (
                     <button
                       onClick={() => {
-                        if (window.confirm(`Bạn có chắc muốn xóa câu hỏi thảo luận này?`)) {
+                        if (window.confirm(isEn ? 'Are you sure you want to delete this discussion question?' : 'Bạn có chắc muốn xóa câu hỏi thảo luận này?')) {
                           const targetQId = q.qId || q.id;
                           onDeleteP3Question(currentP3Set.linkedPart2Id || currentP3Set.id, targetQId);
                         }
                       }}
                       className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-rose-900/40"
-                      title="Xóa câu hỏi thảo luận này"
+                      title={isEn ? 'Delete this discussion question' : 'Xóa câu hỏi thảo luận này'}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -186,13 +193,13 @@ export default function SpeakingPart3Room({
                 "{q.question}"
               </h4>
               <p className="text-xs text-slate-400 italic">
-                💡 Chiến lược PEEL: {q.strategy}
+                {isEn ? `💡 PEEL Strategy: ${q.strategy}` : `💡 Chiến lược PEEL: ${q.strategy}`}
               </p>
 
               {/* Micro recorder for this Part 3 question */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2">
                 <span className="text-[11px] text-slate-500">
-                  Cấu trúc PEEL: Point → Explanation → Example → Link
+                  {isEn ? 'PEEL Framework: Point → Explanation → Example → Link' : 'Cấu trúc PEEL: Point → Explanation → Example → Link'}
                 </span>
                 <button
                   onClick={() => handleTogglePracticeRecord(clipKey)}
@@ -208,17 +215,17 @@ export default function SpeakingPart3Room({
                   {isMicConnecting && activeRecordClipKey === clipKey ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                      <span>Đang Kết Nối Micro...</span>
+                      <span>{isEn ? 'Connecting Mic...' : 'Đang Kết Nối Micro...'}</span>
                     </>
                   ) : speechEngine.isListening && (activeRecordClipKey === clipKey || !activeRecordClipKey) ? (
                     <>
                       <Square className="w-3.5 h-3.5 fill-current text-white" />
-                      <span>🔴 Dừng Thu Âm Câu Này</span>
+                      <span>{isEn ? '🔴 Stop Recording This' : '🔴 Dừng Thu Âm Câu Này'}</span>
                     </>
                   ) : (
                     <>
                       <Mic className="w-3.5 h-3.5" />
-                      <span>Luyện Nói Câu Này</span>
+                      <span>{isEn ? 'Practice Speaking This' : 'Luyện Nói Câu Này'}</span>
                     </>
                   )}
                 </button>
@@ -232,7 +239,7 @@ export default function SpeakingPart3Room({
                     onClick={handleRequestMicPermissionDirectly}
                     className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] shrink-0 ml-2"
                   >
-                    Cấp Lại Quyền
+                    {isEn ? 'Retry Permission' : 'Cấp Lại Quyền'}
                   </button>
                 </div>
               )}
@@ -251,7 +258,9 @@ export default function SpeakingPart3Room({
                     {speechEngine.transcript || speechEngine.interimTranscript ? (
                       <span>"{speechEngine.transcript} <strong className="text-emerald-400 not-italic font-semibold">{speechEngine.interimTranscript}</strong>"</span>
                     ) : (
-                      <span className="text-emerald-400 animate-pulse">🎤 Đang nghe giọng bạn... Hãy trả lời bằng tiếng Anh</span>
+                      <span className="text-emerald-400 animate-pulse">
+                        {isEn ? '🎤 Listening to your voice... Please answer in English' : '🎤 Đang nghe giọng bạn... Hãy trả lời bằng tiếng Anh'}
+                      </span>
                     )}
                   </p>
                 </div>
@@ -271,7 +280,7 @@ export default function SpeakingPart3Room({
           className="px-3.5 py-2 rounded-xl bg-purple-950/70 hover:bg-purple-900 text-purple-300 text-xs font-bold border border-purple-700/50 flex items-center space-x-1.5 transition-colors cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>+ Thêm Câu Hỏi Vào Bộ Thảo Luận Này</span>
+          <span>{isEn ? '+ Add Question to This Discussion Set' : '+ Thêm Câu Hỏi Vào Bộ Thảo Luận Này'}</span>
         </button>
       </div>
 

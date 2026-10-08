@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, ZoomIn, ZoomOut, RotateCcw, Maximize2, Move } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export default function ImageViewerModal({
   isOpen,
   onClose,
   imageUrl,
-  title = 'Hình ảnh đề bài Task 1'
+  title
 }) {
+  const { t, isEn } = useTranslation();
+  const displayTitle = title || (isEn ? 'Task 1 Visual Diagram' : 'Hình ảnh đề bài Task 1');
   const [scale, setScale] = useState(1);
   const containerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -108,7 +111,7 @@ export default function ImageViewerModal({
               <Maximize2 className="w-4 h-4" />
             </span>
             <span className="text-xs sm:text-sm font-bold truncate">
-              {title}
+              {displayTitle}
             </span>
           </div>
 
@@ -119,7 +122,7 @@ export default function ImageViewerModal({
               onClick={handleZoomOut}
               disabled={scale <= 0.5}
               className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-colors"
-              title="Thu nhỏ (Phím -)"
+              title={isEn ? 'Zoom out (Key -)' : 'Thu nhỏ (Phím -)'}
             >
               <ZoomOut className="w-4 h-4" />
             </button>
@@ -133,7 +136,7 @@ export default function ImageViewerModal({
               onClick={handleZoomIn}
               disabled={scale >= 4}
               className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-colors"
-              title="Phóng to (Phím +)"
+              title={isEn ? 'Zoom in (Key +)' : 'Phóng to (Phím +)'}
             >
               <ZoomIn className="w-4 h-4" />
             </button>
@@ -144,7 +147,7 @@ export default function ImageViewerModal({
               type="button"
               onClick={handleReset}
               className="px-2 py-1 rounded-lg hover:bg-slate-700 text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer transition-colors flex items-center space-x-1"
-              title="Đặt lại kích thước gốc 100% (Phím 0)"
+              title={isEn ? 'Reset original scale 100% (Key 0)' : 'Đặt lại kích thước gốc 100% (Phím 0)'}
             >
               <RotateCcw className="w-3 h-3" />
               <span className="hidden sm:inline">100%</span>
@@ -156,7 +159,8 @@ export default function ImageViewerModal({
             type="button"
             onClick={onClose}
             className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-red-600/80 text-slate-300 hover:text-white transition-colors cursor-pointer"
-            title="Đóng (Esc)"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -185,7 +189,7 @@ export default function ImageViewerModal({
           >
             <img
               src={imageUrl}
-              alt={title}
+              alt={displayTitle}
               draggable={false}
               className="max-h-[82vh] w-auto max-w-full object-contain rounded-xl shadow-2xl pointer-events-none"
             />
@@ -195,7 +199,7 @@ export default function ImageViewerModal({
           {scale > 1 && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-slate-700 text-slate-300 text-[11px] flex items-center space-x-1.5 shadow-lg pointer-events-none">
               <Move className="w-3.5 h-3.5 text-blue-400" />
-              <span>Kéo chuột để di chuyển xem các góc chữ • Cuộn chuột hoặc +/- để phóng to</span>
+              <span>{isEn ? 'Drag mouse to pan • Mouse scroll or +/- to zoom' : 'Kéo chuột để di chuyển xem các góc chữ • Cuộn chuột hoặc +/- để phóng to'}</span>
             </div>
           )}
         </div>

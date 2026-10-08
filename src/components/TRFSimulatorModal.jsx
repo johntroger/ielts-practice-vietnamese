@@ -13,12 +13,16 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { printTrfDocument } from '../services/trfExportService';
+import { useTranslation } from '../context/LanguageContext';
 
 export default function TRFSimulatorModal({
   isOpen,
   onClose,
   trfData
 }) {
+  const { language } = useTranslation();
+  const isEn = language === 'en';
+
   if (!isOpen || !trfData) return null;
 
   const [copiedCode, setCopiedCode] = useState(false);
@@ -68,7 +72,9 @@ export default function TRFSimulatorModal({
                 </span>
               </h3>
               <p className="text-xs text-slate-400">
-                Phiếu điểm chuẩn khảo thí Cambridge • British Council • IDP
+                {isEn 
+                  ? 'Official exam scorecard standard • Cambridge • British Council • IDP' 
+                  : 'Phiếu điểm chuẩn khảo thí Cambridge • British Council • IDP'}
               </p>
             </div>
           </div>
@@ -77,15 +83,15 @@ export default function TRFSimulatorModal({
             <button
               onClick={handlePrint}
               className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors cursor-pointer shadow-md min-h-[38px]"
-              title="Xuất file hoặc in ấn phiếu điểm PDF"
+              title={isEn ? 'Export file or print PDF scorecard' : 'Xuất file hoặc in ấn phiếu điểm PDF'}
             >
               <Printer className="w-4 h-4" />
-              <span className="hidden sm:inline">In / Xuất PDF</span>
+              <span className="hidden sm:inline">{isEn ? 'Print / Export PDF' : 'In / Xuất PDF'}</span>
             </button>
             <button
               onClick={onClose}
               className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
-              title="Đóng bảng điểm"
+              title={isEn ? 'Close scorecard' : 'Đóng bảng điểm'}
             >
               <X className="w-5 h-5" />
             </button>
@@ -119,19 +125,19 @@ export default function TRFSimulatorModal({
             <div className="grid grid-cols-3 gap-3 mb-5 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200">
               <div className="col-span-2 space-y-1.5">
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">Thí sinh:</span>
+                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Candidate:' : 'Thí sinh:'}</span>
                   <span className="font-bold text-slate-900 truncate">{candidateName}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">Mã thí sinh:</span>
+                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Candidate No:' : 'Mã thí sinh:'}</span>
                   <span className="font-mono font-bold text-slate-900">{candidateNumber}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">Hội đồng thi:</span>
+                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Test Centre:' : 'Hội đồng thi:'}</span>
                   <span className="font-medium text-slate-700">{centreNumber} (IDP / BC Test Centre)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">Ngày thi:</span>
+                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Test Date:' : 'Ngày thi:'}</span>
                   <span className="font-medium text-slate-700">{testDate}</span>
                 </div>
               </div>
@@ -146,8 +152,8 @@ export default function TRFSimulatorModal({
             {/* 4 Skills Scores Table */}
             <div className="border border-slate-900 rounded-xl overflow-hidden mb-4 shadow-2xs">
               <div className="bg-slate-900 text-white text-[11px] font-bold px-3 py-1.5 uppercase tracking-wide flex items-center justify-between">
-                <span>Điểm Thi 4 Kỹ Năng & Overall</span>
-                <span className="text-red-400 font-extrabold">Quy chuẩn Cambridge</span>
+                <span>{isEn ? '4 Skills Scores & Overall' : 'Điểm Thi 4 Kỹ Năng & Overall'}</span>
+                <span className="text-red-400 font-extrabold">{isEn ? 'Cambridge Standard' : 'Quy chuẩn Cambridge'}</span>
               </div>
               <div className="grid grid-cols-4 sm:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-slate-200 text-center bg-white">
                 <div className="p-3">
@@ -179,19 +185,21 @@ export default function TRFSimulatorModal({
 
             {/* General Assessment Statement */}
             <div className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/80 mb-5 leading-relaxed italic">
-              <strong>Nhận xét chuyên môn từ Hội đồng Giám khảo:</strong> "{examinerFeedback}"
+              <strong>{isEn ? 'Examiner Assessment Feedback:' : 'Nhận xét chuyên môn từ Hội đồng Giám khảo:'}</strong> "{examinerFeedback}"
             </div>
 
             {/* Bottom Security Verification Code & Stamp */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 block">Mã bảo mật xác thực (Validation Code):</span>
+                <span className="text-[11px] font-bold text-slate-500 block">
+                  {isEn ? 'Security Validation Code:' : 'Mã bảo mật xác thực (Validation Code):'}
+                </span>
                 <div className="flex items-center space-x-1.5 font-mono text-[11px] bg-slate-100 px-2 py-1 rounded-md border border-slate-200">
                   <span className="font-bold text-slate-800">{validationCode}</span>
                   <button
                     onClick={handleCopyValidationCode}
                     className="p-1 hover:text-red-600 transition-colors cursor-pointer"
-                    title="Sao chép mã xác thực"
+                    title={isEn ? 'Copy validation code' : 'Sao chép mã xác thực'}
                   >
                     {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
@@ -210,7 +218,9 @@ export default function TRFSimulatorModal({
         {/* Footer Actions */}
         <div className="bg-slate-50 border-t border-slate-200 px-5 py-3 flex items-center justify-between gap-2 shrink-0">
           <div className="text-xs text-slate-500 hidden sm:block">
-            Phiếu điểm được tính theo chuẩn làm tròn khảo thí Cambridge Assessment English.
+            {isEn 
+              ? 'Scorecard rounded per Cambridge Assessment English standard.' 
+              : 'Phiếu điểm được tính theo chuẩn làm tròn khảo thí Cambridge Assessment English.'}
           </div>
           <div className="flex items-center space-x-2 ml-auto">
             <button
@@ -218,13 +228,13 @@ export default function TRFSimulatorModal({
               className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center space-x-1.5 transition-colors cursor-pointer shadow-xs min-h-[40px]"
             >
               <Printer className="w-4 h-4" />
-              <span>In / Xuất PDF</span>
+              <span>{isEn ? 'Print / Export PDF' : 'In / Xuất PDF'}</span>
             </button>
             <button
               onClick={onClose}
               className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-xs transition-colors cursor-pointer min-h-[40px]"
             >
-              Đóng
+              {isEn ? 'Close' : 'Đóng'}
             </button>
           </div>
         </div>

@@ -5,6 +5,7 @@ import {
   RotateCcw, Check, Radio
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
+import { useTranslation } from '../../i18n';
 
 export default function SpeakingSoundcheckModal({
   isOpen,
@@ -13,6 +14,7 @@ export default function SpeakingSoundcheckModal({
   examiner,
   speechEngine
 }) {
+  const { t, isEn } = useTranslation();
   const [testedSpeaker, setTestedSpeaker] = useState(false);
   const [testedMic, setTestedMic] = useState(false);
   const [isPlayingTestAudio, setIsPlayingTestAudio] = useState(false);
@@ -89,7 +91,9 @@ export default function SpeakingSoundcheckModal({
       setTimeout(() => setTestedSpeaker(true), 1500);
     } catch (err) {
       console.warn('Speaker test error:', err);
-      setAudioErrorHint('Trình duyệt chưa cho phép phát âm. Hãy bấm lại hoặc kiểm tra âm lượng máy tính.');
+      setAudioErrorHint(isEn 
+        ? 'Browser has not permitted audio playback yet. Please retry or check your system volume.' 
+        : 'Trình duyệt chưa cho phép phát âm. Hãy bấm lại hoặc kiểm tra âm lượng máy tính.');
       setTestedSpeaker(true); // Allow candidate to override
     }
   };
@@ -110,7 +114,9 @@ export default function SpeakingSoundcheckModal({
         setTestedMic(true);
       } catch (err) {
         console.warn('Start listening error:', err);
-        setAudioErrorHint('Không thể kết nối Micro. Hãy kiểm tra quyền Micro của trình duyệt.');
+        setAudioErrorHint(isEn 
+          ? 'Cannot connect to Microphone. Please check browser microphone permissions.' 
+          : 'Không thể kết nối Micro. Hãy kiểm tra quyền Micro của trình duyệt.');
       }
     }
   };
@@ -172,8 +178,12 @@ export default function SpeakingSoundcheckModal({
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-black text-white">Kiểm Tra Thiết Bị (Soundcheck)</h3>
-              <p className="text-xs text-slate-400">Đảm bảo Loa và Micro hoạt động ổn định trước khi thi</p>
+              <h3 className="text-base font-black text-white">
+                {isEn ? 'Equipment Soundcheck' : 'Kiểm Tra Thiết Bị (Soundcheck)'}
+              </h3>
+              <p className="text-xs text-slate-400">
+                {isEn ? 'Ensure Speaker and Microphone function properly before the test' : 'Đảm bảo Loa và Micro hoạt động ổn định trước khi thi'}
+              </p>
             </div>
           </div>
           <button
@@ -193,11 +203,11 @@ export default function SpeakingSoundcheckModal({
               <div className="flex items-center space-x-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-semibold text-emerald-200">
-                  Trình duyệt tối ưu: Google Chrome (Khuyên Dùng 100%)
+                  {isEn ? 'Optimal browser: Google Chrome (100% Recommended)' : 'Trình duyệt tối ưu: Google Chrome (Khuyên Dùng 100%)'}
                 </span>
               </div>
               <span className="text-[10px] font-bold text-emerald-300 uppercase bg-emerald-900/60 px-2 py-0.5 rounded border border-emerald-700/50">
-                Chuẩn Nhất
+                {isEn ? 'Best Standard' : 'Chuẩn Nhất'}
               </span>
             </div>
           ) : isEdge ? (
@@ -205,14 +215,20 @@ export default function SpeakingSoundcheckModal({
               <div className="flex items-start sm:items-center space-x-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
                 <span className="font-semibold text-amber-200 leading-snug">
-                  Đang dùng Edge: Khuyên dùng <strong>Google Chrome</strong> để có giọng đọc & micro mượt nhất
+                  {isEn ? (
+                    <>Using Edge: Recommend <strong>Google Chrome</strong> for smoothest speech synthesis and recognition</>
+                  ) : (
+                    <>Đang dùng Edge: Khuyên dùng <strong>Google Chrome</strong> để có giọng đọc & micro mượt nhất</>
+                  )}
                 </span>
               </div>
               <button
                 onClick={() => setShowEdgeGuide(!showEdgeGuide)}
                 className="self-end sm:self-auto text-[11px] font-bold text-amber-300 hover:text-white underline cursor-pointer shrink-0"
               >
-                {showEdgeGuide ? 'Đóng mẹo' : 'Mẹo xử lý âm thanh Edge'}
+                {showEdgeGuide 
+                  ? (isEn ? 'Close tips' : 'Đóng mẹo') 
+                  : (isEn ? 'Edge audio tips' : 'Mẹo xử lý âm thanh Edge')}
               </button>
             </div>
           ) : (
@@ -220,11 +236,15 @@ export default function SpeakingSoundcheckModal({
               <div className="flex items-center space-x-2">
                 <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
                 <span className="font-semibold text-rose-200">
-                  Khuyên dùng <strong>Google Chrome</strong> để hỗ trợ nhận diện giọng nói Speaking đầy đủ
+                  {isEn ? (
+                    <>Recommend <strong>Google Chrome</strong> for comprehensive Speaking voice recognition support</>
+                  ) : (
+                    <>Khuyên dùng <strong>Google Chrome</strong> để hỗ trợ nhận diện giọng nói Speaking đầy đủ</>
+                  )}
                 </span>
               </div>
               <span className="text-[10px] font-bold text-rose-300 uppercase bg-rose-900/60 px-2 py-0.5 rounded border border-rose-700/50">
-                Chú ý
+                {isEn ? 'Notice' : 'Chú ý'}
               </span>
             </div>
           )}
@@ -234,12 +254,24 @@ export default function SpeakingSoundcheckModal({
             <div className="p-3.5 rounded-xl bg-slate-950 border border-amber-500/40 text-xs space-y-2 animate-in fade-in duration-150">
               <div className="font-bold text-amber-300 flex items-center space-x-1.5">
                 <HelpCircle className="w-3.5 h-3.5" />
-                <span>Hướng dẫn nếu Microsoft Edge không phát ra tiếng:</span>
+                <span>
+                  {isEn ? 'Troubleshooting guide if Microsoft Edge has no audio:' : 'Hướng dẫn nếu Microsoft Edge không phát ra tiếng:'}
+                </span>
               </div>
               <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px] leading-relaxed pl-1">
-                <li>Bấm vào biểu tượng <strong>Khóa (Bảo mật)</strong> trên thanh địa chỉ Edge $\rightarrow$ Chọn <strong>Quyền trang web</strong> $\rightarrow$ Bật <strong>Âm thanh (Sound)</strong> sang <em>Cho phép</em>.</li>
-                <li>Vào Cài đặt Windows: <em>Settings $\rightarrow$ Privacy & Security $\rightarrow$ Speech</em> $\rightarrow$ Bật <strong>Online speech recognition</strong>.</li>
-                <li><span className="text-emerald-400 font-semibold">Khuyến nghị nhanh nhất:</span> Mở đường dẫn này bằng trình duyệt <strong>Google Chrome</strong> để thi ngay mà không cần chỉnh cài đặt.</li>
+                {isEn ? (
+                  <>
+                    <li>Click the <strong>Lock (Security)</strong> icon in Edge address bar $\rightarrow$ Select <strong>Site permissions</strong> $\rightarrow$ Toggle <strong>Sound</strong> to <em>Allow</em>.</li>
+                    <li>Open Windows Settings: <em>Settings $\rightarrow$ Privacy & Security $\rightarrow$ Speech</em> $\rightarrow$ Turn on <strong>Online speech recognition</strong>.</li>
+                    <li><span className="text-emerald-400 font-semibold">Fastest recommendation:</span> Open this link with <strong>Google Chrome</strong> to test immediately without configuring settings.</li>
+                  </>
+                ) : (
+                  <>
+                    <li>Bấm vào biểu tượng <strong>Khóa (Bảo mật)</strong> trên thanh địa chỉ Edge $\rightarrow$ Chọn <strong>Quyền trang web</strong> $\rightarrow$ Bật <strong>Âm thanh (Sound)</strong> sang <em>Cho phép</em>.</li>
+                    <li>Vào Cài đặt Windows: <em>Settings $\rightarrow$ Privacy & Security $\rightarrow$ Speech</em> $\rightarrow$ Bật <strong>Online speech recognition</strong>.</li>
+                    <li><span className="text-emerald-400 font-semibold">Khuyến nghị nhanh nhất:</span> Mở đường dẫn này bằng trình duyệt <strong>Google Chrome</strong> để thi ngay mà không cần chỉnh cài đặt.</li>
+                  </>
+                )}
               </ol>
             </div>
           )}
@@ -252,8 +284,12 @@ export default function SpeakingSoundcheckModal({
                   <Volume2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Bước 1: Kiểm tra Loa / Tai nghe</h4>
-                  <p className="text-[11px] text-slate-400">Giọng giám khảo: {examiner.name} ({examiner.accent})</p>
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                    {isEn ? 'Step 1: Check Speakers / Headphones' : 'Bước 1: Kiểm tra Loa / Tai nghe'}
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    {isEn ? `Examiner voice: ${examiner.name} (${examiner.accent})` : `Giọng giám khảo: ${examiner.name} (${examiner.accent})`}
+                  </p>
                 </div>
               </div>
 
@@ -265,10 +301,14 @@ export default function SpeakingSoundcheckModal({
                     ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/50'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700'
                 }`}
-                title="Bấm để xác nhận hoặc bỏ chọn"
+                title={isEn ? "Click to confirm or toggle status" : "Bấm để xác nhận hoặc bỏ chọn"}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{testedSpeaker ? 'Đã nghe rõ' : 'Chưa thử'}</span>
+                <span>
+                  {testedSpeaker 
+                    ? (isEn ? 'Heard clearly' : 'Đã nghe rõ') 
+                    : (isEn ? 'Untested' : 'Chưa thử')}
+                </span>
               </button>
             </div>
 
@@ -279,16 +319,20 @@ export default function SpeakingSoundcheckModal({
                 className="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white text-xs font-bold border border-purple-500/30 flex items-center justify-center space-x-2 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>{speechEngine.isSpeaking ? 'Giám khảo đang nói...' : 'Bấm để nghe thử giọng Giám khảo'}</span>
+                <span>
+                  {speechEngine.isSpeaking 
+                    ? (isEn ? 'Examiner is speaking...' : 'Giám khảo đang nói...') 
+                    : (isEn ? 'Click to test Examiner voice' : 'Bấm để nghe thử giọng Giám khảo')}
+                </span>
               </button>
 
               {speechEngine.isSpeaking && (
                 <button
                   onClick={speechEngine.stopSpeaking}
                   className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-400 text-xs font-bold border border-rose-500/30 cursor-pointer"
-                  title="Dừng tiếng nói"
+                  title={isEn ? "Stop speaking" : "Dừng tiếng nói"}
                 >
-                  Dừng
+                  {isEn ? 'Stop' : 'Dừng'}
                 </button>
               )}
             </div>
@@ -306,8 +350,12 @@ export default function SpeakingSoundcheckModal({
                   {speechEngine.isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Bước 2: Kiểm tra Micro</h4>
-                  <p className="text-[11px] text-slate-400">Nói thử một câu để kiểm tra sóng âm & giọng nói</p>
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                    {isEn ? 'Step 2: Check Microphone' : 'Bước 2: Kiểm tra Micro'}
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    {isEn ? 'Say a short sentence to check sound wave & voice input' : 'Nói thử một câu để kiểm tra sóng âm & giọng nói'}
+                  </p>
                 </div>
               </div>
 
@@ -316,16 +364,16 @@ export default function SpeakingSoundcheckModal({
                 {speechEngine.isListening ? (
                   <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] font-extrabold animate-pulse">
                     <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <span>REC • ĐANG BẬT MIC</span>
+                    <span>{isEn ? 'REC • MIC ACTIVE' : 'REC • ĐANG BẬT MIC'}</span>
                   </span>
                 ) : testedMic || hasDetectedAudioWave ? (
                   <span className="inline-flex items-center space-x-1 text-[11px] text-emerald-400 font-bold bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-800/40">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Micro tốt</span>
+                    <span>{isEn ? 'Mic Good' : 'Micro tốt'}</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center space-x-1 text-[11px] text-slate-400 font-bold bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700">
-                    <span>ĐÃ TẮT MIC</span>
+                    <span>{isEn ? 'MIC OFF' : 'ĐÃ TẮT MIC'}</span>
                   </span>
                 )}
               </div>
@@ -344,7 +392,7 @@ export default function SpeakingSoundcheckModal({
               />
               {!speechEngine.isListening && !soundcheckClip && (
                 <span className="absolute text-[11px] text-slate-500 pointer-events-none">
-                  Sóng âm sẽ chuyển động khi bạn bật Micro
+                  {isEn ? 'Audio waves will animate when you turn on Microphone' : 'Sóng âm sẽ chuyển động khi bạn bật Micro'}
                 </span>
               )}
             </div>
@@ -354,10 +402,14 @@ export default function SpeakingSoundcheckModal({
               <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-300 space-y-1 animate-in fade-in duration-150">
                 <div className="font-bold flex items-center space-x-1.5">
                   <AlertTriangle className="w-4 h-4 text-rose-400" />
-                  <span>{speechEngine.speechError === 'not-allowed' ? 'Trình duyệt đang chặn Micro!' : 'Lưu ý âm thanh'}</span>
+                  <span>
+                    {speechEngine.speechError === 'not-allowed' 
+                      ? (isEn ? 'Browser is blocking Microphone!' : 'Trình duyệt đang chặn Micro!') 
+                      : (isEn ? 'Audio Notice' : 'Lưu ý âm thanh')}
+                  </span>
                 </div>
                 <p className="text-[11px] text-rose-300/90 leading-relaxed">
-                  {audioErrorHint || 'Hãy bấm vào biểu tượng ổ khóa 🔒 trên thanh địa chỉ trình duyệt, chọn Cho phép (Allow) Micro rồi thử lại.'}
+                  {audioErrorHint || (isEn ? 'Click the lock 🔒 icon in your browser address bar, select Allow Microphone, and retry.' : 'Hãy bấm vào biểu tượng ổ khóa 🔒 trên thanh địa chỉ trình duyệt, chọn Cho phép (Allow) Micro rồi thử lại.')}
                 </p>
               </div>
             )}
@@ -366,8 +418,10 @@ export default function SpeakingSoundcheckModal({
             {speechEngine.isListening && (
               <div className="p-2.5 rounded-lg bg-slate-900/90 border border-emerald-500/30 text-xs text-slate-300 flex items-center justify-between">
                 <div>
-                  <span className="text-emerald-400 font-bold mr-1">Nghe được:</span>
-                  <span>{speechEngine.transcript || speechEngine.interimTranscript || 'Đang lắng nghe bạn nói...'}</span>
+                  <span className="text-emerald-400 font-bold mr-1">
+                    {isEn ? 'Detected:' : 'Nghe được:'}
+                  </span>
+                  <span>{speechEngine.transcript || speechEngine.interimTranscript || (isEn ? 'Listening to your voice...' : 'Đang lắng nghe bạn nói...')}</span>
                 </div>
                 <span className="text-[11px] font-mono font-bold text-emerald-400">
                   {speechEngine.micLevel}%
@@ -387,12 +441,12 @@ export default function SpeakingSoundcheckModal({
               {speechEngine.isListening ? (
                 <>
                   <Square className="w-4 h-4 fill-current" />
-                  <span>DỪNG THỬ MICRO (HOÀN TẤT NÓI)</span>
+                  <span>{isEn ? 'STOP MIC TEST (DONE SPEAKING)' : 'DỪNG THỬ MICRO (HOÀN TẤT NÓI)'}</span>
                 </>
               ) : (
                 <>
                   <Mic className="w-4 h-4" />
-                  <span>BẬT MICRO & NÓI THỬ 1 CÂU</span>
+                  <span>{isEn ? 'START MIC & SPEAK 1 SENTENCE' : 'BẬT MICRO & NÓI THỬ 1 CÂU'}</span>
                 </>
               )}
             </button>
@@ -403,7 +457,9 @@ export default function SpeakingSoundcheckModal({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1.5">
                     <Volume2 className="w-3.5 h-3.5 text-purple-400" />
-                    <span className="text-xs font-bold text-white">Đoạn âm thanh thử bạn vừa nói ({soundcheckClip.duration || 1}s):</span>
+                    <span className="text-xs font-bold text-white">
+                      {isEn ? `Your test voice recording (${soundcheckClip.duration || 1}s):` : `Đoạn âm thanh thử bạn vừa nói (${soundcheckClip.duration || 1}s):`}
+                    </span>
                   </div>
                   <span className="text-[10px] text-purple-300 font-semibold bg-purple-900/50 px-2 py-0.5 rounded border border-purple-700/40">
                     RAM-Only
@@ -422,12 +478,12 @@ export default function SpeakingSoundcheckModal({
                     {isPlayingTestAudio ? (
                       <>
                         <Pause className="w-3.5 h-3.5 fill-current" />
-                        <span>Tạm Dừng Nghe</span>
+                        <span>{isEn ? 'Pause Replay' : 'Tạm Dừng Nghe'}</span>
                       </>
                     ) : (
                       <>
                         <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>🔊 Nghe Lại Giọng Của Bạn</span>
+                        <span>{isEn ? '🔊 Replay Your Voice' : '🔊 Nghe Lại Giọng Của Bạn'}</span>
                       </>
                     )}
                   </button>
@@ -435,10 +491,10 @@ export default function SpeakingSoundcheckModal({
                   <button
                     onClick={handleConfirmAndClearClip}
                     className="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 text-xs font-bold border border-emerald-500/30 flex items-center space-x-1.5 transition-all cursor-pointer"
-                    title="Âm thanh đã rõ, xóa file tạm để giải phóng bộ nhớ RAM web"
+                    title={isEn ? "Sound is clear, discard temporary clip to free memory" : "Âm thanh đã rõ, xóa file tạm để giải phóng bộ nhớ RAM web"}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Âm Thanh Rõ & Xóa File Tạm</span>
+                    <span>{isEn ? 'Audio Clear & Discard Temp Clip' : 'Âm Thanh Rõ & Xóa File Tạm'}</span>
                   </button>
                 </div>
               </div>
@@ -449,13 +505,19 @@ export default function SpeakingSoundcheckModal({
               <Sparkles className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-bold text-white text-xs">Mẹo nhận diện lời nói chuẩn xác:</span>
+                  <span className="font-bold text-white text-xs">
+                    {isEn ? 'Accurate Speech Recognition Tip:' : 'Mẹo nhận diện lời nói chuẩn xác:'}
+                  </span>
                   <span className="text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.2 rounded-full">
-                    Khuyên Dùng AI
+                    {isEn ? 'AI Recommended' : 'Khuyên Dùng AI'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Nhận diện trực tiếp của trình duyệt có thể nhầm từ hoặc thiếu âm đuôi. Trong phòng luyện nói, bạn nên bấm nút <span className="font-semibold text-indigo-300">"✨ AI Nhận Diện Lại"</span> để AI Multimodal Audio nghe trực tiếp file ghi âm gốc, giúp kết quả phiên âm và chấm điểm chính xác nhất.
+                  {isEn ? (
+                    <>Browser live speech recognition might miss subtle word endings. In the practice room, click <span className="font-semibold text-indigo-300">"✨ AI Re-Recognition"</span> so Multimodal Audio inspects the raw audio for maximum transcription accuracy.</>
+                  ) : (
+                    <>Nhận diện trực tiếp của trình duyệt có thể nhầm từ hoặc thiếu âm đuôi. Trong phòng luyện nói, bạn nên bấm nút <span className="font-semibold text-indigo-300">"✨ AI Nhận Diện Lại"</span> để AI Multimodal Audio nghe trực tiếp file ghi âm gốc, giúp kết quả phiên âm và chấm điểm chính xác nhất.</>
+                  )}
                 </p>
               </div>
             </div>
@@ -467,7 +529,7 @@ export default function SpeakingSoundcheckModal({
                   onClick={() => setTestedMic(true)}
                   className="text-[11px] text-slate-400 hover:text-purple-300 underline cursor-pointer"
                 >
-                  Micro tôi vẫn hoạt động tốt, bỏ qua kiểm tra micro
+                  {isEn ? 'My microphone works fine, skip mic check' : 'Micro tôi vẫn hoạt động tốt, bỏ qua kiểm tra micro'}
                 </button>
               </div>
             )}
@@ -482,7 +544,7 @@ export default function SpeakingSoundcheckModal({
             onClick={onClose}
             className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
           >
-            Quay Lại
+            {isEn ? 'Back' : 'Quay Lại'}
           </button>
 
           <button
@@ -500,7 +562,7 @@ export default function SpeakingSoundcheckModal({
             }}
             className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/40 flex items-center space-x-2 transition-all cursor-pointer"
           >
-            <span>Tôi Đã Sẵn Sàng Vào Phòng Thi</span>
+            <span>{isEn ? 'I Am Ready to Enter Exam Room' : 'Tôi Đã Sẵn Sàng Vào Phòng Thi'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

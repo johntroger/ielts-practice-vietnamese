@@ -17,53 +17,65 @@ import {
   Zap
 } from 'lucide-react';
 import { testApiKey } from '../services/geminiService';
+import { useTranslation } from '../i18n';
 
 const TARGET_BANDS = [
   {
     band: '5.5',
     title: 'Modest / Foundation',
     desc: 'Củng cố ngữ pháp căn bản, tránh bẫy từ vựng, diễn đạt câu đơn - ghép rõ ràng.',
+    descEn: 'Consolidate core grammar, avoid lexical traps, express clear simple and compound sentences.',
     color: 'from-blue-500 to-cyan-500',
     border: 'border-blue-200',
     bg: 'bg-blue-50/60',
-    badge: 'Mục tiêu: Du học nghề / Tốt nghiệp ĐH'
+    badge: 'Mục tiêu: Du học nghề / Tốt nghiệp ĐH',
+    badgeEn: 'Target: Vocational / University Graduation'
   },
   {
     band: '6.0',
     title: 'Competent User',
     desc: 'Phát triển câu phức, làm chủ cấu trúc Task 1 & 2, giảm thiểu lỗi chính tả và dấu câu.',
+    descEn: 'Develop complex sentences, master Task 1 & 2 structural flows, minimize punctuation and spelling errors.',
     color: 'from-teal-500 to-emerald-500',
     border: 'border-teal-200',
     bg: 'bg-teal-50/60',
-    badge: 'Mục tiêu: Đại học quốc tế / Xét tuyển'
+    badge: 'Mục tiêu: Đại học quốc tế / Xét tuyển',
+    badgeEn: 'Target: International University Admission'
   },
   {
     band: '6.5',
     title: 'Good User (Phổ Biến Nhất)',
+    titleEn: 'Good User (Most Popular)',
     desc: 'Lập luận mạch lạc (CC), từ vựng học thuật theo chủ đề (LR), đa dạng ngữ pháp (GRA).',
+    descEn: 'Coherent argumentation (CC), topic-specific academic vocabulary (LR), syntactic variety (GRA).',
     color: 'from-amber-500 to-orange-500',
     border: 'border-amber-300',
     bg: 'bg-amber-50/80',
     badge: 'Khuyên Dùng • Phù hợp 80% thí sinh',
+    badgeEn: 'Recommended • Fits 80% Candidates',
     popular: true
   },
   {
     band: '7.0',
     title: 'Advanced / Professional',
     desc: 'Kiểm soát tốt sắc thái nghĩa, collocations tự nhiên, phản xạ nói và làm bài đọc chuẩn Cambridge.',
+    descEn: 'Master semantic nuance, natural collocations, fluent speaking delivery, and Cambridge reading strategy.',
     color: 'from-rose-500 to-red-500',
     border: 'border-rose-200',
     bg: 'bg-rose-50/60',
-    badge: 'Mục tiêu: Học bổng / Định cư / Master'
+    badge: 'Mục tiêu: Học bổng / Định cư / Master',
+    badgeEn: 'Target: Scholarships / Immigration / Master'
   },
   {
     band: '7.5+',
     title: 'Mastery / Native-like',
     desc: 'Văn phong học thuật sắc sảo, tự nhiên, làm chủ các dạng đề khó và bẫy đề thi thực tế.',
+    descEn: 'Sophisticated academic style, native-like natural tone, mastering complex prompts and exam nuances.',
     color: 'from-purple-500 to-indigo-600',
     border: 'border-purple-200',
     bg: 'bg-purple-50/60',
-    badge: 'Mục tiêu: Giảng dạy IELTS / Tiến sĩ'
+    badge: 'Mục tiêu: Giảng dạy IELTS / Tiến sĩ',
+    badgeEn: 'Target: IELTS Teaching / Doctoral Studies'
   }
 ];
 
@@ -74,6 +86,7 @@ export default function OnboardingModal({
   currentApiKey = '',
   onSaveConfig
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [step, setStep] = useState(1);
@@ -86,7 +99,7 @@ export default function OnboardingModal({
   const handleTestKey = async () => {
     if (!inputKey.trim()) {
       setKeyStatus('error');
-      setKeyErrorMsg('Vui lòng nhập API Key trước khi kiểm tra');
+      setKeyErrorMsg(isEn ? 'Please enter your API Key before testing' : 'Vui lòng nhập API Key trước khi kiểm tra');
       return;
     }
     setIsVerifyingKey(true);
@@ -98,11 +111,11 @@ export default function OnboardingModal({
         setKeyErrorMsg('');
       } else {
         setKeyStatus('error');
-        setKeyErrorMsg(res.message || 'Key không hợp lệ hoặc đã hết hạn ngạch.');
+        setKeyErrorMsg(res.message || (isEn ? 'Invalid key or quota exceeded.' : 'Key không hợp lệ hoặc đã hết hạn ngạch.'));
       }
     } catch (err) {
       setKeyStatus('error');
-      setKeyErrorMsg(err.message || 'Lỗi kết nối kiểm tra Key.');
+      setKeyErrorMsg(err.message || (isEn ? 'Connection error while checking Key.' : 'Lỗi kết nối kiểm tra Key.'));
     } finally {
       setIsVerifyingKey(false);
     }
@@ -130,26 +143,27 @@ export default function OnboardingModal({
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors cursor-pointer"
-            title="Đóng tour hướng dẫn"
+            title={isEn ? 'Close tour' : 'Đóng tour hướng dẫn'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-5 h-5" />
           </button>
 
           <div className="flex items-center space-x-2 text-xs font-bold text-red-400 uppercase tracking-widest mb-1.5">
             <Sparkles className="w-4 h-4" />
-            <span>Chào mừng bạn đến với IELTS Academic Studio</span>
+            <span>{isEn ? 'Welcome to IELTS Academic Studio' : 'Chào mừng bạn đến với IELTS Academic Studio'}</span>
           </div>
 
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-            {step === 1 && '1. Khám Phá 4 Phòng Luyện Thi Chuẩn Cambridge'}
-            {step === 2 && '2. Thiết Lập Trí Tuệ Nhân Tạo (AI API Key)'}
-            {step === 3 && '3. Thiết Lập Mục Tiêu Điểm Số (Target Band)'}
+            {step === 1 && (isEn ? '1. Explore 4 Cambridge Exam Practice Studios' : '1. Khám Phá 4 Phòng Luyện Thi Chuẩn Cambridge')}
+            {step === 2 && (isEn ? '2. Configure AI Intelligence (AI API Key)' : '2. Thiết Lập Trí Tuệ Nhân Tạo (AI API Key)')}
+            {step === 3 && (isEn ? '3. Set Your Target Band Score' : '3. Thiết Lập Mục Tiêu Điểm Số (Target Band)')}
           </h2>
 
           <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-lg">
-            {step === 1 && 'Hệ sinh thái luyện thi toàn diện Writing, Reading, Listening & Speaking tích hợp AI.'}
-            {step === 2 && 'Kết nối API Key cá nhân hoàn toàn miễn phí từ Google để chấm điểm 4 tiêu chí chuẩn xác.'}
-            {step === 3 && 'AI sẽ tự động điều chỉnh độ khó bài tập, tiêu chí sửa bài và radar bẫy lỗi theo band này.'}
+            {step === 1 && (isEn ? 'Comprehensive exam prep ecosystem for Writing, Reading, Listening & Speaking integrated with AI.' : 'Hệ sinh thái luyện thi toàn diện Writing, Reading, Listening & Speaking tích hợp AI.')}
+            {step === 2 && (isEn ? 'Connect your personal Google Gemini API key completely free to enable official 4-criteria AI assessment.' : 'Kết nối API Key cá nhân hoàn toàn miễn phí từ Google để chấm điểm 4 tiêu chí chuẩn xác.')}
+            {step === 3 && (isEn ? 'AI automatically calibrates task difficulty, feedback rubrics, and diagnostic radar to this band.' : 'AI sẽ tự động điều chỉnh độ khó bài tập, tiêu chí sửa bài và radar bẫy lỗi theo band này.')}
           </p>
 
           {/* Stepper Dots */}
@@ -165,11 +179,11 @@ export default function OnboardingModal({
                     ? 'w-4 bg-emerald-400'
                     : 'w-4 bg-slate-600'
                 }`}
-                title={`Chuyển tới Bước ${s}`}
+                title={isEn ? `Go to Step ${s}` : `Chuyển tới Bước ${s}`}
               />
             ))}
             <span className="text-[11px] font-bold text-slate-400 ml-2">
-              Bước {step} / 3
+              {isEn ? `Step ${step} / 3` : `Bước ${step} / 3`}
             </span>
           </div>
         </div>
@@ -192,12 +206,14 @@ export default function OnboardingModal({
                       <span>IELTS Writing Studio</span>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Luyện Task 1 & Task 2 với chế độ thi thật 60 phút, chấm điểm tức thì theo 4 tiêu chí Cambridge (TR/TA, CC, LR, GRA) kèm bài sửa chi tiết.
+                      {isEn 
+                        ? 'Practice Task 1 & Task 2 with authentic 60-min exam conditions, instant 4-criteria Cambridge assessment (TR/TA, CC, LR, GRA) with granular inline corrections.'
+                        : 'Luyện Task 1 & Task 2 với chế độ thi thật 60 phút, chấm điểm tức thì theo 4 tiêu chí Cambridge (TR/TA, CC, LR, GRA) kèm bài sửa chi tiết.'}
                     </p>
                   </div>
                   <div className="mt-3 flex items-center text-[10px] font-bold text-red-600 space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Timer thi thật • Radar điểm • Sổ tay lỗi sai</span>
+                    <span>{isEn ? 'Exam timer • Band radar • Mistake log' : 'Timer thi thật • Radar điểm • Sổ tay lỗi sai'}</span>
                   </div>
                 </div>
 
@@ -211,12 +227,14 @@ export default function OnboardingModal({
                       <span>IELTS Reading Studio</span>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      3 Passages chuẩn Cambridge, chia đôi màn hình làm bài mượt mà, tra từ vựng 1-click và phân tích vị trí bằng chứng (Evidence locator).
+                      {isEn 
+                        ? '3 Cambridge-standard passages, smooth dual-pane interface, 1-click vocab lookup, and evidence locator analysis.'
+                        : '3 Passages chuẩn Cambridge, chia đôi màn hình làm bài mượt mà, tra từ vựng 1-click và phân tích vị trí bằng chứng (Evidence locator).'}
                     </p>
                   </div>
                   <div className="mt-3 flex items-center text-[10px] font-bold text-blue-600 space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Tra từ 1 chạm • Giải thích đáp án • Gạch chân</span>
+                    <span>{isEn ? '1-Click Lookup • Answer Analysis • Underlining' : 'Tra từ 1 chạm • Giải thích đáp án • Gạch chân'}</span>
                   </div>
                 </div>
 
@@ -230,12 +248,14 @@ export default function OnboardingModal({
                       <span>IELTS Listening Studio</span>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Audio tương tác mô phỏng 4 Sections, tính năng Dictation nghe chép chính tả, luyện bẫy nhiễu số & tên riêng, đồng bộ Transcript.
+                      {isEn 
+                        ? 'Interactive audio simulating 4 Sections, sentence-by-sentence dictation, distractor & number trap drills, synchronized transcript.'
+                        : 'Audio tương tác mô phỏng 4 Sections, tính năng Dictation nghe chép chính tả, luyện bẫy nhiễu số & tên riêng, đồng bộ Transcript.'}
                     </p>
                   </div>
                   <div className="mt-3 flex items-center text-[10px] font-bold text-emerald-600 space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Dictation chép chính tả • Luyện bẫy số • Audio</span>
+                    <span>{isEn ? 'Dictation mode • Trap recognition • Audio' : 'Dictation chép chính tả • Luyện bẫy số • Audio'}</span>
                   </div>
                 </div>
 
@@ -249,12 +269,14 @@ export default function OnboardingModal({
                       <span>IELTS Speaking Studio</span>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Luyện nói với Giám khảo AI (British & American Accent), chuẩn bị Part 2 theo kim đồng hồ 1 phút, nhận feedback phát âm & độ trôi chảy.
+                      {isEn 
+                        ? 'Interactive practice with AI Examiner (British & American Accents), 1-minute cue card prep timer, pronunciation & fluency diagnostics.'
+                        : 'Luyện nói với Giám khảo AI (British & American Accent), chuẩn bị Part 2 theo kim đồng hồ 1 phút, nhận feedback phát âm & độ trôi chảy.'}
                     </p>
                   </div>
                   <div className="mt-3 flex items-center text-[10px] font-bold text-purple-600 space-x-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Hỏi đáp trực tiếp • Ghi âm • Chấm phát âm</span>
+                    <span>{isEn ? 'Live Q&A • Recording • Pronunciation check' : 'Hỏi đáp trực tiếp • Ghi âm • Chấm phát âm'}</span>
                   </div>
                 </div>
 
@@ -264,7 +286,9 @@ export default function OnboardingModal({
               <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center space-x-2.5">
                 <Zap className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>
-                  <strong>Đặc quyền:</strong> Hệ thống bổ trợ gồm <em>Cẩm nang chiến thuật 4 kỹ năng (Band 5.0 - 7.5)</em>, Micro-Drills, Sổ tay từ vựng C1-C2 và Chẩn đoán lỗi sai thông minh.
+                  <strong>{isEn ? 'Bonus Perks:' : 'Đặc quyền:'}</strong> {isEn 
+                    ? 'Supplemental toolkit including 4-skill tactical strategy handbook (Band 5.0 - 7.5), Micro-Drills, C1-C2 Vocab Notebook, and Smart Error Diagnostics.'
+                    : 'Hệ thống bổ trợ gồm Cẩm nang chiến thuật 4 kỹ năng (Band 5.0 - 7.5), Micro-Drills, Sổ tay từ vựng C1-C2 và Chẩn đoán lỗi sai thông minh.'}
                 </span>
               </div>
             </div>
@@ -287,7 +311,7 @@ export default function OnboardingModal({
                     rel="noopener noreferrer"
                     className="inline-flex items-center space-x-1 text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline"
                   >
-                    <span>Lấy Key miễn phí tại Google AI Studio</span>
+                    <span>{isEn ? 'Get free key at Google AI Studio' : 'Lấy Key miễn phí tại Google AI Studio'}</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
@@ -305,7 +329,9 @@ export default function OnboardingModal({
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm font-mono"
                   />
                   <p className="text-[11px] text-slate-500">
-                    * Key được lưu trữ hoàn toàn bảo mật trên trình duyệt cá nhân (localStorage) của bạn, không gửi về bất kỳ máy chủ trung gian nào.
+                    {isEn 
+                      ? '* Key is stored securely in your private browser localStorage and never transmitted to intermediary servers.'
+                      : '* Key được lưu trữ hoàn toàn bảo mật trên trình duyệt cá nhân (localStorage) của bạn, không gửi về bất kỳ máy chủ trung gian nào.'}
                   </p>
                 </div>
 
@@ -324,24 +350,24 @@ export default function OnboardingModal({
                     {isVerifyingKey ? (
                       <>
                         <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Đang kiểm tra kết nối...</span>
+                        <span>{isEn ? 'Testing connection...' : 'Đang kiểm tra kết nối...'}</span>
                       </>
                     ) : keyStatus === 'success' ? (
                       <>
                         <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                        <span>Kết Nối Thành Công!</span>
+                        <span>{isEn ? 'Connected Successfully!' : 'Kết Nối Thành Công!'}</span>
                       </>
                     ) : (
                       <>
                         <ShieldCheck className="w-4 h-4 text-amber-400" />
-                        <span>Kiểm Tra Key</span>
+                        <span>{isEn ? 'Test Key' : 'Kiểm Tra Key'}</span>
                       </>
                     )}
                   </button>
 
                   {keyStatus === 'success' && (
                     <span className="text-xs text-emerald-600 font-bold flex items-center space-x-1">
-                      <span>✓ API sẵn sàng hoạt động</span>
+                      <span>{isEn ? '✓ API ready to use' : '✓ API sẵn sàng hoạt động'}</span>
                     </span>
                   )}
                 </div>
@@ -357,12 +383,12 @@ export default function OnboardingModal({
               <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-2">
                 <div className="text-xs font-bold text-amber-900 flex items-center space-x-1.5">
                   <Award className="w-4 h-4 text-amber-600" />
-                  <span>Cách lấy API Key trong 30 giây (100% Free):</span>
+                  <span>{isEn ? 'How to get your API Key in 30 seconds (100% Free):' : 'Cách lấy API Key trong 30 giây (100% Free):'}</span>
                 </div>
                 <ol className="text-xs text-amber-800 space-y-1 pl-4 list-decimal leading-relaxed">
-                  <li>Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="font-bold underline">Google AI Studio</a> và đăng nhập bằng tài khoản Gmail bất kỳ.</li>
-                  <li>Bấm nút <strong>Create API Key</strong> màu xanh ở góc trên.</li>
-                  <li>Sao chép mã Key bắt đầu bằng <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[11px]">AIzaSy...</code> và dán vào ô bên trên.</li>
+                  <li>{isEn ? (<>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="font-bold underline">Google AI Studio</a> and sign in with any Google account.</>) : (<>Truy cập <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="font-bold underline">Google AI Studio</a> và đăng nhập bằng tài khoản Gmail bất kỳ.</>)}</li>
+                  <li>{isEn ? (<>Click the blue <strong>Create API Key</strong> button in the top menu.</>) : (<>Bấm nút <strong>Create API Key</strong> màu xanh ở góc trên.</>)}</li>
+                  <li>{isEn ? (<>Copy the key string starting with <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[11px]">AIzaSy...</code> and paste it into the field above.</>) : (<>Sao chép mã Key bắt đầu bằng <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[11px]">AIzaSy...</code> và dán vào ô bên trên.</>)}</li>
                 </ol>
               </div>
             </div>
@@ -372,7 +398,9 @@ export default function OnboardingModal({
           {step === 3 && (
             <div className="space-y-3">
               <div className="text-xs text-slate-500 font-medium">
-                Chọn mục tiêu điểm số của bạn. Bạn có thể thay đổi mục tiêu này bất kỳ lúc nào trên thanh điều hướng:
+                {isEn 
+                  ? 'Select your target band score. You can adjust this target anytime from the navigation bar:'
+                  : 'Chọn mục tiêu điểm số của bạn. Bạn có thể thay đổi mục tiêu này bất kỳ lúc nào trên thanh điều hướng:'}
               </div>
 
               <div className="grid grid-cols-1 gap-2.5">
@@ -394,13 +422,13 @@ export default function OnboardingModal({
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center space-x-2">
-                            <span className="font-bold text-sm text-slate-900">{item.title}</span>
+                            <span className="font-bold text-sm text-slate-900">{isEn ? (item.titleEn || item.title) : item.title}</span>
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600 shadow-2xs">
-                              {item.badge}
+                              {isEn ? (item.badgeEn || item.badge) : item.badge}
                             </span>
                           </div>
                           <p className="text-xs text-slate-500 truncate sm:whitespace-normal mt-0.5">
-                            {item.desc}
+                            {isEn ? (item.descEn || item.desc) : item.desc}
                           </p>
                         </div>
                       </div>
@@ -431,15 +459,15 @@ export default function OnboardingModal({
                 className="px-3.5 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Quay lại</span>
+                <span>{isEn ? 'Back' : 'Quay lại'}</span>
               </button>
             ) : (
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600 font-semibold"
+                className="px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600 font-semibold cursor-pointer"
               >
-                Bỏ qua lúc này
+                {isEn ? 'Skip for now' : 'Bỏ qua lúc này'}
               </button>
             )}
           </div>
@@ -451,7 +479,7 @@ export default function OnboardingModal({
                 onClick={() => setStep(step + 1)}
                 className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
               >
-                <span>Tiếp tục</span>
+                <span>{isEn ? 'Continue' : 'Tiếp tục'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             ) : (
@@ -461,7 +489,7 @@ export default function OnboardingModal({
                 className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-extrabold flex items-center space-x-2 shadow-md transition-all cursor-pointer active:scale-95"
               >
                 <Target className="w-4 h-4" />
-                <span>Hoàn Tất & Bắt Đầu Luyện ({selectedBand})</span>
+                <span>{isEn ? `Complete & Start Practicing (${selectedBand})` : `Hoàn Tất & Bắt Đầu Luyện (${selectedBand})`}</span>
               </button>
             )}
           </div>

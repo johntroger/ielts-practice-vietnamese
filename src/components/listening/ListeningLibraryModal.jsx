@@ -28,6 +28,7 @@ import {
   assembleFullListeningTest, 
   createRandomFullListeningTest 
 } from '../../utils/listeningTestAssembler';
+import { useTranslation } from '../../i18n';
 
 export default function ListeningLibraryModal({
   isOpen,
@@ -43,6 +44,7 @@ export default function ListeningLibraryModal({
   masteredIds = [],
   onToggleMastered
 }) {
+  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'assembled' | 'part1' | 'part2' | 'part3' | 'part4' | 'mastered'
@@ -89,7 +91,9 @@ export default function ListeningLibraryModal({
   const handleManualAssemble = () => {
     setAssemblerError('');
     if (!selectedP1Key || !selectedP2Key || !selectedP3Key || !selectedP4Key) {
-      setAssemblerError('Vui lòng chọn đủ 4 phần (Part 1, Part 2, Part 3, Part 4) để ghép đề hoàn chỉnh.');
+      setAssemblerError(isEn 
+        ? 'Please select all 4 parts (Part 1, Part 2, Part 3, Part 4) to assemble a complete test.' 
+        : 'Vui lòng chọn đủ 4 phần (Part 1, Part 2, Part 3, Part 4) để ghép đề hoàn chỉnh.');
       return;
     }
 
@@ -126,7 +130,9 @@ export default function ListeningLibraryModal({
     });
 
     if (!randomTest) {
-      setAssemblerError('Không đủ dữ liệu Part để ghép ngẫu nhiên. Cần tối thiểu ít nhất 1 bài cho mỗi Part (1, 2, 3, 4).');
+      setAssemblerError(isEn 
+        ? 'Insufficient Part data to assemble randomly. Need at least 1 test for each Part (1, 2, 3, 4).' 
+        : 'Không đủ dữ liệu Part để ghép ngẫu nhiên. Cần tối thiểu ít nhất 1 bài cho mỗi Part (1, 2, 3, 4).');
       return;
     }
 
@@ -229,14 +235,14 @@ export default function ListeningLibraryModal({
             <div className="min-w-0">
               <div className="flex items-center space-x-2">
                 <h3 className="font-black text-slate-900 text-base sm:text-lg truncate">
-                  Kho Đề Thi IELTS Listening
+                  {isEn ? 'IELTS Listening Test Library' : 'Kho Đề Thi IELTS Listening'}
                 </h3>
                 <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-extrabold uppercase tracking-wider shrink-0">
-                  {stats.total} Bộ Đề Sẵn Sàng
+                  {isEn ? `${stats.total} Tests Available` : `${stats.total} Bộ Đề Sẵn Sàng`}
                 </span>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block truncate">
-                Đề thi chính thức Cambridge & đề hội thoại bản xứ sinh bằng AI
+                {isEn ? 'Official Cambridge tests & native AI-generated conversation tests' : 'Đề thi chính thức Cambridge & đề hội thoại bản xứ sinh bằng AI'}
               </p>
             </div>
           </div>
@@ -244,7 +250,7 @@ export default function ListeningLibraryModal({
           <button
             onClick={onClose}
             className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer shrink-0 ml-1.5"
-            aria-label="Đóng kho đề listening"
+            aria-label={isEn ? "Close listening library" : "Đóng kho đề listening"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -261,7 +267,7 @@ export default function ListeningLibraryModal({
                 activeTab === 'all' ? 'bg-white text-slate-900 shadow-2xs font-black' : 'hover:text-slate-900'
               }`}
             >
-              Tất Cả ({stats.total})
+              {isEn ? 'All' : 'Tất Cả'} ({stats.total})
             </button>
             <button
               onClick={() => setActiveTab('cambridge')}
@@ -278,7 +284,7 @@ export default function ListeningLibraryModal({
               }`}
             >
               <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Đã Thuộc ({stats.mastered})</span>
+              <span>{isEn ? 'Mastered' : 'Đã Thuộc'} ({stats.mastered})</span>
             </button>
             <button
               onClick={() => setActiveTab('public')}
@@ -286,7 +292,7 @@ export default function ListeningLibraryModal({
                 activeTab === 'public' ? 'bg-white text-blue-700 shadow-2xs font-black' : 'hover:text-slate-900'
               }`}
             >
-              🌐 Cộng Đồng ({stats.public})
+              🌐 {isEn ? 'Community' : 'Cộng Đồng'} ({stats.public})
             </button>
             <button
               onClick={() => setActiveTab('assembled')}
@@ -294,7 +300,7 @@ export default function ListeningLibraryModal({
                 activeTab === 'assembled' ? 'bg-white text-purple-900 shadow-2xs font-black' : 'hover:text-slate-900'
               }`}
             >
-              🧩 Đã Ghép ({stats.assembled})
+              🧩 {isEn ? 'Assembled' : 'Đã Ghép'} ({stats.assembled})
             </button>
             <button
               onClick={() => setActiveTab('part1')}
@@ -340,14 +346,16 @@ export default function ListeningLibraryModal({
                 onChange={handleToggleHideMastered}
                 className="w-3.5 h-3.5 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
               />
-              <span className="whitespace-nowrap font-medium text-[11px] sm:text-xs">Ẩn đề đã thuộc</span>
+              <span className="whitespace-nowrap font-medium text-[11px] sm:text-xs">
+                {isEn ? 'Hide mastered' : 'Ẩn đề đã thuộc'}
+              </span>
             </label>
 
             <div className="relative flex-1 sm:w-64">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Tìm tên đề, Part, accent giọng đọc..."
+                placeholder={isEn ? "Search test title, Part, accent..." : "Tìm tên đề, Part, accent giọng đọc..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-slate-800"
@@ -361,11 +369,11 @@ export default function ListeningLibraryModal({
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-white border border-slate-200 text-slate-700 text-[11px] font-bold py-1.5 px-2 rounded-xl shadow-2xs focus:ring-1 focus:ring-purple-500 cursor-pointer"
-                title="Sắp xếp danh sách đề thi Listening"
+                title={isEn ? "Sort listening tests" : "Sắp xếp danh sách đề thi Listening"}
               >
-                <option value="default">Mặc định</option>
-                <option value="rating-desc">⭐ Rating cao</option>
-                <option value="attempts-desc">🔥 Lượt làm</option>
+                <option value="default">{isEn ? 'Default' : 'Mặc định'}</option>
+                <option value="rating-desc">{isEn ? '⭐ Top Rated' : '⭐ Rating cao'}</option>
+                <option value="attempts-desc">{isEn ? '🔥 Most Practiced' : '🔥 Lượt làm'}</option>
               </select>
             </div>
 
@@ -373,10 +381,10 @@ export default function ListeningLibraryModal({
             <button
               onClick={handleRandomAssemble}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs transition-all cursor-pointer shrink-0 shadow-2xs"
-              title="Tự động chọn ngẫu nhiên 4 Part để tạo 1 đề thi thử Full 40 câu hoàn chỉnh"
+              title={isEn ? "Randomly select 4 parts to assemble a full 40-question test" : "Tự động chọn ngẫu nhiên 4 Part để tạo 1 đề thi thử Full 40 câu hoàn chỉnh"}
             >
               <Dices className="w-3.5 h-3.5 text-amber-600" />
-              <span className="hidden sm:inline">🎲 Ghép Nhanh 1 Đề</span>
+              <span className="hidden sm:inline">{isEn ? '🎲 Quick Mix Test' : '🎲 Ghép Nhanh 1 Đề'}</span>
             </button>
 
             {/* Manual Assembler Toggle */}
@@ -387,10 +395,10 @@ export default function ListeningLibraryModal({
                   ? 'bg-purple-700 text-white' 
                   : 'bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200'
               }`}
-              title="Tự chọn 4 Part từ ngân hàng đề để lắp ráp thành 1 đề thi 40 câu"
+              title={isEn ? "Assemble 4 parts from test bank into a 40-question test" : "Tự chọn 4 Part từ ngân hàng đề để lắp ráp thành 1 đề thi 40 câu"}
             >
               <Puzzle className="w-3.5 h-3.5 text-purple-600" />
-              <span>🧩 Ghép Đề 4 Part</span>
+              <span>{isEn ? '🧩 4-Part Assembler' : '🧩 Ghép Đề 4 Part'}</span>
             </button>
 
             {onOpenGenerator && (
@@ -402,8 +410,8 @@ export default function ListeningLibraryModal({
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer shrink-0"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Sinh Đề Mới</span>
-                <span className="sm:hidden">Tạo Đề</span>
+                <span className="hidden sm:inline">{isEn ? 'Generate Test' : 'Sinh Đề Mới'}</span>
+                <span className="sm:hidden">{isEn ? 'Create' : 'Tạo Đề'}</span>
               </button>
             )}
           </div>
@@ -417,11 +425,11 @@ export default function ListeningLibraryModal({
               <div className="flex items-center space-x-2">
                 <Puzzle className="w-4 h-4 text-purple-700" />
                 <h4 className="text-xs font-black text-purple-950 uppercase tracking-wide">
-                  Lắp Ghép Đề Thi Full 4 Parts (40 Câu • ~32 Phút)
+                  {isEn ? 'Assemble Full 4-Part Exam (40 Questions • ~32 Mins)' : 'Lắp Ghép Đề Thi Full 4 Parts (40 Câu • ~32 Phút)'}
                 </h4>
               </div>
               <span className="text-[11px] text-purple-700 font-medium">
-                Chọn 1 bài cho mỗi Part từ ngân hàng đề của bạn:
+                {isEn ? 'Select 1 passage for each Part from your test bank:' : 'Chọn 1 bài cho mỗi Part từ ngân hàng đề của bạn:'}
               </span>
             </div>
 
@@ -429,15 +437,15 @@ export default function ListeningLibraryModal({
               {/* Part 1 Selector */}
               <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
                 <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
-                  <span>Part 1 (Hội thoại)</span>
-                  <span className="text-purple-600 font-mono text-[10px]">{p1List.length} bài</span>
+                  <span>{isEn ? 'Part 1 (Dialogue)' : 'Part 1 (Hội thoại)'}</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p1List.length} {isEn ? 'tests' : 'bài'}</span>
                 </label>
                 <select
                   value={selectedP1Key}
                   onChange={(e) => setSelectedP1Key(e.target.value)}
                   className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
                 >
-                  <option value="">-- Chọn bài Part 1 --</option>
+                  <option value="">{isEn ? '-- Select Part 1 --' : '-- Chọn bài Part 1 --'}</option>
                   {p1List.map(p => (
                     <option key={p.partKey} value={p.partKey}>
                       {p.part.title || p.testTitle}
@@ -449,15 +457,15 @@ export default function ListeningLibraryModal({
               {/* Part 2 Selector */}
               <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
                 <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
-                  <span>Part 2 (Độc thoại)</span>
-                  <span className="text-purple-600 font-mono text-[10px]">{p2List.length} bài</span>
+                  <span>{isEn ? 'Part 2 (Monologue)' : 'Part 2 (Độc thoại)'}</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p2List.length} {isEn ? 'tests' : 'bài'}</span>
                 </label>
                 <select
                   value={selectedP2Key}
                   onChange={(e) => setSelectedP2Key(e.target.value)}
                   className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
                 >
-                  <option value="">-- Chọn bài Part 2 --</option>
+                  <option value="">{isEn ? '-- Select Part 2 --' : '-- Chọn bài Part 2 --'}</option>
                   {p2List.map(p => (
                     <option key={p.partKey} value={p.partKey}>
                       {p.part.title || p.testTitle}
@@ -469,15 +477,15 @@ export default function ListeningLibraryModal({
               {/* Part 3 Selector */}
               <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
                 <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
-                  <span>Part 3 (Thảo luận)</span>
-                  <span className="text-purple-600 font-mono text-[10px]">{p3List.length} bài</span>
+                  <span>{isEn ? 'Part 3 (Discussion)' : 'Part 3 (Thảo luận)'}</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p3List.length} {isEn ? 'tests' : 'bài'}</span>
                 </label>
                 <select
                   value={selectedP3Key}
                   onChange={(e) => setSelectedP3Key(e.target.value)}
                   className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
                 >
-                  <option value="">-- Chọn bài Part 3 --</option>
+                  <option value="">{isEn ? '-- Select Part 3 --' : '-- Chọn bài Part 3 --'}</option>
                   {p3List.map(p => (
                     <option key={p.partKey} value={p.partKey}>
                       {p.part.title || p.testTitle}
@@ -489,15 +497,15 @@ export default function ListeningLibraryModal({
               {/* Part 4 Selector */}
               <div className="bg-white p-2.5 rounded-xl border border-purple-200 shadow-2xs space-y-1">
                 <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
-                  <span>Part 4 (Bài giảng)</span>
-                  <span className="text-purple-600 font-mono text-[10px]">{p4List.length} bài</span>
+                  <span>{isEn ? 'Part 4 (Lecture)' : 'Part 4 (Bài giảng)'}</span>
+                  <span className="text-purple-600 font-mono text-[10px]">{p4List.length} {isEn ? 'tests' : 'bài'}</span>
                 </label>
                 <select
                   value={selectedP4Key}
                   onChange={(e) => setSelectedP4Key(e.target.value)}
                   className="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-500 text-slate-800"
                 >
-                  <option value="">-- Chọn bài Part 4 --</option>
+                  <option value="">{isEn ? '-- Select Part 4 --' : '-- Chọn bài Part 4 --'}</option>
                   {p4List.map(p => (
                     <option key={p.partKey} value={p.partKey}>
                       {p.part.title || p.testTitle}
@@ -511,7 +519,7 @@ export default function ListeningLibraryModal({
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
               <input
                 type="text"
-                placeholder="Tên đề thi tùy chỉnh (Ví dụ: Cambridge Practice Full Test 01)..."
+                placeholder={isEn ? "Custom test title (e.g. Cambridge Practice Full Test 01)..." : "Tên đề thi tùy chỉnh (Ví dụ: Cambridge Practice Full Test 01)..."}
                 value={assembledTitle}
                 onChange={(e) => setAssembledTitle(e.target.value)}
                 className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-purple-200 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-purple-500"
@@ -522,14 +530,14 @@ export default function ListeningLibraryModal({
                   onClick={() => setIsAssemblerOpen(false)}
                   className="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                 >
-                  Đóng
+                  {isEn ? 'Close' : 'Đóng'}
                 </button>
                 <button
                   onClick={handleManualAssemble}
                   disabled={!selectedP1Key || !selectedP2Key || !selectedP3Key || !selectedP4Key}
                   className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 text-white text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center space-x-1"
                 >
-                  <span>Hoàn Tất Ghép Đề (40 Câu)</span>
+                  <span>{isEn ? 'Assemble Test (40 Questions)' : 'Hoàn Tất Ghép Đề (40 Câu)'}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -548,8 +556,12 @@ export default function ListeningLibraryModal({
           {sortedTests.length === 0 ? (
             <div className="text-center py-16 text-slate-400 space-y-2">
               <Headphones className="w-10 h-10 mx-auto opacity-30 text-slate-500" />
-              <p className="text-sm font-semibold text-slate-600">Không tìm thấy bộ đề nghe nào phù hợp.</p>
-              <p className="text-xs text-slate-400">Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Sinh Đề Bằng AI" để tạo đề mới.</p>
+              <p className="text-sm font-semibold text-slate-600">
+                {isEn ? 'No listening tests found matching your criteria.' : 'Không tìm thấy bộ đề nghe nào phù hợp.'}
+              </p>
+              <p className="text-xs text-slate-400">
+                {isEn ? 'Try different keywords or click "Generate Test" to create a new one.' : 'Hãy thử đổi từ khóa tìm kiếm hoặc bấm nút "Sinh Đề Bằng AI" để tạo đề mới.'}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
@@ -575,13 +587,15 @@ export default function ListeningLibraryModal({
                               ? 'bg-purple-100 text-purple-800' 
                               : 'bg-emerald-100 text-emerald-800'
                           }`}>
-                            {test.isCustom ? '✨ AI Audio Test' : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`}
+                            {test.isCustom 
+                              ? '✨ AI Audio Test' 
+                              : (isEn ? `📚 Cambridge Standard${test.cambridgeBook ? ` (Book ${test.cambridgeBook})` : ''}` : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`)}
                           </span>
 
                           {masteredIds.includes(test.id) && (
                             <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
                               <GraduationCap className="w-3 h-3 text-emerald-700" />
-                              <span>Đã thuộc</span>
+                              <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
                             </span>
                           )}
 
@@ -595,17 +609,17 @@ export default function ListeningLibraryModal({
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' 
                                   : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
                               }`}
-                              title="Bấm để chuyển đổi trạng thái Công khai / Riêng tư"
+                              title={isEn ? "Click to toggle Public / Private status" : "Bấm để chuyển đổi trạng thái Công khai / Riêng tư"}
                             >
                               {test.isPublic ? (
                                 <>
                                   <Globe className="w-3 h-3 text-emerald-600" />
-                                  <span>Cộng đồng</span>
+                                  <span>{isEn ? 'Public' : 'Cộng đồng'}</span>
                                 </>
                               ) : (
                                 <>
                                   <Lock className="w-3 h-3 text-slate-500" />
-                                  <span>Riêng tư</span>
+                                  <span>{isEn ? 'Private' : 'Riêng tư'}</span>
                                 </>
                               )}
                             </button>
@@ -613,14 +627,14 @@ export default function ListeningLibraryModal({
 
                           {isCurrent && (
                             <span className="px-2 py-0.5 rounded-md bg-purple-600 text-white text-[10px] font-bold">
-                              Đang Luyện
+                              {isEn ? 'Active' : 'Đang Luyện'}
                             </span>
                           )}
                         </div>
 
                         <div className="flex items-center space-x-1.5 text-xs text-slate-500 font-mono">
                           <Clock className="w-3.5 h-3.5 text-slate-400" />
-                          <span>~{test.timeLimitMinutes || 32} phút</span>
+                          <span>~{test.timeLimitMinutes || 32} {isEn ? 'mins' : 'phút'}</span>
                         </div>
                       </div>
 
@@ -649,7 +663,7 @@ export default function ListeningLibraryModal({
                         ))}
                         {partCount > 3 && (
                           <div className="text-[10px] text-slate-400 pl-5">
-                            + thêm {partCount - 3} phần khác (tổng {test.totalQuestions || 40} câu hỏi)
+                            + {isEn ? `${partCount - 3} more parts (total ${test.totalQuestions || 40} questions)` : `thêm ${partCount - 3} phần khác (tổng ${test.totalQuestions || 40} câu hỏi)`}
                           </div>
                         )}
                       </div>
@@ -677,8 +691,8 @@ export default function ListeningLibraryModal({
                             }`}
                             title={
                               masteredIds.includes(test.id)
-                                ? 'Bỏ đánh dấu đã thuộc'
-                                : 'Đánh dấu đã thuộc đề này'
+                                ? (isEn ? 'Unmark as mastered' : 'Bỏ đánh dấu đã thuộc')
+                                : (isEn ? 'Mark as mastered' : 'Đánh dấu đã thuộc đề này')
                             }
                           >
                             <GraduationCap className="w-4 h-4" />
@@ -689,12 +703,12 @@ export default function ListeningLibraryModal({
                           <button
                             type="button"
                             onClick={() => {
-                              if (window.confirm(`Bạn có chắc muốn xóa đề nghe "${test.title}" không?`)) {
+                              if (window.confirm(isEn ? `Are you sure you want to delete listening test "${test.title}"?` : `Bạn có chắc muốn xóa đề nghe "${test.title}" không?`)) {
                                 onDeleteTest(test.id);
                               }
                             }}
                             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Xóa đề này"
+                            title={isEn ? "Delete this test" : "Xóa đề này"}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -716,12 +730,12 @@ export default function ListeningLibraryModal({
                           {isCurrent ? (
                             <>
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Tiếp Tục Làm</span>
+                              <span>{isEn ? 'Continue' : 'Tiếp Tục Làm'}</span>
                             </>
                           ) : (
                             <>
                               <Play className="w-3.5 h-3.5 fill-current" />
-                              <span>Chọn Đề Này</span>
+                              <span>{isEn ? 'Select Test' : 'Chọn Đề Này'}</span>
                             </>
                           )}
                         </button>
@@ -738,13 +752,13 @@ export default function ListeningLibraryModal({
         {/* Footer */}
         <div className="px-5 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
           <div>
-            Hỗ trợ URL âm thanh trực tiếp từ Archive.org, BBC, TED, Podcasts • Tự động cách ly nếu link chết
+            {isEn ? 'Direct audio streaming from Archive.org, BBC, TED, Podcasts • Automatic dead-link isolation' : 'Hỗ trợ URL âm thanh trực tiếp từ Archive.org, BBC, TED, Podcasts • Tự động cách ly nếu link chết'}
           </div>
           <button
             onClick={onClose}
             className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold transition-colors cursor-pointer"
           >
-            Đóng
+            {isEn ? 'Close' : 'Đóng'}
           </button>
         </div>
 

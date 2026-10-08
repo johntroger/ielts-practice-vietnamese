@@ -1,17 +1,20 @@
 import React from 'react';
 import { SlidersHorizontal, X, Type, Sun, Moon, Check, RotateCcw, Monitor } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export const CDI_FONT_SIZES = [
-  { id: 'standard', label: 'Tiêu chuẩn', scale: '100%', desc: 'Kích thước chuẩn kỳ thi IDP/BC' },
-  { id: 'large', label: 'Cỡ Lớn', scale: '112%', desc: 'Tăng 12% kích thước chữ' },
-  { id: 'xlarge', label: 'Rất Lớn', scale: '125%', desc: 'Tăng 25% kích thước chữ' }
+  { id: 'standard', label: 'Tiêu chuẩn', labelEn: 'Standard', scale: '100%', desc: 'Kích thước chuẩn kỳ thi IDP/BC', descEn: 'Standard official IDP/BC exam text size' },
+  { id: 'large', label: 'Cỡ Lớn', labelEn: 'Large', scale: '112%', desc: 'Tăng 12% kích thước chữ', descEn: 'Increase text scale by 12%' },
+  { id: 'xlarge', label: 'Rất Lớn', labelEn: 'Extra Large', scale: '125%', desc: 'Tăng 25% kích thước chữ', descEn: 'Increase text scale by 25%' }
 ];
 
 export const CDI_CONTRAST_SCHEMES = [
   {
     id: 'standard',
     name: 'Mặc Định (Light)',
+    nameEn: 'Default (Light)',
     desc: 'Chữ đen trên nền trắng tiêu chuẩn',
+    descEn: 'Standard black text on white background',
     bg: 'bg-white',
     text: 'text-slate-900',
     border: 'border-slate-300'
@@ -19,7 +22,9 @@ export const CDI_CONTRAST_SCHEMES = [
   {
     id: 'dark',
     name: 'Ban Đêm (Dark)',
+    nameEn: 'Night (Dark)',
     desc: 'Chữ trắng trên nền tối chống mỏi mắt',
+    descEn: 'White text on dark theme to reduce eye strain',
     bg: 'bg-slate-900',
     text: 'text-slate-100',
     border: 'border-slate-700'
@@ -27,7 +32,9 @@ export const CDI_CONTRAST_SCHEMES = [
   {
     id: 'yellow-on-black',
     name: 'Vàng trên Đen (British Council)',
+    nameEn: 'Yellow on Black (British Council)',
     desc: 'Tương phản cao chuẩn IDP / British Council',
+    descEn: 'High contrast standard IDP / British Council',
     bg: 'bg-black',
     text: 'text-yellow-300',
     border: 'border-yellow-600'
@@ -35,7 +42,9 @@ export const CDI_CONTRAST_SCHEMES = [
   {
     id: 'black-on-yellow',
     name: 'Đen trên Nền Kem (Soft Eye-care)',
+    nameEn: 'Black on Cream (Soft Eye-care)',
     desc: 'Nền kem nhạt ấm áp, êm dịu cho mắt',
+    descEn: 'Warm soft cream background, gentle on the eyes',
     bg: 'bg-amber-50',
     text: 'text-amber-950',
     border: 'border-amber-300'
@@ -51,6 +60,8 @@ export default function CDIDisplayModal({
   onChangeContrast,
   onReset
 }) {
+  const { t, isEn } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
@@ -69,15 +80,19 @@ export default function CDIDisplayModal({
               <SlidersHorizontal className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight truncate">Tùy Chọn Hiển Thị Chuẩn CDI</h3>
-              <p className="text-[11px] text-slate-500 truncate hidden sm:block">Mô phỏng trợ năng Computer-Delivered IELTS (IDP / BC)</p>
+              <h3 className="font-black text-slate-900 text-sm sm:text-base tracking-tight truncate">
+                {isEn ? 'CDI Display Accessibility Options' : 'Tùy Chọn Hiển Thị Chuẩn CDI'}
+              </h3>
+              <p className="text-[11px] text-slate-500 truncate hidden sm:block">
+                {isEn ? 'Computer-Delivered IELTS accessibility simulator (IDP / BC)' : 'Mô phỏng trợ năng Computer-Delivered IELTS (IDP / BC)'}
+              </p>
             </div>
           </div>
           <button 
             onClick={onClose} 
             className="text-slate-400 hover:text-slate-600 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-            title="Đóng (Esc)"
-            aria-label="Đóng"
+            title={isEn ? 'Close (Esc)' : 'Đóng (Esc)'}
+            aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -91,7 +106,7 @@ export default function CDIDisplayModal({
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
                 <Type className="w-4 h-4 text-blue-600" />
-                <span>Cỡ chữ hiển thị bài thi (Font Size):</span>
+                <span>{isEn ? 'Exam display font size (Font Size):' : 'Cỡ chữ hiển thị bài thi (Font Size):'}</span>
               </label>
               <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
                 {CDI_FONT_SIZES.find(f => f.id === cdiFontSize)?.scale || '100%'}
@@ -109,7 +124,7 @@ export default function CDIDisplayModal({
                       : 'border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold'
                   }`}
                 >
-                  <div className="text-sm font-bold">{f.label}</div>
+                  <div className="text-sm font-bold">{isEn ? f.labelEn : f.label}</div>
                   <div className="text-[10px] text-slate-400 mt-0.5">{f.scale}</div>
                 </button>
               ))}
@@ -120,7 +135,7 @@ export default function CDIDisplayModal({
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
               <Monitor className="w-4 h-4 text-purple-600" />
-              <span>Chế độ tương phản màn hình (Screen Contrast):</span>
+              <span>{isEn ? 'Screen contrast mode (Screen Contrast):' : 'Chế độ tương phản màn hình (Screen Contrast):'}</span>
             </label>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -141,8 +156,8 @@ export default function CDIDisplayModal({
                         Aa
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-xs text-slate-900 truncate">{c.name}</div>
-                        <div className="text-[10px] text-slate-500 leading-tight truncate">{c.desc}</div>
+                        <div className="font-bold text-xs text-slate-900 truncate">{isEn ? c.nameEn : c.name}</div>
+                        <div className="text-[10px] text-slate-500 leading-tight truncate">{isEn ? c.descEn : c.desc}</div>
                       </div>
                     </div>
                     {isSelected && (
@@ -157,7 +172,7 @@ export default function CDIDisplayModal({
           {/* Section 3: Live Preview Box */}
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-              Xem trước văn bản với thiết lập hiện tại:
+              {isEn ? 'Live text preview with current settings:' : 'Xem trước văn bản với thiết lập hiện tại:'}
             </span>
             <div 
               data-cdi-font={cdiFontSize}
@@ -189,10 +204,10 @@ export default function CDIDisplayModal({
             type="button"
             onClick={onReset}
             className="flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
-            title="Khôi phục thiết lập mặc định"
+            title={isEn ? 'Reset to default settings' : 'Khôi phục thiết lập mặc định'}
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Mặc định</span>
+            <span>{isEn ? 'Reset' : 'Mặc định'}</span>
           </button>
 
           <button
@@ -200,7 +215,7 @@ export default function CDIDisplayModal({
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
           >
-            Đồng Ý & Áp Dụng
+            {isEn ? 'Apply & Save' : 'Đồng Ý & Áp Dụng'}
           </button>
         </div>
 

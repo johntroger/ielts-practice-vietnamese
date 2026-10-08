@@ -61,6 +61,7 @@ export default function ListeningWorkspace({
   toggleSlimHeader
 }) {
   const { t, language } = useTranslation();
+  const isEn = language === 'en';
   // 1. All Listening Tests (Preloaded + Custom from URL)
   const [allListeningTests, setAllListeningTests] = useState(() => {
     try {
@@ -445,7 +446,7 @@ export default function ListeningWorkspace({
               value={audioEngine.volume}
               onChange={(e) => audioEngine.changeVolume(parseFloat(e.target.value))}
               className="w-20 sm:w-28 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-red-500"
-              title="Âm lượng tai nghe"
+              title={isEn ? "Headphone volume" : "Âm lượng tai nghe"}
             />
           </div>
 
@@ -455,7 +456,7 @@ export default function ListeningWorkspace({
               <button
                 onClick={() => setIsResultModalOpen(true)}
                 className="px-2 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] sm:text-xs flex items-center space-x-1 transition-colors cursor-pointer shadow-xs"
-                title="Xem lại kết quả bài thi lần gần nhất"
+                title={isEn ? "Review latest test result" : "Xem lại kết quả bài thi lần gần nhất"}
               >
                 <Award className="w-3.5 h-3.5" />
                 <span className="hidden xs:inline">Band </span>
@@ -466,22 +467,22 @@ export default function ListeningWorkspace({
             <button
               onClick={() => setContrastTheme(prev => prev === 'standard' ? 'dark' : prev === 'dark' ? 'yellowOnBlack' : 'standard')}
               className="hidden sm:inline-block px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
-              title="Đổi độ tương phản màu"
+              title={isEn ? "Toggle color contrast" : "Đổi độ tương phản màu"}
             >
               Theme
             </button>
             <button
               onClick={() => setFontSizeMode(prev => prev === 'normal' ? 'large' : prev === 'large' ? 'xlarge' : 'normal')}
               className="hidden sm:inline-block px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
-              title="Đổi cỡ chữ"
+              title={isEn ? "Toggle font size" : "Đổi cỡ chữ"}
             >
-              Cỡ chữ
+              {isEn ? 'Font' : 'Cỡ chữ'}
             </button>
             {onOpenTheory && (
               <button
                 onClick={onOpenTheory}
                 className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-emerald-400 text-[11px] font-semibold border border-slate-700 cursor-pointer flex items-center space-x-1 shrink-0"
-                title="Mở Cẩm Nang Lý Thuyết & Chiến Thuật Listening"
+                title={isEn ? "Open Listening Theory & Strategies Guide" : "Mở Cẩm Nang Lý Thuyết & Chiến Thuật Listening"}
               >
                 <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
                 <span className="hidden xs:inline">{t('listening.theoryHandbook', 'Cẩm Nang')}</span>
@@ -489,12 +490,12 @@ export default function ListeningWorkspace({
             )}
             <button
               onClick={() => {
-                if (window.confirm('Bạn có muốn thoát khỏi Chế độ Thi Thử (Strict Mode) để quay về Chế độ Luyện Tập tự do không?')) {
+                if (window.confirm(isEn ? 'Do you want to exit Strict Exam Mode and return to Practice Mode?' : 'Bạn có muốn thoát khỏi Chế độ Thi Thử (Strict Mode) để quay về Chế độ Luyện Tập tự do không?')) {
                   setExamMode('practice');
                 }
               }}
               className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700 cursor-pointer shrink-0"
-              title="Quay về chế độ luyện tập"
+              title={isEn ? "Return to Practice Mode" : "Quay về chế độ luyện tập"}
             >
               {t('listening.exitExam', 'Thoát Thi')}
             </button>
@@ -509,7 +510,7 @@ export default function ListeningWorkspace({
                     ? 'bg-amber-500 text-slate-950 border-amber-400'
                     : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
                 }`}
-                title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa phòng thi Listening, ẩn thanh menu trên (Alt + Z)"}
+                title={isSlimHeader ? (isEn ? "Collapse workspace, show navbar (Alt + Z)" : "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)") : (isEn ? "Expand workspace, hide navbar (Alt + Z)" : "Mở rộng tối đa phòng thi Listening, ẩn thanh menu trên (Alt + Z)")}
               >
                 {isSlimHeader ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
                 <span className="hidden sm:inline">{isSlimHeader ? t('listening.collapseWorkspace', 'Thu gọn') : t('listening.expandWorkspace', 'Mở rộng')}</span>
@@ -589,7 +590,7 @@ export default function ListeningWorkspace({
                   }
                 }}
                 className="hidden xl:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[170px] truncate cursor-pointer shrink-0"
-                title="Chọn bộ đề nghe"
+                title={isEn ? "Select listening test" : "Chọn bộ đề nghe"}
               >
                 {allListeningTests.map(t => (
                   <option key={t.id} value={t.id}>
@@ -604,7 +605,7 @@ export default function ListeningWorkspace({
             <button
               onClick={() => setIsLibraryOpen(true)}
               className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-              title="Mở thư viện toàn bộ đề thi IELTS Listening"
+              title={isEn ? "Open full IELTS Listening test library" : "Mở thư viện toàn bộ đề thi IELTS Listening"}
             >
               <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
               <span>{t('listening.testLibrary', 'Kho Đề')}</span>
@@ -622,8 +623,8 @@ export default function ListeningWorkspace({
               }`}
               title={
                 masteredIds.includes(currentTestId)
-                  ? 'Đã thuộc đề nghe này (Bấm để bỏ đánh dấu)'
-                  : 'Đánh dấu đã thuộc đề nghe này'
+                  ? (isEn ? 'Mastered this listening test (Click to unmark)' : 'Đã thuộc đề nghe này (Bấm để bỏ đánh dấu)')
+                  : (isEn ? 'Mark this listening test as mastered' : 'Đánh dấu đã thuộc đề nghe này')
               }
             >
               <GraduationCap
@@ -640,7 +641,7 @@ export default function ListeningWorkspace({
                 type="button"
                 onClick={onOpenTheory}
                 className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-                title="Mở Cẩm Nang Lý Thuyết & Kỹ Năng Nghe IELTS (Format, Âm học, 4 Parts, Chép chính tả, Shadowing)"
+                title={isEn ? "Open IELTS Listening Theory & Skills Handbook" : "Mở Cẩm Nang Lý Thuyết & Kỹ Năng Nghe IELTS (Format, Âm học, 4 Parts, Chép chính tả, Shadowing)"}
               >
                 <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
                 <span>📖 {t('listening.theoryHandbook', 'Cẩm Nang')}</span>
@@ -651,7 +652,7 @@ export default function ListeningWorkspace({
             <button
               onClick={() => setIsGeneratorOpen(true)}
               className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-              title="Sinh đề thi IELTS mới bằng AI từ file ghi âm máy tính hoặc audio bản xứ"
+              title={isEn ? "Generate new IELTS Listening test with AI from computer audio or native speaker recording" : "Sinh đề thi IELTS mới bằng AI từ file ghi âm máy tính hoặc audio bản xứ"}
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-600" />
               <span>{t('listening.generateAi', 'Sinh Đề (AI)')}</span>
@@ -662,7 +663,7 @@ export default function ListeningWorkspace({
               <button
                 onClick={onOpenDrills}
                 className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-                title="Mở 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills: Số/Đánh vần, Bẫy nhiễu, Bản đồ, Signposting, Dictation)"
+                title={isEn ? "Open 5 listening micro-drills rooms (Numbers/Spelling, Distractors, Maps, Signposting, Dictation)" : "Mở 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills: Số/Đánh vần, Bẫy nhiễu, Bản đồ, Signposting, Dictation)"}
               >
                 <Puzzle className="w-3.5 h-3.5 text-amber-600" />
                 <span>{t('listening.microDrills', 'Luyện Bổ Trợ')}</span>
@@ -674,7 +675,7 @@ export default function ListeningWorkspace({
               <button
                 onClick={() => setIsResultModalOpen(true)}
                 className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer shrink-0"
-                title="Mở lại bảng báo cáo kết quả lần thi gần nhất"
+                title={isEn ? "Reopen latest test result report" : "Mở lại bảng báo cáo kết quả lần thi gần nhất"}
               >
                 <BarChart2 className="w-3.5 h-3.5" />
                 <span>Band {bandResult.band.toFixed(1)}</span>
@@ -701,7 +702,7 @@ export default function ListeningWorkspace({
             <button
               onClick={() => setIsTranscriptOpen(true)}
               className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold transition-colors cursor-pointer shadow-2xs shrink-0"
-              title="Mở lời thoại gỡ băng đồng bộ thời gian thực (Karaoke Transcript)"
+              title={isEn ? "Open realtime synced Karaoke Transcript" : "Mở lời thoại gỡ băng đồng bộ thời gian thực (Karaoke Transcript)"}
             >
               <FileText className="w-3.5 h-3.5" />
               <span>{t('listening.transcript', 'Lời Thoại')}</span>
@@ -711,7 +712,7 @@ export default function ListeningWorkspace({
             <button
               onClick={() => setIsSoundcheckOpen(true)}
               className="hidden lg:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-              title="Kiểm tra âm lượng tai nghe trước khi làm bài"
+              title={isEn ? "Check headphone volume before starting test" : "Kiểm tra âm lượng tai nghe trước khi làm bài"}
             >
               <Volume2 className="w-3.5 h-3.5" />
               <span>{t('listening.soundcheck', 'Soundcheck')}</span>
@@ -727,7 +728,7 @@ export default function ListeningWorkspace({
                     ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                 }`}
-                title={isSlimHeader ? "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)" : "Mở rộng tối đa không gian làm bài nghe, ẩn thanh menu trên (Alt + Z)"}
+                title={isSlimHeader ? (isEn ? "Collapse workspace, show navbar (Alt + Z)" : "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)") : (isEn ? "Expand workspace, hide navbar (Alt + Z)" : "Mở rộng tối đa không gian làm bài nghe, ẩn thanh menu trên (Alt + Z)")}
               >
                 {isSlimHeader ? (
                   <>
@@ -747,7 +748,7 @@ export default function ListeningWorkspace({
             {exam.isSubmitted && (
               <button
                 onClick={() => {
-                  if (window.confirm('Bạn có muốn làm lại đề thi này từ đầu không?')) {
+                  if (window.confirm(isEn ? 'Do you want to retake this test from the beginning?' : 'Bạn có muốn làm lại đề thi này từ đầu không?')) {
                     exam.resetExam();
                     audioEngine.seek(0);
                     setHasStartedExam(false);
@@ -760,7 +761,7 @@ export default function ListeningWorkspace({
                 className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer shrink-0"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Làm lại</span>
+                <span className="hidden sm:inline">{isEn ? 'Retake' : 'Làm lại'}</span>
               </button>
             )}
           </div>
@@ -790,7 +791,11 @@ export default function ListeningWorkspace({
           <div className="flex items-center space-x-2">
             <Clock className="w-4 h-4 text-slate-950 shrink-0" />
             <span>
-              Phát hiện bài làm chưa hoàn tất tại thời điểm <strong>{Math.floor(resumePrompt.savedTime / 60)} phút {Math.floor(resumePrompt.savedTime % 60)} giây</strong> (Part {resumePrompt.activePart || 1}).
+              {isEn ? (
+                <>Unfinished test session detected at <strong>{Math.floor(resumePrompt.savedTime / 60)}m {Math.floor(resumePrompt.savedTime % 60)}s</strong> (Part {resumePrompt.activePart || 1}).</>
+              ) : (
+                <>Phát hiện bài làm chưa hoàn tất tại thời điểm <strong>{Math.floor(resumePrompt.savedTime / 60)} phút {Math.floor(resumePrompt.savedTime % 60)} giây</strong> (Part {resumePrompt.activePart || 1}).</>
+              )}
             </span>
           </div>
           <div className="flex items-center space-x-2 shrink-0">
@@ -798,12 +803,12 @@ export default function ListeningWorkspace({
               onClick={handleResumeExam}
               className="px-2.5 py-1 rounded-md bg-slate-950 text-white hover:bg-slate-900 text-xs font-bold transition-colors cursor-pointer"
             >
-              Tiếp Tục Làm Bài
+              {isEn ? 'Resume Test' : 'Tiếp Tục Làm Bài'}
             </button>
             <button
               onClick={handleDiscardResume}
               className="p-1 hover:bg-amber-600 rounded-md transition-colors cursor-pointer"
-              title="Bỏ qua phiên làm bài cũ"
+              title={isEn ? "Discard previous test session" : "Bỏ qua phiên làm bài cũ"}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -822,14 +827,18 @@ export default function ListeningWorkspace({
               <div>
                 <div className="flex items-center space-x-2">
                   <h4 className="text-xs sm:text-sm font-bold text-amber-950">
-                    Cơ Chế Bảo Vệ Soft-Quarantine: Gián Đoạn Luồng Âm Thanh
+                    {isEn ? 'Soft-Quarantine Protection: Audio Stream Interrupted' : 'Cơ Chế Bảo Vệ Soft-Quarantine: Gián Đoạn Luồng Âm Thanh'}
                   </h4>
                   <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 uppercase">
-                    An Toàn Dữ Liệu
+                    {isEn ? 'Data Protected' : 'An Toàn Dữ Liệu'}
                   </span>
                 </div>
                 <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-                  Link âm thanh gốc không phản hồi (CORS hoặc lỗi mạng). <strong>Tiến trình và câu trả lời của bạn được bảo toàn 100%.</strong> Bạn có thể thử kết nối lại, mở Lời Thoại để làm tiếp hoặc đổi đề khác.
+                  {isEn ? (
+                    <>Original audio link unresponsive (CORS or network error). <strong>Your progress and answers are 100% preserved.</strong> You can retry connecting, open Transcripts, or switch to another test.</>
+                  ) : (
+                    <>Link âm thanh gốc không phản hồi (CORS hoặc lỗi mạng). <strong>Tiến trình và câu trả lời của bạn được bảo toàn 100%.</strong> Bạn có thể thử kết nối lại, mở Lời Thoại để làm tiếp hoặc đổi đề khác.</>
+                  )}
                 </p>
               </div>
             </div>
@@ -838,26 +847,26 @@ export default function ListeningWorkspace({
               <button
                 onClick={() => audioEngine.loadAudio(currentTest.audioUrl || currentTest.fallbackAudioUrl)}
                 className="px-3 py-1.5 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer shadow-2xs"
-                title="Thử tải lại âm thanh"
+                title={isEn ? "Retry loading audio" : "Thử tải lại âm thanh"}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Thử Lại</span>
+                <span>{isEn ? 'Retry' : 'Thử Lại'}</span>
               </button>
               <button
                 onClick={() => setIsTranscriptOpen(true)}
                 className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer shadow-xs"
-                title="Mở gỡ băng lời thoại để làm bài"
+                title={isEn ? "Open transcripts to continue" : "Mở gỡ băng lời thoại để làm bài"}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>Xem Lời Thoại</span>
+                <span>{isEn ? 'View Transcript' : 'Xem Lời Thoại'}</span>
               </button>
               <button
                 onClick={() => setIsLibraryOpen(true)}
                 className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer shadow-xs"
-                title="Chọn bộ đề khác từ thư viện"
+                title={isEn ? "Choose another test from library" : "Chọn bộ đề khác từ thư viện"}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>Kho Đề</span>
+                <span>{isEn ? 'Test Library' : 'Kho Đề'}</span>
               </button>
             </div>
           </div>
@@ -870,14 +879,16 @@ export default function ListeningWorkspace({
           <div className="flex items-center space-x-2">
             <Clock className="w-4 h-4 animate-spin shrink-0" />
             <span>
-              THỜI GIAN ĐỌC ĐỀ & CHUẨN BỊ (PART {activePart}): Bạn có {prepTimeRemaining}s để quét nhanh câu hỏi và gạch chân từ khóa.
+              {isEn 
+                ? `PREPARATION TIME (PART ${activePart}): You have ${prepTimeRemaining}s to quickly scan questions and underline keywords.`
+                : `THỜI GIAN ĐỌC ĐỀ & CHUẨN BỊ (PART ${activePart}): Bạn có ${prepTimeRemaining}s để quét nhanh câu hỏi và gạch chân từ khóa.`}
             </span>
           </div>
           <button
             onClick={() => setIsPrepActive(false)}
             className="px-2 py-0.5 rounded-md bg-white/20 hover:bg-white/30 text-white text-[11px] font-normal transition-colors cursor-pointer"
           >
-            Bỏ qua đếm ngược
+            {isEn ? 'Skip countdown' : 'Bỏ qua đếm ngược'}
           </button>
         </div>
       )}
@@ -907,24 +918,42 @@ export default function ListeningWorkspace({
             <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 mb-6 text-left shadow-xs">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center space-x-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Quy chế thi máy (CD-IELTS Guidelines)</span>
+                <span>{isEn ? 'CD-IELTS Guidelines' : 'Quy chế thi máy (CD-IELTS Guidelines)'}</span>
               </h3>
               <div className="space-y-2.5 text-xs text-slate-600">
                 <div className="flex items-start space-x-2">
                   <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                  <span>Audio sẽ chỉ phát <strong>01 lần duy nhất</strong> xuyên suốt 4 Part không tạm dừng (trong chế độ Thi Thử).</span>
+                  <span>
+                    {isEn ? (
+                      <>Audio will play <strong>only once</strong> throughout 4 Parts without pausing (in Strict Exam Mode).</>
+                    ) : (
+                      <>Audio sẽ chỉ phát <strong>01 lần duy nhất</strong> xuyên suốt 4 Part không tạm dừng (trong chế độ Thi Thử).</>
+                    )}
+                  </span>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                  <span>Có 30 giây chuẩn bị trước mỗi phần và 2 phút kiểm tra lại đáp án ở cuối bài.</span>
+                  <span>{isEn ? 'You have 30 seconds of prep time before each part and 2 minutes to check answers at the end.' : 'Có 30 giây chuẩn bị trước mỗi phần và 2 phút kiểm tra lại đáp án ở cuối bài.'}</span>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                  <span>Dùng phím <strong>Tab</strong> trên bàn phím để chuyển nhanh giữa các ô điền từ.</span>
+                  <span>
+                    {isEn ? (
+                      <>Use the <strong>Tab</strong> key on keyboard to quickly switch between fill-in blanks.</>
+                    ) : (
+                      <>Dùng phím <strong>Tab</strong> trên bàn phím để chuyển nhanh giữa các ô điền từ.</>
+                    )}
+                  </span>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                  <span>Bôi đen chữ bất kỳ để mở thanh <strong>Tô màu (Highlight 3 màu)</strong> và <strong>Ghi chú</strong>.</span>
+                  <span>
+                    {isEn ? (
+                      <>Select any text to reveal the <strong>Highlight (3 colors)</strong> and <strong>Notes</strong> toolbar.</>
+                    ) : (
+                      <>Bôi đen chữ bất kỳ để mở thanh <strong>Tô màu (Highlight 3 màu)</strong> và <strong>Ghi chú</strong>.</>
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
@@ -936,7 +965,7 @@ export default function ListeningWorkspace({
                 className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <Volume2 className="w-4 h-4 text-slate-500" />
-                <span>Kiểm Tra Loa / Tai Nghe</span>
+                <span>{isEn ? 'Check Audio (Soundcheck)' : 'Kiểm Tra Loa / Tai Nghe'}</span>
               </button>
 
               <button
@@ -944,7 +973,7 @@ export default function ListeningWorkspace({
                 className="w-full sm:w-auto px-7 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>Bắt Đầu Làm Bài Ngay</span>
+                <span>{isEn ? 'Start Test Now' : 'Bắt Đầu Làm Bài Ngay'}</span>
               </button>
             </div>
           </div>
@@ -957,7 +986,9 @@ export default function ListeningWorkspace({
                   <div className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span className="text-xs font-bold text-emerald-950">
-                      Bạn đang xem lại bài chấm {bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} câu đúng)` : ''}
+                      {isEn 
+                        ? `You are reviewing test results ${bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} correct)` : ''}`
+                        : `Bạn đang xem lại bài chấm ${bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} câu đúng)` : ''}`}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2 shrink-0">
@@ -965,7 +996,7 @@ export default function ListeningWorkspace({
                       onClick={() => setIsResultModalOpen(true)}
                       className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
                     >
-                      Bảng Điểm Chi Tiết
+                      {isEn ? 'Score Report' : 'Bảng Điểm Chi Tiết'}
                     </button>
                     <button
                       onClick={() => {
@@ -979,7 +1010,7 @@ export default function ListeningWorkspace({
                       className="px-2.5 py-1 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Làm Lại Đề Này</span>
+                      <span>{isEn ? 'Retake Test' : 'Làm Lại Đề Này'}</span>
                     </button>
                   </div>
                 </div>
@@ -1043,12 +1074,16 @@ export default function ListeningWorkspace({
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-black text-slate-900 text-base">Kiểm Tra Âm Thanh (Soundcheck)</h3>
+                    <h3 className="font-black text-slate-900 text-base">
+                      {isEn ? 'Audio Check (Soundcheck)' : 'Kiểm Tra Âm Thanh (Soundcheck)'}
+                    </h3>
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
                       CD-IELTS
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500">Kiểm tra tai nghe & độ to rõ trước khi bắt đầu bài thi</p>
+                  <p className="text-xs text-slate-500">
+                    {isEn ? 'Test headphones & audio clarity before beginning test' : 'Kiểm tra tai nghe & độ to rõ trước khi bắt đầu bài thi'}
+                  </p>
                 </div>
               </div>
               <button
@@ -1058,7 +1093,7 @@ export default function ListeningWorkspace({
                   setIsSoundcheckOpen(false);
                 }}
                 className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-                title="Đóng cửa sổ"
+                title={isEn ? "Close window" : "Đóng cửa sổ"}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1079,11 +1114,11 @@ export default function ListeningWorkspace({
               </div>
               <p className={`text-xs font-bold ${isSoundchecking ? 'text-emerald-800' : 'text-slate-700'}`}>
                 {isSoundchecking 
-                  ? '🔔 Đang phát chuông Harmonic Chime & Giọng đọc kiểm tra IELTS...' 
-                  : 'Bấm nút "Phát Chuông & Giọng Mẫu" bên dưới để kiểm tra loa / tai nghe.'}
+                  ? (isEn ? '🔔 Playing Harmonic Chime & IELTS Soundcheck Speech...' : '🔔 Đang phát chuông Harmonic Chime & Giọng đọc kiểm tra IELTS...') 
+                  : (isEn ? 'Click "Play Chime & Voice Sample" below to test headphones/speakers.' : 'Bấm nút "Phát Chuông & Giọng Mẫu" bên dưới để kiểm tra loa / tai nghe.')}
               </p>
               <p className="text-[11px] text-slate-500 mt-0.5">
-                Âm thanh được phát tức thì qua Web Audio API 100% không lo lỗi mạng.
+                {isEn ? 'Audio rendered instantly via Web Audio API, 100% network-fault tolerant.' : 'Âm thanh được phát tức thì qua Web Audio API 100% không lo lỗi mạng.'}
               </p>
             </div>
 
@@ -1096,7 +1131,7 @@ export default function ListeningWorkspace({
                   ) : (
                     <Volume2 className="w-4 h-4 text-emerald-600" />
                   )}
-                  <span>Điều chỉnh âm lượng tai nghe:</span>
+                  <span>{isEn ? 'Adjust headphone volume:' : 'Điều chỉnh âm lượng tai nghe:'}</span>
                 </span>
                 <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-xs">
                   {Math.round(soundcheckVolume * 100)}%
@@ -1112,9 +1147,9 @@ export default function ListeningWorkspace({
                 className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                <span>0% (Tắt tiếng)</span>
-                <span>50% (Vừa)</span>
-                <span>100% (Tối đa)</span>
+                <span>{isEn ? '0% (Muted)' : '0% (Tắt tiếng)'}</span>
+                <span>{isEn ? '50% (Medium)' : '50% (Vừa)'}</span>
+                <span>{isEn ? '100% (Max)' : '100% (Tối đa)'}</span>
               </div>
             </div>
 
@@ -1122,11 +1157,11 @@ export default function ListeningWorkspace({
             <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 mb-5 text-[11px] text-slate-600 space-y-1.5">
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 font-bold">✓</span>
-                <span>Hãy đeo tai nghe và kiểm tra xem cả hai bên tai có nghe rõ và đều nhau không.</span>
+                <span>{isEn ? 'Put on headphones and verify audio is clear and balanced in both ears.' : 'Hãy đeo tai nghe và kiểm tra xem cả hai bên tai có nghe rõ và đều nhau không.'}</span>
               </div>
               <div className="flex items-start space-x-2">
                 <span className="text-emerald-600 font-bold">✓</span>
-                <span>Sau khi bắt đầu bài thi thật, âm thanh sẽ phát liên tục suốt 4 Parts.</span>
+                <span>{isEn ? 'Once exam starts, audio will play continuously across all 4 Parts.' : 'Sau khi bắt đầu bài thi thật, âm thanh sẽ phát liên tục suốt 4 Parts.'}</span>
               </div>
             </div>
 
@@ -1140,7 +1175,7 @@ export default function ListeningWorkspace({
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
                   <Square className="w-3.5 h-3.5 fill-current" />
-                  <span>Dừng Âm Thanh</span>
+                  <span>{isEn ? 'Stop Audio' : 'Dừng Âm Thanh'}</span>
                 </button>
               ) : (
                 <button
@@ -1149,7 +1184,7 @@ export default function ListeningWorkspace({
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-95"
                 >
                   <Volume2 className="w-4 h-4" />
-                  <span>Phát Chuông & Giọng Mẫu</span>
+                  <span>{isEn ? 'Play Chime & Voice Sample' : 'Phát Chuông & Giọng Mẫu'}</span>
                 </button>
               )}
 
@@ -1163,7 +1198,7 @@ export default function ListeningWorkspace({
                   }}
                   className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  Đóng
+                  {isEn ? 'Close' : 'Đóng'}
                 </button>
                 <button
                   type="button"
@@ -1174,7 +1209,7 @@ export default function ListeningWorkspace({
                   className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Tôi Đã Nghe Rõ</span>
+                  <span>{isEn ? 'Audio Is Clear' : 'Tôi Đã Nghe Rõ'}</span>
                 </button>
               </div>
             </div>
@@ -1191,26 +1226,32 @@ export default function ListeningWorkspace({
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Xác Nhận Nộp Bài Thi</h3>
+                <h3 className="font-bold text-slate-900 text-base">
+                  {isEn ? 'Confirm Exam Submission' : 'Xác Nhận Nộp Bài Thi'}
+                </h3>
                 <p className="text-xs text-slate-500">IELTS Listening Simulation Check</p>
               </div>
             </div>
 
             <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 mb-4 text-xs space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-slate-600">Số câu đã hoàn thành:</span>
-                <span className="font-bold text-slate-900">{exam.answeredCount} / {currentTest.totalQuestions} câu</span>
+                <span className="text-slate-600">{isEn ? 'Completed questions:' : 'Số câu đã hoàn thành:'}</span>
+                <span className="font-bold text-slate-900">
+                  {isEn ? `${exam.answeredCount} / ${currentTest.totalQuestions} questions` : `${exam.answeredCount} / ${currentTest.totalQuestions} câu`}
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-600">Số câu chưa điền:</span>
+                <span className="text-slate-600">{isEn ? 'Unanswered questions:' : 'Số câu chưa điền:'}</span>
                 <span className={"font-bold " + (currentTest.totalQuestions - exam.answeredCount > 0 ? 'text-amber-600' : 'text-emerald-600')}>
-                  {currentTest.totalQuestions - exam.answeredCount} câu
+                  {isEn ? `${currentTest.totalQuestions - exam.answeredCount} questions` : `${currentTest.totalQuestions - exam.answeredCount} câu`}
                 </span>
               </div>
             </div>
 
             <p className="text-xs text-slate-600 mb-6 leading-relaxed">
-              Sau khi nộp bài, hệ thống sẽ tự động chấm điểm theo thang điểm Cambridge Official Band Score, mở khóa Audio Evidence Locator và bản dịch phân tích chi tiết.
+              {isEn 
+                ? 'Upon submission, your test will be evaluated against official Cambridge Band Score standards, unlocking Audio Evidence Locator and detailed explanations.'
+                : 'Sau khi nộp bài, hệ thống sẽ tự động chấm điểm theo thang điểm Cambridge Official Band Score, mở khóa Audio Evidence Locator và bản dịch phân tích chi tiết.'}
             </p>
 
             <div className="flex items-center justify-end space-x-2">
@@ -1218,14 +1259,14 @@ export default function ListeningWorkspace({
                 onClick={() => setIsConfirmSubmitOpen(false)}
                 className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
               >
-                Tiếp Tục Làm Bài
+                {isEn ? 'Continue Test' : 'Tiếp Tục Làm Bài'}
               </button>
               <button
                 onClick={handleConfirmSubmit}
                 className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Xác Nhận Nộp Bài</span>
+                <span>{isEn ? 'Confirm Submit' : 'Xác Nhận Nộp Bài'}</span>
               </button>
             </div>
           </div>

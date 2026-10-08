@@ -101,7 +101,7 @@ export default function UserProfileModal({
         const parsed = JSON.parse(evt.target.result);
         onImportData?.(parsed);
       } catch (err) {
-        alert('File không hợp lệ hoặc bị lỗi cú pháp JSON.');
+        alert(isEn ? 'Invalid file or JSON syntax error.' : 'File không hợp lệ hoặc bị lỗi cú pháp JSON.');
       }
     };
     reader.readAsText(file);
@@ -161,9 +161,9 @@ export default function UserProfileModal({
           validBandCount++;
 
           recentScores.push({
-            date: sub.date || 'Gần đây',
+            date: sub.date || (isEn ? 'Recent' : 'Gần đây'),
             overall: overall,
-            taskTitle: sub.task?.title || 'Bài luận'
+            taskTitle: sub.task?.title || (isEn ? 'Essay' : 'Bài luận')
           });
         }
       }
@@ -253,7 +253,9 @@ export default function UserProfileModal({
           category: writingTask.category || 'Academic Writing',
           title: writingTask.title,
           description: writingTask.prompt,
-          statText: `Đã viết: ${taskSubs.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          statText: isEn 
+            ? `Submitted: ${taskSubs.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}` 
+            : `Đã viết: ${taskSubs.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
           rawItem: writingTask
         };
       }
@@ -270,10 +272,12 @@ export default function UserProfileModal({
           skillBadgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
           typeBadge: readingTest.type === 'general' ? 'General Training' : 'Academic Reading',
           typeBadgeColor: 'bg-emerald-100 text-emerald-800',
-          category: readingTest.isCustom ? 'Đề tự tạo (AI)' : 'Cambridge Official',
+          category: readingTest.isCustom ? (isEn ? 'Custom Test (AI)' : 'Đề tự tạo (AI)') : 'Cambridge Official',
           title: readingTest.title,
           description: readingTest.description || (readingTest.passages?.map(p => p.title).join(' • ') || ''),
-          statText: `Đã làm: ${rHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          statText: isEn
+            ? `Completed: ${rHistory.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}`
+            : `Đã làm: ${rHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
           rawItem: readingTest
         };
       }
@@ -292,8 +296,10 @@ export default function UserProfileModal({
           typeBadgeColor: 'bg-indigo-100 text-indigo-800',
           category: listeningTest.isCustom ? 'AI Audio' : 'Cambridge Official',
           title: listeningTest.title,
-          description: listeningTest.description || `${listeningTest.parts?.length || 4} phần nghe`,
-          statText: `Đã làm: ${lHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          description: listeningTest.description || (isEn ? `${listeningTest.parts?.length || 4} audio parts` : `${listeningTest.parts?.length || 4} phần nghe`),
+          statText: isEn
+            ? `Completed: ${lHistory.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}`
+            : `Đã làm: ${lHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
           rawItem: listeningTest
         };
       }
@@ -312,8 +318,10 @@ export default function UserProfileModal({
           typeBadgeColor: 'bg-purple-100 text-purple-800',
           category: spkPack.difficulty || ('Target ' + spkPack.targetBand),
           title: spkPack.title,
-          description: spkPack.summary || 'Trọn bộ 3 Parts chuẩn khảo thí Cambridge',
-          statText: `Đã thi: ${sHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
+          description: spkPack.summary || (isEn ? 'Complete 3 Parts official Cambridge mock pack' : 'Trọn bộ 3 Parts chuẩn khảo thí Cambridge'),
+          statText: isEn
+            ? `Tested: ${sHistory.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}`
+            : `Đã thi: ${sHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
           rawItem: spkPack
         };
       }
@@ -330,8 +338,8 @@ export default function UserProfileModal({
           typeBadgeColor: 'bg-purple-100 text-purple-800',
           category: p1Topic.isCustom ? 'AI Custom' : 'Cambridge',
           title: p1Topic.title,
-          description: p1Topic.questions?.[0]?.question ? `"${p1Topic.questions[0].question}"` : 'Bộ câu hỏi phỏng vấn Part 1',
-          statText: `${p1Topic.questions?.length || 3} câu hỏi`,
+          description: p1Topic.questions?.[0]?.question ? `"${p1Topic.questions[0].question}"` : (isEn ? 'Part 1 interview questions set' : 'Bộ câu hỏi phỏng vấn Part 1'),
+          statText: isEn ? `${p1Topic.questions?.length || 3} questions` : `${p1Topic.questions?.length || 3} câu hỏi`,
           rawItem: p1Topic
         };
       }
@@ -348,8 +356,8 @@ export default function UserProfileModal({
           typeBadgeColor: 'bg-purple-100 text-purple-800',
           category: p2Card.category || 'Cue Card',
           title: p2Card.title,
-          description: p2Card.cueCard?.intro || (p2Card.cueCard?.bullets?.slice(0, 2).join(' • ') || 'Cue card 2 phút nói'),
-          statText: 'Long Turn 2 Phút',
+          description: p2Card.cueCard?.intro || (p2Card.cueCard?.bullets?.slice(0, 2).join(' • ') || (isEn ? '2-minute speaking cue card' : 'Cue card 2 phút nói')),
+          statText: isEn ? '2-Minute Long Turn' : 'Long Turn 2 Phút',
           rawItem: p2Card
         };
       }
@@ -364,10 +372,10 @@ export default function UserProfileModal({
           skillBadgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
           typeBadge: 'Part 3 Discussion',
           typeBadgeColor: 'bg-purple-100 text-purple-800',
-          category: 'Thảo luận chuyên sâu',
+          category: isEn ? 'In-depth Discussion' : 'Thảo luận chuyên sâu',
           title: p3Set.topic,
-          description: p3Set.questions?.[0]?.question ? `"${p3Set.questions[0].question}"` : 'Bộ câu hỏi thảo luận follow-up',
-          statText: `${p3Set.questions?.length || 3} câu hỏi PEEL`,
+          description: p3Set.questions?.[0]?.question ? `"${p3Set.questions[0].question}"` : (isEn ? 'Part 3 follow-up discussion questions' : 'Bộ câu hỏi thảo luận follow-up'),
+          statText: isEn ? `${p3Set.questions?.length || 3} PEEL questions` : `${p3Set.questions?.length || 3} câu hỏi PEEL`,
           rawItem: p3Set
         };
       }
@@ -376,13 +384,13 @@ export default function UserProfileModal({
       return {
         id,
         skill: 'other',
-        skillLabel: 'Khác',
+        skillLabel: isEn ? 'Other' : 'Khác',
         skillBadgeColor: 'bg-slate-100 text-slate-800 border-slate-200',
-        typeBadge: 'Đã thuộc',
+        typeBadge: isEn ? 'Mastered' : 'Đã thuộc',
         typeBadgeColor: 'bg-slate-100 text-slate-700',
-        category: 'Đề tự do',
+        category: isEn ? 'Free Practice' : 'Đề tự do',
         title: id,
-        description: 'Mục trong danh sách Đã thuộc của bạn',
+        description: isEn ? 'Item in your Mastered repertoire' : 'Mục trong danh sách Đã thuộc của bạn',
         statText: '',
         rawItem: null
       };
@@ -502,7 +510,7 @@ export default function UserProfileModal({
     if (num >= 7.0) return { title: 'Academic Master', color: 'bg-purple-600 text-white font-black', badge: 'Band 7.0 - 7.5' };
     if (num >= 6.0) return { title: 'IELTS Challenger', color: 'bg-blue-600 text-white font-black', badge: 'Band 6.0 - 6.5' };
     if (num >= 5.5) return { title: 'IELTS Foundation Builder', color: 'bg-teal-600 text-white font-black', badge: 'Band 5.5 - 6.0' };
-    return { title: 'IELTS Trainee', color: 'bg-slate-700 text-slate-200 font-bold', badge: 'Khởi đầu lộ trình' };
+    return { title: 'IELTS Trainee', color: 'bg-slate-700 text-slate-200 font-bold', badge: isEn ? 'Journey Starter' : 'Khởi đầu lộ trình' };
   };
 
   const rank = getScholarRank(overallProjectedBand || stats.avgBand);
@@ -543,7 +551,7 @@ export default function UserProfileModal({
                 </div>
                 <div>
                   <h2 className="text-xs font-black tracking-wider uppercase text-white leading-none">Student Portal</h2>
-                  <span className="text-[10px] text-slate-400 font-semibold block mt-0.5">Trang Cá Nhân Học Viên</span>
+                  <span className="text-[10px] text-slate-400 font-semibold block mt-0.5">{isEn ? 'Learner Dashboard' : 'Trang Cá Nhân Học Viên'}</span>
                 </div>
               </div>
               <button 
@@ -563,7 +571,7 @@ export default function UserProfileModal({
                 <div className="truncate flex-1">
                   <div className="flex items-center space-x-1.5 truncate">
                     <span className="text-xs font-bold text-white truncate block">
-                      {user?.email ? user.email.split('@')[0] : 'Khách vãng lai'}
+                      {user?.email ? user.email.split('@')[0] : (isEn ? 'Guest Student' : 'Khách vãng lai')}
                     </span>
                   </div>
                   <span className={`inline-block px-1.5 py-0.2 rounded text-[9.5px] uppercase mt-0.5 ${rank.color}`}>
@@ -577,7 +585,7 @@ export default function UserProfileModal({
                   onClick={() => { onClose(); onOpenAuth?.(); }}
                   className="mt-3 w-full py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow-xs"
                 >
-                  Đăng nhập tài khoản
+                  {isEn ? 'Sign In Account' : 'Đăng nhập tài khoản'}
                 </button>
               )}
             </div>
@@ -585,7 +593,7 @@ export default function UserProfileModal({
             {/* INTEGRATED NAVIGATION MENU */}
             <nav className="p-2 sm:p-3 space-y-1">
               <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                Menu Quản Lý
+                {isEn ? 'Navigation' : 'Menu Quản Lý'}
               </div>
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -629,9 +637,9 @@ export default function UserProfileModal({
             <div className="flex items-center justify-between text-slate-400">
               <span className="flex items-center space-x-1">
                 <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                <span>Chuỗi rèn luyện:</span>
+                <span>{isEn ? 'Streak:' : 'Chuỗi rèn luyện:'}</span>
               </span>
-              <strong className="text-amber-400 font-black">{streakCount} ngày</strong>
+              <strong className="text-amber-400 font-black">{streakCount} {isEn ? 'days' : 'ngày'}</strong>
             </div>
 
             <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800">
@@ -639,7 +647,7 @@ export default function UserProfileModal({
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Cloud Sync</span>
               </span>
-              <span className="text-emerald-400 font-semibold">Bảo mật RLS</span>
+              <span className="text-emerald-400 font-semibold">{isEn ? 'RLS Encrypted' : 'Bảo mật RLS'}</span>
             </div>
 
             {user && (
@@ -648,7 +656,7 @@ export default function UserProfileModal({
                 className="w-full mt-2 py-1.5 rounded-lg bg-slate-800 hover:bg-red-900/60 text-slate-300 hover:text-white transition-colors text-[11px] font-bold flex items-center justify-center space-x-1.5"
               >
                 <LogOut className="w-3 h-3" />
-                <span>Đăng xuất</span>
+                <span>{isEn ? 'Sign Out' : 'Đăng xuất'}</span>
               </button>
             )}
           </div>
@@ -687,14 +695,14 @@ export default function UserProfileModal({
               <button
                 onClick={onClose}
                 className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
-                title="Quay lại phòng luyện thi"
+                title={isEn ? 'Back to practice' : 'Quay lại phòng luyện thi'}
               >
-                <span>← Quay Lại Luyện Thi</span>
+                <span>{isEn ? '← Back to Practice' : '← Quay Lại Luyện Thi'}</span>
               </button>
               <button 
                 onClick={onClose}
                 className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
-                title="Đóng trang cá nhân"
+                title={isEn ? 'Close user profile' : 'Đóng trang cá nhân'}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -723,7 +731,7 @@ export default function UserProfileModal({
                       <Award className="w-5 h-5 text-red-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {overallProjectedBand > 0 ? 'Quy tròn chuẩn 4 kỹ năng' : 'Cần hoàn thành bài thi để tính'}
+                      {overallProjectedBand > 0 ? (isEn ? 'Cambridge 4-skill standard rounding' : 'Quy tròn chuẩn 4 kỹ năng') : (isEn ? 'Complete tests to calculate' : 'Cần hoàn thành bài thi để tính')}
                     </span>
                   </div>
 
@@ -737,7 +745,7 @@ export default function UserProfileModal({
                       <PenTool className="w-5 h-5 text-blue-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {stats.totalEssays} bài viết đã nộp
+                      {stats.totalEssays} {isEn ? 'essays submitted' : 'bài viết đã nộp'}
                     </span>
                   </div>
 
@@ -751,7 +759,7 @@ export default function UserProfileModal({
                       <BookMarked className="w-5 h-5 text-emerald-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {readingStats.totalTests} đề thi • {readingStats.totalCorrect} câu đúng
+                      {readingStats.totalTests} {isEn ? 'tests' : 'đề thi'} • {readingStats.totalCorrect} {isEn ? 'correct' : 'câu đúng'}
                     </span>
                   </div>
 
@@ -765,7 +773,7 @@ export default function UserProfileModal({
                       <Headphones className="w-5 h-5 text-amber-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {listeningStats.totalTests} đề thi • {listeningStats.totalCorrect} câu đúng
+                      {listeningStats.totalTests} {isEn ? 'tests' : 'đề thi'} • {listeningStats.totalCorrect} {isEn ? 'correct' : 'câu đúng'}
                     </span>
                   </div>
 
@@ -779,7 +787,7 @@ export default function UserProfileModal({
                       <Mic className="w-5 h-5 text-purple-500" />
                     </div>
                     <span className="text-[11px] text-slate-500 block">
-                      {speakingStats.totalTests} lượt thi • {speakingStats.avgWpm > 0 ? `${speakingStats.avgWpm} wpm` : 'Chưa có'}
+                      {speakingStats.totalTests} {isEn ? 'tests taken' : 'lượt thi'} • {speakingStats.avgWpm > 0 ? `${speakingStats.avgWpm} wpm` : (isEn ? 'None' : 'Chưa có')}
                     </span>
                   </div>
                 </div>
@@ -792,13 +800,13 @@ export default function UserProfileModal({
                     className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-2xs flex items-center justify-between cursor-pointer hover:bg-emerald-100/70 transition-all group"
                   >
                     <div className="space-y-0.5">
-                      <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block">Đề & Bài Luyện Đã Thuộc</span>
+                      <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider block">{isEn ? 'Mastered Question Bank' : 'Đề & Bài Luyện Đã Thuộc'}</span>
                       <div className="flex items-baseline space-x-2">
                         <span className="text-2xl font-black text-emerald-700">{masteredIds.length}</span>
-                        <span className="text-xs text-emerald-600 font-semibold">mục đã thuần thục</span>
+                        <span className="text-xs text-emerald-600 font-semibold">{isEn ? 'mastered items' : 'mục đã thuần thục'}</span>
                       </div>
                       <span className="text-[11px] text-emerald-700/80 block">
-                        Bấm để xem danh sách & ôn tập lại
+                        {isEn ? 'Click to view list & review' : 'Bấm để xem danh sách & ôn tập lại'}
                       </span>
                     </div>
                     <div className="p-3 rounded-xl bg-emerald-100 text-emerald-700 group-hover:scale-110 transition-transform">
@@ -809,13 +817,13 @@ export default function UserProfileModal({
                   {/* Card: Custom Tasks */}
                   <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Kho Đề Bài Tự Tải Lên & AI Sinh</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{isEn ? 'Custom & AI Generated Tasks' : 'Kho Đề Bài Tự Tải Lên & AI Sinh'}</span>
                       <div className="flex items-baseline space-x-2">
                         <span className="text-2xl font-black text-purple-600">{userCustomTasks.length}</span>
-                        <span className="text-xs text-slate-500">đề bài cá nhân</span>
+                        <span className="text-xs text-slate-500">{isEn ? 'custom tasks' : 'đề bài cá nhân'}</span>
                       </div>
                       <span className="text-[11px] text-slate-400 block">
-                        {userCustomTasks.filter(t => t.isPublic).length} đề đang chia sẻ cộng đồng
+                        {userCustomTasks.filter(t => t.isPublic).length} {isEn ? 'publicly shared with community' : 'đề đang chia sẻ cộng đồng'}
                       </span>
                     </div>
                     <div className="p-3 rounded-xl bg-purple-50 text-purple-600">
@@ -826,16 +834,16 @@ export default function UserProfileModal({
                   {/* Card: Vocab Vault */}
                   <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Sổ Tay Từ Vựng & Sổ Lỗi Sai</span>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">{isEn ? 'Vocab & Error Notebook' : 'Sổ Tay Từ Vựng & Sổ Lỗi Sai'}</span>
                       <div className="flex items-baseline space-x-2">
                         <span className="text-2xl font-black text-amber-600">{vocabList.length}</span>
-                        <span className="text-xs text-slate-500">từ vựng C1/C2</span>
+                        <span className="text-xs text-slate-500">{isEn ? 'C1/C2 terms' : 'từ vựng C1/C2'}</span>
                         <span className="text-slate-300">•</span>
                         <span className="text-2xl font-black text-red-600">{mistakes.length}</span>
-                        <span className="text-xs text-slate-500">lỗi ngữ pháp</span>
+                        <span className="text-xs text-slate-500">{isEn ? 'grammar slips' : 'lỗi ngữ pháp'}</span>
                       </div>
                       <span className="text-[11px] text-slate-400 block">
-                        Được tự động đồng bộ khi viết bài & thi thử
+                        {isEn ? 'Automatically synced during practice & mock tests' : 'Được tự động đồng bộ khi viết bài & thi thử'}
                       </span>
                     </div>
                     <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
@@ -859,14 +867,16 @@ export default function UserProfileModal({
                     <div>
                       <div className="flex items-center space-x-2">
                         <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                          Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition)
+                          {isEn ? 'Daily Error Prescription (Spaced Repetition)' : 'Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition)'}
                         </span>
                         <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-rose-100 text-rose-700 rounded-full">
-                          3 Phút / Ngày
+                          {isEn ? '3 Mins / Day' : '3 Phút / Ngày'}
                         </span>
                       </div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-                        Luyện tập giải quyết triệt để {mistakes.length > 0 ? `${mistakes.length} lỗi thực tế bạn đã mắc` : '5 bẫy ngữ pháp người Việt hay mất điểm nhất'} để tăng band điểm bền vững.
+                        {isEn 
+                          ? `Practice eliminating ${mistakes.length > 0 ? `${mistakes.length} actual mistakes you made` : '5 common grammar traps'} to reliably boost your band.`
+                          : `Luyện tập giải quyết triệt để ${mistakes.length > 0 ? `${mistakes.length} lỗi thực tế bạn đã mắc` : '5 bẫy ngữ pháp người Việt hay mất điểm nhất'} để tăng band điểm bền vững.`}
                       </p>
                     </div>
                   </div>
@@ -874,7 +884,7 @@ export default function UserProfileModal({
                     type="button"
                     className="inline-flex items-center justify-center space-x-2 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 rounded-xl shadow-2xs transition-all shrink-0"
                   >
-                    <span>Mở Đơn Thuốc</span>
+                    <span>{isEn ? 'Open Prescription' : 'Mở Đơn Thuốc'}</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -888,10 +898,12 @@ export default function UserProfileModal({
                       </div>
                       <div>
                         <h4 className="text-base font-bold text-slate-900">
-                          Khởi Động Lộ Trình Luyện Thi Của Bạn
+                          {isEn ? 'Kickstart Your Exam Preparation' : 'Khởi Động Lộ Trình Luyện Thi Của Bạn'}
                         </h4>
                         <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                          Trang cá nhân đã được thiết lập sẵn khung theo dõi tiêu chuẩn Cambridge. Để lấp đầy điểm số vào <strong>Khung Phân Tích 4 Tiêu Chí</strong> bên dưới, bạn hãy chọn 1 đề bài và thực hiện bài viết đầu tiên:
+                          {isEn 
+                            ? 'Your profile has Cambridge tracking frameworks ready. To populate scores into the 4-Criteria Rubric Framework below, choose a topic and submit your first essay:'
+                            : 'Trang cá nhân đã được thiết lập sẵn khung theo dõi tiêu chuẩn Cambridge. Để lấp đầy điểm số vào Khung Phân Tích 4 Tiêu Chí bên dưới, bạn hãy chọn 1 đề bài và thực hiện bài viết đầu tiên:'}
                         </p>
                       </div>
                     </div>
@@ -900,21 +912,21 @@ export default function UserProfileModal({
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
                       <div className="p-3 bg-white/95 rounded-xl border border-red-100 flex items-center space-x-2.5">
                         <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-black text-xs flex items-center justify-center shrink-0">1</span>
-                        <span className="text-xs font-semibold text-slate-800">Chọn 1 đề thi gợi ý bên dưới</span>
+                        <span className="text-xs font-semibold text-slate-800">{isEn ? 'Select a recommended task below' : 'Chọn 1 đề thi gợi ý bên dưới'}</span>
                       </div>
                       <div className="p-3 bg-white/95 rounded-xl border border-red-100 flex items-center space-x-2.5">
                         <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-black text-xs flex items-center justify-center shrink-0">2</span>
-                        <span className="text-xs font-semibold text-slate-800">Nhấn "Nộp Bài & Chấm Điểm AI"</span>
+                        <span className="text-xs font-semibold text-slate-800">{isEn ? 'Click "Submit & AI Grade"' : 'Nhấn "Nộp Bài & Chấm Điểm AI"'}</span>
                       </div>
                       <div className="p-3 bg-white/95 rounded-xl border border-red-100 flex items-center space-x-2.5">
                         <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-black text-xs flex items-center justify-center shrink-0">3</span>
-                        <span className="text-xs font-semibold text-slate-800">Bảng phân tích sẽ tự động kích hoạt</span>
+                        <span className="text-xs font-semibold text-slate-800">{isEn ? 'Analytics board will activate' : 'Bảng phân tích sẽ tự động kích hoạt'}</span>
                       </div>
                     </div>
 
                     {/* Suggested Tasks */}
                     <div className="pt-2 border-t border-red-100">
-                      <span className="text-xs font-bold text-slate-800 block mb-2">Đề bài gợi ý để bạn bắt đầu ngay:</span>
+                      <span className="text-xs font-bold text-slate-800 block mb-2">{isEn ? 'Recommended tasks to start immediately:' : 'Đề bài gợi ý để bạn bắt đầu ngay:'}</span>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {(allTasks || []).slice(0, 2).map((t) => (
                           <button
@@ -935,7 +947,7 @@ export default function UserProfileModal({
                                 {t.title}
                               </span>
                             </div>
-                            <span className="text-xs font-bold text-red-600 shrink-0">Viết ngay →</span>
+                            <span className="text-xs font-bold text-red-600 shrink-0">{isEn ? 'Write now →' : 'Viết ngay →'}</span>
                           </button>
                         ))}
                       </div>
@@ -947,8 +959,8 @@ export default function UserProfileModal({
                 <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-4">
                   <div className="flex items-center justify-between border-b pb-3">
                     <div>
-                      <h3 className="text-sm sm:text-base font-bold text-slate-900">Chi Tiết Năng Lực 4 Tiêu Chí Chấm IELTS (Rubric Framework)</h3>
-                      <p className="text-xs text-slate-500">Thang đo đánh giá chi tiết theo chuẩn giám khảo Cambridge 0 - 9.0</p>
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'IELTS 4-Criteria Diagnostic Details (Rubric Framework)' : 'Chi Tiết Năng Lực 4 Tiêu Chí Chấm IELTS (Rubric Framework)'}</h3>
+                      <p className="text-xs text-slate-500">{isEn ? 'Diagnostic breakdown according to Cambridge examiner criteria 0 - 9.0' : 'Thang đo đánh giá chi tiết theo chuẩn giám khảo Cambridge 0 - 9.0'}</p>
                     </div>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200">
                       IELTS Official Rubric
@@ -961,7 +973,7 @@ export default function UserProfileModal({
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-slate-800">Task Achievement / Response (TR/TA)</span>
                         <span className="font-black text-red-600 text-sm">
-                          {stats.avgTR > 0 ? stats.avgTR : 'Chưa có'}
+                          {stats.avgTR > 0 ? stats.avgTR : (isEn ? 'N/A' : 'Chưa có')}
                         </span>
                       </div>
                       <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
@@ -970,7 +982,7 @@ export default function UserProfileModal({
                           style={{ width: `${stats.avgTR > 0 ? (Number(stats.avgTR) / 9) * 100 : 0}%` }}
                         />
                       </div>
-                      <span className="text-[11px] text-slate-500 block">Khả năng trả lời đúng trọng tâm đề và phát triển luận điểm</span>
+                      <span className="text-[11px] text-slate-500 block">{isEn ? 'Ability to address all parts of the task and develop ideas logically' : 'Khả năng trả lời đúng trọng tâm đề và phát triển luận điểm'}</span>
                     </div>
 
                     {/* CC */}
@@ -978,7 +990,7 @@ export default function UserProfileModal({
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-slate-800">Coherence & Cohesion (CC)</span>
                         <span className="font-black text-blue-600 text-sm">
-                          {stats.avgCC > 0 ? stats.avgCC : 'Chưa có'}
+                          {stats.avgCC > 0 ? stats.avgCC : (isEn ? 'N/A' : 'Chưa có')}
                         </span>
                       </div>
                       <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
@@ -987,7 +999,7 @@ export default function UserProfileModal({
                           style={{ width: `${stats.avgCC > 0 ? (Number(stats.avgCC) / 9) * 100 : 0}%` }}
                         />
                       </div>
-                      <span className="text-[11px] text-slate-500 block">Độ mạch lạc, liên kết câu từ và cấu trúc phân chia đoạn văn</span>
+                      <span className="text-[11px] text-slate-500 block">{isEn ? 'Logical progression, cohesive devices, and effective paragraphing' : 'Độ mạch lạc, liên kết câu từ và cấu trúc phân chia đoạn văn'}</span>
                     </div>
 
                     {/* LR */}
@@ -995,7 +1007,7 @@ export default function UserProfileModal({
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-slate-800">Lexical Resource (LR)</span>
                         <span className="font-black text-amber-600 text-sm">
-                          {stats.avgLR > 0 ? stats.avgLR : 'Chưa có'}
+                          {stats.avgLR > 0 ? stats.avgLR : (isEn ? 'N/A' : 'Chưa có')}
                         </span>
                       </div>
                       <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
@@ -1004,7 +1016,7 @@ export default function UserProfileModal({
                           style={{ width: `${stats.avgLR > 0 ? (Number(stats.avgLR) / 9) * 100 : 0}%` }}
                         />
                       </div>
-                      <span className="text-[11px] text-slate-500 block">Vốn từ vựng học thuật C1/C2, collocations và tránh lặp từ</span>
+                      <span className="text-[11px] text-slate-500 block">{isEn ? 'Academic C1/C2 vocabulary, natural collocations, and paraphrase variety' : 'Vốn từ vựng học thuật C1/C2, collocations và tránh lặp từ'}</span>
                     </div>
 
                     {/* GRA */}
@@ -1012,7 +1024,7 @@ export default function UserProfileModal({
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-slate-800">Grammar Range & Accuracy (GRA)</span>
                         <span className="font-black text-emerald-600 text-sm">
-                          {stats.avgGRA > 0 ? stats.avgGRA : 'Chưa có'}
+                          {stats.avgGRA > 0 ? stats.avgGRA : (isEn ? 'N/A' : 'Chưa có')}
                         </span>
                       </div>
                       <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
@@ -1021,7 +1033,7 @@ export default function UserProfileModal({
                           style={{ width: `${stats.avgGRA > 0 ? (Number(stats.avgGRA) / 9) * 100 : 0}%` }}
                         />
                       </div>
-                      <span className="text-[11px] text-slate-500 block">Độ đa dạng của câu ghép/phức và độ chuẩn xác ngữ pháp</span>
+                      <span className="text-[11px] text-slate-500 block">{isEn ? 'Variety of complex structures and grammatical accuracy' : 'Độ đa dạng của câu ghép/phức và độ chuẩn xác ngữ pháp'}</span>
                     </div>
                   </div>
                 </div>
@@ -1038,8 +1050,8 @@ export default function UserProfileModal({
                 {/* Header Actions */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Quản Lý Đề Thi & Chế Độ Chia Sẻ</h3>
-                    <p className="text-xs text-slate-500">Đề bài do bạn tự tạo hoặc nạp bằng AI, kèm quyền bật/tắt chia sẻ công khai</p>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'Task Library & Sharing Settings' : 'Quản Lý Đề Thi & Chế Độ Chia Sẻ'}</h3>
+                    <p className="text-xs text-slate-500">{isEn ? 'User-authored or AI-ingested tasks, with toggleable public sharing permissions' : 'Đề bài do bạn tự tạo hoặc nạp bằng AI, kèm quyền bật/tắt chia sẻ công khai'}</p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
@@ -1050,7 +1062,7 @@ export default function UserProfileModal({
                           resourceFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
-                        Tất cả ({userCustomTasks.length})
+                        {isEn ? `All (${userCustomTasks.length})` : `Tất cả (${userCustomTasks.length})`}
                       </button>
                       <button
                         onClick={() => setResourceFilter('public')}
@@ -1058,7 +1070,7 @@ export default function UserProfileModal({
                           resourceFilter === 'public' ? 'bg-white text-emerald-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
-                        🌐 Công khai ({userCustomTasks.filter(t => t.isPublic).length})
+                        {isEn ? `🌐 Public (${userCustomTasks.filter(t => t.isPublic).length})` : `🌐 Công khai (${userCustomTasks.filter(t => t.isPublic).length})`}
                       </button>
                       <button
                         onClick={() => setResourceFilter('private')}
@@ -1066,7 +1078,7 @@ export default function UserProfileModal({
                           resourceFilter === 'private' ? 'bg-white text-slate-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
-                        🔒 Riêng tư ({userCustomTasks.filter(t => !t.isPublic).length})
+                        {isEn ? `🔒 Private (${userCustomTasks.filter(t => !t.isPublic).length})` : `🔒 Riêng tư (${userCustomTasks.filter(t => !t.isPublic).length})`}
                       </button>
                     </div>
 
@@ -1076,7 +1088,7 @@ export default function UserProfileModal({
                         className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center space-x-1.5"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Nạp Đề Mới Bằng AI</span>
+                        <span>{isEn ? 'Ingest Task with AI' : 'Nạp Đề Mới Bằng AI'}</span>
                       </button>
                     )}
                   </div>
@@ -1090,9 +1102,9 @@ export default function UserProfileModal({
                         <BookOpen className="w-6 h-6" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-800 text-sm sm:text-base">Kho đề cá nhân của bạn hiện chưa có đề tự tạo</h4>
+                        <h4 className="font-bold text-slate-800 text-sm sm:text-base">{isEn ? 'Your custom task vault is currently empty' : 'Kho đề cá nhân của bạn hiện chưa có đề tự tạo'}</h4>
                         <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-                          Bạn có thể dùng AI để nạp nhanh đề từ tài liệu/sách Cambridge (có ảnh Task 1) hoặc sinh đề mới để luyện thi và chia sẻ cùng cộng đồng.
+                          {isEn ? 'Use AI to ingest tasks from Cambridge tests (with Task 1 charts) or generate brand new tasks to practice and share with the community.' : 'Bạn có thể dùng AI để nạp nhanh đề từ tài liệu/sách Cambridge (có ảnh Task 1) hoặc sinh đề mới để luyện thi và chia sẻ cùng cộng đồng.'}
                         </p>
                       </div>
 
@@ -1103,7 +1115,7 @@ export default function UserProfileModal({
                             className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5"
                           >
                             <Sparkles className="w-3.5 h-3.5" />
-                            <span>Nạp Đề Bằng AI (Smart Ingest)</span>
+                            <span>{isEn ? 'Ingest with AI (Smart Ingest)' : 'Nạp Đề Bằng AI (Smart Ingest)'}</span>
                           </button>
                         )}
                         {onOpenGenerator && (
@@ -1111,7 +1123,7 @@ export default function UserProfileModal({
                             onClick={onOpenGenerator}
                             className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5"
                           >
-                            <span>➕ Sinh Đề Mới Bằng AI</span>
+                            <span>{isEn ? '➕ Generate New Task with AI' : '➕ Sinh Đề Mới Bằng AI'}</span>
                           </button>
                         )}
                       </div>
@@ -1121,9 +1133,9 @@ export default function UserProfileModal({
                     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
                       <div className="flex items-center justify-between border-b pb-2">
                         <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                          Đề Thi Tiêu Biểu Trong Hệ Thống (Có Thể Làm Ngay)
+                          {isEn ? 'Featured System Tasks (Ready to Practice)' : 'Đề Thi Tiêu Biểu Trong Hệ Thống (Có Thể Làm Ngay)'}
                         </span>
-                        <span className="text-[11px] text-slate-400">15 đề chuẩn Cambridge</span>
+                        <span className="text-[11px] text-slate-400">{isEn ? '15 Cambridge official tasks' : '15 đề chuẩn Cambridge'}</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {(allTasks || []).slice(0, 4).map((t) => (
@@ -1148,7 +1160,7 @@ export default function UserProfileModal({
                               }}
                               className="px-2.5 py-1 rounded-lg bg-white hover:bg-red-50 text-red-700 text-xs font-bold border border-slate-200 shrink-0 shadow-2xs transition-colors"
                             >
-                              Viết ngay →
+                              {isEn ? 'Write now →' : 'Viết ngay →'}
                             </button>
                           </div>
                         ))}
@@ -1183,17 +1195,17 @@ export default function UserProfileModal({
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100' 
                                 : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
                             }`}
-                            title={t.isPublic ? "Đang chia sẻ công khai! Nhấn để chuyển về Riêng tư" : "Đang để riêng tư! Nhấn để chia sẻ công khai cho cộng đồng"}
+                            title={t.isPublic ? (isEn ? "Publicly shared! Click to make Private" : "Đang chia sẻ công khai! Nhấn để chuyển về Riêng tư") : (isEn ? "Currently private! Click to share publicly" : "Đang để riêng tư! Nhấn để chia sẻ công khai cho cộng đồng")}
                           >
                             {t.isPublic ? (
                               <>
                                 <Globe className="w-3.5 h-3.5 text-emerald-600" />
-                                <span>Công Khai</span>
+                                <span>{isEn ? 'Public' : 'Công Khai'}</span>
                               </>
                             ) : (
                               <>
                                 <Lock className="w-3.5 h-3.5 text-slate-500" />
-                                <span>Riêng Tư</span>
+                                <span>{isEn ? 'Private' : 'Riêng Tư'}</span>
                               </>
                             )}
                           </button>
@@ -1219,7 +1231,7 @@ export default function UserProfileModal({
                             />
                             <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-bold flex items-center space-x-1">
                               <ImageIcon className="w-3 h-3 text-cyan-400" />
-                              <span>Đính kèm hình ảnh Task 1</span>
+                              <span>{isEn ? 'Attached Task 1 Graphic' : 'Đính kèm hình ảnh Task 1'}</span>
                             </div>
                           </div>
                         )}
@@ -1227,7 +1239,7 @@ export default function UserProfileModal({
                         {/* Actions */}
                         <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                           <span className="text-[11px] text-slate-400">
-                            {t.timeLimit || 40} phút • {t.minWords || 250} từ
+                            {t.timeLimit || 40} {isEn ? 'mins' : 'phút'} • {t.minWords || 250} {isEn ? 'words' : 'từ'}
                           </span>
 
                           <div className="flex items-center space-x-2">
@@ -1239,18 +1251,18 @@ export default function UserProfileModal({
                               className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-colors"
                             >
                               <PenTool className="w-3.5 h-3.5" />
-                              <span>Làm Bài Ngay</span>
+                              <span>{isEn ? 'Practice Now' : 'Làm Bài Ngay'}</span>
                             </button>
 
                             {onDeleteTask && (
                               <button
                                 onClick={() => {
-                                  if (window.confirm(`Bạn có chắc muốn xóa đề "${t.title}" khỏi tài khoản?`)) {
+                                  if (window.confirm(isEn ? `Are you sure you want to delete task "${t.title}" from your account?` : `Bạn có chắc muốn xóa đề "${t.title}" khỏi tài khoản?`)) {
                                     onDeleteTask(t.id);
                                   }
                                 }}
                                 className="p-1.5 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
-                                title="Xóa đề này"
+                                title={isEn ? 'Delete this task' : 'Xóa đề này'}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -1273,20 +1285,20 @@ export default function UserProfileModal({
               <div className="space-y-4">
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Bài Viết & Chấm Điểm AI</h3>
-                    <p className="text-xs text-slate-500">Tất cả bài viết đã nộp và các phiên bản viết lại Band 8.0+ Re-write</p>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'Writing Submissions & AI Evaluations' : 'Lịch Sử Bài Viết & Chấm Điểm AI'}</h3>
+                    <p className="text-xs text-slate-500">{isEn ? 'All submitted essays and Band 8.0+ Re-write model versions' : 'Tất cả bài viết đã nộp và các phiên bản viết lại Band 8.0+ Re-write'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-xl">
-                      {submissions.length} bài đã lưu
+                      {submissions.length} {isEn ? 'saved essays' : 'bài đã lưu'}
                     </span>
                     {submissions.length > 0 && onClearHistory && (
                       <button
                         onClick={onClearHistory}
                         className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                        title="Xóa toàn bộ lịch sử Writing"
+                        title={isEn ? 'Delete all writing history' : 'Xóa toàn bộ lịch sử Writing'}
                       >
-                        Xóa tất cả
+                        {isEn ? 'Clear all' : 'Xóa tất cả'}
                       </button>
                     )}
                   </div>
@@ -1297,9 +1309,9 @@ export default function UserProfileModal({
                     <div className="w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                       <History className="w-6 h-6" />
                     </div>
-                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài nộp nào</h4>
+                    <h4 className="font-bold text-slate-800 text-sm">{isEn ? 'No submissions yet' : 'Chưa có bài nộp nào'}</h4>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Sau khi bạn hoàn thành bài luận và nhấn "Nộp Bài & Chấm Điểm AI", bài viết và nhận xét của giám khảo sẽ tự động lưu trữ tại đây.
+                      {isEn ? 'After completing an essay and clicking "Submit & AI Grade", your essay and examiner feedback will automatically appear here.' : 'Sau khi bạn hoàn thành bài luận và nhấn "Nộp Bài & Chấm Điểm AI", bài viết và nhận xét của giám khảo sẽ tự động lưu trữ tại đây.'}
                     </p>
                   </div>
                 ) : (
@@ -1322,22 +1334,22 @@ export default function UserProfileModal({
                             {masteredIds.includes(sub.task?.id) && (
                               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center space-x-1 shadow-2xs">
                                 <GraduationCap className="w-3 h-3 text-emerald-700" />
-                                <span>Đã thuộc</span>
+                                <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
                               </span>
                             )}
                           </div>
                           <p className="text-xs text-slate-500 line-clamp-1">
-                            {sub.essayText || 'Nội dung bài viết...'}
+                            {sub.essayText || (isEn ? 'Essay contents...' : 'Nội dung bài viết...')}
                           </p>
                           <div className="flex items-center space-x-3 text-[11px] text-slate-400 pt-1">
                             <span className="flex items-center space-x-1">
                               <Clock className="w-3 h-3" />
-                              <span>{sub.date || 'Gần đây'}</span>
+                              <span>{sub.date || (isEn ? 'Recent' : 'Gần đây')}</span>
                             </span>
                             <span>•</span>
-                            <span>{sub.stats?.wordCount || 0} từ</span>
+                            <span>{sub.stats?.wordCount || 0} {isEn ? 'words' : 'từ'}</span>
                             <span>•</span>
-                            <span>Thời gian: {sub.stats?.timeSpent || 'Không tính giờ'}</span>
+                            <span>{isEn ? 'Time:' : 'Thời gian:'} {sub.stats?.timeSpent || (isEn ? 'Untimed' : 'Không tính giờ')}</span>
                           </div>
                         </div>
 
@@ -1356,19 +1368,19 @@ export default function UserProfileModal({
                             }}
                             className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1 shadow-xs cursor-pointer"
                           >
-                            <span>Xem Nhận Xét AI</span>
+                            <span>{isEn ? 'View AI Review' : 'Xem Nhận Xét AI'}</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
 
                           {onDeleteSubmission && (
                             <button
                               onClick={() => {
-                                if (window.confirm(`Bạn có chắc muốn xóa bài viết "${sub.task?.title || 'IELTS Writing'}" khỏi lịch sử?`)) {
+                                if (window.confirm(isEn ? `Are you sure you want to delete essay "${sub.task?.title || 'IELTS Writing'}" from history?` : `Bạn có chắc muốn xóa bài viết "${sub.task?.title || 'IELTS Writing'}" khỏi lịch sử?`)) {
                                   onDeleteSubmission(sub.id);
                                 }
                               }}
                               className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                              title="Xóa bài viết này"
+                              title={isEn ? 'Delete this essay' : 'Xóa bài viết này'}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1388,24 +1400,24 @@ export default function UserProfileModal({
               <div className="space-y-4">
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Làm Đề & Phân Tích IELTS Reading</h3>
-                    <p className="text-xs text-slate-500">Kết quả làm đề 3 Passages 40 câu chuẩn Cambridge và dự phóng Band điểm Reading</p>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'IELTS Reading Official Test Log & Analytics' : 'Lịch Sử Làm Đề & Phân Tích IELTS Reading'}</h3>
+                    <p className="text-xs text-slate-500">{isEn ? 'Cambridge official 3 Passages 40 Questions test records and estimated Reading Band' : 'Kết quả làm đề 3 Passages 40 câu chuẩn Cambridge và dự phóng Band điểm Reading'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
-                      {readingHistory.length} bài thi đã làm
+                      {readingHistory.length} {isEn ? 'tests completed' : 'bài thi đã làm'}
                     </span>
                     {readingHistory.length > 0 && onClearReadingHistory && (
                       <button
                         onClick={() => {
-                          if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử thi Reading?')) {
+                          if (window.confirm(isEn ? 'Are you sure you want to delete all Reading history?' : 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử thi Reading?')) {
                             onClearReadingHistory();
                           }
                         }}
                         className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Xóa toàn bộ lịch sử Reading"
+                        title={isEn ? 'Clear all Reading history' : 'Xóa toàn bộ lịch sử Reading'}
                       >
-                        Xóa tất cả
+                        {isEn ? 'Clear all' : 'Xóa tất cả'}
                       </button>
                     )}
                   </div>
@@ -1415,27 +1427,27 @@ export default function UserProfileModal({
                 {readingHistory.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Reading Band TB</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Avg Reading Band' : 'Reading Band TB'}</span>
                       <div className="text-xl font-black text-emerald-600 mt-0.5">
                         Band {readingStats.avgBand}
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tổng Câu Đúng</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Total Correct' : 'Tổng Câu Đúng'}</span>
                       <div className="text-xl font-black text-slate-800 mt-0.5">
-                        {readingStats.totalCorrect} <span className="text-xs font-normal text-slate-400">câu</span>
+                        {readingStats.totalCorrect} <span className="text-xs font-normal text-slate-400">{isEn ? 'questions' : 'câu'}</span>
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Độ Chính Xác TB</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Avg Accuracy' : 'Độ Chính Xác TB'}</span>
                       <div className="text-xl font-black text-blue-600 mt-0.5">
                         {readingStats.avgAccuracy}%
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Đề Đã Hoàn Thành</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Completed Tests' : 'Đề Đã Hoàn Thành'}</span>
                       <div className="text-xl font-black text-purple-600 mt-0.5">
-                        {readingStats.totalTests} <span className="text-xs font-normal text-slate-400">đề thi</span>
+                        {readingStats.totalTests} <span className="text-xs font-normal text-slate-400">{isEn ? 'tests' : 'đề thi'}</span>
                       </div>
                     </div>
                   </div>
@@ -1446,9 +1458,13 @@ export default function UserProfileModal({
                     <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                       <BookMarked className="w-6 h-6" />
                     </div>
-                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài thi Reading nào</h4>
+                    <h4 className="font-bold text-slate-800 text-sm">{isEn ? 'No Reading tests taken yet' : 'Chưa có bài thi Reading nào'}</h4>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Hãy chuyển sang phân hệ <strong>IELTS Reading Studio</strong> trên thanh điều hướng kỹ năng để bắt đầu luyện đề 3 bài đọc chuẩn thi thật 60 phút và nhận giải thích chi tiết AI!
+                      {isEn ? (
+                        <>Switch to <strong>IELTS Reading Studio</strong> on the navigation menu to practice Cambridge 3-passage 60-minute mock tests with detailed AI explanations!</>
+                      ) : (
+                        <>Hãy chuyển sang phân hệ <strong>IELTS Reading Studio</strong> trên thanh điều hướng kỹ năng để bắt đầu luyện đề 3 bài đọc chuẩn thi thật 60 phút và nhận giải thích chi tiết AI!</>
+                      )}
                     </p>
                   </div>
                 ) : (
@@ -1471,21 +1487,21 @@ export default function UserProfileModal({
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-1">
                             <span className="flex items-center space-x-1">
                               <Clock className="w-3 h-3 text-slate-400" />
-                              <span>{rec.submittedAt || 'Gần đây'}</span>
+                              <span>{rec.submittedAt || (isEn ? 'Recent' : 'Gần đây')}</span>
                             </span>
                             <span>•</span>
                             <span className="font-medium">
-                              Số câu đúng: <strong className="text-slate-800">{rec.correctCount}/{rec.totalQuestions || 40}</strong>
+                              {isEn ? 'Correct:' : 'Số câu đúng:'} <strong className="text-slate-800">{rec.correctCount}/{rec.totalQuestions || 40}</strong>
                             </span>
                             <span>•</span>
                             <span className="font-medium">
-                              Độ chính xác: <strong className="text-emerald-700">{rec.accuracyPercent}%</strong>
+                              {isEn ? 'Accuracy:' : 'Độ chính xác:'} <strong className="text-emerald-700">{rec.accuracyPercent}%</strong>
                             </span>
                             {rec.timeSpentSeconds > 0 && (
                               <>
                                 <span>•</span>
                                 <span>
-                                  Thời gian: {Math.floor(rec.timeSpentSeconds / 60)} phút {rec.timeSpentSeconds % 60} giây
+                                  {isEn ? 'Time:' : 'Thời gian:'} {Math.floor(rec.timeSpentSeconds / 60)} {isEn ? 'mins' : 'phút'} {rec.timeSpentSeconds % 60} {isEn ? 'secs' : 'giây'}
                                 </span>
                               </>
                             )}
@@ -1515,12 +1531,12 @@ export default function UserProfileModal({
                           {onDeleteReadingSubmission && (
                             <button
                               onClick={() => {
-                                if (window.confirm(`Bạn có chắc muốn xóa bài thi "${rec.testTitle || 'IELTS Reading'}" khỏi lịch sử?`)) {
+                                if (window.confirm(isEn ? `Are you sure you want to delete test "${rec.testTitle || 'IELTS Reading'}" from history?` : `Bạn có chắc muốn xóa bài thi "${rec.testTitle || 'IELTS Reading'}" khỏi lịch sử?`)) {
                                   onDeleteReadingSubmission(rec.id);
                                 }
                               }}
                               className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                              title="Xóa bài thi này"
+                              title={isEn ? 'Delete this test' : 'Xóa bài thi này'}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1540,20 +1556,20 @@ export default function UserProfileModal({
               <div className="space-y-4">
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Làm Đề & Thống Kê IELTS Listening</h3>
-                    <p className="text-xs text-slate-500">Các bài thi nghe mô phỏng 4 Sections thi thật với audio giọng bản xứ & transcript chi tiết</p>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'IELTS Listening Test Log & Audioscript Analytics' : 'Lịch Sử Làm Đề & Thống Kê IELTS Listening'}</h3>
+                    <p className="text-xs text-slate-500">{isEn ? 'Full 4-section listening practice tests with native audio & transcripts' : 'Các bài thi nghe mô phỏng 4 Sections thi thật với audio giọng bản xứ & transcript chi tiết'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
-                      {listeningHistory.length} Bài thi
+                      {listeningHistory.length} {isEn ? 'Tests' : 'Bài thi'}
                     </span>
                     {listeningHistory.length > 0 && onClearListeningHistory && (
                       <button
                         onClick={onClearListeningHistory}
                         className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                        title="Xóa toàn bộ lịch sử Listening"
+                        title={isEn ? 'Clear all Listening history' : 'Xóa toàn bộ lịch sử Listening'}
                       >
-                        Xóa tất cả
+                        {isEn ? 'Clear all' : 'Xóa tất cả'}
                       </button>
                     )}
                   </div>
@@ -1563,27 +1579,27 @@ export default function UserProfileModal({
                 {listeningHistory.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Listening Band TB</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Avg Listening Band' : 'Listening Band TB'}</span>
                       <div className="text-xl font-black text-amber-600 mt-0.5">
                         {listeningStats.avgBand > 0 ? `Band ${listeningStats.avgBand}` : '--'}
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tổng Câu Đúng</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Total Correct' : 'Tổng Câu Đúng'}</span>
                       <div className="text-xl font-black text-slate-800 mt-0.5">
-                        {listeningStats.totalCorrect} <span className="text-xs font-normal text-slate-400">câu</span>
+                        {listeningStats.totalCorrect} <span className="text-xs font-normal text-slate-400">{isEn ? 'questions' : 'câu'}</span>
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Độ Chính Xác TB</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Avg Accuracy' : 'Độ Chính Xác TB'}</span>
                       <div className="text-xl font-black text-blue-600 mt-0.5">
                         {listeningStats.avgAccuracy}%
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Đề Đã Hoàn Thành</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Completed Tests' : 'Đề Đã Hoàn Thành'}</span>
                       <div className="text-xl font-black text-purple-600 mt-0.5">
-                        {listeningStats.totalTests} <span className="text-xs font-normal text-slate-400">đề thi</span>
+                        {listeningStats.totalTests} <span className="text-xs font-normal text-slate-400">{isEn ? 'tests' : 'đề thi'}</span>
                       </div>
                     </div>
                   </div>
@@ -1594,9 +1610,13 @@ export default function UserProfileModal({
                     <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
                       <Headphones className="w-6 h-6" />
                     </div>
-                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài thi Listening nào</h4>
+                    <h4 className="font-bold text-slate-800 text-sm">{isEn ? 'No Listening tests taken yet' : 'Chưa có bài thi Listening nào'}</h4>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Hãy chuyển sang phân hệ <strong>IELTS Listening Studio</strong> trên thanh điều hướng kỹ năng để bắt đầu luyện đề 4 Sections với audio chuẩn thi thật và giải thích chi tiết AI!
+                      {isEn ? (
+                        <>Switch to <strong>IELTS Listening Studio</strong> on the navigation menu to practice Cambridge 4-section tests with real exam audio and AI explanations!</>
+                      ) : (
+                        <>Hãy chuyển sang phân hệ <strong>IELTS Listening Studio</strong> trên thanh điều hướng kỹ năng để bắt đầu luyện đề 4 Sections với audio chuẩn thi thật và giải thích chi tiết AI!</>
+                      )}
                     </p>
                   </div>
                 ) : (
@@ -1619,21 +1639,21 @@ export default function UserProfileModal({
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-1">
                             <span className="flex items-center space-x-1">
                               <Clock className="w-3 h-3 text-slate-400" />
-                              <span>{rec.submittedAt ? new Date(rec.submittedAt).toLocaleDateString('vi-VN') : 'Gần đây'}</span>
+                              <span>{rec.submittedAt ? (isEn ? new Date(rec.submittedAt).toLocaleDateString('en-US') : new Date(rec.submittedAt).toLocaleDateString('vi-VN')) : (isEn ? 'Recent' : 'Gần đây')}</span>
                             </span>
                             <span>•</span>
                             <span className="font-medium">
-                              Số câu đúng: <strong className="text-slate-800">{rec.correctCount}/{rec.totalQuestions || 40}</strong>
+                              {isEn ? 'Correct:' : 'Số câu đúng:'} <strong className="text-slate-800">{rec.correctCount}/{rec.totalQuestions || 40}</strong>
                             </span>
                             <span>•</span>
                             <span className="font-medium">
-                              Độ chính xác: <strong className="text-amber-700">{rec.accuracyPercent}%</strong>
+                              {isEn ? 'Accuracy:' : 'Độ chính xác:'} <strong className="text-amber-700">{rec.accuracyPercent}%</strong>
                             </span>
                             {rec.timeSpentSeconds > 0 && (
                               <>
                                 <span>•</span>
                                 <span>
-                                  Thời gian: {Math.floor(rec.timeSpentSeconds / 60)} phút {rec.timeSpentSeconds % 60} giây
+                                  {isEn ? 'Time:' : 'Thời gian:'} {Math.floor(rec.timeSpentSeconds / 60)} {isEn ? 'mins' : 'phút'} {rec.timeSpentSeconds % 60} {isEn ? 'secs' : 'giây'}
                                 </span>
                               </>
                             )}
@@ -1663,12 +1683,12 @@ export default function UserProfileModal({
                           {onDeleteListeningSubmission && (
                             <button
                               onClick={() => {
-                                if (window.confirm(`Bạn có chắc muốn xóa bài thi "${rec.testTitle || 'IELTS Listening'}" khỏi lịch sử?`)) {
+                                if (window.confirm(isEn ? `Are you sure you want to delete test "${rec.testTitle || 'IELTS Listening'}" from history?` : `Bạn có chắc muốn xóa bài thi "${rec.testTitle || 'IELTS Listening'}" khỏi lịch sử?`)) {
                                   onDeleteListeningSubmission(rec.id);
                                 }
                               }}
                               className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                              title="Xóa bài thi này"
+                              title={isEn ? 'Delete this test' : 'Xóa bài thi này'}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1688,20 +1708,20 @@ export default function UserProfileModal({
               <div className="space-y-4">
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Lịch Sử Thi Thử IELTS Speaking & Báo Cáo Chẩn Đoán</h3>
-                    <p className="text-xs text-slate-500">Các buổi thi phỏng vấn 1-1 với Giám khảo AI bản ngữ chuẩn Cambridge 3 Parts kèm phân tích 4 tiêu chí</p>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'IELTS Speaking Examiner Mock Test Records & Diagnostic' : 'Lịch Sử Thi Thử IELTS Speaking & Báo Cáo Chẩn Đoán'}</h3>
+                    <p className="text-xs text-slate-500">{isEn ? '1-on-1 interview mock tests with native Cambridge AI examiner across 3 Parts with 4-criteria rubric breakdown' : 'Các buổi thi phỏng vấn 1-1 với Giám khảo AI bản ngữ chuẩn Cambridge 3 Parts kèm phân tích 4 tiêu chí'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-lg">
-                      {speakingHistory.length} Buổi thi
+                      {speakingHistory.length} {isEn ? 'Mock tests' : 'Buổi thi'}
                     </span>
                     {speakingHistory.length > 0 && onClearSpeakingHistory && (
                       <button
                         onClick={onClearSpeakingHistory}
                         className="px-2.5 py-1 text-xs text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                        title="Xóa toàn bộ lịch sử Speaking"
+                        title={isEn ? 'Clear all Speaking history' : 'Xóa toàn bộ lịch sử Speaking'}
                       >
-                        Xóa tất cả
+                        {isEn ? 'Clear all' : 'Xóa tất cả'}
                       </button>
                     )}
                   </div>
@@ -1711,27 +1731,27 @@ export default function UserProfileModal({
                 {speakingHistory.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Speaking Band TB</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Avg Speaking Band' : 'Speaking Band TB'}</span>
                       <div className="text-xl font-black text-purple-600 mt-0.5">
                         {speakingStats.avgBand > 0 ? `Band ${speakingStats.avgBand}` : '--'}
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tổng Số Lượt Thi</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Total Tests Taken' : 'Tổng Số Lượt Thi'}</span>
                       <div className="text-xl font-black text-slate-800 mt-0.5">
-                        {speakingStats.totalTests} <span className="text-xs font-normal text-slate-400">buổi</span>
+                        {speakingStats.totalTests} <span className="text-xs font-normal text-slate-400">{isEn ? 'tests' : 'buổi'}</span>
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Tốc Độ Nói (WPM)</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Speaking Speed (WPM)' : 'Tốc Độ Nói (WPM)'}</span>
                       <div className="text-xl font-black text-blue-600 mt-0.5">
                         {speakingStats.avgWpm > 0 ? `${speakingStats.avgWpm}` : '--'} <span className="text-xs font-normal text-slate-400">wpm</span>
                       </div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase">Từ Đệm TB (Filler)</span>
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">{isEn ? 'Avg Filler Words' : 'Từ Đệm TB (Filler)'}</span>
                       <div className="text-xl font-black text-amber-600 mt-0.5">
-                        {speakingStats.avgFillerCount !== undefined ? `${speakingStats.avgFillerCount}` : '--'} <span className="text-xs font-normal text-slate-400">từ/buổi</span>
+                        {speakingStats.avgFillerCount !== undefined ? `${speakingStats.avgFillerCount}` : '--'} <span className="text-xs font-normal text-slate-400">{isEn ? 'words/test' : 'từ/buổi'}</span>
                       </div>
                     </div>
                   </div>
@@ -1742,9 +1762,13 @@ export default function UserProfileModal({
                     <div className="w-12 h-12 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
                       <Mic className="w-6 h-6" />
                     </div>
-                    <h4 className="font-bold text-slate-800 text-sm">Chưa có bài thi Speaking nào</h4>
+                    <h4 className="font-bold text-slate-800 text-sm">{isEn ? 'No Speaking mock tests taken yet' : 'Chưa có bài thi Speaking nào'}</h4>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Hãy chuyển sang phân hệ <strong>IELTS Speaking Studio</strong> trên thanh điều hướng kỹ năng để bước vào phòng thi ảo đối thoại trực tiếp cùng Giám khảo AI chuẩn khảo thí!
+                      {isEn ? (
+                        <>Switch to <strong>IELTS Speaking Studio</strong> on the navigation menu to enter the virtual exam room for real-time dialogue with the AI examiner!</>
+                      ) : (
+                        <>Hãy chuyển sang phân hệ <strong>IELTS Speaking Studio</strong> trên thanh điều hướng kỹ năng để bước vào phòng thi ảo đối thoại trực tiếp cùng Giám khảo AI chuẩn khảo thí!</>
+                      )}
                     </p>
                   </div>
                 ) : (
@@ -1765,34 +1789,34 @@ export default function UserProfileModal({
                               {evalData.evaluationMethod === 'algorithmic' ? (
                                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center space-x-1">
                                   <Zap className="w-2.5 h-2.5 text-amber-500 fill-amber-500 inline" />
-                                  <span>Máy Chấm (0.02ms)</span>
+                                  <span>{isEn ? 'Algorithmic (0.02ms)' : 'Máy Chấm (0.02ms)'}</span>
                                 </span>
                               ) : (
                                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200 flex items-center space-x-1">
                                   <Sparkles className="w-2.5 h-2.5 text-purple-500 inline" />
-                                  <span>AI Chấm</span>
+                                  <span>{isEn ? 'AI Examiner' : 'AI Chấm'}</span>
                                 </span>
                               )}
                               <span className="text-xs font-bold text-slate-800">
-                                {rec.mockPack?.title || 'Buổi thi thử IELTS Speaking'}
+                                {rec.mockPack?.title || (isEn ? 'IELTS Speaking Mock Test' : 'Buổi thi thử IELTS Speaking')}
                               </span>
                             </div>
                             
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-0.5">
                               <span className="flex items-center space-x-1">
                                 <Clock className="w-3 h-3 text-slate-400" />
-                                <span>{rec.submittedAt ? new Date(rec.submittedAt).toLocaleDateString('vi-VN') : 'Gần đây'}</span>
+                                <span>{rec.submittedAt ? (isEn ? new Date(rec.submittedAt).toLocaleDateString('en-US') : new Date(rec.submittedAt).toLocaleDateString('vi-VN')) : (isEn ? 'Recent' : 'Gần đây')}</span>
                               </span>
                               {rec.durationSec && (
                                 <>
                                   <span>•</span>
-                                  <span>Thời gian: {Math.round(rec.durationSec / 60)} phút</span>
+                                  <span>{isEn ? 'Duration:' : 'Thời gian:'} {Math.round(rec.durationSec / 60)} {isEn ? 'mins' : 'phút'}</span>
                                 </>
                               )}
                               {rec.examiner?.name && (
                                 <>
                                   <span>•</span>
-                                  <span className="font-medium text-slate-700">Giám khảo: {rec.examiner.name} ({rec.examiner.accent})</span>
+                                  <span className="font-medium text-slate-700">{isEn ? 'Examiner:' : 'Giám khảo:'} {rec.examiner.name} ({rec.examiner.accent})</span>
                                 </>
                               )}
                             </div>
@@ -1823,21 +1847,21 @@ export default function UserProfileModal({
                             <button
                               onClick={() => setSelectedSpeakingSub(rec)}
                               className="px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs flex items-center space-x-1.5 transition-colors cursor-pointer border border-purple-200"
-                              title="Xem lại báo cáo chẩn đoán điểm chi tiết"
+                              title={isEn ? 'View detailed diagnostic report' : 'Xem lại báo cáo chẩn đoán điểm chi tiết'}
                             >
                               <Eye className="w-3.5 h-3.5" />
-                              <span>Xem Báo Cáo</span>
+                              <span>{isEn ? 'View Report' : 'Xem Báo Cáo'}</span>
                             </button>
 
                             {onDeleteSpeakingSubmission && (
                               <button
                                 onClick={() => {
-                                  if (window.confirm(`Bạn có chắc muốn xóa bài thi Speaking này khỏi lịch sử?`)) {
+                                  if (window.confirm(isEn ? 'Are you sure you want to delete this Speaking test from history?' : `Bạn có chắc muốn xóa bài thi Speaking này khỏi lịch sử?`)) {
                                     onDeleteSpeakingSubmission(rec.id);
                                   }
                                 }}
                                 className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                                title="Xóa bài thi này"
+                                title={isEn ? 'Delete this test' : 'Xóa bài thi này'}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -1859,14 +1883,14 @@ export default function UserProfileModal({
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <h3 className="text-sm sm:text-base font-bold text-slate-900">Đề Thi & Bài Luyện Đã Thuần Thục</h3>
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'Mastered Question Bank & Repertoire' : 'Đề Thi & Bài Luyện Đã Thuần Thục'}</h3>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center space-x-1">
                         <GraduationCap className="w-3 h-3 text-emerald-700" />
-                        <span>{allMasteredItems.length} đề</span>
+                        <span>{allMasteredItems.length} {isEn ? 'items' : 'đề'}</span>
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 mt-0.5">
-                      Các đề thi bạn đã thuộc sẽ tự động ẩn khỏi danh sách luyện tập để tập trung vào đề mới, nhưng lịch sử làm bài và điểm số luôn được lưu giữ đầy đủ tại đây.
+                      {isEn ? 'Mastered tasks are automatically hidden from daily practice to focus on new ones, but all submission records and band scores are safely archived here.' : 'Các đề thi bạn đã thuộc sẽ tự động ẩn khỏi danh sách luyện tập để tập trung vào đề mới, nhưng lịch sử làm bài và điểm số luôn được lưu giữ đầy đủ tại đây.'}
                     </p>
                   </div>
 
@@ -1878,7 +1902,7 @@ export default function UserProfileModal({
                         masteredSkillFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs font-black' : 'hover:text-slate-900'
                       }`}
                     >
-                      Tất Cả ({allMasteredItems.length})
+                      {isEn ? `All (${allMasteredItems.length})` : `Tất Cả (${allMasteredItems.length})`}
                     </button>
                     <button
                       onClick={() => setMasteredSkillFilter('writing')}
@@ -1922,11 +1946,15 @@ export default function UserProfileModal({
                     </div>
                     <h4 className="font-bold text-slate-800 text-sm">
                       {masteredSkillFilter === 'all' 
-                        ? 'Chưa có đề thi nào trong danh sách "Đã thuộc"' 
-                        : `Chưa có bài nào thuộc kỹ năng ${masteredSkillFilter.toUpperCase()}`}
+                        ? (isEn ? 'No tasks in "Mastered" repertoire yet' : 'Chưa có đề thi nào trong danh sách "Đã thuộc"') 
+                        : (isEn ? `No mastered tasks for ${masteredSkillFilter.toUpperCase()}` : `Chưa có bài nào thuộc kỹ năng ${masteredSkillFilter.toUpperCase()}`)}
                     </h4>
                     <p className="text-xs text-slate-500 max-w-md mx-auto">
-                      Khi vào <strong>Writing</strong>, <strong>Reading</strong>, <strong>Listening</strong>, hoặc <strong>Speaking</strong>, bấm vào nút <strong>🎓 Đã thuộc</strong> ở bất kỳ đề bài nào để ẩn đề đó khỏi danh sách luyện tập hàng ngày.
+                      {isEn ? (
+                        <>When in <strong>Writing</strong>, <strong>Reading</strong>, <strong>Listening</strong>, or <strong>Speaking</strong>, click <strong>🎓 Mastered</strong> on any task card to hide it from daily practice.</>
+                      ) : (
+                        <>Khi vào <strong>Writing</strong>, <strong>Reading</strong>, <strong>Listening</strong>, hoặc <strong>Speaking</strong>, bấm vào nút <strong>🎓 Đã thuộc</strong> ở bất kỳ đề bài nào để ẩn đề đó khỏi danh sách luyện tập hàng ngày.</>
+                      )}
                     </p>
                   </div>
                 ) : (
@@ -1955,7 +1983,7 @@ export default function UserProfileModal({
 
                               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center space-x-1">
                                 <GraduationCap className="w-3 h-3 text-emerald-700" />
-                                <span>Đã thuộc</span>
+                                <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
                               </span>
 
                               {item.category && (
@@ -1990,9 +2018,9 @@ export default function UserProfileModal({
                                   onClose();
                                 }}
                                 className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer shadow-2xs"
-                                title="Chọn đề này và quay lại phòng viết"
+                                title={isEn ? 'Select this task and return to writing studio' : 'Chọn đề này và quay lại phòng viết'}
                               >
-                                <span>Luyện đề này</span>
+                                <span>{isEn ? 'Practice this task' : 'Luyện đề này'}</span>
                                 <ChevronRight className="w-3.5 h-3.5" />
                               </button>
                             ) : (
@@ -2004,9 +2032,9 @@ export default function UserProfileModal({
                             <button
                               onClick={() => onToggleMastered?.(item.id)}
                               className="px-3 py-1.5 rounded-xl bg-white hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-300 hover:border-red-200 text-xs font-bold transition-colors cursor-pointer"
-                              title="Bỏ đánh dấu 'Đã thuộc' để hiện lại trong thư viện luyện tập"
+                              title={isEn ? 'Unmark "Mastered" to restore into daily practice library' : 'Bỏ đánh dấu "Đã thuộc" để hiện lại trong thư viện luyện tập'}
                             >
-                              Bỏ thuộc (Ôn tập lại)
+                              {isEn ? 'Unmaster (Practice again)' : 'Bỏ thuộc (Ôn tập lại)'}
                             </button>
                           </div>
                         </div>
@@ -2024,15 +2052,15 @@ export default function UserProfileModal({
               <div className="space-y-4">
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Sổ Tay Từ Vựng & Lỗi Sai Thường Gặp</h3>
-                    <p className="text-xs text-slate-500">Kho từ vựng C1/C2 và các bẫy ngữ pháp bạn đã lưu trong quá trình luyện viết</p>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{isEn ? 'Personal Lexicon & Error Log Journal' : 'Sổ Tay Từ Vựng & Lỗi Sai Thường Gặp'}</h3>
+                    <p className="text-xs text-slate-500">{isEn ? 'C1/C2 academic vocabulary and recurring grammar slips saved during practice' : 'Kho từ vựng C1/C2 và các bẫy ngữ pháp bạn đã lưu trong quá trình luyện viết'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
-                      {vocabList.length} Từ vựng
+                      {vocabList.length} {isEn ? 'Vocabulary' : 'Từ vựng'}
                     </span>
                     <span className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-1 rounded-lg">
-                      {mistakes.length} Lỗi sai
+                      {mistakes.length} {isEn ? 'Errors' : 'Lỗi sai'}
                     </span>
                   </div>
                 </div>
@@ -2041,8 +2069,8 @@ export default function UserProfileModal({
                 {vocabList.length === 0 ? (
                   <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 space-y-2">
                     <Bookmark className="w-8 h-8 mx-auto text-amber-400" />
-                    <h4 className="text-sm font-bold text-slate-800">Sổ tay từ vựng hiện đang trống</h4>
-                    <p className="text-xs text-slate-500">Trong lúc viết bài hoặc xem bài mẫu, bạn có thể bấm lưu bất kỳ từ vựng nào vào đây.</p>
+                    <h4 className="text-sm font-bold text-slate-800">{isEn ? 'Vocabulary notebook is currently empty' : 'Sổ tay từ vựng hiện đang trống'}</h4>
+                    <p className="text-xs text-slate-500">{isEn ? 'While writing or reviewing sample essays, click to bookmark any advanced vocabulary here.' : 'Trong lúc viết bài hoặc xem bài mẫu, bạn có thể bấm lưu bất kỳ từ vựng nào vào đây.'}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2070,32 +2098,32 @@ export default function UserProfileModal({
               <div className="space-y-5">
                 
                 <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-4">
-                  <h3 className="text-base font-bold text-slate-900 border-b pb-3">Thông Tin Tài Khoản & Đồng Bộ Đám Mây</h3>
+                  <h3 className="text-base font-bold text-slate-900 border-b pb-3">{isEn ? 'Account Information & Cloud Sync' : 'Thông Tin Tài Khoản & Đồng Bộ Đám Mây'}</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <span className="text-slate-400 block mb-1">Email đăng ký</span>
-                      <strong className="text-slate-800 text-sm font-bold">{user?.email || 'Chưa đăng nhập'}</strong>
+                      <span className="text-slate-400 block mb-1">{isEn ? 'Registered Email' : 'Email đăng ký'}</span>
+                      <strong className="text-slate-800 text-sm font-bold">{user?.email || (isEn ? 'Guest' : 'Chưa đăng nhập')}</strong>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block mb-1">Trạng thái đồng bộ</span>
+                      <span className="text-slate-400 block mb-1">{isEn ? 'Sync Status' : 'Trạng thái đồng bộ'}</span>
                       <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
                         <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Supabase Cloud Sync: Đang Bật</span>
+                        <span>{isEn ? 'Supabase Cloud Sync: Active' : 'Supabase Cloud Sync: Đang Bật'}</span>
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block mb-1">User ID (Mã định danh)</span>
+                      <span className="text-slate-400 block mb-1">{isEn ? 'User ID' : 'User ID (Mã định danh)'}</span>
                       <span className="font-mono text-slate-600 text-[11px] bg-slate-100 px-2 py-1 rounded block truncate">
                         {user?.id || 'anonymous-local'}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block mb-1">Chính sách bảo mật</span>
-                      <span className="text-slate-600">Row Level Security (RLS) bảo vệ 100% dữ liệu cá nhân</span>
+                      <span className="text-slate-400 block mb-1">{isEn ? 'Privacy Policy' : 'Chính sách bảo mật'}</span>
+                      <span className="text-slate-600">{isEn ? 'Row Level Security (RLS) protects 100% of your personal study data' : 'Row Level Security (RLS) bảo vệ 100% dữ liệu cá nhân'}</span>
                     </div>
                   </div>
                 </div>
@@ -2104,8 +2132,8 @@ export default function UserProfileModal({
                 <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3">
                   <div className="flex items-center justify-between border-b pb-2">
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">Sao Lưu & Di Chuyển Dữ Liệu Học Tập (JSON)</h4>
-                      <p className="text-xs text-slate-500">Giúp bạn chuyển toàn bộ bài làm, từ vựng và ghi chú từ thiết bị khác hoặc localhost sang đây</p>
+                      <h4 className="text-sm font-bold text-slate-900">{isEn ? 'Backup & Migrate Study Data (JSON)' : 'Sao Lưu & Di Chuyển Dữ Liệu Học Tập (JSON)'}</h4>
+                      <p className="text-xs text-slate-500">{isEn ? 'Seamlessly export or import all your submissions, vocabulary, and notes across devices or browsers' : 'Giúp bạn chuyển toàn bộ bài làm, từ vựng và ghi chú từ thiết bị khác hoặc localhost sang đây'}</p>
                     </div>
                   </div>
 
@@ -2116,14 +2144,14 @@ export default function UserProfileModal({
                         className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all shadow-2xs flex items-center space-x-1.5"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Xuất Tệp Dữ Liệu (.JSON)</span>
+                        <span>{isEn ? 'Export Data File (.JSON)' : 'Xuất Tệp Dữ Liệu (.JSON)'}</span>
                       </button>
                     )}
 
                     {onImportData && (
                       <label className="cursor-pointer px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold border border-red-200 transition-all shadow-2xs flex items-center space-x-1.5">
                         <Bookmark className="w-3.5 h-3.5" />
-                        <span>Nhập Tệp Dữ Liệu (.JSON) Vào Tài Khoản</span>
+                        <span>{isEn ? 'Import Data File (.JSON) Into Account' : 'Nhập Tệp Dữ Liệu (.JSON) Vào Tài Khoản'}</span>
                         <input
                           type="file"
                           accept=".json"
@@ -2139,15 +2167,15 @@ export default function UserProfileModal({
                 {user && (
                   <div className="p-5 rounded-2xl bg-red-50/70 border border-red-200/80 flex items-center justify-between gap-3">
                     <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-red-900">Đăng Xuất Khỏi Tài Khoản</h4>
-                      <p className="text-[11px] text-red-700">Dữ liệu trên máy của bạn sẽ được lưu an toàn trên Cloud cho lần đăng nhập sau.</p>
+                      <h4 className="text-xs sm:text-sm font-bold text-red-900">{isEn ? 'Sign Out of Account' : 'Đăng Xuất Khỏi Tài Khoản'}</h4>
+                      <p className="text-[11px] text-red-700">{isEn ? 'Your local progress is safely preserved in the cloud for your next login.' : 'Dữ liệu trên máy của bạn sẽ được lưu an toàn trên Cloud cho lần đăng nhập sau.'}</p>
                     </div>
                     <button
                       onClick={onSignOut}
                       className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-xs shrink-0"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>Đăng Xuất</span>
+                      <span>{isEn ? 'Sign Out' : 'Đăng Xuất'}</span>
                     </button>
                   </div>
                 )}

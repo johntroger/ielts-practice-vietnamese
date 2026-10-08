@@ -12,6 +12,7 @@ import {
   Lock
 } from 'lucide-react';
 import { ingestArticleToReadingPassage } from '../../services/geminiService';
+import { useTranslation } from '../../i18n';
 
 export default function ReadingIngestModal({
   isOpen,
@@ -21,6 +22,7 @@ export default function ReadingIngestModal({
   onPassageIngested,
   onOpenSettings
 }) {
+  const { t, isEn } = useTranslation();
   const [rawText, setRawText] = useState('');
   const [customTitle, setCustomTitle] = useState('');
   // Mặc định tự động chuyển thành tài nguyên chung của web (trừ khi user cấu hình tắt hoặc toggle tắt)
@@ -53,11 +55,11 @@ export default function ReadingIngestModal({
 
   const handleIngest = async () => {
     if (!apiKey) {
-      setErrorMsg('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+      setErrorMsg(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
       return;
     }
     if (!rawText.trim() || rawText.trim().length < 80) {
-      setErrorMsg('Vui lòng dán văn bản bài báo (tối thiểu 80 ký tự).');
+      setErrorMsg(isEn ? 'Please paste the article text (minimum 80 characters).' : 'Vui lòng dán văn bản bài báo (tối thiểu 80 ký tự).');
       return;
     }
 
@@ -78,7 +80,7 @@ export default function ReadingIngestModal({
       onClose();
     } catch (err) {
       console.error('Lỗi khi nạp bài báo:', err);
-      setErrorMsg(err.message || 'Lỗi khi chuyển đổi bài báo thành đề IELTS bằng AI.');
+      setErrorMsg(err.message || (isEn ? 'Error converting article into IELTS test with AI.' : 'Lỗi khi chuyển đổi bài báo thành đề IELTS bằng AI.'));
     } finally {
       setIsProcessing(false);
     }
@@ -97,8 +99,12 @@ export default function ReadingIngestModal({
               <FileUp className="w-4 h-4 text-purple-300" />
             </div>
             <div>
-              <h3 className="font-black text-base text-white">Nạp Bài Báo Thô Tạo Đề IELTS Reading</h3>
-              <p className="text-[11px] text-purple-200">Copy bài báo từ BBC, Nature, The Economist để AI tự soạn đề</p>
+              <h3 className="font-black text-base text-white">
+                {isEn ? 'Ingest Raw Article to Generate IELTS Reading' : 'Nạp Bài Báo Thô Tạo Đề IELTS Reading'}
+              </h3>
+              <p className="text-[11px] text-purple-200">
+                {isEn ? 'Extract articles from BBC, Nature, The Economist to auto-build practice tests' : 'Copy bài báo từ BBC, Nature, The Economist để AI tự soạn đề'}
+              </p>
             </div>
           </div>
           <button 
@@ -115,13 +121,13 @@ export default function ReadingIngestModal({
           {/* Custom Title Input */}
           <div className="space-y-1">
             <label className="font-bold text-slate-700 block">
-              Tiêu đề bài đọc (tùy chọn):
+              {isEn ? 'Reading Passage Title (Optional):' : 'Tiêu đề bài đọc (tùy chọn):'}
             </label>
             <input
               type="text"
               value={customTitle}
               onChange={(e) => setCustomTitle(e.target.value)}
-              placeholder="VD: The Future of Renewable Clean Energy in Cities"
+              placeholder={isEn ? "e.g. The Future of Renewable Clean Energy in Cities" : "VD: The Future of Renewable Clean Energy in Cities"}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs text-slate-800"
             />
           </div>
@@ -130,11 +136,11 @@ export default function ReadingIngestModal({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="font-bold text-slate-700">
-                Dán nội dung bài báo tiếng Anh thô:
+                {isEn ? 'Paste Raw English Article Text:' : 'Dán nội dung bài báo tiếng Anh thô:'}
               </label>
               <label className="cursor-pointer text-purple-600 hover:text-purple-800 font-bold text-[11px] flex items-center gap-1">
                 <FileUp className="w-3.5 h-3.5" />
-                <span>Nạp file .txt</span>
+                <span>{isEn ? 'Upload .txt file' : 'Nạp file .txt'}</span>
                 <input 
                   type="file" 
                   accept=".txt,.md" 
@@ -147,11 +153,11 @@ export default function ReadingIngestModal({
               rows={8}
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder="Dán toàn bộ đoạn văn hoặc bài báo tiếng Anh vào đây. AI sẽ tự động phân chia đoạn văn A, B, C, D... và biên soạn các câu hỏi trắc nghiệm, True/False/Not Given, trích dẫn bằng chứng và lời giải chi tiết..."
+              placeholder={isEn ? "Paste the full English text or article here. AI will automatically segment paragraphs (A, B, C, D...) and formulate Multiple Choice, True/False/Not Given questions with evidence markers and detailed solutions..." : "Dán toàn bộ đoạn văn hoặc bài báo tiếng Anh vào đây. AI sẽ tự động phân chia đoạn văn A, B, C, D... và biên soạn các câu hỏi trắc nghiệm, True/False/Not Given, trích dẫn bằng chứng và lời giải chi tiết..."}
               className="w-full p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs text-slate-800 leading-relaxed"
             />
             <div className="text-[11px] text-slate-400 text-right">
-              {rawText.trim().split(/\s+/).filter(Boolean).length} từ đã nhập
+              {rawText.trim().split(/\s+/).filter(Boolean).length} {isEn ? 'words entered' : 'từ đã nhập'}
             </div>
           </div>
 
@@ -163,15 +169,21 @@ export default function ReadingIngestModal({
               </div>
               <div>
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <span>{isPublic ? 'Tự động chia sẻ lên Thư viện Cộng đồng' : 'Chỉ lưu riêng tư trong tài khoản'}</span>
+                  <span>
+                    {isPublic 
+                      ? (isEn ? 'Automatically share to Community Library' : 'Tự động chia sẻ lên Thư viện Cộng đồng')
+                      : (isEn ? 'Save privately to your account' : 'Chỉ lưu riêng tư trong tài khoản')}
+                  </span>
                   {isPublic && (
-                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-100 text-purple-700">Tài nguyên chung</span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-100 text-purple-700">
+                      {isEn ? 'Shared Pool' : 'Tài nguyên chung'}
+                    </span>
                   )}
                 </div>
                 <div className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">
                   {isPublic 
-                    ? 'Bài đọc trích xuất sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.' 
-                    : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.'}
+                    ? (isEn ? 'Extracted passage will be contributed to the shared pool for all learners. Toggle off to keep private.' : 'Bài đọc trích xuất sẽ tự động góp vào kho đề chung cho mọi người cùng luyện. Tắt nếu bạn muốn giữ riêng.')
+                    : (isEn ? 'Only your account can view and attempt this test.' : 'Chỉ riêng tài khoản của bạn mới thấy và làm bài thi này.')}
                 </div>
               </div>
             </div>
@@ -200,7 +212,7 @@ export default function ReadingIngestModal({
                     }}
                     className="text-purple-600 underline font-bold"
                   >
-                    Mở Cài đặt để nhập API Key
+                    {isEn ? 'Open Settings to enter API Key' : 'Mở Cài đặt để nhập API Key'}
                   </button>
                 )}
               </div>
@@ -215,7 +227,7 @@ export default function ReadingIngestModal({
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs"
           >
-            Hủy bỏ
+            {isEn ? 'Cancel' : 'Hủy bỏ'}
           </button>
           <button
             type="button"
@@ -226,17 +238,16 @@ export default function ReadingIngestModal({
             {isProcessing ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>AI đang cấu trúc hóa bài đọc...</span>
+                <span>{isEn ? 'AI is structuring passage...' : 'AI đang cấu trúc hóa bài đọc...'}</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Chuyển Đổi Thành Đề Thi</span>
+                <span>{isEn ? 'Convert into IELTS Test' : 'Chuyển Đổi Thành Đề Thi'}</span>
               </>
             )}
           </button>
         </div>
-
       </div>
     </div>
   );

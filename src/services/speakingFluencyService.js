@@ -93,11 +93,12 @@ export const PACING_PHASES = [
     end: 30,
     duration: 30,
     titleVi: 'Chặng 1: Mở Đầu & Bối Cảnh',
-    titleEn: 'Context & Hook',
+    titleEn: 'Phase 1: Context & Hook',
     bulletTarget: 'Who, Where, When',
     badgeColor: 'emerald',
     barColor: 'bg-emerald-500',
-    strategyVi: 'Nói thong thả, hít thở đều. Giới thiệu bối cảnh, nhân vật, thời gian hoặc địa điểm. Đừng vội vã.'
+    strategyVi: 'Nói thong thả, hít thở đều. Giới thiệu bối cảnh, nhân vật, thời gian hoặc địa điểm. Đừng vội vã.',
+    strategyEn: 'Speak smoothly, breathe calmly. Introduce the background, characters, time, or location. Do not rush.'
   },
   {
     phase: 2,
@@ -106,11 +107,12 @@ export const PACING_PHASES = [
     end: 75,
     duration: 45,
     titleVi: 'Chặng 2: Diễn Biến & Chi Tiết Cốt Lõi',
-    titleEn: 'Core Narrative & Details',
+    titleEn: 'Phase 2: Core Narrative & Details',
     bulletTarget: 'What happened, How',
     badgeColor: 'blue',
     barColor: 'bg-blue-500',
-    strategyVi: 'Đi sâu vào chi tiết câu chuyện. Sử dụng các câu ghép, câu phức và tính từ miêu tả cụ thể.'
+    strategyVi: 'Đi sâu vào chi tiết câu chuyện. Sử dụng các câu ghép, câu phức và tính từ miêu tả cụ thể.',
+    strategyEn: 'Delve into the core narrative. Use compound and complex sentences with precise descriptive adjectives.'
   },
   {
     phase: 3,
@@ -119,11 +121,12 @@ export const PACING_PHASES = [
     end: 105,
     duration: 30,
     titleVi: 'Chặng 3: Cao Trào & Điểm Nhấn',
-    titleEn: 'The Climax & Turning Point',
+    titleEn: 'Phase 3: Climax & Turning Point',
     bulletTarget: 'Why it was memorable',
     badgeColor: 'amber',
     barColor: 'bg-amber-500',
-    strategyVi: 'Kể về khó khăn vượt qua hoặc khoảnh khắc ấn tượng nhất. Nâng ngữ điệu biểu cảm (Intonation)!'
+    strategyVi: 'Kể về khó khăn vượt qua hoặc khoảnh khắc ấn tượng nhất. Nâng ngữ điệu biểu cảm (Intonation)!',
+    strategyEn: 'Describe obstacles overcome or the most vivid highlight. Elevate expressive intonation!'
   },
   {
     phase: 4,
@@ -132,11 +135,12 @@ export const PACING_PHASES = [
     end: 120,
     duration: 15,
     titleVi: 'Chặng 4: Bài Học & Đúc Kết',
-    titleEn: 'Reflective Wrap-up',
+    titleEn: 'Phase 4: Reflective Wrap-up',
     bulletTarget: 'Feelings, Lessons',
     badgeColor: 'rose',
     barColor: 'bg-rose-500',
-    strategyVi: 'Đúc kết bài học hoặc cảm xúc ("All in all, this taught me..."). Kết bài tròn vẹn trước khi giám khảo ngắt lời!'
+    strategyVi: 'Đúc kết bài học hoặc cảm xúc ("All in all, this taught me..."). Kết bài tròn vẹn trước khi giám khảo ngắt lời!',
+    strategyEn: 'Conclude with lessons or emotions ("All in all, this taught me..."). Finish smoothly before examiner stops you!'
   }
 ];
 
@@ -160,8 +164,10 @@ export function getFluencySafeZone(secondsElapsed = 0) {
     return {
       status: 'under_time',
       label: 'Non giờ (< 1:15)',
+      labelEn: 'Under Time (< 1:15)',
       badgeClass: 'bg-rose-950/80 text-rose-300 border-rose-700/60',
       adviceVi: 'Nói dưới 1:15 khiến giám khảo phải im lặng chờ bạn, nguy cơ kẹt ở Band 5.0 Fluency.',
+      adviceEn: 'Speaking under 1:15 leaves awkward silence; risk of being capped at Band 5.0 Fluency.',
       isUnderDanger: sec < 45,
       isWarning: sec >= 45 && sec < 75,
       isSafe: false,
@@ -173,8 +179,10 @@ export function getFluencySafeZone(secondsElapsed = 0) {
     return {
       status: 'safe_zone',
       label: 'Vùng An Toàn (1:15 - 1:45)',
+      labelEn: 'Safe Zone (1:15 - 1:45)',
       badgeClass: 'bg-amber-950/80 text-amber-300 border-amber-700/60',
       adviceVi: 'Đã đạt thời lượng an toàn cho Band 6.5 - 7.0. Tiếp tục nói để chạm mốc xuất sắc.',
+      adviceEn: 'Met safe duration for Band 6.5 - 7.0. Continue speaking to reach mastery.',
       isUnderDanger: false,
       isWarning: false,
       isSafe: true,
@@ -186,8 +194,10 @@ export function getFluencySafeZone(secondsElapsed = 0) {
     return {
       status: 'mastery',
       label: 'Chuẩn Xuất Sắc (1:45 - 2:00)',
+      labelEn: 'Mastery Standard (1:45 - 2:00)',
       badgeClass: 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60',
       adviceVi: 'Tuyệt vời! Bạn đã hoàn thành trọn vẹn 2 phút chuẩn Cambridge Band 7.5 - 8.5+.',
+      adviceEn: 'Excellent! You fulfilled the full 2-minute Cambridge Band 7.5 - 8.5+ benchmark.',
       isUnderDanger: false,
       isWarning: false,
       isSafe: true,
@@ -198,8 +208,10 @@ export function getFluencySafeZone(secondsElapsed = 0) {
   return {
     status: 'over_time',
     label: 'Hết Giờ (> 2:00)',
+    labelEn: 'Time Up (> 2:00)',
     badgeClass: 'bg-purple-950/80 text-purple-300 border-purple-700/60',
     adviceVi: 'Giám khảo sẽ ngắt lời tại giây 120. Bài thi không bị trừ điểm nếu bạn đã kết bài.',
+    adviceEn: 'Examiner stops you at 120s. No penalty if your concluding thought is reached.',
     isUnderDanger: false,
     isWarning: false,
     isSafe: true,

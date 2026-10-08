@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BookOpen, PenLine, Columns } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
+  const { t, isEn } = useTranslation();
   const [splitRatio, setSplitRatio] = useState(defaultSplit); // percentage for left pane
   // Mobile active tab: 'both' | 'editor' | 'prompt'
   const [mobileTab, setMobileTab] = useState('both'); 
@@ -89,7 +91,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
           }`}
         >
           <PenLine className="w-3.5 h-3.5 text-red-600" />
-          <span>Soạn Bài</span>
+          <span>{isEn ? 'Editor' : 'Soạn Bài'}</span>
         </button>
 
         <button
@@ -101,7 +103,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
           }`}
         >
           <BookOpen className="w-3.5 h-3.5 text-blue-600" />
-          <span>Xem Đề Bài</span>
+          <span>{isEn ? 'Task Prompt' : 'Xem Đề Bài'}</span>
         </button>
 
         <button
@@ -113,7 +115,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
           }`}
         >
           <Columns className="w-3.5 h-3.5" />
-          <span>Chia Đôi</span>
+          <span>{isEn ? 'Split View' : 'Chia Đôi'}</span>
         </button>
       </div>
 
@@ -137,7 +139,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
           onMouseDown={startDragging}
           onTouchStart={startDragging}
           className="hidden md:flex items-center justify-center w-2 hover:w-2.5 bg-slate-200 hover:bg-red-500 cursor-col-resize transition-all z-20 group relative select-none touch-none shrink-0"
-          title="Kéo thả để chỉnh độ rộng 2 màn hình"
+          title={isEn ? "Drag to resize split panes" : "Kéo thả để chỉnh độ rộng 2 màn hình"}
         >
           <div className="h-10 w-1 bg-slate-400 group-hover:bg-white rounded-full transition-colors"></div>
         </div>

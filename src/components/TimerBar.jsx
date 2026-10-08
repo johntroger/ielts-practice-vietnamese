@@ -89,20 +89,20 @@ export default function TimerBar({
             <span className={isLowTime ? 'text-red-400' : 'text-white'}>{formatTime(timeRemaining)}</span>
           </div>
           <span className="text-slate-600">•</span>
-          <span className="text-[11px] text-slate-300 font-semibold">{wordCount}/{minWords} từ</span>
+          <span className="text-[11px] text-slate-300 font-semibold">{wordCount}/{minWords} {isEn ? 'words' : 'từ'}</span>
           <button
             onClick={() => handleInitiateSubmit('algorithmic')}
             disabled={isSubmitting}
             className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] flex items-center space-x-1 cursor-pointer active:scale-95 transition-transform"
-            title="Chấm nhanh bằng máy"
+            title={isEn ? "Fast algorithmic grading" : "Chấm nhanh bằng máy"}
           >
             <Zap className="w-3 h-3 fill-current" />
-            <span>Nộp</span>
+            <span>{isEn ? 'Submit' : 'Nộp'}</span>
           </button>
           <button
             onClick={() => setIsMobileCompact(false)}
             className="p-1 text-slate-400 hover:text-white cursor-pointer"
-            title="Mở rộng thanh công cụ thi"
+            title={isEn ? "Expand exam toolbar" : "Mở rộng thanh công cụ thi"}
           >
             <ChevronUp className="w-3.5 h-3.5" />
           </button>
@@ -116,7 +116,7 @@ export default function TimerBar({
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex items-center space-x-2 text-amber-300 font-bold text-xs sm:text-sm">
                     <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Rà soát thói quen viết trước khi nộp ({habitWarnings.length} lưu ý):</span>
+                    <span>{isEn ? `Pre-submission writing habit check (${habitWarnings.length} notices):` : `Rà soát thói quen viết trước khi nộp (${habitWarnings.length} lưu ý):`}</span>
                   </div>
                   <div className="space-y-1 text-xs">
                     {habitWarnings.slice(0, 2).map((w, idx) => (
@@ -134,14 +134,14 @@ export default function TimerBar({
                     onClick={handleDismissWarning}
                     className="flex-1 md:flex-none px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center space-x-1 cursor-pointer min-h-[40px]"
                   >
-                    <span>🔍 Rà soát lại bài</span>
+                    <span>{isEn ? '🔍 Review essay' : '🔍 Rà soát lại bài'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleConfirmSubmit}
                     className="flex-1 md:flex-none px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-colors flex items-center justify-center space-x-1 cursor-pointer min-h-[40px]"
                   >
-                    <span>Tiếp tục nộp bài ({pendingSubmitMethod === 'ai' ? 'AI' : 'Máy'})</span>
+                    <span>{isEn ? `Proceed to submit (${pendingSubmitMethod === 'ai' ? 'AI' : 'Algo'})` : `Tiếp tục nộp bài (${pendingSubmitMethod === 'ai' ? 'AI' : 'Máy'})`}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -177,7 +177,7 @@ export default function TimerBar({
               <button
                 onClick={onToggleTimer}
                 className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
-                title={isRunning ? 'Tạm dừng đồng hồ' : 'Tiếp tục tính giờ'}
+                title={isRunning ? (isEn ? 'Pause timer' : 'Tạm dừng đồng hồ') : (isEn ? 'Resume timer' : 'Tiếp tục tính giờ')}
               >
                 {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
               </button>
@@ -186,7 +186,7 @@ export default function TimerBar({
               <button
                 onClick={onResetTimer}
                 className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
-                title="Đặt lại đồng hồ"
+                title={isEn ? "Reset timer" : "Đặt lại đồng hồ"}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -195,7 +195,7 @@ export default function TimerBar({
               <button
                 onClick={() => setIsMobileCompact(true)}
                 className="sm:hidden p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
-                title="Thu nhỏ thanh điều khiển để không vướng bàn phím ảo"
+                title={isEn ? "Minimize exam toolbar to avoid virtual keyboard" : "Thu nhỏ thanh điều khiển để không vướng bàn phím ảo"}
               >
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
