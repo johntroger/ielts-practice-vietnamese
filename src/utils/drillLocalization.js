@@ -137,7 +137,10 @@ const KNOWN_TOPIC_SUBTITLE_MAP = {
   'Trí tuệ nhân tạo & Thị trường lao động': 'AI & Labor Market Disruption',
   'Đô thị hóa & Giao thông công cộng': 'Urbanization & Transit Infrastructure',
   'Trí nhớ': 'Memory',
-  'Giấc ngủ sâu': 'Deep Sleep'
+  'Giấc ngủ sâu': 'Deep Sleep',
+  'Tác động xã hội của Vườn đô thị': 'Social Impact of Urban Gardens',
+  'Tác động xã hội': 'Social Impact',
+  'Vườn đô thị': 'Urban Gardens'
 };
 
 const KNOWN_CATEGORY_MAP = {
@@ -158,7 +161,8 @@ const KNOWN_CATEGORY_MAP = {
   'Science & Ecology': 'Science & Ecology',
   'History & Archaeology': 'History & Archaeology',
   'Environmental Science': 'Environmental Science',
-  'Psychology & Physiology': 'Psychology & Physiology'
+  'Psychology & Physiology': 'Psychology & Physiology',
+  'IELTS Reading Matching Headings': 'IELTS Reading Matching Headings'
 };
 
 /**
@@ -200,12 +204,58 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
     if (!sub) return '';
     let s = sub.trim();
     if (KNOWN_TOPIC_SUBTITLE_MAP[s]) return KNOWN_TOPIC_SUBTITLE_MAP[s];
+
+    const topicPhrases = [
+      [/Tác động xã hội của Vườn đô thị/gi, 'Social Impact of Urban Gardens'],
+      [/Tác động xã hội/gi, 'Social Impact'],
+      [/Tác động kinh tế/gi, 'Economic Impact'],
+      [/Tác động môi trường/gi, 'Environmental Impact'],
+      [/Tác động sinh thái/gi, 'Ecological Impact'],
+      [/Vườn đô thị/gi, 'Urban Gardens'],
+      [/nông nghiệp đô thị/gi, 'Urban Agriculture'],
+      [/không gian xanh/gi, 'Green Spaces'],
+      [/gắn kết cộng đồng/gi, 'Community Cohesion'],
+      [/gắn kết xã hội/gi, 'Social Cohesion'],
+      [/sức khỏe tinh thần/gi, 'Mental Health'],
+      [/biến đổi khí hậu/gi, 'Climate Change'],
+      [/năng lượng tái tạo/gi, 'Renewable Energy'],
+      [/trí tuệ nhân tạo/gi, 'Artificial Intelligence'],
+      [/lao động từ xa/gi, 'Remote Work'],
+      [/giao thông công cộng/gi, 'Public Transit'],
+      [/đa dạng sinh học/gi, 'Biodiversity'],
+      [/bảo tồn thiên nhiên/gi, 'Nature Conservation'],
+      [/phát triển bền vững/gi, 'Sustainable Development'],
+      [/đô thị hóa/gi, 'Urbanization'],
+      [/ngành dệt may/gi, 'Textile Industry'],
+      [/thời trang nhanh/gi, 'Fast Fashion'],
+      [/kinh tế tuần hoàn/gi, 'Circular Economy'],
+      [/chất lượng không khí/gi, 'Air Quality'],
+      [/ô nhiễm nguồn nước/gi, 'Water Pollution'],
+      [/rác thải nhựa/gi, 'Plastic Waste'],
+      [/giáo dục đại học/gi, 'Higher Education'],
+      [/học tập trực tuyến/gi, 'Online Learning'],
+      [/chuyển đổi số/gi, 'Digital Transformation'],
+      [/bảo mật thông tin/gi, 'Cybersecurity'],
+      [/lịch sử và văn hóa/gi, 'History & Culture'],
+      [/di sản văn hóa/gi, 'Cultural Heritage'],
+      [/\bcủa\b/gi, 'of'],
+      [/\bvà\b/gi, '&'],
+      [/\btrong\b/gi, 'in'],
+      [/\bcho\b/gi, 'for'],
+      [/\bvới\b/gi, 'with'],
+      [/\btại\b/gi, 'at']
+    ];
+
+    for (const [pattern, repl] of topicPhrases) {
+      s = s.replace(pattern, repl);
+    }
+
     for (const [k, v] of Object.entries(KNOWN_TOPIC_SUBTITLE_MAP)) {
       if (s.includes(k)) {
         s = s.replace(new RegExp(k, 'g'), v);
       }
     }
-    return s;
+    return s.trim();
   };
 
   // 3. Pattern / Regex-based translations for dynamic drills

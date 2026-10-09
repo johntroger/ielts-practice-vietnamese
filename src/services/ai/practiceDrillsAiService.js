@@ -125,11 +125,12 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title describing the specific pitfall (e.g. "Sửa lỗi mệnh đề quan hệ & dấu phẩy")
+- "title": ${isEn ? 'English title describing the pitfall (e.g. "Error Spotting: Relative Clauses & Commas")' : 'Title describing the specific pitfall (e.g. "Sửa lỗi mệnh đề quan hệ & dấu phẩy")'}
+- "titleEn": "English title"
 - "category": "Grammar Accuracy & Range"
 - "sentenceWithErrors": The flawed sentence containing 1 realistic grammatical or collocation error
 - "targetCorrection": The perfectly corrected Band 8.5 academic sentence
-- "explanation": Detailed Vietnamese explanation of the rule and why the original was wrong
+- "explanation": ${isEn ? 'Detailed English explanation of the rule and why the original was wrong' : 'Detailed Vietnamese explanation of the rule and why the original was wrong'}
 
 Return ONLY raw parseable JSON:
 {
@@ -145,12 +146,13 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title describing the topic collocations
+- "title": ${isEn ? 'English title describing the topic collocations' : 'Title describing the topic collocations'}
+- "titleEn": "English title"
 - "category": "Lexical Resource (C1-C2)"
 - "pairs": Array of 4 objects, each with:
   - "term": Verb / Adjective (e.g. "mitigate", "exacerbate", "stark")
   - "match": Noun phrase (e.g. "environmental degradation", "disparity")
-  - "meaning": Vietnamese translation of the combined collocation
+  - "meaning": "${isEn ? 'English definition of the combined collocation' : 'Vietnamese translation of the combined collocation'}"
 
 Return ONLY raw parseable JSON:
 {
@@ -166,7 +168,8 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Descriptive title (e.g. "Phân biệt bẫy Not Given vs False: [Chủ đề]")
+- "title": ${isEn ? 'Descriptive title in English (e.g. "Not Given vs False Trap: [English Topic]")' : 'Descriptive title (e.g. "Phân biệt bẫy Not Given vs False: [Chủ đề]")'}
+- "titleEn": "English title"
 - "category": Topic category (e.g. "Science & Ecology", "History & Archaeology", "Technology")
 - "passage": A concise academic passage (3-4 sentences, approx 60-80 words).
 - "statement": 1 statement testing subtle understanding. Choose whether it should be TRUE, FALSE, or NOT GIVEN.
@@ -175,7 +178,7 @@ Requirements:
   - If TRUE: ensure it is a faithful paraphrase of the passage's idea.
 - "answer": MUST be strictly "TRUE", "FALSE", or "NOT GIVEN"
 - "trapType": Name the trap (e.g. "Assumption Trap", "Direct Contradiction", "Comparative Trap", "Paraphrase Confirmation")
-- "explanation": In-depth Vietnamese explanation of why this answer is correct, and why other choices (especially the trap) are incorrect.
+- "explanation": ${isEn ? 'In-depth English explanation of why this answer is correct, and why other choices (especially the trap) are incorrect.' : 'In-depth Vietnamese explanation of why this answer is correct, and why other choices (especially the trap) are incorrect.'}
 - "evidence": Direct quote from the passage proving the answer (or note that info is missing for Not Given).
 
 Return ONLY raw parseable JSON:
@@ -195,13 +198,14 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title (e.g. "Truy tìm Paraphrase: [Chủ đề]")
+- "title": ${isEn ? 'Short title in English (e.g. "Paraphrase Hunter: [English Topic]")' : 'Short title (e.g. "Truy tìm Paraphrase: [Chủ đề]")'}
+- "titleEn": "English title"
 - "category": "Academic Reading Skills"
 - "questionText": 1 sentence representing an IELTS exam question (Band 7.0 style).
 - "passageExcerpt": 1 sentence from the reading text expressing the exact same meaning using sophisticated academic synonyms and restructured syntax.
 - "pairs": Array of 4-6 objects mapping synonymous chunks between question and passage:
   [
-    { "questionWord": "...", "passageWord": "...", "meaning": "Vietnamese meaning of the pair" }
+    { "questionWord": "...", "passageWord": "...", "meaning": "${isEn ? 'English definition of the pair' : 'Vietnamese meaning of the pair'}" }
   ]
 
 Return ONLY raw parseable JSON:
@@ -220,12 +224,13 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title (e.g. "Phá bẫy Matching Headings: [Chủ đề]")
+- "title": ${isEn ? 'Short title in English (e.g. "Matching Headings Trap: [English Topic]")' : 'Short title (e.g. "Phá bẫy Matching Headings: [Chủ đề]")'}
+- "titleEn": "English title"
 - "category": "IELTS Reading Matching Headings"
 - "paragraph": A well-written academic paragraph (4-6 sentences, 80-110 words) with 1 clear central theme.
 - "correctHeadingIndex": Index (0, 1, 2, or 3) of the correct heading.
 - "headings": Array of 4 heading objects:
-  - 1 correct heading (accurate summary of the paragraph's main idea, marked with isCorrect: true, type: "CORRECT", and detailed Vietnamese analysis).
+  - 1 correct heading (accurate summary of the paragraph's main idea, marked with isCorrect: true, type: "CORRECT", and detailed ${isEn ? 'English' : 'Vietnamese'} analysis).
   - 1 "DETAIL_TRAP": Heading focusing on a minor specific detail/keyword mentioned in the paragraph, isCorrect: false.
   - 1 "TOO_GENERAL": Heading that is overly broad or beyond the scope, isCorrect: false.
   - 1 "IRRELEVANT" or "DISTRACTOR": Heading with alluring keywords but misleading or distorted meaning, isCorrect: false.
@@ -280,14 +285,16 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title e.g. "Giải phẫu câu phức: [Chủ đề]"
+- "title": ${isEn ? 'English title e.g. "Complex Sentence S-V-O: [English Topic]"' : 'Title e.g. "Giải phẫu câu phức: [Chủ đề]"'}
+- "titleEn": "English title"
 - "category": "Academic Sentence Mastery"
 - "fullSentence": A sophisticated, 35-45 word academic sentence with embedded relative clauses, participial phrases, or appositives.
 - "subject": The core Subject noun phrase.
 - "subModifier": The non-essential clauses/modifiers (relative clauses, prepositional phrases).
 - "coreVerb": The main finite verb/predicate.
 - "objectResult": The core Object or Result complement.
-- "takeawayVietnamese": A clear takeaway showing how stripping down to Subject-Verb-Object helps fast comprehension.
+- "takeawayVietnamese": ${isEn ? 'A clear English takeaway showing how stripping down to Subject-Verb-Object helps fast comprehension.' : 'A clear takeaway showing how stripping down to Subject-Verb-Object helps fast comprehension.'}
+- "takeawayEn": "English takeaway"
 
 Return ONLY raw parseable JSON:
 {
@@ -306,13 +313,14 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title describing the context (e.g. "Dictation Thực Chiến: [Chủ đề]")
+- "title": ${isEn ? 'English title describing the context (e.g. "Dictation Combat: [Topic]")' : 'Title describing the context (e.g. "Dictation Thực Chiến: [Chủ đề]")'}
+- "titleEn": "English title"
 - "category": Topic category (e.g. "Daily Life & Accommodation", "Campus Facilities", "Urban Ecology")
 - "difficulty": "Band 6.0 - 7.5"
 - "ttsText": A natural, authentic English spoken sentence (14 to 22 words) containing natural connected speech features (linking sounds, vowel reductions, or plural '-s' endings).
 - "targetTranscript": The identical exact transcript of the sentence.
 - "wordCount": Total word count of the sentence.
-- "audioClipTip": Clear Vietnamese advice on phonetics / connected speech to look out for (e.g. "Chú ý nối âm: 'confirm your' và âm đuôi 'reservation'").
+- "audioClipTip": ${isEn ? 'Clear English advice on phonetics / connected speech to look out for (e.g. "Pay attention to linking: \'confirm your\' and the ending sound of \'reservation\'")' : 'Clear Vietnamese advice on phonetics / connected speech to look out for (e.g. "Chú ý nối âm: \'confirm your\' và âm đuôi \'reservation\'")'}
 
 Return ONLY raw parseable JSON:
 {
@@ -330,15 +338,16 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title (e.g. "Đánh vần tên riêng & Mã bưu chính UK")
+- "title": ${isEn ? 'English title (e.g. "Street Name Spelling & UK Postcodes")' : 'Short title (e.g. "Đánh vần tên riêng & Mã bưu chính UK")'}
+- "titleEn": "English title"
 - "category": "Names, Postcodes & Numbers"
 - "subType": One of "spelling", "numbers", "currency-date"
 - "promptAudioText": The complete spoken sentence in British English. If spelling a name, include the spelled letters with hyphens (e.g. "The guest surname is MacIntyre, that is M-A-C-I-N-T-Y-R-E"). If numbers, include realistic distractors or reversals.
 - "questionPrompt": The exam question line with blanks (e.g. "Guest surname: ........." or "Booking reference code: .........")
 - "correctAnswer": The exact key (e.g. "MacIntyre", "SW19 4TL", "75")
 - "acceptableAnswers": Array of acceptable formats (e.g. ["SW19 4TL", "SW194TL", "sw19 4tl"])
-- "trapNote": Specific trap warning in Vietnamese (e.g. "Bẫy âm dễ nhầm: Chữ V vs B, số đảo ngược")
-- "explanation": Detailed Vietnamese explanation
+- "trapNote": ${isEn ? 'Specific trap warning in English (e.g. "Confusable sounds: V vs B, inverted digits")' : 'Specific trap warning in Vietnamese (e.g. "Bẫy âm dễ nhầm: Chữ V vs B, số đảo ngược")'}
+- "explanation": ${isEn ? 'Detailed English explanation' : 'Detailed Vietnamese explanation'}
 
 Return ONLY raw parseable JSON:
 {
@@ -358,14 +367,15 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title e.g. "Bẫy tự đính chính: [Tình huống]"
+- "title": ${isEn ? 'English title e.g. "Self-Correction Trap: [Situation]"' : 'Short title e.g. "Bẫy tự đính chính: [Tình huống]"'}
+- "titleEn": "English title"
 - "category": e.g. "Transport Schedule", "Course Enrollment", "Customer Service"
 - "audioSnippetText": A mini-dialogue (2-3 sentences) between two people where an initial piece of information is suggested, but then corrected or rejected with words like "Actually, make that...", "However, unlike last time...", or "I used to, but now...".
 - "question": Direct question asking about the final confirmed information
 - "options": Array of 3 options [{ "id": "A", "text": "..." }, { "id": "B", "text": "..." }, { "id": "C", "text": "..." }]
 - "correctOption": "A", "B", or "C"
-- "distractorMechanism": Detailed Vietnamese breakdown of how the speaker tricked the listener
-- "explanation": Clear Vietnamese summary of why the correct option is the final decision
+- "distractorMechanism": ${isEn ? 'Detailed English breakdown of how the speaker set the trap' : 'Detailed Vietnamese breakdown of how the speaker tricked the listener'}
+- "explanation": ${isEn ? 'Clear English summary of why the correct option is the final decision' : 'Clear Vietnamese summary of why the correct option is the final decision'}
 
 Return ONLY raw parseable JSON:
 {
@@ -388,14 +398,15 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title e.g. "Định hướng sơ đồ: [Địa điểm]"
+- "title": ${isEn ? 'English title e.g. "Map Navigation: [Location]"' : 'Short title e.g. "Định hướng sơ đồ: [Địa điểm]"'}
+- "titleEn": "English title"
 - "category": "Campus & Park Navigation"
 - "audioDirectionsText": A spoken directional guide (40-60 words) starting from a clear entrance/landmark, navigating through paths, junctions, ponds/fountains, and pinpointing a specific room/facility.
 - "question": "Where is the [Facility Name] located?"
 - "options": Array of 3 location descriptions [{ "id": "A", "text": "..." }, { "id": "B", "text": "..." }, { "id": "C", "text": "..." }]
 - "correctOption": "A", "B", or "C"
 - "spatialClues": Array of 3-4 sequential path clues (e.g. ["Main entrance -> walk straight", "Turn left at fountain", "Directly opposite bike shed"])
-- "explanation": Detailed step-by-step route explanation in Vietnamese
+- "explanation": ${isEn ? 'Detailed step-by-step route explanation in English' : 'Detailed step-by-step route explanation in Vietnamese'}
 
 Return ONLY raw parseable JSON:
 {
@@ -418,14 +429,15 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title e.g. "Bắt tín hiệu chuyển ý: [Chủ đề học thuật]"
+- "title": ${isEn ? 'English title e.g. "Signposting Catcher: [Academic Topic]"' : 'Short title e.g. "Bắt tín hiệu chuyển ý: [Chủ đề học thuật]"'}
+- "titleEn": "English title"
 - "category": "Academic Lecture (Part 4)"
 - "audioSnippetText": An excerpt from an academic monograph / university lecture (40-60 words) containing a prominent signposting cue (e.g. "Moving on to...", "Turning now to our second hypothesis...", "Surprisingly, however...").
-- "question": "Cụm từ nào báo hiệu người nói đang chuyển sang [mục đích cụ thể]?"
+- "question": ${isEn ? '"Which phrase signals that the lecturer is transitioning to [specific topic]?"' : '"Cụm từ nào báo hiệu người nói đang chuyển sang [mục đích cụ thể]?"'}
 - "options": Array of 3 excerpt options [{ "id": "A", "text": "..." }, { "id": "B", "text": "..." }, { "id": "C", "text": "..." }]
 - "correctOption": "A", "B", or "C"
 - "signpostType": e.g. "Transition to New Key Point" or "Contrast / Counter-intuitive Evidence"
-- "explanation": Detailed Vietnamese explanation of why this marker signals the transition
+- "explanation": ${isEn ? 'Detailed English explanation of why this marker signals the transition' : 'Detailed Vietnamese explanation of why this marker signals the transition'}
 
 Return ONLY raw parseable JSON:
 {
@@ -448,17 +460,20 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title e.g. "A.R.E.A Reflex: [Chủ đề sinh hoạt / xã hội]"
-- "topic": Topic name
+- "title": ${isEn ? 'English title e.g. "A.R.E.A Reflex: [English Topic]"' : 'Title e.g. "A.R.E.A Reflex: [Chủ đề sinh hoạt / xã hội]"'}
+- "titleEn": "English title"
+- "topic": Topic name ${isEn ? '(in English)' : ''}
+- "topicEn": "Topic name in English"
 - "part": "Part 1" or "Part 3"
 - "question": An authentic Cambridge IELTS Speaking question
 - "difficulty": "Band 7.0 - 8.5"
-- "tip": Clear Vietnamese advice on how to expand the answer
+- "tip": ${isEn ? 'Clear English advice on how to expand the answer using A.R.E.A' : 'Clear Vietnamese advice on how to expand the answer'}
+- "tipEn": "Clear English advice"
 - "formula": Object containing:
-  - "answer": { "label": "A - Answer (Trực diện)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
-  - "reason": { "label": "R - Reason (Lý do)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
-  - "example": { "label": "E - Example (Ví dụ)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
-  - "alternative": { "label": "A - Alternative (Góc nhìn đối chiếu)", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "answer": { "label": "A - Answer", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "reason": { "label": "R - Reason", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "example": { "label": "E - Example", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
+  - "alternative": { "label": "A - Alternative", "prompt": "...", "sample": "...", "keywords": ["...", "..."] }
 - "modelAnswerBand8": Full 4-sentence Band 8.5 response
 - "lexicalHighlights": Array of 5-7 advanced C1-C2 collocations/idioms used
 
@@ -472,10 +487,10 @@ Return ONLY raw parseable JSON:
   "difficulty": "Band 7.0 - 8.5",
   "tip": "...",
   "formula": {
-    "answer": { "label": "A - Answer (Trực diện)", "prompt": "...", "sample": "...", "keywords": ["..."] },
-    "reason": { "label": "R - Reason (Lý do)", "prompt": "...", "sample": "...", "keywords": ["..."] },
-    "example": { "label": "E - Example (Ví dụ)", "prompt": "...", "sample": "...", "keywords": ["..."] },
-    "alternative": { "label": "A - Alternative (Góc nhìn đối chiếu)", "prompt": "...", "sample": "...", "keywords": ["..."] }
+    "answer": { "label": "A - Answer", "prompt": "...", "sample": "...", "keywords": ["..."] },
+    "reason": { "label": "R - Reason", "prompt": "...", "sample": "...", "keywords": ["..."] },
+    "example": { "label": "E - Example", "prompt": "...", "sample": "...", "keywords": ["..."] },
+    "alternative": { "label": "A - Alternative", "prompt": "...", "sample": "...", "keywords": ["..."] }
   },
   "modelAnswerBand8": "...",
   "lexicalHighlights": ["...", "..."]
@@ -485,12 +500,13 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title e.g. "Từ Đệm: [Tình huống phòng thi]"
+- "title": ${isEn ? 'English title e.g. "Natural Filler: [Exam Situation]"' : 'Title e.g. "Từ Đệm: [Tình huống phòng thi]"'}
+- "titleEn": "English title"
 - "category": e.g. "Buying Time & Recalling Past", "Speculating & Forecasting", "Balancing Two Sides"
-- "situation": Vietnamese description of the challenging exam moment
+- "situation": ${isEn ? 'English description of the challenging exam moment' : 'Vietnamese description of the challenging exam moment'}
 - "question": Examiner question
 - "taskPrompt": Question prompt asking user to pick the most natural native filler
-- "options": Array of 4 options (1 correct native filler with explanation, 3 unnatural/awkward choices with explanations)
+- "options": Array of 4 options (1 correct native filler with ${isEn ? 'English' : 'Vietnamese'} explanation, 3 unnatural/awkward choices with ${isEn ? 'English' : 'Vietnamese'} explanations)
 - "targetFiller": The correct filler phrase
 - "sampleContinuation": Full natural continuation sentence
 
@@ -516,12 +532,13 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title e.g. "Idiom: [Ý nghĩa]"
+- "title": ${isEn ? 'English title e.g. "Idiom: [Meaning]"' : 'Title e.g. "Idiom: [Ý nghĩa]"'}
+- "titleEn": "English title"
 - "category": Topic category
 - "context": Context where this idiom is naturally used
-- "prompt": Instruction prompt in Vietnamese
+- "prompt": ${isEn ? 'Instruction prompt in English (e.g. "Select the most natural English idiom or collocation to complete the blank:")' : 'Instruction prompt in Vietnamese'}
 - "questionSentence": Sentence with "______" blank
-- "options": Array of 4 options (1 correct idiom, 3 incorrect/word-by-word Vietnamese translation traps)
+- "options": Array of 4 options (1 correct idiom with ${isEn ? 'English' : 'Vietnamese'} explanation, 3 incorrect/word-by-word translation traps with ${isEn ? 'English' : 'Vietnamese'} explanations)
 - "idiom": The target idiom
 - "meaning": English meaning
 - "speakingExample": Example sentence for Speaking test
@@ -549,12 +566,14 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title e.g. "Phản Biện Part 3: [Chủ đề tranh luận]"
-- "topic": Topic name
+- "title": ${isEn ? 'English title e.g. "Part 3 Analytical Debate: [Topic]"' : 'Title e.g. "Phản Biện Part 3: [Chủ đề tranh luận]"'}
+- "titleEn": "English title"
+- "topic": Topic name ${isEn ? '(in English)' : ''}
+- "topicEn": "Topic name in English"
 - "question": A challenging, multi-layered Part 3 question
 - "category": "Two-Sided Societal Debate"
 - "difficulty": "Band 7.5 - 8.5"
-- "tip": Vietnamese advice on balancing arguments
+- "tip": ${isEn ? 'English advice on balancing two-sided arguments' : 'Vietnamese advice on balancing arguments'}
 - "sideA": { "perspective": "...", "starter": "On the one hand, ...", "points": "..." }
 - "sideB": { "perspective": "...", "starter": "On the flip side, conversely, ...", "points": "..." }
 - "synthesis": { "starter": "So on balance, ...", "conclusion": "..." }
@@ -582,11 +601,12 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short title (e.g. "Luyện Paraphrase Câu Luận Điểm Thân Bài")
+- "title": ${isEn ? 'English title (e.g. "Body Paragraph Paraphrase: [Topic]")' : 'Short title (e.g. "Luyện Paraphrase Câu Luận Điểm Thân Bài")'}
+- "titleEn": "English title"
 - "category": "Task 1 or Task 2 Paraphrasing"
 - "originalSentence": A simple, Band 5.5-6.0 sentence needing academic upgrade
 - "targetBand": "Band 8.0+"
-- "hints": Array of 2 actionable tips/collocations in Vietnamese
+- "hints": Array of 2 actionable tips/collocations in ${isEn ? 'English' : 'Vietnamese'}
 - "sampleBand8": An exemplary Band 8.5 version demonstrating nominalization or passive structures
 
 Return ONLY raw parseable JSON:

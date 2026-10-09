@@ -16,7 +16,15 @@ import {
   Split
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
-import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
+import { 
+  getLocalizedDrillTitle, 
+  getLocalizedDrillCategory, 
+  getLocalizedDrillExplanation 
+} from '../../utils/drillLocalization';
+import { 
+  getLocalizedTopicName, 
+  getLocalizedVocabMeaning 
+} from '../../utils/vocabLocalization';
 
 /**
  * SpeakingDrillRoom
@@ -73,7 +81,7 @@ export default function SpeakingDrillRoom({
                           {currentArea.part || 'Speaking'} • {currentArea.difficulty || 'Band 7.0 - 8.5'}
                         </span>
                         <span className="px-2 py-0.5 rounded bg-teal-50 text-teal-700 text-xs font-medium border border-teal-200">
-                          {currentArea.topic}
+                          {isEn && currentArea.topicEn ? currentArea.topicEn : (isEn ? getLocalizedTopicName(currentArea.topic) : currentArea.topic)}
                         </span>
                       </div>
                       <h3 className="font-bold text-slate-900 text-base mt-1.5">{getLocalizedDrillTitle(currentArea, isEn)}</h3>
@@ -118,7 +126,7 @@ export default function SpeakingDrillRoom({
                     {currentArea.tip && (
                       <div className="text-xs text-emerald-200/90 bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-start space-x-2">
                         <Lightbulb className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
-                        <span><strong>{isEn ? 'Reflex tip:' : 'Mẹo phản xạ:'}</strong> {currentArea.tip}</span>
+                        <span><strong>{isEn ? 'Reflex tip:' : 'Mẹo phản xạ:'}</strong> {isEn && currentArea.tipEn ? currentArea.tipEn : (isEn ? getLocalizedDrillExplanation(currentArea.tip, true) : currentArea.tip)}</span>
                       </div>
                     )}
                   </div>
@@ -484,7 +492,7 @@ export default function SpeakingDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
-                      {currentFiller.category || (isEn ? 'Natural Fillers' : 'Từ Đệm Tự Nhiên')} • {isEn ? 'Buying Time Reflex' : 'Phản xạ câu giờ tự nhiên'}
+                      {getLocalizedDrillCategory(currentFiller, isEn)} • {isEn ? 'Buying Time Reflex' : 'Phản xạ câu giờ tự nhiên'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentFiller, isEn)}
@@ -523,7 +531,7 @@ export default function SpeakingDrillRoom({
                     </div>
 
                     <div className="text-xs text-slate-300 leading-relaxed bg-white/5 p-3 rounded-xl border border-white/10">
-                      💡 <strong>{isEn ? 'Context:' : 'Ngữ cảnh:'}</strong> {currentFiller.situation}
+                      💡 <strong>{isEn ? 'Context:' : 'Ngữ cảnh:'}</strong> {isEn && currentFiller.situationEn ? currentFiller.situationEn : (isEn ? getLocalizedDrillExplanation(currentFiller.situation, true) : currentFiller.situation)}
                     </div>
 
                     <div className="text-base sm:text-lg font-bold text-white font-serif">
@@ -577,7 +585,7 @@ export default function SpeakingDrillRoom({
                                 <p className={`text-xs mt-1.5 leading-relaxed pt-1.5 border-t ${
                                   opt.isCorrect ? 'border-emerald-200 text-emerald-800 font-medium' : 'border-rose-200 text-rose-700'
                                 }`}>
-                                  {opt.explanation}
+                                  {isEn && opt.explanationEn ? opt.explanationEn : (isEn ? getLocalizedDrillExplanation(opt.explanation, true) : opt.explanation)}
                                 </p>
                               )}
                             </div>
@@ -648,7 +656,7 @@ export default function SpeakingDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[11px] font-bold uppercase">
-                      {currentSpeakingColloc.category || 'Lexical Resource'} • {isEn ? 'Idiom & Collocation Reflex' : 'Phản xạ thành ngữ & Collocation'}
+                      {getLocalizedDrillCategory(currentSpeakingColloc, isEn)} • {isEn ? 'Idiom & Collocation Reflex' : 'Phản xạ thành ngữ & Collocation'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentSpeakingColloc, isEn)}
@@ -671,7 +679,7 @@ export default function SpeakingDrillRoom({
                     )}
 
                     <div className="text-sm sm:text-base font-semibold text-rose-200">
-                      {currentSpeakingColloc.prompt}
+                      {isEn && currentSpeakingColloc.promptEn ? currentSpeakingColloc.promptEn : (isEn ? getLocalizedDrillExplanation(currentSpeakingColloc.prompt, true) : currentSpeakingColloc.prompt)}
                     </div>
 
                     <div className="text-base sm:text-lg font-bold text-white font-serif p-3 rounded-xl bg-white/10 border border-white/20">
@@ -720,7 +728,7 @@ export default function SpeakingDrillRoom({
                                 <p className={`text-xs mt-1.5 leading-relaxed pt-1.5 border-t ${
                                   opt.isCorrect ? 'border-emerald-200 text-emerald-800 font-medium' : 'border-rose-200 text-rose-700'
                                 }`}>
-                                  {opt.explanation}
+                                  {isEn && opt.explanationEn ? opt.explanationEn : (isEn ? getLocalizedDrillExplanation(opt.explanation, true) : opt.explanation)}
                                 </p>
                               )}
                             </div>
@@ -762,7 +770,7 @@ export default function SpeakingDrillRoom({
 
                         <div className="p-3 rounded-lg bg-white border border-slate-200 space-y-2">
                           <div className="font-bold text-slate-800">
-                            📖 <strong>{isEn ? 'Academic Meaning:' : 'Ý nghĩa học thuật:'}</strong> <span className="text-rose-700">{currentSpeakingColloc.idiom}</span> = {currentSpeakingColloc.meaning}
+                            📖 <strong>{isEn ? 'Academic Meaning:' : 'Ý nghĩa học thuật:'}</strong> <span className="text-rose-700">{currentSpeakingColloc.idiom}</span> = {isEn && currentSpeakingColloc.meaningEn ? currentSpeakingColloc.meaningEn : (isEn ? getLocalizedVocabMeaning(currentSpeakingColloc.meaning, true) : currentSpeakingColloc.meaning)}
                           </div>
                           
                           {currentSpeakingColloc.speakingExample && (
@@ -800,7 +808,7 @@ export default function SpeakingDrillRoom({
                           {isEn ? 'Part 3 Analytical Debate' : 'Tranh Biện Đa Chiều Part 3'} • {currentPart3.difficulty || 'Band 7.5 - 8.5'}
                         </span>
                         <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
-                          {currentPart3.topic}
+                          {isEn && currentPart3.topicEn ? currentPart3.topicEn : (isEn ? getLocalizedTopicName(currentPart3.topic) : currentPart3.topic)}
                         </span>
                       </div>
                       <h3 className="font-bold text-slate-900 text-base mt-1.5">{getLocalizedDrillTitle(currentPart3, isEn)}</h3>
@@ -845,7 +853,7 @@ export default function SpeakingDrillRoom({
                     {currentPart3.tip && (
                       <div className="text-xs text-teal-200/90 bg-white/5 p-2.5 rounded-xl border border-white/10 flex items-start space-x-2">
                         <Lightbulb className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
-                        <span><strong>{isEn ? 'Analytical tip:' : 'Mẹo phản biện:'}</strong> {currentPart3.tip}</span>
+                        <span><strong>{isEn ? 'Analytical tip:' : 'Mẹo phản biện:'}</strong> {isEn && currentPart3.tipEn ? currentPart3.tipEn : (isEn ? getLocalizedDrillExplanation(currentPart3.tip, true) : currentPart3.tip)}</span>
                       </div>
                     )}
                   </div>

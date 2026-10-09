@@ -60,7 +60,7 @@ import {
   ListeningDrillRoom,
   SpeakingDrillRoom
 } from './drills';
-import { getLocalizedDrillTitle } from '../utils/drillLocalization';
+import { getLocalizedDrillTitle, getLocalizedDrillCategory } from '../utils/drillLocalization';
 
 
 export default function MicroDrillsModal({ 
@@ -1153,7 +1153,7 @@ export default function MicroDrillsModal({
                 >
                   {list.map((d, i) => (
                     <option key={d.id || i} value={i}>
-                      {isEn ? `Drill ${i + 1}: ` : `Bài ${i + 1}: `}{getLocalizedDrillTitle(d, isEn) || d.category || (isEn ? `Exercise ${i + 1}` : `Bài tập ${i + 1}`)}
+                      {isEn ? `Drill ${i + 1}: ` : `Bài ${i + 1}: `}{getLocalizedDrillTitle(d, isEn) || getLocalizedDrillCategory(d, isEn) || (isEn ? `Exercise ${i + 1}` : `Bài tập ${i + 1}`)}
                     </option>
                   ))}
                 </select>

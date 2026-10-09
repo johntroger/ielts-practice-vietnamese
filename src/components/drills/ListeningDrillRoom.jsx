@@ -10,7 +10,12 @@ import {
 } from 'lucide-react';
 import MicroDrillAudioBar from '../listening/MicroDrillAudioBar';
 import { useTranslation } from '../../i18n';
-import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
+import { 
+  getLocalizedDrillTitle, 
+  getLocalizedDrillCategory, 
+  getLocalizedDrillExplanation, 
+  getLocalizedVocabOption 
+} from '../../utils/drillLocalization';
 
 /**
  * ListeningDrillRoom
@@ -68,7 +73,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
-                      {currentDictation.category} • {currentDictation.difficulty}
+                      {getLocalizedDrillCategory(currentDictation, isEn)} • {currentDictation.difficulty}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentDictation, isEn)}
@@ -96,7 +101,7 @@ export default function ListeningDrillRoom({
                     </p>
                     {currentDictation.audioClipTip && (
                       <p className="text-purple-700 italic pt-1 border-t border-purple-200/50">
-                        💡 {currentDictation.audioClipTip}
+                        💡 {isEn ? getLocalizedDrillExplanation(currentDictation.audioClipTip, true) : currentDictation.audioClipTip}
                       </p>
                     )}
                   </div>
@@ -215,7 +220,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
-                      {currentSpelling.category} • {isEn ? 'Type' : 'Dạng'} {currentSpelling.subType}
+                      {getLocalizedDrillCategory(currentSpelling, isEn)} • {isEn ? 'Type' : 'Dạng'} {currentSpelling.subType}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentSpelling, isEn)}
@@ -238,7 +243,7 @@ export default function ListeningDrillRoom({
                     </p>
                     {currentSpelling.trapNote && (
                       <p className="text-indigo-700 font-medium pt-1 border-t border-indigo-200/60">
-                        ⚠️ {isEn ? 'Caution:' : 'Cảnh giác:'} {currentSpelling.trapNote}
+                        ⚠️ {isEn ? 'Caution:' : 'Cảnh giác:'} {isEn && currentSpelling.trapNoteEn ? currentSpelling.trapNoteEn : (isEn ? getLocalizedDrillExplanation(currentSpelling.trapNote, true) : currentSpelling.trapNote)}
                       </p>
                     )}
                   </div>
@@ -344,7 +349,7 @@ export default function ListeningDrillRoom({
                         )}
                       </div>
                       <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200/60">
-                        <strong>{isEn ? 'Detailed Explanation:' : 'Giải thích chi tiết:'}</strong> {currentSpelling.explanation}
+                        <strong>{isEn ? 'Detailed Explanation:' : 'Giải thích chi tiết:'}</strong> {isEn && currentSpelling.explanationEn ? currentSpelling.explanationEn : (isEn ? getLocalizedDrillExplanation(currentSpelling.explanation, true) : currentSpelling.explanation)}
                       </p>
                     </div>
                   )}
@@ -356,7 +361,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
-                      {currentDistractor.category} • {isEn ? 'Distractor Trap' : 'Bẫy Distractor'}
+                      {getLocalizedDrillCategory(currentDistractor, isEn)} • {isEn ? 'Distractor Trap' : 'Bẫy Distractor'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentDistractor, isEn)}
@@ -414,7 +419,7 @@ export default function ListeningDrillRoom({
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-bold text-slate-900">{currentDistractor.question}</p>
+                    <p className="text-xs font-bold text-slate-900">{isEn && currentDistractor.questionEn ? currentDistractor.questionEn : (isEn ? getLocalizedDrillExplanation(currentDistractor.question, true) : currentDistractor.question)}</p>
                     <div className="space-y-2">
                       {currentDistractor.options.map(opt => (
                         <button
@@ -432,7 +437,7 @@ export default function ListeningDrillRoom({
                           <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center font-bold text-slate-800 shrink-0 mt-0.5">
                             {opt.id}
                           </span>
-                          <span className="flex-1">{opt.text}</span>
+                          <span className="flex-1">{getLocalizedVocabOption(opt, isEn)}</span>
                         </button>
                       ))}
                     </div>
@@ -507,8 +512,8 @@ export default function ListeningDrillRoom({
                           )}
                         </div>
                         <div className="space-y-1 text-slate-600 pt-1 border-t border-slate-200">
-                          <p><strong>{isEn ? 'Cambridge Trap Mechanism:' : 'Cơ chế bẫy của Cambridge:'}</strong> {currentDistractor.distractorMechanism}</p>
-                          <p><strong>{isEn ? 'Explanation:' : 'Giải thích:'}</strong> {currentDistractor.explanation}</p>
+                          <p><strong>{isEn ? 'Cambridge Trap Mechanism:' : 'Cơ chế bẫy của Cambridge:'}</strong> {isEn && currentDistractor.distractorMechanismEn ? currentDistractor.distractorMechanismEn : (isEn ? getLocalizedDrillExplanation(currentDistractor.distractorMechanism, true) : currentDistractor.distractorMechanism)}</p>
+                          <p><strong>{isEn ? 'Explanation:' : 'Giải thích:'}</strong> {isEn && currentDistractor.explanationEn ? currentDistractor.explanationEn : (isEn ? getLocalizedDrillExplanation(currentDistractor.explanation, true) : currentDistractor.explanation)}</p>
                         </div>
                       </div>
                     </div>
@@ -521,7 +526,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase">
-                      {currentMap.category} • {isEn ? 'Map Navigation Trainer' : 'Huấn luyện sơ đồ bản đồ'}
+                      {getLocalizedDrillCategory(currentMap, isEn)} • {isEn ? 'Map Navigation Trainer' : 'Huấn luyện sơ đồ bản đồ'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentMap, isEn)}
@@ -588,7 +593,7 @@ export default function ListeningDrillRoom({
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-bold text-slate-900">{currentMap.question}</p>
+                    <p className="text-xs font-bold text-slate-900">{isEn && currentMap.questionEn ? currentMap.questionEn : (isEn ? getLocalizedDrillExplanation(currentMap.question, true) : currentMap.question)}</p>
                     <div className="space-y-2">
                       {currentMap.options.map(opt => (
                         <button
@@ -606,7 +611,7 @@ export default function ListeningDrillRoom({
                           <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center font-bold text-slate-800 shrink-0 mt-0.5">
                             {opt.id}
                           </span>
-                          <span className="flex-1">{opt.text}</span>
+                          <span className="flex-1">{getLocalizedVocabOption(opt, isEn)}</span>
                         </button>
                       ))}
                     </div>
@@ -681,7 +686,7 @@ export default function ListeningDrillRoom({
                           )}
                         </div>
                         <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
-                          <strong>{isEn ? 'Detailed route:' : 'Lộ trình chi tiết:'}</strong> {currentMap.explanation}
+                          <strong>{isEn ? 'Detailed route:' : 'Lộ trình chi tiết:'}</strong> {isEn && currentMap.explanationEn ? currentMap.explanationEn : (isEn ? getLocalizedDrillExplanation(currentMap.explanation, true) : currentMap.explanation)}
                         </p>
                       </div>
                     </div>
@@ -694,7 +699,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[11px] font-bold uppercase">
-                      {currentSign.category} • Signposting Catcher
+                      {getLocalizedDrillCategory(currentSign, isEn)} • {isEn ? 'Signposting Catcher' : 'Bắt tín hiệu chuyển ý'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentSign, isEn)}
@@ -745,7 +750,7 @@ export default function ListeningDrillRoom({
                           <span className="font-bold text-indigo-950 text-[11px] uppercase tracking-wider">{isEn ? 'Lecture Excerpt:' : 'Nội dung bài giảng:'}</span>
                           {currentSign.signpostType && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-200/80 text-indigo-900">
-                              🎯 {currentSign.signpostType}
+                              🎯 {isEn && currentSign.signpostTypeEn ? currentSign.signpostTypeEn : (isEn ? getLocalizedDrillExplanation(currentSign.signpostType, true) : currentSign.signpostType)}
                             </span>
                           )}
                         </div>
@@ -757,7 +762,7 @@ export default function ListeningDrillRoom({
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-bold text-slate-900">{currentSign.question}</p>
+                    <p className="text-xs font-bold text-slate-900">{isEn && currentSign.questionEn ? currentSign.questionEn : (isEn ? getLocalizedDrillExplanation(currentSign.question, true) : currentSign.question)}</p>
                     <div className="space-y-2">
                       {currentSign.options.map(opt => (
                         <button
@@ -775,7 +780,7 @@ export default function ListeningDrillRoom({
                           <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center font-bold text-slate-800 shrink-0 mt-0.5">
                             {opt.id}
                           </span>
-                          <span className="flex-1">{opt.text}</span>
+                          <span className="flex-1">{getLocalizedVocabOption(opt, isEn)}</span>
                         </button>
                       ))}
                     </div>
@@ -850,7 +855,7 @@ export default function ListeningDrillRoom({
                           )}
                         </div>
                         <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
-                          <strong>{isEn ? 'Tactical analysis:' : 'Phân tích chiến thuật:'}</strong> {currentSign.explanation}
+                          <strong>{isEn ? 'Tactical analysis:' : 'Phân tích chiến thuật:'}</strong> {isEn && currentSign.explanationEn ? currentSign.explanationEn : (isEn ? getLocalizedDrillExplanation(currentSign.explanation, true) : currentSign.explanation)}
                         </p>
                       </div>
                     </div>

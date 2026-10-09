@@ -216,4 +216,35 @@ it('ReadingDrillRoom.jsx wires getLocalizedDrillCategory, getLocalizedDrillExpla
   assert(content.includes('getLocalizedVocabMeaning(pair, true)'), 'ReadingDrillRoom must localize pair meaning');
 });
 
+// 9. Listening and Speaking Rooms Bilingual Wiring
+it('Translates compound Matching Headings dynamic topics into English', () => {
+  const dynamicHeading1 = { title: 'Matching Headings Trap: Tác động xã hội của Vườn đô thị' };
+  const dynamicHeading2 = { title: 'Phá bẫy Matching Headings: Tác động xã hội của Vườn đô thị' };
+
+  assert.strictEqual(getLocalizedDrillTitle(dynamicHeading1, true), 'Matching Headings Trap: Social Impact of Urban Gardens');
+  assert.strictEqual(getLocalizedDrillTitle(dynamicHeading2, true), 'Matching Headings Trap: Social Impact of Urban Gardens');
+});
+
+it('ListeningDrillRoom.jsx wires localized helpers across all 5 sub-labs', () => {
+  const content = fs.readFileSync(path.resolve('src/components/drills/ListeningDrillRoom.jsx'), 'utf-8');
+  assert(content.includes('getLocalizedDrillCategory'), 'ListeningDrillRoom must use getLocalizedDrillCategory');
+  assert(content.includes('getLocalizedDrillExplanation'), 'ListeningDrillRoom must use getLocalizedDrillExplanation');
+  assert(content.includes('getLocalizedVocabOption'), 'ListeningDrillRoom must use getLocalizedVocabOption');
+  assert(content.includes('getLocalizedDrillTitle'), 'ListeningDrillRoom must use getLocalizedDrillTitle');
+});
+
+it('SpeakingDrillRoom.jsx wires localized helpers across all 4 speaking rooms', () => {
+  const content = fs.readFileSync(path.resolve('src/components/drills/SpeakingDrillRoom.jsx'), 'utf-8');
+  assert(content.includes('getLocalizedTopicName'), 'SpeakingDrillRoom must use getLocalizedTopicName');
+  assert(content.includes('getLocalizedDrillCategory'), 'SpeakingDrillRoom must use getLocalizedDrillCategory');
+  assert(content.includes('getLocalizedDrillExplanation'), 'SpeakingDrillRoom must use getLocalizedDrillExplanation');
+  assert(content.includes('getLocalizedVocabMeaning'), 'SpeakingDrillRoom must use getLocalizedVocabMeaning');
+});
+
+it('GeneralDrillRoom.jsx wires getLocalizedDrillExplanation for clueType', () => {
+  const content = fs.readFileSync(path.resolve('src/components/drills/GeneralDrillRoom.jsx'), 'utf-8');
+  assert(content.includes('getLocalizedDrillExplanation(currentVocab.clueType'), 'GeneralDrillRoom must localize clueType');
+});
+
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);
+

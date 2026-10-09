@@ -69,7 +69,7 @@ export default function GeneralDrillRoom({
               ))}
             </p>
             <div className="text-xs text-amber-800 pt-1">
-              💡 <strong>{isEn ? 'Clue type:' : 'Gợi ý loại manh mối:'}</strong> {currentVocab.clueType}
+              💡 <strong>{isEn ? 'Clue type:' : 'Gợi ý loại manh mối:'}</strong> {isEn && currentVocab.clueTypeEn ? currentVocab.clueTypeEn : (isEn ? getLocalizedDrillExplanation(currentVocab.clueType, true) : currentVocab.clueType)}
             </div>
           </div>
 
