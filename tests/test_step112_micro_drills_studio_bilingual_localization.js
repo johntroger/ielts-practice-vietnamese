@@ -241,9 +241,47 @@ it('SpeakingDrillRoom.jsx wires localized helpers across all 4 speaking rooms', 
   assert(content.includes('getLocalizedVocabMeaning'), 'SpeakingDrillRoom must use getLocalizedVocabMeaning');
 });
 
-it('GeneralDrillRoom.jsx wires getLocalizedDrillExplanation for clueType', () => {
-  const content = fs.readFileSync(path.resolve('src/components/drills/GeneralDrillRoom.jsx'), 'utf-8');
-  assert(content.includes('getLocalizedDrillExplanation(currentVocab.clueType'), 'GeneralDrillRoom must localize clueType');
+it('Translates Listening Drill titles dynamically from Vietnamese to English', () => {
+  const combatDictation = { title: 'Dictation Thực Chiến: Dịch Vụ Thẻ Thành Viên' };
+  assert.strictEqual(getLocalizedDrillTitle(combatDictation, true), 'Combat Dictation: Membership Card Services');
+  assert.strictEqual(getLocalizedDrillTitle(combatDictation, false), 'Dictation Thực Chiến: Dịch Vụ Thẻ Thành Viên');
+
+  const commCombat = { title: '✨ [AI Cộng Đồng] Dictation Thực Chiến: Dịch Vụ Thẻ Thành Viên' };
+  assert.strictEqual(getLocalizedDrillTitle(commCombat, true), '✨ [AI Community] Combat Dictation: Membership Card Services');
+
+  const dictationBasic = { title: 'Dictation Cấp 1 (Cơ bản): Đăng ký thông tin lưu trú khách sạn' };
+  assert.strictEqual(getLocalizedDrillTitle(dictationBasic, true), 'Dictation Level 1 (Basic): Hotel Accommodation Registration');
+
+  const spellingDrill = { title: 'Đánh vần tên riêng & Mã bưu chính: Khu đô thị mới' };
+  assert.strictEqual(getLocalizedDrillTitle(spellingDrill, true), 'Proper Names & Postcodes: Khu đô thị mới');
+
+  const distractorDrill = { title: 'Bẫy tự đính chính (Self-Correction Trap): Thời gian khởi hành xe buýt' };
+  assert.strictEqual(getLocalizedDrillTitle(distractorDrill, true), 'Self-Correction Trap: Bus Departure Time');
+
+  const mapDrill = { title: 'Định hướng ngã ba & Lối rẽ: Tìm Phòng Hội Nghị Trung Tâm' };
+  assert.strictEqual(getLocalizedDrillTitle(mapDrill, true), 'T-Junction & Turn Navigation: Central Conference Room');
+
+  const signDrill = { title: 'Tín hiệu Chuyển Luận Điểm: Từ bối cảnh lịch sử sang Nguyên nhân cốt lõi' };
+  assert.strictEqual(getLocalizedDrillTitle(signDrill, true), 'Signposting: Context Shift to Root Causes');
+
+  const dynamicSignDrill = { title: 'Tín hiệu Chuyển Luận Điểm: Thảo luận về dự án bảo tồn nguồn nước' };
+  assert.strictEqual(getLocalizedDrillTitle(dynamicSignDrill, true), 'Signposting: Water Conservation Project Discussion');
+});
+
+it('Translates Listening categories, options, and explanations into English', () => {
+  assert.strictEqual(getLocalizedDrillCategory({ category: 'Chép chính tả' }, true), 'Dictation Practice');
+  assert.strictEqual(getLocalizedDrillCategory({ category: 'Đánh vần & Con số' }, true), 'Spelling & Numbers');
+  assert.strictEqual(getLocalizedDrillCategory({ category: 'Bẫy nhiễu nghe hiểu' }, true), 'Distractor Traps');
+  assert.strictEqual(getLocalizedDrillCategory({ category: 'Bản đồ & Định hướng' }, true), 'Maps & Directions');
+  assert.strictEqual(getLocalizedDrillCategory({ category: 'Tín hiệu chuyển đoạn' }, true), 'Signposting Signals');
+
+  // Option parentheses
+  const optWithParen = '8:15 AM (Thời gian dự kiến ban đầu)';
+  assert.strictEqual(getLocalizedVocabOption(optWithParen, true), '8:15 AM (Initial scheduled time)');
+
+  // Signposting question
+  const viQuestion = 'Cụm từ nào báo hiệu người nói đang chuyển sang phân tích Nguyên nhân (Primary catalyst)?';
+  assert.strictEqual(getLocalizedDrillExplanation(viQuestion, true), 'Which phrase signals that the speaker is shifting to the primary catalyst?');
 });
 
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);

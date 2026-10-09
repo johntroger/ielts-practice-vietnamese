@@ -140,7 +140,69 @@ const KNOWN_TOPIC_SUBTITLE_MAP = {
   'Giấc ngủ sâu': 'Deep Sleep',
   'Tác động xã hội của Vườn đô thị': 'Social Impact of Urban Gardens',
   'Tác động xã hội': 'Social Impact',
-  'Vườn đô thị': 'Urban Gardens'
+  'Vườn đô thị': 'Urban Gardens',
+
+  // Listening Drill Topics
+  'Dịch Vụ Thẻ Thành Viên': 'Membership Card Services',
+  'Dịch vụ thẻ thành viên': 'Membership Card Services',
+  'Thẻ thành viên': 'Membership Card',
+  'Thẻ Thành Viên': 'Membership Card',
+  'Dịch vụ khách hàng': 'Customer Service',
+  'Dịch Vụ Khách Hàng': 'Customer Service',
+  'Thủ tục sinh viên': 'Student Procedures',
+  'Thủ Tục Sinh Viên': 'Student Procedures',
+  'Đăng ký thông tin lưu trú khách sạn': 'Hotel Accommodation Registration',
+  'Lưu trú khách sạn': 'Hotel Accommodation',
+  'Mượn tài liệu thư viện trường': 'University Library Borrowing',
+  'Mượn tài liệu thư viện': 'Library Book Borrowing',
+  'Lịch bảo dưỡng xe định kỳ': 'Periodic Vehicle Maintenance',
+  'Bảo dưỡng xe định kỳ': 'Periodic Vehicle Maintenance',
+  'Thảo luận về dự án bảo tồn nguồn nước': 'Water Conservation Project Discussion',
+  'Bảo tồn nguồn nước': 'Water Conservation',
+  'Phân tích chiến lược phát triển đô thị': 'Urban Development Strategy Analysis',
+  'Chiến lược phát triển đô thị': 'Urban Development Strategy',
+  'Phát triển đô thị': 'Urban Development',
+  'Thuyết trình khảo cổ học thời kỳ đồ đồng': 'Bronze Age Archaeology Presentation',
+  'Khảo cổ học thời kỳ đồ đồng': 'Bronze Age Archaeology',
+  'Thời kỳ đồ đồng': 'Bronze Age',
+  'Nghiên cứu tiến hóa hành vi linh trưởng': 'Primate Behavioral Evolution Study',
+  'Tiến hóa hành vi linh trưởng': 'Primate Behavioral Evolution',
+  'Hành vi linh trưởng': 'Primate Behavior',
+  'Tên đường phố dễ nhầm lẫn': 'Confusable Street Names',
+  'Tên đường phố': 'Street Names',
+  'Đuôi -teen vs -ty và mã bưu chính': 'Distinguishing -teen vs -ty & UK Postcodes',
+  'Mã bưu chính': 'UK Postcodes',
+  'Mã bưu điện': 'Postcodes',
+  'Số điện thoại': 'Phone Numbers',
+  'Ngày tháng & Số tiền có phí đặt cọc hoàn lại': 'Dates & Refundable Deposit Amounts',
+  'Phí đặt cọc hoàn lại': 'Refundable Deposit Fee',
+  'Số tiền đặt cọc': 'Deposit Amount',
+  'Bẫy số lặp & Số không trong số điện thoại': 'Double Numbers & Zero in Phone Numbers',
+  'Số lặp & Số không': 'Double Numbers & Zero',
+  'Đánh vần họ tên người Scotland / Ireland': 'Scottish / Irish Surnames Spelling',
+  'Ngày thi khởi hành': 'Departure Date & Time Traps',
+  'Thời gian khởi hành xe buýt': 'Bus Departure Time',
+  'Thời gian khởi hành': 'Departure Time',
+  'Khởi hành xe buýt': 'Bus Departure',
+  'Đồ dùng được ban tổ chức chuẩn bị sẵn': 'Equipment Provided by Organizers',
+  'Ban tổ chức chuẩn bị sẵn': 'Equipment Provided by Organizers',
+  'Ban tổ chức': 'Organizers',
+  'Đề tài bài tập nhóm': 'Group Project Topic',
+  'Bài tập nhóm': 'Group Project',
+  'Cơ cấu tổ chức công ty': 'Company Organizational Structure',
+  'Cơ cấu tổ chức': 'Company Organizational Structure',
+  'Tìm Phòng Hội Nghị Trung Tâm': 'Locating Central Conference Room',
+  'Phòng Hội Nghị Trung Tâm': 'Central Conference Room',
+  'Phòng hội nghị trung tâm': 'Central Conference Room',
+  'Phòng hội nghị': 'Conference Room',
+  'Ngã ba & Lối rẽ': 'T-Junction & Turns',
+  'La bàn & Vòng xuyến': 'Compass Navigation & Roundabouts',
+  'Từ bối cảnh lịch sử sang Nguyên nhân cốt lõi': 'From Historical Context to Root Causes',
+  'Bối cảnh lịch sử': 'Historical Context',
+  'Nguyên nhân cốt lõi': 'Root Causes',
+  'Phản biện & Bất ngờ': 'Contrasting & Counter-intuitive Evidence',
+  'Quản lý chi tiêu sinh viên': 'Student Expense Management',
+  'Quản lý rác thải nhựa': 'Plastic Waste Management'
 };
 
 const KNOWN_CATEGORY_MAP = {
@@ -162,7 +224,38 @@ const KNOWN_CATEGORY_MAP = {
   'History & Archaeology': 'History & Archaeology',
   'Environmental Science': 'Environmental Science',
   'Psychology & Physiology': 'Psychology & Physiology',
-  'IELTS Reading Matching Headings': 'IELTS Reading Matching Headings'
+  'IELTS Reading Matching Headings': 'IELTS Reading Matching Headings',
+  'Daily Conversation & Travel': 'Daily Conversation & Travel',
+  'Campus Services': 'Campus Services',
+  'Customer Service': 'Customer Service',
+  'Academic Lecture & Archaeology': 'Academic Lecture & Archaeology',
+  'Evolutionary Biology': 'Evolutionary Biology',
+  'Personal Names & Addresses': 'Personal Names & Addresses',
+  'Numbers & Postcodes': 'Numbers & Postcodes',
+  'Dates & Currency': 'Dates & Currency',
+  'Phone Numbers': 'Phone Numbers',
+  'Personal Names': 'Personal Names',
+  'Travel Schedule': 'Travel Schedule',
+  'Transport Schedule': 'Transport Schedule',
+  'Workshops & Equipment': 'Workshops & Equipment',
+  'Academic Discussion': 'Academic Discussion',
+  'Business & Management': 'Business & Management',
+  'Campus & Facility Layout': 'Campus & Facility Layout',
+  'Town & Park Navigation': 'Town & Park Navigation',
+  'Academic Signposting (Part 4)': 'Academic Signposting (Part 4)',
+  'Marine Biology Lecture': 'Marine Biology Lecture',
+  'Chép chính tả': 'Dictation Practice',
+  'Đánh vần & Con số': 'Spelling & Numbers',
+  'Bẫy nhiễu nghe hiểu': 'Distractor Traps',
+  'Bản đồ & Định hướng': 'Maps & Directions',
+  'Tín hiệu chuyển đoạn': 'Signposting Signals',
+  'Dịch vụ & Đời sống': 'Daily Life & Services',
+  'Thủ tục sinh viên': 'Student Procedures',
+  'Giao thông công cộng': 'Public Transport',
+  'Mở Rộng Ý A.R.E.A': 'A.R.E.A Expansion',
+  'Từ Đệm Tự Nhiên': 'Natural Fillers',
+  'Collocations Tự Nhiên': 'Natural Collocations',
+  'Phản Biện Đa Chiều Part 3': 'Part 3 Two-Sided Debate'
 };
 
 /**
@@ -238,6 +331,74 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       [/bảo mật thông tin/gi, 'Cybersecurity'],
       [/lịch sử và văn hóa/gi, 'History & Culture'],
       [/di sản văn hóa/gi, 'Cultural Heritage'],
+
+      // Listening Phrases
+      [/dịch vụ thẻ thành viên/gi, 'Membership Card Services'],
+      [/thẻ thành viên/gi, 'Membership Card'],
+      [/dịch vụ khách hàng/gi, 'Customer Service'],
+      [/thủ tục sinh viên/gi, 'Student Procedures'],
+      [/đăng ký thông tin lưu trú khách sạn/gi, 'Hotel Accommodation Registration'],
+      [/lưu trú khách sạn/gi, 'Hotel Accommodation'],
+      [/mượn tài liệu thư viện trường/gi, 'University Library Borrowing'],
+      [/mượn tài liệu thư viện/gi, 'Library Book Borrowing'],
+      [/lịch bảo dưỡng xe định kỳ/gi, 'Periodic Vehicle Maintenance'],
+      [/bảo dưỡng xe định kỳ/gi, 'Periodic Vehicle Maintenance'],
+      [/thảo luận về dự án bảo tồn nguồn nước/gi, 'Water Conservation Project Discussion'],
+      [/bảo tồn nguồn nước/gi, 'Water Conservation'],
+      [/phân tích chiến lược phát triển đô thị/gi, 'Urban Development Strategy Analysis'],
+      [/chiến lược phát triển đô thị/gi, 'Urban Development Strategy'],
+      [/phát triển đô thị/gi, 'Urban Development'],
+      [/thuyết trình khảo cổ học thời kỳ đồ đồng/gi, 'Bronze Age Archaeology Presentation'],
+      [/khảo cổ học thời kỳ đồ đồng/gi, 'Bronze Age Archaeology'],
+      [/thời kỳ đồ đồng/gi, 'Bronze Age'],
+      [/nghiên cứu tiến hóa hành vi linh trưởng/gi, 'Primate Behavioral Evolution Study'],
+      [/tiến hóa hành vi linh trưởng/gi, 'Primate Behavioral Evolution'],
+      [/hành vi linh trưởng/gi, 'Primate Behavior'],
+      [/tên đường phố dễ nhầm lẫn/gi, 'Confusable Street Names'],
+      [/tên đường phố/gi, 'Street Names'],
+      [/đuôi -teen vs -ty và mã bưu chính/gi, 'Distinguishing -teen vs -ty & UK Postcodes'],
+      [/mã bưu chính/gi, 'UK Postcodes'],
+      [/mã bưu điện/gi, 'Postcodes'],
+      [/số điện thoại/gi, 'Phone Numbers'],
+      [/ngày tháng & số tiền có phí đặt cọc hoàn lại/gi, 'Dates & Refundable Deposit Amounts'],
+      [/phí đặt cọc hoàn lại/gi, 'Refundable Deposit Fee'],
+      [/số tiền đặt cọc/gi, 'Deposit Amount'],
+      [/bẫy số lặp & số không trong số điện thoại/gi, 'Double Numbers & Zero in Phone Numbers'],
+      [/số lặp & số không/gi, 'Double Numbers & Zero'],
+      [/đánh vần họ tên người Scotland \/ Ireland/gi, 'Scottish / Irish Surnames Spelling'],
+      [/ngày thi khởi hành/gi, 'Departure Date & Time Traps'],
+      [/thời gian khởi hành xe buýt/gi, 'Bus Departure Time'],
+      [/thời gian khởi hành/gi, 'Departure Time'],
+      [/khởi hành xe buýt/gi, 'Bus Departure'],
+      [/đồ dùng được ban tổ chức chuẩn bị sẵn/gi, 'Equipment Provided by Organizers'],
+      [/ban tổ chức chuẩn bị sẵn/gi, 'Equipment Provided by Organizers'],
+      [/ban tổ chức/gi, 'Organizers'],
+      [/đề tài bài tập nhóm/gi, 'Group Project Topic'],
+      [/bài tập nhóm/gi, 'Group Project'],
+      [/cơ cấu tổ chức công ty/gi, 'Company Organizational Structure'],
+      [/cơ cấu tổ chức/gi, 'Company Organizational Structure'],
+      [/tìm phòng hội nghị trung tâm/gi, 'Locating Central Conference Room'],
+      [/phòng hội nghị trung tâm/gi, 'Central Conference Room'],
+      [/phòng hội nghị/gi, 'Conference Room'],
+      [/ngã ba & lối rẽ/gi, 'T-Junction & Turns'],
+      [/ngã ba/gi, 'T-Junction'],
+      [/lối rẽ/gi, 'Turns'],
+      [/la bàn & vòng xuyến/gi, 'Compass Navigation & Roundabouts'],
+      [/vòng xuyến/gi, 'Roundabouts'],
+      [/từ bối cảnh lịch sử sang nguyên nhân cốt lõi/gi, 'From Historical Context to Root Causes'],
+      [/từ bối cảnh lịch sử sang/gi, 'From Historical Context to'],
+      [/nguyên nhân cốt lõi/gi, 'Root Causes'],
+      [/bối cảnh lịch sử/gi, 'Historical Context'],
+      [/phản biện & bất ngờ/gi, 'Contrasting & Counter-intuitive Evidence'],
+      [/quản lý chi tiêu sinh viên/gi, 'Student Expense Management'],
+      [/quản lý rác thải nhựa/gi, 'Plastic Waste Management'],
+      [/quản lý tài chính/gi, 'Financial Management'],
+      [/đối diện/gi, 'opposite'],
+      [/phía bắc/gi, 'North'],
+      [/phía nam/gi, 'South'],
+      [/phía đông/gi, 'East'],
+      [/phía tây/gi, 'West'],
+
       [/\bcủa\b/gi, 'of'],
       [/\bvà\b/gi, '&'],
       [/\btrong\b/gi, 'in'],
@@ -256,6 +417,64 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       }
     }
     return s.trim();
+  };
+
+  const translatePrefix = (p) => {
+    if (!p) return '';
+    const cleanP = p.trim();
+    const map = {
+      'Dictation Cấp 1 (Cơ bản)': 'Dictation Level 1 (Basic)',
+      'Dictation Cấp 2 (Thực chiến)': 'Dictation Level 2 (Combat)',
+      'Dictation Cấp 3 (Học thuật)': 'Dictation Level 3 (Academic)',
+      'Dictation Cấp 1': 'Dictation Level 1',
+      'Dictation Cấp 2': 'Dictation Level 2',
+      'Dictation Cấp 3': 'Dictation Level 3',
+      'Dictation Thực Chiến': 'Combat Dictation',
+      'Dictation Cơ Bản': 'Basic Dictation',
+      'Dictation Học Thuật': 'Academic Dictation',
+      'Dictation Nâng Cao': 'Advanced Dictation',
+      'Dictation': 'Dictation',
+      'Chép chính tả': 'Dictation',
+      'Đánh vần tên riêng & Mã bưu chính UK': 'Proper Names & Postcodes',
+      'Đánh vần tên riêng & Mã bưu chính': 'Proper Names & Postcodes',
+      'Đánh vần & Con số': 'Spelling & Numbers',
+      'Đánh vần': 'Spelling',
+      'Bẫy tự đính chính (Self-Correction Trap)': 'Self-Correction Trap',
+      'Bẫy tự đính chính': 'Self-Correction Trap',
+      'Bẫy phủ định ngầm (Implicit Negation)': 'Implicit Negation Trap',
+      'Bẫy phủ định ngầm': 'Implicit Negation Trap',
+      'Bẫy Người thứ 2 phản bác (Disagreement Trap)': 'Disagreement Trap',
+      'Bẫy Người thứ 2 phản bác': 'Disagreement Trap',
+      'Bẫy Quá khứ vs Hiện tại (Temporal Shift Trap)': 'Temporal Shift Trap',
+      'Bẫy Quá khứ vs Hiện tại': 'Temporal Shift Trap',
+      'Bẫy đổi ý': 'Mind-Change Distractor Trap',
+      'Bẫy gây nhiễu': 'Distractor Trap',
+      'Phá bẫy đổi ý': 'Mind-Change Distractor Hunter',
+      'Định hướng ngã ba & Lối rẽ': 'T-Junction & Turn Navigation',
+      'Định hướng La bàn & Vòng xuyến': 'Compass Navigation & Roundabouts',
+      'Định hướng sơ đồ': 'Map Navigation',
+      'Định hướng bản đồ': 'Map Navigation',
+      'Bản đồ & Định hướng': 'Maps & Directions',
+      'Bản đồ & Hướng đi': 'Maps & Directions',
+      'Tín hiệu Chuyển Luận Điểm': 'Signposting Shift',
+      'Tín hiệu Phản biện & Bất ngờ': 'Signposting Contrast',
+      'Bắt tín hiệu chuyển ý': 'Signposting Catcher',
+      'Tín hiệu chuyển đoạn': 'Signposting Signals',
+      'Từ nối lập luận': 'Argumentative Transitions',
+      'Phân biệt bẫy Not Given vs False': 'Not Given vs False Trap',
+      'Phân biệt bẫy Not Given vs True': 'Not Given vs True Trap',
+      'Bẫy suy diễn Not Given vs False': 'Not Given vs False Trap',
+      'Truy tìm Paraphrase': 'Paraphrase Hunter',
+      'Phá bẫy Matching Headings': 'Matching Headings Trap',
+      'Giải phẫu câu phức': 'Complex Sentence S-V-O',
+      'Sửa lỗi': 'Error Spotting',
+      'Luyện Paraphrase': 'Paraphrase Drill',
+      'Collocation Học Thuật': 'Academic Collocations',
+      'A.R.E.A Mở rộng ý': 'A.R.E.A Expansion',
+      'Phản biện Part 3': 'Part 3 Rebuttal'
+    };
+    if (map[cleanP]) return map[cleanP];
+    return translateTopicSubtitle(cleanP);
   };
 
   // 3. Pattern / Regex-based translations for dynamic drills
@@ -302,10 +521,115 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
     return `Academic Collocations: ${translateTopicSubtitle(RegExp.$1)}`;
   }
 
+  // Listening Specific Regex Patterns
+  if (/^(Dictation Cấp 1\s*\(Cơ bản\)|Dictation Level 1\s*\(Basic\)):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Dictation Level 1 (Basic): ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation Cấp 2\s*\(Thực chiến\)|Dictation Level 2\s*\(Combat\)):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Dictation Level 2 (Combat): ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation Cấp 3\s*\(Học thuật\)|Dictation Level 3\s*\(Academic\)):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Dictation Level 3 (Academic): ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation Thực Chiến|Combat Dictation):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Combat Dictation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation Cơ Bản|Basic Dictation):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Basic Dictation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation Học Thuật|Academic Dictation):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Academic Dictation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation Nâng Cao|Advanced Dictation):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Advanced Dictation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Dictation|Chép chính tả):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Dictation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^Đánh vần tên đường phố\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Street Name Spelling Traps ${translateTopicSubtitle(RegExp.$1)}`;
+  }
+  if (/^Phân biệt đuôi -teen vs -ty\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Distinguishing -teen vs -ty & UK Postcodes';
+  }
+  if (/^Ngày tháng & Số tiền\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Dates & Refundable Deposit Amounts';
+  }
+  if (/^Bẫy số lặp & Số không\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Double Numbers & Zero in Phone Numbers';
+  }
+  if (/^Đánh vần họ tên\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Scottish / Irish Surnames Spelling (Mac / Mc)';
+  }
+  if (/^Ngày thi khởi hành\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Departure Date & Time Traps';
+  }
+  if (/^(Đánh vần tên riêng & Mã bưu chính UK|Đánh vần tên riêng & Mã bưu chính):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Proper Names & Postcodes: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Đánh vần|Spelling):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Spelling: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Bẫy tự đính chính\s*\(Self-Correction Trap\)|Bẫy tự đính chính|Self-Correction Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Self-Correction Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Bẫy phủ định ngầm\s*\(Implicit Negation\)|Bẫy phủ định ngầm|Implicit Negation Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Implicit Negation Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Bẫy Người thứ 2 phản bác\s*\(Disagreement Trap\)|Bẫy Người thứ 2 phản bác|Disagreement Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Disagreement Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Bẫy Quá khứ vs Hiện tại\s*\(Temporal Shift Trap\)|Bẫy Quá khứ vs Hiện tại|Temporal Shift Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Temporal Shift Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Bẫy đổi ý|Bẫy gây nhiễu|Bẫy Distractor|Phá bẫy đổi ý):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Mind-Change Distractor Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Định hướng ngã ba & Lối rẽ|T-Junction & Turn Navigation):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `T-Junction & Turn Navigation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^Định hướng La bàn & Vòng xuyến\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Compass Navigation & Roundabouts';
+  }
+  if (/^(Định hướng sơ đồ|Map Navigation|Định hướng bản đồ):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Map Navigation: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Bản đồ & Định hướng|Bản đồ & Hướng đi):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Maps & Directions: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Tín hiệu Chuyển Luận Điểm|Signposting Shift):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Signposting: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^Tín hiệu Phản biện & Bất ngờ\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Signposting: Contrasting & Counter-intuitive Evidence';
+  }
+  if (/^(Bắt tín hiệu chuyển ý|Bắt tín hiệu|Signposting Catcher):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Signposting Catcher: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+  if (/^(Tín hiệu chuyển đoạn|Tín hiệu Part 4):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Part 4 Signposting: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+
   // 4. If title contains English in parentheses e.g. "Giới từ... (Prepositions of Data)"
   const parenMatch = cleanTitle.match(/\(([^)]+)\)$/);
   if (parenMatch && /[a-zA-Z\s]{4,}/.test(parenMatch[1])) {
     return (isCommunityTagged ? '✨ [AI Community] ' : '') + parenMatch[1].trim();
+  }
+
+  // 5. Intelligent Colon-Separated Fallback (e.g. "Prefix: Suffix")
+  if (cleanTitle.includes(':')) {
+    const parts = cleanTitle.split(':');
+    const prefix = parts[0].trim();
+    const suffix = parts.slice(1).join(':').trim();
+    const transPrefix = translatePrefix(prefix);
+    const transSuffix = translateTopicSubtitle(suffix);
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `${transPrefix}: ${transSuffix}`;
+  }
+
+  // 6. Generic single-phrase topic fallback
+  const fallback = translateTopicSubtitle(cleanTitle);
+  if (fallback && fallback !== cleanTitle) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + fallback;
   }
 
   return rawTitle;
@@ -322,7 +646,10 @@ export function getLocalizedDrillCategory(drill, isEn = false) {
   if (!isEn) return drill.category || '';
   if (drill.categoryEn) return drill.categoryEn;
   const raw = drill.category || '';
-  return KNOWN_CATEGORY_MAP[raw] || raw;
+  if (KNOWN_CATEGORY_MAP[raw]) return KNOWN_CATEGORY_MAP[raw];
+  const translated = getLocalizedDrillTitle({ title: raw }, true);
+  if (translated && translated !== raw) return translated;
+  return raw;
 }
 
 /**
@@ -451,12 +778,61 @@ export function getLocalizedDrillExplanation(itemOrExplanation, isEn = false) {
     [/làm lu mờ, gây bối rối, đánh hỏa mù/gi, 'to obscure, confuse, obfuscate'],
     [/làm cải thiện, làm cho tốt lên/gi, 'to improve, make better, ameliorate'],
     [/làm trầm trọng thêm, tồi tệ đi/gi, 'to exacerbate, worsen'],
-    [/làm trầm trọng thêm/gi, 'to exacerbate, worsen']
+    [/làm trầm trọng thêm/gi, 'to exacerbate, worsen'],
+
+    // Listening Specific Explanations & Questions
+    [/Cụm từ nào báo hiệu người nói đang chuyển sang phân tích Nguyên nhân\s*\(Primary catalyst\)\?/gi, 'Which phrase signals that the speaker is shifting to the primary catalyst?'],
+    [/Từ ngữ tín hiệu nào báo hiệu kết quả thực tế trái ngược với dự đoán ban đầu\?/gi, 'Which signposting signal indicates that the actual result contradicts initial predictions?'],
+    [/Cụm từ nào báo hiệu/gi, 'Which phrase signals'],
+    [/Từ ngữ tín hiệu nào báo hiệu/gi, 'Which signpost signal indicates'],
+    [/trái ngược với dự đoán ban đầu/gi, 'contradicts the initial prediction'],
+    [/chuyển sang phân tích/gi, 'shifting to analyzing'],
+    [/Người nói đưa ra 3 mốc giờ liên tiếp/gi, 'The speaker mentions 3 consecutive timestamps'],
+    [/Thí sinh vội vàng sẽ ghi ngay đáp án/gi, 'Hasty test-takers will prematurely choose option'],
+    [/Từ nối đổi ý/gi, 'The self-correcting discourse marker'],
+    [/là dấu hiệu chốt thông tin cuối cùng:?/gi, 'is the definitive signal confirming the final choice:'],
+    [/Bẫy dùng cụm/gi, 'The trap utilizes the phrase'],
+    [/nhưng đảo ngược lại với/gi, 'but reverses course with'],
+    [/Giấy vẽ và bút màu đã có sẵn; chỉ có tạp dề \(apron\) là không còn được cấp, người tham gia bắt buộc phải tự mang theo\./gi, 'Drafting paper and colored pencils are provided; only aprons are no longer supplied, so participants must bring their own.'],
+    [/Liam đề xuất A \(Tidal power\), nhưng Chloe phản bác do thiếu dữ liệu và đề xuất B \(Geothermal\)\. Liam đồng ý với "Fair enough, let us go with that"\./gi, 'Liam proposes A (Tidal power), but Chloe objects due to lack of data and suggests B (Geothermal). Liam agrees with "Fair enough, let us go with that".'],
+    [/Đề tài cuối cùng được hai sinh viên thống nhất chọn là/gi, 'The final presentation topic mutually agreed upon is'],
+    [/Dùng cấu trúc "used to be" cho Manchester, "briefly relocated" cho Birmingham, và chốt hiện tại với/gi, 'Uses "used to be" for Manchester, "briefly relocated" for Birmingham, and confirms current location with'],
+    [/Trụ sở hiện tại của công ty nằm ở/gi, 'The company’s current headquarters is located in'],
+    [/Theo lộ trình:\s*Cổng nam -> đi thẳng qua đài phun nước -> ngã ba rẽ trái -> đi qua hồ nước -> Phòng hội nghị nằm ngay bên tay phải, đối diện bãi đậu xe đạp\./gi, 'Following the route: South entrance -> straight past fountain -> turn left at T-junction -> walk past the pond -> Conference Center is on the right-hand side, opposite bike racks.'],
+    [/Từ quầy du lịch đi về hướng Bắc đến vòng xuyến -> rẽ lối đầu tiên về phía Đông dọc đường River Lane -> cối xay cổ nằm ở bờ phía Bắc, ngay trước cây cầu bộ hành\./gi, 'From tourist kiosk head north to roundabout -> take first exit eastward along River Lane -> historic mill is on northern bank, just before footbridge.'],
+    [/Bẫy âm dễ nhầm:\s*/gi, 'Confusable sound trap: '],
+    [/Chữ cái V \/viː\/ và B \/biː\/, chữ R \/ɑːr\/ câm trong giọng Anh\./gi, 'Letters V /viː/ and B /biː/, silent R /ɑːr/ in British accent.'],
+    [/Người nói đánh vần rõ:\s*/gi, 'The speaker clearly spells: '],
+    [/Bẫy số đảo ngược:\s*/gi, 'Inverted digits trap: '],
+    [/Postcode UK luôn có cấu trúc chữ - số - khoảng cách\./gi, 'UK postcodes always follow the letter - digit - space format.'],
+    [/Mã bưu chính chuẩn xác là/gi, 'The correct postcode is'],
+    [/Người nói cố tình chỉnh lại số máy nhánh để đánh lạc hướng\./gi, 'The speaker intentionally corrects the extension number as a distractor.'],
+    [/Bẫy số 95 \(giá chuẩn\), 15 \(ngày hết hạn\), 10 \(tiền cọc\)\. Giá vé sớm thực tế là £75\./gi, 'Trap numbers 95 (standard fee), 15 (deadline), 10 (deposit). The actual early-bird fare is £75.'],
+    [/Giá vé đăng ký sớm là 75 bảng \(£75\)\./gi, 'The early bird registration ticket is seventy-five pounds (£75).'],
+    [/Cách đọc đặc trưng UK:\s*"double-seven double-oh" = 7700, "five double-two" = 522\./gi, 'Characteristic UK pronunciation: "double-seven double-oh" = 7700, "five double-two" = 522.'],
+    [/Dãy số chuẩn là/gi, 'The correct number sequence is'],
+    [/Bẫy viết hoa chữ I ở giữa \(MacIntyre\) và phân biệt Y với I\./gi, 'Trap of capitalizing middle letter I (MacIntyre) and distinguishing Y from I.'],
+    [/Giáo viên đánh vần/gi, 'The speaker spells'],
+    [/Không điền ngày trong tuần \(Wednesday\) hoặc giờ \(8:45\) nếu đề chỉ hỏi ngày khởi hành\./gi, 'Do not write the day of week (Wednesday) or time (8:45) when only the departure date is requested.'],
+    [/Ngày xuất bến là/gi, 'The departure date is'],
+    [/Chú ý nối âm:\s*/gi, 'Note connected speech: '],
+    [/Chú ý từ ghép/gi, 'Note compound word'],
+    [/và âm đuôi số nhiều/gi, 'and plural ending sounds'],
+    [/Chú ý âm đuôi động cơ/gi, 'Note ending sound of'],
+    [/Chú ý nuốt âm và âm đuôi:\s*/gi, 'Note elision and ending sounds: '],
+    [/Chú ý trạng từ chỉ mức độ/gi, 'Note degree adverb'],
+    [/Chú ý các thuật ngữ học thuật phức tạp:\s*/gi, 'Note complex academic terminology: '],
+    [/Thuật ngữ học thuật/gi, 'Academic terminology'],
+    [/Cụm "let us now turn our attention to \[X\]\.\.\." là tín hiệu chuyển ý kinh điển trong Part 4 giúp thí sinh biết bài nói chuẩn bị trả lời cho câu hỏi tiếp theo trong đề thi\./gi, '"let us now turn our attention to [X]..." is a textbook Part 4 signpost signaling that the lecture is transitioning to the next question on the exam sheet.'],
+    [/"Surprisingly, however\.\.\." là từ nối báo hiệu kết quả đi ngược lại giả thuyết ban đầu \(thường là mấu chốt để trả lời câu hỏi điền từ hoặc trắc nghiệm\)\./gi, '"Surprisingly, however..." is a contrasting signpost indicating an outcome contrary to initial hypotheses (frequently crucial for gap-fills and MCQs).']
   ];
 
   for (const [pattern, repl] of explanationReplacements) {
     text = text.replace(pattern, repl);
   }
+
+  // Remove Vietnamese text inside parenthesis if preceded by English title
+  text = text.replace(/\s*\([^)]*[\u00C0-\u1EF9]+[^)]*\)/g, '');
 
   return text.trim();
 }
@@ -524,6 +900,21 @@ export function getLocalizedVocabOption(optionOrText, isEn = false) {
 
   if (KNOWN_OPTION_TRANSLATIONS[lower]) {
     return KNOWN_OPTION_TRANSLATIONS[lower];
+  }
+
+  // Parenthetical notes in options e.g. "8:15 AM (Thời gian dự kiến ban đầu)"
+  let res = clean
+    .replace(/\(Thời gian dự kiến ban đầu\)/gi, '(Initial scheduled time)')
+    .replace(/\(Thời gian điều chỉnh lần 1\)/gi, '(First revised time)')
+    .replace(/\(Thời gian chốt cuối cùng\)/gi, '(Final confirmed time)')
+    .replace(/\(Thời gian dự kiến\)/gi, '(Scheduled time)')
+    .replace(/\(Thời gian chốt\)/gi, '(Confirmed time)')
+    .replace(/\(Giá chuẩn\)/gi, '(Standard price)')
+    .replace(/\(Giá ưu đãi\)/gi, '(Discounted price)')
+    .replace(/\(Tùy chọn bổ sung\)/gi, '(Additional option)');
+
+  if (res !== clean) {
+    return res;
   }
 
   // Regex rule matching

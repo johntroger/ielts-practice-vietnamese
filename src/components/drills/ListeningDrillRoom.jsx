@@ -73,7 +73,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
-                      {getLocalizedDrillCategory(currentDictation, isEn)} • {currentDictation.difficulty}
+                      {getLocalizedDrillCategory(currentDictation, isEn)} • {isEn ? (currentDictation.difficulty?.replace(/Cơ bản/gi, 'Basic').replace(/Thực chiến/gi, 'Combat').replace(/Học thuật/gi, 'Academic')) : currentDictation.difficulty}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentDictation, isEn)}
@@ -84,7 +84,7 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentDictation.id}
                     audioText={currentDictation.audioText || currentDictation.ttsText}
-                    title={`Dictation: ${getLocalizedDrillTitle(currentDictation, isEn)}`}
+                    title={isEn ? `Dictation: ${getLocalizedDrillTitle(currentDictation, isEn)}` : `Chép chính tả: ${getLocalizedDrillTitle(currentDictation, isEn)}`}
                     accent="en-GB"
                     currentUser={currentUser}
                   />
@@ -220,7 +220,7 @@ export default function ListeningDrillRoom({
                 <div className="space-y-4">
                   <div>
                     <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
-                      {getLocalizedDrillCategory(currentSpelling, isEn)} • {isEn ? 'Type' : 'Dạng'} {currentSpelling.subType}
+                      {getLocalizedDrillCategory(currentSpelling, isEn)} • {isEn ? 'Type' : 'Dạng'} {isEn ? String(currentSpelling.subType || '').replace(/spelling/gi, 'Spelling').replace(/numbers/gi, 'Numbers').replace(/currency-date/gi, 'Currency & Date') : currentSpelling.subType}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentSpelling, isEn)}
@@ -239,7 +239,11 @@ export default function ListeningDrillRoom({
                   <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-1">
                     <p className="font-bold">{isEn ? 'Task Prompt:' : 'Đề bài yêu cầu:'}</p>
                     <p className="text-slate-700">
-                      {currentSpelling.questionPrompt || (isEn ? 'Listen to the native speaker and type the correct keyword or numbers into the box below.' : 'Nghe người bản xứ đọc / đánh vần và gõ lại đúng từ khóa hoặc con số vào ô bên dưới.')}
+                      {isEn && currentSpelling.questionPromptEn 
+                        ? currentSpelling.questionPromptEn 
+                        : (isEn && currentSpelling.questionPrompt 
+                            ? getLocalizedDrillExplanation(currentSpelling.questionPrompt, true) 
+                            : (currentSpelling.questionPrompt || (isEn ? 'Listen to the native speaker and type the correct keyword or numbers into the box below.' : 'Nghe người bản xứ đọc / đánh vần và gõ lại đúng từ khóa hoặc con số vào ô bên dưới.')))}
                     </p>
                     {currentSpelling.trapNote && (
                       <p className="text-indigo-700 font-medium pt-1 border-t border-indigo-200/60">
@@ -583,7 +587,7 @@ export default function ListeningDrillRoom({
                           <div className="pt-2 border-t border-emerald-200/60 flex flex-wrap gap-1.5">
                             {currentMap.spatialClues.map((clue, i) => (
                               <span key={i} className="px-2 py-0.5 rounded-md bg-emerald-100/90 text-emerald-800 font-mono text-[10px] font-bold">
-                                📍 {clue}
+                                📍 {isEn ? getLocalizedDrillExplanation(clue, true) : clue}
                               </span>
                             ))}
                           </div>
