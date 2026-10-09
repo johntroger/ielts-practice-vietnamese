@@ -356,5 +356,53 @@ it('MicroDrillAudioBar.jsx uses useTranslation and contains bilingual labels', (
   assert(content.includes('Exam Aligned Native TTS'), 'Must contain English Exam Aligned badge');
 });
 
+// 12. Audit of Remaining Micro-Drills Rooms from 5 Screenshots
+it('Translates all items from the 5 uploaded screenshots (General, Writing, Reading) correctly into English', () => {
+  // Screenshot 1: General Studio - Complex Sentence S-V-O
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Quy hoạch Đô thị & Giao thông' }, true), 'Complex Sentence S-V-O: Urban Planning & Transport');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Xu hướng làm việc từ xa' }, true), 'Complex Sentence S-V-O: Remote Work Trends');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Công nghệ & Môi trường làm việc' }, true), 'Complex Sentence S-V-O: Technology & Workplace Environment');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Vai trò of Green Spaces đô thị' }, true), 'Complex Sentence S-V-O: Role of Urban Green Spaces');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Hạ tầng đô thị hiện đại' }, true), 'Complex Sentence S-V-O: Modern Urban Infrastructure');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Quá trình Urbanization' }, true), 'Complex Sentence S-V-O: Urbanization Process');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Quy hoạch đô thị và Sức khỏe cộng đồng' }, true), 'Complex Sentence S-V-O: Urban Planning & Public Health');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Quy hoạch đô thị bền vững' }, true), 'Complex Sentence S-V-O: Sustainable Urban Planning');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Complex Sentence S-V-O: Quy hoạch đô thị & Môi trường' }, true), 'Complex Sentence S-V-O: Urban Planning & Environment');
+
+  // Screenshot 2: Writing Drills - Intro/Body Paraphrase
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Drill: Câu Nguyên Nhân - Kết Quả in Writing Task 2' }, true), 'Paraphrase Drill: Cause & Effect Sentences in Writing Task 2');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Drill: Câu Nguyên Nhân - Kết Quả' }, true), 'Paraphrase Drill: Cause & Effect Sentences');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Drill: Câu Nguyên Nhân - Hậu Quả' }, true), 'Paraphrase Drill: Cause & Consequence Sentences');
+
+  // Screenshot 3: Writing Drills - Error Spotting
+  assert.strictEqual(getLocalizedDrillTitle({ title: "Error Spotting: danh từ không đếm được: 'Evidence' in IELTS Writing" }, true), "Error Spotting: Uncountable Noun: 'Evidence' in IELTS Writing");
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: dùng danh từ định lượng và sự hòa hợp chủ-vị' }, true), 'Error Spotting: Quantifiers & Subject-Verb Agreement');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: dùng động từ xu hướng in biểu đồ tĩnh (Static Charts)' }, true), 'Error Spotting: Trend Verbs in Static Charts');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: dùng động từ xu hướng in biểu đồ tĩnh (Static Chart)' }, true), 'Error Spotting: Trend Verbs in Static Charts');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: Danh từ không đếm được & Quantifiers (Information)' }, true), 'Error Spotting: Uncountable Nouns & Quantifiers (Information)');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: Danh từ không đếm được & Sự hòa hợp Chủ ngữ - Động từ' }, true), 'Error Spotting: Uncountable Nouns & Subject-Verb Agreement');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: sự hòa hợp giữa chủ ngữ và động từ with danh động từ (Gerund)' }, true), 'Error Spotting: Subject-Verb Agreement with Gerunds');
+  assert.strictEqual(getLocalizedDrillTitle({ title: "Error Spotting: danh từ không đếm được 'Research' & Cách dùng lượng từ" }, true), "Error Spotting: Uncountable Noun 'Research' & Quantifiers");
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Error Spotting: Động từ Xu hướng in Biểu đồ Tĩnh (Task 1)' }, true), 'Error Spotting: Trend Verbs in Static Charts (Task 1)');
+
+  // Screenshot 4: Reading Drills - True / False / Not Given Traps
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Tác động of Chế độ ăn Lưỡng Hà' }, true), 'Not Given vs False Trap: Impact of Mesopotamian Diet');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Tác động of vườn trên mái đối with năng lượng đô thị' }, true), 'Not Given vs False Trap: Impact of Rooftop Gardens on Urban Energy');
+  assert.strictEqual(getLocalizedDrillTitle({ title: '✨ [AI Community] Bẫy suy diễn Not Given vs True: Kiến trúc phỏng sinh học' }, true), '✨ [AI Community] Not Given vs True Trap: Biomimetic Architecture');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Mô hình Urban Agriculture' }, true), 'Not Given vs False Trap: Urban Agriculture Models');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Hiệu suất làm việc từ xa' }, true), 'Not Given vs False Trap: Remote Work Productivity');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Mô hình làm việc Hybrid và Năng suất' }, true), 'Not Given vs False Trap: Hybrid Work Model & Productivity');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Cây xanh đô thị và Urban Heat Island Effect' }, true), 'Not Given vs False Trap: Urban Trees & Urban Heat Island Effect');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Not Given vs False Trap: Tác động of Đèn đường LED đến An ninh Đô thị' }, true), 'Not Given vs False Trap: Impact of LED Streetlights on Urban Security');
+
+  // Screenshot 5: Reading Drills - Reading Paraphrase Hunter
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Hunter: Public Transit đô thị' }, true), 'Paraphrase Hunter: Urban Public Transit');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Hunter: Giao thông Đô thị' }, true), 'Paraphrase Hunter: Urban Transport');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Hunter: Quy hoạch Green Spaces' }, true), 'Paraphrase Hunter: Green Spaces Planning');
+  assert.strictEqual(getLocalizedDrillTitle({ title: '✨ [AI Community] Bắt cặp từ đồng nghĩa học thuật: Pin năng lượng mặt trời Perovskite' }, true), '✨ [AI Community] Paraphrase Hunter: Perovskite Solar Cells');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Hunter: Green Spaces đô thị' }, true), 'Paraphrase Hunter: Urban Green Spaces');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Hunter: Nông nghiệp Hiện đại' }, true), 'Paraphrase Hunter: Modern Agriculture');
+});
+
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);
 

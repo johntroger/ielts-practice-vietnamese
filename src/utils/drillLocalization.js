@@ -202,7 +202,59 @@ const KNOWN_TOPIC_SUBTITLE_MAP = {
   'Nguyên nhân cốt lõi': 'Root Causes',
   'Phản biện & Bất ngờ': 'Contrasting & Counter-intuitive Evidence',
   'Quản lý chi tiêu sinh viên': 'Student Expense Management',
-  'Quản lý rác thải nhựa': 'Plastic Waste Management'
+  'Quản lý rác thải nhựa': 'Plastic Waste Management',
+
+  // General Studio S-V-O Topics
+  'Quy hoạch Đô thị & Giao thông': 'Urban Planning & Transport',
+  'Quy hoạch đô thị & Giao thông': 'Urban Planning & Transport',
+  'Quy hoạch Đô thị & Môi trường': 'Urban Planning & Environment',
+  'Quy hoạch đô thị & Môi trường': 'Urban Planning & Environment',
+  'Quy hoạch đô thị và Sức khỏe cộng đồng': 'Urban Planning & Public Health',
+  'Quy hoạch đô thị bền vững': 'Sustainable Urban Planning',
+  'Xu hướng làm việc từ xa': 'Remote Work Trends',
+  'Công nghệ & Môi trường làm việc': 'Technology & Workplace Environment',
+  'Vai trò of Green Spaces đô thị': 'Role of Urban Green Spaces',
+  'Vai trò của Green Spaces đô thị': 'Role of Urban Green Spaces',
+  'Hạ tầng đô thị hiện đại': 'Modern Urban Infrastructure',
+  'Quá trình Urbanization': 'Urbanization Process',
+  'Quá trình đô thị hóa': 'Urbanization Process',
+
+  // Writing Paraphrase & Error Spotting Topics
+  'Câu Nguyên Nhân - Kết Quả in Writing Task 2': 'Cause & Effect Sentences in Writing Task 2',
+  'Câu Nguyên Nhân - Kết Quả trong Writing Task 2': 'Cause & Effect Sentences in Writing Task 2',
+  'Câu Nguyên Nhân - Kết Quả': 'Cause & Effect Sentences',
+  'Câu Nguyên Nhân - Hậu Quả': 'Cause & Consequence Sentences',
+  "danh từ không đếm được: 'Evidence' in IELTS Writing": "Uncountable Noun: 'Evidence' in IELTS Writing",
+  'dùng danh từ định lượng và sự hòa hợp chủ-vị': 'Quantifiers & Subject-Verb Agreement',
+  'dùng động từ xu hướng in biểu đồ tĩnh (Static Charts)': 'Trend Verbs in Static Charts',
+  'dùng động từ xu hướng in biểu đồ tĩnh (Static Chart)': 'Trend Verbs in Static Charts',
+  'dùng động từ xu hướng trong biểu đồ tĩnh (Static Charts)': 'Trend Verbs in Static Charts',
+  'Danh từ không đếm được & Quantifiers (Information)': 'Uncountable Nouns & Quantifiers (Information)',
+  'Danh từ không đếm được & Sự hòa hợp Chủ ngữ - Động từ': 'Uncountable Nouns & Subject-Verb Agreement',
+  'sự hòa hợp giữa chủ ngữ và động từ with danh động từ (Gerund)': 'Subject-Verb Agreement with Gerunds',
+  'sự hòa hợp giữa chủ ngữ và động từ với danh động từ (Gerund)': 'Subject-Verb Agreement with Gerunds',
+  "danh từ không đếm được 'Research' & Cách dùng lượng từ": "Uncountable Noun 'Research' & Quantifiers",
+  'Động từ Xu hướng in Biểu đồ Tĩnh (Task 1)': 'Trend Verbs in Static Charts (Task 1)',
+  'Động từ Xu hướng trong Biểu đồ Tĩnh (Task 1)': 'Trend Verbs in Static Charts (Task 1)',
+
+  // Reading TFNG & Paraphrase Topics
+  'Tác động of Chế độ ăn Lưỡng Hà': 'Impact of Mesopotamian Diet',
+  'Tác động của Chế độ ăn Lưỡng Hà': 'Impact of Mesopotamian Diet',
+  'Tác động of vườn trên mái đối with năng lượng đô thị': 'Impact of Rooftop Gardens on Urban Energy',
+  'Tác động của vườn trên mái đối với năng lượng đô thị': 'Impact of Rooftop Gardens on Urban Energy',
+  'Kiến trúc phỏng sinh học': 'Biomimetic Architecture',
+  'Mô hình Urban Agriculture': 'Urban Agriculture Models',
+  'Hiệu suất làm việc từ xa': 'Remote Work Productivity',
+  'Mô hình làm việc Hybrid và Năng suất': 'Hybrid Work Model & Productivity',
+  'Cây xanh đô thị và Urban Heat Island Effect': 'Urban Trees & Urban Heat Island Effect',
+  'Tác động of Đèn đường LED đến An ninh Đô thị': 'Impact of LED Streetlights on Urban Security',
+  'Tác động của Đèn đường LED đến An ninh Đô thị': 'Impact of LED Streetlights on Urban Security',
+  'Public Transit đô thị': 'Urban Public Transit',
+  'Giao thông Đô thị': 'Urban Transport',
+  'Quy hoạch Green Spaces': 'Green Spaces Planning',
+  'Pin năng lượng mặt trời Perovskite': 'Perovskite Solar Cells',
+  'Green Spaces đô thị': 'Urban Green Spaces',
+  'Nông nghiệp Hiện đại': 'Modern Agriculture'
 };
 
 const KNOWN_CATEGORY_MAP = {
@@ -480,6 +532,85 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       [/người mới bắt đầu/gi, 'Beginners'],
       [/nghiên cứu/gi, 'Research on'],
 
+      // S-V-O & Urban Planning & Work
+      [/quy hoạch đô thị & giao thông/gi, 'Urban Planning & Transport'],
+      [/quy hoạch đô thị & môi trường/gi, 'Urban Planning & Environment'],
+      [/quy hoạch đô thị và sức khỏe cộng đồng/gi, 'Urban Planning & Public Health'],
+      [/quy hoạch đô thị bền vững/gi, 'Sustainable Urban Planning'],
+      [/quy hoạch đô thị/gi, 'Urban Planning'],
+      [/quy hoạch green spaces/gi, 'Green Spaces Planning'],
+      [/quy hoạch/gi, 'Planning'],
+      [/giao thông đô thị/gi, 'Urban Transport'],
+      [/giao thông công cộng/gi, 'Public Transit'],
+      [/giao thông/gi, 'Transport'],
+      [/môi trường làm việc/gi, 'Workplace Environment'],
+      [/công nghệ & môi trường làm việc/gi, 'Technology & Workplace Environment'],
+      [/xu hướng làm việc từ xa/gi, 'Remote Work Trends'],
+      [/hiệu suất làm việc từ xa/gi, 'Remote Work Productivity'],
+      [/làm việc từ xa/gi, 'Remote Work'],
+      [/mô hình làm việc hybrid và năng suất/gi, 'Hybrid Work Model & Productivity'],
+      [/mô hình làm việc hybrid/gi, 'Hybrid Work Model'],
+      [/năng suất/gi, 'Productivity'],
+      [/hiệu suất/gi, 'Productivity'],
+      [/vai trò (?:của|of) green spaces đô thị/gi, 'Role of Urban Green Spaces'],
+      [/vai trò (?:của|of)/gi, 'Role of'],
+      [/green spaces đô thị/gi, 'Urban Green Spaces'],
+      [/hạ tầng đô thị hiện đại/gi, 'Modern Urban Infrastructure'],
+      [/hạ tầng đô thị/gi, 'Urban Infrastructure'],
+      [/quá trình urbanization/gi, 'Urbanization Process'],
+      [/quá trình đô thị hóa/gi, 'Urbanization Process'],
+      [/sức khỏe cộng đồng/gi, 'Public Health'],
+      [/cây xanh đô thị/gi, 'Urban Trees'],
+
+      // Writing Paraphrase & Error Spotting
+      [/câu nguyên nhân\s*-\s*kết quả\s*(?:trong|in)\s*writing task 2/gi, 'Cause & Effect Sentences in Writing Task 2'],
+      [/câu nguyên nhân\s*-\s*kết quả/gi, 'Cause & Effect Sentences'],
+      [/câu nguyên nhân\s*-\s*hậu quả/gi, 'Cause & Consequence Sentences'],
+      [/nguyên nhân\s*-\s*kết quả/gi, 'Cause & Effect'],
+      [/nguyên nhân\s*-\s*hậu quả/gi, 'Cause & Consequence'],
+      [/danh từ không đếm được:\s*'evidence'\s*(?:trong|in)\s*ielts writing/gi, "Uncountable Noun: 'Evidence' in IELTS Writing"],
+      [/danh từ không đếm được\s*'research'\s*&\s*cách dùng lượng từ/gi, "Uncountable Noun 'Research' & Quantifiers"],
+      [/danh từ không đếm được\s*&\s*quantifiers\s*\(([^)]+)\)/gi, 'Uncountable Nouns & Quantifiers ($1)'],
+      [/danh từ không đếm được\s*&\s*sự hòa hợp chủ ngữ\s*-\s*động từ/gi, 'Uncountable Nouns & Subject-Verb Agreement'],
+      [/danh từ không đếm được/gi, 'Uncountable Nouns'],
+      [/danh từ đếm được/gi, 'Countable Nouns'],
+      [/dùng danh từ định lượng và sự hòa hợp chủ-vị/gi, 'Quantifiers & Subject-Verb Agreement'],
+      [/dùng danh từ định lượng/gi, 'Using Quantifiers'],
+      [/danh từ định lượng/gi, 'Quantifiers'],
+      [/cách dùng lượng từ/gi, 'Quantifiers Usage'],
+      [/lượng từ/gi, 'Quantifiers'],
+      [/sự hòa hợp giữa chủ ngữ và động từ\s*(?:với|with)\s*danh động từ\s*\(gerund\)/gi, 'Subject-Verb Agreement with Gerunds'],
+      [/sự hòa hợp giữa chủ ngữ và động từ/gi, 'Subject-Verb Agreement'],
+      [/sự hòa hợp chủ-vị/gi, 'Subject-Verb Agreement'],
+      [/sự hòa hợp chủ ngữ\s*-\s*động từ/gi, 'Subject-Verb Agreement'],
+      [/dùng động từ xu hướng\s*(?:trong|in)\s*biểu đồ tĩnh\s*\(([^)]+)\)/gi, 'Trend Verbs in Static Charts ($1)'],
+      [/dùng động từ xu hướng\s*(?:trong|in)\s*biểu đồ tĩnh/gi, 'Trend Verbs in Static Charts'],
+      [/động từ xu hướng\s*(?:trong|in)\s*biểu đồ tĩnh\s*\(([^)]+)\)/gi, 'Trend Verbs in Static Charts ($1)'],
+      [/động từ xu hướng\s*(?:trong|in)\s*biểu đồ tĩnh/gi, 'Trend Verbs in Static Charts'],
+      [/động từ xu hướng/gi, 'Trend Verbs'],
+      [/biểu đồ tĩnh/gi, 'Static Charts'],
+
+      // Reading TFNG & Paraphrase
+      [/tác động (?:của|of) chế độ ăn lưỡng hà/gi, 'Impact of Mesopotamian Diet'],
+      [/chế độ ăn lưỡng hà/gi, 'Mesopotamian Diet'],
+      [/tác động (?:của|of) vườn trên mái đối (?:với|with) năng lượng đô thị/gi, 'Impact of Rooftop Gardens on Urban Energy'],
+      [/vườn trên mái đối (?:với|with) năng lượng đô thị/gi, 'Rooftop Gardens on Urban Energy'],
+      [/vườn trên mái/gi, 'Rooftop Gardens'],
+      [/năng lượng đô thị/gi, 'Urban Energy'],
+      [/đối (?:với|with)/gi, 'on'],
+      [/kiến trúc phỏng sinh học/gi, 'Biomimetic Architecture'],
+      [/mô hình urban agriculture/gi, 'Urban Agriculture Models'],
+      [/mô hình nông nghiệp đô thị/gi, 'Urban Agriculture Models'],
+      [/tác động (?:của|of) đèn đường led đến an ninh đô thị/gi, 'Impact of LED Streetlights on Urban Security'],
+      [/đèn đường led đến an ninh đô thị/gi, 'LED Streetlights on Urban Security'],
+      [/đèn đường led/gi, 'LED Streetlights'],
+      [/an ninh đô thị/gi, 'Urban Security'],
+      [/đến an ninh đô thị/gi, 'on Urban Security'],
+      [/public transit đô thị/gi, 'Urban Public Transit'],
+      [/pin năng lượng mặt trời perovskite/gi, 'Perovskite Solar Cells'],
+      [/pin năng lượng mặt trời/gi, 'Solar Cells'],
+      [/nông nghiệp hiện đại/gi, 'Modern Agriculture'],
+
       [/\bcủa\b/gi, 'of'],
       [/\bvà\b/gi, '&'],
       [/\btrong\b/gi, 'in'],
@@ -493,6 +624,9 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
     }
 
     for (const [k, v] of Object.entries(KNOWN_TOPIC_SUBTITLE_MAP)) {
+      if (s.toLowerCase() === k.toLowerCase()) {
+        return v;
+      }
       if (s.includes(k)) {
         s = s.replace(new RegExp(k, 'g'), v);
       }
@@ -561,11 +695,17 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       'Phân biệt bẫy Not Given vs False': 'Not Given vs False Trap',
       'Phân biệt bẫy Not Given vs True': 'Not Given vs True Trap',
       'Bẫy suy diễn Not Given vs False': 'Not Given vs False Trap',
+      'Bẫy suy diễn Not Given vs True': 'Not Given vs True Trap',
       'Truy tìm Paraphrase': 'Paraphrase Hunter',
+      'Paraphrase Hunter': 'Paraphrase Hunter',
+      'Bắt cặp từ đồng nghĩa học thuật': 'Academic Synonym Matching',
       'Phá bẫy Matching Headings': 'Matching Headings Trap',
       'Giải phẫu câu phức': 'Complex Sentence S-V-O',
+      'Complex Sentence S-V-O': 'Complex Sentence S-V-O',
       'Sửa lỗi': 'Error Spotting',
+      'Error Spotting': 'Error Spotting',
       'Luyện Paraphrase': 'Paraphrase Drill',
+      'Paraphrase Drill': 'Paraphrase Drill',
       'Collocation Học Thuật': 'Academic Collocations',
       'A.R.E.A Mở rộng ý': 'A.R.E.A Expansion',
       'Phản biện Part 3': 'Part 3 Rebuttal'
@@ -587,32 +727,29 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^Từ nối lập luận:\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Argumentative Transitions: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-  if (/^(Phân biệt bẫy Not Given vs False|Not Given vs False Trap):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs False Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(Phân biệt bẫy Not Given vs False|Not Given vs False Trap|Bẫy suy diễn Not Given vs False):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Not Given vs False Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^(Phân biệt bẫy Not Given vs True|Not Given vs True Trap):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs True Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(Phân biệt bẫy Not Given vs True|Not Given vs True Trap|Bẫy suy diễn Not Given vs True):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Not Given vs True Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Bẫy suy diễn Not Given vs False:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs False Trap: ${translateTopicSubtitle(RegExp.$1)}`;
-  }
-  if (/^(Truy tìm Paraphrase|Paraphrase Hunter):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Paraphrase Hunter: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(Truy tìm Paraphrase|Paraphrase Hunter|Bắt cặp từ đồng nghĩa học thuật|Academic Synonym Matching):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Paraphrase Hunter: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^(Phá bẫy Matching Headings|Matching Headings Trap):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Matching Headings Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Matching Headings Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^(Đoán nghĩa từ|Context Vocab):\s*(.*)/i.test(cleanTitle)) {
-    return `Context Vocab: ${translateTopicSubtitle(RegExp.$2)}`;
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Context Vocab: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^(Giải phẫu câu phức|Complex Sentence S-V-O):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Complex Sentence S-V-O: ${translateTopicSubtitle(RegExp.$2)}`;
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Complex Sentence S-V-O: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Sửa lỗi\s*(.*)/i.test(cleanTitle)) {
-    return `Error Spotting: ${translateTopicSubtitle(RegExp.$1)}`;
+  if (/^(Sửa lỗi|Error Spotting):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Error Spotting: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Luyện Paraphrase\s*(.*)/i.test(cleanTitle)) {
-    return `Paraphrase Drill: ${translateTopicSubtitle(RegExp.$1)}`;
+  if (/^(Luyện Paraphrase|Paraphrase Drill):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Paraphrase Drill: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^Collocation Học Thuật:\s*(.*)/i.test(cleanTitle)) {
     return `Academic Collocations: ${translateTopicSubtitle(RegExp.$1)}`;
