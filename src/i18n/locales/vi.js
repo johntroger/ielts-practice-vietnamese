@@ -303,7 +303,20 @@ export const vi = {
       roomWriting: 'Chuyên Writing',
       roomReading: 'Chuyên Reading',
       roomListening: 'Chuyên Listening',
-      roomSpeaking: 'Chuyên Speaking'
+      roomSpeaking: 'Chuyên Speaking',
+      resetExercise: 'Làm lại bài này',
+      checkAnswers: 'Kiểm Tra Đáp Án',
+      selectWord: '[Chọn từ]',
+      showExplanations: 'Giải thích chi tiết từng vị trí:',
+      givenData: 'Dữ liệu cho trước:',
+      originalSentence: 'Câu gốc (Band 5.5 - 6.0):',
+      upgradeHints: '💡 Gợi ý nâng cấp:',
+      yourRewrittenSentence: 'Câu bạn viết lại (Band 7.5+):',
+      startOver: 'Viết lại từ đầu',
+      evaluateWithAi: 'Chấm Điểm Câu Bằng AI',
+      sentenceScore: 'Đánh giá câu:',
+      modelSentence: 'Câu chuẩn:',
+      grammarExplanation: 'Giải thích ngữ pháp:'
     },
     library: {
       title: 'Kho Đề Thi IELTS Academic (Official Bank)',

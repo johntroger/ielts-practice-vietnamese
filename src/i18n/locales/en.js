@@ -303,7 +303,20 @@ export const en = {
       roomWriting: 'Writing Drills',
       roomReading: 'Reading Drills',
       roomListening: 'Listening Drills',
-      roomSpeaking: 'Speaking Drills'
+      roomSpeaking: 'Speaking Drills',
+      resetExercise: 'Reset Exercise',
+      checkAnswers: 'Check Answers',
+      selectWord: '[Select word]',
+      showExplanations: 'Detailed explanations for each position:',
+      givenData: 'Given Data:',
+      originalSentence: 'Original Sentence (Band 5.5 - 6.0):',
+      upgradeHints: 'Upgrade hints:',
+      yourRewrittenSentence: 'Your rewritten sentence (Band 7.5+):',
+      startOver: 'Start over',
+      evaluateWithAi: 'Evaluate with AI',
+      sentenceScore: 'Sentence Score:',
+      modelSentence: 'Model sentence:',
+      grammarExplanation: 'Grammar explanation:'
     },
     library: {
       title: 'IELTS Academic Official Test Bank',

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import MicroDrillAudioBar from '../listening/MicroDrillAudioBar';
 import { useTranslation } from '../../i18n';
+import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
 
 /**
  * ListeningDrillRoom
@@ -70,7 +71,7 @@ export default function ListeningDrillRoom({
                       {currentDictation.category} • {currentDictation.difficulty}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentDictation.title}
+                      {getLocalizedDrillTitle(currentDictation, isEn)}
                     </h3>
                   </div>
 
@@ -78,7 +79,7 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentDictation.id}
                     audioText={currentDictation.audioText || currentDictation.ttsText}
-                    title={`Dictation: ${currentDictation.title}`}
+                    title={`Dictation: ${getLocalizedDrillTitle(currentDictation, isEn)}`}
                     accent="en-GB"
                     currentUser={currentUser}
                   />
@@ -217,7 +218,7 @@ export default function ListeningDrillRoom({
                       {currentSpelling.category} • {isEn ? 'Type' : 'Dạng'} {currentSpelling.subType}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentSpelling.title}
+                      {getLocalizedDrillTitle(currentSpelling, isEn)}
                     </h3>
                   </div>
 
@@ -225,7 +226,7 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentSpelling.id}
                     audioText={currentSpelling.audioText || currentSpelling.promptAudioText}
-                    title={isEn ? `Spelling / Number: ${currentSpelling.title}` : `Đánh vần / Số: ${currentSpelling.title}`}
+                    title={isEn ? `Spelling / Number: ${getLocalizedDrillTitle(currentSpelling, isEn)}` : `Đánh vần / Số: ${currentSpelling.title}`}
                     accent="en-GB"
                     currentUser={currentUser}
                   />
@@ -358,7 +359,7 @@ export default function ListeningDrillRoom({
                       {currentDistractor.category} • {isEn ? 'Distractor Trap' : 'Bẫy Distractor'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentDistractor.title}
+                      {getLocalizedDrillTitle(currentDistractor, isEn)}
                     </h3>
                   </div>
 
@@ -366,7 +367,7 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentDistractor.id}
                     audioText={currentDistractor.audioText || currentDistractor.audioSnippetText}
-                    title={isEn ? `Trap Dialogue: ${currentDistractor.title}` : `Hội thoại bẫy: ${currentDistractor.title}`}
+                    title={isEn ? `Trap Dialogue: ${getLocalizedDrillTitle(currentDistractor, isEn)}` : `Hội thoại bẫy: ${currentDistractor.title}`}
                     accent="en-GB"
                     currentUser={currentUser}
                   />
@@ -523,7 +524,7 @@ export default function ListeningDrillRoom({
                       {currentMap.category} • {isEn ? 'Map Navigation Trainer' : 'Huấn luyện sơ đồ bản đồ'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentMap.title}
+                      {getLocalizedDrillTitle(currentMap, isEn)}
                     </h3>
                   </div>
 
@@ -531,7 +532,7 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentMap.id}
                     audioText={currentMap.audioText || currentMap.audioDirectionsText}
-                    title={isEn ? `Map Directions: ${currentMap.title}` : `Chỉ dẫn bản đồ: ${currentMap.title}`}
+                    title={isEn ? `Map Directions: ${getLocalizedDrillTitle(currentMap, isEn)}` : `Chỉ dẫn bản đồ: ${currentMap.title}`}
                     accent="en-GB"
                     currentUser={currentUser}
                   />
@@ -696,7 +697,7 @@ export default function ListeningDrillRoom({
                       {currentSign.category} • Signposting Catcher
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentSign.title}
+                      {getLocalizedDrillTitle(currentSign, isEn)}
                     </h3>
                   </div>
 
@@ -704,7 +705,7 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentSign.id}
                     audioText={currentSign.audioText || currentSign.audioSnippetText}
-                    title={isEn ? `Part 4 Lecture: ${currentSign.title}` : `Bài giảng Part 4: ${currentSign.title}`}
+                    title={isEn ? `Part 4 Lecture: ${getLocalizedDrillTitle(currentSign, isEn)}` : `Bài giảng Part 4: ${currentSign.title}`}
                     accent="en-GB"
                     currentUser={currentUser}
                   />

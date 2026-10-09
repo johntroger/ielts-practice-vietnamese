@@ -60,6 +60,7 @@ import {
   ListeningDrillRoom,
   SpeakingDrillRoom
 } from './drills';
+import { getLocalizedDrillTitle } from '../utils/drillLocalization';
 
 
 export default function MicroDrillsModal({ 
@@ -1152,7 +1153,7 @@ export default function MicroDrillsModal({
                 >
                   {list.map((d, i) => (
                     <option key={d.id || i} value={i}>
-                      {isEn ? `Drill ${i + 1}: ` : `Bài ${i + 1}: `}{d.title || d.category || (isEn ? `Exercise ${i + 1}` : `Bài tập ${i + 1}`)}
+                      {isEn ? `Drill ${i + 1}: ` : `Bài ${i + 1}: `}{getLocalizedDrillTitle(d, isEn) || d.category || (isEn ? `Exercise ${i + 1}` : `Bài tập ${i + 1}`)}
                     </option>
                   ))}
                 </select>
@@ -1222,7 +1223,8 @@ export default function MicroDrillsModal({
       const newDrill = await generateMicroDrill({
         drillType: activeTab,
         apiKey,
-        model
+        model,
+        isEn
       });
 
       // Enrich listening drills with clean audioText parameter and respect user's sharing preference

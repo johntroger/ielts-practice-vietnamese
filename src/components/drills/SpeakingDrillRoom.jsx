@@ -16,6 +16,7 @@ import {
   Split
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
 
 /**
  * SpeakingDrillRoom
@@ -75,7 +76,7 @@ export default function SpeakingDrillRoom({
                           {currentArea.topic}
                         </span>
                       </div>
-                      <h3 className="font-bold text-slate-900 text-base mt-1.5">{currentArea.title}</h3>
+                      <h3 className="font-bold text-slate-900 text-base mt-1.5">{getLocalizedDrillTitle(currentArea, isEn)}</h3>
                     </div>
                   </div>
 
@@ -486,7 +487,7 @@ export default function SpeakingDrillRoom({
                       {currentFiller.category || (isEn ? 'Natural Fillers' : 'Từ Đệm Tự Nhiên')} • {isEn ? 'Buying Time Reflex' : 'Phản xạ câu giờ tự nhiên'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentFiller.title}
+                      {getLocalizedDrillTitle(currentFiller, isEn)}
                     </h3>
                   </div>
 
@@ -650,7 +651,7 @@ export default function SpeakingDrillRoom({
                       {currentSpeakingColloc.category || 'Lexical Resource'} • {isEn ? 'Idiom & Collocation Reflex' : 'Phản xạ thành ngữ & Collocation'}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
-                      {currentSpeakingColloc.title}
+                      {getLocalizedDrillTitle(currentSpeakingColloc, isEn)}
                     </h3>
                   </div>
 
@@ -802,7 +803,7 @@ export default function SpeakingDrillRoom({
                           {currentPart3.topic}
                         </span>
                       </div>
-                      <h3 className="font-bold text-slate-900 text-base mt-1.5">{currentPart3.title}</h3>
+                      <h3 className="font-bold text-slate-900 text-base mt-1.5">{getLocalizedDrillTitle(currentPart3, isEn)}</h3>
                     </div>
                   </div>
 

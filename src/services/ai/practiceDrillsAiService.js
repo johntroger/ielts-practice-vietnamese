@@ -63,8 +63,12 @@ Return ONLY raw JSON with this format:
 /**
  * AI Auto-Generates New Micro-Drills on demand
  */
-export async function generateMicroDrill({ drillType, topic = 'general', apiKey, model = DEFAULT_MODEL }) {
-  if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+export async function generateMicroDrill({ drillType, topic = 'general', apiKey, model = DEFAULT_MODEL, isEn = false }) {
+  if (!apiKey) throw new Error(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
+
+  const langInstruction = isEn 
+    ? 'CRITICAL REQUIREMENT: Output ALL titles, explanations, tips, and guidelines STRICTLY in English. Include "titleEn" field.' 
+    : 'Yêu cầu: Giải thích và hướng dẫn bằng tiếng Việt.';
 
   let prompt = '';
 
