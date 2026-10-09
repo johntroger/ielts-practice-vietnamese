@@ -8,8 +8,8 @@ import { safeGet, safeSet } from '../utils/storageService.js';
 import { saveUserVocabItem, deleteUserVocabItem } from '../services/dataSyncService.js';
 
 const DEFAULT_INITIAL_VOCAB = [
-  { id: 'v1', phrase: 'catalyze novel industries', meaningVi: 'thúc đẩy các ngành mới', example: 'AI will catalyze novel industries.', topic: 'tech' },
-  { id: 'v2', phrase: 'pivotal element', meaningVi: 'yếu tố then chốt', example: 'Education is a pivotal element.', topic: 'edu' },
+  { id: 'v1', phrase: 'catalyze novel industries', meaningVi: 'thúc đẩy các ngành mới', meaningEn: 'spur / stimulate emerging industries into existence', example: 'AI will catalyze novel industries.', topic: 'tech' },
+  { id: 'v2', phrase: 'pivotal element', meaningVi: 'yếu tố then chốt', meaningEn: 'crucial / essential component', example: 'Education is a pivotal element.', topic: 'edu' },
 ];
 const DEFAULT_INITIAL_MISTAKES = [];
 

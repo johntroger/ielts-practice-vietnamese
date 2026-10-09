@@ -32,6 +32,7 @@ import {
 
 import { vi } from '../src/i18n/locales/vi.js';
 import { en } from '../src/i18n/locales/en.js';
+import { getLocalizedVocabMeaning } from '../src/utils/vocabLocalization.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -192,6 +193,25 @@ it('11. HistoryModal.jsx integrates useTranslation and localized action buttons'
   assert.ok(content.includes('useTranslation'), 'HistoryModal missing useTranslation');
   assert.ok(content.includes("modals.history.title"));
   assert.ok(content.includes("Clear Writing"));
+});
+
+// 12. VocabNotebookModal.jsx & vocabLocalization.js
+it('12. VocabNotebookModal.jsx & vocabLocalization.js are fully localized', () => {
+  const content = fs.readFileSync(path.join(__dirname, '../src/components/VocabNotebookModal.jsx'), 'utf-8');
+  assert.ok(content.includes('useTranslation'), 'VocabNotebookModal missing useTranslation');
+  assert.ok(content.includes('getLocalizedVocabMeaning'), 'VocabNotebookModal missing getLocalizedVocabMeaning');
+  assert.ok(content.includes("isEn ? 'COLLOCATION / ACADEMIC TERM' : 'COLLOCATION / THUẬT NGỮ'"));
+  assert.ok(content.includes("isEn ? 'Click to flip' : 'Nhấp để lật'"));
+  assert.ok(content.includes("isEn ? 'Rate your recall ability:' : 'Đánh giá mức độ ghi nhớ của bạn:'"));
+  assert.ok(content.includes("isEn ? 'Again' : 'Quên'"));
+  assert.ok(content.includes("isEn ? 'Hard' : 'Khó'"));
+  assert.ok(content.includes("isEn ? 'Good' : 'Tốt'"));
+  assert.ok(content.includes("isEn ? 'Easy' : 'Rất Dễ'"));
+
+  // Check vocabLocalization helper
+  const item = { phrase: 'catalyze novel industries', meaningVi: 'thúc đẩy các ngành mới' };
+  assert.strictEqual(getLocalizedVocabMeaning(item, false), 'thúc đẩy các ngành mới');
+  assert.strictEqual(getLocalizedVocabMeaning(item, true), 'spur / stimulate emerging industries into existence');
 });
 
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);

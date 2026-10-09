@@ -48,6 +48,7 @@ import {
 } from '../data/speakingTopics';
 import { useTranslation } from '../i18n';
 import { formatTestTitle, formatTestDescription } from '../utils/testLocalizationHelper';
+import { getLocalizedVocabMeaning } from '../utils/vocabLocalization';
 
 export default function UserProfileModal({
   isOpen,
@@ -2081,7 +2082,7 @@ export default function UserProfileModal({
                           <strong className="text-xs font-bold text-slate-900">{item.phrase}</strong>
                           <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded font-semibold uppercase">{item.topic || 'General'}</span>
                         </div>
-                        <p className="text-xs text-slate-600">{item.meaningVi}</p>
+                        <p className="text-xs text-slate-600">{getLocalizedVocabMeaning(item, isEn)}</p>
                         {item.example && (
                           <p className="text-[11px] text-slate-400 italic pt-1 border-t border-slate-100">"{item.example}"</p>
                         )}

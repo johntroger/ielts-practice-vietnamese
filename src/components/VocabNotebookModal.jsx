@@ -21,6 +21,7 @@ import {
   initSrsItem, 
   SRS_GRADES 
 } from '../utils/srsService';
+import { getLocalizedVocabMeaning, getLocalizedTopicName } from '../utils/vocabLocalization';
 import { useTranslation } from '../i18n';
 
 export default function VocabNotebookModal({
@@ -187,7 +188,7 @@ export default function VocabNotebookModal({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Tìm từ vựng hoặc nghĩa tiếng Việt..."
+                  placeholder={isEn ? "Search vocabulary or meaning..." : "Tìm từ vựng hoặc nghĩa tiếng Việt..."}
                   className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white"
                 />
               </div>
@@ -198,9 +199,9 @@ export default function VocabNotebookModal({
                   onChange={(e) => setSelectedTopic(e.target.value)}
                   className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none cursor-pointer"
                 >
-                  <option value="all">Tất cả chủ đề</option>
+                  <option value="all">{isEn ? 'All Topics' : 'Tất cả chủ đề'}</option>
                   {IELTS_TOPICS.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
+                    <option key={t.id} value={t.id}>{isEn ? t.name : (t.vi || t.name)}</option>
                   ))}
                 </select>
 
@@ -209,7 +210,7 @@ export default function VocabNotebookModal({
                   className="flex items-center space-x-1 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-colors shrink-0 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>{isAdding ? 'Đóng' : 'Thêm Từ'}</span>
+                  <span>{isAdding ? (isEn ? 'Close' : 'Đóng') : (isEn ? 'Add Word' : 'Thêm Từ')}</span>
                 </button>
               </div>
             </div>
@@ -218,18 +219,20 @@ export default function VocabNotebookModal({
             <div className="flex-1 overflow-y-auto p-5 space-y-3">
               {isAdding && (
                 <form onSubmit={handleCreateVocab} className="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-3 shadow-2xs mb-4">
-                  <div className="font-bold text-xs text-amber-900">Thêm Từ Vựng Mới Vào Sổ Tay</div>
+                  <div className="font-bold text-xs text-amber-900">
+                    {isEn ? 'Add New Vocabulary to Vault' : 'Thêm Từ Vựng Mới Vào Sổ Tay'}
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
                       type="text"
-                      placeholder="Cụm từ tiếng Anh (Collocation)..."
+                      placeholder={isEn ? "English phrase (Collocation)..." : "Cụm từ tiếng Anh (Collocation)..."}
                       value={phrase}
                       onChange={e => setPhrase(e.target.value)}
                       className="px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 font-bold"
                     />
                     <input
                       type="text"
-                      placeholder="Nghĩa tiếng Việt..."
+                      placeholder={isEn ? "Meaning / definition..." : "Nghĩa tiếng Việt..."}
                       value={meaningVi}
                       onChange={e => setMeaningVi(e.target.value)}
                       className="px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
@@ -237,7 +240,7 @@ export default function VocabNotebookModal({
                   </div>
                   <input
                     type="text"
-                    placeholder="Ví dụ trong ngữ cảnh bài viết IELTS..."
+                    placeholder={isEn ? "Example sentence in IELTS context..." : "Ví dụ trong ngữ cảnh bài viết IELTS..."}
                     value={example}
                     onChange={e => setExample(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20"
@@ -249,14 +252,14 @@ export default function VocabNotebookModal({
                       className="px-3 py-1.5 rounded-lg border border-amber-200 text-xs bg-white text-slate-700"
                     >
                       {IELTS_TOPICS.map(t => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
+                        <option key={t.id} value={t.id}>{isEn ? t.name : (t.vi || t.name)}</option>
                       ))}
                     </select>
                     <button
                       type="submit"
                       className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
                     >
-                      Lưu Từ Vựng
+                      {isEn ? 'Save Vocabulary' : 'Lưu Từ Vựng'}
                     </button>
                   </div>
                 </form>
@@ -272,14 +275,14 @@ export default function VocabNotebookModal({
                         </span>
                         <div className="flex items-center space-x-1">
                           {v.intervalDays > 0 && (
-                            <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[9px] font-bold" title={`Chu kỳ ôn: ${v.intervalDays} ngày`}>
+                            <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-500 text-[9px] font-bold" title={isEn ? `Review interval: ${v.intervalDays} days` : `Chu kỳ ôn: ${v.intervalDays} ngày`}>
                               {v.intervalDays}d
                             </span>
                           )}
                           <button
                             onClick={() => onDeleteVocab(v.id || idx)}
                             className="p-1 text-slate-300 hover:text-red-600 transition-colors cursor-pointer"
-                            title="Xóa từ này"
+                            title={isEn ? "Delete this word" : "Xóa từ này"}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -287,7 +290,7 @@ export default function VocabNotebookModal({
                       </div>
 
                       <p className="text-xs text-slate-600 font-medium">
-                        {v.meaningVi}
+                        {getLocalizedVocabMeaning(v, isEn)}
                       </p>
 
                       {v.example && (
@@ -300,7 +303,9 @@ export default function VocabNotebookModal({
                 </div>
               ) : (
                 <div className="text-center py-12 text-slate-400 text-xs">
-                  Chưa có từ vựng nào trong sổ. Hãy tra từ điển Paraphrase hoặc bấm lưu từ bài mẫu và nhận xét của giám khảo AI!
+                  {isEn 
+                    ? 'No vocabulary in notebook yet. Use Paraphrase search or bookmark collocations from sample essays and AI examiner feedback!' 
+                    : 'Chưa có từ vựng nào trong sổ. Hãy tra từ điển Paraphrase hoặc bấm lưu từ bài mẫu và nhận xét của giám khảo AI!'}
                 </div>
               )}
             </div>
@@ -315,8 +320,8 @@ export default function VocabNotebookModal({
                 
                 {/* Progress bar */}
                 <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                  <span>Thẻ ôn tập {currentCardIndex + 1} / {dueItems.length}</span>
-                  <span className="text-emerald-600 font-bold">Đã ôn phiên này: {reviewedSessionCount}</span>
+                  <span>{isEn ? `Flashcard ${currentCardIndex + 1} / ${dueItems.length}` : `Thẻ ôn tập ${currentCardIndex + 1} / ${dueItems.length}`}</span>
+                  <span className="text-emerald-600 font-bold">{isEn ? `Reviewed this session: ${reviewedSessionCount}` : `Đã ôn phiên này: ${reviewedSessionCount}`}</span>
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                   <div 
@@ -332,28 +337,28 @@ export default function VocabNotebookModal({
                 >
                   <div className="absolute top-3 right-3 text-[10px] text-slate-400 font-medium flex items-center space-x-1">
                     <RotateCw className="w-3 h-3 group-hover:rotate-180 transition-transform" />
-                    <span>Nhấp để lật</span>
+                    <span>{isEn ? 'Click to flip' : 'Nhấp để lật'}</span>
                   </div>
 
                   {!isFlipped ? (
                     <>
                       <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                        Collocation / Thuật Ngữ
+                        {isEn ? 'COLLOCATION / ACADEMIC TERM' : 'COLLOCATION / THUẬT NGỮ'}
                       </div>
                       <div className="text-2xl font-black text-white tracking-wide px-4">
                         {currentCard.phrase}
                       </div>
                       <p className="text-xs text-slate-400 pt-2">
-                        (Thử nhớ nghĩa tiếng Việt và cách dùng trong IELTS...)
+                        {isEn ? '(Recall the meaning and how to use it in IELTS...)' : '(Thử nhớ nghĩa tiếng Việt và cách dùng trong IELTS...)'}
                       </p>
                     </>
                   ) : (
                     <div className="space-y-3 animate-in fade-in zoom-in-95 duration-150">
                       <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
-                        Ý Nghĩa & Ngữ Cảnh
+                        {isEn ? 'Meaning & Context' : 'Ý Nghĩa & Ngữ Cảnh'}
                       </div>
                       <div className="text-xl font-bold text-amber-300">
-                        {currentCard.meaningVi}
+                        {getLocalizedVocabMeaning(currentCard, isEn)}
                       </div>
                       {currentCard.example && (
                         <div className="text-xs text-slate-300 italic bg-white/10 p-2.5 rounded-xl border border-white/10 max-w-sm">
@@ -368,7 +373,7 @@ export default function VocabNotebookModal({
                 {isFlipped ? (
                   <div className="space-y-2 animate-in fade-in duration-150">
                     <div className="text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                      Đánh giá mức độ ghi nhớ của bạn:
+                      {isEn ? 'Rate your recall ability:' : 'Đánh giá mức độ ghi nhớ của bạn:'}
                     </div>
                     <div className="grid grid-cols-4 gap-2">
                       <button
@@ -376,8 +381,8 @@ export default function VocabNotebookModal({
                         className="p-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-center transition-all cursor-pointer font-bold text-xs"
                       >
                         <span className="block text-sm">🔴</span>
-                        <span>Quên</span>
-                        <span className="block text-[9px] text-red-500 font-normal">1 ngày</span>
+                        <span>{isEn ? 'Again' : 'Quên'}</span>
+                        <span className="block text-[9px] text-red-500 font-normal">{isEn ? '1 day' : '1 ngày'}</span>
                       </button>
 
                       <button
@@ -385,8 +390,8 @@ export default function VocabNotebookModal({
                         className="p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-center transition-all cursor-pointer font-bold text-xs"
                       >
                         <span className="block text-sm">🟡</span>
-                        <span>Khó</span>
-                        <span className="block text-[9px] text-amber-500 font-normal">2-3 ngày</span>
+                        <span>{isEn ? 'Hard' : 'Khó'}</span>
+                        <span className="block text-[9px] text-amber-500 font-normal">{isEn ? '2-3 days' : '2-3 ngày'}</span>
                       </button>
 
                       <button
@@ -394,8 +399,8 @@ export default function VocabNotebookModal({
                         className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-center transition-all cursor-pointer font-bold text-xs"
                       >
                         <span className="block text-sm">🟢</span>
-                        <span>Tốt</span>
-                        <span className="block text-[9px] text-emerald-500 font-normal">4-7 ngày</span>
+                        <span>{isEn ? 'Good' : 'Tốt'}</span>
+                        <span className="block text-[9px] text-emerald-500 font-normal">{isEn ? '4-7 days' : '4-7 ngày'}</span>
                       </button>
 
                       <button
@@ -403,14 +408,16 @@ export default function VocabNotebookModal({
                         className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-center transition-all cursor-pointer font-bold text-xs"
                       >
                         <span className="block text-sm">🔵</span>
-                        <span>Rất Dễ</span>
-                        <span className="block text-[9px] text-blue-500 font-normal">10+ ngày</span>
+                        <span>{isEn ? 'Easy' : 'Rất Dễ'}</span>
+                        <span className="block text-[9px] text-blue-500 font-normal">{isEn ? '10+ days' : '10+ ngày'}</span>
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center text-xs text-slate-400">
-                    Bấm vào thẻ bài ở trên để xem đáp án trước khi đánh giá mức độ nhớ.
+                    {isEn 
+                      ? 'Click the card above to reveal the answer before rating your recall.' 
+                      : 'Bấm vào thẻ bài ở trên để xem đáp án trước khi đánh giá mức độ nhớ.'}
                   </div>
                 )}
 
@@ -421,16 +428,18 @@ export default function VocabNotebookModal({
                   🎉
                 </div>
                 <h3 className="text-base font-bold text-slate-800">
-                  Hoàn Thành Ôn Tập Hôm Nay!
+                  {isEn ? 'All Reviews Completed for Today!' : 'Hoàn Thành Ôn Tập Hôm Nay!'}
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Tất cả {vocabList.length} từ vựng trong sổ tay đều đã được xếp lịch ôn tập khoa học. Hãy quay lại vào ngày mai theo chu kỳ Spaced Repetition!
+                  {isEn 
+                    ? `All ${vocabList.length} vocabulary items have been scheduled. Return tomorrow following your Spaced Repetition interval!` 
+                    : `Tất cả ${vocabList.length} từ vựng trong sổ tay đều đã được xếp lịch ôn tập khoa học. Hãy quay lại vào ngày mai theo chu kỳ Spaced Repetition!`}
                 </p>
                 <button
                   onClick={() => setActiveTab('list')}
                   className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors cursor-pointer"
                 >
-                  Xem Danh Sách Từ Vựng
+                  {isEn ? 'View Vocabulary List' : 'Xem Danh Sách Từ Vựng'}
                 </button>
               </div>
             )}
