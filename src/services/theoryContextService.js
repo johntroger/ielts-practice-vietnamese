@@ -715,6 +715,6 @@ export function openTheoryModalWithContext(context) {
     category: context.category || 'all',
     subType: context.subType || 'all',
     topicId: context.topicId || null,
-    searchQuery: context.title || ''
+    searchQuery: context.topicId ? '' : (context.title || '')
   });
 }

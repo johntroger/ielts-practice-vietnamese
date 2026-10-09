@@ -9,6 +9,7 @@ import {
 import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
 import { useTranslation } from '../i18n';
+import { THEORY_I18N_EN } from '../services/theoryContextService';
 
 // Helper to render bold, italic, code and inline highlights
 function renderInlineText(text) {
@@ -429,116 +430,116 @@ export default function TheoryHandbookModal({
 
   // Subtype filters
   const writingGeneralSubTypes = [
-    { id: 'all', label: 'Tất cả tiêu chí' },
-    { id: 'progression-5-75', label: '⭐ Lộ Trình Nâng Band 5.0 -> 7.5' },
+    { id: 'all', label: isEn ? 'All Criteria' : 'Tất cả tiêu chí' },
+    { id: 'progression-5-75', label: isEn ? '⭐ Band 5.0 -> 7.5 Roadmap' : '⭐ Lộ Trình Nâng Band 5.0 -> 7.5' },
     { id: 'descriptors', label: 'Band Descriptors 2026' },
-    { id: 'strategy', label: 'Bí Quyết 5.5 - 6.0 & 7.5+' },
+    { id: 'strategy', label: isEn ? 'Tips 5.5 - 6.0 & 7.5+' : 'Bí Quyết 5.5 - 6.0 & 7.5+' },
   ];
 
   const writingTask1SubTypes = [
-    { id: 'all', label: 'Tất cả Task 1' },
-    { id: 'line', label: 'Line Graph (Đường)' },
-    { id: 'bar', label: 'Bar Chart (Cột)' },
-    { id: 'pie', label: 'Pie Chart (Tròn)' },
-    { id: 'table', label: 'Table (Bảng)' },
-    { id: 'process', label: 'Process (Quy trình)' },
-    { id: 'map', label: 'Map (Bản đồ)' },
-    { id: 'mixed', label: 'Mixed (Kết hợp)' },
-    { id: 'proportions', label: 'Tỷ Lệ Xấp Xỉ & Biến Động' },
-    { id: 'future-projections', label: 'Dự Báo Tương Lai (2030-2050)' },
+    { id: 'all', label: isEn ? 'All Task 1' : 'Tất cả Task 1' },
+    { id: 'line', label: isEn ? 'Line Graph' : 'Line Graph (Đường)' },
+    { id: 'bar', label: isEn ? 'Bar Chart' : 'Bar Chart (Cột)' },
+    { id: 'pie', label: isEn ? 'Pie Chart' : 'Pie Chart (Tròn)' },
+    { id: 'table', label: isEn ? 'Table' : 'Table (Bảng)' },
+    { id: 'process', label: isEn ? 'Process' : 'Process (Quy trình)' },
+    { id: 'map', label: isEn ? 'Map' : 'Map (Bản đồ)' },
+    { id: 'mixed', label: isEn ? 'Mixed Charts' : 'Mixed (Kết hợp)' },
+    { id: 'proportions', label: isEn ? 'Approximations & Fluctuations' : 'Tỷ Lệ Xấp Xỉ & Biến Động' },
+    { id: 'future-projections', label: isEn ? 'Future Projections (2030-2050)' : 'Dự Báo Tương Lai (2030-2050)' },
   ];
 
   const writingTask2SubTypes = [
-    { id: 'all', label: 'Tất cả Task 2' },
-    { id: 'progression-5-75', label: '⭐ Lộ Trình Nâng Band 5.0 -> 7.5' },
+    { id: 'all', label: isEn ? 'All Task 2' : 'Tất cả Task 2' },
+    { id: 'progression-5-75', label: isEn ? '⭐ Band 5.0 -> 7.5 Roadmap' : '⭐ Lộ Trình Nâng Band 5.0 -> 7.5' },
     { id: 'opinion', label: 'Agree / Disagree' },
     { id: 'discussion', label: 'Discuss Both Views' },
     { id: 'advantages', label: 'Advantages vs Disadvantages' },
     { id: 'problem-solution', label: 'Problem & Solution' },
     { id: 'two-part', label: 'Two-Part Question' },
-    { id: 'counter-argument', label: 'Phản Biện & Bác Bỏ (8.0+)' },
-    { id: 'grammar-8', label: 'Ngữ Pháp 8.0+ Đắt Giá' },
+    { id: 'counter-argument', label: isEn ? 'Counter-Argument & Refutation (8.0+)' : 'Phản Biện & Bác Bỏ (8.0+)' },
+    { id: 'grammar-8', label: isEn ? 'High-Impact 8.0+ Grammar' : 'Ngữ Pháp 8.0+ Đắt Giá' },
     { id: 'collocations', label: 'Academic Collocations' },
-    { id: 'ideation', label: 'Tìm Ý Tưởng (PESTLE)' },
-    { id: 'coherence-8', label: 'Liên Kết Ẩn CC (8.0+)' },
-    { id: 'intro-thesis', label: 'Paraphrase Mở Bài & Thesis' },
+    { id: 'ideation', label: isEn ? 'Idea Generation (PESTLE)' : 'Tìm Ý Tưởng (PESTLE)' },
+    { id: 'coherence-8', label: isEn ? 'Implicit Coherence CC (8.0+)' : 'Liên Kết Ẩn CC (8.0+)' },
+    { id: 'intro-thesis', label: isEn ? 'Introduction Paraphrase & Thesis' : 'Paraphrase Mở Bài & Thesis' },
   ];
 
   const writingMistakesSubTypes = [
-    { id: 'all', label: 'Tất cả lỗi sai' },
-    { id: 'checklist', label: '10 Lỗi Mất Điểm' },
-    { id: 'punctuation', label: 'Dấu Câu & Comma Splice' },
+    { id: 'all', label: isEn ? 'All Pitfalls' : 'Tất cả lỗi sai' },
+    { id: 'checklist', label: isEn ? '10 Costly Penalties' : '10 Lỗi Mất Điểm' },
+    { id: 'punctuation', label: isEn ? 'Punctuation & Comma Splice' : 'Dấu Câu & Comma Splice' },
   ];
 
   const readingSubTypes = [
-    { id: 'all', label: 'Tất cả dạng bài' },
-    { id: 'progression-5-75', label: '⭐ Lộ Trình 5.0 -> 7.5 (Số Câu Đúng)' },
-    { id: 'overview', label: '15-20-25m & Thang Điểm' },
+    { id: 'all', label: isEn ? 'All Question Types' : 'Tất cả dạng bài' },
+    { id: 'progression-5-75', label: isEn ? '⭐ Band 5.0 -> 7.5 Raw Score Roadmap' : '⭐ Lộ Trình 5.0 -> 7.5 (Số Câu Đúng)' },
+    { id: 'overview', label: isEn ? '15-20-25m Timing & Band Score' : '15-20-25m & Thang Điểm' },
     { id: 'tfng', label: 'True / False / Not Given' },
     { id: 'headings', label: 'Matching Headings' },
     { id: 'mcq', label: 'Multiple Choice' },
     { id: 'matching', label: 'Matching Info / Features' },
-    { id: 'completion', label: 'Điền từ / Summary' },
-    { id: 'summary-box', label: 'Summary Điền Từ Khung' },
+    { id: 'completion', label: isEn ? 'Sentence / Summary Completion' : 'Điền từ / Summary' },
+    { id: 'summary-box', label: isEn ? 'Summary Completion with Box' : 'Summary Điền Từ Khung' },
     { id: 'diagram-flow', label: 'Diagram & Flow-Chart' },
-    { id: 'passage3-stance', label: 'Passage 3: Quan Điểm Tác Giả' },
-    { id: 'chunking-speed', label: 'Đọc Cụm Nghĩa (300+ WPM)' },
-    { id: 'time-management', label: 'Quy Tắc 90s & Bỏ Cuộc' },
-    { id: 'paraphrase', label: '5 Quy Tắc Paraphrase' },
-    { id: 'guessing', label: 'Đoán Nghĩa & Gốc Từ' },
-    { id: 'synonyms', label: '50 Cặp Paraphrase Cam' },
-    { id: 'emergency', label: 'Cấp Cứu 5 Phút Cuối' },
+    { id: 'passage3-stance', label: isEn ? 'Passage 3: Author Perspective & Tone' : 'Passage 3: Quan Điểm Tác Giả' },
+    { id: 'chunking-speed', label: isEn ? 'Chunking & Speed Reading (300+ WPM)' : 'Đọc Cụm Nghĩa (300+ WPM)' },
+    { id: 'time-management', label: isEn ? '90s Rule & Strategic Skip' : 'Quy Tắc 90s & Bỏ Cuộc' },
+    { id: 'paraphrase', label: isEn ? '5 Core Paraphrasing Rules' : '5 Quy Tắc Paraphrase' },
+    { id: 'guessing', label: isEn ? 'Context Clues & Word Roots' : 'Đoán Nghĩa & Gốc Từ' },
+    { id: 'synonyms', label: isEn ? '50 Cambridge Paraphrase Pairs' : '50 Cặp Paraphrase Cam' },
+    { id: 'emergency', label: isEn ? 'Last 5 Minutes Emergency Triage' : 'Cấp Cứu 5 Phút Cuối' },
   ];
 
   const listeningSubTypes = [
-    { id: 'all', label: 'Tất cả dạng bài' },
-    { id: 'progression-5-75', label: '⭐ Lộ Trình 5.0 -> 7.5 (Part 1-4)' },
+    { id: 'all', label: isEn ? 'All Question Types' : 'Tất cả dạng bài' },
+    { id: 'progression-5-75', label: isEn ? '⭐ Band 5.0 -> 7.5 Roadmap (Parts 1-4)' : '⭐ Lộ Trình 5.0 -> 7.5 (Part 1-4)' },
     { id: 'overview', label: 'Format & CD-IELTS' },
-    { id: 'part1', label: 'Part 1: Đánh Vần, Số & Postcode' },
-    { id: 'part2', label: 'Part 2: Bản Đồ & Định Hướng' },
-    { id: 'part3', label: 'Part 3: Trắc Nghiệm Học Thuật' },
-    { id: 'tone-attitude', label: 'Thái Độ & Ngữ Điệu Part 3' },
-    { id: 'part4', label: 'Part 4: Dàn Bài & Signposting' },
-    { id: 'prediction', label: '30s Đọc Trước Đề Thi' },
-    { id: 'dictation-shadowing', label: 'Chép Chính Tả & Shadowing' },
-    { id: 'phonetics', label: 'Nối Âm, Nuốt Âm & Schwa' },
-    { id: 'spelling', label: '80 Từ Dễ Sai Chính Tả' },
-    { id: 'plurals', label: 'Phán Đoán Đuôi -s' },
-    { id: 'units', label: 'Bẫy Đơn Vị & Tiền Tệ' },
-    { id: 'accents', label: 'Accent Vùng Miền' },
-    { id: 'cd-hacks', label: 'Phím Tắt & Mẹo Thi Máy' },
+    { id: 'part1', label: isEn ? 'Part 1: Spelling, Numbers & Postcodes' : 'Part 1: Đánh Vần, Số & Postcode' },
+    { id: 'part2', label: isEn ? 'Part 2: Maps & Spatial Orientation' : 'Part 2: Bản Đồ & Định Hướng' },
+    { id: 'part3', label: isEn ? 'Part 3: Academic Discussion MCQ' : 'Part 3: Trắc Nghiệm Học Thuật' },
+    { id: 'tone-attitude', label: isEn ? 'Part 3 Tone, Attitude & Irony' : 'Thái Độ & Ngữ Điệu Part 3' },
+    { id: 'part4', label: isEn ? 'Part 4: Lecture Outlines & Signposts' : 'Part 4: Dàn Bài & Signposting' },
+    { id: 'prediction', label: isEn ? '30s Pre-listening Prediction' : '30s Đọc Trước Đề Thi' },
+    { id: 'dictation-shadowing', label: isEn ? 'Dictation & Shadowing Drills' : 'Chép Chính Tả & Shadowing' },
+    { id: 'phonetics', label: isEn ? 'Linking, Elision & The Schwa' : 'Nối Âm, Nuốt Âm & Schwa' },
+    { id: 'spelling', label: isEn ? '80 Common Spelling Traps' : '80 Từ Dễ Sai Chính Tả' },
+    { id: 'plurals', label: isEn ? 'Deducing Final -s Endings' : 'Phán Đoán Đuôi -s' },
+    { id: 'units', label: isEn ? 'Measurement & Currency Traps' : 'Bẫy Đơn Vị & Tiền Tệ' },
+    { id: 'accents', label: isEn ? 'Regional Accents (UK/US/AU)' : 'Accent Vùng Miền' },
+    { id: 'cd-hacks', label: isEn ? 'Computer-Delivered Shortcuts' : 'Phím Tắt & Mẹo Thi Máy' },
   ];
 
   const speakingSubTypes = [
-    { id: 'all', label: 'Tất cả chủ đề' },
-    { id: 'progression-5-75', label: '⭐ Lộ Trình 5.0 -> 7.5 (Makeover Câu)' },
-    { id: 'criteria', label: '4 Tiêu Chí & Làm Tròn' },
-    { id: 'strategy', label: 'Công Thức A.R.E.A & PPF' },
-    { id: 'pacing', label: 'Căn Giờ 2 Phút Part 2' },
-    { id: 'archetypes', label: '5 Cốt Truyện Vạn Năng Part 2' },
-    { id: 'comparisons', label: 'Ma Trận So Sánh Part 3' },
-    { id: 'fluency', label: '50+ Câu Đệm Câu Giờ' },
-    { id: 'naturalness', label: 'Né Bẫy Học Thuộc Lòng' },
-    { id: 'idioms', label: '35+ Thành Ngữ Band 8.0+' },
-    { id: 'pronunciation', label: 'Âm Đuôi, Trọng Âm & Ngữ Điệu' },
-    { id: 'mindset', label: 'Tâm Lý & Giám Khảo Ngắt Lời' },
+    { id: 'all', label: isEn ? 'All Topics' : 'Tất cả chủ đề' },
+    { id: 'progression-5-75', label: isEn ? '⭐ Band 5.0 -> 7.5 Sentence Makeover' : '⭐ Lộ Trình 5.0 -> 7.5 (Makeover Câu)' },
+    { id: 'criteria', label: isEn ? '4 Criteria & Band Rounding' : '4 Tiêu Chí & Làm Tròn' },
+    { id: 'strategy', label: isEn ? 'A.R.E.A & Past-Present-Future' : 'Công Thức A.R.E.A & PPF' },
+    { id: 'pacing', label: isEn ? 'Part 2 2-Minute Time Pacing' : 'Căn Giờ 2 Phút Part 2' },
+    { id: 'archetypes', label: isEn ? '5 Universal Story Archetypes' : '5 Cốt Truyện Vạn Năng Part 2' },
+    { id: 'comparisons', label: isEn ? 'Part 3 Comparison Matrix' : 'Ma Trận So Sánh Part 3' },
+    { id: 'fluency', label: isEn ? '50+ Fillers & Buying Time' : '50+ Câu Đệm Câu Giờ' },
+    { id: 'naturalness', label: isEn ? 'Avoiding Rote Memorization' : 'Né Bẫy Học Thuộc Lòng' },
+    { id: 'idioms', label: isEn ? '35+ Band 8.0+ Idiomatic Expressions' : '35+ Thành Ngữ Band 8.0+' },
+    { id: 'pronunciation', label: isEn ? 'Ending Sounds, Stress & Intonation' : 'Âm Đuôi, Trọng Âm & Ngữ Điệu' },
+    { id: 'mindset', label: isEn ? 'Exam Room Mindset & Interruption' : 'Tâm Lý & Giám Khảo Ngắt Lời' },
   ];
 
   const grammarVocabSubTypes = [
-    { id: 'all', label: 'Tất cả chuyên đề' },
-    { id: 'grammar-sentence-structures', label: 'A1. Câu Đơn, Ghép, Phức & Quan Hệ' },
-    { id: 'grammar-tenses-by-task', label: 'A2. Chọn Thì Đúng Cho Từng Task' },
-    { id: 'grammar-passive-voice', label: 'A3. Câu Bị Động & Bị Động Khách Quan' },
-    { id: 'grammar-conditionals', label: 'A4. Câu Điều Kiện Toàn Diện' },
-    { id: 'grammar-comparison-structures', label: 'A5. Cấu Trúc So Sánh Đa Dạng' },
-    { id: 'grammar-advanced-structures', label: 'A6. Đảo Ngữ, Câu Chẻ & Danh Từ Hóa' },
-    { id: 'grammar-common-errors-vietnamese', label: 'A7. Lỗi Ngữ Pháp Người Việt' },
-    { id: 'vocab-linking-devices', label: 'B1. Từ Nối Cohesive Devices' },
-    { id: 'vocab-task1-data-language', label: 'B2. Ngôn Ngữ Số Liệu Task 1' },
-    { id: 'vocab-topic-collocations', label: 'B3. Academic Collocations 8 Chủ Đề' },
-    { id: 'vocab-academic-word-families', label: 'B4. Họ Từ AWL & Paraphrase' },
-    { id: 'vocab-speaking-functional-language', label: 'B5. Ngôn Ngữ Chức Năng Speaking' },
-    { id: 'error-log-and-paraphrase-journal', label: 'B6. Sổ Tay Quản Trị Lỗi Sai' },
+    { id: 'all', label: isEn ? 'All Topics' : 'Tất cả chuyên đề' },
+    { id: 'grammar-sentence-structures', label: isEn ? 'A1. Simple, Compound, Complex & Relative Clauses' : 'A1. Câu Đơn, Ghép, Phức & Quan Hệ' },
+    { id: 'grammar-tenses-by-task', label: isEn ? 'A2. Choosing the Right Tenses by Task' : 'A2. Chọn Thì Đúng Cho Từng Task' },
+    { id: 'grammar-passive-voice', label: isEn ? 'A3. Passive & Impersonal Passive Voice' : 'A3. Câu Bị Động & Bị Động Khách Quan' },
+    { id: 'grammar-conditionals', label: isEn ? 'A4. Comprehensive Conditionals & Inversions' : 'A4. Câu Điều Kiện Toàn Diện' },
+    { id: 'grammar-comparison-structures', label: isEn ? 'A5. Diverse Comparative Structures' : 'A5. Cấu Trúc So Sánh Đa Dạng' },
+    { id: 'grammar-advanced-structures', label: isEn ? 'A6. Inversions, Cleft Sentences & Nominalisation' : 'A6. Đảo Ngữ, Câu Chẻ & Danh Từ Hóa' },
+    { id: 'grammar-common-errors-vietnamese', label: isEn ? 'A7. Typical Vietnamese ESL Grammar Errors' : 'A7. Lỗi Ngữ Pháp Người Việt' },
+    { id: 'vocab-linking-devices', label: isEn ? 'B1. Cohesive Devices & Transition Linkers' : 'B1. Từ Nối Cohesive Devices' },
+    { id: 'vocab-task1-data-language', label: isEn ? 'B2. Task 1 Data Reporting & Trend Lexis' : 'B2. Ngôn Ngữ Số Liệu Task 1' },
+    { id: 'vocab-topic-collocations', label: isEn ? 'B3. Academic Collocations Across 8 Core Topics' : 'B3. Academic Collocations 8 Chủ Đề' },
+    { id: 'vocab-academic-word-families', label: isEn ? 'B4. Academic Word List (AWL) & Paraphrasing' : 'B4. Họ Từ AWL & Paraphrase' },
+    { id: 'vocab-speaking-functional-language', label: isEn ? 'B5. Speaking Functional Language' : 'B5. Ngôn Ngữ Chức Năng Speaking' },
+    { id: 'error-log-and-paraphrase-journal', label: isEn ? 'B6. Error Log & Paraphrase Journal' : 'B6. Sổ Tay Quản Trị Lỗi Sai' },
   ];
 
   // Filter handbook by selected skill, category, subtype, and search query
@@ -546,10 +547,25 @@ export default function TheoryHandbookModal({
     if (selectedSkill !== 'personal' && item.skill !== selectedSkill) return false;
     const matchesCat = activeCategory === 'all' || item.category === activeCategory;
     const matchesSubType = activeSubType === 'all' || item.subType === activeSubType;
-    const matchesSearch = !searchQuery || 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.content.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Highlighted topic from context always displayed
+    if (highlightedTopicId && item.id === highlightedTopicId) {
+      return true;
+    }
+
+    if (!searchQuery) return matchesCat && matchesSubType;
+
+    const q = searchQuery.toLowerCase().trim();
+    const enMeta = THEORY_I18N_EN[item.id];
+    const matchesSearch = 
+      item.title.toLowerCase().includes(q) ||
+      item.summary.toLowerCase().includes(q) ||
+      item.content.toLowerCase().includes(q) ||
+      (enMeta && (
+        enMeta.title?.toLowerCase().includes(q) ||
+        enMeta.tip?.toLowerCase().includes(q) ||
+        enMeta.badge?.toLowerCase().includes(q)
+      ));
     return matchesCat && matchesSubType && matchesSearch;
   });
 
@@ -673,7 +689,9 @@ export default function TheoryHandbookModal({
                 <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-white/10 text-slate-200 border border-white/10">
                   {headerMeta.badge}
                 </span>
-                <span className="text-xs text-slate-400 hidden sm:inline">• Thư viện chiến thuật chuẩn khảo thí Cambridge</span>
+                <span className="text-xs text-slate-400 hidden sm:inline">
+                  {isEn ? '• Official Cambridge Strategy Library' : '• Thư viện chiến thuật chuẩn khảo thí Cambridge'}
+                </span>
               </div>
               <h2 className="text-sm sm:text-lg lg:text-xl font-bold mt-0.5 truncate">{headerMeta.title}</h2>
               <p className="text-xs text-slate-400 line-clamp-1">{headerMeta.subtitle}</p>
@@ -686,17 +704,17 @@ export default function TheoryHandbookModal({
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/25 hover:bg-sky-500/35 text-sky-200 hover:text-white text-xs font-bold border border-sky-400/40 transition-all cursor-pointer shrink-0 shadow-xs"
-              title="Mở cẩm nang trực tuyến trên trang web riêng (giao diện sách điện tử toàn màn hình, mục lục đầy đủ & chế độ ban đêm)"
+              title={isEn ? "Open online handbook on dedicated web page (fullscreen e-book UI, full table of contents & dark mode)" : "Mở cẩm nang trực tuyến trên trang web riêng (giao diện sách điện tử toàn màn hình, mục lục đầy đủ & chế độ ban đêm)"}
             >
               <BookOpen className="w-3.5 h-3.5 text-sky-300" />
-              <span className="hidden sm:inline">Mở Bản Web Đầy Đủ</span>
-              <span className="sm:hidden">Bản Web</span>
+              <span className="hidden sm:inline">{isEn ? 'Open Full Web Guide' : 'Mở Bản Web Đầy Đủ'}</span>
+              <span className="sm:hidden">{isEn ? 'Web Guide' : 'Bản Web'}</span>
               <ExternalLink className="w-3 h-3 opacity-80" />
             </a>
             <button 
               onClick={onClose} 
               className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
-              aria-label="Đóng cẩm nang"
+              aria-label={isEn ? "Close handbook" : "Đóng cẩm nang"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -752,17 +770,31 @@ export default function TheoryHandbookModal({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={
-                  selectedSkill === 'reading'
-                    ? "Tìm kiếm lý thuyết Reading (vd: T/F/NG, headings, scanning, 15-20-25m, paraphrase...)"
-                    : selectedSkill === 'listening'
-                    ? "Tìm kiếm lý thuyết Listening (vd: part 1, số điện thoại, bản đồ, signpost, nối âm, schwa...)"
-                    : selectedSkill === 'speaking'
-                    ? "Tìm kiếm lý thuyết Speaking (vd: A.R.E.A, PPF storytelling, PEEL, buying time, phát âm...)"
-                    : selectedSkill === 'grammar-vocab'
-                    ? "Tìm kiếm Ngữ Pháp & Từ Vựng (vd: câu điều kiện, bị động, đảo ngữ, collocations, AWL, error log...)"
-                    : selectedSkill === 'personal'
-                    ? "Tìm kiếm trong sổ tay ghi chú của bạn..."
-                    : "Tìm kiếm lý thuyết Writing (vd: line graph, overview, PEEL, opinion, map, bị động...)"
+                  isEn ? (
+                    selectedSkill === 'reading'
+                      ? "Search Reading theory (e.g., T/F/NG, headings, scanning, 15-20-25m, paraphrase...)"
+                      : selectedSkill === 'listening'
+                      ? "Search Listening theory (e.g., part 1, phone numbers, maps, signpost, connected speech...)"
+                      : selectedSkill === 'speaking'
+                      ? "Search Speaking theory (e.g., A.R.E.A, PPF storytelling, PEEL, buying time, pronunciation...)"
+                      : selectedSkill === 'grammar-vocab'
+                      ? "Search Grammar & Vocab (e.g., conditionals, passive, inversions, collocations, AWL, error log...)"
+                      : selectedSkill === 'personal'
+                      ? "Search in your personal notes..."
+                      : "Search Writing theory (e.g., line graph, overview, PEEL, opinion, map, passive...)"
+                  ) : (
+                    selectedSkill === 'reading'
+                      ? "Tìm kiếm lý thuyết Reading (vd: T/F/NG, headings, scanning, 15-20-25m, paraphrase...)"
+                      : selectedSkill === 'listening'
+                      ? "Tìm kiếm lý thuyết Listening (vd: part 1, số điện thoại, bản đồ, signpost, nối âm, schwa...)"
+                      : selectedSkill === 'speaking'
+                      ? "Tìm kiếm lý thuyết Speaking (vd: A.R.E.A, PPF storytelling, PEEL, buying time, phát âm...)"
+                      : selectedSkill === 'grammar-vocab'
+                      ? "Tìm kiếm Ngữ Pháp & Từ Vựng (vd: câu điều kiện, bị động, đảo ngữ, collocations, AWL, error log...)"
+                      : selectedSkill === 'personal'
+                      ? "Tìm kiếm trong sổ tay ghi chú của bạn..."
+                      : "Tìm kiếm lý thuyết Writing (vd: line graph, overview, PEEL, opinion, map, bị động...)"
+                  )
                 }
                 className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/20 bg-white"
               />
@@ -774,7 +806,7 @@ export default function TheoryHandbookModal({
                 className="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-2xs transition-colors shrink-0 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                <span>{isAddingNote ? 'Đóng Trình Tạo' : 'Tạo Ghi Chú Mới'}</span>
+                <span>{isAddingNote ? (isEn ? 'Close Form' : 'Đóng Trình Tạo') : (isEn ? 'New Note' : 'Tạo Ghi Chú Mới')}</span>
               </button>
             )}
           </div>
@@ -817,7 +849,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Writing General */}
               {selectedSkill === 'writing' && activeCategory === 'general' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Tiêu chí & Lộ trình:</span>
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">
+                    {isEn ? 'Criteria & Roadmap:' : 'Tiêu chí & Lộ trình:'}
+                  </span>
                   {writingGeneralSubTypes.map(st => (
                     <button
                       key={st.id}
@@ -837,7 +871,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Writing Task 1 */}
               {selectedSkill === 'writing' && activeCategory === 'task1' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng biểu đồ:</span>
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">
+                    {isEn ? 'Chart Type:' : 'Dạng biểu đồ:'}
+                  </span>
                   {writingTask1SubTypes.map(st => (
                     <button
                       key={st.id}
@@ -857,7 +893,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Writing Task 2 */}
               {selectedSkill === 'writing' && activeCategory === 'task2' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Dạng câu hỏi:</span>
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">
+                    {isEn ? 'Question Type:' : 'Dạng câu hỏi:'}
+                  </span>
                   {writingTask2SubTypes.map(st => (
                     <button
                       key={st.id}
@@ -877,7 +915,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Writing Mistakes */}
               {selectedSkill === 'writing' && activeCategory === 'mistakes' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">Phân loại lỗi:</span>
+                  <span className="text-slate-400 font-medium whitespace-nowrap mr-1">
+                    {isEn ? 'Error Category:' : 'Phân loại lỗi:'}
+                  </span>
                   {writingMistakesSubTypes.map(st => (
                     <button
                       key={st.id}
@@ -897,7 +937,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Reading */}
               {selectedSkill === 'reading' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-blue-500 font-semibold whitespace-nowrap mr-1">Dạng bài:</span>
+                  <span className="text-blue-500 font-semibold whitespace-nowrap mr-1">
+                    {isEn ? 'Question Type:' : 'Dạng bài:'}
+                  </span>
                   {readingSubTypes.map(st => (
                     <button
                       key={st.id}
@@ -917,7 +959,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Listening */}
               {selectedSkill === 'listening' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-emerald-600 font-semibold whitespace-nowrap mr-1">Phần thi & Âm học:</span>
+                  <span className="text-emerald-600 font-semibold whitespace-nowrap mr-1">
+                    {isEn ? 'Parts & Acoustics:' : 'Phần thi & Âm học:'}
+                  </span>
                   {listeningSubTypes.map(st => (
                     <button
                       key={st.id}
@@ -937,7 +981,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Speaking */}
               {selectedSkill === 'speaking' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-purple-600 font-semibold whitespace-nowrap mr-1">Chủ đề & Kỹ thuật:</span>
+                  <span className="text-purple-600 font-semibold whitespace-nowrap mr-1">
+                    {isEn ? 'Topic & Techniques:' : 'Chủ đề & Kỹ thuật:'}
+                  </span>
                   {speakingSubTypes.map(st => (
                     <button
                       key={st.id}
@@ -957,7 +1003,9 @@ export default function TheoryHandbookModal({
               {/* Sub-Filters for Grammar & Vocab */}
               {selectedSkill === 'grammar-vocab' && (
                 <div className="pt-2 flex items-center space-x-1 overflow-x-auto pb-1 text-[11px] border-t border-slate-200/70">
-                  <span className="text-teal-700 font-semibold whitespace-nowrap mr-1">Chuyên đề A & B:</span>
+                  <span className="text-teal-700 font-semibold whitespace-nowrap mr-1">
+                    {isEn ? 'Modules A & B:' : 'Chuyên đề A & B:'}
+                  </span>
                   {grammarVocabSubTypes.map(st => (
                     <button
                       key={st.id}
@@ -989,7 +1037,7 @@ export default function TheoryHandbookModal({
                   <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
                     <span className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                      Biên soạn mẹo / ghi chú mới
+                      {isEn ? 'Draft new tip / study note' : 'Biên soạn mẹo / ghi chú mới'}
                     </span>
                     <select
                       value={newNoteTag}
@@ -1000,9 +1048,9 @@ export default function TheoryHandbookModal({
                       <option value="Reading">IELTS Reading</option>
                       <option value="Listening">IELTS Listening</option>
                       <option value="Speaking">IELTS Speaking</option>
-                      <option value="Vocabulary">Từ Vựng & Collocation</option>
-                      <option value="Grammar">Cấu Trúc Ngữ Pháp</option>
-                      <option value="General">Mẹo Chung & Chiến Thuật</option>
+                      <option value="Vocabulary">{isEn ? 'Vocabulary & Collocations' : 'Từ Vựng & Collocation'}</option>
+                      <option value="Grammar">{isEn ? 'Grammar Structures' : 'Cấu Trúc Ngữ Pháp'}</option>
+                      <option value="General">{isEn ? 'General Tips & Strategy' : 'Mẹo Chung & Chiến Thuật'}</option>
                     </select>
                   </div>
 
@@ -1010,13 +1058,13 @@ export default function TheoryHandbookModal({
                     type="text"
                     value={newNoteTitle}
                     onChange={(e) => setNewNoteTitle(e.target.value)}
-                    placeholder="Tiêu đề ghi chú (vd: Công thức câu Overview của thầy Simon hoặc bẫy T/F/NG cần nhớ)"
+                    placeholder={isEn ? "Note title (e.g., Simon's Overview formula or key T/F/NG traps)" : "Tiêu đề ghi chú (vd: Công thức câu Overview của thầy Simon hoặc bẫy T/F/NG cần nhớ)"}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white font-semibold"
                   />
                   <textarea
                     value={newNoteContent}
                     onChange={(e) => setNewNoteContent(e.target.value)}
-                    placeholder="Nội dung ghi chú chi tiết... (hỗ trợ dán template, cấu trúc câu, từ vựng hoặc checklist của riêng bạn)"
+                    placeholder={isEn ? "Detailed note content... (supports pasting templates, sentence structures, vocabulary, or your own checklist)" : "Nội dung ghi chú chi tiết... (hỗ trợ dán template, cấu trúc câu, từ vựng hoặc checklist của riêng bạn)"}
                     rows={5}
                     className="w-full p-3.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white resize-none font-sans"
                   />
@@ -1026,13 +1074,13 @@ export default function TheoryHandbookModal({
                       onClick={() => setIsAddingNote(false)}
                       className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
                     >
-                      Hủy
+                      {isEn ? 'Cancel' : 'Hủy'}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 shadow-2xs cursor-pointer"
                     >
-                      Lưu Ghi Chú
+                      {isEn ? 'Save Note' : 'Lưu Ghi Chú'}
                     </button>
                   </div>
                 </form>
@@ -1066,22 +1114,22 @@ export default function TheoryHandbookModal({
                               <option value="Writing">Writing</option>
                               <option value="Reading">Reading</option>
                               <option value="Listening">Listening</option>
-                              <option value="Vocabulary">Vocabulary</option>
-                              <option value="Grammar">Grammar</option>
-                              <option value="General">General</option>
+                              <option value="Vocabulary">{isEn ? 'Vocabulary' : 'Vocabulary'}</option>
+                              <option value="Grammar">{isEn ? 'Grammar' : 'Grammar'}</option>
+                              <option value="General">{isEn ? 'General' : 'General'}</option>
                             </select>
                             <div className="flex space-x-1.5">
                               <button
                                 onClick={() => setEditingNoteId(null)}
                                 className="px-2.5 py-1 rounded text-xs text-slate-500 hover:bg-slate-100 cursor-pointer"
                               >
-                                Hủy
+                                {isEn ? 'Cancel' : 'Hủy'}
                               </button>
                               <button
                                 onClick={() => handleSaveEdit(n.id)}
                                 className="px-3 py-1 rounded bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 cursor-pointer"
                               >
-                                Lưu
+                                {isEn ? 'Save' : 'Lưu'}
                               </button>
                             </div>
                           </div>
@@ -1092,7 +1140,7 @@ export default function TheoryHandbookModal({
                             <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2">
                               <div>
                                 <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200 mb-1">
-                                  {n.tag || 'Ghi Chú'}
+                                  {n.tag || (isEn ? 'Note' : 'Ghi Chú')}
                                 </span>
                                 <h4 className="font-bold text-sm text-slate-900 leading-snug">{n.title}</h4>
                               </div>
@@ -1100,14 +1148,14 @@ export default function TheoryHandbookModal({
                                 <button
                                   onClick={() => startEditNote(n)}
                                   className="p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                                  title="Chỉnh sửa ghi chú"
+                                  title={isEn ? "Edit note" : "Chỉnh sửa ghi chú"}
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => onDeletePersonalNote(n.id)}
                                   className="p-1 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                                  title="Xóa ghi chú này"
+                                  title={isEn ? "Delete note" : "Xóa ghi chú này"}
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -1133,9 +1181,19 @@ export default function TheoryHandbookModal({
                   <div className="w-12 h-12 mx-auto rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
                     <Bookmark className="w-6 h-6" />
                   </div>
-                  <h3 className="text-sm font-bold text-slate-700">Chưa có ghi chú cá nhân nào</h3>
+                  <h3 className="text-sm font-bold text-slate-700">
+                    {isEn ? 'No personal study notes yet' : 'Chưa có ghi chú cá nhân nào'}
+                  </h3>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    Hãy bấm nút <strong className="text-amber-600">"Tạo Ghi Chú Mới"</strong> ở góc trên để ghi lại các câu mẫu, từ vựng đắt giá hoặc mẹo học riêng của bạn! Dữ liệu được lưu an toàn trong trình duyệt.
+                    {isEn ? (
+                      <>
+                        Click the <strong className="text-amber-600">"New Note"</strong> button above to save your model sentences, golden collocations or custom study tips! Data is stored locally in your browser.
+                      </>
+                    ) : (
+                      <>
+                        Hãy bấm nút <strong className="text-amber-600">"Tạo Ghi Chú Mới"</strong> ở góc trên để ghi lại các câu mẫu, từ vựng đắt giá hoặc mẹo học riêng của bạn! Dữ liệu được lưu an toàn trong trình duyệt.
+                      </>
+                    )}
                   </p>
                 </div>
               )}
@@ -1151,11 +1209,13 @@ export default function TheoryHandbookModal({
                   </div>
                   <div>
                     <div className="font-bold text-slate-900 flex items-center gap-1.5">
-                      <span>Đọc Thoải Mái Hơn Trên Trang Web Riêng?</span>
+                      <span>{isEn ? 'Prefer Reading on Dedicated Web Page?' : 'Đọc Thoải Mái Hơn Trên Trang Web Riêng?'}</span>
                       <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-sky-200 text-sky-800">E-Book</span>
                     </div>
                     <p className="text-[11px] text-slate-500 line-clamp-1 sm:line-clamp-none">
-                      Xem đầy đủ 113 chuyên đề với thanh mục lục bên trái, tìm kiếm nhanh và chế độ đọc toàn màn hình.
+                      {isEn 
+                        ? 'Explore all 113 authoritative topics with table of contents, instant search and fullscreen mode.' 
+                        : 'Xem đầy đủ 113 chuyên đề với thanh mục lục bên trái, tìm kiếm nhanh và chế độ đọc toàn màn hình.'}
                     </p>
                   </div>
                 </div>
@@ -1164,10 +1224,10 @@ export default function TheoryHandbookModal({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shrink-0 transition-colors shadow-2xs ml-2 cursor-pointer"
-                  title="Mở cẩm nang trên trang web riêng"
+                  title={isEn ? "Open handbook on dedicated web page" : "Mở cẩm nang trên trang web riêng"}
                 >
-                  <span className="hidden sm:inline">Mở Bản Web</span>
-                  <span className="sm:hidden">Mở</span>
+                  <span className="hidden sm:inline">{isEn ? 'Open Web Guide' : 'Mở Bản Web'}</span>
+                  <span className="sm:hidden">{isEn ? 'Web Guide' : 'Mở'}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
@@ -1225,8 +1285,8 @@ export default function TheoryHandbookModal({
                                 : item.skill === 'speaking'
                                 ? 'IELTS Speaking'
                                 : item.skill === 'grammar-vocab'
-                                ? (item.category === 'grammar' ? 'Ngữ Pháp Trọng Tâm' : 'Từ Vựng & Sổ Tay')
-                                : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? 'Cảnh Báo Lỗi' : item.category === 'exam-skills' ? 'Thi Máy CDI' : 'Chiến Lược & Tiêu Chí')}
+                                ? (item.category === 'grammar' ? (isEn ? 'Core Grammar' : 'Ngữ Pháp Trọng Tâm') : (isEn ? 'Vocab & Error Log' : 'Từ Vựng & Sổ Tay'))
+                                : (item.category === 'task1' ? 'IELTS Task 1' : item.category === 'task2' ? 'IELTS Task 2' : item.category === 'mistakes' ? (isEn ? 'Pitfalls Alert' : 'Cảnh Báo Lỗi') : item.category === 'exam-skills' ? (isEn ? 'CDI Exam' : 'Thi Máy CDI') : (isEn ? 'Strategy & Criteria' : 'Chiến Lược & Tiêu Chí'))}
                             </span>
                             {item.stage && (
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/80">
@@ -1236,7 +1296,7 @@ export default function TheoryHandbookModal({
                             {item.subType === 'progression-5-75' && (
                               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 text-white shadow-2xs flex items-center gap-1">
                                 <Sparkles className="w-3 h-3 text-amber-200" />
-                                <span>Lộ Trình Band 5.0 - 7.5</span>
+                                <span>{isEn ? 'Band 5.0 - 7.5 Roadmap' : 'Lộ Trình Band 5.0 - 7.5'}</span>
                               </span>
                             )}
                           </div>
@@ -1251,9 +1311,11 @@ export default function TheoryHandbookModal({
                               ? 'text-teal-900'
                               : 'text-slate-900'
                           }`}>
-                            {item.title}
+                            {(isEn && THEORY_I18N_EN[item.id]?.title) ? THEORY_I18N_EN[item.id].title : item.title}
                           </h3>
-                          <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.summary}</p>
+                          <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                            {(isEn && THEORY_I18N_EN[item.id]?.tip) ? THEORY_I18N_EN[item.id].tip : item.summary}
+                          </p>
                         </div>
 
                         {/* Copy & GitBook Deep Link Buttons */}
@@ -1264,10 +1326,10 @@ export default function TheoryHandbookModal({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-sky-200/90 bg-sky-50/70 hover:bg-sky-100 text-sky-800 text-xs font-semibold transition-all cursor-pointer shadow-2xs shrink-0"
-                              title={`Đọc bài "${item.title}" trực tiếp trên GitBook`}
+                              title={isEn ? `Read "${(isEn && THEORY_I18N_EN[item.id]?.title) ? THEORY_I18N_EN[item.id].title : item.title}" directly on Web Guide` : `Đọc bài "${item.title}" trực tiếp trên GitBook`}
                             >
                               <BookOpen className="w-3.5 h-3.5 text-sky-600" />
-                              <span className="hidden sm:inline">Bản Web</span>
+                              <span className="hidden sm:inline">{isEn ? 'Web Guide' : 'Bản Web'}</span>
                               <ExternalLink className="w-3 h-3 text-sky-500" />
                             </a>
                           )}
@@ -1278,17 +1340,17 @@ export default function TheoryHandbookModal({
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
                                 : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
                             }`}
-                            title="Sao chép toàn bộ bài viết này"
+                            title={isEn ? "Copy full topic content" : "Sao chép toàn bộ bài viết này"}
                           >
                             {isCopied ? (
                               <>
                                 <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
-                                <span>Đã chép!</span>
+                                <span>{isEn ? 'Copied!' : 'Đã chép!'}</span>
                               </>
                             ) : (
                               <>
                                 <Copy className="w-3.5 h-3.5 text-slate-400" />
-                                <span>Sao chép</span>
+                                <span>{isEn ? 'Copy' : 'Sao chép'}</span>
                               </>
                             )}
                           </button>
@@ -1304,12 +1366,16 @@ export default function TheoryHandbookModal({
               ) : (
                 <div className="text-center py-16 text-slate-400 text-xs space-y-2">
                   <HelpCircle className="w-8 h-8 text-slate-300 mx-auto" />
-                  <p>Không tìm thấy bài cẩm nang nào phù hợp với bộ lọc hoặc từ khóa "${searchQuery}".</p>
+                  <p>
+                    {isEn 
+                      ? `No handbook topics matched your filter or keyword "${searchQuery}".` 
+                      : `Không tìm thấy bài cẩm nang nào phù hợp với bộ lọc hoặc từ khóa "${searchQuery}".`}
+                  </p>
                   <button 
                     onClick={() => { setActiveCategory('all'); setActiveSubType('all'); setSearchQuery(''); }}
                     className="text-xs text-blue-600 hover:underline font-semibold cursor-pointer"
                   >
-                    Xóa bộ lọc để xem tất cả
+                    {isEn ? 'Clear filters to view all' : 'Xóa bộ lọc để xem tất cả'}
                   </button>
                 </div>
               )}
