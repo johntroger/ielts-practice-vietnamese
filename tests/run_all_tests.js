@@ -113,7 +113,8 @@ const testSuites = [
   { name: 'Step 104: Bilingual Modals & Study Tools Localization (Phase 4)', file: 'tests/test_step104_i18n_modals_and_tools_localization.js' },
   { name: 'Step 105: Bilingual Final Polish & Edge Cases (Phase 5 Milestone)', file: 'tests/test_step105_i18n_final_polish_and_edge_cases.js' },
   { name: 'Step 106: Test Titles & Descriptions Bilingual Localization', file: 'tests/test_step106_test_titles_and_descriptions_localization.js' },
-  { name: 'Step 107: Theory Handbook Modal Trigger & Wiring Verification', file: 'tests/test_step107_theory_handbook_modal_trigger.js' }
+  { name: 'Step 107: Theory Handbook Modal Trigger & Wiring Verification', file: 'tests/test_step107_theory_handbook_modal_trigger.js' },
+  { name: 'Step 108: Task Library Filter & Cards Localization Verification', file: 'tests/test_step108_task_library_filter_and_cards_localization.js' }
 ];
 
 console.log('===============================================================');

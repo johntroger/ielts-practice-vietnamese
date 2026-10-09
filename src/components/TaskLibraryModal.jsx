@@ -84,10 +84,10 @@ export default function TaskLibraryModal({
       const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
       const shareUrl = `${window.location.origin}${window.location.pathname}#shared-task=${encoded}`;
       navigator.clipboard.writeText(shareUrl);
-      alert('Đã sao chép liên kết chia sẻ đề thi! Bạn có thể dán liên kết này vào bất kỳ tab ẩn danh hoặc gửi bạn bè để mở bài luyện ngay.');
+      alert(isEn ? 'Copied prompt share link! You can paste it into any incognito tab or share with friends to open it directly.' : 'Đã sao chép liên kết chia sẻ đề thi! Bạn có thể dán liên kết này vào bất kỳ tab ẩn danh hoặc gửi bạn bè để mở bài luyện ngay.');
     } catch (e) {
       console.error(e);
-      alert('Không thể tạo liên kết chia sẻ.');
+      alert(isEn ? 'Failed to generate share link.' : 'Không thể tạo liên kết chia sẻ.');
     }
   };
 
@@ -133,18 +133,42 @@ export default function TaskLibraryModal({
     return (submissions || []).map(s => s.task?.id).filter(Boolean);
   }, [submissions]);
 
+  const getTask1TypeLabel = (typeId, isEnglish) => {
+    const map = {
+      line: isEnglish ? 'Line Graph' : 'Line Graph (Đường)',
+      bar: isEnglish ? 'Bar Chart' : 'Bar Chart (Cột)',
+      pie: isEnglish ? 'Pie Chart' : 'Pie Chart (Tròn)',
+      table: isEnglish ? 'Table' : 'Table (Bảng số liệu)',
+      mixed: isEnglish ? 'Mixed / Combo' : 'Mixed / Combo (Hỗn hợp)',
+      process: isEnglish ? 'Process' : 'Process (Quy trình)',
+      map: isEnglish ? 'Map' : 'Map (Bản đồ biến đổi)'
+    };
+    return map[typeId] || typeId;
+  };
+
+  const getTask2TypeLabel = (typeId, isEnglish) => {
+    const map = {
+      opinion: isEnglish ? 'Agree or Disagree' : 'Đồng ý hay Không đồng ý (Opinion)',
+      discussion: isEnglish ? 'Discuss Both Views' : 'Bàn luận 2 quan điểm (Discussion)',
+      advantages: isEnglish ? 'Advantages vs Disadvantages' : 'Ưu điểm & Nhược điểm (Advantages)',
+      problems: isEnglish ? 'Causes & Solutions' : 'Nguyên nhân & Giải pháp (Problems)',
+      twopart: isEnglish ? 'Two-part Direct Question' : 'Câu hỏi 2 phần (Two-part Direct)'
+    };
+    return map[typeId] || typeId;
+  };
+
   const categoryOptions = useMemo(() => {
     if (filterTaskNum === 1) {
-      return TASK1_TYPES.map(t => ({ value: t.id, label: `Task 1: ${t.label}` }));
+      return TASK1_TYPES.map(t => ({ value: t.id, label: `Task 1: ${getTask1TypeLabel(t.id, isEn)}` }));
     }
     if (filterTaskNum === 2) {
-      return TASK2_TYPES.map(t => ({ value: t.id, label: `Task 2: ${t.label}` }));
+      return TASK2_TYPES.map(t => ({ value: t.id, label: `Task 2: ${getTask2TypeLabel(t.id, isEn)}` }));
     }
     return [
-      ...TASK1_TYPES.map(t => ({ value: t.id, label: `Task 1: ${t.label}` })),
-      ...TASK2_TYPES.map(t => ({ value: t.id, label: `Task 2: ${t.label}` }))
+      ...TASK1_TYPES.map(t => ({ value: t.id, label: `Task 1: ${getTask1TypeLabel(t.id, isEn)}` })),
+      ...TASK2_TYPES.map(t => ({ value: t.id, label: `Task 2: ${getTask2TypeLabel(t.id, isEn)}` }))
     ];
-  }, [filterTaskNum]);
+  }, [filterTaskNum, isEn]);
 
   const filteredTasks = useMemo(() => {
     let base = taskSource;
@@ -245,7 +269,7 @@ export default function TaskLibraryModal({
           if (Array.isArray(json)) {
             const sanitized = json.map(sanitizeItem);
             if (strippedMedia) {
-              alert('Lưu ý: Do dung lượng website giới hạn, một số hình ảnh/âm thanh trong tệp JSON đã được tự động lược bỏ (tính năng nạp đề chứa hình ảnh/âm thanh hiện chỉ dành riêng cho Quản trị viên tranthanhtung37@gmail.com). Toàn bộ nội dung đề văn bản vẫn được nạp đầy đủ.');
+              alert(isEn ? 'Note: Due to website storage limits, some images/audio in the JSON file were automatically omitted (media import is reserved for Administrator tranthanhtung37@gmail.com). All text prompts were fully imported.' : 'Lưu ý: Do dung lượng website giới hạn, một số hình ảnh/âm thanh trong tệp JSON đã được tự động lược bỏ (tính năng nạp đề chứa hình ảnh/âm thanh hiện chỉ dành riêng cho Quản trị viên tranthanhtung37@gmail.com). Toàn bộ nội dung đề văn bản vẫn được nạp đầy đủ.');
             }
             onImportData(sanitized);
             return;
@@ -254,13 +278,13 @@ export default function TaskLibraryModal({
               json.tasks = json.tasks.map(sanitizeItem);
             }
             if (strippedMedia) {
-              alert('Lưu ý: Do dung lượng website giới hạn, một số hình ảnh/âm thanh trong tệp JSON đã được tự động lược bỏ (tính năng nạp đề chứa hình ảnh/âm thanh hiện chỉ dành riêng cho Quản trị viên tranthanhtung37@gmail.com). Toàn bộ nội dung đề văn bản vẫn được nạp đầy đủ.');
+              alert(isEn ? 'Note: Due to website storage limits, some images/audio in the JSON file were automatically omitted (media import is reserved for Administrator tranthanhtung37@gmail.com). All text prompts were fully imported.' : 'Lưu ý: Do dung lượng website giới hạn, một số hình ảnh/âm thanh trong tệp JSON đã được tự động lược bỏ (tính năng nạp đề chứa hình ảnh/âm thanh hiện chỉ dành riêng cho Quản trị viên tranthanhtung37@gmail.com). Toàn bộ nội dung đề văn bản vẫn được nạp đầy đủ.');
             }
           }
         }
         onImportData(json);
       } catch (err) {
-        alert('File JSON không hợp lệ.');
+        alert(isEn ? 'Invalid JSON file.' : 'File JSON không hợp lệ.');
       }
     };
     reader.readAsText(file);
@@ -420,7 +444,7 @@ export default function TaskLibraryModal({
                 className="flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-2xs transition-colors shrink-0 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>{isAddingManual ? 'Đóng' : 'Nạp Đề'}</span>
+                <span>{isAddingManual ? (isEn ? 'Close' : 'Đóng') : (isEn ? '+ Import Prompt' : '+ Nạp Đề')}</span>
               </button>
             </div>
           </div>
@@ -444,7 +468,7 @@ export default function TaskLibraryModal({
               setCategoryFilter('all');
               setSortBy('rating_desc');
             }}
-            placeholder="Tìm đề bài theo tiêu đề, từ khóa, chủ đề Cambridge..."
+            placeholder={isEn ? "Search prompts by title, keyword, Cambridge topic..." : "Tìm đề bài theo tiêu đề, từ khóa, chủ đề Cambridge..."}
           />
         </div>
 
@@ -456,24 +480,24 @@ export default function TaskLibraryModal({
             <form onSubmit={handleCreateManual} className="p-5 rounded-2xl border border-red-200 bg-red-50/40 space-y-3 mb-4">
               <h4 className="font-bold text-sm text-red-900 flex items-center space-x-1.5">
                 <Plus className="w-4 h-4 text-red-600" />
-                <span>Nạp Đề Mới Từ Tài Liệu Riêng Của Bạn:</span>
+                <span>{isEn ? 'Add Custom Task from Your Own Materials:' : 'Nạp Đề Mới Từ Tài Liệu Riêng Của Bạn:'}</span>
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="sm:col-span-2">
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Tiêu đề đề bài:</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">{isEn ? 'Task Title:' : 'Tiêu đề đề bài:'}</label>
                   <input
                     type="text"
                     required
                     value={manualTitle}
                     onChange={(e) => setManualTitle(e.target.value)}
-                    placeholder="Vd: Cambridge 18 Test 2 - Remote Working"
+                    placeholder={isEn ? "E.g. Cambridge 18 Test 2 - Remote Working" : "Vd: Cambridge 18 Test 2 - Remote Working"}
                     className="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-red-500/20"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Phần thi:</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">{isEn ? 'Exam Section:' : 'Phần thi:'}</label>
                   <select
                     value={manualTaskNum}
                     onChange={(e) => setManualTaskNum(Number(e.target.value))}
@@ -487,7 +511,7 @@ export default function TaskLibraryModal({
 
               {/* Dạng bài chi tiết */}
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Dạng bài cụ thể:</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">{isEn ? 'Specific Question Type:' : 'Dạng bài cụ thể:'}</label>
                 <select
                   value={manualType}
                   onChange={(e) => setManualType(e.target.value)}
@@ -495,11 +519,11 @@ export default function TaskLibraryModal({
                 >
                   {manualTaskNum === 1 ? (
                     TASK1_TYPES.map(t => (
-                      <option key={t.id} value={t.id}>{t.label}</option>
+                      <option key={t.id} value={t.id}>{getTask1TypeLabel(t.id, isEn)}</option>
                     ))
                   ) : (
                     TASK2_TYPES.map(t => (
-                      <option key={t.id} value={t.id}>{t.label} ({t.vi})</option>
+                      <option key={t.id} value={t.id}>{getTask2TypeLabel(t.id, isEn)}</option>
                     ))
                   )}
                 </select>
@@ -511,37 +535,37 @@ export default function TaskLibraryModal({
                   <TaskImageUploader
                     imageUrl={manualImageUrl}
                     onImageChange={setManualImageUrl}
-                    label="Ảnh Đề Bài Task 1 (Biểu đồ / Bản đồ / Quy trình):"
+                    label={isEn ? "Task 1 Visual Image (Chart / Map / Process):" : "Ảnh Đề Bài Task 1 (Biểu đồ / Bản đồ / Quy trình):"}
                     user={user}
                   />
                   {manualImageUrl && (
                     <p className="text-[11px] text-amber-800 font-medium mt-1.5 flex items-center gap-1 bg-amber-50 p-2 rounded-lg border border-amber-200">
                       <span>🔒</span>
-                      <span>Ảnh cá nhân tải lên được lưu riêng tư cho tài khoản của bạn, không chia sẻ lên kho đề chung.</span>
+                      <span>{isEn ? "Uploaded personal image is stored privately for your account and will not be shared publicly." : "Ảnh cá nhân tải lên được lưu riêng tư cho tài khoản của bạn, không chia sẻ lên kho đề chung."}</span>
                     </p>
                   )}
                 </div>
               )}
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Nội dung đề bài chính xác (Prompt):</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">{isEn ? 'Exact Prompt Text:' : 'Nội dung đề bài chính xác (Prompt):'}</label>
                 <textarea
                   required
                   rows={3}
                   value={manualPrompt}
                   onChange={(e) => setManualPrompt(e.target.value)}
-                  placeholder="Dán toàn bộ đề bài ở đây..."
+                  placeholder={isEn ? "Paste full exam prompt here..." : "Dán toàn bộ đề bài ở đây..."}
                   className="w-full p-3 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none resize-none font-sans"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Bài mẫu tham khảo (Nếu có):</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">{isEn ? 'Model Answer (Optional):' : 'Bài mẫu tham khảo (Nếu có):'}</label>
                 <textarea
                   rows={3}
                   value={manualModelAnswer}
                   onChange={(e) => setManualModelAnswer(e.target.value)}
-                  placeholder="Dán bài mẫu Band 8.0+ từ sách hoặc tài liệu của bạn (tùy chọn)..."
+                  placeholder={isEn ? "Paste Band 8.0+ model answer here (optional)..." : "Dán bài mẫu Band 8.0+ từ sách hoặc tài liệu của bạn (tùy chọn)..."}
                   className="w-full p-3 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none resize-none font-sans"
                 />
               </div>
@@ -550,15 +574,15 @@ export default function TaskLibraryModal({
                 <button
                   type="button"
                   onClick={() => setIsAddingManual(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs text-slate-600 hover:bg-slate-100"
+                  className="px-3 py-1.5 rounded-lg text-xs text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
-                  Hủy
+                  {isEn ? 'Cancel' : 'Hủy'}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-2xs"
+                  className="px-4 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-2xs cursor-pointer"
                 >
-                  Lưu Đề Vào Kho
+                  {isEn ? 'Save Prompt to Library' : 'Lưu Đề Vào Kho'}
                 </button>
               </div>
             </form>
@@ -591,58 +615,58 @@ export default function TaskLibraryModal({
                         {t.isAiGenerated && (
                           <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex items-center space-x-1 font-semibold">
                             <Sparkles className="w-3 h-3 text-amber-500" />
-                            <span>AI Sinh</span>
+                            <span>{isEn ? 'AI Gen' : 'AI Sinh'}</span>
                           </span>
                         )}
                         {(t.isManual || (t.isCustom && !t.isAiGenerated)) && (
                           <span className="text-[10px] text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded border border-emerald-300 font-bold flex items-center space-x-1 shadow-2xs">
                             <PenTool className="w-3 h-3 text-emerald-600" />
-                            <span>✍️ Thủ Công</span>
+                            <span>✍️ {isEn ? 'Manual' : 'Thủ Công'}</span>
                           </span>
                         )}
                         {(t.isCambridge || (!t.isCustom && !t.isAiGenerated)) && (
                           <span className="text-[10px] text-indigo-800 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200 font-bold flex items-center space-x-1 shadow-2xs">
-                            <span>🏛️ {t.cambridgeBook ? `Chuẩn Cambridge (Cam ${t.cambridgeBook})` : 'Chuẩn Cambridge'}</span>
+                            <span>🏛️ {t.cambridgeBook ? (isEn ? `Cambridge (Cam ${t.cambridgeBook})` : `Chuẩn Cambridge (Cam ${t.cambridgeBook})`) : (isEn ? 'Cambridge Official' : 'Chuẩn Cambridge')}</span>
                           </span>
                         )}
                         {t.imageUrl && (
                           <span className="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-semibold flex items-center space-x-1">
-                            <span>📷 Có Ảnh</span>
+                            <span>📷 {isEn ? 'With Image' : 'Có Ảnh'}</span>
                           </span>
                         )}
                         {t.isPublic && (
                           <span className="text-[10px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-semibold flex items-center space-x-1">
                             <Globe className="w-3 h-3" />
-                            <span>Công Khai</span>
+                            <span>{isEn ? 'Public' : 'Công Khai'}</span>
                           </span>
                         )}
                         {t.isCommunity && t.creatorEmail && (
                           <span className="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200 font-medium">
-                            Từ: {t.creatorEmail.split('@')[0]}
+                            {isEn ? 'By: ' : 'Từ: '}{t.creatorEmail.split('@')[0]}
                           </span>
                         )}
                         {masteredIds.includes(t.id) && (
                           <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 font-bold flex items-center space-x-1 shadow-2xs">
                             <GraduationCap className="w-3 h-3 text-emerald-700" />
-                            <span>Đã thuộc</span>
+                            <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
                           </span>
                         )}
                         {attemptedIds.includes(t.id) && (
                           <span className="text-[10px] text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-semibold flex items-center space-x-1">
                             <CheckCircle2 className="w-3 h-3 text-blue-600" />
-                            <span>Đã làm</span>
+                            <span>{isEn ? 'Attempted' : 'Đã làm'}</span>
                           </span>
                         )}
                         {t._metrics?.isHot && (
                           <span className="text-[10px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 font-bold flex items-center space-x-1">
                             <Flame className="w-3 h-3 text-rose-500 fill-rose-500" />
-                            <span>Thịnh Hành</span>
+                            <span>{isEn ? 'Trending' : 'Thịnh Hành'}</span>
                           </span>
                         )}
                         {t._metrics?.isTopRated && (
                           <span className="text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-bold flex items-center space-x-1">
                             <Star className="w-3 h-3 text-amber-500 fill-amber-400" />
-                            <span>Top Đề</span>
+                            <span>{isEn ? 'Top Pick' : 'Top Đề'}</span>
                           </span>
                         )}
                       </div>
@@ -676,7 +700,7 @@ export default function TaskLibraryModal({
                           <button
                             onClick={() => {
                               if (!t.isPublic && t.imageUrl && (t.imageUrl.startsWith('data:') || t.imageUrl.startsWith('blob:'))) {
-                                alert('Đề thi này có hình ảnh tải lên từ thiết bị cá nhân. Theo chính sách bảo mật & tiết kiệm dung lượng, hình ảnh tự tải lên được giữ riêng tư cho tài khoản của bạn, không thể chia sẻ công khai.');
+                                alert(isEn ? 'This prompt contains a private uploaded image. For privacy and storage policies, personal images remain private to your account and cannot be publicly shared.' : 'Đề thi này có hình ảnh tải lên từ thiết bị cá nhân. Theo chính sách bảo mật & tiết kiệm dung lượng, hình ảnh tự tải lên được giữ riêng tư cho tài khoản của bạn, không thể chia sẻ công khai.');
                                 return;
                               }
                               onTogglePublic(t.id, !t.isPublic);
@@ -686,7 +710,7 @@ export default function TaskLibraryModal({
                                 ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' 
                                 : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                             }`}
-                            title={t.isPublic ? "Đang chia sẻ công khai cho mọi người. Bấm để chuyển về riêng tư" : "Bấm để chia sẻ đề này vào Thư viện Cộng đồng"}
+                            title={t.isPublic ? (isEn ? "Sharing publicly. Click to make private" : "Đang chia sẻ công khai cho mọi người. Bấm để chuyển về riêng tư") : (isEn ? "Click to share this prompt to Community Library" : "Bấm để chia sẻ đề này vào Thư viện Cộng đồng")}
                           >
                             <Share2 className="w-3.5 h-3.5" />
                           </button>
@@ -695,8 +719,8 @@ export default function TaskLibraryModal({
                         {/* Copy Instant Share Link Button */}
                         <button
                           onClick={() => handleCopyShareLink(t)}
-                          className="p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-blue-600"
-                          title="Sao chép liên kết đề thi (Dán trực tiếp vào Tab ẩn danh hoặc gửi bạn bè để mở ngay)"
+                          className="p-1.5 rounded-lg border text-xs font-semibold flex items-center space-x-1 transition-colors bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-blue-600 cursor-pointer"
+                          title={isEn ? "Copy prompt share link" : "Sao chép liên kết đề thi (Dán trực tiếp vào Tab ẩn danh hoặc gửi bạn bè để mở ngay)"}
                         >
                           <LinkIcon className="w-3.5 h-3.5" />
                         </button>
@@ -705,7 +729,7 @@ export default function TaskLibraryModal({
                         <button
                           onClick={() => {
                             if (!user) {
-                              alert('Tính năng "Đã thuộc" giúp ẩn đề đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
+                              alert(isEn ? '"Mastered" feature helps hide mastered prompts from your practice list. Please log in to save your progress!' : 'Tính năng "Đã thuộc" giúp ẩn đề đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
                               onOpenAuth?.();
                               return;
                             }
@@ -717,22 +741,22 @@ export default function TaskLibraryModal({
                               : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
                           }`}
                           title={masteredIds.includes(t.id) 
-                            ? "Đề này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)" 
-                            : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập hàng ngày của bạn)"}
+                            ? (isEn ? "Mastered. Click to unmark" : "Đề này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)") 
+                            : (isEn ? "Mark as 'Mastered' (Hides from daily practice list)" : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập hàng ngày của bạn)")}
                         >
                           <GraduationCap className="w-3.5 h-3.5" />
-                          {masteredIds.includes(t.id) && <span className="text-[10px]">Đã thuộc</span>}
+                          {masteredIds.includes(t.id) && <span className="text-[10px]">{isEn ? 'Mastered' : 'Đã thuộc'}</span>}
                         </button>
 
                         {(t.isCustom || t.isAiGenerated || t.isOwnTask || t.id?.startsWith('custom-') || t.id?.startsWith('ai-gen-') || t.id?.startsWith('task-user')) && (
                           <button
                             onClick={() => {
-                              if (window.confirm(`Bạn có chắc chắn muốn xóa đề "${t.title}" khỏi kho đề?`)) {
+                              if (window.confirm(isEn ? `Are you sure you want to delete prompt "${t.title}" from library?` : `Bạn có chắc chắn muốn xóa đề "${t.title}" khỏi kho đề?`)) {
                                 onDeleteTask(t.id);
                               }
                             }}
                             className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
-                            title="Xóa đề này"
+                            title={isEn ? "Delete this prompt" : "Xóa đề này"}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -742,7 +766,7 @@ export default function TaskLibraryModal({
                       {isActive ? (
                         <span className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold shrink-0">
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Đang Chọn</span>
+                          <span>{isEn ? 'Selected' : 'Đang Chọn'}</span>
                         </span>
                       ) : (
                         <button
@@ -753,7 +777,7 @@ export default function TaskLibraryModal({
                           }}
                           className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
                         >
-                          Làm Bài
+                          {isEn ? 'Practice' : 'Làm Bài'}
                         </button>
                       )}
                     </div>
@@ -763,7 +787,7 @@ export default function TaskLibraryModal({
               })
             ) : (
               <div className="text-center py-12 text-slate-400 text-xs">
-                Không tìm thấy đề thi phù hợp với bộ lọc.
+                {isEn ? 'No tasks found matching your filters.' : 'Không tìm thấy đề thi phù hợp với bộ lọc.'}
               </div>
             )}
           </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Flame, Check } from 'lucide-react';
 import { rateItem, getItemMetrics } from '../../services/ratingPopularityService';
+import { useTranslation } from '../../i18n';
 
 /**
  * StarRatingWidget
@@ -20,6 +21,7 @@ export default function StarRatingWidget({
   showAttempts = false,
   onRateSuccess
 }) {
+  const { t, isEn } = useTranslation();
   const [metrics, setMetrics] = useState(() => {
     if (itemId) {
       return getItemMetrics(itemId, fallbackTitle);
@@ -92,7 +94,7 @@ export default function StarRatingWidget({
               className={`transition-transform duration-150 focus:outline-none ${
                 interactive ? 'cursor-pointer hover:scale-125' : 'cursor-default'
               }`}
-              title={interactive ? `Chấm ${starVal} sao cho đề này` : `${rating} sao`}
+              title={interactive ? (isEn ? `Rate ${starVal} stars for this prompt` : `Chấm ${starVal} sao cho đề này`) : (isEn ? `${rating} stars` : `${rating} sao`)}
             >
               <Star 
                 className={`${starSizes[size] || starSizes.sm} ${
@@ -130,7 +132,7 @@ export default function StarRatingWidget({
       {showFeedbackToast && (
         <div className="absolute -top-7 left-0 bg-slate-900 text-white text-[10px] px-2 py-0.5 rounded shadow-lg flex items-center space-x-1 animate-in fade-in duration-150 z-30 whitespace-nowrap">
           <Check className="w-3 h-3 text-emerald-400" />
-          <span>Đã lưu {userRating}★ của bạn!</span>
+          <span>{isEn ? `Saved your ${userRating}★ rating!` : `Đã lưu ${userRating}★ của bạn!`}</span>
         </div>
       )}
     </div>
