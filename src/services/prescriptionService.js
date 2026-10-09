@@ -12,6 +12,7 @@ export const DEFAULT_IELTS_TRAPS = [
     category: 'grammar',
     type: 'Mạo từ (Articles)',
     title: 'Thiếu mạo từ trước danh từ đếm được số ít',
+    titleEn: 'Missing article before singular countable noun',
     sentence: 'Government should allocate more budget to renewable energy.',
     errorSample: 'Government should allocate more budget to renewable energy.',
     correctSentence: 'The government should allocate more budget to renewable energy.',
@@ -24,6 +25,7 @@ export const DEFAULT_IELTS_TRAPS = [
     correctIndex: 1,
     quiz: {
       question: 'Thiếu mạo từ trước danh từ đếm được số ít',
+      questionEn: 'Missing article before singular countable noun',
       options: [
         'Government should allocate more budget to renewable energy.',
         'The government should allocate more budget to renewable energy.',
@@ -33,6 +35,7 @@ export const DEFAULT_IELTS_TRAPS = [
       tip: 'Quy tắc: Không bao giờ để danh từ đếm được số ít (singular countable noun) đứng một mình mà không có a / an / the / my / this.'
     },
     explanation: 'Trong tiếng Anh học thuật, danh từ đếm được số ít "government" không được đứng trơ trọi. Phải dùng mạo từ xác định "The government" hoặc danh từ số nhiều "Governments".',
+    explanationEn: 'In academic English, singular countable nouns like "government" cannot stand alone. Use the definite article "The government" or the plural form "Governments".',
     ruleTip: 'Quy tắc: Không bao giờ để danh từ đếm được số ít (singular countable noun) đứng một mình mà không có a / an / the / my / this.'
   },
   {
@@ -40,6 +43,7 @@ export const DEFAULT_IELTS_TRAPS = [
     category: 'grammar',
     type: 'Thì động từ (Tense Consistency)',
     title: 'Nhầm lẫn thì hiện tại khi miêu tả dữ liệu quá khứ (Task 1)',
+    titleEn: 'Tense error when describing historical data (Task 1)',
     sentence: 'Between 2010 and 2020, the proportion of car owners increases significantly.',
     errorSample: 'Between 2010 and 2020, the proportion of car owners increases significantly.',
     correctSentence: 'Between 2010 and 2020, the proportion of car owners increased significantly.',
@@ -52,6 +56,7 @@ export const DEFAULT_IELTS_TRAPS = [
     correctIndex: 2,
     quiz: {
       question: 'Nhầm lẫn thì hiện tại khi miêu tả dữ liệu quá khứ (Task 1)',
+      questionEn: 'Tense error when describing historical data (Task 1)',
       options: [
         'Between 2010 and 2020, the proportion of car owners increases significantly.',
         'Between 2010 and 2020, the proportion of car owners was increasing significantly.',
@@ -61,6 +66,7 @@ export const DEFAULT_IELTS_TRAPS = [
       tip: 'Quy tắc Task 1: Luôn kiểm tra mốc thời gian trên biểu đồ. Nếu năm trong quá khứ, 100% động từ miêu tả xu hướng phải ở quá khứ đơn.'
     },
     explanation: 'Mốc thời gian "Between 2010 and 2020" là sự kiện đã kết thúc hoàn toàn trong quá khứ, bắt buộc phải dùng thì Quá khứ đơn (Past Simple: increased).',
+    explanationEn: 'The timeframe "Between 2010 and 2020" is a completed historical event, strictly requiring Past Simple ("increased").',
     ruleTip: 'Quy tắc Task 1: Luôn kiểm tra mốc thời gian trên biểu đồ. Nếu năm trong quá khứ, 100% động từ miêu tả xu hướng phải ở quá khứ đơn.'
   },
   {
@@ -68,6 +74,7 @@ export const DEFAULT_IELTS_TRAPS = [
     category: 'grammar',
     type: 'Hòa hợp Chủ - Vị (Subject-Verb Agreement)',
     title: 'Chia sai động từ với đại từ bất định (Everyone / Everybody)',
+    titleEn: 'Subject-verb disagreement with indefinite pronouns (Everyone / Everybody)',
     sentence: 'Everyone in modern society have the right to access clean water.',
     errorSample: 'Everyone in modern society have the right to access clean water.',
     correctSentence: 'Everyone in modern society has the right to access clean water.',
@@ -80,6 +87,7 @@ export const DEFAULT_IELTS_TRAPS = [
     correctIndex: 1,
     quiz: {
       question: 'Chia sai động từ với đại từ bất định (Everyone / Everybody)',
+      questionEn: 'Subject-verb disagreement with indefinite pronouns (Everyone / Everybody)',
       options: [
         'Everyone in modern society have the right to access clean water.',
         'Everyone in modern society has the right to access clean water.',
@@ -89,6 +97,7 @@ export const DEFAULT_IELTS_TRAPS = [
       tip: 'Quy tắc: Everyone, Everybody, Nobody, Someone, Each + Danh từ đều luôn đi với động từ số ít.'
     },
     explanation: '"Everyone / Everybody / Each person" là đại từ số ít theo ngữ pháp tiếng Anh, do đó động từ chính phải chia số ít: "has", không dùng "have".',
+    explanationEn: '"Everyone / Everybody / Each person" are singular pronouns in English, so the main verb must take the singular form: "has", not "have".',
     ruleTip: 'Quy tắc: Everyone, Everybody, Nobody, Someone, Each + Danh từ đều luôn đi với động từ số ít.'
   },
   {
@@ -96,6 +105,7 @@ export const DEFAULT_IELTS_TRAPS = [
     category: 'syntax',
     type: 'Dư thừa liên từ (Conjunction Redundancy)',
     title: 'Dùng đồng thời "Although" và "But" trong cùng một câu',
+    titleEn: 'Conjunction redundancy: using both "Although" and "But"',
     sentence: 'Although public transport is cheap, but many citizens still prefer private cars.',
     errorSample: 'Although public transport is cheap, but many citizens still prefer private cars.',
     correctSentence: 'Although public transport is cheap, many citizens still prefer private cars.',
@@ -108,6 +118,7 @@ export const DEFAULT_IELTS_TRAPS = [
     correctIndex: 1,
     quiz: {
       question: 'Dùng đồng thời "Although" và "But" trong cùng một câu',
+      questionEn: 'Conjunction redundancy: using both "Although" and "But"',
       options: [
         'Although public transport is cheap, but many citizens still prefer private cars.',
         'Although public transport is cheap, many citizens still prefer private cars.',
@@ -117,6 +128,7 @@ export const DEFAULT_IELTS_TRAPS = [
       tip: 'Quy tắc: Chỉ chọn 1 trong 2: Hoặc dùng "Although A, B" hoặc dùng "A, but B". Không bao giờ đi chung.'
     },
     explanation: 'Tiếng Việt thường quen nói "Mặc dù... nhưng...". Tuy nhiên trong tiếng Anh, nếu đã dùng liên từ phụ thuộc "Although/Even though" thì mệnh đề chính KHÔNG ĐƯỢC dùng "but".',
+    explanationEn: 'In English, if the subordinating conjunction "Although/Even though" introduces the dependent clause, the main clause cannot include "but".',
     ruleTip: 'Quy tắc: Chỉ chọn 1 trong 2: Hoặc dùng "Although A, B" hoặc dùng "A, but B". Không bao giờ đi chung.'
   },
   {
@@ -124,6 +136,7 @@ export const DEFAULT_IELTS_TRAPS = [
     category: 'vocabulary',
     type: 'Giới từ đi kèm (Dependent Prepositions)',
     title: 'Sai giới từ trong Academic Collocation phổ biến',
+    titleEn: 'Incorrect dependent preposition in academic collocation',
     sentence: 'The economic prosperity of a nation depends in the education of its youth.',
     errorSample: 'The economic prosperity of a nation depends in the education of its youth.',
     correctSentence: 'The economic prosperity of a nation depends on the education of its youth.',
@@ -136,6 +149,7 @@ export const DEFAULT_IELTS_TRAPS = [
     correctIndex: 1,
     quiz: {
       question: 'Sai giới từ trong Academic Collocation phổ biến',
+      questionEn: 'Incorrect dependent preposition in academic collocation',
       options: [
         'The economic prosperity of a nation depends in the education of its youth.',
         'The economic prosperity of a nation depends on the education of its youth.',
@@ -145,6 +159,7 @@ export const DEFAULT_IELTS_TRAPS = [
       tip: 'Quy tắc: Nhớ theo cụm: depend on, rely on, focus on, contribute to, attribute to, result in.'
     },
     explanation: 'Động từ "depend" bắt buộc đi với giới từ "on" hoặc "upon" (depend on sth), không dùng "depend in" hay "depend with".',
+    explanationEn: 'The verb "depend" strictly governs the preposition "on" or "upon" (depend on sth), never "depend in" or "depend with".',
     ruleTip: 'Quy tắc: Nhớ theo cụm: depend on, rely on, focus on, contribute to, attribute to, result in.'
   }
 ];

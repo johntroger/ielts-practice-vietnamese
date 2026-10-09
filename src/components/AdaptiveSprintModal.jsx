@@ -133,9 +133,6 @@ export default function AdaptiveSprintModal({
     const completedArr = [...stageProgress.stageCompletedStatus];
     completedArr[currentStageIdx] = true;
 
-    // Check if all 3 stages completed
-    const allCompleted = completedArr.every(Boolean);
-
     if (currentStageIdx < 2) {
       const nextIdx = currentStageIdx + 1;
       const updated = {
@@ -148,7 +145,7 @@ export default function AdaptiveSprintModal({
       handleSwitchStage(nextIdx);
     } else {
       // Completed full sprint
-      const completionResult = recordSprintCompletion(sprintPlan);
+      recordSprintCompletion(sprintPlan);
       setStats(getSprintStats());
       setIsCelebrated(true);
     }
@@ -160,6 +157,7 @@ export default function AdaptiveSprintModal({
         id: `v-sprint-${Date.now()}-${idx}`,
         phrase: v.phrase,
         meaningVi: v.meaningVi,
+        meaningEn: v.meaningEn || v.meaningVi,
         example: v.example,
         topic: 'Sprint C1'
       });
@@ -185,7 +183,7 @@ export default function AdaptiveSprintModal({
                   {t('modals.sprint.title')}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                  {isEn ? 'Daily Sprint' : 'Sprint Hàng Ngày'}
+                  {t('modals.sprint.badgeDaily', isEn ? 'Daily Sprint' : 'Sprint Hàng Ngày')}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -198,13 +196,19 @@ export default function AdaptiveSprintModal({
             {/* Streak Counter */}
             <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-950/60 border border-amber-600/50 text-amber-300 font-bold text-xs">
               <Flame className="w-4 h-4 fill-amber-400 text-amber-500 animate-pulse" />
-              <span>{isEn ? `Streak: ${stats.currentStreak} days` : `Streak: ${stats.currentStreak} ngày`}</span>
+              <span>
+                {t(
+                  'modals.sprint.streakLabel',
+                  { count: stats.currentStreak },
+                  isEn ? `Streak: ${stats.currentStreak} days` : `Streak: ${stats.currentStreak} ngày`
+                )}
+              </span>
             </div>
 
             <button
               onClick={onClose}
               className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-              title="Đóng modal"
+              title={t('modals.sprint.closeModal', isEn ? 'Close modal' : 'Đóng modal')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -224,29 +228,59 @@ export default function AdaptiveSprintModal({
               </div>
               <div className="space-y-2 max-w-md mx-auto">
                 <h3 className="text-2xl font-black text-white">
-                  🎉 Xuất Sắc! Bạn Đã Hoàn Thành Sprint 30 Phút Hôm Nay!
+                  {t(
+                    'modals.sprint.celebrationTitle',
+                    isEn 
+                      ? "🎉 Excellent! You Completed Today's 30-Min Sprint!" 
+                      : "🎉 Xuất Sắc! Bạn Đã Hoàn Thành Sprint 30 Phút Hôm Nay!"
+                  )}
                 </h3>
                 <p className="text-sm text-slate-300 leading-relaxed">
-                  Bạn đã triệt tiêu các bẫy lỗi sai, rèn luyện kỹ năng cốt lõi và nạp thêm từ vựng học thuật C1.
+                  {t(
+                    'modals.sprint.celebrationDesc',
+                    isEn
+                      ? 'You eliminated error traps, practiced core skill mechanics, and consolidated C1 academic vocabulary.'
+                      : 'Bạn đã triệt tiêu các bẫy lỗi sai, rèn luyện kỹ năng cốt lõi và nạp thêm từ vựng học thuật C1.'
+                  )}
                 </p>
               </div>
 
               {/* Stats Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
                 <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase block">Thời lượng</span>
-                  <span className="text-xl font-black text-emerald-400">30 Phút</span>
-                </div>
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase block">Chuỗi Streak</span>
-                  <span className="text-xl font-black text-amber-400 flex items-center justify-center space-x-1">
-                    <Flame className="w-4 h-4 fill-current inline" />
-                    <span>{stats.currentStreak} ngày</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase block">
+                    {t('modals.sprint.durationLabel', isEn ? 'Duration' : 'Thời lượng')}
+                  </span>
+                  <span className="text-xl font-black text-emerald-400">
+                    {t('modals.sprint.durationValue', isEn ? '30 Mins' : '30 Phút')}
                   </span>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase block">Tổng số phiên</span>
-                  <span className="text-xl font-black text-purple-400">{stats.totalSprintsCompleted} buổi</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase block">
+                    {t('modals.sprint.streakChainLabel', isEn ? 'Streak Chain' : 'Chuỗi Streak')}
+                  </span>
+                  <span className="text-xl font-black text-amber-400 flex items-center justify-center space-x-1">
+                    <Flame className="w-4 h-4 fill-current inline" />
+                    <span>
+                      {t(
+                        'modals.sprint.daysCount',
+                        { count: stats.currentStreak },
+                        isEn ? `${stats.currentStreak} days` : `${stats.currentStreak} ngày`
+                      )}
+                    </span>
+                  </span>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase block">
+                    {t('modals.sprint.totalSessionsLabel', isEn ? 'Total Sprints' : 'Tổng số phiên')}
+                  </span>
+                  <span className="text-xl font-black text-purple-400">
+                    {t(
+                      'modals.sprint.sessionsCount',
+                      { count: stats.totalSprintsCompleted },
+                      isEn ? `${stats.totalSprintsCompleted} sessions` : `${stats.totalSprintsCompleted} buổi`
+                    )}
+                  </span>
                 </div>
               </div>
 
@@ -255,13 +289,13 @@ export default function AdaptiveSprintModal({
                   onClick={() => setIsCelebrated(false)}
                   className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all cursor-pointer"
                 >
-                  Xem Lại Các Chặng
+                  {t('modals.sprint.reviewStages', isEn ? 'Review Stages' : 'Xem Lại Các Chặng')}
                 </button>
                 <button
                   onClick={onClose}
                   className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black shadow-lg shadow-emerald-950/40 transition-all cursor-pointer"
                 >
-                  Hoàn Tất & Đóng
+                  {t('modals.sprint.completeAndClose', isEn ? 'Complete & Close' : 'Hoàn Tất & Đóng')}
                 </button>
               </div>
             </div>
@@ -275,14 +309,16 @@ export default function AdaptiveSprintModal({
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center space-x-2">
                     <span className="text-xs font-black text-purple-300 uppercase tracking-wider">
-                      Chẩn đoán Huấn luyện viên AI:
+                      {t('modals.sprint.aiCoachDiagnosis', isEn ? 'AI Coach Diagnosis:' : 'Chẩn đoán Huấn luyện viên AI:')}
                     </span>
                     <span className="text-[10px] bg-purple-900/60 text-purple-200 px-2 py-0.5 rounded-full font-bold border border-purple-700/40">
-                      Mục tiêu Band {targetBand}
+                      {t('modals.sprint.targetBandBadge', { band: targetBand }, isEn ? `Target Band ${targetBand}` : `Mục tiêu Band ${targetBand}`)}
                     </span>
                   </div>
                   <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
-                    {sprintPlan.diagnosis?.diagnosisText}
+                    {isEn 
+                      ? (sprintPlan.diagnosis?.diagnosisTextEn || sprintPlan.diagnosis?.diagnosisText) 
+                      : sprintPlan.diagnosis?.diagnosisText}
                   </p>
                 </div>
               </div>
@@ -316,10 +352,12 @@ export default function AdaptiveSprintModal({
                           }`}>
                             {isDone ? '✓' : idx + 1}
                           </span>
-                          <span className="text-xs font-bold text-white line-clamp-1">{stg.title}</span>
+                          <span className="text-xs font-bold text-white line-clamp-1">
+                            {isEn ? (stg.titleEn || stg.title) : stg.title}
+                          </span>
                         </div>
                         <span className="text-[11px] text-slate-400 block pl-7">
-                          ⏱️ {stg.durationMinutes} phút
+                          {t('modals.sprint.minsDuration', { mins: stg.durationMinutes }, isEn ? `⏱️ ${stg.durationMinutes} mins` : `⏱️ ${stg.durationMinutes} phút`)}
                         </span>
                       </div>
                       <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${isActive ? 'text-indigo-400 rotate-90' : 'text-slate-600'}`} />
@@ -336,14 +374,14 @@ export default function AdaptiveSprintModal({
                   <div>
                     <div className="flex items-center space-x-2">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                        {currentStage.badge}
+                        {isEn ? (currentStage.badgeEn || currentStage.badge) : currentStage.badge}
                       </span>
                       <h3 className="text-sm sm:text-base font-black text-white">
-                        {currentStage.title}
+                        {isEn ? (currentStage.titleEn || currentStage.title) : currentStage.title}
                       </h3>
                     </div>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      {currentStage.subtitle}
+                      {isEn ? (currentStage.subtitleEn || currentStage.subtitle) : currentStage.subtitle}
                     </p>
                   </div>
 
@@ -363,7 +401,7 @@ export default function AdaptiveSprintModal({
                           ? 'bg-amber-600 hover:bg-amber-500'
                           : 'bg-emerald-600 hover:bg-emerald-500'
                       }`}
-                      title={isTimerRunning ? 'Tạm dừng đếm giờ' : 'Bắt đầu đếm giờ chặng'}
+                      title={isTimerRunning ? t('modals.sprint.timerPause', isEn ? 'Pause stage timer' : 'Tạm dừng đếm giờ') : t('modals.sprint.timerStart', isEn ? 'Start stage timer' : 'Bắt đầu đếm giờ chặng')}
                     >
                       {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                     </button>
@@ -374,7 +412,7 @@ export default function AdaptiveSprintModal({
                         setSecondsRemaining(currentStage.durationSeconds);
                       }}
                       className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors cursor-pointer"
-                      title="Đặt lại đồng hồ chặng"
+                      title={t('modals.sprint.timerReset', isEn ? 'Reset stage timer' : 'Đặt lại đồng hồ chặng')}
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
@@ -385,7 +423,7 @@ export default function AdaptiveSprintModal({
                 {currentStage.type === 'error_quiz' && (
                   <div className="space-y-4">
                     <span className="text-xs font-bold text-slate-300 block">
-                      📝 Hoàn thành 3 câu trắc nghiệm sửa lỗi bẫy để mở khóa chặng tiếp theo:
+                      {t('modals.sprint.stage1Instruction', isEn ? '📝 Complete 3 error-correction quizzes to unlock the next stage:' : '📝 Hoàn thành 3 câu trắc nghiệm sửa lỗi bẫy để mở khóa chặng tiếp theo:')}
                     </span>
                     <div className="space-y-3.5">
                       {currentStage.questions.map((q, qIdx) => {
@@ -396,19 +434,25 @@ export default function AdaptiveSprintModal({
                           <div key={q.id} className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
                             <div className="flex items-center justify-between">
                               <span className="text-xs font-bold text-purple-300">
-                                Câu {qIdx + 1}: {q.title}
+                                {t(
+                                  'modals.sprint.stageQuestionHeader',
+                                  { num: qIdx + 1, title: isEn ? (q.titleEn || q.title) : q.title },
+                                  isEn ? `Question ${qIdx + 1}: ${q.titleEn || q.title}` : `Câu ${qIdx + 1}: ${q.title}`
+                                )}
                               </span>
                               {isAnswered && (
                                 <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                                   isCorrect ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/50' : 'bg-rose-950 text-rose-300 border border-rose-600/50'
                                 }`}>
-                                  {isCorrect ? '✓ Đúng' : '✗ Sai'}
+                                  {isCorrect 
+                                    ? t('modals.sprint.stageCorrect', isEn ? '✓ Correct' : '✓ Đúng') 
+                                    : t('modals.sprint.stageIncorrect', isEn ? '✗ Incorrect' : '✗ Sai')}
                                 </span>
                               )}
                             </div>
 
                             <p className="text-xs sm:text-sm text-slate-200 font-medium italic">
-                              "{q.question}"
+                              "{isEn ? (q.questionEn || q.question) : q.question}"
                             </p>
 
                             {/* Options */}
@@ -445,10 +489,14 @@ export default function AdaptiveSprintModal({
                             </div>
 
                             {/* Explanation */}
-                            {showExplanations[q.id] && q.explanation && (
+                            {showExplanations[q.id] && (q.explanation || q.explanationEn) && (
                               <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-800/40 text-xs text-purple-200 space-y-1">
-                                <span className="font-bold block">💡 Giải thích của Giám khảo:</span>
-                                <p className="leading-relaxed">{q.explanation}</p>
+                                <span className="font-bold block">
+                                  {t('modals.sprint.examinerExplanation', isEn ? '💡 Examiner Explanation:' : '💡 Giải thích của Giám khảo:')}
+                                </span>
+                                <p className="leading-relaxed">
+                                  {isEn ? (q.explanationEn || q.explanation) : q.explanation}
+                                </p>
                               </div>
                             )}
                           </div>
@@ -465,7 +513,7 @@ export default function AdaptiveSprintModal({
                       <div className="flex items-center space-x-2">
                         <Mic className="w-4 h-4 text-purple-400" />
                         <span className="text-xs font-bold text-purple-300 uppercase tracking-wider">
-                          Đề thi Speaking Part 2 Nước Rút:
+                          {t('modals.sprint.stage2SpeakingTitle', isEn ? 'Speaking Part 2 Sprint Cue Card:' : 'Đề thi Speaking Part 2 Nước Rút:')}
                         </span>
                       </div>
                       <h4 className="text-base sm:text-lg font-black text-white">
@@ -477,18 +525,18 @@ export default function AdaptiveSprintModal({
                         ))}
                       </ul>
                       <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-400 italic">
-                        💡 {currentStage.cueCard.strategy}
+                        💡 {isEn ? (currentStage.cueCard.strategyEn || currentStage.cueCard.strategy) : currentStage.cueCard.strategy}
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-slate-300 block">
-                        Ghi chú 4 ô nhanh hoặc dàn ý phản xạ (Gõ nhanh trong 60 giây):
+                        {t('modals.sprint.stage2SpeakingNotesLabel', isEn ? '4-Box quick notes or reflex outline (Type quickly within 60s):' : 'Ghi chú 4 ô nhanh hoặc dàn ý phản xạ (Gõ nhanh trong 60 giây):')}
                       </label>
                       <textarea
                         value={stage2Text}
                         onChange={(e) => setStage2Text(e.target.value)}
-                        placeholder="1. Bối cảnh: ...&#10;2. Hành động: ...&#10;3. Khó khăn: ...&#10;4. Cảm xúc/Hệ quả: ..."
+                        placeholder={t('modals.sprint.stage2SpeakingNotesPlaceholder', isEn ? "1. Context: ...\n2. Action: ...\n3. Obstacles: ...\n4. Reflection/Outcome: ..." : "1. Bối cảnh: ...\n2. Hành động: ...\n3. Khó khăn: ...\n4. Cảm xúc/Hệ quả: ...")}
                         rows={4}
                         className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono leading-relaxed"
                       />
@@ -502,30 +550,36 @@ export default function AdaptiveSprintModal({
                       <div className="flex items-center space-x-2">
                         <PenTool className="w-4 h-4 text-indigo-400" />
                         <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">
-                          Đề bài Writing Task 2 (Tập trung đoạn Thân bài PEEL):
+                          {t('modals.sprint.stage2WritingTitle', isEn ? 'Writing Task 2 Prompt (Focus on PEEL Body Paragraph):' : 'Đề bài Writing Task 2 (Tập trung đoạn Thân bài PEEL):')}
                         </span>
                       </div>
                       <p className="text-xs sm:text-sm text-slate-200 font-medium">
                         "{currentStage.taskPrompt}"
                       </p>
                       <div className="text-[11px] text-slate-400 bg-slate-900 p-2 rounded-lg border border-slate-800">
-                        <strong>Khung gợi ý:</strong> {currentStage.suggestedTopicSentence}
+                        <strong>{t('modals.sprint.suggestedFramework', isEn ? 'Suggested Framework:' : 'Khung gợi ý:')}</strong> {currentStage.suggestedTopicSentence}
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <label className="text-xs font-bold text-slate-300">
-                          Khung soạn thảo đoạn Thân bài PEEL:
+                          {t('modals.sprint.stage2WritingLabel', isEn ? 'Drafting PEEL Body Paragraph:' : 'Khung soạn thảo đoạn Thân bài PEEL:')}
                         </label>
                         <span className="text-[11px] text-indigo-400 font-mono font-bold">
-                          {stage2Text.split(/\s+/).filter(Boolean).length} từ (Mục tiêu: 70-95 từ)
+                          {t(
+                            'modals.sprint.stage2WritingWordsTarget',
+                            { count: stage2Text.split(/\s+/).filter(Boolean).length },
+                            isEn 
+                              ? `${stage2Text.split(/\s+/).filter(Boolean).length} words (Target: 70-95 words)` 
+                              : `${stage2Text.split(/\s+/).filter(Boolean).length} từ (Mục tiêu: 70-95 từ)`
+                          )}
                         </span>
                       </div>
                       <textarea
                         value={stage2Text}
                         onChange={(e) => setStage2Text(e.target.value)}
-                        placeholder="Point: Bắt đầu bằng câu chủ đề khẳng định luận điểm...&#10;Explanation: Giải thích cơ chế vì sao điều này xảy ra...&#10;Evidence: Đưa ra ví dụ cụ thể hoặc bằng chứng...&#10;Link: Móc nối hệ quả chốt lại đoạn văn..."
+                        placeholder={t('modals.sprint.stage2WritingPlaceholder', isEn ? "Point: Begin with clear topic sentence...\nExplanation: Explain underlying mechanism...\nEvidence: Provide concrete example or data...\nLink: Reconnect back to prompt conclusion..." : "Point: Bắt đầu bằng câu chủ đề khẳng định luận điểm...\nExplanation: Giải thích cơ chế vì sao điều này xảy ra...\nEvidence: Đưa ra ví dụ cụ thể hoặc bằng chứng...\nLink: Móc nối hệ quả chốt lại đoạn văn...")}
                         rows={5}
                         className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono leading-relaxed"
                       />
@@ -537,7 +591,7 @@ export default function AdaptiveSprintModal({
                 {currentStage.type === 'lexical_consolidation' && (
                   <div className="space-y-4">
                     <span className="text-xs font-bold text-slate-300 block">
-                      💎 Nạp 3 cụm từ vựng học thuật C1/C2 vào Sổ tay để hoàn thành Sprint:
+                      {t('modals.sprint.stage3Instruction', isEn ? '💎 Save 3 academic C1/C2 collocations to your Notebook to complete the Sprint:' : '💎 Nạp 3 cụm từ vựng học thuật C1/C2 vào Sổ tay để hoàn thành Sprint:')}
                     </span>
                     <div className="space-y-3">
                       {currentStage.vocabItems.map((v, idx) => (
@@ -550,10 +604,10 @@ export default function AdaptiveSprintModal({
                               </span>
                             </div>
                             <p className="text-xs text-slate-400">
-                              Nghĩa: <span className="text-slate-200">{v.meaningVi}</span>
+                              {t('modals.sprint.meaningLabel', isEn ? 'Meaning:' : 'Nghĩa:')} <span className="text-slate-200">{isEn ? (v.meaningEn || v.meaningVi) : v.meaningVi}</span>
                             </p>
                             <p className="text-[11px] text-slate-400 italic">
-                              Ví dụ: "{v.example}"
+                              {t('modals.sprint.exampleLabel', isEn ? 'Example:' : 'Ví dụ:')} "{v.example}"
                             </p>
                           </div>
 
@@ -569,12 +623,12 @@ export default function AdaptiveSprintModal({
                             {savedVocabIds[idx] ? (
                               <>
                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                                <span>Đã Lưu Sổ Tay</span>
+                                <span>{t('modals.sprint.savedToNotebook', isEn ? 'Saved to Notebook' : 'Đã Lưu Sổ Tay')}</span>
                               </>
                             ) : (
                               <>
                                 <BookmarkPlus className="w-3.5 h-3.5" />
-                                <span>Lưu Vào Sổ Tay</span>
+                                <span>{t('modals.sprint.saveToNotebook', isEn ? 'Save to Notebook' : 'Lưu Vào Sổ Tay')}</span>
                               </>
                             )}
                           </button>
@@ -587,7 +641,11 @@ export default function AdaptiveSprintModal({
                 {/* Stage Bottom Action Button */}
                 <div className="flex items-center justify-between pt-4 border-t border-slate-800">
                   <div className="text-[11px] text-slate-400">
-                    Chặng {currentStageIdx + 1} / 3 • Sprint 30 Phút
+                    {t(
+                      'modals.sprint.stageProgressLabel',
+                      { current: currentStageIdx + 1 },
+                      isEn ? `Stage ${currentStageIdx + 1} / 3 • 30-Min Sprint` : `Chặng ${currentStageIdx + 1} / 3 • Sprint 30 Phút`
+                    )}
                   </div>
 
                   <button
@@ -595,7 +653,9 @@ export default function AdaptiveSprintModal({
                     className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black shadow-lg shadow-indigo-950/50 flex items-center space-x-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
                   >
                     <span>
-                      {currentStageIdx < 2 ? 'Hoàn Thành Chặng & Sang Chặng Kế Tiếp' : 'Hoàn Tất Sprint Hôm Nay 🎉'}
+                      {currentStageIdx < 2 
+                        ? t('modals.sprint.proceedNext', isEn ? 'Complete Stage & Proceed to Next' : 'Hoàn Thành Chặng & Sang Chặng Kế Tiếp') 
+                        : t('modals.sprint.finishSprint', isEn ? "Complete Today's Sprint 🎉" : 'Hoàn Tất Sprint Hôm Nay 🎉')}
                     </span>
                     <ArrowRight className="w-4 h-4" />
                   </button>

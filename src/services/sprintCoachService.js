@@ -47,6 +47,7 @@ export const SPRINT_LEXICAL_BANK = [
     phrase: 'exert a profound influence on',
     bandLevel: '8.0+',
     meaningVi: 'tạo ra ảnh hưởng sâu rộng lên',
+    meaningEn: 'to have a deep and far-reaching effect on',
     example: 'Technological advancements exert a profound influence on modern pedagogical methods.',
     category: 'academic_writing'
   },
@@ -54,6 +55,7 @@ export const SPRINT_LEXICAL_BANK = [
     phrase: 'incur substantial expenditure',
     bandLevel: '8.0+',
     meaningVi: 'phát sinh chi phí đáng kể',
+    meaningEn: 'to spend or bring about significant financial costs',
     example: 'Municipal authorities often incur substantial expenditure on public transit infrastructure.',
     category: 'task1_task2'
   },
@@ -61,6 +63,7 @@ export const SPRINT_LEXICAL_BANK = [
     phrase: 'corroborate empirical evidence',
     bandLevel: '8.5+',
     meaningVi: 'chứng thực các bằng chứng thực nghiệm',
+    meaningEn: 'to confirm or support scientific experimental evidence',
     example: 'Recent scientific trials corroborate empirical evidence regarding climate shifts.',
     category: 'academic_collocation'
   },
@@ -68,6 +71,7 @@ export const SPRINT_LEXICAL_BANK = [
     phrase: 'give rise to fierce contention',
     bandLevel: '7.5+',
     meaningVi: 'làm dấy lên sự tranh cãi gay gắt',
+    meaningEn: 'to provoke intense disagreement or controversy',
     example: 'The introduction of automated toll booths has given rise to fierce contention.',
     category: 'task2_argument'
   },
@@ -75,6 +79,7 @@ export const SPRINT_LEXICAL_BANK = [
     phrase: 'play a pivotal role in',
     bandLevel: '7.5+',
     meaningVi: 'đóng vai trò nòng cốt then chốt trong',
+    meaningEn: 'to be of central importance in something',
     example: 'Early childhood education plays a pivotal role in cognitive development.',
     category: 'universal'
   },
@@ -82,6 +87,7 @@ export const SPRINT_LEXICAL_BANK = [
     phrase: 'stem from a lack of foresight',
     bandLevel: '8.0+',
     meaningVi: 'bắt nguồn từ sự thiếu nhìn xa trông rộng',
+    meaningEn: 'to originate from failure to anticipate future outcomes',
     example: 'Urban traffic congestion predominantly stems from a lack of long-term foresight.',
     category: 'task2_cause_effect'
   }
@@ -107,7 +113,8 @@ export function diagnoseLearnerProfile({
       bottleneck: 'accuracy_traps',
       focusSkill: 'all',
       urgencyScore: 92,
-      diagnosisText: `Bạn đang có ${mistakeCount} lỗi sai trong Sổ lỗi chưa được triệt tiêu. Cần ưu tiên làm sạch ngữ pháp và mạo từ trước khi tăng tốc viết bài dài.`
+      diagnosisText: `Bạn đang có ${mistakeCount} lỗi sai trong Sổ lỗi chưa được triệt tiêu. Cần ưu tiên làm sạch ngữ pháp và mạo từ trước khi tăng tốc viết bài dài.`,
+      diagnosisTextEn: `You have ${mistakeCount} unresolved errors in your Mistakes Log. Prioritize eliminating grammar and article traps before attempting extended essays.`
     };
   }
 
@@ -121,7 +128,8 @@ export function diagnoseLearnerProfile({
       bottleneck: 'speaking_fluency',
       focusSkill: 'speaking',
       urgencyScore: 88,
-      diagnosisText: `Lịch sử cho thấy bạn đang dành phần lớn thời gian cho bài viết và chưa kích hoạt phản xạ Nói Part 2/3. Hôm nay Huấn luyện viên kích hoạt phiên Speaking Reflex Sprint.`
+      diagnosisText: `Lịch sử cho thấy bạn đang dành phần lớn thời gian cho bài viết và chưa kích hoạt phản xạ Nói Part 2/3. Hôm nay Huấn luyện viên kích hoạt phiên Speaking Reflex Sprint.`,
+      diagnosisTextEn: `Submission history shows substantial writing practice with minimal Speaking Part 2/3 activation. Today the AI Coach initiates a Speaking Reflex Sprint.`
     };
   }
 
@@ -131,7 +139,8 @@ export function diagnoseLearnerProfile({
       bottleneck: 'writing_coherence',
       focusSkill: 'writing',
       urgencyScore: 85,
-      diagnosisText: `Mục tiêu Band ${target} đòi hỏi chuỗi lập luận PEEL không có bước nhảy cóc. Hôm nay Sprint sẽ tập trung vào phát triển đoạn thân bài logic chặt chẽ.`
+      diagnosisText: `Mục tiêu Band ${target} đòi hỏi chuỗi lập luận PEEL không có bước nhảy cóc. Hôm nay Sprint sẽ tập trung vào phát triển đoạn thân bài logic chặt chẽ.`,
+      diagnosisTextEn: `Target Band ${target} requires seamless PEEL argumentation without logical gaps. Today's sprint focuses on tightly structured body paragraph development.`
     };
   }
 
@@ -140,7 +149,8 @@ export function diagnoseLearnerProfile({
     bottleneck: 'balanced_pace',
     focusSkill: 'writing',
     urgencyScore: 80,
-    diagnosisText: `Lộ trình hôm nay cân bằng giữa sửa bẫy ngữ pháp, tăng tốc phản xạ câu và mở rộng vốn từ vựng học thuật C1.`
+    diagnosisText: `Lộ trình hôm nay cân bằng giữa sửa bẫy ngữ pháp, tăng tốc phản xạ câu và mở rộng vốn từ vựng học thuật C1.`,
+    diagnosisTextEn: `Today's roadmap balances trap elimination, sentence reflex acceleration, and C1 academic vocabulary expansion.`
   };
 }
 
@@ -162,23 +172,29 @@ export function generateDaily30MinSprint({
     stage1Questions = mistakes.slice(0, 3).map((m, idx) => ({
       id: `err-${m.id || idx}`,
       title: m.category || 'Lỗi từ vựng/ngữ pháp cá nhân',
+      titleEn: m.category || 'Personal Vocabulary/Grammar Mistake',
       question: m.errorSentence || m.title || 'Phát hiện lỗi sai trong câu sau:',
+      questionEn: m.errorSentence || m.title || 'Identify the error in the following sentence:',
       options: [
         m.errorSentence || 'Câu có lỗi sai',
         m.correctedSentence || m.replacement || 'Câu đã sửa chuẩn xác',
         'Cả hai cách đều sai'
       ],
       correctIndex: 1,
-      explanation: m.explanation || 'Quy tắc: Luôn chú ý thì của động từ và mạo từ xác định.'
+      explanation: m.explanation || 'Quy tắc: Luôn chú ý thì của động từ và mạo từ xác định.',
+      explanationEn: m.explanation || 'Rule: Always verify verb tenses and definite articles.'
     }));
   } else {
     stage1Questions = DEFAULT_IELTS_TRAPS.slice(0, 3).map(trap => ({
       id: trap.id,
       title: trap.title,
+      titleEn: trap.titleEn || trap.title,
       question: trap.quiz?.question || trap.title,
+      questionEn: trap.quiz?.questionEn || trap.titleEn || trap.title,
       options: trap.quiz?.options || trap.options,
       correctIndex: trap.quiz?.correctIndex ?? trap.correctIndex ?? 0,
-      explanation: trap.explanation
+      explanation: trap.explanation,
+      explanationEn: trap.explanationEn || trap.explanation
     }));
   }
 
@@ -186,12 +202,15 @@ export function generateDaily30MinSprint({
     index: 0,
     id: 'stage-1-accuracy',
     title: 'Chặng 1: Khởi Động & Xóa Bẫy Lỗi Sai',
+    titleEn: 'Stage 1: Warm-up & Error Elimination',
     subtitle: 'Triệt tiêu các bẫy ngữ pháp và mạo từ hay mất điểm',
+    subtitleEn: 'Neutralize recurring grammar and article distractor traps',
     durationMinutes: 7,
     durationSeconds: 7 * 60,
     type: 'error_quiz',
     questions: stage1Questions,
-    badge: '🎯 7 Phút Khởi Động'
+    badge: '🎯 7 Phút Khởi Động',
+    badgeEn: '🎯 7-Min Warm-up'
   };
 
   // Stage 2: Core Skill Intensive (15 mins)
@@ -201,7 +220,9 @@ export function generateDaily30MinSprint({
       index: 1,
       id: 'stage-2-speaking-reflex',
       title: 'Chặng 2: Nước Rút Phản Xạ Speaking Part 2',
+      titleEn: 'Stage 2: Speaking Part 2 Reflex Sprint',
       subtitle: 'Thực hành dàn ý 4 ô trong 60s và nói trọn vẹn 2 phút',
+      subtitleEn: 'Practice 4-box rapid outlining in 60s and speak for 2 full minutes',
       durationMinutes: 15,
       durationSeconds: 15 * 60,
       type: 'speaking_cuecard',
@@ -213,23 +234,28 @@ export function generateDaily30MinSprint({
           'What difficulties you encountered',
           'And explain why you felt proud of completing it'
         ],
-        strategy: 'Áp dụng công thức 4 ô: Context ➔ Action ➔ Overcoming Obstacles ➔ Reflection.'
+        strategy: 'Áp dụng công thức 4 ô: Context ➔ Action ➔ Overcoming Obstacles ➔ Reflection.',
+        strategyEn: 'Apply 4-box formula: Context ➔ Action ➔ Overcoming Obstacles ➔ Reflection.'
       },
-      badge: '🎙️ 15 Phút Speaking'
+      badge: '🎙️ 15 Phút Speaking',
+      badgeEn: '🎙️ 15-Min Speaking'
     };
   } else {
     stage2 = {
       index: 1,
       id: 'stage-2-writing-peel',
       title: 'Chặng 2: Luyện Thân Bài Chuẩn Mạch Lạc PEEL',
+      titleEn: 'Stage 2: PEEL Body Paragraph Mastery',
       subtitle: 'Xây dựng 1 đoạn Body Paragraph hoàn chỉnh theo chuẩn Cambridge',
+      subtitleEn: 'Construct a fully coherent body paragraph meeting Cambridge criteria',
       durationMinutes: 15,
       durationSeconds: 15 * 60,
       type: 'writing_paragraph',
       taskPrompt: 'Some people believe that governments should spend money on space exploration, while others argue that public funds should be prioritized for immediate issues on Earth.',
       requiredFramework: 'PEEL (Point ➔ Explanation ➔ Evidence ➔ Link)',
       suggestedTopicSentence: 'Allocating substantial expenditure to space ventures yields long-term technological and economic dividends.',
-      badge: '✍️ 15 Phút Writing PEEL'
+      badge: '✍️ 15 Phút Writing PEEL',
+      badgeEn: '✍️ 15-Min Writing PEEL'
     };
   }
 
@@ -239,12 +265,15 @@ export function generateDaily30MinSprint({
     index: 2,
     id: 'stage-3-lexical-consolidation',
     title: 'Chặng 3: Nạp Từ Vựng C1/C2 & Tổng Kết',
+    titleEn: 'Stage 3: C1/C2 Lexical Consolidation & Review',
     subtitle: 'Nâng cấp 3 cụm Collocations học thuật vào bài và ghi nhớ',
+    subtitleEn: 'Incorporate 3 academic collocations into memory and practice',
     durationMinutes: 8,
     durationSeconds: 8 * 60,
     type: 'lexical_consolidation',
     vocabItems: availableLexical,
-    badge: '💎 8 Phút Từ Vựng'
+    badge: '💎 8 Phút Từ Vựng',
+    badgeEn: '💎 8-Min Vocabulary'
   };
 
   return {
