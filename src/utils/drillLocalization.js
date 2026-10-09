@@ -274,10 +274,11 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   const rawTitle = drill.title || '';
 
   // Check prefix for Community / AI generated tags
-  const isCommunityTagged = rawTitle.includes('[AI Cộng Đồng]');
+  const isCommunityTagged = rawTitle.includes('[AI Cộng Đồng]') || rawTitle.includes('[AI Community]');
   const isAiTagged = rawTitle.includes('[AI]');
   let cleanTitle = rawTitle
     .replace(/✨\s*\[AI Cộng Đồng\]\s*/i, '')
+    .replace(/✨\s*\[AI Community\]\s*/i, '')
     .replace(/\[AI\]\s*/i, '')
     .trim();
 
@@ -399,6 +400,86 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       [/phía đông/gi, 'East'],
       [/phía tây/gi, 'West'],
 
+      // Dynamic Listening Topics from Tests & Community
+      [/công viên\s+bách thảo\s+([A-Za-z0-9\s]+)/gi, '$1 Botanical Park'],
+      [/công viên\s+bách thảo/gi, 'Botanical Park'],
+      [/công viên\s+bờ sông/gi, 'Riverside Waterfront Park'],
+      [/công viên\s+trung tâm/gi, 'Central Park'],
+      [/công viên\s+([A-Za-z0-9\s]+)/gi, '$1 Park'],
+      [/công viên/gi, 'Park'],
+      [/đặt phòng họp sự kiện/gi, 'Event Meeting Room Booking'],
+      [/đặt phòng họp công ty/gi, 'Corporate Meeting Room Booking'],
+      [/đặt phòng hội thảo/gi, 'Seminar Room Booking'],
+      [/đặt phòng họp/gi, 'Meeting Room Booking'],
+      [/đặt phòng/gi, 'Room Booking'],
+      [/đặt bàn nhà hàng/gi, 'Restaurant Table Reservation'],
+      [/đặt bàn/gi, 'Table Reservation'],
+      [/đặt lịch sân thể thao/gi, 'Sports Field Booking'],
+      [/đặt lịch/gi, 'Booking Schedule'],
+      [/thay đổi lịch hẹn dịch vụ/gi, 'Service Appointment Rescheduling'],
+      [/thay đổi lịch hẹn/gi, 'Appointment Rescheduling'],
+      [/lịch hẹn dịch vụ/gi, 'Service Appointment'],
+      [/giờ học yoga for người mới bắt đầu/gi, 'Beginner Yoga Class Schedule'],
+      [/giờ học yoga/gi, 'Yoga Class Schedule'],
+      [/giờ học/gi, 'Class Schedule'],
+      [/phí hội viên trung tâm thể thao/gi, 'Sports Center Membership Fee'],
+      [/phí hội viên/gi, 'Membership Fee'],
+      [/trung tâm thể thao/gi, 'Sports Center'],
+      [/đăng ký tour tham quan miễn phí/gi, 'Free Guided Tour Registration'],
+      [/tour tham quan miễn phí/gi, 'Free Guided Tour'],
+      [/tour tham quan/gi, 'Guided Tour'],
+      [/tham quan miễn phí/gi, 'Free Tour'],
+      [/đăng ký thẻ thư viện công cộng/gi, 'Public Library Card Registration'],
+      [/gia hạn thẻ thư viện/gi, 'Library Card Renewal'],
+      [/thẻ thư viện công cộng/gi, 'Public Library Card'],
+      [/thẻ thư viện/gi, 'Library Card'],
+      [/gia hạn/gi, 'Renewal'],
+      [/đăng ký khóa học cộng đồng/gi, 'Community Course Registration'],
+      [/đăng ký khóa học/gi, 'Course Registration'],
+      [/khóa học cộng đồng/gi, 'Community Course'],
+      [/khóa học/gi, 'Course'],
+      [/vi khí hậu đô thị & hiệu ứng đảo nhiệt/gi, 'Urban Microclimate & Urban Heat Island Effect'],
+      [/hiệu ứng đảo nhiệt/gi, 'Urban Heat Island Effect'],
+      [/nghiên cứu vi khí hậu đô thị/gi, 'Urban Microclimate Research'],
+      [/vi khí hậu đô thị/gi, 'Urban Microclimate'],
+      [/vi khí hậu/gi, 'Microclimate'],
+      [/kinh tế học urban agriculture/gi, 'Economics of Urban Agriculture'],
+      [/kinh tế học/gi, 'Economics of'],
+      [/sinh vật học biển/gi, 'Marine Biology'],
+      [/sinh thái học đại dương/gi, 'Marine Ecology'],
+      [/hiện tượng sinh học biển/gi, 'Marine Biological Phenomena'],
+      [/tác động của green spaces đô thị/gi, 'Impact of Urban Green Spaces'],
+      [/tác động of hạ tầng xanh/gi, 'Impact of Green Infrastructure'],
+      [/tác động của hạ tầng xanh/gi, 'Impact of Green Infrastructure'],
+      [/hạ tầng xanh/gi, 'Green Infrastructure'],
+      [/urbanization và kiến trúc xanh/gi, 'Urbanization & Green Architecture'],
+      [/kiến trúc xanh/gi, 'Green Architecture'],
+      [/cơ chế lưu trữ trí nhớ/gi, 'Memory Storage Mechanisms'],
+      [/lưu trữ trí nhớ/gi, 'Memory Storage'],
+      [/khảo cổ học & tuyến thương mại cổ đại/gi, 'Archaeology & Ancient Trade Routes'],
+      [/tuyến thương mại cổ đại/gi, 'Ancient Trade Routes'],
+      [/tuyến thương mại/gi, 'Trade Routes'],
+      [/cổ đại/gi, 'Ancient'],
+      [/tên đường & uk postcodes/gi, 'Street Names & UK Postcodes'],
+      [/tên đường & tự sửa lỗi/gi, 'Street Names & Self-Correction'],
+      [/tên đường/gi, 'Street Names'],
+      [/tự sửa lỗi/gi, 'Self-Correction'],
+      [/bẫy tự sửa lỗi/gi, 'Self-Correction Trap'],
+      [/bẫy sửa miệng/gi, 'Self-Correction Trap'],
+      [/sửa miệng/gi, 'Self-Correction'],
+      [/họ khách hàng xuất hóa đơn/gi, 'Customer Surname for Invoicing'],
+      [/khách hàng xuất hóa đơn/gi, 'Invoicing Customer'],
+      [/xuất hóa đơn/gi, 'Invoicing'],
+      [/tên họ & bẫy tự sửa lỗi/gi, 'Full Name & Self-Correction Trap'],
+      [/tên họ/gi, 'Full Names'],
+      [/họ người & bẫy tự đính chính/gi, 'Surname Spelling & Self-Correction Trap'],
+      [/họ người/gi, 'Surnames'],
+      [/bẫy tự đính chính/gi, 'Self-Correction Trap'],
+      [/tự đính chính/gi, 'Self-Correction'],
+      [/cho người mới bắt đầu/gi, 'for Beginners'],
+      [/người mới bắt đầu/gi, 'Beginners'],
+      [/nghiên cứu/gi, 'Research on'],
+
       [/\bcủa\b/gi, 'of'],
       [/\bvà\b/gi, '&'],
       [/\btrong\b/gi, 'in'],
@@ -430,23 +511,35 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       'Dictation Cấp 2': 'Dictation Level 2',
       'Dictation Cấp 3': 'Dictation Level 3',
       'Dictation Thực Chiến': 'Combat Dictation',
+      'Combat Dictation': 'Combat Dictation',
       'Dictation Cơ Bản': 'Basic Dictation',
+      'Basic Dictation': 'Basic Dictation',
       'Dictation Học Thuật': 'Academic Dictation',
+      'Academic Dictation': 'Academic Dictation',
       'Dictation Nâng Cao': 'Advanced Dictation',
+      'Advanced Dictation': 'Advanced Dictation',
       'Dictation': 'Dictation',
       'Chép chính tả': 'Dictation',
       'Đánh vần tên riêng & Mã bưu chính UK': 'Proper Names & Postcodes',
       'Đánh vần tên riêng & Mã bưu chính': 'Proper Names & Postcodes',
       'Đánh vần & Con số': 'Spelling & Numbers',
       'Đánh vần': 'Spelling',
+      'Spelling': 'Spelling',
       'Bẫy tự đính chính (Self-Correction Trap)': 'Self-Correction Trap',
       'Bẫy tự đính chính': 'Self-Correction Trap',
+      'Bẫy sửa miệng (Self-Correction Trap)': 'Self-Correction Trap',
+      'Bẫy sửa miệng': 'Self-Correction Trap',
+      'Self-Correction Trap': 'Self-Correction Trap',
+      'Self-correction': 'Self-Correction Trap',
       'Bẫy phủ định ngầm (Implicit Negation)': 'Implicit Negation Trap',
       'Bẫy phủ định ngầm': 'Implicit Negation Trap',
+      'Implicit Negation Trap': 'Implicit Negation Trap',
       'Bẫy Người thứ 2 phản bác (Disagreement Trap)': 'Disagreement Trap',
       'Bẫy Người thứ 2 phản bác': 'Disagreement Trap',
+      'Disagreement Trap': 'Disagreement Trap',
       'Bẫy Quá khứ vs Hiện tại (Temporal Shift Trap)': 'Temporal Shift Trap',
       'Bẫy Quá khứ vs Hiện tại': 'Temporal Shift Trap',
+      'Temporal Shift Trap': 'Temporal Shift Trap',
       'Bẫy đổi ý': 'Mind-Change Distractor Trap',
       'Bẫy gây nhiễu': 'Distractor Trap',
       'Phá bẫy đổi ý': 'Mind-Change Distractor Hunter',
@@ -454,11 +547,15 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       'Định hướng La bàn & Vòng xuyến': 'Compass Navigation & Roundabouts',
       'Định hướng sơ đồ': 'Map Navigation',
       'Định hướng bản đồ': 'Map Navigation',
+      'Map Navigation': 'Map Navigation',
       'Bản đồ & Định hướng': 'Maps & Directions',
       'Bản đồ & Hướng đi': 'Maps & Directions',
+      'Maps & Directions': 'Maps & Directions',
       'Tín hiệu Chuyển Luận Điểm': 'Signposting Shift',
       'Tín hiệu Phản biện & Bất ngờ': 'Signposting Contrast',
       'Bắt tín hiệu chuyển ý': 'Signposting Catcher',
+      'Bắt tín hiệu': 'Signposting Catcher',
+      'Signposting Catcher': 'Signposting Catcher',
       'Tín hiệu chuyển đoạn': 'Signposting Signals',
       'Từ nối lập luận': 'Argumentative Transitions',
       'Phân biệt bẫy Not Given vs False': 'Not Given vs False Trap',
@@ -570,7 +667,7 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^(Đánh vần|Spelling):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Spelling: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^(Bẫy tự đính chính\s*\(Self-Correction Trap\)|Bẫy tự đính chính|Self-Correction Trap):\s*(.*)/i.test(cleanTitle)) {
+  if (/^(Bẫy tự đính chính\s*\(Self-Correction Trap\)|Bẫy tự đính chính|Bẫy sửa miệng\s*\(Self-Correction Trap\)|Bẫy sửa miệng|Self-Correction Trap):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Self-Correction Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^(Bẫy phủ định ngầm\s*\(Implicit Negation\)|Bẫy phủ định ngầm|Implicit Negation Trap):\s*(.*)/i.test(cleanTitle)) {
@@ -608,6 +705,32 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   }
   if (/^(Tín hiệu chuyển đoạn|Tín hiệu Part 4):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Part 4 Signposting: ${translateTopicSubtitle(RegExp.$2)}`;
+  }
+
+  // Non-colon and special listening titles
+  if (/^Đánh vần Họ người & Bẫy tự đính chính/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Surname Spelling & Self-Correction Trap';
+  }
+  if (/^Đánh vần tên đường & UK Postcodes/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Street Names Spelling & UK Postcodes';
+  }
+  if (/^Đánh vần tên đường & Tự sửa lỗi/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Street Names Spelling & Self-Correction';
+  }
+  if (/^Đánh vần họ khách hàng xuất hóa đơn/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Customer Surname Spelling for Invoicing';
+  }
+  if (/^Đánh vần tên họ & Bẫy tự sửa lỗi/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Full Name Spelling & Self-Correction Trap';
+  }
+  if (/^Self-correction$/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Self-Correction Trap';
+  }
+  if (/^Bẫy sửa miệng\s*\(Self-Correction Trap\):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Self-Correction Trap: ${translateTopicSubtitle(RegExp.$1)}`;
+  }
+  if (/^Bẫy sửa miệng:\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Self-Correction Trap: ${translateTopicSubtitle(RegExp.$1)}`;
   }
 
   // 4. If title contains English in parentheses e.g. "Giới từ... (Prepositions of Data)"
@@ -816,6 +939,27 @@ export function getLocalizedDrillExplanation(itemOrExplanation, isEn = false) {
     [/Không điền ngày trong tuần \(Wednesday\) hoặc giờ \(8:45\) nếu đề chỉ hỏi ngày khởi hành\./gi, 'Do not write the day of week (Wednesday) or time (8:45) when only the departure date is requested.'],
     [/Ngày xuất bến là/gi, 'The departure date is'],
     [/Chú ý nối âm:\s*/gi, 'Note connected speech: '],
+    [/Chú ý nối âm phụ âm\s*-\s*nguyên âm ở/gi, 'Note consonant-to-vowel linking in'],
+    [/cùng âm giảm nhẹ của từ/gi, 'along with the weak form of'],
+    [/âm giảm nhẹ của từ/gi, 'weak form of'],
+    [/phụ âm\s*-\s*nguyên âm/gi, 'consonant-to-vowel'],
+    [/nối âm/gi, 'linking'],
+    [/Bẫy tự đính chính\s*\(Self-correction\):\s*/gi, 'Self-correction trap: '],
+    [/Bẫy tự đính chính:\s*/gi, 'Self-correction trap: '],
+    [/Bẫy sửa miệng\s*\(Self-correction\):\s*/gi, 'Self-correction trap: '],
+    [/Bẫy sửa miệng:\s*/gi, 'Self-correction trap: '],
+    [/Người nói đưa ra tên đệm\s*([A-Za-z0-9]+)\s*trước,\s*sau đó mới đính chính lại họ chính xác là\s*([A-Za-z0-9]+)\./gi, 'The speaker mentions middle name $1 first, then corrects to the accurate surname $2.'],
+    [/Người nói đưa ra tên đệm/gi, 'The speaker mentions the middle name'],
+    [/trước,\s*sau đó mới đính chính lại họ chính xác là/gi, 'first, then corrects to the accurate surname'],
+    [/sau đó mới đính chính lại họ chính xác là/gi, 'then corrects to the accurate surname'],
+    [/họ chính xác là/gi, 'accurate surname is'],
+    [/họ chính xác/gi, 'accurate surname'],
+    [/tên đệm/gi, 'middle name'],
+    [/đính chính lại/gi, 'corrects to'],
+    [/người nói đang/gi, 'the speaker is'],
+    [/khía cạnh tài chính của dự án/gi, 'the financial aspect of the project'],
+    [/khía cạnh tài chính/gi, 'the financial aspect'],
+    [/của dự án/gi, 'of the project'],
     [/Chú ý từ ghép/gi, 'Note compound word'],
     [/và âm đuôi số nhiều/gi, 'and plural ending sounds'],
     [/Chú ý âm đuôi động cơ/gi, 'Note ending sound of'],

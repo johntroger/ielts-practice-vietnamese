@@ -284,5 +284,77 @@ it('Translates Listening categories, options, and explanations into English', ()
   assert.strictEqual(getLocalizedDrillExplanation(viQuestion, true), 'Which phrase signals that the speaker is shifting to the primary catalyst?');
 });
 
+// 10. Audit of all 5 Listening Tabs from User Screenshots
+it('Translates all items from the 5 Listening user screenshots correctly into English', () => {
+  // Tab 2: Spelling & Numbers titles without colons and caution notes
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần Họ người & Bẫy tự đính chính' }, true), 'Surname Spelling & Self-Correction Trap');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần tên đường & UK Postcodes' }, true), 'Street Names Spelling & UK Postcodes');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần tên đường & Tự sửa lỗi' }, true), 'Street Names Spelling & Self-Correction');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần họ khách hàng xuất hóa đơn' }, true), 'Customer Surname Spelling for Invoicing');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần tên họ & Bẫy tự sửa lỗi' }, true), 'Full Name Spelling & Self-Correction Trap');
+
+  const cautionNote = '⚠️ Caution: Bẫy tự đính chính (Self-correction): Người nói đưa ra tên đệm Featherstone trước, sau đó mới đính chính lại họ chính xác là Pemberton.';
+  const localizedCaution = getLocalizedDrillExplanation(cautionNote, true);
+  assert(!localizedCaution.includes('Bẫy tự đính chính'), 'Caution note must not contain Vietnamese');
+  assert(localizedCaution.includes('Self-correction trap:'), 'Caution note must have translated label');
+
+  // Tab 1: Dictation titles & audio tips
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Combat Dictation: Đăng Ký Tour Tham Quan Miễn Phí' }, true), 'Combat Dictation: Free Guided Tour Registration');
+  assert.strictEqual(getLocalizedDrillTitle({ title: '✨ [AI Community] Academic Dictation: Vi khí hậu đô thị & Hiệu ứng đảo nhiệt' }, true), '✨ [AI Community] Academic Dictation: Urban Microclimate & Urban Heat Island Effect');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Combat Dictation: Đăng ký thẻ thư viện công cộng' }, true), 'Combat Dictation: Public Library Card Registration');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Combat Dictation: Gia Hạn Thẻ Thư Viện' }, true), 'Combat Dictation: Library Card Renewal');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Combat Dictation: Đăng Ký Khóa Học Cộng Đồng' }, true), 'Combat Dictation: Community Course Registration');
+
+  const dictationTip = "💡 Chú ý nối âm phụ âm - nguyên âm ở 'fill in' và 'hand it', cùng âm giảm nhẹ của từ 'to'.";
+  const localizedTip = getLocalizedDrillExplanation(dictationTip, true);
+  assert(!localizedTip.includes('Chú ý nối âm'), 'Dictation tip must not contain Vietnamese');
+  assert(localizedTip.includes('Note consonant-to-vowel linking in'), 'Dictation tip must be translated');
+
+  // Tab 3: Distractor Hunter jump-to titles
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Đặt phòng họp sự kiện' }, true), 'Self-Correction Trap: Event Meeting Room Booking');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Giờ học Yoga for người mới bắt đầu' }, true), 'Self-Correction Trap: Beginner Yoga Class Schedule');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Đặt phòng hội thảo' }, true), 'Self-Correction Trap: Seminar Room Booking');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Đặt phòng họp công ty' }, true), 'Self-Correction Trap: Corporate Meeting Room Booking');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Đặt bàn nhà hàng' }, true), 'Self-Correction Trap: Restaurant Table Reservation');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Thay đổi lịch hẹn dịch vụ' }, true), 'Self-Correction Trap: Service Appointment Rescheduling');
+  assert.strictEqual(getLocalizedDrillTitle({ title: '✨ [AI Community] Bẫy sửa miệng (Self-Correction Trap): Phí hội viên trung tâm thể thao' }, true), '✨ [AI Community] Self-Correction Trap: Sports Center Membership Fee');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Self-Correction Trap: Đặt lịch sân thể thao' }, true), 'Self-Correction Trap: Sports Field Booking');
+
+  // Tab 4: Maps & Directions Reflex jump-to titles
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Riverside' }, true), 'Map Navigation: Riverside Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Greenvale' }, true), 'Map Navigation: Greenvale Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Green Valley' }, true), 'Map Navigation: Green Valley Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Bách thảo Riverside' }, true), 'Map Navigation: Riverside Botanical Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Trung tâm' }, true), 'Map Navigation: Central Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Greenfield' }, true), 'Map Navigation: Greenfield Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Greenwood' }, true), 'Map Navigation: Greenwood Park');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Map Navigation: Công viên Bờ Sông' }, true), 'Map Navigation: Riverside Waterfront Park');
+
+  // Tab 5: Part 4 Signposting Signals jump-to titles and mixed question
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Kinh tế học Urban Agriculture' }, true), 'Signposting Catcher: Economics of Urban Agriculture');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Nghiên cứu Vi khí hậu Đô thị' }, true), 'Signposting Catcher: Urban Microclimate Research');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Sinh vật học biển' }, true), 'Signposting Catcher: Marine Biology');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Tác động của Green Spaces đô thị' }, true), 'Signposting Catcher: Impact of Urban Green Spaces');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Urbanization và Kiến trúc Xanh' }, true), 'Signposting Catcher: Urbanization & Green Architecture');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Tác động of hạ tầng xanh' }, true), 'Signposting Catcher: Impact of Green Infrastructure');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Cơ chế lưu trữ trí nhớ' }, true), 'Signposting Catcher: Memory Storage Mechanisms');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Khảo cổ học & Tuyến Thương mại Cổ đại' }, true), 'Signposting Catcher: Archaeology & Ancient Trade Routes');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Sinh thái học đại dương' }, true), 'Signposting Catcher: Marine Ecology');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Signposting Catcher: Hiện tượng sinh học biển' }, true), 'Signposting Catcher: Marine Biological Phenomena');
+
+  const mixedQuestion = 'Which phrase signals người nói đang shifting to analyzing khía cạnh tài chính của dự án?';
+  const localizedQuestion = getLocalizedDrillExplanation(mixedQuestion, true);
+  assert.strictEqual(localizedQuestion, 'Which phrase signals the speaker is shifting to analyzing the financial aspect of the project?');
+});
+
+// 11. MicroDrillAudioBar.jsx bilingual verification
+it('MicroDrillAudioBar.jsx uses useTranslation and contains bilingual labels', () => {
+  const content = fs.readFileSync(path.resolve('src/components/listening/MicroDrillAudioBar.jsx'), 'utf-8');
+  assert(content.includes('useTranslation'), 'MicroDrillAudioBar must import useTranslation');
+  assert(content.includes('Click Play to start listening'), 'Must contain English Click Play label');
+  assert(content.includes('Bấm Play để bắt đầu nghe'), 'Must contain Vietnamese Click Play label');
+  assert(content.includes('Exam Aligned Native TTS'), 'Must contain English Exam Aligned badge');
+});
+
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);
 

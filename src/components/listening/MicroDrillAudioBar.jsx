@@ -17,6 +17,7 @@ import {
 import { speakText, stopSpeech, playChimeTone } from '../../utils/speechAudio';
 import { saveAudioBlob, getAudioPlayableUrl } from '../../utils/audioStorage';
 import { isOwnerUser, OWNER_AUDIO_RESTRICTION_MESSAGE, OWNER_EMAIL } from '../../utils/userPermissions';
+import { useTranslation } from '../../i18n';
 
 function formatTime(seconds) {
   if (isNaN(seconds) || seconds < 0) return '00:00';
@@ -47,6 +48,7 @@ export default function MicroDrillAudioBar({
   accent = 'en-GB',
   currentUser = null
 }) {
+  const { isEn } = useTranslation();
   const isOwner = isOwnerUser(currentUser);
   const audioRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -222,7 +224,7 @@ export default function MicroDrillAudioBar({
         onError: () => {
           setIsPlaying(false);
           stopElapsedTimer();
-          setErrorMessage('Lỗi phát âm thanh. Vui lòng bấm thử lại.');
+          setErrorMessage(isEn ? 'Audio playback error. Please try again.' : 'Lỗi phát âm thanh. Vui lòng bấm thử lại.');
         }
       });
     }, 50);
@@ -256,7 +258,7 @@ export default function MicroDrillAudioBar({
       }
     } catch (err) {
       console.error('Error loading custom audio file:', err);
-      alert('Không thể nạp tệp âm thanh này. Vui lòng chọn tệp .mp3 hoặc .wav hợp lệ.');
+      alert(isEn ? 'Unable to load this audio file. Please select a valid .mp3 or .wav file.' : 'Không thể nạp tệp âm thanh này. Vui lòng chọn tệp .mp3 hoặc .wav hợp lệ.');
     }
   };
 
@@ -303,7 +305,7 @@ export default function MicroDrillAudioBar({
             onClick={togglePlay} 
             className="underline font-bold text-[11px] cursor-pointer"
           >
-            Thử lại
+            {isEn ? 'Retry' : 'Thử lại'}
           </button>
         </div>
       )}
@@ -313,7 +315,7 @@ export default function MicroDrillAudioBar({
         <div className="flex items-center space-x-2 font-bold text-slate-200 truncate">
           <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-400 animate-pulse ring-4 ring-emerald-400/20' : 'bg-purple-500'}`} />
           <span className="truncate">
-            {customUploadedName ? `Tệp tải lên: ${customUploadedName}` : title}
+            {customUploadedName ? (isEn ? `Uploaded File: ${customUploadedName}` : `Tệp tải lên: ${customUploadedName}`) : title}
           </span>
         </div>
 
@@ -322,7 +324,9 @@ export default function MicroDrillAudioBar({
           <span className="px-2.5 py-0.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 font-mono text-[10px] font-bold flex items-center space-x-1 shadow-sm">
             <Sparkles className="w-3 h-3 text-purple-400" />
             <span>
-              {customUploadedName ? 'Tệp MP3 cá nhân' : 'Giọng Chuẩn Bản Xứ (100% Khớp Đề)'}
+              {customUploadedName 
+                ? (isEn ? 'Custom Audio' : 'Tệp MP3 cá nhân') 
+                : (isEn ? 'Exam Aligned Native TTS' : 'Giọng Chuẩn Bản Xứ (100% Khớp Đề)')}
             </span>
           </span>
         </div>
@@ -340,7 +344,7 @@ export default function MicroDrillAudioBar({
                 ? 'bg-emerald-600 hover:bg-emerald-500 ring-4 ring-emerald-500/20 shadow-emerald-900/50' 
                 : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-purple-900/40 ring-4 ring-purple-500/20'
             }`}
-            title={isPlaying ? 'Tạm dừng bài nghe' : 'Bắt đầu phát âm thanh'}
+            title={isPlaying ? (isEn ? 'Pause playback' : 'Tạm dừng bài nghe') : (isEn ? 'Start playback' : 'Bắt đầu phát âm thanh')}
           >
             {isPlaying ? (
               <Pause className="w-5 h-5 fill-current" />
@@ -354,7 +358,7 @@ export default function MicroDrillAudioBar({
             type="button"
             onClick={handleReplay}
             className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer border border-slate-800"
-            title="Nghe lại câu này từ đầu"
+            title={isEn ? 'Replay sentence from beginning' : 'Nghe lại câu này từ đầu'}
           >
             <RotateCcw className="w-4 h-4" />
           </button>
@@ -367,7 +371,7 @@ export default function MicroDrillAudioBar({
           </div>
 
           {/* Equalizer Wave Animation (Only active when playing) */}
-          <div className="flex items-center space-x-0.5 h-4 px-1" title={isPlaying ? 'Đang phát âm thanh...' : 'Đang chờ phát'}>
+          <div className="flex items-center space-x-0.5 h-4 px-1" title={isPlaying ? (isEn ? 'Audio playing...' : 'Đang phát âm thanh...') : (isEn ? 'Ready to play' : 'Đang chờ phát')}>
             <span className={`w-0.5 rounded-full bg-purple-400 transition-all ${isPlaying ? 'h-4 animate-bounce' : 'h-1 opacity-40'}`} />
             <span className={`w-0.5 rounded-full bg-indigo-400 transition-all ${isPlaying ? 'h-3 animate-pulse' : 'h-1 opacity-40'}`} />
             <span className={`w-0.5 rounded-full bg-blue-400 transition-all ${isPlaying ? 'h-5 animate-bounce delay-75' : 'h-1 opacity-40'}`} />
@@ -392,7 +396,7 @@ export default function MicroDrillAudioBar({
                     ? 'bg-purple-600 text-white shadow-2xs' 
                     : 'text-slate-400 hover:text-white'
                 }`}
-                title="Giọng Anh - Anh (British BBC)"
+                title={isEn ? 'British BBC Accent' : 'Giọng Anh - Anh (British BBC)'}
               >
                 UK
               </button>
@@ -407,7 +411,7 @@ export default function MicroDrillAudioBar({
                     ? 'bg-purple-600 text-white shadow-2xs' 
                     : 'text-slate-400 hover:text-white'
                 }`}
-                title="Giọng Anh - Úc (Australian)"
+                title={isEn ? 'Australian Accent' : 'Giọng Anh - Úc (Australian)'}
               >
                 AU
               </button>
@@ -422,7 +426,7 @@ export default function MicroDrillAudioBar({
                     ? 'bg-purple-600 text-white shadow-2xs' 
                     : 'text-slate-400 hover:text-white'
                 }`}
-                title="Giọng Anh - Mỹ (American)"
+                title={isEn ? 'American Accent' : 'Giọng Anh - Mỹ (American)'}
               >
                 US
               </button>
@@ -458,7 +462,7 @@ export default function MicroDrillAudioBar({
             type="button"
             onClick={handleSoundTest}
             className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-400 border border-slate-800 transition-colors cursor-pointer"
-            title="Thử âm thanh loa/tai nghe"
+            title={isEn ? 'Sound Test (Speaker / Headphone)' : 'Thử âm thanh loa/tai nghe'}
           >
             <Radio className="w-3.5 h-3.5" />
           </button>
@@ -478,7 +482,7 @@ export default function MicroDrillAudioBar({
                 ? 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-purple-400 border-slate-800'
                 : 'bg-slate-900/60 text-slate-600 border-slate-800 hover:text-amber-400'
             }`}
-            title={isOwner ? "Tải tệp âm thanh cá nhân (.mp3, .wav)" : `Tính năng tải âm thanh cá nhân chỉ dành riêng cho Quản trị viên (${OWNER_EMAIL})`}
+            title={isOwner ? (isEn ? "Upload custom audio file (.mp3, .wav)" : "Tải tệp âm thanh cá nhân (.mp3, .wav)") : (isEn ? `Audio upload is restricted to Administrator (${OWNER_EMAIL})` : `Tính năng tải âm thanh cá nhân chỉ dành riêng cho Quản trị viên (${OWNER_EMAIL})`)}
           >
             <UploadCloud className="w-3.5 h-3.5" />
           </button>
@@ -494,8 +498,8 @@ export default function MicroDrillAudioBar({
           />
         </div>
         <div className="flex items-center justify-between text-[10px] text-slate-400 px-0.5">
-          <span>{isPlaying ? '🔊 Đang phát giọng đọc bản ngữ...' : 'Bấm Play để bắt đầu nghe'}</span>
-          <span>{selectedAccent === 'en-GB' ? 'Giọng Anh - Anh' : selectedAccent === 'en-AU' ? 'Giọng Anh - Úc' : 'Giọng Anh - Mỹ'} • {playbackRate}x</span>
+          <span>{isPlaying ? (isEn ? '🔊 Playing native speaker audio...' : '🔊 Đang phát giọng đọc bản ngữ...') : (isEn ? 'Click Play to start listening' : 'Bấm Play để bắt đầu nghe')}</span>
+          <span>{selectedAccent === 'en-GB' ? (isEn ? 'British (UK)' : 'Giọng Anh - Anh') : selectedAccent === 'en-AU' ? (isEn ? 'Australian (AU)' : 'Giọng Anh - Úc') : (isEn ? 'American (US)' : 'Giọng Anh - Mỹ')} • {playbackRate}x</span>
         </div>
       </div>
     </div>
