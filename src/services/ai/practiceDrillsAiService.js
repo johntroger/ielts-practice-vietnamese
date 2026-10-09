@@ -67,7 +67,7 @@ export async function generateMicroDrill({ drillType, topic = 'general', apiKey,
   if (!apiKey) throw new Error(isEn ? 'Please configure your AI API Key in Settings.' : 'Vui lòng cấu hình AI API Key trong phần Cài đặt.');
 
   const langInstruction = isEn 
-    ? 'CRITICAL REQUIREMENT: Output ALL titles, explanations, tips, and guidelines STRICTLY in English. Include "titleEn" field.' 
+    ? 'CRITICAL LANGUAGE REQUIREMENT: Output ALL titles, categories, contexts, questions, explanations, tips, and guidelines STRICTLY in English. Do NOT output Vietnamese. Include "titleEn" field.' 
     : 'Yêu cầu: Giải thích và hướng dẫn bằng tiếng Việt.';
 
   let prompt = '';
@@ -77,14 +77,14 @@ export async function generateMicroDrill({ drillType, topic = 'general', apiKey,
 Topic: ${topic}
 
 Requirements:
-- "title": Short title (e.g. "Giới từ miêu tả tỷ trọng & biến đổi" or "Từ nối tương phản nâng cao")
+- "title": Short title (e.g. ${isEn ? '"Prepositions of Data & Trends" or "Advanced Contrastive Linkers"' : '"Giới từ miêu tả tỷ trọng & biến đổi" or "Từ nối tương phản nâng cao"'})
 - "category": e.g. "Task 1 Data Prepositions" or "Task 2 Cohesive Devices"
 - "passage": A paragraph (3-4 sentences) with 3 to 4 blanks represented by "___".
 - "blanks": Array of 3-4 objects, each with:
   - "index": integer (0, 1, 2, 3) corresponding to the blanks in order
   - "answer": the correct word (e.g. "at", "by", "However", "Consequently")
   - "options": array of 4 choices [correct word and 3 plausible distractors]
-  - "explanation": Vietnamese explanation of grammar / rule why this word is correct
+  - "explanation": ${isEn ? 'English explanation of grammar / rule why this word is correct' : 'Vietnamese explanation of grammar / rule why this word is correct'}
 
 Return ONLY raw parseable JSON:
 {
@@ -101,14 +101,14 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Short descriptive title
+- "title": Short descriptive title ${isEn ? '(in English)' : ''}
 - "category": "Task 1 Data Accuracy"
-- "context": A concise data summary (e.g. "Dữ liệu năm 2024: Nước A: 45%, Nước B: 30%, Nước C: 15%, Nước D: 10%...")
+- "context": A concise data summary (e.g. ${isEn ? '"Data for 2024: Country A: 45%, Country B: 30%, Country C: 15%, Country D: 10%..."' : '"Dữ liệu năm 2024: Nước A: 45%, Nước B: 30%, Nước C: 15%, Nước D: 10%..."'})
 - "questions": Array of 4 statement objects, each with:
   - "id": "q1", "q2", "q3", "q4"
   - "statement": English statement interpreting the data (some true, some false traps like confusing percentage vs percentage points or lowest vs highest)
   - "isTrue": boolean (true or false)
-  - "explanation": Vietnamese explanation detailing why it is true or false based on the numbers
+  - "explanation": ${isEn ? 'English explanation detailing why it is true or false based on the numbers' : 'Vietnamese explanation detailing why it is true or false based on the numbers'}
 
 Return ONLY raw parseable JSON:
 {
@@ -600,6 +600,8 @@ Return ONLY raw parseable JSON:
   "sampleBand8": "..."
 }`;
   }
+
+  prompt += `\n\n${langInstruction}`;
 
   const response = await callGeminiApi({
     model,

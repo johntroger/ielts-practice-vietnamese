@@ -6,7 +6,13 @@
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
-import { getLocalizedDrillTitle, getLocalizedDrillCategory } from '../src/utils/drillLocalization.js';
+import { 
+  getLocalizedDrillTitle, 
+  getLocalizedDrillCategory,
+  getLocalizedDrillContext,
+  getLocalizedDrillExplanation,
+  getLocalizedHint
+} from '../src/utils/drillLocalization.js';
 import { INITIAL_MICRO_DRILLS } from '../src/data/microDrills.js';
 import { COMMUNITY_DEFAULT_DRILLS } from '../src/data/communityMicroDrills.js';
 
@@ -110,6 +116,43 @@ it('Locale files en.js and vi.js have matching microDrills action keys', () => {
   assert(vi.includes("checkAnswers: 'Kiểm Tra Đáp Án'"), 'vi.js must have checkAnswers');
   assert(en.includes("selectWord: '[Select word]'"), 'en.js must have selectWord');
   assert(vi.includes("selectWord: '[Chọn từ]'"), 'vi.js must have selectWord');
+});
+
+// 7. Context, Explanation, and Hint runtime translations
+it('Translates Task 1 Given Data context from Vietnamese to English', () => {
+  const viContext = 'Dữ liệu năm 2015 và 2023 về tỷ lệ các nguồn năng lượng tiêu thụ tại quốc gia Y: Than đá (2015: 50%, 2023: 30%), Năng lượng tái tạo (2015: 20%, 2023: 40%), Khí đốt (2015: 20%, 2023: 20%), Hạt nhân (2015: 10%, 2023: 10%).';
+  const enContext = getLocalizedDrillContext(viContext, true);
+  
+  assert.strictEqual(enContext, 'Data for 2015 and 2023 on the proportion of energy consumed in Country Y: Coal (2015: 50%, 2023: 30%), Renewable energy (2015: 20%, 2023: 40%), Natural gas (2015: 20%, 2023: 20%), Nuclear (2015: 10%, 2023: 10%).');
+  // Check no residual Vietnamese words
+  assert(!/dữ liệu|quốc gia|than đá|năng lượng|khí đốt|hạt nhân/i.test(enContext), 'Must not contain Vietnamese words');
+  
+  // In Vietnamese mode, preserves original text
+  assert.strictEqual(getLocalizedDrillContext(viContext, false), viContext);
+});
+
+it('Translates True/False explanations and hints', () => {
+  const expl = 'Đúng (True). Năm 2024 Đức dẫn đầu với 52%.';
+  const enExpl = getLocalizedDrillExplanation(expl, true);
+  assert(enExpl.startsWith('Correct (TRUE).'), 'Explanation should start with Correct (TRUE).');
+  assert(enExpl.includes('Germany led with 52%'), 'Explanation should localize Germany and led with');
+
+  const hint = 'Thay "increase" bằng "grow exponentially"';
+  const enHint = getLocalizedHint(hint, true);
+  assert.strictEqual(enHint, 'Replace "increase" with "grow exponentially"');
+});
+
+it('WritingDrillRoom.jsx wires getLocalizedDrillContext, getLocalizedDrillExplanation, and getLocalizedHint', () => {
+  const content = fs.readFileSync(path.resolve('src/components/drills/WritingDrillRoom.jsx'), 'utf-8');
+  assert(content.includes('getLocalizedDrillContext'), 'WritingDrillRoom must use getLocalizedDrillContext');
+  assert(content.includes('getLocalizedDrillExplanation'), 'WritingDrillRoom must use getLocalizedDrillExplanation');
+  assert(content.includes('getLocalizedHint'), 'WritingDrillRoom must use getLocalizedHint');
+});
+
+it('practiceDrillsAiService.js enforces English generation when isEn is true', () => {
+  const serviceContent = fs.readFileSync(path.resolve('src/services/ai/practiceDrillsAiService.js'), 'utf-8');
+  assert(serviceContent.includes('CRITICAL LANGUAGE REQUIREMENT'), 'Service must enforce critical language requirement');
+  assert(serviceContent.includes('prompt += `\\n\\n${langInstruction}`'), 'Service must append langInstruction to prompt');
 });
 
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);

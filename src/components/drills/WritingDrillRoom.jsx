@@ -1,7 +1,13 @@
 import React from 'react';
 import { RotateCcw, Sparkles, Loader2, Award } from 'lucide-react';
 import { useTranslation } from '../../i18n';
-import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
+import { 
+  getLocalizedDrillTitle, 
+  getLocalizedDrillCategory,
+  getLocalizedDrillContext, 
+  getLocalizedDrillExplanation, 
+  getLocalizedHint 
+} from '../../utils/drillLocalization';
 
 /**
  * WritingDrillRoom
@@ -48,7 +54,7 @@ export default function WritingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center space-x-2">
               <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">
-                {currentFill.category}
+                {getLocalizedDrillCategory(currentFill, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm">
                 {getLocalizedDrillTitle(currentFill, isEn)}
@@ -118,7 +124,7 @@ export default function WritingDrillRoom({
                   <strong className="text-red-600 shrink-0">
                     {isEn ? `Position ${i + 1}` : `Vị trí ${i + 1}`} ({b.answer}):
                   </strong>
-                  <span className="text-slate-600">{b.explanation}</span>
+                  <span className="text-slate-600">{getLocalizedDrillExplanation(b, isEn)}</span>
                 </div>
               ))}
             </div>
@@ -134,7 +140,7 @@ export default function WritingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">
-                {currentTf.category}
+                {getLocalizedDrillCategory(currentTf, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentTf, isEn)}
@@ -143,7 +149,7 @@ export default function WritingDrillRoom({
           </div>
 
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 leading-relaxed font-mono">
-            📊 <strong>{isEn ? 'Given Data:' : 'Dữ liệu cho trước:'}</strong> {currentTf.context}
+            📊 <strong>{isEn ? 'Given Data:' : 'Dữ liệu cho trước:'}</strong> {getLocalizedDrillContext(currentTf, isEn)}
           </div>
 
           <div className="space-y-3">
@@ -187,7 +193,7 @@ export default function WritingDrillRoom({
                       {q.isTrue 
                         ? (isEn ? '✓ Correct (TRUE):' : '✓ Đúng (TRUE):') 
                         : (isEn ? '✕ Incorrect (FALSE):' : '✕ Sai (FALSE):')}
-                    </span> {q.explanation}
+                    </span> {getLocalizedDrillExplanation(q, isEn)}
                   </div>
                 )}
               </div>
@@ -224,7 +230,7 @@ export default function WritingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-xs font-bold">
-                {currentPara.category}
+                {getLocalizedDrillCategory(currentPara, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentPara, isEn)}
@@ -251,7 +257,7 @@ export default function WritingDrillRoom({
             <div className="flex flex-wrap gap-2">
               {currentPara.hints.map((h, i) => (
                 <span key={i} className="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
-                  {h}
+                  {getLocalizedHint(h, isEn)}
                 </span>
               ))}
             </div>
@@ -346,7 +352,7 @@ export default function WritingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 text-xs font-bold">
-                {currentError.category}
+                {getLocalizedDrillCategory(currentError, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentError, isEn)}
@@ -391,7 +397,7 @@ export default function WritingDrillRoom({
                 {isEn ? '✓ Model sentence:' : '✓ Câu chuẩn:'} "{currentError.targetCorrection}"
               </div>
               <p className="text-slate-600">
-                <strong>{isEn ? 'Grammar explanation:' : 'Giải thích ngữ pháp:'}</strong> {currentError.explanation}
+                <strong>{isEn ? 'Grammar explanation:' : 'Giải thích ngữ pháp:'}</strong> {getLocalizedDrillExplanation(currentError, isEn)}
               </p>
             </div>
           )}

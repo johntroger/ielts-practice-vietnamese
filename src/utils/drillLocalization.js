@@ -164,3 +164,150 @@ export function getLocalizedDrillCategory(drill, isEn = false) {
   const raw = drill.category || '';
   return KNOWN_CATEGORY_MAP[raw] || raw;
 }
+
+/**
+ * Returns localized drill context (e.g. Task 1 charts and given data numbers).
+ * @param {Object|string} drillOrContext - Drill object or raw context string
+ * @param {boolean} isEn - English mode flag
+ * @returns {string} Localized data summary
+ */
+export function getLocalizedDrillContext(drillOrContext, isEn = false) {
+  if (!drillOrContext) return '';
+  const raw = typeof drillOrContext === 'object' 
+    ? (isEn && drillOrContext.contextEn ? drillOrContext.contextEn : drillOrContext.context) 
+    : drillOrContext;
+
+  if (!raw || !isEn) return raw || '';
+
+  let text = String(raw);
+
+  const phraseReplacements = [
+    [/Dữ liệu phát điện sạch\s*(\d*):?/gi, 'Clean electricity generation data $1:'],
+    [/Dữ liệu năm\s*(\d+)\s*(và|với)\s*(\d+)\s*về tỷ lệ các nguồn năng lượng tiêu thụ tại (quốc gia|nước)\s*([A-Za-z0-9]+):?/gi, 'Data for $1 and $3 on the proportion of energy consumed in Country $5:'],
+    [/Dữ liệu năm\s*(\d+)\s*(và|với)\s*(\d+)\s*về tỷ lệ các nguồn năng lượng tại (quốc gia|nước)\s*([A-Za-z0-9]+):?/gi, 'Data for $1 and $3 on energy source shares in Country $5:'],
+    [/Dữ liệu năm\s*(\d+)\s*(và|với)\s*(\d+):?/gi, 'Data for $1 and $3:'],
+    [/Dữ liệu năm\s*(\d+):?/gi, 'Data for $1:'],
+    [/Dựa trên biểu đồ:\s*/gi, 'Based on the chart: '],
+    [/Dựa trên biểu đồ\s*/gi, 'Based on the chart: '],
+    [/về tỷ lệ các nguồn năng lượng tiêu thụ tại/gi, 'on the proportion of energy consumed in'],
+    [/về tỷ lệ các nguồn năng lượng tại/gi, 'on energy source shares in'],
+    [/về tỷ lệ tiêu thụ năng lượng tại/gi, 'on energy consumption shares in'],
+    [/về tỷ lệ các nguồn năng lượng/gi, 'on energy source shares'],
+    [/về tỷ lệ/gi, 'on the proportion of'],
+    [/tiêu thụ tại/gi, 'consumed in'],
+    [/quốc gia\s*([A-Za-z0-9]+)/gi, 'Country $1'],
+    [/quốc gia/gi, 'Country'],
+    [/nước\s*([A-Za-z0-9]+)/gi, 'Country $1'],
+    [/nước/gi, 'Country'],
+    [/Than đá/gi, 'Coal'],
+    [/Than/gi, 'Coal'],
+    [/Năng lượng tái tạo/gi, 'Renewable energy'],
+    [/Khí đốt/gi, 'Natural gas'],
+    [/Khí tự nhiên/gi, 'Natural gas'],
+    [/Hạt nhân/gi, 'Nuclear'],
+    [/Năng lượng hạt nhân/gi, 'Nuclear energy'],
+    [/Dầu mỏ/gi, 'Oil'],
+    [/Thủy điện/gi, 'Hydroelectric power'],
+    [/Điện mặt trời/gi, 'Solar energy'],
+    [/Điện gió/gi, 'Wind energy'],
+    [/Tây Ban Nha/gi, 'Spain'],
+    [/Đan Mạch/gi, 'Denmark'],
+    [/Đức/gi, 'Germany'],
+    [/Anh/gi, 'UK'],
+    [/Vương quốc Anh/gi, 'UK'],
+    [/Úc/gi, 'Australia'],
+    [/Nhật Bản/gi, 'Japan'],
+    [/Nhật/gi, 'Japan'],
+    [/Hoa Kỳ|Mỹ/gi, 'US'],
+    [/Pháp/gi, 'France'],
+    [/\bvà\b/gi, 'and'],
+    [/\bvới\b/gi, 'with']
+  ];
+
+  for (const [pattern, repl] of phraseReplacements) {
+    text = text.replace(pattern, repl);
+  }
+
+  return text.trim();
+}
+
+/**
+ * Returns localized explanation for drills, questions, blanks, or errors.
+ * @param {Object|string} itemOrExplanation - Item object with explanation or raw string
+ * @param {boolean} isEn - English mode flag
+ * @returns {string} Localized explanation
+ */
+export function getLocalizedDrillExplanation(itemOrExplanation, isEn = false) {
+  if (!itemOrExplanation) return '';
+  const raw = typeof itemOrExplanation === 'object'
+    ? (isEn && itemOrExplanation.explanationEn ? itemOrExplanation.explanationEn : itemOrExplanation.explanation)
+    : itemOrExplanation;
+
+  if (!raw || !isEn) return raw || '';
+
+  let text = String(raw);
+
+  const explanationReplacements = [
+    [/^Đúng\s*\((True|TRUE)\)\.?\s*/i, 'Correct (TRUE). '],
+    [/^Sai\s*\((False|FALSE)\)\.?\s*/i, 'Incorrect (FALSE). '],
+    [/^Đúng\.?\s*/i, 'Correct. '],
+    [/^Sai\.?\s*/i, 'Incorrect. '],
+    [/Năm (\d+)/gi, 'In $1'],
+    [/dẫn đầu với/gi, 'led with'],
+    [/cao hơn/gi, 'higher than'],
+    [/thấp hơn/gi, 'lower than'],
+    [/đạt đỉnh tại/gi, 'peaked at'],
+    [/đạt/gi, 'reached'],
+    [/trong khi/gi, 'while'],
+    [/còn/gi, 'while'],
+    [/có sự chênh lệch nhỏ/gi, 'there was a slight difference of'],
+    [/có mức tăng trưởng theo tỷ lệ ngoạn mục nhất/gi, 'had the most remarkable growth rate'],
+    [/từ (\d+)% tăng gần (\d+) lần lên (\d+)%/gi, 'increasing nearly $2-fold from $1% to $3%'],
+    [/Tây Ban Nha/gi, 'Spain'],
+    [/Đan Mạch/gi, 'Denmark'],
+    [/Đức/gi, 'Germany'],
+    [/Anh/gi, 'UK'],
+    [/Vương quốc Anh/gi, 'UK'],
+    [/Úc/gi, 'Australia'],
+    [/Nhật Bản/gi, 'Japan'],
+    [/Nhật/gi, 'Japan'],
+    [/'stood at \+ \[số liệu\]':\s*đứng tại mốc bao nhiêu\./gi, "'stood at + [data point]': indicates a specific data level."],
+    [/'grew by \+ \[khoảng chênh lệch\]':\s*tăng thêm một khoảng bao nhiêu\./gi, "'grew by + [difference]': indicates the amount of increase."],
+    [/'peaked at \+ \[số liệu đỉnh\]':\s*đạt đỉnh tại mức nào\./gi, "'peaked at + [peak figure]': indicates reaching a peak."],
+    [/'accounted for \+ \[tỷ lệ\/phần trăm\]':\s*chiếm bao nhiêu phần trăm\./gi, "'accounted for + [percentage]': represents or comprises a proportion."]
+  ];
+
+  for (const [pattern, repl] of explanationReplacements) {
+    text = text.replace(pattern, repl);
+  }
+
+  return text.trim();
+}
+
+/**
+ * Returns localized hint for paraphrase exercises.
+ * @param {string} hint - Raw hint string
+ * @param {boolean} isEn - English mode flag
+ * @returns {string} Localized hint
+ */
+export function getLocalizedHint(hint, isEn = false) {
+  if (!hint || !isEn) return hint || '';
+  let text = String(hint);
+  if (/^Thay\s+"([^"]+)"\s+bằng\s+"([^"]+)"\s+hoặc\s+"([^"]+)"/i.test(text)) {
+    return `Replace "${RegExp.$1}" with "${RegExp.$2}" or "${RegExp.$3}"`;
+  }
+  if (/^Thay\s+"([^"]+)"\s+bằng\s+"([^"]+)"/i.test(text)) {
+    return `Replace "${RegExp.$1}" with "${RegExp.$2}"`;
+  }
+  if (/^Dùng danh từ hóa:\s*(.*)/i.test(text)) {
+    return `Use nominalization: ${RegExp.$1}`;
+  }
+  if (/^Dùng từ vựng C1:\s*(.*)/i.test(text)) {
+    return `Use C1 vocabulary: ${RegExp.$1}`;
+  }
+  if (/^Dùng:\s*(.*)/i.test(text)) {
+    return `Use: ${RegExp.$1}`;
+  }
+  return text;
+}
+
