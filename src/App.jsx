@@ -1158,8 +1158,8 @@ export default function App() {
               <ReadingWorkspace
                 apiKey={apiKey}
                 model={model}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenTheory={() => setIsTheoryOpen(true)}
+                onOpenSettings={() => openModal('settings')}
+                onOpenTheory={(opts) => openModal('theory', { skill: 'reading', ...(typeof opts === 'object' ? opts : {}) })}
                 user={currentUser}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onReadingSubmitted={(sub) => {
@@ -1215,7 +1215,7 @@ export default function App() {
                 apiKey={apiKey}
                 model={model}
                 onOpenSettings={() => openModal('settings')}
-                onOpenTheory={() => openModal('theory')}
+                onOpenTheory={(opts) => openModal('theory', { skill: 'listening', ...(typeof opts === 'object' ? opts : {}) })}
                 user={currentUser}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onOpenDrills={() => openModal('drills')}
@@ -1270,7 +1270,7 @@ export default function App() {
                 model={model}
                 onOpenSettings={() => openModal('settings')}
                 user={currentUser}
-                onOpenTheory={() => openModal('theory')}
+                onOpenTheory={(opts) => openModal('theory', { skill: 'speaking', ...(typeof opts === 'object' ? opts : {}) })}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onSpeakingSubmitted={(sub) => {
                   setSpeakingHistory(prev => {
