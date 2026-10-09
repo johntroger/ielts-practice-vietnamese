@@ -80,7 +80,7 @@ it('WritingDrillRoom.jsx localizes action buttons (Reset Exercise & Check Answer
 // 3. GeneralDrillRoom.jsx and ReadingDrillRoom.jsx verification
 it('GeneralDrillRoom.jsx and ReadingDrillRoom.jsx are fully localized', () => {
   const genContent = fs.readFileSync(path.resolve('src/components/drills/GeneralDrillRoom.jsx'), 'utf-8');
-  assert(genContent.includes('useTranslation'), 'GeneralDrillRoom must use useTranslation');
+  assert(genContent.includes("import { useTranslation } from '../../i18n'"), 'GeneralDrillRoom must import useTranslation');
   assert(genContent.includes('getLocalizedDrillTitle'), 'GeneralDrillRoom must use getLocalizedDrillTitle');
   assert(genContent.includes("isEn ? 'Reset Exercise' : 'Làm lại bài này'"), 'GeneralDrillRoom reset button must be bilingual');
 
