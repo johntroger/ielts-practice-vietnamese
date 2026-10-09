@@ -554,12 +554,12 @@ export default function ReadingWorkspace({
             </div>
 
             {/* Test Chip & Passage Pills */}
-            <div className="flex items-center space-x-1 min-w-0 shrink">
+            <div className="flex items-center space-x-1 shrink-0">
               {/* Test Chip */}
               <button
                 type="button"
                 onClick={handleOpenLibrary}
-                className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[120px] sm:max-w-[190px] min-w-0 truncate"
+                className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[120px] sm:max-w-[190px] truncate shrink-0"
                 title={isEn ? `Current test: ${currentTest.title} (Click to open Library - ${allReadingTests.length} tests)` : `Đề đang làm: ${currentTest.title} (Bấm để mở Kho Đề - ${allReadingTests.length} đề)`}
               >
                 <BookOpen className="w-3 h-3 text-indigo-600 shrink-0" />
@@ -812,21 +812,21 @@ export default function ReadingWorkspace({
         </div>
 
         {/* DESKTOP LAYOUT (>= 1024px): Spacious, perfectly proportioned single row */}
-        <div className="hidden lg:flex items-center justify-between gap-3 w-full">
+        <div className="hidden lg:flex items-center justify-between gap-3 w-full min-w-0">
           {/* Left Cluster: Test Info, Passages & AI Creation */}
-          <div className="flex items-center space-x-2 min-w-0 shrink">
+          <div className="flex items-center space-x-2 min-w-0">
             {/* Skill Badge (2xl only) */}
             <div className="hidden 2xl:flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-blue-50 text-blue-800 font-bold text-xs border border-blue-200 shrink-0">
               <BookMarked className="w-3.5 h-3.5 text-blue-600" />
               <span>IELTS Academic Reading</span>
             </div>
 
-            {/* Test Selector Chip */}
-            <div className="flex items-center space-x-1 min-w-0 shrink">
+            {/* Test Selector & Mastered Button Group */}
+            <div className="flex items-center space-x-1 shrink-0">
               <button
                 type="button"
                 onClick={handleOpenLibrary}
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[170px] xl:max-w-[240px] truncate min-w-0 shrink"
+                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-900 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer max-w-[150px] xl:max-w-[200px] 2xl:max-w-[240px] min-w-[100px] truncate shrink-0"
                 title={isEn ? `Current test: ${currentTest.title} (Click to open Library - ${allReadingTests.length} tests)` : `Đề đang làm: ${currentTest.title} (Bấm để mở Kho Đề - ${allReadingTests.length} đề)`}
               >
                 <BookOpen className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
@@ -864,7 +864,7 @@ export default function ReadingWorkspace({
                     : (isEn ? 'Mark this test as "Mastered" to track progress.' : 'Đánh dấu bài đọc này là "Đã thuộc" để ghi nhớ tiến trình và lọc trong thư viện.')}
                 >
                   <GraduationCap className={`w-3.5 h-3.5 ${masteredIds.includes(currentTest.id) ? 'text-emerald-600' : 'text-slate-400'}`} />
-                  <span className="hidden xl:inline">{masteredIds.includes(currentTest.id) ? t('reading.mastered', 'Đã thuộc') : t('reading.markMastered', 'Thuộc bài')}</span>
+                  <span className="hidden 2xl:inline">{masteredIds.includes(currentTest.id) ? t('reading.mastered', 'Đã thuộc') : t('reading.markMastered', 'Thuộc bài')}</span>
                 </button>
               )}
             </div>
@@ -886,10 +886,8 @@ export default function ReadingWorkspace({
                   }`}
                   title={isEn ? `Go to Passage ${p.passageNumber}` : `Chuyển tới Passage ${p.passageNumber}`}
                 >
-                  <span>P{p.passageNumber}</span>
-                  <span className="hidden 2xl:inline text-[11px] font-normal text-slate-400">
-                    Passage {p.passageNumber}
-                  </span>
+                  <span className="2xl:hidden font-bold">P{p.passageNumber}</span>
+                  <span className="hidden 2xl:inline font-bold">Passage {p.passageNumber}</span>
                 </button>
               ))}
             </div>
@@ -1040,29 +1038,6 @@ export default function ReadingWorkspace({
                 </>
               )}
             </div>
-
-            {/* Direct buttons on ultra-wide 2xl screens */}
-            <button
-              type="button"
-              onClick={() => setIsIngestOpen(true)}
-              className="hidden 2xl:flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
-              title={isEn ? "Input an article or custom text to create a Reading test" : "Nạp một bài báo hoặc văn bản bất kỳ để AI tạo đề thi Reading"}
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span>{t('reading.ingestRaw', 'Nạp Báo')}</span>
-            </button>
-
-            {onOpenTheory && (
-              <button
-                type="button"
-                onClick={onOpenTheory}
-                className="hidden 2xl:flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
-                title={isEn ? "Open IELTS Reading Theory & Strategy Guide" : "Mở Cẩm Nang Lý Thuyết & Chiến Thuật IELTS Reading"}
-              >
-                <BookMarked className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>{t('reading.theoryGuide', 'Cẩm Nang')}</span>
-              </button>
-            )}
           </div>
 
           {/* Right Cluster: Timer, Mode, CDI, Band Score */}
