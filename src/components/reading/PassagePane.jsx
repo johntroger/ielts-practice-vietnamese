@@ -18,11 +18,23 @@ import {
   Plus
 } from 'lucide-react';
 import { lookupReadingWord } from '../../services/geminiService';
+import { useTranslation } from '../../i18n';
+
+function formatDifficulty(difficulty, isEn) {
+  if (!difficulty) return isEn ? 'Moderate (Band 6.0 - 7.0)' : 'Trung bình (Band 6.0 - 7.0)';
+  if (!isEn) return difficulty;
+  const d = String(difficulty).toLowerCase();
+  if (d.includes('dễ') && d.includes('trung bình')) return 'Easy - Moderate (Band 5.5 - 6.5)';
+  if (d.includes('dễ') || d.includes('cơ bản')) return 'Basic / Easy (Band 5.0 - 6.0)';
+  if (d.includes('khó') || d.includes('nâng cao')) return 'Challenging / Advanced (Band 7.5 - 8.5)';
+  if (d.includes('trung bình') || d.includes('khá')) return 'Moderate / Intermediate (Band 6.5 - 7.5)';
+  return difficulty;
+}
 
 const HIGHLIGHT_COLORS = [
-  { id: 'yellow', bg: 'bg-yellow-200/90 text-yellow-950', label: 'Vàng' },
-  { id: 'cyan', bg: 'bg-cyan-200/90 text-cyan-950', label: 'Xanh lam' },
-  { id: 'rose', bg: 'bg-rose-200/90 text-rose-950', label: 'Hồng' },
+  { id: 'yellow', bg: 'bg-yellow-200/90 text-yellow-950', label: 'Vàng', labelEn: 'Yellow' },
+  { id: 'cyan', bg: 'bg-cyan-200/90 text-cyan-950', label: 'Xanh lam', labelEn: 'Cyan' },
+  { id: 'rose', bg: 'bg-rose-200/90 text-rose-950', label: 'Hồng', labelEn: 'Rose' },
 ];
 
 export default function PassagePane({
@@ -37,6 +49,7 @@ export default function PassagePane({
   examMode = 'practice',
   theme = 'standard'
 }) {
+  const { isEn } = useTranslation();
   const [activeColor, setActiveColor] = useState('yellow');
   const [highlights, setHighlights] = useState(() => {
     try {
@@ -378,7 +391,7 @@ export default function PassagePane({
         <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-1 font-semibold mr-1">
             <Highlighter className="w-3.5 h-3.5 text-blue-600" />
-            <span className="hidden sm:inline">Dạ quang:</span>
+            <span className="hidden sm:inline">{isEn ? 'Highlighter:' : 'Dạ quang:'}</span>
           </div>
 
           <div className={`flex items-center space-x-1 p-1 rounded-lg border shadow-2xs ${ts.controlCard}`}>
@@ -386,7 +399,7 @@ export default function PassagePane({
               <button
                 key={c.id}
                 onClick={() => setActiveColor(c.id)}
-                title={`Bút dạ quang ${c.label}`}
+                title={isEn ? `Highlighter: ${c.labelEn || c.label}` : `Bút dạ quang ${c.label}`}
                 className={`w-5 h-5 rounded-full transition-transform flex items-center justify-center ${
                   c.id === 'yellow' ? 'bg-amber-300' : c.id === 'cyan' ? 'bg-cyan-300' : 'bg-rose-300'
                 } ${activeColor === c.id ? 'ring-2 ring-blue-500 scale-110' : 'opacity-70 hover:opacity-100'}`}
@@ -399,7 +412,7 @@ export default function PassagePane({
           {Object.keys(highlights).length > 0 && (
             <button
               onClick={handleClearHighlights}
-              title="Xóa tất cả highlight"
+              title={isEn ? "Clear all highlights" : "Xóa tất cả highlight"}
               className="p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -410,10 +423,12 @@ export default function PassagePane({
             {examMode === 'exam' ? (
               <span className="text-amber-700 font-semibold flex items-center gap-1">
                 <Shield className="w-3 h-3 text-amber-600" />
-                <span>Phòng Thi Thử: Không hỗ trợ tra từ</span>
+                <span>{isEn ? 'Mock Exam: Dictionary lookup disabled' : 'Phòng Thi Thử: Không hỗ trợ tra từ'}</span>
               </span>
             ) : (
-              <span className={ts.metaText}>💡 Nhấp đúp vào từ để tra từ điển</span>
+              <span className={ts.metaText}>
+                {isEn ? '💡 Double-click any word for dictionary' : '💡 Nhấp đúp vào từ để tra từ điển'}
+              </span>
             )}
           </div>
         </div>
@@ -429,10 +444,10 @@ export default function PassagePane({
                 ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-2xs' 
                 : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
             }`}
-            title="Mở Bản Nháp & Sổ Ghi Chú Bài Đọc (CDI Scratchpad)"
+            title={isEn ? "Open Reading Scratchpad & Notes (CDI Scratchpad)" : "Mở Bản Nháp & Sổ Ghi Chú Bài Đọc (CDI Scratchpad)"}
           >
             <FileText className="w-3.5 h-3.5 text-amber-600" />
-            <span className="hidden sm:inline">Bản Nháp</span>
+            <span className="hidden sm:inline">{isEn ? 'Scratchpad' : 'Bản Nháp'}</span>
             {totalNotesCount > 0 && (
               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500 text-white font-black">
                 {totalNotesCount}
@@ -447,7 +462,7 @@ export default function PassagePane({
               className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
                 fontSize === 'sm' ? 'bg-blue-600 text-white shadow-xs' : ts.buttonHover
               }`}
-              title="Cỡ chữ nhỏ (A-)"
+              title={isEn ? "Small font (A-)" : "Cỡ chữ nhỏ (A-)"}
             >
               A-
             </button>
@@ -457,7 +472,7 @@ export default function PassagePane({
               className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
                 fontSize === 'base' ? 'bg-blue-600 text-white shadow-xs' : ts.buttonHover
               }`}
-              title="Cỡ chữ chuẩn (A)"
+              title={isEn ? "Standard font (A)" : "Cỡ chữ chuẩn (A)"}
             >
               A
             </button>
@@ -467,14 +482,14 @@ export default function PassagePane({
               className={`px-2.5 py-1 rounded-md font-bold text-xs transition-all cursor-pointer ${
                 fontSize === 'lg' ? 'bg-blue-600 text-white shadow-xs' : ts.buttonHover
               }`}
-              title="Cỡ chữ lớn (A+)"
+              title={isEn ? "Large font (A+)" : "Cỡ chữ lớn (A+)"}
             >
               A+
             </button>
           </div>
 
           <div className={`hidden md:flex items-center space-x-1 text-[11px] px-2 py-1 rounded-md border ${ts.controlCard}`}>
-            <span>{passage?.wordCount || 800} từ</span>
+            <span>{passage?.wordCount || 800} {isEn ? 'words' : 'từ'}</span>
           </div>
         </div>
       </div>
@@ -490,8 +505,8 @@ export default function PassagePane({
             {passage?.title}
           </h2>
           <div className={`flex items-center gap-2 text-xs ${ts.metaText}`}>
-            <span className="font-semibold">Độ khó:</span>
-            <span>{passage?.difficulty}</span>
+            <span className="font-semibold">{isEn ? 'Difficulty:' : 'Độ khó:'}</span>
+            <span>{formatDifficulty(passage?.difficulty, isEn)}</span>
           </div>
         </div>
 
@@ -596,7 +611,7 @@ export default function PassagePane({
 
               {tooltip.data.synonyms && tooltip.data.synonyms.length > 0 && (
                 <div className="text-[11px] text-slate-400">
-                  <span>Đồng nghĩa: </span>
+                  <span>{isEn ? 'Synonyms: ' : 'Đồng nghĩa: '}</span>
                   <span className="text-slate-200 font-medium">{tooltip.data.synonyms.join(', ')}</span>
                 </div>
               )}
@@ -614,12 +629,12 @@ export default function PassagePane({
                   {tooltip.saved ? (
                     <>
                       <Check className="w-3 h-3" />
-                      <span>Đã lưu vào Sổ tay</span>
+                      <span>{isEn ? 'Saved to Notebook' : 'Đã lưu vào Sổ tay'}</span>
                     </>
                   ) : (
                     <>
                       <Bookmark className="w-3 h-3" />
-                      <span>Lưu vào Sổ tay từ vựng C1/C2</span>
+                      <span>{isEn ? 'Save to C1/C2 Vocab Notebook' : 'Lưu vào Sổ tay từ vựng C1/C2'}</span>
                     </>
                   )}
                 </button>
@@ -639,28 +654,28 @@ export default function PassagePane({
           <button
             onClick={() => handleAddHighlight(selectionPopup.paraId, selectionPopup.text, 'yellow')}
             className="px-2 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold flex items-center space-x-1 transition-colors cursor-pointer"
-            title="Tô dạ quang vàng"
+            title={isEn ? "Highlight yellow" : "Tô dạ quang vàng"}
           >
-            <span>🟡 Vàng</span>
+            <span>🟡 {isEn ? 'Yellow' : 'Vàng'}</span>
           </button>
           <button
             onClick={() => handleAddHighlight(selectionPopup.paraId, selectionPopup.text, 'cyan')}
             className="px-2 py-1 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold flex items-center space-x-1 transition-colors cursor-pointer"
-            title="Tô dạ quang xanh"
+            title={isEn ? "Highlight cyan" : "Tô dạ quang xanh"}
           >
-            <span>🔵 Xanh</span>
+            <span>🔵 {isEn ? 'Cyan' : 'Xanh'}</span>
           </button>
           <button
             onClick={() => handleOpenNoteModal(selectionPopup.paraId, selectionPopup.text)}
             className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold flex items-center space-x-1 transition-colors cursor-pointer border border-slate-600"
-            title="Đính kèm ghi chú vào cụm từ này"
+            title={isEn ? "Attach note to this excerpt" : "Đính kèm ghi chú vào cụm từ này"}
           >
-            <span>📝 Ghi chú</span>
+            <span>📝 {isEn ? 'Note' : 'Ghi chú'}</span>
           </button>
           <button
             onClick={() => setSelectionPopup(null)}
             className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-            title="Đóng"
+            title={isEn ? "Close" : "Đóng"}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -677,7 +692,9 @@ export default function PassagePane({
             <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Edit3 className="w-4 h-4 text-amber-400" />
-                <span className="font-bold text-xs sm:text-sm">Ghi Chú Trích Đoạn (Đoạn {activeNoteModal.paraId})</span>
+                <span className="font-bold text-xs sm:text-sm">
+                  {isEn ? `Excerpt Note (Paragraph ${activeNoteModal.paraId})` : `Ghi Chú Trích Đoạn (Đoạn ${activeNoteModal.paraId})`}
+                </span>
               </div>
               <button
                 onClick={() => setActiveNoteModal(null)}
@@ -692,12 +709,12 @@ export default function PassagePane({
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
-                  Nội dung ghi chú cá nhân:
+                  {isEn ? 'Personal Note Content:' : 'Nội dung ghi chú cá nhân:'}
                 </label>
                 <textarea
                   value={noteDraft}
                   onChange={(e) => setNoteDraft(e.target.value)}
-                  placeholder="Nhập ghi chú (nghĩa từ, suy luận, lý do chọn đáp án, bẫy distractor...)"
+                  placeholder={isEn ? "Enter note (word meaning, deduction, rationale, distractor traps...)" : "Nhập ghi chú (nghĩa từ, suy luận, lý do chọn đáp án, bẫy distractor...)"}
                   rows={4}
                   autoFocus
                   className="w-full p-2.5 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs text-slate-900 resize-none font-sans"
@@ -710,7 +727,7 @@ export default function PassagePane({
                     onClick={() => handleDeleteHighlightItem(activeNoteModal.paraId, activeNoteModal.text)}
                     className="px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold transition-colors cursor-pointer"
                   >
-                    Xóa Ghi Chú & Highlight
+                    {isEn ? 'Delete Note & Highlight' : 'Xóa Ghi Chú & Highlight'}
                   </button>
                 ) : <div />}
                 <div className="flex items-center space-x-2">
@@ -719,14 +736,14 @@ export default function PassagePane({
                     onClick={() => setActiveNoteModal(null)}
                     className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition-colors cursor-pointer"
                   >
-                    Hủy
+                    {isEn ? 'Cancel' : 'Hủy'}
                   </button>
                   <button
                     type="button"
                     onClick={handleSaveNote}
                     className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
                   >
-                    Lưu Ghi Chú
+                    {isEn ? 'Save Note' : 'Lưu Ghi Chú'}
                   </button>
                 </div>
               </div>
@@ -741,12 +758,14 @@ export default function PassagePane({
           <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center space-x-2">
               <FileText className="w-4 h-4 text-amber-400" />
-              <span className="font-bold text-sm">CDI Scratchpad & Sổ Ghi Chú</span>
+              <span className="font-bold text-sm">
+                {isEn ? 'CDI Scratchpad & Study Notes' : 'CDI Scratchpad & Sổ Ghi Chú'}
+              </span>
             </div>
             <button
               onClick={() => setIsScratchpadOpen(false)}
               className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title="Đóng"
+              title={isEn ? "Close" : "Đóng"}
             >
               <X className="w-4 h-4" />
             </button>
@@ -757,14 +776,16 @@ export default function PassagePane({
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider flex items-center space-x-1">
-                  <span>Bản nháp tự do (Autosaved)</span>
+                  <span>{isEn ? 'Freeform Scratchpad (Autosaved)' : 'Bản nháp tự do (Autosaved)'}</span>
                 </label>
-                <span className="text-[10px] text-slate-400">Tự động lưu bài đọc</span>
+                <span className="text-[10px] text-slate-400">
+                  {isEn ? 'Auto-saved with passage' : 'Tự động lưu bài đọc'}
+                </span>
               </div>
               <textarea
                 value={scratchpadText}
                 onChange={(e) => setScratchpadText(e.target.value)}
-                placeholder="Ghi chú nhanh các từ khóa, mốc thời gian, ý chính các đoạn A, B, C... trong lúc đọc bài..."
+                placeholder={isEn ? "Quickly jot keywords, timestamps, main paragraph ideas (A, B, C...) while reading..." : "Ghi chú nhanh các từ khóa, mốc thời gian, ý chính các đoạn A, B, C... trong lúc đọc bài..."}
                 rows={8}
                 className="w-full p-2.5 rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/30"
               />
@@ -774,14 +795,16 @@ export default function PassagePane({
             <div className="space-y-2 border-t border-slate-200 pt-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                  Ghi chú theo đoạn ({totalNotesCount})
+                  {isEn ? `Paragraph Notes (${totalNotesCount})` : `Ghi chú theo đoạn (${totalNotesCount})`}
                 </span>
               </div>
 
               {totalNotesCount === 0 ? (
                 <div className="p-4 text-center text-slate-400 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-                  <p>Chưa có ghi chú đính kèm nào.</p>
-                  <p className="text-[10px] text-slate-400">Bôi đen văn bản trong bài đọc và chọn "📝 Ghi chú" để đính kèm.</p>
+                  <p>{isEn ? 'No attached notes yet.' : 'Chưa có ghi chú đính kèm nào.'}</p>
+                  <p className="text-[10px] text-slate-400">
+                    {isEn ? 'Select text in the passage and click "📝 Note" to attach.' : 'Bôi đen văn bản trong bài đọc và chọn "📝 Ghi chú" để đính kèm.'}
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -790,7 +813,9 @@ export default function PassagePane({
                     if (notesInPara.length === 0) return null;
                     return (
                       <div key={paraId} className="space-y-1.5">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase">Đoạn {paraId}</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase">
+                          {isEn ? `Paragraph ${paraId}` : `Đoạn ${paraId}`}
+                        </span>
                         {notesInPara.map((item, idx) => (
                           <div key={idx} className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-200 space-y-1">
                             <div className="flex items-start justify-between gap-1">
@@ -800,7 +825,7 @@ export default function PassagePane({
                               <button
                                 onClick={() => handleDeleteHighlightItem(paraId, item.text)}
                                 className="text-slate-400 hover:text-rose-600 transition-colors p-0.5 cursor-pointer"
-                                title="Xóa ghi chú này"
+                                title={isEn ? "Delete this note" : "Xóa ghi chú này"}
                               >
                                 <Trash2 className="w-3 h-3" />
                               </button>
@@ -819,7 +844,7 @@ export default function PassagePane({
           </div>
 
           <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
-            💡 Mô phỏng tính năng Highlight & Notes trên hệ thống thi IELTS trên máy (CDI).
+            {isEn ? '💡 Simulates the Highlight & Notes feature in official Computer-Delivered IELTS (CDI).' : '💡 Mô phỏng tính năng Highlight & Notes trên hệ thống thi IELTS trên máy (CDI).'}
           </div>
         </div>
       )}

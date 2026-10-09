@@ -250,21 +250,21 @@ export default function ListeningQuestionPane({
           className="fixed z-50 flex items-center space-x-1.5 bg-slate-900 text-white px-2.5 py-1.5 rounded-xl shadow-2xl border border-slate-700 animate-in fade-in zoom-in duration-150"
         >
           <span className="text-[11px] font-semibold text-slate-400 mr-1 flex items-center">
-            <Highlighter className="w-3 h-3 mr-1" /> Tô màu:
+            <Highlighter className="w-3 h-3 mr-1" /> {isEn ? 'Highlight:' : 'Tô màu:'}
           </span>
           {HIGHLIGHT_COLORS.map(c => (
             <button
               key={c.id}
               onClick={() => addHighlight(c.id)}
               className={`w-5 h-5 rounded-full ${c.bg} border-2 ${c.border} hover:scale-110 transition-transform`}
-              title={`Tô màu ${c.label}`}
+              title={isEn ? `Highlight ${c.id === 'yellow' ? 'Yellow' : c.id === 'green' ? 'Green' : 'Pink'}` : `Tô màu ${c.label}`}
             />
           ))}
           <div className="w-px h-4 bg-slate-700 mx-1" />
           <button
             onClick={() => setHighlightMenuPos(null)}
             className="p-1 text-slate-400 hover:text-white rounded-md transition-colors"
-            title="Đóng"
+            title={isEn ? "Close" : "Đóng"}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -294,10 +294,10 @@ export default function ListeningQuestionPane({
                   ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-2xs' 
                   : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
               }`}
-              title="Mở Bản Nháp Nghe (CDI Scratchpad)"
+              title={isEn ? "Open Listening Scratchpad (CDI Scratchpad)" : "Mở Bản Nháp Nghe (CDI Scratchpad)"}
             >
               <FileText className="w-3.5 h-3.5 text-amber-600" />
-              <span>Bản Nháp</span>
+              <span>{isEn ? 'Scratchpad' : 'Bản Nháp'}</span>
             </button>
             <span className="text-xs text-slate-500 font-mono">
               Audio: {formatTimestamp(partData.audioTimestampStart)} – {formatTimestamp(partData.audioTimestampEnd)}
@@ -1310,10 +1310,10 @@ export default function ListeningQuestionPane({
                 type="button"
                 onClick={() => setScratchpadMode('floating')}
                 className="px-3.5 py-2 rounded-xl bg-slate-900/95 hover:bg-slate-800 text-white text-xs font-bold shadow-xl border border-slate-700 flex items-center space-x-2 cursor-pointer transition-all hover:scale-105"
-                title="Mở lại Bản Nháp Nghe (Listening Scratchpad)"
+                title={isEn ? "Re-open Listening Scratchpad" : "Mở lại Bản Nháp Nghe (Listening Scratchpad)"}
               >
                 <FileText className="w-4 h-4 text-amber-400" />
-                <span>Bản Nháp {listeningScratchpadText.trim() ? '• Có ghi chú' : ''}</span>
+                <span>{isEn ? 'Scratchpad' : 'Bản Nháp'} {listeningScratchpadText.trim() ? (isEn ? '• Has notes' : '• Có ghi chú') : ''}</span>
                 <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
               </button>
             </div>
@@ -1325,14 +1325,14 @@ export default function ListeningQuestionPane({
               <div className="px-3.5 py-2.5 bg-slate-900 text-white flex items-center justify-between shrink-0">
                 <div className="flex items-center space-x-2">
                   <FileText className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="font-bold text-xs">Bản Nháp Nghe (Listening Scratchpad)</span>
+                  <span className="font-bold text-xs">{isEn ? 'Listening Scratchpad (CDI)' : 'Bản Nháp Nghe (Listening Scratchpad)'}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <button
                     type="button"
                     onClick={() => setScratchpadMode('minimized')}
                     className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-                    title="Thu nhỏ xuống góc dưới"
+                    title={isEn ? "Minimize to corner" : "Thu nhỏ xuống góc dưới"}
                   >
                     <Minimize2 className="w-3.5 h-3.5" />
                   </button>
@@ -1340,7 +1340,7 @@ export default function ListeningQuestionPane({
                     type="button"
                     onClick={() => setScratchpadMode('sidebar')}
                     className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer hidden md:inline-block"
-                    title="Mở rộng toàn màn hình bên phải (Sidebar)"
+                    title={isEn ? "Expand to right sidebar" : "Mở rộng toàn màn hình bên phải (Sidebar)"}
                   >
                     <Maximize2 className="w-3.5 h-3.5" />
                   </button>
@@ -1348,7 +1348,7 @@ export default function ListeningQuestionPane({
                     type="button"
                     onClick={() => setIsListeningScratchpadOpen(false)}
                     className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-                    title="Đóng bản nháp"
+                    title={isEn ? "Close scratchpad" : "Đóng bản nháp"}
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -1359,14 +1359,14 @@ export default function ListeningQuestionPane({
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                      Ghi chú nhanh khi nghe (Autosaved)
+                      {isEn ? 'Quick Notes While Listening (Autosaved)' : 'Ghi chú nhanh khi nghe (Autosaved)'}
                     </label>
-                    <span className="text-[10px] text-emerald-600 font-semibold">Tự động lưu</span>
+                    <span className="text-[10px] text-emerald-600 font-semibold">{isEn ? 'Auto-saved' : 'Tự động lưu'}</span>
                   </div>
                   <textarea
                     value={listeningScratchpadText}
                     onChange={(e) => setListeningScratchpadText(e.target.value)}
-                    placeholder="Ghi chú nhanh số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy distractor..."
+                    placeholder={isEn ? "Quickly jot numbers, name spellings, suspicious keywords, distractor traps..." : "Ghi chú nhanh số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy distractor..."}
                     rows={6}
                     autoFocus
                     className="w-full p-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/20"
@@ -1376,7 +1376,7 @@ export default function ListeningQuestionPane({
                 {highlights.length > 0 && (
                   <div className="space-y-1.5 border-t border-slate-200 pt-2.5">
                     <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                      Từ khóa đã đánh dấu ({highlights.length})
+                      {isEn ? `Highlighted Keywords (${highlights.length})` : `Từ khóa đã đánh dấu (${highlights.length})`}
                     </span>
                     <div className="space-y-1 max-h-36 overflow-y-auto">
                       {highlights.map(h => (
@@ -1391,7 +1391,9 @@ export default function ListeningQuestionPane({
               </div>
 
               <div className="px-3 py-2 bg-slate-50 border-t border-slate-200 text-center text-[10px] text-slate-500 shrink-0">
-                💡 Bản nháp không che đề thi và không ảnh hưởng câu trả lời chính thức.
+                {isEn
+                  ? '💡 Scratchpad stays clear of test questions and does not affect official answers.'
+                  : '💡 Bản nháp không che đề thi và không ảnh hưởng câu trả lời chính thức.'}
               </div>
             </div>
           )}
@@ -1402,14 +1404,14 @@ export default function ListeningQuestionPane({
               <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
                 <div className="flex items-center space-x-2">
                   <FileText className="w-4 h-4 text-amber-400" />
-                  <span className="font-bold text-sm">Bản Nháp Nghe (Listening Scratchpad)</span>
+                  <span className="font-bold text-sm">{isEn ? 'Listening Scratchpad (CDI)' : 'Bản Nháp Nghe (Listening Scratchpad)'}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <button
                     type="button"
                     onClick={() => setScratchpadMode('floating')}
                     className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-                    title="Chuyển về cửa sổ nổi góc dưới (Không che câu hỏi)"
+                    title={isEn ? "Switch to floating window (unobtrusive)" : "Chuyển về cửa sổ nổi góc dưới (Không che câu hỏi)"}
                   >
                     <Minimize2 className="w-4 h-4" />
                   </button>
@@ -1417,7 +1419,7 @@ export default function ListeningQuestionPane({
                     type="button"
                     onClick={() => setIsListeningScratchpadOpen(false)}
                     className="p-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
-                    title="Đóng"
+                    title={isEn ? "Close" : "Đóng"}
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -1428,14 +1430,14 @@ export default function ListeningQuestionPane({
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                      Bản nháp tự do (Autosaved)
+                      {isEn ? 'Freeform Scratchpad (Autosaved)' : 'Bản nháp tự do (Autosaved)'}
                     </label>
-                    <span className="text-[10px] text-slate-400">Tự động lưu bài nghe</span>
+                    <span className="text-[10px] text-slate-400">{isEn ? 'Auto-saved with audio' : 'Tự động lưu bài nghe'}</span>
                   </div>
                   <textarea
                     value={listeningScratchpadText}
                     onChange={(e) => setListeningScratchpadText(e.target.value)}
-                    placeholder="Ghi chú nhanh các số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy âm thanh (distractor) trong lúc nghe audio..."
+                    placeholder={isEn ? "Quickly jot numbers, name spellings, suspicious keywords, audio distractor traps during listening..." : "Ghi chú nhanh các số liệu, đánh vần tên riêng, từ khóa nghi vấn, bẫy âm thanh (distractor) trong lúc nghe audio..."}
                     rows={12}
                     autoFocus
                     className="w-full p-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs text-slate-800 font-sans leading-relaxed resize-y bg-amber-50/20"
@@ -1445,7 +1447,7 @@ export default function ListeningQuestionPane({
                 {highlights.length > 0 && (
                   <div className="space-y-2 border-t border-slate-200 pt-3">
                     <span className="font-bold text-slate-900 uppercase text-[10px] tracking-wider">
-                      Từ khóa đã đánh dấu ({highlights.length})
+                      {isEn ? `Highlighted Keywords (${highlights.length})` : `Từ khóa đã đánh dấu (${highlights.length})`}
                     </span>
                     <div className="space-y-1.5 max-h-48 overflow-y-auto">
                       {highlights.map(h => (
@@ -1460,7 +1462,9 @@ export default function ListeningQuestionPane({
               </div>
 
               <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 shrink-0">
-                💡 Bản nháp giúp ghi nhanh từ khóa khi nghe mà không ảnh hưởng câu trả lời chính thức.
+                {isEn 
+                  ? '💡 Scratchpad helps jot key words quickly without affecting official answers.'
+                  : '💡 Bản nháp giúp ghi nhanh từ khóa khi nghe mà không ảnh hưởng câu trả lời chính thức.'}
               </div>
             </div>
           )}

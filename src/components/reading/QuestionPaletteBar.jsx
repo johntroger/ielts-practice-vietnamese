@@ -112,7 +112,9 @@ export default function QuestionPaletteBar({
             if (onJumpToQuestion) onJumpToQuestion(num);
           }, 100);
         }}
-        title={`Câu ${num} (${isFlagged ? 'Đang cắm cờ xem lại' : hasAns ? 'Đã làm' : 'Chưa làm'})`}
+        title={isEn 
+          ? `Question ${num} (${isFlagged ? 'Flagged for review' : hasAns ? 'Answered' : 'Unanswered'})` 
+          : `Câu ${num} (${isFlagged ? 'Đang cắm cờ xem lại' : hasAns ? 'Đã làm' : 'Chưa làm'})`}
         className={`relative w-7 h-7 rounded-md text-xs font-semibold flex items-center justify-center border transition-all ${btnClass} shrink-0`}
       >
         <span>{num}</span>
@@ -120,7 +122,7 @@ export default function QuestionPaletteBar({
         {isFlagged && (
           <span 
             className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border border-amber-600 rounded-full shadow-xs"
-            title="Được đánh dấu cờ Review"
+            title={isEn ? "Flagged for review" : "Được đánh dấu cờ Review"}
           />
         )}
       </button>
@@ -138,24 +140,24 @@ export default function QuestionPaletteBar({
             <button
               onClick={() => onOpenResultModal && onOpenResultModal()}
               className="flex items-center space-x-1.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 px-2 sm:px-3 py-1 rounded-xl text-emerald-950 font-bold shadow-2xs transition-colors cursor-pointer text-[11px] sm:text-xs"
-              title="Nhấp để xem Báo cáo phân tích chi tiết & Band Score"
+              title={isEn ? "Click to view detailed analysis report & Band Score" : "Nhấp để xem Báo cáo phân tích chi tiết & Band Score"}
             >
               <Award className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{bandResult.correctCount}/{totalQuestions} câu</span>
+              <span>{bandResult.correctCount}/{totalQuestions} {isEn ? 'correct' : 'câu'}</span>
               <span className="bg-emerald-600 text-white px-1.5 py-0.2 rounded-md text-[10px] sm:text-xs font-black">
                 Band {bandResult.band.toFixed(1)}
               </span>
             </button>
           ) : (
             <div className="flex items-center space-x-1.5 text-slate-600 font-semibold text-[11px] sm:text-xs">
-              <span className="hidden sm:inline">Tiến độ:</span>
+              <span className="hidden sm:inline">{isEn ? 'Progress:' : 'Tiến độ:'}</span>
               <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">
-                {answeredCount}/{totalQuestions} đã làm
+                {answeredCount}/{totalQuestions} {isEn ? 'completed' : 'đã làm'}
               </span>
               {flaggedCount > 0 && (
                 <span className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-800 font-bold border border-amber-200 flex items-center gap-1">
                   <Flag className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-                  <span>{flaggedCount} cờ</span>
+                  <span>{flaggedCount} {isEn ? 'flagged' : 'cờ'}</span>
                 </span>
               )}
             </div>
@@ -170,7 +172,7 @@ export default function QuestionPaletteBar({
               className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[11px]"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>Làm lại</span>
+              <span>{isEn ? 'Restart' : 'Làm lại'}</span>
             </button>
           ) : (
             <button
@@ -178,7 +180,7 @@ export default function QuestionPaletteBar({
               className="flex items-center space-x-1 px-3 py-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-xs text-[11px]"
             >
               <Send className="w-3 h-3" />
-              <span>Nộp bài</span>
+              <span>{isEn ? 'Submit' : 'Nộp bài'}</span>
             </button>
           )}
         </div>
@@ -207,7 +209,7 @@ export default function QuestionPaletteBar({
                   className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded transition-colors ${
                     isCurrentPart ? 'text-blue-800 bg-blue-100 font-extrabold' : 'text-slate-500 hover:text-slate-800'
                   }`}
-                  title={`Chuyển tới Passage ${part.partNum}`}
+                  title={isEn ? `Jump to Passage ${part.partNum}` : `Chuyển tới Passage ${part.partNum}`}
                 >
                   P{part.partNum}
                 </button>

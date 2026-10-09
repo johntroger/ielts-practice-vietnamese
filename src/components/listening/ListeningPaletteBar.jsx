@@ -131,7 +131,9 @@ export default function ListeningPaletteBar({
                       ? 'bg-slate-700 text-white border-b-2 border-emerald-400'
                       : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
                   }`}
-                  title={`Câu ${order}${isAnswered ? ' (Đã làm)' : ' (Chưa làm)'}${isFlagged ? ' - Cắm cờ' : ''}`}
+                  title={isEn 
+                    ? `Question ${order}${isAnswered ? ' (Answered)' : ' (Unanswered)'}${isFlagged ? ' - Flagged' : ''}`
+                    : `Câu ${order}${isAnswered ? ' (Đã làm)' : ' (Chưa làm)'}${isFlagged ? ' - Cắm cờ' : ''}`}
                 >
                   <span>{order}</span>
                   {/* Flag indicator dot */}
@@ -158,8 +160,8 @@ export default function ListeningPaletteBar({
             />
             <Flag className={`w-3.5 h-3.5 ${isCurrentFlagged ? 'text-amber-400 fill-current' : 'text-slate-400'}`} />
             <span className="font-semibold text-[11px] sm:text-xs">
-              <span className="hidden xs:inline">⚑ Đánh dấu </span>
-              <span>Xem lại</span>
+              <span className="hidden xs:inline">{isEn ? '⚑ ' : '⚑ Đánh dấu '}</span>
+              <span>{isEn ? 'Review' : 'Xem lại'}</span>
             </span>
           </label>
 
