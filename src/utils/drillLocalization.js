@@ -274,7 +274,24 @@ export function getLocalizedDrillExplanation(itemOrExplanation, isEn = false) {
     [/'stood at \+ \[số liệu\]':\s*đứng tại mốc bao nhiêu\./gi, "'stood at + [data point]': indicates a specific data level."],
     [/'grew by \+ \[khoảng chênh lệch\]':\s*tăng thêm một khoảng bao nhiêu\./gi, "'grew by + [difference]': indicates the amount of increase."],
     [/'peaked at \+ \[số liệu đỉnh\]':\s*đạt đỉnh tại mức nào\./gi, "'peaked at + [peak figure]': indicates reaching a peak."],
-    [/'accounted for \+ \[tỷ lệ\/phần trăm\]':\s*chiếm bao nhiêu phần trăm\./gi, "'accounted for + [percentage]': represents or comprises a proportion."]
+    [/'accounted for \+ \[tỷ lệ\/phần trăm\]':\s*chiếm bao nhiêu phần trăm\./gi, "'accounted for + [percentage]': represents or comprises a proportion."],
+    [/Manh mối tương phản/gi, 'Contrast clue'],
+    [/Manh mối định nghĩa/gi, 'Definition clue'],
+    [/Manh mối nhân quả/gi, 'Cause & effect clue'],
+    [/Manh mối ví dụ/gi, 'Example clue'],
+    [/cho thấy từ\s*"?([A-Za-z]+)"?\s*có nghĩa là/gi, 'shows that "$1" means'],
+    [/cho thấy/gi, 'shows that'],
+    [/đối lập với/gi, 'contrasts with'],
+    [/kết hợp với/gi, 'combined with'],
+    [/chi tiết/gi, 'detail'],
+    [/do đó/gi, 'therefore'],
+    [/suy ra/gi, 'inferring that'],
+    [/có nghĩa là/gi, 'means'],
+    [/ngắn ngủi, phù du, thoáng qua/gi, 'short-lived, transient, ephemeral'],
+    [/làm lu mờ, gây bối rối, đánh hỏa mù/gi, 'to obscure, confuse, obfuscate'],
+    [/làm cải thiện, làm cho tốt lên/gi, 'to improve, make better, ameliorate'],
+    [/làm trầm trọng thêm, tồi tệ đi/gi, 'to exacerbate, worsen'],
+    [/làm trầm trọng thêm/gi, 'to exacerbate, worsen']
   ];
 
   for (const [pattern, repl] of explanationReplacements) {
@@ -310,4 +327,72 @@ export function getLocalizedHint(hint, isEn = false) {
   }
   return text;
 }
+
+const KNOWN_OPTION_TRANSLATIONS = {
+  'làm cải thiện, làm cho tốt lên': 'To improve, make better',
+  'làm cải thiện, làm cho tốt hơn': 'To improve, make better',
+  'làm trầm trọng thêm, tồi tệ đi': 'To worsen, exacerbate',
+  'làm trầm trọng thêm, tối tệ đi': 'To worsen, exacerbate',
+  'làm trầm trọng thêm': 'To worsen, exacerbate',
+  'duy trì trạng thái không thay đổi': 'To maintain an unchanged state',
+  'phân tích và giám sát chặt chẽ': 'To closely analyze and monitor',
+  'làm suy giảm, suy yếu': 'To weaken, diminish',
+  'làm tăng lên, thúc đẩy': 'To increase, stimulate',
+  'ngăn chặn, kìm hãm': 'To prevent, hinder',
+  'thay thế hoàn toàn': 'To completely replace',
+  'tạo điều kiện thuận lợi': 'To facilitate, foster',
+  'gây hại, nguy hiểm': 'To harm, endanger',
+  'bảo vệ, gìn giữ': 'To protect, preserve'
+};
+
+/**
+ * Returns localized text for Context Vocab option pills.
+ * @param {Object|string} optionOrText - Option object or raw text
+ * @param {boolean} isEn - English mode flag
+ * @returns {string}
+ */
+export function getLocalizedVocabOption(optionOrText, isEn = false) {
+  if (!optionOrText) return '';
+  const rawText = typeof optionOrText === 'object'
+    ? (isEn && optionOrText.textEn ? optionOrText.textEn : optionOrText.text)
+    : optionOrText;
+    
+  if (!rawText || !isEn) return rawText || '';
+
+  const clean = String(rawText).trim();
+  const lower = clean.toLowerCase();
+
+  if (KNOWN_OPTION_TRANSLATIONS[lower]) {
+    return KNOWN_OPTION_TRANSLATIONS[lower];
+  }
+
+  // Regex rule matching
+  if (/làm cải thiện|cải thiện|làm cho tốt/i.test(clean)) {
+    return 'To improve, make better';
+  }
+  if (/trầm trọng|tồi tệ đi|tối tệ đi/i.test(clean)) {
+    return 'To worsen, exacerbate';
+  }
+  if (/duy trì|không thay đổi|giữ nguyên/i.test(clean)) {
+    return 'To maintain an unchanged state';
+  }
+  if (/phân tích|giám sát|theo dõi/i.test(clean)) {
+    return 'To closely analyze and monitor';
+  }
+  if (/ngăn chặn|kìm hãm|cản trở/i.test(clean)) {
+    return 'To prevent, hinder, impede';
+  }
+  if (/thúc đẩy|tăng trưởng|phát triển/i.test(clean)) {
+    return 'To promote, stimulate growth';
+  }
+  if (/suy giảm|suy yếu|giảm bớt/i.test(clean)) {
+    return 'To diminish, decline, weaken';
+  }
+  if (/thay thế|hoán đổi/i.test(clean)) {
+    return 'To replace, substitute';
+  }
+
+  return clean;
+}
+
 

@@ -251,13 +251,13 @@ Return ONLY raw parseable JSON:
 Topic: ${topic}
 
 Requirements:
-- "title": Title e.g. "Đoán nghĩa từ: [targetWord]"
+- "title": Title e.g. ${isEn ? '"Context Vocab: [targetWord]"' : '"Đoán nghĩa từ: [targetWord]"'}
 - "category": "Core Academic Vocabulary"
 - "sentence": An academic sentence containing one advanced C1-C2 word with rich contextual clues (contrast, cause-effect, definition, or examples).
-- "targetWord": The target word (e.g. "ephemeral", "paradoxical", "pernicious", "catalyst").
+- "targetWord": The target word (e.g. "ephemeral", "paradoxical", "pernicious", "catalyst", "ameliorate").
 - "clueType": Description of the clue mechanism (e.g. "Contrast Clue", "Definition by Example", "Cause & Effect Clue").
-- "options": Array of 4 options (1 correct definition, 3 plausible distractors).
-- "explanation": Detailed Vietnamese explanation of how the contextual clues reveal the meaning of the target word.
+- "options": Array of 4 options (1 correct definition, 3 plausible distractors) ${isEn ? 'written STRICTLY in English' : 'in Vietnamese'}.
+- "explanation": Detailed ${isEn ? 'English' : 'Vietnamese'} explanation of how the contextual clues reveal the meaning of the target word.
 
 Return ONLY raw parseable JSON:
 {

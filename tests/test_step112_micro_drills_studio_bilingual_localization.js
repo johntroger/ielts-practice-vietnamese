@@ -11,7 +11,8 @@ import {
   getLocalizedDrillCategory,
   getLocalizedDrillContext,
   getLocalizedDrillExplanation,
-  getLocalizedHint
+  getLocalizedHint,
+  getLocalizedVocabOption
 } from '../src/utils/drillLocalization.js';
 import { INITIAL_MICRO_DRILLS } from '../src/data/microDrills.js';
 import { COMMUNITY_DEFAULT_DRILLS } from '../src/data/communityMicroDrills.js';
@@ -153,6 +154,28 @@ it('practiceDrillsAiService.js enforces English generation when isEn is true', (
   const serviceContent = fs.readFileSync(path.resolve('src/services/ai/practiceDrillsAiService.js'), 'utf-8');
   assert(serviceContent.includes('CRITICAL LANGUAGE REQUIREMENT'), 'Service must enforce critical language requirement');
   assert(serviceContent.includes('prompt += `\\n\\n${langInstruction}`'), 'Service must append langInstruction to prompt');
+});
+
+it('Translates Context Vocab multiple-choice options from Vietnamese to English', () => {
+  const optA = 'Làm cải thiện, làm cho tốt lên';
+  const optB = 'Làm trầm trọng thêm, tối tệ đi';
+  const optC = 'Duy trì trạng thái không thay đổi';
+  const optD = 'Phân tích và giám sát chặt chẽ';
+
+  assert.strictEqual(getLocalizedVocabOption(optA, true), 'To improve, make better');
+  assert.strictEqual(getLocalizedVocabOption(optB, true), 'To worsen, exacerbate');
+  assert.strictEqual(getLocalizedVocabOption(optC, true), 'To maintain an unchanged state');
+  assert.strictEqual(getLocalizedVocabOption(optD, true), 'To closely analyze and monitor');
+
+  // Check object format { text: '...' }
+  assert.strictEqual(getLocalizedVocabOption({ text: optA }, true), 'To improve, make better');
+  // Check Vietnamese mode preserves original
+  assert.strictEqual(getLocalizedVocabOption(optA, false), optA);
+});
+
+it('GeneralDrillRoom.jsx wires getLocalizedVocabOption for vocabulary choices', () => {
+  const content = fs.readFileSync(path.resolve('src/components/drills/GeneralDrillRoom.jsx'), 'utf-8');
+  assert(content.includes('getLocalizedVocabOption(opt, isEn)'), 'GeneralDrillRoom must use getLocalizedVocabOption for options');
 });
 
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);

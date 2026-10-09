@@ -1,7 +1,12 @@
 import React from 'react';
 import { RotateCcw, Split } from 'lucide-react';
-import { useTranslation } from '../../i18n';
-import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
+import { 
+  getLocalizedDrillTitle, 
+  getLocalizedDrillCategory, 
+  getLocalizedDrillExplanation, 
+  getLocalizedVocabOption 
+} from '../../utils/drillLocalization';
+import { getLocalizedVocabMeaning } from '../../utils/vocabLocalization';
 
 /**
  * GeneralDrillRoom
@@ -38,7 +43,7 @@ export default function GeneralDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">
-                {currentVocab.category}
+                {getLocalizedDrillCategory(currentVocab, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentVocab, isEn)}
@@ -92,7 +97,7 @@ export default function GeneralDrillRoom({
                     className={`p-3 rounded-xl border text-left text-xs sm:text-sm transition-all flex items-start space-x-2 ${style}`}
                   >
                     <span className="font-bold opacity-60">{String.fromCharCode(65 + idx)}.</span>
-                    <span>{opt.text}</span>
+                    <span>{getLocalizedVocabOption(opt, isEn)}</span>
                   </button>
                 );
               })}
@@ -132,7 +137,7 @@ export default function GeneralDrillRoom({
               <h4 className="font-bold text-slate-800">
                 {isEn ? 'Context Clue Methodology Explanation:' : 'Giải thích phương pháp luận đoán:'}
               </h4>
-              <p className="text-slate-600 leading-relaxed">{currentVocab.explanation}</p>
+              <p className="text-slate-600 leading-relaxed">{getLocalizedDrillExplanation(currentVocab, isEn)}</p>
             </div>
           )}
         </div>
@@ -146,7 +151,7 @@ export default function GeneralDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">
-                {currentChunk.category}
+                {getLocalizedDrillCategory(currentChunk, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentChunk, isEn)}
@@ -218,7 +223,7 @@ export default function GeneralDrillRoom({
               </div>
 
               <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950">
-                💡 <strong>{isEn ? 'Core takeaway:' : 'Bài học cốt lõi:'}</strong> {currentChunk.takeawayVietnamese}
+                💡 <strong>{isEn ? 'Core takeaway:' : 'Bài học cốt lõi:'}</strong> {isEn && currentChunk.takeawayEn ? currentChunk.takeawayEn : (isEn ? getLocalizedDrillExplanation(currentChunk.takeawayVietnamese, true) : currentChunk.takeawayVietnamese)}
               </div>
             </div>
           )}
@@ -233,7 +238,7 @@ export default function GeneralDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-xs font-bold">
-                {currentColloc.category}
+                {getLocalizedDrillCategory(currentColloc, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentColloc, isEn)}
@@ -282,7 +287,7 @@ export default function GeneralDrillRoom({
 
                 {showCollocResults && (
                   <div className="text-xs text-slate-600 italic bg-slate-50 p-2 rounded sm:max-w-xs">
-                    👉 <strong>{p.term} {p.match}</strong>: {p.meaning}
+                    👉 <strong>{p.term} {p.match}</strong>: {isEn && p.meaningEn ? p.meaningEn : (isEn ? getLocalizedVocabMeaning(p, true) : p.meaning)}
                   </div>
                 )}
               </div>
