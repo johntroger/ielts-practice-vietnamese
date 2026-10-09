@@ -10,14 +10,11 @@ import {
   PenTool, 
   Mic, 
   Calendar, 
-  TrendingUp, 
   Sparkles, 
   ChevronRight, 
   ChevronLeft, 
-  Save, 
   Download, 
   RotateCcw, 
-  ListTodo,
   ShieldCheck,
   BarChart2
 } from 'lucide-react';
@@ -47,7 +44,6 @@ export default function DiagnosticPlacementModal({
   const [studyPlan, setStudyPlan] = useState([]);
   const [selectedPlanWeek, setSelectedPlanWeek] = useState(1);
   const [completedDays, setCompletedDays] = useState({});
-  const [saveStatus, setSaveStatus] = useState('');
 
   // Filter plan by selected week - unconditionally called at top level
   const weekPlan = useMemo(() => {
@@ -149,7 +145,13 @@ export default function DiagnosticPlacementModal({
   };
 
   const handleRetakeTest = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn làm lại bài test định vị từ đầu?')) return;
+    const confirmMessage = t(
+      'modals.diagnostic.retakeConfirm',
+      isEn 
+        ? 'Are you sure you want to retake the diagnostic test from scratch?' 
+        : 'Bạn có chắc chắn muốn làm lại bài test định vị từ đầu?'
+    );
+    if (!window.confirm(confirmMessage)) return;
     setUserAnswers({});
     setCurrentQuestionIndex(0);
     setTimeRemaining(15 * 60);
@@ -235,7 +237,7 @@ export default function DiagnosticPlacementModal({
               <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-1.5">
                 <span>{t('modals.diagnostic.title')}</span>
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
-                  Cambridge Diagnostic
+                  {t('modals.diagnostic.cambridgeBadge', 'Cambridge Diagnostic')}
                 </span>
               </h2>
               <p className="text-xs text-slate-500 hidden sm:block">
@@ -261,8 +263,8 @@ export default function DiagnosticPlacementModal({
               type="button"
               onClick={onClose}
               className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer shrink-0 ml-1.5"
-              aria-label="Đóng kiểm tra định vị"
-              title="Đóng (Esc)"
+              aria-label={t('modals.diagnostic.close', isEn ? 'Close diagnostic test' : 'Đóng kiểm tra định vị')}
+              title={isEn ? "Close (Esc)" : "Đóng (Esc)"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -282,12 +284,22 @@ export default function DiagnosticPlacementModal({
                 <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
                   <div className="flex items-center space-x-1.5">
                     {getSkillIcon(currentQ.skill)}
-                    <span className="font-bold text-slate-800">{currentQ.skillLabel}</span>
+                    <span className="font-bold text-slate-800">
+                      {isEn ? (currentQ.skillLabelEn || currentQ.skillLabel) : currentQ.skillLabel}
+                    </span>
                     <span className="text-slate-400">•</span>
-                    <span>Câu {currentQuestionIndex + 1} / {totalQuestions}</span>
+                    <span>
+                      {t('modals.diagnostic.questionProgress', { 
+                        current: currentQuestionIndex + 1, 
+                        total: totalQuestions 
+                      }, isEn ? `Question ${currentQuestionIndex + 1} / ${totalQuestions}` : `Câu ${currentQuestionIndex + 1} / ${totalQuestions}`)}
+                    </span>
                   </div>
                   <span className="text-blue-600 font-bold">
-                    Đã làm: {answeredCount}/{totalQuestions} câu
+                    {t('modals.diagnostic.answered', { 
+                      count: answeredCount, 
+                      total: totalQuestions 
+                    }, isEn ? `Answered: ${answeredCount}/${totalQuestions}` : `Đã làm: ${answeredCount}/${totalQuestions} câu`)}
                   </span>
                 </div>
 
@@ -315,7 +327,7 @@ export default function DiagnosticPlacementModal({
                             ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}
-                        title={`Chuyển tới câu ${idx + 1}`}
+                        title={t('modals.diagnostic.jumpTo', { num: idx + 1 }, isEn ? `Jump to question ${idx + 1}` : `Chuyển tới câu ${idx + 1}`)}
                       >
                         {idx + 1}
                       </button>
@@ -331,20 +343,20 @@ export default function DiagnosticPlacementModal({
                     <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
                       {currentQ.skill.toUpperCase()}
                     </span>
-                    <span>{currentQ.title}</span>
+                    <span>{isEn ? (currentQ.titleEn || currentQ.title) : currentQ.title}</span>
                   </h3>
                 </div>
 
                 {/* Passage / Context Box */}
-                {currentQ.passage && (
+                {(currentQ.passage || currentQ.passageEn) && (
                   <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed font-serif">
-                    {currentQ.passage}
+                    {isEn ? (currentQ.passageEn || currentQ.passage) : currentQ.passage}
                   </div>
                 )}
 
                 {/* Question Prompt */}
                 <div className="text-xs sm:text-sm font-bold text-slate-800 pt-1">
-                  {currentQ.question}
+                  {isEn ? (currentQ.questionEn || currentQ.question) : currentQ.question}
                 </div>
 
                 {/* Options List */}
@@ -369,7 +381,9 @@ export default function DiagnosticPlacementModal({
                         }`}>
                           {opt.key.length <= 2 ? opt.key : opt.key[0]}
                         </span>
-                        <span className="flex-1 leading-normal">{opt.text}</span>
+                        <span className="flex-1 leading-normal">
+                          {isEn ? (opt.textEn || opt.text) : opt.text}
+                        </span>
                       </button>
                     );
                   })}
@@ -384,7 +398,7 @@ export default function DiagnosticPlacementModal({
                     className="flex items-center space-x-1 px-3.5 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    <span>Câu trước</span>
+                    <span>{t('modals.diagnostic.prevQuestion', isEn ? 'Previous' : 'Câu trước')}</span>
                   </button>
 
                   {currentQuestionIndex < totalQuestions - 1 ? (
@@ -393,7 +407,7 @@ export default function DiagnosticPlacementModal({
                       onClick={() => setCurrentQuestionIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
                       className="flex items-center space-x-1 px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer transition-colors"
                     >
-                      <span>Câu tiếp</span>
+                      <span>{t('modals.diagnostic.nextQuestion', isEn ? 'Next' : 'Câu tiếp')}</span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   ) : (
@@ -403,7 +417,7 @@ export default function DiagnosticPlacementModal({
                       className="flex items-center space-x-1 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm cursor-pointer transition-colors animate-pulse"
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>Hoàn Thành & Chấm Điểm</span>
+                      <span>{t('modals.diagnostic.finishAndScore', isEn ? 'Complete & Score' : 'Hoàn Thành & Chấm Điểm')}</span>
                     </button>
                   )}
                 </div>
@@ -413,14 +427,21 @@ export default function DiagnosticPlacementModal({
               <div className="flex items-center justify-between p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-xs text-indigo-900">
                 <div className="flex items-center space-x-2">
                   <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
-                  <span>Bài test gồm 16 câu hỏi chuẩn Cambridge giúp định vị chính xác điểm mạnh và bẫy lỗi.</span>
+                  <span>
+                    {t(
+                      'modals.diagnostic.introTip', 
+                      isEn 
+                        ? 'The 16 Cambridge-standard questions accurately diagnose your strengths and trap vulnerabilities.'
+                        : 'Bài test gồm 16 câu hỏi chuẩn Cambridge giúp định vị chính xác điểm mạnh và bẫy lỗi.'
+                    )}
+                  </span>
                 </div>
                 <button
                   type="button"
                   onClick={handleSubmitTest}
                   className="px-3 py-1 bg-white hover:bg-indigo-100 text-indigo-700 border border-indigo-300 font-bold rounded-lg shrink-0 cursor-pointer shadow-2xs"
                 >
-                  Nộp bài ngay
+                  {t('modals.diagnostic.submitNow', isEn ? 'Submit now' : 'Nộp bài ngay')}
                 </button>
               </div>
             </div>
@@ -435,13 +456,30 @@ export default function DiagnosticPlacementModal({
                 <div className="space-y-1 text-center md:text-left">
                   <div className="flex items-center justify-center md:justify-start space-x-2 text-xs font-bold uppercase tracking-wider text-blue-200">
                     <Award className="w-4 h-4" />
-                    <span>Kết Quả Đánh Giá Năng Lực Đầu Vào</span>
+                    <span>{t('modals.diagnostic.resultBanner', isEn ? 'Diagnostic Assessment Results' : 'Kết Quả Đánh Giá Năng Lực Đầu Vào')}</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black">
-                    Band Điểm Ước Tính: Band {evaluationResult?.estimatedOverallBand != null ? Number(evaluationResult.estimatedOverallBand).toFixed(1) : '6.0'}
+                    {t(
+                      'modals.diagnostic.estimatedBand',
+                      { band: evaluationResult?.estimatedOverallBand != null ? Number(evaluationResult.estimatedOverallBand).toFixed(1) : '6.0' },
+                      isEn
+                        ? `Estimated Band Score: Band ${evaluationResult?.estimatedOverallBand != null ? Number(evaluationResult.estimatedOverallBand).toFixed(1) : '6.0'}`
+                        : `Band Điểm Ước Tính: Band ${evaluationResult?.estimatedOverallBand != null ? Number(evaluationResult.estimatedOverallBand).toFixed(1) : '6.0'}`
+                    )}
                   </h3>
                   <p className="text-xs text-blue-100 max-w-md leading-relaxed">
-                    Bạn trả lời chính xác <span className="font-bold text-white">{evaluationResult?.totalCorrect ?? 0}/{evaluationResult?.totalQuestions ?? 16} câu</span> ({evaluationResult?.overallPercentage ?? 0}%). Hệ thống đã tự động phân tích và tạo Lộ trình 30 ngày để nâng Band lên mục tiêu {targetBand}!
+                    {t(
+                      'modals.diagnostic.resultSummary',
+                      {
+                        correct: evaluationResult?.totalCorrect ?? 0,
+                        total: evaluationResult?.totalQuestions ?? 16,
+                        percent: evaluationResult?.overallPercentage ?? 0,
+                        targetBand
+                      },
+                      isEn
+                        ? `You answered ${evaluationResult?.totalCorrect ?? 0}/${evaluationResult?.totalQuestions ?? 16} questions correctly (${evaluationResult?.overallPercentage ?? 0}%). The system has automatically analyzed your profile and generated an adaptive 30-day study plan to reach target ${targetBand}!`
+                        : `Bạn trả lời chính xác ${evaluationResult?.totalCorrect ?? 0}/${evaluationResult?.totalQuestions ?? 16} câu (${evaluationResult?.overallPercentage ?? 0}%). Hệ thống đã tự động phân tích và tạo Lộ trình 30 ngày để nâng Band lên mục tiêu ${targetBand}!`
+                    )}
                   </p>
                 </div>
 
@@ -451,9 +489,17 @@ export default function DiagnosticPlacementModal({
                     const s = evaluationResult?.skillStats?.[sKey];
                     return (
                       <div key={sKey} className="bg-white/10 backdrop-blur-xs border border-white/20 p-2.5 rounded-xl text-center">
-                        <div className="text-[10px] text-blue-100 uppercase font-bold">{s?.label || sKey.toUpperCase()}</div>
+                        <div className="text-[10px] text-blue-100 uppercase font-bold">
+                          {isEn ? (s?.labelEn || s?.label || sKey.toUpperCase()) : (s?.label || sKey.toUpperCase())}
+                        </div>
                         <div className="text-base sm:text-lg font-black">{s?.band != null ? Number(s.band).toFixed(1) : '6.0'}</div>
-                        <div className="text-[10px] text-blue-200">{s?.correct ?? 0}/4 đúng</div>
+                        <div className="text-[10px] text-blue-200">
+                          {t(
+                            'modals.diagnostic.correctCount',
+                            { count: s?.correct ?? 0 },
+                            isEn ? `${s?.correct ?? 0}/4 correct` : `${s?.correct ?? 0}/4 đúng`
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -465,15 +511,19 @@ export default function DiagnosticPlacementModal({
                 <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
                   <h4 className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4 text-amber-500" />
-                    <span>Các Điểm Yếu Cần Tập Trung Khắc Phục (Priority Deficiencies)</span>
+                    <span>
+                      {t('modals.diagnostic.weaknessesTitle', isEn ? 'Priority Deficiencies & Trap Vulnerabilities' : 'Các Điểm Yếu Cần Tập Trung Khắc Phục (Priority Deficiencies)')}
+                    </span>
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {evaluationResult.weaknesses.map((w, idx) => (
                       <div key={idx} className="p-3 rounded-xl bg-amber-50/60 border border-amber-200/80 text-xs space-y-1">
                         <div className="font-bold text-amber-900 flex items-center gap-1">
-                          <span>⚠️ {w?.title}</span>
+                          <span>⚠️ {isEn ? (w?.titleEn || w?.title) : w?.title}</span>
                         </div>
-                        <p className="text-amber-800 leading-relaxed text-[11px]">{w?.advice}</p>
+                        <p className="text-amber-800 leading-relaxed text-[11px]">
+                          {isEn ? (w?.adviceEn || w?.advice) : w?.advice}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -486,10 +536,14 @@ export default function DiagnosticPlacementModal({
                   <div>
                     <h4 className="text-sm sm:text-base font-black text-slate-900 flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-blue-600" />
-                      <span>Lộ Trình Học Tập Cá Nhân Hóa 30 Ngày</span>
+                      <span>{t('modals.diagnostic.roadmapTitle', isEn ? '30-Day Personalized Study Roadmap' : 'Lộ Trình Học Tập Cá Nhân Hóa 30 Ngày')}</span>
                     </h4>
                     <p className="text-xs text-slate-500">
-                      Tiến độ: Hoàn thành {completedCount}/30 ngày ({planProgressPercent}%)
+                      {t(
+                        'modals.diagnostic.roadmapProgress',
+                        { completed: completedCount, percent: planProgressPercent },
+                        isEn ? `Progress: Completed ${completedCount}/30 days (${planProgressPercent}%)` : `Tiến độ: Hoàn thành ${completedCount}/30 ngày (${planProgressPercent}%)`
+                      )}
                     </p>
                   </div>
 
@@ -499,20 +553,20 @@ export default function DiagnosticPlacementModal({
                       type="button"
                       onClick={handleExportPlanJson}
                       className="flex items-center space-x-1 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 cursor-pointer transition-colors shadow-2xs"
-                      title="Xuất file JSON lưu trữ lộ trình"
+                      title={t('modals.diagnostic.exportJsonTitle', isEn ? 'Export JSON study plan backup' : 'Xuất file JSON lưu trữ lộ trình')}
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">Xuất Lộ Trình</span>
+                      <span className="hidden sm:inline">{t('modals.diagnostic.exportPlan', isEn ? 'Export Roadmap' : 'Xuất Lộ Trình')}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={handleRetakeTest}
                       className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 cursor-pointer transition-colors"
-                      title="Làm lại bài test định vị 15 phút"
+                      title={t('modals.diagnostic.retakeTitle', isEn ? 'Retake 15-minute diagnostic test' : 'Làm lại bài test định vị 15 phút')}
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Làm Lại</span>
+                      <span>{t('modals.diagnostic.retake', isEn ? 'Retake' : 'Làm Lại')}</span>
                     </button>
                   </div>
                 </div>
@@ -542,9 +596,9 @@ export default function DiagnosticPlacementModal({
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
-                        <div>Tuần {wNum}</div>
+                        <div>{t('modals.diagnostic.weekTab', { week: wNum }, isEn ? `Week ${wNum}` : `Tuần ${wNum}`)}</div>
                         <div className="text-[10px] font-normal text-slate-500">
-                          {weekDone}/{weekDays.length} ngày
+                          {t('modals.diagnostic.daysCompleted', { done: weekDone, total: weekDays.length }, isEn ? `${weekDone}/${weekDays.length} days` : `${weekDone}/${weekDays.length} ngày`)}
                         </div>
                       </button>
                     );
@@ -574,7 +628,11 @@ export default function DiagnosticPlacementModal({
                               ? 'bg-emerald-600 border-emerald-600 text-white' 
                               : 'border-slate-300 hover:border-slate-400 bg-white'
                           }`}
-                          title={isDone ? "Bấm để bỏ đánh dấu hoàn thành" : "Bấm để đánh dấu đã hoàn thành ngày này"}
+                          title={
+                            isDone 
+                              ? t('modals.diagnostic.unmarkDone', isEn ? "Click to unmark day as complete" : "Bấm để bỏ đánh dấu hoàn thành") 
+                              : t('modals.diagnostic.markDone', isEn ? "Click to mark day as complete" : "Bấm để đánh dấu đã hoàn thành ngày này")
+                          }
                         >
                           {isDone && <CheckCircle2 className="w-3.5 h-3.5" />}
                         </button>
@@ -584,18 +642,22 @@ export default function DiagnosticPlacementModal({
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <div className="flex items-center space-x-2">
                               <span className="font-bold text-xs sm:text-sm text-slate-900">
-                                Ngày {item.day}: {item.title}
+                                {t(
+                                  'modals.diagnostic.dayLabel',
+                                  { day: item.day, title: isEn ? (item.titleEn || item.title) : item.title },
+                                  isEn ? `Day ${item.day}: ${item.titleEn || item.title}` : `Ngày ${item.day}: ${item.title}`
+                                )}
                               </span>
                             </div>
                             <div className="flex items-center space-x-1.5 text-[11px]">
                               <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold border border-slate-200">
-                                ⏱️ {item.duration}
+                                ⏱️ {isEn ? (item.durationEn || item.duration) : item.duration}
                               </span>
                             </div>
                           </div>
 
                           <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                            {item.taskDescription}
+                            {isEn ? (item.taskDescriptionEn || item.taskDescription) : item.taskDescription}
                           </p>
                         </div>
                       </div>
@@ -608,7 +670,7 @@ export default function DiagnosticPlacementModal({
               <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
                 <h4 className="text-xs sm:text-sm font-black text-slate-900 flex items-center gap-2">
                   <BarChart2 className="w-4 h-4 text-purple-600" />
-                  <span>Xem Lại Chi Tiết 16 Câu Hỏi Định Vị & Giải Thích Barem</span>
+                  <span>{t('modals.diagnostic.reviewTitle', isEn ? 'Detailed Review: 16 Diagnostic Questions & Explanations' : 'Xem Lại Chi Tiết 16 Câu Hỏi Định Vị & Giải Thích Barem')}</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-96 overflow-y-auto pr-1">
                   {Array.isArray(evaluationResult?.detailedQuestions) && evaluationResult.detailedQuestions.map((dq, idx) => (
@@ -620,16 +682,20 @@ export default function DiagnosticPlacementModal({
                     >
                       <div className="space-y-0.5">
                         <div className="font-bold flex items-center gap-1.5">
-                          <span>{dq?.isCorrect ? '✅' : '❌'} {dq?.title}</span>
+                          <span>{dq?.isCorrect ? '✅' : '❌'} {isEn ? (dq?.titleEn || dq?.title) : dq?.title}</span>
                         </div>
-                        <p className="text-slate-600 text-[11px]">{dq?.explanation}</p>
+                        <p className="text-slate-600 text-[11px]">
+                          {isEn ? (dq?.explanationEn || dq?.explanation) : dq?.explanation}
+                        </p>
                       </div>
                       <div className="text-right shrink-0 font-bold">
                         <span className={dq?.isCorrect ? 'text-emerald-700' : 'text-red-600'}>
-                          Đáp án: {dq?.correctAnswer}
+                          {t('modals.diagnostic.answerLabel', { answer: dq?.correctAnswer }, isEn ? `Answer: ${dq?.correctAnswer}` : `Đáp án: ${dq?.correctAnswer}`)}
                         </span>
                         {dq?.userAnswer && !dq?.isCorrect && (
-                          <div className="text-slate-400 text-[10px]">Bạn chọn: {dq.userAnswer}</div>
+                          <div className="text-slate-400 text-[10px]">
+                            {t('modals.diagnostic.userAnswerLabel', { answer: dq?.userAnswer }, isEn ? `Your answer: ${dq?.userAnswer}` : `Bạn chọn: ${dq?.userAnswer}`)}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -645,7 +711,7 @@ export default function DiagnosticPlacementModal({
         <div className="px-4 sm:px-6 py-3 border-t border-slate-100 flex items-center justify-between bg-white shrink-0">
           <div className="text-xs text-slate-500 flex items-center space-x-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Dữ liệu lưu trữ tự động trên IndexedDB (vượt giới hạn 5MB của trình duyệt)</span>
+            <span>{t('modals.diagnostic.indexedDbFooter', isEn ? 'Data automatically saved to IndexedDB (exceeds browser 5MB limit)' : 'Dữ liệu lưu trữ tự động trên IndexedDB (vượt giới hạn 5MB của trình duyệt)')}</span>
           </div>
 
           <button
@@ -653,7 +719,7 @@ export default function DiagnosticPlacementModal({
             onClick={onClose}
             className="px-4 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer transition-colors"
           >
-            Đóng
+            {t('modals.diagnostic.close', isEn ? 'Close' : 'Đóng')}
           </button>
         </div>
 

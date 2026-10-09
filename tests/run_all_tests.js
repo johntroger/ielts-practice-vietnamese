@@ -115,7 +115,8 @@ const testSuites = [
   { name: 'Step 106: Test Titles & Descriptions Bilingual Localization', file: 'tests/test_step106_test_titles_and_descriptions_localization.js' },
   { name: 'Step 107: Theory Handbook Modal Trigger & Wiring Verification', file: 'tests/test_step107_theory_handbook_modal_trigger.js' },
   { name: 'Step 108: Task Library Filter & Cards Localization Verification', file: 'tests/test_step108_task_library_filter_and_cards_localization.js' },
-  { name: 'Step 109: React Hook Order & Mock Test Modal Integrity Verification', file: 'tests/test_step109_react_hook_order_and_mock_test_modal_integrity.js' }
+  { name: 'Step 109: React Hook Order & Mock Test Modal Integrity Verification', file: 'tests/test_step109_react_hook_order_and_mock_test_modal_integrity.js' },
+  { name: 'Step 110: Diagnostic Placement & 30-Day Roadmap Bilingual Localization', file: 'tests/test_step110_diagnostic_placement_bilingual_localization.js' }
 ];
 
 console.log('===============================================================');

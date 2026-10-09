@@ -175,13 +175,15 @@ export default function AppModalHost({
 
       {/* 1.2 Diagnostic Placement & Study Plan */}
       <WorkspaceErrorBoundary skillName="Diagnostic Placement & Study Plan">
-        <DiagnosticPlacementModal
-          isOpen={Boolean(modals.diagnostic)}
-          onClose={() => closeModal('diagnostic')}
-          targetBand={targetBand}
-          onApplyTargetBand={(newBand) => setTargetBand(newBand)}
-          onOpenSkill={(skill) => setActiveSkill(skill)}
-        />
+        {Boolean(modals.diagnostic) && (
+          <DiagnosticPlacementModal
+            isOpen={Boolean(modals.diagnostic)}
+            onClose={() => closeModal('diagnostic')}
+            targetBand={targetBand}
+            onApplyTargetBand={(newBand) => setTargetBand(newBand)}
+            onOpenSkill={(skill) => setActiveSkill(skill)}
+          />
+        )}
       </WorkspaceErrorBoundary>
 
       {/* 1.3 CDI Display & Accessibility (Font Size & Contrast) */}
