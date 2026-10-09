@@ -14,8 +14,10 @@ import {
   getLocalizedHint,
   getLocalizedVocabOption
 } from '../src/utils/drillLocalization.js';
+import { getLocalizedVocabMeaning } from '../src/utils/vocabLocalization.js';
 import { INITIAL_MICRO_DRILLS } from '../src/data/microDrills.js';
 import { COMMUNITY_DEFAULT_DRILLS } from '../src/data/communityMicroDrills.js';
+import { READING_MICRO_DRILLS } from '../src/data/readingMicroDrills.js';
 
 let passed = 0;
 let total = 0;
@@ -176,6 +178,42 @@ it('Translates Context Vocab multiple-choice options from Vietnamese to English'
 it('GeneralDrillRoom.jsx wires getLocalizedVocabOption for vocabulary choices', () => {
   const content = fs.readFileSync(path.resolve('src/components/drills/GeneralDrillRoom.jsx'), 'utf-8');
   assert(content.includes('getLocalizedVocabOption(opt, isEn)'), 'GeneralDrillRoom must use getLocalizedVocabOption for options');
+});
+
+// 8. Reading Drills & Paraphrase Hunter Verification
+it('Translates Reading Paraphrase Hunter titles without residual Vietnamese words', () => {
+  const drill1 = { title: 'Truy tìm Paraphrase: Trí nhớ & Giấc ngủ sâu' };
+  const drill2 = { title: 'Paraphrase Hunter: Trí nhớ & Giấc ngủ sâu' };
+  const drill3 = { title: 'Truy tìm Paraphrase: Năng lượng tái tạo & Chi phí sản xuất' };
+
+  assert.strictEqual(getLocalizedDrillTitle(drill1, true), 'Paraphrase Hunter: Memory & Deep Sleep');
+  assert.strictEqual(getLocalizedDrillTitle(drill2, true), 'Paraphrase Hunter: Memory & Deep Sleep');
+  assert.strictEqual(getLocalizedDrillTitle(drill3, true), 'Paraphrase Hunter: Renewable Energy & Production Costs');
+
+  // Verify Vietnamese mode preserves original title
+  assert.strictEqual(getLocalizedDrillTitle(drill1, false), 'Truy tìm Paraphrase: Trí nhớ & Giấc ngủ sâu');
+});
+
+it('All READING_MICRO_DRILLS items contain explicit titleEn and categoryEn', () => {
+  assert(READING_MICRO_DRILLS.length > 0, 'READING_MICRO_DRILLS must not be empty');
+  assert(READING_MICRO_DRILLS.every(d => Boolean(d.titleEn)), 'Every reading micro drill must have a titleEn');
+});
+
+it('Translates Paraphrase Hunter synonymous pair meanings into English', () => {
+  const meaning1 = 'mất ngủ kéo dài/mãn tính';
+  const meaning2 = 'gây tác động tiêu cực nặng nề';
+  const meaning3 = 'sự sụt giảm mạnh';
+
+  assert.strictEqual(getLocalizedVocabMeaning(meaning1, true), 'chronic insomnia / prolonged sleeplessness');
+  assert.strictEqual(getLocalizedVocabMeaning(meaning2, true), 'to severely damage / exert a detrimental impact on');
+  assert.strictEqual(getLocalizedVocabMeaning(meaning3, true), 'a sharp decline / dramatic plunge');
+});
+
+it('ReadingDrillRoom.jsx wires getLocalizedDrillCategory, getLocalizedDrillExplanation, and getLocalizedVocabMeaning', () => {
+  const content = fs.readFileSync(path.resolve('src/components/drills/ReadingDrillRoom.jsx'), 'utf-8');
+  assert(content.includes('getLocalizedDrillCategory(currentReadingPara, isEn)'), 'ReadingDrillRoom must localize ReadingPara category');
+  assert(content.includes('getLocalizedDrillCategory(currentHeadings, isEn)'), 'ReadingDrillRoom must localize Headings category');
+  assert(content.includes('getLocalizedVocabMeaning(pair, true)'), 'ReadingDrillRoom must localize pair meaning');
 });
 
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);

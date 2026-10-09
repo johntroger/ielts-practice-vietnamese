@@ -1,7 +1,12 @@
 import React from 'react';
 import { RotateCcw, CheckCircle2, XCircle, Search, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../i18n';
-import { getLocalizedDrillTitle } from '../../utils/drillLocalization';
+import { 
+  getLocalizedDrillTitle, 
+  getLocalizedDrillCategory, 
+  getLocalizedDrillExplanation 
+} from '../../utils/drillLocalization';
+import { getLocalizedVocabMeaning } from '../../utils/vocabLocalization';
 
 /**
  * ReadingDrillRoom
@@ -38,7 +43,7 @@ export default function ReadingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">
-                {currentTfng.category}
+                {getLocalizedDrillCategory(currentTfng, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentTfng, isEn)}
@@ -172,17 +177,17 @@ export default function ReadingDrillRoom({
                 </div>
 
                 <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-amber-300 text-[11px] font-bold">
-                  {currentTfng.trapType}
+                  {isEn && currentTfng.trapTypeEn ? currentTfng.trapTypeEn : (isEn ? getLocalizedDrillExplanation(currentTfng.trapType, true) : currentTfng.trapType)}
                 </span>
               </div>
 
               <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
-                {currentTfng.explanation}
+                {isEn && currentTfng.explanationEn ? currentTfng.explanationEn : (isEn ? getLocalizedDrillExplanation(currentTfng.explanation, true) : currentTfng.explanation)}
               </p>
 
               {currentTfng.evidence && (
                 <div className="p-2.5 rounded-lg bg-white/80 border border-slate-200/60 text-xs text-slate-700">
-                  <strong>{isEn ? 'Reading Evidence:' : 'Manh mối bài đọc:'}</strong> <span className="italic font-serif">"{currentTfng.evidence}"</span>
+                  <strong>{isEn ? 'Reading Evidence:' : 'Manh mối bài đọc:'}</strong> <span className="italic font-serif">"{isEn && currentTfng.evidenceEn ? currentTfng.evidenceEn : (isEn ? getLocalizedDrillExplanation(currentTfng.evidence, true) : currentTfng.evidence)}"</span>
                 </div>
               )}
             </div>
@@ -198,7 +203,7 @@ export default function ReadingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-xs font-bold">
-                {currentReadingPara.category}
+                {getLocalizedDrillCategory(currentReadingPara, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentReadingPara, isEn)}
@@ -261,7 +266,7 @@ export default function ReadingDrillRoom({
                       <span className="font-bold text-emerald-600 font-serif">{pair.passageWord}</span>
                     </div>
                     <div className="text-[11px] text-slate-500 italic pt-1 border-t border-slate-100">
-                      👉 {isEn ? 'Meaning:' : 'Nghĩa:'} {pair.meaning}
+                      👉 {isEn ? 'Meaning:' : 'Nghĩa:'} {isEn && pair.meaningEn ? pair.meaningEn : (isEn ? getLocalizedVocabMeaning(pair, true) : pair.meaning)}
                     </div>
                   </div>
                 ))}
@@ -285,7 +290,7 @@ export default function ReadingDrillRoom({
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-xs font-bold">
-                {currentHeadings.category}
+                {getLocalizedDrillCategory(currentHeadings, isEn)}
               </span>
               <h3 className="font-bold text-slate-800 text-sm mt-1">
                 {getLocalizedDrillTitle(currentHeadings, isEn)}
@@ -345,10 +350,10 @@ export default function ReadingDrillRoom({
                           <span className={`font-bold ${h.isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
                             {h.isCorrect 
                               ? (isEn ? '✓ CORRECT HEADING:' : '✓ TIÊU ĐỀ ĐÚNG:') 
-                              : `⚠️ ${h.type}:`}
+                              : `⚠️ ${isEn && h.typeEn ? h.typeEn : (isEn ? (h.type === 'DETAIL_TRAP' ? 'DETAIL TRAP' : h.type === 'IRRELEVANT' ? 'IRRELEVANT TRAP' : h.type === 'TOO_GENERAL' ? 'TOO GENERAL TRAP' : h.type === 'EXTREME_TRAP' ? 'EXTREME STATEMENT TRAP' : h.type === 'KEYWORD_TRAP' ? 'KEYWORD TRAP' : 'DISTRACTOR TRAP') : h.type)}:`}
                           </span>
                           <p className="text-slate-600 text-[11px] leading-relaxed">
-                            {h.analysis}
+                            {isEn && h.analysisEn ? h.analysisEn : (isEn ? getLocalizedDrillExplanation(h.analysis, true) : h.analysis)}
                           </p>
                         </div>
                       )}

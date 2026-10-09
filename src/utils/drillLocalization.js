@@ -31,29 +31,113 @@ const KNOWN_TITLE_MAP = {
   'Viết lại câu mở bài Task 2: Giảm thải Carbon': 'Task 2 Introduction Paraphrase: Carbon Reduction',
   'Bẫy suy diễn Not Given vs False: AI trong chẩn đoán y khoa': 'Not Given vs False Trap: AI in Medical Diagnosis',
 
-  // Reading Drills
+  // Reading Drills (Curated Dataset & Community)
   'Phân biệt bẫy Not Given vs False: Thụ phấn nhân tạo': 'Not Given vs False Trap: Artificial Pollination',
   'Phân biệt bẫy Not Given vs False: Khảo cổ học nền văn minh Maya': 'Not Given vs False Trap: Maya Civilization Archaeology',
   'Phân biệt bẫy Not Given vs True: Nhiệt độ đại dương sâu': 'Not Given vs True Trap: Deep-Sea Hydrothermal Temperatures',
   'Phân biệt bẫy Not Given vs False: Ngủ ngắn (Power Nap) & Năng suất': 'Not Given vs False Trap: Power Naps & Productivity',
   'Phân biệt bẫy Not Given vs False: Siêu cá heo & Sóng siêu âm': 'Not Given vs False Trap: Dolphin Echolocation',
   'Phân biệt bẫy Not Given vs True: Lớp băng vĩnh cửu tan chảy': 'Not Given vs True Trap: Permafrost Thawing',
+  'Truy tìm Paraphrase: Năng lượng tái tạo & Chi phí sản xuất': 'Paraphrase Hunter: Renewable Energy & Production Costs',
+  'Truy tìm Paraphrase: Trí nhớ & Giấc ngủ sâu': 'Paraphrase Hunter: Memory & Deep Sleep',
+  'Truy tìm Paraphrase: Tác động biến đổi khí hậu lên đô thị ven biển': 'Paraphrase Hunter: Climate Change Impact on Coastal Cities',
+  'Paraphrase Hunter: Trí nhớ & Giấc ngủ sâu': 'Paraphrase Hunter: Memory & Deep Sleep',
+  'Paraphrase Hunter: Năng lượng tái tạo & Chi phí sản xuất': 'Paraphrase Hunter: Renewable Energy & Production Costs',
+  'Paraphrase Hunter: Tác động biến đổi khí hậu lên đô thị ven biển': 'Paraphrase Hunter: Climate Change Impact on Coastal Cities',
   'Truy tìm Paraphrase: Trí tuệ nhân tạo & Y tế': 'Paraphrase Hunter: AI & Healthcare',
   'Truy tìm Paraphrase: Năng lượng tái tạo & Lưới điện': 'Paraphrase Hunter: Renewable Energy & Grid Integration',
   'Truy tìm Paraphrase: Quy hoạch đô thị & Thành phố 15 phút': 'Paraphrase Hunter: Urban Planning & 15-Minute Cities',
   'Truy tìm Paraphrase: Đa dạng sinh học đại dương sâu': 'Paraphrase Hunter: Deep-Sea Marine Biodiversity',
+  'Phá bẫy Matching Headings: Hệ thống phòng thủ của rạn san hô': 'Matching Headings Trap: Coral Reef Defense Mechanisms',
+  'Phá bẫy Matching Headings: Sự trỗi dậy của lao động từ xa': 'Matching Headings Trap: The Rise of Remote Work',
   'Phá bẫy Matching Headings: Đột phá công nghệ giao thông siêu tốc Hyperloop': 'Matching Headings Trap: Hyperloop High-Speed Transport',
   'Phá bẫy Matching Headings: Tâm lý học hành vi người tiêu dùng kỹ thuật số': 'Matching Headings Trap: Digital Consumer Behavior Psychology',
   'Phá bẫy Matching Headings: Tác động sinh thái của ngành dệt may thời trang nhanh': 'Matching Headings Trap: Ecological Impact of Fast Fashion',
 
   // General Core Foundation Drills
   'Đoán nghĩa từ: ephemeral': 'Context Vocab: ephemeral',
+  'Đoán nghĩa từ: "ephemeral"': 'Context Vocab: "ephemeral"',
   'Đoán nghĩa từ: exacerbate': 'Context Vocab: exacerbate',
   'Đoán nghĩa từ: ubiquitous': 'Context Vocab: ubiquitous',
   'Đoán nghĩa từ: detrimental': 'Context Vocab: detrimental',
+  'Đoán nghĩa từ: "obfuscate"': 'Context Vocab: "obfuscate"',
+  'Giải phẫu câu phức: Tác động của đô thị hóa lên nguồn nước ngầm': 'Complex Sentence S-V-O: Impact of Urbanization on Groundwater',
+  'Giải phẫu câu phức: Cơ chế tiến hóa của vi khuẩn kháng kháng sinh': 'Complex Sentence S-V-O: Evolutionary Mechanisms of Antibiotic-Resistant Bacteria',
   'Giải phẫu câu phức: Biến đổi khí hậu & Đa dạng sinh học': 'Complex Sentence S-V-O: Climate Change & Biodiversity',
   'Giải phẫu câu phức: Trí tuệ nhân tạo & Thị trường lao động': 'Complex Sentence S-V-O: AI & Labor Market Disruption',
-  'Giải phẫu câu phức: Đô thị hóa & Giao thông công cộng': 'Complex Sentence S-V-O: Urbanization & Transit Infrastructure'
+  'Giải phẫu câu phức: Đô thị hóa & Giao thông công cộng': 'Complex Sentence S-V-O: Urbanization & Transit Infrastructure',
+
+  // Listening Micro Drills
+  'Dictation Cấp 1 (Cơ bản): Đăng ký thông tin lưu trú khách sạn': 'Dictation Level 1 (Basic): Hotel Accommodation Registration',
+  'Dictation Cấp 1 (Cơ bản): Mượn tài liệu thư viện trường': 'Dictation Level 1 (Basic): University Library Borrowing',
+  'Dictation Cấp 1 (Cơ bản): Lịch bảo dưỡng xe định kỳ': 'Dictation Level 1 (Basic): Periodic Vehicle Maintenance',
+  'Dictation Cấp 2 (Thực chiến): Thảo luận về dự án bảo tồn nguồn nước': 'Dictation Level 2 (Combat): Water Conservation Project Discussion',
+  'Dictation Cấp 2 (Thực chiến): Phân tích chiến lược phát triển đô thị': 'Dictation Level 2 (Combat): Urban Development Strategy Analysis',
+  'Dictation Cấp 3 (Học thuật): Thuyết trình khảo cổ học thời kỳ đồ đồng': 'Dictation Level 3 (Academic): Bronze Age Archaeology Presentation',
+  'Dictation Cấp 3 (Học thuật): Nghiên cứu tiến hóa hành vi linh trưởng': 'Dictation Level 3 (Academic): Primate Behavioral Evolution Study',
+  'Đánh vần tên đường phố dễ nhầm lẫn (British Accent)': 'Street Name Spelling Traps (British Accent)',
+  'Phân biệt đuôi -teen vs -ty và mã bưu chính (Postcode)': 'Distinguishing -teen vs -ty & UK Postcodes',
+  'Ngày tháng & Số tiền có phí đặt cọc hoàn lại': 'Dates & Refundable Deposit Amounts',
+  'Bẫy số lặp & Số không trong số điện thoại (Double numbers)': 'Double Numbers & Zero in Phone Numbers',
+  'Đánh vần họ tên người Scotland / Ireland (Mac / Mc)': 'Scottish / Irish Surnames Spelling (Mac / Mc)',
+  'Ngày thi khởi hành (Departure date & time)': 'Departure Date & Time Traps',
+  'Bẫy tự đính chính (Self-Correction Trap): Thời gian khởi hành xe buýt': 'Self-Correction Trap: Bus Departure Time',
+  'Bẫy phủ định ngầm (Implicit Negation): Đồ dùng được ban tổ chức chuẩn bị sẵn': 'Implicit Negation Trap: Equipment Provided by Organizers',
+  'Bẫy Người thứ 2 phản bác (Disagreement Trap): Đề tài bài tập nhóm': 'Disagreement Trap: Group Project Topic',
+  'Bẫy Quá khứ vs Hiện tại (Temporal Shift Trap): Cơ cấu tổ chức công ty': 'Temporal Shift Trap: Company Organization Structure',
+  'Định hướng ngã ba & Lối rẽ: Tìm Phòng Hội Nghị Trung Tâm': 'T-Junction & Turn Navigation: Central Conference Room',
+  'Định hướng La bàn & Vòng xuyến (Roundabout & Compass Points)': 'Compass Navigation & Roundabouts',
+  'Tín hiệu Chuyển Luận Điểm: Từ bối cảnh lịch sử sang Nguyên nhân cốt lõi': 'Signposting: Context Shift to Root Causes',
+  'Tín hiệu Phản biện & Bất ngờ (Contrasting & Counter-intuitive Evidence)': 'Signposting: Contrasting & Counter-intuitive Evidence',
+
+  // Speaking Micro Drills
+  'A.R.E.A Reflex 1: Nơi Ở - Căn Hộ hay Nhà Riêng?': 'A.R.E.A Reflex 1: Accommodation - Apartment or House?',
+  'A.R.E.A Reflex 2: Thói Quen Đọc Sách': 'A.R.E.A Reflex 2: Reading Habits',
+  'A.R.E.A Reflex 3: Học Tập Một Mình hay Theo Nhóm?': 'A.R.E.A Reflex 3: Studying Solo vs in Groups',
+  'A.R.E.A Reflex 4: Nấu Ăn Tại Nhà': 'A.R.E.A Reflex 4: Home Cooking',
+  'A.R.E.A Reflex 5: Trẻ Em Dùng Thiết Bị Điện Tử': 'A.R.E.A Reflex 5: Screen Time & Young Children',
+  'Từ Đệm 1: Hồi Tưởng Sự Việc Trong Quá Khứ Xa Xôi': 'Filler 1: Recalling the Distant Past',
+  'Từ Đệm 2: Suy Đoán Về Tương Lai Không Chắc Chắn': 'Filler 2: Speculating on Uncertain Future',
+  'Từ Đệm 3: Thừa Nhận Một Thực Tế Ngược Đời / Khó Xử': 'Filler 3: Acknowledging an Irony or Awkward Truth',
+  'Từ Đệm 4: Câu Hỏi Về Lĩnh Vực Bạn Không Rành Lắm': 'Filler 4: Talking About Unfamiliar Topics',
+  'Idiom 1: Vui Mừng Tột Cùng Khi Nhận Tin Tốt': 'Idiom 1: Over the Moon with Good News',
+  'Idiom 2: Giá Cả Quá Đắt Đỏ (Part 1/2)': 'Idiom 2: Cost an Arm and a Leg',
+  'Idiom 3: Dậy Cực Kỳ Sớm Vào Buổi Sáng': 'Idiom 3: Up at the Crack of Dawn',
+  'Idiom 4: Nạp Lại Năng Lượng Sau Chuỗi Ngày Mệt Mỏi': 'Idiom 4: Recharging Your Batteries',
+  'Phản Biện Part 3: Công Nghệ Kết Nối hay Cô Lập Con Người?': 'Part 3 Rebuttal: Technology - Connecting or Isolating People?',
+  'Phản Biện Part 3: Bảo Tồn Lịch Sử vs Phát Triển Đô Thị Hiện Đại': 'Part 3 Rebuttal: Historic Preservation vs Modern Urban Development'
+};
+
+const KNOWN_TOPIC_SUBTITLE_MAP = {
+  'Trí nhớ & Giấc ngủ sâu': 'Memory & Deep Sleep',
+  'Năng lượng tái tạo & Chi phí sản xuất': 'Renewable Energy & Production Costs',
+  'Tác động biến đổi khí hậu lên đô thị ven biển': 'Climate Change Impact on Coastal Cities',
+  'Hệ thống phòng thủ của rạn san hô': 'Coral Reef Defense Mechanisms',
+  'Sự trỗi dậy của lao động từ xa': 'The Rise of Remote Work',
+  'Thụ phấn nhân tạo': 'Artificial Pollination',
+  'Khảo cổ học nền văn minh Maya': 'Maya Civilization Archaeology',
+  'Nhiệt độ đại dương sâu': 'Deep-Sea Hydrothermal Temperatures',
+  'Ngủ ngắn (Power Nap) & Năng suất': 'Power Naps & Productivity',
+  'Tác động của đô thị hóa lên nguồn nước ngầm': 'Impact of Urbanization on Groundwater',
+  'Cơ chế tiến hóa của vi khuẩn kháng kháng sinh': 'Evolutionary Mechanisms of Antibiotic-Resistant Bacteria',
+  'Trí tuệ nhân tạo & Y tế': 'AI & Healthcare',
+  'Năng lượng tái tạo & Lưới điện': 'Renewable Energy & Grid Integration',
+  'Quy hoạch đô thị & Thành phố 15 phút': 'Urban Planning & 15-Minute Cities',
+  'Đa dạng sinh học đại dương sâu': 'Deep-Sea Marine Biodiversity',
+  'Đột phá công nghệ giao thông siêu tốc Hyperloop': 'Hyperloop High-Speed Transport',
+  'Tâm lý học hành vi người tiêu dùng kỹ thuật số': 'Digital Consumer Behavior Psychology',
+  'Tác động sinh thái của ngành dệt may thời trang nhanh': 'Ecological Impact of Fast Fashion',
+  'Siêu cá heo & Sóng siêu âm': 'Dolphin Echolocation',
+  'Lớp băng vĩnh cửu tan chảy': 'Permafrost Thawing',
+  'Xu hướng đô thị hóa': 'Urbanization Trends',
+  'Năng lượng tái tạo': 'Renewable Energy',
+  'Giảm thải Carbon': 'Carbon Reduction',
+  'AI trong chẩn đoán y khoa': 'AI in Medical Diagnosis',
+  'Biến đổi khí hậu & Đa dạng sinh học': 'Climate Change & Biodiversity',
+  'Trí tuệ nhân tạo & Thị trường lao động': 'AI & Labor Market Disruption',
+  'Đô thị hóa & Giao thông công cộng': 'Urbanization & Transit Infrastructure',
+  'Trí nhớ': 'Memory',
+  'Giấc ngủ sâu': 'Deep Sleep'
 };
 
 const KNOWN_CATEGORY_MAP = {
@@ -61,7 +145,20 @@ const KNOWN_CATEGORY_MAP = {
   'Chuyên Writing': 'Writing Drills',
   'Chuyên Reading': 'Reading Drills',
   'Chuyên Listening': 'Listening Drills',
-  'Chuyên Speaking': 'Speaking Drills'
+  'Chuyên Speaking': 'Speaking Drills',
+  'Academic Reading Skills': 'Academic Reading Skills',
+  'Cognitive Science': 'Cognitive Science',
+  'Urban Planning': 'Urban Planning',
+  'Marine Biology': 'Marine Biology',
+  'Workplace & Sociology': 'Workplace & Sociology',
+  'Core Academic Vocabulary': 'Core Academic Vocabulary',
+  'Academic Discourse': 'Academic Discourse',
+  'Academic Sentence Mastery': 'Academic Sentence Mastery',
+  'Medical Science': 'Medical Science',
+  'Science & Ecology': 'Science & Ecology',
+  'History & Archaeology': 'History & Archaeology',
+  'Environmental Science': 'Environmental Science',
+  'Psychology & Physiology': 'Psychology & Physiology'
 };
 
 /**
@@ -98,6 +195,19 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
     return KNOWN_TITLE_MAP[rawTitle];
   }
 
+  // Subtitle topic translator helper
+  const translateTopicSubtitle = (sub) => {
+    if (!sub) return '';
+    let s = sub.trim();
+    if (KNOWN_TOPIC_SUBTITLE_MAP[s]) return KNOWN_TOPIC_SUBTITLE_MAP[s];
+    for (const [k, v] of Object.entries(KNOWN_TOPIC_SUBTITLE_MAP)) {
+      if (s.includes(k)) {
+        s = s.replace(new RegExp(k, 'g'), v);
+      }
+    }
+    return s;
+  };
+
   // 3. Pattern / Regex-based translations for dynamic drills
   if (/^Giới từ miêu tả xu hướng/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : '') + 'Prepositions for Describing Trends & Data';
@@ -108,38 +218,38 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^Từ nối học thuật/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : '') + 'Task 2 Advanced Cohesive Devices';
   }
-  if (/^Từ nối lập luận/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + cleanTitle.replace(/^Từ nối lập luận:\s*/i, 'Argumentative Transitions: ');
+  if (/^Từ nối lập luận:\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Argumentative Transitions: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-  if (/^Phân biệt bẫy Not Given vs False:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs False Trap: ${RegExp.$1}`;
+  if (/^(Phân biệt bẫy Not Given vs False|Not Given vs False Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs False Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Phân biệt bẫy Not Given vs True:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs True Trap: ${RegExp.$1}`;
+  if (/^(Phân biệt bẫy Not Given vs True|Not Given vs True Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs True Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^Bẫy suy diễn Not Given vs False:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs False Trap: ${RegExp.$1}`;
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Not Given vs False Trap: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-  if (/^Truy tìm Paraphrase:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Paraphrase Hunter: ${RegExp.$1}`;
+  if (/^(Truy tìm Paraphrase|Paraphrase Hunter):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Paraphrase Hunter: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Phá bẫy Matching Headings:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Matching Headings Trap: ${RegExp.$1}`;
+  if (/^(Phá bẫy Matching Headings|Matching Headings Trap):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Matching Headings Trap: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Đoán nghĩa từ:\s*(.*)/i.test(cleanTitle)) {
-    return `Context Vocab: ${RegExp.$1}`;
+  if (/^(Đoán nghĩa từ|Context Vocab):\s*(.*)/i.test(cleanTitle)) {
+    return `Context Vocab: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^Giải phẫu câu phức:\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Complex Sentence S-V-O: ${RegExp.$1}`;
+  if (/^(Giải phẫu câu phức|Complex Sentence S-V-O):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : '') + `Complex Sentence S-V-O: ${translateTopicSubtitle(RegExp.$2)}`;
   }
   if (/^Sửa lỗi\s*(.*)/i.test(cleanTitle)) {
-    return `Error Spotting: ${RegExp.$1}`;
+    return `Error Spotting: ${translateTopicSubtitle(RegExp.$1)}`;
   }
   if (/^Luyện Paraphrase\s*(.*)/i.test(cleanTitle)) {
-    return `Paraphrase Drill: ${RegExp.$1}`;
+    return `Paraphrase Drill: ${translateTopicSubtitle(RegExp.$1)}`;
   }
   if (/^Collocation Học Thuật:\s*(.*)/i.test(cleanTitle)) {
-    return `Academic Collocations: ${RegExp.$1}`;
+    return `Academic Collocations: ${translateTopicSubtitle(RegExp.$1)}`;
   }
 
   // 4. If title contains English in parentheses e.g. "Giới từ... (Prepositions of Data)"
