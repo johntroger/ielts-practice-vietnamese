@@ -3,8 +3,8 @@ import { AlertTriangle, Trash2, Search, X, CheckCircle, BookOpen } from 'lucide-
 import { useTranslation } from '../i18n';
 
 export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDeleteMistake, onClearAll }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all');

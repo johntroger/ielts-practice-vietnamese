@@ -31,8 +31,8 @@ export default function WeeklyReportModal({
   apiKey, 
   model 
 }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [reportData, setReportData] = useState(null);

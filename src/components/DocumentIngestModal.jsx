@@ -6,8 +6,8 @@ import { isOwnerUser, OWNER_MEDIA_RESTRICTION_MESSAGE } from '../utils/userPermi
 import { useTranslation } from '../i18n';
 
 export default function DocumentIngestModal({ isOpen, onClose, onTaskImported, apiKey, model, user }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [rawText, setRawText] = useState('');
   const [imageUrl, setImageUrl] = useState('');

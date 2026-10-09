@@ -32,8 +32,8 @@ export default function VocabNotebookModal({
   onClearAll,
   onUpdateVocab
 }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'srs'
   const [searchQuery, setSearchQuery] = useState('');

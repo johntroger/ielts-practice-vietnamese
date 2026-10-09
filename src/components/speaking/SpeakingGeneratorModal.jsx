@@ -109,10 +109,10 @@ export default function SpeakingGeneratorModal({
   onOpenSettings,
   initialMode = 'ai'
 }) {
+  if (!isOpen) return null;
+
   const { t, language } = useTranslation();
   const isEn = language === 'en';
-
-  if (!isOpen) return null;
 
   // Mode Switcher: 'ai' | 'manual'
   const [mode, setMode] = useState(initialMode);

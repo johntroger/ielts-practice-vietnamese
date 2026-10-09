@@ -150,25 +150,27 @@ export default function AppModalHost({
 
       {/* 1.1 Mock Test Modal (Single Skill & Full Marathon) */}
       <WorkspaceErrorBoundary skillName="IELTS Mock Exam">
-        <MockTestModal
-          isOpen={Boolean(modals.mockTest)}
-          onClose={() => closeModal('mockTest')}
-          allTasks={allTasks}
-          submissions={submissions}
-          readingHistory={readingHistory}
-          listeningHistory={listeningHistory}
-          speakingHistory={speakingHistory}
-          onSaveMockResult={onSaveMockResult}
-          apiKey={apiKey}
-          model={model}
-          activeSkill={activeSkill}
-          onSelectSkill={(skill) => setActiveSkill(skill)}
-          onStartReadingMockExam={onStartReadingMockExam}
-          currentUser={currentUser}
-          marathonSession={marathonSession}
-          onStartMarathon={onStartMarathon}
-          onCancelMarathon={onCancelMarathon}
-        />
+        {Boolean(modals.mockTest) && (
+          <MockTestModal
+            isOpen={Boolean(modals.mockTest)}
+            onClose={() => closeModal('mockTest')}
+            allTasks={allTasks}
+            submissions={submissions}
+            readingHistory={readingHistory}
+            listeningHistory={listeningHistory}
+            speakingHistory={speakingHistory}
+            onSaveMockResult={onSaveMockResult}
+            apiKey={apiKey}
+            model={model}
+            activeSkill={activeSkill}
+            onSelectSkill={(skill) => setActiveSkill(skill)}
+            onStartReadingMockExam={onStartReadingMockExam}
+            currentUser={currentUser}
+            marathonSession={marathonSession}
+            onStartMarathon={onStartMarathon}
+            onCancelMarathon={onCancelMarathon}
+          />
+        )}
       </WorkspaceErrorBoundary>
 
       {/* 1.2 Diagnostic Placement & Study Plan */}

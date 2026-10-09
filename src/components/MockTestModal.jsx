@@ -73,10 +73,10 @@ export default function MockTestModal({
   onStartMarathon,
   onCancelMarathon
 }) {
+  if (!isOpen) return null;
+
   const { language } = useTranslation();
   const isEn = language === 'en';
-
-  if (!isOpen) return null;
 
   // Active Tab: 'writing' | 'reading' | 'listening' | 'speaking' | 'full4skills'
   const [activeMockTab, setActiveMockTab] = useState(() => {

@@ -4,8 +4,8 @@ import { lookupSynonyms, ACADEMIC_THESAURUS } from '../data/academicThesaurus';
 import { useTranslation } from '../i18n';
 
 export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onSaveToNotebook }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [searchTerm, setSearchTerm] = useState(initialWord || 'increase');
   const [copiedWord, setCopiedWord] = useState('');

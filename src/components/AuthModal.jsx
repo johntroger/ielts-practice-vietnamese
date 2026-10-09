@@ -7,8 +7,8 @@ import { supabase } from '../services/supabaseClient';
 import { useTranslation } from '../i18n';
 
 export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [email, setEmail] = useState('');

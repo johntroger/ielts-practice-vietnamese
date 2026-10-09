@@ -46,10 +46,10 @@ export default function ListeningURLExerciseGeneratorModal({
   onOpenSettings,
   user = null
 }) {
+  if (!isOpen) return null;
+
   const { t, language } = useTranslation();
   const isEn = language === 'en';
-
-  if (!isOpen) return null;
 
   const isOwner = isOwnerUser(user);
 

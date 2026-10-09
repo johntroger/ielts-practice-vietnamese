@@ -43,8 +43,8 @@ export default function HistoryModal({
   onViewSpeakingSubmission,
   activeSkill = 'writing'
 }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [activeTab, setActiveTab] = useState(() => {
     if (activeSkill === 'reading') return 'reading';

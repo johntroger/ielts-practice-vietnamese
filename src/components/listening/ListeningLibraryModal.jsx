@@ -45,8 +45,8 @@ export default function ListeningLibraryModal({
   masteredIds = [],
   onToggleMastered
 }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'cambridge' | 'ai' | 'assembled' | 'part1' | 'part2' | 'part3' | 'part4' | 'mastered'
   const [searchQuery, setSearchQuery] = useState('');

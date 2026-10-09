@@ -86,8 +86,8 @@ export default function OnboardingModal({
   currentApiKey = '',
   onSaveConfig
 }) {
-  const { t, isEn } = useTranslation();
   if (!isOpen) return null;
+  const { t, isEn } = useTranslation();
 
   const [step, setStep] = useState(1);
   const [selectedBand, setSelectedBand] = useState(initialTargetBand);
