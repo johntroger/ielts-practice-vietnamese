@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
 import { getTheoryContext, openTheoryModalWithContext } from '../../services/theoryContextService';
+import { useTranslation } from '../../i18n';
 
 // Color definitions for highlighter
 const HIGHLIGHT_COLORS = [
@@ -63,6 +64,7 @@ export default function ListeningQuestionPane({
   contrastTheme = 'standard',
   onSeekAudio = null
 }) {
+  const { isEn } = useTranslation();
   const [selectedText, setSelectedText] = useState('');
   const [highlightMenuPos, setHighlightMenuPos] = useState(null);
   const [highlights, setHighlights] = useState(() => {
@@ -386,7 +388,8 @@ export default function ListeningQuestionPane({
                     skill: 'listening',
                     section: partData?.sectionNumber || partData?.partNumber || 1,
                     questionType: group.type,
-                    prompt: group.title || group.instruction
+                    prompt: group.title || group.instruction,
+                    isEn
                   });
                   if (!theoryCtx) return null;
                   return (
@@ -405,9 +408,9 @@ export default function ListeningQuestionPane({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center space-x-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-950 hover:underline shrink-0"
-                        title="Đọc cẩm nang chi tiết trên GitBook"
+                        title={isEn ? "Read detailed strategy guide on GitBook" : "Đọc cẩm nang chi tiết trên GitBook"}
                       >
-                        <span>Bản Web</span>
+                        <span>{isEn ? "Web Guide" : "Bản Web"}</span>
                         <ExternalLink className="w-2.5 h-2.5" />
                       </a>
                     </div>

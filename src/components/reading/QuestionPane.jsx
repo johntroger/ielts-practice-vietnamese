@@ -19,6 +19,7 @@ import { explainReadingQuestion } from '../../services/geminiService';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
 import { evaluateQuestionAnswer } from '../../services/answerEvaluationService';
 import { getTheoryContext, openTheoryModalWithContext } from '../../services/theoryContextService';
+import { useTranslation } from '../../i18n';
 
 export default function QuestionPane({
   passageTitle = '',
@@ -39,6 +40,7 @@ export default function QuestionPane({
   onSaveToVocabNotebook,
   theme = 'standard'
 }) {
+  const { isEn } = useTranslation();
   const [aiExplanations, setAiExplanations] = useState({}); // { [order]: data }
   const [loadingAiFor, setLoadingAiFor] = useState(null); // order
   const [aiErrorFor, setAiErrorFor] = useState({}); // { [order]: string }
@@ -793,7 +795,8 @@ export default function QuestionPane({
             {(() => {
               const theoryCtx = getTheoryContext({
                 skill: 'reading',
-                questionType: group.type
+                questionType: group.type,
+                isEn
               });
               if (!theoryCtx) return null;
               return (
@@ -812,9 +815,9 @@ export default function QuestionPane({
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center space-x-1 text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline shrink-0"
-                    title="Đọc cẩm nang chi tiết trên GitBook"
+                    title={isEn ? "Read detailed strategy guide on GitBook" : "Đọc cẩm nang chi tiết trên GitBook"}
                   >
-                    <span>Bản Web</span>
+                    <span>{isEn ? "Web Guide" : "Bản Web"}</span>
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </div>

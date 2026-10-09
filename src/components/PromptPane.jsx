@@ -288,7 +288,8 @@ export default function PromptPane({
               skill: 'writing',
               taskNumber: task.taskNumber,
               taskType: task.type,
-              prompt: task.prompt
+              prompt: task.prompt,
+              isEn
             });
             if (!theoryCtx) return null;
             return (

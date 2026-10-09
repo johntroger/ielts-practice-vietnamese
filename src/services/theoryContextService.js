@@ -1,5 +1,6 @@
 import { getGitBookBaseUrl } from '../core/featureRegistry.js';
 import { openModal } from '../core/modalStore.js';
+import { getLanguage } from '../i18n/i18nService.js';
 
 /**
  * theoryContextService.js - Contextual Strategy & GitBook Deep-Linking Engine
@@ -360,6 +361,197 @@ export const CONTEXT_THEORY_MAP = {
   }
 };
 
+export const THEORY_I18N_EN = {
+  'task1-map': {
+    badge: 'Map Strategy Guide',
+    title: 'Task 1: Urban & Layout Map Strategy',
+    tip: 'Organize by two time periods or zones; use passive voice and spatial prepositions (to the north of, replaced by).'
+  },
+  'task1-process': {
+    badge: 'Process Diagram Guide',
+    title: 'Task 1: Natural & Manufacturing Process Diagrams',
+    tip: 'Distinguish between linear and cyclical processes; utilize passive present simple and sequential transitions (initially, subsequently, in the final stage).'
+  },
+  'task1-line-graph': {
+    badge: 'Line Graph Strategy Guide',
+    title: 'Task 1: Line Graph (Dynamic Trends)',
+    tip: 'Group lines by parallel trends; highlight starting points, extremes, and final positions with academic lexis.'
+  },
+  'task1-bar-chart': {
+    badge: 'Bar Chart Strategy Guide',
+    title: 'Task 1: Bar Chart (Dynamic vs Static)',
+    tip: 'Distinguish between time-series trends (dynamic) and categorical comparisons (static) to select appropriate lexis and tenses.'
+  },
+  'task1-pie-chart': {
+    badge: 'Pie Chart Strategy Guide',
+    title: 'Task 1: Pie Chart (Proportions & Shares)',
+    tip: 'Focus on dominating segments (account for the lion\'s share) and significant structural shifts.'
+  },
+  'task1-table': {
+    badge: 'Data Table Strategy Guide',
+    title: 'Task 1: Complex Numerical Table Analysis',
+    tip: 'Identify maximum and minimum figures; group data logically rather than transcribing every individual number.'
+  },
+  'task1-mixed': {
+    badge: 'Mixed Charts Strategy Guide',
+    title: 'Task 1: Multi-Chart Synthesis (Combined Data)',
+    tip: 'Dedicate separate body paragraphs to each visualization; the Overview must synthesize primary takeaways from both.'
+  },
+  'task1-mastery': {
+    badge: 'Task 1 Mastery Blueprint',
+    title: 'Master Comprehensive IELTS Writing Task 1 Strategy',
+    tip: 'A 2-sentence Overview is the heart of Task 1. Omitting it caps Task Achievement at Band 5.0.'
+  },
+  'task2-opinion': {
+    badge: 'Opinion / Agree-Disagree Guide',
+    title: 'Task 2: Opinion / Agree or Disagree',
+    tip: 'Present a clear position throughout the essay from the introduction without contradiction.'
+  },
+  'task2-discussion': {
+    badge: 'Discussion Essay Guide',
+    title: 'Task 2: Discussion (Discuss Both Views and Give Opinion)',
+    tip: 'Examine both perspectives objectively; place your supported stance in Body 2 for coherent thesis progression.'
+  },
+  'task2-problem-solution': {
+    badge: 'Problem & Solution Guide',
+    title: 'Task 2: Problem & Solution / Causes & Solutions',
+    tip: 'Body 1 presents 2 root causes; Body 2 introduces directly corresponding countermeasures.'
+  },
+  'task2-advantages-disadvantages': {
+    badge: 'Advantages & Disadvantages Guide',
+    title: 'Task 2: Advantages and Disadvantages / Outweigh',
+    tip: 'Analyze both sides objectively and state a decisive stance on whether positive aspects outweigh drawbacks.'
+  },
+  'task2-two-part': {
+    badge: 'Two-Part Question Guide',
+    title: 'Task 2: Two-Part / Double Direct Questions',
+    tip: 'Address each prompt question in a dedicated body paragraph with direct topic sentences.'
+  },
+  'task2-peel-structure': {
+    badge: 'PEEL Argument Framework',
+    title: 'PEEL Paragraph Structure & Task 2 Argument Master',
+    tip: 'Point -> Explanation -> Example -> Link guarantees high-level Coherence and Task Response.'
+  },
+  'academic-hedging': {
+    badge: 'Academic Hedging Guide',
+    title: 'Academic Hedging & Band 8.0+ Cautious Language',
+    tip: 'Avoid absolute assertions (always, definitely, impossible); employ cautious language (tend to, arguably, likely).'
+  },
+  'true-false-not-given': {
+    badge: 'T/F/NG Trap Decoder',
+    title: 'True / False / Not Given & Yes / No / Not Given Trap Mastery',
+    tip: 'TRUE when meaning matches 100%; FALSE when direct contradiction exists; NOT GIVEN when text lacks sufficient information.'
+  },
+  'matching-headings': {
+    badge: 'Matching Headings Guide',
+    title: 'Master Matching Headings to Paragraphs',
+    tip: 'Skim for central paragraph gist; beware single-word keyword traps in opening sentences.'
+  },
+  'reading-multiple-choice': {
+    badge: 'Multiple Choice Guide',
+    title: 'Multiple Choice & Pick Two Elimination Strategies',
+    tip: 'Use process of elimination for distractor options (Too broad, Too narrow, Contradictory, or Not mentioned).'
+  },
+  'reading-summary-box-options': {
+    badge: 'Summary Completion Guide',
+    title: 'Summary & Sentence Completion Strategies',
+    tip: 'Predict part of speech (noun, adjective, verb) and singular/plural before scanning text keywords.'
+  },
+  'reading-matching-info-features': {
+    badge: 'Matching Information Guide',
+    title: 'Matching Information to Paragraphs Strategy',
+    tip: 'Complete this question type last once you are thoroughly familiar with the passage layout.'
+  },
+  'time-management': {
+    badge: 'Reading Time Management Guide',
+    title: '15 - 20 - 25 Minute Golden Time Management Rule',
+    tip: 'Follow the 15-20-25 minute pacing across the 3 Passages; never stall on any single question for over 90 seconds.'
+  },
+  'map-and-signposting': {
+    badge: 'Map Labelling & Signposting Guide',
+    title: 'Map Labelling & Audio Signposting Markers',
+    tip: 'Locate the starting point and identify directional orientation (North, South, East, West) before audio begins.'
+  },
+  'listening-part1-spelling-numbers': {
+    badge: 'Part 1 Spelling & Numbers Guide',
+    title: 'Part 1: Personal Names, Numbers & Address Spelling Traps',
+    tip: 'Watch out for speaker self-corrections ("Oh sorry, actually...") and distinguish -teen vs -ty endings.'
+  },
+  'listening-part2-map-directions': {
+    badge: 'Part 2 Maps & Monologue Guide',
+    title: 'Part 2: Map Directions & Daily Monologue Traps',
+    tip: 'Track directional signals and sequential transition markers throughout the daily informative talk.'
+  },
+  'listening-part3-academic-discussion': {
+    badge: 'Part 3 Academic Discussion Guide',
+    title: 'Part 3: Academic Discussion & Pseudo-Consensus Traps',
+    tip: 'Listen carefully to see whether speakers genuinely concur or if there is disagreement in disguise.'
+  },
+  'listening-part4-lecture-signposting': {
+    badge: 'Part 4 Lecture Signposting Guide',
+    title: 'Part 4: Academic Lecture Signposting Markers',
+    tip: 'Follow signposting markers closely as the academic lecture plays continuously without mid-section breaks.'
+  },
+  'distractor-traps': {
+    badge: 'Listening Distractor Trap Decoder',
+    title: 'Distractor Traps & Mind-Change in IELTS Listening',
+    tip: 'Never rush to write the first heard option; speakers frequently change their mind after "but / however / actually".'
+  },
+  'area-framework-part1': {
+    badge: 'A.R.E.A Reflex Framework (Part 1)',
+    title: 'A.R.E.A Framework: Natural & Structured Part 1 Responses',
+    tip: 'The 3-sentence formula: Answer (Direct answer) -> Reason (Why) -> Example / Alternative.'
+  },
+  'storytelling-part2': {
+    badge: 'PPF Storytelling Framework (Part 2)',
+    title: 'PPF Timeline Storytelling Technique (Part 2)',
+    tip: 'Divide 120s into 3 stages: 45s Past context -> 45s Present core actions -> 30s Future reflection.'
+  },
+  'critical-thinking-part3': {
+    badge: 'PEEL Discursive Matrix (Part 3)',
+    title: 'Critical Thinking & PEEL Matrix in Part 3',
+    tip: 'Broaden perspective from personal experience to societal scale: Point -> Explanation -> Example -> Societal impact.'
+  },
+  'speaking-criteria-descriptors': {
+    badge: 'Speaking Descriptors & Band Matrix',
+    title: 'IELTS Speaking 4 Criteria Descriptors & Band Ascent Roadmap',
+    tip: 'Examiners prioritize Fluency and Coherence over lexical complexity; maintain natural conversational flow.'
+  },
+  'grammar-sentence-structures': {
+    badge: 'Complex Sentence Grammar A1',
+    title: 'A1. Simple, Compound, Complex Sentences & Relative Clauses',
+    tip: 'Seamlessly combine reduced relative clauses and subordinating conjunctions to maximize GRA Band 7.0+.'
+  },
+  'grammar-conditionals': {
+    badge: 'Conditional Sentences Grammar A4',
+    title: 'A4. Conditionals & Academic Inversion Structures',
+    tip: 'Deploy second/third conditionals and inversion (Were it not for, Had they implemented) to boost GRA.'
+  },
+  'vocab-topic-collocations': {
+    badge: 'Topic Collocations B3',
+    title: 'B3. Academic Collocations Across 8 Core Topics',
+    tip: 'Acquire collocations in natural clusters rather than isolated words to avoid awkward, unnatural phrasing.'
+  }
+};
+
+function formatTheoryContextResult(matched, skill, isEn) {
+  const enMeta = isEn ? THEORY_I18N_EN[matched?.topicId] : null;
+  return {
+    ...matched,
+    skill,
+    title: (enMeta && enMeta.title) ? enMeta.title : matched.title,
+    badge: (enMeta && enMeta.badge) ? enMeta.badge : matched.badge,
+    tip: (enMeta && enMeta.tip) ? enMeta.tip : matched.tip,
+    gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
+    actionLabel: isEn ? 'View Strategy Guide' : (
+      skill === 'reading' ? 'Xem Bí Kíp Bẻ Bẫy' :
+      skill === 'listening' ? 'Xem Chiến Thuật Nghe' :
+      skill === 'speaking' ? 'Xem Cẩm Nang Nói' :
+      skill === 'grammar-vocab' ? 'Xem Cẩm Nang Ngữ Pháp' : 'Xem Cẩm Nang Dạng Bài'
+    )
+  };
+}
+
 /**
  * Sinh URL trực tiếp trên GitBook từ slug bài viết
  * @param {string} slug - slug của bài (vd: 'writing/task1-map')
@@ -380,6 +572,7 @@ export function getGitBookTopicUrl(slug) {
  * @param {string} [params.prompt] - Văn bản đề bài để quét từ khóa
  * @param {number|string} [params.section] - Phần thi (1, 2, 3, 4)
  * @param {string} [params.questionType] - Loại câu hỏi (true_false_not_given, matching_headings...)
+ * @param {boolean} [params.isEn] - Chế độ tiếng Anh
  * @returns {object} Context object đầy đủ thông tin cẩm nang và deep link
  */
 export function getTheoryContext({
@@ -388,8 +581,10 @@ export function getTheoryContext({
   taskType = '',
   prompt = '',
   section = null,
-  questionType = ''
+  questionType = '',
+  isEn = null
 } = {}) {
+  const effectiveIsEn = isEn !== null ? Boolean(isEn) : (typeof window !== 'undefined' ? getLanguage() === 'en' : false);
   const normSkill = String(skill).toLowerCase().trim();
   const normType = String(taskType).toLowerCase().trim();
   const normPrompt = String(prompt).toLowerCase();
@@ -420,12 +615,7 @@ export function getTheoryContext({
         matched = task1Map.mixed;
       }
 
-      return {
-        ...matched,
-        skill: 'writing',
-        gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
-        actionLabel: 'Xem Cẩm Nang Dạng Bài'
-      };
+      return formatTheoryContextResult(matched, 'writing', effectiveIsEn);
     }
 
     // Task 2
@@ -444,12 +634,7 @@ export function getTheoryContext({
       matched = task2Map.two_part;
     }
 
-    return {
-      ...matched,
-      skill: 'writing',
-      gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
-      actionLabel: 'Xem Cẩm Nang Dạng Bài'
-    };
+    return formatTheoryContextResult(matched, 'writing', effectiveIsEn);
   }
 
   // 2. READING CONTEXT
@@ -469,12 +654,7 @@ export function getTheoryContext({
       matched = readingMap.matching_info;
     }
 
-    return {
-      ...matched,
-      skill: 'reading',
-      gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
-      actionLabel: 'Xem Bí Kíp Bẻ Bẫy'
-    };
+    return formatTheoryContextResult(matched, 'reading', effectiveIsEn);
   }
 
   // 3. LISTENING CONTEXT
@@ -495,12 +675,7 @@ export function getTheoryContext({
       matched = listeningMap.section4;
     }
 
-    return {
-      ...matched,
-      skill: 'listening',
-      gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
-      actionLabel: 'Xem Chiến Thuật Nghe'
-    };
+    return formatTheoryContextResult(matched, 'listening', effectiveIsEn);
   }
 
   // 4. SPEAKING CONTEXT
@@ -516,23 +691,13 @@ export function getTheoryContext({
       matched = speakingMap.part3;
     }
 
-    return {
-      ...matched,
-      skill: 'speaking',
-      gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
-      actionLabel: 'Xem Cẩm Nang Nói'
-    };
+    return formatTheoryContextResult(matched, 'speaking', effectiveIsEn);
   }
 
   // 5. GRAMMAR & VOCAB
   const gvMap = CONTEXT_THEORY_MAP['grammar-vocab'];
   const matched = gvMap.default;
-  return {
-    ...matched,
-    skill: 'grammar-vocab',
-    gitbookUrl: getGitBookTopicUrl(matched.gitbookSlug),
-    actionLabel: 'Xem Cẩm Nang Ngữ Pháp'
-  };
+  return formatTheoryContextResult(matched, 'grammar-vocab', effectiveIsEn);
 }
 
 /**
