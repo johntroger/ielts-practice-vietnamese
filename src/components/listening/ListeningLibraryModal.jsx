@@ -29,6 +29,7 @@ import {
   createRandomFullListeningTest 
 } from '../../utils/listeningTestAssembler';
 import { useTranslation } from '../../i18n';
+import { formatTestTitle, formatTestDescription } from '../../utils/testLocalizationHelper';
 
 export default function ListeningLibraryModal({
   isOpen,
@@ -640,10 +641,10 @@ export default function ListeningLibraryModal({
 
                       {/* Title & Description */}
                       <h4 className="font-bold text-slate-900 text-sm mb-1.5 line-clamp-2">
-                        {test.title}
+                        {formatTestTitle(test.title, isEn)}
                       </h4>
                       <p className="text-xs text-slate-600 line-clamp-2 mb-2 leading-relaxed">
-                        {test.description}
+                        {formatTestDescription(test.description, isEn, test)}
                       </p>
 
                       {/* Star Rating & Social Proof */}

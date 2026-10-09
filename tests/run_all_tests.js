@@ -111,7 +111,8 @@ const testSuites = [
   { name: 'Step 102: Workspaces & UI Shell Localization (Bilingual Phase 2)', file: 'tests/test_step102_i18n_workspaces_localization.js' },
   { name: 'Step 103: Bilingual AI Evaluation & Feedback Engine (Phase 3)', file: 'tests/test_step103_i18n_ai_evaluation_localization.js' },
   { name: 'Step 104: Bilingual Modals & Study Tools Localization (Phase 4)', file: 'tests/test_step104_i18n_modals_and_tools_localization.js' },
-  { name: 'Step 105: Bilingual Final Polish & Edge Cases (Phase 5 Milestone)', file: 'tests/test_step105_i18n_final_polish_and_edge_cases.js' }
+  { name: 'Step 105: Bilingual Final Polish & Edge Cases (Phase 5 Milestone)', file: 'tests/test_step105_i18n_final_polish_and_edge_cases.js' },
+  { name: 'Step 106: Test Titles & Descriptions Bilingual Localization', file: 'tests/test_step106_test_titles_and_descriptions_localization.js' }
 ];
 
 console.log('===============================================================');

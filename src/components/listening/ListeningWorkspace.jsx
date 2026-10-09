@@ -38,6 +38,7 @@ import { calculateListeningBandScore } from '../../data/listeningTasks';
 import { scoreListeningExam } from '../../utils/listeningScorer';
 import { deleteAudioBlob } from '../../utils/audioStorage';
 import { useTranslation } from '../../i18n';
+import { formatTestTitle, formatTestDescription } from '../../utils/testLocalizationHelper';
 
 const SNAPSHOT_KEY_PREFIX = 'ielts_listening_snapshot_';
 const CUSTOM_TESTS_STORAGE_KEY = 'ielts_listening_custom_tests';
@@ -907,11 +908,11 @@ export default function ListeningWorkspace({
             </span>
 
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
-              {currentTest.title}
+              {formatTestTitle(currentTest.title, isEn)}
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl mb-6 leading-relaxed">
-              {currentTest.description}
+              {formatTestDescription(currentTest.description, isEn, currentTest)}
             </p>
 
             {/* Instruction Checklist */}

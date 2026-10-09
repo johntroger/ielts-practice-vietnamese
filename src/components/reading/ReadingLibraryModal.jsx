@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import StarRatingWidget from '../common/StarRatingWidget';
 import { getItemMetrics, recordAttempt } from '../../services/ratingPopularityService';
 import { useTranslation } from '../../i18n';
+import { formatTestTitle, formatTestDescription } from '../../utils/testLocalizationHelper';
 import { 
   BookOpen, 
   Search, 
@@ -1010,11 +1011,11 @@ export default function ReadingLibraryModal({
                         </div>
 
                         <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
-                          {test.title}
+                          {formatTestTitle(test.title, isEn)}
                         </h3>
                         
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                          {test.description || (isEn ? 'Multiple-choice and fill-in-the-blank questions under IELTS Reading standards.' : 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.')}
+                          {formatTestDescription(test.description, isEn, test) || (isEn ? 'Multiple-choice and fill-in-the-blank questions under IELTS Reading standards.' : 'Đề thi trắc nghiệm và điền từ theo chuẩn IELTS Reading.')}
                         </p>
 
                         {/* Star Rating & Social Proof */}

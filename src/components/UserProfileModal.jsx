@@ -47,6 +47,7 @@ import {
   SPEAKING_MOCK_TEST_PACKS 
 } from '../data/speakingTopics';
 import { useTranslation } from '../i18n';
+import { formatTestTitle, formatTestDescription } from '../utils/testLocalizationHelper';
 
 export default function UserProfileModal({
   isOpen,
@@ -273,8 +274,8 @@ export default function UserProfileModal({
           typeBadge: readingTest.type === 'general' ? 'General Training' : 'Academic Reading',
           typeBadgeColor: 'bg-emerald-100 text-emerald-800',
           category: readingTest.isCustom ? (isEn ? 'Custom Test (AI)' : 'Đề tự tạo (AI)') : 'Cambridge Official',
-          title: readingTest.title,
-          description: readingTest.description || (readingTest.passages?.map(p => p.title).join(' • ') || ''),
+          title: formatTestTitle(readingTest.title, isEn),
+          description: formatTestDescription(readingTest.description, isEn, readingTest) || (readingTest.passages?.map(p => p.title).join(' • ') || ''),
           statText: isEn
             ? `Completed: ${rHistory.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}`
             : `Đã làm: ${rHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
@@ -295,8 +296,8 @@ export default function UserProfileModal({
           typeBadge: 'Listening Test',
           typeBadgeColor: 'bg-indigo-100 text-indigo-800',
           category: listeningTest.isCustom ? 'AI Audio' : 'Cambridge Official',
-          title: listeningTest.title,
-          description: listeningTest.description || (isEn ? `${listeningTest.parts?.length || 4} audio parts` : `${listeningTest.parts?.length || 4} phần nghe`),
+          title: formatTestTitle(listeningTest.title, isEn),
+          description: formatTestDescription(listeningTest.description, isEn, listeningTest) || (isEn ? `${listeningTest.parts?.length || 4} audio parts` : `${listeningTest.parts?.length || 4} phần nghe`),
           statText: isEn
             ? `Completed: ${lHistory.length} time(s)${bestBand > 0 ? ` • Highest Band: ${bestBand.toFixed(1)}` : ''}`
             : `Đã làm: ${lHistory.length} lần${bestBand > 0 ? ` • Band cao nhất: ${bestBand.toFixed(1)}` : ''}`,
