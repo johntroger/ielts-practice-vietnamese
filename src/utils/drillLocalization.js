@@ -24,6 +24,38 @@ const KNOWN_TITLE_MAP = {
   'Collocation Học Thuật: Môi Trường & Năng Lượng': 'Academic Collocations: Environment & Energy',
   'Collocation Học Thuật: Công Nghệ & Trí Tuệ Nhân Tạo': 'Academic Collocations: Technology & Artificial Intelligence',
 
+  // Error Spotting specific titles from Screenshot 1
+  "Sửa lỗi danh từ không đếm được: 'Evidence' in IELTS Writing": "Error Spotting: Uncountable Noun: 'Evidence' in IELTS Writing",
+  "Sửa lỗi danh từ không đếm được 'Evidence' in IELTS Writing": "Error Spotting: Uncountable Noun: 'Evidence' in IELTS Writing",
+  "Sửa lỗi Uncountable Nouns: 'Evidence' in IELTS Writing": "Error Spotting: Uncountable Noun: 'Evidence' in IELTS Writing",
+  'Sửa lỗi dùng danh từ định lượng và sự hòa hợp chủ-vị': 'Error Spotting: Quantifiers & Subject-Verb Agreement',
+  'Sửa lỗi Quantifiers & Subject-Verb Agreement': 'Error Spotting: Quantifiers & Subject-Verb Agreement',
+  'dùng động từ xu hướng in biểu đồ tĩnh (Static Charts)': 'Error Spotting: Trend Verbs in Static Charts',
+  'dùng động từ xu hướng in biểu đồ tĩnh (Static Chart)': 'Error Spotting: Trend Verbs in Static Charts',
+  'dùng động từ xu hướng trong biểu đồ tĩnh (Static Charts)': 'Error Spotting: Trend Verbs in Static Charts',
+  'Danh từ không đếm được & Quantifiers (Information)': 'Error Spotting: Uncountable Nouns & Quantifiers (Information)',
+  'Sửa lỗi Danh từ không đếm được & Sự hòa hợp Chủ ngữ - Động từ': 'Error Spotting: Uncountable Nouns & Subject-Verb Agreement',
+  'Sửa lỗi Uncountable Nouns & Subject-Verb Agreement': 'Error Spotting: Uncountable Nouns & Subject-Verb Agreement',
+  'sự hòa hợp giữa chủ ngữ và động từ with danh động từ (Gerund)': 'Error Spotting: Subject-Verb Agreement with Gerunds',
+  'sự hòa hợp giữa chủ ngữ và động từ với danh động từ (Gerund)': 'Error Spotting: Subject-Verb Agreement with Gerunds',
+  "Sửa lỗi danh từ không đếm được 'Research' & Cách dùng lượng từ": "Error Spotting: Uncountable Noun 'Research' & Quantifiers",
+  "Sửa lỗi Uncountable Noun 'Research' & Quantifiers": "Error Spotting: Uncountable Noun 'Research' & Quantifiers",
+  'Động từ Xu hướng in Biểu đồ Tĩnh (Task 1)': 'Error Spotting: Trend Verbs in Static Charts (Task 1)',
+  'Động từ Xu hướng trong Biểu đồ Tĩnh (Task 1)': 'Error Spotting: Trend Verbs in Static Charts (Task 1)',
+
+  // Matching Headings specific titles from Screenshot 2
+  'Matching Headings Trap: Urbanization & Môi trường': 'Matching Headings Trap: Urbanization & Environment',
+  'Matching Headings Trap: Giải pháp tiếng ồn đô thị': 'Matching Headings Trap: Urban Noise Solutions',
+  'Matching Headings Trap: Planning cây xanh giảm tiếng ồn đô thị': 'Matching Headings Trap: Greenery Planning for Urban Noise Reduction',
+  'Matching Headings Trap: Thách thức of Nông nghiệp Thẳng đứng': 'Matching Headings Trap: Challenges of Vertical Farming',
+  'Matching Headings Trap: Không gian văn phòng mở': 'Matching Headings Trap: Open-Plan Office Spaces',
+  'Matching Headings Trap: Văn phòng mở': 'Matching Headings Trap: Open-Plan Offices',
+  'Matching Headings Trap: Nuôi ong đô thị (Urban Beekeeping)': 'Matching Headings Trap: Urban Beekeeping',
+
+  // Spelling & Numbers specific titles from Screenshot 3
+  'Đánh vần tên đường & UK Postcodes': 'Street Names Spelling & UK Postcodes',
+  'Đánh vần Street Names & UK Postcodes': 'Street Names Spelling & UK Postcodes',
+
   // Community Drills
   'Từ nối lập luận: Trí tuệ nhân tạo & Lao động': 'Argumentative Transitions: AI & Labor',
   'Giới từ số liệu Task 1: Xu hướng đô thị hóa': 'Task 1 Data Prepositions: Urbanization Trends',
@@ -254,7 +286,33 @@ const KNOWN_TOPIC_SUBTITLE_MAP = {
   'Quy hoạch Green Spaces': 'Green Spaces Planning',
   'Pin năng lượng mặt trời Perovskite': 'Perovskite Solar Cells',
   'Green Spaces đô thị': 'Urban Green Spaces',
-  'Nông nghiệp Hiện đại': 'Modern Agriculture'
+  'Nông nghiệp Hiện đại': 'Modern Agriculture',
+
+  // Matching Headings specific topics from Screenshot 2
+  'Urbanization & Môi trường': 'Urbanization & Environment',
+  'Urbanization và Môi trường': 'Urbanization & Environment',
+  'Giải pháp tiếng ồn đô thị': 'Urban Noise Solutions',
+  'Planning cây xanh giảm tiếng ồn đô thị': 'Greenery Planning for Urban Noise Reduction',
+  'Quy hoạch cây xanh giảm tiếng ồn đô thị': 'Greenery Planning for Urban Noise Reduction',
+  'Thách thức of Nông nghiệp Thẳng đứng': 'Challenges of Vertical Farming',
+  'Thách thức của Nông nghiệp Thẳng đứng': 'Challenges of Vertical Farming',
+  'Nông nghiệp Thẳng đứng': 'Vertical Farming',
+  'Không gian văn phòng mở': 'Open-Plan Office Spaces',
+  'Văn phòng mở': 'Open-Plan Offices',
+  'Nuôi ong đô thị (Urban Beekeeping)': 'Urban Beekeeping',
+  'Nuôi ong đô thị': 'Urban Beekeeping',
+
+  // Spelling from Screenshot 3
+  'Street Names & UK Postcodes': 'Street Names & UK Postcodes',
+  'tên đường & UK Postcodes': 'Street Names & UK Postcodes',
+  'Đánh vần Street Names & UK Postcodes': 'Street Names Spelling & UK Postcodes',
+  'Đánh vần tên đường & UK Postcodes': 'Street Names Spelling & UK Postcodes',
+
+  // Error Spotting prefixes in subtitle topics
+  "Sửa lỗi Uncountable Nouns: 'Evidence' in IELTS Writing": "Uncountable Noun: 'Evidence' in IELTS Writing",
+  "Sửa lỗi Quantifiers & Subject-Verb Agreement": "Quantifiers & Subject-Verb Agreement",
+  "Sửa lỗi Uncountable Nouns & Subject-Verb Agreement": "Uncountable Nouns & Subject-Verb Agreement",
+  "Sửa lỗi Uncountable Noun 'Research' & Quantifiers": "Uncountable Noun 'Research' & Quantifiers"
 };
 
 const KNOWN_CATEGORY_MAP = {
@@ -334,22 +392,32 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
     .replace(/\[AI\]\s*/i, '')
     .trim();
 
-  // 2. Direct dictionary match
-  if (KNOWN_TITLE_MAP[cleanTitle]) {
-    const matched = KNOWN_TITLE_MAP[cleanTitle];
-    if (isCommunityTagged) return `✨ [AI Community] ${matched}`;
-    if (isAiTagged) return `[AI] ${matched}`;
-    return matched;
+  // 2. Direct dictionary match (case-insensitive)
+  const lowerClean = cleanTitle.toLowerCase();
+  for (const [k, v] of Object.entries(KNOWN_TITLE_MAP)) {
+    if (k.toLowerCase() === lowerClean) {
+      if (isCommunityTagged) return `✨ [AI Community] ${v}`;
+      if (isAiTagged) return `[AI] ${v}`;
+      return v;
+    }
   }
-  if (KNOWN_TITLE_MAP[rawTitle]) {
-    return KNOWN_TITLE_MAP[rawTitle];
+  const lowerRaw = rawTitle.toLowerCase();
+  for (const [k, v] of Object.entries(KNOWN_TITLE_MAP)) {
+    if (k.toLowerCase() === lowerRaw) {
+      return v;
+    }
   }
 
   // Subtitle topic translator helper
   const translateTopicSubtitle = (sub) => {
     if (!sub) return '';
     let s = sub.trim();
-    if (KNOWN_TOPIC_SUBTITLE_MAP[s]) return KNOWN_TOPIC_SUBTITLE_MAP[s];
+    const lowerSub = s.toLowerCase();
+    for (const [k, v] of Object.entries(KNOWN_TOPIC_SUBTITLE_MAP)) {
+      if (k.toLowerCase() === lowerSub) {
+        return v;
+      }
+    }
 
     const topicPhrases = [
       [/Tác động xã hội của Vườn đô thị/gi, 'Social Impact of Urban Gardens'],
@@ -609,7 +677,27 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
       [/public transit đô thị/gi, 'Urban Public Transit'],
       [/pin năng lượng mặt trời perovskite/gi, 'Perovskite Solar Cells'],
       [/pin năng lượng mặt trời/gi, 'Solar Cells'],
-      [/nông nghiệp hiện đại/gi, 'Modern Agriculture'],
+      // Matching Headings Traps & Urban Noise
+      [/urbanization\s*(&|và)\s*môi trường/gi, 'Urbanization & Environment'],
+      [/giải pháp tiếng ồn đô thị/gi, 'Urban Noise Solutions'],
+      [/tiếng ồn đô thị/gi, 'Urban Noise'],
+      [/tiếng ồn/gi, 'Noise'],
+      [/planning cây xanh giảm tiếng ồn đô thị/gi, 'Greenery Planning for Urban Noise Reduction'],
+      [/quy hoạch cây xanh giảm tiếng ồn đô thị/gi, 'Greenery Planning for Urban Noise Reduction'],
+      [/cây xanh giảm tiếng ồn đô thị/gi, 'Greenery for Urban Noise Reduction'],
+      [/giảm tiếng ồn đô thị/gi, 'Urban Noise Reduction'],
+      [/giảm tiếng ồn/gi, 'Noise Reduction'],
+      [/thách thức (?:của|of)\s*nông nghiệp thẳng đứng/gi, 'Challenges of Vertical Farming'],
+      [/thách thức (?:của|of)/gi, 'Challenges of'],
+      [/nông nghiệp thẳng đứng/gi, 'Vertical Farming'],
+      [/không gian văn phòng mở/gi, 'Open-Plan Office Spaces'],
+      [/văn phòng mở/gi, 'Open-Plan Offices'],
+      [/không gian văn phòng/gi, 'Office Spaces'],
+      [/nuôi ong đô thị\s*\(urban beekeeping\)/gi, 'Urban Beekeeping'],
+      [/nuôi ong đô thị/gi, 'Urban Beekeeping'],
+      [/môi trường/gi, 'Environment'],
+      [/đánh vần/gi, 'Spelling'],
+      [/sửa lỗi/gi, 'Error Spotting'],
 
       [/\bcủa\b/gi, 'of'],
       [/\bvà\b/gi, '&'],
@@ -736,17 +824,33 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^(Truy tìm Paraphrase|Paraphrase Hunter|Bắt cặp từ đồng nghĩa học thuật|Academic Synonym Matching):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Paraphrase Hunter: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^(Phá bẫy Matching Headings|Matching Headings Trap):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Matching Headings Trap: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(?:Phá bẫy Matching Headings|Matching Headings Trap)[:\s]\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Matching Headings Trap: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-  if (/^(Đoán nghĩa từ|Context Vocab):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Context Vocab: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(?:Đoán nghĩa từ|Context Vocab)[:\s]\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Context Vocab: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-  if (/^(Giải phẫu câu phức|Complex Sentence S-V-O):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Complex Sentence S-V-O: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(?:Giải phẫu câu phức|Complex Sentence S-V-O)[:\s]\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Complex Sentence S-V-O: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-  if (/^(Sửa lỗi|Error Spotting):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Error Spotting: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(?:Sửa lỗi|Error Spotting)[:\s]\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Error Spotting: ${translateTopicSubtitle(RegExp.$1)}`;
+  }
+  if (/^(?:dùng\s+)?động từ xu hướng\s*(?:trong|in)\s*biểu đồ tĩnh(?:\s*\(([^)]+)\))?/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Error Spotting: Trend Verbs in Static Charts';
+  }
+  if (/^danh từ không đếm được\s*&\s*quantifiers(?:\s*\(([^)]+)\))?/i.test(cleanTitle)) {
+    const note = RegExp.$1 ? ` (${RegExp.$1})` : '';
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Error Spotting: Uncountable Nouns & Quantifiers${note}`;
+  }
+  if (/^sự hòa hợp giữa chủ ngữ và động từ\s*(?:with|với)\s*danh động từ(?:\s*\(([^)]+)\))?/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Error Spotting: Subject-Verb Agreement with Gerunds';
+  }
+  if (/^danh từ không đếm được\s*&\s*sự hòa hợp chủ ngữ\s*-\s*động từ/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Error Spotting: Uncountable Nouns & Subject-Verb Agreement';
+  }
+  if (/^(?:dùng\s+)?danh từ định lượng\s*(?:và|&)\s*sự hòa hợp chủ-vị/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Error Spotting: Quantifiers & Subject-Verb Agreement';
   }
   if (/^(Luyện Paraphrase|Paraphrase Drill):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Paraphrase Drill: ${translateTopicSubtitle(RegExp.$2)}`;
@@ -801,8 +905,8 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^(Đánh vần tên riêng & Mã bưu chính UK|Đánh vần tên riêng & Mã bưu chính):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Proper Names & Postcodes: ${translateTopicSubtitle(RegExp.$2)}`;
   }
-  if (/^(Đánh vần|Spelling):\s*(.*)/i.test(cleanTitle)) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Spelling: ${translateTopicSubtitle(RegExp.$2)}`;
+  if (/^(?:Đánh vần|Spelling):\s*(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Spelling: ${translateTopicSubtitle(RegExp.$1)}`;
   }
   if (/^(Bẫy tự đính chính\s*\(Self-Correction Trap\)|Bẫy tự đính chính|Bẫy sửa miệng\s*\(Self-Correction Trap\)|Bẫy sửa miệng|Self-Correction Trap):\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Self-Correction Trap: ${translateTopicSubtitle(RegExp.$2)}`;
@@ -848,7 +952,7 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^Đánh vần Họ người & Bẫy tự đính chính/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Surname Spelling & Self-Correction Trap';
   }
-  if (/^Đánh vần tên đường & UK Postcodes/i.test(cleanTitle)) {
+  if (/^Đánh vần (?:Street Names|tên đường) & UK Postcodes/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + 'Street Names Spelling & UK Postcodes';
   }
   if (/^Đánh vần tên đường & Tự sửa lỗi/i.test(cleanTitle)) {
@@ -869,11 +973,8 @@ export function getLocalizedDrillTitle(drill, isEn = false) {
   if (/^Bẫy sửa miệng:\s*(.*)/i.test(cleanTitle)) {
     return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Self-Correction Trap: ${translateTopicSubtitle(RegExp.$1)}`;
   }
-
-  // 4. If title contains English in parentheses e.g. "Giới từ... (Prepositions of Data)"
-  const parenMatch = cleanTitle.match(/\(([^)]+)\)$/);
-  if (parenMatch && /[a-zA-Z\s]{4,}/.test(parenMatch[1])) {
-    return (isCommunityTagged ? '✨ [AI Community] ' : '') + parenMatch[1].trim();
+  if (/^(?:Đánh vần|Spelling)\s+(.*)/i.test(cleanTitle)) {
+    return (isCommunityTagged ? '✨ [AI Community] ' : (isAiTagged ? '[AI] ' : '')) + `Spelling: ${translateTopicSubtitle(RegExp.$1)}`;
   }
 
   // 5. Intelligent Colon-Separated Fallback (e.g. "Prefix: Suffix")
@@ -1104,8 +1205,14 @@ export function getLocalizedDrillExplanation(itemOrExplanation, isEn = false) {
     [/Chú ý trạng từ chỉ mức độ/gi, 'Note degree adverb'],
     [/Chú ý các thuật ngữ học thuật phức tạp:\s*/gi, 'Note complex academic terminology: '],
     [/Thuật ngữ học thuật/gi, 'Academic terminology'],
-    [/Cụm "let us now turn our attention to \[X\]\.\.\." là tín hiệu chuyển ý kinh điển trong Part 4 giúp thí sinh biết bài nói chuẩn bị trả lời cho câu hỏi tiếp theo trong đề thi\./gi, '"let us now turn our attention to [X]..." is a textbook Part 4 signpost signaling that the lecture is transitioning to the next question on the exam sheet.'],
-    [/"Surprisingly, however\.\.\." là từ nối báo hiệu kết quả đi ngược lại giả thuyết ban đầu \(thường là mấu chốt để trả lời câu hỏi điền từ hoặc trắc nghiệm\)\./gi, '"Surprisingly, however..." is a contrasting signpost indicating an outcome contrary to initial hypotheses (frequently crucial for gap-fills and MCQs).']
+    [/"Surprisingly, however\.\.\." là từ nối báo hiệu kết quả đi ngược lại giả thuyết ban đầu \(thường là mấu chốt để trả lời câu hỏi điền từ hoặc trắc nghiệm\)\./gi, '"Surprisingly, however..." is a contrasting signpost indicating an outcome contrary to initial hypotheses (frequently crucial for gap-fills and MCQs).'],
+    [/Tại Part 3, điểm mấu chốt là không được nhìn nhận vấn đề một chiều đen-trắng\. Hãy phân tích tác động hai mặt và đưa ra kết luận trung dung có chiều sâu\./gi, 'In Part 3, the key is avoiding black-and-white perspectives. Analyze both sides and deliver a balanced, nuanced conclusion.'],
+    [/Phân tích giữa giá trị bản sắc văn hóa \/ du lịch và nhu cầu thực tiễn về hạ tầng nhà ở \/ giao thông\./gi, 'Analyze the trade-off between cultural identity/tourism value and pragmatic infrastructure demands for housing/transport.'],
+    [/Đừng chỉ trả lời "I prefer apartment because it is cheap"\. Hãy vận dụng A\.R\.E\.A để tạo câu trả lời 30s mạch lạc, tự nhiên\./gi, 'Do not just say "I prefer an apartment because it is cheap". Use A.R.E.A to craft a fluent, spontaneous 30-second response.'],
+    [/Tránh dùng "I read books every day"\. Hãy nói về thể loại yêu thích và thời điểm đọc bằng các cụm từ phong phú\./gi, 'Avoid generic phrases like "I read books every day". Discuss your favorite genres and reading occasions with varied vocabulary.'],
+    [/Làm nổi bật khả năng tập trung \(deep focus\) khi học một mình nhưng vẫn thừa nhận giá trị của thảo luận nhóm \(brainstorming\)\./gi, 'Highlight the capacity for deep focus when studying solo while acknowledging the brainstorming value of group study.'],
+    [/Khai thác khía cạnh dinh dưỡng \(nutritional value\) và niềm vui sáng tạo \(culinary experiment\)\./gi, 'Explore both nutritional value and the creative joy of culinary experimentation.'],
+    [/Ở Part 3, quan điểm cần mang tính xã hội và có tính cân nhắc hai chiều sâu sắc\./gi, 'In Part 3, opinions should be societal in scale and reflect deep, balanced consideration of both perspectives.']
   ];
 
   for (const [pattern, repl] of explanationReplacements) {

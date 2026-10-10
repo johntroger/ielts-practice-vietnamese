@@ -15,11 +15,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-area-1',
     type: 'speaking-area',
     title: 'A.R.E.A Reflex 1: Nơi Ở - Căn Hộ hay Nhà Riêng?',
+    titleEn: 'A.R.E.A Reflex 1: Accommodation - Apartment or House?',
     topic: 'Accommodation & Home Life',
     part: 'Part 1',
     question: 'Do you prefer living in a house or an apartment?',
     difficulty: 'Band 7.0 - 8.5',
     tip: 'Đừng chỉ trả lời "I prefer apartment because it is cheap". Hãy vận dụng A.R.E.A để tạo câu trả lời 30s mạch lạc, tự nhiên.',
+    tipEn: 'Do not just say "I prefer an apartment because it is cheap". Use A.R.E.A to craft a fluent, spontaneous 30-second response.',
     formula: {
       answer: {
         label: 'A - Answer',
@@ -53,11 +55,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-area-2',
     type: 'speaking-area',
     title: 'A.R.E.A Reflex 2: Thói Quen Đọc Sách',
+    titleEn: 'A.R.E.A Reflex 2: Reading Habits',
     topic: 'Reading Habits & Leisure',
     part: 'Part 1',
     question: 'How often do you read books?',
     difficulty: 'Band 7.0 - 8.5',
     tip: 'Tránh dùng "I read books every day". Hãy nói về thể loại yêu thích và thời điểm đọc bằng các cụm từ phong phú.',
+    tipEn: 'Avoid generic phrases like "I read books every day". Discuss your favorite genres and reading occasions with varied vocabulary.',
     formula: {
       answer: {
         label: 'A - Answer',
@@ -91,11 +95,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-area-3',
     type: 'speaking-area',
     title: 'A.R.E.A Reflex 3: Học Tập Một Mình hay Theo Nhóm?',
+    titleEn: 'A.R.E.A Reflex 3: Studying Solo vs in Groups',
     topic: 'Education & Study Methods',
     part: 'Part 1',
     question: 'Do you prefer studying alone or in a group?',
     difficulty: 'Band 7.0 - 8.5',
     tip: 'Làm nổi bật khả năng tập trung (deep focus) khi học một mình nhưng vẫn thừa nhận giá trị của thảo luận nhóm (brainstorming).',
+    tipEn: 'Highlight the capacity for deep focus when studying solo while acknowledging the brainstorming value of group study.',
     formula: {
       answer: {
         label: 'A - Answer',
@@ -129,11 +135,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-area-4',
     type: 'speaking-area',
     title: 'A.R.E.A Reflex 4: Nấu Ăn Tại Nhà',
+    titleEn: 'A.R.E.A Reflex 4: Home Cooking',
     topic: 'Food, Cooking & Lifestyle',
     part: 'Part 1',
     question: 'Do you enjoy cooking for yourself?',
     difficulty: 'Band 7.0 - 8.5',
     tip: 'Khai thác khía cạnh dinh dưỡng (nutritional value) và niềm vui sáng tạo (culinary experiment).',
+    tipEn: 'Explore both nutritional value and the creative joy of culinary experimentation.',
     formula: {
       answer: {
         label: 'A - Answer',
@@ -167,11 +175,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-area-5',
     type: 'speaking-area',
     title: 'A.R.E.A Reflex 5: Trẻ Em Dùng Thiết Bị Điện Tử',
+    titleEn: 'A.R.E.A Reflex 5: Screen Time & Young Children',
     topic: 'Technology & Parenting',
     part: 'Part 3',
     question: 'Should young children be allowed to use smartphones and tablets freely?',
     difficulty: 'Band 7.5 - 8.5',
     tip: 'Ở Part 3, quan điểm cần mang tính xã hội và có tính cân nhắc hai chiều sâu sắc.',
+    tipEn: 'In Part 3, opinions should be societal in scale and reflect deep, balanced consideration of both perspectives.',
     formula: {
       answer: {
         label: 'A - Answer',
@@ -183,23 +193,22 @@ export const SPEAKING_MICRO_DRILLS = [
         label: 'R - Reason',
         prompt: 'Analyze adverse impacts on cognitive development and sleep patterns',
         sample: 'Excessive screen exposure at an impressionable age can severely impair cognitive development, disrupt sleep patterns, and induce digital addiction.',
-        keywords: ['screen exposure', 'impressionable age', 'cognitive development', 'digital addiction']
+        keywords: ['excessive screen exposure', 'impressionable age', 'impair cognitive development', 'digital addiction']
       },
       example: {
         label: 'E - Example',
-        prompt: 'Cite clinical observations or documented developmental findings',
-        sample: 'Numerous clinical studies have shown that toddlers who spend over four hours daily glued to screens frequently exhibit shorter attention spans and speech delays.',
-        keywords: ['glued to screens', 'attention spans', 'speech delays']
+        prompt: 'Provide medical evidence or observable childhood behavior',
+        sample: 'For instance, numerous pediatric studies indicate that toddlers with high screen time demonstrate pronounced deficits in speech acquisition and social empathy.',
+        keywords: ['pediatric studies', 'high screen time', 'speech acquisition', 'social empathy']
       },
       alternative: {
         label: 'A - Alternative',
-        prompt: 'Present a balanced view under guided parental supervision',
-        sample: 'Nevertheless, under strict parental supervision and with educational applications, moderate screen interaction can still offer valuable learning benefits.',
-        keywords: ['parental supervision', 'moderate screen interaction', 'valuable learning benefits']
+        prompt: 'Propose regulated or supervised digital educational engagement',
+        sample: 'Instead of outright prohibition, parents should enforce strict time limits and engage exclusively with curated educational applications together.',
+        keywords: ['outright prohibition', 'enforce strict time limits', 'curated educational applications']
       }
     },
-    modelAnswerBand8: 'From my vantage point, allowing young children unrestricted access to smart gadgets is an extraordinarily hazardous practice that responsible parents should strictly avoid. Excessive screen exposure at an impressionable age can severely impair cognitive development, disrupt circadian rhythms, and foster digital dependency. Numerous pediatric studies have demonstrated that toddlers glued to touchscreens for hours frequently develop shorter attention spans and speech delays. Nevertheless, under sensible parental supervision and within curated educational apps, moderate exposure can still offer constructive cognitive stimulation.',
-    lexicalHighlights: ['from my vantage point', 'unrestricted access', 'impressionable age', 'impair cognitive development', 'circadian rhythms', 'glued to touchscreens', 'parental supervision']
+    modelAnswerBand8: 'From my vantage point, allowing young children unrestricted access to smartphones and tablets is a hazardous practice that should be curtailed. Excessive screen exposure at such an impressionable age can impair cognitive development, disrupt restorative sleep cycles, and induce early digital addiction. Pediatric research confirms that toddlers glued to screens show marked delays in linguistic acquisition. Instead of blanket bans, parents ought to enforce stringent daily time limits and co-view curated educational content.',
   },
 
   // ==========================================
@@ -485,11 +494,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-part3-1',
     type: 'speaking-part3-counter',
     title: 'Phản Biện Part 3: Công Nghệ Kết Nối hay Cô Lập Con Người?',
+    titleEn: 'Part 3 Rebuttal: Technology – Connecting or Isolating People?',
     topic: 'Technology & Human Relations',
     question: 'Does modern communication technology bring people closer together, or does it isolate them?',
     category: 'Two-Sided Societal Debate',
     difficulty: 'Band 7.5 - 8.5',
     tip: 'Tại Part 3, điểm mấu chốt là không được nhìn nhận vấn đề một chiều đen-trắng. Hãy phân tích tác động hai mặt và đưa ra kết luận trung dung có chiều sâu.',
+    tipEn: 'In Part 3, the key is avoiding black-and-white perspectives. Analyze both sides and deliver a balanced, nuanced conclusion.',
     sideA: {
       perspective: 'Counter perspective: Digital estrangement & superficial ties',
       starter: 'On the one hand, it cannot be denied that...',
@@ -511,11 +522,13 @@ export const SPEAKING_MICRO_DRILLS = [
     id: 'sdrill-part3-2',
     type: 'speaking-part3-counter',
     title: 'Phản Biện Part 3: Bảo Tồn Lịch Sử vs Phát Triển Đô Thị Hiện Đại',
+    titleEn: 'Part 3 Rebuttal: Historic Preservation vs Modern Urban Development',
     topic: 'Urban Planning & Heritage Preservation',
     question: 'Should governments invest heavily in preserving historic heritage buildings, or prioritize modern infrastructure?',
     category: 'Public Expenditure & Cultural Heritage',
     difficulty: 'Band 7.5 - 8.5',
     tip: 'Phân tích giữa giá trị bản sắc văn hóa / du lịch và nhu cầu thực tiễn về hạ tầng nhà ở / giao thông.',
+    tipEn: 'Analyze the trade-off between cultural identity/tourism value and pragmatic infrastructure demands for housing/transport.',
     sideA: {
       perspective: 'Heritage focus: Cultural lineage & tourism value',
       starter: 'From one perspective, preserving heritage is paramount because...',

@@ -404,5 +404,50 @@ it('Translates all items from the 5 uploaded screenshots (General, Writing, Read
   assert.strictEqual(getLocalizedDrillTitle({ title: 'Paraphrase Hunter: Nông nghiệp Hiện đại' }, true), 'Paraphrase Hunter: Modern Agriculture');
 });
 
+// 13. Audit of Latest 5 Screenshots (Error Spotting, Matching Headings, Spelling, Speaking Part 3)
+it('Translates all items from the latest 5 screenshots correctly into natural English', () => {
+  // Screenshot 1: Writing Drills - Error Spotting Jump-To dropdown
+  assert.strictEqual(getLocalizedDrillTitle({ title: "Sửa lỗi Uncountable Nouns: 'Evidence' in IELTS Writing" }, true), "Error Spotting: Uncountable Noun: 'Evidence' in IELTS Writing");
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Sửa lỗi Quantifiers & Subject-Verb Agreement' }, true), 'Error Spotting: Quantifiers & Subject-Verb Agreement');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'dùng động từ xu hướng in biểu đồ tĩnh (Static Charts)' }, true), 'Error Spotting: Trend Verbs in Static Charts');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Dùng động từ xu hướng in biểu đồ tĩnh (Static Charts)' }, true), 'Error Spotting: Trend Verbs in Static Charts');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'dùng động từ xu hướng in biểu đồ tĩnh (Static Chart)' }, true), 'Error Spotting: Trend Verbs in Static Charts');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Danh từ không đếm được & Quantifiers (Information)' }, true), 'Error Spotting: Uncountable Nouns & Quantifiers (Information)');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Sửa lỗi Uncountable Nouns & Subject-Verb Agreement' }, true), 'Error Spotting: Uncountable Nouns & Subject-Verb Agreement');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'sự hòa hợp giữa chủ ngữ và động từ with danh động từ (Gerund)' }, true), 'Error Spotting: Subject-Verb Agreement with Gerunds');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Sự hòa hợp giữa chủ ngữ và động từ with danh động từ (Gerund)' }, true), 'Error Spotting: Subject-Verb Agreement with Gerunds');
+  assert.strictEqual(getLocalizedDrillTitle({ title: "Sửa lỗi Uncountable Noun 'Research' & Quantifiers" }, true), "Error Spotting: Uncountable Noun 'Research' & Quantifiers");
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Động từ Xu hướng in Biểu đồ Tĩnh (Task 1)' }, true), 'Error Spotting: Trend Verbs in Static Charts (Task 1)');
+
+  // Screenshot 2: Reading Drills - Matching Headings Trap Decoder
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Urbanization & Môi trường' }, true), 'Matching Headings Trap: Urbanization & Environment');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Phá bẫy Matching Headings: Urbanization & Môi trường' }, true), 'Matching Headings Trap: Urbanization & Environment');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Giải pháp tiếng ồn đô thị' }, true), 'Matching Headings Trap: Urban Noise Solutions');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Planning cây xanh giảm tiếng ồn đô thị' }, true), 'Matching Headings Trap: Greenery Planning for Urban Noise Reduction');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Thách thức of Nông nghiệp Thẳng đứng' }, true), 'Matching Headings Trap: Challenges of Vertical Farming');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Phá bẫy Matching Headings: Thách thức của Nông nghiệp Thẳng đứng' }, true), 'Matching Headings Trap: Challenges of Vertical Farming');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Không gian văn phòng mở' }, true), 'Matching Headings Trap: Open-Plan Office Spaces');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Văn phòng mở' }, true), 'Matching Headings Trap: Open-Plan Offices');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Matching Headings Trap: Nuôi ong đô thị (Urban Beekeeping)' }, true), 'Matching Headings Trap: Urban Beekeeping');
+
+  // Screenshot 3: Listening Drills - Spelling & Numbers
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần Street Names & UK Postcodes' }, true), 'Street Names Spelling & UK Postcodes');
+  assert.strictEqual(getLocalizedDrillTitle({ title: 'Đánh vần tên đường & UK Postcodes' }, true), 'Street Names Spelling & UK Postcodes');
+
+  // Screenshot 4 & 5: Speaking Drills - Part 3 Two-Sided Debate Analytical Tip
+  const part3Tip = 'Tại Part 3, điểm mấu chốt là không được nhìn nhận vấn đề một chiều đen-trắng. Hãy phân tích tác động hai mặt và đưa ra kết luận trung dung có chiều sâu.';
+  assert.strictEqual(
+    getLocalizedDrillExplanation(part3Tip, true),
+    'In Part 3, the key is avoiding black-and-white perspectives. Analyze both sides and deliver a balanced, nuanced conclusion.'
+  );
+
+  const part3Tip2 = 'Phân tích giữa giá trị bản sắc văn hóa / du lịch và nhu cầu thực tiễn về hạ tầng nhà ở / giao thông.';
+  assert.strictEqual(
+    getLocalizedDrillExplanation(part3Tip2, true),
+    'Analyze the trade-off between cultural identity/tourism value and pragmatic infrastructure demands for housing/transport.'
+  );
+});
+
 console.log(`\n🎉 Step 112 Verification: All ${passed}/${total} assertions passed!`);
+
 
