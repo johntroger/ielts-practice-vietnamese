@@ -33,6 +33,7 @@ import {
   deduplicateSpeakingP2Cards, 
   deduplicateSpeakingP3Sets 
 } from '../../services/deduplicationService';
+import { setChativeExamMode } from '../../services/chativeService.js';
 import { useTranslation } from '../../i18n/index.js';
 
 export default function SpeakingWorkspace({
@@ -93,6 +94,12 @@ export default function SpeakingWorkspace({
       setIsGeneratorOpen(true);
     }
   }, [openGeneratorTrigger]);
+
+  // Zero-Distraction: Auto-hide Chative live chat in Speaking Examiner Room
+  useEffect(() => {
+    setChativeExamMode(isInMockExamRoom);
+    return () => setChativeExamMode(false);
+  }, [isInMockExamRoom]);
 
   // Sync external library trigger
   useEffect(() => {

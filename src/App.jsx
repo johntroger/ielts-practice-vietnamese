@@ -45,6 +45,7 @@ import { countWords } from './utils/textAnalytics';
 import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
 import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
 import { trackSkillView } from './services/analyticsService.js';
+import { setChativeExamMode } from './services/chativeService.js';
 import { useTranslation } from './i18n';
 
 export default function App() {
@@ -92,6 +93,12 @@ export default function App() {
     safeSet('ielts_active_skill', activeSkill);
     trackSkillView(activeSkill);
   }, [activeSkill]);
+
+  // Zero-Distraction: Auto-hide Chative live chat during 60-Minute Mock Test
+  useEffect(() => {
+    const isExamOpen = Boolean(modals.mockTest);
+    setChativeExamMode(isExamOpen);
+  }, [modals.mockTest]);
 
   // Real-time synchronization across browser tabs, windows and Supabase Cloud
   useEffect(() => {

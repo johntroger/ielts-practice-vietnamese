@@ -196,3 +196,38 @@ html.dark input[type="search"] {
   border-color: #334155;
 }
 
+/* ============================================================ */
+/* Chative.io Smart Exam Mode & Responsive Positioning Rules    */
+/* ============================================================ */
+
+/* 1. Tự động ẩn hoàn toàn khi người dùng đang trong phòng thi (Exam Mode) */
+body.exam-mode-active #chative-widget,
+body.exam-mode-active #chative-messenger,
+body.exam-mode-active iframe[src*="chative"],
+body.exam-mode-active div[class*="chative"],
+body.exam-mode-active div[id*="chative"],
+body.exam-mode-active [data-chative-widget] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 2. Đảm bảo nút chat không đè lên các Modal quan trọng (z-index an toàn) */
+#chative-widget,
+iframe[src*="chative"],
+div[id*="chative"] {
+  z-index: 40 !important;
+  transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+
+/* 3. Tối ưu vùng chạm và lề đáy trên Mobile (< 640px) */
+@media (max-width: 640px) {
+  #chative-widget,
+  iframe[src*="chative"],
+  div[id*="chative"] {
+    max-width: calc(100vw - 20px) !important;
+  }
+}
+
+
