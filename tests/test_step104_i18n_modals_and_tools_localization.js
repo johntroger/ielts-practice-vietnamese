@@ -383,5 +383,17 @@ it('16. FeaturesGuideModal.jsx and featureLocalization.js localize all 44 featur
   assert.strictEqual(localizedPacing.badge, 'New Release');
 });
 
+// 17. ContactModal.jsx provides complete English translations
+it('17. ContactModal.jsx is fully localized into English', () => {
+  const content = fs.readFileSync(path.join(__dirname, '../src/components/ContactModal.jsx'), 'utf-8');
+  assert.ok(content.includes('useTranslation'), 'ContactModal missing useTranslation');
+  assert.ok(content.includes("isEn ? 'Feedback & Contact Support' : 'Liên Hệ & Đóng Góp Ý Kiến'"));
+  assert.ok(content.includes("isEn ? 'Send Message Directly on Web' : 'Gửi thư trực tiếp ngay trên Web'"));
+  assert.ok(content.includes("isEn ? 'Auto-Forwarded to Gmail' : 'Tự động chuyển tiếp Gmail'"));
+  assert.ok(content.includes("isEn ? 'Send to Mr. Tung Tran' : 'Gửi Đến Mr. Tung Tran'"));
+  assert.ok(content.includes("isEn ? 'Open Mail App' : 'Mở app Email'"));
+  assert.ok(content.includes("isEn ? 'Point of Contact & Support' : 'Người Phụ Trách & Tiếp Nhận'"));
+});
+
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
 
