@@ -32,6 +32,7 @@ const RevisionModal = React.lazy(() => import('../RevisionModal'));
 const QuickParaphraseModal = React.lazy(() => import('../QuickParaphraseModal'));
 const SpeakingResultModal = React.lazy(() => import('../speaking/SpeakingResultModal'));
 const AdaptiveSprintModal = React.lazy(() => import('../AdaptiveSprintModal'));
+const AtlasEnglishArenaModal = React.lazy(() => import('../arena/AtlasEnglishArenaModal'));
 
 // 3. System & Profile Cluster
 const SettingsModal = React.lazy(() => import('../SettingsModal'));
@@ -462,6 +463,13 @@ export default function AppModalHost({
           setVocabList(prev => [v, ...prev]);
           if (onSaveUserVocab) onSaveUserVocab(v);
         }}
+      />
+
+      {/* 2.16c Atlas English Arena Fast Sprint */}
+      <AtlasEnglishArenaModal
+        isOpen={Boolean(modals.atlasArena)}
+        onClose={() => closeModal('atlasArena')}
+        currentUser={currentUser}
       />
 
       {/* 2.17 Cambridge Growth Analytics & Prediction */}

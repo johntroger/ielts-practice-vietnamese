@@ -63,6 +63,8 @@ export const en = {
     weeklyReport: 'Weekly Report',
     diagnostic: 'Placement Test',
     sprintCoach: '30-Min Sprint Coach',
+    arena: 'Atlas English Arena',
+    arenaDesc: 'High-speed 90-120s micro-sprint reflex battle with ELO & Leagues',
     vocabGrammar: 'Vocab & Grammar',
     qrCode: 'Website QR Code',
     contact: 'Feedback & Contact'
@@ -431,5 +433,35 @@ export const en = {
       title: 'Submission History & Study Log',
       clearAll: 'Clear all 4 skills ({count})'
     }
+  },
+  arena: {
+    title: 'Atlas English Arena',
+    subtitle: 'High-speed 90-120s micro-sprint reflex battle against Cambridge traps',
+    league: 'League',
+    bronze: 'Bronze Cadet',
+    silver: 'Silver Challenger',
+    gold: 'Gold Vanguard',
+    platinum: 'Platinum Elite',
+    diamond: 'Diamond Master',
+    xp: 'XP',
+    weeklyXp: 'Weekly XP',
+    shieldCount: 'Shields',
+    streak: 'Streak',
+    startSprint: 'Start Sprint',
+    retrySprint: 'Retry with Shield',
+    nextQuestion: 'Next Question',
+    finishSprint: 'Finish Sprint',
+    combo: 'Combo',
+    correct: 'Correct',
+    incorrect: 'Incorrect',
+    timeRemaining: 'Time Left',
+    leaderboardTitle: 'Weekly Relative Leaderboard',
+    promotionZone: 'Promotion Zone (Top 20%)',
+    relegationZone: 'Relegation Zone (Bottom 15%)',
+    safeZone: 'Safe Zone',
+    summaryTitle: 'Sprint Results',
+    summaryAccuracy: 'Accuracy',
+    summarySpeed: 'Avg Speed',
+    summaryTotalXp: 'XP Earned'
   }
 };

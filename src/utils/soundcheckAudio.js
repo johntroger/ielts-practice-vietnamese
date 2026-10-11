@@ -7,7 +7,7 @@
  * - Safe browser audio unlock
  */
 
-import { speakText, stopSpeech } from './speechAudio';
+import { speakText, stopSpeech } from './speechAudio.js';
 
 let activeAudioCtx = null;
 

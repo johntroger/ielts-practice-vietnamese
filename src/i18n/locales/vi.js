@@ -63,6 +63,8 @@ export const vi = {
     weeklyReport: 'Báo cáo tuần',
     diagnostic: 'Kiểm tra trình độ',
     sprintCoach: 'HLV Nước Rút 30 Phút',
+    arena: 'Đấu Trường Anh Ngữ Atlas',
+    arenaDesc: 'Đấu trường phản xạ 90-120s nhịp độ cao với ELO & Xếp hạng',
     vocabGrammar: 'Từ vựng & Ngữ pháp',
     qrCode: 'Mã QR trang web',
     contact: 'Góp ý & Liên hệ'
@@ -431,5 +433,35 @@ export const vi = {
       title: 'Lịch Sử Luyện Thi & Nhật Ký Bài Làm',
       clearAll: 'Xóa sạch 4 kỹ năng ({count})'
     }
+  },
+  arena: {
+    title: 'Đấu Trường Anh Ngữ Atlas',
+    subtitle: 'Đấu trường phản xạ 90-120s nhịp độ cao triệt tiêu bẫy Cambridge',
+    league: 'Bảng Đấu',
+    bronze: 'Tân Binh Bronze',
+    silver: 'Thách Đấu Silver',
+    gold: 'Tiên Phong Gold',
+    platinum: 'Tinh Anh Platinum',
+    diamond: 'Bậc Thầy Diamond',
+    xp: 'XP',
+    weeklyXp: 'XP Tuần',
+    shieldCount: 'Khiên Bảo Vệ',
+    streak: 'Chuỗi Streak',
+    startSprint: 'Bắt Đầu Đấu Trường',
+    retrySprint: 'Dùng Khiên Đấu Lại',
+    nextQuestion: 'Câu Tiếp Theo',
+    finishSprint: 'Hoàn Thành Đấu Trường',
+    combo: 'Combo Phản Xạ',
+    correct: 'Chính Xác',
+    incorrect: 'Chưa Đúng',
+    timeRemaining: 'Thời Gian Còn Lại',
+    leaderboardTitle: 'Bảng Xếp Hạng Tương Đối Tuần',
+    promotionZone: 'Vùng Thăng Hạng (Top 20%)',
+    relegationZone: 'Vùng Trụ Hạng (Top 15% Dưới)',
+    safeZone: 'Vùng An Toàn',
+    summaryTitle: 'Kết Quả Đấu Trường',
+    summaryAccuracy: 'Độ Chính Xác',
+    summarySpeed: 'Tốc Độ Trung Bình',
+    summaryTotalXp: 'XP Đạt Được'
   }
 };

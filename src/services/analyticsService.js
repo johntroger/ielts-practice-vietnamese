@@ -75,6 +75,7 @@ export function trackModalView(modalName) {
     vocabGrammar: 'Vocab, Grammar & 100 Spelling Demons',
     diagnostic: 'Diagnostic Placement Test & 30-Day Plan',
     adaptiveSprint: 'Adaptive 30-Minute Sprint Coach',
+    atlasArena: 'Atlas English Arena (High-Speed eSports Reflex Battle)',
     library: 'Cambridge Authentic Task Library',
     feedback: 'AI Assessment & Examiner Feedback',
     mistakeLog: 'Academic Mistake Notebook & Spaced Repetition',

@@ -34,6 +34,7 @@ import {
   Moon,
   Sun,
   Zap,
+  Swords,
   Globe
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
@@ -405,6 +406,21 @@ export default function Navbar({
                           <span className="px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-black">{isEn ? 'NEW' : 'MỚI'}</span>
                         </div>
                         <div className="text-[10px] text-amber-700/80 font-normal">{isEn ? 'Adaptive 3-stage sprint targeting weak spots' : 'Sprint 3 chặng nước rút cá nhân hóa theo điểm yếu'}</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => { openModal('atlasArena'); setIsPracticeMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-purple-50/70 hover:bg-purple-100/80 text-left text-xs font-bold text-purple-900 transition-colors cursor-pointer border border-purple-200/60"
+                    >
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-2xs">
+                        <Swords className="w-4 h-4 fill-current" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span>{isEn ? 'Atlas English Arena' : 'Đấu Trường Atlas'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-purple-600 text-[9px] text-white font-black">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
+                        </div>
+                        <div className="text-[10px] text-purple-700/80 font-normal">{isEn ? '90s fast-paced micro-sprint & relative leagues' : 'Đấu trường phản xạ 90s nhịp độ cao & BXH tuần'}</div>
                       </div>
                     </button>
                     <button
@@ -946,6 +962,17 @@ export default function Navbar({
                       <span>{isEn ? '30-Min Coach (Adaptive Sprint)' : 'Huấn Luyện Viên 30P (Adaptive Sprint)'}</span>
                     </div>
                     <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded">{isEn ? 'NEW' : 'MỚI'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => { openModal('atlasArena'); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-left text-xs font-bold text-purple-900 border border-purple-200 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Swords className="w-4 h-4 text-purple-600" />
+                      <span>{isEn ? 'Atlas English Arena (90s)' : 'Đấu Trường Anh Ngữ Atlas (90s)'}</span>
+                    </div>
+                    <span className="text-[10px] text-purple-700 font-bold bg-purple-200 px-1.5 py-0.5 rounded">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
                   </button>
 
                   <button
