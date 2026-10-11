@@ -426,19 +426,19 @@ export default function FeedbackModal({
         </div>
 
         {/* ZPD Pedagogical Adaptive Focus Bar */}
-        <div className="bg-slate-100/90 border-b border-slate-200 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center space-x-1.5 text-slate-700 font-semibold shrink-0">
+        <div className="bg-slate-50 border-b border-slate-200/80 px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center space-x-1.5 text-slate-600 font-semibold shrink-0">
             <Target className="w-3.5 h-3.5 text-red-600 shrink-0" />
-            <span>{t('feedback.zpd.title', null, 'Mục tiêu sư phạm (ZPD):')}</span>
+            <span className="text-[11px]">{t('feedback.zpd.title', null, 'Mục tiêu sư phạm (ZPD):')}</span>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <button
               type="button"
               onClick={() => setPedagogicalFocus('all')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+              className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
                 pedagogicalFocus === 'all'
-                  ? 'bg-slate-800 text-white shadow-xs'
-                  : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-200'
+                  ? 'bg-slate-800 text-white shadow-2xs'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
               }`}
             >
               {t('feedback.zpd.all', null, 'Toàn diện (Tất cả)')}

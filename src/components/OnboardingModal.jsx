@@ -391,6 +391,22 @@ export default function OnboardingModal({
                   <li>{isEn ? (<>Copy the key string starting with <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[11px]">AIzaSy...</code> and paste it into the field above.</>) : (<>Sao chép mã Key bắt đầu bằng <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[11px]">AIzaSy...</code> và dán vào ô bên trên.</>)}</li>
                 </ol>
               </div>
+
+              {/* Optional notice: Can practice offline without key */}
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 text-xs flex items-center justify-between gap-2">
+                <span className="leading-relaxed">
+                  {isEn 
+                    ? "Don't have a key right now? You can skip and practice immediately with our offline algorithmic grader." 
+                    : "Chưa có Key lúc này? Bạn hoàn toàn có thể bỏ qua và luyện tập ngay với bộ chấm thuật toán máy (Offline, 0s delay)."}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-bold shrink-0 transition-colors cursor-pointer"
+                >
+                  {isEn ? "Skip →" : "Bỏ qua →"}
+                </button>
+              </div>
             </div>
           )}
 
