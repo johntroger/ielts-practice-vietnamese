@@ -27,11 +27,21 @@ export function isOwnerUser(user) {
 export const OWNER_MEDIA_RESTRICTION_MESSAGE = 
   'Do dung lượng website giới hạn nên tính năng tải lên / nạp hình ảnh & âm thanh đề bài hiện chỉ dành riêng cho Quản trị viên (tranthanhtung37@gmail.com). Bạn vẫn có thể nạp đề văn bản để luyện tập bình thường.';
 
+export const OWNER_MEDIA_RESTRICTION_MESSAGE_EN = 
+  'Due to website storage capacity limits, uploading or attaching task visuals and audio files is currently reserved exclusively for the Administrator (tranthanhtung37@gmail.com). You can still input text prompts to practice normally.';
+
 /**
  * Audio-specific restriction message.
  */
 export const OWNER_AUDIO_RESTRICTION_MESSAGE = 
   'Do dung lượng website giới hạn nên tính năng tải lên tệp âm thanh hiện chỉ dành riêng cho Quản trị viên (tranthanhtung37@gmail.com). Bạn có thể luyện tập với hàng chục bài nghe bản xứ có sẵn hoặc đề nghe sinh từ liên kết.';
+
+export const OWNER_AUDIO_RESTRICTION_MESSAGE_EN = 
+  'Due to website storage capacity limits, custom audio uploads are currently reserved exclusively for the Administrator (tranthanhtung37@gmail.com). You can still practice with dozens of curated authentic audios or URL-generated listening tasks.';
+
+export function getOwnerMediaRestrictionMessage(isEn = false) {
+  return isEn ? OWNER_MEDIA_RESTRICTION_MESSAGE_EN : OWNER_MEDIA_RESTRICTION_MESSAGE;
+}
 
 /**
  * Validates whether a manual task containing media (image or audio) is permissible for the given user.

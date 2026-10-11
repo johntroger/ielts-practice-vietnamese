@@ -1,38 +1,44 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Image as ImageIcon, Upload, Clipboard, Trash2, ZoomIn, X, AlertCircle, Lock, ShieldCheck } from 'lucide-react';
 import ImageViewerModal from './ImageViewerModal';
-import { isOwnerUser, OWNER_EMAIL, OWNER_MEDIA_RESTRICTION_MESSAGE } from '../utils/userPermissions';
+import { isOwnerUser, OWNER_EMAIL, OWNER_MEDIA_RESTRICTION_MESSAGE, getOwnerMediaRestrictionMessage } from '../utils/userPermissions';
+import { useTranslation } from '../i18n';
 
 /**
  * TaskImageUploader
- * Hỗ trợ upload file ảnh (PNG, JPG, WEBP, SVG) hoặc Dán ảnh từ Clipboard (Ctrl+V)
- * Tự động tối ưu dung lượng và resize nếu ảnh quá lớn để lưu trữ an toàn trong LocalStorage/Supabase
+ * Supports uploading image files (PNG, JPG, WEBP, SVG) or pasting from Clipboard (Ctrl+V)
+ * Automatically optimizes file size and resizes large images for safe storage in LocalStorage/Supabase
  * 
- * LƯU Ý BẢO MẬT & QUOTA:
- * Chỉ có Quản trị viên (tranthanhtung37@gmail.com) mới được phép nạp/tải ảnh đề bài.
- * Các tài khoản khác sẽ bị khóa với thông báo giới hạn dung lượng website.
+ * SECURITY & QUOTA NOTICE:
+ * Only the Administrator (tranthanhtung37@gmail.com) can ingest/upload custom task visuals.
+ * Non-owner accounts will see storage capacity guidance and text prompt suggestions.
  */
 export default function TaskImageUploader({ 
   imageUrl, 
   onImageChange, 
-  label = "Hình ảnh đề bài Task 1 (Biểu đồ / Bản đồ / Quy trình):",
+  label = null,
   user = null
 }) {
+  const { t, isEn } = useTranslation();
   const isOwner = isOwnerUser(user);
   const [isHovered, setIsHovered] = useState(false);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
   const fileInputRef = useRef(null);
   const dropAreaRef = useRef(null);
 
-  // Xử lý nén ảnh Base64 để tránh đầy dung lượng LocalStorage/Database
+  const displayLabel = label || (isEn ? "Task 1 Prompt Visual (Chart / Map / Process Diagram):" : "Hình ảnh đề bài Task 1 (Biểu đồ / Bản đồ / Quy trình):");
+
+  // Compress Base64 image to prevent exceeding LocalStorage/Database limits
   const processAndSetImage = (file) => {
     if (!isOwner) {
-      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      alert(getOwnerMediaRestrictionMessage(isEn));
       return;
     }
 
     if (!file || !file.type || !file.type.startsWith('image/')) {
-      alert('Vui lòng chọn hoặc dán tệp hình ảnh hợp lệ (PNG, JPG, WEBP, GIF).');
+      alert(isEn 
+        ? 'Please select or paste a valid image file (PNG, JPG, WEBP, GIF).' 
+        : 'Vui lòng chọn hoặc dán tệp hình ảnh hợp lệ (PNG, JPG, WEBP, GIF).');
       return;
     }
 
@@ -40,7 +46,7 @@ export default function TaskImageUploader({
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        // Tối ưu kích thước tối đa 1400px chiều rộng/cao để giữ nét mà nhẹ dung lượng
+        // Optimize to max 1400px width/height to balance clarity and file size
         const maxDimension = 1400;
         let width = img.width;
         let height = img.height;
@@ -61,7 +67,7 @@ export default function TaskImageUploader({
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Nén chất lượng 0.85
+        // Quality 0.85
         const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
         onImageChange(optimizedBase64);
       };
@@ -70,7 +76,7 @@ export default function TaskImageUploader({
     reader.readAsDataURL(file);
   };
 
-  // Bắt sự kiện Paste (Ctrl+V) khi người dùng đang tương tác với vùng upload
+  // Capture paste event (Ctrl+V) when user interacts with upload area
   useEffect(() => {
     if (!isOwner) return;
 
@@ -94,11 +100,11 @@ export default function TaskImageUploader({
       dropEl.addEventListener('paste', handlePaste);
       return () => dropEl.removeEventListener('paste', handlePaste);
     }
-  }, [isOwner]);
+  }, [isOwner, isEn]);
 
   const handleFileChange = (e) => {
     if (!isOwner) {
-      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      alert(getOwnerMediaRestrictionMessage(isEn));
       return;
     }
     const file = e.target.files?.[0];
@@ -111,7 +117,7 @@ export default function TaskImageUploader({
     e.preventDefault();
     setIsHovered(false);
     if (!isOwner) {
-      alert(OWNER_MEDIA_RESTRICTION_MESSAGE);
+      alert(getOwnerMediaRestrictionMessage(isEn));
       return;
     }
     const file = e.dataTransfer.files?.[0];
@@ -137,7 +143,7 @@ export default function TaskImageUploader({
       <div className="flex items-center justify-between">
         <label className="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
           <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
-          <span>{label}</span>
+          <span>{displayLabel}</span>
           {isOwner && (
             <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold flex items-center gap-0.5">
               <ShieldCheck className="w-3 h-3 text-emerald-600" />
@@ -147,12 +153,16 @@ export default function TaskImageUploader({
         </label>
         {isOwner ? (
           <span className="text-[10px] text-slate-400 font-medium">
-            Kéo thả, chọn file, hoặc bấm <strong>Ctrl + V</strong> để dán ảnh
+            {isEn ? (
+              <>Drag and drop, select file, or press <strong>Ctrl + V</strong> to paste image</>
+            ) : (
+              <>Kéo thả, chọn file, hoặc bấm <strong>Ctrl + V</strong> để dán ảnh</>
+            )}
           </span>
         ) : (
           <span className="text-[10px] text-amber-700 font-semibold flex items-center gap-1">
             <Lock className="w-3 h-3 text-amber-600" />
-            <span>Giới hạn dung lượng: Dành riêng Owner</span>
+            <span>{isEn ? 'Storage Limit: Owner Exclusive' : 'Giới hạn dung lượng: Dành riêng Owner'}</span>
           </span>
         )}
       </div>
@@ -167,14 +177,18 @@ export default function TaskImageUploader({
             <div className="space-y-1">
               <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
                 <span className="text-xs font-bold text-amber-950">
-                  Tính năng nạp hình ảnh/âm thanh đề bài chỉ dành riêng cho Quản trị viên
+                  {isEn 
+                    ? 'Attaching task visuals and audio is reserved exclusively for the Administrator' 
+                    : 'Tính năng nạp hình ảnh/âm thanh đề bài chỉ dành riêng cho Quản trị viên'}
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200/90 text-amber-900 font-extrabold font-mono">
                   {OWNER_EMAIL}
                 </span>
               </div>
               <p className="text-[11px] text-amber-900/90 leading-relaxed">
-                Do dung lượng website giới hạn nên không hỗ trợ tính năng này khi user sử dụng. Bạn vẫn có thể nạp nội dung đề bài dạng văn bản (prompt) để luyện tập bình thường.
+                {isEn 
+                  ? 'Due to website storage capacity limits, custom image uploads are restricted for standard users. You can still input text prompts to practice normally.' 
+                  : 'Do dung lượng website giới hạn nên không hỗ trợ tính năng này khi user sử dụng. Bạn vẫn có thể nạp nội dung đề bài dạng văn bản (prompt) để luyện tập bình thường.'}
               </p>
             </div>
           </div>
@@ -182,11 +196,15 @@ export default function TaskImageUploader({
           <div className="text-[11px] text-slate-600 bg-white/90 p-2.5 rounded-lg border border-amber-100 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <span>💡</span>
-              <span>Gợi ý: Hãy nhập chi tiết mô tả biểu đồ hoặc số liệu vào ô <strong>Đề bài (Prompt)</strong> bên dưới.</span>
+              <span>
+                {isEn 
+                  ? <>Tip: Please enter detailed chart descriptions or numbers into the <strong>Task Prompt</strong> field below.</>
+                  : <>Gợi ý: Hãy nhập chi tiết mô tả biểu đồ hoặc số liệu vào ô <strong>Đề bài (Prompt)</strong> bên dưới.</>}
+              </span>
             </span>
             {user?.email && (
               <span className="text-[10px] text-slate-400 font-mono shrink-0 ml-2">
-                Tài khoản: {user.email}
+                {isEn ? 'Account:' : 'Tài khoản:'} {user.email}
               </span>
             )}
           </div>
@@ -209,7 +227,7 @@ export default function TaskImageUploader({
                 className="px-3 py-1.5 rounded-lg bg-white/95 hover:bg-white text-slate-800 text-xs font-bold flex items-center space-x-1 shadow-md transition-transform active:scale-95 cursor-pointer"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-blue-600" />
-                <span>Phóng To</span>
+                <span>{isEn ? 'Zoom In' : 'Phóng To'}</span>
               </button>
 
               {isOwner && (
@@ -219,7 +237,7 @@ export default function TaskImageUploader({
                   className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center space-x-1 shadow-md transition-transform active:scale-95 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Xóa Ảnh</span>
+                  <span>{isEn ? 'Delete Image' : 'Xóa Ảnh'}</span>
                 </button>
               )}
             </div>
@@ -227,7 +245,7 @@ export default function TaskImageUploader({
 
           <div className="mt-2 flex items-center justify-between px-1">
             <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
-              ✓ Đã có ảnh đề bài Task 1
+              {isEn ? '✓ Task 1 prompt visual attached' : '✓ Đã có ảnh đề bài Task 1'}
             </span>
             {isOwner && (
               <button
@@ -235,7 +253,7 @@ export default function TaskImageUploader({
                 onClick={() => onImageChange('')}
                 className="text-[11px] text-red-600 hover:underline font-semibold cursor-pointer"
               >
-                Thay ảnh khác
+                {isEn ? 'Replace with another image' : 'Thay ảnh khác'}
               </button>
             )}
           </div>
@@ -266,11 +284,21 @@ export default function TaskImageUploader({
 
           <div className="space-y-0.5">
             <div className="text-xs font-bold text-slate-700">
-              <span className="text-blue-600 hover:underline">Tải tệp ảnh lên</span> hoặc kéo thả vào đây
+              {isEn ? (
+                <><span className="text-blue-600 hover:underline">Upload image file</span> or drag and drop here</>
+              ) : (
+                <><span className="text-blue-600 hover:underline">Tải tệp ảnh lên</span> hoặc kéo thả vào đây</>
+              )}
             </div>
             <div className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
               <Clipboard className="w-3 h-3 text-slate-500" />
-              <span>Chụp màn hình (Win+Shift+S) rồi bấm <strong>Ctrl+V</strong> để dán trực tiếp</span>
+              <span>
+                {isEn ? (
+                  <>Take a screenshot (Win+Shift+S) then press <strong>Ctrl+V</strong> to paste directly</>
+                ) : (
+                  <>Chụp màn hình (Win+Shift+S) rồi bấm <strong>Ctrl+V</strong> để dán trực tiếp</>
+                )}
+              </span>
             </div>
           </div>
         </div>
@@ -278,8 +306,12 @@ export default function TaskImageUploader({
 
       {/* Media Policy Notice */}
       <div className="text-[10px] text-slate-400 flex items-center space-x-1 pt-0.5">
-        <span className="text-emerald-600 font-bold">🔒 Tiết kiệm dung lượng:</span>
-        <span>Hình ảnh đề bài được kiểm soát dung lượng nghiêm ngặt để đảm bảo tốc độ tải trang cao nhất cho toàn bộ học viên.</span>
+        <span className="text-emerald-600 font-bold">{isEn ? '🔒 Storage Conservation:' : '🔒 Tiết kiệm dung lượng:'}</span>
+        <span>
+          {isEn 
+            ? 'Task visuals are strictly optimized and size-controlled to ensure lightning-fast page loading for all students.' 
+            : 'Hình ảnh đề bài được kiểm soát dung lượng nghiêm ngặt để đảm bảo tốc độ tải trang cao nhất cho toàn bộ học viên.'}
+        </span>
       </div>
 
       {/* Modal Zoom Preview with Zoom + / Zoom - and Pan */}
@@ -287,7 +319,7 @@ export default function TaskImageUploader({
         isOpen={isZoomModalOpen && !!imageUrl}
         onClose={() => setIsZoomModalOpen(false)}
         imageUrl={imageUrl}
-        title="Xem chi tiết ảnh đề bài Task 1"
+        title={isEn ? "Task 1 Visual Preview Details" : "Xem chi tiết ảnh đề bài Task 1"}
       />
     </div>
   );

@@ -214,4 +214,21 @@ it('12. VocabNotebookModal.jsx & vocabLocalization.js are fully localized', () =
   assert.strictEqual(getLocalizedVocabMeaning(item, true), 'spur / stimulate emerging industries into existence');
 });
 
+// 13. TaskImageUploader.jsx & DocumentIngestModal.jsx localization
+it('13. TaskImageUploader.jsx and DocumentIngestModal.jsx are fully localized', () => {
+  const uploaderContent = fs.readFileSync(path.join(__dirname, '../src/components/TaskImageUploader.jsx'), 'utf-8');
+  assert.ok(uploaderContent.includes('useTranslation'), 'TaskImageUploader missing useTranslation');
+  assert.ok(uploaderContent.includes('Upload image file'), 'TaskImageUploader missing Upload image file');
+  assert.ok(uploaderContent.includes('Tải tệp ảnh lên'), 'TaskImageUploader missing Tải tệp ảnh lên');
+  assert.ok(uploaderContent.includes('or drag and drop here'), 'TaskImageUploader missing or drag and drop here');
+  assert.ok(uploaderContent.includes('hoặc kéo thả vào đây'), 'TaskImageUploader missing hoặc kéo thả vào đây');
+  assert.ok(uploaderContent.includes("isEn ? '🔒 Storage Conservation:' : '🔒 Tiết kiệm dung lượng:'"));
+  assert.ok(uploaderContent.includes("Take a screenshot (Win+Shift+S) then press"));
+  assert.ok(uploaderContent.includes("Drag and drop, select file, or press"));
+
+  const ingestContent = fs.readFileSync(path.join(__dirname, '../src/components/DocumentIngestModal.jsx'), 'utf-8');
+  assert.ok(ingestContent.includes('useTranslation'), 'DocumentIngestModal missing useTranslation');
+  assert.ok(ingestContent.includes("isEn ? 'Fast AI Document Ingestion (Smart Ingestion)'"));
+});
+
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
