@@ -120,8 +120,7 @@ const testSuites = [
   { name: 'Step 111: Adaptive 30-Min Sprint Coach Bilingual Localization', file: 'tests/test_step111_adaptive_sprint_coach_bilingual_localization.js' },
   { name: 'Step 112: Targeted Reflex Studio (Micro-Drills) Bilingual Localization', file: 'tests/test_step112_micro_drills_studio_bilingual_localization.js' },
   { name: 'Step 113: Desktop, Tablet & Mobile Localization & Responsive UI Audit', file: 'tests/test_step113_desktop_tablet_mobile_localization_audit.js' },
-  { name: 'Step 114: Google Analytics 4 & Virtual Pageview Routing Architecture', file: 'tests/test_step114_google_analytics_virtual_pageviews_and_events.js' },
-  { name: 'Step 115: Chative.io Live Chat & Zero-Distraction Exam Mode Suppression', file: 'tests/test_step115_chative_smart_integration_and_exam_mode_suppression.js' }
+  { name: 'Step 114: Google Analytics 4 & Virtual Pageview Routing Architecture', file: 'tests/test_step114_google_analytics_virtual_pageviews_and_events.js' }
 ];
 
 console.log('===============================================================');
