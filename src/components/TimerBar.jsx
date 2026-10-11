@@ -38,6 +38,15 @@ export default function TimerBar({
   const [habitWarnings, setHabitWarnings] = useState([]);
   const [pendingSubmitMethod, setPendingSubmitMethod] = useState(null);
   const [acknowledgedTextHash, setAcknowledgedTextHash] = useState('');
+  const [submitMode, setSubmitMode] = useState(() => (apiKey ? 'ai' : 'algorithmic'));
+  const [isModeSelectorOpen, setIsModeSelectorOpen] = useState(false);
+
+  // Automatically adapt submit mode when user connects an API key
+  React.useEffect(() => {
+    if (apiKey && submitMode === 'algorithmic') {
+      setSubmitMode('ai');
+    }
+  }, [apiKey]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -91,12 +100,14 @@ export default function TimerBar({
           <span className="text-slate-600">•</span>
           <span className="text-[11px] text-slate-300 font-semibold">{wordCount}/{minWords} {isEn ? 'words' : 'từ'}</span>
           <button
-            onClick={() => handleInitiateSubmit('algorithmic')}
+            onClick={() => handleInitiateSubmit(submitMode)}
             disabled={isSubmitting}
-            className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] flex items-center space-x-1 cursor-pointer active:scale-95 transition-transform"
-            title={isEn ? "Fast algorithmic grading" : "Chấm nhanh bằng máy"}
+            className={`px-2.5 py-1 rounded-lg text-white font-black text-[11px] flex items-center space-x-1 cursor-pointer active:scale-95 transition-transform ${
+              submitMode === 'ai' ? 'bg-red-600 hover:bg-red-500' : 'bg-amber-600 hover:bg-amber-500'
+            }`}
+            title={submitMode === 'ai' ? (isEn ? "Grade with AI" : "Chấm Bằng AI") : (isEn ? "Fast algorithmic grading" : "Chấm Bằng Máy")}
           >
-            <Zap className="w-3 h-3 fill-current" />
+            {submitMode === 'ai' ? <Sparkles className="w-3 h-3 text-amber-200" /> : <Zap className="w-3 h-3 fill-current text-amber-200" />}
             <span>{isEn ? 'Submit' : 'Nộp'}</span>
           </button>
           <button
@@ -211,38 +222,120 @@ export default function TimerBar({
                 </span>
               )}
 
-              {/* 1. Algorithmic Fast Grading (Offline, 0s delay, no API Key needed) */}
-              <button
-                onClick={() => handleInitiateSubmit('algorithmic')}
-                disabled={isSubmitting}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-xl bg-slate-800 hover:bg-slate-700/90 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-amber-200 text-xs sm:text-sm font-semibold transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
-                title={isEn ? "Fast algorithmic grading (instant, no API key required)" : "Chấm điểm bằng thuật toán chuyên gia Cambridge (phản hồi ngay tức thì, không cần API Key, không tốn quota)"}
-              >
-                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 fill-amber-400/40" />
-                <span className="lg:hidden">{isEn ? 'Algorithm' : 'Chấm Máy'}</span>
-                <span className="hidden lg:inline">{isEn ? 'Algorithm Grade' : 'Chấm Bằng Máy'}</span>
-              </button>
+              {/* Unified Smart Submit Action Group */}
+              <div className="relative inline-flex items-center rounded-xl shadow-md">
+                {/* Main Action Button */}
+                <button
+                  onClick={() => handleInitiateSubmit(submitMode)}
+                  disabled={isSubmitting}
+                  className={`flex items-center space-x-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-l-xl text-white text-xs sm:text-sm font-bold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
+                    submitMode === 'ai'
+                      ? 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500'
+                      : 'bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600'
+                  }`}
+                  title={
+                    submitMode === 'ai'
+                      ? (isEn ? "In-depth AI grading with Cambridge examiner criteria" : "Chấm chi tiết với Trí tuệ nhân tạo AI (cần kết nối API Key)")
+                      : (isEn ? "Fast algorithmic grading (instant, no API key required)" : "Chấm điểm bằng thuật toán chuyên gia Cambridge (phản hồi ngay tức thì, không cần API Key)")
+                  }
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Sparkles className="w-4 h-4 animate-spin" />
+                      <span>{isEn ? 'Evaluating...' : 'Đang Chấm...'}</span>
+                    </>
+                  ) : submitMode === 'ai' ? (
+                    <>
+                      <Sparkles className="w-4 h-4 text-amber-300" />
+                      <span className="lg:hidden">{isEn ? 'AI Grade' : 'Chấm AI'}</span>
+                      <span className="hidden lg:inline">{isEn ? 'Grade with AI' : 'Nộp Bài & Chấm AI'}</span>
+                      <span className="sr-only">Chấm Bằng AI</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4 text-amber-200 fill-amber-200" />
+                      <span className="lg:hidden">{isEn ? 'Algorithm' : 'Chấm Máy'}</span>
+                      <span className="hidden lg:inline">{isEn ? 'Algorithm Grade' : 'Nộp Bài & Chấm Điểm'}</span>
+                      <span className="sr-only">Chấm Bằng Máy</span>
+                    </>
+                  )}
+                </button>
 
-              {/* 2. AI In-depth Grading */}
-              <button
-                onClick={() => handleInitiateSubmit('ai')}
-                disabled={isSubmitting}
-                className="flex-1 sm:flex-none justify-center flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 shrink-0 cursor-pointer"
-                title={isEn ? "In-depth AI grading with Cambridge examiner criteria" : "Chấm chi tiết với Trí tuệ nhân tạo AI (cần kết nối API Key)"}
-              >
-                {isSubmitting ? (
+                {/* Mode Selector Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setIsModeSelectorOpen(!isModeSelectorOpen)}
+                  className={`px-2 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] rounded-r-xl border-l border-white/20 text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center ${
+                    submitMode === 'ai' ? 'bg-rose-700 hover:bg-rose-600' : 'bg-amber-800 hover:bg-amber-700'
+                  }`}
+                  title={isEn ? "Switch grading mode: AI vs Algorithmic" : "Chuyển phương thức chấm: AI hoặc Máy"}
+                  aria-label={isEn ? "Switch grading mode" : "Chuyển phương thức chấm"}
+                >
+                  <ChevronUp className={`w-3.5 h-3.5 transition-transform duration-150 ${isModeSelectorOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Mode Selector Popover */}
+                {isModeSelectorOpen && (
                   <>
-                    <Sparkles className="w-4 h-4 animate-spin" />
-                    <span>{isEn ? 'Evaluating...' : 'Đang Chấm...'}</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    <span className="lg:hidden">{isEn ? 'AI Grade' : 'Chấm AI'}</span>
-                    <span className="hidden lg:inline">{isEn ? 'Grade with AI' : 'Chấm Bằng AI'}</span>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsModeSelectorOpen(false)} />
+                    <div className="absolute right-0 bottom-full mb-2 w-72 bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1.5 text-left text-xs">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
+                        {isEn ? 'Select Grading Engine' : 'Chọn Phương Thức Chấm'}
+                      </div>
+
+                      {/* Option 1: AI In-depth Grading */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSubmitMode('ai');
+                          setIsModeSelectorOpen(false);
+                        }}
+                        className={`w-full flex items-start space-x-2.5 p-2 rounded-xl transition-colors cursor-pointer ${
+                          submitMode === 'ai' ? 'bg-red-950/80 border border-red-500/50 text-white' : 'hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <div className="p-1.5 rounded-lg bg-red-600 text-white shrink-0 mt-0.5">
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold flex items-center justify-between text-xs">
+                            <span>{isEn ? 'Grade with AI (Cambridge)' : 'Chấm Bằng AI (Cambridge)'}</span>
+                            {submitMode === 'ai' && <span className="text-[10px] text-red-400 font-bold">✓ Đang chọn</span>}
+                          </div>
+                          <div className="text-[11px] text-slate-400 leading-tight mt-0.5">
+                            {isEn ? '4 Cambridge criteria (TR, CC, LR, GRA) with rewrite suggestions' : 'Chấm 4 tiêu chí TR, CC, LR, GRA kèm gợi ý viết lại (Cần API Key)'}
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* Option 2: Algorithmic Fast Grading */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSubmitMode('algorithmic');
+                          setIsModeSelectorOpen(false);
+                        }}
+                        className={`w-full flex items-start space-x-2.5 p-2 rounded-xl transition-colors cursor-pointer ${
+                          submitMode === 'algorithmic' ? 'bg-amber-950/80 border border-amber-500/50 text-white' : 'hover:bg-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <div className="p-1.5 rounded-lg bg-amber-600 text-white shrink-0 mt-0.5">
+                          <Zap className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold flex items-center justify-between text-xs">
+                            <span>{isEn ? 'Algorithm Grade (Instant)' : 'Chấm Bằng Máy (Tức Thì)'}</span>
+                            {submitMode === 'algorithmic' && <span className="text-[10px] text-amber-400 font-bold">✓ Đang chọn</span>}
+                          </div>
+                          <div className="text-[11px] text-slate-400 leading-tight mt-0.5">
+                            {isEn ? 'Instant 0.02s check for word count, paragraphs & vocabulary diversity' : 'Chấm ngay trong 0.02s, đếm từ, kiểm tra đoạn & từ vựng (Không cần API Key)'}
+                          </div>
+                        </div>
+                      </button>
+                    </div>
                   </>
                 )}
-              </button>
+              </div>
             </div>
           </div>
         </footer>

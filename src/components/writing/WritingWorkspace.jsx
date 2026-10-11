@@ -66,8 +66,8 @@ export default function WritingWorkspace({
   onOpenModal
 }) {
   const { isEn } = useTranslation();
-  // Phase 3 UI/UX: Minimal Focus View vs Pro Studio View Mode
-  const [writingViewMode, setWritingViewMode] = useState(() => safeGet('ielts_writing_view_mode', 'pro'));
+  // Phase 3 UI/UX: Minimal Focus View vs Pro Studio View Mode (Defaults to clean Minimal for learners)
+  const [writingViewMode, setWritingViewMode] = useState(() => safeGet('ielts_writing_view_mode', 'minimal'));
 
   const handleToggleWritingViewMode = (newMode) => {
     const next = newMode || (writingViewMode === 'minimal' ? 'pro' : 'minimal');
