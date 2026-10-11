@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ielts-practice-vietnamese.vercel.app/sitemap.xml
