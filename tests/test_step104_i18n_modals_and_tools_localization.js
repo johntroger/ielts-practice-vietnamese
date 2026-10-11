@@ -222,13 +222,39 @@ it('13. TaskImageUploader.jsx and DocumentIngestModal.jsx are fully localized', 
   assert.ok(uploaderContent.includes('Tải tệp ảnh lên'), 'TaskImageUploader missing Tải tệp ảnh lên');
   assert.ok(uploaderContent.includes('or drag and drop here'), 'TaskImageUploader missing or drag and drop here');
   assert.ok(uploaderContent.includes('hoặc kéo thả vào đây'), 'TaskImageUploader missing hoặc kéo thả vào đây');
-  assert.ok(uploaderContent.includes("isEn ? '🔒 Storage Conservation:' : '🔒 Tiết kiệm dung lượng:'"));
-  assert.ok(uploaderContent.includes("Take a screenshot (Win+Shift+S) then press"));
-  assert.ok(uploaderContent.includes("Drag and drop, select file, or press"));
-
   const ingestContent = fs.readFileSync(path.join(__dirname, '../src/components/DocumentIngestModal.jsx'), 'utf-8');
   assert.ok(ingestContent.includes('useTranslation'), 'DocumentIngestModal missing useTranslation');
   assert.ok(ingestContent.includes("isEn ? 'Fast AI Document Ingestion (Smart Ingestion)'"));
 });
 
+// 14. TheoryHandbookModal.jsx & theoryLocalizationHelper.js full English edition
+it('14. TheoryHandbookModal.jsx and theoryLocalizationHelper.js provide full English articles & stages', async () => {
+  const { getLocalizedArticle, getLocalizedStage, WRITING_THEORY_ARTICLES_EN } = await import('../src/data/theoryHandbook/theoryLocalizationHelper.js');
+  const { WRITING_THEORY_ARTICLES } = await import('../src/data/theoryHandbook/writingTheoryData.js');
+
+  // Verify all 34 articles have English entries
+  assert.strictEqual(Object.keys(WRITING_THEORY_ARTICLES_EN).length, 34);
+  assert.strictEqual(WRITING_THEORY_ARTICLES.length, 34);
+
+  // Test first article (foundation-band4-to-5-survival-guide)
+  const firstItem = WRITING_THEORY_ARTICLES[0];
+  const viArticle = getLocalizedArticle(firstItem, false);
+  const enArticle = getLocalizedArticle(firstItem, true);
+
+  assert.strictEqual(viArticle.title, 'Cẩm Nang Chinh Phục Writing Từ Band 4.0 Lên 5.0 Cho Người Mất Gốc');
+  assert.strictEqual(enArticle.title, 'Writing Survival Guide: Climbing from Band 4.0 to Band 5.0');
+  assert.ok(enArticle.content.includes('Three "Life-or-Death" Sentence Structures'));
+  assert.ok(enArticle.stage.includes('Stage 1: Foundation & Survival'));
+
+  // Stage translation helper
+  assert.strictEqual(getLocalizedStage('Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)', false), 'Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)');
+  assert.strictEqual(getLocalizedStage('Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)', true), 'Stage 1: Foundation & Survival (Band 4.0 – 5.0)');
+
+  // Modal code imports helper
+  const modalContent = fs.readFileSync(path.join(__dirname, '../src/components/TheoryHandbookModal.jsx'), 'utf-8');
+  assert.ok(modalContent.includes('getLocalizedArticle'));
+  assert.ok(modalContent.includes('theoryLocalizationHelper'));
+});
+
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
+

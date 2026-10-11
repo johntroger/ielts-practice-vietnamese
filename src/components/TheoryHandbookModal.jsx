@@ -10,6 +10,7 @@ import { THEORY_HANDBOOK } from '../data/theoryHandbook';
 import { GITBOOK_DOCS_BASE_URL } from '../core/featureRegistry';
 import { useTranslation } from '../i18n';
 import { THEORY_I18N_EN } from '../services/theoryContextService';
+import { getLocalizedArticle, getLocalizedStage } from '../data/theoryHandbook/theoryLocalizationHelper';
 
 // Helper to render bold, italic, code and inline highlights
 function renderInlineText(text) {
@@ -323,7 +324,8 @@ export default function TheoryHandbookModal({
   };
 
   const handleCopy = (item) => {
-    const textToCopy = `${item.title}\n${item.summary}\n\n${item.content}`;
+    const localized = getLocalizedArticle(item, isEn);
+    const textToCopy = `${localized.title}\n${localized.summary}\n\n${localized.content}`;
     navigator.clipboard.writeText(textToCopy);
     setCopiedId(item.id);
     setTimeout(() => {
@@ -557,10 +559,14 @@ export default function TheoryHandbookModal({
 
     const q = searchQuery.toLowerCase().trim();
     const enMeta = THEORY_I18N_EN[item.id];
+    const localized = getLocalizedArticle(item, true);
     const matchesSearch = 
       item.title.toLowerCase().includes(q) ||
       item.summary.toLowerCase().includes(q) ||
       item.content.toLowerCase().includes(q) ||
+      localized.title.toLowerCase().includes(q) ||
+      localized.summary.toLowerCase().includes(q) ||
+      localized.content.toLowerCase().includes(q) ||
       (enMeta && (
         enMeta.title?.toLowerCase().includes(q) ||
         enMeta.tip?.toLowerCase().includes(q) ||
@@ -1233,7 +1239,8 @@ export default function TheoryHandbookModal({
               </div>
 
               {filteredHandbook.length > 0 ? (
-                filteredHandbook.map(item => {
+                filteredHandbook.map(rawItem => {
+                  const item = getLocalizedArticle(rawItem, isEn);
                   const isCopied = copiedId === item.id;
                   const itemColor = 
                     item.skill === 'reading' 
@@ -1255,12 +1262,12 @@ export default function TheoryHandbookModal({
                           ? 'ring-2 ring-amber-500 border-amber-400 shadow-md bg-amber-50/15'
                           : itemColor === 'blue' 
                           ? 'border-blue-100 hover:border-blue-200' 
-                          : itemColor === 'emerald'
-                          ? 'border-emerald-100 hover:border-emerald-200'
-                          : itemColor === 'purple'
-                          ? 'border-purple-100 hover:border-purple-200'
-                          : itemColor === 'teal'
-                          ? 'border-teal-100 hover:border-teal-200'
+                          : itemColor === 'emerald' 
+                          ? 'border-emerald-100 hover:border-emerald-200' 
+                          : itemColor === 'purple' 
+                          ? 'border-purple-100 hover:border-purple-200' 
+                          : itemColor === 'teal' 
+                          ? 'border-teal-100 hover:border-teal-200' 
                           : 'border-slate-200 hover:border-slate-300'
                       }`}
                     >
@@ -1311,10 +1318,10 @@ export default function TheoryHandbookModal({
                               ? 'text-teal-900'
                               : 'text-slate-900'
                           }`}>
-                            {(isEn && THEORY_I18N_EN[item.id]?.title) ? THEORY_I18N_EN[item.id].title : item.title}
+                            {item.title}
                           </h3>
                           <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                            {(isEn && THEORY_I18N_EN[item.id]?.tip) ? THEORY_I18N_EN[item.id].tip : item.summary}
+                            {item.summary}
                           </p>
                         </div>
 
@@ -1326,7 +1333,7 @@ export default function TheoryHandbookModal({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-sky-200/90 bg-sky-50/70 hover:bg-sky-100 text-sky-800 text-xs font-semibold transition-all cursor-pointer shadow-2xs shrink-0"
-                              title={isEn ? `Read "${(isEn && THEORY_I18N_EN[item.id]?.title) ? THEORY_I18N_EN[item.id].title : item.title}" directly on Web Guide` : `Đọc bài "${item.title}" trực tiếp trên GitBook`}
+                              title={isEn ? `Read "${item.title}" directly on Web Guide` : `Đọc bài "${item.title}" trực tiếp trên GitBook`}
                             >
                               <BookOpen className="w-3.5 h-3.5 text-sky-600" />
                               <span className="hidden sm:inline">{isEn ? 'Web Guide' : 'Bản Web'}</span>
