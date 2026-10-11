@@ -186,6 +186,14 @@ it('9. GrowthAnalyticsModal.jsx integrates useTranslation and localized headers'
   assert.ok(content.includes('useTranslation'), 'GrowthAnalyticsModal missing useTranslation');
   assert.ok(content.includes("modals.analytics.title"));
   assert.ok(content.includes("modals.analytics.subtitle"));
+  assert.ok(content.includes("isEn ? 'Desired Overall Band Target:' : 'Mục tiêu Overall Band mong muốn:'"));
+  assert.ok(content.includes("isEn ? 'Weekly Study Pace:' : 'Thời lượng học mỗi tuần:'"));
+  assert.ok(content.includes("isEn ? 'Projected Finish Date' : 'Dự Kiến Cán Đích'"));
+  assert.ok(content.includes("isEn ? 'Total Study Hours Needed' : 'Giờ Luyện Tập Cần'"));
+  assert.ok(content.includes("isEn ? 'Target Completion Progress' : 'Tiến Trình Cán Đích'"));
+  assert.ok(content.includes("isEn ? 'Primary Priority Bottleneck' : 'Điểm Nghẽn Cần Khắc Phục Ưu Tiên Số 1'"));
+  assert.ok(content.includes("isEn ? '4-Skill Gap Matrix Breakdown' : 'Phân Tích Chi Tiết 4 Kỹ Năng (Skill Gaps Breakdown)'"));
+  assert.ok(content.includes("isEn ? 'Got It & Continue Practice' : 'Đã hiểu & Tiếp tục luyện thi'"));
 });
 
 // 10. WeeklyReportModal.jsx

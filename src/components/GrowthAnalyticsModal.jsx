@@ -5,7 +5,9 @@ import {
 } from 'lucide-react';
 import { 
   generateGrowthAnalyticsReport, 
-  DEFAULT_WEEKLY_STUDY_HOURS 
+  DEFAULT_WEEKLY_STUDY_HOURS,
+  SKILL_LABELS_EN,
+  SKILL_PRESCRIPTIONS_EN
 } from '../services/growthPredictorService.js';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -66,7 +68,7 @@ export default function GrowthAnalyticsModal({
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer"
-            aria-label="Đóng"
+            aria-label={isEn ? "Close" : "Đóng"}
           >
             <X className="w-4 h-4" />
           </button>
@@ -80,7 +82,7 @@ export default function GrowthAnalyticsModal({
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-2 flex items-center space-x-1.5">
                 <Target className="w-3.5 h-3.5 text-purple-400" />
-                <span>Mục tiêu Overall Band mong muốn:</span>
+                <span>{isEn ? 'Desired Overall Band Target:' : 'Mục tiêu Overall Band mong muốn:'}</span>
               </label>
               <div className="flex items-center space-x-2">
                 {[6.5, 7.0, 7.5, 8.0, 8.5].map(b => (
@@ -103,9 +105,9 @@ export default function GrowthAnalyticsModal({
               <label className="text-xs font-bold text-slate-300 block mb-2 flex items-center justify-between">
                 <span className="flex items-center space-x-1.5">
                   <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Thời lượng học mỗi tuần:</span>
+                  <span>{isEn ? 'Weekly Study Pace:' : 'Thời lượng học mỗi tuần:'}</span>
                 </span>
-                <span className="text-indigo-400 font-mono font-bold">{weeklyHours} giờ / tuần</span>
+                <span className="text-indigo-400 font-mono font-bold">{isEn ? `${weeklyHours} hrs / week` : `${weeklyHours} giờ / tuần`}</span>
               </label>
               <div className="flex items-center space-x-2">
                 {[4, 6, 8, 12, 16].map(h => (
@@ -118,7 +120,7 @@ export default function GrowthAnalyticsModal({
                         : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-slate-200'
                     }`}
                   >
-                    {h}h/tuần
+                    {isEn ? `${h}h/wk` : `${h}h/tuần`}
                   </button>
                 ))}
               </div>
@@ -133,7 +135,7 @@ export default function GrowthAnalyticsModal({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center space-x-1.5">
                   <Calendar className="w-3.5 h-3.5" />
-                  <span>Dự Kiến Cán Đích</span>
+                  <span>{isEn ? 'Projected Finish Date' : 'Dự Kiến Cán Đích'}</span>
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-500/20 text-purple-200">
                   ETA
@@ -141,10 +143,12 @@ export default function GrowthAnalyticsModal({
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  {report.estimatedCompletionDate}
+                  {report.totalHoursRequired <= 0 ? (isEn ? 'Target Achieved!' : 'Đã đạt mục tiêu!') : report.estimatedCompletionDate}
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  {report.weeksRemaining > 0 ? `Còn khoảng ${report.weeksRemaining} tuần (~${report.daysRemaining} ngày) nữa` : 'Bạn đã chạm hoặc vượt mốc mục tiêu!'}
+                  {report.weeksRemaining > 0 
+                    ? (isEn ? `Approx. ${report.weeksRemaining} weeks (~${report.daysRemaining} days) remaining` : `Còn khoảng ${report.weeksRemaining} tuần (~${report.daysRemaining} ngày) nữa`) 
+                    : (isEn ? 'You have reached or exceeded your target band!' : 'Bạn đã chạm hoặc vượt mốc mục tiêu!')}
                 </p>
               </div>
             </div>
@@ -154,7 +158,7 @@ export default function GrowthAnalyticsModal({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center space-x-1.5">
                   <Zap className="w-3.5 h-3.5" />
-                  <span>Giờ Luyện Tập Cần</span>
+                  <span>{isEn ? 'Total Study Hours Needed' : 'Giờ Luyện Tập Cần'}</span>
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/20 text-indigo-200">
                   Total
@@ -162,10 +166,12 @@ export default function GrowthAnalyticsModal({
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-indigo-200 tracking-tight">
-                  {report.totalHoursRequired} <span className="text-base font-normal text-slate-400">giờ</span>
+                  {report.totalHoursRequired} <span className="text-base font-normal text-slate-400">{isEn ? 'hrs' : 'giờ'}</span>
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  Khoảng cách: +{report.overallGap} band (Hiện tại {report.currentScores.overall} → Target {report.targetBand})
+                  {isEn 
+                    ? `Gap: +${report.overallGap} band (Current ${report.currentScores.overall} → Target ${report.targetBand})` 
+                    : `Khoảng cách: +${report.overallGap} band (Hiện tại ${report.currentScores.overall} → Target ${report.targetBand})`}
                 </p>
               </div>
             </div>
@@ -175,7 +181,7 @@ export default function GrowthAnalyticsModal({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center space-x-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Tiến Trình Cán Đích</span>
+                  <span>{isEn ? 'Target Completion Progress' : 'Tiến Trình Cán Đích'}</span>
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-200">
                   {report.progressPercentage}%
@@ -189,7 +195,7 @@ export default function GrowthAnalyticsModal({
                   />
                 </div>
                 <p className="text-xs text-slate-400 mt-2">
-                  Dựa trên baseline điểm khởi đầu Band 4.0
+                  {isEn ? 'Calibrated from Band 4.0 starting baseline' : 'Dựa trên baseline điểm khởi đầu Band 4.0'}
                 </p>
               </div>
             </div>
@@ -204,16 +210,16 @@ export default function GrowthAnalyticsModal({
                 </div>
                 <div>
                   <h4 className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center space-x-1.5">
-                    <span>Điểm Nghẽn Cần Khắc Phục Ưu Tiên Số 1</span>
+                    <span>{isEn ? 'Primary Priority Bottleneck' : 'Điểm Nghẽn Cần Khắc Phục Ưu Tiên Số 1'}</span>
                     <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-amber-500/20 text-amber-300">
-                      Cần +{report.skillAnalysis.primaryBottleneck.gap} band
+                      {isEn ? `Needs +${report.skillAnalysis.primaryBottleneck.gap} band` : `Cần +${report.skillAnalysis.primaryBottleneck.gap} band`}
                     </span>
                   </h4>
                   <p className="text-sm font-bold text-white mt-0.5">
-                    {report.skillAnalysis.primaryBottleneck.label} (Đang ở Band {report.skillAnalysis.primaryBottleneck.currentBand.toFixed(1)})
+                    {(isEn ? (SKILL_LABELS_EN[report.skillAnalysis.primaryBottleneck.skill] || report.skillAnalysis.primaryBottleneck.skill) : report.skillAnalysis.primaryBottleneck.label)} ({isEn ? `Currently at Band ${report.skillAnalysis.primaryBottleneck.currentBand.toFixed(1)}` : `Đang ở Band ${report.skillAnalysis.primaryBottleneck.currentBand.toFixed(1)}`})
                   </p>
                   <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                    💡 <strong className="text-amber-200">Lời khuyên Cambridge:</strong> {report.skillAnalysis.primaryBottleneck.prescription}
+                    💡 <strong className="text-amber-200">{isEn ? 'Cambridge Action Advice:' : 'Lời khuyên Cambridge:'}</strong> {isEn ? (SKILL_PRESCRIPTIONS_EN[report.skillAnalysis.primaryBottleneck.skill] || report.skillAnalysis.primaryBottleneck.prescription) : report.skillAnalysis.primaryBottleneck.prescription}
                   </p>
                 </div>
               </div>
@@ -226,7 +232,7 @@ export default function GrowthAnalyticsModal({
                   }}
                   className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs transition-colors shrink-0 flex items-center space-x-1.5 cursor-pointer shadow-md"
                 >
-                  <span>Luyện {report.skillAnalysis.primaryBottleneck.label.split(' ')[0]} ngay</span>
+                  <span>{isEn ? `Practice ${SKILL_LABELS_EN[report.skillAnalysis.primaryBottleneck.skill] || report.skillAnalysis.primaryBottleneck.skill} now` : `Luyện ${report.skillAnalysis.primaryBottleneck.label.split(' ')[0]} ngay`}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               )}
@@ -237,7 +243,7 @@ export default function GrowthAnalyticsModal({
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-wider mb-3 flex items-center space-x-2">
               <ShieldCheck className="w-4 h-4 text-purple-400" />
-              <span>Phân Tích Chi Tiết 4 Kỹ Năng (Skill Gaps Breakdown)</span>
+              <span>{isEn ? '4-Skill Gap Matrix Breakdown' : 'Phân Tích Chi Tiết 4 Kỹ Năng (Skill Gaps Breakdown)'}</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -255,24 +261,24 @@ export default function GrowthAnalyticsModal({
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-2">
                         {skillIcons[item.skill]}
-                        <span className="font-bold text-sm text-white">{item.label}</span>
+                        <span className="font-bold text-sm text-white">{isEn ? (SKILL_LABELS_EN[item.skill] || item.skill) : item.label}</span>
                       </div>
                       <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-lg ${
                         isReached 
                           ? 'bg-emerald-500/20 text-emerald-300' 
                           : 'bg-amber-500/20 text-amber-300'
                       }`}>
-                        {isReached ? 'Đã đạt' : `Thiếu ${item.gap} band (~${item.hoursNeeded}h)`}
+                        {isReached ? (isEn ? 'Achieved ✓' : 'Đã đạt') : (isEn ? `Deficit: ${item.gap} band (~${item.hoursNeeded}h)` : `Thiếu ${item.gap} band (~${item.hoursNeeded}h)`)}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                      <span>Hiện tại: <strong className="text-white">{item.currentBand.toFixed(1)}</strong></span>
-                      <span>Mục tiêu: <strong className="text-purple-300">{item.targetBand.toFixed(1)}</strong></span>
+                      <span>{isEn ? 'Current:' : 'Hiện tại:'} <strong className="text-white">{item.currentBand.toFixed(1)}</strong></span>
+                      <span>{isEn ? 'Target:' : 'Mục tiêu:'} <strong className="text-purple-300">{item.targetBand.toFixed(1)}</strong></span>
                     </div>
 
                     <p className="text-[11px] text-slate-400 leading-normal border-t border-slate-800/80 pt-2">
-                      {item.prescription}
+                      {isEn ? (SKILL_PRESCRIPTIONS_EN[item.skill] || item.prescription) : item.prescription}
                     </p>
                   </div>
                 );
@@ -286,13 +292,13 @@ export default function GrowthAnalyticsModal({
         <div className="px-6 py-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between shrink-0">
           <p className="text-xs text-slate-400 flex items-center space-x-1.5">
             <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-            <span>Định mức được hiệu chỉnh tự động khi bạn làm thêm bài test mới.</span>
+            <span>{isEn ? 'Calibration automatically updates as you complete new tests.' : 'Định mức được hiệu chỉnh tự động khi bạn làm thêm bài test mới.'}</span>
           </p>
           <button
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-colors cursor-pointer"
           >
-            Đã hiểu & Tiếp tục luyện thi
+            {isEn ? 'Got It & Continue Practice' : 'Đã hiểu & Tiếp tục luyện thi'}
           </button>
         </div>
       </div>

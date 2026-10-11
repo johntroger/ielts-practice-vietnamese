@@ -15,11 +15,25 @@ export const SKILL_LABELS = {
   speaking: 'Speaking (Nói)'
 };
 
+export const SKILL_LABELS_EN = {
+  listening: 'Listening',
+  reading: 'Reading',
+  writing: 'Writing',
+  speaking: 'Speaking'
+};
+
 export const SKILL_PRESCRIPTIONS = {
   writing: 'Tập trung củng cố tính mạch lạc (Coherence & Cohesion), luyện viết câu phức đa mệnh đề và tránh lỗi quả quyết tuyệt đối bằng Academic Hedging.',
   speaking: 'Kéo dài thời lượng phát triển ý tưởng trong Part 3, sử dụng các từ nối tự nhiên (Discourse Markers) để hạn chế ngập ngừng và filler words.',
   reading: 'Luyện kỹ năng Skimming & Scanning định vị từ khóa paraphrased, giải tỏa bẫy câu hỏi True/False/Not Given và Matching Headings.',
   listening: 'Tăng tốc độ ghi chú chính xác cho Section 3 & 4, dự đoán từ loại cần điền và làm quen với đa dạng accent bản xứ (UK, Aus, US).'
+};
+
+export const SKILL_PRESCRIPTIONS_EN = {
+  writing: 'Focus on strengthening Coherence & Cohesion, construct multi-clause complex sentences, and hedge absolute assertions using Academic Hedging.',
+  speaking: 'Extend idea development in Part 3, utilize natural discourse markers to eliminate hesitation, and minimize non-functional filler words.',
+  reading: 'Master Skimming & Scanning for paraphrased keywords, and dismantle distractors in True/False/Not Given and Matching Headings questions.',
+  listening: 'Increase precise note-taking speed for Sections 3 & 4, predict required word categories, and familiarize yourself with native accents (UK, AUS, US).'
 };
 
 /**
