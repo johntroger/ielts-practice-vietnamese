@@ -197,6 +197,10 @@ it('11. HistoryModal.jsx integrates useTranslation and localized action buttons'
   assert.ok(content.includes('useTranslation'), 'HistoryModal missing useTranslation');
   assert.ok(content.includes("modals.history.title"));
   assert.ok(content.includes("Clear Writing"));
+  assert.ok(content.includes("isEn ? 'You have no Reading test history yet. Complete and submit a reading test to record your history!'"));
+  assert.ok(content.includes("isEn ? 'You have no Listening test history yet. Complete and submit a listening test to record your history!'"));
+  assert.ok(content.includes("isEn ? 'You have no Speaking test history yet. Complete and submit a speaking test to record your history!'"));
+  assert.ok(content.includes("isEn ? 'You have no Writing submissions yet. Complete and submit an essay to record your history!'"));
 });
 
 // 12. VocabNotebookModal.jsx & vocabLocalization.js
