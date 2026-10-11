@@ -8,6 +8,21 @@
  * - Tự động đồng bộ với Help Center Modal, Spotlight Search và Changelog Timeline.
  * - Được bảo vệ bằng bộ kiểm thử tự động (tests/test_step25_help_registry.js).
  */
+import { 
+  FEATURE_LOCALIZATION_EN, 
+  BADGE_LOCALIZATION_EN, 
+  getLocalizedFeature, 
+  getLocalizedFeatures, 
+  getLocalizedBadge 
+} from './featureLocalization.js';
+
+export { 
+  FEATURE_LOCALIZATION_EN, 
+  BADGE_LOCALIZATION_EN, 
+  getLocalizedFeature, 
+  getLocalizedFeatures, 
+  getLocalizedBadge 
+};
 
 export const SKILL_DEFINITIONS = {
   writing: {
@@ -1184,13 +1199,14 @@ export function searchFeatures(query, options = {}) {
     // 3. Nếu không có từ khóa tìm kiếm -> thỏa mãn
     if (!cleanQuery) return true;
 
-    // 4. Tìm kiếm từ khóa trong các trường siêu dữ liệu
-    const titleMatch = feature.title?.toLowerCase().includes(cleanQuery);
-    const descMatch = feature.shortDesc?.toLowerCase().includes(cleanQuery);
-    const badgeMatch = feature.badge?.toLowerCase().includes(cleanQuery);
+    // 4. Tìm kiếm từ khóa trong các trường siêu dữ liệu (Hỗ trợ song ngữ Tiếng Việt & Tiếng Anh)
+    const loc = FEATURE_LOCALIZATION_EN[feature.id];
+    const titleMatch = feature.title?.toLowerCase().includes(cleanQuery) || loc?.title?.toLowerCase().includes(cleanQuery);
+    const descMatch = feature.shortDesc?.toLowerCase().includes(cleanQuery) || loc?.shortDesc?.toLowerCase().includes(cleanQuery);
+    const badgeMatch = feature.badge?.toLowerCase().includes(cleanQuery) || loc?.badge?.toLowerCase().includes(cleanQuery);
     const shortcutMatch = feature.shortcut?.toLowerCase().includes(cleanQuery);
-    const highlightsMatch = feature.highlights?.some(h => h.toLowerCase().includes(cleanQuery));
-    const usageMatch = feature.usageGuide?.toLowerCase().includes(cleanQuery);
+    const highlightsMatch = feature.highlights?.some(h => h.toLowerCase().includes(cleanQuery)) || loc?.highlights?.some(h => h.toLowerCase().includes(cleanQuery));
+    const usageMatch = feature.usageGuide?.toLowerCase().includes(cleanQuery) || loc?.usageGuide?.toLowerCase().includes(cleanQuery);
     const skillMatch = feature.targetSkills?.some(s => s.toLowerCase().includes(cleanQuery));
 
     return Boolean(

@@ -41,7 +41,8 @@ import {
   searchFeatures, 
   dispatchFeatureAction,
   getRecentChangelog,
-  getFeatureGitBookUrl
+  getFeatureGitBookUrl,
+  getLocalizedFeature
 } from '../core/featureRegistry';
 import { openModal as storeOpenModal } from '../core/modalStore';
 import { useTranslation } from '../i18n';
@@ -156,8 +157,9 @@ export default function FeaturesGuideModal({
   }, [filteredFeatures, activeFeatureId]);
 
   const activeFeature = useMemo(() => {
-    return FEATURE_REGISTRY.find(f => f.id === activeFeatureId) || filteredFeatures[0] || FEATURE_REGISTRY[0];
-  }, [activeFeatureId, filteredFeatures]);
+    const raw = FEATURE_REGISTRY.find(f => f.id === activeFeatureId) || filteredFeatures[0] || FEATURE_REGISTRY[0];
+    return getLocalizedFeature(raw, isEn);
+  }, [activeFeatureId, filteredFeatures, isEn]);
 
   const ActiveIcon = ICON_MAP[activeFeature?.icon] || Sparkles;
 
@@ -468,6 +470,7 @@ export default function FeaturesGuideModal({
                 </div>
               ) : (
                 filteredFeatures.map(feat => {
+                  const localizedFeat = getLocalizedFeature(feat, isEn);
                   const ItemIcon = ICON_MAP[feat.icon] || Sparkles;
                   const isActive = feat.id === activeFeature?.id;
                   
@@ -495,24 +498,24 @@ export default function FeaturesGuideModal({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
                           <span className={`text-xs font-bold line-clamp-1 ${isActive ? 'text-white' : 'text-slate-900'}`}>
-                            {feat.title}
+                            {localizedFeat.title}
                           </span>
                         </div>
 
                         <p className={`text-[11px] line-clamp-2 mt-0.5 leading-snug ${
                           isActive ? 'text-slate-300' : 'text-slate-500'
                         }`}>
-                          {feat.shortDesc}
+                          {localizedFeat.shortDesc}
                         </p>
 
                         <div className="flex items-center space-x-2 mt-2">
-                          {feat.badge && (
+                          {localizedFeat.badge && (
                             <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
                               isActive 
                                 ? 'bg-red-500/20 text-red-300 border border-red-500/40' 
                                 : 'bg-red-50 text-red-700 border border-red-200'
                             }`}>
-                              {feat.badge}
+                              {localizedFeat.badge}
                             </span>
                           )}
 
@@ -587,7 +590,7 @@ export default function FeaturesGuideModal({
                         className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs sm:text-sm font-extrabold shadow-lg shadow-red-900/30 flex items-center space-x-2 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                       >
                         <Zap className="w-4 h-4 fill-white" />
-                        <span>{isEn ? (activeFeature.quickAction.labelEn || 'Launch This Feature') : (activeFeature.quickAction.label || 'Thử Ngay Tính Năng Này')}</span>
+                        <span>{isEn ? (activeFeature.quickAction.label || 'Launch This Feature') : (activeFeature.quickAction.label || 'Thử Ngay Tính Năng Này')}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     )}
@@ -698,7 +701,7 @@ export default function FeaturesGuideModal({
                       onClick={() => handleLaunchFeature(activeFeature)}
                       className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all shrink-0 shadow-sm flex items-center justify-center gap-1.5"
                     >
-                      <span>{isEn ? (activeFeature.quickAction.labelEn || 'Get Started Now') : (activeFeature.quickAction.label || 'Bắt Đầu Ngay')}</span>
+                      <span>{isEn ? (activeFeature.quickAction.label || 'Get Started Now') : (activeFeature.quickAction.label || 'Bắt Đầu Ngay')}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   ) : (

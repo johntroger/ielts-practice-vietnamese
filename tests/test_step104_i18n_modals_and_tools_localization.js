@@ -38,6 +38,11 @@ import {
   getLocalizedGrammarTitle,
   getLocalizedSpellingTrap
 } from '../src/utils/vocabLocalization.js';
+import { 
+  FEATURE_REGISTRY, 
+  getLocalizedFeature, 
+  FEATURE_LOCALIZATION_EN 
+} from '../src/core/featureRegistry.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -347,6 +352,35 @@ it('15. VocabGrammarSpellingModal grammar & spelling dynamic localization conver
   const localizedSp = getLocalizedSpellingTrap(customSpelling, true);
   assert.ok(localizedSp.rule.includes('Envi-ron-ment'));
   assert.ok(localizedSp.explanation.includes('environner'));
+});
+
+// 16. FeaturesGuideModal.jsx and featureLocalization.js provide complete English translations
+it('16. FeaturesGuideModal.jsx and featureLocalization.js localize all 44 features and badges', () => {
+  const content = fs.readFileSync(path.join(__dirname, '../src/components/FeaturesGuideModal.jsx'), 'utf-8');
+  assert.ok(content.includes('getLocalizedFeature'), 'FeaturesGuideModal missing getLocalizedFeature');
+  assert.ok(content.includes('CATEGORY_LABELS_EN'), 'FeaturesGuideModal missing CATEGORY_LABELS_EN');
+  
+  // Verify all 44 features have localization
+  assert.strictEqual(FEATURE_REGISTRY.length, 44);
+  FEATURE_REGISTRY.forEach(f => {
+    const loc = getLocalizedFeature(f, true);
+    assert.ok(loc.title, `Feature ${f.id} missing titleEn`);
+    assert.ok(loc.shortDesc, `Feature ${f.id} missing shortDescEn`);
+    assert.ok(loc.badge, `Feature ${f.id} missing badgeEn`);
+    assert.ok(Array.isArray(loc.highlights) && loc.highlights.length >= 2, `Feature ${f.id} missing highlightsEn`);
+    assert.ok(loc.usageGuide, `Feature ${f.id} missing usageGuideEn`);
+  });
+
+  const fSprint = FEATURE_REGISTRY.find(f => f.id === 'feat-adaptive-30min-sprint');
+  const localizedSprint = getLocalizedFeature(fSprint, true);
+  assert.strictEqual(localizedSprint.title, 'Adaptive 30-Min Sprint Coach');
+  assert.strictEqual(localizedSprint.badge, 'New Release');
+  assert.strictEqual(localizedSprint.quickAction.label, 'Launch 30-Min Sprint');
+
+  const fPacing = FEATURE_REGISTRY.find(f => f.id === 'feat-speaking-pacing-bar');
+  const localizedPacing = getLocalizedFeature(fPacing, true);
+  assert.strictEqual(localizedPacing.title, 'Speaking Part 2 Pacing Bar (2-Minute Cadence Guide)');
+  assert.strictEqual(localizedPacing.badge, 'New Release');
 });
 
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
