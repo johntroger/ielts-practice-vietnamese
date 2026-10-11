@@ -42,7 +42,11 @@ export default function SmartRecommendationBanner({
 }) {
   const { t, isEn } = useTranslation();
   const [isDismissed, setIsDismissed] = useState(() => isRecommendationDismissedToday());
-  const [isCollapsed, setIsCollapsed] = useState(() => safeGet('ielts_rec_banner_collapsed', 'false') === 'true');
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = safeGet('ielts_rec_banner_collapsed', null);
+    if (saved !== null) return saved === 'true';
+    return writingViewMode === 'minimal';
+  });
   const [currentIndex, setCurrentIndex] = useState(() => getSavedRecommendationIndex());
 
   // Generate prioritized recommendations list

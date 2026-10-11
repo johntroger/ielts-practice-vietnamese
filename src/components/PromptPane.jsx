@@ -565,8 +565,13 @@ export default function PromptPane({
       )}
 
       {/* Writing Helpers & AI Diagnostic Tools (Brainstorming, Idea Matrix, Thesis & PEEL Checkers) */}
-      <div className="pt-4 border-t border-slate-200 space-y-4">
-          
+      <div className="pt-4 border-t border-slate-200 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              {isEn ? "Learning Supports & AI Coaching:" : "Công cụ hỗ trợ & Gợi ý làm bài:"}
+            </span>
+          </div>
+
           {/* Action Row */}
           <div className="flex flex-wrap gap-2">
             
@@ -574,7 +579,7 @@ export default function PromptPane({
             {task.taskNumber === 2 && onOpenIdeaMatrix && (
               <button
                 onClick={onOpenIdeaMatrix}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 text-xs font-semibold shadow-2xs transition-colors"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border border-indigo-200/80 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-900 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
               >
                 <Compass className="w-3.5 h-3.5 text-indigo-600" />
                 <span>{isEn ? "Multi-Perspective Idea Matrix" : "Ma Trận Ý Tưởng Đa Chiều"}</span>

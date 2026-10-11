@@ -115,13 +115,13 @@ export default function WritingSubHeaderToolbar({
           )}
         </div>
 
-        {/* 2. Sinh Đề Mới Bằng AI (Primary Action) */}
+        {/* 2. Sinh Đề Mới Bằng AI (Secondary Task Action) */}
         <button
           onClick={onOpenGenerator}
-          className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-bold shrink-0 transition-all cursor-pointer shadow-xs active:scale-95 group"
+          className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/90 text-rose-700 border border-rose-200/80 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs active:scale-95 group"
           title={isEn ? "Generate new trend-aligned IELTS Writing Task with AI" : "Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng bằng AI"}
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-300 group-hover:scale-110 transition-transform shrink-0" />
+          <Sparkles className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
           <span>{isEn ? "Generate (AI)" : "Sinh Đề (AI)"}</span>
         </button>
       </div>
