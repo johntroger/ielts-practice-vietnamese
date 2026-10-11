@@ -14,9 +14,23 @@ import {
   ShieldAlert,
   AlertTriangle
 } from 'lucide-react';
-import { lookupSynonyms, ACADEMIC_THESAURUS } from '../data/academicThesaurus';
+import { lookupSynonyms, ACADEMIC_THESAURUS, getLocalizedSynonymMeaning } from '../data/academicThesaurus';
 import { IELTS_TOPICS } from '../data/topics';
 import { useTranslation } from '../i18n/index.js';
+import { getLocalizedVocabMeaning } from '../utils/vocabLocalization.js';
+
+const getLocalizedMistakeType = (type, isEn) => {
+  if (!isEn || !type) return type || 'Lỗi Diễn Đạt';
+  const typeMap = {
+    grammar: 'Grammar',
+    spelling: 'Spelling',
+    collocation: 'Collocation',
+    lexical: 'Lexical / Vocabulary',
+    word_choice: 'Word Choice',
+    punctuation: 'Punctuation'
+  };
+  return typeMap[type.toLowerCase()] || type;
+};
 
 export default function SlideOverToolPanel({
   isOpen,
@@ -124,7 +138,7 @@ export default function SlideOverToolPanel({
             <button
               onClick={onClose}
               className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              aria-label="Đóng bảng công cụ"
+              aria-label={isEn ? "Close tool panel" : "Đóng bảng công cụ"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -141,7 +155,7 @@ export default function SlideOverToolPanel({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-red-500" />
-              <span>Paraphrase</span>
+              <span>{t('slideOver.paraphraseTab', 'Paraphrase')}</span>
             </button>
 
             <button
@@ -165,7 +179,7 @@ export default function SlideOverToolPanel({
               }`}
             >
               <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
-              <span>{isEn ? `Mistake Journal (${mistakes.length})` : `Sổ Lỗi Sai (${mistakes.length})`}</span>
+              <span>{t('slideOver.mistakesTab', isEn ? 'Mistake Journal' : 'Sổ Lỗi Sai')} ({mistakes.length})</span>
             </button>
           </div>
 
@@ -181,14 +195,14 @@ export default function SlideOverToolPanel({
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Gõ từ cần tìm (vd: important, increase, problem)..."
+                    placeholder={isEn ? "Search words to paraphrase (e.g. important, increase, problem)..." : "Gõ từ cần tìm (vd: important, increase, problem)..."}
                     className="w-full pl-9.5 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-medium"
                   />
                 </div>
 
                 {/* Quick pills */}
                 <div className="flex flex-wrap gap-1.5 items-center">
-                  <span className="text-[11px] font-bold text-slate-400">Gợi ý nhanh:</span>
+                  <span className="text-[11px] font-bold text-slate-400">{isEn ? 'Quick suggestions:' : 'Gợi ý nhanh:'}</span>
                   {commonWords.slice(0, 8).map(w => (
                     <button
                       key={w}
@@ -207,7 +221,9 @@ export default function SlideOverToolPanel({
                 {/* Synonyms list */}
                 <div className="space-y-2 pt-2">
                   <div className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-                    Từ Đồng Nghĩa Học Thuật Band 7.5+ Cho "{searchTerm}"
+                    {isEn 
+                      ? `BAND 7.5+ ACADEMIC SYNONYMS FOR "${searchTerm.toUpperCase()}"` 
+                      : `TỪ ĐỒNG NGHĨA HỌC THUẬT BAND 7.5+ CHO "${searchTerm.toUpperCase()}"`}
                   </div>
 
                   {synonyms.length > 0 ? (
@@ -228,36 +244,38 @@ export default function SlideOverToolPanel({
                               <button
                                 onClick={() => handleCopy(item.word)}
                                 className="p-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs font-semibold transition-colors cursor-pointer flex items-center space-x-1"
-                                title="Sao chép từ"
+                                title={isEn ? "Copy word" : "Sao chép từ"}
                               >
                                 {copiedWord === item.word ? (
                                   <>
                                     <Check className="w-3.5 h-3.5 text-emerald-600" />
-                                    <span className="text-[10px] text-emerald-600">Đã chép</span>
+                                    <span className="text-[10px] text-emerald-600">{isEn ? 'Copied' : 'Đã chép'}</span>
                                   </>
                                 ) : (
                                   <>
                                     <Copy className="w-3.5 h-3.5 text-slate-500" />
-                                    <span className="text-[10px]">Chép</span>
+                                    <span className="text-[10px]">{isEn ? 'Copy' : 'Chép'}</span>
                                   </>
                                 )}
                               </button>
                               <button
                                 onClick={() => handleInsert(item.word)}
                                 className="p-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1 shadow-2xs"
-                                title="Chèn trực tiếp từ này vào cuối bài viết"
+                                title={isEn ? "Insert this word directly into your essay" : "Chèn trực tiếp từ này vào cuối bài viết"}
                               >
                                 <ArrowRight className="w-3.5 h-3.5" />
-                                <span className="text-[10px]">Chèn vào bài</span>
+                                <span className="text-[10px]">{isEn ? 'Insert into essay' : 'Chèn vào bài'}</span>
                               </button>
                             </div>
                           </div>
-                          {item.meaningVi && (
-                            <div className="text-xs text-slate-600 font-medium">{item.meaningVi}</div>
+                          {(item.meaningEn || item.meaningVi) && (
+                            <div className="text-xs text-slate-600 font-medium">
+                              {getLocalizedSynonymMeaning(item, isEn)}
+                            </div>
                           )}
-                          {item.collocation && (
+                          {(item.collocation || item.example) && (
                             <div className="text-[11px] text-slate-500 italic bg-slate-100/70 p-1.5 rounded-lg">
-                              Ví dụ: "{item.collocation}"
+                              {isEn ? 'Example:' : 'Ví dụ:'} "{item.collocation || item.example}"
                             </div>
                           )}
                         </div>
@@ -265,7 +283,10 @@ export default function SlideOverToolPanel({
                     </div>
                   ) : (
                     <div className="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
-                      Chưa có từ đồng nghĩa nâng cao cho từ này. Thử tìm từ khác như: <span className="font-semibold text-slate-600">improve, reduce, increase, danger, solution</span>.
+                      {isEn 
+                        ? 'No advanced synonyms found for this word yet. Try searching for other terms like: ' 
+                        : 'Chưa có từ đồng nghĩa nâng cao cho từ này. Thử tìm từ khác như: '}
+                      <span className="font-semibold text-slate-600">improve, reduce, increase, danger, solution</span>.
                     </div>
                   )}
                 </div>
@@ -282,7 +303,7 @@ export default function SlideOverToolPanel({
                       type="text"
                       value={vocabSearch}
                       onChange={(e) => setVocabSearch(e.target.value)}
-                      placeholder="Tìm trong sổ từ..."
+                      placeholder={isEn ? "Search in notebook..." : "Tìm trong sổ từ..."}
                       className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 bg-white"
                     />
                   </div>
@@ -291,7 +312,7 @@ export default function SlideOverToolPanel({
                     className="px-2.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center space-x-1 cursor-pointer shadow-2xs shrink-0"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Thêm Từ</span>
+                    <span>{isEn ? 'Add Word' : 'Thêm Từ'}</span>
                   </button>
                 </div>
 
@@ -301,14 +322,14 @@ export default function SlideOverToolPanel({
                       type="text"
                       value={newPhrase}
                       onChange={(e) => setNewPhrase(e.target.value)}
-                      placeholder="Cụm từ tiếng Anh..."
+                      placeholder={isEn ? "English word or phrase..." : "Cụm từ tiếng Anh..."}
                       className="w-full px-3 py-1.5 rounded-lg border border-amber-200 text-xs bg-white font-semibold"
                     />
                     <input
                       type="text"
                       value={newMeaning}
                       onChange={(e) => setNewMeaning(e.target.value)}
-                      placeholder="Nghĩa tiếng Việt..."
+                      placeholder={isEn ? "Definition / meaning..." : "Nghĩa tiếng Việt..."}
                       className="w-full px-3 py-1.5 rounded-lg border border-amber-200 text-xs bg-white"
                     />
                     <div className="flex justify-end space-x-1.5 pt-1">
@@ -317,13 +338,13 @@ export default function SlideOverToolPanel({
                         onClick={() => setIsAddingVocab(false)}
                         className="px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
                       >
-                        Hủy
+                        {isEn ? 'Cancel' : 'Hủy'}
                       </button>
                       <button
                         type="submit"
                         className="px-3 py-1 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 cursor-pointer"
                       >
-                        Lưu
+                        {isEn ? 'Save' : 'Lưu'}
                       </button>
                     </div>
                   </form>
@@ -337,7 +358,7 @@ export default function SlideOverToolPanel({
                       selectedTopic === 'all' ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    Tất cả
+                    {isEn ? 'All' : 'Tất cả'}
                   </button>
                   {Object.entries(IELTS_TOPICS).slice(0, 5).map(([key, val]) => (
                     <button
@@ -347,7 +368,7 @@ export default function SlideOverToolPanel({
                         selectedTopic === key ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
-                      {val.name}
+                      {isEn ? (val.name || val.id) : (val.vi ? val.vi.split(' (')[0] : val.name)}
                     </button>
                   ))}
                 </div>
@@ -366,29 +387,31 @@ export default function SlideOverToolPanel({
                             <button
                               onClick={() => handleCopy(v.phrase)}
                               className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer"
-                              title="Sao chép cụm từ"
+                              title={isEn ? "Copy phrase" : "Sao chép cụm từ"}
                             >
                               <Copy className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleInsert(v.phrase)}
                               className="px-2 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[10px] font-bold border border-amber-200 cursor-pointer flex items-center space-x-1"
-                              title="Chèn cụm từ vào bài"
+                              title={isEn ? "Insert phrase into essay" : "Chèn cụm từ vào bài"}
                             >
                               <ArrowRight className="w-3 h-3" />
-                              <span>Chèn</span>
+                              <span>{isEn ? 'Insert' : 'Chèn'}</span>
                             </button>
                           </div>
                         </div>
-                        <div className="text-[11px] text-slate-600">{v.meaningVi}</div>
+                        <div className="text-[11px] text-slate-600">{getLocalizedVocabMeaning(v, isEn)}</div>
                         {v.example && (
-                          <div className="text-[10px] text-slate-400 italic">Ví dụ: {v.example}</div>
+                          <div className="text-[10px] text-slate-400 italic">{isEn ? 'Example:' : 'Ví dụ:'} {v.example}</div>
                         )}
                       </div>
                     ))
                   ) : (
                     <div className="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
-                      Chưa có từ vựng nào trong danh mục này. Hãy thêm từ vựng mới hoặc lưu từ bài chấm điểm!
+                      {isEn 
+                        ? 'No vocabulary saved in this category yet. Add a new phrase or save words from essay evaluations!' 
+                        : 'Chưa có từ vựng nào trong danh mục này. Hãy thêm từ vựng mới hoặc lưu từ bài chấm điểm!'}
                     </div>
                   )}
                 </div>
@@ -404,7 +427,7 @@ export default function SlideOverToolPanel({
                     type="text"
                     value={mistakeSearch}
                     onChange={(e) => setMistakeSearch(e.target.value)}
-                    placeholder="Tìm kiếm lỗi sai theo câu hoặc từ..."
+                    placeholder={isEn ? "Search mistakes by sentence or keyword..." : "Tìm kiếm lỗi sai theo câu hoặc từ..."}
                     className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500/20 bg-white"
                   />
                 </div>
@@ -417,7 +440,7 @@ export default function SlideOverToolPanel({
                       selectedMistakeType === 'all' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
-                    Tất cả ({mistakes.length})
+                    {isEn ? `All (${mistakes.length})` : `Tất cả (${mistakes.length})`}
                   </button>
                   {['grammar', 'spelling', 'collocation', 'lexical'].map(type => {
                     const count = mistakes.filter(m => (m.type || '').toLowerCase() === type).length;
@@ -430,7 +453,7 @@ export default function SlideOverToolPanel({
                           selectedMistakeType === type ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}
                       >
-                        {type} ({count})
+                        {getLocalizedMistakeType(type, isEn)} ({count})
                       </button>
                     );
                   })}
@@ -446,35 +469,35 @@ export default function SlideOverToolPanel({
                       >
                         <div className="flex items-start justify-between gap-2">
                           <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold uppercase tracking-wider">
-                            {m.type || 'Lỗi Diễn Đạt'}
+                            {m.type ? getLocalizedMistakeType(m.type, isEn) : (isEn ? 'Expression Error' : 'Lỗi Diễn Đạt')}
                           </span>
                           <div className="flex items-center space-x-1 shrink-0">
                             <button
                               onClick={() => handleCopy(m.corrected || m.correction || '')}
                               className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer"
-                              title="Sao chép câu chuẩn"
+                              title={isEn ? "Copy corrected sentence" : "Sao chép câu chuẩn"}
                             >
                               <Copy className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleInsert(m.corrected || m.correction || '')}
                               className="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[10px] font-bold border border-rose-200 cursor-pointer flex items-center space-x-1"
-                              title="Chèn câu đúng vào bài viết"
+                              title={isEn ? "Insert corrected sentence into essay" : "Chèn câu đúng vào bài viết"}
                             >
                               <ArrowRight className="w-3 h-3" />
-                              <span>Chèn</span>
+                              <span>{isEn ? 'Insert' : 'Chèn'}</span>
                             </button>
                           </div>
                         </div>
 
                         <div className="space-y-1 text-xs">
                           <div className="flex items-baseline space-x-1.5 text-rose-800 line-through bg-rose-50/60 p-1.5 rounded-lg">
-                            <span className="text-[10px] font-bold text-rose-500 shrink-0">Sai:</span>
-                            <span>{m.original || m.wrong || m.phrase || 'Lỗi chưa ghi nhận'}</span>
+                            <span className="text-[10px] font-bold text-rose-500 shrink-0">{isEn ? 'Wrong:' : 'Sai:'}</span>
+                            <span>{m.original || m.wrong || m.phrase || (isEn ? 'Unrecorded error' : 'Lỗi chưa ghi nhận')}</span>
                           </div>
                           <div className="flex items-baseline space-x-1.5 text-emerald-800 font-semibold bg-emerald-50/60 p-1.5 rounded-lg">
-                            <span className="text-[10px] font-bold text-emerald-600 shrink-0">Đúng:</span>
-                            <span>{m.corrected || m.correction || m.fix || 'Câu sửa chuẩn'}</span>
+                            <span className="text-[10px] font-bold text-emerald-600 shrink-0">{isEn ? 'Correct:' : 'Đúng:'}</span>
+                            <span>{m.corrected || m.correction || m.fix || (isEn ? 'Standard correction' : 'Câu sửa chuẩn')}</span>
                           </div>
                         </div>
 
@@ -488,8 +511,8 @@ export default function SlideOverToolPanel({
                   ) : (
                     <div className="p-6 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
                       {mistakes.length === 0
-                        ? 'Chưa có lỗi sai nào được ghi nhận. Các lỗi khi AI chấm bài sẽ tự động lưu vào đây!'
-                        : 'Không tìm thấy lỗi sai phù hợp với từ khóa tìm kiếm.'}
+                        ? (isEn ? 'No errors recorded yet. Mistakes from AI essay evaluations will automatically appear here!' : 'Chưa có lỗi sai nào được ghi nhận. Các lỗi khi AI chấm bài sẽ tự động lưu vào đây!')
+                        : (isEn ? 'No mistakes matching your search query.' : 'Không tìm thấy lỗi sai phù hợp với từ khóa tìm kiếm.')}
                     </div>
                   )}
                 </div>
@@ -500,7 +523,11 @@ export default function SlideOverToolPanel({
 
           {/* Footer status */}
           <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-[10px] text-slate-400 shrink-0">
-            Bấm <strong>"Chèn vào bài"</strong> để tự động chèn cụm từ học thuật vào bài viết dở dang của bạn.
+            {isEn ? (
+              <>Click <strong>"Insert into essay"</strong> to automatically insert the academic phrase into your draft.</>
+            ) : (
+              <>Bấm <strong>"Chèn vào bài"</strong> để tự động chèn cụm từ học thuật vào bài viết dở dang của bạn.</>
+            )}
           </div>
 
         </div>

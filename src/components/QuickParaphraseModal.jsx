@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Copy, Check, Search, BookMarked } from 'lucide-react';
-import { lookupSynonyms, ACADEMIC_THESAURUS } from '../data/academicThesaurus';
+import { lookupSynonyms, ACADEMIC_THESAURUS, getLocalizedSynonymMeaning } from '../data/academicThesaurus';
 import { useTranslation } from '../i18n';
 
 export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onSaveToNotebook }) {
@@ -98,7 +98,7 @@ export default function QuickParaphraseModal({ isOpen, onClose, initialWord, onS
                       {s.type}
                     </span>
                     <span className="text-xs text-slate-500 italic">
-                      — {s.meaningVi}
+                      — {getLocalizedSynonymMeaning(s, isEn)}
                     </span>
                   </div>
 

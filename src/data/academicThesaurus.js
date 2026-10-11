@@ -168,25 +168,188 @@ export const ACADEMIC_THESAURUS = {
   ]
 };
 
+export const THESAURUS_MEANINGS_EN = {
+  // increase
+  surge: 'rise or increase suddenly and powerfully',
+  soar: 'increase rapidly above the normal level',
+  escalate: 'intensify or increase rapidly in magnitude',
+  proliferate: 'multiply or increase rapidly in numbers',
+  'upward trajectory': 'steady rising path or trend',
+  // decrease
+  plummet: 'fall or drop straight down at high speed',
+  plunge: 'drop or decrease steeply and rapidly',
+  diminish: 'make or become less / reduce in size or importance',
+  dwindle: 'diminish gradually in size, amount, or strength',
+  'precipitous drop': 'very steep or sudden decline',
+  // important
+  vital: 'essential / absolutely necessary for life or success',
+  pivotal: 'of crucial importance in relation to development',
+  paramount: 'more important than anything else / supreme',
+  indispensable: 'absolutely necessary / impossible to do without',
+  imperative: 'crucial / of vital importance',
+  // problem
+  dilemma: 'difficult situation with challenging choices',
+  obstacle: 'a thing that blocks one\'s way or prevents progress',
+  setback: 'a reversal or check in progress',
+  predicament: 'a difficult, unpleasant, or embarrassing situation',
+  impediment: 'a hindrance or obstruction in doing something',
+  // solve
+  mitigate: 'make less severe, serious, or painful',
+  alleviate: 'make suffering or a problem less severe',
+  rectify: 'put right / correct an error or imbalance',
+  tackle: 'make determined efforts to deal with a problem',
+  counteract: 'act against something in order to reduce its force',
+  // people
+  individuals: 'single human beings distinct from a group',
+  citizens: 'legally recognized subjects or nationals of a state',
+  'the populace': 'the people living in a particular country or area',
+  demographics: 'particular sectors of a population',
+  inhabitants: 'persons that live in or occupy a place',
+  // good
+  beneficial: 'resulting in good / favorable or advantageous',
+  advantageous: 'involving or creating favorable circumstances',
+  meritorious: 'deserving reward, praise, or esteem',
+  propitious: 'giving or indicating a good chance of success',
+  'conducive to': 'making a certain situation or outcome likely',
+  // bad
+  detrimental: 'tending to cause harm or damage',
+  deleterious: 'causing harm or damage',
+  pernicious: 'having a harmful effect, especially in a gradual way',
+  adverse: 'preventing success or development / harmful',
+  counterproductive: 'having the opposite of the desired effect',
+  // show
+  illustrate: 'explain or clarify using examples or data',
+  demonstrate: 'clearly show the existence or truth of something',
+  delineate: 'describe or portray something precisely',
+  manifest: 'display or show a quality or feeling by acts',
+  depict: 'show or represent by a drawing, or other art form',
+  // effect
+  ramification: 'a complex or unwelcome consequence of an action',
+  consequence: 'a result or effect of an action or condition',
+  repercussion: 'an unintended consequence occurring after an event',
+  implication: 'the conclusion that can be drawn / consequence',
+  aftermath: 'the consequences or aftereffects of a significant event',
+  // technology
+  'technological innovation': 'advancement and novelty in technology',
+  automation: 'the use of largely automatic equipment in a system',
+  'digital advancements': 'progress in computer and information technology',
+  'cutting-edge equipment': 'highly advanced and pioneering tools',
+  'state-of-the-art tools': 'the most modern and up-to-date equipment',
+  // government
+  policymakers: 'persons responsible for formulating policies',
+  'state authorities': 'official governing bodies of a nation',
+  'governing bodies': 'groups that conduct the policy of an organization',
+  'the administration': 'the executive branch or government in office',
+  'municipal officials': 'local government authorities in a city or town',
+  // help
+  facilitate: 'make an action or process easy or easier',
+  assist: 'help someone, typically by doing a share of work',
+  foster: 'encourage or promote the development of something',
+  bolster: 'support, strengthen, or prop up',
+  aid: 'help, assist, or support someone or something',
+  // difficult
+  arduous: 'involving or requiring strenuous effort / tiring',
+  formidable: 'inspiring fear or respect through size or power',
+  demanding: 'requiring much skill, effort, or attention',
+  challenging: 'testing one\'s abilities / demanding',
+  burdensome: 'difficult to carry out or fulfill / oppressive',
+  // change
+  transformation: 'a thorough or dramatic change in form or character',
+  'paradigm shift': 'a fundamental change in approach or assumptions',
+  evolution: 'the gradual development of something',
+  restructuring: 'organizing differently for efficiency',
+  alteration: 'the action of altering or modifying',
+  // society
+  'the community': 'a group of people living in the same place',
+  civilization: 'the stage of human social and cultural development',
+  'the general public': 'ordinary people in society at large',
+  'civic institutions': 'organizations dedicated to public welfare',
+  'demographic groups': 'distinct socioeconomic segments in society',
+  // many
+  'a myriad of': 'a countless or extremely great number of',
+  numerous: 'great in number / many',
+  'a multitude of': 'a large number of people or things',
+  'an abundance of': 'a very large quantity of something',
+  countless: 'too many to be counted / immense',
+  // crime
+  'criminal activity': 'acts that violate the legal penal code',
+  'unlawful conduct': 'behavior contrary to established law',
+  'illicit behavior': 'forbidden or unauthorized actions',
+  transgression: 'an act that goes against a law or rule',
+  offenses: 'breaches of a law or illegal acts',
+  // police
+  'law enforcement agencies': 'public bodies tasked with enforcing laws',
+  'patrol authorities': 'officers monitoring public areas for safety',
+  'the constabulary': 'the police force of a particular district',
+  'security apparatus': 'the network of agencies maintaining security',
+  // policing
+  'law enforcement operations': 'active operational duties of police',
+  'crime prevention initiatives': 'programs designed to stop crimes before occurrence',
+  'security oversight': 'supervision and maintenance of public safety',
+  // money
+  'financial resources': 'monetary assets available for expenditure',
+  'capital allocation': 'apportionment of financial resources to ventures',
+  'fiscal revenue': 'government income through taxation and tariffs',
+  'pecuniary assets': 'assets relating to or consisting of money',
+  // education
+  'pedagogical training': 'instruction in the methods of teaching',
+  'academic instruction': 'formal teaching in scholarly subjects',
+  'intellectual cultivation': 'the development and nurturing of the mind',
+  'vocational schooling': 'education directed toward practical trades',
+  // think
+  'maintain the view that': 'firmly hold the opinion or stance that',
+  'contend that': 'assert something as a position in an argument',
+  'postulate that': 'suggest or assume the existence of a fact',
+  'are convinced that': 'completely certain and persuaded that',
+  // big
+  substantial: 'of considerable importance, size, or worth',
+  monumental: 'great in importance, extent, or size',
+  immense: 'extremely large or great, especially in scale',
+  pronounced: 'very noticeable or marked',
+  // cause
+  precipitate: 'cause an event or situation to happen suddenly',
+  engender: 'give rise to / produce or create a feeling or condition',
+  'give rise to': 'lead to / bring about a particular reaction',
+  trigger: 'cause an event or reaction to happen'
+};
+
+export function getLocalizedSynonymMeaning(item, isEn = false) {
+  if (!item) return '';
+  if (!isEn) return item.meaningVi || item.meaning || '';
+  if (item.meaningEn) return item.meaningEn;
+  const wordKey = (item.word || '').toLowerCase().trim();
+  if (THESAURUS_MEANINGS_EN[wordKey]) {
+    return THESAURUS_MEANINGS_EN[wordKey];
+  }
+  return item.meaningVi || item.meaning || '';
+}
+
 export function lookupSynonyms(word) {
   if (!word) return [];
   const clean = word.toLowerCase().trim().replace(/^[^\w]+|[^\w]+$/g, '');
-  if (ACADEMIC_THESAURUS[clean]) return ACADEMIC_THESAURUS[clean];
+  let list = ACADEMIC_THESAURUS[clean];
 
-  // Simple lemmatization fallbacks
-  const candidates = [];
-  if (clean.endsWith('ing')) candidates.push(clean.slice(0, -3), clean.slice(0, -3) + 'e');
-  if (clean.endsWith('ed')) candidates.push(clean.slice(0, -2), clean.slice(0, -1));
-  if (clean.endsWith('s')) candidates.push(clean.slice(0, -1), clean.slice(0, -2));
-  if (clean.endsWith('ly')) candidates.push(clean.slice(0, -2));
+  if (!list) {
+    // Simple lemmatization fallbacks
+    const candidates = [];
+    if (clean.endsWith('ing')) candidates.push(clean.slice(0, -3), clean.slice(0, -3) + 'e');
+    if (clean.endsWith('ed')) candidates.push(clean.slice(0, -2), clean.slice(0, -1));
+    if (clean.endsWith('s')) candidates.push(clean.slice(0, -1), clean.slice(0, -2));
+    if (clean.endsWith('ly')) candidates.push(clean.slice(0, -2));
 
-  for (const cand of candidates) {
-    if (ACADEMIC_THESAURUS[cand]) {
-      return ACADEMIC_THESAURUS[cand];
+    for (const cand of candidates) {
+      if (ACADEMIC_THESAURUS[cand]) {
+        list = ACADEMIC_THESAURUS[cand];
+        break;
+      }
     }
   }
 
-  return [];
+  if (!list) return [];
+  return list.map(item => ({
+    ...item,
+    meaningEn: THESAURUS_MEANINGS_EN[(item.word || '').toLowerCase()] || item.meaningVi
+  }));
 }
 
 /**

@@ -408,5 +408,18 @@ it('18. Task 2 Coherence modal and EditorPane toolbar handle empty essay and Eng
   assert.ok(editorContent.includes("'No essay yet'"), 'EditorPane must show "No essay yet" in English mode when empty');
 });
 
+// 19. SlideOverToolPanel.jsx and academicThesaurus.js localization
+it('19. SlideOverToolPanel.jsx and academicThesaurus.js localize synonyms and action buttons into English', () => {
+  const panelContent = fs.readFileSync(path.join(__dirname, '../src/components/SlideOverToolPanel.jsx'), 'utf-8');
+  assert.ok(panelContent.includes('useTranslation'), 'SlideOverToolPanel missing useTranslation');
+  assert.ok(panelContent.includes('getLocalizedSynonymMeaning'), 'SlideOverToolPanel missing getLocalizedSynonymMeaning');
+  assert.ok(panelContent.includes("isEn ? 'Insert into essay' : 'Chèn vào bài'"), 'SlideOverToolPanel missing localized Insert into essay button');
+  assert.ok(panelContent.includes("isEn ? 'Quick suggestions:' : 'Gợi ý nhanh:'"), 'SlideOverToolPanel missing localized Quick suggestions');
+
+  // Verify getLocalizedSynonymMeaning works for important synonyms
+  const vitalMeaningEn = panelContent.includes('getLocalizedSynonymMeaning(item, isEn)');
+  assert.ok(vitalMeaningEn, 'SlideOverToolPanel must call getLocalizedSynonymMeaning with isEn');
+});
+
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
 
