@@ -52,7 +52,7 @@ import {
   deletePublicVocabGrammarItem
 } from '../services/dataSyncService';
 import { useTranslation } from '../i18n';
-import { getLocalizedGrammarItem, getLocalizedCardMeaning } from '../utils/vocabLocalization';
+import { getLocalizedGrammarItem, getLocalizedCardMeaning, getLocalizedSpellingTrap } from '../utils/vocabLocalization';
 
 export default function VocabGrammarSpellingModal({
   isOpen,
@@ -643,7 +643,7 @@ export default function VocabGrammarSpellingModal({
 
     try {
       if (activeTab === 'spelling') {
-        const rawTrap = await generateSpellingTrapAi({ apiKey, model, bandLevel: targetBand });
+        const rawTrap = await generateSpellingTrapAi({ apiKey, model, bandLevel: targetBand, isEn });
         const newTrap = {
           ...rawTrap,
           isPublic: isPub,
@@ -674,7 +674,7 @@ export default function VocabGrammarSpellingModal({
             ? ['Concession with While/Although', 'Relative Clauses', 'Academic Passive Voice']
             : ['Participle Clause V-ing', 'Cleft Sentence', 'Not only Inversion', 'Nominalization'];
         const randomType = types[Math.floor(Math.random() * types.length)];
-        const rawGrammar = await generateGrammarDrillAi({ apiKey, model, grammarType: randomType, bandLevel: targetBand });
+        const rawGrammar = await generateGrammarDrillAi({ apiKey, model, grammarType: randomType, bandLevel: targetBand, isEn });
         const newGrammar = {
           ...rawGrammar,
           isPublic: isPub,
@@ -701,7 +701,7 @@ export default function VocabGrammarSpellingModal({
       } else if (activeTab === 'vocab') {
         const topicNames = ['Technology & Digital Life', 'Environment & Climate', 'Society & Urban Life'];
         const currentDeckName = currentDeck ? currentDeck.topicName : topicNames[0];
-        const rawCards = await generateThematicVocabAi({ apiKey, model, topic: currentDeckName, bandLevel: targetBand });
+        const rawCards = await generateThematicVocabAi({ apiKey, model, topic: currentDeckName, bandLevel: targetBand, isEn });
         const enrichedCards = rawCards.map(c => ({
           ...c,
           deckId: activeDeckId,
@@ -1447,9 +1447,9 @@ export default function VocabGrammarSpellingModal({
                           <Lightbulb className="w-4 h-4 text-amber-600" />
                           <span>{isEn ? 'Memory Trick / Rule:' : 'Mẹo nhớ nhanh không bị nhầm lẫn:'}</span>
                         </div>
-                        <p className="font-medium">{currentTrap.rule}</p>
+                        <p className="font-medium">{isEn ? getLocalizedSpellingTrap(currentTrap, true).rule : currentTrap.rule}</p>
                         <p className="text-xs text-amber-700/90 pt-1 border-t border-amber-200/60">
-                          <strong>{isEn ? 'Etymology & Explanation: ' : 'Nguồn gốc & Giải thích: '}</strong>{currentTrap.explanation}
+                          <strong>{isEn ? 'Etymology & Explanation: ' : 'Nguồn gốc & Giải thích: '}</strong>{isEn ? getLocalizedSpellingTrap(currentTrap, true).explanation : currentTrap.explanation}
                         </p>
                       </div>
 
@@ -1500,7 +1500,8 @@ export default function VocabGrammarSpellingModal({
                 currentItem: currentGrammar,
                 getItemTitle: (item, idx) => {
                   const loc = getLocalizedGrammarItem(item, isEn);
-                  return loc.title ? `${loc.title} (${loc.bandTarget || `Band ${loc.bandLevel}`})` : (isEn ? `Grammar Rule ${idx + 1}` : `Cấu trúc ${idx + 1}`);
+                  const bandDisplay = loc.bandTarget ? (loc.bandTarget.startsWith('Band') ? loc.bandTarget : `Band ${loc.bandTarget}`) : (loc.bandLevel ? `Band ${loc.bandLevel}` : '');
+                  return loc.title ? `${loc.title}${bandDisplay ? ` (${bandDisplay})` : ''}` : (isEn ? `Grammar Rule ${idx + 1}` : `Cấu trúc ${idx + 1}`);
                 }
               })}
 
@@ -1533,7 +1534,7 @@ export default function VocabGrammarSpellingModal({
                   <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-md space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-                        {isEn ? `Standard Formula: ${currentGrammar.bandTarget}` : `Công thức chuẩn ${currentGrammar.bandTarget}`}
+                        {isEn ? `Standard Formula: ${locGrammar.bandTarget || `Band ${locGrammar.bandLevel}`}` : `Công thức chuẩn ${currentGrammar.bandTarget}`}
                       </span>
                       <span className="text-xs text-amber-300 font-semibold">
                         {isEn ? '⭐ Cambridge Grammatical Range & Accuracy Guaranteed' : '⭐ Đảm bảo tiêu chí Grammatical Range & Accuracy'}
@@ -1562,7 +1563,7 @@ export default function VocabGrammarSpellingModal({
 
                     <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 shadow-xs space-y-2">
                       <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                        {isEn ? `Band ${currentGrammar.bandTarget} Upgrade (Cohesive & Sophisticated)` : `Nâng cấp ${currentGrammar.bandTarget} (Mạch lạc & Chuẩn xác)`}
+                        {isEn ? `${locGrammar.bandTarget || `Band ${locGrammar.bandLevel}`} Upgrade (Cohesive & Sophisticated)` : `Nâng cấp ${currentGrammar.bandTarget} (Mạch lạc & Chuẩn xác)`}
                       </span>
                       <p className="text-sm font-semibold text-emerald-950">
                         "{currentGrammar.band8Sentence}"
@@ -1623,7 +1624,7 @@ export default function VocabGrammarSpellingModal({
 
                     {showGrammarAnswer && (
                       <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 space-y-2 text-xs sm:text-sm animate-in fade-in">
-                        <strong className="text-indigo-950 font-bold block">{isEn ? `✨ Cambridge Model Answer ${currentGrammar.bandTarget}:` : `✨ Đáp án chuẩn ${currentGrammar.bandTarget}:`}</strong>
+                        <strong className="text-indigo-950 font-bold block">{isEn ? `✨ Cambridge Model Answer (${locGrammar.bandTarget || `Band ${locGrammar.bandLevel}`}):` : `✨ Đáp án chuẩn ${currentGrammar.bandTarget}:`}</strong>
                         <p className="font-serif font-semibold text-indigo-900 italic">
                           "{currentGrammar.modelAnswer}"
                         </p>

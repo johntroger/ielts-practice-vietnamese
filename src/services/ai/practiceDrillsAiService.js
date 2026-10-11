@@ -736,10 +736,22 @@ Evaluate and return ONLY valid JSON:
  */
 
 
-export async function generateSpellingTrapAi({ apiKey, model = DEFAULT_MODEL, category = 'Academic Register', bandLevel = '6.5' }) {
-  if (!apiKey) throw new Error('Vui lòng nhập AI API Key.');
+export async function generateSpellingTrapAi({ apiKey, model = DEFAULT_MODEL, category = 'Academic Register', bandLevel = '6.5', isEn = false }) {
+  if (!apiKey) throw new Error(isEn ? 'Please provide AI API Key.' : 'Vui lòng nhập AI API Key.');
 
-  const prompt = `Act as a senior Cambridge IELTS examiner. Generate 1 practical IELTS spelling trap item targeting Band ${bandLevel} (within target Band 5.5 - 7.5) in JSON format:
+  const prompt = isEn ? `Act as a senior Cambridge IELTS examiner. Generate 1 practical IELTS spelling trap item targeting Band ${bandLevel} (within target Band 5.5 - 7.5) in JSON format:
+{
+  "correct": "exact correctly spelled word suitable for Band ${bandLevel} IELTS Writing (e.g. environment, government, definitely, separate, necessary, maintenance, privilege, proportion, accommodate, until, convenient, technology, opportunity, believe, receive, etc.)",
+  "distractors": ["3 common deceptive misspellings that Band ${bandLevel === '5.5' ? '5.0 - 5.5' : '6.0 - 7.0'} students make"],
+  "rule": "A sharp, unforgettable mnemonic trick / rule strictly in English (e.g. letter count, root word, syllable breakdown)",
+  "contextSentence": "An academic IELTS sentence using the word with '________' replacing the word.",
+  "explanation": "Brief explanation of etymology, word formation, and common trap strictly in English",
+  "category": "${category}",
+  "bandLevel": "${bandLevel}"
+}
+
+Return ONLY raw valid JSON without markdown fences.`
+  : `Act as a senior Cambridge IELTS examiner. Generate 1 practical IELTS spelling trap item targeting Band ${bandLevel} (within target Band 5.5 - 7.5) in JSON format:
 {
   "correct": "exact correctly spelled word suitable for Band ${bandLevel} IELTS Writing (e.g. environment, government, definitely, separate, necessary, maintenance, privilege, proportion, accommodate, until, convenient, technology, opportunity, believe, receive, etc.)",
   "distractors": ["3 common deceptive misspellings that Band ${bandLevel === '5.5' ? '5.0 - 5.5' : '6.0 - 7.0'} students make"],
@@ -772,10 +784,32 @@ Return ONLY raw valid JSON without markdown fences.`;
   return { id: `ai-sp-${Date.now()}`, bandLevel: bandLevel, ...obj };
 }
 
-export async function generateGrammarDrillAi({ apiKey, model = DEFAULT_MODEL, grammarType = 'Complex Sentences', bandLevel = '7.0' }) {
-  if (!apiKey) throw new Error('Vui lòng nhập AI API Key.');
+export async function generateGrammarDrillAi({ apiKey, model = DEFAULT_MODEL, grammarType = 'Complex Sentences', bandLevel = '7.0', isEn = false }) {
+  if (!apiKey) throw new Error(isEn ? 'Please provide AI API Key.' : 'Vui lòng nhập AI API Key.');
 
-  const prompt = `Act as an elite IELTS Writing Coach. Create 1 practical grammar drill targeting Band ${bandLevel} (range Band 5.5 - 7.5) for pattern "${grammarType}" in JSON format:
+  const prompt = isEn ? `Act as an elite IELTS Writing Coach. Create 1 practical grammar drill targeting Band ${bandLevel} (range Band 5.5 - 7.5) for pattern "${grammarType}" in JSON format:
+{
+  "title": "Title of the grammatical architecture strictly in English (e.g. Defining & Non-defining Relative Clauses, Concession with While/Although, Academic Passive Voice, Nominalization, Participle Clauses)",
+  "bandTarget": "Band ${bandLevel === '5.5' ? 'Band 5.5 - 6.0' : (bandLevel === '6.0' || bandLevel === '6.5' ? 'Band 6.0 - 6.5' : 'Band 7.0 - 7.5')}",
+  "bandLevel": "${bandLevel}",
+  "formula": "Grammar formula clearly explained in English",
+  "rationale": "Why this structure secures Band ${bandLevel} criteria for Cambridge GRA (in English)",
+  "basicSentence": "A basic Band 5.0 - 5.5 sentence conveying this idea",
+  "band8Sentence": "A sophisticated Band ${bandLevel} sentence applying this structure",
+  "prompt": "Practice sentence upgrade prompt for the student strictly in English",
+  "testInput": "The input sentence to rewrite",
+  "modelAnswer": "Official model answer Band ${bandLevel}",
+  "drills": [
+    {
+      "question": "Additional practice question in English",
+      "origin": "Original Band 5.0 - 5.5 sentence",
+      "correctPattern": "Rewritten Band ${bandLevel} sentence"
+    }
+  ]
+}
+
+Return ONLY raw valid JSON without markdown fences.`
+  : `Act as an elite IELTS Writing Coach. Create 1 practical grammar drill targeting Band ${bandLevel} (range Band 5.5 - 7.5) for pattern "${grammarType}" in JSON format:
 {
   "title": "Tên cấu trúc ngữ pháp (e.g. Subject-Verb Agreement, Compound Sentences, Cause and Effect, While/Whereas contrast, Relative clauses, Passive voice, Participle clauses, Not only inversion, Cleft sentence)",
   "bandTarget": "Band ${bandLevel === '5.5' ? 'Band 5.5 - 6.0' : (bandLevel === '6.0' || bandLevel === '6.5' ? 'Band 6.0 - 6.5' : 'Band 7.0 - 7.5')}",
@@ -818,10 +852,25 @@ Return ONLY raw valid JSON without markdown fences.`;
   return { id: `ai-gr-${Date.now()}`, bandLevel: bandLevel, ...obj };
 }
 
-export async function generateThematicVocabAi({ apiKey, model = DEFAULT_MODEL, topic = 'Technology & Digital Life', bandLevel = '7.0' }) {
-  if (!apiKey) throw new Error('Vui lòng nhập AI API Key.');
+export async function generateThematicVocabAi({ apiKey, model = DEFAULT_MODEL, topic = 'Technology & Digital Life', bandLevel = '7.0', isEn = false }) {
+  if (!apiKey) throw new Error(isEn ? 'Please provide AI API Key.' : 'Vui lòng nhập AI API Key.');
 
-  const prompt = `Act as a Cambridge Lexical Resource specialist. Generate 2 practical vocabulary items / collocations strictly in Band ${bandLevel} (range Band 5.5 - 7.5) for IELTS topic "${topic}" in JSON format:
+  const prompt = isEn ? `Act as a Cambridge Lexical Resource specialist. Generate 2 practical vocabulary items / collocations strictly in Band ${bandLevel} (range Band 5.5 - 7.5) for IELTS topic "${topic}" in JSON format:
+[
+  {
+    "term": "Natural academic phrase / collocation chunk (Band ${bandLevel})",
+    "phonetic": "/phonetic transcription/",
+    "wordType": "noun phrase / verb phrase / collocated chunk",
+    "meaningVi": "Clear definition in English",
+    "collocations": ["collocation 1", "collocation 2", "collocation 3"],
+    "bandScore": "${bandLevel}",
+    "bandLevel": "${bandLevel}",
+    "example": "A clear academic sentence using this term in an IELTS Writing context."
+  }
+]
+
+Return ONLY raw valid JSON array without markdown fences.`
+  : `Act as a Cambridge Lexical Resource specialist. Generate 2 practical vocabulary items / collocations strictly in Band ${bandLevel} (range Band 5.5 - 7.5) for IELTS topic "${topic}" in JSON format:
 [
   {
     "term": "Natural academic phrase / collocation chunk (Band ${bandLevel})",

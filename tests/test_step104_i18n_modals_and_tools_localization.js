@@ -32,7 +32,12 @@ import {
 
 import { vi } from '../src/i18n/locales/vi.js';
 import { en } from '../src/i18n/locales/en.js';
-import { getLocalizedVocabMeaning } from '../src/utils/vocabLocalization.js';
+import { 
+  getLocalizedVocabMeaning,
+  getLocalizedGrammarItem,
+  getLocalizedGrammarTitle,
+  getLocalizedSpellingTrap
+} from '../src/utils/vocabLocalization.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -300,6 +305,40 @@ it('14. TheoryHandbookModal.jsx and theoryLocalizationHelper.js provide full Eng
   const modalContent = fs.readFileSync(path.join(__dirname, '../src/components/TheoryHandbookModal.jsx'), 'utf-8');
   assert.ok(modalContent.includes('getLocalizedArticle'));
   assert.ok(modalContent.includes('theoryLocalizationHelper'));
+});
+
+// 15. VocabGrammarSpellingModal grammar & spelling dynamic localization
+it('15. VocabGrammarSpellingModal grammar & spelling dynamic localization converts Vietnamese titles and rules', () => {
+  assert.strictEqual(getLocalizedGrammarTitle('Mệnh đề quan hệ (Band 6.0 - 6.5)', true), 'Defining & Non-defining Relative Clauses');
+  assert.strictEqual(getLocalizedGrammarTitle('Mệnh đề nhượng bộ với While/Although (Band 6.0 - 6.5)', true), 'Complex Contrast & Concession (While/Although)');
+  assert.strictEqual(getLocalizedGrammarTitle('Câu bị động học thuật', true), 'Academic Passive Voice');
+
+  // Test custom cloud grammar item
+  const customCloudGrammar = {
+    id: 'ai-gr-1791691908',
+    title: 'Mệnh đề quan hệ (Band 6.0 - 6.5)',
+    bandTarget: 'Band 6.0 - 6.5',
+    bandLevel: '6.5',
+    formula: 'S + [who / which + V] + Động từ số ít',
+    rationale: 'Giúp câu văn đạt chuẩn Band 6.5 tiêu chí Grammatical Range & Accuracy.',
+    prompt: 'Nối 2 câu sau thành 1 câu có mệnh đề quan hệ:'
+  };
+  const localizedGr = getLocalizedGrammarItem(customCloudGrammar, true);
+  assert.strictEqual(localizedGr.title, 'Defining & Non-defining Relative Clauses');
+  assert.ok(localizedGr.formula.includes('Singular'));
+  assert.ok(localizedGr.prompt.includes('Join the sentences'));
+  assert.ok(localizedGr.rationale.includes('relative clauses'));
+
+  // Test custom spelling trap
+  const customSpelling = {
+    id: 'ai-sp-1234',
+    correct: 'environment',
+    rule: 'Nhớ chữ n giữa ro và ment',
+    explanation: 'Gốc tiếng Pháp environner + ment'
+  };
+  const localizedSp = getLocalizedSpellingTrap(customSpelling, true);
+  assert.ok(localizedSp.rule.includes('Envi-ron-ment'));
+  assert.ok(localizedSp.explanation.includes('environner'));
 });
 
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
