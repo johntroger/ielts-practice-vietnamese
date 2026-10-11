@@ -11,7 +11,8 @@ import {
   Copy,
   Lightbulb
 } from 'lucide-react';
-import { findLexicalUpgrades } from '../data/academicThesaurus';
+import { findLexicalUpgrades, getLocalizedSynonymMeaning } from '../data/academicThesaurus';
+import { useTranslation } from '../i18n';
 
 /**
  * In-Situ Lexical Upgrader Component
@@ -25,6 +26,7 @@ export default function InSituLexicalUpgrader({
   onClose,
   inline = false
 }) {
+  const { isEn } = useTranslation();
   const [copiedWord, setCopiedWord] = useState('');
   const [savedWord, setSavedWord] = useState('');
   const [replacedWord, setReplacedWord] = useState('');
@@ -50,10 +52,11 @@ export default function InSituLexicalUpgrader({
       onSaveToNotebook({
         id: `vocab-${Date.now()}`,
         phrase: item.word,
-        meaningVi: item.meaningVi,
+        meaningVi: getLocalizedSynonymMeaning(item, false),
+        meaningEn: getLocalizedSynonymMeaning(item, true),
         example: item.example,
         topic: 'writing-upgrade',
-        createdAt: new Date().toLocaleDateString('vi-VN')
+        createdAt: new Date().toLocaleDateString(isEn ? 'en-US' : 'vi-VN')
       });
       setSavedWord(item.word);
       setTimeout(() => setSavedWord(''), 1800);
@@ -81,7 +84,7 @@ export default function InSituLexicalUpgrader({
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                Nâng cấp từ vựng C1/C2:
+                {isEn ? 'C1/C2 Lexical Upgrade:' : 'Nâng cấp từ vựng C1/C2:'}
               </span>
               <span className="text-xs font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                 "{selectedWord}"
@@ -94,7 +97,7 @@ export default function InSituLexicalUpgrader({
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-700 p-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
-            title="Đóng bảng gợi ý"
+            title={isEn ? "Close suggestions" : "Đóng bảng gợi ý"}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -105,7 +108,7 @@ export default function InSituLexicalUpgrader({
       {suggestions.length > 0 ? (
         <div className="space-y-2">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-            Chọn để thay thế trực tiếp vào bài (1-Click Replace):
+            {isEn ? 'Select to replace in essay (1-Click Replace):' : 'Chọn để thay thế trực tiếp vào bài (1-Click Replace):'}
           </span>
 
           <div className="space-y-1.5 max-h-64 overflow-y-auto pr-0.5">
@@ -133,17 +136,17 @@ export default function InSituLexicalUpgrader({
                           ? 'bg-emerald-600 text-white'
                           : 'bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95'
                       }`}
-                      title={`Thay thế "${selectedWord}" bằng "${item.word}"`}
+                      title={isEn ? `Replace "${selectedWord}" with "${item.word}"` : `Thay thế "${selectedWord}" bằng "${item.word}"`}
                     >
                       {replacedWord === item.word ? (
                         <>
                           <Check className="w-3 h-3 text-white" />
-                          <span>Đã thay!</span>
+                          <span>{isEn ? 'Replaced!' : 'Đã thay!'}</span>
                         </>
                       ) : (
                         <>
                           <Zap className="w-3 h-3 text-amber-300" />
-                          <span>Thay từ này</span>
+                          <span>{isEn ? 'Replace' : 'Thay từ này'}</span>
                         </>
                       )}
                     </button>
@@ -153,7 +156,7 @@ export default function InSituLexicalUpgrader({
                       <button
                         onClick={() => handleSaveNotebook(item)}
                         className="p-1 rounded-md border border-slate-200 hover:border-amber-300 bg-white hover:bg-amber-50 text-slate-500 hover:text-amber-800 transition-colors cursor-pointer"
-                        title="Lưu vào Sổ tay Từ Vựng"
+                        title={isEn ? "Save to Vocab Notebook" : "Lưu vào Sổ tay Từ Vựng"}
                       >
                         {savedWord === item.word ? (
                           <Check className="w-3 h-3 text-emerald-600" />
@@ -167,7 +170,7 @@ export default function InSituLexicalUpgrader({
                     <button
                       onClick={() => handleCopy(item.word)}
                       className="p-1 rounded-md border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                      title="Sao chép từ này"
+                      title={isEn ? "Copy word" : "Sao chép từ này"}
                     >
                       {copiedWord === item.word ? (
                         <Check className="w-3 h-3 text-emerald-600" />
@@ -178,9 +181,9 @@ export default function InSituLexicalUpgrader({
                   </div>
                 </div>
 
-                {/* Meaning in Vietnamese */}
+                {/* Meaning */}
                 <p className="text-[11px] text-slate-700 font-medium">
-                  {item.meaningVi}
+                  {getLocalizedSynonymMeaning(item, isEn)}
                 </p>
 
                 {/* IELTS Example Sentence */}
@@ -196,10 +199,14 @@ export default function InSituLexicalUpgrader({
       ) : (
         <div className="p-3 text-center space-y-1.5 bg-slate-50 rounded-lg text-xs text-slate-600">
           <p>
-            Chưa tìm thấy từ đồng nghĩa C1/C2 có sẵn cho từ <strong>"{selectedWord}"</strong>.
+            {isEn 
+              ? <>No pre-built C1/C2 academic upgrades found for <strong>"{selectedWord}"</strong>.</> 
+              : <>Chưa tìm thấy từ đồng nghĩa C1/C2 có sẵn cho từ <strong>"{selectedWord}"</strong>.</>}
           </p>
           <p className="text-[11px] text-slate-400">
-            Mẹo: Hãy thử bôi đen các từ gốc phổ biến như: <em>important, problem, increase, decrease, crime, technology, money, solve, good, bad</em>...
+            {isEn 
+              ? <>Tip: Try selecting common root words such as: <em>important, problem, increase, decrease, crime, technology, money, solve, good, bad</em>...</>
+              : <>Mẹo: Hãy thử bôi đen các từ gốc phổ biến như: <em>important, problem, increase, decrease, crime, technology, money, solve, good, bad</em>...</>}
           </p>
         </div>
       )}

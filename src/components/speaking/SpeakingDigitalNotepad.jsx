@@ -3,6 +3,7 @@ import {
   FileText, Clock, ChevronDown, ChevronUp, Sparkles, CheckCircle2, 
   HelpCircle, Minimize2, Maximize2, RotateCcw
 } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 /**
  * SpeakingDigitalNotepad
@@ -22,6 +23,7 @@ export default function SpeakingDigitalNotepad({
   prepTimeRemaining = 0,
   isPrepPhase = false
 }) {
+  const { isEn } = useTranslation();
   const handleInputChange = (field, value) => {
     onChangeNotes({
       ...notes,
@@ -46,12 +48,12 @@ export default function SpeakingDigitalNotepad({
             <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
             <span className="text-xs font-bold text-white flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-purple-400" />
-              <span>Ghi chú Part 2 của bạn</span>
+              <span>{isEn ? 'Your Part 2 Notes' : 'Ghi chú Part 2 của bạn'}</span>
             </span>
           </div>
           <button 
             className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Mở rộng bảng nháp"
+            title={isEn ? "Expand notepad" : "Mở rộng bảng nháp"}
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
@@ -61,19 +63,19 @@ export default function SpeakingDigitalNotepad({
         <div className="p-3 grid grid-cols-2 gap-2 text-[11px] max-h-48 overflow-y-auto">
           <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
             <span className="font-bold text-purple-300 block text-[10px] uppercase">1. Who / What</span>
-            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q1 || <em className="text-slate-500">Chưa ghi</em>}</p>
+            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q1 || <em className="text-slate-500">{isEn ? 'Not noted' : 'Chưa ghi'}</em>}</p>
           </div>
           <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
             <span className="font-bold text-indigo-300 block text-[10px] uppercase">2. When / Where</span>
-            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q2 || <em className="text-slate-500">Chưa ghi</em>}</p>
+            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q2 || <em className="text-slate-500">{isEn ? 'Not noted' : 'Chưa ghi'}</em>}</p>
           </div>
           <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
             <span className="font-bold text-emerald-300 block text-[10px] uppercase">3. Details / Climax</span>
-            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q3 || <em className="text-slate-500">Chưa ghi</em>}</p>
+            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q3 || <em className="text-slate-500">{isEn ? 'Not noted' : 'Chưa ghi'}</em>}</p>
           </div>
           <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
             <span className="font-bold text-amber-300 block text-[10px] uppercase">4. Feelings & Why</span>
-            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q4 || <em className="text-slate-500">Chưa ghi</em>}</p>
+            <p className="text-slate-200 line-clamp-2 mt-0.5 whitespace-pre-wrap">{notes.q4 || <em className="text-slate-500">{isEn ? 'Not noted' : 'Chưa ghi'}</em>}</p>
           </div>
         </div>
       </div>
@@ -91,15 +93,17 @@ export default function SpeakingDigitalNotepad({
           </div>
           <div>
             <h4 className="text-sm font-extrabold text-white flex items-center gap-2">
-              <span>Bảng Nháp Part 2 Thông Minh (4 Ô Ma Trận)</span>
+              <span>{isEn ? 'Smart Part 2 Notepad (4-Box Matrix)' : 'Bảng Nháp Part 2 Thông Minh (4 Ô Ma Trận)'}</span>
               {isPrepPhase && (
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse">
-                  Đang trong 60s nháp
+                  {isEn ? '60s Prep Active' : 'Đang trong 60s nháp'}
                 </span>
               )}
             </h4>
             <p className="text-[11px] text-slate-400">
-              Ghi nhanh từ khóa (Keywords) thay vì viết cả câu. Hết 60s, bảng sẽ tự động thu nhỏ xuống góc màn hình.
+              {isEn 
+                ? 'Jot down keywords rather than full sentences. After 60s, notepad will dock automatically to the corner.' 
+                : 'Ghi nhanh từ khóa (Keywords) thay vì viết cả câu. Hết 60s, bảng sẽ tự động thu nhỏ xuống góc màn hình.'}
             </p>
           </div>
         </div>
@@ -108,7 +112,7 @@ export default function SpeakingDigitalNotepad({
           <button
             onClick={handleClearAll}
             className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 text-xs transition-colors cursor-pointer"
-            title="Xóa toàn bộ nháp"
+            title={isEn ? "Clear all notes" : "Xóa toàn bộ nháp"}
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -116,7 +120,7 @@ export default function SpeakingDigitalNotepad({
             <button
               onClick={onToggleDock}
               className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs transition-colors cursor-pointer"
-              title="Thu nhỏ xuống góc"
+              title={isEn ? "Dock to corner" : "Thu nhỏ xuống góc"}
             >
               <Minimize2 className="w-3.5 h-3.5" />
             </button>
@@ -131,14 +135,14 @@ export default function SpeakingDigitalNotepad({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
               <span className="w-5 h-5 rounded-lg bg-purple-900/60 text-purple-300 flex items-center justify-center text-[10px]">1</span>
-              <span>Who / What (Đối tượng cốt lõi)</span>
+              <span>{isEn ? 'Who / What (Core Target)' : 'Who / What (Đối tượng cốt lõi)'}</span>
             </span>
-            <span className="text-[10px] text-slate-500">Ai, là cái gì, đặc điểm gì?</span>
+            <span className="text-[10px] text-slate-500">{isEn ? 'Who, what is it, main traits?' : 'Ai, là cái gì, đặc điểm gì?'}</span>
           </div>
           <textarea
             value={notes.q1}
             onChange={(e) => handleInputChange('q1', e.target.value)}
-            placeholder="VD: Sony noise-canceling headphones, matte black finish, lightweight..."
+            placeholder={isEn ? "e.g., Sony noise-canceling headphones, matte black finish, lightweight..." : "VD: Sony noise-canceling headphones, matte black finish, lightweight..."}
             rows={2}
             className="w-full bg-transparent text-xs text-slate-100 placeholder-slate-600 focus:outline-none resize-none leading-relaxed"
           />
@@ -149,14 +153,14 @@ export default function SpeakingDigitalNotepad({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
               <span className="w-5 h-5 rounded-lg bg-indigo-900/60 text-indigo-300 flex items-center justify-center text-[10px]">2</span>
-              <span>When / Where (Bối cảnh thời gian)</span>
+              <span>{isEn ? 'When / Where (Time & Setting)' : 'When / Where (Bối cảnh thời gian)'}</span>
             </span>
-            <span className="text-[10px] text-slate-500">Xảy ra khi nào, ở đâu?</span>
+            <span className="text-[10px] text-slate-500">{isEn ? 'When and where did it take place?' : 'Xảy ra khi nào, ở đâu?'}</span>
           </div>
           <textarea
             value={notes.q2}
             onChange={(e) => handleInputChange('q2', e.target.value)}
-            placeholder="VD: 2 years ago, university freshman, Tokyo electronic district..."
+            placeholder={isEn ? "e.g., 2 years ago, university freshman, Tokyo electronic district..." : "VD: 2 years ago, university freshman, Tokyo electronic district..."}
             rows={2}
             className="w-full bg-transparent text-xs text-slate-100 placeholder-slate-600 focus:outline-none resize-none leading-relaxed"
           />
@@ -167,14 +171,14 @@ export default function SpeakingDigitalNotepad({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
               <span className="w-5 h-5 rounded-lg bg-emerald-900/60 text-emerald-300 flex items-center justify-center text-[10px]">3</span>
-              <span>Core Details & Action (Điểm nhấn)</span>
+              <span>{isEn ? 'Core Details & Action (Key Highlights)' : 'Core Details & Action (Điểm nhấn)'}</span>
             </span>
-            <span className="text-[10px] text-slate-500">Chi tiết bạn đã làm/sử dụng</span>
+            <span className="text-[10px] text-slate-500">{isEn ? 'Key actions, what you did/used' : 'Chi tiết bạn đã làm/sử dụng'}</span>
           </div>
           <textarea
             value={notes.q3}
             onChange={(e) => handleInputChange('q3', e.target.value)}
-            placeholder="VD: daily study in noisy coffee shops, blocks background chatter completely..."
+            placeholder={isEn ? "e.g., daily study in noisy coffee shops, blocks background chatter completely..." : "VD: daily study in noisy coffee shops, blocks background chatter completely..."}
             rows={2}
             className="w-full bg-transparent text-xs text-slate-100 placeholder-slate-600 focus:outline-none resize-none leading-relaxed"
           />
@@ -185,14 +189,14 @@ export default function SpeakingDigitalNotepad({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
               <span className="w-5 h-5 rounded-lg bg-amber-900/60 text-amber-300 flex items-center justify-center text-[10px]">4</span>
-              <span>Feelings & Why (Cảm xúc & Bài học)</span>
+              <span>{isEn ? 'Feelings & Why (Reflection & Impact)' : 'Feelings & Why (Cảm xúc & Bài học)'}</span>
             </span>
-            <span className="text-[10px] text-slate-500">Tại sao lại đặc biệt với bạn?</span>
+            <span className="text-[10px] text-slate-500">{isEn ? 'Why is it memorable or meaningful?' : 'Tại sao lại đặc biệt với bạn?'}</span>
           </div>
           <textarea
             value={notes.q4}
             onChange={(e) => handleInputChange('q4', e.target.value)}
-            placeholder="VD: indispensable productivity booster, worth every single penny..."
+            placeholder={isEn ? "e.g., indispensable productivity booster, worth every single penny..." : "VD: indispensable productivity booster, worth every single penny..."}
             rows={2}
             className="w-full bg-transparent text-xs text-slate-100 placeholder-slate-600 focus:outline-none resize-none leading-relaxed"
           />

@@ -9,6 +9,7 @@ import SpeakingDigitalNotepad from './SpeakingDigitalNotepad';
 import SpeakingPacingBar from './SpeakingPacingBar';
 import { speakingSoundEffects } from '../../utils/speakingSoundEffects';
 import { analyzeCandidateUtterance } from '../../services/speakingAdaptiveService';
+import { useTranslation } from '../../i18n';
 
 /**
  * SpeakingExaminerRoom.jsx
@@ -34,6 +35,7 @@ export default function SpeakingExaminerRoom({
   onFinishExam,
   onExitRoom
 }) {
+  const { isEn } = useTranslation();
   // 1. Stage Phase State
   // 'greeting' | 'part1' | 'part2_prep' | 'part2_speak' | 'part3' | 'finishing'
   const [currentStage, setCurrentStage] = useState('greeting');
@@ -514,24 +516,24 @@ export default function SpeakingExaminerRoom({
           <div className="flex items-center space-x-1.5 shrink-0">
             <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
             <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-rose-400 shrink-0">
-              <span className="hidden sm:inline">Phòng Thi </span>Live
+              <span className="hidden sm:inline">{isEn ? 'Exam Room ' : 'Phòng Thi '}</span>Live
             </span>
           </div>
           <div className="h-4 w-px bg-slate-800 shrink-0" />
           <span className="text-xs font-bold text-slate-300 truncate max-w-[130px] sm:max-w-none">
-            {currentStage === 'greeting' && 'Thủ tục: Chào hỏi & ID'}
+            {currentStage === 'greeting' && (isEn ? 'Procedure: ID & Verification' : 'Thủ tục: Chào hỏi & ID')}
             {currentStage === 'part1' && `Part 1 (${p1Index + 1}/${part1Topic.questions.length})`}
-            {currentStage === 'part2_prep' && 'Part 2: Nháp (60s)'}
-            {currentStage === 'part2_speak' && 'Part 2: Nói (2 phút)'}
+            {currentStage === 'part2_prep' && (isEn ? 'Part 2: Prep (60s)' : 'Part 2: Nháp (60s)')}
+            {currentStage === 'part2_speak' && (isEn ? 'Part 2: Speaking (2 min)' : 'Part 2: Nói (2 phút)')}
             {currentStage === 'part3' && `Part 3 (${p3Index + 1}/${part3Set.questions.length})`}
-            {currentStage === 'finishing' && 'Hoàn thành'}
+            {currentStage === 'finishing' && (isEn ? 'Completed' : 'Hoàn thành')}
           </span>
         </div>
 
         {/* Center: Stage Duration Clock */}
         <div className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 shrink-0">
           <Clock className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-          <span><span className="hidden sm:inline">Thời gian: </span>{formatTime(totalSeconds)}</span>
+          <span><span className="hidden sm:inline">{isEn ? 'Elapsed: ' : 'Thời gian: '}</span>{formatTime(totalSeconds)}</span>
         </div>
 
         {/* Right: Adaptive Toggle & Exit / Conclude */}
@@ -543,7 +545,7 @@ export default function SpeakingExaminerRoom({
                 ? 'bg-purple-950/60 text-purple-300 border-purple-500/40 hover:bg-purple-900/60'
                 : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800'
             }`}
-            title="Bật/Tắt tính năng giám khảo hỏi bồi thích ứng (Adaptive Follow-up)"
+            title={isEn ? "Toggle AI Adaptive Follow-up questions" : "Bật/Tắt tính năng giám khảo hỏi bồi thích ứng (Adaptive Follow-up)"}
           >
             <Sparkles className={`w-3.5 h-3.5 ${isAdaptiveMode ? 'text-purple-400' : 'text-slate-500'}`} />
             <span>Adaptive AI: {isAdaptiveMode ? 'ON' : 'OFF'}</span>
@@ -551,24 +553,24 @@ export default function SpeakingExaminerRoom({
 
           <button
             onClick={() => {
-              if (window.confirm('Bạn có muốn kết thúc bài thi ngay bây giờ để chuyển sang phần chấm điểm không?')) {
+              if (window.confirm(isEn ? 'Do you want to conclude the speaking test now and proceed to evaluation?' : 'Bạn có muốn kết thúc bài thi ngay bây giờ để chuyển sang phần chấm điểm không?')) {
                 handleConcludeExam();
               }
             }}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-colors cursor-pointer"
-            title="Nộp bài và chấm điểm"
+            title={isEn ? "Submit test and grade" : "Nộp bài và chấm điểm"}
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-purple-300 shrink-0" />
-            <span className="hidden sm:inline">Nộp bài & Chấm điểm</span>
+            <span className="hidden sm:inline">{isEn ? 'Submit & Grade' : 'Nộp bài & Chấm điểm'}</span>
           </button>
 
           <button
             onClick={onExitRoom}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
-            title="Thoát phòng thi"
+            title={isEn ? "Exit exam room" : "Thoát phòng thi"}
           >
             <LogOut className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">Rời phòng</span>
+            <span className="hidden sm:inline">{isEn ? 'Exit' : 'Rời phòng'}</span>
           </button>
         </div>
       </div>
@@ -593,7 +595,7 @@ export default function SpeakingExaminerRoom({
             {examiner.avatar}
             {speechEngine.isSpeaking && (
               <span className="absolute -bottom-2 px-2 py-0.5 rounded-full bg-purple-600 text-white text-[10px] font-black uppercase tracking-wider animate-bounce shadow-md">
-                Đang nói
+                {isEn ? 'Speaking' : 'Đang nói'}
               </span>
             )}
           </div>
@@ -616,11 +618,11 @@ export default function SpeakingExaminerRoom({
                 </span>
                 {currentStage === 'part2_prep' ? (
                   <span className="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded-lg border border-amber-500/40 animate-pulse">
-                    Thời gian nháp còn: {prepSecondsLeft}s
+                    {isEn ? `Prep Time Left: ${prepSecondsLeft}s` : `Thời gian nháp còn: ${prepSecondsLeft}s`}
                   </span>
                 ) : (
                   <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-500/40">
-                    Đã nói: {part2SpeakSeconds}s / 120s
+                    {isEn ? `Spoken: ${part2SpeakSeconds}s / 120s` : `Đã nói: ${part2SpeakSeconds}s / 120s`}
                   </span>
                 )}
               </div>
@@ -663,7 +665,7 @@ export default function SpeakingExaminerRoom({
                       onClick={handleStartPart2Speaking}
                       className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 shadow-md"
                     >
-                      <span>Bỏ qua đếm ngược & Bắt đầu nói ngay</span>
+                      <span>{isEn ? 'Skip countdown & Start speaking' : 'Bỏ qua đếm ngược & Bắt đầu nói ngay'}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -676,7 +678,7 @@ export default function SpeakingExaminerRoom({
               {isAnsweringFollowUp && (
                 <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-black uppercase tracking-wider animate-pulse">
                   <Sparkles className="w-3 h-3 text-amber-400" />
-                  <span>Giám khảo hỏi bồi thích ứng (Adaptive Follow-up)</span>
+                  <span>{isEn ? 'Examiner Adaptive Follow-up Question' : 'Giám khảo hỏi bồi thích ứng (Adaptive Follow-up)'}</span>
                 </div>
               )}
               <p className="text-base sm:text-lg font-extrabold text-white leading-relaxed">
@@ -689,7 +691,7 @@ export default function SpeakingExaminerRoom({
                   onClick={() => speechEngine.repeatLastQuestion()}
                   disabled={speechEngine.isSpeaking}
                   className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white text-xs font-bold border border-purple-500/30 flex items-center space-x-1.5 transition-colors cursor-pointer disabled:opacity-50"
-                  title="Nhờ Giám khảo nhắc lại câu hỏi (Phím tắt P)"
+                  title={isEn ? "Ask examiner to repeat question (Shortcut P)" : "Nhờ Giám khảo nhắc lại câu hỏi (Phím tắt P)"}
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                   <span>"Could you please repeat that?" [ P ]</span>
@@ -713,12 +715,16 @@ export default function SpeakingExaminerRoom({
                   <div className="text-left">
                     <div className="flex items-center space-x-1.5">
                       <span className="text-[11px] font-black uppercase tracking-wider text-emerald-400">
-                        Giám khảo đã hỏi xong • Đến lượt bạn
+                        {isEn ? 'Examiner finished • Your turn to speak' : 'Giám khảo đã hỏi xong • Đến lượt bạn'}
                       </span>
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                     </div>
                     <p className="text-xs text-slate-200 font-medium leading-snug">
-                      Nhấn <strong>[ Phím Spacebar ]</strong> hoặc nút Micro đỏ bên dưới để bắt đầu trả lời. Hệ thống sẽ ghi âm & chấm điểm trực tiếp.
+                      {isEn ? (
+                        <>Press <strong>[ Spacebar ]</strong> or the Red Mic button below to answer. Speech will be transcribed & graded.</>
+                      ) : (
+                        <>Nhấn <strong>[ Phím Spacebar ]</strong> hoặc nút Micro đỏ bên dưới để bắt đầu trả lời. Hệ thống sẽ ghi âm & chấm điểm trực tiếp.</>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -729,7 +735,7 @@ export default function SpeakingExaminerRoom({
                   className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shrink-0 transition-all cursor-pointer shadow-lg shadow-emerald-900/40 flex items-center space-x-1.5 hover:scale-105"
                 >
                   <Mic className="w-4 h-4" />
-                  <span>BẬT MIC NGAY</span>
+                  <span>{isEn ? 'MIC ON NOW' : 'BẬT MIC NGAY'}</span>
                 </button>
               </div>
             </div>
@@ -742,7 +748,7 @@ export default function SpeakingExaminerRoom({
                 <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider pb-1 border-b border-slate-800/60 mb-1">
                   <span className="flex items-center space-x-1.5 text-emerald-400">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Transcript Trực Tiếp (Live STT)</span>
+                    <span>{isEn ? 'Live STT Transcript' : 'Transcript Trực Tiếp (Live STT)'}</span>
                   </span>
                   {isMicActive && (
                     <span className="text-rose-400 font-mono text-[10px] flex items-center space-x-1">
@@ -762,17 +768,17 @@ export default function SpeakingExaminerRoom({
               <div className="flex flex-col items-center space-y-1">
                 <p className="text-xs text-rose-300 flex items-center gap-1.5 font-bold animate-pulse">
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                  <span>Đang thu âm trực tiếp... Hãy bắt đầu nói câu trả lời của bạn</span>
+                  <span>{isEn ? 'Recording live... Please start your response' : 'Đang thu âm trực tiếp... Hãy bắt đầu nói câu trả lời của bạn'}</span>
                 </p>
                 <span className="text-[10px] text-slate-400 font-medium">
-                  Hệ thống tự động chuyển đổi giọng nói thành văn bản (STT) và lưu vào hồ sơ bài thi
+                  {isEn ? 'Speech is converted to text automatically and stored into the exam session' : 'Hệ thống tự động chuyển đổi giọng nói thành văn bản (STT) và lưu vào hồ sơ bài thi'}
                 </span>
               </div>
             ) : (
               <p className="text-xs text-slate-500 flex items-center space-x-1.5">
-                <span>Nhấn</span>
-                <strong className="text-slate-300 font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px]">[ Phím Spacebar ]</strong>
-                <span>hoặc nút Micro bên dưới để bắt đầu nói</span>
+                <span>{isEn ? 'Press' : 'Nhấn'}</span>
+                <strong className="text-slate-300 font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px]">{isEn ? '[ Spacebar ]' : '[ Phím Spacebar ]'}</strong>
+                <span>{isEn ? 'or click the Mic button below to start speaking' : 'hoặc nút Micro bên dưới để bắt đầu nói'}</span>
               </p>
             )}
           </div>
@@ -818,7 +824,7 @@ export default function SpeakingExaminerRoom({
           {speechEngine.speechError === 'not-allowed' && (
             <div className="absolute -top-12 bg-rose-950/95 text-rose-300 border border-rose-600/80 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center space-x-1.5 shadow-xl animate-bounce z-40 whitespace-nowrap">
               <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-              <span>Trình duyệt đang chặn Micro! Bấm biểu tượng 🔒 trên thanh URL để BẬT</span>
+              <span>{isEn ? 'Microphone blocked! Click 🔒 icon in browser URL bar to ALLOW' : 'Trình duyệt đang chặn Micro! Bấm biểu tượng 🔒 trên thanh URL để BẬT'}</span>
             </div>
           )}
 
@@ -830,8 +836,8 @@ export default function SpeakingExaminerRoom({
                 ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/60 ring-4 ring-rose-500/40 animate-pulse scale-105 border-2 border-rose-400'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-2 border-slate-700 shadow-slate-950/50'
             }`}
-            title="Bật/Tắt Micro"
-            aria-label="Bật hoặc tắt micro"
+            title={isEn ? "Toggle Microphone" : "Bật/Tắt Micro"}
+            aria-label={isEn ? "Toggle microphone" : "Bật hoặc tắt micro"}
           >
             {isMicActive ? (
               <div className="relative flex items-center justify-center">
@@ -847,7 +853,7 @@ export default function SpeakingExaminerRoom({
             <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider ${
               isMicActive ? 'text-rose-400' : 'text-slate-400'
             }`}>
-              {isMicActive ? 'ĐANG THU ÂM' : 'MICRO TẮT'}<span className="hidden sm:inline"> [SPACE]</span>
+              {isMicActive ? (isEn ? 'RECORDING' : 'ĐANG THU ÂM') : (isEn ? 'MIC OFF' : 'MICRO TẮT')}<span className="hidden sm:inline"> [SPACE]</span>
             </span>
           </div>
         </div>
@@ -859,7 +865,7 @@ export default function SpeakingExaminerRoom({
               onClick={handleProceedToPart1}
               className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40"
             >
-              <span>Vào Part 1 [Enter]</span>
+              <span>{isEn ? 'Start Part 1 [Enter]' : 'Vào Part 1 [Enter]'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -869,7 +875,7 @@ export default function SpeakingExaminerRoom({
               onClick={handleNextPart1Question}
               className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40"
             >
-              <span>{p1Index + 1 >= part1Topic.questions.length ? 'Chuyển sang Part 2 [Enter]' : 'Câu tiếp theo [Enter]'}</span>
+              <span>{p1Index + 1 >= part1Topic.questions.length ? (isEn ? 'Proceed to Part 2 [Enter]' : 'Chuyển sang Part 2 [Enter]') : (isEn ? 'Next Question [Enter]' : 'Câu tiếp theo [Enter]')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -879,7 +885,7 @@ export default function SpeakingExaminerRoom({
               onClick={handleStartPart2Speaking}
               className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg"
             >
-              <span>Xong nháp $\rightarrow$ Bắt đầu nói</span>
+              <span>{isEn ? 'Finished Prep ➔ Start Speaking' : 'Xong nháp ➔ Bắt đầu nói'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -889,7 +895,7 @@ export default function SpeakingExaminerRoom({
               onClick={handleMoveToPart3}
               className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40"
             >
-              <span>Xong Part 2 $\rightarrow$ Sang Part 3</span>
+              <span>{isEn ? 'Done Part 2 ➔ Proceed to Part 3' : 'Xong Part 2 ➔ Sang Part 3'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -899,7 +905,7 @@ export default function SpeakingExaminerRoom({
               onClick={handleNextPart3Question}
               className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg"
             >
-              <span>{p3Index + 1 >= part3Set.questions.length ? 'Hoàn Thành Bài Thi [Enter]' : 'Câu tiếp theo [Enter]'}</span>
+              <span>{p3Index + 1 >= part3Set.questions.length ? (isEn ? 'Finish Exam [Enter]' : 'Hoàn Thành Bài Thi [Enter]') : (isEn ? 'Next Question [Enter]' : 'Câu tiếp theo [Enter]')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}

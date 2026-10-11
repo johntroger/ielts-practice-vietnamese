@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { ArrowRight, MapPin, Layers, GitCommit, Compass, Sparkles, ZoomIn, X, Image as ImageIcon, ListOrdered } from 'lucide-react';
 import { ensureTaskIllustration } from '../services/processMapSvgEngine.js';
 import ImageViewerModal from './ImageViewerModal.jsx';
+import { useTranslation } from '../i18n';
 
 export default function ProcessMapRenderer({ task }) {
   if (!task) return null;
 
+  const { isEn } = useTranslation();
   const isProcess = task.type === 'process' || !!task.processSteps;
   const isMap = task.type === 'map' || !!task.mapChanges;
 
@@ -26,11 +28,11 @@ export default function ProcessMapRenderer({ task }) {
           </div>
           <div>
             <h4 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-              <span>{isProcess ? 'Sơ Đồ Quy Trình Tuần Tự (Process Flowchart)' : 'Đối Chiếu Bản Đồ Quy Hoạch (Map Transformations)'}</span>
+              <span>{isProcess ? (isEn ? 'Sequential Process Flowchart' : 'Sơ Đồ Quy Trình Tuần Tự (Process Flowchart)') : (isEn ? 'Map Transformations Comparison' : 'Đối Chiếu Bản Đồ Quy Hoạch (Map Transformations)')}</span>
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-extrabold lowercase">cambridge</span>
             </h4>
             <p className="text-[11px] text-slate-500">
-              {isProcess ? `${task.processSteps?.length || 4} giai đoạn liên hoàn` : `${task.mapChanges?.length || 4} khu vực biến đổi quy hoạch`}
+              {isProcess ? `${task.processSteps?.length || 4} ${isEn ? 'sequential stages' : 'giai đoạn liên hoàn'}` : `${task.mapChanges?.length || 4} ${isEn ? 'redevelopment zones' : 'khu vực biến đổi quy hoạch'}`}
             </p>
           </div>
         </div>
@@ -47,7 +49,7 @@ export default function ProcessMapRenderer({ task }) {
             }`}
           >
             <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
-            <span>Hình Ảnh Minh Họa</span>
+            <span>{isEn ? 'Visual Diagram' : 'Hình Ảnh Minh Họa'}</span>
           </button>
           <button
             type="button"
@@ -59,7 +61,7 @@ export default function ProcessMapRenderer({ task }) {
             }`}
           >
             <ListOrdered className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Chi Tiết Từng Bước</span>
+            <span>{isEn ? 'Step-by-Step Breakdown' : 'Chi Tiết Từng Bước'}</span>
           </button>
         </div>
       </div>
@@ -73,7 +75,7 @@ export default function ProcessMapRenderer({ task }) {
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span className="font-semibold text-slate-700 flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Bản vẽ vector tiêu chuẩn Cambridge (Bấm để phóng to full màn hình):</span>
+                <span>{isEn ? 'Cambridge standard vector illustration (Click to zoom fullscreen):' : 'Bản vẽ vector tiêu chuẩn Cambridge (Bấm để phóng to full màn hình):'}</span>
               </span>
               <button
                 type="button"
@@ -81,7 +83,7 @@ export default function ProcessMapRenderer({ task }) {
                 className="text-blue-600 hover:text-blue-800 font-bold inline-flex items-center gap-1 cursor-pointer"
               >
                 <ZoomIn className="w-3.5 h-3.5" />
-                <span>Phóng to</span>
+                <span>{isEn ? 'Zoom in' : 'Phóng to'}</span>
               </button>
             </div>
 
@@ -96,7 +98,7 @@ export default function ProcessMapRenderer({ task }) {
               />
               <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-slate-900/80 backdrop-blur-xs text-white text-[11px] font-semibold flex items-center space-x-1 shadow-md opacity-80 group-hover:opacity-100 transition-opacity">
                 <ZoomIn className="w-3 h-3" />
-                <span>Nhấp để phóng to</span>
+                <span>{isEn ? 'Click to enlarge' : 'Nhấp để phóng to'}</span>
               </div>
             </div>
           </div>
@@ -117,7 +119,7 @@ export default function ProcessMapRenderer({ task }) {
                         {step.step || idx + 1}
                       </span>
                       <span className="text-[10px] font-bold text-blue-700 uppercase">
-                        {idx === 0 ? 'Bắt đầu' : idx === task.processSteps.length - 1 ? 'Thành phẩm' : 'Giai đoạn giữa'}
+                        {idx === 0 ? (isEn ? 'Start' : 'Bắt đầu') : idx === task.processSteps.length - 1 ? (isEn ? 'Final Product' : 'Thành phẩm') : (isEn ? 'Intermediate' : 'Giai đoạn giữa')}
                       </span>
                     </div>
                     <h5 className="font-bold text-xs text-slate-900 pt-1">{step.name}</h5>
@@ -137,10 +139,10 @@ export default function ProcessMapRenderer({ task }) {
                     </div>
                     <div className="text-xs space-y-1">
                       <div className="p-2 rounded bg-amber-50 border border-amber-200 text-amber-950">
-                        <strong>Thời kỳ trước: </strong> {change.past}
+                        <strong>{isEn ? 'Past Period: ' : 'Thời kỳ trước: '}</strong> {change.past}
                       </div>
                       <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-950">
-                        <strong>Sau quy hoạch: </strong> {change.present}
+                        <strong>{isEn ? 'Post-Redevelopment: ' : 'Sau quy hoạch: '}</strong> {change.present}
                       </div>
                     </div>
                   </div>
@@ -153,7 +155,7 @@ export default function ProcessMapRenderer({ task }) {
         {/* Quick Language Helpers */}
         {isProcess && (
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex flex-wrap items-center gap-2">
-            <strong className="text-slate-800 font-bold">Từ nối thứ tự quy trình:</strong>
+            <strong className="text-slate-800 font-bold">{isEn ? 'Process Sequence Connectors:' : 'Từ nối thứ tự quy trình:'}</strong>
             <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">Initially</span>
             <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">Following this</span>
             <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">Subsequently</span>
@@ -164,7 +166,7 @@ export default function ProcessMapRenderer({ task }) {
 
         {isMap && (
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex flex-wrap items-center gap-2">
-            <strong className="text-slate-800 font-bold">Động từ miêu tả bản đồ:</strong>
+            <strong className="text-slate-800 font-bold">{isEn ? 'Map Description Verbs:' : 'Động từ miêu tả bản đồ:'}</strong>
             <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">demolished to make way for</span>
             <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">converted into</span>
             <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">erected / constructed</span>
@@ -179,7 +181,7 @@ export default function ProcessMapRenderer({ task }) {
         isOpen={isZoomed && !!effectiveTask.imageUrl}
         onClose={() => setIsZoomed(false)}
         imageUrl={effectiveTask.imageUrl}
-        title={task.title || (isProcess ? 'Sơ đồ quy trình (Process Flowchart)' : 'Bản đồ quy hoạch (Map Comparison)')}
+        title={task.title || (isProcess ? (isEn ? 'Process Flowchart' : 'Sơ đồ quy trình (Process Flowchart)') : (isEn ? 'Map Comparison' : 'Bản đồ quy hoạch (Map Comparison)'))}
       />
 
     </div>

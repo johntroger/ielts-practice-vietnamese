@@ -118,7 +118,8 @@ const testSuites = [
   { name: 'Step 109: React Hook Order & Mock Test Modal Integrity Verification', file: 'tests/test_step109_react_hook_order_and_mock_test_modal_integrity.js' },
   { name: 'Step 110: Diagnostic Placement & 30-Day Roadmap Bilingual Localization', file: 'tests/test_step110_diagnostic_placement_bilingual_localization.js' },
   { name: 'Step 111: Adaptive 30-Min Sprint Coach Bilingual Localization', file: 'tests/test_step111_adaptive_sprint_coach_bilingual_localization.js' },
-  { name: 'Step 112: Targeted Reflex Studio (Micro-Drills) Bilingual Localization', file: 'tests/test_step112_micro_drills_studio_bilingual_localization.js' }
+  { name: 'Step 112: Targeted Reflex Studio (Micro-Drills) Bilingual Localization', file: 'tests/test_step112_micro_drills_studio_bilingual_localization.js' },
+  { name: 'Step 113: Desktop, Tablet & Mobile Localization & Responsive UI Audit', file: 'tests/test_step113_desktop_tablet_mobile_localization_audit.js' }
 ];
 
 console.log('===============================================================');

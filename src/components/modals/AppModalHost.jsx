@@ -2,6 +2,7 @@ import React from 'react';
 import WorkspaceErrorBoundary from '../common/WorkspaceErrorBoundary';
 import { useModalStore } from '../../core/modalStore';
 import { countWords } from '../../utils/textAnalytics';
+import { useTranslation } from '../../i18n';
 
 // ==========================================
 // LAZY-LOADED MODAL CHUNKS (CODE-SPLIT)
@@ -140,6 +141,7 @@ export default function AppModalHost({
   onExportAllData,
   onImportData
 }) {
+  const { isEn } = useTranslation();
   const { modals, openModal, closeModal } = useModalStore();
 
   return (
@@ -263,7 +265,7 @@ export default function AppModalHost({
         onInsertToOutline={(idea) => {
           setOutlines(prev => ({
             ...prev,
-            [currentTaskId]: (prev[currentTaskId] || '') + `\n- [Ý tưởng]: ${idea}`
+            [currentTaskId]: (prev[currentTaskId] || '') + `\n- [${isEn ? 'Idea' : 'Ý tưởng'}]: ${idea}`
           }));
         }}
         apiKey={apiKey}

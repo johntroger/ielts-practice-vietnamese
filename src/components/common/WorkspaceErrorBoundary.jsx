@@ -75,7 +75,8 @@ export default class WorkspaceErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      const skill = this.props.skillName || 'Phòng Thi';
+      const isEn = (typeof localStorage !== 'undefined' && localStorage.getItem('ielts_language') === 'en') || Boolean(this.props.isEn);
+      const skill = this.props.skillName || (isEn ? 'Exam Room' : 'Phòng Thi');
       const hasDataToSave = Boolean(this.props.emergencyData);
 
       return (
@@ -90,13 +91,15 @@ export default class WorkspaceErrorBoundary extends React.Component {
             {/* Error Message */}
             <div className="space-y-1.5">
               <span className="text-[11px] uppercase tracking-wider font-extrabold text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/30">
-                Lá Chắn Bảo Vệ Khảo Thí (Error Boundary)
+                {isEn ? 'Exam Shield (Error Boundary)' : 'Lá Chắn Bảo Vệ Khảo Thí (Error Boundary)'}
               </span>
               <h2 className="text-lg sm:text-xl font-black text-white pt-1">
-                Sự cố hiển thị tại không gian {skill}
+                {isEn ? `Display issue encountered in ${skill}` : `Sự cố hiển thị tại không gian ${skill}`}
               </h2>
               <p className="text-xs text-slate-400 leading-relaxed max-w-md mx-auto">
-                Hệ thống phát hiện lỗi giao diện bất ngờ. Đừng lo lắng, toàn bộ tiến trình và dữ liệu khác của bạn vẫn an toàn và không bị mất trắng.
+                {isEn 
+                  ? 'An unexpected UI error occurred. Rest assured, your draft and session progress are preserved and not lost.' 
+                  : 'Hệ thống phát hiện lỗi giao diện bất ngờ. Đừng lo lắng, toàn bộ tiến trình và dữ liệu khác của bạn vẫn an toàn và không bị mất trắng.'}
               </p>
             </div>
 
@@ -106,9 +109,9 @@ export default class WorkspaceErrorBoundary extends React.Component {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4 text-amber-400" />
-                    <span>Hộp Cứu Sinh Dữ Liệu Khẩn Cấp:</span>
+                    <span>{isEn ? 'Emergency Data Lifesaver Box:' : 'Hộp Cứu Sinh Dữ Liệu Khẩn Cấp:'}</span>
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Dữ liệu có sẵn</span>
+                  <span className="text-[10px] text-slate-400 font-mono">{isEn ? 'Data available' : 'Dữ liệu có sẵn'}</span>
                 </div>
 
                 <div className="max-h-28 overflow-y-auto p-2.5 rounded-lg bg-slate-900 text-xs font-mono text-slate-300 select-all border border-slate-800">
@@ -123,7 +126,7 @@ export default class WorkspaceErrorBoundary extends React.Component {
                     className="flex-1 min-w-[130px] flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs border border-amber-500/40 transition-colors"
                   >
                     {this.state.copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{this.state.copied ? 'Đã sao chép!' : 'Sao chép nội dung'}</span>
+                    <span>{this.state.copied ? (isEn ? 'Copied!' : 'Đã sao chép!') : (isEn ? 'Copy Content' : 'Sao chép nội dung')}</span>
                   </button>
 
                   <button
@@ -131,7 +134,7 @@ export default class WorkspaceErrorBoundary extends React.Component {
                     className="flex-1 min-w-[130px] flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Tải bản sao lưu (.txt)</span>
+                    <span>{isEn ? 'Download Backup (.txt)' : 'Tải bản sao lưu (.txt)'}</span>
                   </button>
                 </div>
               </div>
@@ -141,7 +144,7 @@ export default class WorkspaceErrorBoundary extends React.Component {
             {this.state.error && (
               <details className="text-left text-[11px] text-slate-500 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80">
                 <summary className="cursor-pointer font-bold hover:text-slate-400">
-                  Chi tiết mã lỗi kỹ thuật: {this.state.error.name || 'Error'}
+                  {isEn ? 'Technical error code:' : 'Chi tiết mã lỗi kỹ thuật:'} {this.state.error.name || 'Error'}
                 </summary>
                 <div className="mt-1 font-mono break-all text-slate-400 pt-1 border-t border-slate-800">
                   {this.state.error.message || String(this.state.error)}
@@ -156,7 +159,7 @@ export default class WorkspaceErrorBoundary extends React.Component {
                 className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition-all active:scale-95"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>Thử Phục Hồi Lại Phòng {skill}</span>
+                <span>{isEn ? `Attempt Recovery for ${skill}` : `Thử Phục Hồi Lại Phòng ${skill}`}</span>
               </button>
 
               <button
@@ -164,7 +167,7 @@ export default class WorkspaceErrorBoundary extends React.Component {
                 className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Tải lại trang</span>
+                <span>{isEn ? 'Reload Page' : 'Tải lại trang'}</span>
               </button>
             </div>
 

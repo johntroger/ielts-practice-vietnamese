@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { analyzeDistractorTrap } from '../services/trapAnalysisService';
 import { openTheoryModalWithContext } from '../services/theoryContextService';
+import { useTranslation } from '../i18n';
 
 /**
  * Distractor Trap Explainer Component
@@ -31,6 +32,7 @@ export default function DistractorTrapExplainer({
   onSaveMistake = null,
   initiallyExpanded = true
 }) {
+  const { isEn } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(initiallyExpanded);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -107,9 +109,9 @@ export default function DistractorTrapExplainer({
         questionText: question.questionText,
         userAnswer,
         correctAnswer: correctAnswer || question.answer,
-        trapType: trap.titleVi,
-        reflexTip: trap.reflexActionTip,
-        date: new Date().toLocaleDateString('vi-VN')
+        trapType: isEn ? trap.titleEn : trap.titleVi,
+        reflexTip: isEn ? trap.reflexActionTipEn : trap.reflexActionTip,
+        date: new Date().toLocaleDateString(isEn ? 'en-US' : 'vi-VN')
       });
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 2000);
@@ -130,14 +132,14 @@ export default function DistractorTrapExplainer({
           <div>
             <div className="flex items-center space-x-2">
               <span className={`text-[10px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded ${style.badge}`}>
-                Bẫy Khảo Thí Cambridge
+                {isEn ? 'Cambridge Trap' : 'Bẫy Khảo Thí Cambridge'}
               </span>
               <span className="text-xs font-black text-slate-900">
-                {trap.titleVi}
+                {isEn ? trap.titleEn : trap.titleVi}
               </span>
             </div>
             <p className="text-[10px] text-slate-500 font-medium">
-              {trap.titleEn}
+              {isEn ? trap.titleVi : trap.titleEn}
             </p>
           </div>
         </div>
@@ -155,10 +157,12 @@ export default function DistractorTrapExplainer({
           <div className={`p-2.5 rounded-lg border ${style.highlightBox} space-y-1`}>
             <div className="flex items-center space-x-1.5 text-slate-700 font-bold">
               <span className="text-xs">🧠</span>
-              <span className="text-[11px] uppercase tracking-wide">Tại sao bạn bị thu hút vào đáp án này:</span>
+              <span className="text-[11px] uppercase tracking-wide">
+                {isEn ? 'Why you were lured into this answer:' : 'Tại sao bạn bị thu hút vào đáp án này:'}
+              </span>
             </div>
             <p className="text-slate-800 leading-relaxed text-[12px]">
-              {trap.whyYouChoseThis}
+              {isEn ? (trap.whyYouChoseThisEn || trap.whyYouChoseThis) : trap.whyYouChoseThis}
             </p>
           </div>
 
@@ -166,10 +170,12 @@ export default function DistractorTrapExplainer({
           <div className={`p-2.5 rounded-lg border ${style.highlightBox} space-y-1`}>
             <div className="flex items-center space-x-1.5 text-slate-700 font-bold">
               <span className="text-xs">🎯</span>
-              <span className="text-[11px] uppercase tracking-wide">Bản chất kỹ thuật đặt bẫy của Đề thi:</span>
+              <span className="text-[11px] uppercase tracking-wide">
+                {isEn ? 'The Examiner\'s Trap Blueprint:' : 'Bản chất kỹ thuật đặt bẫy của Đề thi:'}
+              </span>
             </div>
             <p className="text-slate-800 leading-relaxed text-[12px]">
-              {trap.examinerBlueprint}
+              {isEn ? (trap.examinerBlueprintEn || trap.examinerBlueprint) : trap.examinerBlueprint}
             </p>
           </div>
 
@@ -177,17 +183,21 @@ export default function DistractorTrapExplainer({
           <div className="p-2.5 rounded-lg bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 space-y-1">
             <div className="flex items-center space-x-1.5 text-amber-900 font-black">
               <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-500 shrink-0" />
-              <span className="text-[11px] uppercase tracking-wider">Chiến thuật phản xạ 3 giây (3-Second Reflex Rule):</span>
+              <span className="text-[11px] uppercase tracking-wider">
+                {isEn ? '3-Second Reflex Rule:' : 'Chiến thuật phản xạ 3 giây (3-Second Reflex Rule):'}
+              </span>
             </div>
             <p className="text-amber-950 font-semibold leading-relaxed text-[12px]">
-              {trap.reflexActionTip}
+              {isEn ? (trap.reflexActionTipEn || trap.reflexActionTip) : trap.reflexActionTip}
             </p>
           </div>
 
           {/* Footer Action Bar */}
           <div className="pt-1 flex items-center justify-between text-[11px] flex-wrap gap-2">
             <span className="text-slate-500 italic">
-              💡 Hiểu rõ cơ chế bẫy giúp giảm 80% lỗi sai lặp lại ở bài thi thật.
+              {isEn 
+                ? '💡 Deconstructing traps reduces repeated mistakes by up to 80% in the real test.' 
+                : '💡 Hiểu rõ cơ chế bẫy giúp giảm 80% lỗi sai lặp lại ở bài thi thật.'}
             </span>
 
             <div className="flex items-center space-x-1.5 shrink-0">
@@ -199,14 +209,14 @@ export default function DistractorTrapExplainer({
                   subType: 'all',
                   topicId: skill === 'listening' ? 'distractor-traps' : 'true-false-not-given',
                   title: skill === 'listening' 
-                    ? 'Bẫy Distractor & Đổi Ý Trong IELTS Listening: Chiến Lược Bẻ Bẫy'
-                    : 'Phá Bẫy True / False / Not Given & Yes / No / Not Given'
+                    ? (isEn ? 'Distractor Traps & Turnarounds in IELTS Listening' : 'Bẫy Distractor & Đổi Ý Trong IELTS Listening: Chiến Lược Bẻ Bẫy')
+                    : (isEn ? 'Mastering True / False / Not Given & Yes / No / Not Given' : 'Phá Bẫy True / False / Not Given & Yes / No / Not Given')
                 })}
                 className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold flex items-center space-x-1 transition-colors cursor-pointer shadow-2xs"
-                title="Mở cẩm nang lý thuyết bẻ bẫy Cambridge"
+                title={isEn ? "Open Cambridge Trap Handbook" : "Mở cẩm nang lý thuyết bẻ bẫy Cambridge"}
               >
                 <BookOpen className="w-3 h-3 text-sky-600" />
-                <span>Đọc Cẩm Nang Bẫy</span>
+                <span>{isEn ? 'Read Trap Guide' : 'Đọc Cẩm Nang Bẫy'}</span>
               </button>
 
               {onSaveMistake && (
@@ -214,17 +224,17 @@ export default function DistractorTrapExplainer({
                   type="button"
                   onClick={handleSaveToMistakeLog}
                   className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold flex items-center space-x-1 transition-colors cursor-pointer shadow-2xs"
-                  title="Lưu dạng bẫy này vào Sổ Lỗi Sai để ôn tập"
+                  title={isEn ? "Save this trap pattern into Mistake Journal" : "Lưu dạng bẫy này vào Sổ Lỗi Sai để ôn tập"}
                 >
                   {isSaved ? (
                     <>
                       <Check className="w-3 h-3 text-emerald-600" />
-                      <span className="text-emerald-700">Đã lưu sổ lỗi</span>
+                      <span className="text-emerald-700">{isEn ? 'Saved to Log' : 'Đã lưu sổ lỗi'}</span>
                     </>
                   ) : (
                     <>
                       <Bookmark className="w-3 h-3 text-amber-600" />
-                      <span>Lưu vào Sổ Lỗi Sai</span>
+                      <span>{isEn ? 'Save to Mistake Log' : 'Lưu vào Sổ Lỗi Sai'}</span>
                     </>
                   )}
                 </button>

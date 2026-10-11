@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { AlertTriangle, CheckCircle, Info, ChevronDown, ChevronUp, Sparkles, Volume2 } from 'lucide-react';
 import { analyzeFillerWords, NATURAL_BUYING_TIME_PHRASES } from '../../services/speakingFluencyService.js';
+import { useTranslation } from '../../i18n';
 
 export default function SpeakingFillerTracker({
   transcript = '',
   durationSec = 30,
   className = ''
 }) {
+  const { isEn } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
-  const data = analyzeFillerWords(transcript, durationSec);
+  const data = analyzeFillerWords(transcript, durationSec, isEn);
 
   if (!transcript || data.totalWords < 5) return null;
 
@@ -37,10 +39,10 @@ export default function SpeakingFillerTracker({
               {data.statusLabel}:
             </span>
             <span className="ml-1.5 font-mono font-bold">
-              {data.totalFillers} từ đệm
+              {data.totalFillers} {isEn ? 'fillers' : 'từ đệm'}
             </span>
             <span className="text-[10px] text-slate-400 ml-1">
-              ({data.fillerRatePerMin}/phút • {data.fillerDensityPercent}%)
+              ({data.fillerRatePerMin}/{isEn ? 'min' : 'phút'} • {data.fillerDensityPercent}%)
             </span>
           </div>
         </div>
@@ -49,7 +51,7 @@ export default function SpeakingFillerTracker({
           onClick={() => setIsExpanded(!isExpanded)}
           className="flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-slate-900/60 hover:bg-slate-800 text-[10px] font-bold text-slate-300 border border-slate-700/50 cursor-pointer transition-colors shrink-0"
         >
-          <span>{isExpanded ? 'Ẩn' : 'Chi tiết'}</span>
+          <span>{isExpanded ? (isEn ? 'Hide' : 'Ẩn') : (isEn ? 'Details' : 'Chi tiết')}</span>
           {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         </button>
       </div>
@@ -68,7 +70,7 @@ export default function SpeakingFillerTracker({
           {data.totalFillers > 0 ? (
             <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                Các từ đệm đã phát hiện trong bài nói:
+                {isEn ? 'Detected filler words in speech:' : 'Các từ đệm đã phát hiện trong bài nói:'}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(data.fillerBreakdown).map(([word, count]) => (
@@ -76,14 +78,16 @@ export default function SpeakingFillerTracker({
                     key={word} 
                     className="px-2 py-0.5 rounded-md bg-slate-900 text-rose-300 border border-rose-800/60 text-[11px] font-mono font-bold"
                   >
-                    "{word}": <span className="text-white">{count} lần</span>
+                    "{word}": <span className="text-white">{count} {isEn ? 'times' : 'lần'}</span>
                   </span>
                 ))}
               </div>
             </div>
           ) : (
             <p className="text-[11px] text-emerald-300">
-              🎉 Không phát hiện từ đệm ngập ngừng nào. Bạn đang duy trì mạch nói rất tự tin và liền mạch!
+              {isEn 
+                ? '🎉 No hesitation fillers detected. You are maintaining natural and confident fluency!' 
+                : '🎉 Không phát hiện từ đệm ngập ngừng nào. Bạn đang duy trì mạch nói rất tự tin và liền mạch!'}
             </p>
           )}
 
@@ -91,7 +95,7 @@ export default function SpeakingFillerTracker({
           <div className="space-y-1.5 bg-slate-900/70 p-2.5 rounded-lg border border-slate-800">
             <div className="flex items-center space-x-1 text-[11px] font-bold text-amber-300">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Gợi ý thay thế chuẩn Cambridge Band 7.5+ Fluency:</span>
+              <span>{isEn ? 'Cambridge Band 7.5+ Fluency Replacement Recommendations:' : 'Gợi ý thay thế chuẩn Cambridge Band 7.5+ Fluency:'}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10px]">
               {NATURAL_BUYING_TIME_PHRASES.slice(0, 4).map((p, idx) => (

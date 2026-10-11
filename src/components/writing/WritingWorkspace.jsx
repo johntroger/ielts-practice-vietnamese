@@ -9,6 +9,7 @@ import SmartRecommendationBanner from '../SmartRecommendationBanner';
 import { countWords } from '../../utils/textAnalytics';
 import { brainstormIdeas } from '../../services/geminiService';
 import { safeGet, safeSet } from '../../utils/storageService';
+import { useTranslation } from '../../i18n';
 
 /**
  * WritingWorkspace - Self-contained workspace for IELTS Writing (Task 1 & Task 2)
@@ -64,6 +65,7 @@ export default function WritingWorkspace({
   onSelectTask,
   onOpenModal
 }) {
+  const { isEn } = useTranslation();
   // Phase 3 UI/UX: Minimal Focus View vs Pro Studio View Mode
   const [writingViewMode, setWritingViewMode] = useState(() => safeGet('ielts_writing_view_mode', 'pro'));
 
@@ -102,7 +104,7 @@ export default function WritingWorkspace({
       });
       setBrainstormResult(res);
     } catch (err) {
-      alert(err.message || 'Lỗi gợi ý ý tưởng.');
+      alert(err.message || (isEn ? 'Failed to brainstorm ideas.' : 'Lỗi gợi ý ý tưởng.'));
     } finally {
       setIsBrainstorming(false);
     }

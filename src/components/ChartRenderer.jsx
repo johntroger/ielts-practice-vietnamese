@@ -12,6 +12,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line, Bar, Pie } from 'react-chartjs-2';
+import { useTranslation } from '../i18n';
 
 ChartJS.register(
   CategoryScale,
@@ -26,10 +27,12 @@ ChartJS.register(
 );
 
 export default function ChartRenderer({ chartData }) {
+  const { isEn } = useTranslation();
+
   if (!chartData || !chartData.datasets) {
     return (
       <div className="p-4 rounded-lg bg-slate-100 border border-slate-200 text-center text-slate-500 text-sm">
-        Không có dữ liệu biểu đồ số liệu cho bài này.
+        {isEn ? 'No chart data available for this task.' : 'Không có dữ liệu biểu đồ số liệu cho bài này.'}
       </div>
     );
   }
@@ -80,7 +83,7 @@ export default function ChartRenderer({ chartData }) {
         )}
       </div>
       <p className="mt-2 text-center text-xs text-slate-400 italic">
-        Biểu đồ trực quan do hệ thống render từ số liệu đề bài
+        {isEn ? 'Visual chart generated from prompt data' : 'Biểu đồ trực quan do hệ thống render từ số liệu đề bài'}
       </p>
     </div>
   );
