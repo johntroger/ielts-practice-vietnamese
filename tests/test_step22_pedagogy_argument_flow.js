@@ -34,12 +34,23 @@ it('analyzeTask2Coherence should handle empty or null essay gracefully', () => {
   assert.strictEqual(emptyRes.totalWords, 0);
   assert.strictEqual(emptyRes.paragraphCount, 0);
   assert.strictEqual(emptyRes.status, 'empty');
+  assert.strictEqual(emptyRes.statusLabelEn, 'No essay yet');
+  assert.strictEqual(emptyRes.isStandardParagraphing, false);
+  assert.ok(emptyRes.metrics, 'Metrics object must exist even when essay is empty');
+  assert.strictEqual(emptyRes.metrics.totalExamples, 0);
+  assert.strictEqual(emptyRes.metrics.totalHedging, 0);
+  assert.strictEqual(emptyRes.metrics.totalTopicSentences, 0);
   assert.strictEqual(emptyRes.thesis.hasThesis, false);
   assert.strictEqual(emptyRes.conclusion.hasConclusion, false);
+  assert.ok(emptyRes.sampleTemplates, 'Sample templates must be provided in empty state');
+  assert.ok(emptyRes.sampleTemplates.opinionAgree);
 
   const nullRes = analyzeTask2Coherence(null);
   assert.strictEqual(nullRes.totalWords, 0);
   assert.strictEqual(nullRes.status, 'empty');
+  assert.strictEqual(nullRes.statusLabelEn, 'No essay yet');
+  assert.ok(nullRes.metrics, 'Metrics object must exist for null input');
+  assert.strictEqual(nullRes.metrics.totalExamples, 0);
 });
 
 it('analyzeTask2Coherence should warn about non-standard single-paragraph essays', () => {

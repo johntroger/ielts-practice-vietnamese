@@ -201,17 +201,32 @@ export function analyzeTask2Coherence(essayText, promptText = '') {
     return {
       totalWords: 0,
       paragraphCount: 0,
+      isStandardParagraphing: false,
       paragraphs: [],
       thesis: { hasThesis: false, thesisSentence: '', quality: 'missing', feedback: 'Chưa có nội dung bài viết.' },
       conclusion: { hasConclusion: false, feedback: 'Chưa có kết bài.' },
+      metrics: {
+        totalExamples: 0,
+        totalHedging: 0,
+        totalTopicSentences: 0,
+        bodyParagraphCount: 0
+      },
       overallScore: 0,
       bandEstimate: '0.0',
       progression: 'none',
       status: 'empty',
       statusLabel: 'Chưa có bài viết',
+      statusLabelEn: 'No essay yet',
       strengths: [],
       warnings: ['Vui lòng bắt đầu gõ bài luận để phân tích cấu trúc lập luận.'],
-      recommendations: []
+      recommendations: [],
+      sampleTemplates: {
+        opinionAgree: 'In my opinion, I completely agree with this view because [Lý do chính 1], and [Lý do chính 2].',
+        opinionDisagree: 'From my perspective, I firmly disagree with this statement since [Lý do phản bác 1], and [Lý do phản bác 2].',
+        bothViews: 'While it is true that [Quan điểm A có cơ sở nhất định], I am convinced that [Quan điểm B có sức thuyết phục hơn nhiều].',
+        peelExample: 'For instance, in countries such as Singapore, [mô tả trường hợp thực tế mang tính chứng minh].',
+        conclusionSignal: 'In conclusion, while [thừa nhận ngắn gọn khía cạnh đối lập], I strongly reaffirm that [khẳng định lại lập trường chính của bạn].'
+      }
     };
   }
 
@@ -380,18 +395,23 @@ export function analyzeTask2Coherence(essayText, promptText = '') {
   const calculatedBand = Math.min(8.5, Math.max(4.0, baseBand)).toFixed(1);
 
   let statusLabel = 'Đạt chuẩn ✓';
+  let statusLabelEn = 'Standard met ✓';
   let status = 'optimal';
   if (paragraphCount < 3) {
     statusLabel = 'Chưa đủ đoạn';
+    statusLabelEn = 'Need more paragraphs';
     status = 'critical';
   } else if (!hasThesis) {
     statusLabel = 'Thiếu Thesis ⚠️';
+    statusLabelEn = 'Missing Thesis ⚠️';
     status = 'needs_work';
   } else if (totalExamples === 0) {
     statusLabel = 'Thiếu ví dụ ⚠️';
+    statusLabelEn = 'Missing examples ⚠️';
     status = 'needs_work';
   } else if (totalWords < 200) {
     statusLabel = 'Chưa đủ từ ⚠️';
+    statusLabelEn = 'Under word count ⚠️';
     status = 'needs_work';
   }
 
@@ -421,6 +441,7 @@ export function analyzeTask2Coherence(essayText, promptText = '') {
     bandEstimate: calculatedBand,
     status,
     statusLabel,
+    statusLabelEn,
     strengths,
     warnings,
     recommendations,

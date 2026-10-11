@@ -395,5 +395,18 @@ it('17. ContactModal.jsx is fully localized into English', () => {
   assert.ok(content.includes("isEn ? 'Point of Contact & Support' : 'Người Phụ Trách & Tiếp Nhận'"));
 });
 
+// 18. Task 2 Coherence modal and toolbar badge handle empty essay and English localization
+it('18. Task 2 Coherence modal and EditorPane toolbar handle empty essay and English localization', () => {
+  const coherenceContent = fs.readFileSync(path.join(__dirname, '../src/components/Task2CoherenceModal.jsx'), 'utf-8');
+  assert.ok(coherenceContent.includes('useTranslation'), 'Task2CoherenceModal missing useTranslation');
+  assert.ok(coherenceContent.includes('metrics?.totalExamples'), 'Task2CoherenceModal must safely guard metrics?.totalExamples');
+  assert.ok(coherenceContent.includes('metrics?.totalHedging'), 'Task2CoherenceModal must safely guard metrics?.totalHedging');
+  assert.ok(coherenceContent.includes("isEn ? 'No essay drafted yet' : 'Chưa có bài viết'"), 'Task2CoherenceModal missing empty state banner');
+
+  const editorContent = fs.readFileSync(path.join(__dirname, '../src/components/EditorPane.jsx'), 'utf-8');
+  assert.ok(editorContent.includes('task2CoherenceCheck?.statusLabelEn'), 'EditorPane must use task2CoherenceCheck?.statusLabelEn');
+  assert.ok(editorContent.includes("'No essay yet'"), 'EditorPane must show "No essay yet" in English mode when empty');
+});
+
 console.log(`\n🎉 STEP 104 PASSED: ${passedTests}/${passedTests} tests passed!`);
 

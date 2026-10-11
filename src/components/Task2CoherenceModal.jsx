@@ -55,6 +55,11 @@ const getRecommendationText = (rec, isEn) => {
 };
 
 const getThesisFeedback = (thesis, isEn) => {
+  if (thesis?.quality === 'missing' || thesis?.feedback === 'Chưa có nội dung bài viết.') {
+    return isEn 
+      ? 'No essay drafted yet. Start writing in the editor to unlock real-time Thesis Statement and argument structure diagnostics.' 
+      : (thesis?.feedback || 'Chưa có nội dung bài viết.');
+  }
   if (!isEn) return thesis?.feedback;
   if (thesis?.hasThesis) {
     return 'Clear thesis statement identified in the introduction, outlining your perspective and directly addressing the prompt to satisfy Band 7.0+ TR requirements.';
@@ -157,6 +162,23 @@ export default function Task2CoherenceModal({
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+          {/* Empty Essay State Banner */}
+          {analysis.status === 'empty' && (
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-bold text-sm text-amber-950 mb-0.5">
+                  {isEn ? 'No essay drafted yet' : 'Chưa có bài viết'}
+                </div>
+                <p className="leading-relaxed text-amber-800">
+                  {isEn 
+                    ? 'Start drafting your Task 2 essay in the editor. As you write, this tool will automatically analyze your Thesis statement, PEEL body paragraph flow, hedging nuance, and evidence grounding in real time.'
+                    : 'Hãy bắt đầu viết bài luận Task 2 trong khung soạn thảo. Hệ thống sẽ tự động chẩn đoán câu Thesis mở bài, cấu trúc đoạn thân bài PEEL, ngôn ngữ phản đề và dẫn chứng thực tế theo thời gian thực.'}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Quick Metrics Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
             {/* Macro-structure */}
@@ -176,7 +198,7 @@ export default function Task2CoherenceModal({
                 )}
               </div>
               <div className="text-sm sm:text-base font-black">
-                {analysis.paragraphCount} {isEn ? (analysis.paragraphCount === 1 ? 'Paragraph' : 'Paragraphs') : 'Đoạn'}
+                {analysis.paragraphCount || 0} {isEn ? ((analysis.paragraphCount || 0) === 1 ? 'Paragraph' : 'Paragraphs') : 'Đoạn'}
               </div>
               <div className="text-[10px] opacity-80 mt-0.5">
                 {analysis.isStandardParagraphing 
@@ -187,7 +209,7 @@ export default function Task2CoherenceModal({
 
             {/* Thesis Statement */}
             <div className={`p-3 rounded-xl border ${
-              analysis.thesis.hasThesis 
+              analysis.thesis?.hasThesis 
                 ? 'bg-indigo-50 border-indigo-200 text-indigo-900' 
                 : 'bg-rose-50 border-rose-200 text-rose-900'
             }`}>
@@ -195,17 +217,17 @@ export default function Task2CoherenceModal({
                 <span className="text-[10px] font-bold uppercase tracking-wider">
                   {isEn ? 'Thesis (Intro)' : 'Thesis (Mở Bài)'}
                 </span>
-                {analysis.thesis.hasThesis ? (
+                {analysis.thesis?.hasThesis ? (
                   <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
                 ) : (
                   <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
                 )}
               </div>
               <div className="text-sm sm:text-base font-black truncate">
-                {analysis.thesis.hasThesis ? (isEn ? 'Present ✓' : 'Đã Có ✓') : (isEn ? 'Missing ⚠️' : 'Chưa Có ⚠️')}
+                {analysis.thesis?.hasThesis ? (isEn ? 'Present ✓' : 'Đã Có ✓') : (isEn ? 'Missing ⚠️' : 'Chưa Có ⚠️')}
               </div>
               <div className="text-[10px] opacity-80 mt-0.5">
-                {analysis.thesis.hasThesis 
+                {analysis.thesis?.hasThesis 
                   ? (isEn ? 'TR 7.0+ Ready' : 'Bảo đảm TR 7.0+') 
                   : (isEn ? 'Risk Band 6 cap' : 'Nguy cơ trần Band 6')}
               </div>
@@ -213,7 +235,7 @@ export default function Task2CoherenceModal({
 
             {/* PEEL Examples */}
             <div className={`p-3 rounded-xl border ${
-              analysis.metrics.totalExamples >= 2 
+              (analysis.metrics?.totalExamples || 0) >= 2 
                 ? 'bg-purple-50 border-purple-200 text-purple-900' 
                 : 'bg-amber-50 border-amber-200 text-amber-900'
             }`}>
@@ -221,17 +243,17 @@ export default function Task2CoherenceModal({
                 <span className="text-[10px] font-bold uppercase tracking-wider">
                   {isEn ? 'Evidence / Examples' : 'Dẫn Chứng'}
                 </span>
-                {analysis.metrics.totalExamples >= 2 ? (
+                {(analysis.metrics?.totalExamples || 0) >= 2 ? (
                   <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
                 ) : (
                   <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
                 )}
               </div>
               <div className="text-sm sm:text-base font-black">
-                {analysis.metrics.totalExamples} {isEn ? (analysis.metrics.totalExamples === 1 ? 'Example' : 'Examples') : 'Ví Dụ'}
+                {analysis.metrics?.totalExamples || 0} {isEn ? ((analysis.metrics?.totalExamples || 0) === 1 ? 'Example' : 'Examples') : 'Ví Dụ'}
               </div>
               <div className="text-[10px] opacity-80 mt-0.5">
-                {analysis.metrics.totalExamples >= 2 
+                {(analysis.metrics?.totalExamples || 0) >= 2 
                   ? (isEn ? 'Sufficient grounding' : 'Đủ minh họa thực tế') 
                   : (isEn ? 'More evidence needed' : 'Cần thêm ví dụ')}
               </div>
@@ -239,7 +261,7 @@ export default function Task2CoherenceModal({
 
             {/* Hedging */}
             <div className={`p-3 rounded-xl border ${
-              analysis.metrics.totalHedging >= 1 
+              (analysis.metrics?.totalHedging || 0) >= 1 
                 ? 'bg-teal-50 border-teal-200 text-teal-900' 
                 : 'bg-slate-50 border-slate-200 text-slate-700'
             }`}>
@@ -247,17 +269,17 @@ export default function Task2CoherenceModal({
                 <span className="text-[10px] font-bold uppercase tracking-wider">
                   {isEn ? 'Hedging & Nuance' : 'Hedging & Phản Đề'}
                 </span>
-                {analysis.metrics.totalHedging >= 1 ? (
+                {(analysis.metrics?.totalHedging || 0) >= 1 ? (
                   <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
                 ) : (
                   <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
                 )}
               </div>
               <div className="text-sm sm:text-base font-black">
-                {analysis.metrics.totalHedging} {isEn ? (analysis.metrics.totalHedging === 1 ? 'Instance' : 'Instances') : 'Vị Trí'}
+                {analysis.metrics?.totalHedging || 0} {isEn ? ((analysis.metrics?.totalHedging || 0) === 1 ? 'Instance' : 'Instances') : 'Vị Trí'}
               </div>
               <div className="text-[10px] opacity-80 mt-0.5">
-                {analysis.metrics.totalHedging >= 1 
+                {(analysis.metrics?.totalHedging || 0) >= 1 
                   ? (isEn ? 'Balanced argumentation' : 'Lập luận đa chiều') 
                   : (isEn ? 'Add counter-argument' : 'Nên thêm phản biện')}
               </div>
@@ -266,7 +288,7 @@ export default function Task2CoherenceModal({
 
           {/* Thesis Statement Diagnostic Banner */}
           <div className={`p-4 rounded-xl border space-y-2 ${
-            analysis.thesis.hasThesis 
+            analysis.thesis?.hasThesis 
               ? 'bg-indigo-50/70 border-indigo-200 text-indigo-900' 
               : 'bg-rose-50 border-rose-200 text-rose-900'
           }`}>
@@ -324,23 +346,31 @@ export default function Task2CoherenceModal({
               </span>
             </div>
 
-            {/* Paragraph Tabs */}
-            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
-              {analysis.paragraphs.map((p, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedParagraphIndex(idx)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                    selectedParagraphIndex === idx
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                  }`}
-                >
-                  <span>{getParagraphLabel(p, isEn)}</span>
-                  <span className="ml-1 text-[10px] opacity-75">({p.wordCount}{isEn ? 'w' : 't'})</span>
-                </button>
-              ))}
-            </div>
+            {(!analysis.paragraphs || analysis.paragraphs.length === 0) ? (
+              <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center text-slate-500 text-xs">
+                {isEn 
+                  ? 'No paragraphs drafted yet. Type your essay in the editor to inspect sentence-by-sentence roles.' 
+                  : 'Chưa có đoạn văn nào. Hãy viết bài trong khung soạn thảo để xem giải phẫu chức năng chi tiết.'}
+              </div>
+            ) : (
+              <>
+                {/* Paragraph Tabs */}
+                <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
+                  {analysis.paragraphs.map((p, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedParagraphIndex(idx)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        selectedParagraphIndex === idx
+                          ? 'bg-slate-900 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                      }`}
+                    >
+                      <span>{getParagraphLabel(p, isEn)}</span>
+                      <span className="ml-1 text-[10px] opacity-75">({p.wordCount}{isEn ? 'w' : 't'})</span>
+                    </button>
+                  ))}
+                </div>
 
             {/* Active Paragraph Detail Card */}
             {activePara && (
@@ -440,7 +470,7 @@ export default function Task2CoherenceModal({
                     <ul className="list-disc list-inside space-y-0.5 text-[11px] text-rose-800">
                       {activePeel.unsupportedClaims.map((uc, uIdx) => (
                         <li key={uIdx}>
-                          <span className="italic">"{uc.sentence}"</span>: {uc.reason}
+                          <span className="italic">"{uc.sentence}"</span>: {isEn ? (uc.reasonEn || uc.reason) : uc.reason}
                         </li>
                       ))}
                     </ul>
@@ -479,7 +509,9 @@ export default function Task2CoherenceModal({
                 )}
               </div>
             )}
-          </div>
+          </>
+        )}
+      </div>
 
           {/* Quick Cambridge Template Samples */}
           <div className="p-4 rounded-xl bg-slate-900 text-white space-y-3">

@@ -1269,7 +1269,8 @@ export function validatePeelParagraphAlgorithmically({ task, paragraphText = '' 
     if (hasAbsoluteClaim) {
       unsupportedClaims.push({
         sentence: s,
-        reason: 'Khẳng định mang tính tuyệt đối hóa (Absolute Claim) thiếu dữ chứng bảo đảm theo tiêu chuẩn học thuật.'
+        reason: 'Khẳng định mang tính tuyệt đối hóa (Absolute Claim) thiếu dữ chứng bảo đảm theo tiêu chuẩn học thuật.',
+        reasonEn: 'Overgeneralized absolute claim lacking empirical support according to academic writing standards.'
       });
     }
 

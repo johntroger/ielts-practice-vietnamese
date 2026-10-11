@@ -382,7 +382,9 @@ export default function EditorPane({
                           ? 'bg-emerald-200 text-emerald-900'
                           : 'bg-indigo-200 text-indigo-900'
                       }`}>
-                        {task2CoherenceCheck?.statusLabel || (isEn ? 'Check' : 'Kiểm tra')}
+                        {isEn 
+                          ? (task2CoherenceCheck?.statusLabelEn || (task2CoherenceCheck?.status === 'empty' ? 'No essay yet' : task2CoherenceCheck?.statusLabel) || 'Check')
+                          : (task2CoherenceCheck?.statusLabel || 'Kiểm tra')}
                       </span>
                     </button>
                   )}
@@ -514,7 +516,9 @@ export default function EditorPane({
                       ? 'bg-emerald-200 text-emerald-900'
                       : 'bg-indigo-200 text-indigo-900'
                   }`}>
-                    {task2CoherenceCheck?.statusLabel || (isEn ? 'Check' : 'Kiểm tra')}
+                    {isEn 
+                      ? (task2CoherenceCheck?.statusLabelEn || (task2CoherenceCheck?.status === 'empty' ? 'No essay yet' : task2CoherenceCheck?.statusLabel) || 'Check')
+                      : (task2CoherenceCheck?.statusLabel || 'Kiểm tra')}
                   </span>
                 </button>
               )}
