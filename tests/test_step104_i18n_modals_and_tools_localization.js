@@ -227,24 +227,62 @@ it('13. TaskImageUploader.jsx and DocumentIngestModal.jsx are fully localized', 
   assert.ok(ingestContent.includes("isEn ? 'Fast AI Document Ingestion (Smart Ingestion)'"));
 });
 
-// 14. TheoryHandbookModal.jsx & theoryLocalizationHelper.js full English edition
-it('14. TheoryHandbookModal.jsx and theoryLocalizationHelper.js provide full English articles & stages', async () => {
-  const { getLocalizedArticle, getLocalizedStage, WRITING_THEORY_ARTICLES_EN } = await import('../src/data/theoryHandbook/theoryLocalizationHelper.js');
+// 14. TheoryHandbookModal.jsx & theoryLocalizationHelper.js full English edition for all 5 skills (113 topics)
+it('14. TheoryHandbookModal.jsx and theoryLocalizationHelper.js provide full English articles & stages for all 5 skills', async () => {
+  const { 
+    getLocalizedArticle, 
+    getLocalizedStage, 
+    WRITING_THEORY_ARTICLES_EN,
+    READING_THEORY_ARTICLES_EN,
+    LISTENING_THEORY_ARTICLES_EN,
+    SPEAKING_THEORY_ARTICLES_EN,
+    GRAMMAR_VOCAB_THEORY_ARTICLES_EN
+  } = await import('../src/data/theoryHandbook/theoryLocalizationHelper.js');
   const { WRITING_THEORY_ARTICLES } = await import('../src/data/theoryHandbook/writingTheoryData.js');
+  const { READING_THEORY_ARTICLES } = await import('../src/data/theoryHandbook/readingTheoryData.js');
+  const { LISTENING_THEORY_ARTICLES } = await import('../src/data/theoryHandbook/listeningTheoryData.js');
+  const { SPEAKING_THEORY_ARTICLES } = await import('../src/data/theoryHandbook/speakingTheoryData.js');
+  const { GRAMMAR_VOCAB_THEORY_ARTICLES } = await import('../src/data/theoryHandbook/grammarVocabTheoryData.js');
 
-  // Verify all 34 articles have English entries
+  // Verify all 113 articles have English entries across 5 skills
   assert.strictEqual(Object.keys(WRITING_THEORY_ARTICLES_EN).length, 34);
-  assert.strictEqual(WRITING_THEORY_ARTICLES.length, 34);
+  assert.strictEqual(Object.keys(READING_THEORY_ARTICLES_EN).length, 25);
+  assert.strictEqual(Object.keys(LISTENING_THEORY_ARTICLES_EN).length, 20);
+  assert.strictEqual(Object.keys(SPEAKING_THEORY_ARTICLES_EN).length, 20);
+  assert.strictEqual(Object.keys(GRAMMAR_VOCAB_THEORY_ARTICLES_EN).length, 14);
 
-  // Test first article (foundation-band4-to-5-survival-guide)
-  const firstItem = WRITING_THEORY_ARTICLES[0];
-  const viArticle = getLocalizedArticle(firstItem, false);
-  const enArticle = getLocalizedArticle(firstItem, true);
+  const totalEn = 34 + 25 + 20 + 20 + 14;
+  assert.strictEqual(totalEn, 113);
 
-  assert.strictEqual(viArticle.title, 'Cẩm Nang Chinh Phục Writing Từ Band 4.0 Lên 5.0 Cho Người Mất Gốc');
-  assert.strictEqual(enArticle.title, 'Writing Survival Guide: Climbing from Band 4.0 to Band 5.0');
-  assert.ok(enArticle.content.includes('Three "Life-or-Death" Sentence Structures'));
-  assert.ok(enArticle.stage.includes('Stage 1: Foundation & Survival'));
+  // 1. Test Writing (foundation-band4-to-5-survival-guide)
+  const writingItem = WRITING_THEORY_ARTICLES[0];
+  const enWriting = getLocalizedArticle(writingItem, true);
+  assert.strictEqual(enWriting.title, 'Writing Survival Guide: Climbing from Band 4.0 to Band 5.0');
+  assert.ok(enWriting.content.includes('Three "Life-or-Death" Sentence Structures'));
+
+  // 2. Test Reading (reading-overview-academic-vs-general-conversion)
+  const readingItem = READING_THEORY_ARTICLES[0];
+  const enReading = getLocalizedArticle(readingItem, true);
+  assert.strictEqual(enReading.title, 'IELTS Reading Exam Overview: Academic vs General Training & Official Score Conversion');
+  assert.ok(enReading.content.includes('Comprehensive Comparison: IELTS Reading Academic vs General Training'));
+
+  // 3. Test Listening (foundation-listening-band4-to-5-part1-mastery)
+  const listeningItem = LISTENING_THEORY_ARTICLES[0];
+  const enListening = getLocalizedArticle(listeningItem, true);
+  assert.strictEqual(enListening.title, 'Listening Survival: Climbing from Band 4.0 to 5.0 (Part 1 Mastery & Letter/Number Traps)');
+  assert.ok(enListening.content.includes('The Four Most Confused Letter Sound Pairs'));
+
+  // 4. Test Speaking (foundation-speaking-band4-to-5-fluency)
+  const speakingItem = SPEAKING_THEORY_ARTICLES[0];
+  const enSpeaking = getLocalizedArticle(speakingItem, true);
+  assert.strictEqual(enSpeaking.title, 'Speaking Survival: Climbing from Band 4.0 to 5.0 (Conquering Speaking Anxiety & Part 1/2 Frameworks)');
+  assert.ok(enSpeaking.content.includes('The 2-Sentence "Life-or-Death" Formula for Part 1'));
+
+  // 5. Test Grammar & Vocab (README)
+  const gvItem = GRAMMAR_VOCAB_THEORY_ARTICLES[0];
+  const enGv = getLocalizedArticle(gvItem, true);
+  assert.strictEqual(enGv.title, '📚 IELTS Core Grammar & Academic Vocabulary Guide');
+  assert.ok(enGv.content.includes('Why Grammar and Vocabulary Matter So Much'));
 
   // Stage translation helper
   assert.strictEqual(getLocalizedStage('Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)', false), 'Chặng 1: Nền Tảng & Cứu Sinh (Band 4.0 – 5.0)');

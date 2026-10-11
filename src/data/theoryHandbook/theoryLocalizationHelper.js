@@ -1,9 +1,14 @@
 /**
  * src/data/theoryHandbook/theoryLocalizationHelper.js
  * Centralized localization service for Theory Handbook articles, stages, titles, summaries, and Markdown content.
+ * Supports all 113 topics across all 5 skills: Writing, Reading, Listening, Speaking, and Grammar & Vocab.
  */
 
 import { WRITING_THEORY_ARTICLES_EN } from './writingTheoryDataEn.js';
+import { READING_THEORY_ARTICLES_EN } from './readingTheoryDataEn.js';
+import { LISTENING_THEORY_ARTICLES_EN } from './listeningTheoryDataEn.js';
+import { SPEAKING_THEORY_ARTICLES_EN } from './speakingTheoryDataEn.js';
+import { GRAMMAR_VOCAB_THEORY_ARTICLES_EN } from './grammarVocabTheoryDataEn.js';
 import { THEORY_I18N_EN } from '../../services/theoryContextService.js';
 
 export const STAGE_LOCALIZATION = {
@@ -22,7 +27,8 @@ export const STAGE_LOCALIZATION = {
   'Chặng 1: Nền Tảng Phản Xạ & Xóa Sợ Nói (Band 4.0 – 5.0)': 'Stage 1: Reflex Foundation & Speaking Confidence (Band 4.0 – 5.0)',
   'Chặng 2: Làm Chủ Part 1 & Storytelling Part 2 (Band 5.5 – 6.5)': 'Stage 2: Master Part 1 & Part 2 Storytelling (Band 5.5 – 6.5)',
   'Chặng 3: Tư Duy Phản Biện & Collocations C1/C2 (Band 7.0 – 8.5+)': 'Stage 3: Critical Thinking & C1/C2 Collocations (Band 7.0 – 8.5+)',
-  'Chặng 4: Tâm Lý Phòng Thi & Tương Tác Giám Khảo': 'Stage 4: Exam Room Mindset & Examiner Interaction'
+  'Chặng 4: Tâm Lý Phòng Thi & Tương Tác Giám Khảo': 'Stage 4: Exam Room Mindset & Examiner Interaction',
+  'Core Grammar & Vocab Guide': 'Core Grammar & Vocab Guide'
 };
 
 /**
@@ -40,13 +46,35 @@ export function getLocalizedArticle(item, isEn) {
   if (!item) return item;
   if (!isEn) return item;
 
-  const enWriting = WRITING_THEORY_ARTICLES_EN[item.id];
+  let enArticle = null;
+  if (item.skill === 'writing') {
+    enArticle = WRITING_THEORY_ARTICLES_EN[item.id];
+  } else if (item.skill === 'reading') {
+    enArticle = READING_THEORY_ARTICLES_EN[item.id];
+  } else if (item.skill === 'listening') {
+    enArticle = LISTENING_THEORY_ARTICLES_EN[item.id];
+  } else if (item.skill === 'speaking') {
+    enArticle = SPEAKING_THEORY_ARTICLES_EN[item.id];
+  } else if (item.skill === 'grammar-vocab') {
+    enArticle = GRAMMAR_VOCAB_THEORY_ARTICLES_EN[item.id];
+  }
+
+  // Fallback check across all collections
+  if (!enArticle) {
+    enArticle =
+      WRITING_THEORY_ARTICLES_EN[item.id] ||
+      READING_THEORY_ARTICLES_EN[item.id] ||
+      LISTENING_THEORY_ARTICLES_EN[item.id] ||
+      SPEAKING_THEORY_ARTICLES_EN[item.id] ||
+      GRAMMAR_VOCAB_THEORY_ARTICLES_EN[item.id];
+  }
+
   const enMeta = THEORY_I18N_EN[item.id];
 
-  const title = (enWriting?.title) || (enMeta?.title) || item.title;
-  const summary = (enWriting?.summary) || (enMeta?.tip) || item.summary;
-  const content = (enWriting?.content) || item.content;
-  const stage = (enWriting?.stage) || getLocalizedStage(item.stage, true);
+  const title = (enArticle?.title) || (enMeta?.title) || item.title;
+  const summary = (enArticle?.summary) || (enMeta?.tip) || item.summary;
+  const content = (enArticle?.content) || item.content;
+  const stage = (enArticle?.stage) || getLocalizedStage(item.stage, true);
 
   return {
     ...item,
@@ -57,4 +85,10 @@ export function getLocalizedArticle(item, isEn) {
   };
 }
 
-export { WRITING_THEORY_ARTICLES_EN };
+export { 
+  WRITING_THEORY_ARTICLES_EN,
+  READING_THEORY_ARTICLES_EN,
+  LISTENING_THEORY_ARTICLES_EN,
+  SPEAKING_THEORY_ARTICLES_EN,
+  GRAMMAR_VOCAB_THEORY_ARTICLES_EN
+};
