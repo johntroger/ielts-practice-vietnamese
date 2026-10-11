@@ -115,20 +115,37 @@ export default function WeeklyReportModal({
   // Smart Fallback Diagnosis (when offline or without API key)
   const generateFallbackDiagnosis = () => {
     return {
-      summaryHeadline: totalActivities > 0 
-        ? `Tuần này bạn đã hoàn thành ${totalActivities} bài tập trên ${activeBands.length} kỹ năng với dự phóng Overall Band đạt ${overallProjectedBand}. Phong độ tương đối ổn định và có chiều hướng tiến bộ rõ rệt.`
-        : 'Bạn vừa bắt đầu chu kỳ tuần mới. Hãy hoàn thành ít nhất 1 bài tập ở mỗi kỹ năng để AI thiết lập bản đồ năng lực chính xác.',
-      strengths: [
+      summaryHeadline: isEn
+        ? (totalActivities > 0 
+          ? `This week you completed ${totalActivities} practice sessions across ${activeBands.length} skills with a projected Overall Band of ${overallProjectedBand}. Your performance remains consistent with steady progress.`
+          : 'You have just started a new weekly cycle. Complete at least 1 practice session in each skill so AI can map your diagnostic profile accurately.')
+        : (totalActivities > 0 
+          ? `Tuần này bạn đã hoàn thành ${totalActivities} bài tập trên ${activeBands.length} kỹ năng với dự phóng Overall Band đạt ${overallProjectedBand}. Phong độ tương đối ổn định và có chiều hướng tiến bộ rõ rệt.`
+          : 'Bạn vừa bắt đầu chu kỳ tuần mới. Hãy hoàn thành ít nhất 1 bài tập ở mỗi kỹ năng để AI thiết lập bản đồ năng lực chính xác.'),
+      strengths: isEn ? [
+        totalEssays > 0 ? `Maintained regular Writing practice (${totalEssays} essays) with progressively structured arguments.` : 'High focus on building foundational academic competence.',
+        (totalReadingTests > 0 || totalListeningTests > 0) ? `Receptive skills (Reading/Listening) demonstrate strong scanning and synonym/paraphrase identification.` : 'Balanced training awareness distributed across skills.',
+        totalSpeakingTests > 0 ? `Actively engaged in conversational practice with AI Examiner (${totalSpeakingTests} sessions), maintaining ~${avgSpeakingWpm} WPM.` : 'Study plan closely aligned with Cambridge assessment criteria.'
+      ] : [
         totalEssays > 0 ? `Duy trì thói quen luyện viết Writing (${totalEssays} bài) với cấu trúc và tư duy lập luận ngày càng chặt chẽ.` : 'Tập trung cao độ vào việc xây dựng nền tảng học thuật.',
         (totalReadingTests > 0 || totalListeningTests > 0) ? `Kỹ năng tiếp nhận (Reading/Listening) thể hiện khả năng quét thông tin và xử lý từ đồng nghĩa (paraphrase) tốt.` : 'Ý thức rèn luyện phân bổ đều giữa các kỹ năng.',
         totalSpeakingTests > 0 ? `Chủ động phản xạ đàm thoại với Giám khảo AI (${totalSpeakingTests} lượt thi), kiểm soát tốc độ nói trung bình đạt ~${avgSpeakingWpm} WPM.` : 'Kế hoạch học tập bám sát chuẩn khảo thí Cambridge.'
       ],
-      weaknesses: [
+      weaknesses: isEn ? [
+        mistakes.length > 0 ? `Recurring grammatical slips recorded in Mistake Log (${mistakes.length} errors logged; focus on articles and verb tenses).` : 'Expand advanced C1/C2 collocations to enhance writing and speaking fluency.',
+        avgWritingBand && Number(avgWritingBand) < 7.0 ? 'Writing Task 2 requires deeper paragraph elaboration using PEEL framework, avoiding superficial lists.' : 'Reading Passage 3 requires stricter pacing to avoid running out of time.',
+        avgSpeakingBand && Number(avgSpeakingBand) < 7.0 ? 'Speaking Part 2 should follow the 4-box Past - Present - Future timeline outline to sustain 2 full minutes.' : 'Minimize filler pauses and hesitation markers (uh, um, like).'
+      ] : [
         mistakes.length > 0 ? `Còn lặp lại một số lỗi ngữ pháp trong Sổ tay lỗi sai (${mistakes.length} lỗi ghi nhận, chú ý mạo từ và chia thì).` : 'Cần trau dồi thêm các cụm từ vựng C1/C2 để bài viết và bài nói tự nhiên hơn.',
         avgWritingBand && Number(avgWritingBand) < 7.0 ? 'Writing Task 2 cần phát triển luận cứ sâu hơn theo khung PEEL, tránh liệt kê ý rời rạc.' : 'Reading Passage 3 cần căn chỉnh thời gian làm bài để không bị thiếu giờ.',
         avgSpeakingBand && Number(avgSpeakingBand) < 7.0 ? 'Speaking Part 2 cần bám sát bảng nháp 4 ô theo trục thời gian Past - Present - Future để nói đủ 2 phút trơn tru.' : 'Cần hạn chế tối đa các từ đệm vô nghĩa (uh, um, like).'
       ],
-      actionPlan: [
+      actionPlan: isEn ? [
+        { task: 'Complete 1 Writing Task 2 essay and review all grammatical structures before submission', priority: 'High', targetSkill: 'Writing' },
+        { task: 'Practice 1 full 60-min Reading test, focusing on True/False/Not Given distractors', priority: 'High', targetSkill: 'Reading' },
+        { task: 'Conduct 1 complete Speaking 3-Part mock session with AI Examiner using A.R.E.A in Part 1', priority: 'Medium', targetSkill: 'Speaking' },
+        { task: 'Complete 1 Listening Part 3 & Part 4 test, concentrating on audio distractors', priority: 'Medium', targetSkill: 'Listening' }
+      ] : [
         { task: 'Hoàn thành 1 bài viết Writing Task 2, rà soát lại toàn bộ lỗi ngữ pháp trước khi nộp', priority: 'Cao', targetSkill: 'Writing' },
         { task: 'Luyện 1 đề Reading trọn vẹn 60 phút, chú trọng phân tích bẫy dạng True/False/Not Given', priority: 'Cao', targetSkill: 'Reading' },
         { task: 'Thực hiện 1 buổi thi thử Speaking 3 Parts cùng Giám khảo AI, ứng dụng công thức A.R.E.A ở Part 1', priority: 'Trung bình', targetSkill: 'Speaking' },
@@ -258,8 +275,8 @@ Return ONLY raw parseable JSON with this exact schema:
           <button 
             onClick={onClose} 
             className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
-            title="Đóng bảng báo cáo"
-            aria-label="Đóng"
+            title={isEn ? "Close report" : "Đóng bảng báo cáo"}
+            aria-label={isEn ? "Close" : "Đóng"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -270,12 +287,12 @@ Return ONLY raw parseable JSON with this exact schema:
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
             <div className="flex items-center space-x-1.5 text-slate-700">
               <Calendar className="w-4 h-4 text-slate-400" />
-              <span>Đã thực hiện: <strong className="text-slate-900">{totalActivities} bài tập & ca thi</strong></span>
+              <span>{isEn ? 'Completed: ' : 'Đã thực hiện: '}<strong className="text-slate-900">{totalActivities} {isEn ? 'activities & tests' : 'bài tập & ca thi'}</strong></span>
             </div>
             <span className="text-slate-300">•</span>
             <div>
-              <span>Dự phóng Overall tuần: <strong className="text-red-600 font-extrabold text-sm">
-                {overallProjectedBand !== 'N/A' ? `BAND ${overallProjectedBand}` : 'Chưa đủ dữ liệu'}
+              <span>{isEn ? 'Projected Weekly Overall: ' : 'Dự phóng Overall tuần: '}<strong className="text-red-600 font-extrabold text-sm">
+                {overallProjectedBand !== 'N/A' ? `BAND ${overallProjectedBand}` : (isEn ? 'Insufficient data' : 'Chưa đủ dữ liệu')}
               </strong></span>
             </div>
           </div>
@@ -286,7 +303,7 @@ Return ONLY raw parseable JSON with this exact schema:
             className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 text-white text-xs font-bold shadow-2xs transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>{isLoading ? 'AI Đang Chẩn Đoán...' : 'AI Chẩn Đoán Tuần Này'}</span>
+            <span>{isLoading ? (isEn ? 'AI Diagnosing...' : 'AI Đang Chẩn Đoán...') : (isEn ? 'AI Weekly Diagnosis' : 'AI Chẩn Đoán Tuần Này')}</span>
           </button>
         </div>
 
@@ -301,7 +318,7 @@ Return ONLY raw parseable JSON with this exact schema:
               <div className="text-xl font-black text-red-600">
                 {overallProjectedBand !== 'N/A' ? `Band ${overallProjectedBand}` : '--'}
               </div>
-              <span className="text-[10px] text-slate-500 block">4 kỹ năng quy tròn</span>
+              <span className="text-[10px] text-slate-500 block">{isEn ? '4 skills rounded' : '4 kỹ năng quy tròn'}</span>
             </div>
 
             {/* Card 2: Writing */}
@@ -313,7 +330,7 @@ Return ONLY raw parseable JSON with this exact schema:
               <div className="text-lg font-black text-blue-600">
                 {avgWritingBand ? `Band ${avgWritingBand}` : '--'}
               </div>
-              <span className="text-[10px] text-slate-500 block">{totalEssays} bài viết</span>
+              <span className="text-[10px] text-slate-500 block">{totalEssays} {isEn ? 'essays' : 'bài viết'}</span>
             </div>
 
             {/* Card 3: Reading */}
@@ -325,7 +342,7 @@ Return ONLY raw parseable JSON with this exact schema:
               <div className="text-lg font-black text-emerald-600">
                 {avgReadingBand ? `Band ${avgReadingBand}` : '--'}
               </div>
-              <span className="text-[10px] text-slate-500 block">{totalReadingTests} đề thi</span>
+              <span className="text-[10px] text-slate-500 block">{totalReadingTests} {isEn ? 'tests' : 'đề thi'}</span>
             </div>
 
             {/* Card 4: Listening */}
@@ -337,7 +354,7 @@ Return ONLY raw parseable JSON with this exact schema:
               <div className="text-lg font-black text-amber-600">
                 {avgListeningBand ? `Band ${avgListeningBand}` : '--'}
               </div>
-              <span className="text-[10px] text-slate-500 block">{totalListeningTests} đề thi</span>
+              <span className="text-[10px] text-slate-500 block">{totalListeningTests} {isEn ? 'tests' : 'đề thi'}</span>
             </div>
 
             {/* Card 5: Speaking */}
@@ -349,7 +366,7 @@ Return ONLY raw parseable JSON with this exact schema:
               <div className="text-lg font-black text-purple-600">
                 {avgSpeakingBand ? `Band ${avgSpeakingBand}` : '--'}
               </div>
-              <span className="text-[10px] text-slate-500 block">{totalSpeakingTests} buổi thi</span>
+              <span className="text-[10px] text-slate-500 block">{totalSpeakingTests} {isEn ? 'sessions' : 'buổi thi'}</span>
             </div>
           </div>
 
@@ -360,7 +377,9 @@ Return ONLY raw parseable JSON with this exact schema:
                 onClick={() => setShowDetailedCriteria(!showDetailedCriteria)}
                 className="text-[11px] font-bold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
               >
-                {showDetailedCriteria ? '▲ Thu gọn tiêu chí Writing' : '▼ Xem chi tiết 4 tiêu chí Writing (TR, CC, LR, GRA)'}
+                {showDetailedCriteria 
+                  ? (isEn ? '▲ Collapse Writing criteria' : '▲ Thu gọn tiêu chí Writing')
+                  : (isEn ? '▼ Detailed 4 Writing criteria (TR, CC, LR, GRA)' : '▼ Xem chi tiết 4 tiêu chí Writing (TR, CC, LR, GRA)')}
               </button>
             </div>
           )}
@@ -392,7 +411,7 @@ Return ONLY raw parseable JSON with this exact schema:
               
               {/* Summary Headline */}
               <div className="p-4 rounded-xl bg-slate-900 text-white text-xs sm:text-sm font-medium leading-relaxed shadow-xs">
-                🎯 <strong>Nhận định tổng quan:</strong> {reportData.summaryHeadline}
+                🎯 <strong>{isEn ? 'Overall Assessment:' : 'Nhận định tổng quan:'}</strong> {reportData.summaryHeadline}
               </div>
 
               {/* Strengths & Weaknesses 2 Columns */}
@@ -402,7 +421,7 @@ Return ONLY raw parseable JSON with this exact schema:
                 <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2">
                   <div className="flex items-center space-x-2 text-emerald-900 font-bold text-xs sm:text-sm border-b border-emerald-200/60 pb-2">
                     <Award className="w-4 h-4 text-emerald-600" />
-                    <span>Điểm Mạnh Đã Đạt Được (Superpowers):</span>
+                    <span>{isEn ? 'Key Strengths (Superpowers):' : 'Điểm Mạnh Đã Đạt Được (Superpowers):'}</span>
                   </div>
                   <ul className="space-y-1.5 text-xs text-emerald-950 font-sans">
                     {reportData.strengths?.map((s, i) => (
@@ -418,7 +437,7 @@ Return ONLY raw parseable JSON with this exact schema:
                 <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2">
                   <div className="flex items-center space-x-2 text-amber-900 font-bold text-xs sm:text-sm border-b border-amber-200/60 pb-2">
                     <AlertTriangle className="w-4 h-4 text-amber-600" />
-                    <span>Điểm Nghẽn Cốt Tử Cần Khắc Phục:</span>
+                    <span>{isEn ? 'Critical Bottlenecks to Address:' : 'Điểm Nghẽn Cốt Tử Cần Khắc Phục:'}</span>
                   </div>
                   <ul className="space-y-1.5 text-xs text-amber-950 font-sans">
                     {reportData.weaknesses?.map((w, i) => (
@@ -437,10 +456,10 @@ Return ONLY raw parseable JSON with this exact schema:
                 <div className="flex items-center justify-between border-b pb-2">
                   <div className="flex items-center space-x-2 text-slate-900 font-bold text-xs sm:text-sm">
                     <ListTodo className="w-4 h-4 text-red-600" />
-                    <span>Lộ Trình Hành Động 7 Ngày Tới (Targeted Action Plan):</span>
+                    <span>{isEn ? '7-Day Action Plan (Targeted Roadmap):' : 'Lộ Trình Hành Động 7 Ngày Tới (Targeted Action Plan):'}</span>
                   </div>
                   <span className="text-[11px] text-slate-400">
-                    Đã hoàn thành: {Object.values(checkedActions).filter(Boolean).length}/{reportData.actionPlan?.length || 0}
+                    {isEn ? 'Completed: ' : 'Đã hoàn thành: '}{Object.values(checkedActions).filter(Boolean).length}/{reportData.actionPlan?.length || 0}
                   </span>
                 </div>
 
@@ -473,9 +492,9 @@ Return ONLY raw parseable JSON with this exact schema:
                           </span>
                         )}
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          plan.priority === 'Cao' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-700'
+                          plan.priority === 'Cao' || plan.priority === 'High' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-700'
                         }`}>
-                          {plan.priority}
+                          {plan.priority === 'Cao' || plan.priority === 'High' ? (isEn ? 'High' : 'Cao') : (isEn ? 'Medium' : 'Trung bình')}
                         </span>
                       </div>
                     </div>
@@ -488,7 +507,9 @@ Return ONLY raw parseable JSON with this exact schema:
             <div className="text-center py-12 text-slate-400 text-xs space-y-2 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
               <Target className="w-8 h-8 text-slate-300 mx-auto" />
               <p className="max-w-md mx-auto">
-                Bấm nút <strong>"AI Chẩn Đoán Tuần Này"</strong> ở trên để AI phân tích toàn bộ kết quả 4 kỹ năng (Writing, Reading, Listening, Speaking) và kê đơn lộ trình tối ưu cho bạn!
+                {isEn 
+                  ? 'Click "AI Weekly Diagnosis" above to analyze all 4 skills (Writing, Reading, Listening, Speaking) and receive your tailored optimization roadmap!'
+                  : 'Bấm nút "AI Chẩn Đoán Tuần Này" ở trên để AI phân tích toàn bộ kết quả 4 kỹ năng (Writing, Reading, Listening, Speaking) và kê đơn lộ trình tối ưu cho bạn!'}
               </p>
             </div>
           )}

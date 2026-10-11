@@ -68,11 +68,24 @@ it('2. KeyboardShortcutsModal.jsx integrates bilingual shortcut descriptions', (
 });
 
 // 3. MistakeLogModal.jsx
-it('3. MistakeLogModal.jsx integrates bilingual headers and placeholders', () => {
+it('3. MistakeLogModal.jsx integrates bilingual headers, placeholders, filters, and empty state', () => {
   const content = fs.readFileSync(path.join(__dirname, '../src/components/MistakeLogModal.jsx'), 'utf-8');
   assert.ok(content.includes('useTranslation'), 'MistakeLogModal must use useTranslation');
   assert.ok(content.includes("isEn ? 'Academic Mistake Log & Error Journal' : 'Sổ Tay Lỗi Sai Thường Gặp (Mistake Log)'"));
   assert.ok(content.includes("isEn ? \"Search errors by phrase, pattern, or explanation...\" : \"Tìm kiếm lỗi sai theo câu hoặc từ...\""));
+  assert.ok(content.includes("isEn ? 'All Error Types' : 'Tất cả dạng lỗi'"));
+  assert.ok(content.includes("isEn ? 'Clear all' : 'Xóa tất cả'"));
+  assert.ok(content.includes("isEn\n                ? 'No errors recorded yet."));
+});
+
+// 3b. WeeklyReportModal.jsx
+it('3b. WeeklyReportModal.jsx integrates bilingual stats bar, diagnosis, and action plans', () => {
+  const content = fs.readFileSync(path.join(__dirname, '../src/components/WeeklyReportModal.jsx'), 'utf-8');
+  assert.ok(content.includes('useTranslation'), 'WeeklyReportModal must use useTranslation');
+  assert.ok(content.includes("isEn ? 'Completed: ' : 'Đã thực hiện: '"));
+  assert.ok(content.includes("isEn ? 'AI Weekly Diagnosis' : 'AI Chẩn Đoán Tuần Này'"));
+  assert.ok(content.includes("isEn ? 'Key Strengths (Superpowers):' : 'Điểm Mạnh Đã Đạt Được (Superpowers):'"));
+  assert.ok(content.includes("isEn ? '7-Day Action Plan (Targeted Roadmap):' : 'Lộ Trình Hành Động 7 Ngày Tới (Targeted Action Plan):'"));
 });
 
 // 4. VocabNotebookModal.jsx

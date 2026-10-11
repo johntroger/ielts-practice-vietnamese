@@ -47,7 +47,8 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
           <button 
             onClick={onClose} 
             className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
-            aria-label="Đóng"
+            aria-label={isEn ? "Close" : "Đóng"}
+            title={isEn ? "Close" : "Đóng"}
           >
             <X className="w-5 h-5" />
           </button>
@@ -72,11 +73,11 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
               onChange={(e) => setSelectedType(e.target.value)}
               className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white text-slate-700 font-medium focus:outline-none"
             >
-              <option value="all">Tất cả dạng lỗi</option>
-              <option value="grammar">Ngữ pháp (Grammar)</option>
-              <option value="vocabulary">Từ vựng (Vocabulary)</option>
-              <option value="collocation">Cụm từ (Collocation)</option>
-              <option value="punctuation">Dấu câu (Punctuation)</option>
+              <option value="all">{isEn ? 'All Error Types' : 'Tất cả dạng lỗi'}</option>
+              <option value="grammar">{isEn ? 'Grammar' : 'Ngữ pháp (Grammar)'}</option>
+              <option value="vocabulary">{isEn ? 'Vocabulary' : 'Từ vựng (Vocabulary)'}</option>
+              <option value="collocation">{isEn ? 'Collocation' : 'Cụm từ (Collocation)'}</option>
+              <option value="punctuation">{isEn ? 'Punctuation' : 'Dấu câu (Punctuation)'}</option>
             </select>
 
             {mistakes.length > 0 && (
@@ -84,7 +85,7 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
                 onClick={onClearAll}
                 className="text-xs text-red-600 hover:underline shrink-0 font-medium"
               >
-                Xóa tất cả
+                {isEn ? 'Clear all' : 'Xóa tất cả'}
               </button>
             )}
           </div>
@@ -102,13 +103,13 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
                       {m.type || 'Grammar'}
                     </span>
                     <span className="text-[11px] text-slate-400">
-                      Bài: {m.taskTitle || 'IELTS Task'}
+                      {isEn ? 'Task: ' : 'Bài: '}{m.taskTitle || (isEn ? 'IELTS Task' : 'Bài viết IELTS')}
                     </span>
                   </div>
                   <button
                     onClick={() => onDeleteMistake(idx)}
                     className="p-1 text-slate-300 hover:text-red-600 transition-colors"
-                    title="Xóa lỗi này"
+                    title={isEn ? "Delete this error" : "Xóa lỗi này"}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -116,26 +117,28 @@ export default function MistakeLogModal({ isOpen, onClose, mistakes = [], onDele
 
                 <div className="space-y-1 text-xs">
                   <div className="p-2 rounded bg-red-50/60 border border-red-100 text-red-900">
-                    <span className="font-bold text-red-700">Lỗi viết: </span>
+                    <span className="font-bold text-red-700">{isEn ? 'Original: ' : 'Lỗi viết: '}</span>
                     <strike>{m.original}</strike>
                   </div>
                   <div className="p-2 rounded bg-emerald-50/60 border border-emerald-100 text-emerald-900">
-                    <span className="font-bold text-emerald-700">Đã sửa: </span>
+                    <span className="font-bold text-emerald-700">{isEn ? 'Correction: ' : 'Đã sửa: '}</span>
                     <strong>{m.corrected}</strong>
                   </div>
                 </div>
 
                 {m.explanation && (
                   <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                    <em>Giải thích:</em> {m.explanation}
+                    <em>{isEn ? 'Explanation: ' : 'Giải thích: '}</em> {m.explanation}
                   </p>
                 )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-slate-400 text-xs">
-              Chưa có lỗi sai nào được lưu. Khi giám khảo AI chấm bài, bấm "Lưu vào Sổ tay lỗi sai" ở mỗi câu cần sửa để ghi nhớ!
+            <div className="text-center py-12 text-slate-400 text-xs max-w-md mx-auto leading-relaxed">
+              {isEn
+                ? 'No errors recorded yet. When the AI examiner evaluates your work, click "Save to Mistake Log" on any sentence that needs correction to track it!'
+                : 'Chưa có lỗi sai nào được lưu. Khi giám khảo AI chấm bài, bấm "Lưu vào Sổ tay lỗi sai" ở mỗi câu cần sửa để ghi nhớ!'}
             </div>
           )}
         </div>
