@@ -52,6 +52,7 @@ import {
   deletePublicVocabGrammarItem
 } from '../services/dataSyncService';
 import { useTranslation } from '../i18n';
+import { getLocalizedGrammarItem, getLocalizedCardMeaning } from '../utils/vocabLocalization';
 
 export default function VocabGrammarSpellingModal({
   isOpen,
@@ -339,7 +340,7 @@ export default function VocabGrammarSpellingModal({
   // Mastered button handler with login guard
   const handleToggleMasteredItem = (itemId) => {
     if (!currentUser) {
-      alert('Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
+      alert(isEn ? 'The "Mastered" feature hides mastered items from practice. Please log in to save your progress!' : 'Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
       onOpenAuth?.();
       return;
     }
@@ -385,7 +386,7 @@ export default function VocabGrammarSpellingModal({
         example: card.example,
         topic: activeDeckId.replace('deck-', '')
       });
-      setSavedSuccessMsg(`Đã lưu "${card.term}" vào Sổ tay từ vựng!`);
+      setSavedSuccessMsg(isEn ? `Saved "${card.term}" to Vocabulary Notebook!` : `Đã lưu "${card.term}" vào Sổ tay từ vựng!`);
       setTimeout(() => setSavedSuccessMsg(''), 3000);
     }
   };
@@ -528,9 +529,9 @@ export default function VocabGrammarSpellingModal({
           bc.close();
         }
       } catch (e) {}
-      alert('Đồng bộ thành công! Toàn bộ bẫy chính tả, ngữ pháp và thẻ từ vựng đã được cập nhật từ Cloud.');
+      alert(isEn ? 'Sync successful! All spelling traps, grammar drills, and vocabulary cards have been updated from Cloud.' : 'Đồng bộ thành công! Toàn bộ bẫy chính tả, ngữ pháp và thẻ từ vựng đã được cập nhật từ Cloud.');
     } catch (e) {
-      alert('Đồng bộ hoàn tất.');
+      alert(isEn ? 'Sync completed.' : 'Đồng bộ hoàn tất.');
     } finally {
       setIsSyncing(false);
     }
@@ -623,11 +624,11 @@ export default function VocabGrammarSpellingModal({
 
   const handleGenerateAiItem = async () => {
     if (!apiKey) {
-      alert('Vui lòng vào Cài đặt (biểu tượng bánh răng) để cấu hình AI API Key trước!');
+      alert(isEn ? 'Please configure your AI API Key in Settings (gear icon) first!' : 'Vui lòng vào Cài đặt (biểu tượng bánh răng) để cấu hình AI API Key trước!');
       return;
     }
     setIsAiGenerating(true);
-    setAiMessage('AI đang tạo bài tập chuẩn trọng tâm theo dải điểm...');
+    setAiMessage(isEn ? 'AI is generating targeted practice for selected band...' : 'AI đang tạo bài tập chuẩn trọng tâm theo dải điểm...');
 
     const targetBand = selectedBandTier === 'band-5.5'
       ? '5.5'
@@ -638,7 +639,7 @@ export default function VocabGrammarSpellingModal({
           : '6.0';
 
     const isPub = Boolean(isAutoShare);
-    const creatorLabel = isPub ? (currentUser?.email ? `${currentUser.email.split('@')[0]} (Thành viên)` : 'Cộng Đồng IELTS') : 'Tôi';
+    const creatorLabel = isPub ? (currentUser?.email ? `${currentUser.email.split('@')[0]} (${isEn ? 'Member' : 'Thành viên'})` : (isEn ? 'IELTS Community' : 'Cộng Đồng IELTS')) : (isEn ? 'Me' : 'Tôi');
 
     try {
       if (activeTab === 'spelling') {
@@ -665,7 +666,7 @@ export default function VocabGrammarSpellingModal({
             }
           }
         } catch (e) {}
-        setAiMessage(`Đã tạo bẫy chính tả Band ${targetBand}: "${newTrap.correct}"!`);
+        setAiMessage(isEn ? `Created Band ${targetBand} spelling trap: "${newTrap.correct}"!` : `Đã tạo bẫy chính tả Band ${targetBand}: "${newTrap.correct}"!`);
       } else if (activeTab === 'grammar') {
         const types = targetBand === '5.5'
           ? ['Subject-Verb Agreement with Complex Subjects', 'Compound Sentences & Eliminating Comma Splices', 'Cause and Effect with Because / As a result']
@@ -696,7 +697,7 @@ export default function VocabGrammarSpellingModal({
             }
           }
         } catch (e) {}
-        setAiMessage(`Đã tạo bài tập ngữ pháp Band ${targetBand}: "${newGrammar.title}"!`);
+        setAiMessage(isEn ? `Created Band ${targetBand} grammar drill: "${newGrammar.title}"!` : `Đã tạo bài tập ngữ pháp Band ${targetBand}: "${newGrammar.title}"!`);
       } else if (activeTab === 'vocab') {
         const topicNames = ['Technology & Digital Life', 'Environment & Climate', 'Society & Urban Life'];
         const currentDeckName = currentDeck ? currentDeck.topicName : topicNames[0];
@@ -735,12 +736,12 @@ export default function VocabGrammarSpellingModal({
         }
         setCurrentCardIdx(0);
         setIsFlipped(false);
-        setAiMessage(`Đã nạp ${enrichedCards.length} thẻ từ vựng thực chiến Band ${targetBand}!`);
+        setAiMessage(isEn ? `Generated ${enrichedCards.length} authentic Band ${targetBand} vocab cards!` : `Đã nạp ${enrichedCards.length} thẻ từ vựng thực chiến Band ${targetBand}!`);
       }
       setTimeout(() => setAiMessage(''), 4000);
     } catch (err) {
       console.error(err);
-      alert(err.message || 'Lỗi khi gọi AI sinh nội dung.');
+      alert(err.message || (isEn ? 'Error calling AI generation service.' : 'Lỗi khi gọi AI sinh nội dung.'));
     } finally {
       setIsAiGenerating(false);
     }
@@ -764,7 +765,7 @@ export default function VocabGrammarSpellingModal({
     themeColor = 'red',
     totalMastered = 0,
     currentItem,
-    getItemTitle = (item, idx) => `Câu ${idx + 1}`
+    getItemTitle = (item, idx) => (isEn ? `Item ${idx + 1}` : `Câu ${idx + 1}`)
   }) => {
     const total = list.length;
     if (total === 0) return null;
@@ -788,7 +789,7 @@ export default function VocabGrammarSpellingModal({
           <div className="flex items-center flex-wrap gap-2">
             {/* Step Counter */}
             <div className={`px-3 py-1 rounded-lg border font-black text-xs flex items-center space-x-1 ${bgLightColor}`}>
-              <span>Câu:</span>
+              <span>{isEn ? 'Item:' : 'Câu:'}</span>
               <span className={`text-sm font-extrabold ${textAccentColor}`}>{currentIndex + 1}</span>
               <span className="opacity-60 font-semibold">/ {total}</span>
             </div>
@@ -800,7 +801,7 @@ export default function VocabGrammarSpellingModal({
                 onClick={() => onSelectIndex(Math.max(0, currentIndex - 1))}
                 disabled={currentIndex === 0}
                 className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition cursor-pointer shadow-2xs"
-                title="Câu trước"
+                title={isEn ? "Previous item" : "Câu trước"}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -809,7 +810,7 @@ export default function VocabGrammarSpellingModal({
                 onClick={() => onSelectIndex(Math.min(total - 1, currentIndex + 1))}
                 disabled={currentIndex === total - 1}
                 className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition cursor-pointer shadow-2xs"
-                title="Câu tiếp theo"
+                title={isEn ? "Next item" : "Câu tiếp theo"}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -818,7 +819,7 @@ export default function VocabGrammarSpellingModal({
             {/* Quick Select Dropdown for Scalability (When total > 8) */}
             {total > 8 && (
               <div className="flex items-center space-x-1.5">
-                <span className="text-[11px] text-slate-500 font-semibold hidden md:inline">Chuyển nhanh:</span>
+                <span className="text-[11px] text-slate-500 font-semibold hidden md:inline">{isEn ? 'Jump to:' : 'Chuyển nhanh:'}</span>
                 <select
                   value={currentIndex}
                   onChange={(e) => onSelectIndex(Number(e.target.value))}
@@ -828,7 +829,7 @@ export default function VocabGrammarSpellingModal({
                     const isM = masteredIds.includes(item.id);
                     return (
                       <option key={item.id || idx} value={idx}>
-                        Câu {idx + 1}: {getItemTitle(item, idx)} {isM ? ' [Đã thuộc ✓]' : ''}
+                        {isEn ? 'Item' : 'Câu'} {idx + 1}: {getItemTitle(item, idx)} {isM ? (isEn ? ' [Mastered ✓]' : ' [Đã thuộc ✓]') : ''}
                       </option>
                     );
                   })}
@@ -845,7 +846,7 @@ export default function VocabGrammarSpellingModal({
                   onChange={(e) => handleToggleHideMastered(e.target.checked)}
                   className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                 />
-                <span className="font-semibold text-emerald-800 text-[11px]">Ẩn câu đã thuộc ({totalMastered})</span>
+                <span className="font-semibold text-emerald-800 text-[11px]">{isEn ? `Hide mastered (${totalMastered})` : `Ẩn câu đã thuộc (${totalMastered})`}</span>
               </label>
             )}
           </div>
@@ -870,23 +871,23 @@ export default function VocabGrammarSpellingModal({
                     : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
                 }`}
                 title={masteredIds.includes(currentItem.id)
-                  ? "Câu này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)"
-                  : "Đánh dấu 'Đã thuộc'"}
+                  ? (isEn ? "Marked as mastered. Click to unmark (Review again)" : "Câu này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)")
+                  : (isEn ? "Mark as 'Mastered'" : "Đánh dấu 'Đã thuộc'")}
               >
                 <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
-                <span>{masteredIds.includes(currentItem.id) ? 'Đã thuộc' : 'Thuộc câu này'}</span>
+                <span>{masteredIds.includes(currentItem.id) ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Mark Mastered' : 'Thuộc câu này')}</span>
               </button>
 
               {/* Community / Private Badge */}
               {currentItem.isCommunity || currentItem.isPublic ? (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
                   <Globe className="w-3 h-3 text-emerald-600" />
-                  <span>🌐 Cộng Đồng</span>
+                  <span>{isEn ? '🌐 Community' : '🌐 Cộng Đồng'}</span>
                 </span>
               ) : (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
                   <Lock className="w-3 h-3 text-amber-600" />
-                  <span>🔒 Riêng tư</span>
+                  <span>{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
                 </span>
               )}
 
@@ -895,9 +896,9 @@ export default function VocabGrammarSpellingModal({
                   type="button"
                   onClick={() => handleToggleItemPublicity(currentItem.id, type)}
                   className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                  title={currentItem.isPublic ? 'Khóa riêng' : 'Mở chia sẻ bài tập này cho mọi người'}
+                  title={currentItem.isPublic ? (isEn ? 'Make private' : 'Khóa riêng') : (isEn ? 'Share with community' : 'Mở chia sẻ bài tập này cho mọi người')}
                 >
-                  {currentItem.isPublic ? 'Khóa riêng' : 'Mở chia sẻ'}
+                  {currentItem.isPublic ? (isEn ? 'Private' : 'Khóa riêng') : (isEn ? 'Share' : 'Mở chia sẻ')}
                 </button>
               )}
             </div>
@@ -906,7 +907,7 @@ export default function VocabGrammarSpellingModal({
 
         {/* BOTTOM ROW: Numbered Pill Buttons (1, 2, 3...) with horizontal scroll and indicator */}
         <div className="pt-2 border-t border-slate-100 flex items-center space-x-1.5 overflow-x-auto py-1 scrollbar-thin scrollbar-thumb-slate-300">
-          <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1">Danh sách câu:</span>
+          <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1">{isEn ? 'Question list:' : 'Danh sách câu:'}</span>
           {list.map((item, idx) => {
             const isActive = currentIndex === idx;
             const isMastered = masteredIds.includes(item.id);
@@ -922,7 +923,7 @@ export default function VocabGrammarSpellingModal({
                       ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100'
                       : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
                 }`}
-                title={`Câu ${idx + 1}: ${getItemTitle(item, idx)}${isMastered ? ' (Đã thuộc)' : ''}`}
+                title={`${isEn ? 'Item' : 'Câu'} ${idx + 1}: ${getItemTitle(item, idx)}${isMastered ? (isEn ? ' (Mastered)' : ' (Đã thuộc)') : ''}`}
               >
                 <span>{idx + 1}</span>
                 {/* Dot indicator for Mastered items */}
@@ -961,14 +962,16 @@ export default function VocabGrammarSpellingModal({
             <div>
               <div className="flex items-center space-x-2">
                 <h2 className="text-base sm:text-lg font-bold tracking-tight">
-                  {t('modals.vocabGrammar.title', null, 'Luyện Từ Vựng, Ngữ Pháp & Chính Tả')}
+                  {isEn ? 'Vocabulary, Grammar & Spelling Studio' : t('modals.vocabGrammar.title', null, 'Luyện Từ Vựng, Ngữ Pháp & Chính Tả')}
                 </h2>
                 <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
                   Band 5.5 - 7.5+
                 </span>
               </div>
               <p className="text-xs text-slate-300 hidden md:block">
-                {t('modals.vocabGrammar.subtitle', null, 'Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS')}
+                {isEn 
+                  ? 'Active recall, spelling traps & authentic Cambridge IELTS grammar architectures'
+                  : t('modals.vocabGrammar.subtitle', null, 'Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS')}
               </p>
             </div>
           </div>
@@ -987,7 +990,7 @@ export default function VocabGrammarSpellingModal({
                 }}
                 className="rounded text-emerald-500 focus:ring-emerald-400 cursor-pointer"
               />
-              <span className="font-semibold text-white text-[11px]">Chia sẻ cộng đồng</span>
+              <span className="font-semibold text-white text-[11px]">{isEn ? 'Share to Community' : 'Chia sẻ cộng đồng'}</span>
             </label>
 
             {/* Cloud Sync Button */}
@@ -995,10 +998,10 @@ export default function VocabGrammarSpellingModal({
               onClick={handleManualSync}
               disabled={isSyncing}
               className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/15 transition-all cursor-pointer shadow-2xs"
-              title="Đồng bộ tức thời với Supabase Cloud"
+              title={isEn ? "Instantly sync with Supabase Cloud" : "Đồng bộ tức thời với Supabase Cloud"}
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-400' : 'text-slate-300'}`} />
-              <span className="hidden sm:inline">{isSyncing ? 'Đang sync...' : 'Đồng bộ'}</span>
+              <span className="hidden sm:inline">{isSyncing ? (isEn ? 'Syncing...' : 'Đang sync...') : (isEn ? 'Cloud Sync' : 'Đồng bộ')}</span>
             </button>
 
             {/* AI Generator Button */}
@@ -1006,7 +1009,7 @@ export default function VocabGrammarSpellingModal({
               onClick={handleGenerateAiItem}
               disabled={isAiGenerating}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-              title="Nhờ AI tạo thêm bài tập thực chiến theo dải điểm đã chọn"
+              title={isEn ? "Generate authentic targeted practice with AI for selected band" : "Nhờ AI tạo thêm bài tập thực chiến theo dải điểm đã chọn"}
             >
               {isAiGenerating ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1014,7 +1017,7 @@ export default function VocabGrammarSpellingModal({
                 <Sparkles className="w-3.5 h-3.5" />
               )}
               <span className="hidden sm:inline">
-                {isAiGenerating ? 'Đang tạo...' : 'AI Sinh Bài Luyện'}
+                {isAiGenerating ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Sinh Bài Luyện')}
               </span>
             </button>
 
@@ -1027,8 +1030,8 @@ export default function VocabGrammarSpellingModal({
                   ? 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-xs'
                   : 'text-slate-300 hover:text-white hover:bg-white/10 bg-white/5 border border-white/10'
               }`}
-              title={isExpanded ? "Thu gọn giao diện (Alt + Z)" : "Mở rộng toàn màn hình (Alt + Z)"}
-              aria-label={isExpanded ? "Thu gọn" : "Mở rộng"}
+              title={isExpanded ? (isEn ? "Collapse workspace (Alt + Z)" : "Thu gọn giao diện (Alt + Z)") : (isEn ? "Expand fullscreen (Alt + Z)" : "Mở rộng toàn màn hình (Alt + Z)")}
+              aria-label={isExpanded ? (isEn ? "Collapse" : "Thu gọn") : (isEn ? "Expand" : "Mở rộng")}
             >
               {isExpanded ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </button>
@@ -1037,7 +1040,7 @@ export default function VocabGrammarSpellingModal({
             <button
               onClick={onClose}
               className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
-              aria-label="Đóng bảng luyện từ vựng ngữ pháp"
+              aria-label={isEn ? "Close vocabulary & grammar studio" : "Đóng bảng luyện từ vựng ngữ pháp"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -1062,7 +1065,7 @@ export default function VocabGrammarSpellingModal({
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                {t('modals.vocabGrammar.tierAll', null, 'Toàn Bộ')}
+                {isEn ? 'All Levels' : t('modals.vocabGrammar.tierAll', null, 'Toàn Bộ')}
               </button>
               <button
                 type="button"
@@ -1109,7 +1112,7 @@ export default function VocabGrammarSpellingModal({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('modals.vocabGrammar.searchPlaceholder', null, 'Tìm từ vựng, bẫy, ngữ pháp...')}
+                placeholder={isEn ? 'Search vocab, traps, grammar...' : t('modals.vocabGrammar.searchPlaceholder', null, 'Tìm từ vựng, bẫy, ngữ pháp...')}
                 className="pl-8 pr-7 py-1 text-xs bg-white rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-44 sm:w-56 font-medium text-slate-800 shadow-2xs placeholder:text-slate-400"
               />
               {searchQuery && (
@@ -1117,7 +1120,7 @@ export default function VocabGrammarSpellingModal({
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                  title="Xóa tìm kiếm"
+                  title={isEn ? "Clear search" : "Xóa tìm kiếm"}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -1133,7 +1136,7 @@ export default function VocabGrammarSpellingModal({
                   vgQuickFilter === 'all' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
-                Tất cả
+                {isEn ? 'All' : 'Tất cả'}
               </button>
               <button
                 type="button"
@@ -1141,7 +1144,7 @@ export default function VocabGrammarSpellingModal({
                 className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                   vgQuickFilter === 'top_rated' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
-                title="Đánh giá từ 4.8★ trở lên"
+                title={isEn ? "Rating 4.8★ and above" : "Đánh giá từ 4.8★ trở lên"}
               >
                 ⭐ 4.8★+
               </button>
@@ -1151,7 +1154,7 @@ export default function VocabGrammarSpellingModal({
                 className={`px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                   vgQuickFilter === 'trending' ? 'bg-rose-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
-                title="Nhiều lượt luyện tập nhất"
+                title={isEn ? "Most practiced" : "Nhiều lượt luyện tập nhất"}
               >
                 🔥 Hot
               </button>
@@ -1163,11 +1166,11 @@ export default function VocabGrammarSpellingModal({
               onChange={(e) => setVgSortBy(e.target.value)}
               className="px-2 py-1 text-[11px] font-bold bg-white text-slate-700 border border-slate-300 rounded-xl focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs cursor-pointer"
             >
-              <option value="rating_desc">⭐ Rating cao nhất</option>
-              <option value="attempts_desc">🔥 Luyện nhiều nhất</option>
-              <option value="difficulty_desc">💎 Độ khó cao</option>
-              <option value="difficulty_asc">🌱 Độ khó cơ bản</option>
-              <option value="title_asc">🔤 Tên A-Z</option>
+              <option value="rating_desc">{isEn ? '⭐ Highest Rated' : '⭐ Rating cao nhất'}</option>
+              <option value="attempts_desc">{isEn ? '🔥 Most Practiced' : '🔥 Luyện nhiều nhất'}</option>
+              <option value="difficulty_desc">{isEn ? '💎 High Difficulty' : '💎 Độ khó cao'}</option>
+              <option value="difficulty_asc">{isEn ? '🌱 Foundational' : '🌱 Độ khó cơ bản'}</option>
+              <option value="title_asc">{isEn ? '🔤 Name A-Z' : '🔤 Tên A-Z'}</option>
             </select>
           </div>
         </div>
@@ -1201,7 +1204,7 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <SpellCheck2 className="w-4 h-4" />
-            <span>{t('modals.vocabGrammar.tabSpelling', null, '100 Bẫy Chính Tả Listening (Spelling Demons)')}</span>
+            <span>{isEn ? '100 Listening Spelling Demons' : t('modals.vocabGrammar.tabSpelling', null, '100 Bẫy Chính Tả Listening (Spelling Demons)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-red-100 text-red-700 font-extrabold">
               {filteredSpellingList.length} {isEn ? 'traps' : 'bẫy'}
             </span>
@@ -1216,7 +1219,7 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <Award className="w-4 h-4" />
-            <span>{t('modals.vocabGrammar.tabGrammar', null, 'Ngữ Pháp Điểm Tựa (Grammar Architecture)')}</span>
+            <span>{isEn ? 'Grammar Architecture & Scaffolding' : t('modals.vocabGrammar.tabGrammar', null, 'Ngữ Pháp Điểm Tựa (Grammar Architecture)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-indigo-100 text-indigo-700 font-extrabold">
               {filteredGrammarList.length} {isEn ? 'rules' : 'cấu trúc'}
             </span>
@@ -1231,7 +1234,7 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>{t('modals.vocabGrammar.tabVocab', null, 'Thẻ Từ Vựng & Collocation (Active Recall)')}</span>
+            <span>{isEn ? 'Vocabulary & Golden Collocations (Active Recall)' : t('modals.vocabGrammar.tabVocab', null, 'Thẻ Từ Vựng & Collocation (Active Recall)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-emerald-100 text-emerald-700 font-extrabold">
               {filteredCards.length} {isEn ? 'cards' : 'thẻ'}
             </span>
@@ -1246,7 +1249,7 @@ export default function VocabGrammarSpellingModal({
             }`}
           >
             <Compass className="w-4 h-4" />
-            <span>{t('modals.vocabGrammar.tabSynonyms', null, '50 Cặp Paraphrase Cambridge (Reading)')}</span>
+            <span>{isEn ? '50 Cambridge Paraphrase Pairs (Reading)' : t('modals.vocabGrammar.tabSynonyms', null, '50 Cặp Paraphrase Cambridge (Reading)')}</span>
             <span className="px-1.5 py-0.5 rounded text-[11px] bg-purple-100 text-purple-700 font-extrabold">
               {filteredSynonymsList.length} {isEn ? 'pairs' : 'cặp'}
             </span>
@@ -1265,14 +1268,14 @@ export default function VocabGrammarSpellingModal({
               {/* Category Filter Chips & Handbook Link */}
               <div className="flex flex-wrap items-center justify-between gap-2.5 bg-white p-2.5 sm:p-3 rounded-2xl border border-slate-200 shadow-2xs">
                 <div className="flex items-center space-x-1.5 overflow-x-auto min-w-0 flex-1">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0 mr-1">Nhóm bẫy:</span>
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0 mr-1">{isEn ? 'Trap Category:' : 'Nhóm bẫy:'}</span>
                   {[
-                    { id: 'all', label: 'Tất cả' },
-                    { id: 'Double Letters', label: 'Ký tự kép' },
-                    { id: 'Vowel Traps', label: 'Nguyên âm' },
-                    { id: 'Silent Letters', label: 'Âm câm' },
-                    { id: 'Plural Demons', label: 'Số nhiều' },
-                    { id: 'Campus & Jobs', label: 'Trường học & Nghề' }
+                    { id: 'all', label: isEn ? 'All' : 'Tất cả' },
+                    { id: 'Double Letters', label: isEn ? 'Double Letters' : 'Ký tự kép' },
+                    { id: 'Vowel Traps', label: isEn ? 'Vowels' : 'Nguyên âm' },
+                    { id: 'Silent Letters', label: isEn ? 'Silent Letters' : 'Âm câm' },
+                    { id: 'Plural Demons', label: isEn ? 'Plurals' : 'Số nhiều' },
+                    { id: 'Campus & Jobs', label: isEn ? 'Campus & Jobs' : 'Trường học & Nghề' }
                   ].map(cat => (
                     <button
                       key={cat.id}
@@ -1294,10 +1297,10 @@ export default function VocabGrammarSpellingModal({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold border border-red-200 transition-colors shrink-0"
-                  title="Xem toàn bộ 100 từ sát thủ chính tả trên cẩm nang GitBook"
+                  title={isEn ? "View all 100 spelling demons in the GitBook Handbook" : "Xem toàn bộ 100 từ sát thủ chính tả trên cẩm nang GitBook"}
                 >
                   <BookOpen className="w-3.5 h-3.5 text-red-600" />
-                  <span>Bí Kíp 100 Từ</span>
+                  <span>{isEn ? '100 Demons Guide' : 'Bí Kíp 100 Từ'}</span>
                   <ExternalLink className="w-3 h-3 text-red-400" />
                 </a>
               </div>
@@ -1315,21 +1318,21 @@ export default function VocabGrammarSpellingModal({
                 themeColor: 'red',
                 totalMastered: totalMasteredSpelling,
                 currentItem: currentTrap,
-                getItemTitle: (item, idx) => item.correct ? `${item.correct} (Band ${item.bandLevel || '6.5'})` : `Bẫy chính tả ${idx + 1}`
+                getItemTitle: (item, idx) => item.correct ? `${item.correct} (Band ${item.bandLevel || '6.5'})` : (isEn ? `Spelling Trap ${idx + 1}` : `Bẫy chính tả ${idx + 1}`)
               })}
 
               {/* Category & Score Bar */}
               {currentTrap && (
                 <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-slate-100/80 border border-slate-200/80 text-xs font-bold text-slate-600">
                   <div className="flex items-center space-x-2">
-                    <span className="text-slate-500 font-semibold">Chủ đề:</span>
+                    <span className="text-slate-500 font-semibold">{isEn ? 'Topic:' : 'Chủ đề:'}</span>
                     <span className="text-slate-800 font-extrabold">{currentTrap.category || 'Academic English'}</span>
                     <span className="px-2 py-0.5 rounded text-[11px] font-black bg-blue-100 text-blue-800">
                       Band {currentTrap.bandLevel || '6.5'}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span>Điểm đúng:</span>
+                    <span>{isEn ? 'Score:' : 'Điểm đúng:'}</span>
                     <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-black">
                       {spellingScore.correct} / {spellingScore.total}
                     </span>
@@ -1349,10 +1352,10 @@ export default function VocabGrammarSpellingModal({
                     <GraduationCap className="w-6 h-6" />
                   </div>
                   <h4 className="font-bold text-emerald-900 text-base">
-                    Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredSpelling} bẫy chính tả trong dải điểm này.
+                    {isEn ? `Excellent! You have marked all ${totalMasteredSpelling} spelling traps in this band as mastered.` : `Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ ${totalMasteredSpelling} bẫy chính tả trong dải điểm này.`}
                   </h4>
                   <p className="text-xs text-emerald-700 max-w-md mx-auto">
-                    Các từ đã thuộc được tự động ẩn khỏi danh sách luyện tập để bạn tập trung vào từ mới. Lịch sử và thống kê của bạn luôn được bảo toàn đầy đủ.
+                    {isEn ? 'Mastered items are automatically hidden so you can focus on new traps. Your stats and history remain safely recorded.' : 'Các từ đã thuộc được tự động ẩn khỏi danh sách luyện tập để bạn tập trung vào từ mới. Lịch sử và thống kê của bạn luôn được bảo toàn đầy đủ.'}
                   </p>
                   <button
                     type="button"
@@ -1360,7 +1363,7 @@ export default function VocabGrammarSpellingModal({
                     className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Hiện lại tất cả từ đã thuộc để ôn tập</span>
+                    <span>{isEn ? 'Show all mastered items for review' : 'Hiện lại tất cả từ đã thuộc để ôn tập'}</span>
                   </button>
                 </div>
               ) : currentTrap ? (
@@ -1368,10 +1371,10 @@ export default function VocabGrammarSpellingModal({
                 <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6 text-center">
                   <div>
                     <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 mb-3">
-                      🔍 Bẫy chính tả thường gặp Band {currentTrap.bandLevel || '6.0 - 7.5'}
+                      {isEn ? `🔍 Common Spelling Trap Band ${currentTrap.bandLevel || '6.0 - 7.5'}` : `🔍 Bẫy chính tả thường gặp Band ${currentTrap.bandLevel || '6.0 - 7.5'}`}
                     </span>
                     <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
-                      Chọn từ viết đúng chính tả vào chỗ trống:
+                      {isEn ? 'Choose the correctly spelled word for the blank:' : 'Chọn từ viết đúng chính tả vào chỗ trống:'}
                     </h3>
                   </div>
 
@@ -1428,10 +1431,12 @@ export default function VocabGrammarSpellingModal({
                         )}
                         <div className="text-sm">
                           <strong className="block font-bold">
-                            {selectedSpellingChoice === currentTrap.correct ? 'Chính xác tuyệt đối!' : 'Rất tiếc, bạn đã mắc bẫy!'}
+                            {selectedSpellingChoice === currentTrap.correct 
+                              ? (isEn ? 'Spot on! Correct answer!' : 'Chính xác tuyệt đối!') 
+                              : (isEn ? 'Oops! You caught the trap!' : 'Rất tiếc, bạn đã mắc bẫy!')}
                           </strong>
                           <p className="mt-1">
-                            Từ đúng là: <span className="font-mono font-black underline">{currentTrap.correct}</span>
+                            {isEn ? 'Correct spelling is: ' : 'Từ đúng là: '}<span className="font-mono font-black underline">{currentTrap.correct}</span>
                           </p>
                         </div>
                       </div>
@@ -1440,11 +1445,11 @@ export default function VocabGrammarSpellingModal({
                       <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-amber-950 text-xs sm:text-sm space-y-2">
                         <div className="flex items-center space-x-1.5 font-bold text-amber-800">
                           <Lightbulb className="w-4 h-4 text-amber-600" />
-                          <span>Mẹo nhớ nhanh không bị nhầm lẫn:</span>
+                          <span>{isEn ? 'Memory Trick / Rule:' : 'Mẹo nhớ nhanh không bị nhầm lẫn:'}</span>
                         </div>
                         <p className="font-medium">{currentTrap.rule}</p>
                         <p className="text-xs text-amber-700/90 pt-1 border-t border-amber-200/60">
-                          <strong>Nguồn gốc & Giải thích:</strong> {currentTrap.explanation}
+                          <strong>{isEn ? 'Etymology & Explanation: ' : 'Nguồn gốc & Giải thích: '}</strong>{currentTrap.explanation}
                         </p>
                       </div>
 
@@ -1456,14 +1461,14 @@ export default function VocabGrammarSpellingModal({
                           className="flex items-center space-x-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-xl border border-emerald-200 transition cursor-pointer"
                         >
                           <GraduationCap className="w-4 h-4" />
-                          <span>{masteredIds.includes(currentTrap.id) ? 'Bỏ thuộc từ này' : 'Đánh dấu đã thuộc từ này'}</span>
+                          <span>{masteredIds.includes(currentTrap.id) ? (isEn ? 'Unmark Mastered' : 'Bỏ thuộc từ này') : (isEn ? 'Mark as Mastered' : 'Đánh dấu đã thuộc từ này')}</span>
                         </button>
 
                         <button
                           onClick={handleNextSpelling}
                           className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all active:scale-95 cursor-pointer"
                         >
-                          <span>Câu tiếp theo</span>
+                          <span>{isEn ? 'Next Trap' : 'Câu tiếp theo'}</span>
                           <ArrowRight className="w-4 h-4" />
                         </button>
                       </div>
@@ -1493,7 +1498,10 @@ export default function VocabGrammarSpellingModal({
                 themeColor: 'indigo',
                 totalMastered: totalMasteredGrammar,
                 currentItem: currentGrammar,
-                getItemTitle: (item, idx) => item.title ? `${item.title} (${item.bandTarget || `Band ${item.bandLevel}`})` : `Cấu trúc ${idx + 1}`
+                getItemTitle: (item, idx) => {
+                  const loc = getLocalizedGrammarItem(item, isEn);
+                  return loc.title ? `${loc.title} (${loc.bandTarget || `Band ${loc.bandLevel}`})` : (isEn ? `Grammar Rule ${idx + 1}` : `Cấu trúc ${idx + 1}`);
+                }
               })}
 
               {/* Congratulatory Empty State when all are mastered */}
@@ -1503,10 +1511,10 @@ export default function VocabGrammarSpellingModal({
                     <GraduationCap className="w-6 h-6" />
                   </div>
                   <h4 className="font-bold text-emerald-900 text-base">
-                    Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredGrammar} cấu trúc ngữ pháp trong dải điểm này.
+                    {isEn ? `Excellent! You have marked all ${totalMasteredGrammar} grammar structures in this band as mastered.` : `Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ ${totalMasteredGrammar} cấu trúc ngữ pháp trong dải điểm này.`}
                   </h4>
                   <p className="text-xs text-emerald-700 max-w-md mx-auto">
-                    Các cấu trúc đã thuộc được tự động ẩn khỏi danh sách luyện tập để tập trung vào kiến thức mới.
+                    {isEn ? 'Mastered grammar structures are automatically hidden to focus on new concepts.' : 'Các cấu trúc đã thuộc được tự động ẩn khỏi danh sách luyện tập để tập trung vào kiến thức mới.'}
                   </p>
                   <button
                     type="button"
@@ -1514,28 +1522,30 @@ export default function VocabGrammarSpellingModal({
                     className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Hiện lại tất cả cấu trúc đã thuộc để ôn tập</span>
+                    <span>{isEn ? 'Show all mastered structures for review' : 'Hiện lại tất cả cấu trúc đã thuộc để ôn tập'}</span>
                   </button>
                 </div>
-              ) : currentGrammar ? (
+              ) : currentGrammar ? (() => {
+                const locGrammar = getLocalizedGrammarItem(currentGrammar, isEn);
+                return (
                 <>
                   {/* Grammar Formula & Rationale */}
                   <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-md space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-                        Công thức chuẩn {currentGrammar.bandTarget}
+                        {isEn ? `Standard Formula: ${currentGrammar.bandTarget}` : `Công thức chuẩn ${currentGrammar.bandTarget}`}
                       </span>
                       <span className="text-xs text-amber-300 font-semibold">
-                        ⭐ Đảm bảo tiêu chí Grammatical Range & Accuracy
+                        {isEn ? '⭐ Cambridge Grammatical Range & Accuracy Guaranteed' : '⭐ Đảm bảo tiêu chí Grammatical Range & Accuracy'}
                       </span>
                     </div>
                     
                     <div className="p-4 rounded-xl bg-white/10 border border-white/15 font-mono text-sm sm:text-base text-amber-200 font-bold">
-                      {currentGrammar.formula}
+                      {locGrammar.formula}
                     </div>
 
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      <strong>💡 Lợi ích chấm điểm:</strong> {currentGrammar.rationale}
+                      <strong>{isEn ? '💡 Scoring Benefit: ' : '💡 Lợi ích chấm điểm: '}</strong>{locGrammar.rationale}
                     </p>
                   </div>
 
@@ -1543,7 +1553,7 @@ export default function VocabGrammarSpellingModal({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
                       <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">
-                        Câu văn Band 5.5 - 6.0 (Đơn điệu / Rời rạc)
+                        {isEn ? 'Band 5.5 - 6.0 Sentence (Basic / Disjointed)' : 'Câu văn Band 5.5 - 6.0 (Đơn điệu / Rời rạc)'}
                       </span>
                       <p className="text-sm text-slate-700 italic">
                         "{currentGrammar.basicSentence}"
@@ -1552,7 +1562,7 @@ export default function VocabGrammarSpellingModal({
 
                     <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 shadow-xs space-y-2">
                       <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
-                        Nâng cấp {currentGrammar.bandTarget} (Mạch lạc & Chuẩn xác)
+                        {isEn ? `Band ${currentGrammar.bandTarget} Upgrade (Cohesive & Sophisticated)` : `Nâng cấp ${currentGrammar.bandTarget} (Mạch lạc & Chuẩn xác)`}
                       </span>
                       <p className="text-sm font-semibold text-emerald-950">
                         "{currentGrammar.band8Sentence}"
@@ -1564,9 +1574,9 @@ export default function VocabGrammarSpellingModal({
                   <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
                     <div>
                       <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">
-                        Thực hành Nâng Cấp Câu
+                        {isEn ? 'Practice Sentence Upgrade' : 'Thực hành Nâng Cấp Câu'}
                       </span>
-                      <h4 className="text-sm font-bold text-slate-800 mt-1">{currentGrammar.prompt}</h4>
+                      <h4 className="text-sm font-bold text-slate-800 mt-1">{locGrammar.prompt}</h4>
                     </div>
 
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 font-serif">
@@ -1576,7 +1586,7 @@ export default function VocabGrammarSpellingModal({
                     <textarea
                       value={userGrammarInput}
                       onChange={(e) => setUserGrammarInput(e.target.value)}
-                      placeholder="Gõ câu viết lại của bạn vào đây để tự kiểm tra..."
+                      placeholder={isEn ? "Type your rewritten sentence here to self-check..." : "Gõ câu viết lại của bạn vào đây để tự kiểm tra..."}
                       className="w-full h-24 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium resize-none"
                     />
 
@@ -1593,7 +1603,7 @@ export default function VocabGrammarSpellingModal({
                         className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
                       >
                         <HelpCircle className="w-4 h-4" />
-                        <span>{showGrammarAnswer ? 'Ẩn đáp án gợi ý' : 'Xem đáp án mẫu'}</span>
+                        <span>{showGrammarAnswer ? (isEn ? 'Hide Model Answer' : 'Ẩn đáp án gợi ý') : (isEn ? 'Reveal Model Answer' : 'Xem đáp án mẫu')}</span>
                       </button>
 
                       <button
@@ -1606,14 +1616,14 @@ export default function VocabGrammarSpellingModal({
                         }}
                         className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer"
                       >
-                        <span>Cấu trúc tiếp theo</span>
+                        <span>{isEn ? 'Next Structure' : 'Cấu trúc tiếp theo'}</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
 
                     {showGrammarAnswer && (
                       <div className="p-4 rounded-xl bg-indigo-50/80 border border-indigo-200 space-y-2 text-xs sm:text-sm animate-in fade-in">
-                        <strong className="text-indigo-950 font-bold block">✨ Đáp án chuẩn {currentGrammar.bandTarget}:</strong>
+                        <strong className="text-indigo-950 font-bold block">{isEn ? `✨ Cambridge Model Answer ${currentGrammar.bandTarget}:` : `✨ Đáp án chuẩn ${currentGrammar.bandTarget}:`}</strong>
                         <p className="font-serif font-semibold text-indigo-900 italic">
                           "{currentGrammar.modelAnswer}"
                         </p>
@@ -1621,7 +1631,8 @@ export default function VocabGrammarSpellingModal({
                     )}
                   </div>
                 </>
-              ) : null}
+                );
+              })() : null}
             </div>
           )}
 
@@ -1643,7 +1654,7 @@ export default function VocabGrammarSpellingModal({
                         : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
-                    {deck.topicName.split('(')[0]}
+                    {deck.topicName.split('(')[0].trim()}
                     <span className="ml-1.5 opacity-70">
                       ({deck.cards.filter(c => selectedBandTier === 'band-6' ? (c.bandLevel === '6.0' || c.bandLevel === '6.5') : selectedBandTier === 'band-7' ? (c.bandLevel === '7.0' || c.bandLevel === '7.5') : true).length})
                     </span>
@@ -1658,10 +1669,10 @@ export default function VocabGrammarSpellingModal({
                     <GraduationCap className="w-6 h-6" />
                   </div>
                   <h4 className="font-bold text-emerald-900 text-base">
-                    Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ {totalMasteredVocab} thẻ từ vựng trong chủ đề này.
+                    {isEn ? `Excellent! You have marked all ${totalMasteredVocab} vocabulary cards in this topic as mastered.` : `Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ ${totalMasteredVocab} thẻ từ vựng trong chủ đề này.`}
                   </h4>
                   <p className="text-xs text-emerald-700 max-w-md mx-auto">
-                    Các thẻ đã thuộc được tự động ẩn khỏi danh sách luyện tập để bạn tập trung vào từ mới.
+                    {isEn ? 'Mastered cards are hidden so you can focus on new vocabulary.' : 'Các thẻ đã thuộc được tự động ẩn khỏi danh sách luyện tập để bạn tập trung vào từ mới.'}
                   </p>
                   <button
                     type="button"
@@ -1669,7 +1680,7 @@ export default function VocabGrammarSpellingModal({
                     className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Hiện lại tất cả thẻ đã thuộc để ôn tập</span>
+                    <span>{isEn ? 'Show all mastered cards for review' : 'Hiện lại tất cả thẻ đã thuộc để ôn tập'}</span>
                   </button>
                 </div>
               ) : currentCard ? (
@@ -1686,7 +1697,7 @@ export default function VocabGrammarSpellingModal({
                     themeColor: 'emerald',
                     totalMastered: totalMasteredVocab,
                     currentItem: currentCard,
-                    getItemTitle: (item, idx) => item.term ? `${item.term} (${item.wordType || `Band ${item.bandScore || item.bandLevel || '6.5'}`})` : `Thẻ từ vựng ${idx + 1}`
+                    getItemTitle: (item, idx) => item.term ? `${item.term} (${item.wordType || `Band ${item.bandScore || item.bandLevel || '6.5'}`})` : (isEn ? `Vocab Card ${idx + 1}` : `Thẻ từ vựng ${idx + 1}`)
                   })}
 
                   {/* Interactive Flip Card */}
@@ -1696,7 +1707,7 @@ export default function VocabGrammarSpellingModal({
                   >
                     <div className="absolute top-4 right-4 text-xs font-bold text-slate-400 group-hover:text-slate-600 flex items-center space-x-1">
                       <RotateCcw className="w-3.5 h-3.5" />
-                      <span>{isFlipped ? 'Bấm để lật về thuật ngữ' : 'Bấm để lật xem nghĩa & ví dụ'}</span>
+                      <span>{isFlipped ? (isEn ? 'Click to flip to term' : 'Bấm để lật về thuật ngữ') : (isEn ? 'Click to flip for definition & example' : 'Bấm để lật xem nghĩa & ví dụ')}</span>
                     </div>
 
                     {!isFlipped ? (
@@ -1727,16 +1738,16 @@ export default function VocabGrammarSpellingModal({
                       <div className="flex-1 flex flex-col justify-center space-y-4 my-auto animate-in fade-in">
                         <div className="space-y-1">
                           <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 block">
-                            Định nghĩa tiếng Việt
+                            {isEn ? 'Academic Definition / Meaning' : 'Định nghĩa tiếng Việt'}
                           </span>
                           <p className="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
-                            {currentCard.meaningVi}
+                            {getLocalizedCardMeaning(currentCard, isEn)}
                           </p>
                         </div>
 
                         <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-emerald-950 space-y-1.5">
                           <span className="text-xs font-bold text-emerald-800 block">
-                            Ví dụ thực tế trong bài thi IELTS Writing:
+                            {isEn ? 'Authentic IELTS Exam Example:' : 'Ví dụ thực tế trong bài thi IELTS Writing:'}
                           </span>
                           <p className="text-sm font-serif italic leading-relaxed">
                             "{currentCard.example}"
@@ -1747,7 +1758,7 @@ export default function VocabGrammarSpellingModal({
 
                     {/* Bottom action hint inside card */}
                     <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                      <span>Mẹo: Tự nhớ nghĩa trong đầu trước khi lật thẻ</span>
+                      <span>{isEn ? 'Tip: Recall the meaning in your head before flipping the card' : 'Mẹo: Tự nhớ nghĩa trong đầu trước khi lật thẻ'}</span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1756,7 +1767,7 @@ export default function VocabGrammarSpellingModal({
                         className="flex items-center space-x-1 font-bold text-emerald-600 hover:text-emerald-800 cursor-pointer"
                       >
                         <Bookmark className="w-3.5 h-3.5" />
-                        <span>Lưu vào Sổ tay</span>
+                        <span>{isEn ? 'Save to Notebook' : 'Lưu vào Sổ tay'}</span>
                       </button>
                     </div>
                   </div>
@@ -1786,20 +1797,20 @@ export default function VocabGrammarSpellingModal({
                         onClick={() => handleUpdateMastery('learning')}
                         className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold transition-all active:scale-95 cursor-pointer"
                       >
-                        Chưa nhớ
+                        {isEn ? 'Again' : 'Chưa nhớ'}
                       </button>
                       <button
                         onClick={() => handleUpdateMastery('reviewed')}
                         className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition-all active:scale-95 cursor-pointer"
                       >
-                        Tạm nhớ
+                        {isEn ? 'Good' : 'Tạm nhớ'}
                       </button>
                       <button
                         onClick={() => handleUpdateMastery('mastered')}
                         className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-all active:scale-95 cursor-pointer flex items-center justify-center space-x-1"
                       >
                         <GraduationCap className="w-3.5 h-3.5" />
-                        <span>Đã thuộc lòng</span>
+                        <span>{isEn ? 'Mastered' : 'Đã thuộc lòng'}</span>
                       </button>
                     </div>
                   </div>
@@ -1821,13 +1832,13 @@ export default function VocabGrammarSpellingModal({
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/30 text-purple-200 border border-purple-500/40">
                       Reading Cambridge 10 - 19
                     </span>
-                    <span className="text-xs text-purple-300 font-semibold">Tần suất xuất hiện cao nhất</span>
+                    <span className="text-xs text-purple-300 font-semibold">{isEn ? 'Highest Exam Frequency' : 'Tần suất xuất hiện cao nhất'}</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-black text-white">
-                    Bảng Vàng 50 Cặp Từ Paraphrase Độc Quyền
+                    {isEn ? 'Cambridge Golden 50 Paraphrase Matrix' : 'Bảng Vàng 50 Cặp Từ Paraphrase Độc Quyền'}
                   </h3>
                   <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                    Chiến lược giải mã cơ chế hoán đổi từ của Giám khảo: Đối chiếu từ khóa câu hỏi (Question Stem) vs từ thực tế trong bài đọc (Passage Text).
+                    {isEn ? 'Examiner Decryption Strategy: Match Question Stem keywords vs actual Passage Text synonyms.' : 'Chiến lược giải mã cơ chế hoán đổi từ của Giám khảo: Đối chiếu từ khóa câu hỏi (Question Stem) vs từ thực tế trong bài đọc (Passage Text).'}
                   </p>
                 </div>
 
@@ -1836,10 +1847,10 @@ export default function VocabGrammarSpellingModal({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="self-start sm:self-auto flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-md shrink-0 cursor-pointer"
-                  title="Xem toàn bộ ma trận từ đồng nghĩa trên cẩm nang GitBook"
+                  title={isEn ? "View entire paraphrase matrix in GitBook Handbook" : "Xem toàn bộ ma trận từ đồng nghĩa trên cẩm nang GitBook"}
                 >
                   <BookOpen className="w-4 h-4 text-purple-200" />
-                  <span>Cẩm Nang Paraphrase</span>
+                  <span>{isEn ? 'Paraphrase Guide' : 'Cẩm Nang Paraphrase'}</span>
                   <ExternalLink className="w-3.5 h-3.5 text-purple-300" />
                 </a>
               </div>
@@ -1847,10 +1858,10 @@ export default function VocabGrammarSpellingModal({
               {/* Quick Summary Pill & Filter count */}
               <div className="flex items-center justify-between text-xs text-slate-500 px-1">
                 <span>
-                  Hiển thị <strong>{filteredSynonymsList.length}</strong> / {CAMBRIDGE_SYNONYM_PAIRS.length} cặp từ tương đương
+                  {isEn ? 'Showing ' : 'Hiển thị '}<strong>{filteredSynonymsList.length}</strong> / {CAMBRIDGE_SYNONYM_PAIRS.length} {isEn ? 'equivalent pairs' : 'cặp từ tương đương'}
                 </span>
                 <span className="text-slate-400 italic hidden sm:inline">
-                  💡 Bấm vào từ bất kỳ để sao chép vào bộ nhớ đệm
+                  💡 {isEn ? 'Click any card to copy the pair to clipboard' : 'Bấm vào từ bất kỳ để sao chép vào bộ nhớ đệm'}
                 </span>
               </div>
 
@@ -1870,10 +1881,10 @@ export default function VocabGrammarSpellingModal({
                           type="button"
                           onClick={() => {
                             navigator.clipboard.writeText(`${item.questionStem} <=> ${item.passageMatch}`);
-                            alert(`Đã sao chép: "${item.questionStem} <=> ${item.passageMatch}"`);
+                            alert(isEn ? `Copied: "${item.questionStem} <=> ${item.passageMatch}"` : `Đã sao chép: "${item.questionStem} <=> ${item.passageMatch}"`);
                           }}
                           className="p-1 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
-                          title="Sao chép cặp từ này"
+                          title={isEn ? "Copy this pair" : "Sao chép cặp từ này"}
                         >
                           <Copy className="w-3.5 h-3.5" />
                         </button>
@@ -1882,7 +1893,7 @@ export default function VocabGrammarSpellingModal({
                       {/* Question Stem */}
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                          Từ khóa trong câu hỏi (Question Stem):
+                          {isEn ? 'Keyword in Question Stem:' : 'Từ khóa trong câu hỏi (Question Stem):'}
                         </span>
                         <p className="text-xs sm:text-sm font-extrabold text-slate-900 bg-slate-50 p-2 rounded-xl border border-slate-100">
                           {item.questionStem}
@@ -1893,7 +1904,7 @@ export default function VocabGrammarSpellingModal({
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider block flex items-center space-x-1">
                           <ArrowRight className="w-3 h-3 text-purple-500" />
-                          <span>Từ thực tế xuất hiện trong bài đọc:</span>
+                          <span>{isEn ? 'Actual word appearing in passage text:' : 'Từ thực tế xuất hiện trong bài đọc:'}</span>
                         </span>
                         <p className="text-xs sm:text-sm font-bold text-purple-950 bg-purple-50/70 p-2 rounded-xl border border-purple-100/80 leading-relaxed font-serif">
                           {item.passageMatch}
@@ -1903,7 +1914,7 @@ export default function VocabGrammarSpellingModal({
 
                     <div className="pt-2 text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-50">
                       <span>Cambridge Academic Lexicon</span>
-                      <span className="text-emerald-600 font-semibold">Paraphrase 100% khớp</span>
+                      <span className="text-emerald-600 font-semibold">{isEn ? '100% Exact Paraphrase' : 'Paraphrase 100% khớp'}</span>
                     </div>
                   </div>
                 ))}

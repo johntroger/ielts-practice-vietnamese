@@ -123,10 +123,14 @@ it('2. t() resolves modal keys reactively in vi and en', () => {
 it('3. VocabGrammarSpellingModal.jsx integrates useTranslation and localized strings', () => {
   const content = fs.readFileSync(path.join(__dirname, '../src/components/VocabGrammarSpellingModal.jsx'), 'utf-8');
   assert.ok(content.includes('useTranslation'), 'VocabGrammarSpellingModal missing useTranslation');
-  assert.ok(content.includes("modals.vocabGrammar.title"));
-  assert.ok(content.includes("modals.vocabGrammar.subtitle"));
-  assert.ok(content.includes("modals.vocabGrammar.tabSpelling"));
-  assert.ok(content.includes("modals.vocabGrammar.tabGrammar"));
+  assert.ok(content.includes("isEn ? 'Share to Community' : 'Chia sẻ cộng đồng'"));
+  assert.ok(content.includes("isEn ? '100 Listening Spelling Demons'"));
+  assert.ok(content.includes("isEn ? 'Grammar Architecture & Scaffolding'"));
+  assert.ok(content.includes("isEn ? 'Vocabulary & Golden Collocations (Active Recall)'"));
+  assert.ok(content.includes("isEn ? '50 Cambridge Paraphrase Pairs (Reading)'"));
+  assert.ok(content.includes("isEn ? 'Trap Category:' : 'Nhóm bẫy:'"));
+  assert.ok(content.includes("isEn ? 'Jump to:' : 'Chuyển nhanh:'"));
+  assert.ok(content.includes("isEn ? 'Item:' : 'Câu:'"));
 });
 
 // 4. MicroDrillsModal.jsx
