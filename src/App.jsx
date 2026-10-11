@@ -44,6 +44,7 @@ import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationSe
 import { countWords } from './utils/textAnalytics';
 import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
 import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
+import { trackSkillView } from './services/analyticsService.js';
 import { useTranslation } from './i18n';
 
 export default function App() {
@@ -86,9 +87,10 @@ export default function App() {
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
   const [isApiKeyBannerDismissed, setIsApiKeyBannerDismissed] = useState(() => safeGet('ielts_dismiss_api_banner', false));
 
-  // Keep active skill in localStorage safely
+  // Keep active skill in localStorage safely & track virtual pageview in GA4
   useEffect(() => {
     safeSet('ielts_active_skill', activeSkill);
+    trackSkillView(activeSkill);
   }, [activeSkill]);
 
   // Real-time synchronization across browser tabs, windows and Supabase Cloud

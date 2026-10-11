@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { trackModalView } from '../services/analyticsService.js';
 
 /**
  * Lightweight, zero-dependency Pub/Sub Modal Store for IELTS Web Platform.
@@ -71,6 +72,11 @@ export function openModal(modalName, payload = true) {
     [modalName]: payload
   };
   emitChange();
+  try {
+    trackModalView(modalName);
+  } catch (e) {
+    // Silently continue if analytics fails
+  }
 }
 
 /**
