@@ -42,7 +42,7 @@ export default function ArenaHeaderBar({
         {/* Left: Progress & Combo */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1 rounded-md text-xs font-semibold text-slate-300 border border-slate-700/60">
-            <span>{t('arena.stageQuestionHeader', { num: currentIndex + 1, title: '' }) || `Q${currentIndex + 1}/${totalQuestions}`}</span>
+            <span>{t('arena.stageQuestionHeader', { num: currentIndex + 1, total: totalQuestions }) || `Q${currentIndex + 1}/${totalQuestions}`}</span>
           </div>
 
           {combo >= 2 && (

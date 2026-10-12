@@ -19,12 +19,15 @@ export default function ArenaQuestionCard({
   isCorrect = null,
   onSelectOption,
   onCheckAnswer,
+  onSubmitAnswer,
   onNextQuestion,
   onPlayAudio
 }) {
   const { t } = useTranslation();
 
   if (!question) return null;
+
+  const handleCheck = onCheckAnswer || onSubmitAnswer;
 
   const categoryColor = {
     vocab: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
@@ -44,10 +47,10 @@ export default function ArenaQuestionCard({
           <button
             type="button"
             onClick={() => onPlayAudio?.(question.audioText)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             <Volume2 className="w-3.5 h-3.5" />
-            <span>Play Audio (Space)</span>
+            <span>{t('arena.playAudio') || 'Play Audio (Space)'}</span>
           </button>
         )}
       </div>
@@ -70,16 +73,16 @@ export default function ArenaQuestionCard({
           const isSelected = selectedOption === idx;
           const isOptionCorrect = idx === question.correctIndex;
           
-          let btnStyle = 'bg-slate-800/50 hover:bg-slate-800 border-slate-700/70 text-slate-200';
+          let btnStyle = 'bg-slate-800/50 hover:bg-slate-800 border-slate-700/70 text-slate-200 cursor-pointer';
           if (isSelected && !isAnswerChecked) {
-            btnStyle = 'bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30';
+            btnStyle = 'bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30 cursor-pointer';
           } else if (isAnswerChecked) {
             if (isOptionCorrect) {
-              btnStyle = 'bg-emerald-600/20 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30 font-semibold';
+              btnStyle = 'bg-emerald-600/20 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30 font-semibold cursor-default';
             } else if (isSelected && !isCorrect) {
-              btnStyle = 'bg-red-600/20 border-red-500 text-red-200 ring-2 ring-red-500/30';
+              btnStyle = 'bg-red-600/20 border-red-500 text-red-200 ring-2 ring-red-500/30 cursor-default';
             } else {
-              btnStyle = 'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-60';
+              btnStyle = 'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-60 cursor-default';
             }
           }
 
@@ -130,18 +133,18 @@ export default function ArenaQuestionCard({
           <button
             type="button"
             disabled={selectedOption === null}
-            onClick={onCheckAnswer}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all"
+            onClick={() => handleCheck?.()}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all select-none"
           >
-            <span>Check Answer (Enter)</span>
+            <span>{t('arena.checkAnswer') || 'Check Answer'} (Enter)</span>
           </button>
         ) : (
           <button
             type="button"
-            onClick={onNextQuestion}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all"
+            onClick={() => onNextQuestion?.()}
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all select-none"
           >
-            <span>{t('arena.nextQuestion')} (Enter)</span>
+            <span>{t('arena.nextQuestion') || 'Câu Tiếp Theo'} (Enter)</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         )}

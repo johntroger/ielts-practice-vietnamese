@@ -462,6 +462,9 @@ export const vi = {
     summaryTitle: 'Kết Quả Đấu Trường',
     summaryAccuracy: 'Độ Chính Xác',
     summarySpeed: 'Tốc Độ Trung Bình',
-    summaryTotalXp: 'XP Đạt Được'
+    summaryTotalXp: 'XP Đạt Được',
+    checkAnswer: 'Kiểm Tra Đáp Án',
+    playAudio: 'Phát Âm Thanh (Space)',
+    stageQuestionHeader: 'Câu {num}/{total}'
   }
 };

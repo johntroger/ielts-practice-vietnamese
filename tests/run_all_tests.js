@@ -126,7 +126,8 @@ const testSuites = [
   { name: 'Step 117: 100-Level Atlas Titans Mathematical Engine', file: 'tests/test_step117_level_progression_mathematical_engine.js' },
   { name: 'Step 118: Arena Leaderboard Level Badges, Glowing Avatar Frames & Interaction', file: 'tests/test_step118_arena_leaderboard_level_badges_and_interaction.js' },
   { name: 'Step 119: Public Learner Profile Modal & User Profile Atlas Titans Level Card', file: 'tests/test_step119_public_learner_profile_and_user_level_card.js' },
-  { name: 'Step 120: Level-Up Celebration Fanfare Modal & Showcase Badges', file: 'tests/test_step120_level_up_celebration_and_showcase_badges.js' }
+  { name: 'Step 120: Level-Up Celebration Fanfare Modal & Showcase Badges', file: 'tests/test_step120_level_up_celebration_and_showcase_badges.js' },
+  { name: 'Step 121: Atlas Arena Mouse Click & Header i18n Polish', file: 'tests/test_step121_arena_mouse_click_and_i18n_header_fix.js' }
 ];
 
 console.log('===============================================================');

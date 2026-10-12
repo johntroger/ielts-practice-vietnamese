@@ -462,6 +462,9 @@ export const en = {
     summaryTitle: 'Sprint Results',
     summaryAccuracy: 'Accuracy',
     summarySpeed: 'Avg Speed',
-    summaryTotalXp: 'XP Earned'
+    summaryTotalXp: 'XP Earned',
+    checkAnswer: 'Check Answer',
+    playAudio: 'Play Audio (Space)',
+    stageQuestionHeader: 'Question {num}/{total}'
   }
 };

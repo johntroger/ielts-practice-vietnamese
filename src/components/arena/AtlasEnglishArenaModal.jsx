@@ -289,6 +289,7 @@ export default function AtlasEnglishArenaModal({
                     isAnswerChecked={sprint.isAnswerChecked}
                     isCorrect={sprint.isCorrect}
                     onSelectOption={sprint.selectOption}
+                    onCheckAnswer={sprint.checkAnswer}
                     onSubmitAnswer={sprint.checkAnswer}
                     onNextQuestion={sprint.nextQuestion}
                     onPlayAudio={(text) => speak(text)}
