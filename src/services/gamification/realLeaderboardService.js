@@ -105,6 +105,12 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
       if (ownerEntry) {
         ownerEntry.isCurrentUser = true;
         ownerEntry.user_id = currentUser.id || DEFAULT_OWNER_PROFILE.user_id;
+        const localKey = `ielts_leaderboard_local_${ownerEntry.user_id}`;
+        const localData = safeGet(localKey, {});
+        if (localData && (localData.weekly_xp > 0 || localData.total_xp > 0)) {
+          ownerEntry.weekly_xp = Math.max(ownerEntry.weekly_xp || 0, Number(localData.weekly_xp) || 0);
+          ownerEntry.total_xp = Math.max(ownerEntry.total_xp || 0, Number(localData.total_xp) || 0);
+        }
         const currentStreak = getUnifiedStreakCount();
         if (currentStreak > 0) {
           ownerEntry.streak_count = Math.max(ownerEntry.streak_count, currentStreak);
@@ -151,6 +157,17 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
       });
       activeUserIdKey = 'guest_player';
     }
+
+    // Also reconcile owner local storage on this client if exists
+    const ownerLocal = safeGet(`ielts_leaderboard_local_${DEFAULT_OWNER_PROFILE.user_id}`, {});
+    if (ownerLocal && (ownerLocal.weekly_xp > 0 || ownerLocal.total_xp > 0)) {
+      const ownerEntry = usersMap.get('tranthanhtung37');
+      if (ownerEntry) {
+        ownerEntry.weekly_xp = Math.max(ownerEntry.weekly_xp || 0, Number(ownerLocal.weekly_xp) || 0);
+        ownerEntry.total_xp = Math.max(ownerEntry.total_xp || 0, Number(ownerLocal.total_xp) || 0);
+        usersMap.set('tranthanhtung37', ownerEntry);
+      }
+    }
   }
 
   // 4. Sort strictly descending by weekly_xp (with total_xp tiebreaker)
@@ -192,6 +209,7 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
 
 /**
  * Fetches real leaderboard data with Cloud Supabase sync & Local Storage cache.
+ * Employs Local-First merging so fresh offline / local gameplay XP is NEVER clobbered by stale cloud rows.
  * @param {Object|null} currentUser 
  * @returns {Promise<{ leaderboard: Array, currentRank: number, userWeeklyXp: number, leagueTier: string }>}
  */
@@ -240,8 +258,38 @@ export async function fetchRealLeaderboard(currentUser = null) {
         };
       });
 
-      safeSet(REAL_LEADERBOARD_STORAGE_KEY, cloudUsers);
-      cachedUsers = cloudUsers;
+      // Local-First Smart Merge: merge cloud entries into local cache without overwriting higher local progress
+      const mergedMap = new Map();
+      if (Array.isArray(cachedUsers)) {
+        for (const u of cachedUsers) {
+          if (u && u.display_name) {
+            mergedMap.set(u.display_name.toLowerCase(), u);
+          }
+        }
+      }
+
+      for (const c of cloudUsers) {
+        if (!c || !c.display_name) continue;
+        const key = c.display_name.toLowerCase();
+        const existing = mergedMap.get(key);
+
+        if (existing) {
+          mergedMap.set(key, {
+            ...c,
+            ...existing,
+            weekly_xp: Math.max(existing.weekly_xp || 0, c.weekly_xp || 0),
+            total_xp: Math.max(existing.total_xp || 0, c.total_xp || 0),
+            streak_count: Math.max(existing.streak_count || 1, c.streak_count || 1),
+            version_v2: existing.version_v2 || c.version_v2
+          });
+        } else {
+          mergedMap.set(key, c);
+        }
+      }
+
+      const mergedUsers = Array.from(mergedMap.values());
+      safeSet(REAL_LEADERBOARD_STORAGE_KEY, mergedUsers);
+      cachedUsers = mergedUsers;
     }
   } catch (err) {
     // Cloud sync graceful fallback to local cache

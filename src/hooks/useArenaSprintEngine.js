@@ -257,14 +257,18 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
   }, []);
 
   const nextQuestion = useCallback(() => {
+    let completedSummary = null;
     setState(prev => {
       const next = nextQuestionAction(prev);
       if (next.phase === ARENA_SPRINT_PHASES.COMPLETED) {
-        emit('arena:sprint_completed', next.summary);
-        onSprintEnd?.(next.summary);
+        completedSummary = next.summary;
       }
       return next;
     });
+    if (completedSummary) {
+      emit('arena:sprint_completed', completedSummary);
+      onSprintEnd?.(completedSummary);
+    }
   }, [onSprintEnd]);
 
   const retrySprint = useCallback(() => {
@@ -298,8 +302,10 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
             clearInterval(timerRef.current);
             timerRef.current = null;
             const finished = finishSprintAction({ ...prev, timeRemaining: 0 }, user);
-            emit('arena:sprint_completed', finished.summary);
-            onSprintEnd?.(finished.summary);
+            setTimeout(() => {
+              emit('arena:sprint_completed', finished.summary);
+              onSprintEnd?.(finished.summary);
+            }, 0);
             return finished;
           }
           if (prev.timeRemaining !== remaining) {

@@ -12,6 +12,7 @@ import {
   submitRealSprintScore 
 } from '../../services/gamification/realLeaderboardService.js';
 import { calculateLevelFromXp, getLevelTierInfo } from '../../services/gamification/levelEngine.js';
+import { calculateSprintXp } from '../../services/gamification/xpCalculator.js';
 import ArenaHeaderBar from './ArenaHeaderBar.jsx';
 import ArenaQuestionCard from './ArenaQuestionCard.jsx';
 import ArenaRelativeLeaderboard from './ArenaRelativeLeaderboard.jsx';
@@ -131,12 +132,49 @@ export default function AtlasEnglishArenaModal({
     onClose?.();
   }, [onClose]);
 
-  const handleReturnToLobby = useCallback(() => {
+  const handleReturnToLobby = useCallback(async () => {
+    if (sprint.phase === ARENA_SPRINT_PHASES.DEFEATED && sprint.score > 0) {
+      const partialXp = calculateSprintXp({
+        correctAnswers: sprint.score,
+        streakCount: streak,
+        totalSeconds: (sprint.duration || 180) - Math.max(0, sprint.timeRemaining),
+        difficulty: selectedDifficulty,
+        timeRemaining: 0,
+        isBossCleared: false
+      });
+      if (partialXp.finalXp > 0) {
+        await submitRealSprintScore({
+          currentUser,
+          deltaXp: partialXp.finalXp,
+          streakCount: streak
+        }).catch(() => {});
+      }
+    }
     sprint.resetSprint();
-    fetchRealLeaderboard(currentUser).then(res => {
-      if (res) setLeaderboardData(res);
-    }).catch(() => {});
-  }, [sprint, currentUser]);
+    const updated = await fetchRealLeaderboard(currentUser);
+    if (updated) setLeaderboardData(updated);
+  }, [sprint, currentUser, streak, selectedDifficulty]);
+
+  const handleDefeatedRestart = useCallback(async () => {
+    if (sprint.score > 0) {
+      const partialXp = calculateSprintXp({
+        correctAnswers: sprint.score,
+        streakCount: streak,
+        totalSeconds: (sprint.duration || 180) - Math.max(0, sprint.timeRemaining),
+        difficulty: selectedDifficulty,
+        timeRemaining: 0,
+        isBossCleared: false
+      });
+      if (partialXp.finalXp > 0) {
+        await submitRealSprintScore({
+          currentUser,
+          deltaXp: partialXp.finalXp,
+          streakCount: streak
+        }).catch(() => {});
+      }
+    }
+    sprint.startSprint(null, selectedDifficulty);
+  }, [sprint, currentUser, streak, selectedDifficulty]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -412,7 +450,7 @@ export default function AtlasEnglishArenaModal({
                 </button>
                 <button
                   type="button"
-                  onClick={() => sprint.startSprint()}
+                  onClick={handleDefeatedRestart}
                   className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3.5 px-6 rounded-xl transition-colors cursor-pointer border border-slate-700"
                 >
                   Đấu Lại Từ Đầu
