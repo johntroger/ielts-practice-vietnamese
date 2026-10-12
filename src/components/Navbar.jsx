@@ -112,12 +112,16 @@ export default function Navbar({
     });
   }, []);
 
+  const desktopSkillRef = useRef(null);
   const desktopMenuRef = useRef(null);
   const mobileSkillRef = useRef(null);
 
   // Close menus on outside click without blocking adjacent menu switching
   useEffect(() => {
     const handleOutsideClick = (e) => {
+      if (desktopSkillRef.current && !desktopSkillRef.current.contains(e.target)) {
+        setIsSkillMenuOpen(false);
+      }
       if (desktopMenuRef.current && !desktopMenuRef.current.contains(e.target)) {
         setIsPracticeMenuOpen(false);
         setIsToolsMenuOpen(false);
@@ -130,6 +134,7 @@ export default function Navbar({
 
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
+        setIsSkillMenuOpen(false);
         setIsPracticeMenuOpen(false);
         setIsToolsMenuOpen(false);
         setIsProgressMenuOpen(false);
@@ -297,34 +302,108 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Direct 4-Skill Switcher Tabs (Writing / Reading / Listening / Speaking) - LUÔN HIỆN HẾT RA NGOÀI */}
-            <div className="hidden sm:flex items-center bg-slate-100/90 p-0.5 sm:p-1 rounded-xl border border-slate-200/80 space-x-0.5 sm:space-x-1 shrink-0">
-              {skills.map(s => {
-                const Icon = s.icon;
-                const isCurrent = activeSkill === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => onSelectSkill?.(s.id)}
-                    className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      isCurrent
-                        ? s.id === 'speaking'
-                          ? 'bg-purple-600 text-white shadow-xs'
-                          : s.id === 'listening'
-                          ? 'bg-emerald-600 text-white shadow-xs'
-                          : s.id === 'reading'
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'bg-red-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span className={isCurrent ? 'inline' : 'hidden 2xl:inline'}>
-                      {s.label.replace('IELTS ', '')}
-                    </span>
-                  </button>
-                );
-              })}
+            {/* Desktop 4-Skill Consolidated Dropdown (Writing / Reading / Listening / Speaking) */}
+            <div className="relative hidden sm:block" ref={desktopSkillRef}>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSkillMenuOpen(prev => !prev);
+                  setIsPracticeMenuOpen(false);
+                  setIsToolsMenuOpen(false);
+                  setIsProgressMenuOpen(false);
+                }}
+                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95 ${
+                  activeSkill === 'writing'
+                    ? 'border-red-200 bg-red-50/90 text-red-700 hover:bg-red-100'
+                    : activeSkill === 'reading'
+                    ? 'border-blue-200 bg-blue-50/90 text-blue-700 hover:bg-blue-100'
+                    : activeSkill === 'listening'
+                    ? 'border-emerald-200 bg-emerald-50/90 text-emerald-700 hover:bg-emerald-100'
+                    : 'border-purple-200 bg-purple-50/90 text-purple-700 hover:bg-purple-100'
+                }`}
+                title={isEn ? "Select IELTS Skill (Writing, Reading, Listening, Speaking)" : "Chọn kỹ năng IELTS (Writing, Reading, Listening, Speaking)"}
+                aria-label={isEn ? "Select IELTS skill" : "Chọn kỹ năng IELTS"}
+              >
+                <CurrentSkillIcon className="w-3.5 h-3.5 shrink-0" />
+                <span className="font-extrabold">{currentSkillObj.label.replace('IELTS ', '')}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isSkillMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isSkillMenuOpen && (
+                <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                  <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    {isEn ? 'Switch Practice Skill' : 'Chuyển Kỹ Năng Luyện Thi'}
+                  </div>
+                  {skills.map(s => {
+                    const Icon = s.icon;
+                    const isCurrent = activeSkill === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectSkill?.(s.id);
+                          setIsSkillMenuOpen(false);
+                        }}
+                        className={`w-full flex items-center space-x-2.5 p-2 rounded-xl text-left text-xs font-bold transition-all cursor-pointer ${
+                          isCurrent
+                            ? s.id === 'writing'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : s.id === 'reading'
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                              : s.id === 'listening'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'text-slate-700 hover:bg-slate-50 border border-transparent'
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-lg shrink-0 ${
+                          s.id === 'writing' ? 'bg-red-100 text-red-700' :
+                          s.id === 'reading' ? 'bg-blue-100 text-blue-700' :
+                          s.id === 'listening' ? 'bg-emerald-100 text-emerald-700' :
+                          'bg-purple-100 text-purple-700'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-extrabold truncate">{s.label}</div>
+                          <div className="text-[10px] text-slate-400 font-normal truncate">{s.desc}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Direct Quick Access: Atlas Game & Micro-Drill (Đưa ra ngoài thanh trên cùng theo yêu cầu) */}
+            <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+              {/* Atlas Game (Đấu Trường Atlas 90s) */}
+              <button
+                type="button"
+                onClick={() => openModal('atlasArena')}
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                title={isEn ? "Atlas English Arena (90s fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ 90s nhịp độ cao & BXH)"}
+                aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
+              >
+                <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
+                <span className="font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Game'}</span>
+                <span className="hidden sm:inline px-1 py-0.2 rounded bg-purple-600 text-white text-[9px] font-black">
+                  90s
+                </span>
+              </button>
+
+              {/* Micro-Drill (Luyện Kỹ Năng Vi Mô) */}
+              <button
+                type="button"
+                onClick={doOpenDrills}
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                title={isEn ? "Micro-Drills (Deliberate sentence, dictation & scanning practice)" : "Micro-Drills (Luyện câu đơn, ghép ý, dictation & scanning)"}
+                aria-label={isEn ? "Open Micro-Drills deliberate practice" : "Mở Micro-Drills luyện kỹ năng vi mô"}
+              >
+                <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span className="font-extrabold">Micro-Drill</span>
+              </button>
             </div>
           </div>
 
@@ -360,6 +439,7 @@ export default function Navbar({
                 <button
                   onClick={() => {
                     setIsPracticeMenuOpen(prev => !prev);
+                    setIsSkillMenuOpen(false);
                     setIsToolsMenuOpen(false);
                     setIsProgressMenuOpen(false);
                   }}
@@ -495,6 +575,7 @@ export default function Navbar({
                 <button
                   onClick={() => {
                     setIsToolsMenuOpen(prev => !prev);
+                    setIsSkillMenuOpen(false);
                     setIsPracticeMenuOpen(false);
                     setIsProgressMenuOpen(false);
                   }}
@@ -580,6 +661,7 @@ export default function Navbar({
                 <button
                   onClick={() => {
                     setIsProgressMenuOpen(prev => !prev);
+                    setIsSkillMenuOpen(false);
                     setIsPracticeMenuOpen(false);
                     setIsToolsMenuOpen(false);
                   }}
