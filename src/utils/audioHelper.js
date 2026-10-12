@@ -38,7 +38,59 @@ export function unlockAudioContext() {
 }
 
 /**
- * Plays Cambridge 4-note soundcheck chime.
+ * Plays pure 4-note ascending musical chime (C5-E5-G5-C6) WITHOUT voiceover.
+ */
+export function playChimeTone({ volume = 0.4, onStart, onEnd } = {}) {
+  try {
+    const ctx = getSharedAudioContext();
+    if (!ctx) {
+      onEnd?.();
+      return;
+    }
+
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    const clampedVol = Math.max(0.05, Math.min(1.0, Number(volume) || 0.4));
+    masterGain.gain.setValueAtTime(clampedVol, now);
+    masterGain.connect(ctx.destination);
+
+    onStart?.();
+
+    // 4 harmonic bell notes: C5 (523.25Hz), E5 (659.25Hz), G5 (783.99Hz), C6 (1046.5Hz)
+    const notes = [
+      { freq: 523.25, time: 0.0, dur: 0.25 },
+      { freq: 659.25, time: 0.12, dur: 0.25 },
+      { freq: 783.99, time: 0.24, dur: 0.28 },
+      { freq: 1046.50, time: 0.36, dur: 0.55 }
+    ];
+
+    notes.forEach(n => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(n.freq, now + n.time);
+
+      gain.gain.setValueAtTime(0, now + n.time);
+      gain.gain.linearRampToValueAtTime(0.5, now + n.time + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + n.time + n.dur);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(now + n.time);
+      osc.stop(now + n.time + n.dur);
+    });
+
+    setTimeout(() => {
+      onEnd?.();
+    }, 950);
+  } catch (e) {
+    onEnd?.();
+  }
+}
+
+/**
+ * Plays Cambridge 4-note soundcheck chime with official spoken prompt.
  */
 export function playSoundcheck({ onStart, onEnd } = {}) {
   return playIELTSSoundcheck({ volume: 1.0, onStart, onEnd });

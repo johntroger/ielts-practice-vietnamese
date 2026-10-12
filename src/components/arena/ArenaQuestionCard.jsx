@@ -41,6 +41,7 @@ export default function ArenaQuestionCard({
 
   const diffConfig = ARENA_DIFFICULTY_CONFIG[question.difficulty] || ARENA_DIFFICULTY_CONFIG.medium;
   const topicObj = ARENA_IELTS_TOPICS.find(tp => tp.id === question.topic);
+  const isListening = question.skillCategory === 'listening' || question.type === 'listening_trap' || Boolean(question.audioText);
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-3 py-1">
@@ -82,10 +83,29 @@ export default function ArenaQuestionCard({
         {question.prompt}
       </h2>
 
-      {/* Context or Reading Snippet */}
-      {question.context && (
+      {/* Context or Reading Snippet: Hidden for Listening questions while answering to prevent transcript spoiler */}
+      {question.context && !isListening && (
         <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-300 font-serif leading-relaxed max-h-36 overflow-y-auto">
           {question.context}
+        </div>
+      )}
+
+      {/* Listening Audio Prompt Helper Banner (When answering listening questions) */}
+      {isListening && !isAnswerChecked && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center justify-between text-xs text-amber-200/90">
+          <div className="flex items-center gap-2">
+            <Volume2 className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
+            <span>{isEn ? '🎧 Listening Task: Focus on the audio track to find the answer.' : '🎧 Bài nghe: Hãy chú ý lắng nghe đoạn băng để chọn đáp án đúng.'}</span>
+          </div>
+          {question.audioText && (
+            <button
+              type="button"
+              onClick={() => onPlayAudio?.(question.audioText)}
+              className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-md font-medium text-[11px] transition-colors cursor-pointer"
+            >
+              {isEn ? 'Replay Audio' : 'Nghe lại'}
+            </button>
+          )}
         </div>
       )}
 
@@ -159,6 +179,15 @@ export default function ArenaQuestionCard({
             {isCorrect ? <Check className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
             <span>{isCorrect ? t('arena.correct') : t('arena.incorrect')}</span>
           </div>
+
+          {/* Reveal Audio Transcript only on Review/Explanation phase */}
+          {isListening && (question.context || question.audioText) && (
+            <div className="my-2 p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 text-xs text-slate-200 font-sans leading-relaxed">
+              <span className="font-semibold text-amber-300 block mb-1">🎧 {isEn ? 'Audio Transcript:' : 'Lời thoại đoạn nghe:'}</span>
+              <p className="italic text-slate-300">"{question.context || question.audioText}"</p>
+            </div>
+          )}
+
           <p className="text-slate-300 text-xs mt-1">{question.explanation}</p>
         </div>
       )}

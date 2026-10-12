@@ -330,7 +330,6 @@ export default function AtlasEnglishArenaModal({
                     <button
                       type="button"
                       onClick={() => {
-                        playChime();
                         const nextTopic = ARENA_IELTS_TOPICS[Math.floor(Math.random() * ARENA_IELTS_TOPICS.length)];
                         setCurrentTopic(nextTopic);
                         sprint.startSprint(null, selectedDifficulty);
@@ -345,7 +344,6 @@ export default function AtlasEnglishArenaModal({
                       <button
                         type="button"
                         onClick={() => {
-                          playChime();
                           const revengeQuestions = generateRevengeSprintQuestions({ count: 10 });
                           if (revengeQuestions.length > 0) {
                             sprint.startSprint(revengeQuestions, selectedDifficulty);
@@ -479,7 +477,6 @@ export default function AtlasEnglishArenaModal({
             onClose={() => setSelectedLearner(null)}
             onChallengeSprint={() => {
               setSelectedLearner(null);
-              playChime();
               sprint.startSprint();
             }}
           />

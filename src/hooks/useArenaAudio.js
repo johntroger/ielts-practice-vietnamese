@@ -8,6 +8,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { 
+  playChimeTone,
   playSoundcheck, 
   speakArenaText, 
   stopAllAudio, 
@@ -34,7 +35,7 @@ export function useArenaAudio() {
 
   const playChime = useCallback((callbacks = {}) => {
     if (isMuted) return;
-    playSoundcheck(callbacks);
+    playChimeTone(callbacks);
   }, [isMuted]);
 
   const speak = useCallback((text, callbacks = {}) => {
