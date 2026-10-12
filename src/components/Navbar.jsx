@@ -378,19 +378,16 @@ export default function Navbar({
 
             {/* Direct Quick Access: Atlas Arena & Luyện Phản Xạ */}
             <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-              {/* Atlas Arena (Đấu Trường Atlas 90s) */}
+              {/* Atlas Arena */}
               <button
                 type="button"
                 onClick={() => openModal('atlasArena')}
                 className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-                title={isEn ? "Atlas English Arena (90s fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ 90s nhịp độ cao & BXH)"}
+                title={isEn ? "Atlas English Arena (fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ nhịp độ cao & BXH)"}
                 aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
               >
                 <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
                 <span className="font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
-                <span className="hidden sm:inline px-1 py-0.2 rounded bg-purple-600 text-white text-[9px] font-black">
-                  90s
-                </span>
               </button>
 
               {/* Luyện Phản Xạ (Micro-Drills) */}
