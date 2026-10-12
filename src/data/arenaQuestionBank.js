@@ -10,7 +10,9 @@
  * - Authentic Cambridge Examination Style distractors and detailed examiner rationale
  */
 
-export const ARENA_QUESTION_BANK = [
+import { ARENA_BATCH_1_QUESTIONS } from './arenaQuestionsBatch1.js';
+
+export const ARENA_BASE_QUESTION_BANK = [
   // ==========================================
   // TIER 1: EASY (Band 4.0 - 5.0) - Base XP: 12
   // ==========================================
@@ -453,6 +455,11 @@ export const ARENA_QUESTION_BANK = [
     correctAnswer: 'tenets',
     explanation: '"Tenet" (plural: tenets) means a principle or belief, especially one of the main principles of a religion or philosophy (distinct from "tenant" = renter).'
   }
+];
+
+export const ARENA_QUESTION_BANK = [
+  ...ARENA_BASE_QUESTION_BANK,
+  ...ARENA_BATCH_1_QUESTIONS
 ];
 
 /**
