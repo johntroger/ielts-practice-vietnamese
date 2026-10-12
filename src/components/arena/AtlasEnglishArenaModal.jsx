@@ -26,6 +26,10 @@ import {
   ARENA_IELTS_TOPICS 
 } from '../../utils/arenaStorageKeys.js';
 import { safeGet, safeSet } from '../../utils/storageService.js';
+import { 
+  getUnresolvedMistakeCount, 
+  generateRevengeSprintQuestions 
+} from '../../services/gamification/mistakeVaultService.js';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -275,19 +279,39 @@ export default function AtlasEnglishArenaModal({
                     currentTopic={currentTopic}
                   />
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playChime();
-                      const nextTopic = ARENA_IELTS_TOPICS[Math.floor(Math.random() * ARENA_IELTS_TOPICS.length)];
-                      setCurrentTopic(nextTopic);
-                      sprint.startSprint(null, selectedDifficulty);
-                    }}
-                    className="mt-2 w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-base py-4 px-8 rounded-2xl shadow-xl shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
-                  >
-                    <Play className="w-5 h-5 fill-white" />
-                    <span>{t('arena.startSprint')}</span>
-                  </button>
+                  <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playChime();
+                        const nextTopic = ARENA_IELTS_TOPICS[Math.floor(Math.random() * ARENA_IELTS_TOPICS.length)];
+                        setCurrentTopic(nextTopic);
+                        sprint.startSprint(null, selectedDifficulty);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-base py-4 px-8 rounded-2xl shadow-xl shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
+                    >
+                      <Play className="w-5 h-5 fill-white" />
+                      <span>{t('arena.startSprint')}</span>
+                    </button>
+
+                    {getUnresolvedMistakeCount() > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playChime();
+                          const revengeQuestions = generateRevengeSprintQuestions({ count: 10 });
+                          if (revengeQuestions.length > 0) {
+                            sprint.startSprint(revengeQuestions, selectedDifficulty);
+                          }
+                        }}
+                        className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-base py-4 px-6 rounded-2xl shadow-xl shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
+                        title="Vào vòng đấu giải cứu các câu bạn đã làm sai"
+                      >
+                        <RotateCcw className="w-5 h-5" />
+                        <span>⚡ Đấu Phục Thù ({getUnresolvedMistakeCount()})</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Right: Real Learner Leaderboard */}

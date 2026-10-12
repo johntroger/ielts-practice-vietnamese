@@ -37,8 +37,8 @@ export default function ArenaSprintSummaryModal({
         </p>
       </div>
 
-      {/* XP Hero Card */}
-      <div className="w-full bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-800/40 rounded-2xl p-4 flex flex-col items-center gap-1">
+      {/* XP Hero Card with Transparent 3-Tier Breakdown */}
+      <div className="w-full bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-800/40 rounded-2xl p-4 flex flex-col items-center gap-2">
         <span className="text-xs uppercase tracking-wider font-bold text-indigo-400">
           {t('arena.summaryTotalXp')}
         </span>
@@ -46,9 +46,33 @@ export default function ArenaSprintSummaryModal({
           <span>+{summary.finalXp || 0}</span>
           <span className="text-base text-indigo-400 font-bold">XP</span>
         </div>
-        {summary.speedBonus > 0 && (
-          <span className="text-[11px] text-emerald-400 font-semibold">
-            ⚡ +{summary.speedBonus} Speed Reflex Bonus
+
+        {/* 3-Tier Transparent Decomposition Table */}
+        <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-indigo-800/30 text-xs">
+          <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
+            <span className="text-slate-400 text-[10px]">Base XP ({summary.score || 0} đúng)</span>
+            <span className="font-bold text-indigo-300">+{summary.baseScore || (summary.score * 20) || 0}</span>
+          </div>
+
+          <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
+            <span className="text-slate-400 text-[10px]">👑 Boss Bonus</span>
+            <span className="font-bold text-amber-300">+{summary.bossBonus || 0}</span>
+          </div>
+
+          <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
+            <span className="text-slate-400 text-[10px]">⏱️ Time Bonus</span>
+            <span className="font-bold text-emerald-300">+{summary.timeBonus || summary.speedBonus || 0}</span>
+          </div>
+
+          <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
+            <span className="text-slate-400 text-[10px]">🔥 Streak Bonus</span>
+            <span className="font-bold text-rose-300">+{summary.streakBonus || 0}</span>
+          </div>
+        </div>
+
+        {summary.softCapMultiplier < 1.0 && (
+          <span className="text-[11px] text-amber-400/90 font-medium pt-1">
+            ⚠️ Daily Soft-Cap: x{summary.softCapMultiplier} (Chống cày cuốc mất tập trung)
           </span>
         )}
       </div>
