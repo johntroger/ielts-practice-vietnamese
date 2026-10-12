@@ -51,8 +51,8 @@ it('1. reconcileRealLeaderboard attaches level and titanTier to every leaderboar
   }
 });
 
-// 2. Specific Validation for tranthanhtung37
-it('2. tranthanhtung37 is accurately calculated at Level 20 Atlas Gladiator with emerald ring', () => {
+// 2. Specific Validation for tranthanhtung37 (Reset for Fresh Gameplay)
+it('2. tranthanhtung37 is accurately reset to Level 1 Atlas Seeker with slate ring upon reset', () => {
   const result = reconcileRealLeaderboard([], {
     email: 'tranthanhtung37@gmail.com',
     user_metadata: { name: 'tranthanhtung37' }
@@ -60,14 +60,14 @@ it('2. tranthanhtung37 is accurately calculated at Level 20 Atlas Gladiator with
 
   const owner = result.leaderboard.find(u => u.display_name === 'tranthanhtung37');
   assert.ok(owner, 'tranthanhtung37 must exist on leaderboard');
-  assert.strictEqual(owner.level, 20, 'Must be Level 20');
-  assert.strictEqual(owner.titanTier.id, 'gladiator');
-  assert.strictEqual(owner.titanTier.titleEn, 'Atlas Gladiator');
-  assert.strictEqual(owner.titanTier.titleVi, 'Đấu Sĩ Đấu Trường');
-  assert.ok(owner.titanTier.ringColor.includes('emerald'), 'Ring color must be emerald');
-  assert.strictEqual(owner.levelProgress.xpIntoLevel, 318);
-  assert.strictEqual(owner.levelProgress.xpRemaining, 600);
-  assert.strictEqual(owner.levelProgress.progressPercent, 35);
+  assert.strictEqual(owner.level, 1, 'Must be Level 1');
+  assert.strictEqual(owner.titanTier.id, 'seeker');
+  assert.strictEqual(owner.titanTier.titleEn, 'Atlas Seeker');
+  assert.strictEqual(owner.titanTier.titleVi, 'Kẻ Khởi Hành Atlas');
+  assert.ok(owner.titanTier.ringColor.includes('slate'), 'Ring color must be slate');
+  assert.strictEqual(owner.levelProgress.xpIntoLevel, 0);
+  assert.strictEqual(owner.levelProgress.xpRemaining, 82);
+  assert.strictEqual(owner.levelProgress.progressPercent, 0);
 });
 
 // 3. Novice User Level 1 Atlas Seeker

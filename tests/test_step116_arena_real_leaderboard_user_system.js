@@ -45,7 +45,8 @@ async function runTests() {
     assert.strictEqual(DEFAULT_OWNER_PROFILE.display_name, 'tranthanhtung37');
     assert.strictEqual(DEFAULT_OWNER_PROFILE.email, 'tranthanhtung37@gmail.com');
     assert.strictEqual(DEFAULT_OWNER_PROFILE.isOwner, true);
-    assert.ok(DEFAULT_OWNER_PROFILE.weekly_xp > 0);
+    assert.strictEqual(DEFAULT_OWNER_PROFILE.weekly_xp, 0);
+    assert.strictEqual(DEFAULT_OWNER_PROFILE.total_xp, 0);
   });
 
   // 2. isUserOwner helper checks
@@ -114,7 +115,7 @@ async function runTests() {
     const mockUsers = [
       { display_name: 'HocVienA', weekly_xp: 500, total_xp: 1000 },
       { display_name: 'HocVienB', weekly_xp: 3500, total_xp: 7000 },
-      { display_name: 'tranthanhtung37', weekly_xp: 2850, total_xp: 9400 }
+      { display_name: 'tranthanhtung37', weekly_xp: 2850, total_xp: 9400, version_v2: true }
     ];
 
     const result = reconcileRealLeaderboard(mockUsers, null);

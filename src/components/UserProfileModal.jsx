@@ -51,6 +51,7 @@ import { formatTestTitle, formatTestDescription } from '../utils/testLocalizatio
 import { getLocalizedVocabMeaning } from '../utils/vocabLocalization';
 import { calculateLevelProgress } from '../services/gamification/levelEngine';
 import { safeGet } from '../utils/storageService';
+import { DEFAULT_OWNER_PROFILE } from '../services/gamification/realLeaderboardService';
 
 export default function UserProfileModal({
   isOpen,
@@ -523,11 +524,15 @@ export default function UserProfileModal({
 
   const userLevelData = useMemo(() => {
     let xp = 0;
-    if (isOwnerUser) {
-      xp = 9400;
-    } else if (user?.id) {
+    if (user?.id) {
       const local = safeGet(`ielts_leaderboard_local_${user.id}`, {});
-      xp = Number(local.total_xp || local.weekly_xp || 0);
+      if (isOwnerUser && (!local.version_v2 && (local.total_xp === 9400 || local.weekly_xp === 2850))) {
+        xp = 0;
+      } else {
+        xp = Number(local.total_xp || local.weekly_xp || (isOwnerUser ? DEFAULT_OWNER_PROFILE.total_xp : 0));
+      }
+    } else if (isOwnerUser) {
+      xp = Number(DEFAULT_OWNER_PROFILE.total_xp || 0);
     } else {
       const guest = safeGet('ielts_guest_arena_score_v1', {});
       xp = Number(guest.total_xp || guest.weekly_xp || 0);

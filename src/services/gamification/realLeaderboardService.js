@@ -19,11 +19,12 @@ export const DEFAULT_OWNER_PROFILE = {
   display_name: 'tranthanhtung37',
   email: 'tranthanhtung37@gmail.com',
   avatar_url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tranthanhtung37',
-  weekly_xp: 2850,
-  total_xp: 9400,
-  streak_count: 14,
+  weekly_xp: 0,
+  total_xp: 0,
+  streak_count: 0,
   isOwner: true,
-  role: 'Admin & Top Scholar'
+  role: 'Admin & Top Scholar',
+  version_v2: true
 };
 
 /**
@@ -62,14 +63,21 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
       const key = u.display_name.toLowerCase();
       const existing = usersMap.get(key);
 
+      // Discard legacy mock stats (9400 total / 2850 weekly) for owner when resetting to play from scratch
+      const isLegacyOwnerMock = (key === 'tranthanhtung37') && (!u.version_v2 && (u.total_xp === 9400 || u.weekly_xp === 2850));
+      const incomingWeekly = isLegacyOwnerMock ? 0 : (Number(u.weekly_xp) || 0);
+      const incomingTotal = isLegacyOwnerMock ? 0 : (Number(u.total_xp) || 0);
+      const incomingStreak = isLegacyOwnerMock ? 0 : (Number(u.streak_count) || 0);
+
       if (existing) {
         usersMap.set(key, {
           ...existing,
           ...u,
-          weekly_xp: Math.max(existing.weekly_xp || 0, Number(u.weekly_xp) || 0),
-          total_xp: Math.max(existing.total_xp || 0, Number(u.total_xp) || 0),
-          streak_count: Math.max(existing.streak_count || 1, Number(u.streak_count) || 1),
-          isOwner: existing.isOwner || u.isOwner || (u.display_name === 'tranthanhtung37')
+          weekly_xp: Math.max(existing.weekly_xp || 0, incomingWeekly),
+          total_xp: Math.max(existing.total_xp || 0, incomingTotal),
+          streak_count: Math.max(existing.streak_count || 0, incomingStreak),
+          isOwner: existing.isOwner || u.isOwner || (u.display_name === 'tranthanhtung37'),
+          version_v2: existing.version_v2 || u.version_v2
         });
       } else {
         usersMap.set(key, {
@@ -77,11 +85,12 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
           display_name: u.display_name,
           email: u.email || '',
           avatar_url: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.display_name}`,
-          weekly_xp: Math.max(0, Number(u.weekly_xp) || 0),
-          total_xp: Math.max(0, Number(u.total_xp) || 0),
-          streak_count: Math.max(1, Number(u.streak_count) || 1),
+          weekly_xp: incomingWeekly,
+          total_xp: incomingTotal,
+          streak_count: incomingStreak,
           isOwner: u.display_name === 'tranthanhtung37' || u.email === 'tranthanhtung37@gmail.com',
-          last_updated: u.last_updated || new Date().toISOString()
+          last_updated: u.last_updated || new Date().toISOString(),
+          version_v2: u.version_v2
         });
       }
     }
@@ -189,6 +198,14 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
 export async function fetchRealLeaderboard(currentUser = null) {
   // Step 1: Read local cache for immediate 0ms UI responsiveness
   let cachedUsers = safeGet(REAL_LEADERBOARD_STORAGE_KEY, [DEFAULT_OWNER_PROFILE]);
+  if (Array.isArray(cachedUsers)) {
+    cachedUsers = cachedUsers.map(u => {
+      if (u.display_name?.toLowerCase() === 'tranthanhtung37' && (!u.version_v2 && (u.total_xp === 9400 || u.weekly_xp === 2850))) {
+        return { ...u, weekly_xp: 0, total_xp: 0, streak_count: 0, version_v2: true };
+      }
+      return u;
+    });
+  }
 
   // Step 2: Query Cloud Supabase for real learner arena entries
   try {
@@ -205,17 +222,23 @@ export async function fetchRealLeaderboard(currentUser = null) {
     const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
     if (!error && Array.isArray(data) && data.length > 0) {
-      const cloudUsers = data.map(row => ({
-        user_id: row.user_id || row.id.replace('arena-score-', ''),
-        display_name: row.task_data?.display_name || row.creator_email?.split('@')[0] || 'IELTS Scholar',
-        email: row.creator_email || '',
-        avatar_url: row.task_data?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${row.task_data?.display_name || 'learner'}`,
-        weekly_xp: Number(row.task_data?.weekly_xp) || 0,
-        total_xp: Number(row.task_data?.total_xp) || 0,
-        streak_count: Number(row.task_data?.streak_count) || 1,
-        last_updated: row.task_data?.last_updated || row.created_at,
-        isOwner: row.creator_email === 'tranthanhtung37@gmail.com' || row.task_data?.display_name === 'tranthanhtung37'
-      }));
+      const cloudUsers = data.map(row => {
+        const isOwnerAccount = row.creator_email === 'tranthanhtung37@gmail.com' || row.task_data?.display_name === 'tranthanhtung37';
+        const isLegacyMock = isOwnerAccount && (!row.task_data?.version_v2 && (row.task_data?.total_xp === 9400 || row.task_data?.weekly_xp === 2850));
+
+        return {
+          user_id: row.user_id || row.id.replace('arena-score-', ''),
+          display_name: row.task_data?.display_name || row.creator_email?.split('@')[0] || 'IELTS Scholar',
+          email: row.creator_email || '',
+          avatar_url: row.task_data?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${row.task_data?.display_name || 'learner'}`,
+          weekly_xp: isLegacyMock ? 0 : (Number(row.task_data?.weekly_xp) || 0),
+          total_xp: isLegacyMock ? 0 : (Number(row.task_data?.total_xp) || 0),
+          streak_count: isLegacyMock ? 0 : (Number(row.task_data?.streak_count) || 1),
+          last_updated: row.task_data?.last_updated || row.created_at,
+          isOwner: isOwnerAccount,
+          version_v2: row.task_data?.version_v2 || false
+        };
+      });
 
       safeSet(REAL_LEADERBOARD_STORAGE_KEY, cloudUsers);
       cachedUsers = cloudUsers;
@@ -273,9 +296,11 @@ export async function submitRealSprintScore({
       .eq('id', cloudRecordId)
       .maybeSingle();
 
-    const baseWeekly = existingRow?.task_data?.weekly_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.weekly_xp : 0);
-    const baseTotal = existingRow?.task_data?.total_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.total_xp : 0);
-    const baseStreak = existingRow?.task_data?.streak_count ?? (isOwner ? DEFAULT_OWNER_PROFILE.streak_count : 1);
+    const isLegacyCloudRow = isOwner && existingRow && (!existingRow.task_data?.version_v2 && (existingRow.task_data?.total_xp === 9400 || existingRow.task_data?.weekly_xp === 2850));
+
+    const baseWeekly = isLegacyCloudRow ? 0 : (existingRow?.task_data?.weekly_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.weekly_xp : 0));
+    const baseTotal = isLegacyCloudRow ? 0 : (existingRow?.task_data?.total_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.total_xp : 0));
+    const baseStreak = isLegacyCloudRow ? 0 : (existingRow?.task_data?.streak_count ?? (isOwner ? DEFAULT_OWNER_PROFILE.streak_count : 1));
 
     const updatedTaskData = {
       type: 'arena_leaderboard_entry',
@@ -284,7 +309,8 @@ export async function submitRealSprintScore({
       total_xp: baseTotal + validXp,
       streak_count: Math.max(baseStreak, streakCount),
       avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${targetName}`,
-      last_updated: new Date().toISOString()
+      last_updated: new Date().toISOString(),
+      version_v2: true
     };
 
     await supabase.from('user_custom_tasks').upsert({
@@ -304,9 +330,15 @@ export async function submitRealSprintScore({
   const userIdx = cachedList.findIndex(u => u.display_name.toLowerCase() === targetName.toLowerCase());
 
   if (userIdx !== -1) {
-    cachedList[userIdx].weekly_xp = (cachedList[userIdx].weekly_xp || 0) + validXp;
-    cachedList[userIdx].total_xp = (cachedList[userIdx].total_xp || 0) + validXp;
-    cachedList[userIdx].streak_count = Math.max(cachedList[userIdx].streak_count || 1, streakCount);
+    const isLegacyCache = isOwner && (!cachedList[userIdx].version_v2 && (cachedList[userIdx].total_xp === 9400 || cachedList[userIdx].weekly_xp === 2850));
+    const prevWeekly = isLegacyCache ? 0 : (cachedList[userIdx].weekly_xp || 0);
+    const prevTotal = isLegacyCache ? 0 : (cachedList[userIdx].total_xp || 0);
+    const prevStreak = isLegacyCache ? 0 : (cachedList[userIdx].streak_count || 1);
+
+    cachedList[userIdx].weekly_xp = prevWeekly + validXp;
+    cachedList[userIdx].total_xp = prevTotal + validXp;
+    cachedList[userIdx].streak_count = Math.max(prevStreak, streakCount);
+    cachedList[userIdx].version_v2 = true;
   } else {
     cachedList.push({
       user_id: targetUserId,
@@ -316,10 +348,22 @@ export async function submitRealSprintScore({
       weekly_xp: validXp,
       total_xp: validXp,
       streak_count: streakCount,
-      isOwner
+      isOwner,
+      version_v2: true
     });
   }
   safeSet(REAL_LEADERBOARD_STORAGE_KEY, cachedList);
+
+  // If owner, also update local user profile storage
+  if (isOwner) {
+    const finalOwnerXp = cachedList.find(u => u.display_name === 'tranthanhtung37')?.total_xp || validXp;
+    safeSet(`ielts_leaderboard_local_${DEFAULT_OWNER_PROFILE.user_id}`, {
+      weekly_xp: finalOwnerXp,
+      total_xp: finalOwnerXp,
+      streak_count: streakCount,
+      version_v2: true
+    });
+  }
 
   // If Guest, record guest score locally
   if (!currentUser) {
@@ -332,4 +376,29 @@ export async function submitRealSprintScore({
   }
 
   return { success: true };
+}
+
+/**
+ * Resets a user's arena profile (starts fresh from Level 1, 0 XP, 0 streak).
+ * @param {string} username 
+ */
+export function resetUserArenaScore(username = 'tranthanhtung37') {
+  const cached = safeGet(REAL_LEADERBOARD_STORAGE_KEY, []);
+  if (Array.isArray(cached)) {
+    const cleaned = cached.map(u => {
+      if (u.display_name?.toLowerCase() === username.toLowerCase()) {
+        return { ...u, weekly_xp: 0, total_xp: 0, streak_count: 0, version_v2: true };
+      }
+      return u;
+    });
+    safeSet(REAL_LEADERBOARD_STORAGE_KEY, cleaned);
+  }
+  if (username.toLowerCase() === 'tranthanhtung37') {
+    safeSet(`ielts_leaderboard_local_${DEFAULT_OWNER_PROFILE.user_id}`, {
+      weekly_xp: 0,
+      total_xp: 0,
+      streak_count: 0,
+      version_v2: true
+    });
+  }
 }

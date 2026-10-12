@@ -23,8 +23,8 @@ describe('Step 121: Atlas Arena Mouse Click & Header i18n Polish', () => {
 
   it('2. AtlasEnglishArenaModal explicitly passes onCheckAnswer and onSubmitAnswer to ArenaQuestionCard', () => {
     const modalCode = fs.readFileSync(path.resolve('src/components/arena/AtlasEnglishArenaModal.jsx'), 'utf-8');
-    assert.ok(modalCode.includes('onCheckAnswer={sprint.checkAnswer}'), 'Must pass onCheckAnswer prop');
-    assert.ok(modalCode.includes('onSubmitAnswer={sprint.checkAnswer}'), 'Must pass onSubmitAnswer prop');
+    assert.ok(modalCode.includes('onCheckAnswer={handleCheckAnswer}') || modalCode.includes('onCheckAnswer={sprint.checkAnswer}'), 'Must pass onCheckAnswer prop');
+    assert.ok(modalCode.includes('onSubmitAnswer={handleCheckAnswer}') || modalCode.includes('onSubmitAnswer={sprint.checkAnswer}'), 'Must pass onSubmitAnswer prop');
   });
 
   it('3. Both vi.js and en.js contain arena.checkAnswer, playAudio, and stageQuestionHeader', () => {
