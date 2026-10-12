@@ -54,12 +54,14 @@ export const INITIAL_SPRINT_STATE = {
 /**
  * Pure state transition functions for unit testing and deterministic execution.
  */
-export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIMER_SECONDS) {
+export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIMER_SECONDS, difficulty = 'medium') {
   return {
     ...INITIAL_SPRINT_STATE,
     phase: ARENA_SPRINT_PHASES.ACTIVE,
     questions,
     timeRemaining: duration,
+    duration,
+    difficulty,
     shieldState: createSprintShieldState()
   };
 }
@@ -157,12 +159,13 @@ export function retrySprintAction(state) {
 }
 
 export function finishSprintAction(state, user = null) {
-  const totalSeconds = INITIAL_SPRINT_TIMER_SECONDS - Math.max(0, state.timeRemaining);
+  const totalSeconds = (state.duration || INITIAL_SPRINT_TIMER_SECONDS) - Math.max(0, state.timeRemaining);
   const streak = getUnifiedStreakCount();
   const xpResult = calculateSprintXp({
     correctAnswers: state.score,
     streakCount: streak,
-    totalSeconds
+    totalSeconds,
+    difficulty: state.difficulty || 'medium'
   });
 
   incrementDailySprintCount();
@@ -180,6 +183,7 @@ export function finishSprintAction(state, user = null) {
 
   const summary = {
     ...xpResult,
+    difficulty: state.difficulty || 'medium',
     score: state.score,
     totalQuestions: state.questions.length,
     accuracy: state.questions.length > 0 ? Math.round((state.score / state.questions.length) * 100) : 0,
@@ -201,11 +205,11 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
   const [state, setState] = useState(INITIAL_SPRINT_STATE);
   const timerRef = useRef(null);
 
-  const startSprint = useCallback((customQuestions = null) => {
-    const qList = customQuestions || generateArenaSprintQuestions({ count: 7 });
-    const next = startSprintAction(qList);
+  const startSprint = useCallback((customQuestions = null, selectedDifficulty = 'medium') => {
+    const qList = customQuestions || generateArenaSprintQuestions({ count: 7, difficulty: selectedDifficulty });
+    const next = startSprintAction(qList, INITIAL_SPRINT_TIMER_SECONDS, selectedDifficulty);
     setState(next);
-    emit('arena:sprint_started', { totalQuestions: qList.length });
+    emit('arena:sprint_started', { totalQuestions: qList.length, difficulty: selectedDifficulty });
   }, []);
 
   const selectOption = useCallback((idx) => {

@@ -9,6 +9,8 @@
 import { IELTS_SPELLING_TRAPS, CAMBRIDGE_SYNONYM_PAIRS } from '../data/vocabGrammarSpellingData.js';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills.js';
 import { LISTENING_MICRO_DRILLS } from '../data/listeningMicroDrills.js';
+import { ARENA_QUESTION_BANK, getQuestionsByTierAndTopic } from '../data/arenaQuestionBank.js';
+import { ARENA_IELTS_TOPICS } from '../utils/arenaStorageKeys.js';
 import { filterEligibleQuestions, recordServedQuestions } from './sprintCooldownService.js';
 
 /**
@@ -104,40 +106,51 @@ export function adaptListeningDrill(item) {
  * @param {number} [options.count=7]
  * @param {() => number} [options.rng=Math.random]
  * @param {boolean} [options.recordHistory=true]
+ * @param {string} [options.difficulty='medium']
+ * @param {string} [options.topic=null]
  * @returns {Array<Object>}
  */
-export function generateArenaSprintQuestions({ count = 7, rng = Math.random, recordHistory = true } = {}) {
-  // 1. Convert all pools to normalized arena questions
-  const spellingPool = (IELTS_SPELLING_TRAPS || []).map(item => adaptSpellingTrap(item, rng));
-  const synonymPool = (CAMBRIDGE_SYNONYM_PAIRS || []).map(item => adaptSynonymPair(item, CAMBRIDGE_SYNONYM_PAIRS, rng));
-  const readingPool = (READING_MICRO_DRILLS || []).filter(d => d.type === 'reading-tfng').map(adaptReadingDrill);
-  const listeningPool = (LISTENING_MICRO_DRILLS || []).filter(d => d.type === 'listening-distractor').map(adaptListeningDrill);
+export function generateArenaSprintQuestions({ count = 7, rng = Math.random, recordHistory = true, difficulty = 'medium', topic = null } = {}) {
+  const randomTopicObj = ARENA_IELTS_TOPICS[Math.floor(rng() * ARENA_IELTS_TOPICS.length)];
+  const activeTopic = topic || randomTopicObj?.id || 'environment';
 
-  // 2. Filter pools through Cooldown Engine
-  const eligSpelling = filterEligibleQuestions(spellingPool, 2);
-  const eligSynonym = filterEligibleQuestions(synonymPool, 2);
-  const eligReading = filterEligibleQuestions(readingPool, 2);
-  const eligListening = filterEligibleQuestions(listeningPool, 1);
+  // 1. Fetch questions from rich 4-tier bank matching difficulty and topic
+  const targetedBank = getQuestionsByTierAndTopic(difficulty, topic);
+  const eligibleBank = filterEligibleQuestions(targetedBank, count);
 
-  // 3. Select balanced composition (2 spelling, 2 synonym, 2 reading, 1 listening)
-  const selected = [
-    ...shuffleArray(eligSpelling, rng).slice(0, 2),
-    ...shuffleArray(eligSynonym, rng).slice(0, 2),
-    ...shuffleArray(eligReading, rng).slice(0, 2),
-    ...shuffleArray(eligListening, rng).slice(0, 1)
-  ];
+  let selected = [...shuffleArray(eligibleBank, rng).slice(0, count)];
 
-  // 4. Fill from combined remaining pools if any pool was short
+  // 2. If additional questions are needed to reach count, fill from legacy micro-drill pools
   if (selected.length < count) {
+    const spellingPool = (IELTS_SPELLING_TRAPS || []).map(item => adaptSpellingTrap(item, rng));
+    const synonymPool = (CAMBRIDGE_SYNONYM_PAIRS || []).map(item => adaptSynonymPair(item, CAMBRIDGE_SYNONYM_PAIRS, rng));
+    const readingPool = (READING_MICRO_DRILLS || []).filter(d => d.type === 'reading-tfng').map(adaptReadingDrill);
+    const listeningPool = (LISTENING_MICRO_DRILLS || []).filter(d => d.type === 'listening-distractor').map(adaptListeningDrill);
+
+    const eligSpelling = filterEligibleQuestions(spellingPool, 2);
+    const eligSynonym = filterEligibleQuestions(synonymPool, 2);
+    const eligReading = filterEligibleQuestions(readingPool, 2);
+    const eligListening = filterEligibleQuestions(listeningPool, 1);
+
     const existingIds = new Set(selected.map(q => q.id));
-    const leftovers = [...spellingPool, ...synonymPool, ...readingPool, ...listeningPool]
-      .filter(q => !existingIds.has(q.id));
-    selected.push(...shuffleArray(leftovers, rng).slice(0, count - selected.length));
+    const leftovers = [
+      ...shuffleArray(eligSpelling, rng),
+      ...shuffleArray(eligSynonym, rng),
+      ...shuffleArray(eligReading, rng),
+      ...shuffleArray(eligListening, rng)
+    ].filter(q => !existingIds.has(q.id));
+
+    selected.push(...leftovers.slice(0, count - selected.length));
   }
 
-  const finalQuestions = shuffleArray(selected.slice(0, count), rng);
+  const finalQuestions = shuffleArray(selected.slice(0, count), rng).map(q => ({
+    ...q,
+    type: q.type || (q.skillCategory === 'reading' ? 'tfng' : q.skillCategory === 'listening' ? 'listening_trap' : 'vocab'),
+    difficulty: q.difficulty || difficulty,
+    topic: q.topic || activeTopic
+  }));
 
-  // 5. Update cooldown log with newly served questions
+  // 3. Update cooldown log with newly served questions
   if (recordHistory) {
     recordServedQuestions(finalQuestions.map(q => q.id));
   }

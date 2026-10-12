@@ -1,6 +1,8 @@
 import React from 'react';
-import { Volume2, CheckCircle2, XCircle, ArrowRight, Check } from 'lucide-react';
+import { Volume2, CheckCircle2, XCircle, ArrowRight, Check, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import ArenaMediaViewer from './ArenaMediaViewer.jsx';
+import { ARENA_DIFFICULTY_CONFIG, ARENA_IELTS_TOPICS } from '../../utils/arenaStorageKeys.js';
 
 /**
  * src/components/arena/ArenaQuestionCard.jsx
@@ -10,6 +12,7 @@ import { useTranslation } from '../../i18n';
  * - Keyboard badges 1-4 for instant answer selection
  * - Dual-color review state (Green for correct, Red for error)
  * - TTS Audio button for listening and spelling questions
+ * - Rich Multimedia Support: Charts, Maps, and Process Diagrams
  * - Clear Cambridge examiner reasoning explanation box
  */
 export default function ArenaQuestionCard({
@@ -23,7 +26,7 @@ export default function ArenaQuestionCard({
   onNextQuestion,
   onPlayAudio
 }) {
-  const { t } = useTranslation();
+  const { t, isEn } = useTranslation();
 
   if (!question) return null;
 
@@ -32,16 +35,35 @@ export default function ArenaQuestionCard({
   const categoryColor = {
     vocab: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
     reading: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
-    listening: 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+    listening: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    visual_data: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
   }[question.skillCategory] || 'bg-slate-500/10 text-slate-400 border-slate-500/30';
 
+  const diffConfig = ARENA_DIFFICULTY_CONFIG[question.difficulty] || ARENA_DIFFICULTY_CONFIG.medium;
+  const topicObj = ARENA_IELTS_TOPICS.find(tp => tp.id === question.topic);
+
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col gap-5 py-4">
-      {/* Category Pill & Audio Button */}
-      <div className="flex items-center justify-between gap-2">
-        <span className={`text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md border ${categoryColor}`}>
-          {question.skillCategory?.toUpperCase() || 'PRACTICE'}
-        </span>
+    <div className="w-full max-w-2xl mx-auto flex flex-col gap-4 py-3">
+      {/* Category Pill, Topic, Difficulty & Audio Button */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className={`text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md border ${categoryColor}`}>
+            {question.skillCategory?.toUpperCase() || 'PRACTICE'}
+          </span>
+
+          {diffConfig && (
+            <span className={`text-[11px] font-bold tracking-wider px-2.5 py-1 rounded-md border ${diffConfig.badgeClass}`}>
+              {diffConfig.targetBand}
+            </span>
+          )}
+
+          {topicObj && (
+            <span className="text-[11px] font-medium px-2 py-1 rounded-md bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1">
+              <span>{topicObj.icon}</span>
+              <span>{isEn ? topicObj.nameEn : topicObj.nameVi}</span>
+            </span>
+          )}
+        </div>
 
         {question.audioText && (
           <button
@@ -62,9 +84,14 @@ export default function ArenaQuestionCard({
 
       {/* Context or Reading Snippet */}
       {question.context && (
-        <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 text-sm text-slate-300 font-serif leading-relaxed max-h-48 overflow-y-auto">
+        <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3.5 text-sm text-slate-300 font-serif leading-relaxed max-h-48 overflow-y-auto">
           {question.context}
         </div>
+      )}
+
+      {/* Rich Multimedia Asset (Chart, Map, Diagram) */}
+      {question.media && (
+        <ArenaMediaViewer media={question.media} />
       )}
 
       {/* Option Cards */}

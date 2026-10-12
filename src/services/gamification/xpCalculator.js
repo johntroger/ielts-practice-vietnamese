@@ -9,7 +9,7 @@
  */
 
 import { safeGet, safeSet } from '../../utils/storageService.js';
-import { ARENA_STORAGE_KEYS, ARENA_XP_CAPS } from '../../utils/arenaStorageKeys.js';
+import { ARENA_STORAGE_KEYS, ARENA_XP_CAPS, ARENA_DIFFICULTY_CONFIG } from '../../utils/arenaStorageKeys.js';
 import { getLocalDateKey } from '../../utils/dateHelper.js';
 
 /**
@@ -54,25 +54,33 @@ export function getDailySoftCapMultiplier(sprintIndex = getDailySprintCount()) {
  * @param {number} params.correctAnswers - Number of correct questions (0 to 7)
  * @param {number} [params.streakCount=0] - Current daily streak count
  * @param {number} [params.totalSeconds=60] - Time taken to complete the sprint
- * @returns {{ finalXp: number, rawXp: number, softCapMultiplier: number, speedBonus: number }}
+ * @param {string} [params.difficulty='medium'] - Selected difficulty level ('easy' | 'medium' | 'hard' | 'nightmare')
+ * @returns {{ finalXp: number, rawXp: number, softCapMultiplier: number, speedBonus: number, difficulty: string }}
  */
 export function calculateSprintXp({
   correctAnswers = 0,
   streakCount = 0,
-  totalSeconds = 60
+  totalSeconds = 60,
+  difficulty = 'medium'
 } = {}) {
   const validCorrect = Math.max(0, Math.min(7, Number(correctAnswers) || 0));
   if (validCorrect === 0) {
-    return { finalXp: 0, rawXp: 0, softCapMultiplier: 1.0, speedBonus: 0 };
+    return { finalXp: 0, rawXp: 0, softCapMultiplier: 1.0, speedBonus: 0, difficulty };
   }
 
-  // 1. Base XP: 20 XP per correct question (max 140)
-  const baseScore = validCorrect * ARENA_XP_CAPS.BASE_QUESTION_XP;
+  const diffConfig = ARENA_DIFFICULTY_CONFIG[difficulty] || ARENA_DIFFICULTY_CONFIG.medium;
+  const baseXpPerQuestion = diffConfig.baseXpPerQuestion || ARENA_XP_CAPS.BASE_QUESTION_XP;
+  const maxSprintCap = diffConfig.maxSprintXp || ARENA_XP_CAPS.MAX_XP_PER_SPRINT;
 
-  // 2. Speed Bonus: if finished cleanly under 60 seconds (max 20 XP)
+  // 1. Base XP: scaled by difficulty level
+  const baseScore = validCorrect * baseXpPerQuestion;
+
+  // 2. Speed Bonus: if finished cleanly under 60 seconds (or under 90s for higher tiers) with >= 5 correct
   let speedBonus = 0;
   if (totalSeconds < 60 && validCorrect >= 5) {
     speedBonus = Math.min(20, Math.round((60 - Math.max(20, totalSeconds)) / 2));
+  } else if (totalSeconds < 90 && validCorrect >= 5 && ['hard', 'nightmare'].includes(diffConfig.id)) {
+    speedBonus = Math.min(30, Math.round((90 - Math.max(20, totalSeconds)) / 2));
   }
 
   // 3. Streak Multiplier Bonus (max 40 XP)
@@ -85,13 +93,14 @@ export function calculateSprintXp({
   const multiplier = getDailySoftCapMultiplier();
   let finalXp = Math.round(rawXp * multiplier);
 
-  // 5. Enforce Absolute Mathematical Cap (200 XP)
-  finalXp = Math.max(0, Math.min(ARENA_XP_CAPS.MAX_XP_PER_SPRINT, finalXp));
+  // 5. Enforce Maximum Cap for selected difficulty
+  finalXp = Math.max(0, Math.min(maxSprintCap, finalXp));
 
   return {
     finalXp,
     rawXp,
     softCapMultiplier: multiplier,
-    speedBonus
+    speedBonus,
+    difficulty: diffConfig.id
   };
 }

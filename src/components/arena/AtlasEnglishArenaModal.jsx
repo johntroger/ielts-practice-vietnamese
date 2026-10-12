@@ -18,6 +18,14 @@ import ArenaRelativeLeaderboard from './ArenaRelativeLeaderboard.jsx';
 import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
 import PublicLearnerProfileModal from './PublicLearnerProfileModal.jsx';
 import LevelUpCelebrationModal from './LevelUpCelebrationModal.jsx';
+import ArenaDifficultySelector from './ArenaDifficultySelector.jsx';
+import { 
+  ARENA_STORAGE_KEYS, 
+  ARENA_DIFFICULTY_LEVELS, 
+  ARENA_DIFFICULTY_CONFIG, 
+  ARENA_IELTS_TOPICS 
+} from '../../utils/arenaStorageKeys.js';
+import { safeGet, safeSet } from '../../utils/storageService.js';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -41,6 +49,21 @@ export default function AtlasEnglishArenaModal({
   );
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [levelUpData, setLevelUpData] = useState(null);
+
+  // Difficulty & Topic States
+  const [selectedDifficulty, setSelectedDifficulty] = useState(() => 
+    safeGet(ARENA_STORAGE_KEYS.LAST_DIFFICULTY, ARENA_DIFFICULTY_LEVELS.MEDIUM)
+  );
+
+  const [currentTopic, setCurrentTopic] = useState(() => {
+    const idx = Math.floor(Math.random() * ARENA_IELTS_TOPICS.length);
+    return ARENA_IELTS_TOPICS[idx] || ARENA_IELTS_TOPICS[0];
+  });
+
+  const handleDifficultyChange = useCallback((diff) => {
+    setSelectedDifficulty(diff);
+    safeSet(ARENA_STORAGE_KEYS.LAST_DIFFICULTY, diff);
+  }, []);
 
   const streak = useMemo(() => getUnifiedStreakCount(), []);
 
@@ -228,7 +251,7 @@ export default function AtlasEnglishArenaModal({
                     Rèn luyện phản xạ học thuật tức thì: tiêu diệt bẫy chính tả khó, bẫy từ đồng nghĩa học thuật, bẫy đọc True/False/Not Given và bẫy âm thanh tự sửa trong bài thi Listening. Bảng xếp hạng cập nhật điểm người học thật trực tiếp trên hệ thống.
                   </p>
 
-                  <div className="grid grid-cols-3 gap-3 pt-2">
+                  <div className="grid grid-cols-3 gap-3 pt-1">
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
                       <div className="text-base sm:text-lg font-black text-indigo-300">180s</div>
                       <div className="text-[11px] text-slate-400 font-medium">Thời Gian (3p)</div>
@@ -238,16 +261,27 @@ export default function AtlasEnglishArenaModal({
                       <div className="text-[11px] text-slate-400 font-medium">Bảo Vệ</div>
                     </div>
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
-                      <div className="text-base sm:text-lg font-black text-amber-300">200 XP</div>
-                      <div className="text-[11px] text-slate-400 font-medium">Điểm Tối Đa</div>
+                      <div className="text-base sm:text-lg font-black text-amber-300">
+                        ~{ARENA_DIFFICULTY_CONFIG[selectedDifficulty]?.maxSprintXp || 200} XP
+                      </div>
+                      <div className="text-[11px] text-slate-400 font-medium">Thưởng Tối Đa</div>
                     </div>
                   </div>
+
+                  {/* 4-Tier Difficulty Selector & Topic Preview */}
+                  <ArenaDifficultySelector
+                    selectedDifficulty={selectedDifficulty}
+                    onSelectDifficulty={handleDifficultyChange}
+                    currentTopic={currentTopic}
+                  />
 
                   <button
                     type="button"
                     onClick={() => {
                       playChime();
-                      sprint.startSprint();
+                      const nextTopic = ARENA_IELTS_TOPICS[Math.floor(Math.random() * ARENA_IELTS_TOPICS.length)];
+                      setCurrentTopic(nextTopic);
+                      sprint.startSprint(null, selectedDifficulty);
                     }}
                     className="mt-2 w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-base py-4 px-8 rounded-2xl shadow-xl shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
                   >

@@ -9,3 +9,7 @@ export { default as ArenaQuestionCard } from './ArenaQuestionCard.jsx';
 export { default as ArenaRelativeLeaderboard } from './ArenaRelativeLeaderboard.jsx';
 export { default as ArenaSprintSummaryModal } from './ArenaSprintSummaryModal.jsx';
 export { default as AtlasEnglishArenaModal } from './AtlasEnglishArenaModal.jsx';
+export { default as ArenaDifficultySelector } from './ArenaDifficultySelector.jsx';
+export { default as ArenaMediaViewer } from './ArenaMediaViewer.jsx';
+export { default as PublicLearnerProfileModal } from './PublicLearnerProfileModal.jsx';
+export { default as LevelUpCelebrationModal } from './LevelUpCelebrationModal.jsx';
