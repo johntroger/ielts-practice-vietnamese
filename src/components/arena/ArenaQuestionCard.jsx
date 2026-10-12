@@ -43,7 +43,7 @@ export default function ArenaQuestionCard({
   const topicObj = ARENA_IELTS_TOPICS.find(tp => tp.id === question.topic);
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col gap-4 py-3">
+    <div className="w-full max-w-2xl mx-auto flex flex-col gap-3 py-1">
       {/* Category Pill, Topic, Difficulty & Audio Button */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -78,13 +78,13 @@ export default function ArenaQuestionCard({
       </div>
 
       {/* Main Prompt */}
-      <h2 className="text-lg md:text-xl font-bold text-slate-100 leading-snug">
+      <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-100 leading-snug">
         {question.prompt}
       </h2>
 
       {/* Context or Reading Snippet */}
       {question.context && (
-        <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3.5 text-sm text-slate-300 font-serif leading-relaxed max-h-48 overflow-y-auto">
+        <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-300 font-serif leading-relaxed max-h-36 overflow-y-auto">
           {question.context}
         </div>
       )}

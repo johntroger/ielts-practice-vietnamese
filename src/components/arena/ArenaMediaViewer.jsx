@@ -53,14 +53,14 @@ export default function ArenaMediaViewer({ media }) {
         >
           {media.svg ? (
             <div 
-              className="w-full max-h-56 overflow-hidden flex items-center justify-center"
+              className="w-full max-h-48 sm:max-h-52 overflow-hidden flex items-center justify-center"
               dangerouslySetInnerHTML={{ __html: media.svg }}
             />
           ) : media.url ? (
             <img 
               src={media.url} 
               alt={media.alt || 'Arena question illustration'} 
-              className="w-full max-h-56 object-contain rounded-lg"
+              className="w-full max-h-48 sm:max-h-52 object-contain rounded-lg"
               loading="lazy"
             />
           ) : null}

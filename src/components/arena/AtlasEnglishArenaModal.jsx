@@ -184,10 +184,10 @@ export default function AtlasEnglishArenaModal({
       className="fixed inset-0 z-50 bg-slate-950 text-white flex flex-col w-screen h-screen overflow-hidden select-none animate-fade-in"
       onClick={unlockAudio}
     >
-      <div className="w-full h-full flex flex-col overflow-y-auto bg-slate-950">
+      <div className="w-full h-full flex flex-col bg-slate-950 overflow-hidden">
         {/* State 1: IDLE / Full-Screen Lobby Screen */}
         {sprint.phase === ARENA_SPRINT_PHASES.IDLE && (
-          <div className="flex flex-col min-h-full">
+          <div className="flex flex-col flex-1 h-full overflow-y-auto">
             {/* Top Navigation Bar */}
             <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
@@ -308,7 +308,7 @@ export default function AtlasEnglishArenaModal({
 
         {/* State 2 & 3: ACTIVE & REVIEWING_ANSWER Screens */}
         {(sprint.phase === ARENA_SPRINT_PHASES.ACTIVE || sprint.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) && (
-          <div className="flex flex-col flex-1 min-h-full">
+          <div className="flex flex-col flex-1 h-full min-h-0 overflow-hidden">
             <ArenaHeaderBar
               timeRemaining={sprint.timeRemaining}
               remainingShields={sprint.shieldState.remainingShields}
@@ -321,8 +321,8 @@ export default function AtlasEnglishArenaModal({
               onToggleFullscreen={toggleFullscreen}
               onClose={handleReturnToLobby}
             />
-            <div className="p-4 sm:p-8 flex-1 flex flex-col justify-center items-center overflow-y-auto">
-              <div className="w-full max-w-3xl">
+            <div className="px-4 py-4 sm:px-6 sm:py-5 flex-1 min-h-0 flex flex-col items-center justify-start overflow-y-auto">
+              <div className="w-full max-w-2xl pb-16">
                 {currentQ && (
                   <ArenaQuestionCard
                     question={currentQ}
@@ -343,7 +343,7 @@ export default function AtlasEnglishArenaModal({
 
         {/* State 4: DEFEATED Screen */}
         {sprint.phase === ARENA_SPRINT_PHASES.DEFEATED && (
-          <div className="flex flex-col flex-1 min-h-full">
+          <div className="flex flex-col flex-1 h-full overflow-y-auto">
             <header className="w-full bg-slate-900/90 border-b border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
                 <ShieldAlert className="w-5 h-5" />
