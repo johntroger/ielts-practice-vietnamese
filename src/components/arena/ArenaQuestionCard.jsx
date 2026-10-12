@@ -94,11 +94,18 @@ export default function ArenaQuestionCard({
         <ArenaMediaViewer media={question.media} />
       )}
 
-      {/* Option Cards */}
-      <div className="grid grid-cols-1 gap-2.5">
+      {/* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */}
+      <div className={`grid gap-2.5 ${
+        question.options.length === 3 
+          ? 'grid-cols-1 sm:grid-cols-3' 
+          : question.options.length === 2 
+            ? 'grid-cols-1 sm:grid-cols-2' 
+            : 'grid-cols-1'
+      }`}>
         {question.options.map((optText, idx) => {
           const isSelected = selectedOption === idx;
           const isOptionCorrect = idx === question.correctIndex;
+          const isSpelling = question.type === 'spelling' || question.skillCategory === 'spelling';
           
           let btnStyle = 'bg-slate-800/50 hover:bg-slate-800 border-slate-700/70 text-slate-200 cursor-pointer';
           if (isSelected && !isAnswerChecked) {
@@ -122,17 +129,19 @@ export default function ArenaQuestionCard({
               className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${btnStyle}`}
             >
               <div className="flex items-center gap-3">
-                <span className="w-6 h-6 rounded-md bg-slate-700/60 flex items-center justify-center text-xs font-mono font-bold text-slate-300">
+                <span className="w-6 h-6 rounded-md bg-slate-700/60 flex items-center justify-center text-xs font-mono font-bold text-slate-300 shrink-0">
                   {idx + 1}
                 </span>
-                <span className="text-sm font-medium">{optText}</span>
+                <span className={`text-sm font-medium ${isSpelling ? 'font-mono tracking-wide' : ''}`}>
+                  {optText}
+                </span>
               </div>
 
               {isAnswerChecked && isOptionCorrect && (
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />
               )}
               {isAnswerChecked && isSelected && !isCorrect && (
-                <XCircle className="w-5 h-5 text-red-400 shrink-0" />
+                <XCircle className="w-5 h-5 text-red-400 shrink-0 ml-2" />
               )}
             </button>
           );

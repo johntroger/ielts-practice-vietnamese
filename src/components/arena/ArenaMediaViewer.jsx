@@ -8,13 +8,27 @@
  * - 1-Click "Zoom In" Lightbox Modal for detailed inspection
  */
 
-import React, { useState } from 'react';
-import { ZoomIn, ZoomOut, X, BarChart3, MapPin, Layers } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ZoomIn, ZoomOut, X, BarChart3, MapPin, Layers, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 
 export default function ArenaMediaViewer({ media }) {
   const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
   const { isEn } = useTranslation();
+
+  // Close Lightbox on Escape key
+  useEffect(() => {
+    if (!isZoomed) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsZoomed(false);
+        setZoomScale(1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isZoomed]);
 
   if (!media) return null;
 
@@ -84,27 +98,63 @@ export default function ArenaMediaViewer({ media }) {
                   {media.caption || (isEn ? 'Detailed View' : 'Xem Chi Tiết Hình Ảnh')}
                 </h3>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsZoomed(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
-                title={isEn ? 'Close' : 'Đóng'}
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 bg-slate-800/80 rounded-xl p-1 border border-slate-700/60">
+                  <button
+                    type="button"
+                    onClick={() => setZoomScale(prev => Math.min(2.5, +(prev + 0.25).toFixed(2)))}
+                    className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
+                    title={isEn ? 'Zoom In' : 'Phóng to'}
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoomScale(prev => Math.max(0.75, +(prev - 0.25).toFixed(2)))}
+                    className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
+                    title={isEn ? 'Zoom Out' : 'Thu nhỏ'}
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoomScale(1)}
+                    className="p-1 text-slate-300 hover:text-white rounded-lg hover:bg-slate-700/60 transition-colors cursor-pointer"
+                    title={isEn ? 'Reset Zoom' : 'Mặc định'}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
+                  <span className="text-[11px] font-mono text-slate-400 px-1.5">
+                    {Math.round(zoomScale * 100)}%
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsZoomed(false);
+                    setZoomScale(1);
+                  }}
+                  className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+                  title={isEn ? 'Close' : 'Đóng (Esc)'}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            <div className="w-full flex items-center justify-center p-2">
+            <div className="w-full flex items-center justify-center p-2 overflow-auto max-h-[65vh]">
               {media.svg ? (
                 <div 
-                  className="w-full max-h-[60vh] flex items-center justify-center scale-110 sm:scale-125 my-4"
+                  className="w-full max-h-[60vh] flex items-center justify-center transition-transform duration-200 my-4"
+                  style={{ transform: `scale(${zoomScale})` }}
                   dangerouslySetInnerHTML={{ __html: media.svg }}
                 />
               ) : media.url ? (
                 <img 
                   src={media.url} 
                   alt={media.alt || 'Arena question illustration zoomed'} 
-                  className="max-h-[60vh] object-contain rounded-xl shadow-xl"
+                  className="max-h-[60vh] object-contain rounded-xl shadow-xl transition-transform duration-200"
+                  style={{ transform: `scale(${zoomScale})` }}
                 />
               ) : null}
             </div>
