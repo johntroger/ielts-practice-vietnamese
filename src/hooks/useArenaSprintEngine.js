@@ -25,6 +25,7 @@ import { getUnifiedStreakCount } from '../services/gamification/leagueEngine.js'
 import { recordGuestPendingXp } from '../services/gamification/guestMigrationService.js';
 import { submitSprintXp } from '../services/supabaseLeaderboard.js';
 import { emit } from '../services/gamification/eventBus.js';
+import { recordMistake, resolveMistake } from '../services/gamification/mistakeVaultService.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -48,6 +49,9 @@ export const INITIAL_SPRINT_STATE = {
   maxCombo: 0,
   shieldState: createSprintShieldState(),
   timeRemaining: INITIAL_SPRINT_TIMER_SECONDS,
+  duration: INITIAL_SPRINT_TIMER_SECONDS,
+  difficulty: 'medium',
+  isBossCleared: false,
   summary: null
 };
 
@@ -90,6 +94,7 @@ export function checkAnswerAction(state) {
   let nextMaxCombo = state.maxCombo;
   let nextShieldState = state.shieldState;
   let nextPhase = ARENA_SPRINT_PHASES.REVIEWING_ANSWER;
+  let isBossCleared = state.isBossCleared;
 
   if (isCorrect) {
     nextScore += 1;
@@ -97,8 +102,19 @@ export function checkAnswerAction(state) {
     if (nextCombo > nextMaxCombo) {
       nextMaxCombo = nextCombo;
     }
+    // Check if this was the Boss question (last question in sprint)
+    if (currentQ.isBossQuestion || state.currentIndex === state.questions.length - 1) {
+      isBossCleared = true;
+    }
+    // If this was a revenge question, mark as resolved in Mistake Vault
+    if (currentQ.isRevengeQuestion || currentQ.id) {
+      resolveMistake(currentQ.id);
+    }
   } else {
     nextCombo = 0;
+    // Record into Mistake Vault
+    recordMistake(currentQ, state.selectedOption);
+
     const { state: updatedShields, isDefeated } = deductShield(state.shieldState, currentQ);
     nextShieldState = updatedShields;
     if (isDefeated) {
@@ -114,7 +130,8 @@ export function checkAnswerAction(state) {
     score: nextScore,
     combo: nextCombo,
     maxCombo: nextMaxCombo,
-    shieldState: nextShieldState
+    shieldState: nextShieldState,
+    isBossCleared
   };
 }
 
@@ -165,7 +182,9 @@ export function finishSprintAction(state, user = null) {
     correctAnswers: state.score,
     streakCount: streak,
     totalSeconds,
-    difficulty: state.difficulty || 'medium'
+    difficulty: state.difficulty || 'medium',
+    timeRemaining: Math.max(0, state.timeRemaining),
+    isBossCleared: state.isBossCleared
   });
 
   incrementDailySprintCount();
@@ -188,7 +207,10 @@ export function finishSprintAction(state, user = null) {
     totalQuestions: state.questions.length,
     accuracy: state.questions.length > 0 ? Math.round((state.score / state.questions.length) * 100) : 0,
     timeSpent: totalSeconds,
-    maxCombo: state.maxCombo
+    timeRemaining: Math.max(0, state.timeRemaining),
+    maxCombo: state.maxCombo,
+    isBossCleared: state.isBossCleared,
+    isDefeated: state.phase === ARENA_SPRINT_PHASES.DEFEATED
   };
 
   return {
@@ -200,14 +222,21 @@ export function finishSprintAction(state, user = null) {
 
 /**
  * React Hook for Atlas English Arena.
+ * Employs a robust Timestamp Delta Timer (ticks every 250ms, computing Date.now() delta)
+ * to eliminate mobile background timer drift or sleep throttling.
  */
 export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
   const [state, setState] = useState(INITIAL_SPRINT_STATE);
   const timerRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const durationRef = useRef(INITIAL_SPRINT_TIMER_SECONDS);
 
   const startSprint = useCallback((customQuestions = null, selectedDifficulty = 'medium') => {
-    const qList = customQuestions || generateArenaSprintQuestions({ count: 7, difficulty: selectedDifficulty });
-    const next = startSprintAction(qList, INITIAL_SPRINT_TIMER_SECONDS, selectedDifficulty);
+    const qList = customQuestions || generateArenaSprintQuestions({ count: 10, difficulty: selectedDifficulty });
+    const duration = INITIAL_SPRINT_TIMER_SECONDS;
+    durationRef.current = duration;
+    startTimeRef.current = Date.now();
+    const next = startSprintAction(qList, duration, selectedDifficulty);
     setState(next);
     emit('arena:sprint_started', { totalQuestions: qList.length, difficulty: selectedDifficulty });
   }, []);
@@ -245,33 +274,49 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
   const resetSprint = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
     }
+    startTimeRef.current = null;
     setState(INITIAL_SPRINT_STATE);
   }, []);
 
-  // Timer Tick
+  // Timestamp Delta Timer (Tick interval: 250ms for smooth synchronization)
   useEffect(() => {
     if (state.phase === ARENA_SPRINT_PHASES.ACTIVE || state.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
+      if (!startTimeRef.current) {
+        // Resume from current remaining time if not set
+        startTimeRef.current = Date.now() - (durationRef.current - state.timeRemaining) * 1000;
+      }
+
       timerRef.current = setInterval(() => {
+        if (!startTimeRef.current) return;
+        const elapsedSeconds = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        const remaining = Math.max(0, durationRef.current - elapsedSeconds);
+
         setState(prev => {
-          if (prev.timeRemaining <= 1) {
+          if (remaining <= 0) {
             clearInterval(timerRef.current);
-            const finished = finishSprintAction(prev, user);
+            timerRef.current = null;
+            const finished = finishSprintAction({ ...prev, timeRemaining: 0 }, user);
             emit('arena:sprint_completed', finished.summary);
             onSprintEnd?.(finished.summary);
             return finished;
           }
-          return { ...prev, timeRemaining: prev.timeRemaining - 1 };
+          if (prev.timeRemaining !== remaining) {
+            return { ...prev, timeRemaining: remaining };
+          }
+          return prev;
         });
-      }, 1000);
+      }, 250);
     }
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
-  }, [state.phase, user, onSprintEnd]);
+  }, [state.phase, user, onSprintEnd, state.timeRemaining]);
 
   return {
     ...state,

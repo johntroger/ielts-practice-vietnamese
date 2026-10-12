@@ -102,16 +102,18 @@ export function adaptListeningDrill(item) {
 }
 
 /**
- * Generates exactly 7 balanced sprint questions, respecting rotation cooldown.
+ * Generates exactly 10 balanced sprint questions (or custom count), respecting rotation cooldown.
+ * Question 10 is designated as the Boss Question (isBossQuestion: true).
+ * 
  * @param {Object} [options]
- * @param {number} [options.count=7]
+ * @param {number} [options.count=10]
  * @param {() => number} [options.rng=Math.random]
  * @param {boolean} [options.recordHistory=true]
  * @param {string} [options.difficulty='medium']
  * @param {string} [options.topic=null]
  * @returns {Array<Object>}
  */
-export function generateArenaSprintQuestions({ count = 7, rng = Math.random, recordHistory = true, difficulty = 'medium', topic = null } = {}) {
+export function generateArenaSprintQuestions({ count = 10, rng = Math.random, recordHistory = true, difficulty = 'medium', topic = null } = {}) {
   const randomTopicObj = ARENA_IELTS_TOPICS[Math.floor(rng() * ARENA_IELTS_TOPICS.length)];
   const activeTopic = topic || randomTopicObj?.id || 'environment';
 
@@ -145,11 +147,12 @@ export function generateArenaSprintQuestions({ count = 7, rng = Math.random, rec
   }
 
   // 4. Normalize and runtime schema validation
-  const finalQuestions = selected.slice(0, count).map(q => ({
+  const finalQuestions = selected.slice(0, count).map((q, idx) => ({
     ...q,
     type: q.type || (q.skillCategory === 'reading' ? 'tfng' : q.skillCategory === 'listening' ? 'listening_trap' : 'vocab'),
     difficulty: q.difficulty || difficulty,
-    topic: q.topic || activeTopic
+    topic: q.topic || activeTopic,
+    isBossQuestion: idx === count - 1 && count >= 5
   })).filter(q => validateArenaQuestion(q).valid);
 
   // 5. Update cooldown log with newly served questions
