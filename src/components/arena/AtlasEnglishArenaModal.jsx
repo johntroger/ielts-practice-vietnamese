@@ -11,10 +11,13 @@ import {
   reconcileRealLeaderboard, 
   submitRealSprintScore 
 } from '../../services/gamification/realLeaderboardService.js';
+import { calculateLevelFromXp, getLevelTierInfo } from '../../services/gamification/levelEngine.js';
 import ArenaHeaderBar from './ArenaHeaderBar.jsx';
 import ArenaQuestionCard from './ArenaQuestionCard.jsx';
 import ArenaRelativeLeaderboard from './ArenaRelativeLeaderboard.jsx';
 import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
+import PublicLearnerProfileModal from './PublicLearnerProfileModal.jsx';
+import LevelUpCelebrationModal from './LevelUpCelebrationModal.jsx';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -36,6 +39,8 @@ export default function AtlasEnglishArenaModal({
   const [leaderboardData, setLeaderboardData] = useState(() => 
     reconcileRealLeaderboard([], currentUser)
   );
+  const [selectedLearner, setSelectedLearner] = useState(null);
+  const [levelUpData, setLevelUpData] = useState(null);
 
   const streak = useMemo(() => getUnifiedStreakCount(), []);
 
@@ -55,6 +60,11 @@ export default function AtlasEnglishArenaModal({
     user: currentUser,
     onSprintEnd: async (summary) => {
       if (summary && summary.finalXp > 0) {
+        // Calculate old and new level to detect Level-Up
+        const currentTotalXp = leaderboardData.userWeeklyXp || 0;
+        const oldLevel = calculateLevelFromXp(currentTotalXp);
+        const newLevel = calculateLevelFromXp(currentTotalXp + summary.finalXp);
+
         await submitRealSprintScore({
           currentUser,
           deltaXp: summary.finalXp,
@@ -62,6 +72,15 @@ export default function AtlasEnglishArenaModal({
         });
         const updated = await fetchRealLeaderboard(currentUser);
         setLeaderboardData(updated);
+
+        if (newLevel > oldLevel) {
+          playChime();
+          setLevelUpData({
+            oldLevel,
+            newLevel,
+            tier: getLevelTierInfo(newLevel)
+          });
+        }
       }
     }
   });
@@ -238,6 +257,7 @@ export default function AtlasEnglishArenaModal({
                     currentUserEmail={currentUser?.email}
                     userWeeklyXp={leaderboardData.userWeeklyXp}
                     leagueTier={leaderboardData.leagueTier}
+                    onSelectLearner={setSelectedLearner}
                   />
                 </div>
               </div>
@@ -332,6 +352,35 @@ export default function AtlasEnglishArenaModal({
             summary={sprint.summary}
             onPlayAgain={() => sprint.startSprint()}
             onClose={handleClose}
+          />
+        )}
+
+        {/* Public Learner Profile Modal (Peer Profile Viewer) */}
+        {selectedLearner && (
+          <PublicLearnerProfileModal
+            isOpen={Boolean(selectedLearner)}
+            learner={selectedLearner}
+            onClose={() => setSelectedLearner(null)}
+            onChallengeSprint={() => {
+              setSelectedLearner(null);
+              playChime();
+              sprint.startSprint();
+            }}
+          />
+        )}
+
+        {/* Level-Up Celebration Modal (High-Octane Fanfare) */}
+        {levelUpData && (
+          <LevelUpCelebrationModal
+            isOpen={Boolean(levelUpData)}
+            oldLevel={levelUpData.oldLevel}
+            newLevel={levelUpData.newLevel}
+            tier={levelUpData.tier}
+            onClose={() => setLevelUpData(null)}
+            onContinue={() => {
+              setLevelUpData(null);
+              sprint.startSprint();
+            }}
           />
         )}
       </div>

@@ -122,7 +122,11 @@ const testSuites = [
   { name: 'Step 113: Desktop, Tablet & Mobile Localization & Responsive UI Audit', file: 'tests/test_step113_desktop_tablet_mobile_localization_audit.js' },
   { name: 'Step 114: Google Analytics 4 & Virtual Pageview Routing Architecture', file: 'tests/test_step114_google_analytics_virtual_pageviews_and_events.js' },
   { name: 'Step 115: Atlas English Arena Gamification & Deterministic Infrastructure', file: 'tests/test_step115_atlas_english_arena_production_system.js' },
-  { name: 'Step 116: Real-User Arena Leaderboard (No Fake Bot Rivals & tranthanhtung37 Inclusion)', file: 'tests/test_step116_arena_real_leaderboard_user_system.js' }
+  { name: 'Step 116: Real-User Arena Leaderboard (No Fake Bot Rivals & tranthanhtung37 Inclusion)', file: 'tests/test_step116_arena_real_leaderboard_user_system.js' },
+  { name: 'Step 117: 100-Level Atlas Titans Mathematical Engine', file: 'tests/test_step117_level_progression_mathematical_engine.js' },
+  { name: 'Step 118: Arena Leaderboard Level Badges, Glowing Avatar Frames & Interaction', file: 'tests/test_step118_arena_leaderboard_level_badges_and_interaction.js' },
+  { name: 'Step 119: Public Learner Profile Modal & User Profile Atlas Titans Level Card', file: 'tests/test_step119_public_learner_profile_and_user_level_card.js' },
+  { name: 'Step 120: Level-Up Celebration Fanfare Modal & Showcase Badges', file: 'tests/test_step120_level_up_celebration_and_showcase_badges.js' }
 ];
 
 console.log('===============================================================');

@@ -9,6 +9,7 @@
 import { supabase } from '../supabaseClient.js';
 import { safeGet, safeSet } from '../../utils/storageService.js';
 import { getLeagueTier, getUnifiedStreakCount } from './leagueEngine.js';
+import { calculateLevelProgress } from './levelEngine.js';
 
 export const REAL_LEADERBOARD_STORAGE_KEY = 'ielts_real_arena_leaderboard_v1';
 export const GUEST_ARENA_STORAGE_KEY = 'ielts_guest_arena_score_v1';
@@ -151,12 +152,18 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
     return b.total_xp - a.total_xp;
   });
 
-  // 5. Assign 1-indexed ranks and league tiers
-  const rankedLeaderboard = sortedList.map((item, idx) => ({
-    ...item,
-    rank: idx + 1,
-    league_tier: getLeagueTier(item.weekly_xp)
-  }));
+  // 5. Assign 1-indexed ranks, league tiers, and 100-Level Atlas progression
+  const rankedLeaderboard = sortedList.map((item, idx) => {
+    const levelProgress = calculateLevelProgress(item.total_xp || item.weekly_xp || 0);
+    return {
+      ...item,
+      rank: idx + 1,
+      league_tier: getLeagueTier(item.weekly_xp),
+      level: levelProgress.level,
+      levelProgress,
+      titanTier: levelProgress.tier
+    };
+  });
 
   // 6. Find current user's entry
   const userEntry = rankedLeaderboard.find(u => u.isCurrentUser) || 

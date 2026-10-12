@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, Flame, ArrowUp, ArrowDown, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
+import { Trophy, Flame, ArrowUp, ArrowDown, ShieldCheck, Sparkles, UserCheck, Shield, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 
 /**
@@ -7,14 +7,16 @@ import { useTranslation } from '../../i18n';
  * 
  * 100% Real-User Leaderboard for Atlas English Arena.
  * Completely eliminates dummy / bot rivals.
- * Exclusively displays verified real users with prominent honor badges for tranthanhtung37 and current user.
+ * Displays 100-Level Atlas Progression Badges, Glowing Avatar Frames,
+ * and enables interactive click-to-view peer scholar profile.
  */
 export default function ArenaRelativeLeaderboard({
   rivals = [],
   currentUserId = null,
   currentUserEmail = null,
   userWeeklyXp = 0,
-  leagueTier = 'bronze'
+  leagueTier = 'bronze',
+  onSelectLearner = null
 }) {
   const { t } = useTranslation();
 
@@ -71,24 +73,35 @@ export default function ArenaRelativeLeaderboard({
                            (currentUserEmail === 'tranthanhtung37@gmail.com' && isOwner);
 
             const rank = rival.rank || index + 1;
+            const level = rival.level || 1;
+            const titanTier = rival.titanTier || {
+              titleVi: 'Kẻ Khởi Hành',
+              titleEn: 'Atlas Seeker',
+              badgeColor: 'bg-slate-800 text-slate-300 border-slate-600',
+              ringColor: 'ring-slate-600',
+              accentText: 'text-slate-300'
+            };
+
             const isPromotion = totalCount >= 5 && rank <= promoThreshold;
             const isRelegation = totalCount >= 5 && rank >= relThreshold;
 
-            let rowStyle = 'border-slate-800/80 bg-slate-800/40 hover:bg-slate-800/70';
+            let rowStyle = 'border-slate-800/80 bg-slate-800/40 hover:bg-slate-800/80 hover:border-indigo-500/50';
             if (isOwner && isUser) {
-              rowStyle = 'border-amber-500/70 bg-gradient-to-r from-amber-950/40 via-indigo-950/40 to-slate-900 ring-1 ring-amber-500/60';
+              rowStyle = 'border-amber-500/70 bg-gradient-to-r from-amber-950/40 via-indigo-950/40 to-slate-900 ring-1 ring-amber-500/60 hover:ring-amber-400';
             } else if (isOwner) {
-              rowStyle = 'border-amber-500/50 bg-amber-950/20 ring-1 ring-amber-500/40';
+              rowStyle = 'border-amber-500/50 bg-amber-950/20 ring-1 ring-amber-500/40 hover:ring-amber-400/80';
             } else if (isUser) {
-              rowStyle = 'border-indigo-500/80 bg-indigo-950/50 ring-1 ring-indigo-500/60';
+              rowStyle = 'border-indigo-500/80 bg-indigo-950/50 ring-1 ring-indigo-500/60 hover:ring-indigo-400';
             }
 
             return (
               <div
                 key={rival.user_id || rival.display_name || index}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs transition-all ${rowStyle}`}
+                onClick={() => onSelectLearner?.(rival)}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs transition-all duration-200 cursor-pointer select-none group hover:scale-[1.01] active:scale-[0.99] ${rowStyle}`}
+                title={`Nhấn để xem Hồ Sơ Đấu Sĩ của ${rival.display_name || 'Học Viên'}`}
               >
-                {/* Rank & User Info */}
+                {/* Rank, Glowing Avatar & Level Info */}
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`w-5 font-mono font-black text-center text-sm ${
                     rank === 1 ? 'text-amber-400' : rank === 2 ? 'text-slate-300' : rank === 3 ? 'text-amber-600' : 'text-slate-500'
@@ -96,7 +109,8 @@ export default function ArenaRelativeLeaderboard({
                     {rank}
                   </span>
 
-                  <div className="relative w-8 h-8 rounded-full bg-slate-800 border border-slate-700 overflow-hidden shrink-0 shadow-sm">
+                  {/* Glowing Frame Avatar */}
+                  <div className={`relative w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm ring-2 ${titanTier.ringColor} transition-transform group-hover:scale-105`}>
                     <img
                       src={rival.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${rival.display_name}`}
                       alt={rival.display_name}
@@ -107,9 +121,15 @@ export default function ArenaRelativeLeaderboard({
                     )}
                   </div>
 
+                  {/* Names, Level Badge & Titan Tier Title */}
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-1.5 truncate">
-                      <span className={`font-bold truncate text-xs ${
+                      {/* Level Badge */}
+                      <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border shadow-xs shrink-0 ${titanTier.badgeColor}`}>
+                        Lv.{level}
+                      </span>
+
+                      <span className={`font-bold truncate text-xs group-hover:text-white transition-colors ${
                         isOwner ? 'text-amber-300' : isUser ? 'text-indigo-200' : 'text-slate-100'
                       }`}>
                         {rival.display_name || 'Học Viên'}
@@ -129,19 +149,17 @@ export default function ArenaRelativeLeaderboard({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                      <span className={`font-semibold ${titanTier.accentText}`}>
+                        {titanTier.titleEn || titanTier.titleVi}
+                      </span>
+                      <span>•</span>
                       <span className="capitalize">{rival.league_tier || 'Bronze'}</span>
-                      {rival.role && (
-                        <>
-                          <span>•</span>
-                          <span className="text-amber-400/80 font-medium truncate">{rival.role}</span>
-                        </>
-                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Stats & Promotion Badges */}
+                {/* Stats & Click Chevron */}
                 <div className="flex items-center gap-3 shrink-0">
                   {rival.streak_count > 0 && (
                     <div className="flex items-center gap-1 text-amber-400 font-bold text-xs" title={`Streak: ${rival.streak_count} ngày`}>
@@ -167,6 +185,9 @@ export default function ArenaRelativeLeaderboard({
                       <div className="w-4 h-4 shrink-0" />
                     )
                   )}
+
+                  {/* Hover Chevron */}
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0" />
                 </div>
               </div>
             );
@@ -174,10 +195,10 @@ export default function ArenaRelativeLeaderboard({
         )}
       </div>
 
-      {/* Real Learners Footer Callout */}
+      {/* Real Learners Interactive Footer */}
       <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-        <span>🏆 Hoàn thành ván đấu để tích lũy XP</span>
-        <span className="text-indigo-400 font-semibold">Tự động lưu & xếp hạng</span>
+        <span>💡 Nhấn vào người học để xem Hồ Sơ Đấu Sĩ</span>
+        <span className="text-indigo-400 font-semibold">Tự động thăng cấp</span>
       </div>
     </div>
   );

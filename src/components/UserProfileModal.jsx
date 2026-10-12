@@ -49,6 +49,8 @@ import {
 import { useTranslation } from '../i18n';
 import { formatTestTitle, formatTestDescription } from '../utils/testLocalizationHelper';
 import { getLocalizedVocabMeaning } from '../utils/vocabLocalization';
+import { calculateLevelProgress } from '../services/gamification/levelEngine';
+import { safeGet } from '../utils/storageService';
 
 export default function UserProfileModal({
   isOpen,
@@ -517,6 +519,26 @@ export default function UserProfileModal({
 
   const rank = getScholarRank(overallProjectedBand || stats.avgBand);
 
+  const isOwnerUser = user?.email === 'tranthanhtung37@gmail.com' || user?.user_metadata?.name === 'tranthanhtung37';
+
+  const userLevelData = useMemo(() => {
+    let xp = 0;
+    if (isOwnerUser) {
+      xp = 9400;
+    } else if (user?.id) {
+      const local = safeGet(`ielts_leaderboard_local_${user.id}`, {});
+      xp = Number(local.total_xp || local.weekly_xp || 0);
+    } else {
+      const guest = safeGet('ielts_guest_arena_score_v1', {});
+      xp = Number(guest.total_xp || guest.weekly_xp || 0);
+    }
+    const prog = calculateLevelProgress(xp);
+    return {
+      ...prog,
+      totalXp: xp
+    };
+  }, [user, isOwnerUser]);
+
   // Nav Items Definitions (All 4 Skills)
   const navItems = [
     { id: 'overview', label: isEn ? 'Overview & Analytics' : 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: overallProjectedBand > 0 ? `Overall ${overallProjectedBand}` : null },
@@ -598,9 +620,14 @@ export default function UserProfileModal({
                       {user?.email ? user.email.split('@')[0] : (isEn ? 'Guest Student' : 'Khách vãng lai')}
                     </span>
                   </div>
-                  <span className={`inline-block px-1.5 py-0.2 rounded text-[9.5px] uppercase mt-0.5 ${rank.color}`}>
-                    {rank.badge}
-                  </span>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className={`inline-block px-1.5 py-0.2 rounded text-[9.5px] uppercase ${rank.color}`}>
+                      {rank.badge}
+                    </span>
+                    <span className={`inline-block px-1.5 py-0.2 rounded text-[9.5px] font-black border ${userLevelData.tier.badgeColor}`}>
+                      Lv.{userLevelData.level}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -742,7 +769,48 @@ export default function UserProfileModal({
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 
-                {/* PRE-DESIGNED KPI CARDS GRID (KHUNG CHỈ SỐ CỐ ĐỊNH) */}
+                {/* ATLAS TITANS LEVEL & XP PROGRESSION HERO BANNER */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white border border-indigo-900/50 shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3.5">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-base shadow-md ring-2 ${userLevelData.tier.ringColor} ${userLevelData.tier.badgeColor}`}>
+                      Lv.{userLevelData.level}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm sm:text-base font-black text-white">
+                          CẤP {userLevelData.level} • {isEn ? userLevelData.tier.titleEn : userLevelData.tier.titleVi}
+                        </span>
+                        {isOwnerUser && (
+                          <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-black">
+                            👑 ADMIN
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-300 font-sans mt-0.5">
+                        {isEn 
+                          ? `Atlas Titan Progression • ${userLevelData.totalXp} Lifetime XP`
+                          : `Hệ thống cấp độ Atlas Titans • ${userLevelData.totalXp} XP Toàn thời gian`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="w-full md:w-72 flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400 font-medium">Tiến độ lên Cấp {userLevelData.level + 1}</span>
+                      <span className="font-mono font-bold text-indigo-300">{userLevelData.progressPercent}%</span>
+                    </div>
+                    <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/60">
+                      <div 
+                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700"
+                        style={{ width: `${userLevelData.progressPercent}%` }}
+                      />
+                    </div>
+                    <div className="text-[10px] text-slate-400 text-right font-mono">
+                      {userLevelData.isMaxLevel ? 'MAX LEVEL' : `Còn thiếu ${userLevelData.xpRemaining} XP`}
+                    </div>
+                  </div>
+                </div>
+
                 {/* PRE-DESIGNED KPI CARDS GRID (KHUNG CHỈ SỐ CỐ ĐỊNH 4 KỸ NĂNG) */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                   {/* Card 1: Estimated Overall Band */}
