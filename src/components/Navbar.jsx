@@ -376,9 +376,9 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Direct Quick Access: Atlas Game & Micro-Drill (Đưa ra ngoài thanh trên cùng theo yêu cầu) */}
+            {/* Direct Quick Access: Atlas Arena & Luyện Phản Xạ */}
             <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-              {/* Atlas Game (Đấu Trường Atlas 90s) */}
+              {/* Atlas Arena (Đấu Trường Atlas 90s) */}
               <button
                 type="button"
                 onClick={() => openModal('atlasArena')}
@@ -387,22 +387,22 @@ export default function Navbar({
                 aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
               >
                 <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
-                <span className="font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Game'}</span>
+                <span className="font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
                 <span className="hidden sm:inline px-1 py-0.2 rounded bg-purple-600 text-white text-[9px] font-black">
                   90s
                 </span>
               </button>
 
-              {/* Micro-Drill (Luyện Kỹ Năng Vi Mô) */}
+              {/* Luyện Phản Xạ (Micro-Drills) */}
               <button
                 type="button"
                 onClick={doOpenDrills}
                 className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-                title={isEn ? "Micro-Drills (Deliberate sentence, dictation & scanning practice)" : "Micro-Drills (Luyện câu đơn, ghép ý, dictation & scanning)"}
-                aria-label={isEn ? "Open Micro-Drills deliberate practice" : "Mở Micro-Drills luyện kỹ năng vi mô"}
+                title={isEn ? "Targeted Reflex Studio (Deliberate sentence, dictation & scanning practice)" : "Phòng Luyện Phản Xạ (Luyện câu đơn, ghép ý, dictation & scanning)"}
+                aria-label={isEn ? "Open Targeted Reflex Studio" : "Mở Phòng Luyện Phản Xạ"}
               >
                 <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span className="font-extrabold">Micro-Drill</span>
+                <span className="font-extrabold">{isEn ? 'Micro-Drills' : 'Luyện Phản Xạ'}</span>
               </button>
             </div>
           </div>
