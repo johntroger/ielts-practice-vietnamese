@@ -11,6 +11,7 @@
  */
 
 import { ARENA_BATCH_1_QUESTIONS } from './arenaQuestionsBatch1.js';
+import { ARENA_BATCH_2_QUESTIONS } from './arenaQuestionsBatch2.js';
 
 export const ARENA_BASE_QUESTION_BANK = [
   // ==========================================
@@ -459,7 +460,8 @@ export const ARENA_BASE_QUESTION_BANK = [
 
 export const ARENA_QUESTION_BANK = [
   ...ARENA_BASE_QUESTION_BANK,
-  ...ARENA_BATCH_1_QUESTIONS
+  ...ARENA_BATCH_1_QUESTIONS,
+  ...ARENA_BATCH_2_QUESTIONS
 ];
 
 /**
