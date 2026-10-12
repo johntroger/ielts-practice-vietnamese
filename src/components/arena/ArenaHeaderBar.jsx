@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, X, Shield, Zap } from 'lucide-react';
+import { Volume2, VolumeX, X, Shield, Zap, Maximize2, Minimize2 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 
 /**
@@ -10,7 +10,7 @@ import { useTranslation } from '../../i18n';
  * - Real-time countdown timer with 10s urgent pulsing
  * - 5 Interactive Shields tracker
  * - Combo streak multiplier pill
- * - Quick mute & exit buttons
+ * - Fullscreen toggle, quick mute & exit buttons
  */
 export default function ArenaHeaderBar({
   timeRemaining = 90,
@@ -21,7 +21,9 @@ export default function ArenaHeaderBar({
   currentIndex = 0,
   totalQuestions = 7,
   isMuted = false,
+  isFullscreen = false,
   onToggleMute,
+  onToggleFullscreen,
   onClose
 }) {
   const { t } = useTranslation();
@@ -35,8 +37,8 @@ export default function ArenaHeaderBar({
   };
 
   return (
-    <header className="w-full bg-slate-900 border-b border-slate-800 px-4 py-3 text-white select-none">
-      <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+    <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-3 text-white select-none shrink-0">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
         {/* Left: Progress & Combo */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1 rounded-md text-xs font-semibold text-slate-300 border border-slate-700/60">
@@ -91,6 +93,18 @@ export default function ArenaHeaderBar({
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
+
+          {/* Fullscreen Toggle */}
+          {onToggleFullscreen && (
+            <button
+              type="button"
+              onClick={onToggleFullscreen}
+              className="p-1.5 text-slate-400 hover:text-white rounded hover:bg-slate-800 transition-colors"
+              title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+          )}
 
           {/* Close / Exit */}
           <button

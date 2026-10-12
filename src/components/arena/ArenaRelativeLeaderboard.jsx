@@ -49,7 +49,7 @@ export default function ArenaRelativeLeaderboard({
       </div>
 
       {/* Rivals List */}
-      <div className="flex flex-col gap-1.5 max-h-72 overflow-y-auto pr-1">
+      <div className="flex flex-col gap-1.5 max-h-[360px] md:max-h-[440px] overflow-y-auto pr-1 custom-scrollbar">
         {rivals.map((rival, index) => {
           const isUser = rival.user_id === currentUserId || rival.isCurrentUser;
           const rank = rival.rank || index + 1;
