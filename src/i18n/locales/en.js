@@ -64,7 +64,7 @@ export const en = {
     diagnostic: 'Placement Test',
     sprintCoach: '30-Min Sprint Coach',
     arena: 'Atlas English Arena',
-    arenaDesc: 'High-speed 90-120s micro-sprint reflex battle with ELO & Leagues',
+    arenaDesc: 'High-speed 180s (3-min) micro-sprint reflex battle with ELO & Leagues',
     vocabGrammar: 'Vocab & Grammar',
     qrCode: 'Website QR Code',
     contact: 'Feedback & Contact'
@@ -436,7 +436,7 @@ export const en = {
   },
   arena: {
     title: 'Atlas English Arena',
-    subtitle: 'High-speed 90-120s micro-sprint reflex battle against Cambridge traps',
+    subtitle: 'High-speed 180s (3-min) reflex battle against Cambridge traps',
     league: 'League',
     bronze: 'Bronze Cadet',
     silver: 'Silver Challenger',

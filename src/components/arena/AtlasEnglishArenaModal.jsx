@@ -217,7 +217,7 @@ export default function AtlasEnglishArenaModal({
                 <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl">
                   <div className="flex items-center gap-2 text-indigo-400 text-xs font-black uppercase tracking-wider">
                     <Trophy className="w-4 h-4" />
-                    <span>7 Câu Hỏi Phản Xạ • 90 Giây • 5 Khiên Bảo Vệ</span>
+                    <span>7 Câu Hỏi Phản Xạ • 180 Giây (3 Phút) • 5 Khiên Bảo Vệ</span>
                   </div>
 
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-100 leading-tight">
@@ -230,8 +230,8 @@ export default function AtlasEnglishArenaModal({
 
                   <div className="grid grid-cols-3 gap-3 pt-2">
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
-                      <div className="text-base sm:text-lg font-black text-indigo-300">90s</div>
-                      <div className="text-[11px] text-slate-400 font-medium">Thời Gian</div>
+                      <div className="text-base sm:text-lg font-black text-indigo-300">180s</div>
+                      <div className="text-[11px] text-slate-400 font-medium">Thời Gian (3p)</div>
                     </div>
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
                       <div className="text-base sm:text-lg font-black text-emerald-300">5 Khiên</div>

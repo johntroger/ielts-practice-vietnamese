@@ -13,8 +13,8 @@ import { useTranslation } from '../../i18n';
  * - Fullscreen toggle, quick mute & exit buttons
  */
 export default function ArenaHeaderBar({
-  timeRemaining = 90,
-  totalTime = 90,
+  timeRemaining = 180,
+  totalTime = 180,
   remainingShields = 5,
   maxShields = 5,
   combo = 0,

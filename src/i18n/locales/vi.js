@@ -64,7 +64,7 @@ export const vi = {
     diagnostic: 'Kiểm tra trình độ',
     sprintCoach: 'HLV Nước Rút 30 Phút',
     arena: 'Đấu Trường Anh Ngữ Atlas',
-    arenaDesc: 'Đấu trường phản xạ 90-120s nhịp độ cao với ELO & Xếp hạng',
+    arenaDesc: 'Đấu trường phản xạ 180s (3 phút) nhịp độ cao với ELO & Xếp hạng',
     vocabGrammar: 'Từ vựng & Ngữ pháp',
     qrCode: 'Mã QR trang web',
     contact: 'Góp ý & Liên hệ'
@@ -436,7 +436,7 @@ export const vi = {
   },
   arena: {
     title: 'Đấu Trường Anh Ngữ Atlas',
-    subtitle: 'Đấu trường phản xạ 90-120s nhịp độ cao triệt tiêu bẫy Cambridge',
+    subtitle: 'Đấu trường phản xạ 180s (3 phút) nhịp độ cao triệt tiêu bẫy Cambridge',
     league: 'Bảng Đấu',
     bronze: 'Tân Binh Bronze',
     silver: 'Thách Đấu Silver',
