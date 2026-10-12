@@ -455,7 +455,7 @@ export const en = {
     correct: 'Correct',
     incorrect: 'Incorrect',
     timeRemaining: 'Time Left',
-    leaderboardTitle: 'Weekly Relative Leaderboard',
+    leaderboardTitle: 'Real Learner Leaderboard',
     promotionZone: 'Promotion Zone (Top 20%)',
     relegationZone: 'Relegation Zone (Bottom 15%)',
     safeZone: 'Safe Zone',

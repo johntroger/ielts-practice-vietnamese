@@ -5,8 +5,12 @@ import { useArenaSprintEngine, ARENA_SPRINT_PHASES } from '../../hooks/useArenaS
 import { useArenaAudio } from '../../hooks/useArenaAudio.js';
 import { setupKeyboardNavigation } from '../../utils/keyboardNavigator.js';
 import { getIsoWeekKey } from '../../utils/dateHelper.js';
-import { generateWeeklyRivals } from '../../services/gamification/offlineRivals.js';
-import { getLeagueTier, getRelativeLeaderboardSlice, getUnifiedStreakCount } from '../../services/gamification/leagueEngine.js';
+import { getUnifiedStreakCount } from '../../services/gamification/leagueEngine.js';
+import { 
+  fetchRealLeaderboard, 
+  reconcileRealLeaderboard, 
+  submitRealSprintScore 
+} from '../../services/gamification/realLeaderboardService.js';
 import ArenaHeaderBar from './ArenaHeaderBar.jsx';
 import ArenaQuestionCard from './ArenaQuestionCard.jsx';
 import ArenaRelativeLeaderboard from './ArenaRelativeLeaderboard.jsx';
@@ -17,6 +21,7 @@ import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
  * 
  * Standalone Fast-Paced eSports Sprint Modal for Atlas English Arena.
  * Delivers an immersive full-screen eSports experience with HTML5 Fullscreen support.
+ * 100% Real-User Leaderboard: completely eliminates fake bot rivals and highlights real users (e.g. tranthanhtung37).
  */
 export default function AtlasEnglishArenaModal({
   isOpen = false,
@@ -27,18 +32,39 @@ export default function AtlasEnglishArenaModal({
   const { isMuted, toggleMute, playChime, speak, unlockAudio } = useArenaAudio();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const sprint = useArenaSprintEngine({
-    user: currentUser
-  });
+  // State for real-user leaderboard data
+  const [leaderboardData, setLeaderboardData] = useState(() => 
+    reconcileRealLeaderboard([], currentUser)
+  );
 
-  const weekKey = useMemo(() => getIsoWeekKey(), []);
   const streak = useMemo(() => getUnifiedStreakCount(), []);
-  const rivalsData = useMemo(() => {
-    const rawRivals = generateWeeklyRivals(weekKey, 20);
-    return getRelativeLeaderboardSlice(rawRivals, currentUser?.id || 'current_user');
-  }, [weekKey, currentUser]);
 
-  const currentTier = useMemo(() => getLeagueTier(rivalsData.userRank ? (2000 - rivalsData.userRank * 50) : 100), [rivalsData]);
+  // Fetch real users from Supabase / cache whenever modal opens or user auth changes
+  useEffect(() => {
+    if (!isOpen) return;
+    let isMounted = true;
+    fetchRealLeaderboard(currentUser).then(res => {
+      if (isMounted && res) {
+        setLeaderboardData(res);
+      }
+    });
+    return () => { isMounted = false; };
+  }, [isOpen, currentUser]);
+
+  const sprint = useArenaSprintEngine({
+    user: currentUser,
+    onSprintEnd: async (summary) => {
+      if (summary && summary.finalXp > 0) {
+        await submitRealSprintScore({
+          currentUser,
+          deltaXp: summary.finalXp,
+          streakCount: streak + 1
+        });
+        const updated = await fetchRealLeaderboard(currentUser);
+        setLeaderboardData(updated);
+      }
+    }
+  });
 
   // Fullscreen toggle support
   const toggleFullscreen = useCallback(() => {
@@ -120,53 +146,49 @@ export default function AtlasEnglishArenaModal({
                   <Swords className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-base sm:text-lg md:text-xl font-black text-slate-100 tracking-tight">
-                      {t('arena.title')}
-                    </h1>
-                    <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-[10px] font-bold uppercase tracking-wider">
-                      eSPORTS ARENA
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400">
+                  <h1 className="text-base sm:text-lg font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
+                    {t('arena.title')}
+                  </h1>
+                  <p className="text-xs text-slate-400 hidden sm:block">
                     {t('arena.subtitle')}
                   </p>
                 </div>
               </div>
 
+              {/* Header Right Actions */}
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="flex items-center gap-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-bold">
-                  <Flame className="w-4 h-4 fill-amber-400" />
-                  <span>{streak} Ngày Streak</span>
-                </div>
+                {streak > 0 && (
+                  <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl text-amber-400 text-xs font-bold">
+                    <Flame className="w-4 h-4 fill-amber-400" />
+                    <span>{streak} {t('arena.daysStreak')}</span>
+                  </div>
+                )}
 
                 <button
                   type="button"
                   onClick={toggleFullscreen}
-                  className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
-                  title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
+                  title={isFullscreen ? 'Thu nhỏ cửa sổ' : 'Phóng to toàn màn hình'}
                 >
-                  {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                  {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="p-2 text-slate-400 hover:text-red-400 rounded-xl hover:bg-slate-800 transition-colors"
-                  title={t('common.close')}
+                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
+                  title="Thoát Đấu Trường"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </header>
 
-            {/* Lobby Body */}
-            <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 md:p-10 flex flex-col justify-center">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-                {/* Left Hero Card */}
-                <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-6 bg-gradient-to-br from-indigo-950/60 via-slate-900 to-purple-950/40 border border-indigo-800/40 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl relative overflow-hidden">
-                  <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-                  
+            {/* Main Fullscreen Lobby Body */}
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-10 flex flex-col justify-center">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                {/* Left: Hero Banner & Rules */}
+                <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl">
                   <div className="flex items-center gap-2 text-indigo-400 text-xs font-black uppercase tracking-wider">
                     <Trophy className="w-4 h-4" />
                     <span>7 Câu Hỏi Phản Xạ • 90 Giây • 5 Khiên Bảo Vệ</span>
@@ -177,7 +199,7 @@ export default function AtlasEnglishArenaModal({
                   </h2>
 
                   <p className="text-sm text-slate-300/90 leading-relaxed font-sans">
-                    Rèn luyện phản xạ học thuật tức thì: tiêu diệt bẫy chính tả khó, bẫy từ đồng nghĩa học thuật, bẫy đọc True/False/Not Given và bẫy âm thanh tự sửa trong bài thi Listening.
+                    Rèn luyện phản xạ học thuật tức thì: tiêu diệt bẫy chính tả khó, bẫy từ đồng nghĩa học thuật, bẫy đọc True/False/Not Given và bẫy âm thanh tự sửa trong bài thi Listening. Bảng xếp hạng cập nhật điểm người học thật trực tiếp trên hệ thống.
                   </p>
 
                   <div className="grid grid-cols-3 gap-3 pt-2">
@@ -208,12 +230,14 @@ export default function AtlasEnglishArenaModal({
                   </button>
                 </div>
 
-                {/* Right: Leaderboard */}
+                {/* Right: Real Learner Leaderboard */}
                 <div className="lg:col-span-6 xl:col-span-5 w-full">
                   <ArenaRelativeLeaderboard
-                    rivals={rivalsData.rivalsSlice}
+                    rivals={leaderboardData.leaderboard}
                     currentUserId={currentUser?.id}
-                    leagueTier={currentTier}
+                    currentUserEmail={currentUser?.email}
+                    userWeeklyXp={leaderboardData.userWeeklyXp}
+                    leagueTier={leaderboardData.leagueTier}
                   />
                 </div>
               </div>
@@ -238,16 +262,18 @@ export default function AtlasEnglishArenaModal({
             />
             <div className="p-4 sm:p-8 flex-1 flex flex-col justify-center items-center overflow-y-auto">
               <div className="w-full max-w-3xl">
-                <ArenaQuestionCard
-                  question={currentQ}
-                  selectedOption={sprint.selectedOption}
-                  isAnswerChecked={sprint.isAnswerChecked}
-                  isCorrect={sprint.isCorrect}
-                  onSelectOption={sprint.selectOption}
-                  onCheckAnswer={sprint.checkAnswer}
-                  onNextQuestion={sprint.nextQuestion}
-                  onPlayAudio={speak}
-                />
+                {currentQ && (
+                  <ArenaQuestionCard
+                    question={currentQ}
+                    selectedOption={sprint.selectedOption}
+                    isAnswerChecked={sprint.isAnswerChecked}
+                    isCorrect={sprint.isCorrect}
+                    onSelectOption={sprint.selectOption}
+                    onSubmitAnswer={sprint.checkAnswer}
+                    onNextQuestion={sprint.nextQuestion}
+                    onPlayAudio={(text) => speak(text)}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -255,55 +281,58 @@ export default function AtlasEnglishArenaModal({
 
         {/* State 4: DEFEATED Screen */}
         {sprint.phase === ARENA_SPRINT_PHASES.DEFEATED && (
-          <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center gap-6">
-              <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
-                <ShieldAlert className="w-8 h-8" />
+          <div className="flex flex-col flex-1 min-h-full">
+            <header className="w-full bg-slate-900/90 border-b border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
+                <ShieldAlert className="w-5 h-5" />
+                <span>Hết Khiên Bảo Vệ</span>
               </div>
-              <div>
-                <h2 className="text-2xl font-black text-slate-100">
-                  Cả 5 Khiên Đã Vỡ!
-                </h2>
-                <p className="text-xs text-slate-400 mt-2">
-                  Bạn đã phạm quá nhiều lỗi dưới áp lực thời gian của đấu trường.
-                </p>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="p-2 text-slate-400 hover:text-white rounded-xl transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </header>
+
+            <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-lg mx-auto">
+              <div className="w-20 h-20 rounded-full bg-rose-500/20 border-2 border-rose-500/40 flex items-center justify-center text-rose-400 mb-6 animate-bounce">
+                <ShieldAlert className="w-10 h-10" />
               </div>
-              <div className="flex items-center gap-3 w-full">
-                {!sprint.shieldState.retryUsed ? (
-                  <button
-                    type="button"
-                    onClick={sprint.retrySprint}
-                    className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm py-3.5 rounded-xl shadow-lg transition-all"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    <span>{t('arena.retrySprint')}</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm py-3.5 rounded-xl transition-colors"
-                  >
-                    {t('common.close')}
-                  </button>
-                )}
+              <h2 className="text-3xl font-black text-white mb-2">Đấu Trường Tạm Dừng</h2>
+              <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                Bạn đã dùng hết 5 khiên bảo vệ trong vòng đấu này. Hãy sử dụng quyền hồi sinh khiên cấp cứu (1 lần duy nhất) để tiếp tục!
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3 w-full">
+                <button
+                  type="button"
+                  onClick={sprint.retrySprint}
+                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-6 rounded-xl transition-all cursor-pointer shadow-lg shadow-emerald-600/30"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Hồi Sinh +2 Khiên</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => sprint.startSprint()}
+                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3.5 px-6 rounded-xl transition-colors cursor-pointer border border-slate-700"
+                >
+                  Đấu Lại Từ Đầu
+                </button>
               </div>
-            </div>
+            </main>
           </div>
         )}
 
-        {/* State 5: COMPLETED Screen */}
-        {sprint.phase === ARENA_SPRINT_PHASES.COMPLETED && (
-          <div className="flex-1 flex items-center justify-center p-6">
-            <ArenaSprintSummaryModal
-              summary={sprint.summary}
-              onPlayAgain={() => {
-                playChime();
-                sprint.startSprint();
-              }}
-              onClose={handleClose}
-            />
-          </div>
+        {/* State 5: COMPLETED Screen / Summary Modal */}
+        {sprint.phase === ARENA_SPRINT_PHASES.COMPLETED && sprint.summary && (
+          <ArenaSprintSummaryModal
+            summary={sprint.summary}
+            onPlayAgain={() => sprint.startSprint()}
+            onClose={handleClose}
+          />
         )}
       </div>
     </div>

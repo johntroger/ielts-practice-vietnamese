@@ -121,7 +121,8 @@ const testSuites = [
   { name: 'Step 112: Targeted Reflex Studio (Micro-Drills) Bilingual Localization', file: 'tests/test_step112_micro_drills_studio_bilingual_localization.js' },
   { name: 'Step 113: Desktop, Tablet & Mobile Localization & Responsive UI Audit', file: 'tests/test_step113_desktop_tablet_mobile_localization_audit.js' },
   { name: 'Step 114: Google Analytics 4 & Virtual Pageview Routing Architecture', file: 'tests/test_step114_google_analytics_virtual_pageviews_and_events.js' },
-  { name: 'Step 115: Atlas English Arena Gamification & Deterministic Infrastructure', file: 'tests/test_step115_atlas_english_arena_production_system.js' }
+  { name: 'Step 115: Atlas English Arena Gamification & Deterministic Infrastructure', file: 'tests/test_step115_atlas_english_arena_production_system.js' },
+  { name: 'Step 116: Real-User Arena Leaderboard (No Fake Bot Rivals & tranthanhtung37 Inclusion)', file: 'tests/test_step116_arena_real_leaderboard_user_system.js' }
 ];
 
 console.log('===============================================================');

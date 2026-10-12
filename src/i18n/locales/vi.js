@@ -455,7 +455,7 @@ export const vi = {
     correct: 'Chính Xác',
     incorrect: 'Chưa Đúng',
     timeRemaining: 'Thời Gian Còn Lại',
-    leaderboardTitle: 'Bảng Xếp Hạng Tương Đối Tuần',
+    leaderboardTitle: 'Bảng Xếp Hạng Người Học Thật',
     promotionZone: 'Vùng Thăng Hạng (Top 20%)',
     relegationZone: 'Vùng Trụ Hạng (Top 15% Dưới)',
     safeZone: 'Vùng An Toàn',
