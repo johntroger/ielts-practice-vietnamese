@@ -11,7 +11,8 @@ import {
   playSoundcheck, 
   speakArenaText, 
   stopAllAudio, 
-  unlockAudioContext 
+  unlockAudioContext,
+  playArenaSfx
 } from '../utils/audioHelper.js';
 
 export function useArenaAudio() {
@@ -41,6 +42,11 @@ export function useArenaAudio() {
     speakArenaText(text, callbacks);
   }, [isMuted]);
 
+  const playSfx = useCallback((type = 'correct') => {
+    if (isMuted) return;
+    playArenaSfx(type);
+  }, [isMuted]);
+
   const stopAudio = useCallback(() => {
     stopAllAudio();
   }, []);
@@ -55,6 +61,7 @@ export function useArenaAudio() {
     isMuted,
     toggleMute,
     playChime,
+    playSfx,
     speak,
     stopAudio,
     unlockAudio

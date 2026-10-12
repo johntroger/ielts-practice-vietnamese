@@ -44,7 +44,7 @@ export default function AtlasEnglishArenaModal({
   currentUser = null
 }) {
   const { t } = useTranslation();
-  const { isMuted, toggleMute, playChime, speak, unlockAudio } = useArenaAudio();
+  const { isMuted, toggleMute, playChime, playSfx, speak, unlockAudio } = useArenaAudio();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // State for real-user leaderboard data
@@ -147,6 +147,15 @@ export default function AtlasEnglishArenaModal({
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
+  const handleCheckAnswer = useCallback(() => {
+    if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE && sprint.selectedOption !== null) {
+      const curQ = sprint.questions[sprint.currentIndex];
+      const isCorrect = curQ && sprint.selectedOption === curQ.correctIndex;
+      playSfx(isCorrect ? 'correct' : 'wrong');
+      sprint.checkAnswer();
+    }
+  }, [sprint, playSfx]);
+
   // Keyboard navigation wiring
   useEffect(() => {
     if (!isOpen) return;
@@ -160,7 +169,7 @@ export default function AtlasEnglishArenaModal({
       },
       onSubmit: () => {
         if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE && sprint.selectedOption !== null) {
-          sprint.checkAnswer();
+          handleCheckAnswer();
         } else if (sprint.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
           sprint.nextQuestion();
         }
@@ -177,7 +186,7 @@ export default function AtlasEnglishArenaModal({
         }
       }
     });
-  }, [isOpen, sprint, speak]);
+  }, [isOpen, sprint, speak, handleCheckAnswer]);
 
   if (!isOpen) return null;
 
@@ -354,8 +363,8 @@ export default function AtlasEnglishArenaModal({
                     isAnswerChecked={sprint.isAnswerChecked}
                     isCorrect={sprint.isCorrect}
                     onSelectOption={sprint.selectOption}
-                    onCheckAnswer={sprint.checkAnswer}
-                    onSubmitAnswer={sprint.checkAnswer}
+                    onCheckAnswer={handleCheckAnswer}
+                    onSubmitAnswer={handleCheckAnswer}
                     onNextQuestion={sprint.nextQuestion}
                     onPlayAudio={(text) => speak(text)}
                   />
