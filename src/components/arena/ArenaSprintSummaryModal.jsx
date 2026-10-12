@@ -94,7 +94,7 @@ export default function ArenaSprintSummaryModal({
         <button
           type="button"
           onClick={onPlayAgain}
-          className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm py-3 px-4 rounded-xl shadow-lg shadow-indigo-600/30 transition-all"
+          className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm py-3 px-4 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
         >
           <RotateCcw className="w-4 h-4" />
           <span>{t('arena.startSprint')}</span>
@@ -103,8 +103,8 @@ export default function ArenaSprintSummaryModal({
         <button
           type="button"
           onClick={onClose}
-          className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700/80 transition-colors"
-          title={t('common.close')}
+          className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700/80 transition-colors cursor-pointer"
+          title="Quay lại Bảng Xếp Hạng"
         >
           <X className="w-4 h-4" />
         </button>

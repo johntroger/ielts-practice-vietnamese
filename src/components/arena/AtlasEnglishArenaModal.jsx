@@ -104,6 +104,13 @@ export default function AtlasEnglishArenaModal({
     onClose?.();
   }, [onClose]);
 
+  const handleReturnToLobby = useCallback(() => {
+    sprint.resetSprint();
+    fetchRealLeaderboard(currentUser).then(res => {
+      if (res) setLeaderboardData(res);
+    }).catch(() => {});
+  }, [sprint, currentUser]);
+
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const handleFsChange = () => {
@@ -278,7 +285,7 @@ export default function AtlasEnglishArenaModal({
               isFullscreen={isFullscreen}
               onToggleMute={toggleMute}
               onToggleFullscreen={toggleFullscreen}
-              onClose={handleClose}
+              onClose={handleReturnToLobby}
             />
             <div className="p-4 sm:p-8 flex-1 flex flex-col justify-center items-center overflow-y-auto">
               <div className="w-full max-w-3xl">
@@ -310,8 +317,9 @@ export default function AtlasEnglishArenaModal({
               </div>
               <button
                 type="button"
-                onClick={handleClose}
+                onClick={handleReturnToLobby}
                 className="p-2 text-slate-400 hover:text-white rounded-xl transition-colors cursor-pointer"
+                title="Quay lại Bảng Xếp Hạng"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -349,11 +357,13 @@ export default function AtlasEnglishArenaModal({
 
         {/* State 5: COMPLETED Screen / Summary Modal */}
         {sprint.phase === ARENA_SPRINT_PHASES.COMPLETED && sprint.summary && (
-          <ArenaSprintSummaryModal
-            summary={sprint.summary}
-            onPlayAgain={() => sprint.startSprint()}
-            onClose={handleClose}
-          />
+          <div className="flex flex-col flex-1 min-h-full items-center justify-center p-4">
+            <ArenaSprintSummaryModal
+              summary={sprint.summary}
+              onPlayAgain={() => sprint.startSprint()}
+              onClose={handleReturnToLobby}
+            />
+          </div>
         )}
 
         {/* Public Learner Profile Modal (Peer Profile Viewer) */}

@@ -238,6 +238,13 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     setState(prev => retrySprintAction(prev));
   }, []);
 
+  const resetSprint = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    setState(INITIAL_SPRINT_STATE);
+  }, []);
+
   // Timer Tick
   useEffect(() => {
     if (state.phase === ARENA_SPRINT_PHASES.ACTIVE || state.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
@@ -268,6 +275,7 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     selectOption,
     checkAnswer,
     nextQuestion,
-    retrySprint
+    retrySprint,
+    resetSprint
   };
 }

@@ -50,4 +50,18 @@ describe('Step 121: Atlas Arena Mouse Click & Header i18n Polish', () => {
     assert.ok(cardCode.includes('cursor-pointer'), 'Action buttons must have cursor-pointer for intuitive mouse clicking');
     assert.ok(cardCode.includes('disabled:cursor-not-allowed'), 'Disabled state should display not-allowed cursor');
   });
+
+  it('6. useArenaSprintEngine exports resetSprint to return to IDLE/Leaderboard state', () => {
+    const engineCode = fs.readFileSync(path.resolve('src/hooks/useArenaSprintEngine.js'), 'utf-8');
+    assert.ok(engineCode.includes('resetSprint'), 'Hook must export resetSprint');
+    assert.ok(engineCode.includes('setState(INITIAL_SPRINT_STATE)'), 'resetSprint must restore initial IDLE state');
+  });
+
+  it('7. AtlasEnglishArenaModal closes Summary Modal & Header back to Leaderboard Lobby', () => {
+    const modalCode = fs.readFileSync(path.resolve('src/components/arena/AtlasEnglishArenaModal.jsx'), 'utf-8');
+    assert.ok(modalCode.includes('handleReturnToLobby'), 'Modal must define handleReturnToLobby');
+    assert.ok(modalCode.includes('sprint.resetSprint()'), 'handleReturnToLobby must call resetSprint()');
+    assert.ok(modalCode.includes('<ArenaSprintSummaryModal'), 'Summary modal must be rendered');
+    assert.ok(modalCode.includes('onClose={handleReturnToLobby}'), 'Summary modal onClose must route back to Leaderboard lobby');
+  });
 });
