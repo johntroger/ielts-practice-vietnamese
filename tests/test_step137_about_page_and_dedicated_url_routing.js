@@ -85,16 +85,28 @@ assert(appSource.includes("search.get('page') === 'about'"), 'App.jsx must suppo
 assert(appSource.includes("window.history.pushState({ page: 'about' }, '', '/about')"), 'App.jsx must pushState /about on open');
 assert(appSource.includes("trackSkillView('about')"), 'App.jsx must log virtual pageview for GA4 analytics');
 assert(appSource.includes('<AboutPage'), 'App.jsx must render AboutPage');
+assert(appSource.includes('isDirectRootAccess'), 'App.jsx must redirect direct root visits to /about');
 console.log('  ✓ Two-Way URL Routing and deep-linking in App.jsx verified');
 
-// Test 4: Verify Navbar integration
-console.log('Test 4: Verifying Navbar integration');
+// Test 4: Verify vercel.json redirect rule
+console.log('Test 4: Verifying vercel.json server redirect');
+const vercelConfigPath = path.resolve('vercel.json');
+assert(fs.existsSync(vercelConfigPath), 'vercel.json must exist');
+const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf-8'));
+assert(Array.isArray(vercelConfig.redirects), 'vercel.json must define redirects array');
+const rootRedirect = vercelConfig.redirects.find(r => r.source === '/' && r.destination === '/about');
+assert(rootRedirect, 'vercel.json must redirect / to /about');
+console.log('  ✓ vercel.json redirects / to /about');
+
+// Test 5: Verify Navbar integration (Compact Home icon & Thi Thử button)
+console.log('Test 5: Verifying Navbar integration');
 const navbarSource = fs.readFileSync(navbarPath, 'utf-8');
 
 assert(navbarSource.includes('onOpenAbout'), 'Navbar.jsx must support onOpenAbout prop');
 assert(navbarSource.includes('doOpenAbout'), 'Navbar.jsx must provide doOpenAbout handler');
 assert(navbarSource.includes('/about'), 'Navbar.jsx must link to /about');
 assert(navbarSource.includes('<Home'), 'Navbar.jsx must render Home icon for About navigation');
-console.log('  ✓ Navbar desktop and mobile drawer integration verified (Home icon)');
+assert(navbarSource.includes("<span>{isEn ? 'Mock Test' : 'Thi Thử'}</span>"), 'Navbar.jsx must render compact Thi Thử without 60p');
+console.log('  ✓ Navbar desktop and mobile drawer integration verified (Home icon & Thi Thử)');
 
 console.log('\n🎉 ALL STEP 137 ABOUT PAGE CHECKS PASSED CLEANLY!\n');

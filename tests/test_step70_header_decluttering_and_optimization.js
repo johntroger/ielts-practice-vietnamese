@@ -65,8 +65,8 @@ assert(
   'Navbar header must use backdrop blur for modern aesthetic depth'
 );
 assert(
-  navbarSource.includes('Thi Thử 60p') && navbarSource.includes('ShieldAlert'),
-  'Hero CTA "Thi Thử 60p" must be prominent in Navbar'
+  (navbarSource.includes('Thi Thử') || navbarSource.includes('Thi Thử 60p')) && navbarSource.includes('ShieldAlert'),
+  'Hero CTA "Thi Thử" must be prominent in Navbar'
 );
 assert(
   navbarSource.includes('desktopMenuRef') && navbarSource.includes('handleOutsideClick'),

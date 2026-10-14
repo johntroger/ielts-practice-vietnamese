@@ -453,14 +453,14 @@ export default function Navbar({
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
           <div className="flex items-center gap-1 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
-            {/* Desktop Only Hero CTA: Thi Thử IELTS 60 Phút */}
+            {/* Desktop Only Hero CTA: Thi Thử IELTS */}
             <button
               onClick={doOpenMockTest}
               className="hidden xl:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-black shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
-              title={isEn ? "Enter High-Pressure IELTS Mock Test (60 Minutes)" : "Vào Phòng Thi Thử IELTS Áp Lực Cao (60 Phút)"}
+              title={isEn ? "Enter High-Pressure IELTS Mock Test" : "Vào Phòng Thi Thử IELTS Áp Lực Cao"}
             >
               <ShieldAlert className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-              <span>{isEn ? '60m Mock Test' : 'Thi Thử 60p'}</span>
+              <span>{isEn ? 'Mock Test' : 'Thi Thử'}</span>
             </button>
 
             {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px) */}
