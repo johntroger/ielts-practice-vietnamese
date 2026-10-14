@@ -76,6 +76,31 @@ export const FEATURE_CATEGORIES = [
 export const FEATURE_REGISTRY = [
   // --- NHÓM 1: CÁC TÍNH NĂNG MỚI NHẤT (PHASE 2026 RELEASES) ---
   {
+    id: 'feat-beginner-foundation-hub',
+    version: 'v3.4',
+    status: 'new',
+    badge: 'Mới Ra Mắt',
+    category: 'practice_tools',
+    targetSkills: ['writing', 'speaking', 'reading', 'listening'],
+    title: 'Trung Tâm Khởi Động Cho Người Mới Bắt Đầu (Beginner Foundation Hub)',
+    shortDesc: 'Lộ trình 4 bước không áp lực dành riêng cho người mất gốc hoặc mới làm quen IELTS: Chơi game 90s nạp từ, luyện câu đơn 3 phút, giải thích thuật ngữ siêu dễ hiểu.',
+    icon: 'Compass',
+    shortcut: null,
+    updatedAt: '2026-10-14',
+    highlights: [
+      'Lộ Trình 4 Bước Vừa Sức: Bắt đầu từ minigame 90s Atlas Arena và luyện phản xạ câu đơn Micro-Drills thay vì phải viết bài luận 250 từ ngay lập tức.',
+      'Giải Mã Thuật Ngữ IELTS Siêu Dễ Hiểu (Jargon Buster): Giải thích bằng tiếng Việt gần gũi nhất về Task 1, Task 2, PEEL, Paraphrase, Collocations.',
+      'Chọn Target Band Vừa Sức (Band 5.0 - 5.5): Cho phép người mới đặt mục tiêu khởi động để hệ thống điều chỉnh độ khó và tiêu chí đánh giá phù hợp.',
+      'Hướng Dẫn Từng Bước 100% Tiếng Việt: Giảm tối đa cảm giác quá tải (ngợp) cho người học chưa có nền tảng tiếng Anh vững vàng.'
+    ],
+    usageGuide: 'Bấm vào nút "🌱 Người Mới" trên thanh Navbar hoặc thẻ "Bắt Đầu Từ Đây" trong menu để mở hướng dẫn lộ trình bất cứ lúc nào.',
+    quickAction: {
+      type: 'open_modal',
+      target: 'beginnerGuide',
+      label: 'Mở Hướng Dẫn Người Mới'
+    }
+  },
+  {
     id: 'feat-adaptive-30min-sprint',
     version: 'v3.3',
     status: 'new',

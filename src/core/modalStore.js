@@ -37,7 +37,8 @@ let state = {
   shortcuts: false,
   speakingResult: false,
   cdiDisplay: false,
-  evaluationProgress: false
+  evaluationProgress: false,
+  beginnerGuide: false
 };
 
 const listeners = new Set();

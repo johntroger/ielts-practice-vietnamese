@@ -86,6 +86,7 @@ export default function App() {
   const [activeSkill, setActiveSkill] = useState(() => safeGet('ielts_active_skill', 'writing'));
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
   const [isApiKeyBannerDismissed, setIsApiKeyBannerDismissed] = useState(() => safeGet('ielts_dismiss_api_banner', false));
+  const [isBeginnerBannerDismissed, setIsBeginnerBannerDismissed] = useState(() => safeGet('ielts_dismiss_beginner_banner', false));
 
   // Keep active skill in localStorage safely & track virtual pageview in GA4
   useEffect(() => {
@@ -1019,7 +1020,7 @@ export default function App() {
     <div 
       data-cdi-font={cdiFontSize}
       data-cdi-contrast={cdiContrast}
-      className={`${(activeSkill === 'reading' || activeSkill === 'listening' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
+      className={`${(activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
       
       {/* Focus Mode Floating Exit Pill */}
       {isFocusMode && (
@@ -1175,6 +1176,45 @@ export default function App() {
                 safeSet('ielts_dismiss_api_banner', true);
               }}
               className="p-1 rounded-md text-amber-700 hover:text-amber-950 hover:bg-amber-100 transition-colors cursor-pointer"
+              title={language === 'en' ? 'Dismiss' : 'Ẩn thông báo'}
+              aria-label={language === 'en' ? 'Dismiss' : 'Ẩn thông báo'}
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 1.6 Global Beginner & Zero-Overwhelm Guidance Banner (Slim & Dismissible) */}
+      {!isFocusMode && !isBeginnerBannerDismissed && (
+        <div className="bg-emerald-50/95 border-b border-emerald-200/90 text-emerald-950 px-3 sm:px-6 py-1.5 text-xs transition-all duration-300 shadow-2xs shrink-0 z-20 flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 min-w-0">
+            <span className="text-base shrink-0 leading-none">🌱</span>
+            <div className="text-[11px] sm:text-xs text-emerald-900 leading-tight min-w-0 truncate">
+              <span className="font-extrabold text-emerald-800 mr-1.5">
+                {language === 'en' ? 'New to IELTS?' : 'Chưa có nền tảng vững?'}
+              </span>
+              <span className="font-medium text-emerald-950">
+                {language === 'en'
+                  ? 'Feeling overwhelmed? Follow the 4-step gentle path with 90s games & 3-min micro-drills!'
+                  : 'Đừng lo nếu thấy hơi ngợp! Bạn không cần viết ngay 250 từ. Hãy bắt đầu với game 90s Arena & luyện câu 3 phút.'}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-1.5 shrink-0">
+            <button
+              onClick={() => openModal('beginnerGuide')}
+              className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-2xs transition-all active:scale-95 shrink-0 flex items-center space-x-1 cursor-pointer"
+            >
+              <span>{language === 'en' ? 'Quick Guide' : 'Xem Lộ Trình'}</span>
+            </button>
+            <button
+              onClick={() => {
+                setIsBeginnerBannerDismissed(true);
+                safeSet('ielts_dismiss_beginner_banner', true);
+              }}
+              className="p-1 rounded-md text-emerald-700 hover:text-emerald-950 hover:bg-emerald-100 transition-colors cursor-pointer"
               title={language === 'en' ? 'Dismiss' : 'Ẩn thông báo'}
               aria-label={language === 'en' ? 'Dismiss' : 'Ẩn thông báo'}
             >

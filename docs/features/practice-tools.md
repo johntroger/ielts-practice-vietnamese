@@ -1,15 +1,39 @@
 # 🛠️ Kho Đề Thi & Bộ Công Cụ Luyện Tập 4 Kỹ Năng
 
-> **Chuyên mục**: `practice_tools` | **Số lượng**: **12 tính năng**  
+> **Chuyên mục**: `practice_tools` | **Số lượng**: **13 tính năng**  
 > **Tổng quan**: Bộ sưu tập công cụ hỗ trợ người học: nạp đề từ ảnh chụp Task 1 (OCR), ma trận phát triển ý tưởng, từ điển đồng nghĩa và phân tầng trình độ.
 
 [← Quay lại Trung Tâm Tính Năng](README.md)
 
 ---
 
+<a id="feat-beginner-foundation-hub"></a>
+
+## 1. Trung Tâm Khởi Động Cho Người Mới Bắt Đầu (Beginner Foundation Hub)
+
+> **Phiên bản**: `v3.4` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Writing** • **Speaking** • **Reading** • **Listening** | **Phím tắt**: _Không có_
+
+### 📝 Mô Tả Tính Năng
+Lộ trình 4 bước không áp lực dành riêng cho người mất gốc hoặc mới làm quen IELTS: Chơi game 90s nạp từ, luyện câu đơn 3 phút, giải thích thuật ngữ siêu dễ hiểu.
+
+### 💎 Điểm Nổi Bật & Giá Trị Học Thuật
+- Lộ Trình 4 Bước Vừa Sức: Bắt đầu từ minigame 90s Atlas Arena và luyện phản xạ câu đơn Micro-Drills thay vì phải viết bài luận 250 từ ngay lập tức.
+- Giải Mã Thuật Ngữ IELTS Siêu Dễ Hiểu (Jargon Buster): Giải thích bằng tiếng Việt gần gũi nhất về Task 1, Task 2, PEEL, Paraphrase, Collocations.
+- Chọn Target Band Vừa Sức (Band 5.0 - 5.5): Cho phép người mới đặt mục tiêu khởi động để hệ thống điều chỉnh độ khó và tiêu chí đánh giá phù hợp.
+- Hướng Dẫn Từng Bước 100% Tiếng Việt: Giảm tối đa cảm giác quá tải (ngợp) cho người học chưa có nền tảng tiếng Anh vững vàng.
+
+### 🎯 Hướng Dẫn Thao Tác Từng Bước
+```text
+Bấm vào nút "🌱 Người Mới" trên thanh Navbar hoặc thẻ "Bắt Đầu Từ Đây" trong menu để mở hướng dẫn lộ trình bất cứ lúc nào.
+```
+
+> 💡 **Thao tác nhanh trên Web**: Tính năng này được tích hợp sẵn 1-click action **"Mở Hướng Dẫn Người Mới"** trong giao diện làm bài.
+
+---
+
 <a id="feat-adaptive-30min-sprint"></a>
 
-## 1. Huấn Luyện Viên Cá Nhân Hóa (Adaptive 30-Min Sprint Coach)
+## 2. Huấn Luyện Viên Cá Nhân Hóa (Adaptive 30-Min Sprint Coach)
 
 > **Phiên bản**: `v3.3` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Writing** • **Speaking** • **Reading** • **Listening** | **Phím tắt**: _Không có_
 
@@ -33,7 +57,7 @@ Tại thanh Navbar mục "Luyện Tập" hoặc banner trên trang chủ, bấm 
 
 <a id="feat-in-situ-lexical-upgrader"></a>
 
-## 2. Nâng Cấp Từ Vựng Ngữ Cảnh 1-Chạm (In-situ Lexical Upgrader)
+## 3. Nâng Cấp Từ Vựng Ngữ Cảnh 1-Chạm (In-situ Lexical Upgrader)
 
 > **Phiên bản**: `v3.2` | **Huy hiệu**: `Mới Ra Mắt` | **Kỹ năng**: **Writing** | **Phím tắt**: _Không có_
 
@@ -57,7 +81,7 @@ Trong phòng luyện IELTS Writing, bôi đen từ cần nâng cấp trong bài 
 
 <a id="feat-band-55-60-expansion"></a>
 
-## 3. Mở Rộng Phân Tầng Trình Độ: Dải Điểm Band 5.5 - 6.0
+## 4. Mở Rộng Phân Tầng Trình Độ: Dải Điểm Band 5.5 - 6.0
 
 > **Phiên bản**: `v2.6` | **Huy hiệu**: `Học Thuật` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -81,7 +105,7 @@ Mở "Vocab & Lỗi Sai" -> Chọn tab "📗 Band 5.5 - 6.0" hoặc mở "Cẩm 
 
 <a id="feat-task1-image-upload"></a>
 
-## 4. Tải Lên & Dán Trực Tiếp Ảnh Biểu Đồ Writing Task 1 (Ctrl + V)
+## 5. Tải Lên & Dán Trực Tiếp Ảnh Biểu Đồ Writing Task 1 (Ctrl + V)
 
 > **Phiên bản**: `v2.5` | **Huy hiệu**: `Hot` | **Kỹ năng**: **Writing** | **Phím tắt**: `Ctrl + V`
 
@@ -105,7 +129,7 @@ Vào "Kho Đề Thi" -> Bấm "Nạp Đề Cá Nhân Mới (Task 1)" -> Dán ả
 
 <a id="feat-ai-generator-pro"></a>
 
-## 5. Trình Sinh Đề & Bài Mẫu AI (AI Prompt & Task Generator)
+## 6. Trình Sinh Đề & Bài Mẫu AI (AI Prompt & Task Generator)
 
 > **Phiên bản**: `v2.2` | **Huy hiệu**: `AI Pro` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -128,7 +152,7 @@ Bấm nút "Sinh Đề (AI)" trên thanh điều hướng hoặc trong Menu Côn
 
 <a id="feat-idea-matrix"></a>
 
-## 6. Ma Trận Phát Triển Ý Tưởng (Idea Matrix & Critical Thinking)
+## 7. Ma Trận Phát Triển Ý Tưởng (Idea Matrix & Critical Thinking)
 
 > **Phiên bản**: `v2.1` | **Huy hiệu**: `Tư Duy` | **Kỹ năng**: **Writing** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -151,7 +175,7 @@ Bấm nút "Ma Trận Ý" trên thanh điều hướng hoặc trong Menu Luyện
 
 <a id="feat-paraphrase-helper"></a>
 
-## 7. Trợ Thủ Paraphrase Học Thuật C1-C2 (Academic Rewriter)
+## 8. Trợ Thủ Paraphrase Học Thuật C1-C2 (Academic Rewriter)
 
 > **Phiên bản**: `v2.1` | **Huy hiệu**: `Từ Vựng` | **Kỹ năng**: **Writing** • **Speaking** • **Reading** | **Phím tắt**: _Không có_
 
@@ -174,7 +198,7 @@ Nhấn vào "Trợ Thủ Paraphrase" trong Menu Công Cụ hoặc bấm vào bi�
 
 <a id="feat-micro-drills-studio"></a>
 
-## 8. Phòng Luyện Phản Xạ Vi Mô (Micro-Drills Studio)
+## 9. Phòng Luyện Phản Xạ Vi Mô (Micro-Drills Studio)
 
 > **Phiên bản**: `v2.0` | **Huy hiệu**: `Bài Tập Nhanh` | **Kỹ năng**: **Writing** • **Reading** • **Speaking** • **Listening** | **Phím tắt**: _Không có_
 
@@ -197,7 +221,7 @@ Bấm nút "Phòng Luyện" trên Navbar -> Chọn dạng bài tập bạn muố
 
 <a id="feat-raw-task-ingest"></a>
 
-## 9. Công Cụ Nạp Đề & Bài Mẫu Thô Hàng Loạt (Raw Task Ingest)
+## 10. Công Cụ Nạp Đề & Bài Mẫu Thô Hàng Loạt (Raw Task Ingest)
 
 > **Phiên bản**: `v2.3` | **Huy hiệu**: `Nạp Đề Nhanh` | **Kỹ năng**: **Writing** • **Reading** | **Phím tắt**: _Không có_
 
@@ -219,7 +243,7 @@ Mở Menu Công Cụ -> Chọn "Nạp Đề & Bài Mẫu Thô" -> Dán nội dun
 
 <a id="feat-daily-error-prescription"></a>
 
-## 10. Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition Micro-Drill)
+## 11. Đơn Thuốc Sửa Lỗi Sai Mỗi Ngày (Spaced Repetition Micro-Drill)
 
 > **Phiên bản**: `v3.0` | **Huy hiệu**: `Đơn Thuốc Lỗi` | **Kỹ năng**: **Writing** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -243,7 +267,7 @@ Vào Toolbar Writing -> Bấm "Tiện Ích Khác" -> Chọn "Đơn Thuốc Sửa
 
 <a id="feat-smart-filters-social-proof"></a>
 
-## 11. Bộ Lọc Đa Chiều & Đánh Giá Sao Xã Hội (Smart Discovery & Rating)
+## 12. Bộ Lọc Đa Chiều & Đánh Giá Sao Xã Hội (Smart Discovery & Rating)
 
 > **Phiên bản**: `2.5.0` | **Huy hiệu**: `Đột Phá 2.0` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
 
@@ -268,7 +292,7 @@ Mở Kho Đề Thi, Phòng Micro-Drills hoặc Luyện Từ Vựng/Ngữ Pháp. 
 
 <a id="feat-smart-recommendation-engine"></a>
 
-## 12. Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)
+## 13. Thẻ Gợi Ý Bài Tập Thông Minh Hàng Ngày (Smart Daily Recommendation)
 
 > **Phiên bản**: `v4.5` | **Huy hiệu**: `Định Hướng AI` | **Kỹ năng**: **Writing** • **Reading** • **Listening** • **Speaking** | **Phím tắt**: _Không có_
 

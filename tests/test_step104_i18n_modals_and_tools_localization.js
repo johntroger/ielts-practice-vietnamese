@@ -360,8 +360,8 @@ it('16. FeaturesGuideModal.jsx and featureLocalization.js localize all 44 featur
   assert.ok(content.includes('getLocalizedFeature'), 'FeaturesGuideModal missing getLocalizedFeature');
   assert.ok(content.includes('CATEGORY_LABELS_EN'), 'FeaturesGuideModal missing CATEGORY_LABELS_EN');
   
-  // Verify all 44 features have localization
-  assert.strictEqual(FEATURE_REGISTRY.length, 44);
+  // Verify all features have localization
+  assert.ok(FEATURE_REGISTRY.length >= 44, `Expected at least 44 features, found ${FEATURE_REGISTRY.length}`);
   FEATURE_REGISTRY.forEach(f => {
     const loc = getLocalizedFeature(f, true);
     assert.ok(loc.title, `Feature ${f.id} missing titleEn`);

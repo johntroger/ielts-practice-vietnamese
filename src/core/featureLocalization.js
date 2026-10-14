@@ -44,6 +44,19 @@ export const BADGE_LOCALIZATION_EN = {
 };
 
 export const FEATURE_LOCALIZATION_EN = {
+  'feat-beginner-foundation-hub': {
+    title: 'Beginner Foundation Hub & Zero-Overwhelm Roadmap',
+    shortDesc: 'Gentle, pressure-free 4-step onboarding journey for learners starting from scratch: 90s vocabulary games, 3-minute sentence drills, and clear IELTS jargon decoded.',
+    badge: 'New Release',
+    highlights: [
+      'Zero-Overwhelm 4-Step Path: Start with 90s Atlas Arena games and single-sentence micro-drills before writing full 250-word essays.',
+      'IELTS Jargon Buster: Understand Task 1, Task 2, PEEL formula, Paraphrase, and Collocations in simple, accessible language.',
+      'Starter Band Selection (Band 5.0 - 5.5): Pick a realistic starting milestone to keep AI evaluation constructive and encouraging.',
+      'Bilingual Step-by-Step Guidance: Eliminates anxiety for candidates who lack a strong English foundation.'
+    ],
+    usageGuide: 'Click the "🌱 Beginner" button on the Navbar or "Start Here" in the mobile menu to access the guide at any time.',
+    quickActionLabel: 'Open Beginner Guide'
+  },
   'feat-adaptive-30min-sprint': {
     title: 'Adaptive 30-Min Sprint Coach',
     shortDesc: 'Smart 3-stage, 30-minute high-yield practice sprint diagnosing individual bottlenecks (Grammar, Speaking reflex, Writing argumentation) for daily band breakthroughs.',

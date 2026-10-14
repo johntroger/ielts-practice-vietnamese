@@ -93,6 +93,27 @@ export function getSmartDailyRecommendations({
   const suggestedTask1 = task1Candidates[0] || allTasks.find(t => t.taskNumber === 1) || null;
   const suggestedTask2 = task2Candidates[0] || allTasks.find(t => t.taskNumber === 2) || null;
 
+  // RULE ZERO: Beginner Foundation & Zero-Overwhelm (If new user or starter band <= 5.5)
+  if (recentSubmissions.length === 0 || parseFloat(targetBand) <= 5.5) {
+    recommendations.push({
+      id: 'rec-beginner-foundation',
+      priority: 98,
+      type: 'beginner_foundation',
+      badge: isEn ? '🌱 Beginner Friendly' : '🌱 Cho Người Mới Bắt Đầu',
+      badgeColor: 'emerald',
+      title: isEn
+        ? 'Feeling overwhelmed? Start gently with 90s games'
+        : 'Chưa có nền tảng vững? Hãy khởi động nhẹ nhàng 90 giây trước!',
+      description: isEn
+        ? 'You do not need to write a full 250-word essay right away. Play 1 round of Atlas Arena or take a 3-minute sentence micro-drill to build natural reflexes.'
+        : 'Bạn không cần viết ngay một bài văn 250 từ! Chơi 1 ván Atlas Arena (90s) để nạp từ vựng hoặc làm bài Luyện phản xạ câu đơn 3 phút để tự tin hơn.',
+      actionType: 'open_modal',
+      actionPayload: 'beginnerGuide',
+      actionLabel: isEn ? 'View Beginner Roadmap' : 'Xem Lộ Trình Cho Người Mới',
+      estimatedMinutes: 2
+    });
+  }
+
   // RULE A: Balance Task 1 vs Task 2
   // If recent submissions are skewed towards Task 2 (>= 2 Task 2 and 0 Task 1)
   if (recentSubmissions.length >= 2 && recentTask2Count >= 2 && recentTask1Count === 0 && suggestedTask1) {

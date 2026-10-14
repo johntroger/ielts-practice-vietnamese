@@ -135,7 +135,8 @@ const testSuites = [
   { name: 'Step 126: Mobile Top Navbar Responsive Layout & Zero Truncation', file: 'tests/test_step126_mobile_navbar_responsive_layout.js' },
   { name: 'Step 127: Listening Split-Screen Two-Column Layout & Decluttered Header', file: 'tests/test_step127_listening_split_screen_two_column_layout.js' },
   { name: 'Step 128: Speaking Fullscreen Optimization, Representative Card & Library Modal', file: 'tests/test_step128_speaking_fullscreen_representative_card_and_library_modal.js' },
-  { name: 'Step 129: Atlas Arena Dedicated URL Routing (/atlas-arena)', file: 'tests/test_step129_atlas_arena_dedicated_url_routing.js' }
+  { name: 'Step 129: Atlas Arena Dedicated URL Routing (/atlas-arena)', file: 'tests/test_step129_atlas_arena_dedicated_url_routing.js' },
+  { name: 'Step 130: Beginner Foundation Experience & Cross-Device Responsive Display Audit', file: 'tests/test_step130_beginner_experience_and_responsive_audit.js' }
 ];
 
 console.log('===============================================================');

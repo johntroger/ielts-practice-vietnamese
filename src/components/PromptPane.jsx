@@ -25,7 +25,8 @@ import {
   Copy,
   RefreshCw,
   BookOpen,
-  ExternalLink
+  ExternalLink,
+  ChevronDown
 } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
@@ -106,6 +107,7 @@ export default function PromptPane({
   const [showOutline, setShowOutline] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
+  const [showBeginnerHelp, setShowBeginnerHelp] = useState(false);
 
   // Thesis Statement & Stance Validator States
   const [showThesisValidator, setShowThesisValidator] = useState(false);
@@ -420,6 +422,114 @@ export default function PromptPane({
                     </button>
                   </span>
                 ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Beginner-Friendly Explainer & Vietnamese Walkthrough */}
+        <div className="rounded-2xl border border-emerald-200/90 bg-emerald-50/40 p-3 sm:p-3.5 shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setShowBeginnerHelp(!showBeginnerHelp)}
+            className="w-full flex items-center justify-between text-left cursor-pointer group"
+          >
+            <div className="flex items-center space-x-2">
+              <span className="text-base leading-none">🌱</span>
+              <span className="font-extrabold text-xs text-emerald-950 group-hover:text-emerald-800 transition-colors">
+                {isEn ? "Beginner Guide: Prompt Goal & Basic Structure" : "Dành cho người mới: Dịch nghĩa & Hướng dẫn cơ bản"}
+              </span>
+              <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold">
+                {isEn ? "Easy Steps" : "Từng Bước"}
+              </span>
+            </div>
+            <ChevronDown className={`w-3.5 h-3.5 text-emerald-600 transition-transform duration-200 ${showBeginnerHelp ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showBeginnerHelp && (
+            <div className="mt-3 pt-3 border-t border-emerald-200/60 space-y-3 text-xs text-slate-700 animate-in fade-in duration-150">
+              {/* Prompt Goal in plain language */}
+              <div>
+                <div className="font-bold text-emerald-900 mb-1 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{isEn ? "Prompt Goal:" : "Mục tiêu bài viết:"}</span>
+                </div>
+                <p className="text-slate-700 leading-relaxed pl-4">
+                  {task.taskNumber === 1
+                    ? (isEn 
+                        ? "Summarise the main trends and highlight key comparisons (150 words). Do not give personal opinions." 
+                        : "Tóm tắt các xu hướng chính và so sánh số liệu nổi bật (tối thiểu 150 từ, ~20 phút). Tuyệt đối không suy đoán hay nêu ý kiến cá nhân.")
+                    : (isEn 
+                        ? "Give a clear answer to the prompt with a consistent stance throughout (250 words). Provide real-life reasons and examples." 
+                        : "Trả lời trực tiếp câu hỏi của đề bài, nêu rõ quan điểm xuyên suốt từ mở bài đến kết bài (tối thiểu 250 từ, ~40 phút).")}
+                </p>
+              </div>
+
+              {/* Basic 4-Paragraph Structure */}
+              <div>
+                <div className="font-bold text-emerald-900 mb-1 flex items-center gap-1">
+                  <Layers className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{isEn ? "Recommended 4-Paragraph Structure:" : "Gợi ý cấu trúc 4 đoạn cơ bản dễ viết nhất:"}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-4">
+                  <div className="p-2 rounded-xl bg-white border border-emerald-100">
+                    <span className="font-bold text-emerald-800">{isEn ? "1. Introduction:" : "1. Mở bài (1-2 câu):"}</span>
+                    <p className="text-slate-600 text-[11px] mt-0.5">{isEn ? "Paraphrase the prompt + state your opinion." : "Viết lại đề bài bằng từ ngữ của bạn + nêu ý kiến cá nhân."}</p>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-emerald-100">
+                    <span className="font-bold text-emerald-800">{isEn ? "2. Body 1:" : "2. Thân bài 1 (4-5 câu):"}</span>
+                    <p className="text-slate-600 text-[11px] mt-0.5">{isEn ? "Present idea 1 + explanation + specific example." : "Nêu lý do 1 ➔ giải thích vì sao ➔ đưa ví dụ thực tế."}</p>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-emerald-100">
+                    <span className="font-bold text-emerald-800">{isEn ? "3. Body 2:" : "3. Thân bài 2 (4-5 câu):"}</span>
+                    <p className="text-slate-600 text-[11px] mt-0.5">{isEn ? "Present idea 2 + explanation + specific example." : "Nêu lý do 2 ➔ giải thích vì sao ➔ đưa ví dụ thực tế."}</p>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-emerald-100">
+                    <span className="font-bold text-emerald-800">{isEn ? "4. Conclusion:" : "4. Kết bài (1-2 câu):"}</span>
+                    <p className="text-slate-600 text-[11px] mt-0.5">{isEn ? "Summarise main points & restate opinion." : "Tóm tắt ngắn gọn các ý chính và chốt lại quan điểm."}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vocabulary Highlights with Vietnamese Meanings */}
+              {task.vocabularyHighlights && task.vocabularyHighlights.length > 0 && (
+                <div>
+                  <div className="font-bold text-emerald-900 mb-1 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{isEn ? "Key Vocabulary with Vietnamese Meanings:" : "Từ vựng quan trọng kèm dịch nghĩa:"}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pl-4">
+                    {task.vocabularyHighlights.map((v, i) => (
+                      <span key={i} className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-xs text-slate-800 shadow-2xs">
+                        <span className="font-bold text-emerald-800">{v.word}</span>
+                        <span className="text-slate-400">:</span>
+                        <span className="text-slate-600">{v.meaning}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick actions for beginners */}
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-emerald-200/50">
+                {task.outline && (
+                  <button
+                    type="button"
+                    onClick={() => setShowOutline(true)}
+                    className="px-3 py-1.5 rounded-xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-100 font-bold text-xs transition-colors cursor-pointer"
+                  >
+                    📖 {isEn ? "View Suggested Outline" : "Xem Dàn Ý Gợi Ý"}
+                  </button>
+                )}
+                {task.modelAnswer && (
+                  <button
+                    type="button"
+                    onClick={() => setShowModelAnswer(true)}
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-2xs cursor-pointer"
+                  >
+                    💎 {isEn ? "View Model Essay" : "Xem Bài Mẫu Tham Khảo"}
+                  </button>
+                )}
               </div>
             </div>
           )}

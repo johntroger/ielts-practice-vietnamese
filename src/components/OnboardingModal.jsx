@@ -21,6 +21,18 @@ import { useTranslation } from '../i18n';
 
 const TARGET_BANDS = [
   {
+    band: '5.0',
+    title: 'Starter / Foundation',
+    titleEn: 'Starter / Foundation',
+    desc: 'Lấy lại căn bản, luyện câu đơn - câu ghép chuẩn, phản xạ từ vựng qua game 90s.',
+    descEn: 'Build basic foundation, master simple and compound sentences, build reflexes with 90s games.',
+    color: 'from-emerald-500 to-teal-500',
+    border: 'border-emerald-200',
+    bg: 'bg-emerald-50/60',
+    badge: 'Khởi đầu: Cho người mới / Mất gốc',
+    badgeEn: 'Starter: Beginners / Foundation'
+  },
+  {
     band: '5.5',
     title: 'Modest / Foundation',
     desc: 'Củng cố ngữ pháp căn bản, tránh bẫy từ vựng, diễn đạt câu đơn - ghép rõ ràng.',

@@ -402,6 +402,19 @@ export default function Navbar({
                 <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span className="font-extrabold">{isEn ? 'Micro-Drills' : 'Luyện Phản Xạ'}</span>
               </button>
+
+              {/* Hướng Dẫn Người Mới (Beginner Guide & Zero-Overwhelm Roadmap) */}
+              <button
+                type="button"
+                onClick={() => openModal('beginnerGuide')}
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50/90 hover:bg-emerald-100 text-emerald-800 hover:text-emerald-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                title={isEn ? "Beginner Guide & Zero-Overwhelm Roadmap" : "Hướng Dẫn Cho Người Mới Bắt Đầu (Lộ trình không áp lực)"}
+                aria-label={isEn ? "Open Beginner Guide" : "Mở Hướng Dẫn Người Mới"}
+              >
+                <span className="text-emerald-600 text-sm leading-none shrink-0">🌱</span>
+                <span className="hidden sm:inline font-extrabold">{isEn ? 'Beginner Guide' : 'Người Mới'}</span>
+                <span className="sm:hidden font-extrabold text-[11px]">{isEn ? 'Guide' : 'Mới'}</span>
+              </button>
             </div>
           </div>
 
@@ -924,6 +937,31 @@ export default function Navbar({
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* 0. Beginner Card in Mobile Drawer */}
+              <button
+                onClick={() => {
+                  openModal('beginnerGuide');
+                  setIsMobileDrawerOpen(false);
+                }}
+                className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-xs shadow-2xs active:scale-95 transition-all min-h-[44px] cursor-pointer text-left group"
+              >
+                <div className="flex items-center space-x-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <span className="text-base leading-none">🌱</span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+                      <span>{isEn ? 'New to IELTS? Start Here' : 'Chưa Có Nền Tảng? Bắt Đầu Từ Đây'}</span>
+                      <span className="px-1.5 py-0.2 rounded-full bg-emerald-200 text-emerald-900 text-[9px] font-black">{isEn ? 'EASY' : 'DỄ'}</span>
+                    </div>
+                    <div className="text-[10px] text-emerald-800 font-normal truncate">
+                      {isEn ? 'Zero-overwhelm 4-step roadmap & mini-games' : 'Lộ trình 4 bước không áp lực, vừa sức'}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              </button>
 
               {/* 1. Hero CTA & Goal Target in Mobile Drawer */}
               <div className="space-y-2">

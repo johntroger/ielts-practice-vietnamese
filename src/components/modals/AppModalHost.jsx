@@ -43,6 +43,7 @@ const ContactModal = React.lazy(() => import('../ContactModal'));
 const KeyboardShortcutsModal = React.lazy(() => import('../KeyboardShortcutsModal'));
 const OnboardingModal = React.lazy(() => import('../OnboardingModal'));
 const AIEvaluationProgressModal = React.lazy(() => import('../AIEvaluationProgressModal'));
+const BeginnerGuideModal = React.lazy(() => import('../BeginnerGuideModal'));
 
 /**
  * AppModalHost - Centralized Modal Container for IELTS Web Platform
@@ -598,6 +599,18 @@ export default function AppModalHost({
           if (newBand) setTargetBand(newBand);
           if (newKey) setApiKey(newKey);
         }}
+      />
+
+      {/* 3.9 Beginner Foundation Hub & Zero-Overwhelm Guide */}
+      <BeginnerGuideModal
+        isOpen={Boolean(modals.beginnerGuide)}
+        onClose={() => closeModal('beginnerGuide')}
+        targetBand={targetBand}
+        onApplyTargetBand={(band) => setTargetBand(band)}
+        onOpenArena={() => openModal('atlasArena')}
+        onOpenDrills={() => openModal('drills')}
+        onOpenDiagnostic={() => openModal('diagnostic')}
+        onOpenTheory={() => openModal('theory')}
       />
     </React.Suspense>
   );
