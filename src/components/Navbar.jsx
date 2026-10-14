@@ -298,6 +298,22 @@ export default function Navbar({
                       </button>
                     );
                   })}
+                  <div className="pt-1 mt-1 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openModal('beginnerGuide');
+                        setMobileSkillMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2 p-1.5 rounded-xl text-xs font-bold text-emerald-900 bg-emerald-50/80 hover:bg-emerald-100 transition-colors text-left border border-emerald-200/60 cursor-pointer"
+                    >
+                      <span className="text-sm shrink-0">🌱</span>
+                      <div className="min-w-0">
+                        <div className="font-extrabold text-[11px] truncate">{isEn ? 'Beginner Guide (Start Here)' : 'Hướng Dẫn Người Mới (Bắt Đầu)'}</div>
+                        <div className="text-[10px] text-emerald-700 font-normal truncate">{isEn ? 'Zero-overwhelm 4-step path' : 'Lộ trình 4 bước không áp lực'}</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -372,6 +388,22 @@ export default function Navbar({
                       </button>
                     );
                   })}
+                  <div className="pt-1.5 mt-1 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openModal('beginnerGuide');
+                        setIsSkillMenuOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl text-xs font-bold text-emerald-900 bg-emerald-50/80 hover:bg-emerald-100 transition-colors text-left border border-emerald-200/60 cursor-pointer"
+                    >
+                      <span className="text-base shrink-0">🌱</span>
+                      <div className="min-w-0">
+                        <div className="font-extrabold truncate">{isEn ? 'Beginner Guide (Start Here)' : 'Hướng Dẫn Cho Người Mới'}</div>
+                        <div className="text-[10px] text-emerald-700 font-normal truncate">{isEn ? 'Zero-overwhelm 4-step path' : 'Lộ trình 4 bước không áp lực'}</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -401,19 +433,6 @@ export default function Navbar({
               >
                 <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span className="font-extrabold">{isEn ? 'Micro-Drills' : 'Luyện Phản Xạ'}</span>
-              </button>
-
-              {/* Hướng Dẫn Người Mới (Beginner Guide & Zero-Overwhelm Roadmap) */}
-              <button
-                type="button"
-                onClick={() => openModal('beginnerGuide')}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50/90 hover:bg-emerald-100 text-emerald-800 hover:text-emerald-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-                title={isEn ? "Beginner Guide & Zero-Overwhelm Roadmap" : "Hướng Dẫn Cho Người Mới Bắt Đầu (Lộ trình không áp lực)"}
-                aria-label={isEn ? "Open Beginner Guide" : "Mở Hướng Dẫn Người Mới"}
-              >
-                <span className="text-emerald-600 text-sm leading-none shrink-0">🌱</span>
-                <span className="hidden sm:inline font-extrabold">{isEn ? 'Beginner Guide' : 'Người Mới'}</span>
-                <span className="sm:hidden font-extrabold text-[11px]">{isEn ? 'Guide' : 'Mới'}</span>
               </button>
             </div>
           </div>
@@ -469,6 +488,39 @@ export default function Navbar({
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       {isEn ? 'Tests & Practice Modes' : 'Đề Thi & Chế Độ Luyện'}
                     </div>
+                    {/* 60m Mock Test in Practice Menu */}
+                    <button
+                      onClick={() => { doOpenMockTest(); setIsPracticeMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100 text-left text-xs font-bold text-red-950 transition-colors cursor-pointer border border-red-200/70"
+                    >
+                      <div className="p-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-2xs">
+                        <ShieldAlert className="w-4 h-4 text-amber-300" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span>{isEn ? '60-Min Mock Exam' : 'Thi Thử 60 Phút (Full Room)'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-red-600 text-[9px] text-white font-black">{isEn ? 'EXAM' : 'THI THỬ'}</span>
+                        </div>
+                        <div className="text-[10px] text-red-700/80 font-normal">{isEn ? 'Official CDI timed exam simulation' : 'Mô phỏng áp lực phòng thi máy chuẩn IDP/BC'}</div>
+                      </div>
+                    </button>
+
+                    {/* Beginner Foundation Hub */}
+                    <button
+                      onClick={() => { openModal('beginnerGuide'); setIsPracticeMenuOpen(false); }}
+                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/80 text-left text-xs font-bold text-emerald-950 transition-colors cursor-pointer border border-emerald-200/60"
+                    >
+                      <div className="p-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs">
+                        <span className="text-sm leading-none">🌱</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span>{isEn ? 'Beginner Foundation Hub' : 'Hướng Dẫn Cho Người Mới'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-emerald-600 text-[9px] text-white font-black">{isEn ? 'START' : 'KHỞI ĐỘNG'}</span>
+                        </div>
+                        <div className="text-[10px] text-emerald-800 font-normal">{isEn ? 'Zero-overwhelm 4-step path & jargon decoder' : 'Lộ trình 4 bước không áp lực cho người mất gốc'}</div>
+                      </div>
+                    </button>
                     <button
                       onClick={() => { doOpenDiagnostic(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/80 text-left text-xs font-bold text-indigo-900 transition-colors cursor-pointer border border-indigo-200/60"
