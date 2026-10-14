@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import StarRatingWidget from './common/StarRatingWidget';
 import { 
   ChevronDown, 
@@ -51,6 +52,54 @@ export default function WritingSubHeaderToolbar({
 }) {
   const { t, isEn } = useTranslation();
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+  const toolsButtonRef = useRef(null);
+  const [dropdownCoords, setDropdownCoords] = useState(null);
+
+  const renderPortal = (children) => {
+    if (typeof document !== 'undefined' && document.body) {
+      return createPortal(children, document.body);
+    }
+    return children;
+  };
+
+  useEffect(() => {
+    if (!isToolsDropdownOpen) {
+      setDropdownCoords(null);
+      return;
+    }
+    const calcCoords = () => {
+      if (!toolsButtonRef.current) return;
+      const rect = toolsButtonRef.current.getBoundingClientRect();
+      const desiredWidth = Math.min(320, window.innerWidth - 24);
+      
+      // Default preferred alignment: right-aligned with the button
+      let left = rect.right - desiredWidth;
+      
+      // Smart clamp: prevent spilling off the left edge (at least 12px padding)
+      if (left < 12) {
+        left = 12;
+      }
+      // Smart clamp: prevent spilling off the right edge (at least 12px padding)
+      if (left + desiredWidth > window.innerWidth - 12) {
+        left = window.innerWidth - 12 - desiredWidth;
+      }
+
+      setDropdownCoords({
+        top: rect.bottom + 6,
+        left,
+        width: desiredWidth,
+        maxHeight: Math.max(220, window.innerHeight - rect.bottom - 16)
+      });
+    };
+
+    calcCoords();
+    window.addEventListener('resize', calcCoords);
+    window.addEventListener('scroll', calcCoords, true);
+    return () => {
+      window.removeEventListener('resize', calcCoords);
+      window.removeEventListener('scroll', calcCoords, true);
+    };
+  }, [isToolsDropdownOpen]);
 
   // Daily Missions Progress Tracker
   const todayStr = new Date().toISOString().slice(0, 10);
@@ -164,7 +213,7 @@ export default function WritingSubHeaderToolbar({
           </div>
 
           {/* Unified "Tiện Ích & Cài Đặt" Menu Dropdown */}
-          <div className="relative">
+          <div className="relative" ref={toolsButtonRef}>
             <button
               onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
               className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
@@ -189,13 +238,25 @@ export default function WritingSubHeaderToolbar({
             </button>
 
             {/* Dropdown Popover */}
-            {isToolsDropdownOpen && (
+            {isToolsDropdownOpen && renderPortal(
               <>
                 <div 
-                  className="fixed inset-0 z-40" 
+                  className="fixed inset-0 z-50 bg-transparent cursor-pointer" 
                   onClick={() => setIsToolsDropdownOpen(false)} 
                 />
-                <div className="absolute right-0 top-full mt-1.5 w-72 sm:w-80 max-w-[calc(100vw-24px)] max-h-[calc(100dvh-160px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left">
+                <div 
+                  style={dropdownCoords ? {
+                    position: 'fixed',
+                    top: `${dropdownCoords.top}px`,
+                    left: `${dropdownCoords.left}px`,
+                    width: `${dropdownCoords.width}px`,
+                    maxHeight: `${dropdownCoords.maxHeight}px`,
+                    zIndex: 51
+                  } : undefined}
+                  className={`bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-51 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left overflow-y-auto overscroll-contain ${
+                    !dropdownCoords ? 'fixed top-24 left-3 right-3 max-h-[calc(100dvh-120px)]' : ''
+                  }`}
+                >
                   
                   {/* SECTION 1: Cấu hình thi & Hiển thị */}
                   <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
