@@ -497,7 +497,7 @@ export default function Navbar({
                 </button>
 
                 {isPracticeMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                  <div className="absolute right-0 mt-2 w-[420px] sm:w-[460px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       {isEn ? 'Tests & Practice Modes' : 'Đề Thi & Chế Độ Luyện'}
                     </div>
@@ -506,15 +506,15 @@ export default function Navbar({
                       onClick={() => { doOpenMockTest(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 hover:from-red-100 hover:to-rose-100 text-left text-xs font-bold text-red-950 transition-colors cursor-pointer border border-red-200/70"
                     >
-                      <div className="p-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-2xs">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-2xs shrink-0">
                         <ShieldAlert className="w-4 h-4 text-amber-300" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span>{isEn ? '60-Min Mock Exam' : 'Thi Thử 60 Phút (Full Room)'}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-red-600 text-[9px] text-white font-black">{isEn ? 'EXAM' : 'THI THỬ'}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                          <span className="truncate">{isEn ? '60-Min Mock Exam' : 'Thi Thử 60 Phút (Full Room)'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-red-600 text-[9px] text-white font-black shrink-0">{isEn ? 'EXAM' : 'THI THỬ'}</span>
                         </div>
-                        <div className="text-[10px] text-red-700/80 font-normal">{isEn ? 'Official CDI timed exam simulation' : 'Mô phỏng áp lực phòng thi máy chuẩn IDP/BC'}</div>
+                        <div className="text-[10px] text-red-700/80 font-normal truncate whitespace-nowrap">{isEn ? 'Official CDI timed exam simulation' : 'Mô phỏng áp lực phòng thi máy chuẩn IDP/BC'}</div>
                       </div>
                     </button>
 
@@ -523,123 +523,123 @@ export default function Navbar({
                       onClick={() => { openModal('beginnerGuide'); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/80 text-left text-xs font-bold text-emerald-950 transition-colors cursor-pointer border border-emerald-200/60"
                     >
-                      <div className="p-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs">
+                      <div className="p-1.5 rounded-lg bg-emerald-600 text-white shadow-2xs shrink-0">
                         <span className="text-sm leading-none">🌱</span>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span>{isEn ? 'Beginner Foundation Hub' : 'Hướng Dẫn Cho Người Mới'}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-emerald-600 text-[9px] text-white font-black">{isEn ? 'START' : 'KHỞI ĐỘNG'}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                          <span className="truncate">{isEn ? 'Beginner Foundation Hub' : 'Hướng Dẫn Cho Người Mới'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-emerald-600 text-[9px] text-white font-black shrink-0">{isEn ? 'START' : 'KHỞI ĐỘNG'}</span>
                         </div>
-                        <div className="text-[10px] text-emerald-800 font-normal">{isEn ? 'Zero-overwhelm 4-step path & jargon decoder' : 'Lộ trình 4 bước không áp lực cho người mất gốc'}</div>
+                        <div className="text-[10px] text-emerald-800 font-normal truncate whitespace-nowrap">{isEn ? 'Zero-overwhelm 4-step path & jargon decoder' : 'Lộ trình 4 bước không áp lực cho người mất gốc'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { doOpenDiagnostic(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/80 text-left text-xs font-bold text-indigo-900 transition-colors cursor-pointer border border-indigo-200/60"
                     >
-                      <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs">
+                      <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs shrink-0">
                         <Award className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span>{isEn ? 'Band Diagnostic & Roadmap' : 'Định Vị Band & Lộ Trình'}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-[9px] text-white font-black">{isEn ? '15m' : '15p'}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                          <span className="truncate">{isEn ? 'Band Diagnostic & Roadmap' : 'Định Vị Band & Lộ Trình'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-indigo-600 text-[9px] text-white font-black shrink-0">{isEn ? '15m' : '15p'}</span>
                         </div>
-                        <div className="text-[10px] text-indigo-700/80 font-normal">{isEn ? '16-question placement test & 30-day plan' : 'Test 16 câu định vị Band & tạo kế hoạch 30 ngày'}</div>
+                        <div className="text-[10px] text-indigo-700/80 font-normal truncate whitespace-nowrap">{isEn ? '16-question placement test & 30-day plan' : 'Test 16 câu định vị Band & tạo kế hoạch 30 ngày'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { openModal('adaptiveSprint'); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-amber-50/70 hover:bg-amber-100/80 text-left text-xs font-bold text-amber-900 transition-colors cursor-pointer border border-amber-200/60"
                     >
-                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-500 text-white shadow-2xs">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-amber-500 to-rose-500 text-white shadow-2xs shrink-0">
                         <Zap className="w-4 h-4 fill-current" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span>{isEn ? '30-Min Sprint Coach' : 'Huấn Luyện Viên 30P'}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-black">{isEn ? 'NEW' : 'MỚI'}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                          <span className="truncate">{isEn ? '30-Min Sprint Coach' : 'Huấn Luyện Viên 30P'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-black shrink-0">{isEn ? 'NEW' : 'MỚI'}</span>
                         </div>
-                        <div className="text-[10px] text-amber-700/80 font-normal">{isEn ? 'Adaptive 3-stage sprint targeting weak spots' : 'Sprint 3 chặng nước rút cá nhân hóa theo điểm yếu'}</div>
+                        <div className="text-[10px] text-amber-700/80 font-normal truncate whitespace-nowrap">{isEn ? 'Adaptive 3-stage sprint targeting weak spots' : 'Sprint 3 chặng nước rút cá nhân hóa theo điểm yếu'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { openModal('atlasArena'); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl bg-purple-50/70 hover:bg-purple-100/80 text-left text-xs font-bold text-purple-900 transition-colors cursor-pointer border border-purple-200/60"
                     >
-                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-2xs">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-2xs shrink-0">
                         <Swords className="w-4 h-4 fill-current" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span>{isEn ? 'Atlas English Arena' : 'Đấu Trường Atlas'}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-purple-600 text-[9px] text-white font-black">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                          <span className="truncate">{isEn ? 'Atlas English Arena' : 'Đấu Trường Atlas'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-purple-600 text-[9px] text-white font-black shrink-0">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
                         </div>
-                        <div className="text-[10px] text-purple-700/80 font-normal">{isEn ? '90s fast-paced micro-sprint & relative leagues' : 'Đấu trường phản xạ 90s nhịp độ cao & BXH tuần'}</div>
+                        <div className="text-[10px] text-purple-700/80 font-normal truncate whitespace-nowrap">{isEn ? '90s fast-paced micro-sprint & relative leagues' : 'Đấu trường phản xạ 90s nhịp độ cao & BXH tuần'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { doOpenLibrary(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
-                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700 shrink-0">
                         <BookOpen className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold">{isEn ? 'Test Library' : 'Thư Viện Đề Thi'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Writing, Reading, Listening Cambridge tests' : 'Đề Writing, Reading, Listening chuẩn Cambridge'}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold truncate whitespace-nowrap">{isEn ? 'Test Library' : 'Thư Viện Đề Thi'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Writing, Reading, Listening Cambridge tests' : 'Đề Writing, Reading, Listening chuẩn Cambridge'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { doOpenGenerator(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
-                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700">
+                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700 shrink-0">
                         <Sparkles className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold">{isEn ? 'AI Prompt Generator' : 'Sinh Đề Mới Bằng AI'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Create new prompts following real exam trends' : 'Tạo đề thi mới bám sát xu hướng đề thật'}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold truncate whitespace-nowrap">{isEn ? 'AI Prompt Generator' : 'Sinh Đề Mới Bằng AI'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Create new prompts following real exam trends' : 'Tạo đề thi mới bám sát xu hướng đề thật'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { doOpenDrills(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
-                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700 shrink-0">
                         <Puzzle className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Vi Mô)'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Sentence structures, dictation, scanning & idea linking' : 'Luyện câu đơn, ghép ý, dictation, scanning'}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold truncate whitespace-nowrap">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Vi Mô)'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Sentence structures, dictation, scanning & idea linking' : 'Luyện câu đơn, ghép ý, dictation, scanning'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { doOpenIngest(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
-                      <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700">
+                      <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700 shrink-0">
                         <FileUp className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold">{isEn ? 'Import Prompts & Raw Samples' : 'Nạp Đề & Bài Mẫu Thô'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Import external prompts or custom sample essays' : 'Nhập văn bản đề bài hoặc bài mẫu bên ngoài'}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold truncate whitespace-nowrap">{isEn ? 'Import Prompts & Raw Samples' : 'Nạp Đề & Bài Mẫu Thô'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Import external prompts or custom sample essays' : 'Nhập văn bản đề bài hoặc bài mẫu bên ngoài'}</div>
                       </div>
                     </button>
                     <button
                       onClick={() => { doOpenTheory(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
                     >
-                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 shrink-0">
                         <BookMarked className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="flex items-center space-x-1.5">
-                          <span className="font-bold">{isEn ? 'Strategy Handbook' : 'Cẩm Nang Chiến Thuật'}</span>
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-sky-100 text-sky-700">{isEn ? 'Web Edition' : 'Bản Web'}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                          <span className="font-bold truncate">{isEn ? 'Strategy Handbook' : 'Cẩm Nang Chiến Thuật'}</span>
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-sky-100 text-sky-700 shrink-0">{isEn ? 'Web Edition' : 'Bản Web'}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? '4-skill strategies & interactive reading' : 'Chiến lược 4 kỹ năng & đọc trực tuyến'}</div>
+                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? '4-skill strategies & interactive reading' : 'Chiến lược 4 kỹ năng & đọc trực tuyến'}</div>
                       </div>
                     </button>
                   </div>
@@ -1142,42 +1142,42 @@ export default function Navbar({
                     onClick={() => { doOpenDiagnostic(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-left text-xs font-bold text-indigo-900 border border-indigo-200 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <Award className="w-4 h-4 text-indigo-600" />
-                      <span>{isEn ? 'Band Diagnostic & 30-Day Plan' : 'Định Vị Band & Lộ Trình 30 Ngày'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Award className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Band Diagnostic & 30-Day Plan' : 'Định Vị Band & Lộ Trình 30 Ngày'}</span>
                     </div>
-                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded">{isEn ? '15 Min' : '15 Phút'}</span>
+                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded shrink-0">{isEn ? '15 Min' : '15 Phút'}</span>
                   </button>
 
                   <button
                     onClick={() => { openModal('adaptiveSprint'); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <Zap className="w-4 h-4 text-amber-600 fill-current" />
-                      <span>{isEn ? '30-Min Coach (Adaptive Sprint)' : 'Huấn Luyện Viên 30P (Adaptive Sprint)'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Zap className="w-4 h-4 text-amber-600 fill-current shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? '30-Min Coach (Adaptive Sprint)' : 'Huấn Luyện Viên 30P (Adaptive Sprint)'}</span>
                     </div>
-                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded">{isEn ? 'NEW' : 'MỚI'}</span>
+                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'NEW' : 'MỚI'}</span>
                   </button>
 
                   <button
                     onClick={() => { openModal('atlasArena'); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-left text-xs font-bold text-purple-900 border border-purple-200 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <Swords className="w-4 h-4 text-purple-600" />
-                      <span>{isEn ? 'Atlas English Arena (180s)' : 'Đấu Trường Anh Ngữ Atlas (180s)'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Swords className="w-4 h-4 text-purple-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Atlas English Arena (180s)' : 'Đấu Trường Anh Ngữ Atlas (180s)'}</span>
                     </div>
-                    <span className="text-[10px] text-purple-700 font-bold bg-purple-200 px-1.5 py-0.5 rounded">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
+                    <span className="text-[10px] text-purple-700 font-bold bg-purple-200 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
                   </button>
 
                   <button
                     onClick={() => { doOpenLibrary(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <BookOpen className="w-4 h-4 text-blue-600" />
-                      <span>{isEn ? 'Cambridge Standard Test Library' : 'Thư Viện Đề Thi Chuẩn Cambridge'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Cambridge Standard Test Library' : 'Thư Viện Đề Thi Chuẩn Cambridge'}</span>
                     </div>
                   </button>
 
@@ -1185,20 +1185,20 @@ export default function Navbar({
                     onClick={() => { doOpenGenerator(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <Sparkles className="w-4 h-4 text-red-600" />
-                      <span>{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
                     </div>
-                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded">AI</span>
+                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded shrink-0">AI</span>
                   </button>
 
                   <button
                     onClick={() => { doOpenDrills(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <Puzzle className="w-4 h-4 text-amber-600" />
-                      <span>{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Kỹ Năng Vi Mô)'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Puzzle className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Kỹ Năng Vi Mô)'}</span>
                     </div>
                   </button>
 
@@ -1206,20 +1206,20 @@ export default function Navbar({
                     onClick={() => { doOpenTheory(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <BookMarked className="w-4 h-4 text-amber-600" />
-                      <span>{isEn ? 'Theory & Strategy Handbook' : 'Cẩm Nang Lý Thuyết & Chiến Thuật'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <BookMarked className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Theory & Strategy Handbook' : 'Cẩm Nang Lý Thuyết & Chiến Thuật'}</span>
                     </div>
-                    <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded">{isEn ? 'Online Web' : 'Bản Web Online'}</span>
+                    <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'Online Web' : 'Bản Web Online'}</span>
                   </button>
 
                   <button
                     onClick={() => { doOpenIngest(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <FileUp className="w-4 h-4 text-purple-600" />
-                      <span>{isEn ? 'Import Prompts & Samples' : 'Nạp Đề & Bài Mẫu Thô'}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <FileUp className="w-4 h-4 text-purple-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Import Prompts & Samples' : 'Nạp Đề & Bài Mẫu Thô'}</span>
                     </div>
                   </button>
                 </div>
