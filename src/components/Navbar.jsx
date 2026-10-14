@@ -210,7 +210,7 @@ export default function Navbar({
         <div className="flex items-center justify-between h-14 sm:h-16 gap-1 xl:gap-1.5 2xl:gap-2">
           
           {/* 1. LEFT ZONE: Brand & Skills Switcher */}
-          <div className="flex items-center space-x-2 sm:space-x-3.5">
+          <div className="flex items-center space-x-1.5 sm:space-x-3.5 min-w-0">
             {/* Logo with QR Code Popup Trigger */}
             <button
               type="button"
@@ -378,7 +378,7 @@ export default function Navbar({
 
             {/* Direct Quick Access: Atlas Arena & Luyện Phản Xạ */}
             <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-              {/* Atlas Arena */}
+              {/* Atlas Arena (Compact 'Arena' label on mobile, full on tablet/desktop) */}
               <button
                 type="button"
                 onClick={() => openModal('atlasArena')}
@@ -387,14 +387,15 @@ export default function Navbar({
                 aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
               >
                 <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
-                <span className="font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
+                <span className="hidden sm:inline font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
+                <span className="sm:hidden font-extrabold text-[11px]">{isEn ? 'Arena' : 'Arena'}</span>
               </button>
 
-              {/* Luyện Phản Xạ (Micro-Drills) */}
+              {/* Luyện Phản Xạ (Micro-Drills) - Shown on tablet & desktop (>= 768px), accessible in mobile drawer */}
               <button
                 type="button"
                 onClick={doOpenDrills}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
                 title={isEn ? "Targeted Reflex Studio (Deliberate sentence, dictation & scanning practice)" : "Phòng Luyện Phản Xạ (Luyện câu đơn, ghép ý, dictation & scanning)"}
                 aria-label={isEn ? "Open Targeted Reflex Studio" : "Mở Phòng Luyện Phản Xạ"}
               >
@@ -818,10 +819,10 @@ export default function Navbar({
               )}
             </button>
 
-            {/* API Key Indicator */}
+            {/* API Key Indicator - Visible on tablet/desktop (sm:), managed via drawer on mobile */}
             <button
               onClick={doOpenSettings}
-              className={`flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px] ${
+              className={`hidden sm:flex items-center justify-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px] ${
                 apiKey 
                   ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200' 
                   : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300 animate-pulse'
@@ -859,13 +860,16 @@ export default function Navbar({
               </span>
             </button>
 
-            {/* Mobile & Tablet Hamburger Menu Button (44px touch target, active up to 1280px) */}
+            {/* Mobile & Tablet Hamburger Menu Button (Compact 38px on phone, 44px touch target on tablet, active up to 1280px) */}
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-              className="xl:hidden flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer"
+              className="xl:hidden relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer active:scale-95"
               aria-label={isEn ? "Open full menu" : "Mở menu đầy đủ"}
             >
               {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5" />}
+              {!apiKey && (
+                <span className="sm:hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-500 border-2 border-white animate-pulse" />
+              )}
             </button>
 
           </div>

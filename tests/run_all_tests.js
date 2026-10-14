@@ -131,7 +131,8 @@ const testSuites = [
   { name: 'Step 122: Arena Multi-Tier Difficulty, 8 Topics & XP Scaling Engine', file: 'tests/test_step122_difficulty_xp_scaling_and_schema.js' },
   { name: 'Step 123: Arena Question Viewport Overflow & Scroll Clipping Fix', file: 'tests/test_step123_arena_question_viewport_overflow_fix.js' },
   { name: 'Step 124: Arena XP Persistence, Local-First Merge & Progression Accumulation', file: 'tests/test_step124_arena_xp_persistence_and_accumulation.js' },
-  { name: 'Step 125: Arena No Soundcheck on Start & Hidden Listening Transcript', file: 'tests/test_step125_arena_no_soundcheck_and_hidden_listening_transcript.js' }
+  { name: 'Step 125: Arena No Soundcheck on Start & Hidden Listening Transcript', file: 'tests/test_step125_arena_no_soundcheck_and_hidden_listening_transcript.js' },
+  { name: 'Step 126: Mobile Top Navbar Responsive Layout & Zero Truncation', file: 'tests/test_step126_mobile_navbar_responsive_layout.js' }
 ];
 
 console.log('===============================================================');
