@@ -3,6 +3,7 @@ import { Volume2, CheckCircle2, XCircle, ArrowRight, Check, Sparkles } from 'luc
 import { useTranslation } from '../../i18n';
 import ArenaMediaViewer from './ArenaMediaViewer.jsx';
 import { ARENA_DIFFICULTY_CONFIG, ARENA_IELTS_TOPICS } from '../../utils/arenaStorageKeys.js';
+import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.js';
 
 /**
  * src/components/arena/ArenaQuestionCard.jsx
@@ -30,6 +31,8 @@ export default function ArenaQuestionCard({
 
   if (!question) return null;
 
+  const localizedQ = getLocalizedArenaQuestion(question, isEn);
+  const promptText = localizedQ?.prompt || question.prompt;
   const handleCheck = onCheckAnswer || onSubmitAnswer;
 
   const categoryColor = {
@@ -37,11 +40,12 @@ export default function ArenaQuestionCard({
     reading: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
     listening: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
     visual_data: 'bg-purple-500/10 text-purple-400 border-purple-500/30'
-  }[question.skillCategory] || 'bg-slate-500/10 text-slate-400 border-slate-500/30';
+  }[localizedQ.skillCategory] || 'bg-slate-500/10 text-slate-400 border-slate-500/30';
 
-  const diffConfig = ARENA_DIFFICULTY_CONFIG[question.difficulty] || ARENA_DIFFICULTY_CONFIG.medium;
-  const topicObj = ARENA_IELTS_TOPICS.find(tp => tp.id === question.topic);
+  const diffConfig = ARENA_DIFFICULTY_CONFIG[localizedQ.difficulty] || ARENA_DIFFICULTY_CONFIG.medium;
+  const topicObj = ARENA_IELTS_TOPICS.find(tp => tp.id === localizedQ.topic);
   const isListening = question.skillCategory === 'listening' || question.type === 'listening_trap' || Boolean(question.audioText);
+  const activeContext = localizedQ.context || question.context;
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-3 py-1">
@@ -49,7 +53,7 @@ export default function ArenaQuestionCard({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className={`text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md border ${categoryColor}`}>
-            {question.skillCategory?.toUpperCase() || 'PRACTICE'}
+            {localizedQ.skillCategory?.toUpperCase() || 'PRACTICE'}
           </span>
 
           {diffConfig && (
@@ -73,27 +77,27 @@ export default function ArenaQuestionCard({
           )}
         </div>
 
-        {question.audioText && (
+        {localizedQ.audioText && (
           <button
             type="button"
-            onClick={() => onPlayAudio?.(question.audioText)}
+            onClick={() => onPlayAudio?.(localizedQ.audioText)}
             className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
           >
             <Volume2 className="w-3.5 h-3.5" />
-            <span>{t('arena.playAudio') || 'Play Audio (Space)'}</span>
+            <span>{t('arena.playAudio') || (isEn ? 'Play Audio (Space)' : 'Nghe Audio (Phím cách)')}</span>
           </button>
         )}
       </div>
 
       {/* Main Prompt */}
       <h2 className="text-base sm:text-lg md:text-xl font-bold text-slate-100 leading-snug">
-        {question.prompt}
+        {promptText || question.prompt}
       </h2>
 
       {/* Context or Reading Snippet: Hidden for Listening questions while answering to prevent transcript spoiler */}
       {question.context && !isListening && (
         <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-300 font-serif leading-relaxed max-h-36 overflow-y-auto">
-          {question.context}
+          {activeContext}
         </div>
       )}
 
@@ -185,7 +189,7 @@ export default function ArenaQuestionCard({
           <div className="font-bold flex items-center justify-between gap-1.5 mb-1">
             <div className="flex items-center gap-1.5">
               {isCorrect ? <Check className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-              <span>{isCorrect ? t('arena.correct') : t('arena.incorrect')}</span>
+              <span>{isCorrect ? (t('arena.correct') || (isEn ? 'Correct!' : 'Chính xác!')) : (t('arena.incorrect') || (isEn ? 'Incorrect' : 'Chưa chính xác'))}</span>
             </div>
             {isCorrect && question.isRevengeQuestion && (
               <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-black border border-amber-500/40 animate-pulse">
@@ -198,11 +202,11 @@ export default function ArenaQuestionCard({
           {isListening && (question.context || question.audioText) && (
             <div className="my-2 p-2.5 rounded-lg bg-slate-900/60 border border-slate-700/60 text-xs text-slate-200 font-sans leading-relaxed">
               <span className="font-semibold text-amber-300 block mb-1">🎧 {isEn ? 'Audio Transcript:' : 'Lời thoại đoạn nghe:'}</span>
-              <p className="italic text-slate-300">"{question.context || question.audioText}"</p>
+              <p className="italic text-slate-300">"{activeContext || localizedQ.audioText || question.audioText}"</p>
             </div>
           )}
 
-          <p className="text-slate-300 text-xs mt-1">{question.explanation}</p>
+          <p className="text-slate-300 text-xs mt-1">{localizedQ.explanation}</p>
         </div>
       )}
 
@@ -215,7 +219,7 @@ export default function ArenaQuestionCard({
             onClick={() => handleCheck?.()}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all select-none"
           >
-            <span>{t('arena.checkAnswer') || 'Check Answer'} (Enter)</span>
+            <span>{t('arena.checkAnswer') || (isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án')} (Enter)</span>
           </button>
         ) : (
           <button
@@ -223,7 +227,7 @@ export default function ArenaQuestionCard({
             onClick={() => onNextQuestion?.()}
             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all select-none"
           >
-            <span>{t('arena.nextQuestion') || 'Câu Tiếp Theo'} (Enter)</span>
+            <span>{t('arena.nextQuestion') || (isEn ? 'Next Question' : 'Câu Tiếp Theo')} (Enter)</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         )}

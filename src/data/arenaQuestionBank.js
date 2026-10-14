@@ -12,6 +12,7 @@
 
 import { ARENA_BATCH_1_QUESTIONS } from './arenaQuestionsBatch1.js';
 import { ARENA_BATCH_2_QUESTIONS } from './arenaQuestionsBatch2.js';
+import { ARENA_QUESTION_TRANSLATIONS } from './arenaQuestionTranslations.js';
 
 export const ARENA_BASE_QUESTION_BANK = [
   // ==========================================
@@ -462,7 +463,19 @@ export const ARENA_QUESTION_BANK = [
   ...ARENA_BASE_QUESTION_BANK,
   ...ARENA_BATCH_1_QUESTIONS,
   ...ARENA_BATCH_2_QUESTIONS
-];
+].map(q => {
+  const trans = ARENA_QUESTION_TRANSLATIONS[q.id];
+  if (!trans) return q;
+  return {
+    ...q,
+    promptVi: q.prompt,
+    contextVi: q.context,
+    explanationVi: q.explanation,
+    promptEn: trans.promptEn || q.prompt,
+    contextEn: trans.contextEn || q.context,
+    explanationEn: trans.explanationEn || q.explanation
+  };
+});
 
 /**
  * Filter questions by difficulty and optional topic.

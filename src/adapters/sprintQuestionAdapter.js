@@ -96,17 +96,23 @@ export function shuffleQuestionOptions(question, rng = Math.random) {
 export function adaptSpellingTrap(item, rng = Math.random) {
   const rawOptions = [item.correct, ...(item.distractors || []).slice(0, 3)];
   const options = shuffleArray(rawOptions, rng);
+  const englishExp = `"${item.correct}" is the standard Cambridge academic spelling.`;
   return {
     id: `spelling_${item.id}`,
     rawId: item.id,
     type: 'spelling',
     skillCategory: 'vocab',
     prompt: 'Select the authentic Cambridge academic spelling:',
+    promptEn: 'Select the authentic Cambridge academic spelling:',
+    promptVi: 'Chọn phương án viết đúng chính tả học thuật:',
     context: item.contextSentence || '',
+    contextEn: item.contextSentence || '',
     options,
     correctIndex: options.indexOf(item.correct),
     correctAnswer: item.correct,
-    explanation: item.explanation || item.rule || ''
+    explanation: item.explanationEn || englishExp,
+    explanationEn: item.explanationEn || englishExp,
+    explanationVi: item.explanation || item.rule || englishExp
   };
 }
 
@@ -117,17 +123,23 @@ export function adaptSynonymPair(item, allSynonyms = [], rng = Math.random) {
     .filter(Boolean);
   const pickedDistractors = shuffleArray(distractors, rng).slice(0, 3);
   const options = shuffleArray([item.passageMatch, ...pickedDistractors], rng);
+  const englishExp = `In authentic Cambridge exams, "${item.questionStem}" paraphrases to "${item.passageMatch}".`;
   return {
     id: `synonym_${item.id}`,
     rawId: item.id,
     type: 'synonym',
     skillCategory: 'vocab',
-    prompt: `Match the Cambridge academic paraphrase for: "${item.questionStem}"`,
+    prompt: `Select the authentic Cambridge academic paraphrase for: "${item.questionStem}"`,
+    promptEn: `Select the authentic Cambridge academic paraphrase for: "${item.questionStem}"`,
+    promptVi: `Chọn từ đồng nghĩa/paraphrase học thuật chuẩn Cambridge cho: "${item.questionStem}"`,
     context: `Category: ${item.category || 'Academic Vocabulary'}`,
+    contextEn: `Category: ${item.category || 'Academic Vocabulary'}`,
     options,
     correctIndex: options.indexOf(item.passageMatch),
     correctAnswer: item.passageMatch,
-    explanation: `In authentic Cambridge exams, "${item.questionStem}" paraphrases to "${item.passageMatch}".`
+    explanation: englishExp,
+    explanationEn: englishExp,
+    explanationVi: `Trong đề thi Cambridge, cụm "${item.questionStem}" được paraphrase thành "${item.passageMatch}".`
   };
 }
 
@@ -135,36 +147,59 @@ export function adaptReadingDrill(item) {
   const options = ['TRUE', 'FALSE', 'NOT GIVEN'];
   const ans = (item.answer || '').toUpperCase().trim();
   const correctIndex = options.indexOf(ans) !== -1 ? options.indexOf(ans) : 0;
+  const standardExplanation = ans === 'TRUE' 
+    ? 'The passage directly confirms this statement. The answer is TRUE.'
+    : ans === 'FALSE'
+    ? 'The statement directly contradicts the facts in the passage. The answer is FALSE.'
+    : 'The passage does not provide sufficient information to verify this statement. The answer is NOT GIVEN.';
+
   return {
     id: `reading_${item.id}`,
     rawId: item.id,
     type: 'tfng',
     skillCategory: 'reading',
-    prompt: 'Determine whether the statement is TRUE, FALSE, or NOT GIVEN:',
+    prompt: 'According to the passage, is the statement TRUE, FALSE, or NOT GIVEN?',
+    promptEn: 'According to the passage, is the statement TRUE, FALSE, or NOT GIVEN?',
+    promptVi: 'Theo đoạn văn, nhận định sau là TRUE, FALSE hay NOT GIVEN?',
     context: `${item.passage || ''}\n\nStatement: "${item.statement || ''}"`,
+    contextEn: `${item.passage || ''}\n\nStatement: "${item.statement || ''}"`,
     options,
     correctIndex,
     correctAnswer: options[correctIndex],
-    explanation: item.explanation || item.explanationEn || ''
+    explanation: item.explanationEn || standardExplanation,
+    explanationEn: item.explanationEn || standardExplanation,
+    explanationVi: item.explanation || standardExplanation
   };
 }
 
 export function adaptListeningDrill(item) {
-  const rawOpts = (item.options || []).map(o => (typeof o === 'string' ? o : o.text));
+  const rawOpts = (item.options || []).map(o => {
+    const text = typeof o === 'string' ? o : o.text;
+    // Strip out Vietnamese annotations in parentheses, e.g. "8:15 AM (Thời gian dự kiến ban đầu)" -> "8:15 AM"
+    return text.replace(/\s*\([^)]*[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ][^)]*\)/g, '').trim();
+  });
   const correctIdx = item.options?.findIndex(o => o.id === item.correctOption) ?? 0;
   const safeIdx = correctIdx >= 0 ? correctIdx : 0;
+  const cleanAns = rawOpts[safeIdx] || '';
+  const defaultEnglishExp = `The recording confirms "${cleanAns}" as the correct response based on speaker clarification.`;
+
   return {
     id: `listening_${item.id}`,
     rawId: item.id,
     type: 'listening_trap',
     skillCategory: 'listening',
     prompt: item.question || 'Listen carefully to the audio and answer:',
+    promptEn: item.question || 'Listen carefully to the audio and answer:',
+    promptVi: item.questionVi || item.question || 'Nghe đoạn băng và trả lời câu hỏi:',
     context: item.audioSnippetText || item.audioText || '',
+    contextEn: item.audioSnippetText || item.audioText || '',
     audioText: item.audioText || item.audioSnippetText || '',
     options: rawOpts,
     correctIndex: safeIdx,
-    correctAnswer: rawOpts[safeIdx] || '',
-    explanation: item.explanation || item.distractorMechanism || ''
+    correctAnswer: cleanAns,
+    explanation: item.explanationEn || defaultEnglishExp,
+    explanationEn: item.explanationEn || defaultEnglishExp,
+    explanationVi: item.explanation || item.distractorMechanism || defaultEnglishExp
   };
 }
 
