@@ -66,80 +66,126 @@ export default function SpeakingPart1Room({
   renderAudioPlayback
 }) {
   const { isEn } = useTranslation();
+
+  const displayedTopics = React.useMemo(() => {
+    return hideMastered ? part1Topics.filter(t => !masteredIds.includes(t.id)) : part1Topics;
+  }, [part1Topics, hideMastered, masteredIds]);
+
+  const currentTopicIndex = React.useMemo(() => {
+    const idx = displayedTopics.findIndex(t => t.id === selectedP1TopicId);
+    return idx >= 0 ? idx : 0;
+  }, [displayedTopics, selectedP1TopicId]);
+
+  const handlePrevTopic = () => {
+    if (displayedTopics.length === 0) return;
+    const newIdx = (currentTopicIndex - 1 + displayedTopics.length) % displayedTopics.length;
+    setSelectedP1TopicId(displayedTopics[newIdx].id);
+    setActiveP1QuestionIndex(0);
+    setShowSampleAnswer(false);
+    if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
+  };
+
+  const handleNextTopic = () => {
+    if (displayedTopics.length === 0) return;
+    const newIdx = (currentTopicIndex + 1) % displayedTopics.length;
+    setSelectedP1TopicId(displayedTopics[newIdx].id);
+    setActiveP1QuestionIndex(0);
+    setShowSampleAnswer(false);
+    if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
+  };
+
   return (
     <div className="space-y-4 animate-in fade-in duration-150">
-      {/* Part 1 Topic Control Bar with AI Button */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-900 p-3 rounded-2xl border border-slate-800">
-        <div className="flex items-center space-x-2.5 flex-wrap">
-          <span className="text-xs font-bold text-slate-200">{isEn ? 'Interview Topics:' : 'Chủ đề phỏng vấn:'}</span>
-          <span className="text-[11px] text-purple-300 font-semibold bg-purple-950/80 px-2.5 py-0.5 rounded-full border border-purple-800/40">
-            {part1Topics.length} {isEn ? 'topics' : 'chủ đề'}
+      {/* Sleek Unified Part 1 Topic Selector Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/90 p-3 rounded-2xl border border-slate-800 shadow-md">
+        <div className="flex items-center space-x-2 flex-wrap sm:flex-nowrap min-w-0 flex-1">
+          <span className="text-xs font-bold text-slate-300 shrink-0">
+            {isEn ? 'Topic:' : 'Chủ đề:'}
           </span>
 
-          {/* Ẩn chủ đề đã thuộc Checkbox */}
-          <label className="flex items-center space-x-1.5 text-xs text-slate-400 cursor-pointer select-none px-2 py-0.5 rounded-lg hover:bg-slate-800 transition-colors">
+          <select
+            value={selectedP1TopicId}
+            onChange={(e) => {
+              setSelectedP1TopicId(e.target.value);
+              setActiveP1QuestionIndex(0);
+              setShowSampleAnswer(false);
+              if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
+            }}
+            className="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-white font-bold focus:outline-hidden focus:border-purple-500 max-w-[260px] sm:max-w-[320px] truncate cursor-pointer shrink-0"
+          >
+            {displayedTopics.map(t => (
+              <option key={t.id} value={t.id}>
+                {t.title} {masteredIds.includes(t.id) ? '🎓' : ''}
+              </option>
+            ))}
+          </select>
+
+          {/* Prev / Next Buttons with Counter */}
+          <div className="flex items-center space-x-1 shrink-0 bg-slate-950 border border-slate-800 rounded-xl p-0.5">
+            <button
+              type="button"
+              onClick={handlePrevTopic}
+              disabled={displayedTopics.length <= 1}
+              className="px-2 py-1 text-xs text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg cursor-pointer transition-colors"
+              title={isEn ? "Previous topic" : "Chủ đề trước"}
+            >
+              ◀
+            </button>
+            <span className="px-1.5 text-[11px] font-black text-purple-300 min-w-[50px] text-center">
+              {displayedTopics.length > 0 ? `${currentTopicIndex + 1} / ${displayedTopics.length}` : '0 / 0'}
+            </span>
+            <button
+              type="button"
+              onClick={handleNextTopic}
+              disabled={displayedTopics.length <= 1}
+              className="px-2 py-1 text-xs text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg cursor-pointer transition-colors"
+              title={isEn ? "Next topic" : "Chủ đề tiếp theo"}
+            >
+              ▶
+            </button>
+          </div>
+
+          {/* Mastered badge */}
+          {masteredIds.includes(activeP1Topic?.id) && (
+            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 flex items-center space-x-1">
+              <GraduationCap className="w-3 h-3 text-emerald-400" />
+              <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
+            </span>
+          )}
+
+          {/* Custom / Community tags */}
+          {activeP1Topic?.isCommunity || (activeP1Topic?.isPublic && activeP1Topic?.isCustom) ? (
+            <span className="text-[9px] px-1.5 py-0.5 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40 shrink-0">
+              {isEn ? '🌐 Community' : '🌐 Cộng Đồng'}
+            </span>
+          ) : activeP1Topic?.isCustom ? (
+            <span className="text-[9px] px-1.5 py-0.5 bg-amber-950/80 rounded text-amber-300 border border-amber-500/40 shrink-0">
+              {isEn ? '🔒 Custom' : '🔒 Riêng'}
+            </span>
+          ) : null}
+        </div>
+
+        {/* Right side: Hide Mastered checkbox & Single AI Generator CTA */}
+        <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
+          <label className="flex items-center space-x-1.5 text-xs text-slate-400 cursor-pointer select-none px-2 py-1 rounded-lg hover:bg-slate-800 transition-colors">
             <input
               type="checkbox"
               checked={hideMastered}
               onChange={handleToggleHideMastered}
               className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-800 text-purple-600 focus:ring-purple-500 cursor-pointer"
             />
-            <span className="whitespace-nowrap font-medium text-[11px]">{isEn ? 'Hide mastered topics' : 'Ẩn chủ đề đã thuộc'}</span>
+            <span className="whitespace-nowrap font-medium text-[11px]">{isEn ? 'Hide mastered' : 'Ẩn đã thuộc'}</span>
           </label>
+
+          <button
+            onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
+            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer transition-all shrink-0"
+            title={isEn ? 'Create or generate Part 1 topics with AI' : 'Thêm hoặc sinh chủ đề Part 1 mới bằng AI'}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+            <span>{isEn ? '+ New Topic (AI)' : '+ Thêm Chủ Đề (AI)'}</span>
+          </button>
         </div>
-
-        <button
-          onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
-          className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/40 cursor-pointer transition-all hover:scale-[1.01]"
-        >
-          <Sparkles className="w-4 h-4 text-purple-200" />
-          <span>{isEn ? '+ Generate Part 1 Topics with AI' : '+ Sinh Chủ Đề & Câu Hỏi Part 1 Bằng AI'}</span>
-        </button>
-      </div>
-
-      {/* Topic Selector Pills */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-2">
-        {/* Front AI button */}
-        <button
-          onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
-          className="px-3.5 py-1.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-purple-300 hover:text-white border border-purple-600/50 text-xs font-bold whitespace-nowrap flex items-center space-x-1 cursor-pointer shrink-0"
-          title={isEn ? 'Generate new Part 1 topics with AI' : 'Sinh chủ đề luyện tập Part 1 mới bằng AI'}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-          <span>{isEn ? '+ New (AI)' : '+ Tạo Mới (AI)'}</span>
-        </button>
-
-        {(hideMastered ? part1Topics.filter(t => !masteredIds.includes(t.id)) : part1Topics).map(topic => (
-          <div key={topic.id} className="relative group shrink-0">
-            <button
-              onClick={() => {
-                setSelectedP1TopicId(topic.id);
-                setActiveP1QuestionIndex(0);
-                setShowSampleAnswer(false);
-                if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
-              }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-1.5 ${
-                selectedP1TopicId === topic.id
-                  ? 'bg-purple-600 text-white border border-purple-400 shadow-sm'
-                  : 'bg-slate-900 text-slate-400 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>{topic.title}</span>
-              {masteredIds.includes(topic.id) && (
-                <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0" title={isEn ? 'Mastered topic' : 'Chủ đề đã thuộc'} />
-              )}
-              {topic.isCommunity || (topic.isPublic && topic.isCustom) ? (
-                <span className="text-[9px] px-1.5 py-0.2 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40">
-                  {isEn ? '🌐 Community' : '🌐 Cộng Đồng'}
-                </span>
-              ) : topic.isCustom ? (
-                <span className="text-[9px] px-1.5 py-0.2 bg-amber-950/80 rounded text-amber-300 border border-amber-500/40">
-                  {isEn ? '🔒 Custom' : '🔒 Riêng'}
-                </span>
-              ) : null}
-            </button>
-          </div>
-        ))}
       </div>
 
       {/* Question Card */}

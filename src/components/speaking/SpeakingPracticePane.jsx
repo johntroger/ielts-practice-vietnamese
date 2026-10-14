@@ -887,7 +887,7 @@ export default function SpeakingPracticePane({
   };
 
   return (
-    <div className="w-full max-w-4xl space-y-6 animate-in fade-in duration-200">
+    <div className="w-full max-w-5xl xl:max-w-6xl space-y-4 sm:space-y-5 animate-in fade-in duration-200">
       
       {/* 1. Header Navigation & Part Switcher */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 bg-slate-900/90 border border-slate-800 p-2 sm:p-2.5 rounded-2xl">
@@ -988,34 +988,6 @@ export default function SpeakingPracticePane({
           </div>
         </div>
       )}
-
-      {/* Practice Welcome & Quick AI Generator Banner */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border border-purple-800/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              {isEn ? 'Unlimited Free Practice' : 'Luyện Tập Tự Do Không Giới Hạn'}
-            </span>
-            <span className="text-xs text-slate-400 font-semibold">• {isEn ? 'Integrated Cambridge AI Evaluation' : 'Tích hợp chấm điểm AI Cambridge'}</span>
-          </div>
-          <p className="text-xs text-slate-300">
-            {isEn
-              ? 'Practice questions individually, get 4 Cambridge criteria analysis and Band 8.5+ upgrades. You can generate unlimited custom topics with AI!'
-              : 'Luyện từng câu hỏi độc lập, nhận ngay nhận xét 4 tiêu chí khảo thí & bản nâng cấp Band 8.5+. Bạn có thể sinh thêm bất kỳ chủ đề/câu hỏi nào bằng AI!'}
-          </p>
-        </div>
-
-        <button
-          onClick={() => {
-            setTopicModalPart(practicePart);
-            setIsTopicModalOpen(true);
-          }}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black shadow-lg shadow-purple-950/60 flex items-center space-x-2 cursor-pointer transition-all hover:scale-[1.02] shrink-0"
-        >
-          <Sparkles className="w-4 h-4 text-purple-200" />
-          <span>{isEn ? '✨ Generate Topic with AI' : '✨ Sinh Chủ Đề Bằng AI'}</span>
-        </button>
-      </div>
 
       {/* ========================================================= */}
       {/* 2. PART 1 PRACTICE VIEW                                    */}

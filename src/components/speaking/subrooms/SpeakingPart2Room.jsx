@@ -68,13 +68,44 @@ export default function SpeakingPart2Room({
   const [isArchetypesModalOpen, setIsArchetypesModalOpen] = useState(false);
   const [customQuadrantNotes, setCustomQuadrantNotes] = useState(null);
 
+  const displayedCards = React.useMemo(() => {
+    return hideMastered ? part2Cards.filter(c => !masteredIds.includes(c.id)) : part2Cards;
+  }, [part2Cards, hideMastered, masteredIds]);
+
+  const currentCardIndex = React.useMemo(() => {
+    const idx = displayedCards.findIndex(c => c.id === selectedP2CueCardId);
+    return idx >= 0 ? idx : 0;
+  }, [displayedCards, selectedP2CueCardId]);
+
+  const handlePrevCard = () => {
+    if (displayedCards.length === 0) return;
+    const newIdx = (currentCardIndex - 1 + displayedCards.length) % displayedCards.length;
+    setSelectedP2CueCardId(displayedCards[newIdx].id);
+    setShowSampleAnswer(false);
+    setSpeakSecondsElapsed(0);
+    setIsPart2Speaking(false);
+    setIsPrepping(false);
+    speechEngine.resetTranscript();
+  };
+
+  const handleNextCard = () => {
+    if (displayedCards.length === 0) return;
+    const newIdx = (currentCardIndex + 1) % displayedCards.length;
+    setSelectedP2CueCardId(displayedCards[newIdx].id);
+    setShowSampleAnswer(false);
+    setSpeakSecondsElapsed(0);
+    setIsPart2Speaking(false);
+    setIsPrepping(false);
+    speechEngine.resetTranscript();
+  };
+
   if (!activeP2Card) return null;
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-6 animate-in fade-in duration-150 shadow-xl">
+    <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5 animate-in fade-in duration-150 shadow-xl">
       
       {/* Header & Cue Card Selector */}
-      <div className="space-y-3 border-b border-slate-800 pb-4">
+      <div className="space-y-3 border-b border-slate-800 pb-3 sm:pb-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="flex items-center space-x-2 flex-wrap gap-y-1">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
@@ -154,7 +185,7 @@ export default function SpeakingPart2Room({
           </div>
         </div>
 
-        {/* Cue Card Selection Bar */}
+        {/* Cue Card Selection Bar with Prev/Next Controls */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-950/70 p-2.5 sm:p-3 rounded-xl border border-slate-800/80">
           <div className="flex-1 min-w-0 pr-0 sm:pr-2">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -166,9 +197,31 @@ export default function SpeakingPart2Room({
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
-            <span className="text-xs text-slate-400 font-medium hidden md:inline">
-              {isEn ? 'Switch Card:' : 'Đổi chủ đề:'}
-            </span>
+            {/* Prev / Next Buttons */}
+            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+              <button
+                type="button"
+                onClick={handlePrevCard}
+                disabled={displayedCards.length <= 1}
+                className="px-2 py-1 text-xs text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg cursor-pointer transition-colors"
+                title={isEn ? "Previous cue card" : "Thẻ Cue Card trước"}
+              >
+                ◀
+              </button>
+              <span className="px-1.5 text-[11px] font-black text-purple-300 min-w-[50px] text-center">
+                {displayedCards.length > 0 ? `${currentCardIndex + 1} / ${displayedCards.length}` : '0 / 0'}
+              </span>
+              <button
+                type="button"
+                onClick={handleNextCard}
+                disabled={displayedCards.length <= 1}
+                className="px-2 py-1 text-xs text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg cursor-pointer transition-colors"
+                title={isEn ? "Next cue card" : "Thẻ Cue Card tiếp theo"}
+              >
+                ▶
+              </button>
+            </div>
+
             <select
               value={selectedP2CueCardId}
               onChange={(e) => {
@@ -181,7 +234,7 @@ export default function SpeakingPart2Room({
               }}
               className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-none focus:border-purple-500 cursor-pointer w-full sm:w-auto max-w-full sm:max-w-xs truncate"
             >
-              {(hideMastered ? part2Cards.filter(c => !masteredIds.includes(c.id)) : part2Cards).map(c => (
+              {displayedCards.map(c => (
                 <option key={c.id} value={c.id}>
                   {masteredIds.includes(c.id) ? '🎓 ' : ''}{c.title} {c.isCommunity || (c.isPublic && c.isCustom) ? (isEn ? '(🌐 Community)' : '(🌐 Cộng Đồng)') : c.isCustom ? (isEn ? '(🔒 Custom)' : '(🔒 Riêng)') : ''}
                 </option>

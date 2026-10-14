@@ -45,10 +45,33 @@ export default function SpeakingPart3Room({
 }) {
   const { language } = useTranslation();
   const isEn = language === 'en';
+  const displayedSets = React.useMemo(() => {
+    return hideMastered ? part3Sets.filter(s => !masteredIds.includes(s.linkedPart2Id || s.id)) : part3Sets;
+  }, [part3Sets, hideMastered, masteredIds]);
+
+  const currentSetIndex = React.useMemo(() => {
+    const idx = displayedSets.findIndex(s => (s.linkedPart2Id || s.id) === selectedP3Id);
+    return idx >= 0 ? idx : 0;
+  }, [displayedSets, selectedP3Id]);
+
+  const handlePrevSet = () => {
+    if (displayedSets.length === 0) return;
+    const newIdx = (currentSetIndex - 1 + displayedSets.length) % displayedSets.length;
+    setSelectedP3Id(displayedSets[newIdx].linkedPart2Id || displayedSets[newIdx].id);
+    if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
+  };
+
+  const handleNextSet = () => {
+    if (displayedSets.length === 0) return;
+    const newIdx = (currentSetIndex + 1) % displayedSets.length;
+    setSelectedP3Id(displayedSets[newIdx].linkedPart2Id || displayedSets[newIdx].id);
+    if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
+  };
+
   if (!currentP3Set) return null;
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5 animate-in fade-in duration-150 shadow-xl">
+    <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5 animate-in fade-in duration-150 shadow-xl">
       
       {/* Header & Topic Selector */}
       <div className="space-y-3 border-b border-slate-800 pb-3">
@@ -125,7 +148,7 @@ export default function SpeakingPart3Room({
           </div>
         </div>
 
-        {/* Topic Selection Bar */}
+        {/* Topic Selection Bar with Prev/Next Controls */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-950/70 p-2.5 sm:p-3 rounded-xl border border-slate-800/80">
           <div className="flex-1 min-w-0 pr-0 sm:pr-2">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -137,15 +160,37 @@ export default function SpeakingPart3Room({
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
-            <span className="text-xs text-slate-400 font-medium hidden md:inline">
-              {isEn ? 'Change topic:' : 'Đổi chủ đề:'}
-            </span>
+            {/* Prev / Next Buttons */}
+            <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+              <button
+                type="button"
+                onClick={handlePrevSet}
+                disabled={displayedSets.length <= 1}
+                className="px-2 py-1 text-xs text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg cursor-pointer transition-colors"
+                title={isEn ? "Previous discussion set" : "Bộ thảo luận trước"}
+              >
+                ◀
+              </button>
+              <span className="px-1.5 text-[11px] font-black text-purple-300 min-w-[50px] text-center">
+                {displayedSets.length > 0 ? `${currentSetIndex + 1} / ${displayedSets.length}` : '0 / 0'}
+              </span>
+              <button
+                type="button"
+                onClick={handleNextSet}
+                disabled={displayedSets.length <= 1}
+                className="px-2 py-1 text-xs text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed rounded-lg cursor-pointer transition-colors"
+                title={isEn ? "Next discussion set" : "Bộ thảo luận tiếp theo"}
+              >
+                ▶
+              </button>
+            </div>
+
             <select
               value={selectedP3Id}
               onChange={(e) => setSelectedP3Id(e.target.value)}
               className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-none focus:border-purple-500 cursor-pointer w-full sm:w-auto max-w-full sm:max-w-xs truncate"
             >
-              {(hideMastered ? part3Sets.filter(s => !masteredIds.includes(s.linkedPart2Id || s.id)) : part3Sets).map((s, idx) => (
+              {displayedSets.map((s, idx) => (
                 <option key={s.linkedPart2Id || s.id || idx} value={s.linkedPart2Id || s.id || idx}>
                   {masteredIds.includes(s.linkedPart2Id || s.id) ? '🎓 ' : ''}{s.topic} {s.isCommunity || (s.isPublic && s.isCustom) ? (isEn ? '(🌐 Community)' : '(🌐 Cộng Đồng)') : s.isCustom ? (isEn ? '(🔒 Custom)' : '(🔒 Riêng)') : ''}
                 </option>
