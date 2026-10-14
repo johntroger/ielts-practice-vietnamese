@@ -139,7 +139,8 @@ const testSuites = [
   { name: 'Step 130: Beginner Foundation Experience & Cross-Device Responsive Display Audit', file: 'tests/test_step130_beginner_experience_and_responsive_audit.js' },
   { name: 'Step 131: Navbar Dropdown Scrolling & Viewport Clamp Audit', file: 'tests/test_step131_navbar_dropdown_scrolling_and_viewport_clamp.js' },
   { name: 'Step 132: Writing SubHeader Toolbar Dropdown Screen-Edge Clamping Audit', file: 'tests/test_step132_writing_toolbar_dropdown_screen_edge_clamping.js' },
-  { name: 'Step 133: Reading Workspace CDI & Expand Deduplication Audit', file: 'tests/test_step133_reading_workspace_cdi_and_expand_deduplication.js' }
+  { name: 'Step 133: Reading Workspace CDI & Expand Deduplication Audit', file: 'tests/test_step133_reading_workspace_cdi_and_expand_deduplication.js' },
+  { name: 'Step 134: Mobile Drawer Crash Prevention Audit', file: 'tests/test_step134_navbar_mobile_drawer_crash_prevention.js' }
 ];
 
 console.log('===============================================================');

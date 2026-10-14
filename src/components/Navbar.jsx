@@ -7,6 +7,7 @@ import {
   Bookmark, 
   Settings, 
   ChevronDown, 
+  ChevronRight,
   PenTool, 
   Headphones, 
   BookMarked, 
