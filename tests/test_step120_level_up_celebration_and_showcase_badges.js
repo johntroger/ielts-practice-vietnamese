@@ -84,9 +84,9 @@ it('3. getLevelTierInfo maps celebration tier metadata correctly for Level 21', 
 it('4. PublicLearnerProfileModal.jsx includes the 3 Showcase Badges', () => {
   const profilePath = path.resolve('src/components/arena/PublicLearnerProfileModal.jsx');
   const profileContent = fs.readFileSync(profilePath, 'utf-8');
-  assert.ok(profileContent.includes('Chuỗi Bất Bại'), 'Must include Streak Master badge');
-  assert.ok(profileContent.includes('Xạ Thủ Phản Xạ'), 'Must include Sharpshooter badge');
-  assert.ok(profileContent.includes('Đại Sư Kiến Tạo'), 'Must include Master Contributor badge');
+  assert.ok(profileContent.includes('arena.badgeStreakMaster') || profileContent.includes('Chuỗi Bất Bại'), 'Must include Streak Master badge');
+  assert.ok(profileContent.includes('arena.badgeSharpshooter') || profileContent.includes('Xạ Thủ Phản Xạ'), 'Must include Sharpshooter badge');
+  assert.ok(profileContent.includes('arena.badgeMasterArchitect') || profileContent.includes('Đại Sư Kiến Tạo'), 'Must include Master Contributor badge');
 });
 
 console.log(`\n🎉 All ${passed}/${total} unit tests passed for Step 120! (100%)\n`);

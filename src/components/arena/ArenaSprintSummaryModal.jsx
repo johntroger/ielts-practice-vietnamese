@@ -50,29 +50,29 @@ export default function ArenaSprintSummaryModal({
         {/* 3-Tier Transparent Decomposition Table */}
         <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-indigo-800/30 text-xs">
           <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
-            <span className="text-slate-400 text-[10px]">Base XP ({summary.score || 0} đúng)</span>
+            <span className="text-slate-400 text-[10px]">{t('arena.baseXpLabel', { score: summary.score || 0 })}</span>
             <span className="font-bold text-indigo-300">+{summary.baseScore || (summary.score * 20) || 0}</span>
           </div>
 
           <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
-            <span className="text-slate-400 text-[10px]">👑 Boss Bonus</span>
+            <span className="text-slate-400 text-[10px]">{t('arena.bossBonusLabel')}</span>
             <span className="font-bold text-amber-300">+{summary.bossBonus || 0}</span>
           </div>
 
           <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
-            <span className="text-slate-400 text-[10px]">⏱️ Time Bonus</span>
+            <span className="text-slate-400 text-[10px]">{t('arena.timeBonusLabel')}</span>
             <span className="font-bold text-emerald-300">+{summary.timeBonus || summary.speedBonus || 0}</span>
           </div>
 
           <div className="flex flex-col items-center bg-slate-900/60 rounded-lg p-2 border border-slate-800/60">
-            <span className="text-slate-400 text-[10px]">🔥 Streak Bonus</span>
+            <span className="text-slate-400 text-[10px]">{t('arena.streakBonusLabel')}</span>
             <span className="font-bold text-rose-300">+{summary.streakBonus || 0}</span>
           </div>
         </div>
 
         {summary.softCapMultiplier < 1.0 && (
           <span className="text-[11px] text-amber-400/90 font-medium pt-1">
-            ⚠️ Daily Soft-Cap: x{summary.softCapMultiplier} (Chống cày cuốc mất tập trung)
+            {t('arena.softCapNotice', { multiplier: summary.softCapMultiplier })}
           </span>
         )}
       </div>
@@ -108,7 +108,7 @@ export default function ArenaSprintSummaryModal({
             {summary.maxCombo || 0}x
           </span>
           <span className="text-[10px] text-slate-400 font-medium">
-            Max Combo
+            {t('arena.maxCombo')}
           </span>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function ArenaSprintSummaryModal({
           type="button"
           onClick={onClose}
           className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700/80 transition-colors cursor-pointer"
-          title="Quay lại Bảng Xếp Hạng"
+          title={t('arena.backToLeaderboard')}
         >
           <X className="w-4 h-4" />
         </button>

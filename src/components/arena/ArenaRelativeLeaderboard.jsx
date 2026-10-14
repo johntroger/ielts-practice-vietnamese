@@ -18,7 +18,7 @@ export default function ArenaRelativeLeaderboard({
   leagueTier = 'bronze',
   onSelectLearner = null
 }) {
-  const { t } = useTranslation();
+  const { t, isEn } = useTranslation();
 
   const tierColors = {
     bronze: 'text-amber-600 bg-amber-500/10 border-amber-500/30',
@@ -45,7 +45,7 @@ export default function ArenaRelativeLeaderboard({
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
             <UserCheck className="w-3 h-3 text-emerald-400" />
-            <span>100% Người Học Thật (Không Dùng Bot Ảo)</span>
+            <span>{t('arena.realLearnersOnly')}</span>
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export default function ArenaRelativeLeaderboard({
         {rivals.length === 0 ? (
           <div className="p-6 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
             <Sparkles className="w-6 h-6 text-indigo-400 animate-pulse" />
-            <span>Đang đồng bộ dữ liệu người học thật từ hệ thống...</span>
+            <span>{t('arena.syncingRealLearners')}</span>
           </div>
         ) : (
           rivals.map((rival, index) => {
@@ -99,7 +99,7 @@ export default function ArenaRelativeLeaderboard({
                 key={rival.user_id || rival.display_name || index}
                 onClick={() => onSelectLearner?.(rival)}
                 className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs transition-all duration-200 cursor-pointer select-none group hover:scale-[1.01] active:scale-[0.99] ${rowStyle}`}
-                title={`Nhấn để xem Hồ Sơ Đấu Sĩ của ${rival.display_name || 'Học Viên'}`}
+                title={t('arena.learnerTitle', { name: rival.display_name || t('arena.anonymousLearner') })}
               >
                 {/* Rank, Glowing Avatar & Level Info */}
                 <div className="flex items-center gap-3 min-w-0">
@@ -132,7 +132,7 @@ export default function ArenaRelativeLeaderboard({
                       <span className={`font-bold truncate text-xs group-hover:text-white transition-colors ${
                         isOwner ? 'text-amber-300' : isUser ? 'text-indigo-200' : 'text-slate-100'
                       }`}>
-                        {rival.display_name || 'Học Viên'}
+                        {rival.display_name || t('arena.anonymousLearner')}
                       </span>
 
                       {/* Prominent Badges */}
@@ -151,7 +151,7 @@ export default function ArenaRelativeLeaderboard({
 
                     <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
                       <span className={`font-semibold ${titanTier.accentText}`}>
-                        {titanTier.titleEn || titanTier.titleVi}
+                        {isEn ? (titanTier.titleEn || titanTier.titleVi) : (titanTier.titleVi || titanTier.titleEn)}
                       </span>
                       <span>•</span>
                       <span className="capitalize">{rival.league_tier || 'Bronze'}</span>
@@ -162,7 +162,7 @@ export default function ArenaRelativeLeaderboard({
                 {/* Stats & Click Chevron */}
                 <div className="flex items-center gap-3 shrink-0">
                   {rival.streak_count > 0 && (
-                    <div className="flex items-center gap-1 text-amber-400 font-bold text-xs" title={`Streak: ${rival.streak_count} ngày`}>
+                    <div className="flex items-center gap-1 text-amber-400 font-bold text-xs" title={`Streak: ${rival.streak_count}d`}>
                       <Flame className="w-3.5 h-3.5 fill-amber-400" />
                       <span>{rival.streak_count}</span>
                     </div>
@@ -197,8 +197,8 @@ export default function ArenaRelativeLeaderboard({
 
       {/* Real Learners Interactive Footer */}
       <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-        <span>💡 Nhấn vào người học để xem Hồ Sơ Đấu Sĩ</span>
-        <span className="text-indigo-400 font-semibold">Tự động thăng cấp</span>
+        <span>{t('arena.clickToViewProfile')}</span>
+        <span className="text-indigo-400 font-semibold">{t('arena.autoPromotionNotice')}</span>
       </div>
     </div>
   );

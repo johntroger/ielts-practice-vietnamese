@@ -28,7 +28,7 @@ export default function PublicLearnerProfileModal({
   onClose,
   onChallengeSprint = null
 }) {
-  const { t } = useTranslation();
+  const { t, isEn } = useTranslation();
   const [hasCheered, setHasCheered] = useState(false);
   const [kudosCount, setKudosCount] = useState(() => {
     if (!learner) return 0;
@@ -83,14 +83,14 @@ export default function PublicLearnerProfileModal({
         <div className="flex items-center justify-between pb-2 border-b border-slate-800/80 relative z-10">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
             <Trophy className="w-4 h-4 text-amber-400" />
-            <span>HỒ SƠ ĐẤU SĨ ATLAS • PUBLIC SCHOLAR</span>
+            <span>{t('arena.publicProfileHeader')}</span>
           </div>
 
           <button
             type="button"
             onClick={onClose}
             className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
-            title="Đóng hồ sơ"
+            title={t('arena.closeProfile')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -113,26 +113,26 @@ export default function PublicLearnerProfileModal({
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xl sm:text-2xl font-black text-slate-100 truncate">
-                {learner.display_name || 'Học Viên'}
+                {learner.display_name || t('arena.anonymousLearner')}
               </h2>
               {isOwner && (
                 <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/50 px-2 py-0.5 rounded font-black tracking-wide">
-                  👑 ADMIN
+                  {t('arena.adminBadge')}
                 </span>
               )}
             </div>
 
             <div className="flex items-center gap-2 mt-1">
               <span className={`text-xs font-black px-2.5 py-0.5 rounded-lg border shadow-xs ${titanTier.badgeColor}`}>
-                CẤP {level}
+                {isEn ? `LV.${level}` : `CẤP ${level}`}
               </span>
               <span className={`text-xs font-bold ${titanTier.accentText}`}>
-                {titanTier.titleEn}
+                {isEn ? (titanTier.titleEn || titanTier.titleVi) : (titanTier.titleVi || titanTier.titleEn)}
               </span>
             </div>
 
             <span className="text-[11px] text-slate-400 mt-0.5">
-              {isOwner ? 'Quản Trị Viên & Tác Giả Hơn 210 Đề Thi' : 'Đấu Sĩ Tích Cực Trên Hệ Thống'}
+              {isOwner ? t('arena.adminDesc') : t('arena.activeScholarDesc')}
             </span>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function PublicLearnerProfileModal({
         {/* Level XP Progress Bar Card */}
         <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col gap-2.5 relative z-10">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-400 font-medium">Tiến Trình Cấp Độ (XP Progress)</span>
+            <span className="text-slate-400 font-medium">{t('arena.levelXpProgress')}</span>
             <span className="font-mono font-bold text-indigo-300">
               {progress.progressPercent}%
             </span>
@@ -159,7 +159,7 @@ export default function PublicLearnerProfileModal({
           <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
             <span>{learner.total_xp || 0} Total XP</span>
             <span>
-              {progress.isMaxLevel ? 'MAX LEVEL' : `Cần thêm ${progress.xpRemaining} XP lên Lv.${level + 1}`}
+              {progress.isMaxLevel ? t('arena.maxLevelReached') : t('arena.needXpForNextLevel', { xp: progress.xpRemaining, nextLevel: level + 1 })}
             </span>
           </div>
         </div>
@@ -171,21 +171,21 @@ export default function PublicLearnerProfileModal({
               <Flame className="w-4 h-4 fill-amber-400" />
               <span>{learner.streak_count || 1}</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">Chuỗi Streak</div>
+            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">{t('arena.statStreak')}</div>
           </div>
 
           <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3 text-center">
             <div className="text-sm font-black text-indigo-300 font-mono">
               {learner.weekly_xp || 0}
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">XP Tuần Này</div>
+            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">{t('arena.statWeeklyXp')}</div>
           </div>
 
           <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3 text-center">
             <div className="text-sm font-black text-cyan-300 capitalize">
-              {learner.league_tier || 'Bronze'}
+              {t(`arena.${learner.league_tier}`) || learner.league_tier || 'Bronze'}
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">Hạng Giải Đấu</div>
+            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">{t('arena.statLeague')}</div>
           </div>
 
           <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3 text-center">
@@ -193,14 +193,14 @@ export default function PublicLearnerProfileModal({
               <Heart className={`w-3.5 h-3.5 ${hasCheered ? 'fill-rose-500 text-rose-500' : ''}`} />
               <span>{kudosCount}</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">Lượt Bái Phục</div>
+            <div className="text-[10px] text-slate-400 mt-0.5 font-medium">{t('arena.statKudos')}</div>
           </div>
         </div>
 
         {/* Showcase Badges (Tủ Kính 3 Huy Hiệu Danh Dự) */}
         <div className="bg-slate-950/40 border border-slate-800/80 rounded-2xl p-3.5 flex flex-col gap-2 relative z-10">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-            🏅 Huy Hiệu Danh Dự Đạt Được
+            {t('arena.honorsTitle')}
           </span>
           <div className="grid grid-cols-3 gap-2">
             {/* Badge 1: Streak Master */}
@@ -210,7 +210,7 @@ export default function PublicLearnerProfileModal({
                 : 'bg-slate-800/30 border-slate-800 text-slate-500'
             }`}>
               <Flame className="w-4 h-4" />
-              <span className="text-[10px] font-bold">Chuỗi Bất Bại</span>
+              <span className="text-[10px] font-bold">{t('arena.badgeStreakMaster')}</span>
               <span className="text-[9px] text-slate-400 font-mono">Streak {learner.streak_count || 1}d</span>
             </div>
 
@@ -221,8 +221,8 @@ export default function PublicLearnerProfileModal({
                 : 'bg-slate-800/30 border-slate-800 text-slate-500'
             }`}>
               <Trophy className="w-4 h-4" />
-              <span className="text-[10px] font-bold">Xạ Thủ Phản Xạ</span>
-              <span className="text-[9px] text-slate-400 font-mono">Cấp {level}</span>
+              <span className="text-[10px] font-bold">{t('arena.badgeSharpshooter')}</span>
+              <span className="text-[9px] text-slate-400 font-mono">{isEn ? `Lv.${level}` : `Cấp ${level}`}</span>
             </div>
 
             {/* Badge 3: Master Architect / Contributor */}
@@ -232,8 +232,8 @@ export default function PublicLearnerProfileModal({
                 : 'bg-slate-800/30 border-slate-800 text-slate-500'
             }`}>
               <Award className="w-4 h-4" />
-              <span className="text-[10px] font-bold">Đại Sư Kiến Tạo</span>
-              <span className="text-[9px] text-slate-400 font-mono">{isOwner ? '210+ Đề Thi' : 'Đấu Sĩ'}</span>
+              <span className="text-[10px] font-bold">{t('arena.badgeMasterArchitect')}</span>
+              <span className="text-[9px] text-slate-400 font-mono">{isOwner ? (isEn ? '210+ Tests' : '210+ Đề Thi') : t('arena.badgeFighter')}</span>
             </div>
           </div>
         </div>
@@ -252,7 +252,7 @@ export default function PublicLearnerProfileModal({
             }`}
           >
             <Heart className={`w-4 h-4 ${hasCheered ? 'fill-rose-400 text-rose-400' : 'text-rose-400'}`} />
-            <span>{hasCheered ? 'Đã Gửi Bái Phục 👏' : 'Bái Phục / Cổ Vũ 👏'}</span>
+            <span>{hasCheered ? t('arena.kudoSent') : t('arena.sendKudo')}</span>
           </button>
 
           {/* Challenge Sprint Button */}
@@ -265,7 +265,7 @@ export default function PublicLearnerProfileModal({
             className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-600/30 transition-all cursor-pointer active:scale-95"
           >
             <Swords className="w-4 h-4" />
-            <span>Vào Đua Điểm Đấu Trường</span>
+            <span>{t('arena.challengeInArena')}</span>
           </button>
         </div>
       </div>

@@ -94,7 +94,7 @@ export default function ArenaDifficultySelector({
                 <div className="flex items-center justify-between mb-1.5">
                   <Icon className="w-4 h-4 shrink-0" />
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activeBadge}`}>
-                    +{diff.baseXpPerQuestion} XP/câu
+                    +{diff.baseXpPerQuestion} {isEn ? 'XP/item' : 'XP/câu'}
                   </span>
                 </div>
                 <div className="text-xs sm:text-sm font-black text-slate-100 leading-tight">

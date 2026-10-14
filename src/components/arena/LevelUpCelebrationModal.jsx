@@ -29,7 +29,7 @@ export default function LevelUpCelebrationModal({
   onClose,
   onContinue
 }) {
-  const { t } = useTranslation();
+  const { t, isEn } = useTranslation();
 
   if (!isOpen) return null;
 
@@ -77,20 +77,20 @@ export default function LevelUpCelebrationModal({
         <div className="flex flex-col gap-1.5 relative z-10">
           <div className="flex items-center justify-center gap-1.5 text-xs font-black uppercase tracking-widest text-amber-400">
             <Sparkles className="w-4 h-4 fill-amber-400" />
-            <span>THĂNG CẤP ĐẤU SĨ • LEVEL UP!</span>
+            <span>{t('arena.levelUpHeader')}</span>
             <Sparkles className="w-4 h-4 fill-amber-400" />
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-            Chúc Mừng Bạn Đạt Cấp {newLevel}!
+            {t('arena.levelUpCongrats', { level: newLevel })}
           </h2>
 
           <div className="flex items-center justify-center gap-2 mt-1">
             <span className={`text-xs font-black px-2.5 py-0.5 rounded-lg border ${titanTier.badgeColor}`}>
-              {titanTier.titleEn}
+              {isEn ? (titanTier.titleEn || titanTier.titleVi) : (titanTier.titleVi || titanTier.titleEn)}
             </span>
             <span className="text-xs text-slate-300 font-medium">
-              ({titanTier.titleVi})
+              ({isEn ? titanTier.titleVi : titanTier.titleEn})
             </span>
           </div>
         </div>
@@ -98,28 +98,28 @@ export default function LevelUpCelebrationModal({
         {/* Unlocked Privileges Card */}
         <div className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 text-left text-xs relative z-10">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-            🎁 Phần Thưởng & Quyền Lợi Mở Khóa:
+            {t('arena.rewardsTitle')}
           </span>
 
           <div className="flex items-center gap-2.5 text-slate-200">
             <div className="w-5 h-5 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-3.5 h-3.5" />
             </div>
-            <span>Mở khóa Khung Viền Avatar Đấu Sĩ phát sáng</span>
+            <span>{t('arena.rewardAvatarFrame')}</span>
           </div>
 
           <div className="flex items-center gap-2.5 text-slate-200">
             <div className="w-5 h-5 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
               <Trophy className="w-3.5 h-3.5" />
             </div>
-            <span>Thăng hạng danh xưng trên Bảng Xếp Hạng Đấu Trường</span>
+            <span>{t('arena.rewardTitlePromotion')}</span>
           </div>
 
           <div className="flex items-center gap-2.5 text-slate-200">
             <div className="w-5 h-5 rounded-md bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
               <Award className="w-3.5 h-3.5" />
             </div>
-            <span>Mở rộng chỉ số uy tín trong Hồ Sơ Đấu Sĩ Công Khai</span>
+            <span>{t('arena.rewardProfilePrestige')}</span>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ export default function LevelUpCelebrationModal({
           }}
           className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-black text-sm bg-gradient-to-r from-amber-500 via-indigo-600 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white shadow-xl shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] relative z-10"
         >
-          <span>Tiếp Tục Chinh Phục Cấp {newLevel + 1}</span>
+          <span>{t('arena.continueToNextLevel', { nextLevel: newLevel + 1 })}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

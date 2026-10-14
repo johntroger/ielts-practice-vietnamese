@@ -1049,7 +1049,7 @@ export default function Navbar({
                   >
                     <div className="flex items-center space-x-2.5">
                       <Swords className="w-4 h-4 text-purple-600" />
-                      <span>{isEn ? 'Atlas English Arena (90s)' : 'Đấu Trường Anh Ngữ Atlas (90s)'}</span>
+                      <span>{isEn ? 'Atlas English Arena (180s)' : 'Đấu Trường Anh Ngữ Atlas (180s)'}</span>
                     </div>
                     <span className="text-[10px] text-purple-700 font-bold bg-purple-200 px-1.5 py-0.5 rounded">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
                   </button>

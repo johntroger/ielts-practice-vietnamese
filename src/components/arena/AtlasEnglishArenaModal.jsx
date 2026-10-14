@@ -268,7 +268,7 @@ export default function AtlasEnglishArenaModal({
                   type="button"
                   onClick={toggleFullscreen}
                   className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
-                  title={isFullscreen ? 'Thu nhỏ cửa sổ' : 'Phóng to toàn màn hình'}
+                  title={isFullscreen ? t('arena.minimizeWindow') : t('arena.fullscreenWindow')}
                 >
                   {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
                 </button>
@@ -277,7 +277,7 @@ export default function AtlasEnglishArenaModal({
                   type="button"
                   onClick={handleClose}
                   className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
-                  title="Thoát Đấu Trường"
+                  title={t('arena.exitArena')}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -291,31 +291,31 @@ export default function AtlasEnglishArenaModal({
                 <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl">
                   <div className="flex items-center gap-2 text-indigo-400 text-xs font-black uppercase tracking-wider">
                     <Trophy className="w-4 h-4" />
-                    <span>7 Câu Hỏi Phản Xạ • 180 Giây (3 Phút) • 5 Khiên Bảo Vệ</span>
+                    <span>{t('arena.rulesBadge')}</span>
                   </div>
 
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-100 leading-tight">
-                    Đấu Trường Anh Ngữ Nhịp Độ Cao Triệt Tiêu Bẫy Cambridge
+                    {t('arena.heroTitle')}
                   </h2>
 
                   <p className="text-sm text-slate-300/90 leading-relaxed font-sans">
-                    Rèn luyện phản xạ học thuật tức thì: tiêu diệt bẫy chính tả khó, bẫy từ đồng nghĩa học thuật, bẫy đọc True/False/Not Given và bẫy âm thanh tự sửa trong bài thi Listening. Bảng xếp hạng cập nhật điểm người học thật trực tiếp trên hệ thống.
+                    {t('arena.heroDescription')}
                   </p>
 
                   <div className="grid grid-cols-3 gap-3 pt-1">
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
                       <div className="text-base sm:text-lg font-black text-indigo-300">180s</div>
-                      <div className="text-[11px] text-slate-400 font-medium">Thời Gian (3p)</div>
+                      <div className="text-[11px] text-slate-400 font-medium">{t('arena.durationLabel')}</div>
                     </div>
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
-                      <div className="text-base sm:text-lg font-black text-emerald-300">5 Khiên</div>
-                      <div className="text-[11px] text-slate-400 font-medium">Bảo Vệ</div>
+                      <div className="text-base sm:text-lg font-black text-emerald-300">{t('arena.shieldsUnit')}</div>
+                      <div className="text-[11px] text-slate-400 font-medium">{t('arena.shieldsLabel')}</div>
                     </div>
                     <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
                       <div className="text-base sm:text-lg font-black text-amber-300">
                         ~{ARENA_DIFFICULTY_CONFIG[selectedDifficulty]?.maxSprintXp || 200} XP
                       </div>
-                      <div className="text-[11px] text-slate-400 font-medium">Thưởng Tối Đa</div>
+                      <div className="text-[11px] text-slate-400 font-medium">{t('arena.maxRewardLabel')}</div>
                     </div>
                   </div>
 
@@ -350,10 +350,10 @@ export default function AtlasEnglishArenaModal({
                           }
                         }}
                         className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-base py-4 px-6 rounded-2xl shadow-xl shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
-                        title="Vào vòng đấu giải cứu các câu bạn đã làm sai"
+                        title={t('arena.revengeSprintTitle')}
                       >
                         <RotateCcw className="w-5 h-5" />
-                        <span>⚡ Đấu Phục Thù ({getUnresolvedMistakeCount()})</span>
+                        <span>{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
                       </button>
                     )}
                   </div>
@@ -416,13 +416,13 @@ export default function AtlasEnglishArenaModal({
             <header className="w-full bg-slate-900/90 border-b border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
                 <ShieldAlert className="w-5 h-5" />
-                <span>Hết Khiên Bảo Vệ</span>
+                <span>{t('arena.shieldsExhausted')}</span>
               </div>
               <button
                 type="button"
                 onClick={handleReturnToLobby}
                 className="p-2 text-slate-400 hover:text-white rounded-xl transition-colors cursor-pointer"
-                title="Quay lại Bảng Xếp Hạng"
+                title={t('arena.backToLeaderboard')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -432,9 +432,9 @@ export default function AtlasEnglishArenaModal({
               <div className="w-20 h-20 rounded-full bg-rose-500/20 border-2 border-rose-500/40 flex items-center justify-center text-rose-400 mb-6 animate-bounce">
                 <ShieldAlert className="w-10 h-10" />
               </div>
-              <h2 className="text-3xl font-black text-white mb-2">Đấu Trường Tạm Dừng</h2>
+              <h2 className="text-3xl font-black text-white mb-2">{t('arena.arenaPaused')}</h2>
               <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-                Bạn đã dùng hết 5 khiên bảo vệ trong vòng đấu này. Hãy sử dụng quyền hồi sinh khiên cấp cứu (1 lần duy nhất) để tiếp tục!
+                {t('arena.defeatedDescription')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -444,14 +444,14 @@ export default function AtlasEnglishArenaModal({
                   className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-6 rounded-xl transition-all cursor-pointer shadow-lg shadow-emerald-600/30"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  <span>Hồi Sinh +2 Khiên</span>
+                  <span>{t('arena.reviveShields')}</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleDefeatedRestart}
                   className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3.5 px-6 rounded-xl transition-colors cursor-pointer border border-slate-700"
                 >
-                  Đấu Lại Từ Đầu
+                  {t('arena.restartFromBeginning')}
                 </button>
               </div>
             </main>
