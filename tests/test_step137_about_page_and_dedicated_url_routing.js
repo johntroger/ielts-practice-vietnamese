@@ -94,6 +94,7 @@ const navbarSource = fs.readFileSync(navbarPath, 'utf-8');
 assert(navbarSource.includes('onOpenAbout'), 'Navbar.jsx must support onOpenAbout prop');
 assert(navbarSource.includes('doOpenAbout'), 'Navbar.jsx must provide doOpenAbout handler');
 assert(navbarSource.includes('/about'), 'Navbar.jsx must link to /about');
-console.log('  ✓ Navbar desktop and mobile drawer integration verified');
+assert(navbarSource.includes('<Home'), 'Navbar.jsx must render Home icon for About navigation');
+console.log('  ✓ Navbar desktop and mobile drawer integration verified (Home icon)');
 
-console.log('\n🎉 ALL STEP 135 ABOUT PAGE CHECKS PASSED CLEANLY!\n');
+console.log('\n🎉 ALL STEP 137 ABOUT PAGE CHECKS PASSED CLEANLY!\n');

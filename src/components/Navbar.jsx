@@ -36,7 +36,8 @@ import {
   Sun,
   Zap,
   Swords,
-  Globe
+  Globe,
+  Home
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
 import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
@@ -845,15 +846,14 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* About Page (/about) Link Button */}
+            {/* About Page (/about) Link Button - Compact Home Icon */}
             <button
               onClick={doOpenAbout}
-              className="hidden xl:flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-indigo-200/90 bg-indigo-50/80 hover:bg-indigo-100 text-indigo-800 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px]"
-              title={isEn ? "About IELTS Studio Master (/about)" : "Giới thiệu hệ thống IELTS Studio Master (/about)"}
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-indigo-200/90 bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-900 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
+              title={isEn ? "About & Introduction (/about)" : "Giới thiệu & Trang chủ (/about)"}
               aria-label={isEn ? "About Page" : "Trang Giới Thiệu"}
             >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              <span className="hidden min-[1500px]:inline text-[11px] font-bold">{isEn ? 'About' : 'Giới Thiệu'}</span>
+              <Home className="w-4 h-4 text-indigo-600 group-hover:scale-110 transition-transform shrink-0" />
             </button>
 
             {/* Help Center (F1) - 100% Công khai, hiển thị trên màn hình rộng >= 1536px; trên tablet nằm trong menu Tiến Độ */}
@@ -1365,7 +1365,7 @@ export default function Navbar({
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 text-left text-xs font-bold text-indigo-700 border border-indigo-200 mt-2 min-h-[44px] cursor-pointer shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
-                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                      <Home className="w-4 h-4 text-indigo-600" />
                       <span>{isEn ? 'About Platform (/about)' : 'Giới Thiệu Website (/about)'}</span>
                     </div>
                     <span className="text-[10px] text-indigo-700 font-extrabold bg-white border border-indigo-200 px-1.5 py-0.5 rounded-full">/about</span>
