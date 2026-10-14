@@ -146,7 +146,8 @@ const testSuites = [
   { name: 'Step 137: Dedicated About Page & Two-Way URL Routing Audit', file: 'tests/test_step137_about_page_and_dedicated_url_routing.js' },
   { name: 'Step 138: PromptPane Header Redesign & Decluttering Audit', file: 'tests/test_step138_prompt_pane_header_redesign.js' },
   { name: 'Step 139: Utilities Dropdown Alignment & Animation Audit', file: 'tests/test_step139_utilities_dropdown_alignment_and_animation.js' },
-  { name: 'Step 140: Practice Menu Single-Line and Responsive Width Audit', file: 'tests/test_step140_practice_menu_single_line_and_responsive_width.js' }
+  { name: 'Step 140: Practice Menu Single-Line and Responsive Width Audit', file: 'tests/test_step140_practice_menu_single_line_and_responsive_width.js' },
+  { name: 'Step 141: Mobile Header Uniform Alignment & Harmonious Styling Audit', file: 'tests/test_step141_mobile_header_uniform_alignment_and_styling.js' }
 ];
 
 console.log('===============================================================');

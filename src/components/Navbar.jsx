@@ -220,7 +220,7 @@ export default function Navbar({
       <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs shrink-0 overflow-x-clip">
       <div className="w-full max-w-full px-2 sm:px-4 xl:px-6">
         {/* ROW 1: Brand (Left) + Tools/Settings/Menu (Right) */}
-        <div className="flex items-center justify-between h-14 sm:h-16 gap-1 xl:gap-1.5 2xl:gap-2">
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-1.5 sm:gap-2">
           
           {/* 1. LEFT ZONE: Brand & Skills Switcher */}
           <div className="flex items-center space-x-1.5 sm:space-x-3.5 min-w-0">
@@ -232,7 +232,7 @@ export default function Navbar({
               title={isEn ? "Scan QR code to access website on phone" : "Quét mã QR truy cập nhanh website trên điện thoại"}
               aria-label={isEn ? "Open IELTS Studio website QR code" : "Mở mã QR website IELTS Studio"}
             >
-              <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-sm text-xs sm:text-sm group-hover:shadow-md group-hover:from-red-700 group-hover:to-rose-600 transition-all">
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 flex items-center justify-center text-white font-black tracking-wider shadow-xs text-xs sm:text-sm group-hover:shadow-md group-hover:from-red-700 group-hover:to-rose-600 transition-all">
                 <span>IELTS</span>
                 <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-xs flex items-center justify-center border border-red-100 group-hover:scale-110 group-hover:bg-rose-50 transition-transform">
                   <QrCode className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-red-600" />
@@ -253,7 +253,7 @@ export default function Navbar({
             <div className="relative sm:hidden" ref={mobileSkillRef}>
               <button
                 onClick={() => setMobileSkillMenuOpen(!mobileSkillMenuOpen)}
-                className={`flex items-center space-x-1.5 px-2 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
+                className={`flex items-center space-x-1.5 px-2.5 h-9 rounded-xl border text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer ${
                   activeSkill === 'writing'
                     ? 'border-red-200 bg-red-50 text-red-700'
                     : activeSkill === 'reading'
@@ -427,7 +427,7 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => openModal('atlasArena')}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 h-9 sm:h-10 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
                 title={isEn ? "Atlas English Arena (fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ nhịp độ cao & BXH)"}
                 aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
               >
@@ -451,7 +451,7 @@ export default function Navbar({
           </div>
 
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}
-          <div className="flex items-center gap-1 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
+          <div className="flex items-center gap-1 sm:gap-1.5 xl:gap-1.5 2xl:gap-2 shrink-0 pr-0.5 sm:pr-1">
             
             {/* Desktop Only Hero CTA: Thi Thử IELTS */}
             <button
@@ -849,11 +849,11 @@ export default function Navbar({
             {/* About Page (/about) Link Button - Compact Home Icon */}
             <button
               onClick={doOpenAbout}
-              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-indigo-200/90 bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-900 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-indigo-600 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
               title={isEn ? "About & Introduction (/about)" : "Giới thiệu & Trang chủ (/about)"}
               aria-label={isEn ? "About Page" : "Trang Giới Thiệu"}
             >
-              <Home className="w-4 h-4 text-indigo-600 group-hover:scale-110 transition-transform shrink-0" />
+              <Home className="w-4 h-4 text-slate-600 group-hover:text-indigo-600 transition-colors shrink-0" />
             </button>
 
             {/* Help Center (F1) - 100% Công khai, hiển thị trên màn hình rộng >= 1536px; trên tablet nằm trong menu Tiến Độ */}
@@ -882,12 +882,12 @@ export default function Navbar({
             <button
               type="button"
               onClick={toggleLanguage}
-              className="flex items-center justify-center space-x-1 px-2 py-1.5 sm:px-2.5 h-9 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group font-bold text-xs"
+              className="flex items-center justify-center space-x-1 px-2 h-9 sm:px-2.5 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-blue-600 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group font-bold text-xs"
               title={isEn ? "Switch to Vietnamese (Chuyển sang Tiếng Việt)" : "Switch to English (Chuyển sang Tiếng Anh)"}
               aria-label="Switch Language"
             >
-              <Globe className="w-3.5 h-3.5 text-blue-600 group-hover:rotate-45 transition-transform shrink-0" />
-              <span className="text-[11px] font-black tracking-wider text-slate-800">
+              <Globe className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-600 group-hover:rotate-45 transition-all shrink-0" />
+              <span className="text-[11px] font-black tracking-wider text-slate-800 group-hover:text-blue-600 transition-colors">
                 {isEn ? 'EN' : 'VI'}
               </span>
             </button>
@@ -896,7 +896,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-amber-500 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
               title={currentTheme === 'dark' ? (isEn ? "Switch to Light Mode" : "Chuyển sang Giao diện Sáng (Light Mode)") : (isEn ? "Switch to Dark Mode" : "Chuyển sang Giao diện Ban Đêm (Dark Mode)")}
               aria-label={isEn ? "Toggle Light / Dark mode" : "Chuyển đổi giao diện Sáng / Tối"}
             >
@@ -951,10 +951,10 @@ export default function Navbar({
             {/* Mobile & Tablet Hamburger Menu Button (Compact 38px on phone, 44px touch target on tablet, active up to 1280px) */}
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-              className="xl:hidden relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 transition-colors shadow-2xs shrink-0 cursor-pointer active:scale-95"
+              className="xl:hidden relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px] rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95"
               aria-label={isEn ? "Open full menu" : "Mở menu đầy đủ"}
             >
-              {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-5 h-5" />}
+              {isMobileDrawerOpen ? <X className="w-5 h-5 text-red-600" /> : <Menu className="w-4.5 h-4.5 text-slate-700" />}
               {!apiKey && (
                 <span className="sm:hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-500 border-2 border-white animate-pulse" />
               )}
