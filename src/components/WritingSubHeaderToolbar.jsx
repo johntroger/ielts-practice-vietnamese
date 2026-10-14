@@ -62,36 +62,48 @@ export default function WritingSubHeaderToolbar({
     return children;
   };
 
+  const calcCoords = () => {
+    if (!toolsButtonRef.current) return null;
+    const rect = toolsButtonRef.current.getBoundingClientRect();
+    const desiredWidth = Math.min(320, window.innerWidth - 24);
+    
+    // Default preferred alignment: right-aligned with the button
+    let left = rect.right - desiredWidth;
+    
+    // Smart clamp: prevent spilling off the left edge (at least 12px padding)
+    if (left < 12) {
+      left = 12;
+    }
+    // Smart clamp: prevent spilling off the right edge (at least 12px padding)
+    if (left + desiredWidth > window.innerWidth - 12) {
+      left = window.innerWidth - 12 - desiredWidth;
+    }
+
+    const coords = {
+      top: rect.bottom + 6,
+      left,
+      width: desiredWidth,
+      maxHeight: Math.max(220, window.innerHeight - rect.bottom - 16)
+    };
+    setDropdownCoords(coords);
+    return coords;
+  };
+
+  const handleToggleToolsDropdown = () => {
+    if (isToolsDropdownOpen) {
+      setIsToolsDropdownOpen(false);
+      setDropdownCoords(null);
+    } else {
+      calcCoords();
+      setIsToolsDropdownOpen(true);
+    }
+  };
+
   useEffect(() => {
     if (!isToolsDropdownOpen) {
       setDropdownCoords(null);
       return;
     }
-    const calcCoords = () => {
-      if (!toolsButtonRef.current) return;
-      const rect = toolsButtonRef.current.getBoundingClientRect();
-      const desiredWidth = Math.min(320, window.innerWidth - 24);
-      
-      // Default preferred alignment: right-aligned with the button
-      let left = rect.right - desiredWidth;
-      
-      // Smart clamp: prevent spilling off the left edge (at least 12px padding)
-      if (left < 12) {
-        left = 12;
-      }
-      // Smart clamp: prevent spilling off the right edge (at least 12px padding)
-      if (left + desiredWidth > window.innerWidth - 12) {
-        left = window.innerWidth - 12 - desiredWidth;
-      }
-
-      setDropdownCoords({
-        top: rect.bottom + 6,
-        left,
-        width: desiredWidth,
-        maxHeight: Math.max(220, window.innerHeight - rect.bottom - 16)
-      });
-    };
-
     calcCoords();
     window.addEventListener('resize', calcCoords);
     window.addEventListener('scroll', calcCoords, true);
@@ -215,7 +227,7 @@ export default function WritingSubHeaderToolbar({
           {/* Unified "Tiện Ích & Cài Đặt" Menu Dropdown */}
           <div className="relative" ref={toolsButtonRef}>
             <button
-              onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+              onClick={handleToggleToolsDropdown}
               className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-2xs ${
                 isToolsDropdownOpen || mistakesCount > 0
                   ? 'bg-amber-50/90 text-amber-900 border-amber-300'
@@ -238,11 +250,14 @@ export default function WritingSubHeaderToolbar({
             </button>
 
             {/* Dropdown Popover */}
-            {isToolsDropdownOpen && renderPortal(
+            {isToolsDropdownOpen && dropdownCoords && renderPortal(
               <>
                 <div 
                   className="fixed inset-0 z-50 bg-transparent cursor-pointer" 
-                  onClick={() => setIsToolsDropdownOpen(false)} 
+                  onClick={() => {
+                    setIsToolsDropdownOpen(false);
+                    setDropdownCoords(null);
+                  }} 
                 />
                 <div 
                   style={dropdownCoords ? {
@@ -253,13 +268,11 @@ export default function WritingSubHeaderToolbar({
                     maxHeight: `${dropdownCoords.maxHeight}px`,
                     zIndex: 51
                   } : undefined}
-                  className={`bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-51 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-left overflow-y-auto overscroll-contain ${
-                    !dropdownCoords ? 'fixed top-24 left-3 right-3 max-h-[calc(100dvh-120px)]' : ''
-                  }`}
+                  className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-51 origin-top-right animate-in fade-in-0 slide-in-from-top-2 duration-150 ease-out space-y-1 text-left overflow-y-auto overscroll-contain"
                 >
                   
                   {/* SECTION 1: Cấu hình thi & Hiển thị */}
-                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-left">
                     {isEn ? "Exam Environment & Display" : "Cấu Hình Phòng Thi & Hiển Thị"}
                   </div>
 
@@ -268,18 +281,19 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       toggleFocusMode?.();
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
                     className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                       isFocusMode ? 'bg-purple-50 text-purple-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className={`p-1.5 rounded-lg ${isFocusMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700'}`}>
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className={`p-1.5 rounded-lg shrink-0 ${isFocusMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700'}`}>
                         {isFocusMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                       </div>
-                      <div>
-                        <div className="font-bold text-xs">{isEn ? "Focus Mode (Zen)" : "Chế Độ Tập Trung (Zen)"}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Hide all menus to focus on writing (Alt+F)" : "Ẩn mọi menu để tập trung viết (Alt+F)"}</div>
+                      <div className="text-left">
+                        <div className="font-bold text-xs text-left">{isEn ? "Focus Mode (Zen)" : "Chế Độ Tập Trung (Zen)"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Hide all menus to focus on writing (Alt+F)" : "Ẩn mọi menu để tập trung viết (Alt+F)"}</div>
                       </div>
                     </div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isFocusMode ? 'bg-purple-200 text-purple-800' : 'bg-slate-100 text-slate-600'}`}>
@@ -292,18 +306,19 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onToggleWritingViewMode?.(writingViewMode === 'minimal' ? 'pro' : 'minimal');
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
                     className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                       writingViewMode === 'minimal' ? 'bg-indigo-50 text-indigo-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className={`p-1.5 rounded-lg ${writingViewMode === 'minimal' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700'}`}>
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className={`p-1.5 rounded-lg shrink-0 ${writingViewMode === 'minimal' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-700'}`}>
                         <Sparkles className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs">{isEn ? "Minimal Layout (Minimal)" : "Giao Diện Tinh Giản (Minimal)"}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Hide auxiliary panels, optimize concentration" : "Ẩn các bảng biểu phân tích phụ, tối ưu tập trung"}</div>
+                      <div className="text-left">
+                        <div className="font-bold text-xs text-left">{isEn ? "Minimal Layout (Minimal)" : "Giao Diện Tinh Giản (Minimal)"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Hide auxiliary panels, optimize concentration" : "Ẩn các bảng biểu phân tích phụ, tối ưu tập trung"}</div>
                       </div>
                     </div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${writingViewMode === 'minimal' ? 'bg-indigo-200 text-indigo-800' : 'bg-slate-100 text-slate-600'}`}>
@@ -316,16 +331,17 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onOpenCDIDisplay?.();
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 text-left transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700 shrink-0">
                         <SlidersHorizontal className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs">{isEn ? "CDI Display Accessibility" : "Trợ Năng Hiển Thị CDI"}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Font size & contrast mode (IDP/BC standard)" : "Cỡ chữ & màu tương phản IDP/BC"}</div>
+                      <div className="text-left">
+                        <div className="font-bold text-xs text-left">{isEn ? "CDI Display Accessibility" : "Trợ Năng Hiển Thị CDI"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Font size & contrast mode (IDP/BC standard)" : "Cỡ chữ & màu tương phản IDP/BC"}</div>
                       </div>
                     </div>
                     {(cdiFontSize !== 'standard' || cdiContrast !== 'standard') && (
@@ -340,18 +356,19 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onToggleMastered?.(currentTask?.id);
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
                     className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-colors cursor-pointer ${
                       masteredIds.includes(currentTask?.id) ? 'bg-emerald-50 text-emerald-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className={`p-1.5 rounded-lg ${masteredIds.includes(currentTask?.id) ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'}`}>
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className={`p-1.5 rounded-lg shrink-0 ${masteredIds.includes(currentTask?.id) ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'}`}>
                         <GraduationCap className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs">{isEn ? "Mark Task as Mastered" : "Đánh Dấu Thuộc Đề Thi Này (Thuộc bài)"}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Remember you have mastered this prompt type" : "Ghi nhớ đã luyện thành thạo dạng bài này"}</div>
+                      <div className="text-left">
+                        <div className="font-bold text-xs text-left">{isEn ? "Mark Task as Mastered" : "Đánh Dấu Thuộc Đề Thi Này (Thuộc bài)"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Remember you have mastered this prompt type" : "Ghi nhớ đã luyện thành thạo dạng bài này"}</div>
                       </div>
                     </div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${masteredIds.includes(currentTask?.id) ? 'bg-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
@@ -361,7 +378,7 @@ export default function WritingSubHeaderToolbar({
 
                   {/* SECTION 2: Học tập & Sửa lỗi */}
                   <div className="border-t border-slate-100 pt-1 my-1"></div>
-                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-left">
                     {isEn ? "Writing Handbook & Notes" : "Sổ Tay & Kiến Thức Luyện Viết"}
                   </div>
 
@@ -374,19 +391,20 @@ export default function WritingSubHeaderToolbar({
                         onOpenMistakeLog?.();
                       }
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 text-left transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700">
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700 shrink-0">
                         <ShieldAlert className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs flex items-center gap-1.5">
+                      <div className="text-left">
+                        <div className="font-bold text-xs flex items-center gap-1.5 text-left">
                           <span>{isEn ? "Frequent Mistakes Notebook" : "Sổ Tay Lỗi Sai Thường Gặp"}</span>
                           <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 text-[9px] font-bold">{isEn ? "Sidebar" : "Khay Trượt"}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Grammar, vocabulary & expression traps on sidebar" : "Ngữ pháp, từ vựng & bẫy diễn đạt bên hông"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Grammar, vocabulary & expression traps on sidebar" : "Ngữ pháp, từ vựng & bẫy diễn đạt bên hông"}</div>
                       </div>
                     </div>
                     {mistakesCount > 0 && (
@@ -403,19 +421,20 @@ export default function WritingSubHeaderToolbar({
                         onOpenSlideOver('vocab');
                       }
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 text-left transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700 shrink-0">
                         <Bookmark className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs flex items-center gap-1.5">
+                      <div className="text-left">
+                        <div className="font-bold text-xs flex items-center gap-1.5 text-left">
                           <span>{isEn ? "Vocabulary & Collocations Notebook" : "Sổ Tay Từ Vựng & Collocations"}</span>
                           <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold">{isEn ? "Sidebar" : "Khay Trượt"}</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Quickly look up vocabulary and insert into essay" : "Tra cứu nhanh từ vựng & chèn trực tiếp vào bài"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Quickly look up vocabulary and insert into essay" : "Tra cứu nhanh từ vựng & chèn trực tiếp vào bài"}</div>
                       </div>
                     </div>
                   </button>
@@ -425,19 +444,20 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onOpenPrescription?.();
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 text-left transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-rose-500 to-amber-500 text-white">
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-tr from-rose-500 to-amber-500 text-white shrink-0">
                         <Pill className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs flex items-center space-x-1">
+                      <div className="text-left">
+                        <div className="font-bold text-xs flex items-center space-x-1 text-left">
                           <span>{isEn ? "Error Prescription" : "Đơn Thuốc Sửa Lỗi"}</span>
                           <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 text-[9px] font-black">SRS</span>
                         </div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "3-minute drills to conquer mistake traps" : "Bài tập 3 phút khắc phục bẫy lỗi sai"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "3-minute drills to conquer mistake traps" : "Bài tập 3 phút khắc phục bẫy lỗi sai"}</div>
                       </div>
                     </div>
                   </button>
@@ -447,15 +467,16 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onOpenTheory?.();
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 transition-colors cursor-pointer"
+                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-amber-50 text-slate-700 hover:text-amber-900 text-left transition-colors cursor-pointer"
                   >
-                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700 shrink-0">
                       <BookOpen className="w-4 h-4" />
                     </div>
-                    <div>
-                      <div className="font-bold text-xs">{isEn ? "Tactical Strategy Handbook" : "Cẩm Nang Chiến Thuật"}</div>
-                      <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Band 8.0+ writing strategies for Task 1 & Task 2" : "Chiến lược viết Task 1 & Task 2 chuẩn 8.0+"}</div>
+                    <div className="text-left">
+                      <div className="font-bold text-xs text-left">{isEn ? "Tactical Strategy Handbook" : "Cẩm Nang Chiến Thuật"}</div>
+                      <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Band 8.0+ writing strategies for Task 1 & Task 2" : "Chiến lược viết Task 1 & Task 2 chuẩn 8.0+"}</div>
                     </div>
                   </button>
 
@@ -464,15 +485,16 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onOpenShortcuts?.();
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
+                    className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-slate-700 text-left transition-colors cursor-pointer"
                   >
-                    <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+                    <div className="p-1.5 rounded-lg bg-slate-100 text-slate-600 shrink-0">
                       <Keyboard className="w-4 h-4" />
                     </div>
-                    <div>
-                      <div className="font-bold text-xs">{isEn ? "Keyboard Shortcuts Guide (?)" : "Bảng Tra Cứu Phím Tắt (?)"}</div>
-                      <div className="text-[10px] text-slate-400 font-normal">Alt+F, Alt+K, Ctrl+Enter, Esc</div>
+                    <div className="text-left">
+                      <div className="font-bold text-xs text-left">{isEn ? "Keyboard Shortcuts Guide (?)" : "Bảng Tra Cứu Phím Tắt (?)"}</div>
+                      <div className="text-[10px] text-slate-400 font-normal text-left">Alt+F, Alt+K, Ctrl+Enter, Esc</div>
                     </div>
                   </button>
 
@@ -482,16 +504,17 @@ export default function WritingSubHeaderToolbar({
                     onClick={() => {
                       onOpenOnboarding?.();
                       setIsToolsDropdownOpen(false);
+                      setDropdownCoords(null);
                     }}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 text-left transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700">
+                    <div className="flex items-center space-x-2.5 text-left">
+                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700 shrink-0">
                         <Target className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs">{isEn ? "Target Band Score" : "Mục Tiêu Band Điểm"}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? "Click to customize study roadmap" : "Nhấn để thay đổi lộ trình học"}</div>
+                      <div className="text-left">
+                        <div className="font-bold text-xs text-left">{isEn ? "Target Band Score" : "Mục Tiêu Band Điểm"}</div>
+                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Click to customize study roadmap" : "Nhấn để thay đổi lộ trình học"}</div>
                       </div>
                     </div>
                     <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-700 font-black text-[10px]">
@@ -500,9 +523,9 @@ export default function WritingSubHeaderToolbar({
                   </button>
 
                   {/* Streak Info */}
-                  <div className="px-2.5 py-1.5 bg-orange-50/60 rounded-xl border border-orange-200/50 flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 text-orange-800 text-xs font-bold">
-                      <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                  <div className="px-2.5 py-1.5 bg-orange-50/60 rounded-xl border border-orange-200/50 flex items-center justify-between text-left">
+                    <div className="flex items-center space-x-1.5 text-orange-800 text-xs font-bold text-left">
+                      <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500 shrink-0" />
                       <span>{isEn ? "Study Streak" : "Chuỗi học tập"}</span>
                     </div>
                     <span className="font-black text-xs text-orange-700">{streakCount} {isEn ? 'consecutive days' : 'ngày liên tục'}</span>

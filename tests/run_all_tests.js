@@ -144,7 +144,8 @@ const testSuites = [
   { name: 'Step 135: Bulletproof Mastery, Ebbinghaus 14-Day Decay & 7-Slot Blueprint', file: 'tests/test_step135_bulletproof_mastery_and_7slot_flow.js' },
   { name: 'Step 136: Arena Bilingual Localization & Zero Vietnamese Leaks in English Mode', file: 'tests/test_step136_arena_bilingual_localization_and_zero_vietnamese_leak.js' },
   { name: 'Step 137: Dedicated About Page & Two-Way URL Routing Audit', file: 'tests/test_step137_about_page_and_dedicated_url_routing.js' },
-  { name: 'Step 138: PromptPane Header Redesign & Decluttering Audit', file: 'tests/test_step138_prompt_pane_header_redesign.js' }
+  { name: 'Step 138: PromptPane Header Redesign & Decluttering Audit', file: 'tests/test_step138_prompt_pane_header_redesign.js' },
+  { name: 'Step 139: Utilities Dropdown Alignment & Animation Audit', file: 'tests/test_step139_utilities_dropdown_alignment_and_animation.js' }
 ];
 
 console.log('===============================================================');
