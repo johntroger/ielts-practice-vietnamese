@@ -26,7 +26,8 @@ import {
   RefreshCw,
   BookOpen,
   ExternalLink,
-  ChevronDown
+  ChevronDown,
+  Clock
 } from 'lucide-react';
 import ChartRenderer from './ChartRenderer';
 import ProcessMapRenderer from './ProcessMapRenderer';
@@ -36,6 +37,50 @@ import { recordAttempt } from '../services/ratingPopularityService';
 import { validateThesisStatement, validatePeelParagraph } from '../services/geminiService';
 import { getTheoryContext, openTheoryModalWithContext } from '../services/theoryContextService';
 import { useTranslation } from '../i18n/index.js';
+
+// Format task type into polished, human-readable title
+function formatTaskType(type, taskNumber, isEn = false) {
+  if (!type) return taskNumber === 1 ? (isEn ? 'Visual Data' : 'Biểu đồ') : (isEn ? 'Essay' : 'Nghị luận');
+  const t = String(type).toLowerCase().trim();
+  
+  if (t === 'twopart' || t === 'two-part' || t === 'two_part') {
+    return isEn ? 'Two-part Question' : 'Câu hỏi 2 phần';
+  }
+  if (t === 'opinion' || t.includes('agree')) {
+    return isEn ? 'Opinion Essay' : 'Quan điểm / Ý kiến';
+  }
+  if (t === 'discussion' || t.includes('discuss')) {
+    return isEn ? 'Discussion Essay' : 'Bàn luận 2 mặt';
+  }
+  if (t.includes('problem') || t.includes('solution') || t.includes('cause')) {
+    return isEn ? 'Problems & Solutions' : 'Nguyên nhân & Giải pháp';
+  }
+  if (t.includes('advantage') || t.includes('disadvantage')) {
+    return isEn ? 'Advantages & Disadvantages' : 'Ưu & Nhược điểm';
+  }
+  if (t === 'line' || t.includes('line')) {
+    return isEn ? 'Line Graph' : 'Biểu đồ Đường';
+  }
+  if (t === 'bar' || t.includes('bar')) {
+    return isEn ? 'Bar Chart' : 'Biểu đồ Cột';
+  }
+  if (t === 'pie' || t.includes('pie')) {
+    return isEn ? 'Pie Chart' : 'Biểu đồ Tròn';
+  }
+  if (t === 'table' || t.includes('table')) {
+    return isEn ? 'Data Table' : 'Bảng số liệu';
+  }
+  if (t === 'map' || t.includes('map')) {
+    return isEn ? 'Map / Plan' : 'Bản đồ / Quy hoạch';
+  }
+  if (t === 'process' || t.includes('process') || t.includes('diagram')) {
+    return isEn ? 'Process Diagram' : 'Sơ đồ Quy trình';
+  }
+  if (t === 'mixed' || t.includes('mix')) {
+    return isEn ? 'Mixed Charts' : 'Biểu đồ Kết hợp';
+  }
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
 
 // Helper to escape special characters for RegExp
 function escapeRegExp(string) {
@@ -248,124 +293,132 @@ export default function PromptPane({
   return (
     <div className="p-4 sm:p-6 pb-24 sm:pb-12 max-w-3xl mx-auto space-y-5">
       
-      {/* Social Proof, Star Rating & Discovery Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 rounded-2xl bg-gradient-to-r from-amber-50/80 via-white to-slate-50 border border-amber-200/70 shadow-2xs">
-        <div className="flex items-center flex-wrap gap-2">
-          {(task?.id || task?.title) && (
-            <StarRatingWidget
-              itemId={task.id || task.title}
-              fallbackTitle={task.title}
-              showAttempts={true}
-              size="sm"
-            />
-          )}
+      {/* Redesigned Unified Task Header Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3.5 transition-all">
+        {/* Row 1: Badges & Quick Action Tools */}
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
+          {/* Left: Task Type & Badges */}
+          <div className="flex items-center flex-wrap gap-2">
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold tracking-wide uppercase shadow-2xs ${
+              task.taskNumber === 1 
+                ? 'bg-sky-50 text-sky-700 border border-sky-200/80' 
+                : 'bg-rose-50 text-rose-700 border border-rose-200/80'
+            }`}>
+              {isEn ? `Writing Task ${task.taskNumber}` : `IELTS Writing Task ${task.taskNumber}`}
+            </span>
+
+            <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200/70 shadow-2xs">
+              {formatTaskType(task.type, task.taskNumber, isEn)}
+            </span>
+
+            {task.isAiGenerated && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/80 text-xs font-semibold shadow-2xs">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span>AI Forecast</span>
+              </span>
+            )}
+          </div>
+
+          {/* Right: Handbook & Library Actions */}
+          <div className="flex items-center flex-wrap gap-2">
+            {(() => {
+              const theoryCtx = getTheoryContext({
+                skill: 'writing',
+                taskNumber: task.taskNumber,
+                taskType: task.type,
+                prompt: task.prompt,
+                isEn
+              });
+              if (!theoryCtx) return null;
+              return (
+                <div className="inline-flex items-center rounded-lg border border-sky-200/80 bg-sky-50/70 text-sky-900 text-xs font-semibold shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => openTheoryModalWithContext(theoryCtx)}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 hover:bg-sky-100/80 text-sky-850 transition-colors cursor-pointer rounded-l-lg whitespace-nowrap"
+                    title={theoryCtx.tip || theoryCtx.title}
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                    <span>{isEn ? "Handbook" : "Cẩm Nang"}</span>
+                  </button>
+                  <a
+                    href={theoryCtx.gitbookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-1 text-sky-700 hover:text-sky-950 hover:bg-sky-100/90 border-l border-sky-200/80 flex items-center shrink-0 rounded-r-lg transition-colors"
+                    title={isEn ? "Read detailed handbook on GitBook" : "Đọc cẩm nang chi tiết trên GitBook"}
+                  >
+                    <span className="sr-only">GitBook</span>
+                    <ExternalLink className="w-3 h-3 opacity-75" />
+                  </a>
+                </div>
+              );
+            })()}
+
+            {onOpenLibrary && (
+              <button
+                type="button"
+                onClick={onOpenLibrary}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold text-xs border border-slate-200 shadow-2xs transition-all cursor-pointer hover:border-slate-300 active:scale-95 whitespace-nowrap"
+                title={isEn ? "Open task library to filter, view top-rated tasks & switch prompts" : "Mở Thư Viện Đề để Lọc thông minh, xem Đề Rating cao & Đổi đề thi khác"}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                <span>{isEn ? "Task Bank & Filters" : "Kho Đề & Bộ Lọc"}</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        {onOpenLibrary && (
-          <button
-            type="button"
-            onClick={onOpenLibrary}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200 shadow-2xs transition-all cursor-pointer hover:border-slate-300 active:scale-95"
-            title={isEn ? "Open task library to filter, view top-rated tasks & switch prompts" : "Mở Thư Viện Đề để Lọc thông minh, xem Đề Rating cao & Đổi đề thi khác"}
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-red-600" />
-            <span>{isEn ? "Task Bank & Filters" : "Kho Đề & Bộ Lọc"}</span>
-          </button>
-        )}
-      </div>
+        {/* Row 2: Exam Question Title */}
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug tracking-tight">
+          {task.title}
+        </h2>
 
-      {/* Header Badges */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
-        <div className="flex items-center space-x-2">
-          <span className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${
-            task.taskNumber === 1 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-          }`}>
-            IELTS Writing Task {task.taskNumber}
-          </span>
-          <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium capitalize">
-            {task.type}
-          </span>
-          {(() => {
-            const theoryCtx = getTheoryContext({
-              skill: 'writing',
-              taskNumber: task.taskNumber,
-              taskType: task.type,
-              prompt: task.prompt,
-              isEn
-            });
-            if (!theoryCtx) return null;
-            return (
-              <div className="inline-flex items-center rounded-md border border-sky-200 bg-sky-50 text-sky-900 text-[11px] font-semibold shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => openTheoryModalWithContext(theoryCtx)}
-                  className="inline-flex items-center space-x-1 px-2 py-0.5 hover:bg-sky-100 transition-colors cursor-pointer rounded-l-md"
-                  title={theoryCtx.tip}
-                >
-                  <BookOpen className="w-3 h-3 text-sky-600 shrink-0" />
-                  <span className="hidden sm:inline">{theoryCtx.badge}</span>
-                  <span className="sm:hidden">{isEn ? "Handbook" : "Cẩm Nang"}</span>
-                </button>
-                <a
-                  href={theoryCtx.gitbookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-1.5 py-0.5 text-sky-700 hover:text-sky-950 hover:underline border-l border-sky-200 flex items-center shrink-0"
-                  title={isEn ? "Read detailed handbook on GitBook" : "Đọc cẩm nang chi tiết trên GitBook"}
-                >
-                  <span className="hidden sm:inline">{isEn ? "Web Guide" : "Bản Web"}</span>
-                  <ExternalLink className="w-2.5 h-2.5 sm:ml-0.5 opacity-80" />
-                </a>
-              </div>
-            );
-          })()}
-          {task.isAiGenerated && (
-            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-medium">
-              <Sparkles className="w-3 h-3" />
-              <span>AI Forecast</span>
+        {/* Row 3: Meta Stats & Mastery Status (Unified Bottom Bar) */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-100 text-xs">
+          {/* Left: Star Rating & Word/Time Targets */}
+          <div className="flex items-center flex-wrap gap-2.5 sm:gap-3 text-slate-500 font-medium">
+            {(task?.id || task?.title) && (
+              <StarRatingWidget
+                itemId={task.id || task.title}
+                fallbackTitle={task.title}
+                showAttempts={true}
+                size="sm"
+              />
+            )}
+            <span className="text-slate-300 hidden sm:inline">•</span>
+            <span className="inline-flex items-center gap-1 whitespace-nowrap text-slate-600">
+              <Target className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span>{isEn ? 'Min:' : 'Tối thiểu:'} <strong className="text-slate-800 font-semibold">{task.minWords} {isEn ? 'words' : 'từ'}</strong></span>
             </span>
-          )}
+            <span className="text-slate-300 hidden sm:inline">•</span>
+            <span className="inline-flex items-center gap-1 whitespace-nowrap text-slate-600">
+              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span>{isEn ? 'Time:' : 'Gợi ý:'} <strong className="text-slate-800 font-semibold">{task.timeLimit} {isEn ? 'mins' : 'phút'}</strong></span>
+            </span>
+          </div>
+
+          {/* Right: Mastered Toggle Button */}
           {onToggleMastered && (
             <button
               onClick={onToggleMastered}
-              className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-bold transition-all cursor-pointer shadow-2xs border ${
+              className={`whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs border ${
                 isMastered 
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
-                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 ring-1 ring-emerald-200/50' 
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300'
               }`}
               title={isMastered 
                 ? (isEn ? 'Task mastered. Click to unmark' : 'Đề thi này đã thuộc. Nhấp để bỏ đánh dấu') 
                 : (isEn ? 'Mark this task as Mastered to track progress' : 'Đánh dấu đề thi này là "Đã thuộc" để ghi nhớ tiến trình')}
             >
-              <CheckCircle2 className={`w-3 h-3 ${isMastered ? 'text-emerald-600' : 'text-slate-400'}`} />
-              <span>{isMastered ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Mark as Mastered' : 'Đánh dấu thuộc')}</span>
+              <CheckCircle2 className={`w-3.5 h-3.5 shrink-0 ${isMastered ? 'text-emerald-600' : 'text-slate-400'}`} />
+              <span className="whitespace-nowrap">{isMastered ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Mark as Mastered' : 'Đánh dấu thuộc')}</span>
             </button>
           )}
         </div>
-
-        <div className="flex items-center space-x-3 text-xs text-slate-500">
-          <span>{isEn ? 'Minimum:' : 'Tối thiểu:'} <strong className="text-slate-700">{task.minWords} {isEn ? 'words' : 'từ'}</strong></span>
-          <span>•</span>
-          <span>{isEn ? 'Suggested time:' : 'Thời gian gợi ý:'} <strong className="text-slate-700">{task.timeLimit} {isEn ? 'mins' : 'phút'}</strong></span>
-        </div>
       </div>
 
-      {/* Task Title & Prompt */}
       <div className="space-y-3">
-        <div>
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-            {task.title}
-          </h2>
-          <div className="flex items-center gap-2 mt-2">
-            <StarRatingWidget 
-              itemId={task.id || task.title} 
-              fallbackTitle={task.title} 
-              size="sm" 
-              showAttempts={true} 
-            />
-          </div>
-        </div>
-
         {/* Prompt Card with text selection highlighter */}
         <div 
           ref={promptContainerRef}
