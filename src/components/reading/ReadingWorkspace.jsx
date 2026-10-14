@@ -25,7 +25,8 @@ import {
   ChevronDown,
   SlidersHorizontal,
   Shield,
-  GraduationCap
+  GraduationCap,
+  Monitor
 } from 'lucide-react';
 import { INITIAL_READING_TESTS } from '../../data/readingTasks';
 import { useReadingExam } from '../../hooks/useReadingExam';
@@ -674,21 +675,6 @@ export default function ReadingWorkspace({
                 {examMode === 'exam' ? `🛡️ ${t('reading.examMode', 'Thi')}` : `📗 ${t('reading.practiceMode', 'Luyện')}`}
               </button>
 
-              {/* CDI Button */}
-              <button
-                type="button"
-                onClick={() => setCdiFullscreen(prev => !prev)}
-                className={`p-1 sm:px-2 sm:py-1 rounded-xl border font-bold text-xs flex items-center gap-1 shrink-0 cursor-pointer ${
-                  cdiFullscreen
-                    ? 'bg-purple-600 text-white border-purple-700'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-                }`}
-                title={cdiFullscreen ? (isEn ? "Exit CDI" : "Thoát CDI") : (isEn ? "Launch CDI simulation" : "Bật mô phỏng thi máy tính CDI")}
-              >
-                {cdiFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5 text-purple-600" />}
-                <span className="hidden sm:inline">{cdiFullscreen ? t('reading.exitCdi', 'Thoát') : t('reading.enterCdi', 'CDI')}</span>
-              </button>
-
               {/* Workspace Expansion Toggle (Alt + Z) */}
               {toggleSlimHeader && (
                 <button
@@ -723,6 +709,19 @@ export default function ReadingWorkspace({
                       <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         {t('reading.utilitiesMenu', 'Tiện Ích & Công Cụ')}
                       </div>
+                      {/* CDI Computer Exam Simulation */}
+                      <button
+                        onClick={() => { setCdiFullscreen(prev => !prev); setIsToolsDropdownOpen(false); }}
+                        className={`w-full flex items-center space-x-2 px-2.5 py-2 rounded-xl text-left text-xs font-semibold cursor-pointer transition-colors ${
+                          cdiFullscreen
+                            ? 'bg-purple-100 text-purple-900 font-bold'
+                            : 'hover:bg-purple-50 text-purple-800'
+                        }`}
+                        title={cdiFullscreen ? (isEn ? "Exit CDI mode" : "Thoát chế độ thi CDI") : (isEn ? "Launch CDI simulation" : "Bật mô phỏng thi máy tính CDI")}
+                      >
+                        <Monitor className="w-4 h-4 text-purple-600 shrink-0" />
+                        <span>{cdiFullscreen ? (isEn ? 'Exit CDI Simulation' : 'Thoát Mô Phỏng CDI') : (isEn ? 'CDI Exam Simulation' : 'Mô Phỏng Thi Máy Tính (CDI)')}</span>
+                      </button>
                       <button
                         onClick={() => { setIsIngestOpen(true); setIsToolsDropdownOpen(false); }}
                         className="w-full flex items-center space-x-2 px-2.5 py-2 rounded-xl hover:bg-amber-50 text-left text-xs font-semibold text-amber-900 cursor-pointer transition-colors"
@@ -1105,7 +1104,7 @@ export default function ReadingWorkspace({
                 </>
               ) : (
                 <>
-                  <Maximize2 className="w-3.5 h-3.5 text-purple-600" />
+                  <Monitor className="w-3.5 h-3.5 text-purple-600" />
                   <span>{t('reading.enterCdi', 'Thi CDI')}</span>
                 </>
               )}
