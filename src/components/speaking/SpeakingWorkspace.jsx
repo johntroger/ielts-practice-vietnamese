@@ -28,6 +28,7 @@ import SpeakingExaminerRoom from './SpeakingExaminerRoom';
 import SpeakingResultModal from './SpeakingResultModal';
 import SpeakingGeneratorModal from './SpeakingGeneratorModal';
 import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
+import SpeakingMockLibraryModal from './SpeakingMockLibraryModal';
 import { 
   deduplicateSpeakingP1Topics, 
   deduplicateSpeakingP2Cards, 
@@ -74,6 +75,7 @@ export default function SpeakingWorkspace({
   const [selectedMockId, setSelectedMockId] = useState(SPEAKING_MOCK_TEST_PACKS[0]?.id || 'mock-spk-tech-future');
   
   // Modals state
+  const [isMockLibraryOpen, setIsMockLibraryOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [generatorInitialMode, setGeneratorInitialMode] = useState('ai');
   const [mockFilter, setMockFilter] = useState('all'); // 'all' | 'cambridge' | 'manual' | 'ai'
@@ -97,9 +99,12 @@ export default function SpeakingWorkspace({
   // Sync external library trigger
   useEffect(() => {
     if (openLibraryTrigger) {
+      if (activeMode === 'mock') {
+        setIsMockLibraryOpen(true);
+      }
       setIsPracticeTopicModalOpen(true);
     }
-  }, [openLibraryTrigger]);
+  }, [openLibraryTrigger, activeMode]);
 
   // Practice Mode State
   const [practicePart, setPracticePart] = useState(1); // 1 | 2 | 3
@@ -419,6 +424,23 @@ export default function SpeakingWorkspace({
     return allMockPacks;
   }, [allMockPacks, mockFilter]);
 
+  const currentPackIndex = React.useMemo(() => {
+    const idx = filteredMockPacks.findIndex(p => p.id === selectedMockId);
+    return idx >= 0 ? idx : 0;
+  }, [filteredMockPacks, selectedMockId]);
+
+  const handlePrevPack = () => {
+    if (filteredMockPacks.length === 0) return;
+    const newIdx = (currentPackIndex - 1 + filteredMockPacks.length) % filteredMockPacks.length;
+    setSelectedMockId(filteredMockPacks[newIdx].id);
+  };
+
+  const handleNextPack = () => {
+    if (filteredMockPacks.length === 0) return;
+    const newIdx = (currentPackIndex + 1) % filteredMockPacks.length;
+    setSelectedMockId(filteredMockPacks[newIdx].id);
+  };
+
   // Derive active items for Mock Pack (support both preset IDs and custom inline items)
   const mockP1 = activeMockPack.customPart1 
     || SPEAKING_PART1_TOPICS.find(p => p.id === activeMockPack.part1TopicId) 
@@ -527,7 +549,7 @@ export default function SpeakingWorkspace({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 min-h-[calc(100vh-64px)] overflow-x-hidden">
+    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 h-full min-h-0 overflow-hidden">
       
       {/* 1. TOP HEADER & METRICS BAR (Theater Mode & Mobile-Optimized) */}
       <div className="bg-slate-900 border-b border-slate-800/80 px-2.5 sm:px-6 py-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2 sm:gap-3 shrink-0">
@@ -622,6 +644,19 @@ export default function SpeakingWorkspace({
             </select>
           </div>
 
+          {/* Speaking Mock Test Library Button */}
+          {activeMode === 'mock' && (
+            <button
+              type="button"
+              onClick={() => setIsMockLibraryOpen(true)}
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-900/40 hover:bg-purple-900/70 text-purple-200 hover:text-white border border-purple-500/40 text-xs font-bold transition-all cursor-pointer shrink-0"
+              title={isEn ? "Open Speaking Mock Test Library" : "Mở Kho Đề Thi Thử IELTS Speaking"}
+            >
+              <Layers className="w-3.5 h-3.5 text-purple-400" />
+              <span>📚 {isEn ? `Library (${allMockPacks.length})` : `Kho Đề (${allMockPacks.length})`}</span>
+            </button>
+          )}
+
           {/* Theory Handbook Button */}
           {onOpenTheory && (
             <button
@@ -715,16 +750,16 @@ export default function SpeakingWorkspace({
       ) : null}
 
       {/* 2. MAIN CONTENT STAGE */}
-      <div className="flex-1 overflow-y-auto p-2.5 sm:p-6 flex flex-col items-center justify-start">
+      <div className="flex-1 overflow-y-auto p-2.5 sm:p-5 flex flex-col items-center justify-start">
         
         {activeMode === 'mock' ? (
           /* ========================================================= */
           /* MOCK TEST PREVIEW & SELECTION STAGE                       */
           /* ========================================================= */
-          <div className="w-full max-w-4xl space-y-6 animate-in fade-in duration-200">
+          <div className="w-full max-w-5xl xl:max-w-6xl space-y-4 sm:space-y-5 animate-in fade-in duration-200">
             
             {/* Top Welcome Banner */}
-            <div className="p-6 rounded-3xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-slate-900 border border-purple-800/40 relative overflow-hidden shadow-xl">
+            <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-slate-900 border border-purple-800/40 relative overflow-hidden shadow-xl">
               <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
               
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
@@ -797,21 +832,31 @@ export default function SpeakingWorkspace({
               </div>
             </div>
 
-            {/* Select Mock Test Pack */}
+            {/* Select Mock Test Pack - Representative Card + Quick Switcher */}
             <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div>
                   <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
                     <Layers className="w-4 h-4 text-purple-400" />
-                    <span>{isEn ? 'Select Mock Test Pack' : 'Chọn Bộ Đề Thi Thử (Mock Test Pack)'}</span>
+                    <span>{isEn ? 'Selected Mock Test Pack (Representative)' : 'Bộ Đề Thi Thử Đang Chọn (Đại Diện)'}</span>
                   </h3>
                   <span className="text-xs text-slate-400 font-medium">
-                    {allMockPacks.length} {isEn ? 'Test Packs (Cambridge Standard, Manual & AI Generated)' : 'Gói đề thi (Chuẩn Cambridge, Thủ công & AI Tự Sinh)'}
+                    {allMockPacks.length} {isEn ? 'Test Packs (Cambridge Standard, Manual & AI Generated)' : 'Gói đề thi (Chuẩn Cambridge, Thủ công & AI Tự Sinh)'} • {isEn ? 'Showing active test pack to maximize workspace space' : 'Chỉ hiển thị đề thi đại diện để tối ưu không gian toàn màn hình'}
                   </span>
                 </div>
 
-                {/* GENERATOR ACTION BUTTONS */}
-                <div className="flex items-center gap-2">
+                {/* ACTION BUTTONS: KHO ĐỀ MODAL + GENERATOR */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsMockLibraryOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 hover:text-white border border-purple-500/50 font-bold text-xs shadow-md shadow-purple-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                    title={isEn ? 'View all test packs in full library modal' : 'Mở toàn bộ kho đề thi trong cửa sổ riêng để tiết kiệm diện tích'}
+                  >
+                    <Layers className="w-4 h-4 text-purple-400" />
+                    <span>📚 {isEn ? `Open Test Library (${allMockPacks.length})` : `Kho Đề Speaking (${allMockPacks.length} Đề)`}</span>
+                  </button>
+
                   <button
                     onClick={() => {
                       setGeneratorInitialMode('manual');
@@ -838,175 +883,217 @@ export default function SpeakingWorkspace({
                 </div>
               </div>
 
-              {/* FILTER PILLS */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setMockFilter('all')}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    mockFilter === 'all'
-                      ? 'bg-purple-600 text-white shadow-xs'
-                      : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {isEn ? 'All' : 'Tất Cả'} ({mockPackCounts.all})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMockFilter('cambridge')}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
-                    mockFilter === 'cambridge'
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <span>🏛️ {isEn ? 'Cambridge Standard' : 'Chuẩn Cambridge'} ({mockPackCounts.cambridge})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMockFilter('manual')}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
-                    mockFilter === 'manual'
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-slate-900 border border-slate-800 text-emerald-400 hover:text-emerald-300'
-                  }`}
-                >
-                  <PenTool className="w-3 h-3" />
-                  <span>✍️ {isEn ? 'Manual' : 'Thủ Công'} ({mockPackCounts.manual})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMockFilter('ai')}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
-                    mockFilter === 'ai'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-900 border border-slate-800 text-purple-300 hover:text-purple-200'
-                  }`}
-                >
-                  <Sparkles className="w-3 h-3" />
-                  <span>🤖 {isEn ? 'AI Generated' : 'AI Sinh'} ({mockPackCounts.ai})</span>
-                </button>
-              </div>
-
-              {filteredMockPacks.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400 text-xl">
-                    📂
-                  </div>
-                  <p className="text-xs text-slate-400">
-                    {isEn ? 'No test packs found in this category.' : 'Chưa có bộ đề nào trong mục này.'}
-                  </p>
+              {/* FILTER PILLS & SWITCHER */}
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                <div className="flex flex-wrap items-center gap-1.5">
                   <button
                     type="button"
-                    onClick={() => {
-                      setGeneratorInitialMode('manual');
-                      setIsGeneratorOpen(true);
-                    }}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 cursor-pointer"
+                    onClick={() => setMockFilter('all')}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      mockFilter === 'all'
+                        ? 'bg-purple-600 text-white shadow-xs'
+                        : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                    }`}
                   >
-                    {isEn ? '✍️ Create First Manual Pack' : '✍️ Tạo đề thủ công đầu tiên'}
+                    {isEn ? 'All' : 'Tất Cả'} ({mockPackCounts.all})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMockFilter('cambridge')}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                      mockFilter === 'cambridge'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <span>🏛️ {isEn ? 'Cambridge Standard' : 'Chuẩn Cambridge'} ({mockPackCounts.cambridge})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMockFilter('manual')}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                      mockFilter === 'manual'
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'bg-slate-900 border border-slate-800 text-emerald-400 hover:text-emerald-300'
+                    }`}
+                  >
+                    <PenTool className="w-3 h-3" />
+                    <span>✍️ {isEn ? 'Manual' : 'Thủ Công'} ({mockPackCounts.manual})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMockFilter('ai')}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1 ${
+                      mockFilter === 'ai'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-900 border border-slate-800 text-purple-300 hover:text-purple-200'
+                    }`}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>🤖 {isEn ? 'AI Generated' : 'AI Sinh'} ({mockPackCounts.ai})</span>
                   </button>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  {filteredMockPacks.map(pack => {
-                    const isSelected = selectedMockId === pack.id;
-                    const isManual = pack.isManual || (pack.isCustom && !pack.isAiGenerated);
-                    const isAi = pack.isAiGenerated || (pack.isCustom && !pack.isManual);
-                    return (
-                      <div
-                        key={pack.id}
-                        onClick={() => setSelectedMockId(pack.id)}
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
-                          isSelected 
-                            ? 'bg-purple-950/40 border-purple-500/80 shadow-lg shadow-purple-950/50' 
-                            : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+
+                {/* Quick Switcher Controls: Prev / Current Counter / Next */}
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-slate-400 font-semibold hidden md:inline">
+                    {isEn ? 'Switch pack:' : 'Chuyển đề:'}
+                  </span>
+                  <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 rounded-xl p-0.5">
+                    <button
+                      type="button"
+                      onClick={handlePrevPack}
+                      disabled={filteredMockPacks.length <= 1}
+                      className="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                      title={isEn ? "Previous test pack" : "Bộ đề phía trước"}
+                    >
+                      ◀
+                    </button>
+                    <span className="px-2 text-xs font-black text-purple-300 min-w-[60px] text-center">
+                      {filteredMockPacks.length > 0 ? `${currentPackIndex + 1} / ${filteredMockPacks.length}` : '0 / 0'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleNextPack}
+                      disabled={filteredMockPacks.length <= 1}
+                      className="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                      title={isEn ? "Next test pack" : "Bộ đề tiếp theo"}
+                    >
+                      ▶
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* REPRESENTATIVE SELECTED PACK CARD */}
+              <div className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-purple-500/60 shadow-xl shadow-purple-950/40 space-y-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-80 h-40 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+
+                {/* Top Row: Badges & Switcher Dropdown */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                  <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                      {activeMockPack.difficulty} • Target {activeMockPack.targetBand}
+                    </span>
+
+                    {masteredIds.includes(activeMockPack.id) && (
+                      <span className="px-2 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                        <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
+                      </span>
+                    )}
+
+                    {(activeMockPack.isCambridge || !activeMockPack.isCustom) && (
+                      <span className="px-2 py-1 rounded-lg text-[10px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                        🏛️ {activeMockPack.cambridgeBook ? (isEn ? `Cam ${activeMockPack.cambridgeBook}` : `Chuẩn Cam ${activeMockPack.cambridgeBook}`) : 'Cambridge Standard'}
+                      </span>
+                    )}
+
+                    {(activeMockPack.isManual || (activeMockPack.isCustom && !activeMockPack.isAiGenerated)) && (
+                      <span className="px-2 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                        <PenTool className="w-3 h-3" />
+                        <span>{isEn ? '✍️ Manual' : '✍️ Thủ Công'}</span>
+                      </span>
+                    )}
+
+                    {activeMockPack.isAiGenerated && (
+                      <span className="px-2 py-1 rounded-lg text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center space-x-1">
+                        <Sparkles className="w-3 h-3 text-purple-400" />
+                        <span>{isEn ? 'AI Gen' : 'AI Sinh'}</span>
+                      </span>
+                    )}
+
+                    <span className="text-xs text-slate-400 font-bold flex items-center space-x-1 pl-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{activeMockPack.estTime || '11 – 14 Mins'}</span>
+                    </span>
+                  </div>
+
+                  {/* Direct Dropdown Switcher */}
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <select
+                      value={selectedMockId}
+                      onChange={(e) => setSelectedMockId(e.target.value)}
+                      className="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 font-bold focus:outline-hidden focus:border-purple-500 max-w-[240px] sm:max-w-[280px] truncate cursor-pointer"
+                    >
+                      {filteredMockPacks.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.title}
+                        </option>
+                      ))}
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsMockLibraryOpen(true)}
+                      className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 hover:text-white text-xs font-bold border border-slate-700 flex items-center space-x-1 cursor-pointer transition-colors"
+                      title={isEn ? "Open full mock library" : "Mở toàn bộ kho đề"}
+                    >
+                      <span>{isEn ? 'All Packs' : 'Tất cả đề'}</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Title & Summary */}
+                <div className="space-y-1.5 relative z-10">
+                  <h4 className="text-lg sm:text-xl font-black text-white leading-snug">
+                    {activeMockPack.title}
+                  </h4>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    {activeMockPack.summary}
+                  </p>
+                </div>
+
+                {/* Footer Info & Controls */}
+                <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-slate-400 relative z-10">
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[11px] font-bold text-slate-300">
+                      {isEn ? 'Parts 1, 2, 3 included' : 'Đầy đủ Part 1, 2, 3'}
+                    </span>
+                    <span className="text-[11px] text-slate-500">
+                      • {isEn ? 'Full Mock Simulation' : 'Khảo Thí Hoàn Chỉnh'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center space-x-2 self-end sm:self-auto">
+                    {onToggleMastered && (
+                      <button
+                        type="button"
+                        onClick={() => onToggleMastered(activeMockPack.id)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors flex items-center space-x-1 cursor-pointer ${
+                          masteredIds.includes(activeMockPack.id)
+                            ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800'
                         }`}
                       >
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center space-x-1.5">
-                              <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-slate-800 text-purple-300 border border-slate-700">
-                                {pack.difficulty} • Target {pack.targetBand}
-                              </span>
-                              {masteredIds.includes(pack.id) && (
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
-                                  <GraduationCap className="w-3 h-3 text-emerald-400" />
-                                  <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
-                                </span>
-                              )}
-                              {(pack.isCambridge || !pack.isCustom) && (
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                                  🏛️ {pack.cambridgeBook ? (isEn ? `Cam ${pack.cambridgeBook}` : `Chuẩn Cam ${pack.cambridgeBook}`) : 'Cambridge'}
-                                </span>
-                              )}
-                              {isManual && (
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
-                                  <PenTool className="w-2.5 h-2.5" />
-                                  <span>{isEn ? '✍️ Manual' : '✍️ Thủ Công'}</span>
-                                </span>
-                              )}
-                              {isAi && (
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center space-x-1">
-                                  <Sparkles className="w-2.5 h-2.5 text-purple-400" />
-                                  <span>{isEn ? 'AI Gen' : 'AI Sinh'}</span>
-                                </span>
-                              )}
-                            </div>
-                            <span className="text-xs text-slate-400 font-bold flex items-center space-x-1">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>{pack.estTime}</span>
-                            </span>
-                          </div>
-                          <h4 className="font-bold text-sm text-white leading-snug">{pack.title}</h4>
-                          <p className="text-xs text-slate-400 line-clamp-2">{pack.summary}</p>
-                        </div>
+                        <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{isEn ? (masteredIds.includes(activeMockPack.id) ? 'Mastered' : 'Master') : (masteredIds.includes(activeMockPack.id) ? 'Đã thuộc đề' : 'Thuộc đề')}</span>
+                      </button>
+                    )}
 
-                        <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                          <span>{isEn ? 'Parts 1, 2, 3 included' : 'Đủ Part 1, 2, 3'}</span>
-                          <div className="flex items-center space-x-2">
-                            {onToggleMastered && (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onToggleMastered(pack.id);
-                                }}
-                                className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors flex items-center space-x-1 cursor-pointer ${
-                                  masteredIds.includes(pack.id)
-                                    ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900'
-                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                                }`}
-                                title={
-                                  masteredIds.includes(pack.id)
-                                    ? (isEn ? 'Unmark mastered' : 'Bỏ đánh dấu đã thuộc')
-                                    : (isEn ? 'Mark this pack as mastered' : 'Đánh dấu đã thuộc gói đề này')
-                                }
-                              >
-                                <GraduationCap className="w-3 h-3" />
-                                <span>{isEn ? (masteredIds.includes(pack.id) ? 'Mastered' : 'Master') : (masteredIds.includes(pack.id) ? 'Đã thuộc' : 'Thuộc đề')}</span>
-                              </button>
-                            )}
-                            {pack.isCustom && (
-                              <button
-                                onClick={(e) => handleDeleteCustomPack(pack.id, e)}
-                                className="text-slate-500 hover:text-rose-400 px-1.5 py-0.5 rounded transition-colors text-[10px] font-bold"
-                                title={isEn ? 'Delete this generated pack' : 'Xóa bộ đề tự sinh này'}
-                              >
-                                {isEn ? 'Delete' : 'Xóa đề'}
-                              </button>
-                            )}
-                            <div className="flex items-center space-x-1 text-purple-400 font-bold">
-                              <span>{isEn ? (isSelected ? 'Selected' : 'Select') : (isSelected ? 'Đang chọn đề này' : 'Bấm để chọn')}</span>
-                              <ChevronRight className="w-3.5 h-3.5" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                    {activeMockPack.isCustom && (
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteCustomPack(activeMockPack.id, e)}
+                        className="text-slate-500 hover:text-rose-400 px-2 py-1 rounded-lg transition-colors text-xs font-bold cursor-pointer"
+                        title={isEn ? 'Delete this generated pack' : 'Xóa bộ đề tự sinh này'}
+                      >
+                        {isEn ? 'Delete' : 'Xóa đề'}
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => setIsMockLibraryOpen(true)}
+                      className="px-3 py-1 rounded-lg bg-purple-900/40 hover:bg-purple-900/60 text-purple-200 text-xs font-bold border border-purple-500/30 flex items-center space-x-1 cursor-pointer transition-colors"
+                    >
+                      <span>{isEn ? 'Change Pack' : 'Đổi đề khác'}</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Test Details Breakdown (Part 1, 2, 3 Overview) */}
@@ -1358,6 +1445,29 @@ export default function SpeakingWorkspace({
         onReEvaluateWithAI={handleReEvaluateWithAI}
         onReEvaluateAlgorithmically={handleReEvaluateAlgorithmically}
         apiKey={apiKey}
+      />
+
+      {/* Speaking Mock Test Library Modal */}
+      <SpeakingMockLibraryModal
+        isOpen={isMockLibraryOpen}
+        onClose={() => setIsMockLibraryOpen(false)}
+        allMockPacks={allMockPacks}
+        selectedMockId={selectedMockId}
+        onSelectMockPack={(id) => setSelectedMockId(id)}
+        onDeleteCustomPack={handleDeleteCustomPack}
+        onOpenManualCreate={() => {
+          setGeneratorInitialMode('manual');
+          setIsGeneratorOpen(true);
+        }}
+        onOpenAiGenerate={() => {
+          setGeneratorInitialMode('ai');
+          setIsGeneratorOpen(true);
+        }}
+        masteredIds={masteredIds}
+        onToggleMastered={onToggleMastered}
+        mockFilter={mockFilter}
+        setMockFilter={setMockFilter}
+        mockPackCounts={mockPackCounts}
       />
 
       {/* 7. STEP 6: AI / MANUAL SPEAKING MOCK TEST GENERATOR MODAL */}
