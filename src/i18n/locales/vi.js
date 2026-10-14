@@ -529,6 +529,8 @@ export const vi = {
     maxReward: 'Tối Đa',
     audioTranscript: 'Lời thoại đoạn nghe:',
     listeningHelperText: '🎧 Bài nghe: Hãy chú ý lắng nghe đoạn băng để chọn đáp án đúng.',
-    replayAudio: 'Nghe lại'
+    replayAudio: 'Nghe lại',
+    shareArena: 'Chia sẻ /atlas-arena',
+    linkCopied: 'Đã sao chép link!'
   }
 };

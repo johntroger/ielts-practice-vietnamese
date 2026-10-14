@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Swords, Flame, Trophy, Play, RotateCcw, X, ShieldAlert, Maximize2, Minimize2 } from 'lucide-react';
+import { Swords, Flame, Trophy, Play, RotateCcw, X, ShieldAlert, Maximize2, Minimize2, Share2, Check } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { useArenaSprintEngine, ARENA_SPRINT_PHASES } from '../../hooks/useArenaSprintEngine.js';
 import { useArenaAudio } from '../../hooks/useArenaAudio.js';
@@ -54,6 +54,24 @@ export default function AtlasEnglishArenaModal({
   );
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [levelUpData, setLevelUpData] = useState(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleShareArena = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const shareUrl = `${window.location.origin}/atlas-arena`;
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2500);
+      }).catch(() => {
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2500);
+      });
+    } else {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    }
+  }, []);
 
   // Difficulty & Topic States
   const [selectedDifficulty, setSelectedDifficulty] = useState(() => 
@@ -263,6 +281,19 @@ export default function AtlasEnglishArenaModal({
                     <span>{streak} {t('arena.daysStreak')}</span>
                   </div>
                 )}
+
+                {/* 1-Click Share Direct /atlas-arena URL */}
+                <button
+                  type="button"
+                  onClick={handleShareArena}
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                  title={isEn ? "Copy direct link to Atlas Arena (/atlas-arena)" : "Sao chép liên kết trực tiếp Đấu Trường (/atlas-arena)"}
+                >
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-indigo-400" />}
+                  <span className="hidden sm:inline font-bold">
+                    {copiedLink ? t('arena.linkCopied') : t('arena.shareArena')}
+                  </span>
+                </button>
 
                 <button
                   type="button"

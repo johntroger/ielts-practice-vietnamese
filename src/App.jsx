@@ -475,6 +475,83 @@ export default function App() {
     }
   }, []);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Atlas Arena (/atlas-arena & /arena)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsArenaRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+      return (
+        pathname === '/atlas-arena' ||
+        pathname.endsWith('/atlas-arena') ||
+        pathname === '/arena' ||
+        pathname.endsWith('/arena') ||
+        hash === '#atlas-arena' ||
+        hash === '#arena' ||
+        search.get('mode') === 'atlas-arena' ||
+        search.get('mode') === 'arena'
+      );
+    };
+
+    // 1. Direct entry check on mount (e.g. user visits domain.com/atlas-arena)
+    if (checkIsArenaRoute()) {
+      openModal('atlasArena');
+    }
+
+    // 2. Handle browser Back / Forward navigation (popstate & hashchange)
+    const handleLocationChange = () => {
+      const isRouteMatch = checkIsArenaRoute();
+      if (isRouteMatch) {
+        openModal('atlasArena');
+      } else {
+        closeModal('atlasArena');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.atlasArena opens or closes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isArenaOpen = Boolean(modals.atlasArena);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnArenaUrl =
+      pathname === '/atlas-arena' ||
+      pathname.endsWith('/atlas-arena') ||
+      pathname === '/arena' ||
+      pathname.endsWith('/arena') ||
+      hash === '#atlas-arena' ||
+      hash === '#arena';
+
+    if (isArenaOpen && !isCurrentlyOnArenaUrl) {
+      try {
+        window.history.pushState({ modal: 'atlasArena' }, '', '/atlas-arena');
+      } catch (e) {
+        window.location.hash = 'atlas-arena';
+      }
+    } else if (!isArenaOpen && isCurrentlyOnArenaUrl) {
+      try {
+        if (hash === '#atlas-arena' || hash === '#arena') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [modals.atlasArena]);
+
   // Fetch from Cloud when user logs in with Bi-directional Auto-Sync
   useEffect(() => {
     if (currentUser) {

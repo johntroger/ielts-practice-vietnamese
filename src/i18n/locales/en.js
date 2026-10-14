@@ -529,6 +529,8 @@ export const en = {
     maxReward: 'Max Reward',
     audioTranscript: 'Audio Transcript:',
     listeningHelperText: '🎧 Listening Task: Focus on the audio track to find the answer.',
-    replayAudio: 'Replay Audio'
+    replayAudio: 'Replay Audio',
+    shareArena: 'Share /atlas-arena',
+    linkCopied: 'Link Copied!'
   }
 };
