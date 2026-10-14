@@ -16,7 +16,7 @@ export default function ArenaSprintSummaryModal({
   onPlayAgain,
   onClose
 }) {
-  const { t } = useTranslation();
+  const { t, isEn } = useTranslation();
 
   if (!summary) return null;
 
@@ -68,6 +68,13 @@ export default function ArenaSprintSummaryModal({
             <span className="text-slate-400 text-[10px]">{t('arena.streakBonusLabel')}</span>
             <span className="font-bold text-rose-300">+{summary.streakBonus || 0}</span>
           </div>
+
+          {summary.revengeBonusXp > 0 && (
+            <div className="flex flex-col items-center bg-amber-950/40 rounded-lg p-2 border border-amber-800/60 col-span-2 sm:col-span-4">
+              <span className="text-amber-300 text-[10px] font-bold">⚡ {isEn ? 'Revenge Clearance Bonus' : 'Thưởng Chuộc Lỗi Phục Thù'}</span>
+              <span className="font-extrabold text-amber-300">+{summary.revengeBonusXp} XP ({summary.revengeClearedCount} {isEn ? 'cleared' : 'câu'})</span>
+            </div>
+          )}
         </div>
 
         {summary.softCapMultiplier < 1.0 && (

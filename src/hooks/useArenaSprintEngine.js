@@ -26,6 +26,10 @@ import { recordGuestPendingXp } from '../services/gamification/guestMigrationSer
 import { submitSprintXp } from '../services/supabaseLeaderboard.js';
 import { emit } from '../services/gamification/eventBus.js';
 import { recordMistake, resolveMistake } from '../services/gamification/mistakeVaultService.js';
+import { 
+  recordQuestionResult, 
+  recordMatchCompleted 
+} from '../services/gamification/arenaMasteryService.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -52,6 +56,9 @@ export const INITIAL_SPRINT_STATE = {
   duration: INITIAL_SPRINT_TIMER_SECONDS,
   difficulty: 'medium',
   isBossCleared: false,
+  revengeClearedCount: 0,
+  revengeBonusXp: 0,
+  isCurrentRevengeCleared: false,
   summary: null
 };
 
@@ -89,12 +96,22 @@ export function checkAnswerAction(state) {
   if (!currentQ) return state;
 
   const isCorrect = state.selectedOption === currentQ.correctIndex;
+  
+  // Record mastery progression (2-Hit rule, Ebbinghaus decay, mistake cooling-off)
+  const masteryResult = recordQuestionResult({
+    questionId: currentQ.id,
+    isCorrect
+  });
+
   let nextScore = state.score;
   let nextCombo = state.combo;
   let nextMaxCombo = state.maxCombo;
   let nextShieldState = state.shieldState;
   let nextPhase = ARENA_SPRINT_PHASES.REVIEWING_ANSWER;
   let isBossCleared = state.isBossCleared;
+  let nextRevengeCount = state.revengeClearedCount || 0;
+  let nextRevengeBonusXp = state.revengeBonusXp || 0;
+  let isCurrentRevengeCleared = false;
 
   if (isCorrect) {
     nextScore += 1;
@@ -106,9 +123,12 @@ export function checkAnswerAction(state) {
     if (currentQ.isBossQuestion || state.currentIndex === state.questions.length - 1) {
       isBossCleared = true;
     }
-    // If this was a revenge question, mark as resolved in Mistake Vault
-    if (currentQ.isRevengeQuestion || currentQ.id) {
+    // Check if revenge question was cleared or mistake resolved
+    if (currentQ.isRevengeQuestion || masteryResult.isRevengeCleared) {
       resolveMistake(currentQ.id);
+      isCurrentRevengeCleared = true;
+      nextRevengeCount += 1;
+      nextRevengeBonusXp += (masteryResult.bonusXp || 5);
     }
   } else {
     nextCombo = 0;
@@ -131,7 +151,10 @@ export function checkAnswerAction(state) {
     combo: nextCombo,
     maxCombo: nextMaxCombo,
     shieldState: nextShieldState,
-    isBossCleared
+    isBossCleared,
+    isCurrentRevengeCleared,
+    revengeClearedCount: nextRevengeCount,
+    revengeBonusXp: nextRevengeBonusXp
   };
 }
 
@@ -178,7 +201,7 @@ export function retrySprintAction(state) {
 export function finishSprintAction(state, user = null) {
   const totalSeconds = (state.duration || INITIAL_SPRINT_TIMER_SECONDS) - Math.max(0, state.timeRemaining);
   const streak = getUnifiedStreakCount();
-  const xpResult = calculateSprintXp({
+  const rawXpResult = calculateSprintXp({
     correctAnswers: state.score,
     streakCount: streak,
     totalSeconds,
@@ -187,6 +210,14 @@ export function finishSprintAction(state, user = null) {
     isBossCleared: state.isBossCleared
   });
 
+  const finalXpWithRevenge = (rawXpResult.finalXp || 0) + (state.revengeBonusXp || 0);
+  const xpResult = {
+    ...rawXpResult,
+    finalXp: finalXpWithRevenge,
+    revengeBonusXp: state.revengeBonusXp || 0
+  };
+
+  recordMatchCompleted();
   incrementDailySprintCount();
 
   if (user && user.id) {
@@ -210,7 +241,9 @@ export function finishSprintAction(state, user = null) {
     timeRemaining: Math.max(0, state.timeRemaining),
     maxCombo: state.maxCombo,
     isBossCleared: state.isBossCleared,
-    isDefeated: state.phase === ARENA_SPRINT_PHASES.DEFEATED
+    isDefeated: state.phase === ARENA_SPRINT_PHASES.DEFEATED,
+    revengeClearedCount: state.revengeClearedCount || 0,
+    revengeBonusXp: state.revengeBonusXp || 0
   };
 
   return {
@@ -232,7 +265,7 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
   const durationRef = useRef(INITIAL_SPRINT_TIMER_SECONDS);
 
   const startSprint = useCallback((customQuestions = null, selectedDifficulty = 'medium') => {
-    const qList = customQuestions || generateArenaSprintQuestions({ count: 10, difficulty: selectedDifficulty });
+    const qList = customQuestions || generateArenaSprintQuestions({ count: 7, difficulty: selectedDifficulty });
     const duration = INITIAL_SPRINT_TIMER_SECONDS;
     durationRef.current = duration;
     startTimeRef.current = Date.now();

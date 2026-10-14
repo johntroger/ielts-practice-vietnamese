@@ -203,6 +203,23 @@ export default function AtlasEnglishArenaModal({
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
+  // Pre-fetch audio assets in active sprint to eliminate in-match latency
+  useEffect(() => {
+    if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE && Array.isArray(sprint.questions)) {
+      sprint.questions.forEach(q => {
+        if (q.audioUrl) {
+          try {
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.src = q.audioUrl;
+          } catch (e) {
+            // Silently ignore prefetch errors
+          }
+        }
+      });
+    }
+  }, [sprint.phase, sprint.questions]);
+
   const handleCheckAnswer = useCallback(() => {
     if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE && sprint.selectedOption !== null) {
       const curQ = sprint.questions[sprint.currentIndex];

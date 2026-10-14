@@ -1,9 +1,18 @@
 /**
  * src/adapters/sprintQuestionAdapter.js
  * 
- * Standardized Question Normalizer & Fast-Paced Sprint Generator.
- * Consolidates Cambridge Spelling Traps, Synonyms, Reading Traps & Listening Traps
- * into an identical 7-question sprint schema for Atlas English Arena.
+ * Standardized Question Normalizer & Fast-Paced Sprint Generator v8.1.
+ * 
+ * Enhancements:
+ * 1. Safe Distractor Shuffling: Preserves Cambridge CDI True/False/Not Given standard order
+ *    and sequential numeric/date formats. Only shuffles general multiple choice distractors.
+ * 2. 7-Slot Blueprint (The 7-Slot Flow):
+ *    - Slot 1-2 (Fast Reflex): Spelling demons & academic synonyms (8-12s).
+ *    - Slot 3-4 (Core Analysis): Ngữ pháp, Collocation & True/False/Not Given + Tối đa 1 Revenge Question (+5 XP).
+ *    - Slot 5-6 (Tactical Reading): Reading micro-scanning & distractor traps (15-20s).
+ *    - Slot 7 (The Boss Stage): Listening micro-audio or high-difficulty challenge.
+ * 3. 2-Hit Mastery & Ebbinghaus 14-Day Spaced Decay Integration.
+ * 4. Soft Recycling Protection: Automatically borrows least-recently-seen mastered questions if pool is running low.
  */
 
 import { IELTS_SPELLING_TRAPS, CAMBRIDGE_SYNONYM_PAIRS } from '../data/vocabGrammarSpellingData.js';
@@ -13,6 +22,12 @@ import { ARENA_QUESTION_BANK, getQuestionsByTierAndTopic } from '../data/arenaQu
 import { ARENA_IELTS_TOPICS } from '../utils/arenaStorageKeys.js';
 import { filterEligibleQuestions, recordServedQuestions } from './sprintCooldownService.js';
 import { balanceQuestionsBySkill, validateArenaQuestion } from '../services/gamification/skillBalancingEngine.js';
+import { 
+  getQuestionMeta, 
+  getQuestionMasteryStatus, 
+  getEligibleRevengeQuestions, 
+  getCompletedMatchCount 
+} from '../services/gamification/arenaMasteryService.js';
 
 /**
  * Shuffles an array with an optional deterministic or native RNG.
@@ -24,6 +39,58 @@ export function shuffleArray(arr = [], rng = Math.random) {
     [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
   }
   return cloned;
+}
+
+/**
+ * Safe Distractor Shuffling:
+ * - NEVER shuffles True / False / Not Given or Yes / No / Not Given (preserves standard Cambridge CDI layout).
+ * - NEVER shuffles sequential numeric/date answers.
+ * - Safely shuffles general multiple-choice options and recalculates correctIndex & correctAnswer.
+ * 
+ * @param {Object} question
+ * @param {() => number} [rng=Math.random]
+ * @returns {Object}
+ */
+export function shuffleQuestionOptions(question, rng = Math.random) {
+  if (!question || !Array.isArray(question.options) || question.options.length <= 1) {
+    return question;
+  }
+
+  // 1. Preserve Cambridge True/False/Not Given and Yes/No/Not Given standard order
+  if (
+    question.type === 'tfng' ||
+    question.type === 'reading-tfng' ||
+    question.skillCategory === 'reading' ||
+    (question.options.includes('TRUE') && question.options.includes('FALSE')) ||
+    (question.options.includes('YES') && question.options.includes('NO')) ||
+    question.allowShuffle === false
+  ) {
+    return question;
+  }
+
+  // 2. Preserve sequential numeric/date values (e.g. £10, £20, £50, £100 or 1990, 2000, 2010)
+  const isSequentialNumbers = question.options.every(opt => typeof opt === 'string' && /^[£$€¥]?\s*\d+/.test(opt.trim()));
+  if (isSequentialNumbers) {
+    return question;
+  }
+
+  const correctVal = question.correctAnswer || question.options[question.correctIndex];
+  const paired = question.options.map((opt, idx) => ({
+    opt,
+    isCorrect: idx === question.correctIndex || opt === correctVal
+  }));
+
+  const shuffledPairs = shuffleArray(paired, rng);
+  const newOptions = shuffledPairs.map(p => p.opt);
+  const newCorrectIndex = shuffledPairs.findIndex(p => p.isCorrect);
+  const safeIdx = newCorrectIndex >= 0 ? newCorrectIndex : 0;
+
+  return {
+    ...question,
+    options: newOptions,
+    correctIndex: safeIdx,
+    correctAnswer: newOptions[safeIdx]
+  };
 }
 
 export function adaptSpellingTrap(item, rng = Math.random) {
@@ -102,26 +169,34 @@ export function adaptListeningDrill(item) {
 }
 
 /**
- * Generates exactly 10 balanced sprint questions (or custom count), respecting rotation cooldown.
- * Question 10 is designated as the Boss Question (isBossQuestion: true).
+ * Generates balanced sprint questions (default: 7 questions for 180s sprint),
+ * respecting the 7-Slot Blueprint, 2-Hit Mastery, Max 1 Revenge Question,
+ * Ebbinghaus Spaced Decay, and Safe Shuffling.
  * 
  * @param {Object} [options]
- * @param {number} [options.count=10]
+ * @param {number} [options.count=7]
  * @param {() => number} [options.rng=Math.random]
  * @param {boolean} [options.recordHistory=true]
  * @param {string} [options.difficulty='medium']
  * @param {string} [options.topic=null]
  * @returns {Array<Object>}
  */
-export function generateArenaSprintQuestions({ count = 10, rng = Math.random, recordHistory = true, difficulty = 'medium', topic = null } = {}) {
+export function generateArenaSprintQuestions({ 
+  count = 7, 
+  rng = Math.random, 
+  recordHistory = true, 
+  difficulty = 'medium', 
+  topic = null 
+} = {}) {
   const randomTopicObj = ARENA_IELTS_TOPICS[Math.floor(rng() * ARENA_IELTS_TOPICS.length)];
   const activeTopic = topic || randomTopicObj?.id || 'environment';
+  const currentMatch = getCompletedMatchCount() + 1;
 
-  // 1. Fetch questions from rich 4-tier bank matching difficulty and topic
+  // 1. Fetch targeted questions matching difficulty and topic
   const targetedBank = getQuestionsByTierAndTopic(difficulty, topic);
   const eligibleBank = filterEligibleQuestions(targetedBank, count * 2);
 
-  // Legacy micro-drill pools for backfill and skill diversity
+  // Micro-drill pools for backfill and multi-skill diversity
   const spellingPool = (IELTS_SPELLING_TRAPS || []).map(item => adaptSpellingTrap(item, rng));
   const synonymPool = (CAMBRIDGE_SYNONYM_PAIRS || []).map(item => adaptSynonymPair(item, CAMBRIDGE_SYNONYM_PAIRS, rng));
   const readingPool = (READING_MICRO_DRILLS || []).filter(d => d.type === 'reading-tfng').map(adaptReadingDrill);
@@ -135,27 +210,123 @@ export function generateArenaSprintQuestions({ count = 10, rng = Math.random, re
     ...listeningPool
   ];
 
-  // 2. Apply Dynamic Skill Balancing according to the Golden Pedagogical Ratio
-  const balanced = balanceQuestionsBySkill(candidatePool, count, rng);
+  // 2. Classify candidate questions by Mastery State
+  const eligibleRevenge = getEligibleRevengeQuestions(candidatePool, currentMatch);
+  
+  // Fresh questions: Unseen, Familiar (1 correct), or Refresh Review (Ebbinghaus decayed after 14 days)
+  const freshPool = candidatePool.filter(q => {
+    const status = getQuestionMasteryStatus(q.id);
+    return status === 'unseen' || status === 'familiar' || status === 'refresh_review';
+  });
 
-  // 3. Graceful backfill if balanced count is lower than requested
-  let selected = [...balanced];
-  if (selected.length < count) {
-    const existingIds = new Set(selected.map(q => q.id));
-    const leftovers = candidatePool.filter(q => !existingIds.has(q.id));
-    selected.push(...shuffleArray(leftovers, rng).slice(0, count - selected.length));
+  // Mastered questions for Soft Recycling fallback
+  const masteredPool = candidatePool.filter(q => getQuestionMasteryStatus(q.id) === 'mastered');
+
+  const selected = [];
+  const selectedIds = new Set();
+
+  const addQuestion = (q, isRevenge = false) => {
+    if (!q || selectedIds.has(q.id)) return false;
+    selectedIds.add(q.id);
+    selected.push({
+      ...q,
+      isRevengeQuestion: isRevenge
+    });
+    return true;
+  };
+
+  // 3. APPLY 7-SLOT BLUEPRINT (if count === 7)
+  if (count === 7) {
+    // SLOT 1 & 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase)
+    const fastReflexCandidates = freshPool.filter(q => 
+      q.skillCategory === 'vocab' || q.type === 'spelling' || q.type === 'synonym'
+    );
+    const shuffledFast = shuffleArray(fastReflexCandidates, rng);
+    for (let i = 0; i < shuffledFast.length && selected.length < 2; i++) {
+      addQuestion(shuffledFast[i]);
+    }
+
+    // SLOT 3 & 4: Core Analysis (Grammar / Collocation / TFNG) + REVENGE QUESTION SLOT (Max 1)
+    if (eligibleRevenge.length > 0) {
+      // Pick exactly ONE cooling-off revenge question
+      const pickedRevenge = shuffleArray(eligibleRevenge, rng)[0];
+      addQuestion(pickedRevenge, true);
+    }
+
+    const coreAnalysisCandidates = freshPool.filter(q => 
+      !selectedIds.has(q.id) && (q.skillCategory === 'grammar' || q.skillCategory === 'reading' || q.type === 'tfng')
+    );
+    const shuffledCore = shuffleArray(coreAnalysisCandidates, rng);
+    for (let i = 0; i < shuffledCore.length && selected.length < 4; i++) {
+      addQuestion(shuffledCore[i]);
+    }
+
+    // SLOT 5 & 6: Tactical Reading (Micro-Scanning / Distractor Traps)
+    const readingCandidates = freshPool.filter(q => 
+      !selectedIds.has(q.id) && (q.skillCategory === 'reading' || q.type === 'tfng' || q.skillCategory === 'vocab')
+    );
+    const shuffledReading = shuffleArray(readingCandidates, rng);
+    for (let i = 0; i < shuffledReading.length && selected.length < 6; i++) {
+      addQuestion(shuffledReading[i]);
+    }
+
+    // SLOT 7: The Boss Stage (Listening Audio or High-Difficulty Trap)
+    const bossCandidates = freshPool.filter(q => 
+      !selectedIds.has(q.id) && (q.skillCategory === 'listening' || q.type === 'listening_trap' || q.difficulty === 'hard' || q.difficulty === 'nightmare')
+    );
+    const shuffledBoss = shuffleArray(bossCandidates, rng);
+    if (shuffledBoss.length > 0) {
+      addQuestion({ ...shuffledBoss[0], isBossQuestion: true });
+    }
   }
 
-  // 4. Normalize and runtime schema validation
-  const finalQuestions = selected.slice(0, count).map((q, idx) => ({
-    ...q,
-    type: q.type || (q.skillCategory === 'reading' ? 'tfng' : q.skillCategory === 'listening' ? 'listening_trap' : 'vocab'),
-    difficulty: q.difficulty || difficulty,
-    topic: q.topic || activeTopic,
-    isBossQuestion: idx === count - 1 && count >= 5
-  })).filter(q => validateArenaQuestion(q).valid);
+  // 4. BACKFILL & SOFT RECYCLING PROTECTION (Guarantees exact requested count, 0% crashes)
+  if (selected.length < count) {
+    // Fill from remaining fresh candidates
+    const remainingFresh = freshPool.filter(q => !selectedIds.has(q.id));
+    const shuffledRemFresh = shuffleArray(remainingFresh, rng);
+    for (let i = 0; i < shuffledRemFresh.length && selected.length < count; i++) {
+      addQuestion(shuffledRemFresh[i]);
+    }
+  }
 
-  // 5. Update cooldown log with newly served questions
+  if (selected.length < count) {
+    // Soft Recycling: Borrow mastered questions sorted by least-recently-seen
+    const sortedMastered = [...masteredPool].sort((a, b) => {
+      const timeA = getQuestionMeta(a.id)?.lastAttemptTime || 0;
+      const timeB = getQuestionMeta(b.id)?.lastAttemptTime || 0;
+      return timeA - timeB;
+    });
+    for (let i = 0; i < sortedMastered.length && selected.length < count; i++) {
+      if (!selectedIds.has(sortedMastered[i].id)) {
+        addQuestion(sortedMastered[i]);
+      }
+    }
+  }
+
+  // Final fallback to entire candidate pool if still under count
+  if (selected.length < count) {
+    const fallbackAll = candidatePool.filter(q => !selectedIds.has(q.id));
+    const shuffledAll = shuffleArray(fallbackAll, rng);
+    for (let i = 0; i < shuffledAll.length && selected.length < count; i++) {
+      addQuestion(shuffledAll[i]);
+    }
+  }
+
+  // 5. NORMALIZE, SAFE SHUFFLE DISTRACTORS & VALIDATE
+  const finalQuestions = selected.slice(0, count).map((q, idx) => {
+    const normalized = {
+      ...q,
+      type: q.type || (q.skillCategory === 'reading' ? 'tfng' : q.skillCategory === 'listening' ? 'listening_trap' : 'vocab'),
+      difficulty: q.difficulty || difficulty,
+      topic: q.topic || activeTopic,
+      isBossQuestion: q.isBossQuestion || (idx === count - 1 && count >= 5)
+    };
+    // Apply Safe Distractor Shuffling (preserves TFNG standard layout)
+    return shuffleQuestionOptions(normalized, rng);
+  }).filter(q => validateArenaQuestion(q).valid);
+
+  // 6. UPDATE COOLDOWN LOG
   if (recordHistory) {
     recordServedQuestions(finalQuestions.map(q => q.id));
   }

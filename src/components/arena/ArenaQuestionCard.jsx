@@ -64,6 +64,13 @@ export default function ArenaQuestionCard({
               <span>{isEn ? topicObj.nameEn : topicObj.nameVi}</span>
             </span>
           )}
+
+          {question.isRevengeQuestion && (
+            <span className="text-[11px] font-black tracking-wider px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 animate-pulse">
+              <span>⚡</span>
+              <span>{isEn ? 'REVENGE (+5 XP)' : 'CÂU PHỤC THÙ (+5 XP)'}</span>
+            </span>
+          )}
         </div>
 
         {question.audioText && (
@@ -175,9 +182,16 @@ export default function ArenaQuestionCard({
             ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300' 
             : 'bg-red-950/30 border-red-800/50 text-red-300'
         }`}>
-          <div className="font-bold flex items-center gap-1.5 mb-1">
-            {isCorrect ? <Check className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-            <span>{isCorrect ? t('arena.correct') : t('arena.incorrect')}</span>
+          <div className="font-bold flex items-center justify-between gap-1.5 mb-1">
+            <div className="flex items-center gap-1.5">
+              {isCorrect ? <Check className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+              <span>{isCorrect ? t('arena.correct') : t('arena.incorrect')}</span>
+            </div>
+            {isCorrect && question.isRevengeQuestion && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-black border border-amber-500/40 animate-pulse">
+                ⚡ {isEn ? 'Revenge Cleared! (+5 XP)' : 'Phục Thù Thành Công! (+5 XP)'}
+              </span>
+            )}
           </div>
 
           {/* Reveal Audio Transcript only on Review/Explanation phase */}
