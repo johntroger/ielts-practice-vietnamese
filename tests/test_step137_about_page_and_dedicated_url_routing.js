@@ -85,18 +85,18 @@ assert(appSource.includes("search.get('page') === 'about'"), 'App.jsx must suppo
 assert(appSource.includes("window.history.pushState({ page: 'about' }, '', '/about')"), 'App.jsx must pushState /about on open');
 assert(appSource.includes("trackSkillView('about')"), 'App.jsx must log virtual pageview for GA4 analytics');
 assert(appSource.includes('<AboutPage'), 'App.jsx must render AboutPage');
-assert(appSource.includes('isDirectRootAccess'), 'App.jsx must redirect direct root visits to /about');
+assert(appSource.includes('checkIsAboutRoute()'), 'App.jsx must check about route on mount');
 console.log('  ✓ Two-Way URL Routing and deep-linking in App.jsx verified');
 
-// Test 4: Verify vercel.json redirect rule
-console.log('Test 4: Verifying vercel.json server redirect');
+// Test 4: Verify vercel.json SPA rewrites
+console.log('Test 4: Verifying vercel.json SPA rewrites configuration');
 const vercelConfigPath = path.resolve('vercel.json');
 assert(fs.existsSync(vercelConfigPath), 'vercel.json must exist');
 const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf-8'));
-assert(Array.isArray(vercelConfig.redirects), 'vercel.json must define redirects array');
-const rootRedirect = vercelConfig.redirects.find(r => r.source === '/' && r.destination === '/about');
-assert(rootRedirect, 'vercel.json must redirect / to /about');
-console.log('  ✓ vercel.json redirects / to /about');
+assert(Array.isArray(vercelConfig.rewrites), 'vercel.json must define rewrites array for SPA routing');
+const spaRewrite = vercelConfig.rewrites.find(r => r.source === '/(.*)' && r.destination === '/');
+assert(spaRewrite, 'vercel.json must rewrite all paths to / for SPA support');
+console.log('  ✓ vercel.json correctly configured for client-side SPA routing');
 
 // Test 5: Verify Navbar integration (Compact Home icon & Thi Thử button)
 console.log('Test 5: Verifying Navbar integration');

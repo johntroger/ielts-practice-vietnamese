@@ -576,20 +576,10 @@ export default function App() {
       );
     };
 
-    // 1. Direct entry check on mount (e.g. user visits domain.com/about or domain.com/)
-    const rawPath = window.location.pathname.toLowerCase().replace(/\/+$/, '');
-    const isDirectRootAccess = (rawPath === '' || rawPath === '/') && !window.location.hash && !window.location.search;
-
-    if (checkIsAboutRoute() || isDirectRootAccess) {
+    // 1. Direct entry check on mount (e.g. user visits domain.com/about)
+    if (checkIsAboutRoute()) {
       setIsAboutViewOpen(true);
       trackSkillView('about');
-      if (isDirectRootAccess) {
-        try {
-          window.history.replaceState({ page: 'about' }, '', '/about');
-        } catch (e) {
-          window.location.hash = 'about';
-        }
-      }
     }
 
     // 2. Handle browser Back / Forward navigation (popstate & hashchange)
