@@ -26,7 +26,8 @@ export default function AudioPlayerBar({
   examMode = 'practice', // 'strict' | 'practice'
   activePart = 1,
   onSelectPart,
-  parts = []
+  parts = [],
+  inSplitPane = false
 }) {
   const {
     isPlaying,
@@ -93,6 +94,153 @@ export default function AudioPlayerBar({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [togglePlay, seek, currentTime, duration, examMode]);
+
+  if (inSplitPane) {
+    return (
+      <div className="bg-slate-950 text-slate-100 border-b border-slate-800 shadow-xs shrink-0 select-none">
+        {/* Error & Stalling banners */}
+        {errorMessage && (
+          <div className="bg-amber-600/90 text-white text-xs px-3 py-1 flex items-center justify-between font-medium">
+            <div className="flex items-center space-x-1.5">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{errorMessage}</span>
+            </div>
+            <button onClick={togglePlay} className="underline text-[11px] hover:text-amber-100 font-bold ml-2">Thử lại</button>
+          </div>
+        )}
+        {isStalled && isPlaying && (
+          <div className="bg-indigo-600/95 text-white text-[11px] px-3 py-0.5 flex items-center justify-center space-x-1.5 font-medium animate-pulse">
+            <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+            <span>Đang đệm ({bufferedPercent}%)...</span>
+          </div>
+        )}
+
+        <div className="p-2.5 sm:p-3 flex flex-col gap-2">
+          {/* ROW 1: Controls */}
+          <div className="flex items-center justify-between gap-2">
+            {/* Left: Play/Pause, -5s/+5s, Time */}
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <button
+                type="button"
+                onClick={togglePlay}
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md transition-all active:scale-95 cursor-pointer shrink-0 ${
+                  isPlaying 
+                    ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
+                    : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
+                }`}
+                title={isLoading ? 'Đang tải...' : isPlaying ? 'Tạm dừng (Space)' : 'Phát bài nghe (Space)'}
+              >
+                {isLoading ? (
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                ) : isPlaying ? (
+                  <Pause className="w-3.5 h-3.5 fill-current" />
+                ) : (
+                  <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
+                )}
+              </button>
+
+              {examMode !== 'strict' && (
+                <div className="flex items-center space-x-1">
+                  <button
+                    type="button"
+                    onClick={() => seek?.(Math.max(0, currentTime - 5))}
+                    className="px-1.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-[10px] font-mono font-bold flex items-center space-x-0.5 border border-slate-800 cursor-pointer"
+                    title="Lùi 5s (←)"
+                  >
+                    <RotateCcw className="w-3 h-3 text-slate-400" />
+                    <span>-5s</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => seek?.(Math.min(duration || 0, currentTime + 5))}
+                    className="px-1.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-[10px] font-mono font-bold flex items-center space-x-0.5 border border-slate-800 cursor-pointer"
+                    title="Tiến 5s (→)"
+                  >
+                    <span>+5s</span>
+                    <FastForward className="w-3 h-3 text-slate-400" />
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-baseline space-x-1 font-mono text-xs">
+                <span className="font-bold text-emerald-400">{formatTime(currentTime)}</span>
+                <span className="text-slate-500">/</span>
+                <span className="text-slate-400">{formatTime(duration)}</span>
+              </div>
+            </div>
+
+            {/* Right: Speed & Volume */}
+            <div className="flex items-center space-x-1.5">
+              {examMode === 'strict' ? (
+                <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-semibold">
+                  <Lock className="w-2.5 h-2.5 text-amber-400" />
+                  <span>Strict</span>
+                </span>
+              ) : (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)}
+                    className="px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-200 text-[11px] font-mono font-bold border border-slate-700 cursor-pointer"
+                    title="Tốc độ phát"
+                  >
+                    {playbackRate}x
+                  </button>
+                  {isSpeedMenuOpen && (
+                    <div className="absolute right-0 top-full mt-1 w-20 bg-slate-900 border border-slate-700 rounded-lg shadow-xl py-1 z-50 flex flex-col">
+                      {[0.8, 1.0, 1.1, 1.25].map(rate => (
+                        <button
+                          key={rate}
+                          onClick={() => {
+                            changePlaybackRate(rate);
+                            setIsSpeedMenuOpen(false);
+                          }}
+                          className={`px-2.5 py-1 text-xs text-left font-mono hover:bg-slate-800 cursor-pointer ${
+                            playbackRate === rate ? 'text-emerald-400 font-bold bg-slate-800/60' : 'text-slate-300'
+                          }`}
+                        >
+                          {rate}x
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button
+                onClick={toggleMute}
+                className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-900 transition-colors cursor-pointer"
+                title={isMuted ? 'Bật âm' : 'Tắt âm'}
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-3.5 h-3.5 text-rose-400" />
+                ) : (
+                  <Volume2 className="w-3.5 h-3.5" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* ROW 2: Interactive Audio Progress Bar */}
+          <div 
+            onClick={handleProgressBarClick}
+            className={`group relative h-2 bg-slate-800 rounded-full overflow-hidden transition-all ${
+              examMode === 'strict' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer hover:h-2.5'
+            }`}
+            title={examMode === 'strict' ? 'Chế độ thi thật: Không thể tua âm thanh' : 'Bấm để tua đến vị trí mong muốn'}
+          >
+            <div 
+              className="absolute left-0 top-0 bottom-0 bg-slate-700/60 transition-all duration-300"
+              style={{ width: `${bufferedPercent}%` }}
+            />
+            <div 
+              className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-red-600 via-rose-500 to-emerald-400 rounded-full transition-all duration-100"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sticky top-0 z-10 bg-slate-950 text-slate-100 border-b border-slate-800 shadow-md">

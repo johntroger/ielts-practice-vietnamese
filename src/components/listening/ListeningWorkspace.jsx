@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Headphones, 
   Volume2, 
@@ -20,7 +20,14 @@ import {
   Puzzle,
   GraduationCap,
   Maximize2,
-  Minimize2
+  Minimize2,
+  MapPin,
+  ZoomIn,
+  ZoomOut,
+  Search,
+  Lock,
+  ChevronDown,
+  Sliders
 } from 'lucide-react';
 import AudioPlayerBar from './AudioPlayerBar';
 import ListeningQuestionPane from './ListeningQuestionPane';
@@ -149,6 +156,93 @@ export default function ListeningWorkspace({
   const [fontSizeMode, setFontSizeMode] = useState('normal'); // 'normal' | 'large' | 'xlarge'
   const [contrastTheme, setContrastTheme] = useState('standard'); // 'standard' | 'dark' | 'yellowOnBlack'
   
+  // Split pane drag width (percentage for left pane)
+  const [splitWidth, setSplitWidth] = useState(48);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef(null);
+  const [mobileTab, setMobileTab] = useState('questions'); // 'context' | 'questions'
+  const [leftPaneTab, setLeftPaneTab] = useState('overview'); // 'overview' | 'scratchpad' | 'transcript'
+  const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
+  const [mapZoom, setMapZoom] = useState(1);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [transcriptSearch, setTranscriptSearch] = useState('');
+  const [scratchpadText, setScratchpadText] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_listening_scratchpad_' + initialTestId) || '';
+    } catch (e) {
+      return '';
+    }
+  });
+
+  // Responsive state for screen width >= 1024px (Desktop & Tablet Landscape)
+  const [isDesktopOrLandscape, setIsDesktopOrLandscape] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktopOrLandscape(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
+  // Splitter dragging handlers
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const newWidth = ((e.clientX - rect.left) / rect.width) * 100;
+      setSplitWidth(Math.max(25, Math.min(75, newWidth)));
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isDragging || !containerRef.current || !e.touches || !e.touches[0]) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const newWidth = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
+      setSplitWidth(Math.max(25, Math.min(75, newWidth)));
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging) setIsDragging(false);
+    };
+
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchmove', handleTouchMove);
+      window.addEventListener('touchend', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleMouseUp);
+    };
+  }, [isDragging]);
+
+  // Sync scratchpad text when test changes
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ielts_listening_scratchpad_' + currentTestId);
+      setScratchpadText(saved || '');
+    } catch (e) {}
+  }, [currentTestId]);
+
+  const handleScratchpadChange = (val) => {
+    setScratchpadText(val);
+    try {
+      localStorage.setItem('ielts_listening_scratchpad_' + currentTestId, val);
+    } catch (e) {}
+  };
+
   // Preparation Timer (30s Prep cue at start of each part)
   const [prepTimeRemaining, setPrepTimeRemaining] = useState(0);
   const [isPrepActive, setIsPrepActive] = useState(false);
@@ -165,6 +259,11 @@ export default function ListeningWorkspace({
   const currentPartData = useMemo(() => {
     return currentTest.parts?.find(p => p.partNumber === activePart) || currentTest.parts?.[0] || INITIAL_LISTENING_TESTS[0].parts[0];
   }, [currentTest, activePart]);
+
+  // Detected Map / Diagram Group if active part contains one
+  const mapGroup = useMemo(() => {
+    return currentPartData?.questionGroups?.find(g => g.type === 'map_labelling' && g.mapImageUrl);
+  }, [currentPartData]);
 
   // Handler: Add newly generated listening test from URL or Upload
   const handleAddCustomTest = (newTest) => {
@@ -336,6 +435,17 @@ export default function ListeningWorkspace({
       audioEngine.forcePreload();
     }
     audioEngine.play();
+  };
+
+  // Switch active Part and synchronize audio
+  const handleSelectPart = (pNum) => {
+    setActivePart(pNum);
+    const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
+    if (targetPart?.audioUrl && targetPart.audioUrl !== currentTest.audioUrl && audioEngine.src !== targetPart.audioUrl) {
+      audioEngine.loadAudio(targetPart.audioUrl);
+    } else if (examMode === 'practice' && targetPart && typeof targetPart.audioTimestampStart === 'number') {
+      audioEngine.seek(targetPart.audioTimestampStart);
+    }
   };
 
   // Resume interrupted exam
@@ -527,18 +637,18 @@ export default function ListeningWorkspace({
           </div>
         </div>
       ) : (
-        /* Standard Header in Practice Mode (Responsive 2-row on Mobile & Tablet, 1-row on Desktop) */
-        <div className="bg-white border-b border-slate-200 px-2.5 sm:px-6 py-2 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-1.5 sm:gap-2 shrink-0 shadow-2xs">
+        /* Standard Header in Practice Mode (Clean Single-Row Architecture) */
+        <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 shrink-0 shadow-2xs">
           
-          {/* ROW 1 ON MOBILE/TABLET / LEFT ON DESKTOP: Test Info & Mode Pill */}
-          <div className="flex items-center justify-between gap-2 min-w-0 flex-1">
+          {/* LEFT: Test Info & Question Count */}
+          <div className="flex items-center justify-between gap-2 min-w-0">
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                <Headphones className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Headphones className="w-4 h-4" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center space-x-1.5 flex-wrap">
-                  <h2 className="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[280px] md:max-w-[360px] lg:max-w-[260px] xl:max-w-[380px]">
+                  <h2 className="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[280px] md:max-w-[360px] lg:max-w-[260px] xl:max-w-[360px]">
                     {currentTest.title}
                   </h2>
                   <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">
@@ -555,24 +665,44 @@ export default function ListeningWorkspace({
               </div>
             </div>
 
-            {/* Mode Switcher on Mobile & Tablet (compact) */}
-            <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px] font-semibold shrink-0">
-              <button
-                onClick={() => setExamMode('practice')}
-                className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
-              >
-                {t('listening.practiceMode', 'Luyện Tập')}
-              </button>
-              <button
-                onClick={() => setExamMode('strict')}
-                className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
-              >
-                {t('listening.examMode', 'Thi Thử')}
-              </button>
+            {/* Mobile Mode Switcher (compact) */}
+            <div className="flex lg:hidden items-center space-x-1 shrink-0">
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px] font-semibold shrink-0">
+                <button
+                  onClick={() => setExamMode('practice')}
+                  className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
+                >
+                  {t('listening.practiceMode', 'Luyện Tập')}
+                </button>
+                <button
+                  onClick={() => setExamMode('strict')}
+                  className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
+                >
+                  {t('listening.examMode', 'Thi Thử')}
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* ROW 2 ON MOBILE / RIGHT ON DESKTOP: Touch-scrollable Action Buttons */}
+          {/* CENTER: Part Quick Switcher Tabs (Desktop & Tablet) */}
+          <div className="hidden md:flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
+            {(currentTest.parts || [{ partNumber: 1 }, { partNumber: 2 }, { partNumber: 3 }, { partNumber: 4 }]).map((p) => (
+              <button
+                key={p.partNumber}
+                type="button"
+                onClick={() => handleSelectPart(p.partNumber)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  activePart === p.partNumber
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                }`}
+              >
+                Part {p.partNumber}
+              </button>
+            ))}
+          </div>
+
+          {/* RIGHT: Action Controls & Tools Dropdown */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 shrink-0 max-w-full">
             {/* Quick Test Switcher Dropdown (Desktop only) */}
             {allListeningTests.length > 1 && (
@@ -633,58 +763,11 @@ export default function ListeningWorkspace({
                   masteredIds.includes(currentTestId) ? 'text-emerald-600' : 'text-slate-400'
                 }`}
               />
-              <span>{masteredIds.includes(currentTestId) ? t('listening.mastered', 'Đã thuộc') : t('listening.markMastered', 'Thuộc đề')}</span>
+              <span className="hidden sm:inline">{masteredIds.includes(currentTestId) ? t('listening.mastered', 'Đã thuộc') : t('listening.markMastered', 'Thuộc đề')}</span>
             </button>
-
-            {/* Cẩm Nang Lý Thuyết Listening Button */}
-            {onOpenTheory && (
-              <button
-                type="button"
-                onClick={onOpenTheory}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-                title={isEn ? "Open IELTS Listening Theory & Skills Handbook" : "Mở Cẩm Nang Lý Thuyết & Kỹ Năng Nghe IELTS (Format, Âm học, 4 Parts, Chép chính tả, Shadowing)"}
-              >
-                <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
-                <span>📖 {t('listening.theoryHandbook', 'Cẩm Nang')}</span>
-              </button>
-            )}
-
-            {/* Sinh Đề AI Button */}
-            <button
-              onClick={() => setIsGeneratorOpen(true)}
-              className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs border border-purple-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-              title={isEn ? "Generate new IELTS Listening test with AI from computer audio or native speaker recording" : "Sinh đề thi IELTS mới bằng AI từ file ghi âm máy tính hoặc audio bản xứ"}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>{t('listening.generateAi', 'Sinh Đề (AI)')}</span>
-            </button>
-
-            {/* Luyện Bổ Trợ Micro-Drills Button */}
-            {onOpenDrills && (
-              <button
-                onClick={onOpenDrills}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-                title={isEn ? "Open 5 listening micro-drills rooms (Numbers/Spelling, Distractors, Maps, Signposting, Dictation)" : "Mở 5 phòng luyện bổ trợ kỹ năng nghe chuyên sâu (Micro-Drills: Số/Đánh vần, Bẫy nhiễu, Bản đồ, Signposting, Dictation)"}
-              >
-                <Puzzle className="w-3.5 h-3.5 text-amber-600" />
-                <span>{t('listening.microDrills', 'Luyện Bổ Trợ')}</span>
-              </button>
-            )}
-
-            {/* Previous or Current Result Report Button */}
-            {bandResult && (
-              <button
-                onClick={() => setIsResultModalOpen(true)}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer shrink-0"
-                title={isEn ? "Reopen latest test result report" : "Mở lại bảng báo cáo kết quả lần thi gần nhất"}
-              >
-                <BarChart2 className="w-3.5 h-3.5" />
-                <span>Band {bandResult.band.toFixed(1)}</span>
-              </button>
-            )}
 
             {/* Desktop Mode Switcher */}
-            <div className="hidden xl:flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold shrink-0">
+            <div className="hidden lg:flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold shrink-0">
               <button
                 onClick={() => setExamMode('practice')}
                 className={"px-2.5 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
@@ -699,25 +782,81 @@ export default function ListeningWorkspace({
               </button>
             </div>
 
-            {/* Transcript Modal Button */}
-            <button
-              onClick={() => setIsTranscriptOpen(true)}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold transition-colors cursor-pointer shadow-2xs shrink-0"
-              title={isEn ? "Open realtime synced Karaoke Transcript" : "Mở lời thoại gỡ băng đồng bộ thời gian thực (Karaoke Transcript)"}
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>{t('listening.transcript', 'Lời Thoại')}</span>
-            </button>
+            {/* Previous or Current Result Report Button */}
+            {bandResult && (
+              <button
+                onClick={() => setIsResultModalOpen(true)}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer shrink-0"
+                title={isEn ? "Reopen latest test result report" : "Mở lại bảng báo cáo kết quả lần thi gần nhất"}
+              >
+                <BarChart2 className="w-3.5 h-3.5" />
+                <span>Band {bandResult.band.toFixed(1)}</span>
+              </button>
+            )}
 
-            {/* Soundcheck Button */}
-            <button
-              onClick={() => setIsSoundcheckOpen(true)}
-              className="hidden lg:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer shrink-0"
-              title={isEn ? "Check headphone volume before starting test" : "Kiểm tra âm lượng tai nghe trước khi làm bài"}
-            >
-              <Volume2 className="w-3.5 h-3.5" />
-              <span>{t('listening.soundcheck', 'Soundcheck')}</span>
-            </button>
+            {/* Consolidated Study Tools Dropdown Menu */}
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsToolsMenuOpen(prev => !prev)}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-200 transition-colors shadow-2xs cursor-pointer"
+                title={isEn ? "Open study tools and utilities" : "Mở công cụ và tiện ích bổ trợ"}
+              >
+                <Sliders className="w-3.5 h-3.5 text-slate-500" />
+                <span className="hidden sm:inline">{isEn ? 'Tools' : 'Tiện ích'}</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+
+              {isToolsMenuOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-30" 
+                    onClick={() => setIsToolsMenuOpen(false)} 
+                  />
+                  <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 animate-in fade-in zoom-in-95 duration-100">
+                    {onOpenTheory && (
+                      <button
+                        onClick={() => { setIsToolsMenuOpen(false); onOpenTheory(); }}
+                        className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center space-x-2 cursor-pointer"
+                      >
+                        <BookOpen className="w-4 h-4 text-emerald-600" />
+                        <span>📖 {t('listening.theoryHandbook', 'Cẩm Nang Lý Thuyết')}</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { setIsToolsMenuOpen(false); setIsGeneratorOpen(true); }}
+                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-800 flex items-center space-x-2 cursor-pointer"
+                    >
+                      <Sparkles className="w-4 h-4 text-purple-600" />
+                      <span>✨ {t('listening.generateAi', 'Sinh Đề Bằng AI')}</span>
+                    </button>
+                    {onOpenDrills && (
+                      <button
+                        onClick={() => { setIsToolsMenuOpen(false); onOpenDrills(); }}
+                        className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-800 flex items-center space-x-2 cursor-pointer"
+                      >
+                        <Puzzle className="w-4 h-4 text-amber-600" />
+                        <span>🧩 {t('listening.microDrills', 'Luyện Phản Xạ Bổ Trợ')}</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { setIsToolsMenuOpen(false); setIsTranscriptOpen(true); }}
+                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-800 flex items-center space-x-2 cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4 text-purple-600" />
+                      <span>📄 {t('listening.transcript', 'Lời Thoại (Full Modal)')}</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsToolsMenuOpen(false); setIsSoundcheckOpen(true); }}
+                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-100 flex items-center space-x-2 cursor-pointer"
+                    >
+                      <Volume2 className="w-4 h-4 text-slate-600" />
+                      <span>🔊 {t('listening.soundcheck', 'Kiểm Tra Âm Thanh')}</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Workspace Expansion Toggle (Alt + Z) */}
             {toggleSlimHeader && (
@@ -769,22 +908,47 @@ export default function ListeningWorkspace({
         </div>
       )}
 
-      {/* 2. Sticky Audio Player Bar */}
-      <AudioPlayerBar 
-        audioEngine={audioEngine}
-        examMode={examMode}
-        activePart={activePart}
-        onSelectPart={(pNum) => {
-          setActivePart(pNum);
-          const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
-          if (targetPart?.audioUrl && targetPart.audioUrl !== currentTest.audioUrl && audioEngine.src !== targetPart.audioUrl) {
-            audioEngine.loadAudio(targetPart.audioUrl);
-          } else if (examMode === 'practice' && targetPart && typeof targetPart.audioTimestampStart === 'number') {
-            audioEngine.seek(targetPart.audioTimestampStart);
-          }
-        }}
-        parts={currentTest.parts || []}
-      />
+      {/* 2. Responsive Segmented Switcher on Mobile & Portrait Tablets */}
+      {!isDesktopOrLandscape && (hasStartedExam || exam.isSubmitted) && (
+        <div className="bg-slate-100 border-b border-slate-200 px-3 py-1.5 flex items-center justify-between shrink-0 select-none">
+          <div className="flex items-center space-x-1 p-0.5 bg-slate-200 rounded-lg">
+            <button
+              type="button"
+              onClick={() => setMobileTab('context')}
+              className={`px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                mobileTab === 'context' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+              }`}
+            >
+              🎧 {mapGroup ? (isEn ? 'Map & Audio' : 'Bản Đồ & Audio') : (isEn ? 'Audio & Context' : 'Bối Cảnh & Audio')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileTab('questions')}
+              className={`px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                mobileTab === 'questions' ? 'bg-white text-red-600 shadow-2xs' : 'text-slate-600'
+              }`}
+            >
+              📝 {isEn ? 'Questions' : 'Câu Hỏi'}
+            </button>
+          </div>
+
+          {/* Quick Part Pills on Mobile */}
+          <div className="flex items-center space-x-1">
+            {(currentTest.parts || [{ partNumber: 1 }, { partNumber: 2 }, { partNumber: 3 }, { partNumber: 4 }]).map((p) => (
+              <button
+                key={p.partNumber}
+                type="button"
+                onClick={() => handleSelectPart(p.partNumber)}
+                className={`w-7 h-7 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                  activePart === p.partNumber ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-700 border border-slate-200'
+                }`}
+              >
+                {p.partNumber}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 3. Crash Recovery / Resume Notification Banner */}
       {resumePrompt && !hasStartedExam && (
@@ -895,9 +1059,9 @@ export default function ListeningWorkspace({
       )}
 
       {/* 5. Main Content Area */}
-      <div className="flex-1 overflow-y-auto min-h-0 relative">
-        {!hasStartedExam && !exam.isSubmitted ? (
-          /* Welcome & Soundcheck Gate Screen */
+      {!hasStartedExam && !exam.isSubmitted ? (
+        <div className="flex-1 overflow-y-auto min-h-0 relative">
+          {/* Welcome & Soundcheck Gate Screen */}
           <div className="max-w-3xl mx-auto px-4 py-8 sm:py-12 flex flex-col items-center justify-center text-center">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-xl mb-5">
               <Headphones className="w-8 h-8 sm:w-10 sm:h-10" />
@@ -978,65 +1142,467 @@ export default function ListeningWorkspace({
               </button>
             </div>
           </div>
-        ) : (
-          /* Active Question Pane Rendering */
-          <div className="flex-1 overflow-y-auto">
-            {exam.isSubmitted && (
-              <div className="max-w-4xl mx-auto px-3 sm:px-6 pt-3 pb-0">
-                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-2xs">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="text-xs font-bold text-emerald-950">
-                      {isEn 
-                        ? `You are reviewing test results ${bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} correct)` : ''}`
-                        : `Bạn đang xem lại bài chấm ${bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} câu đúng)` : ''}`}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2 shrink-0">
-                    <button
-                      onClick={() => setIsResultModalOpen(true)}
-                      className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
-                    >
-                      {isEn ? 'Score Report' : 'Bảng Điểm Chi Tiết'}
-                    </button>
-                    <button
-                      onClick={() => {
-                        exam.resetExam();
-                        audioEngine.seek(0);
-                        setBandResult(null);
-                        try {
-                          localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
-                        } catch (e) {}
-                      }}
-                      className="px-2.5 py-1 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>{isEn ? 'Retake Test' : 'Làm Lại Đề Này'}</span>
-                    </button>
-                  </div>
+        </div>
+      ) : (
+          /* Two-Column Split Screen Interactive Workspace */
+          <div 
+            ref={containerRef}
+            className={`flex-1 flex overflow-hidden relative ${isDragging ? 'select-none cursor-col-resize' : ''}`}
+          >
+            {/* LEFT COLUMN: Audio Player & Overview / Map / Scratchpad / Transcript */}
+            <div
+              style={{ width: isDesktopOrLandscape ? `${splitWidth}%` : '100%' }}
+              className={`h-full border-r border-slate-200 bg-slate-50/50 flex flex-col overflow-hidden shrink-0 ${
+                !isDesktopOrLandscape && mobileTab !== 'context' ? 'hidden' : 'flex'
+              }`}
+            >
+              {/* Compact Audio Player Bar at top of Left Column */}
+              <AudioPlayerBar 
+                audioEngine={audioEngine}
+                examMode={examMode}
+                activePart={activePart}
+                onSelectPart={handleSelectPart}
+                parts={currentTest.parts || []}
+                inSplitPane={true}
+              />
+
+              {/* Left Column Tabs Header */}
+              <div className="bg-white border-b border-slate-200 px-3 py-1.5 flex items-center justify-between shrink-0 shadow-2xs">
+                <div className="flex items-center space-x-1">
+                  <button
+                    type="button"
+                    onClick={() => setLeftPaneTab('overview')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
+                      leftPaneTab === 'overview'
+                        ? 'bg-red-50 text-red-700 border border-red-200 shadow-2xs'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>{mapGroup ? (isEn ? 'Map & Context' : 'Bản Đồ & Bối Cảnh') : (isEn ? 'Overview' : 'Bối Cảnh')}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLeftPaneTab('scratchpad')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
+                      leftPaneTab === 'scratchpad'
+                        ? 'bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Scratchpad' : 'Bản Nháp'}</span>
+                    {scratchpadText.trim() && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLeftPaneTab('transcript')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
+                      leftPaneTab === 'transcript'
+                        ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Transcript' : 'Lời Thoại'}</span>
+                    {examMode === 'strict' && !exam.isSubmitted && <Lock className="w-3 h-3 text-slate-400 ml-0.5" />}
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-1 text-xs text-slate-500 font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-100 font-bold text-[10px] uppercase text-slate-700">Part {activePart}/4</span>
                 </div>
               </div>
-            )}
-            <ListeningQuestionPane 
-              testId={currentTestId}
-              partData={currentPartData}
-              userAnswers={exam.userAnswers}
-              onAnswerChange={exam.setAnswer}
-              flaggedQuestions={exam.flaggedQuestions}
-              onToggleFlag={exam.toggleFlag}
-              activeQuestionOrder={exam.activeQuestionOrder}
-              onSelectQuestion={exam.setActiveQuestionOrder}
-              isSubmitted={exam.isSubmitted}
-              fontSizeMode={fontSizeMode}
-              contrastTheme={contrastTheme}
-              onSeekAudio={(timestamp) => {
-                audioEngine.seek(timestamp);
-                audioEngine.play();
-              }}
-            />
+
+              {/* Left Column Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-5">
+                {leftPaneTab === 'overview' && (
+                  <div className="space-y-4 text-left">
+                    {/* Part Overview Card */}
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="px-2.5 py-1 rounded-lg bg-red-600 text-white text-xs font-black uppercase tracking-wider">
+                          Part {currentPartData.partNumber} / 4
+                        </span>
+                        <span className="text-xs text-slate-500 font-mono">
+                          {isEn ? 'Audio' : 'Khung phát'}: {Math.floor((currentPartData.audioTimestampStart || 0) / 60)}:{String((currentPartData.audioTimestampStart || 0) % 60).padStart(2, '0')} – {Math.floor((currentPartData.audioTimestampEnd || 0) / 60)}:{String((currentPartData.audioTimestampEnd || 0) % 60).padStart(2, '0')}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-base sm:text-lg mb-1">
+                          {currentPartData.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                          {currentPartData.context}
+                        </p>
+                      </div>
+
+                      {/* Speakers */}
+                      {currentPartData.speakers && currentPartData.speakers.length > 0 && (
+                        <div className="pt-2.5 border-t border-slate-100">
+                          <span className="text-slate-400 font-medium text-xs mr-2">{isEn ? 'Speakers:' : 'Nhân vật:'}</span>
+                          <div className="inline-flex flex-wrap gap-1.5 mt-1">
+                            {currentPartData.speakers.map((s, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2 py-0.5 rounded-md font-medium text-[11px] bg-slate-100 text-slate-700 border border-slate-200"
+                              >
+                                {s.name} ({s.accent} {s.gender})
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Map / Diagram Labelling (PINNED DIRECTLY ON LEFT) */}
+                    {mapGroup && (
+                      <div className="rounded-2xl border border-indigo-200 bg-white p-4 shadow-xs space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 text-indigo-900 font-bold text-xs sm:text-sm">
+                            <MapPin className="w-4 h-4 text-indigo-600" />
+                            <span>{isEn ? 'Map / Diagram Reference' : 'Bản Đồ / Sơ Đồ Tham Chiếu'}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => setMapZoom(prev => Math.max(0.7, prev - 0.15))}
+                              className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs cursor-pointer"
+                              title={isEn ? "Zoom Out" : "Thu nhỏ"}
+                            >
+                              <ZoomOut className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="text-[10px] font-mono font-bold px-1 text-slate-600">{Math.round(mapZoom * 100)}%</span>
+                            <button
+                              type="button"
+                              onClick={() => setMapZoom(prev => Math.min(2.5, prev + 0.15))}
+                              className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs cursor-pointer"
+                              title={isEn ? "Zoom In" : "Phóng to"}
+                            >
+                              <ZoomIn className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setIsMapModalOpen(true)}
+                              className="px-2 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold cursor-pointer flex items-center space-x-1 shadow-2xs"
+                              title={isEn ? "Enlarge map" : "Mở toàn màn hình"}
+                            >
+                              <Maximize2 className="w-3 h-3" />
+                              <span className="hidden sm:inline">{isEn ? 'Full' : 'Toàn cảnh'}</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="overflow-auto max-h-[460px] rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center p-2">
+                          <img
+                            src={mapGroup.mapImageUrl}
+                            alt="IELTS Listening Map"
+                            style={{ transform: `scale(${mapZoom})`, transformOrigin: 'top center' }}
+                            className="transition-transform duration-150 max-w-full rounded-lg shadow-xs"
+                          />
+                        </div>
+
+                        <p className="text-[11px] text-slate-500 italic">
+                          {isEn 
+                            ? '💡 Observe letters (A-H) and landmarks on the map on the left while answering corresponding questions on the right.'
+                            : '💡 Quan sát các ký tự (A-H) và mốc địa điểm trên bản đồ bên trái và chọn đáp án tương ứng bên phải.'}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Quick Listening Strategies & Signposting Tips */}
+                    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs space-y-2">
+                      <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{isEn ? 'Key Tips for Part ' + activePart : 'Mẹo nghe trọng tâm Part ' + activePart}</span>
+                      </h4>
+                      <ul className="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                        {activePart === 1 && (
+                          <>
+                            <li>{isEn ? 'Focus on names, numbers, dates, addresses, and postcodes.' : 'Tập trung nghe tên riêng, số điện thoại, ngày tháng, địa chỉ và mã bưu điện.'}</li>
+                            <li>{isEn ? 'Double check spelling of tricky English consonants (J/G, A/E/I, B/P).' : 'Kiểm tra kỹ các cặp âm dễ nhầm (J/G, A/E/I, B/P).'}</li>
+                          </>
+                        )}
+                        {activePart === 2 && (
+                          <>
+                            <li>{isEn ? 'Follow speaker signposts (First, moving on to, on your left, opposite).' : 'Bám sát từ định hướng chỉ dẫn (First, moving on to, on your left, opposite).'}</li>
+                            <li>{isEn ? 'Beware of distractors where the speaker changes their mind.' : 'Cảnh giác bẫy đổi ý (distractor): người nói đổi thông tin ở câu tiếp theo.'}</li>
+                          </>
+                        )}
+                        {activePart === 3 && (
+                          <>
+                            <li>{isEn ? 'Identify agreement vs disagreement between the two speakers.' : 'Phân biệt ý kiến đồng tình và phản bác giữa hai người nói.'}</li>
+                            <li>{isEn ? 'Focus on the final decision reached by both students/tutors.' : 'Chú ý kết luận/quyết định cuối cùng được cả hai thống nhất.'}</li>
+                          </>
+                        )}
+                        {activePart === 4 && (
+                          <>
+                            <li>{isEn ? 'Academic lecture: listen for headings and bullet sub-points.' : 'Bài giảng học thuật: bám theo tiêu đề và các dấu đầu dòng của ghi chú.'}</li>
+                            <li>{isEn ? 'Only 1 word per blank in most Cambridge Part 4 questions.' : 'Hầu hết Part 4 chỉ cho phép điền DUY NHẤT 1 TỪ, chú ý số lượng từ.'}</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {leftPaneTab === 'scratchpad' && (
+                  <div className="space-y-3 h-full flex flex-col text-left">
+                    <div className="flex items-center justify-between">
+                      <label className="font-bold text-slate-900 uppercase text-xs tracking-wider flex items-center space-x-1.5">
+                        <FileText className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{isEn ? 'Listening Scratchpad (Autosaved)' : 'Bản Nháp Nghe (Tự Động Lưu)'}</span>
+                      </label>
+                      <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        {isEn ? 'Auto-saved' : 'Tự động lưu'}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-500">
+                      {isEn
+                        ? 'Quickly jot down numbers, name spellings, suspicious keywords, and distractor traps while listening without leaving your workspace.'
+                        : 'Ghi nhanh số liệu, đánh vần tên riêng, từ khóa nghi vấn và bẫy nghe (distractor) ngay khi nghe mà không cần rời phòng thi.'}
+                    </p>
+
+                    <textarea
+                      value={scratchpadText}
+                      onChange={(e) => handleScratchpadChange(e.target.value)}
+                      placeholder={isEn ? "Type quick notes, numbers, spellings, keywords..." : "Ghi chú nhanh số điện thoại, đánh vần tên riêng, từ khóa..."}
+                      rows={14}
+                      className="w-full flex-1 p-3.5 rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-xs sm:text-sm text-slate-800 font-sans leading-relaxed resize-none bg-amber-50/20 shadow-inner"
+                    />
+
+                    <div className="p-2.5 bg-slate-100 rounded-xl text-[11px] text-slate-600 flex items-center justify-between">
+                      <span>{isEn ? `${scratchpadText.trim() ? scratchpadText.trim().split(/\s+/).length : 0} words` : `${scratchpadText.trim() ? scratchpadText.trim().split(/\s+/).length : 0} từ`}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleScratchpadChange('')}
+                        className="text-slate-500 hover:text-red-600 transition-colors cursor-pointer text-[10px] font-bold"
+                      >
+                        {isEn ? 'Clear notes' : 'Xóa nội dung'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {leftPaneTab === 'transcript' && (
+                  <div className="space-y-3 text-left">
+                    {examMode === 'strict' && !exam.isSubmitted ? (
+                      <div className="p-8 text-center rounded-2xl bg-amber-50 border border-amber-200 space-y-3">
+                        <Lock className="w-10 h-10 text-amber-600 mx-auto" />
+                        <h4 className="font-bold text-sm text-amber-950">
+                          {isEn ? 'Transcript Locked in Exam Mode' : 'Lời Thoại Khóa Trong Chế Độ Thi Thử'}
+                        </h4>
+                        <p className="text-xs text-amber-800 leading-relaxed max-w-sm mx-auto">
+                          {isEn
+                            ? 'To ensure authentic Cambridge exam conditions, transcripts unlock after test submission to review mistakes, or when practicing in Practice Mode.'
+                            : 'Để đảm bảo tính nghiêm túc chuẩn Cambridge, lời thoại sẽ tự động mở khóa sau khi nộp bài để tra cứu câu sai, hoặc khi làm trong Chế độ Luyện Tập.'}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setExamMode('practice')}
+                          className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                        >
+                          {isEn ? 'Switch to Practice Mode' : 'Chuyển sang Chế độ Luyện Tập'}
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                          <div className="relative flex-1">
+                            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                            <input
+                              type="text"
+                              value={transcriptSearch}
+                              onChange={(e) => setTranscriptSearch(e.target.value)}
+                              placeholder={isEn ? "Search transcript lines or keywords..." : "Tìm từ khóa trong lời thoại..."}
+                              className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsTranscriptOpen(true)}
+                            className="px-2.5 py-1.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200 transition-colors flex items-center space-x-1 shrink-0 cursor-pointer"
+                            title="Open Fullscreen Karaoke Modal"
+                          >
+                            <Maximize2 className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">{isEn ? 'Fullscreen' : 'Phóng to'}</span>
+                          </button>
+                        </div>
+
+                        {/* Real-time Synced Transcript Sentences */}
+                        <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+                          {(currentPartData.transcripts || [])
+                            .filter(s => !transcriptSearch || s.text.toLowerCase().includes(transcriptSearch.toLowerCase()) || (s.speaker && s.speaker.toLowerCase().includes(transcriptSearch.toLowerCase())))
+                            .map((s, idx) => {
+                              const isSentenceActive = audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end;
+                              return (
+                                <div
+                                  key={idx}
+                                  onClick={() => {
+                                    audioEngine.seek(s.start);
+                                    if (!audioEngine.isPlaying) audioEngine.play();
+                                  }}
+                                  className={`p-3 rounded-xl border text-xs leading-relaxed transition-all cursor-pointer ${
+                                    isSentenceActive
+                                      ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-200 shadow-xs'
+                                      : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between text-[11px] mb-1 font-mono">
+                                    <span className="font-bold text-slate-700">{s.speaker || `Speaker`}</span>
+                                    <span className={isSentenceActive ? 'text-purple-700 font-bold' : 'text-slate-400'}>
+                                      {Math.floor(s.start / 60)}:{String(Math.floor(s.start % 60)).padStart(2, '0')}
+                                    </span>
+                                  </div>
+                                  <p className={isSentenceActive ? 'text-purple-950 font-medium' : 'text-slate-700'}>
+                                    {s.text}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Resizable Splitter Bar (Desktop Only) */}
+            <div
+              onMouseDown={() => setIsDragging(true)}
+              onTouchStart={() => setIsDragging(true)}
+              onDoubleClick={() => setSplitWidth(48)}
+              className="hidden lg:flex w-2 bg-slate-100 hover:bg-red-400 active:bg-red-600 cursor-col-resize items-center justify-center transition-colors group z-10 shrink-0"
+              title={isEn ? "Drag to adjust split ratio (Double-click to reset 48/52)" : "Kéo thả để điều chỉnh tỷ lệ chia đôi màn hình (Nhấp đúp để đặt lại 48/52)"}
+            >
+              <div className="w-0.5 h-8 bg-slate-400 group-hover:bg-white rounded-full" />
+            </div>
+
+            {/* RIGHT COLUMN: Questions Pane */}
+            <div
+              style={{ width: isDesktopOrLandscape ? `${100 - splitWidth}%` : '100%' }}
+              className={`h-full bg-white flex flex-col overflow-hidden ${
+                !isDesktopOrLandscape && mobileTab !== 'questions' ? 'hidden' : 'flex'
+              }`}
+            >
+              {/* Sticky mini audio bar on mobile when viewing questions */}
+              {!isDesktopOrLandscape && (
+                <div className="bg-slate-950 text-white px-3 py-1.5 flex items-center justify-between border-b border-slate-800 shrink-0 select-none">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={audioEngine.togglePlay}
+                      className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-white"
+                    >
+                      {audioEngine.isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />}
+                    </button>
+                    <span className="font-mono text-xs text-emerald-400">
+                      {Math.floor(audioEngine.currentTime / 60)}:{String(Math.floor(audioEngine.currentTime % 60)).padStart(2, '0')} / {Math.floor(audioEngine.duration / 60)}:{String(Math.floor(audioEngine.duration % 60)).padStart(2, '0')}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileTab('context')}
+                    className="text-xs text-slate-300 underline font-semibold"
+                  >
+                    {mapGroup ? (isEn ? 'View Map' : 'Xem Bản Đồ') : (isEn ? 'View Context' : 'Xem Bối Cảnh')}
+                  </button>
+                </div>
+              )}
+
+              {/* Scrollable Questions Area */}
+              <div className="flex-1 overflow-y-auto">
+                {exam.isSubmitted && (
+                  <div className="w-full px-4 sm:px-6 pt-3 pb-0">
+                    <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-2xs">
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span className="text-xs font-bold text-emerald-950">
+                          {isEn 
+                            ? `You are reviewing test results ${bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} correct)` : ''}`
+                            : `Bạn đang xem lại bài chấm ${bandResult ? `• Band ${bandResult.band.toFixed(1)} (${bandResult.correctCount}/${bandResult.totalQuestions} câu đúng)` : ''}`}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2 shrink-0">
+                        <button
+                          onClick={() => setIsResultModalOpen(true)}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          {isEn ? 'Score Report' : 'Bảng Điểm Chi Tiết'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            exam.resetExam();
+                            audioEngine.seek(0);
+                            setBandResult(null);
+                            try {
+                              localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
+                            } catch (e) {}
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors cursor-pointer flex items-center space-x-1"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span>{isEn ? 'Retake Test' : 'Làm Lại Đề Này'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <ListeningQuestionPane 
+                  testId={currentTestId}
+                  partData={currentPartData}
+                  userAnswers={exam.userAnswers}
+                  onAnswerChange={exam.setAnswer}
+                  flaggedQuestions={exam.flaggedQuestions}
+                  onToggleFlag={exam.toggleFlag}
+                  activeQuestionOrder={exam.activeQuestionOrder}
+                  onSelectQuestion={exam.setActiveQuestionOrder}
+                  isSubmitted={exam.isSubmitted}
+                  fontSizeMode={fontSizeMode}
+                  contrastTheme={contrastTheme}
+                  onSeekAudio={(timestamp) => {
+                    audioEngine.seek(timestamp);
+                    audioEngine.play();
+                  }}
+                  hidePartHeader={true}
+                />
+              </div>
+            </div>
           </div>
         )}
-      </div>
+
+      {/* Fullscreen Map Modal */}
+      {isMapModalOpen && mapGroup && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col p-4 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between text-white mb-2">
+            <h3 className="font-bold text-sm sm:text-base flex items-center space-x-2">
+              <MapPin className="w-4 h-4 text-emerald-400" />
+              <span>{isEn ? 'Detailed Map / Diagram View' : 'Bản Đồ / Sơ Đồ Toàn Cảnh'}</span>
+            </h3>
+            <button
+              onClick={() => setIsMapModalOpen(false)}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold flex items-center space-x-1 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+              <span>{isEn ? 'Close' : 'Đóng'}</span>
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-auto flex items-center justify-center p-2">
+            <img
+              src={mapGroup.mapImageUrl}
+              alt="IELTS Listening Map Large"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
 
       {/* 6. CD-IELTS Bottom Palette Bar */}
       {(hasStartedExam || exam.isSubmitted) && (
