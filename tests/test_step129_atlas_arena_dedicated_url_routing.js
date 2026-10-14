@@ -71,13 +71,15 @@ it('App.jsx synchronizes window.history.pushState when modal opens and closes', 
 });
 
 // 6. Share Button inside Atlas English Arena
-it('AtlasEnglishArenaModal.jsx renders 1-click Share /atlas-arena button with clipboard copy', () => {
-  assert(arenaModalSource.includes("handleShareArena"), 'Must define handleShareArena handler');
-  assert(arenaModalSource.includes("const shareUrl = `${window.location.origin}/atlas-arena`"), 
+it('AtlasEnglishArenaModal.jsx renders 1-click Share /atlas-arena button with clipboard copy and isEn defined', () => {
+  const freshModalSource = fs.readFileSync(path.resolve('src/components/arena/AtlasEnglishArenaModal.jsx'), 'utf-8');
+  assert(freshModalSource.includes("const { t, isEn } = useTranslation()"), 'Must destructure isEn from useTranslation to prevent ReferenceError');
+  assert(freshModalSource.includes("handleShareArena"), 'Must define handleShareArena handler');
+  assert(freshModalSource.includes("const shareUrl = `${window.location.origin}/atlas-arena`"), 
     'Must generate /atlas-arena direct link');
-  assert(arenaModalSource.includes("navigator.clipboard.writeText(shareUrl)"), 
+  assert(freshModalSource.includes("navigator.clipboard.writeText(shareUrl)"), 
     'Must copy link to clipboard');
-  assert(arenaModalSource.includes("copiedLink ? t('arena.linkCopied') : t('arena.shareArena')"), 
+  assert(freshModalSource.includes("copiedLink ? t('arena.linkCopied') : t('arena.shareArena')"), 
     'Must render responsive copy confirmation text');
 });
 

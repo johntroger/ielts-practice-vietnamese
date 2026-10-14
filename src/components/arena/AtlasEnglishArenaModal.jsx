@@ -44,7 +44,7 @@ export default function AtlasEnglishArenaModal({
   onClose,
   currentUser = null
 }) {
-  const { t } = useTranslation();
+  const { t, isEn } = useTranslation();
   const { isMuted, toggleMute, playChime, playSfx, speak, unlockAudio } = useArenaAudio();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
