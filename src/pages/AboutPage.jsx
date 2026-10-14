@@ -179,34 +179,34 @@ export default function AboutPage({
     <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-indigo-500 selection:text-white transition-colors duration-200">
       
       {/* 1. STICKY TOP NAVIGATION BAR */}
-      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200/80 dark:border-slate-800 transition-colors shadow-2xs">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
           
           {/* Logo & Platform Name */}
           <div 
             onClick={() => onStartPractice && onStartPractice()}
-            className="flex items-center space-x-3 cursor-pointer group"
+            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group min-w-0 shrink"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 bg-clip-text text-transparent">
+            <div className="min-w-0">
+              <div className="flex items-center space-x-1.5 truncate">
+                <span className="font-extrabold text-sm sm:text-base md:text-lg tracking-tight bg-gradient-to-r from-slate-900 to-indigo-900 dark:from-white dark:to-indigo-200 bg-clip-text text-transparent truncate">
                   IELTS Studio
                 </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60 uppercase">
+                <span className="hidden sm:inline-block text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60 uppercase shrink-0">
                   Local-First
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-none">
+              <p className="hidden md:block text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-none truncate mt-0.5">
                 {isEn ? 'Cambridge AI Assessment Engine' : 'Hệ thống luyện thi chuẩn Cambridge'}
               </p>
             </div>
           </div>
 
           {/* Quick Nav Anchor Links (Desktop) */}
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300">
             <button 
               onClick={() => scrollToSection('workspaces')}
               className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
@@ -241,37 +241,40 @@ export default function AboutPage({
           </nav>
 
           {/* Utility Actions (Lang, Theme, CTA) */}
-          <div className="flex items-center space-x-2.5 sm:space-x-3">
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
             {/* Language Switcher */}
             <button
               onClick={handleToggleLang}
-              className="flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+              className="flex items-center space-x-1 px-2 py-1 sm:px-2.5 sm:py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
               title={isEn ? 'Switch to Vietnamese' : 'Chuyển sang tiếng Anh'}
+              aria-label="Toggle language"
             >
-              <Globe className="w-3.5 h-3.5 text-indigo-500" />
-              <span>{language === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}</span>
+              <Globe className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+              <span className="font-bold text-[11px] sm:text-xs">{language === 'vi' ? 'VI' : 'EN'}</span>
             </button>
 
             {/* Dark / Light Toggle */}
             <button
               onClick={handleToggleTheme}
-              className="p-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+              className="p-1.5 sm:p-2 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
               title={currentTheme === 'dark' ? 'Giao diện sáng' : 'Giao diện tối'}
+              aria-label="Toggle dark mode"
             >
               {currentTheme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-slate-600" />
+                <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />
               )}
             </button>
 
-            {/* Return to Practice Button */}
+            {/* Return to Practice Button - Clean, Non-wrapping, Space-saving */}
             <button
               onClick={() => onStartPractice && onStartPractice()}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <span>{t('about.ctaStart', 'Vào Phòng Luyện Thi')}</span>
-              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">{t('about.ctaStart', 'Vào Phòng Luyện Thi')}</span>
+              <span className="sm:hidden">{isEn ? 'Practice' : 'Luyện thi'}</span>
+              <ArrowRight className="w-3.5 h-3.5 shrink-0" />
             </button>
           </div>
 
@@ -279,19 +282,19 @@ export default function AboutPage({
       </header>
 
       {/* 2. HERO SECTION */}
-      <section id="overview" className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-slate-200/60 dark:border-slate-800/60">
+      <section id="overview" className="relative overflow-hidden pt-8 pb-12 sm:pt-16 sm:pb-20 md:pt-20 md:pb-24 border-b border-slate-200/60 dark:border-slate-800/60">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(99,102,241,0.25),rgba(0,0,0,0))] pointer-events-none" />
         
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-xs sm:text-sm font-semibold mb-6 shadow-sm">
-            <Sparkles className="w-4 h-4 text-indigo-500 animate-pulse" />
-            <span>{t('about.badge', 'NỀN TẢNG LUYỆN THI IELTS 4 KỸ NĂNG • 100% LOCAL-FIRST & MIỄN PHÍ')}</span>
+          <div className="inline-flex items-center space-x-1.5 sm:space-x-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-[11px] sm:text-xs md:text-sm font-semibold mb-4 sm:mb-6 shadow-sm max-w-[95vw]">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-500 animate-pulse shrink-0" />
+            <span className="truncate">{t('about.badge', 'NỀN TẢNG LUYỆN THI IELTS 4 KỸ NĂNG • 100% LOCAL-FIRST & MIỄN PHÍ')}</span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15] mb-6">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.2] mb-4 sm:mb-6">
             {isEn ? (
               <>
                 Master IELTS with <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-emerald-500 bg-clip-text text-transparent">Precision AI</span> & Authentic Cambridge Standards
@@ -304,15 +307,15 @@ export default function AboutPage({
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed mb-10">
+          <p className="text-xs sm:text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-10 px-1">
             {t('about.heroSubtitle', 'Hệ thống tự học toàn diện 4 kỹ năng Writing, Reading, Listening, Speaking. Tích hợp AI chấm thi chuyên sâu, giải mã bẫy đề thi, đấu trường tương tác 100 cấp độ và bảo mật dữ liệu tuyệt đối trên thiết bị của bạn.')}
           </p>
 
           {/* Dual Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 mb-10 sm:mb-16">
             <button
               onClick={() => onStartPractice && onStartPractice()}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center space-x-2 text-base"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center space-x-2 text-sm sm:text-base"
             >
               <span>{t('about.ctaStart', 'Vào Phòng Luyện Thi Ngay')}</span>
               <ArrowRight className="w-4 h-4" />
@@ -322,7 +325,7 @@ export default function AboutPage({
                 if (onOpenArena) onOpenArena();
                 else scrollToSection('arena');
               }}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center space-x-2 text-base"
+              className="w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-3.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center space-x-2 text-sm sm:text-base"
             >
               <Swords className="w-4 h-4 text-amber-500" />
               <span>{t('about.ctaArena', 'Khám Phá Đấu Trường Arena')}</span>
