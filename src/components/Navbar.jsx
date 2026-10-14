@@ -75,7 +75,8 @@ export default function Navbar({
   apiKey,
   user,
   onOpenAuth,
-  onOpenCDIDisplay
+  onOpenCDIDisplay,
+  onOpenAbout
 }) {
   const doOpenOnboarding = onOpenOnboarding || (() => openModal('onboarding'));
   const doOpenDiagnostic = onOpenDiagnostic || (() => openModal('diagnostic'));
@@ -96,6 +97,16 @@ export default function Navbar({
   const doOpenContact = onOpenContact || (() => openModal('contact'));
   const doOpenAuth = onOpenAuth || (() => openModal('auth'));
   const doOpenCDIDisplay = onOpenCDIDisplay || (() => openModal('cdiDisplay'));
+  const doOpenAbout = onOpenAbout || (() => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.history.pushState({ page: 'about' }, '', '/about');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      } catch (e) {
+        window.location.hash = 'about';
+      }
+    }
+  });
 
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const [isPracticeMenuOpen, setIsPracticeMenuOpen] = useState(false);
@@ -834,6 +845,17 @@ export default function Navbar({
               </div>
             </div>
 
+            {/* About Page (/about) Link Button */}
+            <button
+              onClick={doOpenAbout}
+              className="hidden xl:flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl border border-indigo-200/90 bg-indigo-50/80 hover:bg-indigo-100 text-indigo-800 text-xs font-bold transition-all shadow-2xs shrink-0 cursor-pointer min-h-[38px] sm:min-h-[40px]"
+              title={isEn ? "About IELTS Studio Master (/about)" : "Giới thiệu hệ thống IELTS Studio Master (/about)"}
+              aria-label={isEn ? "About Page" : "Trang Giới Thiệu"}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span className="hidden min-[1500px]:inline text-[11px] font-bold">{isEn ? 'About' : 'Giới Thiệu'}</span>
+            </button>
+
             {/* Help Center (F1) - 100% Công khai, hiển thị trên màn hình rộng >= 1536px; trên tablet nằm trong menu Tiến Độ */}
             <button
               onClick={doOpenFeaturesGuide}
@@ -1336,6 +1358,17 @@ export default function Navbar({
                     }`}>
                       {currentTheme === 'dark' ? (isEn ? 'ON' : 'ĐANG BẬT') : (isEn ? 'OFF' : 'ĐANG TẮT')}
                     </span>
+                  </button>
+
+                  <button
+                    onClick={() => { doOpenAbout(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 text-left text-xs font-bold text-indigo-700 border border-indigo-200 mt-2 min-h-[44px] cursor-pointer shadow-2xs"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Sparkles className="w-4 h-4 text-indigo-600" />
+                      <span>{isEn ? 'About Platform (/about)' : 'Giới Thiệu Website (/about)'}</span>
+                    </div>
+                    <span className="text-[10px] text-indigo-700 font-extrabold bg-white border border-indigo-200 px-1.5 py-0.5 rounded-full">/about</span>
                   </button>
 
                   <button

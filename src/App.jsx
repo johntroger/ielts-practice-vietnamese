@@ -6,6 +6,7 @@ import WritingWorkspace from './components/writing/WritingWorkspace';
 const ReadingWorkspace = React.lazy(() => import('./components/reading/ReadingWorkspace'));
 const ListeningWorkspace = React.lazy(() => import('./components/listening/ListeningWorkspace'));
 const SpeakingWorkspace = React.lazy(() => import('./components/speaking/SpeakingWorkspace'));
+const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 
 import AppModalHost from './components/modals/AppModalHost';
 import { useStudyData } from './hooks/useStudyData';
@@ -46,6 +47,7 @@ import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContra
 import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
 import { trackSkillView } from './services/analyticsService.js';
 import { useTranslation } from './i18n';
+import { GITBOOK_FEATURES_BASE_URL } from './core/featureRegistry';
 
 export default function App() {
   const { t, language } = useTranslation();
@@ -87,6 +89,7 @@ export default function App() {
   const [mode, setMode] = useState('exam'); // 'exam' | 'practice'
   const [isApiKeyBannerDismissed, setIsApiKeyBannerDismissed] = useState(() => safeGet('ielts_dismiss_api_banner', false));
   const [isBeginnerBannerDismissed, setIsBeginnerBannerDismissed] = useState(() => safeGet('ielts_dismiss_beginner_banner', false));
+  const [isAboutViewOpen, setIsAboutViewOpen] = useState(false);
 
   // Keep active skill in localStorage safely & track virtual pageview in GA4
   useEffect(() => {
@@ -552,6 +555,83 @@ export default function App() {
       }
     }
   }, [modals.atlasArena]);
+
+  // Dedicated Two-Way URL Routing & Deep-Linking for About Page (/about & /gioi-thieu)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsAboutRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+      return (
+        pathname === '/about' ||
+        pathname.endsWith('/about') ||
+        pathname === '/gioi-thieu' ||
+        pathname.endsWith('/gioi-thieu') ||
+        hash === '#about' ||
+        hash === '#gioi-thieu' ||
+        search.get('page') === 'about' ||
+        search.get('view') === 'about'
+      );
+    };
+
+    // 1. Direct entry check on mount (e.g. user visits domain.com/about)
+    if (checkIsAboutRoute()) {
+      setIsAboutViewOpen(true);
+      trackSkillView('about');
+    }
+
+    // 2. Handle browser Back / Forward navigation (popstate & hashchange)
+    const handleLocationChange = () => {
+      const isRouteMatch = checkIsAboutRoute();
+      setIsAboutViewOpen(isRouteMatch);
+      if (isRouteMatch) {
+        trackSkillView('about');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
+
+  // Sync address bar when isAboutViewOpen toggles
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnAboutUrl =
+      pathname === '/about' ||
+      pathname.endsWith('/about') ||
+      pathname === '/gioi-thieu' ||
+      pathname.endsWith('/gioi-thieu') ||
+      hash === '#about' ||
+      hash === '#gioi-thieu';
+
+    if (isAboutViewOpen && !isCurrentlyOnAboutUrl) {
+      try {
+        window.history.pushState({ page: 'about' }, '', '/about');
+      } catch (e) {
+        window.location.hash = 'about';
+      }
+      trackSkillView('about');
+    } else if (!isAboutViewOpen && isCurrentlyOnAboutUrl) {
+      try {
+        if (hash === '#about' || hash === '#gioi-thieu') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [isAboutViewOpen]);
 
   // Fetch from Cloud when user logs in with Bi-directional Auto-Sync
   useEffect(() => {
@@ -1020,9 +1100,36 @@ export default function App() {
     <div 
       data-cdi-font={cdiFontSize}
       data-cdi-contrast={cdiContrast}
-      className={`${(activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
+      className={`${isAboutViewOpen ? 'min-h-[100dvh] overflow-y-auto' : (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
       
-      {/* Focus Mode Floating Exit Pill */}
+      {isAboutViewOpen ? (
+        <React.Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center p-12 text-slate-500 font-bold text-sm bg-slate-50 dark:bg-slate-950">
+            <div className="flex items-center space-x-2">
+              <span className="w-3 h-3 rounded-full bg-indigo-600 animate-ping" />
+              <span>{language === 'en' ? 'Loading About page...' : 'Đang tải trang giới thiệu...'}</span>
+            </div>
+          </div>
+        }>
+          <AboutPage
+            onStartPractice={() => {
+              setIsAboutViewOpen(false);
+            }}
+            onSelectSkill={(skill) => {
+              setActiveSkill(skill);
+              setIsAboutViewOpen(false);
+            }}
+            onOpenArena={() => {
+              openModal('atlasArena');
+            }}
+            onOpenGitBook={() => {
+              window.open(GITBOOK_FEATURES_BASE_URL, '_blank');
+            }}
+          />
+        </React.Suspense>
+      ) : (
+        <>
+          {/* Focus Mode Floating Exit Pill */}
       {isFocusMode && (
         <div className="fixed top-3 right-4 z-50 flex items-center space-x-2 bg-slate-900/90 text-white text-xs px-3 py-1.5 rounded-full shadow-xl border border-slate-700/80 transition-all backdrop-blur-md animate-in fade-in">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -1143,6 +1250,7 @@ export default function App() {
           user={currentUser}
           onOpenAuth={() => openModal('auth')}
           onOpenCDIDisplay={() => openModal('cdiDisplay')}
+          onOpenAbout={() => setIsAboutViewOpen(true)}
         />
       )}
 
@@ -1431,6 +1539,8 @@ export default function App() {
             onOpenModal={(modal) => openModal(modal)}
           />
         </WorkspaceErrorBoundary>
+      )}
+        </>
       )}
 
       {/* 3. Centralized Modals System (Grouped into Exam, Learning, and System Clusters) */}
