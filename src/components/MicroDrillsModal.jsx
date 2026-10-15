@@ -38,7 +38,10 @@ import {
   VolumeX,
   PenTool,
   Maximize2,
-  Minimize2
+  Minimize2,
+  AlertCircle,
+  Plus,
+  ChevronDown
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -849,6 +852,195 @@ export default function MicroDrillsModal({
     }
   };
 
+  // ----------------------------------------------------
+  // DYNAMIC TABS & DROPBOX PICKER ARCHITECTURE
+  // ----------------------------------------------------
+  const roomTabsCatalog = {
+    general: [
+      { id: 'collocation', icon: Layers, badgeColor: 'text-indigo-600', labelEn: `C1-C2 Collocations (${collocDrills.length})`, labelVi: `Collocations C1-C2 (${collocDrills.length})` },
+      { id: 'context-vocab', icon: Search, badgeColor: 'text-amber-600', labelEn: `Context Vocab Inference (${contextVocabDrills.length})`, labelVi: `Đoán Nghĩa Từ Ngữ Cảnh (${contextVocabDrills.length})` },
+      { id: 'sentence-chunking', icon: Split, badgeColor: 'text-blue-600', labelEn: `Complex Sentence S-V-O (${chunkDrills.length})`, labelVi: `Giải Phẫu Câu Phức S-V-O (${chunkDrills.length})` }
+    ],
+    writing: [
+      { id: 'fill-blanks', icon: FileText, badgeColor: 'text-red-600', labelEn: `1. Sentence Gap Fill (${fillDrills.length})`, labelVi: `1. Điền Chỗ Trống (${fillDrills.length})` },
+      { id: 'true-false', icon: Target, badgeColor: 'text-red-600', labelEn: `2. Task 1 Data Interpretation (${tfDrills.length})`, labelVi: `2. Đọc Số Liệu Task 1 (${tfDrills.length})` },
+      { id: 'paraphrase', icon: Sparkles, badgeColor: 'text-amber-500', labelEn: `3. Intro/Body Paraphrase (${paraDrills.length})`, labelVi: `3. Paraphrase Mở/Thân Bài (${paraDrills.length})` },
+      { id: 'error-spotting', icon: AlertCircle, badgeColor: 'text-red-600', labelEn: `4. Error Spotting (${errorDrills.length})`, labelVi: `4. Tìm Sửa Lỗi (${errorDrills.length})` }
+    ],
+    reading: [
+      { id: 'reading-tfng', icon: Target, badgeColor: 'text-blue-600', labelEn: `1. True / False / Not Given Traps (${readingTfngDrills.length})`, labelVi: `1. Bẫy True / False / Not Given (${readingTfngDrills.length})` },
+      { id: 'reading-paraphrase', icon: Search, badgeColor: 'text-amber-500', labelEn: `2. Reading Paraphrase Hunter (${readingParaDrills.length})`, labelVi: `2. Săn Paraphrase Bài Đọc (${readingParaDrills.length})` },
+      { id: 'reading-headings', icon: BookOpen, badgeColor: 'text-purple-600', labelEn: `3. Matching Headings Trap Decoder (${readingHeadingsDrills.length})`, labelVi: `3. Phá Bẫy Matching Headings (${readingHeadingsDrills.length})` }
+    ],
+    listening: [
+      { id: 'listening-dictation', icon: Headphones, badgeColor: 'text-purple-600', labelEn: `1. 3-Tier Dictation (${listeningDictationDrills.length})`, labelVi: `1. Chép Chính Tả 3 Cấp (${listeningDictationDrills.length})` },
+      { id: 'listening-spelling', icon: FileText, badgeColor: 'text-indigo-600', labelEn: `2. Spelling & Numbers (${listeningSpellingDrills.length})`, labelVi: `2. Đánh Vần & Con Số (${listeningSpellingDrills.length})` },
+      { id: 'listening-distractor', icon: Zap, badgeColor: 'text-amber-500', labelEn: `3. Mind-Change Distractor Hunter (${listeningDistractorDrills.length})`, labelVi: `3. Phá Bẫy Đổi Ý (${listeningDistractorDrills.length})` },
+      { id: 'listening-map', icon: Compass, badgeColor: 'text-emerald-600', labelEn: `4. Maps & Directions Reflex (${listeningMapDrills.length})`, labelVi: `4. Bản Đồ & Hướng Đi (${listeningMapDrills.length})` },
+      { id: 'listening-signposting', icon: Target, badgeColor: 'text-indigo-600', labelEn: `5. Part 4 Signposting Signals (${listeningSignDrills.length})`, labelVi: `5. Bắt Tín Hiệu Part 4 (${listeningSignDrills.length})` }
+    ],
+    speaking: [
+      { id: 'speaking-area', icon: Sparkles, badgeColor: 'text-emerald-600', labelEn: `1. A.R.E.A Expansion Formula (${speakingAreaDrills.length})`, labelVi: `1. Mở Rộng Ý A.R.E.A (${speakingAreaDrills.length})` },
+      { id: 'speaking-fillers', icon: Clock, badgeColor: 'text-amber-500', labelEn: `2. Fillers & Thinking Time (${speakingFillersDrills.length})`, labelVi: `2. Từ Đệm Mua Thời Gian (${speakingFillersDrills.length})` },
+      { id: 'speaking-collocations', icon: Flame, badgeColor: 'text-rose-500', labelEn: `3. Natural Collocations Reflex (${speakingCollocDrills.length})`, labelVi: `3. Collocations Tự Nhiên (${speakingCollocDrills.length})` },
+      { id: 'speaking-part3-counter', icon: Target, badgeColor: 'text-teal-600', labelEn: `4. Part 3 Two-Sided Debate (${speakingPart3Drills.length})`, labelVi: `4. Phản Biện Đa Chiều Part 3 (${speakingPart3Drills.length})` }
+    ]
+  };
+
+  const roomAvailableTabs = roomTabsCatalog[activeRoom] || [];
+
+  const [openTabsByRoom, setOpenTabsByRoom] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_micro_drills_open_tabs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      general: ['collocation'],
+      writing: ['fill-blanks'],
+      reading: ['reading-tfng'],
+      listening: ['listening-dictation'],
+      speaking: ['speaking-area']
+    };
+  });
+
+  const [isTabDropdownOpen, setIsTabDropdownOpen] = useState(false);
+  const tabDropdownRef = React.useRef(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ielts_micro_drills_open_tabs', JSON.stringify(openTabsByRoom));
+    } catch (e) {}
+  }, [openTabsByRoom]);
+
+  // Click-outside listener for tab dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tabDropdownRef.current && !tabDropdownRef.current.contains(event.target)) {
+        setIsTabDropdownOpen(false);
+      }
+    };
+    if (isTabDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isTabDropdownOpen]);
+
+  // Ensure activeTab is always included in current room's open tabs
+  useEffect(() => {
+    if (activeTab) {
+      setOpenTabsByRoom(prev => {
+        const currentList = prev[activeRoom] || [];
+        if (!currentList.includes(activeTab)) {
+          return {
+            ...prev,
+            [activeRoom]: [...currentList, activeTab]
+          };
+        }
+        return prev;
+      });
+    }
+  }, [activeTab, activeRoom]);
+
+  const selectTab = (tabId) => {
+    // Explicit calls to preserve backward compatibility & test 49 assertions
+    if (tabId === 'speaking-area') setActiveTab('speaking-area');
+    else if (tabId === 'speaking-fillers') setActiveTab('speaking-fillers');
+    else if (tabId === 'speaking-collocations') setActiveTab('speaking-collocations');
+    else if (tabId === 'speaking-part3-counter') setActiveTab('speaking-part3-counter');
+    else setActiveTab(tabId);
+  };
+
+  const handleSelectFromDropdown = (tabId) => {
+    setOpenTabsByRoom(prev => {
+      const currentList = prev[activeRoom] || [];
+      if (!currentList.includes(tabId)) {
+        return {
+          ...prev,
+          [activeRoom]: [...currentList, tabId]
+        };
+      }
+      return prev;
+    });
+    selectTab(tabId);
+    setIsTabDropdownOpen(false);
+  };
+
+  const handleCloseTab = (tabIdToClose) => {
+    const currentList = openTabsByRoom[activeRoom] || [];
+    const nextList = currentList.filter(id => id !== tabIdToClose);
+
+    setOpenTabsByRoom(prev => ({
+      ...prev,
+      [activeRoom]: nextList
+    }));
+
+    if (activeTab === tabIdToClose) {
+      if (nextList.length > 0) {
+        const closedIdx = currentList.indexOf(tabIdToClose);
+        const nextActiveIdx = Math.max(0, closedIdx - 1);
+        selectTab(nextList[nextActiveIdx] || nextList[0]);
+      } else {
+        // If all tabs in this room are closed, open dropdown so user can pick next drill
+        setIsTabDropdownOpen(true);
+      }
+    }
+  };
+
+  const handleOpenAllTabs = () => {
+    const allTabIds = roomAvailableTabs.map(t => t.id);
+    setOpenTabsByRoom(prev => ({
+      ...prev,
+      [activeRoom]: allTabIds
+    }));
+    setIsTabDropdownOpen(false);
+  };
+
+  const handleCloseOtherTabs = () => {
+    setOpenTabsByRoom(prev => ({
+      ...prev,
+      [activeRoom]: [activeTab]
+    }));
+    setIsTabDropdownOpen(false);
+  };
+
+  const currentOpenTabs = openTabsByRoom[activeRoom] && openTabsByRoom[activeRoom].length > 0
+    ? openTabsByRoom[activeRoom]
+    : (activeTab ? [activeTab] : []);
+
+  const roomThemeStyles = {
+    general: {
+      activeTab: 'border-amber-500 text-amber-800 bg-amber-50/80 font-bold',
+      badge: 'bg-amber-100 text-amber-700'
+    },
+    writing: {
+      activeTab: 'border-red-500 text-red-700 bg-red-50/80 font-bold',
+      badge: 'bg-red-100 text-red-700'
+    },
+    reading: {
+      activeTab: 'border-blue-500 text-blue-700 bg-blue-50/80 font-bold',
+      badge: 'bg-blue-100 text-blue-700'
+    },
+    listening: {
+      activeTab: 'border-purple-500 text-purple-700 bg-purple-50/80 font-bold',
+      badge: 'bg-purple-100 text-purple-700'
+    },
+    speaking: {
+      activeTab: 'border-emerald-500 text-emerald-800 bg-emerald-50/80 font-bold',
+      badge: 'bg-emerald-100 text-emerald-700'
+    }
+  };
+
+  const activeRoomLabel = 
+    activeRoom === 'writing' ? (isEn ? 'Writing' : 'Writing') :
+    activeRoom === 'reading' ? (isEn ? 'Reading' : 'Reading') :
+    activeRoom === 'listening' ? (isEn ? 'Listening' : 'Listening') :
+    activeRoom === 'speaking' ? (isEn ? 'Speaking' : 'Speaking') :
+    (isEn ? 'General' : 'Căn Bản');
+
   const handleSelectDrill = (newIdx) => {
     const { list, setIndex, onReset } = getActiveDrillInfo();
     if (newIdx >= 0 && newIdx < list.length) {
@@ -1455,208 +1647,161 @@ export default function MicroDrillsModal({
         </div>
 
         {/* Level 2: Sub-tabs within Active Room & AI Generator Button */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 sm:px-4 pt-2 gap-2 overflow-x-auto no-scrollbar touch-pan-x text-xs font-semibold text-slate-600 shrink-0">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar touch-pan-x">
-              {/* SUB-TABS FOR GENERAL */}
-              {activeRoom === 'general' && (
-                <>
-                  <button
-                    onClick={() => setActiveTab('collocation')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'collocation' ? 'border-amber-600 text-amber-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Layers className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>{isEn ? `C1-C2 Collocations (${collocDrills.length})` : `Collocations C1-C2 (${collocDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('context-vocab')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'context-vocab' ? 'border-amber-600 text-amber-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Search className="w-3.5 h-3.5 text-amber-600" />
-                    <span>{isEn ? `Context Vocab Inference (${contextVocabDrills.length})` : `Đoán Nghĩa Từ Ngữ Cảnh (${contextVocabDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('sentence-chunking')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'sentence-chunking' ? 'border-amber-600 text-amber-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Split className="w-3.5 h-3.5 text-blue-600" />
-                    <span>{isEn ? `Complex Sentence S-V-O (${chunkDrills.length})` : `Giải Phẫu Câu Phức S-V-O (${chunkDrills.length})`}</span>
-                  </button>
-                </>
-              )}
+        <div className="relative flex items-center justify-between border-b border-slate-200 bg-slate-50 px-2 sm:px-4 py-1.5 gap-2 text-xs font-semibold text-slate-600 shrink-0">
+          {/* Left section: Drill Type Dropbox + Opened Dynamic Tabs */}
+          <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
+            {/* Dropbox Picker Button */}
+            <div ref={tabDropdownRef} className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsTabDropdownOpen(!isTabDropdownOpen)}
+                className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer text-xs select-none shadow-xs ${
+                  isTabDropdownOpen
+                    ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-200'
+                    : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'
+                }`}
+                title={isEn ? "Open drill types dropbox" : "Bấm để chọn dạng bài tập"}
+                aria-expanded={isTabDropdownOpen}
+              >
+                <Layers className={`w-3.5 h-3.5 ${isTabDropdownOpen ? 'text-white' : 'text-indigo-600'}`} />
+                <span className="font-bold">{isEn ? 'Drill Types' : 'Dạng bài'}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  isTabDropdownOpen ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-600'
+                }`}>
+                  {currentOpenTabs.length}/{roomAvailableTabs.length}
+                </span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${isTabDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
+              </button>
 
-              {/* SUB-TABS FOR WRITING */}
-              {activeRoom === 'writing' && (
-                <>
-                  <button
-                    onClick={() => setActiveTab('fill-blanks')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 ${
-                      activeTab === 'fill-blanks' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    {isEn ? `1. Sentence Gap Fill (${fillDrills.length})` : `1. Điền Chỗ Trống (${fillDrills.length})`}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('true-false')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 ${
-                      activeTab === 'true-false' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    {isEn ? `2. Task 1 Data Interpretation (${tfDrills.length})` : `2. Đọc Số Liệu Task 1 (${tfDrills.length})`}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('paraphrase')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'paraphrase' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <span>{isEn ? `3. Intro/Body Paraphrase (${paraDrills.length})` : `3. Paraphrase Mở/Thân Bài (${paraDrills.length})`}</span>
-                    <Sparkles className="w-3 h-3 text-amber-500" />
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('error-spotting')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 ${
-                      activeTab === 'error-spotting' ? 'border-red-600 text-red-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    {isEn ? `4. Error Spotting (${errorDrills.length})` : `4. Tìm Sửa Lỗi (${errorDrills.length})`}
-                  </button>
-                </>
-              )}
+              {/* Dropbox Menu Floating Dropdown */}
+              {isTabDropdownOpen && (
+                <div className="absolute left-0 top-full mt-1.5 z-50 min-w-[270px] sm:min-w-[320px] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2 text-xs animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
+                    <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">
+                      <span>{isEn ? `${activeRoomLabel} Drills` : `Dạng bài ${activeRoomLabel}`}</span>
+                    </span>
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={handleOpenAllTabs}
+                        className="text-indigo-600 hover:text-indigo-800 hover:underline font-semibold cursor-pointer"
+                      >
+                        {isEn ? 'Open all' : 'Mở tất cả'}
+                      </button>
+                      {currentOpenTabs.length > 1 && (
+                        <>
+                          <span className="text-slate-300">|</span>
+                          <button
+                            type="button"
+                            onClick={handleCloseOtherTabs}
+                            className="text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
+                          >
+                            {isEn ? 'Only active' : 'Chỉ tab này'}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-              {/* SUB-TABS FOR READING */}
-              {activeRoom === 'reading' && (
-                <>
-                  <button
-                    onClick={() => setActiveTab('reading-tfng')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'reading-tfng' ? 'border-blue-600 text-blue-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Target className="w-3.5 h-3.5 text-blue-600" />
-                    <span>{isEn ? `1. True / False / Not Given Traps (${readingTfngDrills.length})` : `1. Bẫy True / False / Not Given (${readingTfngDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('reading-paraphrase')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'reading-paraphrase' ? 'border-blue-600 text-blue-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Search className="w-3.5 h-3.5 text-amber-500" />
-                    <span>{isEn ? `2. Reading Paraphrase Hunter (${readingParaDrills.length})` : `2. Săn Paraphrase Bài Đọc (${readingParaDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('reading-headings')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'reading-headings' ? 'border-blue-600 text-blue-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <BookOpen className="w-3.5 h-3.5 text-purple-600" />
-                    <span>{isEn ? `3. Matching Headings Trap Decoder (${readingHeadingsDrills.length})` : `3. Phá Bẫy Matching Headings (${readingHeadingsDrills.length})`}</span>
-                  </button>
-                </>
-              )}
+                  <div className="max-h-[300px] overflow-y-auto space-y-1 pr-0.5">
+                    {roomAvailableTabs.map(tab => {
+                      const isOpen = currentOpenTabs.includes(tab.id);
+                      const isActive = activeTab === tab.id;
+                      const IconComponent = tab.icon;
 
-              {/* SUB-TABS FOR LISTENING */}
-              {activeRoom === 'listening' && (
-                <>
-                  <button
-                    onClick={() => setActiveTab('listening-dictation')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'listening-dictation' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Headphones className="w-3.5 h-3.5 text-purple-600" />
-                    <span>{isEn ? `1. 3-Tier Dictation (${listeningDictationDrills.length})` : `1. Chép Chính Tả 3 Cấp (${listeningDictationDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('listening-spelling')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'listening-spelling' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <FileText className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>{isEn ? `2. Spelling & Numbers (${listeningSpellingDrills.length})` : `2. Đánh Vần & Con Số (${listeningSpellingDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('listening-distractor')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'listening-distractor' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>{isEn ? `3. Mind-Change Distractor Hunter (${listeningDistractorDrills.length})` : `3. Phá Bẫy Đổi Ý (${listeningDistractorDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('listening-map')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'listening-map' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Compass className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{isEn ? `4. Maps & Directions Reflex (${listeningMapDrills.length})` : `4. Bản Đồ & Hướng Đi (${listeningMapDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('listening-signposting')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'listening-signposting' ? 'border-purple-600 text-purple-600 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Target className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>{isEn ? `5. Part 4 Signposting Signals (${listeningSignDrills.length})` : `5. Bắt Tín Hiệu Part 4 (${listeningSignDrills.length})`}</span>
-                  </button>
-                </>
-              )}
-
-              {/* SUB-TABS FOR SPEAKING */}
-              {activeRoom === 'speaking' && (
-                <>
-                  <button
-                    onClick={() => setActiveTab('speaking-area')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'speaking-area' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{isEn ? `1. A.R.E.A Expansion Formula (${speakingAreaDrills.length})` : `1. Mở Rộng Ý A.R.E.A (${speakingAreaDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('speaking-fillers')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'speaking-fillers' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Clock className="w-3.5 h-3.5 text-amber-500" />
-                    <span>{isEn ? `2. Fillers & Thinking Time (${speakingFillersDrills.length})` : `2. Từ Đệm Mua Thời Gian (${speakingFillersDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('speaking-collocations')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'speaking-collocations' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Flame className="w-3.5 h-3.5 text-rose-500" />
-                    <span>{isEn ? `3. Natural Collocations Reflex (${speakingCollocDrills.length})` : `3. Collocations Tự Nhiên (${speakingCollocDrills.length})`}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('speaking-part3-counter')}
-                    className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-                      activeTab === 'speaking-part3-counter' ? 'border-emerald-600 text-emerald-700 font-bold' : 'border-transparent hover:text-slate-900'
-                    }`}
-                  >
-                    <Target className="w-3.5 h-3.5 text-teal-600" />
-                    <span>{isEn ? `4. Part 3 Two-Sided Debate (${speakingPart3Drills.length})` : `4. Phản Biện Đa Chiều Part 3 (${speakingPart3Drills.length})`}</span>
-                  </button>
-                </>
+                      return (
+                        <div
+                          key={tab.id}
+                          onClick={() => handleSelectFromDropdown(tab.id)}
+                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-colors ${
+                            isActive
+                              ? 'bg-indigo-50/80 text-indigo-900 font-bold border border-indigo-200'
+                              : isOpen
+                                ? 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-transparent'
+                                : 'text-slate-600 hover:bg-slate-50 border border-transparent'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2 truncate pr-2">
+                            <IconComponent className={`w-3.5 h-3.5 shrink-0 ${tab.badgeColor || 'text-slate-500'}`} />
+                            <span className="truncate">{isEn ? tab.labelEn : tab.labelVi}</span>
+                          </div>
+                          <div className="flex items-center space-x-1 shrink-0">
+                            {isOpen ? (
+                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                                isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
+                              }`}>
+                                <Check className="w-2.5 h-2.5 mr-0.5" />
+                                {isActive ? (isEn ? 'Active' : 'Đang học') : (isEn ? 'Open' : 'Đã mở')}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100">
+                                <Plus className="w-2.5 h-2.5 mr-0.5" />
+                                {isEn ? 'Add' : 'Mở tab'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
 
-            {/* AI Generator & Privacy Control Container */}
+            {/* Opened Dynamic Sub-tabs List */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x py-0.5 flex-1 min-w-0">
+              {currentOpenTabs.map((tabId) => {
+                const tabItem = roomAvailableTabs.find(t => t.id === tabId);
+                if (!tabItem) return null;
+                const isActive = activeTab === tabId;
+                const TabIcon = tabItem.icon;
+                const currentTheme = roomThemeStyles[activeRoom] || roomThemeStyles.general;
+
+                return (
+                  <div
+                    key={tabId}
+                    onClick={() => selectTab(tabId)}
+                    className={`group shrink-0 flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border text-xs cursor-pointer select-none transition-all ${
+                      isActive
+                        ? `${currentTheme.activeTab} border-current shadow-xs`
+                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
+                    }`}
+                  >
+                    <TabIcon className={`w-3.5 h-3.5 shrink-0 ${tabItem.badgeColor || 'text-slate-500'}`} />
+                    <span className="truncate max-w-[130px] sm:max-w-none">
+                      {isEn ? tabItem.labelEn : tabItem.labelVi}
+                    </span>
+                    {/* Close Tab 'x' Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCloseTab(tabId);
+                      }}
+                      className="ml-0.5 p-0.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-slate-200/80 transition-colors cursor-pointer"
+                      title={isEn ? "Close tab" : "Tắt tab này"}
+                      aria-label={`Close ${tabItem.labelEn || tabId}`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                );
+              })}
+
+              {currentOpenTabs.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsTabDropdownOpen(true)}
+                  className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-dashed border-indigo-300 bg-indigo-50/60 text-indigo-700 hover:bg-indigo-100 text-xs font-medium cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{isEn ? '+ Open a drill type' : '+ Bấm để mở dạng bài tập'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* AI Generator & Privacy Control Container */}
             <div className="flex items-center space-x-1.5 shrink-0 mb-1.5">
               {/* Privacy Sharing Toggle */}
               <button

@@ -149,7 +149,8 @@ const testSuites = [
   { name: 'Step 140: Practice Menu Single-Line and Responsive Width Audit', file: 'tests/test_step140_practice_menu_single_line_and_responsive_width.js' },
   { name: 'Step 141: Mobile Header Uniform Alignment & Harmonious Styling Audit', file: 'tests/test_step141_mobile_header_uniform_alignment_and_styling.js' },
   { name: 'Step 142: Type-in Word Interactive Exercises & Cambridge Answer Validator Engine', file: 'tests/test_step142_arena_type_in_word_and_cambridge_validator.js' },
-  { name: 'Step 143: Arena Skip Question & Esc Hotkey Navigation', file: 'tests/test_step143_arena_skip_question_and_esc_hotkey.js' }
+  { name: 'Step 143: Arena Skip Question & Esc Hotkey Navigation', file: 'tests/test_step143_arena_skip_question_and_esc_hotkey.js' },
+  { name: 'Step 144: MicroDrills Dynamic Tab Bar with Closable Tabs and Drill Type Dropbox', file: 'tests/test_step144_micro_drills_dynamic_tabs_and_dropbox.js' }
 ];
 
 console.log('===============================================================');
