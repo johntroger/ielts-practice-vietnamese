@@ -33,3 +33,13 @@ Mỗi file audio đưa vào hệ thống phải được lưu trữ trên **Clou
 
 ### Bước 4: Kiểm Tra & Biên Dịch (Build Verification)
 - Chạy lệnh `npm run build` để đảm bảo hệ thống không bị lỗi cú pháp, dữ liệu đồng bộ và sẵn sàng phục vụ học viên.
+
+### Bước 5: Tự Động Đồng Bộ Git & Triển Khai Vercel (Auto Git Push & Deploy)
+- Chạy tự động:
+  ```powershell
+  git add package.json package-lock.json src/data/ scripts/ docs/
+  git commit -m "feat(listening): integrate <trackName> with R2 and multi-module distribution"
+  git push origin main
+  ```
+- Kích hoạt Vercel tự động build và cập nhật phiên bản live trên domain production `https://ielts-practice-vietnamese.vercel.app/` ngay lập tức mà không cần người dùng nhắc nhở.
+
