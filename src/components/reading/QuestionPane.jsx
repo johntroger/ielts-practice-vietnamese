@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   CheckCircle2, 
   XCircle, 
@@ -45,6 +45,52 @@ export default function QuestionPane({
   const [loadingAiFor, setLoadingAiFor] = useState(null); // order
   const [aiErrorFor, setAiErrorFor] = useState({}); // { [order]: string }
   const [savedVocabIds, setSavedVocabIds] = useState({}); // { [word]: boolean }
+
+  // Track clicks to handle double-click deselection on desktop and touch devices
+  const lastOptionClickRef = useRef({});
+
+  const handleOptionSelect = (qOrder, optValue) => {
+    if (isSubmitted) return;
+    const now = Date.now();
+    const currentAns = String(userAnswers[qOrder] || '').trim().toUpperCase();
+    const targetOpt = String(optValue || '').trim().toUpperCase();
+    const last = lastOptionClickRef.current[qOrder] || { time: 0, opt: '', wasAlreadySelected: false };
+
+    // If double-clicked / double-tapped on an ALREADY SELECTED option within 500ms -> deselect!
+    if (
+      last.wasAlreadySelected &&
+      last.opt === targetOpt &&
+      now - last.time > 0 &&
+      now - last.time < 500
+    ) {
+      onAnswerChange(qOrder, '');
+      lastOptionClickRef.current[qOrder] = { time: 0, opt: '', wasAlreadySelected: false };
+      return;
+    }
+
+    // Otherwise select this option
+    const wasAlready = currentAns === targetOpt;
+    lastOptionClickRef.current[qOrder] = {
+      time: now,
+      opt: targetOpt,
+      wasAlreadySelected: wasAlready
+    };
+    onAnswerChange(qOrder, optValue);
+  };
+
+  const handleOptionDoubleClick = (e, qOrder, optValue) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmitted) return;
+    const last = lastOptionClickRef.current[qOrder];
+    const currentAns = String(userAnswers[qOrder] || '').trim().toUpperCase();
+    const targetOpt = String(optValue || '').trim().toUpperCase();
+
+    // If native double-click fires on an already selected option -> deselect!
+    if ((last && last.wasAlreadySelected) || currentAns === targetOpt) {
+      onAnswerChange(qOrder, '');
+      lastOptionClickRef.current[qOrder] = { time: 0, opt: '', wasAlreadySelected: false };
+    }
+  };
 
   const themeStyles = {
     standard: {
@@ -190,15 +236,18 @@ export default function QuestionPane({
                   </p>
 
                   {/* Segmented Button Choice */}
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1 select-none">
                     {options.map(opt => {
                       const isSelected = currentAns.toUpperCase() === opt;
                       return (
                         <button
                           key={opt}
+                          type="button"
                           disabled={isSubmitted}
-                          onClick={() => onAnswerChange(q.order, opt)}
-                          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                          onClick={() => handleOptionSelect(q.order, opt)}
+                          onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt)}
+                          title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
+                          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all border select-none touch-manipulation ${
                             isSelected
                               ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-200'
                               : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -251,7 +300,7 @@ export default function QuestionPane({
                     {q.questionText}
                   </p>
 
-                  <div className="space-y-2 pt-1">
+                  <div className="space-y-2 pt-1 select-none">
                     {q.options?.map(opt => {
                       const isSelected = currentAns.toUpperCase() === opt.letter.toUpperCase();
                       const isKey = isSubmitted && q.answer.toUpperCase() === opt.letter.toUpperCase();
@@ -259,9 +308,12 @@ export default function QuestionPane({
                       return (
                         <button
                           key={opt.letter}
+                          type="button"
                           disabled={isSubmitted}
-                          onClick={() => onAnswerChange(q.order, opt.letter)}
-                          className={`w-full text-left p-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-start gap-2.5 border ${
+                          onClick={() => handleOptionSelect(q.order, opt.letter)}
+                          onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt.letter)}
+                          title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
+                          className={`w-full text-left p-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-start gap-2.5 border select-none touch-manipulation ${
                             isSelected
                               ? 'bg-blue-50 text-blue-900 border-blue-400 ring-2 ring-blue-100 font-semibold'
                               : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
@@ -509,15 +561,18 @@ export default function QuestionPane({
                   </div>
 
                   {/* Dropdown / Segmented selector */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
+                  <div className="flex flex-wrap gap-1.5 pt-1 select-none">
                     {optionsList.map(opt => {
                       const isSelected = currentAns.toUpperCase() === opt.toUpperCase();
                       return (
                         <button
                           key={opt}
+                          type="button"
                           disabled={isSubmitted}
-                          onClick={() => onAnswerChange(q.order, opt)}
-                          className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border ${
+                          onClick={() => handleOptionSelect(q.order, opt)}
+                          onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt)}
+                          title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
+                          className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border select-none touch-manipulation ${
                             isSelected
                               ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                               : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'

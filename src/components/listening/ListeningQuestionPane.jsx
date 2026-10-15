@@ -95,6 +95,52 @@ export default function ListeningQuestionPane({
 
   const questionRefs = useRef({});
 
+  // Track clicks to handle double-click deselection on desktop and touch devices
+  const lastOptionClickRef = useRef({});
+
+  const handleOptionSelect = (qOrder, optValue) => {
+    if (isSubmitted) return;
+    const now = Date.now();
+    const currentAns = String(userAnswers[qOrder] || '').trim().toUpperCase();
+    const targetOpt = String(optValue || '').trim().toUpperCase();
+    const last = lastOptionClickRef.current[qOrder] || { time: 0, opt: '', wasAlreadySelected: false };
+
+    // If double-clicked / double-tapped on an ALREADY SELECTED option within 500ms -> deselect!
+    if (
+      last.wasAlreadySelected &&
+      last.opt === targetOpt &&
+      now - last.time > 0 &&
+      now - last.time < 500
+    ) {
+      onAnswerChange && onAnswerChange(qOrder, '');
+      lastOptionClickRef.current[qOrder] = { time: 0, opt: '', wasAlreadySelected: false };
+      return;
+    }
+
+    // Otherwise select this option
+    const wasAlready = currentAns === targetOpt;
+    lastOptionClickRef.current[qOrder] = {
+      time: now,
+      opt: targetOpt,
+      wasAlreadySelected: wasAlready
+    };
+    onAnswerChange && onAnswerChange(qOrder, optValue);
+  };
+
+  const handleOptionDoubleClick = (e, qOrder, optValue) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmitted) return;
+    const last = lastOptionClickRef.current[qOrder];
+    const currentAns = String(userAnswers[qOrder] || '').trim().toUpperCase();
+    const targetOpt = String(optValue || '').trim().toUpperCase();
+
+    // If native double-click fires on an already selected option -> deselect!
+    if ((last && last.wasAlreadySelected) || currentAns === targetOpt) {
+      onAnswerChange && onAnswerChange(qOrder, '');
+      lastOptionClickRef.current[qOrder] = { time: 0, opt: '', wasAlreadySelected: false };
+    }
+  };
+
   useEffect(() => {
     try {
       localStorage.setItem(`ielts_listening_highlights_${testId}`, JSON.stringify(highlights));
@@ -663,9 +709,14 @@ export default function ListeningQuestionPane({
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   onSelectQuestion && onSelectQuestion(q.order);
-                                  onAnswerChange && onAnswerChange(q.order, opt.key);
+                                  handleOptionSelect(q.order, opt.key);
                                 }}
-                                className={`w-full text-left p-2.5 sm:p-3 rounded-xl border flex items-start space-x-3 transition-all cursor-pointer ${optStyle}`}
+                                onDoubleClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOptionDoubleClick(e, q.order, opt.key);
+                                }}
+                                title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
+                                className={`w-full text-left p-2.5 sm:p-3 rounded-xl border flex items-start space-x-3 transition-all cursor-pointer select-none touch-manipulation ${optStyle}`}
                               >
                                 <span
                                   className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
