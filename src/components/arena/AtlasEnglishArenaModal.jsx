@@ -243,6 +243,15 @@ export default function AtlasEnglishArenaModal({
     }
   }, [sprint, playSfx]);
 
+  const handleSkipQuestion = useCallback(() => {
+    if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
+      playSfx('wrong');
+      sprint.skipQuestion();
+    } else if (sprint.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
+      sprint.nextQuestion();
+    }
+  }, [sprint, playSfx]);
+
   // Keyboard navigation wiring
   useEffect(() => {
     if (!isOpen) return;
@@ -270,9 +279,7 @@ export default function AtlasEnglishArenaModal({
         }
       },
       onSkip: () => {
-        if (sprint.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
-          sprint.nextQuestion();
-        }
+        handleSkipQuestion();
       },
       onSpaceAudio: () => {
         const curQ = sprint.questions[sprint.currentIndex];
@@ -281,7 +288,7 @@ export default function AtlasEnglishArenaModal({
         }
       }
     });
-  }, [isOpen, sprint, speak, handleCheckAnswer]);
+  }, [isOpen, sprint, speak, handleCheckAnswer, handleSkipQuestion]);
 
   if (!isOpen) return null;
 
@@ -471,9 +478,12 @@ export default function AtlasEnglishArenaModal({
                     validationResult={sprint.validationResult}
                     isAnswerChecked={sprint.isAnswerChecked}
                     isCorrect={sprint.isCorrect}
+                    isSkipped={sprint.isSkipped}
                     onSelectOption={sprint.selectOption}
                     onCheckAnswer={handleCheckAnswer}
                     onSubmitAnswer={handleCheckAnswer}
+                    onSkipQuestion={handleSkipQuestion}
+                    onSkip={handleSkipQuestion}
                     onNextQuestion={sprint.nextQuestion}
                     onPlayAudio={(text) => speak(text)}
                   />

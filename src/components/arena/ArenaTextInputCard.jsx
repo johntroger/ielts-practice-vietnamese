@@ -18,6 +18,11 @@ export default function ArenaTextInputCard({
   value = '',
   onChange,
   onSubmit,
+  question,
+  userInputText,
+  onUserInputChange,
+  onCheckAnswer,
+  onSkip,
   isAnswerChecked = false,
   isCorrect = null,
   validationResult = null,
@@ -26,6 +31,12 @@ export default function ArenaTextInputCard({
 }) {
   const { t, isEn } = useTranslation();
   const inputRef = useRef(null);
+
+  const activeValue = userInputText !== undefined ? userInputText : value;
+  const activeChange = onUserInputChange || onChange;
+  const activeSubmit = onCheckAnswer || onSubmit;
+  const activeTarget = question?.correctAnswer || correctAnswer;
+  const activeAcceptable = question?.acceptableAnswers || acceptableAnswers || [activeTarget];
 
   // Auto-focus input on question mount or advance
   useEffect(() => {
@@ -37,9 +48,12 @@ export default function ArenaTextInputCard({
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (value.trim()) {
-        onSubmit?.();
+      if (activeValue.trim()) {
+        activeSubmit?.();
       }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onSkip?.();
     }
   };
 
@@ -97,24 +111,31 @@ export default function ArenaTextInputCard({
             </span>
           </div>
 
-          {/* User's typed diff with red indicators */}
-          <div className="flex items-center gap-1 font-mono text-sm tracking-wider flex-wrap bg-slate-950/80 p-2.5 rounded-lg border border-slate-800">
-            <span className="text-slate-500 text-xs font-sans mr-1">{isEn ? 'You typed:' : 'Bạn đã gõ:'}</span>
-            {diffTokens.map((token, idx) => (
-              <span
-                key={idx}
-                className={`px-1 py-0.5 rounded font-bold ${
-                  token.type === 'match'
-                    ? 'text-slate-200 bg-slate-800'
-                    : token.type === 'wrong'
-                    ? 'text-rose-200 bg-rose-600/60 line-through'
-                    : 'text-rose-300 bg-rose-900/80'
-                }`}
-              >
-                {token.char}
-              </span>
-            ))}
-          </div>
+          {/* User's typed diff with red indicators OR skipped state */}
+          {value ? (
+            <div className="flex items-center gap-1 font-mono text-sm tracking-wider flex-wrap bg-slate-950/80 p-2.5 rounded-lg border border-slate-800">
+              <span className="text-slate-500 text-xs font-sans mr-1">{isEn ? 'You typed:' : 'Bạn đã gõ:'}</span>
+              {diffTokens.map((token, idx) => (
+                <span
+                  key={idx}
+                  className={`px-1 py-0.5 rounded font-bold ${
+                    token.type === 'match'
+                      ? 'text-slate-200 bg-slate-800'
+                      : token.type === 'wrong'
+                      ? 'text-rose-200 bg-rose-600/60 line-through'
+                      : 'text-rose-300 bg-rose-900/80'
+                  }`}
+                >
+                  {token.char}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-800/40 p-2.5 rounded-lg">
+              <span>⏭️</span>
+              <span>{isEn ? 'Question skipped without input' : 'Câu hỏi đã được bỏ qua'}</span>
+            </div>
+          )}
 
           {/* Correct Cambridge answer */}
           <div className="flex items-center gap-1.5 text-xs text-slate-300">

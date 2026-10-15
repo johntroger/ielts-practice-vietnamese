@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, CheckCircle2, XCircle, ArrowRight, Check, Sparkles } from 'lucide-react';
+import { Volume2, CheckCircle2, XCircle, ArrowRight, Check, Sparkles, SkipForward } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import ArenaMediaViewer from './ArenaMediaViewer.jsx';
 import ArenaTextInputCard from './ArenaTextInputCard.jsx';
@@ -16,6 +16,7 @@ import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.
  * - TTS Audio button for listening and spelling questions
  * - Rich Multimedia Support: Charts, Maps, and Process Diagrams
  * - Type-in-the-word interactive exercise card with Cambridge validator diffing
+ * - Skip button for graceful question surrender (Esc) with examiner learning review
  * - Clear Cambridge examiner reasoning explanation box
  */
 export default function ArenaQuestionCard({
@@ -26,9 +27,12 @@ export default function ArenaQuestionCard({
   validationResult = null,
   isAnswerChecked = false,
   isCorrect = null,
+  isSkipped = false,
   onSelectOption,
   onCheckAnswer,
   onSubmitAnswer,
+  onSkipQuestion,
+  onSkip,
   onNextQuestion,
   onPlayAudio
 }) {
@@ -139,8 +143,10 @@ export default function ArenaQuestionCard({
           onUserInputChange={onUserInputChange}
           isAnswerChecked={isAnswerChecked}
           isCorrect={isCorrect}
+          isSkipped={isSkipped}
           validationResult={validationResult}
           onCheckAnswer={handleCheck}
+          onSkip={onSkipQuestion || onSkip}
         />
       ) : (
         /* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */
@@ -201,14 +207,30 @@ export default function ArenaQuestionCard({
       {/* Explanation Box */}
       {isAnswerChecked && (
         <div className={`p-4 rounded-xl border text-sm leading-relaxed ${
-          isCorrect 
-            ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300' 
-            : 'bg-red-950/30 border-red-800/50 text-red-300'
+          isSkipped
+            ? 'bg-amber-950/30 border-amber-800/50 text-amber-300'
+            : isCorrect 
+              ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300' 
+              : 'bg-red-950/30 border-red-800/50 text-red-300'
         }`}>
           <div className="font-bold flex items-center justify-between gap-1.5 mb-1">
             <div className="flex items-center gap-1.5">
-              {isCorrect ? <Check className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-              <span>{isCorrect ? (t('arena.correct') || (isEn ? 'Correct!' : 'Chính xác!')) : (t('arena.incorrect') || (isEn ? 'Incorrect' : 'Chưa chính xác'))}</span>
+              {isSkipped ? (
+                <>
+                  <SkipForward className="w-4 h-4 text-amber-400" />
+                  <span>{t('arena.questionSkipped') || (isEn ? 'Question Skipped' : 'Đã Bỏ Qua Câu Hỏi')}</span>
+                </>
+              ) : isCorrect ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>{t('arena.correct') || (isEn ? 'Correct!' : 'Chính xác!')}</span>
+                </>
+              ) : (
+                <>
+                  <XCircle className="w-4 h-4" />
+                  <span>{t('arena.incorrect') || (isEn ? 'Incorrect' : 'Chưa chính xác')}</span>
+                </>
+              )}
             </div>
             {isCorrect && question.isRevengeQuestion && (
               <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-black border border-amber-500/40 animate-pulse">
@@ -229,26 +251,40 @@ export default function ArenaQuestionCard({
         </div>
       )}
 
-      {/* 2-Step Action CTA */}
-      <div className="mt-2 flex justify-end">
+      {/* 2-Step Action CTA & Skip Button */}
+      <div className="mt-2 flex items-center justify-between gap-3">
         {!isAnswerChecked ? (
-          <button
-            type="button"
-            disabled={isTextInput ? !userInputText?.trim() : selectedOption === null}
-            onClick={() => handleCheck?.()}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all select-none"
-          >
-            <span>{t('arena.checkAnswer') || (isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án')} (Enter)</span>
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => (onSkipQuestion || onSkip)?.()}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-400 hover:text-slate-200 text-xs sm:text-sm font-semibold transition-all cursor-pointer select-none"
+              title={isEn ? "Don't know this answer? Skip to reveal explanation (Esc)" : "Không biết câu này? Bỏ qua để xem đáp án (Esc)"}
+            >
+              <SkipForward className="w-4 h-4 text-slate-400" />
+              <span>{t('arena.skipQuestion') || (isEn ? 'Skip (Esc)' : 'Bỏ Qua (Esc)')}</span>
+            </button>
+
+            <button
+              type="button"
+              disabled={isTextInput ? !userInputText?.trim() : selectedOption === null}
+              onClick={() => handleCheck?.()}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all select-none ml-auto"
+            >
+              <span>{t('arena.checkAnswer') || (isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án')} (Enter)</span>
+            </button>
+          </>
         ) : (
-          <button
-            type="button"
-            onClick={() => onNextQuestion?.()}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all select-none"
-          >
-            <span>{t('arena.nextQuestion') || (isEn ? 'Next Question' : 'Câu Tiếp Theo')} (Enter)</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="w-full flex justify-end">
+            <button
+              type="button"
+              onClick={() => onNextQuestion?.()}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/20 transition-all select-none"
+            >
+              <span>{t('arena.nextQuestion') || (isEn ? 'Next Question' : 'Câu Tiếp Theo')} (Enter)</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </div>
     </div>

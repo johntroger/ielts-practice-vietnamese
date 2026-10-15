@@ -25,6 +25,10 @@ export function setupKeyboardNavigation({
     // Strict Input Focus Guard
     const tag = e.target?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onSkip?.();
+      }
       return;
     }
 

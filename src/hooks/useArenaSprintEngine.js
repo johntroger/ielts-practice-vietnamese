@@ -54,6 +54,7 @@ export const INITIAL_SPRINT_STATE = {
   validationResult: null,
   isAnswerChecked: false,
   isCorrect: null,
+  isSkipped: false,
   score: 0,
   combo: 0,
   maxCombo: 0,
@@ -197,6 +198,52 @@ export function checkAnswerAction(state) {
   };
 }
 
+export function skipQuestionAction(state) {
+  if (state.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
+    return nextQuestionAction(state);
+  }
+
+  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE) {
+    return state;
+  }
+
+  const currentQ = state.questions[state.currentIndex];
+  if (!currentQ) return state;
+
+  // Record mastery progression for skipped question (counts as unmastered/incorrect attempt)
+  recordQuestionResult({
+    questionId: currentQ.id,
+    isCorrect: false
+  });
+
+  // Record into Mistake Vault as SKIPPED
+  recordMistake(currentQ, 'SKIPPED');
+
+  const { state: updatedShields, isDefeated } = deductShield(state.shieldState, currentQ);
+  let nextPhase = ARENA_SPRINT_PHASES.REVIEWING_ANSWER;
+  if (isDefeated) {
+    nextPhase = ARENA_SPRINT_PHASES.DEFEATED;
+  }
+
+  const expectedAnswer = currentQ.correctAnswer || (currentQ.options && currentQ.options[currentQ.correctIndex]) || '';
+
+  return {
+    ...state,
+    phase: nextPhase,
+    isAnswerChecked: true,
+    isCorrect: false,
+    isSkipped: true,
+    combo: 0,
+    shieldState: updatedShields,
+    validationResult: {
+      isCorrect: false,
+      isSkipped: true,
+      userInput: state.userInputText || '',
+      diff: generateVisualDiff(state.userInputText || '', expectedAnswer)
+    }
+  };
+}
+
 export function nextQuestionAction(state) {
   if (state.phase !== ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
     return state;
@@ -211,7 +258,8 @@ export function nextQuestionAction(state) {
       userInputText: '',
       validationResult: null,
       isAnswerChecked: false,
-      isCorrect: null
+      isCorrect: null,
+      isSkipped: false
     };
   }
 
@@ -237,7 +285,8 @@ export function retrySprintAction(state) {
     userInputText: '',
     validationResult: null,
     isAnswerChecked: false,
-    isCorrect: null
+    isCorrect: null,
+    isSkipped: false
   };
 }
 
@@ -400,6 +449,17 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     };
   }, [state.phase, user, onSprintEnd, state.timeRemaining]);
 
+  const skipQuestion = useCallback(() => {
+    setState(prev => {
+      const next = skipQuestionAction(prev);
+      emit('arena:question_skipped', { questionId: prev.questions[prev.currentIndex]?.id });
+      if (next.phase === ARENA_SPRINT_PHASES.DEFEATED) {
+        emit('arena:sprint_defeated', { mistakes: next.shieldState.mistakesRecorded });
+      }
+      return next;
+    });
+  }, []);
+
   const setUserInputText = useCallback((text) => {
     setState(prev => setUserInputTextAction(prev, text));
   }, []);
@@ -410,6 +470,7 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     selectOption,
     setUserInputText,
     checkAnswer,
+    skipQuestion,
     nextQuestion,
     retrySprint,
     resetSprint
