@@ -221,6 +221,43 @@ export default function AtlasEnglishArenaModal({
     }
   }, [sprint.phase, sprint.questions]);
 
+  // Speedrun Mode state (Auto-advances immediately on correct answer)
+  const [isSpeedrunMode, setIsSpeedrunMode] = useState(() => {
+    try {
+      return localStorage.getItem('ielts_arena_speedrun_mode') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSpeedrun = useCallback(() => {
+    setIsSpeedrunMode(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('ielts_arena_speedrun_mode', String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  // Screen shake & damage juice effect state
+  const [isScreenShaking, setIsScreenShaking] = useState(false);
+  const triggerShake = useCallback(() => {
+    setIsScreenShaking(true);
+    setTimeout(() => setIsScreenShaking(false), 380);
+  }, []);
+
+  // Auto-advance timer ref for speedrun mode
+  const autoAdvanceTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimerRef.current) {
+        clearTimeout(autoAdvanceTimerRef.current);
+      }
+    };
+  }, []);
+
   const handleCheckAnswer = useCallback(() => {
     if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
       const curQ = sprint.questions[sprint.currentIndex];
@@ -235,31 +272,74 @@ export default function AtlasEnglishArenaModal({
         });
         if (isCorrect) {
           playSfx('correct');
+          sprint.checkAnswer();
+          if (isSpeedrunMode) {
+            if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+            autoAdvanceTimerRef.current = setTimeout(() => {
+              sprint.nextQuestion();
+            }, 550);
+          }
         } else {
           const nearMissCheck = isNearMissAnswer(sprint.userInputText, acceptable);
           if (nearMissCheck.isNearMiss && !sprint.hasUsedNearMiss) {
             playSfx('click');
           } else {
             playSfx('wrong');
+            triggerShake();
           }
+          sprint.checkAnswer();
         }
-        sprint.checkAnswer();
       } else if (sprint.selectedOption !== null) {
         const isCorrect = curQ && sprint.selectedOption === curQ.correctIndex;
-        playSfx(isCorrect ? 'correct' : 'wrong');
+        if (isCorrect) {
+          playSfx('correct');
+          sprint.checkAnswer();
+          if (isSpeedrunMode) {
+            if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+            autoAdvanceTimerRef.current = setTimeout(() => {
+              sprint.nextQuestion();
+            }, 420);
+          }
+        } else {
+          playSfx('wrong');
+          triggerShake();
+          sprint.checkAnswer();
+        }
+      }
+    }
+  }, [sprint, playSfx, isSpeedrunMode, triggerShake]);
+
+  const handleSelectOption = useCallback((idx) => {
+    if (sprint.phase !== ARENA_SPRINT_PHASES.ACTIVE || sprint.isAnswerChecked) return;
+    sprint.selectOption(idx);
+
+    if (isSpeedrunMode) {
+      const curQ = sprint.questions[sprint.currentIndex];
+      const isCorrect = curQ && idx === curQ.correctIndex;
+      if (isCorrect) {
+        playSfx('correct');
+        sprint.checkAnswer();
+        if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+        autoAdvanceTimerRef.current = setTimeout(() => {
+          sprint.nextQuestion();
+        }, 420);
+      } else {
+        playSfx('wrong');
+        triggerShake();
         sprint.checkAnswer();
       }
     }
-  }, [sprint, playSfx]);
+  }, [sprint, isSpeedrunMode, playSfx, triggerShake]);
 
   const handleSkipQuestion = useCallback(() => {
     if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
       playSfx('wrong');
+      triggerShake();
       sprint.skipQuestion();
     } else if (sprint.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
       sprint.nextQuestion();
     }
-  }, [sprint, playSfx]);
+  }, [sprint, playSfx, triggerShake]);
 
   // Keyboard navigation wiring
   useEffect(() => {
@@ -269,7 +349,7 @@ export default function AtlasEnglishArenaModal({
       isActive: isOpen,
       onSelectOption: (idx) => {
         if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
-          sprint.selectOption(idx);
+          handleSelectOption(idx);
         }
       },
       onSubmit: () => {
@@ -297,7 +377,7 @@ export default function AtlasEnglishArenaModal({
         }
       }
     });
-  }, [isOpen, sprint, speak, handleCheckAnswer, handleSkipQuestion]);
+  }, [isOpen, sprint, speak, handleCheckAnswer, handleSelectOption, handleSkipQuestion]);
 
   if (!isOpen) return null;
 
@@ -472,12 +552,16 @@ export default function AtlasEnglishArenaModal({
               totalQuestions={sprint.questions.length}
               isMuted={isMuted}
               isFullscreen={isFullscreen}
+              isSpeedrunMode={isSpeedrunMode}
+              onToggleSpeedrun={toggleSpeedrun}
               onToggleMute={toggleMute}
               onToggleFullscreen={toggleFullscreen}
               onClose={handleReturnToLobby}
             />
             <div className="px-3 sm:px-6 py-1.5 sm:py-2.5 flex-1 min-h-0 flex flex-col items-center justify-start overflow-y-auto">
-              <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl pb-2 sm:pb-3 transition-all duration-300">
+              <div className={`w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl pb-2 sm:pb-3 transition-all duration-300 ${
+                isScreenShaking ? 'animate-arena-shake ring-2 ring-rose-500/50 rounded-2xl' : ''
+              }`}>
                 {currentQ && (
                   <ArenaQuestionCard
                     question={currentQ}
@@ -489,7 +573,7 @@ export default function AtlasEnglishArenaModal({
                     isCorrect={sprint.isCorrect}
                     isSkipped={sprint.isSkipped}
                     nearMissState={sprint.nearMissState}
-                    onSelectOption={sprint.selectOption}
+                    onSelectOption={handleSelectOption}
                     onCheckAnswer={handleCheckAnswer}
                     onSubmitAnswer={handleCheckAnswer}
                     onSkipQuestion={handleSkipQuestion}
