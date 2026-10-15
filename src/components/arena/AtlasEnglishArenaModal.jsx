@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Swords, Flame, Trophy, Play, RotateCcw, X, ShieldAlert, Maximize2, Minimize2, Share2, Check } from 'lucide-react';
 import { useTranslation } from '../../i18n';
-import { useArenaSprintEngine, ARENA_SPRINT_PHASES } from '../../hooks/useArenaSprintEngine.js';
+import { 
+  useArenaSprintEngine, 
+  ARENA_SPRINT_PHASES,
+  computeSprintDiagnostics,
+  getCambridgeTheoryPrescription
+} from '../../hooks/useArenaSprintEngine.js';
 import { useArenaAudio } from '../../hooks/useArenaAudio.js';
+import { openModal } from '../../core/modalStore.js';
 import { setupKeyboardNavigation } from '../../utils/keyboardNavigator.js';
 import { getIsoWeekKey } from '../../utils/dateHelper.js';
 import { getUnifiedStreakCount } from '../../services/gamification/leagueEngine.js';
@@ -43,7 +49,8 @@ import {
 export default function AtlasEnglishArenaModal({
   isOpen = false,
   onClose,
-  currentUser = null
+  currentUser = null,
+  onOpenTheory = null
 }) {
   const { t, isEn } = useTranslation();
   const { isMuted, toggleMute, playChime, playSfx, speak, unlockAudio } = useArenaAudio();
@@ -257,6 +264,28 @@ export default function AtlasEnglishArenaModal({
       }
     };
   }, []);
+
+  const handleOpenTheoryPrescription = useCallback((prescription) => {
+    if (prescription) {
+      openModal('theory', {
+        skill: prescription.handbookSkill || 'grammar-vocab',
+        searchQuery: prescription.searchQuery || ''
+      });
+      if (onOpenTheory) {
+        onOpenTheory(prescription);
+      }
+    }
+  }, [onOpenTheory]);
+
+  const defeatedDiagnostics = useMemo(() => {
+    if (sprint.phase !== ARENA_SPRINT_PHASES.DEFEATED) return null;
+    return computeSprintDiagnostics(sprint.questionHistory, sprint.questions);
+  }, [sprint.phase, sprint.questionHistory, sprint.questions]);
+
+  const defeatedPrescription = useMemo(() => {
+    if (!defeatedDiagnostics) return null;
+    return getCambridgeTheoryPrescription(defeatedDiagnostics.weakestSkill);
+  }, [defeatedDiagnostics]);
 
   const handleCheckAnswer = useCallback(() => {
     if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
@@ -610,9 +639,33 @@ export default function AtlasEnglishArenaModal({
                 <ShieldAlert className="w-10 h-10" />
               </div>
               <h2 className="text-3xl font-black text-white mb-2">{t('arena.arenaPaused')}</h2>
-              <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+              <p className="text-sm text-slate-400 mb-5 leading-relaxed">
                 {t('arena.defeatedDescription')}
               </p>
+
+              {/* 1-Click Cambridge Theory Prescription for Defeated State */}
+              {defeatedPrescription && (
+                <div className="w-full bg-slate-900/90 border border-amber-500/40 rounded-2xl p-3.5 mb-5 text-left flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    <span className="text-2xl shrink-0">🩺</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-400">
+                        {t('arena.prescriptionTitle')}
+                      </span>
+                      <span className="text-xs font-bold text-white truncate mt-0.5">
+                        {isEn ? defeatedPrescription.titleEn : defeatedPrescription.titleVi}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenTheoryPrescription(defeatedPrescription)}
+                    className="w-full sm:w-auto px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs rounded-xl transition-all cursor-pointer shrink-0 shadow-sm"
+                  >
+                    {t('arena.reviewInHandbook')}
+                  </button>
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-3 w-full">
                 <button
@@ -640,8 +693,9 @@ export default function AtlasEnglishArenaModal({
           <div className="flex flex-col flex-1 min-h-full items-center justify-center p-4">
             <ArenaSprintSummaryModal
               summary={sprint.summary}
-              onPlayAgain={() => sprint.startSprint()}
+              onPlayAgain={() => sprint.startSprint(null, selectedDifficulty)}
               onClose={handleReturnToLobby}
+              onOpenTheory={handleOpenTheoryPrescription}
             />
           </div>
         )}

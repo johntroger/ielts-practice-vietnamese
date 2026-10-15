@@ -537,7 +537,19 @@ export const en = {
     listeningHelperText: '🎧 Listening Task: Focus on the audio track to find the answer.',
     replayAudio: 'Replay Audio',
     shareArena: 'Share /atlas-arena',
-    linkCopied: 'Link Copied!'
+    linkCopied: 'Link Copied!',
+    bossClimaxBadge: '👑 CAMBRIDGE BOSS CLIMAX (x2 XP)',
+    bossSlayerTitle: '👑 BOSS SLAYER! (x2 XP)',
+    diagnosticRadarTitle: 'Cambridge 4-Axis Competency Analysis',
+    diagnosticSubtitle: 'Trap immunity rate measured across key exam reflex axes',
+    skillOrthography: '✍️ Orthography & Academic Spelling',
+    skillDistractors: '🎧 Listening Traps & Self-Correction',
+    skillLogic: '📖 Reading Logic & TFNG',
+    skillLexicon: '💎 Academic Collocations & C1/C2 Lexicon',
+    prescriptionTitle: '1-Click Cambridge Theory Prescription',
+    prescriptionSubtitle: 'Priority knowledge gap to reinforce in Strategy Handbook',
+    reviewInHandbook: 'Review in Handbook',
+    untestedAxis: 'Not tested'
   },
   about: {
     badge: 'CAMBRIDGE-STANDARD 4-SKILL IELTS PLATFORM • 100% LOCAL-FIRST & FREE',

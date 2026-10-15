@@ -70,8 +70,220 @@ export const INITIAL_SPRINT_STATE = {
   revengeClearedCount: 0,
   revengeBonusXp: 0,
   isCurrentRevengeCleared: false,
+  questionHistory: [],
   summary: null
 };
+
+/**
+ * Classifies a question or history record into one of the 4 Cambridge competency axes:
+ * 1. 'spelling': Orthography & academic spelling, typing drills, spelling demons
+ * 2. 'listening': Listening distractor traps, self-correction, direction shift
+ * 3. 'reading': Reading logic, True/False/Not Given, inference
+ * 4. 'lexicon': Academic collocations, synonyms, C1/C2 advanced lexical resource
+ */
+export function classifyQuestionAxis(item) {
+  if (!item) return 'lexicon';
+  const type = String(item.type || '').toLowerCase();
+  const skill = String(item.skillCategory || '').toLowerCase();
+  const interaction = String(item.interactionType || '').toLowerCase();
+
+  if (
+    type === 'spelling' ||
+    type === 'listening_spelling' ||
+    type === 'spelling_trap' ||
+    skill === 'spelling' ||
+    interaction === 'text_input'
+  ) {
+    return 'spelling';
+  }
+
+  if (
+    skill === 'listening' ||
+    type === 'listening_trap' ||
+    type === 'listening-distractor' ||
+    type === 'listening'
+  ) {
+    return 'listening';
+  }
+
+  if (
+    skill === 'reading' ||
+    type === 'tfng' ||
+    type === 'reading-tfng' ||
+    type === 'reading'
+  ) {
+    return 'reading';
+  }
+
+  return 'lexicon';
+}
+
+/**
+ * Computes 4-axis diagnostic metrics and determines learner's primary gap / weakest skill.
+ */
+export function computeSprintDiagnostics(questionHistory = [], questions = []) {
+  const axesMap = {
+    spelling: {
+      key: 'spelling',
+      nameKey: 'arena.skillOrthography',
+      nameVi: 'Chính Tả Học Thuật & Gõ',
+      nameEn: 'Orthography & Academic Spelling',
+      icon: '✍️',
+      total: 0,
+      correct: 0
+    },
+    listening: {
+      key: 'listening',
+      nameKey: 'arena.skillDistractors',
+      nameVi: 'Bẫy Bẻ Hướng & Tự Sửa',
+      nameEn: 'Listening Traps & Self-Correction',
+      icon: '🎧',
+      total: 0,
+      correct: 0
+    },
+    reading: {
+      key: 'reading',
+      nameKey: 'arena.skillLogic',
+      nameVi: 'Logic Đọc Hiểu & TFNG',
+      nameEn: 'Reading Logic & TFNG',
+      icon: '📖',
+      total: 0,
+      correct: 0
+    },
+    lexicon: {
+      key: 'lexicon',
+      nameKey: 'arena.skillLexicon',
+      nameVi: 'Từ Vựng & Collocation C1/C2',
+      nameEn: 'Academic Collocations & C1/C2 Lexicon',
+      icon: '💎',
+      total: 0,
+      correct: 0
+    }
+  };
+
+  const records = Array.isArray(questionHistory) && questionHistory.length > 0
+    ? questionHistory
+    : (Array.isArray(questions) ? questions.map(q => ({ ...q, isCorrect: true })) : []);
+
+  records.forEach(item => {
+    const axisKey = classifyQuestionAxis(item);
+    if (axesMap[axisKey]) {
+      axesMap[axisKey].total += 1;
+      if (item.isCorrect) {
+        axesMap[axisKey].correct += 1;
+      }
+    }
+  });
+
+  const axes = Object.values(axesMap).map(axis => {
+    const rate = axis.total > 0 ? Math.round((axis.correct / axis.total) * 100) : 100;
+    let status = 'neutral';
+    if (axis.total > 0) {
+      if (rate >= 80) status = 'mastered';
+      else if (rate >= 50) status = 'warning';
+      else status = 'critical';
+    }
+    return {
+      ...axis,
+      rate,
+      status
+    };
+  });
+
+  // Determine weakest skill among axes that have been tested (total > 0)
+  const testedAxes = axes.filter(a => a.total > 0);
+  const axesWithErrors = testedAxes.filter(a => a.rate < 100);
+
+  let weakestSkill = null;
+  if (axesWithErrors.length > 0) {
+    // Sort by lowest rate ascending, then by most errors descending
+    axesWithErrors.sort((a, b) => {
+      if (a.rate !== b.rate) return a.rate - b.rate;
+      const errorsA = a.total - a.correct;
+      const errorsB = b.total - b.correct;
+      return errorsB - errorsA;
+    });
+    weakestSkill = axesWithErrors[0].key;
+  }
+
+  return {
+    axes,
+    weakestSkill
+  };
+}
+
+/**
+ * Returns Cambridge Theory Prescription for the identified weakest skill.
+ */
+export function getCambridgeTheoryPrescription(weakestSkillKey) {
+  switch (weakestSkillKey) {
+    case 'spelling':
+      return {
+        skillKey: 'spelling',
+        handbookSkill: 'grammar-vocab',
+        searchQuery: 'Spelling',
+        topicId: null,
+        titleVi: '100 Con Quỷ Chính Tả Cambridge & Quy Tắc Gõ Chuẩn',
+        titleEn: '100 Cambridge Spelling Demons & Accurate Transcription',
+        chapterVi: 'Chương Từ Vựng & Chính Tả Học Thuật',
+        chapterEn: 'Academic Vocabulary & Spelling Chapter',
+        recommendationVi: 'Rèn luyện phản xạ phát hiện bẫy nguyên âm đôi và phụ âm kép thường gặp trong bài thi Listening/Writing.',
+        recommendationEn: 'Master double consonant rules and silent vowel pitfalls in authentic Cambridge exams.'
+      };
+    case 'listening':
+      return {
+        skillKey: 'listening',
+        handbookSkill: 'listening',
+        searchQuery: 'Distractor',
+        topicId: null,
+        titleVi: 'Bẫy Tự Sửa & Paraphrase Đảo Hướng (Direction Shifting)',
+        titleEn: 'Self-Correction Traps & Direction-Shifting Paraphrase',
+        chapterVi: 'Chương Chiến Thuật Nghe Cambridge',
+        chapterEn: 'Cambridge Listening Strategy Chapter',
+        recommendationVi: 'Luyện kỹ năng bắt từ khóa chuyển hướng (Actually, In fact, But) để không bị sập bẫy thông tin đầu tiên.',
+        recommendationEn: 'Identify direction-shifting markers (Actually, However) to eliminate initial distractor traps.'
+      };
+    case 'reading':
+      return {
+        skillKey: 'reading',
+        handbookSkill: 'reading',
+        searchQuery: 'True',
+        topicId: null,
+        titleVi: 'Chiến Thuật True / False / Not Given & Triệt Tiêu Suy Diễn',
+        titleEn: 'True / False / Not Given & Eliminating Over-Interpretation',
+        chapterVi: 'Chương Đọc Hiểu & Suy Luận Logic',
+        chapterEn: 'Reading Comprehension & Logical Inference Chapter',
+        recommendationVi: 'Chỉ dựa 100% vào dữ kiện trong bài đọc; tuyệt đối không dùng kiến thức nền bên ngoài để suy diễn đáp án.',
+        recommendationEn: 'Base reasoning strictly on passage evidence without external assumptions.'
+      };
+    case 'lexicon':
+      return {
+        skillKey: 'lexicon',
+        handbookSkill: 'grammar-vocab',
+        searchQuery: 'Collocation',
+        topicId: null,
+        titleVi: 'Collocation Học Thuật & Nâng Cấp Lexical Resource C1/C2',
+        titleEn: 'Academic Collocations & C1/C2 Lexical Resource Upgrade',
+        chapterVi: 'Chương Từ Vựng & Cụm Từ Học Thuật C1/C2',
+        chapterEn: 'Academic Collocations & C1/C2 Lexical Resource Chapter',
+        recommendationVi: 'Mở rộng các cặp cụm từ tự nhiên theo chuẩn bài thi Cambridge để nâng Band điểm từ 6.5 lên 7.5+.',
+        recommendationEn: 'Upgrade topic-specific collocations to boost Lexical Resource from Band 6.5 to 7.5+.'
+      };
+    default:
+      return {
+        skillKey: 'perfect',
+        handbookSkill: 'grammar-vocab',
+        searchQuery: 'C2',
+        topicId: null,
+        titleVi: 'Bộ Bí Kíp Tinh Hoa Cambridge Band 8.5+ Toàn Diện',
+        titleEn: 'Comprehensive Cambridge Band 8.5+ Master Arsenal',
+        chapterVi: 'Chương Chiến Thuật Toàn Diện C2',
+        chapterEn: 'Comprehensive C2 Strategy Chapter',
+        recommendationVi: 'Phong độ phản xạ hoàn hảo! Hãy sẵn sàng thử thách với cấp độ Ác Mộng (Nightmare Arena).',
+        recommendationEn: 'Flawless precision! You are primed to challenge the Nightmare Arena tier.'
+      };
+  }
+}
 
 /**
  * Pure state transition functions for unit testing and deterministic execution.
@@ -84,7 +296,8 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     timeRemaining: duration,
     duration,
     difficulty,
-    shieldState: createSprintShieldState()
+    shieldState: createSprintShieldState(),
+    questionHistory: []
   };
 }
 
@@ -215,6 +428,17 @@ export function checkAnswerAction(state) {
     }
   }
 
+  const historyItem = {
+    id: currentQ.id,
+    skillCategory: currentQ.skillCategory || 'vocab',
+    type: currentQ.type || 'vocab',
+    interactionType: currentQ.interactionType || 'multiple_choice',
+    isBossQuestion: Boolean(currentQ.isBossQuestion || state.currentIndex === state.questions.length - 1),
+    isCorrect,
+    isSkipped: false
+  };
+  const nextHistory = [...(state.questionHistory || []), historyItem];
+
   return {
     ...state,
     phase: nextPhase,
@@ -229,7 +453,8 @@ export function checkAnswerAction(state) {
     isBossCleared,
     isCurrentRevengeCleared,
     revengeClearedCount: nextRevengeCount,
-    revengeBonusXp: nextRevengeBonusXp
+    revengeBonusXp: nextRevengeBonusXp,
+    questionHistory: nextHistory
   };
 }
 
@@ -270,6 +495,17 @@ export function skipQuestionAction(state) {
     nextPhase = ARENA_SPRINT_PHASES.DEFEATED;
   }
 
+  const historyItem = {
+    id: currentQ.id,
+    skillCategory: currentQ.skillCategory || 'vocab',
+    type: currentQ.type || 'vocab',
+    interactionType: currentQ.interactionType || 'multiple_choice',
+    isBossQuestion: Boolean(currentQ.isBossQuestion || state.currentIndex === state.questions.length - 1),
+    isCorrect: false,
+    isSkipped: true
+  };
+  const nextHistory = [...(state.questionHistory || []), historyItem];
+
   return {
     ...state,
     phase: nextPhase,
@@ -280,6 +516,7 @@ export function skipQuestionAction(state) {
     hasUsedNearMiss: false,
     combo: 0,
     shieldState: updatedShields,
+    questionHistory: nextHistory,
     validationResult: {
       isCorrect: false,
       isSkipped: true,
@@ -372,6 +609,9 @@ export function finishSprintAction(state, user = null) {
     recordGuestPendingXp(xpResult.finalXp);
   }
 
+  const diagnostics = computeSprintDiagnostics(state.questionHistory, state.questions);
+  const prescription = getCambridgeTheoryPrescription(diagnostics.weakestSkill);
+
   const summary = {
     ...xpResult,
     difficulty: state.difficulty || 'medium',
@@ -384,7 +624,10 @@ export function finishSprintAction(state, user = null) {
     isBossCleared: state.isBossCleared,
     isDefeated: state.phase === ARENA_SPRINT_PHASES.DEFEATED,
     revengeClearedCount: state.revengeClearedCount || 0,
-    revengeBonusXp: state.revengeBonusXp || 0
+    revengeBonusXp: state.revengeBonusXp || 0,
+    diagnosticSkills: diagnostics.axes,
+    weakestSkill: diagnostics.weakestSkill,
+    prescription
   };
 
   return {

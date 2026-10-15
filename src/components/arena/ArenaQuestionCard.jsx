@@ -197,7 +197,9 @@ export default function ArenaQuestionCard({
   const isTextInput = question.interactionType === 'text_input';
 
   return (
-    <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-2 sm:gap-2.5 py-0.5">
+    <div className={`w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-2 sm:gap-2.5 py-0.5 transition-all duration-300 ${
+      question.isBossQuestion ? 'rounded-2xl p-2 sm:p-2.5 bg-gradient-to-b from-amber-950/20 via-slate-900/40 to-purple-950/25 border-2 border-amber-500/40 shadow-xl shadow-amber-950/30 ring-1 ring-amber-400/30' : ''
+    }`}>
       {/* Category Pill, Topic, Difficulty & Audio Button */}
       <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -215,6 +217,13 @@ export default function ArenaQuestionCard({
             <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 shadow-xs">
               <span className="text-xs sm:text-sm">{topicObj.icon}</span>
               <span>{isEn ? topicObj.nameEn : topicObj.nameVi}</span>
+            </span>
+          )}
+
+          {question.isBossQuestion && (
+            <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-amber-500/30 text-amber-300 border border-amber-400/60 flex items-center gap-1.5 shadow-sm shadow-amber-500/20 animate-pulse">
+              <span>👑</span>
+              <span>{t('arena.bossClimaxBadge') || (isEn ? 'CAMBRIDGE BOSS CLIMAX (x2 XP)' : 'TRÙM CUỐI CAMBRIDGE (x2 XP)')}</span>
             </span>
           )}
 
@@ -380,6 +389,11 @@ export default function ArenaQuestionCard({
                 </>
               )}
             </div>
+            {isCorrect && question.isBossQuestion && (
+              <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/30 via-purple-600/30 to-amber-500/30 text-amber-300 text-[11px] font-black border border-amber-400/60 shadow-xs flex items-center gap-1 animate-bounce">
+                👑 {t('arena.bossSlayerTitle') || (isEn ? 'BOSS SLAYER! (x2 XP)' : 'DIỆT TRÙM THÀNH CÔNG! (x2 XP)')}
+              </span>
+            )}
             {isCorrect && question.isRevengeQuestion && (
               <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-black border border-amber-500/40 animate-pulse">
                 ⚡ {isEn ? 'Revenge Cleared! (+5 XP)' : 'Phục Thù Thành Công! (+5 XP)'}

@@ -537,7 +537,19 @@ export const vi = {
     listeningHelperText: '🎧 Bài nghe: Hãy chú ý lắng nghe đoạn băng để chọn đáp án đúng.',
     replayAudio: 'Nghe lại',
     shareArena: 'Chia sẻ /atlas-arena',
-    linkCopied: 'Đã sao chép link!'
+    linkCopied: 'Đã sao chép link!',
+    bossClimaxBadge: '👑 TRÙM CUỐI CAMBRIDGE (x2 XP)',
+    bossSlayerTitle: '👑 DIỆT TRÙM THÀNH CÔNG! (x2 XP)',
+    diagnosticRadarTitle: 'Phân Tích 4 Trục Năng Lực Cambridge',
+    diagnosticSubtitle: 'Tỷ lệ triệt tiêu bẫy phòng thi qua từng trục phản xạ',
+    skillOrthography: '✍️ Chính Tả Học Thuật & Gõ',
+    skillDistractors: '🎧 Bẫy Bẻ Hướng & Tự Sửa',
+    skillLogic: '📖 Logic Đọc Hiểu & TFNG',
+    skillLexicon: '💎 Từ Vựng & Collocation C1/C2',
+    prescriptionTitle: 'Kê Đơn Chiến Thuật Cambridge (1-Click)',
+    prescriptionSubtitle: 'Lỗ hổng ưu tiên cần khắc phục ngay trong Cẩm Nang',
+    reviewInHandbook: 'Ôn Ngay Trong Cẩm Nang',
+    untestedAxis: 'Chưa xuất hiện'
   },
   about: {
     badge: 'NỀN TẢNG LUYỆN THI IELTS 4 KỸ NĂNG • 100% LOCAL-FIRST & MIỄN PHÍ',
