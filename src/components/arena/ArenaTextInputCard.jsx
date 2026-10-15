@@ -59,8 +59,22 @@ export default function ArenaTextInputCard({
 
   const diffTokens = validationResult?.diff || [];
 
+  const activePlaceholder = isEn
+    ? (question?.placeholderEn || question?.placeholder || 'Type the missing word and press Enter...')
+    : (question?.placeholderVi || question?.placeholder || 'Gõ từ còn thiếu rồi nhấn Enter...');
+
   return (
     <div className="w-full flex flex-col gap-3 my-1">
+      {/* Misspelled Word Target Cue (Unambiguous Spelling Correction) */}
+      {question?.misspelledWord && !isAnswerChecked && (
+        <div className="flex items-center gap-2 text-xs text-rose-300 bg-rose-950/40 border border-rose-800/50 px-3 py-1.5 rounded-xl w-fit">
+          <span className="font-semibold text-rose-400">{isEn ? '⚠️ Fix spelling for:' : '⚠️ Sửa lỗi chính tả cho từ:'}</span>
+          <span className="font-mono font-bold text-rose-200 line-through bg-rose-900/60 px-2 py-0.5 rounded border border-rose-700/50">
+            {question.misspelledWord}
+          </span>
+        </div>
+      )}
+
       {/* Input container */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -79,7 +93,7 @@ export default function ArenaTextInputCard({
           autoCapitalize="none"
           spellCheck={false}
           data-lpignore="true"
-          placeholder={isEn ? 'Type the missing word and press Enter...' : 'Gõ từ còn thiếu rồi nhấn Enter...'}
+          placeholder={activePlaceholder}
           className={`w-full pl-11 pr-12 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-mono font-bold tracking-wide transition-all outline-hidden border select-text cursor-text ${
             isAnswerChecked
               ? isCorrect

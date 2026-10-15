@@ -150,7 +150,8 @@ const testSuites = [
   { name: 'Step 141: Mobile Header Uniform Alignment & Harmonious Styling Audit', file: 'tests/test_step141_mobile_header_uniform_alignment_and_styling.js' },
   { name: 'Step 142: Type-in Word Interactive Exercises & Cambridge Answer Validator Engine', file: 'tests/test_step142_arena_type_in_word_and_cambridge_validator.js' },
   { name: 'Step 143: Arena Skip Question & Esc Hotkey Navigation', file: 'tests/test_step143_arena_skip_question_and_esc_hotkey.js' },
-  { name: 'Step 144: MicroDrills Dynamic Tab Bar with Closable Tabs and Drill Type Dropbox', file: 'tests/test_step144_micro_drills_dynamic_tabs_and_dropbox.js' }
+  { name: 'Step 144: MicroDrills Dynamic Tab Bar with Closable Tabs and Drill Type Dropbox', file: 'tests/test_step144_micro_drills_dynamic_tabs_and_dropbox.js' },
+  { name: 'Step 145: Unambiguous Type-in Questions & Spelling Error Cues', file: 'tests/test_step145_arena_unambiguous_typing_questions.js' }
 ];
 
 console.log('===============================================================');

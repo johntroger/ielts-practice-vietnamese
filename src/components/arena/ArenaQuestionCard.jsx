@@ -107,7 +107,34 @@ export default function ArenaQuestionCard({
       {/* Context or Reading Snippet: Hidden for Listening questions while answering to prevent transcript spoiler */}
       {question.context && !isListening && (
         <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 text-sm text-slate-300 font-serif leading-relaxed max-h-36 overflow-y-auto">
-          {activeContext}
+          {typeof activeContext === 'string' && activeContext.includes('[') && activeContext.includes(']') ? (
+            <span>
+              {activeContext.split(/(\[[^\]]+\])/g).map((part, idx) => {
+                if (part.startsWith('[') && part.endsWith(']')) {
+                  return (
+                    <span
+                      key={idx}
+                      className="mx-1 px-2 py-0.5 rounded-md bg-rose-950/80 border border-rose-500/60 text-rose-300 font-mono font-bold inline-flex items-center gap-1 shadow-xs"
+                    >
+                      <span className="text-xs">⚠️</span>
+                      <span>{part}</span>
+                    </span>
+                  );
+                }
+                return <span key={idx}>{part}</span>;
+              })}
+            </span>
+          ) : (
+            activeContext
+          )}
+        </div>
+      )}
+
+      {/* Listening Note/Form Completion snippet */}
+      {isListening && (question.formStem || localizedQ.formStem) && (
+        <div className="bg-slate-900/90 border border-amber-500/40 rounded-xl p-3 text-sm font-mono text-amber-200 flex items-center gap-2">
+          <span className="text-amber-400 font-bold">📋 Note:</span>
+          <span>{isEn ? (question.formStem || localizedQ.formStem) : (question.formStemVi || localizedQ.formStemVi || question.formStem)}</span>
         </div>
       )}
 

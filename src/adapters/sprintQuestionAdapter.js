@@ -97,6 +97,33 @@ export function adaptSpellingTrap(item, rng = Math.random) {
   const rawOptions = [item.correct, ...(item.distractors || []).slice(0, 3)];
   const options = shuffleArray(rawOptions, rng);
   const englishExp = `"${item.correct}" is the standard Cambridge academic spelling.`;
+
+  // Select the primary high-risk misspelling trap (e.g. "Wenesday" for "Wednesday")
+  const misspelledWord = (item.distractors && item.distractors[0]) || '';
+
+  // Transform blank context sentence to explicitly highlight the misspelled word in brackets
+  // e.g. "The chemistry lab workshop convenes promptly every [Wenesday] morning."
+  let sentenceWithMistake = item.contextSentence || '';
+  if (sentenceWithMistake.includes('____')) {
+    sentenceWithMistake = sentenceWithMistake.replace(/_{2,}/g, `[${misspelledWord}]`);
+  } else if (misspelledWord) {
+    sentenceWithMistake = sentenceWithMistake ? `${sentenceWithMistake} [${misspelledWord}]` : `[${misspelledWord}]`;
+  }
+
+  const promptEn = misspelledWord
+    ? `Identify and correct the misspelled word in brackets [${misspelledWord}] with the authentic Cambridge spelling:`
+    : `Type the authentic Cambridge academic spelling:`;
+  const promptVi = misspelledWord
+    ? `Tìm và sửa từ viết sai chính tả trong ngoặc [${misspelledWord}] thành dạng đúng chuẩn Cambridge:`
+    : `Gõ chính tả học thuật chuẩn Cambridge:`;
+
+  const placeholderEn = misspelledWord
+    ? `Type the correct spelling of "${misspelledWord}" and press Enter...`
+    : `Type the missing word and press Enter...`;
+  const placeholderVi = misspelledWord
+    ? `Gõ chính tả đúng thay cho "${misspelledWord}" rồi nhấn Enter...`
+    : `Gõ từ còn thiếu rồi nhấn Enter...`;
+
   return {
     id: `spelling_${item.id}`,
     rawId: item.id,
@@ -104,13 +131,18 @@ export function adaptSpellingTrap(item, rng = Math.random) {
     interactionType: 'text_input',
     strictSpelling: true,
     acceptableAnswers: [item.correct],
-    placeholder: 'Type the correct spelling...',
+    placeholder: placeholderEn,
+    placeholderEn,
+    placeholderVi,
+    misspelledWord,
+    audioText: item.correct,
     skillCategory: 'vocab',
-    prompt: 'Select the authentic Cambridge academic spelling:',
-    promptEn: 'Select the authentic Cambridge academic spelling:',
-    promptVi: 'Chọn phương án viết đúng chính tả học thuật:',
-    context: item.contextSentence || '',
-    contextEn: item.contextSentence || '',
+    prompt: promptEn,
+    promptEn,
+    promptVi,
+    context: sentenceWithMistake,
+    contextEn: sentenceWithMistake,
+    contextVi: sentenceWithMistake,
     options,
     correctIndex: options.indexOf(item.correct),
     correctAnswer: item.correct,
@@ -210,6 +242,16 @@ export function adaptListeningDrill(item) {
 export function adaptListeningSpellingDrill(item) {
   const acceptable = item.acceptableAnswers || [item.correctAnswer];
   const englishExp = item.explanationEn || `The recording confirms the exact spelling or code as "${item.correctAnswer}".`;
+  const formStemEn = item.questionPrompt || '';
+  const formStemVi = item.questionPromptVi || item.questionPrompt || '';
+
+  const promptEn = formStemEn 
+    ? `Listen to the audio and complete the note: "${formStemEn}"`
+    : 'Listen to the audio and type the exact spelling, name or code:';
+  const promptVi = formStemVi
+    ? `Nghe audio và điền vào chỗ trống: "${formStemVi}"`
+    : 'Nghe đoạn audio và gõ chính xác tên, từ ngữ hoặc mã số:';
+
   return {
     id: `listen_spell_${item.id}`,
     rawId: item.id,
@@ -217,13 +259,18 @@ export function adaptListeningSpellingDrill(item) {
     interactionType: 'text_input',
     strictSpelling: true,
     acceptableAnswers: acceptable,
-    placeholder: 'Type what you hear...',
+    placeholder: 'Type what you hear and press Enter...',
+    placeholderEn: 'Type what you hear and press Enter...',
+    placeholderVi: 'Gõ từ hoặc con số bạn nghe được rồi nhấn Enter...',
     skillCategory: 'listening',
-    prompt: 'Listen to the audio and type the exact spelling, name or code:',
-    promptEn: 'Listen to the audio and type the exact spelling, name or code:',
-    promptVi: 'Nghe đoạn audio và gõ chính xác tên, từ ngữ hoặc mã số:',
-    context: '',
-    contextEn: '',
+    prompt: promptEn,
+    promptEn,
+    promptVi,
+    context: formStemEn,
+    contextEn: formStemEn,
+    contextVi: formStemVi,
+    formStem: formStemEn,
+    formStemVi,
     audioText: item.audioText || item.promptAudioText || '',
     options: acceptable.slice(0, 4),
     correctIndex: 0,

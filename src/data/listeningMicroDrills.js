@@ -121,6 +121,8 @@ export const LISTENING_MICRO_DRILLS = [
     audioText: 'The parcel should be delivered to twenty-four Ravensbourne Crescent, that is R-A-V-E-N-S-B-O-U-R-N-E Crescent.',
     spokenSpelling: 'R-A-V-E-N-S-B-O-U-R-N-E',
     correctAnswer: 'Ravensbourne',
+    questionPrompt: 'Delivery address: 24 ......... Crescent',
+    questionPromptVi: 'Địa chỉ giao nhận bưu phẩm: 24 ......... Crescent',
     acceptableAnswers: ['Ravensbourne', 'ravensbourne', 'RAVENSBOURNE'],
     trapNote: 'Bẫy âm dễ nhầm: Chữ cái V /viː/ và B /biː/, chữ R /ɑːr/ câm trong giọng Anh.',
     explanation: 'Người nói đánh vần rõ: R-A-V-E-N-S-B-O-U-R-N-E (Ravensbourne Crescent).'
@@ -134,6 +136,8 @@ export const LISTENING_MICRO_DRILLS = [
     promptAudioText: 'Our office postcode is SW19 4TL, and the extension number is seven three four, not seven four three.',
     audioText: 'Our office postcode is SW19 4TL, and the extension number is seven three four, not seven four three.',
     correctAnswer: 'SW19 4TL',
+    questionPrompt: 'Office postcode: .........',
+    questionPromptVi: 'Mã bưu chính văn phòng: .........',
     acceptableAnswers: ['SW19 4TL', 'SW194TL', 'sw19 4tl'],
     trapNote: 'Bẫy số đảo ngược: "seven three four, not seven four three". Postcode UK luôn có cấu trúc chữ - số - khoảng cách.',
     explanation: 'Mã bưu chính chuẩn xác là SW19 4TL. Người nói cố tình chỉnh lại số máy nhánh để đánh lạc hướng.'
