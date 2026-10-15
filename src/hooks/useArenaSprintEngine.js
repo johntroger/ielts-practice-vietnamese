@@ -30,6 +30,10 @@ import {
   recordQuestionResult, 
   recordMatchCompleted 
 } from '../services/gamification/arenaMasteryService.js';
+import { 
+  isAnswerAcceptable, 
+  generateVisualDiff 
+} from '../services/gamification/cambridgeAnswerValidator.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -46,6 +50,8 @@ export const INITIAL_SPRINT_STATE = {
   questions: [],
   currentIndex: 0,
   selectedOption: null,
+  userInputText: '',
+  validationResult: null,
   isAnswerChecked: false,
   isCorrect: null,
   score: 0,
@@ -87,15 +93,47 @@ export function selectOptionAction(state, optionIndex) {
   };
 }
 
+export function setUserInputTextAction(state, text) {
+  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.isAnswerChecked) {
+    return state;
+  }
+  return {
+    ...state,
+    userInputText: text
+  };
+}
+
 export function checkAnswerAction(state) {
-  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.selectedOption === null || state.isAnswerChecked) {
+  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.isAnswerChecked) {
     return state;
   }
 
   const currentQ = state.questions[state.currentIndex];
   if (!currentQ) return state;
 
-  const isCorrect = state.selectedOption === currentQ.correctIndex;
+  const isTextInput = currentQ.interactionType === 'text_input';
+  if (!isTextInput && state.selectedOption === null) {
+    return state;
+  }
+  if (isTextInput && !state.userInputText?.trim()) {
+    return state;
+  }
+
+  let isCorrect = false;
+  let validationResult = null;
+
+  if (isTextInput) {
+    const acceptable = currentQ.acceptableAnswers || [currentQ.correctAnswer];
+    const isStrict = currentQ.type === 'spelling';
+    isCorrect = isAnswerAcceptable(state.userInputText, acceptable, { isStrictSpelling: isStrict });
+    validationResult = {
+      isCorrect,
+      userInput: state.userInputText,
+      diff: generateVisualDiff(state.userInputText, currentQ.correctAnswer)
+    };
+  } else {
+    isCorrect = state.selectedOption === currentQ.correctIndex;
+  }
   
   // Record mastery progression (2-Hit rule, Ebbinghaus decay, mistake cooling-off)
   const masteryResult = recordQuestionResult({
@@ -133,7 +171,7 @@ export function checkAnswerAction(state) {
   } else {
     nextCombo = 0;
     // Record into Mistake Vault
-    recordMistake(currentQ, state.selectedOption);
+    recordMistake(currentQ, isTextInput ? state.userInputText : state.selectedOption);
 
     const { state: updatedShields, isDefeated } = deductShield(state.shieldState, currentQ);
     nextShieldState = updatedShields;
@@ -147,6 +185,7 @@ export function checkAnswerAction(state) {
     phase: nextPhase,
     isAnswerChecked: true,
     isCorrect,
+    validationResult,
     score: nextScore,
     combo: nextCombo,
     maxCombo: nextMaxCombo,
@@ -169,6 +208,8 @@ export function nextQuestionAction(state) {
       phase: ARENA_SPRINT_PHASES.ACTIVE,
       currentIndex: state.currentIndex + 1,
       selectedOption: null,
+      userInputText: '',
+      validationResult: null,
       isAnswerChecked: false,
       isCorrect: null
     };
@@ -193,6 +234,8 @@ export function retrySprintAction(state) {
     phase: ARENA_SPRINT_PHASES.ACTIVE,
     shieldState: restoredShields,
     selectedOption: null,
+    userInputText: '',
+    validationResult: null,
     isAnswerChecked: false,
     isCorrect: null
   };
@@ -357,10 +400,15 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     };
   }, [state.phase, user, onSprintEnd, state.timeRemaining]);
 
+  const setUserInputText = useCallback((text) => {
+    setState(prev => setUserInputTextAction(prev, text));
+  }, []);
+
   return {
     ...state,
     startSprint,
     selectOption,
+    setUserInputText,
     checkAnswer,
     nextQuestion,
     retrySprint,

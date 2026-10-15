@@ -101,6 +101,10 @@ export function adaptSpellingTrap(item, rng = Math.random) {
     id: `spelling_${item.id}`,
     rawId: item.id,
     type: 'spelling',
+    interactionType: 'text_input',
+    strictSpelling: true,
+    acceptableAnswers: [item.correct],
+    placeholder: 'Type the correct spelling...',
     skillCategory: 'vocab',
     prompt: 'Select the authentic Cambridge academic spelling:',
     promptEn: 'Select the authentic Cambridge academic spelling:',
@@ -203,6 +207,33 @@ export function adaptListeningDrill(item) {
   };
 }
 
+export function adaptListeningSpellingDrill(item) {
+  const acceptable = item.acceptableAnswers || [item.correctAnswer];
+  const englishExp = item.explanationEn || `The recording confirms the exact spelling or code as "${item.correctAnswer}".`;
+  return {
+    id: `listen_spell_${item.id}`,
+    rawId: item.id,
+    type: 'listening_spelling',
+    interactionType: 'text_input',
+    strictSpelling: true,
+    acceptableAnswers: acceptable,
+    placeholder: 'Type what you hear...',
+    skillCategory: 'listening',
+    prompt: 'Listen to the audio and type the exact spelling, name or code:',
+    promptEn: 'Listen to the audio and type the exact spelling, name or code:',
+    promptVi: 'Nghe đoạn audio và gõ chính xác tên, từ ngữ hoặc mã số:',
+    context: '',
+    contextEn: '',
+    audioText: item.audioText || item.promptAudioText || '',
+    options: acceptable.slice(0, 4),
+    correctIndex: 0,
+    correctAnswer: item.correctAnswer,
+    explanation: englishExp,
+    explanationEn: englishExp,
+    explanationVi: item.explanation || englishExp
+  };
+}
+
 /**
  * Generates balanced sprint questions (default: 7 questions for 180s sprint),
  * respecting the 7-Slot Blueprint, 2-Hit Mastery, Max 1 Revenge Question,
@@ -236,13 +267,15 @@ export function generateArenaSprintQuestions({
   const synonymPool = (CAMBRIDGE_SYNONYM_PAIRS || []).map(item => adaptSynonymPair(item, CAMBRIDGE_SYNONYM_PAIRS, rng));
   const readingPool = (READING_MICRO_DRILLS || []).filter(d => d.type === 'reading-tfng').map(adaptReadingDrill);
   const listeningPool = (LISTENING_MICRO_DRILLS || []).filter(d => d.type === 'listening-distractor').map(adaptListeningDrill);
+  const listeningSpellingPool = (LISTENING_MICRO_DRILLS || []).filter(d => d.type === 'listening-spelling').map(adaptListeningSpellingDrill);
 
   const candidatePool = [
     ...eligibleBank,
     ...spellingPool,
     ...synonymPool,
     ...readingPool,
-    ...listeningPool
+    ...listeningPool,
+    ...listeningSpellingPool
   ];
 
   // 2. Classify candidate questions by Mastery State
@@ -272,9 +305,9 @@ export function generateArenaSprintQuestions({
 
   // 3. APPLY 7-SLOT BLUEPRINT (if count === 7)
   if (count === 7) {
-    // SLOT 1 & 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase)
+    // SLOT 1 & 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase or Listening Spelling)
     const fastReflexCandidates = freshPool.filter(q => 
-      q.skillCategory === 'vocab' || q.type === 'spelling' || q.type === 'synonym'
+      q.skillCategory === 'vocab' || q.type === 'spelling' || q.type === 'synonym' || q.type === 'listening_spelling'
     );
     const shuffledFast = shuffleArray(fastReflexCandidates, rng);
     for (let i = 0; i < shuffledFast.length && selected.length < 2; i++) {

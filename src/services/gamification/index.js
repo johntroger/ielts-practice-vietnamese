@@ -11,3 +11,4 @@ export * from './offlineRivals.js';
 export * from './guestMigrationService.js';
 export * from './realLeaderboardService.js';
 export * from './levelEngine.js';
+export * from './cambridgeAnswerValidator.js';

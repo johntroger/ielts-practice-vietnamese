@@ -20,6 +20,7 @@ import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
 import PublicLearnerProfileModal from './PublicLearnerProfileModal.jsx';
 import LevelUpCelebrationModal from './LevelUpCelebrationModal.jsx';
 import ArenaDifficultySelector from './ArenaDifficultySelector.jsx';
+import { isAnswerAcceptable } from '../../services/gamification/cambridgeAnswerValidator.js';
 import { 
   ARENA_STORAGE_KEYS, 
   ARENA_DIFFICULTY_LEVELS, 
@@ -221,11 +222,24 @@ export default function AtlasEnglishArenaModal({
   }, [sprint.phase, sprint.questions]);
 
   const handleCheckAnswer = useCallback(() => {
-    if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE && sprint.selectedOption !== null) {
+    if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
       const curQ = sprint.questions[sprint.currentIndex];
-      const isCorrect = curQ && sprint.selectedOption === curQ.correctIndex;
-      playSfx(isCorrect ? 'correct' : 'wrong');
-      sprint.checkAnswer();
+      const isTextInput = curQ?.interactionType === 'text_input';
+
+      if (isTextInput) {
+        if (!sprint.userInputText || !sprint.userInputText.trim()) return;
+        const acceptable = curQ.acceptableAnswers || [curQ.correctAnswer || (curQ.options && curQ.options[curQ.correctIndex])];
+        const isCorrect = isAnswerAcceptable(sprint.userInputText, acceptable, {
+          strictSpelling: curQ.strictSpelling ?? true,
+          ignoreAccents: true
+        });
+        playSfx(isCorrect ? 'correct' : 'wrong');
+        sprint.checkAnswer();
+      } else if (sprint.selectedOption !== null) {
+        const isCorrect = curQ && sprint.selectedOption === curQ.correctIndex;
+        playSfx(isCorrect ? 'correct' : 'wrong');
+        sprint.checkAnswer();
+      }
     }
   }, [sprint, playSfx]);
 
@@ -241,8 +255,16 @@ export default function AtlasEnglishArenaModal({
         }
       },
       onSubmit: () => {
-        if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE && sprint.selectedOption !== null) {
-          handleCheckAnswer();
+        if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
+          const curQ = sprint.questions[sprint.currentIndex];
+          const isTextInput = curQ?.interactionType === 'text_input';
+          if (isTextInput) {
+            if (sprint.userInputText && sprint.userInputText.trim()) {
+              handleCheckAnswer();
+            }
+          } else if (sprint.selectedOption !== null) {
+            handleCheckAnswer();
+          }
         } else if (sprint.phase === ARENA_SPRINT_PHASES.REVIEWING_ANSWER) {
           sprint.nextQuestion();
         }
@@ -444,6 +466,9 @@ export default function AtlasEnglishArenaModal({
                   <ArenaQuestionCard
                     question={currentQ}
                     selectedOption={sprint.selectedOption}
+                    userInputText={sprint.userInputText}
+                    onUserInputChange={sprint.setUserInputText}
+                    validationResult={sprint.validationResult}
                     isAnswerChecked={sprint.isAnswerChecked}
                     isCorrect={sprint.isCorrect}
                     onSelectOption={sprint.selectOption}

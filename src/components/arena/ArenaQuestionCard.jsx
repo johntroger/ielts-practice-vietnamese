@@ -2,6 +2,7 @@ import React from 'react';
 import { Volume2, CheckCircle2, XCircle, ArrowRight, Check, Sparkles } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import ArenaMediaViewer from './ArenaMediaViewer.jsx';
+import ArenaTextInputCard from './ArenaTextInputCard.jsx';
 import { ARENA_DIFFICULTY_CONFIG, ARENA_IELTS_TOPICS } from '../../utils/arenaStorageKeys.js';
 import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.js';
 
@@ -14,11 +15,15 @@ import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.
  * - Dual-color review state (Green for correct, Red for error)
  * - TTS Audio button for listening and spelling questions
  * - Rich Multimedia Support: Charts, Maps, and Process Diagrams
+ * - Type-in-the-word interactive exercise card with Cambridge validator diffing
  * - Clear Cambridge examiner reasoning explanation box
  */
 export default function ArenaQuestionCard({
   question,
   selectedOption = null,
+  userInputText = '',
+  onUserInputChange,
+  validationResult = null,
   isAnswerChecked = false,
   isCorrect = null,
   onSelectOption,
@@ -46,6 +51,7 @@ export default function ArenaQuestionCard({
   const topicObj = ARENA_IELTS_TOPICS.find(tp => tp.id === localizedQ.topic);
   const isListening = question.skillCategory === 'listening' || question.type === 'listening_trap' || Boolean(question.audioText);
   const activeContext = localizedQ.context || question.context;
+  const isTextInput = question.interactionType === 'text_input';
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-3 py-1">
@@ -125,59 +131,72 @@ export default function ArenaQuestionCard({
         <ArenaMediaViewer media={question.media} />
       )}
 
-      {/* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */}
-      <div className={`grid gap-2.5 ${
-        question.options.length === 3 
-          ? 'grid-cols-1 sm:grid-cols-3' 
-          : question.options.length === 2 
-            ? 'grid-cols-1 sm:grid-cols-2' 
-            : 'grid-cols-1'
-      }`}>
-        {question.options.map((optText, idx) => {
-          const isSelected = selectedOption === idx;
-          const isOptionCorrect = idx === question.correctIndex;
-          const isSpelling = question.type === 'spelling' || question.skillCategory === 'spelling';
-          
-          let btnStyle = 'bg-slate-800/50 hover:bg-slate-800 border-slate-700/70 text-slate-200 cursor-pointer';
-          if (isSelected && !isAnswerChecked) {
-            btnStyle = 'bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30 cursor-pointer';
-          } else if (isAnswerChecked) {
-            if (isOptionCorrect) {
-              btnStyle = 'bg-emerald-600/20 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30 font-semibold cursor-default';
-            } else if (isSelected && !isCorrect) {
-              btnStyle = 'bg-red-600/20 border-red-500 text-red-200 ring-2 ring-red-500/30 cursor-default';
-            } else {
-              btnStyle = 'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-60 cursor-default';
+      {/* Option Cards or Text Input Card */}
+      {isTextInput ? (
+        <ArenaTextInputCard
+          question={question}
+          userInputText={userInputText}
+          onUserInputChange={onUserInputChange}
+          isAnswerChecked={isAnswerChecked}
+          isCorrect={isCorrect}
+          validationResult={validationResult}
+          onCheckAnswer={handleCheck}
+        />
+      ) : (
+        /* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */
+        <div className={`grid gap-2.5 ${
+          question.options.length === 3 
+            ? 'grid-cols-1 sm:grid-cols-3' 
+            : question.options.length === 2 
+              ? 'grid-cols-1 sm:grid-cols-2' 
+              : 'grid-cols-1'
+        }`}>
+          {question.options.map((optText, idx) => {
+            const isSelected = selectedOption === idx;
+            const isOptionCorrect = idx === question.correctIndex;
+            const isSpelling = question.type === 'spelling' || question.skillCategory === 'spelling';
+            
+            let btnStyle = 'bg-slate-800/50 hover:bg-slate-800 border-slate-700/70 text-slate-200 cursor-pointer';
+            if (isSelected && !isAnswerChecked) {
+              btnStyle = 'bg-indigo-600/20 border-indigo-500 text-indigo-200 ring-2 ring-indigo-500/30 cursor-pointer';
+            } else if (isAnswerChecked) {
+              if (isOptionCorrect) {
+                btnStyle = 'bg-emerald-600/20 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30 font-semibold cursor-default';
+              } else if (isSelected && !isCorrect) {
+                btnStyle = 'bg-red-600/20 border-red-500 text-red-200 ring-2 ring-red-500/30 cursor-default';
+              } else {
+                btnStyle = 'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-60 cursor-default';
+              }
             }
-          }
 
-          return (
-            <button
-              key={idx}
-              type="button"
-              disabled={isAnswerChecked}
-              onClick={() => onSelectOption?.(idx)}
-              className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${btnStyle}`}
-            >
-              <div className="flex items-center gap-3">
-                <span className="w-6 h-6 rounded-md bg-slate-700/60 flex items-center justify-center text-xs font-mono font-bold text-slate-300 shrink-0">
-                  {idx + 1}
-                </span>
-                <span className={`text-sm font-medium ${isSpelling ? 'font-mono tracking-wide' : ''}`}>
-                  {optText}
-                </span>
-              </div>
+            return (
+              <button
+                key={idx}
+                type="button"
+                disabled={isAnswerChecked}
+                onClick={() => onSelectOption?.(idx)}
+                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${btnStyle}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-6 h-6 rounded-md bg-slate-700/60 flex items-center justify-center text-xs font-mono font-bold text-slate-300 shrink-0">
+                    {idx + 1}
+                  </span>
+                  <span className={`text-sm font-medium ${isSpelling ? 'font-mono tracking-wide' : ''}`}>
+                    {optText}
+                  </span>
+                </div>
 
-              {isAnswerChecked && isOptionCorrect && (
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />
-              )}
-              {isAnswerChecked && isSelected && !isCorrect && (
-                <XCircle className="w-5 h-5 text-red-400 shrink-0 ml-2" />
-              )}
-            </button>
-          );
-        })}
-      </div>
+                {isAnswerChecked && isOptionCorrect && (
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 ml-2" />
+                )}
+                {isAnswerChecked && isSelected && !isCorrect && (
+                  <XCircle className="w-5 h-5 text-red-400 shrink-0 ml-2" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Explanation Box */}
       {isAnswerChecked && (
@@ -215,7 +234,7 @@ export default function ArenaQuestionCard({
         {!isAnswerChecked ? (
           <button
             type="button"
-            disabled={selectedOption === null}
+            disabled={isTextInput ? !userInputText?.trim() : selectedOption === null}
             onClick={() => handleCheck?.()}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-lg shadow-indigo-600/20 transition-all select-none"
           >
