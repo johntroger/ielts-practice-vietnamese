@@ -1647,158 +1647,171 @@ export default function MicroDrillsModal({
         </div>
 
         {/* Level 2: Sub-tabs within Active Room & AI Generator Button */}
-        <div className="relative flex items-center justify-between border-b border-slate-200 bg-slate-50 px-2 sm:px-4 py-1.5 gap-2 text-xs font-semibold text-slate-600 shrink-0">
-          {/* Left section: Drill Type Dropbox + Opened Dynamic Tabs */}
-          <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
-            {/* Dropbox Picker Button */}
-            <div ref={tabDropdownRef} className="relative shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsTabDropdownOpen(!isTabDropdownOpen)}
-                className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer text-xs select-none shadow-xs ${
-                  isTabDropdownOpen
-                    ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-200'
-                    : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'
-                }`}
-                title={isEn ? "Open drill types dropbox" : "Bấm để chọn dạng bài tập"}
-                aria-expanded={isTabDropdownOpen}
+        <div className="relative z-30 flex items-center justify-between border-b border-slate-200 bg-slate-50 px-2 sm:px-4 py-1.5 gap-2 text-xs font-semibold text-slate-600 shrink-0 overflow-visible">
+          {/* Left: Drill Type Dropbox Button & Floating Menu */}
+          <div ref={tabDropdownRef} className="relative shrink-0 z-40">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsTabDropdownOpen(prev => !prev);
+              }}
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border transition-all cursor-pointer text-xs select-none shadow-xs ${
+                isTabDropdownOpen
+                  ? 'bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-200'
+                  : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'
+              }`}
+              title={isEn ? "Open drill types dropbox" : "Bấm để chọn dạng bài tập"}
+              aria-expanded={isTabDropdownOpen}
+            >
+              <Layers className={`w-3.5 h-3.5 ${isTabDropdownOpen ? 'text-white' : 'text-indigo-600'}`} />
+              <span className="font-bold">{isEn ? 'Drill Types' : 'Dạng bài'}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                isTabDropdownOpen ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {currentOpenTabs.length}/{roomAvailableTabs.length}
+              </span>
+              <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isTabDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
+            </button>
+
+            {/* Dropbox Menu Floating Dropdown */}
+            {isTabDropdownOpen && (
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="absolute left-0 top-full mt-1.5 z-50 min-w-[280px] sm:min-w-[340px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150"
               >
-                <Layers className={`w-3.5 h-3.5 ${isTabDropdownOpen ? 'text-white' : 'text-indigo-600'}`} />
-                <span className="font-bold">{isEn ? 'Drill Types' : 'Dạng bài'}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  isTabDropdownOpen ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-600'
-                }`}>
-                  {currentOpenTabs.length}/{roomAvailableTabs.length}
-                </span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${isTabDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
-              </button>
-
-              {/* Dropbox Menu Floating Dropdown */}
-              {isTabDropdownOpen && (
-                <div className="absolute left-0 top-full mt-1.5 z-50 min-w-[270px] sm:min-w-[320px] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2 text-xs animate-in fade-in slide-in-from-top-1 duration-150">
-                  <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
-                    <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">
-                      <span>{isEn ? `${activeRoomLabel} Drills` : `Dạng bài ${activeRoomLabel}`}</span>
-                    </span>
-                    <div className="flex items-center gap-2 text-[11px]">
-                      <button
-                        type="button"
-                        onClick={handleOpenAllTabs}
-                        className="text-indigo-600 hover:text-indigo-800 hover:underline font-semibold cursor-pointer"
-                      >
-                        {isEn ? 'Open all' : 'Mở tất cả'}
-                      </button>
-                      {currentOpenTabs.length > 1 && (
-                        <>
-                          <span className="text-slate-300">|</span>
-                          <button
-                            type="button"
-                            onClick={handleCloseOtherTabs}
-                            className="text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
-                          >
-                            {isEn ? 'Only active' : 'Chỉ tab này'}
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="max-h-[300px] overflow-y-auto space-y-1 pr-0.5">
-                    {roomAvailableTabs.map(tab => {
-                      const isOpen = currentOpenTabs.includes(tab.id);
-                      const isActive = activeTab === tab.id;
-                      const IconComponent = tab.icon;
-
-                      return (
-                        <div
-                          key={tab.id}
-                          onClick={() => handleSelectFromDropdown(tab.id)}
-                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-colors ${
-                            isActive
-                              ? 'bg-indigo-50/80 text-indigo-900 font-bold border border-indigo-200'
-                              : isOpen
-                                ? 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-transparent'
-                                : 'text-slate-600 hover:bg-slate-50 border border-transparent'
-                          }`}
-                        >
-                          <div className="flex items-center space-x-2 truncate pr-2">
-                            <IconComponent className={`w-3.5 h-3.5 shrink-0 ${tab.badgeColor || 'text-slate-500'}`} />
-                            <span className="truncate">{isEn ? tab.labelEn : tab.labelVi}</span>
-                          </div>
-                          <div className="flex items-center space-x-1 shrink-0">
-                            {isOpen ? (
-                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                                isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
-                              }`}>
-                                <Check className="w-2.5 h-2.5 mr-0.5" />
-                                {isActive ? (isEn ? 'Active' : 'Đang học') : (isEn ? 'Open' : 'Đã mở')}
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100">
-                                <Plus className="w-2.5 h-2.5 mr-0.5" />
-                                {isEn ? 'Add' : 'Mở tab'}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Opened Dynamic Sub-tabs List */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x py-0.5 flex-1 min-w-0">
-              {currentOpenTabs.map((tabId) => {
-                const tabItem = roomAvailableTabs.find(t => t.id === tabId);
-                if (!tabItem) return null;
-                const isActive = activeTab === tabId;
-                const TabIcon = tabItem.icon;
-                const currentTheme = roomThemeStyles[activeRoom] || roomThemeStyles.general;
-
-                return (
-                  <div
-                    key={tabId}
-                    onClick={() => selectTab(tabId)}
-                    className={`group shrink-0 flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border text-xs cursor-pointer select-none transition-all ${
-                      isActive
-                        ? `${currentTheme.activeTab} border-current shadow-xs`
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
-                    }`}
-                  >
-                    <TabIcon className={`w-3.5 h-3.5 shrink-0 ${tabItem.badgeColor || 'text-slate-500'}`} />
-                    <span className="truncate max-w-[130px] sm:max-w-none">
-                      {isEn ? tabItem.labelEn : tabItem.labelVi}
-                    </span>
-                    {/* Close Tab 'x' Button */}
+                <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
+                  <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">
+                    <span>{isEn ? `${activeRoomLabel} Drills` : `Dạng bài ${activeRoomLabel}`}</span>
+                  </span>
+                  <div className="flex items-center gap-2 text-[11px]">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleCloseTab(tabId);
+                        handleOpenAllTabs();
                       }}
-                      className="ml-0.5 p-0.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-slate-200/80 transition-colors cursor-pointer"
-                      title={isEn ? "Close tab" : "Tắt tab này"}
-                      aria-label={`Close ${tabItem.labelEn || tabId}`}
+                      className="text-indigo-600 hover:text-indigo-800 hover:underline font-semibold cursor-pointer"
                     >
-                      <X className="w-3 h-3" />
+                      {isEn ? 'Open all' : 'Mở tất cả'}
                     </button>
+                    {currentOpenTabs.length > 1 && (
+                      <>
+                        <span className="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCloseOtherTabs();
+                          }}
+                          className="text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
+                        >
+                          {isEn ? 'Only active' : 'Chỉ tab này'}
+                        </button>
+                      </>
+                    )}
                   </div>
-                );
-              })}
+                </div>
 
-              {currentOpenTabs.length === 0 && (
-                <button
-                  type="button"
-                  onClick={() => setIsTabDropdownOpen(true)}
-                  className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-dashed border-indigo-300 bg-indigo-50/60 text-indigo-700 hover:bg-indigo-100 text-xs font-medium cursor-pointer"
+                <div className="max-h-[300px] overflow-y-auto space-y-1 pr-0.5">
+                  {roomAvailableTabs.map(tab => {
+                    const isOpen = currentOpenTabs.includes(tab.id);
+                    const isActive = activeTab === tab.id;
+                    const IconComponent = tab.icon;
+
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectFromDropdown(tab.id);
+                        }}
+                        className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-colors text-left ${
+                          isActive
+                            ? 'bg-indigo-50/90 text-indigo-900 font-bold border border-indigo-200'
+                            : isOpen
+                              ? 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-transparent'
+                              : 'text-slate-600 hover:bg-slate-50 border border-transparent'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2 truncate pr-2">
+                          <IconComponent className={`w-3.5 h-3.5 shrink-0 ${tab.badgeColor || 'text-slate-500'}`} />
+                          <span className="truncate">{isEn ? tab.labelEn : tab.labelVi}</span>
+                        </div>
+                        <div className="flex items-center space-x-1 shrink-0">
+                          {isOpen ? (
+                            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                              isActive ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
+                            }`}>
+                              <Check className="w-2.5 h-2.5 mr-0.5" />
+                              {isActive ? (isEn ? 'Active' : 'Đang học') : (isEn ? 'Open' : 'Đã mở')}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100">
+                              <Plus className="w-2.5 h-2.5 mr-0.5" />
+                              {isEn ? 'Add' : 'Mở tab'}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Center: Opened Dynamic Sub-tabs List (horizontally scrollable if tabs exceed available space) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x py-0.5 flex-1 min-w-0">
+            {currentOpenTabs.map((tabId) => {
+              const tabItem = roomAvailableTabs.find(t => t.id === tabId);
+              if (!tabItem) return null;
+              const isActive = activeTab === tabId;
+              const TabIcon = tabItem.icon;
+              const currentTheme = roomThemeStyles[activeRoom] || roomThemeStyles.general;
+
+              return (
+                <div
+                  key={tabId}
+                  onClick={() => selectTab(tabId)}
+                  className={`group shrink-0 flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border text-xs cursor-pointer select-none transition-all ${
+                    isActive
+                      ? `${currentTheme.activeTab} border-current shadow-xs`
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>{isEn ? '+ Open a drill type' : '+ Bấm để mở dạng bài tập'}</span>
-                </button>
-              )}
-            </div>
+                  <TabIcon className={`w-3.5 h-3.5 shrink-0 ${tabItem.badgeColor || 'text-slate-500'}`} />
+                  <span className="truncate max-w-[130px] sm:max-w-none">
+                    {isEn ? tabItem.labelEn : tabItem.labelVi}
+                  </span>
+                  {/* Close Tab 'x' Button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCloseTab(tabId);
+                    }}
+                    className="ml-0.5 p-0.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-slate-200/80 transition-colors cursor-pointer"
+                    title={isEn ? "Close tab" : "Tắt tab này"}
+                    aria-label={`Close ${tabItem.labelEn || tabId}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              );
+            })}
+
+            {currentOpenTabs.length === 0 && (
+              <button
+                type="button"
+                onClick={() => setIsTabDropdownOpen(true)}
+                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-dashed border-indigo-300 bg-indigo-50/60 text-indigo-700 hover:bg-indigo-100 text-xs font-medium cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{isEn ? '+ Open a drill type' : '+ Bấm để mở dạng bài tập'}</span>
+              </button>
+            )}
           </div>
 
           {/* AI Generator & Privacy Control Container */}

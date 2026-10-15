@@ -49,7 +49,7 @@ assert(modalSource.includes('handleCloseOtherTabs'), 'Must have handleCloseOther
 
 // 3. Verify Dropbox and Tab Bar UI Elements
 console.log('Test 3: Verifying Dropbox picker button and dropdown UI');
-assert(modalSource.includes('setIsTabDropdownOpen(!isTabDropdownOpen)'), 'Dropbox button must toggle dropdown');
+assert(modalSource.includes('setIsTabDropdownOpen(prev => !prev)') || modalSource.includes('setIsTabDropdownOpen(!isTabDropdownOpen)'), 'Dropbox button must toggle dropdown');
 assert(modalSource.includes("isEn ? 'Drill Types' : 'Dạng bài'"), 'Must display bilingual Drill Types label');
 assert(modalSource.includes('handleOpenAllTabs'), 'Dropdown must include Open all option');
 assert(modalSource.includes('handleSelectFromDropdown(tab.id)'), 'Dropdown items must be selectable');
