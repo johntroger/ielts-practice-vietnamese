@@ -158,7 +158,8 @@ const testSuites = [
   { name: 'Step 149: Mobile Ergonomics & Lexical Typing Analytics', file: 'tests/test_step149_arena_mobile_ergonomics_and_spelling_analytics.js' },
   { name: 'Step 150: Listening Workspace Tools Portal & Overflow Clipping Audit', file: 'tests/test_step150_listening_tools_portal.js' },
   { name: 'Step 151: Listening Compact Palette Bar & Viewport Optimization Audit', file: 'tests/test_step151_listening_compact_palette_bar.js' },
-  { name: 'Step 152: Arena Expanded Typography, Max-W-5xl Viewport & Statement Bolding Audit', file: 'tests/test_step152_arena_expanded_typography_and_statement_bolding.js' }
+  { name: 'Step 152: Arena Expanded Typography, Max-W-5xl Viewport & Statement Bolding Audit', file: 'tests/test_step152_arena_expanded_typography_and_statement_bolding.js' },
+  { name: 'Step 153: Arena Lobby Single-Screen Viewport Lock & Vertical Density', file: 'tests/test_step153_arena_lobby_single_screen_viewport_lock.js' }
 ];
 
 console.log('===============================================================');

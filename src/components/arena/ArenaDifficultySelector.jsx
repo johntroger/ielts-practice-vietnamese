@@ -45,21 +45,21 @@ export default function ArenaDifficultySelector({
   ];
 
   return (
-    <div className="w-full flex flex-col gap-3.5 select-none">
+    <div className="w-full flex flex-col gap-2 sm:gap-2.5 select-none">
       <div className="flex items-center justify-between">
         <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-amber-400" />
+          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span>{isEn ? 'Choose Difficulty Level' : 'Chọn Cấp Độ Thử Thách'}</span>
         </label>
         {currentTopic && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
-            <span>{currentTopic.icon}</span>
+          <div className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+            <span className="text-xs">{currentTopic.icon}</span>
             <span>{isEn ? currentTopic.nameEn : currentTopic.nameVi}</span>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {difficultyList.map(diff => {
           const isSelected = selectedDifficulty === diff.id;
           const Icon = diff.icon;
@@ -88,24 +88,24 @@ export default function ArenaDifficultySelector({
               key={diff.id}
               type="button"
               onClick={() => onSelectDifficulty?.(diff.id)}
-              className={`p-3 rounded-2xl border text-left flex flex-col justify-between transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] ${ringColor}`}
+              className={`p-2 sm:p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.99] ${ringColor}`}
             >
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activeBadge}`}>
+                <div className="flex items-center justify-between mb-1">
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  <span className={`text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded ${activeBadge}`}>
                     +{diff.baseXpPerQuestion} {isEn ? 'XP/item' : 'XP/câu'}
                   </span>
                 </div>
                 <div className="text-xs sm:text-sm font-black text-slate-100 leading-tight">
                   {isEn ? diff.nameEn : diff.name}
                 </div>
-                <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-2">
+                <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 line-clamp-1 sm:line-clamp-2 leading-tight">
                   {isEn ? diff.descEn : diff.descVi}
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
+              <div className="mt-1.5 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
                 <span className="text-slate-500 font-medium">{isEn ? 'Max Reward' : 'Tối Đa'}:</span>
                 <span className="font-mono font-bold text-amber-400">~{diff.maxSprintXp} XP</span>
               </div>

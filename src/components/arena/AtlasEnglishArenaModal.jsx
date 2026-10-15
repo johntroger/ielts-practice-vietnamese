@@ -313,26 +313,26 @@ export default function AtlasEnglishArenaModal({
         {sprint.phase === ARENA_SPRINT_PHASES.IDLE && (
           <div className="flex flex-col flex-1 h-full overflow-y-auto">
             {/* Top Navigation Bar */}
-            <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/30">
-                  <Swords className="w-5 h-5" />
+            <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 shrink-0">
+                  <Swords className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h1 className="text-base sm:text-lg font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
+                  <h1 className="text-sm sm:text-base font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-snug">
                     {t('arena.title')}
                   </h1>
-                  <p className="text-xs text-slate-400 hidden sm:block">
+                  <p className="text-[11px] text-slate-400 hidden sm:block leading-none">
                     {t('arena.subtitle')}
                   </p>
                 </div>
               </div>
 
               {/* Header Right Actions */}
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-2.5">
                 {streak > 0 && (
-                  <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl text-amber-400 text-xs font-bold">
-                    <Flame className="w-4 h-4 fill-amber-400" />
+                  <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-lg text-amber-400 text-xs font-bold">
+                    <Flame className="w-3.5 h-3.5 fill-amber-400" />
                     <span>{streak} {t('arena.daysStreak')}</span>
                   </div>
                 )}
@@ -341,7 +341,7 @@ export default function AtlasEnglishArenaModal({
                 <button
                   type="button"
                   onClick={handleShareArena}
-                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
                   title={isEn ? "Copy direct link to Atlas Arena (/atlas-arena)" : "Sao chép liên kết trực tiếp Đấu Trường (/atlas-arena)"}
                 >
                   {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-indigo-400" />}
@@ -353,55 +353,55 @@ export default function AtlasEnglishArenaModal({
                 <button
                   type="button"
                   onClick={toggleFullscreen}
-                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
+                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
                   title={isFullscreen ? t('arena.minimizeWindow') : t('arena.fullscreenWindow')}
                 >
-                  {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+                  {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
+                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
                   title={t('arena.exitArena')}
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </header>
 
             {/* Main Fullscreen Lobby Body */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-10 flex flex-col justify-center">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start">
                 {/* Left: Hero Banner & Rules */}
-                <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl">
-                  <div className="flex items-center gap-2 text-indigo-400 text-xs font-black uppercase tracking-wider">
-                    <Trophy className="w-4 h-4" />
+                <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl">
+                  <div className="flex items-center gap-1.5 text-indigo-400 text-xs font-black uppercase tracking-wider">
+                    <Trophy className="w-3.5 h-3.5" />
                     <span>{t('arena.rulesBadge')}</span>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-100 leading-tight">
+                  <h2 className="text-xl sm:text-2xl md:text-[26px] font-black text-slate-100 leading-snug tracking-tight">
                     {t('arena.heroTitle')}
                   </h2>
 
-                  <p className="text-sm text-slate-300/90 leading-relaxed font-sans">
+                  <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed font-sans line-clamp-2 md:line-clamp-none">
                     {t('arena.heroDescription')}
                   </p>
 
-                  <div className="grid grid-cols-3 gap-3 pt-1">
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
-                      <div className="text-base sm:text-lg font-black text-indigo-300">180s</div>
-                      <div className="text-[11px] text-slate-400 font-medium">{t('arena.durationLabel')}</div>
+                  <div className="grid grid-cols-3 gap-2 pt-0.5">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
+                      <div className="text-sm sm:text-base font-black text-indigo-300">180s</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">{t('arena.durationLabel')}</div>
                     </div>
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
-                      <div className="text-base sm:text-lg font-black text-emerald-300">{t('arena.shieldsUnit')}</div>
-                      <div className="text-[11px] text-slate-400 font-medium">{t('arena.shieldsLabel')}</div>
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
+                      <div className="text-sm sm:text-base font-black text-emerald-300">{t('arena.shieldsUnit')}</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">{t('arena.shieldsLabel')}</div>
                     </div>
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center">
-                      <div className="text-base sm:text-lg font-black text-amber-300">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-lg py-1.5 px-2 text-center shadow-xs">
+                      <div className="text-sm sm:text-base font-black text-amber-300">
                         ~{ARENA_DIFFICULTY_CONFIG[selectedDifficulty]?.maxSprintXp || 200} XP
                       </div>
-                      <div className="text-[11px] text-slate-400 font-medium">{t('arena.maxRewardLabel')}</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">{t('arena.maxRewardLabel')}</div>
                     </div>
                   </div>
 
@@ -412,7 +412,7 @@ export default function AtlasEnglishArenaModal({
                     currentTopic={currentTopic}
                   />
 
-                  <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="mt-1 sm:mt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                     <button
                       type="button"
                       onClick={() => {
@@ -420,9 +420,9 @@ export default function AtlasEnglishArenaModal({
                         setCurrentTopic(nextTopic);
                         sprint.startSprint(null, selectedDifficulty);
                       }}
-                      className="flex-1 flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-base py-4 px-8 rounded-2xl shadow-xl shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
+                      className="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.99]"
                     >
-                      <Play className="w-5 h-5 fill-white" />
+                      <Play className="w-4 h-4 fill-white" />
                       <span>{t('arena.startSprint')}</span>
                     </button>
 
@@ -435,10 +435,10 @@ export default function AtlasEnglishArenaModal({
                             sprint.startSprint(revengeQuestions, selectedDifficulty);
                           }
                         }}
-                        className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-base py-4 px-6 rounded-2xl shadow-xl shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.02] active:scale-[0.99]"
+                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-4 rounded-xl shadow-lg shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.99]"
                         title={t('arena.revengeSprintTitle')}
                       >
-                        <RotateCcw className="w-5 h-5" />
+                        <RotateCcw className="w-4 h-4" />
                         <span>{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
                       </button>
                     )}

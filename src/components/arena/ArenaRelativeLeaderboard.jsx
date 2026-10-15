@@ -33,29 +33,29 @@ export default function ArenaRelativeLeaderboard({
   const relThreshold = totalCount - Math.ceil(totalCount * 0.15);
 
   return (
-    <div className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col gap-3.5 shadow-2xl backdrop-blur-md">
+    <div className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col gap-2.5 shadow-2xl backdrop-blur-md">
       {/* Header: League Tier & Real Users Badge */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-800">
         <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
-            <h3 className="text-sm font-bold text-slate-100">
+          <div className="flex items-center gap-1.5">
+            <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <h3 className="text-xs sm:text-sm font-bold text-slate-100">
               {t('arena.leaderboardTitle')}
             </h3>
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
+          <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-emerald-400 font-medium">
             <UserCheck className="w-3 h-3 text-emerald-400" />
             <span>{t('arena.realLearnersOnly')}</span>
           </div>
         </div>
 
-        <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${tierColors}`}>
+        <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${tierColors}`}>
           {t(`arena.${leagueTier}`) || leagueTier}
         </span>
       </div>
 
       {/* Real Learners List */}
-      <div className="flex flex-col gap-2 max-h-[380px] md:max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+      <div className="flex flex-col gap-1.5 max-h-[240px] sm:max-h-[280px] md:max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
         {rivals.length === 0 ? (
           <div className="p-6 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
             <Sparkles className="w-6 h-6 text-indigo-400 animate-pulse" />
@@ -98,7 +98,7 @@ export default function ArenaRelativeLeaderboard({
               <div
                 key={rival.user_id || rival.display_name || index}
                 onClick={() => onSelectLearner?.(rival)}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs transition-all duration-200 cursor-pointer select-none group hover:scale-[1.01] active:scale-[0.99] ${rowStyle}`}
+                className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs transition-all duration-200 cursor-pointer select-none group hover:scale-[1.01] active:scale-[0.99] ${rowStyle}`}
                 title={t('arena.learnerTitle', { name: rival.display_name || t('arena.anonymousLearner') })}
               >
                 {/* Rank, Glowing Avatar & Level Info */}
@@ -196,7 +196,7 @@ export default function ArenaRelativeLeaderboard({
       </div>
 
       {/* Real Learners Interactive Footer */}
-      <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+      <div className="pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400">
         <span>{t('arena.clickToViewProfile')}</span>
         <span className="text-indigo-400 font-semibold">{t('arena.autoPromotionNotice')}</span>
       </div>
