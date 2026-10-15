@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Award, 
   CheckCircle, 
@@ -20,7 +20,9 @@ import {
   ArrowRight,
   ChevronRight,
   CheckCircle2,
-  BookOpen
+  BookOpen,
+  ChevronDown,
+  Plus
 } from 'lucide-react';
 import { openTheoryModalWithContext } from '../services/theoryContextService';
 import { useTranslation } from '../i18n';
@@ -71,6 +73,140 @@ export default function FeedbackModal({
   const [pedagogicalFocus, setPedagogicalFocus] = useState('all');
   // Band Stepping Rewrite Mode: '6.5' | '8.5'
   const [selectedRewriteBand, setSelectedRewriteBand] = useState('8.5');
+
+  // ----------------------------------------------------
+  // DYNAMIC TABS & DROPBOX PICKER ARCHITECTURE
+  // ----------------------------------------------------
+  const feedbackTabsCatalog = useMemo(() => [
+    {
+      id: 'criteria',
+      icon: Target,
+      label: t('feedback.tabs.criteria', null, '4 Tiêu Chí & Lộ Trình'),
+      labelEn: '4 Criteria & Roadmap',
+      labelVi: '4 Tiêu Chí & Lộ Trình',
+      activeTheme: 'border-red-600 text-red-700 bg-red-50/80 font-bold',
+      iconColor: 'text-red-600'
+    },
+    {
+      id: 'paragraphs',
+      icon: Layers,
+      label: t('feedback.tabs.paragraphs', null, 'Mổ Xẻ Từng Đoạn'),
+      labelEn: 'Paragraph Deep-Dive',
+      labelVi: 'Mổ Xẻ Từng Đoạn',
+      count: evaluation.paragraphAnalysis?.length,
+      badgeColor: 'bg-indigo-100 text-indigo-700',
+      activeTheme: 'border-indigo-600 text-indigo-700 bg-indigo-50/80 font-bold',
+      iconColor: 'text-indigo-600'
+    },
+    {
+      id: 'corrections',
+      icon: AlertCircle,
+      label: t('feedback.tabs.corrections', null, 'Soi Lỗi Từng Câu'),
+      labelEn: 'Sentence-by-Sentence Diagnostics',
+      labelVi: 'Soi Lỗi Từng Câu',
+      count: evaluation.corrections?.length,
+      badgeColor: 'bg-red-100 text-red-700',
+      activeTheme: 'border-red-600 text-red-700 bg-red-50/80 font-bold',
+      iconColor: 'text-red-600'
+    },
+    {
+      id: 'rewrite',
+      icon: Sparkles,
+      label: t('feedback.tabs.rewrites', null, 'Bản Nâng Cấp Band 8.5+'),
+      labelEn: 'Band 8.5+ Model Upgrade',
+      labelVi: 'Bản Nâng Cấp Band 8.5+',
+      activeTheme: 'border-amber-600 text-amber-700 bg-amber-50/80 font-bold',
+      iconColor: 'text-amber-500'
+    },
+    {
+      id: 'vocab',
+      icon: BookOpen,
+      label: t('feedback.tabs.vocab', null, 'Từ Vựng Vàng Trích Xuất'),
+      labelEn: 'Extracted Golden Lexicon',
+      labelVi: 'Từ Vựng Vàng Trích Xuất',
+      activeTheme: 'border-emerald-600 text-emerald-700 bg-emerald-50/80 font-bold',
+      iconColor: 'text-emerald-600'
+    }
+  ], [evaluation, t]);
+
+  const [openTabs, setOpenTabs] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_feedback_open_tabs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return ['criteria', 'paragraphs', 'corrections', 'rewrite', 'vocab'];
+  });
+
+  const [isTabDropdownOpen, setIsTabDropdownOpen] = useState(false);
+  const tabDropdownRef = React.useRef(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ielts_feedback_open_tabs', JSON.stringify(openTabs));
+    } catch (e) {}
+  }, [openTabs]);
+
+  // Click-outside listener
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tabDropdownRef.current && !tabDropdownRef.current.contains(event.target)) {
+        setIsTabDropdownOpen(false);
+      }
+    };
+    if (isTabDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isTabDropdownOpen]);
+
+  // Ensure activeTab is always in openTabs
+  useEffect(() => {
+    if (activeTab && !openTabs.includes(activeTab)) {
+      setOpenTabs(prev => [...prev, activeTab]);
+    }
+  }, [activeTab, openTabs]);
+
+  const handleSelectFromDropdown = (tabId) => {
+    if (!openTabs.includes(tabId)) {
+      setOpenTabs(prev => [...prev, tabId]);
+    }
+    setActiveTab(tabId);
+    setIsTabDropdownOpen(false);
+  };
+
+  const handleCloseTab = (tabIdToClose) => {
+    const nextList = openTabs.filter(id => id !== tabIdToClose);
+    setOpenTabs(nextList);
+
+    if (activeTab === tabIdToClose) {
+      if (nextList.length > 0) {
+        const closedIdx = openTabs.indexOf(tabIdToClose);
+        const nextActiveIdx = Math.max(0, closedIdx - 1);
+        setActiveTab(nextList[nextActiveIdx] || nextList[0]);
+      } else {
+        setIsTabDropdownOpen(true);
+      }
+    }
+  };
+
+  const handleOpenAllTabs = () => {
+    setOpenTabs(feedbackTabsCatalog.map(t => t.id));
+    setIsTabDropdownOpen(false);
+  };
+
+  const handleCloseOtherTabs = () => {
+    setOpenTabs([activeTab]);
+    setIsTabDropdownOpen(false);
+  };
+
+  const currentOpenTabs = openTabs.length > 0 ? openTabs : (activeTab ? [activeTab] : []);
 
   const filteredCorrections = useMemo(() => {
     const list = evaluation.corrections || [];
@@ -371,58 +507,182 @@ export default function FeedbackModal({
           </div>
         )}
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-4 pt-2 gap-2 overflow-x-auto text-xs font-semibold text-slate-600">
-          <button
-            onClick={() => setActiveTab('criteria')}
-            className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 ${
-              activeTab === 'criteria' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
-            }`}
-          >
-            {t('feedback.tabs.criteria', null, '4 Tiêu Chí & Lộ Trình')}
-          </button>
-          <button
-            onClick={() => setActiveTab('paragraphs')}
-            className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-              activeTab === 'paragraphs' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
-            }`}
-          >
-            <span>{t('feedback.tabs.paragraphs', null, 'Mổ Xẻ Từng Đoạn')}</span>
-            {evaluation.paragraphAnalysis && evaluation.paragraphAnalysis.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold">
-                {evaluation.paragraphAnalysis.length}
+        {/* Tab Navigation with Dropbox & Dynamic Closable Tabs */}
+        <div className="relative z-30 flex items-center justify-between border-b border-slate-200 bg-slate-50 px-2 sm:px-4 py-1.5 gap-2 text-xs font-semibold text-slate-600 shrink-0 overflow-visible">
+          {/* Left: Dropbox Picker Button & Floating Menu */}
+          <div ref={tabDropdownRef} className="relative shrink-0 z-40">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsTabDropdownOpen(prev => !prev);
+              }}
+              className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border transition-all cursor-pointer text-xs select-none shadow-xs ${
+                isTabDropdownOpen
+                  ? 'bg-red-600 text-white border-red-600 ring-2 ring-red-200'
+                  : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'
+              }`}
+              title={isEn ? "Open feedback sections dropbox" : "Bấm để chọn mục chấm điểm"}
+              aria-expanded={isTabDropdownOpen}
+            >
+              <Layers className={`w-3.5 h-3.5 ${isTabDropdownOpen ? 'text-white' : 'text-red-600'}`} />
+              <span className="font-bold">{isEn ? 'Feedback Sections' : 'Mục đánh giá'}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                isTabDropdownOpen ? 'bg-red-700 text-white' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {currentOpenTabs.length}/{feedbackTabsCatalog.length}
               </span>
+              <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isTabDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
+            </button>
+
+            {/* Dropbox Menu Floating Dropdown */}
+            {isTabDropdownOpen && (
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="absolute left-0 top-full mt-1.5 z-50 min-w-[280px] sm:min-w-[340px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150"
+              >
+                <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
+                  <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">
+                    <span>{isEn ? 'Evaluation Sections' : 'Các phần đánh giá'}</span>
+                  </span>
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenAllTabs();
+                      }}
+                      className="text-red-600 hover:text-red-800 hover:underline font-semibold cursor-pointer"
+                    >
+                      {isEn ? 'Open all' : 'Mở tất cả'}
+                    </button>
+                    {currentOpenTabs.length > 1 && (
+                      <>
+                        <span className="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCloseOtherTabs();
+                          }}
+                          className="text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
+                        >
+                          {isEn ? 'Only active' : 'Chỉ tab này'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="max-h-[300px] overflow-y-auto space-y-1 pr-0.5">
+                  {feedbackTabsCatalog.map(tab => {
+                    const isOpen = currentOpenTabs.includes(tab.id);
+                    const isActive = activeTab === tab.id;
+                    const IconComponent = tab.icon;
+
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectFromDropdown(tab.id);
+                        }}
+                        className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-colors text-left ${
+                          isActive
+                            ? 'bg-red-50/90 text-red-900 font-bold border border-red-200'
+                            : isOpen
+                              ? 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-transparent'
+                              : 'text-slate-600 hover:bg-slate-50 border border-transparent'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2 truncate pr-2">
+                          <IconComponent className={`w-3.5 h-3.5 shrink-0 ${tab.iconColor || 'text-slate-500'}`} />
+                          <span className="truncate">{tab.label}</span>
+                          {tab.count !== undefined && tab.count > 0 && (
+                            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${tab.badgeColor || 'bg-slate-100 text-slate-600'}`}>
+                              {tab.count}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-1 shrink-0">
+                          {isOpen ? (
+                            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                              isActive ? 'bg-red-600 text-white' : 'bg-slate-200 text-slate-700'
+                            }`}>
+                              <Check className="w-2.5 h-2.5 mr-0.5" />
+                              {isActive ? (isEn ? 'Active' : 'Đang xem') : (isEn ? 'Open' : 'Đã mở')}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 text-red-600 hover:bg-red-100">
+                              <Plus className="w-2.5 h-2.5 mr-0.5" />
+                              {isEn ? 'Add' : 'Mở tab'}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
-          </button>
-          <button
-            onClick={() => setActiveTab('corrections')}
-            className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 flex items-center space-x-1 ${
-              activeTab === 'corrections' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
-            }`}
-          >
-            <span>{t('feedback.tabs.corrections', null, 'Soi Lỗi Từng Câu')}</span>
-            {evaluation.corrections && evaluation.corrections.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-red-100 text-red-700 text-[10px]">
-                {evaluation.corrections.length}
-              </span>
+          </div>
+
+          {/* Center: Opened Dynamic Sub-tabs List */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x py-0.5 flex-1 min-w-0">
+            {currentOpenTabs.map((tabId) => {
+              const tabItem = feedbackTabsCatalog.find(t => t.id === tabId);
+              if (!tabItem) return null;
+              const isActive = activeTab === tabId;
+              const TabIcon = tabItem.icon;
+
+              return (
+                <div
+                  key={tabId}
+                  onClick={() => setActiveTab(tabId)}
+                  className={`group shrink-0 flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-xs cursor-pointer select-none transition-all ${
+                    isActive
+                      ? `${tabItem.activeTheme} border-current shadow-xs`
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
+                >
+                  <TabIcon className={`w-3.5 h-3.5 shrink-0 ${tabItem.iconColor || 'text-slate-500'}`} />
+                  <span className="truncate max-w-[130px] sm:max-w-none">
+                    {tabItem.label}
+                  </span>
+                  {tabItem.count !== undefined && tabItem.count > 0 && (
+                    <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${tabItem.badgeColor || 'bg-slate-100 text-slate-600'}`}>
+                      {tabItem.count}
+                    </span>
+                  )}
+                  {/* Close Tab 'x' Button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCloseTab(tabId);
+                    }}
+                    className="ml-0.5 p-0.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-slate-200/80 transition-colors cursor-pointer"
+                    title={isEn ? "Close tab" : "Tắt tab này"}
+                    aria-label={`Close ${tabItem.labelEn || tabId}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              );
+            })}
+
+            {currentOpenTabs.length === 0 && (
+              <button
+                type="button"
+                onClick={() => setIsTabDropdownOpen(true)}
+                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border border-dashed border-red-300 bg-red-50/60 text-red-700 hover:bg-red-100 text-xs font-medium cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{isEn ? '+ Open a section' : '+ Bấm để mở mục'}</span>
+              </button>
             )}
-          </button>
-          <button
-            onClick={() => setActiveTab('rewrite')}
-            className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 ${
-              activeTab === 'rewrite' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
-            }`}
-          >
-            {t('feedback.tabs.rewrites', null, 'Bản Nâng Cấp Band 8.5+')}
-          </button>
-          <button
-            onClick={() => setActiveTab('vocab')}
-            className={`pb-2.5 px-3 border-b-2 transition-all shrink-0 ${
-              activeTab === 'vocab' ? 'border-red-600 text-red-600' : 'border-transparent hover:text-slate-900'
-            }`}
-          >
-            {t('feedback.tabs.vocab', null, 'Từ Vựng Vàng Trích Xuất')}
-          </button>
+          </div>
         </div>
 
         {/* ZPD Pedagogical Adaptive Focus Bar */}

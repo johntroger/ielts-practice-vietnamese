@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Sparkles,
   X,
@@ -14,7 +14,11 @@ import {
   Lightbulb,
   Target,
   Zap,
-  BookMarked
+  BookMarked,
+  Layers,
+  ChevronDown,
+  Plus,
+  Check
 } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { safeSet } from '../utils/storageService';
@@ -33,6 +37,118 @@ export default function BeginnerGuideModal({
   const { isEn } = useTranslation();
   const [activeTab, setActiveTab] = useState('roadmap'); // 'roadmap' | 'jargon' | 'target'
   const [bandAppliedMsg, setBandAppliedMsg] = useState('');
+
+  // ----------------------------------------------------
+  // DYNAMIC TABS & DROPBOX PICKER ARCHITECTURE
+  // ----------------------------------------------------
+  const beginnerTabsCatalog = useMemo(() => [
+    {
+      id: 'roadmap',
+      icon: Compass,
+      label: isEn ? "4-Step Roadmap" : "1. Lộ Trình 4 Bước",
+      shortLabel: isEn ? "Roadmap" : "Lộ trình",
+      activeTheme: 'bg-white text-emerald-800 shadow-md font-bold',
+      iconColor: 'text-emerald-700'
+    },
+    {
+      id: 'jargon',
+      icon: HelpCircle,
+      label: isEn ? "IELTS Jargon Buster" : "2. Giải Thích Thuật Ngữ",
+      shortLabel: isEn ? "Jargon" : "Thuật ngữ",
+      activeTheme: 'bg-white text-emerald-800 shadow-md font-bold',
+      iconColor: 'text-teal-700'
+    },
+    {
+      id: 'target',
+      icon: Target,
+      label: isEn ? "Starter Target Band" : "3. Chọn Target Vừa Sức",
+      shortLabel: isEn ? "Target Band" : "Target Band",
+      activeTheme: 'bg-white text-emerald-800 shadow-md font-bold',
+      iconColor: 'text-amber-700'
+    }
+  ], [isEn]);
+
+  const [openTabs, setOpenTabs] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_beginner_open_tabs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return ['roadmap', 'jargon', 'target'];
+  });
+
+  const [isTabDropdownOpen, setIsTabDropdownOpen] = useState(false);
+  const tabDropdownRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ielts_beginner_open_tabs', JSON.stringify(openTabs));
+    } catch (e) {}
+  }, [openTabs]);
+
+  // Click-outside listener
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tabDropdownRef.current && !tabDropdownRef.current.contains(event.target)) {
+        setIsTabDropdownOpen(false);
+      }
+    };
+    if (isTabDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isTabDropdownOpen]);
+
+  // Ensure activeTab is always in openTabs
+  useEffect(() => {
+    if (activeTab && !openTabs.includes(activeTab)) {
+      setOpenTabs(prev => [...prev, activeTab]);
+    }
+  }, [activeTab, openTabs]);
+
+  const handleSelectFromDropdown = (tabId) => {
+    if (!openTabs.includes(tabId)) {
+      setOpenTabs(prev => [...prev, tabId]);
+    }
+    setActiveTab(tabId);
+    setIsTabDropdownOpen(false);
+  };
+
+  const handleCloseTab = (tabId) => {
+    const nextList = openTabs.filter(id => id !== tabId);
+    setOpenTabs(nextList);
+    if (activeTab === tabId) {
+      if (nextList.length > 0) {
+        const closedIdx = openTabs.indexOf(tabId);
+        const nextActiveIdx = Math.min(closedIdx, nextList.length - 1);
+        setActiveTab(nextList[nextActiveIdx] || nextList[0]);
+      } else {
+        const remaining = beginnerTabsCatalog.find(t => t.id !== tabId);
+        if (remaining) {
+          setActiveTab(remaining.id);
+          setOpenTabs([remaining.id]);
+        }
+      }
+    }
+  };
+
+  const handleOpenAllTabs = () => {
+    setOpenTabs(beginnerTabsCatalog.map(t => t.id));
+    setIsTabDropdownOpen(false);
+  };
+
+  const handleCloseOtherTabs = () => {
+    setOpenTabs([activeTab]);
+    setIsTabDropdownOpen(false);
+  };
+
+  const currentOpenTabs = openTabs.length > 0 ? openTabs : ['roadmap'];
 
   const handleSetStarterBand = (newBand) => {
     onApplyTargetBand?.(newBand);
@@ -73,38 +189,172 @@ export default function BeginnerGuideModal({
               : "Bạn không cần viết ngay một bài luận 250 từ! Hãy làm quen với các bài tập ngắn 90 giây để tích lũy phản xạ và từ vựng tự nhiên nhất."}
           </p>
 
-          {/* Navigation Tabs */}
-          <div className="flex items-center space-x-1 sm:space-x-2 mt-4 pt-3 border-t border-white/20 overflow-x-auto no-scrollbar">
-            <button
-              onClick={() => setActiveTab('roadmap')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'roadmap'
-                  ? 'bg-white text-emerald-800 shadow-md'
-                  : 'text-white/80 hover:bg-white/10'
-              }`}
-            >
-              {isEn ? "4-Step Roadmap" : "1. Lộ Trình 4 Bước"}
-            </button>
-            <button
-              onClick={() => setActiveTab('jargon')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'jargon'
-                  ? 'bg-white text-emerald-800 shadow-md'
-                  : 'text-white/80 hover:bg-white/10'
-              }`}
-            >
-              {isEn ? "IELTS Jargon Buster" : "2. Giải Thích Thuật Ngữ"}
-            </button>
-            <button
-              onClick={() => setActiveTab('target')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                activeTab === 'target'
-                  ? 'bg-white text-emerald-800 shadow-md'
-                  : 'text-white/80 hover:bg-white/10'
-              }`}
-            >
-              {isEn ? "Starter Target Band" : "3. Chọn Target Vừa Sức"}
-            </button>
+          {/* Navigation Tabs with Dropbox */}
+          <div className="flex items-center gap-2 mt-4 pt-3 border-t border-white/20 relative z-30 overflow-visible">
+            {/* Left: Dropbox Category Selector */}
+            <div className="relative shrink-0" ref={tabDropdownRef}>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsTabDropdownOpen(prev => !prev);
+                }}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                  isTabDropdownOpen 
+                    ? 'bg-white text-emerald-800 border-white shadow-md' 
+                    : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
+                }`}
+                title={isEn ? "Open topics dropbox" : "Bấm để chọn chuyên mục"}
+                aria-expanded={isTabDropdownOpen}
+              >
+                <Layers className={`w-3.5 h-3.5 ${isTabDropdownOpen ? 'text-emerald-700' : 'text-emerald-200'}`} />
+                <span className="font-bold">{isEn ? 'Topics' : 'Chuyên mục'}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  isTabDropdownOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-black/20 text-white'
+                }`}>
+                  {currentOpenTabs.length}/{beginnerTabsCatalog.length}
+                </span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isTabDropdownOpen ? 'rotate-180 text-white' : 'text-emerald-200'}`} />
+              </button>
+
+              {/* Dropbox Menu Floating Dropdown */}
+              {isTabDropdownOpen && (
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute left-0 top-full mt-1.5 z-50 min-w-[240px] sm:min-w-[260px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150 text-slate-800"
+                >
+                  <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
+                    <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">
+                      <span>{isEn ? 'Beginner Modules' : 'Chuyên mục khởi động'}</span>
+                    </span>
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenAllTabs();
+                        }}
+                        className="text-emerald-600 hover:text-emerald-800 hover:underline font-semibold cursor-pointer"
+                      >
+                        {isEn ? 'Open all' : 'Mở tất cả'}
+                      </button>
+                      {currentOpenTabs.length > 1 && (
+                        <>
+                          <span className="text-slate-300">|</span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCloseOtherTabs();
+                            }}
+                            className="text-slate-500 hover:text-rose-600 hover:underline cursor-pointer"
+                          >
+                            {isEn ? 'Only active' : 'Chỉ tab này'}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="max-h-[300px] overflow-y-auto space-y-1 pr-0.5">
+                    {beginnerTabsCatalog.map(tab => {
+                      const isOpen = currentOpenTabs.includes(tab.id);
+                      const isActive = activeTab === tab.id;
+                      const IconComponent = tab.icon;
+
+                      return (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectFromDropdown(tab.id);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-colors text-left ${
+                            isActive
+                              ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200'
+                              : isOpen
+                                ? 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-transparent'
+                                : 'text-slate-600 hover:bg-slate-50 border border-transparent'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2 truncate pr-2">
+                            <IconComponent className={`w-3.5 h-3.5 shrink-0 ${tab.iconColor || 'text-slate-500'}`} />
+                            <span className="truncate">{tab.shortLabel}</span>
+                          </div>
+                          <div className="flex items-center space-x-1 shrink-0">
+                            {isOpen ? (
+                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                                isActive ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                              }`}>
+                                <Check className="w-2.5 h-2.5 mr-0.5" />
+                                {isActive ? (isEn ? 'Active' : 'Đang xem') : (isEn ? 'Open' : 'Đã mở')}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-600 hover:bg-emerald-100">
+                                <Plus className="w-2.5 h-2.5 mr-0.5" />
+                                {isEn ? 'Add' : 'Mở tab'}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right: Dynamic Opened Tabs List */}
+            <div className="flex items-center space-x-1 sm:space-x-2 overflow-x-auto no-scrollbar touch-pan-x flex-1 min-w-0 py-0.5">
+              {beginnerTabsCatalog
+                .filter(tab => currentOpenTabs.includes(tab.id))
+                .map(tab => {
+                  const isActive = activeTab === tab.id;
+                  const IconComponent = tab.icon;
+
+                  return (
+                    <div
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`group flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer border select-none ${
+                        isActive
+                          ? `${tab.activeTheme} border-white shadow-md`
+                          : 'text-white/80 hover:bg-white/10 hover:text-white border-transparent'
+                      }`}
+                    >
+                      <IconComponent className="w-3.5 h-3.5 shrink-0" />
+                      <span className="whitespace-nowrap">{tab.label}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCloseTab(tab.id);
+                        }}
+                        title={isEn ? `Close ${tab.shortLabel} tab` : `Tắt tab ${tab.shortLabel}`}
+                        className={`p-0.5 rounded-full transition-colors cursor-pointer ml-0.5 ${
+                          isActive
+                            ? 'hover:bg-emerald-200 text-emerald-800'
+                            : 'hover:bg-white/20 text-white/70 hover:text-white'
+                        }`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+
+              {currentOpenTabs.length === 0 && (
+                <button
+                  type="button"
+                  onClick={() => setIsTabDropdownOpen(true)}
+                  className="text-xs text-white/90 hover:text-white underline font-medium py-1 px-2 cursor-pointer flex items-center space-x-1 bg-white/10 rounded-lg border border-dashed border-white/30"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>{isEn ? '+ Click to open topic tab' : '+ Bấm để mở tab chuyên mục'}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
