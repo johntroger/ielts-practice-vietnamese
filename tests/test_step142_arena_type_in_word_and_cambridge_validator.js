@@ -181,10 +181,11 @@ it('9. checkAnswerAction validates text_input using Cambridge validator and gene
   assert.ok(correctResult.validationResult);
   assert.strictEqual(correctResult.validationResult.isCorrect, true);
 
-  // Incorrect answer
+  // Incorrect answer (penalized path when grace exhausted)
   const wrongState = {
     ...activeState,
-    userInputText: 'millenium'
+    userInputText: 'millenium',
+    hasUsedNearMiss: true
   };
   const wrongResult = checkAnswerAction(wrongState);
   assert.strictEqual(wrongResult.isCorrect, false);

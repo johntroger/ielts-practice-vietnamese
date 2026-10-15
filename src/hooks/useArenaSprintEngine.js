@@ -32,7 +32,8 @@ import {
 } from '../services/gamification/arenaMasteryService.js';
 import { 
   isAnswerAcceptable, 
-  generateVisualDiff 
+  generateVisualDiff,
+  isNearMissAnswer 
 } from '../services/gamification/cambridgeAnswerValidator.js';
 
 export const ARENA_SPRINT_PHASES = {
@@ -55,6 +56,8 @@ export const INITIAL_SPRINT_STATE = {
   isAnswerChecked: false,
   isCorrect: null,
   isSkipped: false,
+  nearMissState: null,
+  hasUsedNearMiss: false,
   score: 0,
   combo: 0,
   maxCombo: 0,
@@ -132,6 +135,23 @@ export function checkAnswerAction(state) {
       userInput: state.userInputText,
       diff: generateVisualDiff(state.userInputText, currentQ.correctAnswer)
     };
+
+    // Phase 2: Near-Miss Grace Window (Levenshtein distance === 1)
+    if (!isCorrect && !state.hasUsedNearMiss) {
+      const nearMissCheck = isNearMissAnswer(state.userInputText, acceptable);
+      if (nearMissCheck.isNearMiss) {
+        return {
+          ...state,
+          hasUsedNearMiss: true,
+          nearMissState: {
+            isNearMiss: true,
+            minDistance: 1,
+            closestTarget: nearMissCheck.closestTarget,
+            diff: generateVisualDiff(state.userInputText, nearMissCheck.closestTarget)
+          }
+        };
+      }
+    }
   } else {
     isCorrect = state.selectedOption === currentQ.correctIndex;
   }
@@ -187,6 +207,7 @@ export function checkAnswerAction(state) {
     isAnswerChecked: true,
     isCorrect,
     validationResult,
+    nearMissState: null,
     score: nextScore,
     combo: nextCombo,
     maxCombo: nextMaxCombo,
@@ -233,6 +254,8 @@ export function skipQuestionAction(state) {
     isAnswerChecked: true,
     isCorrect: false,
     isSkipped: true,
+    nearMissState: null,
+    hasUsedNearMiss: false,
     combo: 0,
     shieldState: updatedShields,
     validationResult: {
@@ -259,7 +282,9 @@ export function nextQuestionAction(state) {
       validationResult: null,
       isAnswerChecked: false,
       isCorrect: null,
-      isSkipped: false
+      isSkipped: false,
+      nearMissState: null,
+      hasUsedNearMiss: false
     };
   }
 
@@ -286,7 +311,9 @@ export function retrySprintAction(state) {
     validationResult: null,
     isAnswerChecked: false,
     isCorrect: null,
-    isSkipped: false
+    isSkipped: false,
+    nearMissState: null,
+    hasUsedNearMiss: false
   };
 }
 

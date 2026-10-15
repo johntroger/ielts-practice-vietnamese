@@ -25,6 +25,8 @@ export default function ArenaTextInputCard({
   onSkip,
   isAnswerChecked = false,
   isCorrect = null,
+  isSkipped = false,
+  nearMissState = null,
   validationResult = null,
   correctAnswer = '',
   acceptableAnswers = []
@@ -44,6 +46,14 @@ export default function ArenaTextInputCard({
       inputRef.current.focus();
     }
   }, [isAnswerChecked]);
+
+  // Re-focus and select input when Near-Miss grace window triggers
+  useEffect(() => {
+    if (nearMissState?.isNearMiss && !isAnswerChecked && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [nearMissState, isAnswerChecked]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -75,6 +85,21 @@ export default function ArenaTextInputCard({
         </div>
       )}
 
+      {/* Phase 2: Near-Miss Grace Warning Banner */}
+      {nearMissState?.isNearMiss && !isAnswerChecked && (
+        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-950/70 border border-amber-500/70 text-amber-200 text-xs font-semibold animate-pulse shadow-lg shadow-amber-950/40">
+          <span className="text-base shrink-0">⚡</span>
+          <div className="flex flex-col gap-0.5">
+            <span className="font-bold text-amber-300">
+              {isEn ? "Almost there! You're only 1 letter away from the correct spelling." : "Suýt đúng rồi! Bạn chỉ lệch đúng 1 chữ cái."}
+            </span>
+            <span className="text-amber-400/90 font-normal text-[11px]">
+              {isEn ? "Quickly fix your spelling and press Enter to save your combo!" : "Hãy nhanh tay sửa lại rồi nhấn Enter để bảo toàn combo và khiên!"}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Input container */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -99,7 +124,9 @@ export default function ArenaTextInputCard({
               ? isCorrect
                 ? 'bg-emerald-950/40 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30'
                 : 'bg-rose-950/40 border-rose-500 text-rose-200 ring-2 ring-rose-500/30'
-              : 'bg-slate-900/90 border-slate-700/80 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 hover:border-slate-600'
+              : nearMissState?.isNearMiss
+                ? 'bg-amber-950/30 border-amber-500 text-amber-100 ring-2 ring-amber-500/40 focus:border-amber-400'
+                : 'bg-slate-900/90 border-slate-700/80 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 hover:border-slate-600'
           }`}
         />
 

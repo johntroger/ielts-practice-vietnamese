@@ -20,7 +20,7 @@ import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
 import PublicLearnerProfileModal from './PublicLearnerProfileModal.jsx';
 import LevelUpCelebrationModal from './LevelUpCelebrationModal.jsx';
 import ArenaDifficultySelector from './ArenaDifficultySelector.jsx';
-import { isAnswerAcceptable } from '../../services/gamification/cambridgeAnswerValidator.js';
+import { isAnswerAcceptable, isNearMissAnswer } from '../../services/gamification/cambridgeAnswerValidator.js';
 import { 
   ARENA_STORAGE_KEYS, 
   ARENA_DIFFICULTY_LEVELS, 
@@ -233,7 +233,16 @@ export default function AtlasEnglishArenaModal({
           strictSpelling: curQ.strictSpelling ?? true,
           ignoreAccents: true
         });
-        playSfx(isCorrect ? 'correct' : 'wrong');
+        if (isCorrect) {
+          playSfx('correct');
+        } else {
+          const nearMissCheck = isNearMissAnswer(sprint.userInputText, acceptable);
+          if (nearMissCheck.isNearMiss && !sprint.hasUsedNearMiss) {
+            playSfx('click');
+          } else {
+            playSfx('wrong');
+          }
+        }
         sprint.checkAnswer();
       } else if (sprint.selectedOption !== null) {
         const isCorrect = curQ && sprint.selectedOption === curQ.correctIndex;
@@ -479,6 +488,7 @@ export default function AtlasEnglishArenaModal({
                     isAnswerChecked={sprint.isAnswerChecked}
                     isCorrect={sprint.isCorrect}
                     isSkipped={sprint.isSkipped}
+                    nearMissState={sprint.nearMissState}
                     onSelectOption={sprint.selectOption}
                     onCheckAnswer={handleCheckAnswer}
                     onSubmitAnswer={handleCheckAnswer}

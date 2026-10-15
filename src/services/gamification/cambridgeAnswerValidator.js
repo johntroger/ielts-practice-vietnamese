@@ -161,6 +161,118 @@ export function normalizeCambridgeString(str = '') {
 }
 
 /**
+ * Automatically cleans unintentional Telex / VNI Vietnamese IME artifacts
+ * commonly introduced when Vietnamese learners type English words with Unikey enabled.
+ * 
+ * Examples:
+ * - "ưednesday" -> "wednesday" (initial 'w' turned to 'ư' by Telex)
+ * - "ađress" -> "address" ('đ' from double 'd')
+ * - "cômmittêe" -> "committee" (vowels with circumflex from double 'o', 'e')
+ * - "bâzaar" -> "bazaar" ('â' from double 'a')
+ * 
+ * @param {string} str
+ * @param {boolean} [preferDoubleD=false]
+ * @returns {string}
+ */
+export function cleanVietnameseImeArtifacts(str = '', preferDoubleD = false) {
+  if (typeof str !== 'string') return '';
+  let cleaned = str
+    .replace(/\b[ưƯ]/g, 'w')
+    .replace(/^[ưƯ]/g, 'w');
+
+  if (preferDoubleD) {
+    cleaned = cleaned.replace(/[đĐ]/g, 'dd');
+  } else {
+    cleaned = cleaned.replace(/[đĐ]/g, 'd');
+  }
+
+  cleaned = cleaned.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  cleaned = cleaned
+    .replace(/[ưƯ]/g, 'u')
+    .replace(/[ơƠ]/g, 'o')
+    .replace(/[đĐ]/g, 'd');
+
+  return cleaned;
+}
+
+/**
+ * Calculates standard Levenshtein edit distance between two strings.
+ * 
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
+export function calculateLevenshteinDistance(a = '', b = '') {
+  const s1 = normalizeCambridgeString(a);
+  const s2 = normalizeCambridgeString(b);
+  if (s1 === s2) return 0;
+  if (!s1.length) return s2.length;
+  if (!s2.length) return s1.length;
+
+  const dp = Array(s2.length + 1).fill(null).map((_, i) => i);
+
+  for (let i = 1; i <= s1.length; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= s2.length; j++) {
+      const temp = dp[j];
+      if (s1[i - 1] === s2[j - 1]) {
+        dp[j] = prev;
+      } else {
+        dp[j] = 1 + Math.min(prev, dp[j], dp[j - 1]);
+      }
+      prev = temp;
+    }
+  }
+
+  return dp[s2.length];
+}
+
+/**
+ * Evaluates whether a user's typed answer is a "Near-Miss" (distance === 1).
+ * 
+ * @param {string} rawInput
+ * @param {string|string[]} targetAnswers
+ * @returns {{ isNearMiss: boolean, minDistance: number, closestTarget: string }}
+ */
+export function isNearMissAnswer(rawInput = '', targetAnswers = []) {
+  const cleanedInput = normalizeCambridgeString(rawInput);
+  if (!cleanedInput) return { isNearMiss: false, minDistance: Infinity, closestTarget: '' };
+
+  const targets = Array.isArray(targetAnswers) 
+    ? targetAnswers.map(normalizeCambridgeString).filter(Boolean)
+    : [normalizeCambridgeString(targetAnswers)].filter(Boolean);
+
+  if (targets.length === 0) return { isNearMiss: false, minDistance: Infinity, closestTarget: '' };
+
+  const candidateInputs = [
+    cleanedInput,
+    normalizeCambridgeString(cleanVietnameseImeArtifacts(rawInput, false)),
+    normalizeCambridgeString(cleanVietnameseImeArtifacts(rawInput, true))
+  ].filter(Boolean);
+
+  let minDistance = Infinity;
+  let closestTarget = targets[0];
+
+  for (const input of candidateInputs) {
+    for (const target of targets) {
+      const dist = calculateLevenshteinDistance(input, target);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestTarget = target;
+      }
+    }
+  }
+
+  return {
+    isNearMiss: minDistance === 1,
+    minDistance,
+    closestTarget
+  };
+}
+
+/**
  * Evaluates whether a user's typed answer is acceptable against the target answer(s).
  * 
  * @param {string} rawInput - Text typed by the learner
@@ -181,9 +293,18 @@ export function isAnswerAcceptable(rawInput = '', targetAnswers = [], options = 
 
   if (targets.length === 0) return false;
 
-  // 1. Direct Normalized Match
-  if (targets.includes(cleanedInput)) {
-    return true;
+  // Candidate inputs: raw normalized, plus IME cleaned variants
+  const candidateInputs = [cleanedInput];
+  const imeCleaned1 = normalizeCambridgeString(cleanVietnameseImeArtifacts(rawInput, false));
+  const imeCleaned2 = normalizeCambridgeString(cleanVietnameseImeArtifacts(rawInput, true));
+  if (imeCleaned1 && !candidateInputs.includes(imeCleaned1)) candidateInputs.push(imeCleaned1);
+  if (imeCleaned2 && !candidateInputs.includes(imeCleaned2)) candidateInputs.push(imeCleaned2);
+
+  // 1. Direct Normalized Match across any candidate input
+  for (const input of candidateInputs) {
+    if (targets.includes(input)) {
+      return true;
+    }
   }
 
   // If this is a strict spelling question, no loose synonym or substitution is allowed
@@ -192,47 +313,51 @@ export function isAnswerAcceptable(rawInput = '', targetAnswers = [], options = 
   }
 
   // 2. Cambridge UK vs US spelling check
-  for (const target of targets) {
-    if (UK_US_EQUIVALENTS[cleanedInput] === target || UK_US_EQUIVALENTS[target] === cleanedInput) {
-      return true;
-    }
-    // Multi-word UK/US check (e.g. "sports centre" vs "sports center")
-    const inputWords = cleanedInput.split(' ');
-    const targetWords = target.split(' ');
-    if (inputWords.length === targetWords.length) {
-      const allWordsMatch = inputWords.every((word, idx) => {
-        const tWord = targetWords[idx];
-        return word === tWord || UK_US_EQUIVALENTS[word] === tWord || UK_US_EQUIVALENTS[tWord] === word;
-      });
-      if (allWordsMatch) return true;
+  for (const input of candidateInputs) {
+    for (const target of targets) {
+      if (UK_US_EQUIVALENTS[input] === target || UK_US_EQUIVALENTS[target] === input) {
+        return true;
+      }
+      // Multi-word UK/US check (e.g. "sports centre" vs "sports center")
+      const inputWords = input.split(' ');
+      const targetWords = target.split(' ');
+      if (inputWords.length === targetWords.length) {
+        const allWordsMatch = inputWords.every((word, idx) => {
+          const tWord = targetWords[idx];
+          return word === tWord || UK_US_EQUIVALENTS[word] === tWord || UK_US_EQUIVALENTS[tWord] === word;
+        });
+        if (allWordsMatch) return true;
+      }
     }
   }
 
   // 3. Cambridge Number & Word parity check
-  for (const target of targets) {
-    // Check if target is a number and input is the word (or vice versa)
-    if (NUMBER_WORDS_MAP[target]?.includes(cleanedInput)) return true;
-    if (NUMBER_WORDS_MAP[cleanedInput]?.includes(target)) return true;
+  for (const input of candidateInputs) {
+    for (const target of targets) {
+      // Check if target is a number and input is the word (or vice versa)
+      if (NUMBER_WORDS_MAP[target]?.includes(input)) return true;
+      if (NUMBER_WORDS_MAP[input]?.includes(target)) return true;
 
-    const parsedInput = parseNumberWords(cleanedInput);
-    if (parsedInput && parsedInput === target) return true;
-    const parsedTarget = parseNumberWords(target);
-    if (parsedTarget && parsedTarget === cleanedInput) return true;
-    if (convertNumberToWords(cleanedInput) === target) return true;
-    if (convertNumberToWords(target) === cleanedInput) return true;
+      const parsedInput = parseNumberWords(input);
+      if (parsedInput && parsedInput === target) return true;
+      const parsedTarget = parseNumberWords(target);
+      if (parsedTarget && parsedTarget === input) return true;
+      if (convertNumberToWords(input) === target) return true;
+      if (convertNumberToWords(target) === input) return true;
 
-    // Currency check (e.g. "£25" vs "25" vs "25 pounds")
-    const strippedInput = cleanedInput.replace(/^[£$€¥]/, '').replace(/\s*(pounds|dollars|euros|cents|pence)$/, '').trim();
-    const strippedTarget = target.replace(/^[£$€¥]/, '').replace(/\s*(pounds|dollars|euros|cents|pence)$/, '').trim();
-    if (strippedInput && strippedInput === strippedTarget) {
-      return true;
-    }
+      // Currency check (e.g. "£25" vs "25" vs "25 pounds")
+      const strippedInput = input.replace(/^[£$€¥]/, '').replace(/\s*(pounds|dollars|euros|cents|pence)$/, '').trim();
+      const strippedTarget = target.replace(/^[£$€¥]/, '').replace(/\s*(pounds|dollars|euros|cents|pence)$/, '').trim();
+      if (strippedInput && strippedInput === strippedTarget) {
+        return true;
+      }
 
-    // Time check (e.g. "8.45" vs "8:45" vs "8:45 am")
-    const timeInput = cleanedInput.replace('.', ':').replace(/\s*am|\s*pm/, '').trim();
-    const timeTarget = target.replace('.', ':').replace(/\s*am|\s*pm/, '').trim();
-    if (timeInput && timeInput === timeTarget) {
-      return true;
+      // Time check (e.g. "8.45" vs "8:45" vs "8:45 am")
+      const timeInput = input.replace('.', ':').replace(/\s*am|\s*pm/, '').trim();
+      const timeTarget = target.replace('.', ':').replace(/\s*am|\s*pm/, '').trim();
+      if (timeInput && timeInput === timeTarget) {
+        return true;
+      }
     }
   }
 

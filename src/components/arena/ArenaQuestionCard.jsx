@@ -28,6 +28,7 @@ export default function ArenaQuestionCard({
   isAnswerChecked = false,
   isCorrect = null,
   isSkipped = false,
+  nearMissState = null,
   onSelectOption,
   onCheckAnswer,
   onSubmitAnswer,
@@ -171,6 +172,7 @@ export default function ArenaQuestionCard({
           isAnswerChecked={isAnswerChecked}
           isCorrect={isCorrect}
           isSkipped={isSkipped}
+          nearMissState={nearMissState}
           validationResult={validationResult}
           onCheckAnswer={handleCheck}
           onSkip={onSkipQuestion || onSkip}
