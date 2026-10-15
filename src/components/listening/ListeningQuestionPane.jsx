@@ -286,7 +286,7 @@ export default function ListeningQuestionPane({
   return (
     <div
       onMouseUp={handleMouseUp}
-      className={`relative ${hidePartHeader ? 'w-full max-w-5xl mx-auto px-3 sm:px-6 py-4 pb-28' : 'max-w-4xl mx-auto px-3 sm:px-6 py-4 pb-28'} transition-colors ${
+      className={`relative ${hidePartHeader ? 'w-full max-w-5xl mx-auto px-3 sm:px-6 py-4 pb-16' : 'max-w-4xl mx-auto px-3 sm:px-6 py-4 pb-16'} transition-colors ${
         contrastTheme === 'dark' ? 'text-slate-100' : 'text-slate-900'
       }`}
     >

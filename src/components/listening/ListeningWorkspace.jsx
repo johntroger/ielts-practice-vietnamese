@@ -1737,7 +1737,11 @@ export default function ListeningWorkspace({
           totalQuestions={currentTest.totalQuestions || 40}
           activePart={activePart}
           availableParts={currentTest.parts?.map(p => p.partNumber) || [1]}
-          onSelectPart={setActivePart}
+          onSelectPart={(pNum) => {
+            handleSelectPart(pNum);
+            const startQ = (pNum - 1) * 10 + 1;
+            exam.setActiveQuestionOrder(startQ);
+          }}
           activeQuestionOrder={exam.activeQuestionOrder}
           onSelectQuestion={(order) => {
             exam.setActiveQuestionOrder(order);
