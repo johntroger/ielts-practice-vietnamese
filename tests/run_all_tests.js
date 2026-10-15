@@ -155,7 +155,8 @@ const testSuites = [
   { name: 'Step 146: Double-Click Answer Deselection in Reading and Listening', file: 'tests/test_step146_double_click_deselect.js' },
   { name: 'Step 147: TRF Modal & Hooks Order Invariant Verification (React Error #310 Fix)', file: 'tests/test_step147_trf_modal_hook_order.js' },
   { name: 'Step 148: Unikey IME Filter & Near-Miss Grace Window', file: 'tests/test_step148_arena_unikey_and_near_miss_grace.js' },
-  { name: 'Step 149: Mobile Ergonomics & Lexical Typing Analytics', file: 'tests/test_step149_arena_mobile_ergonomics_and_spelling_analytics.js' }
+  { name: 'Step 149: Mobile Ergonomics & Lexical Typing Analytics', file: 'tests/test_step149_arena_mobile_ergonomics_and_spelling_analytics.js' },
+  { name: 'Step 150: Listening Workspace Tools Portal & Overflow Clipping Audit', file: 'tests/test_step150_listening_tools_portal.js' }
 ];
 
 console.log('===============================================================');
