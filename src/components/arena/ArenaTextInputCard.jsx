@@ -4,14 +4,15 @@
  * Interactive Type-In-The-Word Component for Atlas English Arena.
  * Features:
  * - Anti-Autocorrect & Anti-Cheating guards (spellcheck=false, autocomplete=off, autocorrect=off)
- * - Auto-focus on question load
+ * - Auto-focus on question load with mobile viewport auto-scroll pinning
  * - 2-Step Enter Flow (Type -> Enter to Check -> Enter to Advance)
+ * - Mobile ergonomics bar: instant Submit, Clear, and Skip thumb buttons
+ * - Mobile keyboard hardening: enterKeyHint="go", inputMode="text", data-lpignore="true"
  * - In-situ Character Diff Viewer for visual error correction
- * - Responsive mobile keyboard accommodation
  */
 
 import React, { useRef, useEffect } from 'react';
-import { Keyboard, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
+import { Keyboard, CheckCircle2, XCircle, Sparkles, X, SkipForward, CornerDownLeft } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 
 export default function ArenaTextInputCard({
@@ -40,10 +41,17 @@ export default function ArenaTextInputCard({
   const activeTarget = question?.correctAnswer || correctAnswer;
   const activeAcceptable = question?.acceptableAnswers || acceptableAnswers || [activeTarget];
 
-  // Auto-focus input on question mount or advance
+  const scrollToInput = () => {
+    if (inputRef.current) {
+      inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
+
+  // Auto-focus input on question mount or advance with viewport pinning
   useEffect(() => {
     if (!isAnswerChecked && inputRef.current) {
       inputRef.current.focus();
+      scrollToInput();
     }
   }, [isAnswerChecked]);
 
@@ -52,6 +60,7 @@ export default function ArenaTextInputCard({
     if (nearMissState?.isNearMiss && !isAnswerChecked && inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
+      scrollToInput();
     }
   }, [nearMissState, isAnswerChecked]);
 
@@ -64,6 +73,13 @@ export default function ArenaTextInputCard({
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onSkip?.();
+    }
+  };
+
+  const handleClear = () => {
+    activeChange?.('');
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
   };
 
@@ -113,6 +129,9 @@ export default function ArenaTextInputCard({
           disabled={isAnswerChecked}
           onChange={(e) => activeChange?.(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={scrollToInput}
+          enterKeyHint="go"
+          inputMode="text"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
@@ -130,7 +149,19 @@ export default function ArenaTextInputCard({
           }`}
         />
 
-        {/* Status Icon */}
+        {/* Clear Button (Active while typing) */}
+        {!isAnswerChecked && Boolean(activeValue) && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors cursor-pointer"
+            title={isEn ? 'Clear input' : 'Xóa nội dung'}
+          >
+            <X className="w-5 h-5 rounded-full bg-slate-800/80 p-0.5 hover:bg-slate-700" />
+          </button>
+        )}
+
+        {/* Status Icon (After checking) */}
         {isAnswerChecked && (
           <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
             {isCorrect ? (
@@ -141,6 +172,54 @@ export default function ArenaTextInputCard({
           </div>
         )}
       </div>
+
+      {/* Mobile Ergonomics Action Bar (Quick thumb buttons directly below input) */}
+      {!isAnswerChecked && (
+        <div className="flex items-center justify-between gap-2 pt-0.5">
+          <div className="flex items-center gap-2">
+            {onSkip && (
+              <button
+                type="button"
+                onClick={onSkip}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 transition-all cursor-pointer active:scale-95"
+                title={isEn ? 'Skip question (Esc)' : 'Bỏ qua câu này (Esc)'}
+              >
+                <SkipForward className="w-3.5 h-3.5" />
+                <span>{isEn ? 'Skip' : 'Bỏ qua'}</span>
+              </button>
+            )}
+            {Boolean(activeValue) && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 bg-slate-800/40 hover:bg-slate-800 border border-slate-800 transition-all cursor-pointer"
+              >
+                <span>{isEn ? 'Clear' : 'Xóa'}</span>
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={!activeValue?.trim()}
+              onClick={() => {
+                if (activeValue.trim()) {
+                  activeSubmit?.();
+                }
+              }}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95 ${
+                activeValue?.trim()
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white shadow-indigo-950/50'
+                  : 'bg-slate-800/60 text-slate-500 border border-slate-800 cursor-not-allowed opacity-60'
+              }`}
+            >
+              <span>{isEn ? 'Submit' : 'Kiểm tra'}</span>
+              <CornerDownLeft className="w-3.5 h-3.5 opacity-80" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Visual Character Diff Display when incorrect */}
       {isAnswerChecked && !isCorrect && (

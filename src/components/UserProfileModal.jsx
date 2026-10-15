@@ -35,7 +35,8 @@ import {
   Volume2,
   GraduationCap,
   Zap,
-  Pill
+  Pill,
+  Keyboard
 } from 'lucide-react';
 import SpeakingResultModal from './speaking/SpeakingResultModal';
 import { INITIAL_READING_TESTS } from '../data/readingTasks';
@@ -52,6 +53,7 @@ import { getLocalizedVocabMeaning } from '../utils/vocabLocalization';
 import { calculateLevelProgress } from '../services/gamification/levelEngine';
 import { safeGet } from '../utils/storageService';
 import { DEFAULT_OWNER_PROFILE } from '../services/gamification/realLeaderboardService';
+import { getTypingStats, getTopSpellingDemons, getTypingBadges } from '../services/gamification/typingStatsService';
 
 export default function UserProfileModal({
   isOpen,
@@ -544,6 +546,18 @@ export default function UserProfileModal({
     };
   }, [user, isOwnerUser]);
 
+  const typingStats = useMemo(() => {
+    return getTypingStats();
+  }, [isOpen]);
+
+  const topSpellingDemons = useMemo(() => {
+    return getTopSpellingDemons(5);
+  }, [isOpen]);
+
+  const typingBadges = useMemo(() => {
+    return getTypingBadges(typingStats);
+  }, [typingStats]);
+
   // Nav Items Definitions (All 4 Skills)
   const navItems = [
     { id: 'overview', label: isEn ? 'Overview & Analytics' : 'Tổng Quan & Năng Lực', icon: LayoutDashboard, badge: overallProjectedBand > 0 ? `Overall ${overallProjectedBand}` : null },
@@ -984,6 +998,145 @@ export default function UserProfileModal({
                     <span>{isEn ? 'Open Prescription' : 'Mở Đơn Thuốc'}</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
+                </div>
+
+                {/* SPELLING & LEXICAL TYPING MASTERY (ARENA TYPE-IN & SPELLING DEMONS) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/70 to-slate-900 border border-indigo-800/50 shadow-md text-white space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        <Keyboard className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm sm:text-base font-bold text-white">
+                            {isEn ? 'Spelling & Lexical Typing Mastery' : 'Chính Tả & Luyện Gõ Arena'}
+                          </h4>
+                          <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 rounded-full">
+                            Active Recall
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 mt-0.5">
+                          {isEn 
+                            ? 'Cambridge exact spelling accuracy and near-miss grace rescues in the Arena'
+                            : 'Độ chuẩn xác chính tả chuẩn Cambridge và số lần cứu combo suýt đúng trong Arena'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4 Mini Metrics */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                    <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex flex-col gap-0.5">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        {isEn ? 'Words Typed' : 'Từ Đã Gõ'}
+                      </span>
+                      <span className="text-xl sm:text-2xl font-black text-indigo-300 font-mono">
+                        {typingStats.totalTyped}
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        {isEn ? `${typingStats.correctCount} correct` : `${typingStats.correctCount} đúng`}
+                      </span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex flex-col gap-0.5">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        {isEn ? 'Accuracy Rate' : 'Độ Chính Xác'}
+                      </span>
+                      <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
+                        {typingStats.accuracyRate}%
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        {isEn ? 'Cambridge standard' : 'Chuẩn Cambridge'}
+                      </span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex flex-col gap-0.5">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        {isEn ? 'Near-Miss Rescues' : 'Cứu Combo'}
+                      </span>
+                      <span className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
+                        {typingStats.nearMissRescued}
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        {isEn ? 'Grace window saved' : 'Ân hạn suýt đúng'}
+                      </span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex flex-col gap-0.5">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        {isEn ? 'Skipped Words' : 'Từ Bỏ Qua'}
+                      </span>
+                      <span className="text-xl sm:text-2xl font-black text-rose-400 font-mono">
+                        {typingStats.skippedCount}
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        {isEn ? 'Pass without input' : 'Bỏ qua khi thi'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Typing Mastery Badges */}
+                  <div className="pt-2 border-t border-slate-800/80">
+                    <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
+                      {isEn ? 'Lexical Badges & Achievements' : 'Huy Hiệu & Thành Tích Chính Tả'}
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {typingBadges.map((badge) => (
+                        <div
+                          key={badge.id}
+                          className={`p-2.5 rounded-xl border transition-all flex flex-col gap-1 ${
+                            badge.unlocked
+                              ? 'bg-indigo-950/40 border-indigo-500/50 text-indigo-100 shadow-sm'
+                              : 'bg-slate-950/30 border-slate-800/60 text-slate-500 opacity-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg">{badge.icon}</span>
+                            <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
+                              badge.unlocked ? 'bg-indigo-500/30 text-indigo-300' : 'bg-slate-800 text-slate-500'
+                            }`}>
+                              {badge.unlocked ? (isEn ? 'UNLOCKED' : 'ĐÃ ĐẠT') : (isEn ? 'LOCKED' : 'CHƯA MỞ')}
+                            </span>
+                          </div>
+                          <span className="text-xs font-bold truncate">
+                            {isEn ? badge.nameEn : badge.nameVi}
+                          </span>
+                          <span className="text-[10px] text-slate-400 line-clamp-1">
+                            {isEn ? badge.descEn : badge.descVi}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Top Spelling Demons List */}
+                  {topSpellingDemons.length > 0 && (
+                    <div className="pt-2 border-t border-slate-800/80">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
+                          <span>⚠️</span>
+                          <span>{isEn ? 'Top Spelling Traps Encountered' : 'Các Bẫy Chính Tả Dễ Sai Nhất'}</span>
+                        </span>
+                        <span className="text-[11px] text-slate-400">
+                          {isEn ? 'Practice these in Arena' : 'Cần rèn luyện thêm'}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {topSpellingDemons.map(({ word, count }) => (
+                          <div
+                            key={word}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-950/40 border border-rose-800/50 text-rose-200 text-xs font-mono"
+                          >
+                            <span className="font-bold">{word}</span>
+                            <span className="px-1.5 py-0.2 rounded-full bg-rose-900/80 text-[10px] text-rose-300 font-sans font-bold">
+                              {count}x {isEn ? 'slips' : 'lỗi'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* ONBOARDING QUICK-ACTION FRAME (KHI CHƯA CÓ BÀI LÀM) */}

@@ -35,6 +35,7 @@ import {
   generateVisualDiff,
   isNearMissAnswer 
 } from '../services/gamification/cambridgeAnswerValidator.js';
+import { recordTypingAttempt } from '../services/gamification/typingStatsService.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -178,6 +179,13 @@ export function checkAnswerAction(state) {
     if (nextCombo > nextMaxCombo) {
       nextMaxCombo = nextCombo;
     }
+    if (isTextInput) {
+      recordTypingAttempt({
+        word: currentQ.correctAnswer,
+        isCorrect: true,
+        wasNearMissRescued: Boolean(state.hasUsedNearMiss)
+      });
+    }
     // Check if this was the Boss question (last question in sprint)
     if (currentQ.isBossQuestion || state.currentIndex === state.questions.length - 1) {
       isBossCleared = true;
@@ -191,6 +199,12 @@ export function checkAnswerAction(state) {
     }
   } else {
     nextCombo = 0;
+    if (isTextInput) {
+      recordTypingAttempt({
+        word: currentQ.correctAnswer,
+        isCorrect: false
+      });
+    }
     // Record into Mistake Vault
     recordMistake(currentQ, isTextInput ? state.userInputText : state.selectedOption);
 
@@ -240,13 +254,21 @@ export function skipQuestionAction(state) {
   // Record into Mistake Vault as SKIPPED
   recordMistake(currentQ, 'SKIPPED');
 
+  const expectedAnswer = currentQ.correctAnswer || (currentQ.options && currentQ.options[currentQ.correctIndex]) || '';
+
+  if (currentQ.interactionType === 'text_input') {
+    recordTypingAttempt({
+      word: expectedAnswer,
+      isCorrect: false,
+      isSkipped: true
+    });
+  }
+
   const { state: updatedShields, isDefeated } = deductShield(state.shieldState, currentQ);
   let nextPhase = ARENA_SPRINT_PHASES.REVIEWING_ANSWER;
   if (isDefeated) {
     nextPhase = ARENA_SPRINT_PHASES.DEFEATED;
   }
-
-  const expectedAnswer = currentQ.correctAnswer || (currentQ.options && currentQ.options[currentQ.correctIndex]) || '';
 
   return {
     ...state,
