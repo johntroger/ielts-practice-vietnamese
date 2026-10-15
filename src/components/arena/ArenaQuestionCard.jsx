@@ -36,7 +36,7 @@ function renderPromptWithFormattedStatement(prompt) {
     tokens.push(
       <strong
         key={`statement-${count++}`}
-        className="font-black text-amber-200 bg-amber-950/70 border-2 border-amber-500/60 px-3 sm:px-4 py-0.5 sm:py-1 rounded-xl inline-block mx-1.5 shadow-md tracking-wide text-xl sm:text-2xl md:text-[27px]"
+        className="font-black text-amber-200 bg-amber-950/70 border-2 border-amber-500/60 px-2.5 sm:px-3 py-0.5 rounded-lg inline-block mx-1 shadow-md tracking-wide text-lg sm:text-xl md:text-2xl"
       >
         "{quotedStatement}"
       </strong>
@@ -66,11 +66,11 @@ function renderFormattedContext(activeContext, isEn) {
   if (/^Category:\s*/i.test(activeContext) || /^Chủ đề:\s*/i.test(activeContext)) {
     const categoryName = activeContext.replace(/^(?:Category|Chủ đề):\s*/i, '').trim();
     return (
-      <div className="flex items-center gap-2.5 text-xs sm:text-sm text-indigo-300 bg-indigo-950/50 border border-indigo-700/50 px-4 py-2 rounded-xl w-fit font-medium shadow-xs">
-        <span className="text-indigo-400 font-bold uppercase tracking-wider text-[11px]">
+      <div className="flex items-center gap-2 text-xs text-indigo-300 bg-indigo-950/50 border border-indigo-700/50 px-3 py-1 rounded-lg w-fit font-medium shadow-xs">
+        <span className="text-indigo-400 font-bold uppercase tracking-wider text-[10px]">
           📁 {isEn ? 'Category / Domain:' : 'Chủ đề từ vựng:'}
         </span>
-        <span className="font-bold text-indigo-200 text-sm sm:text-base">{categoryName}</span>
+        <span className="font-bold text-indigo-200 text-xs sm:text-sm">{categoryName}</span>
       </div>
     );
   }
@@ -84,10 +84,10 @@ function renderFormattedContext(activeContext, isEn) {
     const passageText = activeContext.replace(/(?:\r?\n\r?\n|\r?\n)?(?:Statement|Nhận định):\s*["“]?[^"”\r\n]+["”]?/i, '').trim();
 
     return (
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-2.5">
         {passageText && (
-          <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 sm:p-5 text-base sm:text-lg text-slate-200 font-serif leading-relaxed max-h-56 overflow-y-auto shadow-inner">
-            <span className="text-xs uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 mb-2 font-sans">
+          <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3 sm:p-4 text-sm sm:text-base text-slate-200 font-serif leading-relaxed max-h-40 overflow-y-auto shadow-inner">
+            <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 mb-1.5 font-sans">
               <span>📖</span>
               <span>{isEn ? 'Reading Passage:' : 'Đoạn Văn Đọc Hiểu:'}</span>
             </span>
@@ -95,12 +95,12 @@ function renderFormattedContext(activeContext, isEn) {
           </div>
         )}
 
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-indigo-950/50 border-2 border-amber-500/70 shadow-lg flex flex-col gap-1.5">
-          <div className="flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider text-amber-400">
+        <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-indigo-950/50 border-2 border-amber-500/70 shadow-lg flex flex-col gap-1">
+          <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-400">
             <span>📌</span>
             <span>{isEn ? 'Statement to Evaluate (In Đậm):' : 'Nhận Định Cần Đánh Giá (Statement - In Đậm):'}</span>
           </div>
-          <p className="text-lg sm:text-xl md:text-2xl font-black text-amber-100 font-sans tracking-wide leading-snug">
+          <p className="text-base sm:text-lg md:text-xl font-black text-amber-100 font-sans tracking-wide leading-snug">
             "{rawStatement}"
           </p>
         </div>
@@ -197,29 +197,29 @@ export default function ArenaQuestionCard({
   const isTextInput = question.interactionType === 'text_input';
 
   return (
-    <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-4 sm:gap-5 py-2">
+    <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-2 sm:gap-2.5 py-0.5">
       {/* Category Pill, Topic, Difficulty & Audio Button */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`text-xs sm:text-sm font-extrabold tracking-wider uppercase px-3 py-1.5 rounded-lg border shadow-xs ${categoryColor}`}>
+      <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span className={`text-xs font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-lg border shadow-xs ${categoryColor}`}>
             {localizedQ.skillCategory?.toUpperCase() || 'PRACTICE'}
           </span>
 
           {diffConfig && (
-            <span className={`text-xs sm:text-sm font-extrabold tracking-wider px-3 py-1.5 rounded-lg border shadow-xs ${diffConfig.badgeClass}`}>
+            <span className={`text-xs font-extrabold tracking-wider px-2.5 py-1 rounded-lg border shadow-xs ${diffConfig.badgeClass}`}>
               {diffConfig.targetBand}
             </span>
           )}
 
           {topicObj && (
-            <span className="text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 shadow-xs">
-              <span className="text-sm sm:text-base">{topicObj.icon}</span>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 shadow-xs">
+              <span className="text-xs sm:text-sm">{topicObj.icon}</span>
               <span>{isEn ? topicObj.nameEn : topicObj.nameVi}</span>
             </span>
           )}
 
           {question.isRevengeQuestion && (
-            <span className="text-xs sm:text-sm font-black tracking-wider px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 animate-pulse shadow-xs">
+            <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 animate-pulse shadow-xs">
               <span>⚡</span>
               <span>{isEn ? 'REVENGE (+5 XP)' : 'CÂU PHỤC THÙ (+5 XP)'}</span>
             </span>
@@ -230,16 +230,16 @@ export default function ArenaQuestionCard({
           <button
             type="button"
             onClick={() => onPlayAudio?.(localizedQ.audioText)}
-            className="flex items-center gap-2 text-xs sm:text-sm font-bold text-indigo-300 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/35 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shadow-xs active:scale-95"
+            className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/35 px-3 py-1 rounded-lg transition-all cursor-pointer shadow-xs active:scale-95"
           >
-            <Volume2 className="w-4 h-4" />
+            <Volume2 className="w-3.5 h-3.5" />
             <span>{t('arena.playAudio') || (isEn ? 'Play Audio (Space)' : 'Nghe Audio (Phím cách)')}</span>
           </button>
         )}
       </div>
 
       {/* Main Prompt with Highlighted Statements */}
-      <h2 className="text-xl sm:text-2xl md:text-[27px] font-bold text-slate-100 leading-relaxed tracking-tight">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-100 leading-snug tracking-tight">
         {renderPromptWithFormattedStatement(promptText || question.prompt)}
       </h2>
 
@@ -252,24 +252,24 @@ export default function ArenaQuestionCard({
 
       {/* Listening Note/Form Completion snippet */}
       {isListening && (question.formStem || localizedQ.formStem) && (
-        <div className="bg-slate-900/90 border border-amber-500/40 rounded-2xl p-4 text-base sm:text-lg font-mono text-amber-200 flex items-center gap-2.5 shadow-md">
-          <span className="text-amber-400 font-bold text-lg sm:text-xl">📋 Note:</span>
+        <div className="bg-slate-900/90 border border-amber-500/40 rounded-xl p-3 text-sm sm:text-base font-mono text-amber-200 flex items-center gap-2 shadow-md">
+          <span className="text-amber-400 font-bold text-base sm:text-lg">📋 Note:</span>
           <span className="font-bold">{isEn ? (question.formStem || localizedQ.formStem) : (question.formStemVi || localizedQ.formStemVi || question.formStem)}</span>
         </div>
       )}
 
       {/* Listening Audio Prompt Helper Banner (When answering listening questions) */}
       {isListening && !isAnswerChecked && (
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-center justify-between text-xs sm:text-sm text-amber-200/90 shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <Volume2 className="w-5 h-5 text-amber-400 shrink-0 animate-pulse" />
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center justify-between text-xs text-amber-200/90 shadow-xs">
+          <div className="flex items-center gap-2">
+            <Volume2 className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
             <span className="font-medium">{isEn ? '🎧 Listening Task: Focus on the audio track to find the answer.' : '🎧 Bài nghe: Hãy chú ý lắng nghe đoạn băng để chọn đáp án đúng.'}</span>
           </div>
           {question.audioText && (
             <button
               type="button"
               onClick={() => onPlayAudio?.(question.audioText)}
-              className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg font-bold text-xs transition-colors cursor-pointer shrink-0"
+              className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-md font-bold text-xs transition-colors cursor-pointer shrink-0"
             >
               {isEn ? 'Replay Audio' : 'Nghe lại'}
             </button>
@@ -298,7 +298,7 @@ export default function ArenaQuestionCard({
         />
       ) : (
         /* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */
-        <div className={`grid gap-3 sm:gap-3.5 ${
+        <div className={`grid gap-2 sm:gap-2.5 ${
           question.options.length === 3 
             ? 'grid-cols-1 sm:grid-cols-3' 
             : question.options.length === 2 
@@ -329,22 +329,22 @@ export default function ArenaQuestionCard({
                 type="button"
                 disabled={isAnswerChecked}
                 onClick={() => onSelectOption?.(idx)}
-                className={`group flex items-center justify-between p-4 sm:p-5 rounded-2xl border text-left transition-all active:scale-[0.99] select-none ${btnStyle}`}
+                className={`group flex items-center justify-between py-2.5 px-3.5 sm:py-3 sm:px-4 rounded-xl border text-left transition-all active:scale-[0.99] select-none ${btnStyle}`}
               >
-                <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
-                  <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-700/60 group-hover:bg-slate-700 flex items-center justify-center text-sm sm:text-base font-mono font-black text-slate-200 shrink-0 transition-colors shadow-xs">
+                <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">
+                  <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-700/60 group-hover:bg-slate-700 flex items-center justify-center text-xs sm:text-sm font-mono font-black text-slate-200 shrink-0 transition-colors shadow-xs">
                     {idx + 1}
                   </span>
-                  <span className={`text-base sm:text-lg md:text-xl font-semibold leading-normal break-words ${isSpelling ? 'font-mono tracking-wide' : ''}`}>
+                  <span className={`text-sm sm:text-base md:text-lg font-semibold leading-normal break-words ${isSpelling ? 'font-mono tracking-wide' : ''}`}>
                     {optText}
                   </span>
                 </div>
 
                 {isAnswerChecked && isOptionCorrect && (
-                  <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-400 shrink-0 ml-3 animate-in zoom-in-75 duration-200" />
+                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400 shrink-0 ml-2 animate-in zoom-in-75 duration-200" />
                 )}
                 {isAnswerChecked && isSelected && !isCorrect && (
-                  <XCircle className="w-6 h-6 sm:w-7 sm:h-7 text-red-400 shrink-0 ml-3 animate-in zoom-in-75 duration-200" />
+                  <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 shrink-0 ml-2 animate-in zoom-in-75 duration-200" />
                 )}
               </button>
             );
@@ -354,34 +354,34 @@ export default function ArenaQuestionCard({
 
       {/* Explanation Box */}
       {isAnswerChecked && (
-        <div className={`p-5 sm:p-6 rounded-2xl border text-sm sm:text-base leading-relaxed shadow-lg ${
+        <div className={`p-4 sm:p-4.5 rounded-xl border text-xs sm:text-sm leading-relaxed shadow-md ${
           isSkipped
             ? 'bg-amber-950/30 border-amber-800/50 text-amber-300'
             : isCorrect 
               ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300' 
               : 'bg-red-950/30 border-red-800/50 text-red-300'
         }`}>
-          <div className="font-extrabold text-base sm:text-lg flex items-center justify-between gap-2 mb-2">
+          <div className="font-extrabold text-sm sm:text-base flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-2">
               {isSkipped ? (
                 <>
-                  <SkipForward className="w-5 h-5 text-amber-400" />
+                  <SkipForward className="w-4 h-4 text-amber-400" />
                   <span>{t('arena.questionSkipped') || (isEn ? 'Question Skipped' : 'Đã Bỏ Qua Câu Hỏi')}</span>
                 </>
               ) : isCorrect ? (
                 <>
-                  <Check className="w-5 h-5 text-emerald-400" />
+                  <Check className="w-4 h-4 text-emerald-400" />
                   <span>{t('arena.correct') || (isEn ? 'Correct!' : 'Chính xác!')}</span>
                 </>
               ) : (
                 <>
-                  <XCircle className="w-5 h-5 text-red-400" />
+                  <XCircle className="w-4 h-4 text-red-400" />
                   <span>{t('arena.incorrect') || (isEn ? 'Incorrect' : 'Chưa chính xác')}</span>
                 </>
               )}
             </div>
             {isCorrect && question.isRevengeQuestion && (
-              <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-black border border-amber-500/40 animate-pulse">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px] font-black border border-amber-500/40 animate-pulse">
                 ⚡ {isEn ? 'Revenge Cleared! (+5 XP)' : 'Phục Thù Thành Công! (+5 XP)'}
               </span>
             )}
@@ -389,27 +389,27 @@ export default function ArenaQuestionCard({
 
           {/* Reveal Audio Transcript only on Review/Explanation phase */}
           {isListening && (question.context || question.audioText) && (
-            <div className="my-2.5 p-3 rounded-xl bg-slate-900/80 border border-slate-700/60 text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
-              <span className="font-bold text-amber-300 block mb-1">🎧 {isEn ? 'Audio Transcript:' : 'Lời thoại đoạn nghe:'}</span>
+            <div className="my-2 p-2.5 rounded-lg bg-slate-900/80 border border-slate-700/60 text-xs text-slate-200 font-sans leading-relaxed">
+              <span className="font-bold text-amber-300 block mb-0.5">🎧 {isEn ? 'Audio Transcript:' : 'Lời thoại đoạn nghe:'}</span>
               <p className="italic text-slate-300">"{activeContext || localizedQ.audioText || question.audioText}"</p>
             </div>
           )}
 
-          <p className="text-slate-300 text-xs sm:text-sm mt-1.5 leading-relaxed">{localizedQ.explanation}</p>
+          <p className="text-slate-300 text-xs mt-1 leading-relaxed">{localizedQ.explanation}</p>
         </div>
       )}
 
       {/* 2-Step Action CTA & Skip Button */}
-      <div className="mt-3 flex items-center justify-between gap-3">
+      <div className="mt-1 sm:mt-1.5 flex items-center justify-between gap-2.5">
         {!isAnswerChecked ? (
           <>
             <button
               type="button"
               onClick={() => (onSkipQuestion || onSkip)?.()}
-              className="flex items-center gap-2 px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-sm sm:text-base font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs"
+              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs"
               title={isEn ? "Don't know this answer? Skip to reveal explanation (Esc)" : "Không biết câu này? Bỏ qua để xem đáp án (Esc)"}
             >
-              <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+              <SkipForward className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
               <span>{t('arena.skipQuestion') || (isEn ? 'Skip (Esc)' : 'Bỏ Qua (Esc)')}</span>
             </button>
 
@@ -417,7 +417,7 @@ export default function ArenaQuestionCard({
               type="button"
               disabled={isTextInput ? !userInputText?.trim() : selectedOption === null}
               onClick={() => handleCheck?.()}
-              className="flex items-center gap-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-sm sm:text-base px-7 sm:px-9 py-3 sm:py-3.5 rounded-xl shadow-xl shadow-indigo-600/25 transition-all select-none ml-auto active:scale-95"
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all select-none ml-auto active:scale-95"
             >
               <span>{t('arena.checkAnswer') || (isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án')} (Enter)</span>
             </button>
@@ -427,10 +427,10 @@ export default function ArenaQuestionCard({
             <button
               type="button"
               onClick={() => onNextQuestion?.()}
-              className="flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-sm sm:text-base px-7 sm:px-9 py-3 sm:py-3.5 rounded-xl shadow-xl shadow-emerald-600/25 transition-all select-none active:scale-95"
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all select-none active:scale-95"
             >
               <span>{t('arena.nextQuestion') || (isEn ? 'Next Question' : 'Câu Tiếp Theo')} (Enter)</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}

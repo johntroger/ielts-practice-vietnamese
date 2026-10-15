@@ -476,8 +476,8 @@ export default function AtlasEnglishArenaModal({
               onToggleFullscreen={toggleFullscreen}
               onClose={handleReturnToLobby}
             />
-            <div className="px-4 py-4 sm:px-6 sm:py-6 flex-1 min-h-0 flex flex-col items-center justify-start overflow-y-auto">
-              <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl pb-16 transition-all duration-300">
+            <div className="px-3 sm:px-6 py-1.5 sm:py-2.5 flex-1 min-h-0 flex flex-col items-center justify-start overflow-y-auto">
+              <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl pb-2 sm:pb-3 transition-all duration-300">
                 {currentQ && (
                   <ArenaQuestionCard
                     question={currentQ}

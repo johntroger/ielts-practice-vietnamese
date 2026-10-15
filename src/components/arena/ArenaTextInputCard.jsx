@@ -90,12 +90,12 @@ export default function ArenaTextInputCard({
     : (question?.placeholderVi || question?.placeholder || 'Gõ từ còn thiếu rồi nhấn Enter...');
 
   return (
-    <div className="w-full flex flex-col gap-3 my-1">
+    <div className="w-full flex flex-col gap-2 my-0.5">
       {/* Misspelled Word Target Cue (Unambiguous Spelling Correction) */}
       {question?.misspelledWord && !isAnswerChecked && (
-        <div className="flex items-center gap-2.5 text-sm sm:text-base text-rose-300 bg-rose-950/50 border border-rose-700/60 px-3.5 sm:px-4 py-2 rounded-xl w-fit shadow-xs">
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-rose-300 bg-rose-950/50 border border-rose-700/60 px-3 py-1.5 rounded-lg w-fit shadow-xs">
           <span className="font-semibold text-rose-400">{isEn ? '⚠️ Fix spelling for:' : '⚠️ Sửa lỗi chính tả cho từ:'}</span>
-          <span className="font-mono font-black text-rose-100 text-base sm:text-lg line-through bg-rose-900/80 px-2.5 py-0.5 rounded border border-rose-600 shadow-xs">
+          <span className="font-mono font-black text-rose-100 text-sm sm:text-base line-through bg-rose-900/80 px-2 py-0.5 rounded border border-rose-600 shadow-xs">
             {question.misspelledWord}
           </span>
         </div>
@@ -103,13 +103,13 @@ export default function ArenaTextInputCard({
 
       {/* Phase 2: Near-Miss Grace Warning Banner */}
       {nearMissState?.isNearMiss && !isAnswerChecked && (
-        <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-950/70 border border-amber-500/70 text-amber-200 text-sm font-semibold animate-pulse shadow-xl shadow-amber-950/40">
-          <span className="text-xl shrink-0">⚡</span>
+        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-950/70 border border-amber-500/70 text-amber-200 text-xs font-semibold animate-pulse shadow-lg shadow-amber-950/40">
+          <span className="text-lg shrink-0">⚡</span>
           <div className="flex flex-col gap-0.5">
-            <span className="font-bold text-amber-300 text-sm sm:text-base">
+            <span className="font-bold text-amber-300 text-xs sm:text-sm">
               {isEn ? "Almost there! You're only 1 letter away from the correct spelling." : "Suýt đúng rồi! Bạn chỉ lệch đúng 1 chữ cái."}
             </span>
-            <span className="text-amber-400/90 font-normal text-xs sm:text-sm">
+            <span className="text-amber-400/90 font-normal text-[11px] sm:text-xs">
               {isEn ? "Quickly fix your spelling and press Enter to save your combo!" : "Hãy nhanh tay sửa lại rồi nhấn Enter để bảo toàn combo và khiên!"}
             </span>
           </div>
@@ -118,8 +118,8 @@ export default function ArenaTextInputCard({
 
       {/* Input container */}
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-          <Keyboard className="w-6 h-6" />
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+          <Keyboard className="w-5 h-5" />
         </div>
 
         <input
@@ -138,7 +138,7 @@ export default function ArenaTextInputCard({
           spellCheck={false}
           data-lpignore="true"
           placeholder={activePlaceholder}
-          className={`w-full pl-13 pr-14 py-4 sm:py-5 rounded-2xl text-lg sm:text-xl md:text-2xl font-mono font-bold tracking-wide transition-all outline-hidden border select-text cursor-text ${
+          className={`w-full pl-11 pr-12 py-3 sm:py-3.5 rounded-xl text-base sm:text-lg md:text-xl font-mono font-bold tracking-wide transition-all outline-hidden border select-text cursor-text ${
             isAnswerChecked
               ? isCorrect
                 ? 'bg-emerald-950/40 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30'
@@ -154,10 +154,10 @@ export default function ArenaTextInputCard({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors cursor-pointer"
             title={isEn ? 'Clear input' : 'Xóa nội dung'}
           >
-            <X className="w-6 h-6 rounded-full bg-slate-800/80 p-1 hover:bg-slate-700" />
+            <X className="w-5 h-5 rounded-full bg-slate-800/80 p-1 hover:bg-slate-700" />
           </button>
         )}
 
@@ -165,9 +165,9 @@ export default function ArenaTextInputCard({
         {isAnswerChecked && (
           <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
             {isCorrect ? (
-              <CheckCircle2 className="w-6 h-6 text-emerald-400 animate-in zoom-in-75 duration-200" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 animate-in zoom-in-75 duration-200" />
             ) : (
-              <XCircle className="w-6 h-6 text-rose-400 animate-in zoom-in-75 duration-200" />
+              <XCircle className="w-5 h-5 text-rose-400 animate-in zoom-in-75 duration-200" />
             )}
           </div>
         )}
@@ -208,14 +208,14 @@ export default function ArenaTextInputCard({
                   activeSubmit?.();
                 }
               }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm sm:text-base font-bold shadow-md transition-all cursor-pointer active:scale-95 ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer active:scale-95 ${
                 activeValue?.trim()
                   ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white shadow-indigo-950/50'
                   : 'bg-slate-800/60 text-slate-500 border border-slate-800 cursor-not-allowed opacity-60'
               }`}
             >
               <span>{isEn ? 'Submit' : 'Kiểm tra'}</span>
-              <CornerDownLeft className="w-4 h-4 opacity-80" />
+              <CornerDownLeft className="w-3.5 h-3.5 opacity-80" />
             </button>
           </div>
         </div>
@@ -223,9 +223,9 @@ export default function ArenaTextInputCard({
 
       {/* Visual Character Diff Display when incorrect */}
       {isAnswerChecked && !isCorrect && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-rose-800/60 flex flex-col gap-3 text-sm sm:text-base shadow-xl">
+        <div className="p-3 sm:p-4 rounded-xl bg-slate-900/90 border border-rose-800/60 flex flex-col gap-2 text-xs sm:text-sm shadow-xl">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="font-bold text-rose-400 flex items-center gap-2">
+            <span className="font-bold text-rose-400 flex items-center gap-1.5">
               <span>⚠️</span>
               <span>{isEn ? 'Your spelling vs authentic Cambridge spelling:' : 'Đối chiếu chính tả của bạn với chuẩn Cambridge:'}</span>
             </span>
