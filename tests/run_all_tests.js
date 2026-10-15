@@ -161,7 +161,8 @@ const testSuites = [
   { name: 'Step 152: Arena Expanded Typography, Max-W-5xl Viewport & Statement Bolding Audit', file: 'tests/test_step152_arena_expanded_typography_and_statement_bolding.js' },
   { name: 'Step 153: Arena Lobby Single-Screen Viewport Lock & Vertical Density', file: 'tests/test_step153_arena_lobby_single_screen_viewport_lock.js' },
   { name: 'Step 154: Arena Game Feel, Urgency Bar & Speedrun Auto-Advance', file: 'tests/test_step154_arena_game_feel_speedrun_and_urgency_bar.js' },
-  { name: 'Step 155: Arena Boss Climax, 4-Axis Diagnostics & 1-Click Prescription', file: 'tests/test_step155_arena_boss_climax_and_diagnostic_prescription.js' }
+  { name: 'Step 155: Arena Boss Climax, 4-Axis Diagnostics & 1-Click Prescription', file: 'tests/test_step155_arena_boss_climax_and_diagnostic_prescription.js' },
+  { name: 'Step 156: Arena League Promotion, Relegation & Ghost Rivals', file: 'tests/test_step156_arena_league_progression_and_ghost_rivals.js' }
 ];
 
 console.log('===============================================================');

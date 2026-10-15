@@ -462,7 +462,7 @@ export const vi = {
     leaderboardTitle: 'Bảng Xếp Hạng Người Học Thật',
     realLearnersOnly: '100% Người Học Thật (Không Dùng Bot Ảo)',
     promotionZone: 'Vùng Thăng Hạng (Top 20%)',
-    relegationZone: 'Vùng Trụ Hạng (Top 15% Dưới)',
+    relegationZone: 'Vùng Nguy Hiểm (15% Cuối)',
     safeZone: 'Vùng An Toàn',
     summaryTitle: 'Kết Quả Đấu Trường',
     summaryAccuracy: 'Độ Chính Xác',

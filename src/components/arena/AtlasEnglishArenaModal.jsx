@@ -11,7 +11,10 @@ import { useArenaAudio } from '../../hooks/useArenaAudio.js';
 import { openModal } from '../../core/modalStore.js';
 import { setupKeyboardNavigation } from '../../utils/keyboardNavigator.js';
 import { getIsoWeekKey } from '../../utils/dateHelper.js';
-import { getUnifiedStreakCount } from '../../services/gamification/leagueEngine.js';
+import { 
+  getUnifiedStreakCount,
+  evaluateWeeklyLeagueTransition
+} from '../../services/gamification/leagueEngine.js';
 import { 
   fetchRealLeaderboard, 
   reconcileRealLeaderboard, 
@@ -23,6 +26,7 @@ import ArenaHeaderBar from './ArenaHeaderBar.jsx';
 import ArenaQuestionCard from './ArenaQuestionCard.jsx';
 import ArenaRelativeLeaderboard from './ArenaRelativeLeaderboard.jsx';
 import ArenaSprintSummaryModal from './ArenaSprintSummaryModal.jsx';
+import ArenaLeaguePromotionModal from './ArenaLeaguePromotionModal.jsx';
 import PublicLearnerProfileModal from './PublicLearnerProfileModal.jsx';
 import LevelUpCelebrationModal from './LevelUpCelebrationModal.jsx';
 import ArenaDifficultySelector from './ArenaDifficultySelector.jsx';
@@ -62,6 +66,7 @@ export default function AtlasEnglishArenaModal({
   );
   const [selectedLearner, setSelectedLearner] = useState(null);
   const [levelUpData, setLevelUpData] = useState(null);
+  const [weeklyTransition, setWeeklyTransition] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const handleShareArena = useCallback(() => {
@@ -109,6 +114,37 @@ export default function AtlasEnglishArenaModal({
     });
     return () => { isMounted = false; };
   }, [isOpen, currentUser]);
+
+  // Evaluate weekly league rollover upon opening modal
+  useEffect(() => {
+    if (!isOpen || !leaderboardData?.leaderboard?.length) return;
+    const currentWeekKey = getIsoWeekKey();
+    const lastEvaluatedWeek = safeGet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, '');
+
+    if (lastEvaluatedWeek && lastEvaluatedWeek !== currentWeekKey) {
+      const result = evaluateWeeklyLeagueTransition({
+        currentWeekKey,
+        lastEvaluatedWeek,
+        currentTier: leaderboardData.leagueTier,
+        userRank: leaderboardData.currentRank,
+        totalPlayers: leaderboardData.leaderboard.length,
+        weeklyXp: leaderboardData.userWeeklyXp || 0
+      });
+
+      if (result.isNewWeek && result.action === 'promoted') {
+        setWeeklyTransition(result);
+        playChime();
+        submitRealSprintScore({
+          currentUser,
+          deltaXp: result.bonusXp,
+          streakCount: streak
+        }).catch(() => {});
+      }
+      safeSet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, currentWeekKey);
+    } else if (!lastEvaluatedWeek) {
+      safeSet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, currentWeekKey);
+    }
+  }, [isOpen, currentUser, leaderboardData, playChime, streak]);
 
   const sprint = useArenaSprintEngine({
     user: currentUser,
@@ -725,6 +761,15 @@ export default function AtlasEnglishArenaModal({
               setLevelUpData(null);
               sprint.startSprint();
             }}
+          />
+        )}
+
+        {/* Weekly League Promotion Celebration Modal */}
+        {weeklyTransition && (
+          <ArenaLeaguePromotionModal
+            isOpen={Boolean(weeklyTransition)}
+            transition={weeklyTransition}
+            onClose={() => setWeeklyTransition(null)}
           />
         )}
       </div>

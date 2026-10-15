@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Trophy, Flame, ArrowUp, ArrowDown, ShieldCheck, Sparkles, UserCheck, Shield, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import { computeGhostRivalPacing } from '../../services/gamification/leagueEngine.js';
 
 /**
  * src/components/arena/ArenaRelativeLeaderboard.jsx
  * 
  * 100% Real-User Leaderboard for Atlas English Arena.
  * Completely eliminates dummy / bot rivals.
- * Displays 100-Level Atlas Progression Badges, Glowing Avatar Frames,
- * and enables interactive click-to-view peer scholar profile.
+ * Phase 3 Upgrades:
+ * - Ghost Rival Pacing Callout (Overtake push & Leader lead stats)
+ * - Visual Promotion Zone Boundary (Top 20% Emerald line)
+ * - Visual Relegation Zone Boundary (Bottom 15% Rose line)
+ * - Status indicators on each row (Up, Down, Safe)
+ * - Interactive click-to-view peer scholar profile
  */
 export default function ArenaRelativeLeaderboard({
   rivals = [],
@@ -32,6 +37,8 @@ export default function ArenaRelativeLeaderboard({
   const promoThreshold = Math.ceil(totalCount * 0.2);
   const relThreshold = totalCount - Math.ceil(totalCount * 0.15);
 
+  const pacing = useMemo(() => computeGhostRivalPacing(rivals, currentUserId), [rivals, currentUserId]);
+
   return (
     <div className="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col gap-2.5 shadow-2xl backdrop-blur-md">
       {/* Header: League Tier & Real Users Badge */}
@@ -53,6 +60,34 @@ export default function ArenaRelativeLeaderboard({
           {t(`arena.${leagueTier}`) || leagueTier}
         </span>
       </div>
+
+      {/* Ghost Rival Near-Pacing Callout */}
+      {pacing.aheadRival && (
+        <div className="bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-purple-500/15 border border-amber-500/40 rounded-xl px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in">
+          <div className="flex items-center gap-1.5 text-amber-300 font-bold truncate">
+            <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0 animate-pulse" />
+            <span>{isEn ? `Just +${pacing.xpToOvertake} XP to pass` : `Chỉ cần +${pacing.xpToOvertake} XP để vượt`}</span>
+            <span className="text-white font-black underline">@{pacing.aheadRival.display_name}</span>
+            <span className="text-amber-400 font-mono text-[10px]">#{pacing.aheadRival.rank}</span>
+          </div>
+          <span className="text-[10px] text-amber-200/80 font-mono shrink-0 pl-1 font-semibold">1 sprint ⚡</span>
+        </div>
+      )}
+
+      {pacing.isLeader && (
+        <div className="bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-indigo-950/40 border border-amber-400/50 rounded-xl px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in">
+          <div className="flex items-center gap-1.5 text-amber-200 font-bold truncate">
+            <span>👑</span>
+            <span>{isEn ? 'Dominating League #1!' : 'Thống lĩnh Bảng đấu #1!'}</span>
+            {pacing.behindRival && (
+              <span className="text-amber-300/80 font-semibold text-[10px]">
+                (+{pacing.leadXp} XP {isEn ? 'lead' : 'cách biệt'})
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] text-amber-300 font-mono uppercase font-black shrink-0">Top 1</span>
+        </div>
+      )}
 
       {/* Real Learners List */}
       <div className="flex flex-col gap-1.5 max-h-[240px] sm:max-h-[280px] md:max-h-[340px] overflow-y-auto pr-1 custom-scrollbar">
@@ -94,102 +129,136 @@ export default function ArenaRelativeLeaderboard({
               rowStyle = 'border-indigo-500/80 bg-indigo-950/50 ring-1 ring-indigo-500/60 hover:ring-indigo-400';
             }
 
+            const showPromoDivider = totalCount >= 5 && index === promoThreshold && index > 0;
+            const showRelDivider = totalCount >= 5 && index === (relThreshold - 1) && index > promoThreshold;
+
             return (
-              <div
-                key={rival.user_id || rival.display_name || index}
-                onClick={() => onSelectLearner?.(rival)}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs transition-all duration-200 cursor-pointer select-none group hover:scale-[1.01] active:scale-[0.99] ${rowStyle}`}
-                title={t('arena.learnerTitle', { name: rival.display_name || t('arena.anonymousLearner') })}
-              >
-                {/* Rank, Glowing Avatar & Level Info */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className={`w-5 font-mono font-black text-center text-sm ${
-                    rank === 1 ? 'text-amber-400' : rank === 2 ? 'text-slate-300' : rank === 3 ? 'text-amber-600' : 'text-slate-500'
-                  }`}>
-                    {rank}
-                  </span>
-
-                  {/* Glowing Frame Avatar */}
-                  <div className={`relative w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm ring-2 ${titanTier.ringColor} transition-transform group-hover:scale-105`}>
-                    <img
-                      src={rival.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${rival.display_name}`}
-                      alt={rival.display_name}
-                      className="w-full h-full object-cover"
-                    />
-                    {isOwner && (
-                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-400 rounded-full ring-1 ring-slate-950" title="Admin Verified" />
-                    )}
-                  </div>
-
-                  {/* Names, Level Badge & Titan Tier Title */}
-                  <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-1.5 truncate">
-                      {/* Level Badge */}
-                      <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border shadow-xs shrink-0 ${titanTier.badgeColor}`}>
-                        Lv.{level}
-                      </span>
-
-                      <span className={`font-bold truncate text-xs group-hover:text-white transition-colors ${
-                        isOwner ? 'text-amber-300' : isUser ? 'text-indigo-200' : 'text-slate-100'
-                      }`}>
-                        {rival.display_name || t('arena.anonymousLearner')}
-                      </span>
-
-                      {/* Prominent Badges */}
-                      {isOwner && (
-                        <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0">
-                          👑 ADMIN
-                        </span>
-                      )}
-
-                      {isUser && (
-                        <span className="text-[10px] bg-indigo-500/30 text-indigo-300 border border-indigo-500/50 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0">
-                          YOU
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                      <span className={`font-semibold ${titanTier.accentText}`}>
-                        {isEn ? (titanTier.titleEn || titanTier.titleVi) : (titanTier.titleVi || titanTier.titleEn)}
-                      </span>
-                      <span>•</span>
-                      <span className="capitalize">{rival.league_tier || 'Bronze'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stats & Click Chevron */}
-                <div className="flex items-center gap-3 shrink-0">
-                  {rival.streak_count > 0 && (
-                    <div className="flex items-center gap-1 text-amber-400 font-bold text-xs" title={`Streak: ${rival.streak_count}d`}>
-                      <Flame className="w-3.5 h-3.5 fill-amber-400" />
-                      <span>{rival.streak_count}</span>
-                    </div>
-                  )}
-
-                  <div className="text-right min-w-[55px]">
-                    <span className="font-mono font-black text-slate-100 text-sm">
-                      {rival.weekly_xp || 0}
+              <React.Fragment key={rival.user_id || rival.display_name || index}>
+                {/* Visual Promotion Zone Boundary Line */}
+                {showPromoDivider && (
+                  <div className="flex items-center gap-2 py-1 select-none">
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+                    <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/40">
+                      ▲ {t('arena.promotionZone') || (isEn ? 'Promotion Zone (Top 20%)' : 'Vùng Thăng Hạng (Top 20%)')}
                     </span>
-                    <span className="text-[10px] text-slate-400 ml-0.5 font-bold">XP</span>
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+                  </div>
+                )}
+
+                {/* Visual Relegation Zone Boundary Line */}
+                {showRelDivider && (
+                  <div className="flex items-center gap-2 py-1 select-none">
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-rose-500/50 to-transparent" />
+                    <span className="text-[9px] font-black uppercase tracking-wider text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-500/40">
+                      ▼ {t('arena.relegationZone') || (isEn ? 'Relegation Zone (Bottom 15%)' : 'Vùng Nguy Hiểm (15% Cuối)')}
+                    </span>
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-rose-500/50 to-transparent" />
+                  </div>
+                )}
+
+                <div
+                  onClick={() => onSelectLearner?.(rival)}
+                  className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs transition-all duration-200 cursor-pointer select-none group hover:scale-[1.01] active:scale-[0.99] ${rowStyle}`}
+                  title={t('arena.learnerTitle', { name: rival.display_name || t('arena.anonymousLearner') })}
+                >
+                  {/* Rank, Glowing Avatar & Level Info */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className={`w-5 font-mono font-black text-center text-sm ${
+                      rank === 1 ? 'text-amber-400' : rank === 2 ? 'text-slate-300' : rank === 3 ? 'text-amber-600' : 'text-slate-500'
+                    }`}>
+                      {rank}
+                    </span>
+
+                    {/* Glowing Frame Avatar */}
+                    <div className={`relative w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm ring-2 ${titanTier.ringColor} transition-transform group-hover:scale-105`}>
+                      <img
+                        src={rival.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${rival.display_name}`}
+                        alt={rival.display_name}
+                        className="w-full h-full object-cover"
+                      />
+                      {isOwner && (
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-400 rounded-full ring-1 ring-slate-950" title="Admin Verified" />
+                      )}
+                    </div>
+
+                    {/* Names, Level Badge & Titan Tier Title */}
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-1.5 truncate">
+                        {/* Level Badge */}
+                        <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border shadow-xs shrink-0 ${titanTier.badgeColor}`}>
+                          Lv.{level}
+                        </span>
+
+                        <span className={`font-bold truncate text-xs group-hover:text-white transition-colors ${
+                          isOwner ? 'text-amber-300' : isUser ? 'text-indigo-200' : 'text-slate-100'
+                        }`}>
+                          {rival.display_name || t('arena.anonymousLearner')}
+                        </span>
+
+                        {/* Prominent Badges */}
+                        {isOwner && (
+                          <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0">
+                            👑 ADMIN
+                          </span>
+                        )}
+
+                        {isUser && (
+                          <span className="text-[10px] bg-indigo-500/30 text-indigo-300 border border-indigo-500/50 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0">
+                            YOU
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                        <span className={`font-semibold ${titanTier.accentText}`}>
+                          {isEn ? (titanTier.titleEn || titanTier.titleVi) : (titanTier.titleVi || titanTier.titleEn)}
+                        </span>
+                        <span>•</span>
+                        <span className="capitalize">{rival.league_tier || 'Bronze'}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Zone Indicator (when total players >= 5) */}
-                  {totalCount >= 5 && (
-                    isPromotion ? (
-                      <ArrowUp className="w-4 h-4 text-emerald-400 shrink-0" title={t('arena.promotionZone')} />
-                    ) : isRelegation ? (
-                      <ArrowDown className="w-4 h-4 text-rose-400 shrink-0" title={t('arena.relegationZone')} />
-                    ) : (
-                      <div className="w-4 h-4 shrink-0" />
-                    )
-                  )}
+                  {/* Stats & Click Chevron */}
+                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                    {rival.streak_count > 0 && (
+                      <div className="flex items-center gap-1 text-amber-400 font-bold text-xs" title={`Streak: ${rival.streak_count}d`}>
+                        <Flame className="w-3.5 h-3.5 fill-amber-400" />
+                        <span>{rival.streak_count}</span>
+                      </div>
+                    )}
 
-                  {/* Hover Chevron */}
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0" />
+                    <div className="text-right min-w-[50px] sm:min-w-[55px]">
+                      <span className="font-mono font-black text-slate-100 text-xs sm:text-sm">
+                        {rival.weekly_xp || 0}
+                      </span>
+                      <span className="text-[10px] text-slate-400 ml-0.5 font-bold">XP</span>
+                    </div>
+
+                    {/* Zone Indicator (when total players >= 5) */}
+                    {totalCount >= 5 && (
+                      isPromotion ? (
+                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded shadow-xs" title={t('arena.promotionZone')}>
+                          <ArrowUp className="w-3 h-3 text-emerald-400 shrink-0" />
+                          <span className="hidden sm:inline">{isEn ? 'Up' : 'Lên'}</span>
+                        </span>
+                      ) : isRelegation ? (
+                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-1.5 py-0.5 rounded shadow-xs" title={t('arena.relegationZone')}>
+                          <ArrowDown className="w-3 h-3 text-rose-400 shrink-0" />
+                          <span className="hidden sm:inline">{isEn ? 'Down' : 'Rớt'}</span>
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-slate-500 px-1" title={t('arena.safeZone') || (isEn ? 'Safe Zone' : 'An Toàn')}>
+                          ―
+                        </span>
+                      )
+                    )}
+
+                    {/* Hover Chevron */}
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0" />
+                  </div>
                 </div>
-              </div>
+              </React.Fragment>
             );
           })
         )}

@@ -18,7 +18,9 @@ export const ARENA_STORAGE_KEYS = {
   DAILY_SPRINT_COUNT: 'ielts_arena_daily_sprint_count',
   DAILY_SPRINT_DATE: 'ielts_arena_daily_sprint_date',
   // Last chosen difficulty preference
-  LAST_DIFFICULTY: 'ielts_arena_last_difficulty'
+  LAST_DIFFICULTY: 'ielts_arena_last_difficulty',
+  // Weekly league rollover evaluation tracker
+  LAST_EVALUATED_WEEK: 'ielts_arena_last_evaluated_week'
 };
 
 export const ARENA_LEAGUE_TIERS = {
