@@ -157,7 +157,8 @@ const testSuites = [
   { name: 'Step 148: Unikey IME Filter & Near-Miss Grace Window', file: 'tests/test_step148_arena_unikey_and_near_miss_grace.js' },
   { name: 'Step 149: Mobile Ergonomics & Lexical Typing Analytics', file: 'tests/test_step149_arena_mobile_ergonomics_and_spelling_analytics.js' },
   { name: 'Step 150: Listening Workspace Tools Portal & Overflow Clipping Audit', file: 'tests/test_step150_listening_tools_portal.js' },
-  { name: 'Step 151: Listening Compact Palette Bar & Viewport Optimization Audit', file: 'tests/test_step151_listening_compact_palette_bar.js' }
+  { name: 'Step 151: Listening Compact Palette Bar & Viewport Optimization Audit', file: 'tests/test_step151_listening_compact_palette_bar.js' },
+  { name: 'Step 152: Arena Expanded Typography, Max-W-5xl Viewport & Statement Bolding Audit', file: 'tests/test_step152_arena_expanded_typography_and_statement_bolding.js' }
 ];
 
 console.log('===============================================================');

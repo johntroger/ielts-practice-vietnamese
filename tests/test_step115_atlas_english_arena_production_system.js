@@ -627,5 +627,7 @@ console.log(`\n===============================================================`)
 console.log(`🎉 Step 115: All ${passed}/${total} Unit Tests Passed Successfully!`);
 console.log(`===============================================================\n`);
 
+process.exit(0);
+
 
 
