@@ -22,10 +22,9 @@ export default function TRFSimulatorModal({
 }) {
   const { language } = useTranslation();
   const isEn = language === 'en';
+  const [copiedCode, setCopiedCode] = useState(false);
 
   if (!isOpen || !trfData) return null;
-
-  const [copiedCode, setCopiedCode] = useState(false);
 
   const handleCopyValidationCode = () => {
     if (trfData.validationCode) {

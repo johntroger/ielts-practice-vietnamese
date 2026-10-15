@@ -31,7 +31,6 @@ export default function WeeklyReportModal({
   apiKey, 
   model 
 }) {
-  if (!isOpen) return null;
   const { t, isEn } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -109,6 +108,8 @@ export default function WeeklyReportModal({
     else rounded = intPart + 1.0;
     return rounded.toFixed(1);
   }, [activeBands]);
+
+  if (!isOpen) return null;
 
   const totalActivities = totalEssays + totalReadingTests + totalListeningTests + totalSpeakingTests;
 

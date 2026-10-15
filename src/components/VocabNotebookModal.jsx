@@ -33,7 +33,6 @@ export default function VocabNotebookModal({
   onClearAll,
   onUpdateVocab
 }) {
-  if (!isOpen) return null;
   const { t, isEn } = useTranslation();
 
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'srs'
@@ -51,6 +50,8 @@ export default function VocabNotebookModal({
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [reviewedSessionCount, setReviewedSessionCount] = useState(0);
+
+  if (!isOpen) return null;
 
   // Compute due cards
   const dueItems = getDueItems(vocabList);

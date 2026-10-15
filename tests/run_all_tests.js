@@ -152,7 +152,8 @@ const testSuites = [
   { name: 'Step 143: Arena Skip Question & Esc Hotkey Navigation', file: 'tests/test_step143_arena_skip_question_and_esc_hotkey.js' },
   { name: 'Step 144: MicroDrills Dynamic Tab Bar with Closable Tabs and Drill Type Dropbox', file: 'tests/test_step144_micro_drills_dynamic_tabs_and_dropbox.js' },
   { name: 'Step 145: Unambiguous Type-in Questions & Spelling Error Cues', file: 'tests/test_step145_arena_unambiguous_typing_questions.js' },
-  { name: 'Step 146: Double-Click Answer Deselection in Reading and Listening', file: 'tests/test_step146_double_click_deselect.js' }
+  { name: 'Step 146: Double-Click Answer Deselection in Reading and Listening', file: 'tests/test_step146_double_click_deselect.js' },
+  { name: 'Step 147: TRF Modal & Hooks Order Invariant Verification (React Error #310 Fix)', file: 'tests/test_step147_trf_modal_hook_order.js' }
 ];
 
 console.log('===============================================================');
