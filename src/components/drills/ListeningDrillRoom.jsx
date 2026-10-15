@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Sparkles,
   Loader2,
@@ -16,6 +16,7 @@ import {
   getLocalizedDrillExplanation, 
   getLocalizedVocabOption 
 } from '../../utils/drillLocalization';
+import { computeDictationDiff } from '../../utils/dictationDiff';
 
 /**
  * ListeningDrillRoom
@@ -63,6 +64,11 @@ export default function ListeningDrillRoom({
   currentUser = null
 }) {
   const { isEn } = useTranslation();
+
+  const dictationDiff = useMemo(() => {
+    if (!currentDictation?.targetTranscript) return null;
+    return computeDictationDiff(currentDictation.targetTranscript, userDictationInput);
+  }, [currentDictation?.targetTranscript, userDictationInput]);
 
   return (
     <div className="space-y-4">
@@ -189,25 +195,119 @@ export default function ListeningDrillRoom({
 
                   {showDictationFeedback && (
                     <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 animate-in fade-in duration-150">
-                      <div className="font-bold text-xs text-slate-800 flex items-center justify-between border-b border-slate-200 pb-2">
-                        <span>{isEn ? 'Visual Comparison Breakdown:' : 'Phân tích đối chiếu trực quan:'}</span>
-                        <div className="flex items-center space-x-2 text-[10px]">
-                          <span className="text-emerald-700 font-bold">{isEn ? '● Correct' : '● Đúng'}</span>
-                          <span className="text-rose-700 font-bold">{isEn ? '● Misspelling / Extra words' : '● Sai chính tả / thừa từ'}</span>
-                          <span className="text-slate-500">{isEn ? '● Missed words' : '● Nghe sót'}</span>
+                      <div className="font-bold text-xs text-slate-800 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2">
+                        <div className="flex items-center space-x-2">
+                          <span>{isEn ? 'Visual Comparison Breakdown:' : 'Phân tích đối chiếu trực quan:'}</span>
+                          {userDictationInput.trim() && dictationDiff && (
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                              dictationDiff.accuracy >= 90
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                : dictationDiff.accuracy >= 70
+                                  ? 'bg-purple-100 text-purple-800 border border-purple-300'
+                                  : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            }`}>
+                              {isEn ? 'Match:' : 'Độ khớp:'} {dictationDiff.accuracy}% ({dictationDiff.correctCount}/{dictationDiff.totalCount} {isEn ? 'words' : 'từ'})
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-3 text-[10px]">
+                          <span className="inline-flex items-center gap-1.5 text-emerald-700 font-bold">
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-xs"></span>
+                            {isEn ? 'Correct' : 'Đúng'}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 text-rose-700 font-bold">
+                            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block shadow-xs"></span>
+                            {isEn ? 'Misspelling / Extra words' : 'Sai chính tả / thừa từ'}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 text-sky-700 font-bold">
+                            <span className="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block shadow-xs"></span>
+                            {isEn ? 'Missed words' : 'Nghe sót'}
+                          </span>
                         </div>
                       </div>
 
-                      <div className="p-3 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm leading-relaxed space-y-2 font-mono">
-                        <div>
-                          <span className="text-[11px] font-sans text-slate-500 block font-bold">{isEn ? 'Official Cambridge sentence:' : 'Câu chuẩn Cambridge:'}</span>
-                          <span className="text-emerald-800 font-semibold">{currentDictation.targetTranscript}</span>
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-sans text-slate-500 block font-bold">{isEn ? 'Your transcript:' : 'Bản chép của bạn:'}</span>
-                          <span className={userDictationInput.trim().toLowerCase() === currentDictation.targetTranscript.trim().toLowerCase() ? "text-emerald-600 font-bold" : "text-amber-800 font-medium"}>
-                            {userDictationInput || (isEn ? '(No text entered yet)' : '(Chưa gõ câu nào)')}
+                      <div className="p-3.5 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm leading-relaxed space-y-3 font-mono">
+                        {/* 1. Official Cambridge sentence */}
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-sans text-slate-500 block font-bold">
+                            {isEn ? 'Official Cambridge sentence:' : 'Câu chuẩn Cambridge:'}
                           </span>
+                          <div className="flex flex-wrap items-center gap-1.5 leading-loose">
+                            {dictationDiff && userDictationInput.trim() ? (
+                              dictationDiff.targetDiff.map((token, idx) => (
+                                <span
+                                  key={`target-${idx}`}
+                                  className={
+                                    token.type === 'correct'
+                                      ? 'text-emerald-700 font-semibold'
+                                      : 'inline-flex items-center text-sky-800 bg-sky-100 ring-1 ring-sky-300 font-bold px-1.5 py-0.5 rounded text-xs shadow-xs'
+                                  }
+                                  title={token.type === 'missed' ? (isEn ? 'Missed word from audio' : 'Từ bạn đã bỏ sót khi nghe') : ''}
+                                >
+                                  {token.text}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-slate-800 font-medium">
+                                {currentDictation.targetTranscript}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 2. Your transcript */}
+                        <div className="space-y-1 pt-1 border-t border-slate-100">
+                          <span className="text-[11px] font-sans text-slate-500 block font-bold">
+                            {isEn ? 'Your transcript:' : 'Bản chép của bạn:'}
+                          </span>
+                          <div className="flex flex-wrap items-center gap-1.5 leading-loose">
+                            {!userDictationInput.trim() ? (
+                              <span className="text-slate-400 italic font-sans text-xs">
+                                {isEn ? '(No text entered yet. Type above and click Check Word-by-Word)' : '(Chưa gõ câu nào. Hãy gõ vào ô trên và bấm Kiểm Tra)'}
+                              </span>
+                            ) : dictationDiff?.isExactMatch ? (
+                              <span className="text-emerald-700 font-bold flex items-center gap-1.5">
+                                <span>{userDictationInput}</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-sans border border-emerald-300">
+                                  ✓ {isEn ? '100% Exact Match!' : 'Khớp hoàn toàn 100%!'}
+                                </span>
+                              </span>
+                            ) : (
+                              dictationDiff?.userDiff.map((item, idx) => {
+                                if (item.type === 'correct') {
+                                  return (
+                                    <span key={`user-${idx}`} className="text-emerald-700 font-semibold">
+                                      {item.text}
+                                    </span>
+                                  );
+                                }
+                                if (item.type === 'extra') {
+                                  return (
+                                    <span
+                                      key={`user-${idx}`}
+                                      className="inline-flex items-center text-rose-800 bg-rose-100 ring-1 ring-rose-300 line-through decoration-rose-500 font-bold px-1.5 py-0.5 rounded text-xs shadow-xs"
+                                      title={isEn ? 'Misspelled or extra word' : 'Từ sai chính tả hoặc thừa'}
+                                    >
+                                      {item.text}
+                                    </span>
+                                  );
+                                }
+                                if (item.type === 'omission') {
+                                  return (
+                                    <span
+                                      key={`user-${idx}`}
+                                      className="inline-flex items-center text-sky-700 bg-sky-50 border border-dashed border-sky-300 font-sans font-medium px-1.5 py-0.5 rounded text-xs gap-1 shadow-xs"
+                                      title={isEn ? `Missed word from official audio: "${item.text}"` : `Từ bạn bỏ sót: "${item.text}"`}
+                                    >
+                                      <span className="text-sky-500 font-bold">+</span>
+                                      <span className="font-bold underline decoration-sky-300">{item.text}</span>
+                                    </span>
+                                  );
+                                }
+                                return null;
+                              })
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
