@@ -230,6 +230,8 @@ it('11. ArenaTextInputCard has anti-autocorrect attributes and ArenaQuestionCard
   assert.ok(inputCardCode.includes('autoCapitalize="none"'));
   assert.ok(inputCardCode.includes('spellCheck={false}'));
   assert.ok(inputCardCode.includes('inputRef.current.focus()'));
+  assert.ok(inputCardCode.includes('value={activeValue}'));
+  assert.ok(inputCardCode.includes('onChange={(e) => activeChange?.(e.target.value)}'));
 
   const questionCardCode = fs.readFileSync(path.resolve('src/components/arena/ArenaQuestionCard.jsx'), 'utf-8');
   assert.ok(questionCardCode.includes('ArenaTextInputCard'));

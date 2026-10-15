@@ -70,9 +70,9 @@ export default function ArenaTextInputCard({
         <input
           ref={inputRef}
           type="text"
-          value={value}
+          value={activeValue}
           disabled={isAnswerChecked}
-          onChange={(e) => onChange?.(e.target.value)}
+          onChange={(e) => activeChange?.(e.target.value)}
           onKeyDown={handleKeyDown}
           autoComplete="off"
           autoCorrect="off"
@@ -80,7 +80,7 @@ export default function ArenaTextInputCard({
           spellCheck={false}
           data-lpignore="true"
           placeholder={isEn ? 'Type the missing word and press Enter...' : 'Gõ từ còn thiếu rồi nhấn Enter...'}
-          className={`w-full pl-11 pr-12 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-mono font-bold tracking-wide transition-all outline-hidden border ${
+          className={`w-full pl-11 pr-12 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-mono font-bold tracking-wide transition-all outline-hidden border select-text cursor-text ${
             isAnswerChecked
               ? isCorrect
                 ? 'bg-emerald-950/40 border-emerald-500 text-emerald-200 ring-2 ring-emerald-500/30'
@@ -112,7 +112,7 @@ export default function ArenaTextInputCard({
           </div>
 
           {/* User's typed diff with red indicators OR skipped state */}
-          {value ? (
+          {activeValue ? (
             <div className="flex items-center gap-1 font-mono text-sm tracking-wider flex-wrap bg-slate-950/80 p-2.5 rounded-lg border border-slate-800">
               <span className="text-slate-500 text-xs font-sans mr-1">{isEn ? 'You typed:' : 'Bạn đã gõ:'}</span>
               {diffTokens.map((token, idx) => (
@@ -141,11 +141,11 @@ export default function ArenaTextInputCard({
           <div className="flex items-center gap-1.5 text-xs text-slate-300">
             <span className="text-emerald-400 font-bold">{isEn ? 'Correct Answer:' : 'Đáp Án Đúng:'}</span>
             <span className="font-mono font-bold text-emerald-300 text-sm tracking-wide bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
-              {correctAnswer}
+              {activeTarget}
             </span>
-            {acceptableAnswers.length > 1 && (
+            {activeAcceptable.length > 1 && (
               <span className="text-slate-400 italic text-[11px] ml-1">
-                ({isEn ? 'Also accepted:' : 'Cũng chấp nhận:'} {acceptableAnswers.filter(a => a.toLowerCase() !== correctAnswer.toLowerCase()).join(', ')})
+                ({isEn ? 'Also accepted:' : 'Cũng chấp nhận:'} {activeAcceptable.filter(a => a.toLowerCase() !== String(activeTarget).toLowerCase()).join(', ')})
               </span>
             )}
           </div>
