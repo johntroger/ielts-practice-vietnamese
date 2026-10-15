@@ -456,6 +456,378 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctIndex: 0,
     correctAnswer: 'tenets',
     explanation: '"Tenet" (plural: tenets) means a principle or belief, especially one of the main principles of a religion or philosophy (distinct from "tenant" = renter).'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 2 FLAT INSPECTIONS
+  // ==========================================
+  {
+    id: 'easy_lis_flat_01',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen and identify the total number of bathrooms/toilets in Flat 1:',
+    context: 'The main bedroom is a double bedroom with an en-suite bathroom and toilet, in addition to the main bathroom and toilet.',
+    audioText: 'The main bedroom is a double bedroom with an en-suite bathroom and toilet, in addition to the main bathroom and toilet.',
+    options: ['1 bathroom & toilet', '2 bathrooms & toilets', '3 bathrooms & toilets', 'None'],
+    correctIndex: 1,
+    correctAnswer: '2 bathrooms & toilets',
+    explanation: 'Bẫy số lượng: Căn hộ 1 có 1 phòng tắm khép kín (en-suite) CỘNG THÊM 1 phòng tắm chính (in addition to the main bathroom), vậy tổng cộng là 2 phòng tắm và 2 toilet.'
+  },
+  {
+    id: 'med_lis_flat_02',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to the property agent: How many bedrooms does Flat 2 CURRENTLY have?',
+    context: 'There are two double bedrooms, one bathroom, a newly fitted kitchen, a living room, and a separate dining room which could be turned into a third bedroom.',
+    audioText: 'There are two double bedrooms, one bathroom, a newly fitted kitchen, a living room, and a separate dining room which could be turned into a third bedroom.',
+    options: ['2 bedrooms', '3 bedrooms', '1 bedroom', '4 bedrooms'],
+    correctIndex: 0,
+    correctAnswer: '2 bedrooms',
+    explanation: 'Bẫy thông tin tiềm năng: Người nói nói phòng ăn có thể sửa thành phòng ngủ thứ 3 ("could be turned into a third bedroom"), nhưng hiện tại chỉ có 2 phòng ngủ đôi ("two double bedrooms").'
+  },
+  {
+    id: 'hard_lis_flat_03',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen carefully: Which floor levels does Flat 3 occupy?',
+    context: "The flat is on two levels; there's a first floor and a second floor above a separate ground floor flat.",
+    audioText: "The flat is on two levels; there's a first floor and a second floor above a separate ground floor flat.",
+    options: ['First and second floor only', 'Ground floor and first floor', 'Ground floor only', 'Second floor only'],
+    correctIndex: 0,
+    correctAnswer: 'First and second floor only',
+    explanation: 'Bẫy từ gây nhiễu "ground floor": Căn hộ tầng trệt là của người khác ("above a separate ground floor flat"). Căn số 3 gồm 2 tầng là tầng 1 và tầng 2.'
+  },
+  {
+    id: 'med_vocab_flat_04',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'vocab',
+    type: 'vocab',
+    prompt: 'In UK housing advertisements, an "en-suite" bathroom specifically denotes:',
+    context: 'The main bedroom is a double bedroom with an en-suite bathroom and toilet.',
+    options: [
+      'A private bathroom directly accessible from inside the bedroom',
+      'A communal washroom situated at the end of the corridor',
+      'An auxiliary outdoor shower adjacent to the garden',
+      'A guest toilet located near the front entrance'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A private bathroom directly accessible from inside the bedroom',
+    explanation: '"En-suite" (mượn từ tiếng Pháp) trong bất động sản Anh chỉ phòng tắm hoặc WC nối liền trực tiếp, khép kín bên trong phòng ngủ riêng.'
+  },
+  {
+    id: 'hard_paraphrase_flat_05',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'reading',
+    type: 'vocab',
+    prompt: 'Select the Band 8.0 academic synonym closest in meaning to "well kept" in property valuation:',
+    context: 'The flat needs some modernization, but it is very well kept and would be an excellent family home.',
+    options: ['meticulously maintained', 'severely dilapidated', 'sparsely furnished', 'structurally compromised'],
+    correctIndex: 0,
+    correctAnswer: 'meticulously maintained',
+    explanation: '"Well kept" (được bảo dưỡng, gìn giữ cẩn thận) đồng nghĩa với "meticulously maintained". Các từ còn lại: dilapidated (xập xệ), sparsely furnished (ít nội thất), compromised (bị hư hại kết cấu).'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 3 PROPERTY ENQUIRY
+  // ==========================================
+  {
+    id: 'easy_lis_addr_01',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to the caller spelling the street name: What is the correct street name?',
+    context: 'Sorry, did you say Church Mill Road? - No, Church Hill Road. C-H-U-R-C-H H-I-double L.',
+    audioText: 'Sorry, did you say Church Mill Road? - No, Church Hill Road. C-H-U-R-C-H H-I-double L.',
+    options: ['Church Hill Road', 'Church Mill Road', 'Church Dale Road', 'Church Well Road'],
+    correctIndex: 0,
+    correctAnswer: 'Church Hill Road',
+    explanation: 'Bẫy âm Mill vs Hill: Môi giới nghe nhầm thành "Church Mill Road", nhưng người gọi đính chính là "Church Hill Road" (H-I-double L).'
+  },
+  {
+    id: 'med_lis_appt_02',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen and identify the finalized viewing appointment time:',
+    context: "I'm free tomorrow morning. Is 11:00 okay? - Oh no, I'm sorry, I'm busy then. - How about 1:00 then, or 1:45? - 1:00 would be best for me.",
+    audioText: "I'm free tomorrow morning. Is 11:00 okay? - Oh no, I'm sorry, I'm busy then. - How about 1:00 then, or 1:45? - 1:00 would be best for me.",
+    options: ['1:00 PM', '11:00 AM', '1:45 PM', 'Tomorrow afternoon at 2:00 PM'],
+    correctIndex: 0,
+    correctAnswer: '1:00 PM',
+    explanation: 'Bẫy đổi lịch hẹn (Schedule shift trap): Khách hỏi 11:00 (môi giới bận), sau đó gợi ý 1:00 hoặc 1:45. Hai người chốt giờ tốt nhất là 1:00 PM.'
+  },
+  {
+    id: 'med_lis_spell_03',
+    difficulty: 'medium',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'spelling',
+    prompt: "Listen carefully: What is the accurate spelling of the estate agent's surname?",
+    context: 'Is that with two Ls? - No, one. E-L-I-O-T.',
+    audioText: 'Is that with two Ls? - No, one. E-L-I-O-T.',
+    options: ['Elliot', 'Elliott', 'Eliott', 'Eliot'],
+    correctIndex: 0,
+    correctAnswer: 'Elliot',
+    explanation: 'Bẫy chính tả tên riêng: Người hỏi thắc mắc có phải "two Ls" không, nhưng ông ấy trả lời "No, one" -> Elliot (E-L-I-O-T).'
+  },
+  {
+    id: 'hard_lis_appliances_04',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Will the prospective buyer need to purchase a cooker or dishwasher for this property?',
+    context: "It's fully fitted, so it includes a cooker and a dishwasher and all the other things you'd expect in a kitchen. - That sounds great! Not having to buy a cooker and dishwasher.",
+    audioText: "It's fully fitted, so it includes a cooker and a dishwasher and all the other things you'd expect in a kitchen. - That sounds great! Not having to buy a cooker and dishwasher.",
+    options: [
+      'No, both appliances are already installed in the fully fitted kitchen',
+      'Yes, she must purchase both appliances prior to moving in',
+      'Only the cooker is included, the dishwasher must be purchased',
+      'Only the dishwasher is included, the cooker is missing'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'No, both appliances are already installed in the fully fitted kitchen',
+    explanation: 'Nhà bếp lắp sẵn đầy đủ (fully fitted) bao gồm cả bếp nấu và máy rửa bát, người mua không cần phải tự mua ("Not having to buy a cooker and dishwasher").'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 4 NUMBERS & CODES
+  // ==========================================
+  {
+    id: 'easy_lis_b_vs_d_01',
+    difficulty: 'easy',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'spelling',
+    prompt: 'Listen to the membership code clarification: What is the correct membership ID?',
+    context: 'What\'s your membership number? - It\'s B1074. - Sorry, did you say D1074? - No, B1074.',
+    audioText: 'What\'s your membership number? - It\'s B1074. - Sorry, did you say D1074? - No, B1074.',
+    options: ['B1074', 'D1074', 'P1074', 'B1047'],
+    correctIndex: 0,
+    correctAnswer: 'B1074',
+    explanation: 'Bẫy âm chữ cái tương đồng B vs D: Nhân viên hỏi lại D1074, khách hàng khẳng định là B1074.'
+  },
+  {
+    id: 'easy_lis_price_02',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to the shop cashier: What is the accurate total amount due?',
+    context: 'That\'s £53.72 please. - Sorry, did you say £43.72? - No, £53.72.',
+    audioText: 'That\'s £53.72 please. - Sorry, did you say £43.72? - No, £53.72.',
+    options: ['£53.72', '£43.72', '£35.72', '£53.27'],
+    correctIndex: 0,
+    correctAnswer: '£53.72',
+    explanation: 'Bẫy phát âm số đếm 43 vs 53: Giá tiền chuẩn là £53.72.'
+  },
+  {
+    id: 'med_lis_phone_03',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to the phone message: What is the real phone number for Mr. Hemmings to call back?',
+    context: 'Did you say 01857 629 730? - No, it\'s 01897 625 730.',
+    audioText: 'Did you say 01857 629 730? - No, it\'s 01897 625 730.',
+    options: ['01897 625 730', '01857 629 730', '01897 629 730', '01857 625 730'],
+    correctIndex: 0,
+    correctAnswer: '01897 625 730',
+    explanation: 'Bẫy số kép: 897 (thay vì 857) và 625 (thay vì 629).'
+  },
+  {
+    id: 'hard_lis_dim_04',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the width of the football field mentioned in the conversation?',
+    context: 'It\'s 110 meters by 55 meters. - 110 meters long and 55 meters wide?',
+    audioText: 'It\'s 110 meters by 55 meters. - 110 meters long and 55 meters wide?',
+    options: ['55 meters', '110 meters', '165 meters', '50 meters'],
+    correctIndex: 0,
+    correctAnswer: '55 meters',
+    explanation: 'Bẫy kích thước Dài vs Rộng (Length vs Width): 110m là chiều dài, 55m là chiều rộng.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 5 HOUSE TOUR & DIMENSIONS
+  // ==========================================
+  {
+    id: 'easy_lis_decision_offer',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What does Caroline explicitly decide to do at the end of the house viewing?',
+    context: 'So, would you like to put in an offer? - Yes, please! This is the best property I\'ve seen so far.',
+    audioText: 'So, would you like to put in an offer? - Yes, please! This is the best property I\'ve seen so far.',
+    options: ['Put in an offer to buy the house', 'View the property a second time tomorrow', 'Check other houses in the same neighborhood', 'Decline the purchase due to price'],
+    correctIndex: 0,
+    correctAnswer: 'Put in an offer to buy the house',
+    explanation: 'Bà Caroline đồng ý trả giá mua ngay ("Yes, please! This is the best property I\'ve seen so far").'
+  },
+  {
+    id: 'med_lis_asking_price_trap',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the actual current asking price stated by the estate agent?',
+    context: 'If I remember rightly, it\'s £340,000? - Actually, it\'s £350,000 at the moment...',
+    audioText: 'If I remember rightly, it\'s £340,000? - Actually, it\'s £350,000 at the moment...',
+    options: ['£350,000', '£340,000', '£345,000', '£360,000'],
+    correctIndex: 0,
+    correctAnswer: '£350,000',
+    explanation: 'Bẫy giá nhớ nhầm: Khách nhớ là £340,000 nhưng môi giới đính chính giá hiện tại là £350,000.'
+  },
+  {
+    id: 'med_lis_bath_fixture_trap',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Does the en-suite bathroom in the master bedroom contain a full-sized bathtub?',
+    context: '...though it only has a shower unit and not a big bath like the main bathroom.',
+    audioText: '...though it only has a shower unit and not a big bath like the main bathroom.',
+    options: [
+      'No, it only has a shower unit',
+      'Yes, it features both a jacuzzi and bathtub',
+      'Yes, identical to the main family bathroom',
+      'No, it only contains a washbasin with no shower'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'No, it only has a shower unit',
+    explanation: 'Phòng tắm khép kín (en-suite) chỉ có buồng tắm vòi sen (shower unit), không có bồn tắm lớn.'
+  },
+  {
+    id: 'hard_lis_dim_correction_trap',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the corrected length of the main master bedroom?',
+    context: 'It\'s 4.91 meters by 3.95 meters... Oh sorry, that\'s 4.9 meters long and 3.95 meters wide.',
+    audioText: 'It\'s 4.91 meters by 3.95 meters... Oh sorry, that\'s 4.9 meters long and 3.95 meters wide.',
+    options: ['4.9 meters', '4.91 meters', '3.95 meters', '4.2 meters'],
+    correctIndex: 0,
+    correctAnswer: '4.9 meters',
+    explanation: 'Bẫy số thập phân tự đính chính: Môi giới đọc nhầm 4.91m rồi xin lỗi sửa lại thành 4.9m.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 6 PURCHASE OFFER & FINANCE
+  // ==========================================
+  {
+    id: 'easy_lis_postcode_ke7',
+    difficulty: 'easy',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'spelling',
+    prompt: 'Listen to the caller stating her postcode: What is the correct alphanumeric postcode?',
+    context: 'The postcode is KE7 8UD.',
+    audioText: 'The postcode is KE7 8UD.',
+    options: ['KE7 8UD', 'KA7 8UD', 'KE7 8UT', 'KE8 7UD'],
+    correctIndex: 0,
+    correctAnswer: 'KE7 8UD',
+    explanation: 'Mã bưu chính chuẩn là KE7 8UD.'
+  },
+  {
+    id: 'med_lis_current_stay',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is the buyer ready to move in immediately without waiting to sell a home?',
+    context: 'No, we sold it a couple of months ago and we\'re staying with relatives...',
+    audioText: 'No, we sold it a couple of months ago and we\'re staying with relatives...',
+    options: [
+      'They already sold their previous house and are currently staying with relatives',
+      'They are renting a flat on Church Hill Road',
+      'They own multiple homes in the riverside area',
+      'Their bank purchased their previous property'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They already sold their previous house and are currently staying with relatives',
+    explanation: 'Gia đình đã bán nhà cách đây vài tháng và hiện đang ở nhờ người thân nên không phải chờ bán nhà cũ.'
+  },
+  {
+    id: 'med_lis_main_worry',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is Caroline\'s MAIN motivation for wanting the sale completed before the end of summer?',
+    context: 'It\'s not easy living a long time with relatives, and my husband has a long journey to get to work. But those aren\'t the things I\'m really worried about. If we can move in before the end of the summer, it\'ll be much easier for the children to go to their new school.',
+    audioText: 'It\'s not easy living a long time with relatives, and my husband has a long journey to get to work. But those aren\'t the things I\'m really worried about. If we can move in before the end of the summer, it\'ll be much easier for the children to go to their new school.',
+    options: [
+      'Helping her children settle smoothly into their new school',
+      'Avoiding the daily commute to her husband\'s workplace',
+      'Ending the uncomfortable stay with her relatives',
+      'Preventing interest rate increases on the mortgage'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Helping her children settle smoothly into their new school',
+    explanation: 'Bẫy ưu tiên: Bà nói việc đi làm và ở nhờ không phải là điều bà lo nhất ("those aren\'t the things I\'m really worried about"), lý do cốt lõi là việc nhập học trường mới của các con.'
+  },
+  {
+    id: 'hard_lis_deposit_cash',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What percentage of cash deposit does Caroline\'s family currently hold in their bank account?',
+    context: 'We also have a 15% deposit in our bank account, about £52,000...',
+    audioText: 'We also have a 15% deposit in our bank account, about £52,000...',
+    options: ['15%', '10%', '20%', '50%'],
+    correctIndex: 0,
+    correctAnswer: '15%',
+    explanation: 'Tiền mặt đặt cọc có sẵn là 15% (tương đương khoảng 52,000 bảng Anh).'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 7 EN-SUITE & ROUTINES
+  // ==========================================
+  {
+    id: 'easy_lis_ensuite_routine',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to the buyer, when will the extra en-suite bathroom be most beneficial?',
+    context: 'That would come in very useful when we all get up to get ready for school or work.',
+    audioText: 'That would come in very useful when we all get up to get ready for school or work.',
+    options: [
+      'In the morning when family members get ready for school or work',
+      'During evening weekends when hosting guests',
+      'When doing laundry and washing clothes',
+      'Only during summer holidays'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'In the morning when family members get ready for school or work',
+    explanation: 'Phòng tắm phụ giúp giải tỏa ùn tắc buổi sáng khi cả nhà cùng thức dậy chuẩn bị đi làm hoặc đi học.'
+  },
+  {
+    id: 'med_lis_idiom_useful',
+    difficulty: 'medium',
+    topic: 'culture',
+    skillCategory: 'vocab',
+    type: 'vocab',
+    prompt: 'In conversational British English, what does the idiom "come in very useful" mean?',
+    context: 'That would come in very useful when we all get up to get ready for school or work.',
+    options: [
+      'Prove exceptionally handy, convenient, or practical',
+      'Be quite costly and difficult to maintain',
+      'Require additional building permits',
+      'Take a long time to construct'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Prove exceptionally handy, convenient, or practical',
+    explanation: '"Come in useful" (hoặc "come in handy") là thành ngữ chỉ một vật/tiện nghi tỏ ra rất hữu dụng, tiện lợi trong một tình huống cụ thể.'
   }
 ];
 

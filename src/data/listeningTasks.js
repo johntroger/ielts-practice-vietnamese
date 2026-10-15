@@ -10,6 +10,12 @@ import { cambridge17Test1 } from './listening/cambridge17Test1.js';
 import { cambridge8Test1 } from './listening/cambridge8Test1.js';
 import { cambridge8Test2 } from './listening/cambridge8Test2.js';
 import { cambridge8Test3 } from './listening/cambridge8Test3.js';
+import { track2FlatDescriptions } from './listening/track2FlatDescriptions.js';
+import { track3PropertyEnquiry } from './listening/track3PropertyEnquiry.js';
+import { track4NumbersMeasurements } from './listening/track4NumbersMeasurements.js';
+import { track5PropertyViewing } from './listening/track5PropertyViewing.js';
+import { track6OfferProcess } from './listening/track6OfferProcess.js';
+import { track7EnsuiteMicroDrill } from './listening/track7EnsuiteMicroDrill.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -32,6 +38,12 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track7EnsuiteMicroDrill,
+  track6OfferProcess,
+  track5PropertyViewing,
+  track4NumbersMeasurements,
+  track3PropertyEnquiry,
+  track2FlatDescriptions,
   cambridge20Test1,
   cambridge19Test1,
   cambridge18Test1,
@@ -40,3 +52,4 @@ export const INITIAL_LISTENING_TESTS = [
   cambridge8Test2,
   cambridge8Test3
 ];
+
