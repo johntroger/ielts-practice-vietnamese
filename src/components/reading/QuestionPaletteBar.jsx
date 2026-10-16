@@ -71,21 +71,29 @@ export default function QuestionPaletteBar({
     let isCorrect = false;
     let isWrong = false;
     if (isSubmitted) {
-      const qObj = questionsData.find(q => q.order === num);
-      if (qObj) {
-        const uAns = userAnswers[num];
-        if (Array.isArray(uAns)) {
-          const correctArr = Array.isArray(qObj.answer) ? qObj.answer : [qObj.answer];
-          isCorrect = uAns.length === correctArr.length && uAns.every(a => correctArr.includes(a));
-          isWrong = !isCorrect;
-        } else if (uAns) {
-          isCorrect = (
-            String(uAns).trim().toLowerCase() === String(qObj.answer).trim().toLowerCase() ||
-            (qObj.acceptableAnswers && qObj.acceptableAnswers.some(a => a.toLowerCase() === String(uAns).trim().toLowerCase()))
-          );
-          isWrong = !isCorrect;
-        } else {
-          isWrong = true;
+      const diag = bandResult?.questionsBreakdown?.find(q => q.order === num);
+      if (diag) {
+        isCorrect = Boolean(diag.isCorrect);
+        isWrong = !isCorrect;
+      } else {
+        const qObj = questionsData.find(q => q.order === num);
+        if (qObj) {
+          const uAns = userAnswers[num];
+          if (Array.isArray(uAns)) {
+            const correctArr = Array.isArray(qObj.answer) ? qObj.answer : [qObj.answer];
+            isCorrect = uAns.length === correctArr.length && uAns.every(a => correctArr.includes(a));
+            isWrong = !isCorrect;
+          } else if (uAns) {
+            const acceptable = [
+              qObj.answer,
+              ...(qObj.acceptableAnswers || []),
+              ...(qObj.acceptableAlternatives || [])
+            ].filter(Boolean).map(a => String(a).trim().toLowerCase());
+            isCorrect = acceptable.includes(String(uAns).trim().toLowerCase());
+            isWrong = !isCorrect;
+          } else {
+            isWrong = true;
+          }
         }
       }
     }

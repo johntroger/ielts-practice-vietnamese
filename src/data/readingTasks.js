@@ -8,6 +8,7 @@ import { cambridge18ReadingTest1 } from './reading/cambridge18ReadingTest1.js';
 import { cambridge17ReadingTest1 } from './reading/cambridge17ReadingTest1.js';
 import { cambridge16ReadingTest1 } from './reading/cambridge16ReadingTest1.js';
 import { pastPaper101Test1 } from './reading/pastPaper101Test1.js';
+import { pastPaper101Test2 } from './reading/pastPaper101Test2.js';
 
 export const INITIAL_READING_TESTS = [
   cambridge20ReadingTest1,
@@ -15,6 +16,7 @@ export const INITIAL_READING_TESTS = [
   cambridge17ReadingTest1,
   cambridge16ReadingTest1,
   pastPaper101Test1,
+  pastPaper101Test2,
   {
     id: 'cambridge-academic-test-1',
     title: 'Cambridge Practice Test 15: Roman Shipwrecks, Multilingualism & Air Traffic',

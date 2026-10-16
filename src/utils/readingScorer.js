@@ -457,11 +457,13 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
   // 4. Build complete list of acceptable variations (including brackets)
   const allAcceptableTargets = new Set();
   expandOptionalBrackets(question.answer).forEach(v => allAcceptableTargets.add(v));
-  if (Array.isArray(question.acceptableAnswers)) {
-    question.acceptableAnswers.forEach(ans => {
-      expandOptionalBrackets(ans).forEach(v => allAcceptableTargets.add(v));
-    });
-  }
+  const acceptableList = [
+    ...(Array.isArray(question.acceptableAnswers) ? question.acceptableAnswers : []),
+    ...(Array.isArray(question.acceptableAlternatives) ? question.acceptableAlternatives : [])
+  ];
+  acceptableList.forEach(ans => {
+    expandOptionalBrackets(ans).forEach(v => allAcceptableTargets.add(v));
+  });
 
   // 5. Check Exact / Bracket-Expanded Match
   if (allAcceptableTargets.has(userNorm)) {

@@ -101,6 +101,14 @@ export default function ReadingResultModal({
       count: distractorSummary?.totalTrapsIdentified || 0,
       activeTheme: 'bg-purple-600 text-white border-purple-600 shadow-2xs font-bold',
       iconColor: 'text-purple-600'
+    },
+    {
+      id: 'paraphrase_matrix',
+      icon: BookMarked,
+      label: isEn ? 'Paraphrase Matrix & Vocabulary' : 'Bản Đồ Paraphrase & Từ Vựng',
+      shortLabel: isEn ? 'Paraphrase' : 'Paraphrase',
+      activeTheme: 'bg-emerald-600 text-white border-emerald-600 shadow-2xs font-bold',
+      iconColor: 'text-emerald-600'
     }
   ], [isEn, correctCount, totalQuestions, distractorSummary?.totalTrapsIdentified]);
 
@@ -109,10 +117,15 @@ export default function ReadingResultModal({
       const saved = localStorage.getItem('ielts_reading_result_open_tabs');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          if (!parsed.includes('paraphrase_matrix')) {
+            parsed.push('paraphrase_matrix');
+          }
+          return parsed;
+        }
       }
     } catch (e) {}
-    return ['overview', 'passages', 'questions', 'types', 'distractors'];
+    return ['overview', 'passages', 'questions', 'types', 'distractors', 'paraphrase_matrix'];
   });
 
   const [isTabDropdownOpen, setIsTabDropdownOpen] = useState(false);
@@ -985,6 +998,117 @@ export default function ReadingResultModal({
                     ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 6: PARAPHRASE MATRIX & VOCABULARY */}
+          {activeTab === 'paraphrase_matrix' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 flex items-start gap-3">
+                <BookMarked className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <h3 className="font-bold text-emerald-950 text-sm sm:text-base">
+                    {isEn ? 'IELTS Reading Paraphrase Matrix & Vocabulary Journal' : 'Bản Đồ Đối Chiếu Paraphrase & Từ Khóa Cốt Lõi'}
+                  </h3>
+                  <p className="text-xs text-emerald-800 leading-relaxed">
+                    {isEn 
+                      ? 'Mastering Cambridge IELTS Reading hinges on identifying semantic paraphrases. Below is the direct mapping between question keywords and authentic passage evidence across all questions.'
+                      : 'Bí quyết đạt điểm cao trong IELTS Reading là năng lực phát hiện các cặp từ đồng nghĩa biến đổi (Paraphrase). Dưới đây là bảng đối chiếu trực diện giữa từ khóa trong đề và dẫn chứng tương đương trong bài đọc.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Questions Paraphrase List */}
+              <div className="space-y-3">
+                {questionsBreakdown
+                  .filter(q => q.evidenceQuote || q.evidenceParagraph || q.explanation)
+                  .map(q => (
+                    <div 
+                      key={q.order}
+                      className={`p-4 rounded-xl border transition-all ${
+                        q.isCorrect 
+                          ? 'bg-white border-slate-200 hover:border-emerald-300' 
+                          : 'bg-rose-50/30 border-rose-200 hover:border-rose-300'
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${
+                            q.isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                          }`}>
+                            {q.order}
+                          </span>
+                          <span className="font-bold text-slate-800 text-xs">
+                            {isEn ? `Question ${q.order}` : `Câu hỏi ${q.order}`}
+                          </span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            {isEn ? `Passage ${q.passageNumber}` : `Bài đọc ${q.passageNumber}`} {q.evidenceParagraph ? `• Para ${q.evidenceParagraph}` : ''}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                            q.isCorrect ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                          }`}>
+                            {q.isCorrect ? (isEn ? '✓ Correct' : '✓ Đúng') : (isEn ? '✗ Incorrect' : '✗ Chưa đúng')}
+                          </span>
+                          <span className="text-xs font-bold text-slate-700">
+                            {isEn ? 'Target Key: ' : 'Đáp án chuẩn: '}
+                            <span className="text-emerald-700 font-mono">{String(q.correctAnswer)}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mb-3">
+                        {/* Question Prompt */}
+                        <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                          <span className="font-bold text-slate-700 block mb-1">
+                            {isEn ? '📌 Question Keyword / Statement:' : '📌 Từ khóa / Mệnh đề trong câu hỏi:'}
+                          </span>
+                          <p className="text-slate-800 italic">
+                            "{q.questionText || `Question ${q.order}`}"
+                          </p>
+                        </div>
+
+                        {/* Passage Evidence Quote */}
+                        <div className="bg-emerald-50/60 p-2.5 rounded-lg border border-emerald-200">
+                          <span className="font-bold text-emerald-900 block mb-1">
+                            {isEn ? '🔍 Matching Evidence in Passage:' : '🔍 Dẫn chứng tương đương trong bài đọc:'}
+                          </span>
+                          <p className="text-emerald-950 font-medium">
+                            "{q.evidenceQuote || (isEn ? 'Refer to paragraph context.' : 'Tham chiếu ngữ cảnh đoạn văn.')}"
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Explanation & Semantic Shift */}
+                      {q.explanation && (
+                        <div className="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-200 mb-3 leading-relaxed">
+                          <strong className="text-slate-900">
+                            {isEn ? '💡 Cambridge Paraphrase Takeaway: ' : '💡 Phân tích từ đồng nghĩa & logic khảo thí: '}
+                          </strong>
+                          {q.explanation}
+                        </div>
+                      )}
+
+                      {/* Action: Jump to Evidence */}
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (onSelectPassage) onSelectPassage(q.passageNumber);
+                            if (onJumpToQuestion) onJumpToQuestion(q.order);
+                            onClose();
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>{isEn ? 'Jump to Evidence in Passage' : 'Xem vị trí dẫn chứng trong bài đọc'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
           )}
 
