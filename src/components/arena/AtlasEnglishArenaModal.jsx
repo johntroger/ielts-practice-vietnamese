@@ -58,7 +58,7 @@ export default function AtlasEnglishArenaModal({
   onOpenTheory = null
 }) {
   const { t, isEn } = useTranslation();
-  const { isMuted, toggleMute, playChime, playSfx, speak, unlockAudio } = useArenaAudio();
+  const { isMuted, toggleMute, playChime, playSfx, speak, stopAudio, unlockAudio } = useArenaAudio();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // State for real-user leaderboard data
@@ -189,13 +189,15 @@ export default function AtlasEnglishArenaModal({
   }, []);
 
   const handleClose = useCallback(() => {
+    stopAudio();
     if (typeof document !== 'undefined' && document.fullscreenElement) {
       document.exitFullscreen?.().catch(() => {});
     }
     onClose?.();
-  }, [onClose]);
+  }, [onClose, stopAudio]);
 
   const handleReturnToLobby = useCallback(async () => {
+    stopAudio();
     if (sprint.phase === ARENA_SPRINT_PHASES.DEFEATED && sprint.score > 0) {
       const partialXp = calculateSprintXp({
         correctAnswers: sprint.score,
@@ -216,9 +218,10 @@ export default function AtlasEnglishArenaModal({
     sprint.resetSprint();
     const updated = await fetchRealLeaderboard(currentUser);
     if (updated) setLeaderboardData(updated);
-  }, [sprint, currentUser, streak, selectedDifficulty]);
+  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio]);
 
   const handleDefeatedRestart = useCallback(async () => {
+    stopAudio();
     if (sprint.score > 0) {
       const partialXp = calculateSprintXp({
         correctAnswers: sprint.score,
@@ -237,7 +240,17 @@ export default function AtlasEnglishArenaModal({
       }
     }
     sprint.startSprint(null, selectedDifficulty);
-  }, [sprint, currentUser, streak, selectedDifficulty]);
+  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio]);
+
+  // Ensure all audio is immediately killed if modal is closed or unmounted
+  useEffect(() => {
+    if (!isOpen) {
+      stopAudio();
+    }
+    return () => {
+      stopAudio();
+    };
+  }, [isOpen, stopAudio]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -447,12 +460,18 @@ export default function AtlasEnglishArenaModal({
 
   // Auto-play audio when an active Listening question loads
   useEffect(() => {
-    if (!isOpen || sprint.phase !== ARENA_SPRINT_PHASES.ACTIVE) return;
+    if (!isOpen || sprint.phase !== ARENA_SPRINT_PHASES.ACTIVE) {
+      stopAudio();
+      return;
+    }
     const curQ = sprint.questions[sprint.currentIndex];
     if (curQ && (curQ.skillCategory === 'listening' || curQ.type === 'listening_trap' || curQ.type === 'listening_spelling' || curQ.isR2Audio)) {
       speak(curQ.audioText || 'audio', curQ);
     }
-  }, [isOpen, sprint.phase, sprint.currentIndex, sprint.questions, speak]);
+    return () => {
+      stopAudio();
+    };
+  }, [isOpen, sprint.phase, sprint.currentIndex, sprint.questions, speak, stopAudio]);
 
   if (!isOpen) return null;
 
@@ -596,16 +615,16 @@ export default function AtlasEnglishArenaModal({
                           difficulty: selectedDifficulty
                         });
                         if (r2SprintQuestions.length > 0) {
-                          sprint.startSprint(r2SprintQuestions, selectedDifficulty);
+                          sprint.startSprint(r2SprintQuestions, selectedDifficulty, { isAudioSprint: true });
                         } else {
-                          sprint.startSprint(null, selectedDifficulty);
+                          sprint.startSprint(null, selectedDifficulty, { isAudioSprint: true });
                         }
                       }}
                       className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40"
-                      title={isEn ? "Launch a 7-question Listening Audio Sprint using Cloudflare R2 studio tracks (Tracks 2-7)" : "Chạy ngay Sprint 7 câu chuyên biệt Luyện Nghe Audio Thực Chiến từ kho Cloudflare R2 (Tracks 2-7)"}
+                      title={t('arena.audioBlitzDesc')}
                     >
                       <span>🎧</span>
-                      <span>{isEn ? 'R2 Audio Sprint (Tracks 2-7)' : 'Sprint Nghe Audio R2 (Mới)'}</span>
+                      <span>{t('arena.audioBlitzTitle')}</span>
                     </button>
 
                     {getUnresolvedMistakeCount() > 0 && (

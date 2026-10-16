@@ -465,9 +465,9 @@ export function generateArenaSprintQuestions({
       addQuestion(shuffledR2Fast[0]);
     }
 
-    // SLOT 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase or Listening Spelling)
+    // SLOT 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase)
     const fastReflexCandidates = freshPool.filter(q => 
-      !selectedIds.has(q.id) && (q.skillCategory === 'vocab' || q.type === 'spelling' || q.type === 'synonym' || q.type === 'listening_spelling')
+      !selectedIds.has(q.id) && q.skillCategory === 'vocab'
     );
     const shuffledFast = shuffleArray(fastReflexCandidates, rng);
     for (let i = 0; i < shuffledFast.length && selected.length < 2; i++) {
@@ -491,7 +491,7 @@ export function generateArenaSprintQuestions({
 
     // SLOT 5 & 6: Tactical Reading (Micro-Scanning / Distractor Traps)
     const readingCandidates = freshPool.filter(q => 
-      !selectedIds.has(q.id) && (q.skillCategory === 'reading' || q.type === 'tfng' || q.skillCategory === 'vocab' || q.isR2Audio)
+      !selectedIds.has(q.id) && (q.skillCategory === 'reading' || q.type === 'tfng')
     );
     const shuffledReading = shuffleArray(readingCandidates, rng);
     for (let i = 0; i < shuffledReading.length && selected.length < 6; i++) {

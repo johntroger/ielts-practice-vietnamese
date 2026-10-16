@@ -165,7 +165,8 @@ const testSuites = [
   { name: 'Step 156: Arena League Promotion, Relegation & Ghost Rivals', file: 'tests/test_step156_arena_league_progression_and_ghost_rivals.js' },
   { name: 'Step 157: Dictation Word Diff & Visual Breakdown', file: 'tests/test_step157_dictation_word_diff_and_visual_breakdown.js' },
   { name: 'Step 158: Atlas Arena & Home Mobile Navigation Hub & Zero Collision', file: 'tests/test_step158_atlas_and_home_mobile_navigation_hub.js' },
-  { name: 'Step 159: Listening Header Optimization - Dynamic Closable Tabs & Dropdown Switcher', file: 'tests/test_step159_listening_dynamic_tabs_and_dropdown.js' }
+  { name: 'Step 159: Listening Header Optimization - Dynamic Closable Tabs & Dropdown Switcher', file: 'tests/test_step159_listening_dynamic_tabs_and_dropdown.js' },
+  { name: 'Step 160: Arena Audio Blitz Dedicated XP & Audio Leak Prevention', file: 'tests/test_step160_arena_audio_blitz_and_audio_leak_fix.js' }
 ];
 
 console.log('===============================================================');

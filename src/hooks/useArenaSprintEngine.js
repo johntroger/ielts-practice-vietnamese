@@ -66,6 +66,7 @@ export const INITIAL_SPRINT_STATE = {
   timeRemaining: INITIAL_SPRINT_TIMER_SECONDS,
   duration: INITIAL_SPRINT_TIMER_SECONDS,
   difficulty: 'medium',
+  isAudioSprint: false,
   isBossCleared: false,
   revengeClearedCount: 0,
   revengeBonusXp: 0,
@@ -288,7 +289,12 @@ export function getCambridgeTheoryPrescription(weakestSkillKey) {
 /**
  * Pure state transition functions for unit testing and deterministic execution.
  */
-export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIMER_SECONDS, difficulty = 'medium') {
+export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIMER_SECONDS, difficulty = 'medium', options = {}) {
+  const isAudioSprint = Boolean(
+    options.isAudioSprint ||
+    (Array.isArray(questions) && questions.length > 0 && questions.every(q => q && (q.audioUrl || q.isR2Audio)))
+  );
+
   return {
     ...INITIAL_SPRINT_STATE,
     phase: ARENA_SPRINT_PHASES.ACTIVE,
@@ -296,6 +302,7 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     timeRemaining: duration,
     duration,
     difficulty,
+    isAudioSprint,
     shieldState: createSprintShieldState(),
     questionHistory: []
   };
@@ -585,7 +592,8 @@ export function finishSprintAction(state, user = null) {
     totalSeconds,
     difficulty: state.difficulty || 'medium',
     timeRemaining: Math.max(0, state.timeRemaining),
-    isBossCleared: state.isBossCleared
+    isBossCleared: state.isBossCleared,
+    isAudioSprint: Boolean(state.isAudioSprint)
   });
 
   const finalXpWithRevenge = (rawXpResult.finalXp || 0) + (state.revengeBonusXp || 0);
@@ -648,14 +656,14 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
   const startTimeRef = useRef(null);
   const durationRef = useRef(INITIAL_SPRINT_TIMER_SECONDS);
 
-  const startSprint = useCallback((customQuestions = null, selectedDifficulty = 'medium') => {
+  const startSprint = useCallback((customQuestions = null, selectedDifficulty = 'medium', options = {}) => {
     const qList = customQuestions || generateArenaSprintQuestions({ count: 7, difficulty: selectedDifficulty });
     const duration = INITIAL_SPRINT_TIMER_SECONDS;
     durationRef.current = duration;
     startTimeRef.current = Date.now();
-    const next = startSprintAction(qList, duration, selectedDifficulty);
+    const next = startSprintAction(qList, duration, selectedDifficulty, options);
     setState(next);
-    emit('arena:sprint_started', { totalQuestions: qList.length, difficulty: selectedDifficulty });
+    emit('arena:sprint_started', { totalQuestions: qList.length, difficulty: selectedDifficulty, isAudioSprint: next.isAudioSprint });
   }, []);
 
   const selectOption = useCallback((idx) => {

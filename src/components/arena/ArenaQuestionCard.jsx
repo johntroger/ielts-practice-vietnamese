@@ -229,8 +229,8 @@ export default function ArenaQuestionCard({
 
           {(question.isR2Audio || question.audioUrl) && (
             <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 flex items-center gap-1.5 shadow-xs">
-              <span>☁️</span>
-              <span>{question.trackLabel || (isEn ? 'R2 STUDIO AUDIO' : 'AUDIO THỰC CHIẾN R2')}</span>
+              <span>🎧</span>
+              <span>{question.trackLabel || (isEn ? 'CAMBRIDGE STUDIO AUDIO' : 'AUDIO THỰC CHIẾN CAMBRIDGE')}</span>
             </span>
           )}
 

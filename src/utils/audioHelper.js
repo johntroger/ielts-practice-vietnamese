@@ -98,22 +98,33 @@ export function playSoundcheck({ onStart, onEnd } = {}) {
 
 let sharedArenaAudioElement = null;
 let sharedArenaClipTimer = null;
+let activeLoadedListener = null;
+let currentPlaySessionId = 0;
 
 function stopArenaHtmlAudio() {
+  currentPlaySessionId++;
   if (sharedArenaClipTimer) {
     clearInterval(sharedArenaClipTimer);
     sharedArenaClipTimer = null;
   }
   if (sharedArenaAudioElement) {
     try {
+      if (activeLoadedListener) {
+        sharedArenaAudioElement.removeEventListener('loadedmetadata', activeLoadedListener);
+        activeLoadedListener = null;
+      }
       sharedArenaAudioElement.pause();
+      sharedArenaAudioElement.currentTime = 0;
+      // Detach audio source so buffered media immediately ceases
+      sharedArenaAudioElement.removeAttribute('src');
+      sharedArenaAudioElement.load();
     } catch (e) {}
   }
 }
 
 /**
  * Stops all ongoing soundcheck chimes, R2 HTML5 audio streams, and speech synthesis.
- * Essential to eliminate acoustic feedback before mic recording.
+ * Essential to eliminate acoustic feedback before mic recording and when exiting games.
  */
 export function stopAllAudio() {
   stopArenaHtmlAudio();
@@ -133,18 +144,19 @@ export function speakArenaText(textOrQuestion, { audioUrl, clipStart = 0, clipEn
   const resolvedStart = Number((isObj ? textOrQuestion.clipStart : clipStart) || 0);
   const resolvedEnd = Number((isObj ? textOrQuestion.clipEnd : clipEnd) || 0);
 
+  const sessionId = ++currentPlaySessionId;
+
   if (resolvedUrl && typeof window !== 'undefined' && typeof Audio !== 'undefined') {
     try {
       if (!sharedArenaAudioElement) {
         sharedArenaAudioElement = new Audio();
-        sharedArenaAudioElement.preload = 'auto';
       }
       const audio = sharedArenaAudioElement;
-      if (audio.src !== resolvedUrl) {
-        audio.src = resolvedUrl;
-      }
+      audio.preload = 'auto';
+      audio.src = resolvedUrl;
 
       const startPlayback = () => {
+        if (sessionId !== currentPlaySessionId) return;
         try {
           if (resolvedStart > 0 && Math.abs(audio.currentTime - resolvedStart) > 0.5) {
             audio.currentTime = resolvedStart;
@@ -154,26 +166,37 @@ export function speakArenaText(textOrQuestion, { audioUrl, clipStart = 0, clipEn
         } catch (e) {}
 
         audio.play().then(() => {
+          if (sessionId !== currentPlaySessionId) {
+            try {
+              audio.pause();
+              audio.currentTime = 0;
+              audio.removeAttribute('src');
+            } catch (e) {}
+            return;
+          }
           onStart?.();
           if (resolvedEnd > resolvedStart) {
             sharedArenaClipTimer = setInterval(() => {
-              if (audio.currentTime >= resolvedEnd || audio.paused || audio.ended) {
+              if (sessionId !== currentPlaySessionId || audio.currentTime >= resolvedEnd || audio.paused || audio.ended) {
                 stopArenaHtmlAudio();
                 onEnd?.();
               }
-            }, 150);
+            }, 100);
           } else {
             audio.onended = () => {
-              stopArenaHtmlAudio();
-              onEnd?.();
+              if (sessionId === currentPlaySessionId) {
+                stopArenaHtmlAudio();
+                onEnd?.();
+              }
             };
           }
-        }).catch(() => {
+        }).catch((err) => {
+          if (sessionId !== currentPlaySessionId) return;
           // Fallback to TTS if autoplay/network blocked
           if (resolvedText) {
             speakText(resolvedText, { voiceLang: 'en-GB', rate: 0.95, pitch: 1.0, onStart, onEnd, onError });
           } else {
-            onError?.();
+            onError?.(err);
           }
         });
       };
@@ -181,11 +204,14 @@ export function speakArenaText(textOrQuestion, { audioUrl, clipStart = 0, clipEn
       if (audio.readyState >= 1) {
         startPlayback();
       } else {
-        const onLoaded = () => {
-          audio.removeEventListener('loadedmetadata', onLoaded);
+        activeLoadedListener = () => {
+          if (activeLoadedListener) {
+            audio.removeEventListener('loadedmetadata', activeLoadedListener);
+            activeLoadedListener = null;
+          }
           startPlayback();
         };
-        audio.addEventListener('loadedmetadata', onLoaded, { once: true });
+        audio.addEventListener('loadedmetadata', activeLoadedListener, { once: true });
         audio.load();
       }
       return;

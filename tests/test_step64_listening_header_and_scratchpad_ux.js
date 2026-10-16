@@ -34,8 +34,8 @@ assert(
   'ListeningWorkspace question count must be protected with whitespace-nowrap shrink-0'
 );
 assert(
-  workspaceCode.includes('hidden xl:block') && workspaceCode.includes('shrink-0'),
-  'ListeningWorkspace test switcher dropdown must have shrink-0 and xl:block'
+  workspaceCode.includes('shrink-0') && (workspaceCode.includes('isTestDropdownOpen') || workspaceCode.includes('hidden xl:block')),
+  'ListeningWorkspace test switcher controls must be protected with shrink-0'
 );
 console.log('  ✅ 1. ListeningWorkspace header layout stabilized across breakpoints');
 

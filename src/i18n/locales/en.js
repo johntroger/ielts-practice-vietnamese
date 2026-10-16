@@ -549,7 +549,10 @@ export const en = {
     prescriptionTitle: '1-Click Cambridge Theory Prescription',
     prescriptionSubtitle: 'Priority knowledge gap to reinforce in Strategy Handbook',
     reviewInHandbook: 'Review in Handbook',
-    untestedAxis: 'Not tested'
+    untestedAxis: 'Not tested',
+    audioBlitzTitle: 'Cambridge Audio Blitz (+25% XP)',
+    audioBlitzDesc: '7-Question Cambridge Studio Audio Challenge — Earn +25% Bonus XP and Perfect Ear mastery reward!',
+    audioBonusLabel: 'Audio Mastery Bonus (+25% XP)'
   },
   about: {
     badge: 'CAMBRIDGE-STANDARD 4-SKILL IELTS PLATFORM • 100% LOCAL-FIRST & FREE',

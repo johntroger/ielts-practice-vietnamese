@@ -77,7 +77,8 @@ export function calculateTimeBonusXp({ remainingSeconds = 0, baseScore = 0, corr
  * @param {string} [params.difficulty='medium'] - Selected difficulty level ('easy' | 'medium' | 'hard' | 'nightmare')
  * @param {number} [params.timeRemaining=0] - Time remaining in seconds (for time bonus)
  * @param {boolean} [params.isBossCleared=false] - Whether question 10 (Boss) was answered correctly
- * @returns {{ finalXp: number, rawXp: number, baseScore: number, bossBonus: number, timeBonus: number, streakBonus: number, speedBonus: number, softCapMultiplier: number, difficulty: string }}
+ * @param {boolean} [params.isAudioSprint=false] - Whether sprint is a dedicated Audio Blitz round
+ * @returns {{ finalXp: number, rawXp: number, baseScore: number, bossBonus: number, audioBonus: number, timeBonus: number, streakBonus: number, speedBonus: number, softCapMultiplier: number, difficulty: string, isAudioSprint: boolean }}
  */
 export function calculateSprintXp({
   correctAnswers = 0,
@@ -85,7 +86,8 @@ export function calculateSprintXp({
   totalSeconds = 60,
   difficulty = 'medium',
   timeRemaining = 0,
-  isBossCleared = false
+  isBossCleared = false,
+  isAudioSprint = false
 } = {}) {
   // Support up to 10 questions for Atlas Arena v8.0
   const validCorrect = Math.max(0, Math.min(10, Number(correctAnswers) || 0));
@@ -95,17 +97,21 @@ export function calculateSprintXp({
       rawXp: 0, 
       baseScore: 0, 
       bossBonus: 0, 
+      audioBonus: 0,
       timeBonus: 0, 
       streakBonus: 0, 
       speedBonus: 0, 
       softCapMultiplier: 1.0, 
-      difficulty 
+      difficulty,
+      isAudioSprint: Boolean(isAudioSprint)
     };
   }
 
   const diffConfig = ARENA_DIFFICULTY_CONFIG[difficulty] || ARENA_DIFFICULTY_CONFIG.medium;
   const baseXpPerQuestion = diffConfig.baseXpPerQuestion || ARENA_XP_CAPS.BASE_QUESTION_XP;
-  const maxSprintCap = diffConfig.maxSprintXp || ARENA_XP_CAPS.MAX_XP_PER_SPRINT;
+  const standardCap = diffConfig.maxSprintXp || ARENA_XP_CAPS.MAX_XP_PER_SPRINT;
+  // If isAudioSprint, expand max sprint cap to reward dedicated audio practice (+25%)
+  const maxSprintCap = isAudioSprint ? Math.round(standardCap * 1.25) : standardCap;
 
   // 1. Base XP: scaled by difficulty level
   const baseScore = validCorrect * baseXpPerQuestion;
@@ -113,7 +119,16 @@ export function calculateSprintXp({
   // 2. Boss Question Bonus: Question 10 yields +0.5x Base XP if cleared
   const bossBonus = isBossCleared ? Math.round(baseXpPerQuestion * 0.5) : 0;
 
-  // 3. Time Bonus: Capped strictly at 30% of Base XP
+  // 3. Audio Sprint Mastery Bonus: +25% on Base XP + Perfect Ear (+15 XP if all correct)
+  let audioBonus = 0;
+  if (isAudioSprint) {
+    audioBonus = Math.round(baseScore * 0.25);
+    if (validCorrect >= 7) {
+      audioBonus += 15; // Perfect Ear Bonus for flawlessly clearing 7 audio traps
+    }
+  }
+
+  // 4. Time Bonus: Capped strictly at 30% of Base XP
   const timeBonus = calculateTimeBonusXp({
     remainingSeconds: timeRemaining,
     baseScore,
@@ -130,17 +145,17 @@ export function calculateSprintXp({
     }
   }
 
-  // 4. Streak Multiplier Bonus (max 40 XP)
+  // 5. Streak Multiplier Bonus (max 40 XP)
   const streakBonus = Math.min(40, Math.floor(Math.max(0, streakCount) * 2));
 
   // Raw Total before Soft-Cap
-  const rawXp = baseScore + bossBonus + timeBonus + speedBonus + streakBonus;
+  const rawXp = baseScore + bossBonus + audioBonus + timeBonus + speedBonus + streakBonus;
 
-  // 5. Apply Daily Soft-Cap Curve
+  // 6. Apply Daily Soft-Cap Curve
   const multiplier = getDailySoftCapMultiplier();
   let finalXp = Math.round(rawXp * multiplier);
 
-  // 6. Enforce Maximum Cap for selected difficulty
+  // 7. Enforce Maximum Cap for selected difficulty
   finalXp = Math.max(0, Math.min(maxSprintCap, finalXp));
 
   return {
@@ -148,10 +163,12 @@ export function calculateSprintXp({
     rawXp,
     baseScore,
     bossBonus,
+    audioBonus,
     timeBonus,
     streakBonus,
     speedBonus,
     softCapMultiplier: multiplier,
-    difficulty: diffConfig.id
+    difficulty: diffConfig.id,
+    isAudioSprint: Boolean(isAudioSprint)
   };
 }

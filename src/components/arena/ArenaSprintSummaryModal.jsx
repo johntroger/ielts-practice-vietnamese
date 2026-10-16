@@ -103,6 +103,13 @@ export default function ArenaSprintSummaryModal({
             <span className="font-bold text-rose-300 text-xs sm:text-sm">+{summary.streakBonus || 0}</span>
           </div>
 
+          {summary.audioBonus > 0 && (
+            <div className="flex flex-col items-center bg-cyan-950/40 rounded-lg p-1.5 border border-cyan-800/60 col-span-2 sm:col-span-4">
+              <span className="text-cyan-300 text-[10px] font-bold">🎧 {t('arena.audioBonusLabel')}</span>
+              <span className="font-extrabold text-cyan-300 text-xs sm:text-sm">+{summary.audioBonus} XP</span>
+            </div>
+          )}
+
           {summary.revengeBonusXp > 0 && (
             <div className="flex flex-col items-center bg-amber-950/40 rounded-lg p-1.5 border border-amber-800/60 col-span-2 sm:col-span-4">
               <span className="text-amber-300 text-[10px] font-bold">⚡ {isEn ? 'Revenge Clearance Bonus' : 'Thưởng Chuộc Lỗi Phục Thù'}</span>
