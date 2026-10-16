@@ -569,5 +569,43 @@ export const LISTENING_MICRO_DRILLS = [
     wordCount: 22,
     difficulty: 'Band 6.0 - 7.0',
     audioClipTip: 'Chú ý phát âm nối âm "there\'s an" và liên từ nhượng bộ "though it only has".'
+  },
+  {
+    id: 'ldrill-num-track8-commute',
+    type: 'listening-numbers',
+    subType: 'numbers',
+    title: 'Phản xạ ghi chép thời gian & phương tiện đi lại (Track 8)',
+    category: 'Commute & Travel Times',
+    promptAudioText: 'Our school is about a 20-minute bus ride from my house.',
+    audioText: 'Our house is in the city centre, about 5 minutes\' walk from the train station... and our school is about a 20-minute bus ride from my house.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track8-student-accommodation-and-shopping.mp3',
+    clipStart: 28,
+    clipEnd: 46,
+    correctAnswer: '20 minutes',
+    questionPrompt: 'Travel duration to school by bus: .........',
+    questionPromptVi: 'Thời gian đi xe buýt đến trường: .........',
+    acceptableAnswers: ['20 minutes', '20-minute', '20 mins', '20 min', 'twenty minutes', '20-minute bus ride'],
+    trapNote: 'Bẫy số 5 phút: 5 phút là khoảng cách đi bộ ra ga tàu (train station), còn đến trường học là 20 phút bằng xe buýt (20-minute bus ride).',
+    explanation: 'Thời gian đi lại từ nhà đến trường là 20 phút bằng xe buýt.'
+  },
+  {
+    id: 'ldrill-dist-track8-market',
+    type: 'listening-distractor',
+    title: 'Bẫy nhận diện quan điểm: Lý do không đi chợ truyền thống (Track 8)',
+    category: 'Consumer & Retail Preferences',
+    audioSnippetText: 'the local market is more for older people who just want to go and buy some cheaper food or clothes, and the styles and brands on sale at the market are a bit old-fashioned for me personally.',
+    audioText: 'the local market is more for older people who just want to go and buy some cheaper food or clothes, and the styles and brands on sale at the market are a bit old-fashioned for me personally.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track8-student-accommodation-and-shopping.mp3',
+    clipStart: 167,
+    clipEnd: 193,
+    question: 'Lý do chính khiến người nói không muốn đi mua sắm tại khu chợ truyền thống địa phương là gì?',
+    options: [
+      { id: 'A', text: 'Đồ ăn và quần áo ở chợ có mức giá quá đắt' },
+      { id: 'B', text: 'Các mẫu mã và thương hiệu ở chợ có phần lỗi thời so với bạn ấy' },
+      { id: 'C', text: 'Khu chợ nằm cách quá xa bến xe buýt và ga tàu' }
+    ],
+    correctOption: 'B',
+    distractorMechanism: 'Người nói có đề cập chợ bán đồ ăn giá rẻ hơn ("cheaper food or clothes"), nhưng đó là lý do người lớn tuổi thích, còn lý do người nói từ chối là vì mẫu mã lỗi thời ("a bit old-fashioned for me personally").',
+    explanation: 'Đáp án chính xác là B. Cần chú ý phân biệt giữa ưu điểm của đối tượng khác (người già thích giá rẻ) và quan điểm cá nhân của người nói (chê lỗi thời).'
   }
 ];

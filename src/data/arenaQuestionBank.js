@@ -851,6 +851,79 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Prove exceptionally handy, convenient, or practical',
     explanation: '"Come in useful" (hoặc "come in handy") là thành ngữ chỉ một vật/tiện nghi tỏ ra rất hữu dụng, tiện lợi trong một tình huống cụ thể.',
     explanationEn: "Idiomatic usage: 'Come in useful' (or 'come in handy') means to prove especially practical, convenient, or helpful in a particular situation."
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 8 STUDENT HOUSING & SHOPPING
+  // ==========================================
+  {
+    id: 'easy_lis_commute_t8',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How long does it take the student to commute from her shared house to school?',
+    context: 'Our house is in the city centre, about 5 minutes\' walk from the train station... and our school is about a 20-minute bus ride from my house.',
+    audioText: 'Our house is in the city centre, about 5 minutes\' walk from the train station... and our school is about a 20-minute bus ride from my house.',
+    options: [
+      'About a 20-minute bus ride',
+      'A 5-minute walk',
+      'A 40-minute train journey',
+      'Under 10 minutes on foot'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'About a 20-minute bus ride',
+    explanation: 'Bẫy số liệu và phương tiện: 5 phút là khoảng cách đi bộ ra ga tàu (train station), còn đến trường là khoảng 20 phút đi xe buýt (20-minute bus ride).',
+    explanationEn: 'Distractor trap: 5 minutes refers to walking to the train station, whereas school is a 20-minute bus journey.'
+  },
+  {
+    id: 'med_lis_nationality_t8',
+    difficulty: 'medium',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the nationality of the student being interviewed?',
+    context: 'One of them is from China and the other is from India. I\'m from Romania, so I think we live in a pretty international house.',
+    audioText: 'One of them is from China and the other is from India. I\'m from Romania, so I think we live in a pretty international house.',
+    options: ['Romanian', 'Chinese', 'Indian', 'British'],
+    correctIndex: 0,
+    correctAnswer: 'Romanian',
+    explanation: 'Bẫy quốc tịch: Người nói nhắc tới bạn cùng nhà từ Trung Quốc (China) và Ấn Độ (India), nhưng bản thân người nói là từ Romania (I\'m from Romania).',
+    explanationEn: 'Nationality identification: The student mentions housemates from China and India, but she explicitly clarifies "I\'m from Romania".'
+  },
+  {
+    id: 'med_lis_mall_feature_t8',
+    difficulty: 'medium',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Besides retail shops, restaurants, and a cinema, what leisure facility is available at City Gate?',
+    context: 'There is also a cinema and ice rink, so people go there not just to shop, but to hang out with their friends as well.',
+    audioText: 'There is also a cinema and ice rink, so people go there not just to shop, but to hang out with their friends as well.',
+    options: ['An ice rink', 'A bowling alley', 'An indoor water park', 'A tennis court'],
+    correctIndex: 0,
+    correctAnswer: 'An ice rink',
+    explanation: 'Khu mua sắm City Gate có rạp chiếu phim và sân trượt băng (ice rink) để giới trẻ tụ tập bạn bè.',
+    explanationEn: 'Leisure amenity: City Gate features an ice rink in addition to its cinema, shops, and dining establishments.'
+  },
+  {
+    id: 'hard_lis_market_reason_t8',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does the student personally avoid shopping at the traditional local market?',
+    context: 'the local market is more for older people who just want to go and buy some cheaper food or clothes, and the styles and brands on sale at the market are a bit old-fashioned for me personally.',
+    audioText: 'the local market is more for older people who just want to go and buy some cheaper food or clothes, and the styles and brands on sale at the market are a bit old-fashioned for me personally.',
+    options: [
+      'The fashion styles and brands sold there feel old-fashioned to her',
+      'Fresh groceries and clothes are substantially more expensive',
+      'The market is situated too far from the train station',
+      'Public transport to the market is suspended at weekends'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The fashion styles and brands sold there feel old-fashioned to her',
+    explanation: 'Bẫy lý do: Chợ địa phương tuy bán đồ ăn rẻ hơn nhưng phù hợp với người lớn tuổi hơn, còn với người nói thì mẫu mã và thương hiệu ở đó bị xem là lỗi thời (a bit old-fashioned).',
+    explanationEn: 'Attitude and evaluation: Despite cheaper prices, the student finds market brands and styles too old-fashioned for her personal taste.'
   }
 ];
 
@@ -885,7 +958,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   hard_lis_deposit_cash: { audioUrl: `${R2_BASE}/ielts-listening-track6-offer-and-sale-process.mp3`, clipStart: 100, clipEnd: 118, isR2Audio: true, trackLabel: 'Track 6 • Offer Process' },
   // Track 7: En-Suite Clip
   easy_lis_ensuite_routine: { audioUrl: `${R2_BASE}/ielts-listening-track7-ensuite-bathroom-clip.mp3`, clipStart: 0, clipEnd: 12, isR2Audio: true, trackLabel: 'Track 7 • En-suite Routine' },
-  med_lis_idiom_useful: { audioUrl: `${R2_BASE}/ielts-listening-track7-ensuite-bathroom-clip.mp3`, clipStart: 0, clipEnd: 12, isR2Audio: true, trackLabel: 'Track 7 • En-suite Routine', audioText: 'That would come in very useful when we all get up to get ready for school or work.' }
+  med_lis_idiom_useful: { audioUrl: `${R2_BASE}/ielts-listening-track7-ensuite-bathroom-clip.mp3`, clipStart: 0, clipEnd: 12, isR2Audio: true, trackLabel: 'Track 7 • En-suite Routine', audioText: 'That would come in very useful when we all get up to get ready for school or work.' },
+  // Track 8: Student Accommodation & Shopping
+  easy_lis_commute_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 28, clipEnd: 46, isR2Audio: true, trackLabel: 'Track 8 • Commute & School' },
+  med_lis_nationality_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 52, clipEnd: 71, isR2Audio: true, trackLabel: 'Track 8 • International House' },
+  med_lis_mall_feature_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 100, clipEnd: 118, isR2Audio: true, trackLabel: 'Track 8 • City Gate Amenities' },
+  hard_lis_market_reason_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 167, clipEnd: 193, isR2Audio: true, trackLabel: 'Track 8 • Local Market Opinion' }
 };
 
 export const ARENA_QUESTION_BANK = [
