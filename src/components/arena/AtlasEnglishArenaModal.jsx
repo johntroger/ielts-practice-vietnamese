@@ -565,7 +565,7 @@ export default function AtlasEnglishArenaModal({
 
             {/* Main Fullscreen Lobby Body */}
             <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
                 {/* Left: Hero Banner & Rules */}
                 <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl">
                   <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider">
@@ -573,11 +573,11 @@ export default function AtlasEnglishArenaModal({
                     <span className="truncate">{t('arena.rulesBadge')}</span>
                   </div>
 
-                  <h2 className="text-base sm:text-2xl md:text-[26px] font-black text-slate-100 leading-tight sm:leading-snug tracking-tight">
+                  <h2 className="text-base sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight">
                     {t('arena.heroTitle')}
                   </h2>
 
-                  <p className="text-xs sm:text-sm text-slate-300/90 leading-relaxed font-sans hidden sm:block">
+                  <p className="text-xs text-slate-300/90 leading-relaxed font-sans hidden sm:block line-clamp-2">
                     {t('arena.heroDescription')}
                   </p>
 
@@ -604,9 +604,6 @@ export default function AtlasEnglishArenaModal({
                       <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">{t('arena.maxRewardLabel')}</div>
                     </div>
                   </div>
-
-                  {/* Daily Cambridge World Boss Raid Event Card */}
-                  <ArenaWorldBossCard isEn={isEn} />
 
                   {/* 4-Tier Difficulty Selector & Topic Preview */}
                   <ArenaDifficultySelector
@@ -706,8 +703,8 @@ export default function AtlasEnglishArenaModal({
                   </div>
                 </div>
 
-                {/* Right: Real Learner Leaderboard */}
-                <div className="lg:col-span-6 xl:col-span-5 w-full">
+                {/* Right: Real Learner Leaderboard & Daily World Boss Raid */}
+                <div className="lg:col-span-6 xl:col-span-5 w-full flex flex-col gap-2.5 sm:gap-3 min-w-0">
                   <ArenaRelativeLeaderboard
                     rivals={leaderboardData.leaderboard}
                     currentUserId={currentUser?.id}
@@ -716,6 +713,7 @@ export default function AtlasEnglishArenaModal({
                     leagueTier={leaderboardData.leagueTier}
                     onSelectLearner={setSelectedLearner}
                   />
+                  <ArenaWorldBossCard isEn={isEn} />
                 </div>
               </div>
             </main>
