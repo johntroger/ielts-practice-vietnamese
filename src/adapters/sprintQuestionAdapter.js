@@ -469,13 +469,21 @@ export function generateArenaSprintQuestions({
       addQuestion(shuffledR2Fast[0]);
     }
 
-    // SLOT 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase)
-    const fastReflexCandidates = freshPool.filter(q => 
-      !selectedIds.has(q.id) && q.skillCategory === 'vocab'
+    // SLOT 2: Fast Reflex Type-In (Spelling Demons or Listening Spelling interactive text_input)
+    const textInputCandidates = freshPool.filter(q => 
+      !selectedIds.has(q.id) && q.interactionType === 'text_input'
     );
-    const shuffledFast = shuffleArray(fastReflexCandidates, rng);
-    for (let i = 0; i < shuffledFast.length && selected.length < 2; i++) {
-      addQuestion(shuffledFast[i]);
+    if (textInputCandidates.length > 0) {
+      const shuffledTextInput = shuffleArray(textInputCandidates, rng);
+      addQuestion(shuffledTextInput[0]);
+    } else {
+      const fastReflexCandidates = freshPool.filter(q => 
+        !selectedIds.has(q.id) && q.skillCategory === 'vocab'
+      );
+      const shuffledFast = shuffleArray(fastReflexCandidates, rng);
+      for (let i = 0; i < shuffledFast.length && selected.length < 2; i++) {
+        addQuestion(shuffledFast[i]);
+      }
     }
 
     // SLOT 3 & 4: Core Analysis (Grammar / Collocation / TFNG) + REVENGE QUESTION SLOT (Max 1)
