@@ -1577,6 +1577,49 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Supervising weightlifting until Geoff arrives at the sports centre',
     explanation: 'Nhiệm vụ dự phòng: Mặc dù vai trò chính của Steve là hỗ trợ linh hoạt, nhưng nếu Geoff đến muộn thì Steve sẽ trông coi môn cử tạ cho đến khi Geoff tới ("take care of the weightlifting till I arrive").',
     explanationEn: 'Contingency duty: Although Steve is a flexible helper, he must oversee weightlifting if Geoff is delayed early in the afternoon.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 17 ATHLETIC MOTIVATIONS & BENEFITS
+  // ==========================================
+  {
+    id: 'easy_lis_rowing_health_t17',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to the first speaker, what makes rowing a particularly commendable sport?',
+    context: 'I think that rowing is a great sport if you want to stay fit and healthy.',
+    audioText: 'I think that rowing is a great sport if you want to stay fit and healthy.',
+    options: [
+      'It provides an effective means to maintain physical fitness and sound health',
+      'It offers intense competitive pressure when racing against friends',
+      'It is an inexpensive outdoor recreational pastime',
+      'It focuses exclusively on upper body muscular strength'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It provides an effective means to maintain physical fitness and sound health',
+    explanation: 'Người nói số 1 nêu rõ rowing là môn thể thao tuyệt vời nếu muốn giữ vóc dáng và sức khỏe tốt ("stay fit and healthy").',
+    explanationEn: 'Speaker 1 affirms that rowing is a great sport for staying fit and healthy.'
+  },
+  {
+    id: 'med_lis_tennis_competitive_t17',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What specific factor drives the second speaker\'s enjoyment of tennis?',
+    context: 'I often enjoy tennis, as it is very competitive, and I like to beat my friends.',
+    audioText: 'I often enjoy tennis, as it is very competitive, and I like to beat my friends.',
+    options: [
+      'The fierce competitive nature and the pleasure of defeating friends',
+      'The requirement to develop endurance on open water',
+      'The social atmosphere among non-competitive club members',
+      'The physical conditioning that keeps players lean and fit'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The fierce competitive nature and the pleasure of defeating friends',
+    explanation: 'Người nói số 2 thích tennis vì tính cạnh tranh cao và cảm giác đánh bại bạn bè ("as it is very competitive, and I like to beat my friends").',
+    explanationEn: 'Speaker 2 enjoys tennis specifically because of its competitiveness and the thrill of beating friends.'
   }
 ];
 
@@ -1656,7 +1699,10 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_geoff_absence_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 8, clipEnd: 18, isR2Audio: true, trackLabel: 'Track 16 • Geoff Absence' },
   med_lis_amanda_badminton_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 38, clipEnd: 56, isR2Audio: true, trackLabel: 'Track 16 • Badminton Rules' },
   med_lis_basketball_reversal_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 86, clipEnd: 110, isR2Audio: true, trackLabel: 'Track 16 • Basketball Reversal' },
-  hard_lis_steve_reserve_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 124, clipEnd: 142, isR2Audio: true, trackLabel: 'Track 16 • Steve Contingency' }
+  hard_lis_steve_reserve_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 124, clipEnd: 142, isR2Audio: true, trackLabel: 'Track 16 • Steve Contingency' },
+  // Track 17: Athletic Motivations & Benefits
+  easy_lis_rowing_health_t17: { audioUrl: `${R2_BASE}/ielts-listening-track17-sports-benefits-and-opinions.mp3`, clipStart: 2, clipEnd: 8, isR2Audio: true, trackLabel: 'Track 17 • Rowing Benefits' },
+  med_lis_tennis_competitive_t17: { audioUrl: `${R2_BASE}/ielts-listening-track17-sports-benefits-and-opinions.mp3`, clipStart: 10, clipEnd: 18, isR2Audio: true, trackLabel: 'Track 17 • Tennis Motivation' }
 };
 
 export const ARENA_QUESTION_BANK = [

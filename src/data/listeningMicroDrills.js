@@ -1080,5 +1080,53 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'Steve is primarily an all-round helper, but given an explicit conditional contingency: "And if something happens and I can\'t make it in the early afternoon, you can take care of the weightlifting till I arrive".',
     explanation: 'Đáp án là A vì câu nói nêu rõ "take care of the weightlifting till I arrive".',
     explanationEn: 'Option A is correct: the speaker explicitly specifies "take care of the weightlifting till I arrive".'
+  },
+  {
+    id: 'ldrill-spell-track17-rowing',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ từ vựng môn thể thao dưới nước: Rowing (Track 17)',
+    titleEn: 'Water Sports Vocabulary Reflex: Rowing (Track 17)',
+    category: 'Water Sports & Athletics',
+    categoryEn: 'Water Sports & Athletics',
+    promptAudioText: 'I think that rowing is a great sport if you want to stay fit and healthy.',
+    audioText: 'I think that rowing is a great sport if you want to stay fit and healthy.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track17-sports-benefits-and-opinions.mp3',
+    clipStart: 2,
+    clipEnd: 8,
+    correctAnswer: 'rowing',
+    questionPrompt: 'Water sport recommendation: ................ is great for staying fit and healthy.',
+    questionPromptEn: 'Water sport recommendation: ................ is great for staying fit and healthy.',
+    questionPromptVi: 'Gợi ý thể thao dưới nước: Môn ......... rất tốt để giữ gìn vóc dáng và sức khỏe.',
+    acceptableAnswers: ['rowing', 'Rowing'],
+    trapNote: 'Bẫy chính tả nguyên âm: "rowing" (/ˈroʊ.ɪŋ/). Tránh viết sai thành "roing" hoặc "rowwing".',
+    trapNoteEn: 'Vowel spelling rule: "rowing" (/ˈroʊ.ɪŋ/). Avoid misspelling as "roing" or "rowwing".',
+    explanation: 'Từ cần điền là "rowing" (môn chèo thuyền).',
+    explanationEn: 'The required vocabulary term is "rowing".'
+  },
+  {
+    id: 'ldrill-dist-track17-tennis-motivation',
+    type: 'listening-distractor',
+    title: 'Bẫy phân biệt động lực chơi thể thao: Rowing vs Tennis (Track 17)',
+    titleEn: 'Motivation Distractor Trap: Rowing vs Tennis (Track 17)',
+    category: 'Athletic Motivations & Traps',
+    categoryEn: 'Athletic Motivations & Traps',
+    audioSnippetText: 'I often enjoy tennis, as it is very competitive, and I like to beat my friends.',
+    audioText: 'I often enjoy tennis, as it is very competitive, and I like to beat my friends.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track17-sports-benefits-and-opinions.mp3',
+    clipStart: 10,
+    clipEnd: 18,
+    question: 'Lý do chính khiến người nói thường xuyên chơi môn quần vợt (tennis) là gì?',
+    questionEn: 'What is the primary reason the speaker frequently plays tennis?',
+    options: [
+      { id: 'A', text: 'Tính cạnh tranh cao và thích cảm giác giành chiến thắng trước bạn bè', textEn: 'High competitiveness and the thrill of outperforming friends' },
+      { id: 'B', text: 'Để duy trì vóc dáng săn chắc và sức khỏe tổng thể', textEn: 'To stay fit and maintain general health' },
+      { id: 'C', text: 'Vì đây là môn thể thao vận động nhẹ nhàng không cần nhiều thể lực', textEn: 'Because it is a gentle activity requiring minimal endurance' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe rất dễ nhầm lẫn sang lý do "stay fit and healthy" ở phát biểu số 1 (dành cho môn rowing), trong khi động lực thực sự của tennis là "very competitive, and I like to beat my friends".',
+    distractorMechanismEn: 'Test-takers often confuse the rationale with speaker 1\'s "stay fit and healthy" (applicable to rowing), whereas tennis is motivated by "very competitive, and I like to beat my friends".',
+    explanation: 'Đáp án là A vì lý do của tennis được nêu trực tiếp: "as it is very competitive, and I like to beat my friends".',
+    explanationEn: 'Option A is correct: the speaker explicitly accounts for tennis with "as it is very competitive, and I like to beat my friends".'
   }
 ];
