@@ -13,6 +13,7 @@
 import { ARENA_BATCH_1_QUESTIONS } from './arenaQuestionsBatch1.js';
 import { ARENA_BATCH_2_QUESTIONS } from './arenaQuestionsBatch2.js';
 import { ARENA_QUESTION_TRANSLATIONS } from './arenaQuestionTranslations.js';
+import { ARENA_101_READING_QUESTIONS } from './arenaQuestions101Reading.js';
 
 export const ARENA_BASE_QUESTION_BANK = [
   // ==========================================
@@ -2009,7 +2010,8 @@ const R2_AUDIO_METADATA_BY_ID = {
 export const ARENA_QUESTION_BANK = [
   ...ARENA_BASE_QUESTION_BANK,
   ...ARENA_BATCH_1_QUESTIONS,
-  ...ARENA_BATCH_2_QUESTIONS
+  ...ARENA_BATCH_2_QUESTIONS,
+  ...ARENA_101_READING_QUESTIONS
 ].map(q => {
   const r2Meta = R2_AUDIO_METADATA_BY_ID[q.id] || {};
   const merged = { ...q, ...r2Meta };

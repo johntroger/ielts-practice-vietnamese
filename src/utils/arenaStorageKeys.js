@@ -22,7 +22,13 @@ export const ARENA_STORAGE_KEYS = {
   // Equipped tactical booster perk
   EQUIPPED_PERK: 'ielts_arena_equipped_perk',
   // Weekly league rollover evaluation tracker
-  LAST_EVALUATED_WEEK: 'ielts_arena_last_evaluated_week'
+  LAST_EVALUATED_WEEK: 'ielts_arena_last_evaluated_week',
+  // Active 1-on-1 Ghost Duel
+  ACTIVE_GHOST_DUEL: 'ielts_arena_active_ghost_duel',
+  // Daily World Boss Raid event state
+  WORLD_BOSS_STATE: 'ielts_arena_world_boss_state',
+  // Resilient offline submission queue
+  OFFLINE_QUEUE: 'ielts_arena_offline_queue'
 };
 
 export const ARENA_LEAGUE_TIERS = {

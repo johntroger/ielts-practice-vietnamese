@@ -15,8 +15,12 @@ import {
   Edit3,
   MessageSquare,
   ChevronRight,
-  Plus
+  Plus,
+  ZoomIn,
+  ZoomOut,
+  Maximize2
 } from 'lucide-react';
+import ImageViewerModal from '../ImageViewerModal';
 import { lookupReadingWord } from '../../services/geminiService';
 import { useTranslation } from '../../i18n';
 
@@ -72,6 +76,8 @@ export default function PassagePane({
   const [selectionPopup, setSelectionPopup] = useState(null); // { x, y, text, paraId }
   const [activeNoteModal, setActiveNoteModal] = useState(null); // { paraId, text, currentNote }
   const [noteDraft, setNoteDraft] = useState('');
+  const [previewImage, setPreviewImage] = useState(null); // { url, title }
+  const [passageImageZoom, setPassageImageZoom] = useState(1);
 
   // Persist highlights
   useEffect(() => {
@@ -516,6 +522,69 @@ export default function PassagePane({
           </div>
         </div>
 
+        {/* Passage Visual / Diagram / Map (If Present) */}
+        {(passage?.imageUrl || passage?.diagramImageUrl) && (
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-900 relative shadow-sm">
+            <div className="absolute top-2 right-2 z-10 flex items-center space-x-1 bg-slate-900/85 backdrop-blur-xs p-1 rounded-lg border border-slate-700 text-white shadow-md">
+              <button
+                type="button"
+                onClick={() => setPassageImageZoom(prev => Math.min(prev + 0.25, 2.5))}
+                className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                title={isEn ? "Zoom in" : "Phóng to"}
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setPassageImageZoom(prev => Math.max(prev - 0.25, 0.75))}
+                className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                title={isEn ? "Zoom out" : "Thu nhỏ"}
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setPassageImageZoom(1)}
+                className="px-1.5 py-0.5 text-[10px] font-bold hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                title={isEn ? "Reset (100%)" : "Cỡ chuẩn (100%)"}
+              >
+                {Math.round(passageImageZoom * 100)}%
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewImage({
+                  url: passage.imageUrl || passage.diagramImageUrl,
+                  title: passage.title || (isEn ? "Passage Diagram / Visual Figure" : "Sơ đồ minh họa bài đọc")
+                })}
+                className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                title={isEn ? "Full Screen View" : "Mở toàn màn hình"}
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="overflow-auto max-h-[380px] flex items-center justify-center p-3 bg-slate-950">
+              <img
+                src={passage.imageUrl || passage.diagramImageUrl}
+                alt={passage.title || (isEn ? "Passage Illustration" : "Minh họa bài đọc")}
+                style={{
+                  transform: `scale(${passageImageZoom})`,
+                  transformOrigin: 'center center'
+                }}
+                className="max-w-full h-auto transition-transform duration-150 rounded-lg cursor-pointer"
+                onClick={() => setPreviewImage({
+                  url: passage.imageUrl || passage.diagramImageUrl,
+                  title: passage.title || (isEn ? "Passage Diagram / Visual Figure" : "Sơ đồ minh họa bài đọc")
+                })}
+              />
+            </div>
+            <div className="px-3 py-1.5 bg-slate-900 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+              <span>{isEn ? "💡 Click image or use controls to inspect visual details" : "💡 Nhấp vào ảnh hoặc dùng nút điều khiển để soi chi tiết sơ đồ"}</span>
+              <span className="text-slate-500 font-mono text-[10px]">{isEn ? "Visual Reference" : "Tư liệu minh họa"}</span>
+            </div>
+          </div>
+        )}
+
         {/* Paragraphs */}
         <div className={`space-y-6 ${ts.paraText}`}>
           {passage?.paragraphs?.map(para => {
@@ -853,6 +922,16 @@ export default function PassagePane({
             {isEn ? '💡 Simulates the Highlight & Notes feature in official Computer-Delivered IELTS (CDI).' : '💡 Mô phỏng tính năng Highlight & Notes trên hệ thống thi IELTS trên máy (CDI).'}
           </div>
         </div>
+      )}
+
+      {/* Fullscreen Interactive Image Viewer Modal */}
+      {previewImage && (
+        <ImageViewerModal
+          isOpen={!!previewImage}
+          onClose={() => setPreviewImage(null)}
+          imageUrl={previewImage.url}
+          title={previewImage.title}
+        />
       )}
     </div>
   );

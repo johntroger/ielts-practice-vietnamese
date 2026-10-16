@@ -13,8 +13,12 @@ import {
   RefreshCw,
   AlertCircle,
   BookOpen,
-  ExternalLink
+  ExternalLink,
+  ZoomIn,
+  ZoomOut,
+  Maximize2
 } from 'lucide-react';
+import ImageViewerModal from '../ImageViewerModal';
 import { explainReadingQuestion } from '../../services/geminiService';
 import DistractorTrapExplainer from '../DistractorTrapExplainer';
 import { evaluateQuestionAnswer } from '../../services/answerEvaluationService';
@@ -45,6 +49,8 @@ export default function QuestionPane({
   const [loadingAiFor, setLoadingAiFor] = useState(null); // order
   const [aiErrorFor, setAiErrorFor] = useState({}); // { [order]: string }
   const [savedVocabIds, setSavedVocabIds] = useState({}); // { [word]: boolean }
+  const [previewImage, setPreviewImage] = useState(null); // { url, title }
+  const [diagramZoom, setDiagramZoom] = useState({}); // { [groupId]: scale }
 
   // Track clicks to handle double-click deselection on desktop and touch devices
   const lastOptionClickRef = useRef({});
@@ -882,6 +888,78 @@ export default function QuestionPane({
             })()}
           </div>
 
+          {/* Group Diagram / Illustration / Map (If Present) */}
+          {(group.diagramImageUrl || group.imageUrl || group.mapImageUrl) && (
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-900 relative shadow-sm">
+              <div className="absolute top-2 right-2 z-10 flex items-center space-x-1 bg-slate-900/85 backdrop-blur-xs p-1 rounded-lg border border-slate-700 text-white shadow-md">
+                <button
+                  type="button"
+                  onClick={() => setDiagramZoom(prev => ({
+                    ...prev,
+                    [group.id || idx]: Math.min((prev[group.id || idx] || 1) + 0.25, 2.5)
+                  }))}
+                  className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                  title={isEn ? "Zoom in" : "Phóng to"}
+                >
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDiagramZoom(prev => ({
+                    ...prev,
+                    [group.id || idx]: Math.max((prev[group.id || idx] || 1) - 0.25, 0.75)
+                  }))}
+                  className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                  title={isEn ? "Zoom out" : "Thu nhỏ"}
+                >
+                  <ZoomOut className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDiagramZoom(prev => ({
+                    ...prev,
+                    [group.id || idx]: 1
+                  }))}
+                  className="px-1.5 py-0.5 text-[10px] font-bold hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                  title={isEn ? "Reset (100%)" : "Cỡ chuẩn (100%)"}
+                >
+                  {Math.round((diagramZoom[group.id || idx] || 1) * 100)}%
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewImage({
+                    url: group.diagramImageUrl || group.imageUrl || group.mapImageUrl,
+                    title: group.title || (isEn ? "Reading Diagram / Illustration" : "Sơ đồ minh họa bài đọc")
+                  })}
+                  className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
+                  title={isEn ? "Full Screen View" : "Mở toàn màn hình"}
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="overflow-auto max-h-[380px] flex items-center justify-center p-3 bg-slate-950">
+                <img
+                  src={group.diagramImageUrl || group.imageUrl || group.mapImageUrl}
+                  alt={group.title || (isEn ? "Reading Diagram" : "Sơ đồ bài đọc")}
+                  style={{
+                    transform: `scale(${diagramZoom[group.id || idx] || 1})`,
+                    transformOrigin: 'center center'
+                  }}
+                  className="max-w-full h-auto transition-transform duration-150 rounded-lg cursor-pointer"
+                  onClick={() => setPreviewImage({
+                    url: group.diagramImageUrl || group.imageUrl || group.mapImageUrl,
+                    title: group.title || (isEn ? "Reading Diagram / Illustration" : "Sơ đồ minh họa bài đọc")
+                  })}
+                />
+              </div>
+              <div className="px-3 py-1.5 bg-slate-900 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>{isEn ? "💡 Click image or use controls to inspect diagram details" : "💡 Nhấp vào ảnh hoặc dùng nút điều khiển để soi chi tiết sơ đồ"}</span>
+                <span className="text-slate-500 font-mono text-[10px]">{isEn ? "HD Diagram" : "Sơ đồ HD"}</span>
+              </div>
+            </div>
+          )}
+
           {/* Render by Question Group Type */}
           {(group.type === 'true_false_not_given' || group.type === 'yes_no_not_given') && renderTFNGGroup(group)}
           {group.type === 'multiple_choice_single' && renderMultipleChoiceGroup(group)}
@@ -890,6 +968,16 @@ export default function QuestionPane({
           {(group.type === 'matching_headings' || group.type === 'matching_features') && renderMatchingGroup(group)}
         </div>
       ))}
+
+      {/* Fullscreen Interactive Image Viewer Modal */}
+      {previewImage && (
+        <ImageViewerModal
+          isOpen={!!previewImage}
+          onClose={() => setPreviewImage(null)}
+          imageUrl={previewImage.url}
+          title={previewImage.title}
+        />
+      )}
     </div>
   );
 }

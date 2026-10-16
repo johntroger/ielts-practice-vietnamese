@@ -1206,7 +1206,11 @@ export default function ReadingLibraryModal({
                           </span>
 
                           {/* Source Badge */}
-                          {(test.isCambridge || !test.isCustom) ? (
+                          {test.source === '101_past_papers' ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200">
+                              📖 {isEn ? '101 Past Papers' : '101 Đề Past Papers'}
+                            </span>
+                          ) : (test.isCambridge || !test.isCustom) ? (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
                               🏛️ {test.cambridgeBook ? (isEn ? `Cambridge Official (Cam ${test.cambridgeBook})` : `Chuẩn Cambridge (Cam ${test.cambridgeBook})`) : 'Cambridge Academic'}
                             </span>
@@ -1259,7 +1263,7 @@ export default function ReadingLibraryModal({
                         </div>
 
                         <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
-                          {formatTestTitle(test.title, isEn)}
+                          {formatTestTitle(test.title, isEn, test)}
                         </h3>
                         
                         <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
