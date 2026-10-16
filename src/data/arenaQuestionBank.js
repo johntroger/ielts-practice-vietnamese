@@ -924,6 +924,84 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The fashion styles and brands sold there feel old-fashioned to her',
     explanation: 'Bẫy lý do: Chợ địa phương tuy bán đồ ăn rẻ hơn nhưng phù hợp với người lớn tuổi hơn, còn với người nói thì mẫu mã và thương hiệu ở đó bị xem là lỗi thời (a bit old-fashioned).',
     explanationEn: 'Attitude and evaluation: Despite cheaper prices, the student finds market brands and styles too old-fashioned for her personal taste.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 9 HOMETOWN & URBAN LEXIS
+  // ==========================================
+  {
+    id: 'easy_lis_inhabitants_t9',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to the speaker, why are the inhabitants of their hometown characterized as easygoing?',
+    context: 'The inhabitants of my hometown are pretty easygoing as we live in a place with good weather.',
+    audioText: 'The inhabitants of my hometown are pretty easygoing as we live in a place with good weather.',
+    options: [
+      'Because they reside in a region blessed with good weather',
+      'Because living costs and taxes are remarkably low',
+      'Because working hours are flexible and stress-free',
+      'Because outdoor markets offer free organic produce'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Because they reside in a region blessed with good weather',
+    explanation: 'Lý do cư dân sống cởi mở, dễ chịu (easygoing) là do sống ở vùng có thời tiết thuận lợi, dễ chịu (good weather).',
+    explanationEn: 'Causal link: Inhabitants are easygoing specifically because they live in an area with pleasant, good weather.'
+  },
+  {
+    id: 'med_lis_architecture_t9',
+    difficulty: 'medium',
+    topic: 'culture',
+    skillCategory: 'vocab',
+    type: 'vocab',
+    prompt: 'Which advanced adjective does the speaker use to express great fascination with their hometown\'s architecture?',
+    context: 'The architecture in my hometown is fascinating.',
+    audioText: 'The architecture in my hometown is fascinating.',
+    options: ['Fascinating', 'Ordinary', 'Conventional', 'Monotonous'],
+    correctIndex: 0,
+    correctAnswer: 'Fascinating',
+    explanation: '"Fascinating" có nghĩa là cực kỳ lôi cuốn, quyến rũ, hấp dẫn trí tò mò.',
+    explanationEn: "Lexical choice: 'Fascinating' signifies extremely captivating, intriguing, or delightful to observe."
+  },
+  {
+    id: 'med_lis_residential_dull_t9',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why are residential areas considered the most boring parts of the speaker\'s hometown?',
+    context: 'The most boring places in my hometown are the residential areas as there are no shops there.',
+    audioText: 'The most boring places in my hometown are the residential areas as there are no shops there.',
+    options: [
+      'Because there are no retail shops or commercial outlets there',
+      'Because public buses stop running after midday',
+      'Because the architecture of the houses is repetitive',
+      'Because streets are narrow and difficult to navigate'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Because there are no retail shops or commercial outlets there',
+    explanation: 'Khu dân cư (residential areas) bị coi là chán nhất bởi vì hoàn toàn không có cửa hàng mua bán nào (no shops there).',
+    explanationEn: 'Lack of amenities: Residential zones are deemed dull precisely because they lack shops and commercial venues.'
+  },
+  {
+    id: 'hard_lis_traffic_env_t9',
+    difficulty: 'hard',
+    topic: 'environment',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What primary factor does the speaker hold responsible for environmental degradation in their hometown?',
+    context: 'I\'d say that due to the traffic in my hometown, the environment there is getting worse.',
+    audioText: 'I\'d say that due to the traffic in my hometown, the environment there is getting worse.',
+    options: [
+      'Heavy vehicular traffic congestion',
+      'Industrial chemical pollutants from local factories',
+      'Uncollected household refuse in residential quarters',
+      'Excessive energy consumption by multi-storey malls'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Heavy vehicular traffic congestion',
+    explanation: 'Chất lượng môi trường giảm sút được người nói quy trực tiếp cho lưu lượng và ách tắc giao thông (due to the traffic).',
+    explanationEn: 'Environmental impact: The speaker directly attributes the deteriorating local environment to traffic.'
   }
 ];
 
@@ -963,7 +1041,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_commute_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 28, clipEnd: 46, isR2Audio: true, trackLabel: 'Track 8 • Commute & School' },
   med_lis_nationality_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 52, clipEnd: 71, isR2Audio: true, trackLabel: 'Track 8 • International House' },
   med_lis_mall_feature_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 100, clipEnd: 118, isR2Audio: true, trackLabel: 'Track 8 • City Gate Amenities' },
-  hard_lis_market_reason_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 167, clipEnd: 193, isR2Audio: true, trackLabel: 'Track 8 • Local Market Opinion' }
+  hard_lis_market_reason_t8: { audioUrl: `${R2_BASE}/ielts-listening-track8-student-accommodation-and-shopping.mp3`, clipStart: 167, clipEnd: 193, isR2Audio: true, trackLabel: 'Track 8 • Local Market Opinion' },
+  // Track 9: Hometown Descriptions & Urban Living
+  easy_lis_inhabitants_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 68, clipEnd: 84, isR2Audio: true, trackLabel: 'Track 9 • Inhabitants & Weather' },
+  med_lis_architecture_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 26, clipEnd: 37, isR2Audio: true, trackLabel: 'Track 9 • Architecture Vocab' },
+  med_lis_residential_dull_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 114, clipEnd: 131, isR2Audio: true, trackLabel: 'Track 9 • Residential Areas' },
+  hard_lis_traffic_env_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 163, clipEnd: 179, isR2Audio: true, trackLabel: 'Track 9 • Traffic & Environment' }
 };
 
 export const ARENA_QUESTION_BANK = [

@@ -17,6 +17,7 @@ import { track5PropertyViewing } from './listening/track5PropertyViewing.js';
 import { track6OfferProcess } from './listening/track6OfferProcess.js';
 import { track7EnsuiteMicroDrill } from './listening/track7EnsuiteMicroDrill.js';
 import { track8StudentAccommodation } from './listening/track8StudentAccommodation.js';
+import { track9HometownSentences } from './listening/track9HometownSentences.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -39,6 +40,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track9HometownSentences,
   track8StudentAccommodation,
   track7EnsuiteMicroDrill,
   track6OfferProcess,

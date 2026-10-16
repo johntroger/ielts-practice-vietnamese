@@ -607,5 +607,43 @@ export const LISTENING_MICRO_DRILLS = [
     correctOption: 'B',
     distractorMechanism: 'Người nói có đề cập chợ bán đồ ăn giá rẻ hơn ("cheaper food or clothes"), nhưng đó là lý do người lớn tuổi thích, còn lý do người nói từ chối là vì mẫu mã lỗi thời ("a bit old-fashioned for me personally").',
     explanation: 'Đáp án chính xác là B. Cần chú ý phân biệt giữa ưu điểm của đối tượng khác (người già thích giá rẻ) và quan điểm cá nhân của người nói (chê lỗi thời).'
+  },
+  {
+    id: 'ldrill-spell-track9-architecture',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ từ vựng học thuật: Architecture & Monuments (Track 9)',
+    category: 'Architecture & Buildings',
+    promptAudioText: 'The architecture in my hometown is fascinating.',
+    audioText: 'The architecture in my hometown is fascinating.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track9-hometown-architecture-and-living.mp3',
+    clipStart: 26,
+    clipEnd: 37,
+    correctAnswer: 'architecture',
+    questionPrompt: 'The town\'s ................ is regarded as fascinating.',
+    questionPromptVi: 'Kiến trúc đô thị của thị trấn: .........',
+    acceptableAnswers: ['architecture', 'Architecture'],
+    trapNote: 'Bẫy chính tả kinh điển: "architecture" có chữ "ch" phát âm là /k/, hậu tố "-ture" phát âm là /tʃər/.',
+    explanation: 'Từ vựng cần điền là "architecture" (nghĩa: kiến trúc).'
+  },
+  {
+    id: 'ldrill-dist-track9-countryside',
+    type: 'listening-distractor',
+    title: 'Bẫy nguyên nhân di cư thành thị - nông thôn (Track 9)',
+    category: 'Urbanization & Migration',
+    audioSnippetText: 'These days, many people are leaving the city to go to the countryside, where it\'s cleaner.',
+    audioText: 'These days, many people are leaving the city to go to the countryside, where it\'s cleaner.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track9-hometown-architecture-and-living.mp3',
+    clipStart: 147,
+    clipEnd: 162,
+    question: 'Lý do chính khiến người dân hiện nay có xu hướng rời thành phố về nông thôn là gì?',
+    options: [
+      { id: 'A', text: 'Môi trường sống ở vùng quê trong lành, sạch sẽ hơn' },
+      { id: 'B', text: 'Chi phí mua sắm và ăn uống ở nông thôn thấp hơn' },
+      { id: 'C', text: 'Có nhiều việc làm nông nghiệp phù hợp hơn' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói nhấn mạnh yếu tố môi trường trong lành ("where it\'s cleaner"). Đừng suy diễn các lý do kinh tế hay chi phí không được đề cập.',
+    explanation: 'Đáp án là A vì câu nói nêu rõ "to go to the countryside, where it\'s cleaner".'
   }
 ];
