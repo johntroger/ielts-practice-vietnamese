@@ -96,21 +96,105 @@ export function playSoundcheck({ onStart, onEnd } = {}) {
   return playIELTSSoundcheck({ volume: 1.0, onStart, onEnd });
 }
 
+let sharedArenaAudioElement = null;
+let sharedArenaClipTimer = null;
+
+function stopArenaHtmlAudio() {
+  if (sharedArenaClipTimer) {
+    clearInterval(sharedArenaClipTimer);
+    sharedArenaClipTimer = null;
+  }
+  if (sharedArenaAudioElement) {
+    try {
+      sharedArenaAudioElement.pause();
+    } catch (e) {}
+  }
+}
+
 /**
- * Stops all ongoing soundcheck chimes and speech synthesis.
+ * Stops all ongoing soundcheck chimes, R2 HTML5 audio streams, and speech synthesis.
  * Essential to eliminate acoustic feedback before mic recording.
  */
 export function stopAllAudio() {
+  stopArenaHtmlAudio();
   stopIELTSSoundcheck();
   stopSpeech();
 }
 
 /**
- * Speaks text using Cambridge en-GB voice (rate 0.95).
+ * Plays Cloudflare R2 studio audio clip (if audioUrl provided) or speaks text using Cambridge en-GB voice (rate 0.95).
  */
-export function speakArenaText(text, { onStart, onEnd, onError } = {}) {
+export function speakArenaText(textOrQuestion, { audioUrl, clipStart = 0, clipEnd = 0, onStart, onEnd, onError } = {}) {
   stopAllAudio();
-  return speakText(text, {
+
+  const isObj = textOrQuestion && typeof textOrQuestion === 'object';
+  const resolvedText = isObj ? (textOrQuestion.audioText || textOrQuestion.context || '') : String(textOrQuestion || '');
+  const resolvedUrl = (isObj ? textOrQuestion.audioUrl : audioUrl) || null;
+  const resolvedStart = Number((isObj ? textOrQuestion.clipStart : clipStart) || 0);
+  const resolvedEnd = Number((isObj ? textOrQuestion.clipEnd : clipEnd) || 0);
+
+  if (resolvedUrl && typeof window !== 'undefined' && typeof Audio !== 'undefined') {
+    try {
+      if (!sharedArenaAudioElement) {
+        sharedArenaAudioElement = new Audio();
+        sharedArenaAudioElement.preload = 'auto';
+      }
+      const audio = sharedArenaAudioElement;
+      if (audio.src !== resolvedUrl) {
+        audio.src = resolvedUrl;
+      }
+
+      const startPlayback = () => {
+        try {
+          if (resolvedStart > 0 && Math.abs(audio.currentTime - resolvedStart) > 0.5) {
+            audio.currentTime = resolvedStart;
+          } else if (resolvedStart === 0) {
+            audio.currentTime = 0;
+          }
+        } catch (e) {}
+
+        audio.play().then(() => {
+          onStart?.();
+          if (resolvedEnd > resolvedStart) {
+            sharedArenaClipTimer = setInterval(() => {
+              if (audio.currentTime >= resolvedEnd || audio.paused || audio.ended) {
+                stopArenaHtmlAudio();
+                onEnd?.();
+              }
+            }, 150);
+          } else {
+            audio.onended = () => {
+              stopArenaHtmlAudio();
+              onEnd?.();
+            };
+          }
+        }).catch(() => {
+          // Fallback to TTS if autoplay/network blocked
+          if (resolvedText) {
+            speakText(resolvedText, { voiceLang: 'en-GB', rate: 0.95, pitch: 1.0, onStart, onEnd, onError });
+          } else {
+            onError?.();
+          }
+        });
+      };
+
+      if (audio.readyState >= 1) {
+        startPlayback();
+      } else {
+        const onLoaded = () => {
+          audio.removeEventListener('loadedmetadata', onLoaded);
+          startPlayback();
+        };
+        audio.addEventListener('loadedmetadata', onLoaded, { once: true });
+        audio.load();
+      }
+      return;
+    } catch (e) {
+      // Fallback to TTS below
+    }
+  }
+
+  return speakText(resolvedText, {
     voiceLang: 'en-GB',
     rate: 0.95,
     pitch: 1.0,

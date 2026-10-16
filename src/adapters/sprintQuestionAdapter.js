@@ -208,8 +208,53 @@ export function adaptReadingDrill(item) {
   };
 }
 
+const DRILL_LOCALIZATION = {
+  'ldrill-sign-1': {
+    questionEn: 'Which phrase signals that the speaker is transitioning to examine the primary catalyst?',
+    explanationEn: 'The signpost "let us now turn our attention to [X]..." is a classic Part 4 lecture marker introducing the next core key point.'
+  },
+  'ldrill-sign-2': {
+    questionEn: 'Which signposting marker signals that the empirical finding contradicted initial hypotheses?',
+    explanationEn: 'The discourse marker "Contrary to previous assumptions..." explicitly introduces counter-intuitive evidence that refutes earlier predictions.'
+  },
+  'ldrill-dist-flat-2': {
+    questionEn: 'How many bedrooms does Flat 2 currently have in reality?',
+    optionsEn: ['3 bedrooms', '2 bedrooms', '1 bedroom'],
+    explanationEn: 'Potential modification trap: The dining room could be converted in future, but currently Flat 2 has exactly two double bedrooms.'
+  },
+  'ldrill-dist-sched-1': {
+    questionEn: 'At what time did the client and estate agent agree to meet?',
+    explanationEn: 'Schedule negotiation: The morning slot is unavailable, so they agree that 1:00 PM is the best viewing appointment.'
+  },
+  'ldrill-dist-price-5372': {
+    questionEn: 'What is the accurate total amount due according to the cashier?',
+    explanationEn: 'Number pronunciation trap (43 vs 53): The cashier explicitly confirms the total amount is £53.72.'
+  },
+  'ldrill-dist-price-350k': {
+    questionEn: 'What is the current official asking price of the property?',
+    explanationEn: 'Misremembered price distractor: The buyer recalls £340,000, but the estate agent clarifies the asking price is £350,000.'
+  },
+  'ldrill-dist-dim-master-bed': {
+    questionEn: 'What is the corrected length of the master bedroom in meters?',
+    optionsEn: ['4.9 meters', '4.91 meters', '3.95 meters', '4.2 meters'],
+    explanationEn: 'Self-correction distractor: The agent initially says 4.91m, then immediately apologizes and corrects to 4.9m.'
+  },
+  'ldrill-dist-motivation-school': {
+    questionEn: "What is Caroline's primary motivation for completing the house purchase before summer ends?",
+    optionsEn: [
+      'Helping her children settle smoothly into their new school',
+      'Shortening her husband\'s daily work commute',
+      'Ending the uncomfortable stay with relatives',
+      'Locking in a lower mortgage interest rate'
+    ],
+    explanationEn: 'Core priority trap: Caroline clarifies that commuting and staying with relatives are not her main worry; settling children into school is.'
+  }
+};
+
 export function adaptListeningDrill(item) {
-  const rawOpts = (item.options || []).map(o => {
+  const loc = DRILL_LOCALIZATION[item.id] || {};
+  const sourceOpts = loc.optionsEn || item.options || [];
+  const rawOpts = sourceOpts.map(o => {
     const text = typeof o === 'string' ? o : o.text;
     // Strip out Vietnamese annotations in parentheses, e.g. "8:15 AM (Thời gian dự kiến ban đầu)" -> "8:15 AM"
     return text.replace(/\s*\([^)]*[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ][^)]*\)/g, '').trim();
@@ -217,15 +262,21 @@ export function adaptListeningDrill(item) {
   const correctIdx = item.options?.findIndex(o => o.id === item.correctOption) ?? 0;
   const safeIdx = correctIdx >= 0 ? correctIdx : 0;
   const cleanAns = rawOpts[safeIdx] || '';
-  const defaultEnglishExp = `The recording confirms "${cleanAns}" as the correct response based on speaker clarification.`;
+  const defaultEnglishExp = loc.explanationEn || item.explanationEn || `The recording confirms "${cleanAns}" as the correct response based on speaker clarification.`;
+  const enQuestion = loc.questionEn || item.questionEn || (item.question && !/[à-ỹÀ-Ỹ]/.test(item.question) ? item.question : 'Listen carefully to the audio and answer:');
 
   return {
     id: `listening_${item.id}`,
     rawId: item.id,
     type: 'listening_trap',
     skillCategory: 'listening',
-    prompt: item.question || 'Listen carefully to the audio and answer:',
-    promptEn: item.question || 'Listen carefully to the audio and answer:',
+    isR2Audio: Boolean(item.audioUrl),
+    audioUrl: item.audioUrl || null,
+    clipStart: item.clipStart || 0,
+    clipEnd: item.clipEnd || 0,
+    trackLabel: item.category || null,
+    prompt: enQuestion,
+    promptEn: enQuestion,
     promptVi: item.questionVi || item.question || 'Nghe đoạn băng và trả lời câu hỏi:',
     context: item.audioSnippetText || item.audioText || '',
     contextEn: item.audioSnippetText || item.audioText || '',
@@ -233,8 +284,8 @@ export function adaptListeningDrill(item) {
     options: rawOpts,
     correctIndex: safeIdx,
     correctAnswer: cleanAns,
-    explanation: item.explanationEn || defaultEnglishExp,
-    explanationEn: item.explanationEn || defaultEnglishExp,
+    explanation: defaultEnglishExp,
+    explanationEn: defaultEnglishExp,
     explanationVi: item.explanation || item.distractorMechanism || defaultEnglishExp
   };
 }
@@ -242,7 +293,7 @@ export function adaptListeningDrill(item) {
 export function adaptListeningSpellingDrill(item) {
   const acceptable = item.acceptableAnswers || [item.correctAnswer];
   const englishExp = item.explanationEn || `The recording confirms the exact spelling or code as "${item.correctAnswer}".`;
-  const formStemEn = item.questionPrompt || '';
+  const formStemEn = item.questionPromptEn || item.questionPrompt || '';
   const formStemVi = item.questionPromptVi || item.questionPrompt || '';
 
   const promptEn = formStemEn 
@@ -263,6 +314,11 @@ export function adaptListeningSpellingDrill(item) {
     placeholderEn: 'Type what you hear and press Enter...',
     placeholderVi: 'Gõ từ hoặc con số bạn nghe được rồi nhấn Enter...',
     skillCategory: 'listening',
+    isR2Audio: Boolean(item.audioUrl),
+    audioUrl: item.audioUrl || null,
+    clipStart: item.clipStart || 0,
+    clipEnd: item.clipEnd || 0,
+    trackLabel: item.category || null,
     prompt: promptEn,
     promptEn,
     promptVi,
@@ -279,6 +335,55 @@ export function adaptListeningSpellingDrill(item) {
     explanationEn: englishExp,
     explanationVi: item.explanation || englishExp
   };
+}
+
+/**
+ * Generates a dedicated 7-question Listening Audio Sprint powered by Cloudflare R2 studio tracks (Tracks 2-7).
+ */
+export function generateR2ListeningSprintQuestions({
+  count = 7,
+  rng = Math.random,
+  difficulty = 'medium'
+} = {}) {
+  const r2BankQuestions = ARENA_QUESTION_BANK.filter(q => q.isR2Audio || q.audioUrl);
+  const r2MicroDistractors = (LISTENING_MICRO_DRILLS || [])
+    .filter(d => d.type === 'listening-distractor' && d.audioUrl)
+    .map(adaptListeningDrill);
+  const r2MicroSpelling = (LISTENING_MICRO_DRILLS || [])
+    .filter(d => d.type === 'listening-spelling' && d.audioUrl)
+    .map(adaptListeningSpellingDrill);
+
+  const combinedR2Pool = [
+    ...r2BankQuestions,
+    ...r2MicroDistractors,
+    ...r2MicroSpelling
+  ];
+
+  const unseenR2 = combinedR2Pool.filter(q => getQuestionMasteryStatus(q.id) === 'unseen');
+  const restR2 = combinedR2Pool.filter(q => getQuestionMasteryStatus(q.id) !== 'unseen');
+
+  const orderedPool = [...shuffleArray(unseenR2, rng), ...shuffleArray(restR2, rng)];
+  const selected = [];
+  const seenIds = new Set();
+
+  for (const q of orderedPool) {
+    if (selected.length >= count) break;
+    if (!seenIds.has(q.id)) {
+      seenIds.add(q.id);
+      selected.push(q);
+    }
+  }
+
+  return selected.map((q, idx) => {
+    const normalized = {
+      ...q,
+      type: q.type || 'listening_trap',
+      difficulty: q.difficulty || difficulty,
+      topic: q.topic || 'urbanization',
+      isBossQuestion: idx === selected.length - 1
+    };
+    return shuffleQuestionOptions(normalized, rng);
+  }).filter(q => validateArenaQuestion(q).valid);
 }
 
 /**
@@ -305,9 +410,10 @@ export function generateArenaSprintQuestions({
   const activeTopic = topic || randomTopicObj?.id || 'environment';
   const currentMatch = getCompletedMatchCount() + 1;
 
-  // 1. Fetch targeted questions matching difficulty and topic
+  // 1. Fetch targeted questions matching difficulty and topic + include all R2 audio questions so they are always eligible
   const targetedBank = getQuestionsByTierAndTopic(difficulty, topic);
-  const eligibleBank = filterEligibleQuestions(targetedBank, count * 2);
+  const r2ArenaQuestions = ARENA_QUESTION_BANK.filter(q => q.isR2Audio || q.audioUrl);
+  const eligibleBank = filterEligibleQuestions([...r2ArenaQuestions, ...targetedBank], count * 3);
 
   // Micro-drill pools for backfill and multi-skill diversity
   const spellingPool = (IELTS_SPELLING_TRAPS || []).map(item => adaptSpellingTrap(item, rng));
@@ -352,9 +458,16 @@ export function generateArenaSprintQuestions({
 
   // 3. APPLY 7-SLOT BLUEPRINT (if count === 7)
   if (count === 7) {
-    // SLOT 1 & 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase or Listening Spelling)
+    // SLOT 1: Guarantee 1 R2 Real-Audio Listening or Spelling question right at the start of the Sprint!
+    const r2FastCandidates = freshPool.filter(q => q.isR2Audio || q.audioUrl);
+    if (r2FastCandidates.length > 0) {
+      const shuffledR2Fast = shuffleArray(r2FastCandidates, rng);
+      addQuestion(shuffledR2Fast[0]);
+    }
+
+    // SLOT 2: Fast Reflex (Spelling Demons or Vocabulary Paraphrase or Listening Spelling)
     const fastReflexCandidates = freshPool.filter(q => 
-      q.skillCategory === 'vocab' || q.type === 'spelling' || q.type === 'synonym' || q.type === 'listening_spelling'
+      !selectedIds.has(q.id) && (q.skillCategory === 'vocab' || q.type === 'spelling' || q.type === 'synonym' || q.type === 'listening_spelling')
     );
     const shuffledFast = shuffleArray(fastReflexCandidates, rng);
     for (let i = 0; i < shuffledFast.length && selected.length < 2; i++) {
@@ -369,7 +482,7 @@ export function generateArenaSprintQuestions({
     }
 
     const coreAnalysisCandidates = freshPool.filter(q => 
-      !selectedIds.has(q.id) && (q.skillCategory === 'grammar' || q.skillCategory === 'reading' || q.type === 'tfng')
+      !selectedIds.has(q.id) && (q.skillCategory === 'grammar' || q.skillCategory === 'reading' || q.type === 'tfng' || q.isR2Audio)
     );
     const shuffledCore = shuffleArray(coreAnalysisCandidates, rng);
     for (let i = 0; i < shuffledCore.length && selected.length < 4; i++) {
@@ -378,17 +491,22 @@ export function generateArenaSprintQuestions({
 
     // SLOT 5 & 6: Tactical Reading (Micro-Scanning / Distractor Traps)
     const readingCandidates = freshPool.filter(q => 
-      !selectedIds.has(q.id) && (q.skillCategory === 'reading' || q.type === 'tfng' || q.skillCategory === 'vocab')
+      !selectedIds.has(q.id) && (q.skillCategory === 'reading' || q.type === 'tfng' || q.skillCategory === 'vocab' || q.isR2Audio)
     );
     const shuffledReading = shuffleArray(readingCandidates, rng);
     for (let i = 0; i < shuffledReading.length && selected.length < 6; i++) {
       addQuestion(shuffledReading[i]);
     }
 
-    // SLOT 7: The Boss Stage (Listening Audio or High-Difficulty Trap)
-    const bossCandidates = freshPool.filter(q => 
-      !selectedIds.has(q.id) && (q.skillCategory === 'listening' || q.type === 'listening_trap' || q.difficulty === 'hard' || q.difficulty === 'nightmare')
+    // SLOT 7: The Boss Stage (Prioritize R2 Listening Audio Boss Trap)
+    const r2BossCandidates = freshPool.filter(q => 
+      !selectedIds.has(q.id) && (q.isR2Audio || q.audioUrl)
     );
+    const bossCandidates = r2BossCandidates.length > 0
+      ? r2BossCandidates
+      : freshPool.filter(q => 
+          !selectedIds.has(q.id) && (q.skillCategory === 'listening' || q.type === 'listening_trap' || q.difficulty === 'hard' || q.difficulty === 'nightmare')
+        );
     const shuffledBoss = shuffleArray(bossCandidates, rng);
     if (shuffledBoss.length > 0) {
       addQuestion({ ...shuffledBoss[0], isBossQuestion: true });

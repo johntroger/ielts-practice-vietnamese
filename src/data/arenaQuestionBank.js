@@ -472,7 +472,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['1 bathroom & toilet', '2 bathrooms & toilets', '3 bathrooms & toilets', 'None'],
     correctIndex: 1,
     correctAnswer: '2 bathrooms & toilets',
-    explanation: 'Bẫy số lượng: Căn hộ 1 có 1 phòng tắm khép kín (en-suite) CỘNG THÊM 1 phòng tắm chính (in addition to the main bathroom), vậy tổng cộng là 2 phòng tắm và 2 toilet.'
+    explanation: 'Bẫy số lượng: Căn hộ 1 có 1 phòng tắm khép kín (en-suite) CỘNG THÊM 1 phòng tắm chính (in addition to the main bathroom), vậy tổng cộng là 2 phòng tắm và 2 toilet.',
+    explanationEn: 'Addition arithmetic: Flat 1 features one en-suite bathroom in the master bedroom in addition to the main bathroom, giving a total of two bathrooms and toilets.'
   },
   {
     id: 'med_lis_flat_02',
@@ -486,7 +487,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['2 bedrooms', '3 bedrooms', '1 bedroom', '4 bedrooms'],
     correctIndex: 0,
     correctAnswer: '2 bedrooms',
-    explanation: 'Bẫy thông tin tiềm năng: Người nói nói phòng ăn có thể sửa thành phòng ngủ thứ 3 ("could be turned into a third bedroom"), nhưng hiện tại chỉ có 2 phòng ngủ đôi ("two double bedrooms").'
+    explanation: 'Bẫy thông tin tiềm năng: Người nói nói phòng ăn có thể sửa thành phòng ngủ thứ 3 ("could be turned into a third bedroom"), nhưng hiện tại chỉ có 2 phòng ngủ đôi ("two double bedrooms").',
+    explanationEn: 'Current status vs Potential modification: The speaker states the dining room could be converted in future, but currently Flat 2 has exactly two double bedrooms.'
   },
   {
     id: 'hard_lis_flat_03',
@@ -500,7 +502,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['First and second floor only', 'Ground floor and first floor', 'Ground floor only', 'Second floor only'],
     correctIndex: 0,
     correctAnswer: 'First and second floor only',
-    explanation: 'Bẫy từ gây nhiễu "ground floor": Căn hộ tầng trệt là của người khác ("above a separate ground floor flat"). Căn số 3 gồm 2 tầng là tầng 1 và tầng 2.'
+    explanation: 'Bẫy từ gây nhiễu "ground floor": Căn hộ tầng trệt là của người khác ("above a separate ground floor flat"). Căn số 3 gồm 2 tầng là tầng 1 và tầng 2.',
+    explanationEn: 'Distractor trap (\'ground floor\'): The ground floor flat is completely separate; Flat 3 occupies the first and second floors only.'
   },
   {
     id: 'med_vocab_flat_04',
@@ -518,7 +521,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'A private bathroom directly accessible from inside the bedroom',
-    explanation: '"En-suite" (mượn từ tiếng Pháp) trong bất động sản Anh chỉ phòng tắm hoặc WC nối liền trực tiếp, khép kín bên trong phòng ngủ riêng.'
+    explanation: '"En-suite" (mượn từ tiếng Pháp) trong bất động sản Anh chỉ phòng tắm hoặc WC nối liền trực tiếp, khép kín bên trong phòng ngủ riêng.',
+    explanationEn: 'Property terminology: An \'en-suite\' bathroom is a private bathroom accessed directly from inside a bedroom.'
   },
   {
     id: 'hard_paraphrase_flat_05',
@@ -531,7 +535,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['meticulously maintained', 'severely dilapidated', 'sparsely furnished', 'structurally compromised'],
     correctIndex: 0,
     correctAnswer: 'meticulously maintained',
-    explanation: '"Well kept" (được bảo dưỡng, gìn giữ cẩn thận) đồng nghĩa với "meticulously maintained". Các từ còn lại: dilapidated (xập xệ), sparsely furnished (ít nội thất), compromised (bị hư hại kết cấu).'
+    explanation: '"Well kept" (được bảo dưỡng, gìn giữ cẩn thận) đồng nghĩa với "meticulously maintained". Các từ còn lại: dilapidated (xập xệ), sparsely furnished (ít nội thất), compromised (bị hư hại kết cấu).',
+    explanationEn: 'Academic synonym: \'Well kept\' in property appraisal corresponds directly to \'meticulously maintained\'.'
   },
   // ==========================================
   // LISTENING DRILLS: TRACK 3 PROPERTY ENQUIRY
@@ -548,7 +553,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['Church Hill Road', 'Church Mill Road', 'Church Dale Road', 'Church Well Road'],
     correctIndex: 0,
     correctAnswer: 'Church Hill Road',
-    explanation: 'Bẫy âm Mill vs Hill: Môi giới nghe nhầm thành "Church Mill Road", nhưng người gọi đính chính là "Church Hill Road" (H-I-double L).'
+    explanation: 'Bẫy âm Mill vs Hill: Môi giới nghe nhầm thành "Church Mill Road", nhưng người gọi đính chính là "Church Hill Road" (H-I-double L).',
+    explanationEn: 'Acoustic distractor (Mill vs Hill): The estate agent mishears the address, but the caller clarifies \'Church Hill Road\' (H-I-double L).'
   },
   {
     id: 'med_lis_appt_02',
@@ -562,7 +568,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['1:00 PM', '11:00 AM', '1:45 PM', 'Tomorrow afternoon at 2:00 PM'],
     correctIndex: 0,
     correctAnswer: '1:00 PM',
-    explanation: 'Bẫy đổi lịch hẹn (Schedule shift trap): Khách hỏi 11:00 (môi giới bận), sau đó gợi ý 1:00 hoặc 1:45. Hai người chốt giờ tốt nhất là 1:00 PM.'
+    explanation: 'Bẫy đổi lịch hẹn (Schedule shift trap): Khách hỏi 11:00 (môi giới bận), sau đó gợi ý 1:00 hoặc 1:45. Hai người chốt giờ tốt nhất là 1:00 PM.',
+    explanationEn: 'Appointment negotiation: The morning slot (11:00 AM) is unavailable; the parties agree that 1:00 PM is the best viewing time.'
   },
   {
     id: 'med_lis_spell_03',
@@ -576,7 +583,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['Elliot', 'Elliott', 'Eliott', 'Eliot'],
     correctIndex: 0,
     correctAnswer: 'Elliot',
-    explanation: 'Bẫy chính tả tên riêng: Người hỏi thắc mắc có phải "two Ls" không, nhưng ông ấy trả lời "No, one" -> Elliot (E-L-I-O-T).'
+    explanation: 'Bẫy chính tả tên riêng: Người hỏi thắc mắc có phải "two Ls" không, nhưng ông ấy trả lời "No, one" -> Elliot (E-L-I-O-T).',
+    explanationEn: "Spelling clarification: The caller clarifies whether the surname contains two Ls, and the agent responds 'No, one', spelling E-L-I-O-T."
   },
   {
     id: 'hard_lis_appliances_04',
@@ -595,7 +603,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'No, both appliances are already installed in the fully fitted kitchen',
-    explanation: 'Nhà bếp lắp sẵn đầy đủ (fully fitted) bao gồm cả bếp nấu và máy rửa bát, người mua không cần phải tự mua ("Not having to buy a cooker and dishwasher").'
+    explanation: 'Nhà bếp lắp sẵn đầy đủ (fully fitted) bao gồm cả bếp nấu và máy rửa bát, người mua không cần phải tự mua ("Not having to buy a cooker and dishwasher").',
+    explanationEn: 'Fitted kitchen inclusions: Because the kitchen is fully fitted with a cooker and dishwasher, the buyer does not need to purchase either appliance.'
   },
   // ==========================================
   // LISTENING DRILLS: TRACK 4 NUMBERS & CODES
@@ -612,7 +621,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['B1074', 'D1074', 'P1074', 'B1047'],
     correctIndex: 0,
     correctAnswer: 'B1074',
-    explanation: 'Bẫy âm chữ cái tương đồng B vs D: Nhân viên hỏi lại D1074, khách hàng khẳng định là B1074.'
+    explanation: 'Bẫy âm chữ cái tương đồng B vs D: Nhân viên hỏi lại D1074, khách hàng khẳng định là B1074.',
+    explanationEn: "Phonetic similarity trap: The assistant asks if the code begins with 'D', but the caller clarifies that it begins with 'B1074'."
   },
   {
     id: 'easy_lis_price_02',
@@ -626,7 +636,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['£53.72', '£43.72', '£35.72', '£53.27'],
     correctIndex: 0,
     correctAnswer: '£53.72',
-    explanation: 'Bẫy phát âm số đếm 43 vs 53: Giá tiền chuẩn là £53.72.'
+    explanation: 'Bẫy phát âm số đếm 43 vs 53: Giá tiền chuẩn là £53.72.',
+    explanationEn: 'Number pronunciation distractor (43 vs 53): The cashier explicitly confirms the total amount is £53.72.'
   },
   {
     id: 'med_lis_phone_03',
@@ -640,7 +651,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['01897 625 730', '01857 629 730', '01897 629 730', '01857 625 730'],
     correctIndex: 0,
     correctAnswer: '01897 625 730',
-    explanation: 'Bẫy số kép: 897 (thay vì 857) và 625 (thay vì 629).'
+    explanation: 'Bẫy số kép: 897 (thay vì 857) và 625 (thay vì 629).',
+    explanationEn: 'Double digit reversal trap: The speaker corrects both middle numbers from 857/629 to 01897 625 730.'
   },
   {
     id: 'hard_lis_dim_04',
@@ -654,7 +666,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['55 meters', '110 meters', '165 meters', '50 meters'],
     correctIndex: 0,
     correctAnswer: '55 meters',
-    explanation: 'Bẫy kích thước Dài vs Rộng (Length vs Width): 110m là chiều dài, 55m là chiều rộng.'
+    explanation: 'Bẫy kích thước Dài vs Rộng (Length vs Width): 110m là chiều dài, 55m là chiều rộng.',
+    explanationEn: 'Length vs Width distractor: 110 meters refers to length, while 55 meters is specifically the width.'
   },
   // ==========================================
   // LISTENING DRILLS: TRACK 5 HOUSE TOUR & DIMENSIONS
@@ -671,7 +684,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['Put in an offer to buy the house', 'View the property a second time tomorrow', 'Check other houses in the same neighborhood', 'Decline the purchase due to price'],
     correctIndex: 0,
     correctAnswer: 'Put in an offer to buy the house',
-    explanation: 'Bà Caroline đồng ý trả giá mua ngay ("Yes, please! This is the best property I\'ve seen so far").'
+    explanation: 'Bà Caroline đồng ý trả giá mua ngay ("Yes, please! This is the best property I\'ve seen so far").',
+    explanationEn: "Direct buyer decision: Caroline confirms her choice immediately with 'Yes, please! This is the best property I have seen so far.'"
   },
   {
     id: 'med_lis_asking_price_trap',
@@ -685,7 +699,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['£350,000', '£340,000', '£345,000', '£360,000'],
     correctIndex: 0,
     correctAnswer: '£350,000',
-    explanation: 'Bẫy giá nhớ nhầm: Khách nhớ là £340,000 nhưng môi giới đính chính giá hiện tại là £350,000.'
+    explanation: 'Bẫy giá nhớ nhầm: Khách nhớ là £340,000 nhưng môi giới đính chính giá hiện tại là £350,000.',
+    explanationEn: 'Misremembered price distractor: The buyer recalls £340,000, but the estate agent clarifies the current asking price is £350,000.'
   },
   {
     id: 'med_lis_bath_fixture_trap',
@@ -704,7 +719,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'No, it only has a shower unit',
-    explanation: 'Phòng tắm khép kín (en-suite) chỉ có buồng tắm vòi sen (shower unit), không có bồn tắm lớn.'
+    explanation: 'Phòng tắm khép kín (en-suite) chỉ có buồng tắm vòi sen (shower unit), không có bồn tắm lớn.',
+    explanationEn: 'En-suite specification: The agent confirms the en-suite only has a shower unit, unlike the main family bathroom with a full bath.'
   },
   {
     id: 'hard_lis_dim_correction_trap',
@@ -718,7 +734,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['4.9 meters', '4.91 meters', '3.95 meters', '4.2 meters'],
     correctIndex: 0,
     correctAnswer: '4.9 meters',
-    explanation: 'Bẫy số thập phân tự đính chính: Môi giới đọc nhầm 4.91m rồi xin lỗi sửa lại thành 4.9m.'
+    explanation: 'Bẫy số thập phân tự đính chính: Môi giới đọc nhầm 4.91m rồi xin lỗi sửa lại thành 4.9m.',
+    explanationEn: 'Self-correction distractor: The agent first says 4.91 meters, then immediately corrects to 4.9 meters long.'
   },
   // ==========================================
   // LISTENING DRILLS: TRACK 6 PURCHASE OFFER & FINANCE
@@ -735,7 +752,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['KE7 8UD', 'KA7 8UD', 'KE7 8UT', 'KE8 7UD'],
     correctIndex: 0,
     correctAnswer: 'KE7 8UD',
-    explanation: 'Mã bưu chính chuẩn là KE7 8UD.'
+    explanation: 'Mã bưu chính chuẩn là KE7 8UD.',
+    explanationEn: 'Alphanumeric postcode transcription: The caller clearly dictates KE7 8UD.'
   },
   {
     id: 'med_lis_current_stay',
@@ -754,7 +772,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'They already sold their previous house and are currently staying with relatives',
-    explanation: 'Gia đình đã bán nhà cách đây vài tháng và hiện đang ở nhờ người thân nên không phải chờ bán nhà cũ.'
+    explanation: 'Gia đình đã bán nhà cách đây vài tháng và hiện đang ở nhờ người thân nên không phải chờ bán nhà cũ.',
+    explanationEn: 'Relocation readiness: The family already sold their house months ago and are currently staying with relatives, allowing an immediate move.'
   },
   {
     id: 'med_lis_main_worry',
@@ -773,7 +792,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'Helping her children settle smoothly into their new school',
-    explanation: 'Bẫy ưu tiên: Bà nói việc đi làm và ở nhờ không phải là điều bà lo nhất ("those aren\'t the things I\'m really worried about"), lý do cốt lõi là việc nhập học trường mới của các con.'
+    explanation: 'Bẫy ưu tiên: Bà nói việc đi làm và ở nhờ không phải là điều bà lo nhất ("those aren\'t the things I\'m really worried about"), lý do cốt lõi là việc nhập học trường mới của các con.',
+    explanationEn: 'Core priority trap: Caroline notes that while commuting and living with relatives are inconvenient, her primary worry is helping her children settle into their new school.'
   },
   {
     id: 'hard_lis_deposit_cash',
@@ -787,7 +807,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     options: ['15%', '10%', '20%', '50%'],
     correctIndex: 0,
     correctAnswer: '15%',
-    explanation: 'Tiền mặt đặt cọc có sẵn là 15% (tương đương khoảng 52,000 bảng Anh).'
+    explanation: 'Tiền mặt đặt cọc có sẵn là 15% (tương đương khoảng 52,000 bảng Anh).',
+    explanationEn: 'Financial reserve figure: The buyer holds a 15% cash deposit in their bank account (around £52,000).'
   },
   // ==========================================
   // LISTENING DRILLS: TRACK 7 EN-SUITE & ROUTINES
@@ -809,7 +830,8 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'In the morning when family members get ready for school or work',
-    explanation: 'Phòng tắm phụ giúp giải tỏa ùn tắc buổi sáng khi cả nhà cùng thức dậy chuẩn bị đi làm hoặc đi học.'
+    explanation: 'Phòng tắm phụ giúp giải tỏa ùn tắc buổi sáng khi cả nhà cùng thức dậy chuẩn bị đi làm hoặc đi học.',
+    explanationEn: 'Daily morning routine: The extra en-suite bathroom is most useful in the morning when the family gets ready for school and work.'
   },
   {
     id: 'med_lis_idiom_useful',
@@ -827,25 +849,62 @@ export const ARENA_BASE_QUESTION_BANK = [
     ],
     correctIndex: 0,
     correctAnswer: 'Prove exceptionally handy, convenient, or practical',
-    explanation: '"Come in useful" (hoặc "come in handy") là thành ngữ chỉ một vật/tiện nghi tỏ ra rất hữu dụng, tiện lợi trong một tình huống cụ thể.'
+    explanation: '"Come in useful" (hoặc "come in handy") là thành ngữ chỉ một vật/tiện nghi tỏ ra rất hữu dụng, tiện lợi trong một tình huống cụ thể.',
+    explanationEn: "Idiomatic usage: 'Come in useful' (or 'come in handy') means to prove especially practical, convenient, or helpful in a particular situation."
   }
 ];
+
+const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
+
+const R2_AUDIO_METADATA_BY_ID = {
+  // Track 2: Flat Descriptions
+  easy_lis_flat_01: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 8, clipEnd: 20, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions' },
+  med_lis_flat_02: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 36, clipEnd: 52, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions' },
+  hard_lis_flat_03: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 88, clipEnd: 101, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions' },
+  med_vocab_flat_04: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 8, clipEnd: 20, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions', audioText: 'The main bedroom is a double bedroom with an en-suite bathroom and toilet.' },
+  hard_paraphrase_flat_05: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 70, clipEnd: 82, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions', audioText: 'The flat needs some modernization, but it is very well kept and would be an excellent family home.' },
+  // Track 3: Property Enquiry
+  easy_lis_addr_01: { audioUrl: `${R2_BASE}/ielts-listening-track3-property-enquiry.mp3`, clipStart: 8, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 3 • Property Enquiry' },
+  med_lis_appt_02: { audioUrl: `${R2_BASE}/ielts-listening-track3-property-enquiry.mp3`, clipStart: 120, clipEnd: 142, isR2Audio: true, trackLabel: 'Track 3 • Property Enquiry' },
+  med_lis_spell_03: { audioUrl: `${R2_BASE}/ielts-listening-track3-property-enquiry.mp3`, clipStart: 162, clipEnd: 175, isR2Audio: true, trackLabel: 'Track 3 • Property Enquiry' },
+  hard_lis_appliances_04: { audioUrl: `${R2_BASE}/ielts-listening-track3-property-enquiry.mp3`, clipStart: 62, clipEnd: 78, isR2Audio: true, trackLabel: 'Track 3 • Property Enquiry' },
+  // Track 4: Numbers & Measurements
+  easy_lis_b_vs_d_01: { audioUrl: `${R2_BASE}/ielts-listening-track4-numbers-measurements.mp3`, clipStart: 2, clipEnd: 12, isR2Audio: true, trackLabel: 'Track 4 • Numbers & Codes' },
+  easy_lis_price_02: { audioUrl: `${R2_BASE}/ielts-listening-track4-numbers-measurements.mp3`, clipStart: 35, clipEnd: 45, isR2Audio: true, trackLabel: 'Track 4 • Numbers & Codes' },
+  med_lis_phone_03: { audioUrl: `${R2_BASE}/ielts-listening-track4-numbers-measurements.mp3`, clipStart: 88, clipEnd: 102, isR2Audio: true, trackLabel: 'Track 4 • Numbers & Codes' },
+  hard_lis_dim_04: { audioUrl: `${R2_BASE}/ielts-listening-track4-numbers-measurements.mp3`, clipStart: 62, clipEnd: 74, isR2Audio: true, trackLabel: 'Track 4 • Numbers & Codes' },
+  // Track 5: Property Viewing
+  easy_lis_decision_offer: { audioUrl: `${R2_BASE}/ielts-listening-track5-property-viewing.mp3`, clipStart: 120, clipEnd: 136, isR2Audio: true, trackLabel: 'Track 5 • Property Viewing' },
+  med_lis_asking_price_trap: { audioUrl: `${R2_BASE}/ielts-listening-track5-property-viewing.mp3`, clipStart: 105, clipEnd: 120, isR2Audio: true, trackLabel: 'Track 5 • Property Viewing' },
+  med_lis_bath_fixture_trap: { audioUrl: `${R2_BASE}/ielts-listening-track5-property-viewing.mp3`, clipStart: 25, clipEnd: 40, isR2Audio: true, trackLabel: 'Track 5 • Property Viewing' },
+  hard_lis_dim_correction_trap: { audioUrl: `${R2_BASE}/ielts-listening-track5-property-viewing.mp3`, clipStart: 8, clipEnd: 24, isR2Audio: true, trackLabel: 'Track 5 • Property Viewing' },
+  // Track 6: Offer & Sale Process
+  easy_lis_postcode_ke7: { audioUrl: `${R2_BASE}/ielts-listening-track6-offer-and-sale-process.mp3`, clipStart: 30, clipEnd: 42, isR2Audio: true, trackLabel: 'Track 6 • Offer Process' },
+  med_lis_current_stay: { audioUrl: `${R2_BASE}/ielts-listening-track6-offer-and-sale-process.mp3`, clipStart: 50, clipEnd: 65, isR2Audio: true, trackLabel: 'Track 6 • Offer Process' },
+  med_lis_main_worry: { audioUrl: `${R2_BASE}/ielts-listening-track6-offer-and-sale-process.mp3`, clipStart: 65, clipEnd: 88, isR2Audio: true, trackLabel: 'Track 6 • Offer Process' },
+  hard_lis_deposit_cash: { audioUrl: `${R2_BASE}/ielts-listening-track6-offer-and-sale-process.mp3`, clipStart: 100, clipEnd: 118, isR2Audio: true, trackLabel: 'Track 6 • Offer Process' },
+  // Track 7: En-Suite Clip
+  easy_lis_ensuite_routine: { audioUrl: `${R2_BASE}/ielts-listening-track7-ensuite-bathroom-clip.mp3`, clipStart: 0, clipEnd: 12, isR2Audio: true, trackLabel: 'Track 7 • En-suite Routine' },
+  med_lis_idiom_useful: { audioUrl: `${R2_BASE}/ielts-listening-track7-ensuite-bathroom-clip.mp3`, clipStart: 0, clipEnd: 12, isR2Audio: true, trackLabel: 'Track 7 • En-suite Routine', audioText: 'That would come in very useful when we all get up to get ready for school or work.' }
+};
 
 export const ARENA_QUESTION_BANK = [
   ...ARENA_BASE_QUESTION_BANK,
   ...ARENA_BATCH_1_QUESTIONS,
   ...ARENA_BATCH_2_QUESTIONS
 ].map(q => {
-  const trans = ARENA_QUESTION_TRANSLATIONS[q.id];
-  if (!trans) return q;
+  const r2Meta = R2_AUDIO_METADATA_BY_ID[q.id] || {};
+  const merged = { ...q, ...r2Meta };
+  const trans = ARENA_QUESTION_TRANSLATIONS[merged.id];
+  if (!trans) return merged;
   return {
-    ...q,
-    promptVi: q.prompt,
-    contextVi: q.context,
-    explanationVi: q.explanation,
-    promptEn: trans.promptEn || q.prompt,
-    contextEn: trans.contextEn || q.context,
-    explanationEn: trans.explanationEn || q.explanation
+    ...merged,
+    promptVi: merged.prompt,
+    contextVi: merged.context,
+    explanationVi: merged.explanation,
+    promptEn: trans.promptEn || merged.prompt,
+    contextEn: trans.contextEn || merged.context,
+    explanationEn: trans.explanationEn || merged.explanation
   };
 });
 

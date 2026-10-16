@@ -227,6 +227,13 @@ export default function ArenaQuestionCard({
             </span>
           )}
 
+          {(question.isR2Audio || question.audioUrl) && (
+            <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 flex items-center gap-1.5 shadow-xs">
+              <span>☁️</span>
+              <span>{question.trackLabel || (isEn ? 'R2 STUDIO AUDIO' : 'AUDIO THỰC CHIẾN R2')}</span>
+            </span>
+          )}
+
           {question.isRevengeQuestion && (
             <span className="text-xs font-black tracking-wider px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/50 flex items-center gap-1 animate-pulse shadow-xs">
               <span>⚡</span>
@@ -235,10 +242,10 @@ export default function ArenaQuestionCard({
           )}
         </div>
 
-        {localizedQ.audioText && (
+        {(localizedQ.audioText || question.audioUrl) && (
           <button
             type="button"
-            onClick={() => onPlayAudio?.(localizedQ.audioText)}
+            onClick={() => onPlayAudio?.(localizedQ.audioText, question)}
             className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 hover:text-white bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/35 px-3 py-1 rounded-lg transition-all cursor-pointer shadow-xs active:scale-95"
           >
             <Volume2 className="w-3.5 h-3.5" />
@@ -272,12 +279,16 @@ export default function ArenaQuestionCard({
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center justify-between text-xs text-amber-200/90 shadow-xs">
           <div className="flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
-            <span className="font-medium">{isEn ? '🎧 Listening Task: Focus on the audio track to find the answer.' : '🎧 Bài nghe: Hãy chú ý lắng nghe đoạn băng để chọn đáp án đúng.'}</span>
+            <span className="font-medium">
+              {question.audioUrl
+                ? (isEn ? '🎧 Cloudflare R2 Studio Audio: Listen carefully to the recording clip to answer.' : '🎧 Audio Thực Chiến (Cloudflare R2): Hãy lắng nghe đoạn băng gốc để chọn đáp án.')
+                : (isEn ? '🎧 Listening Task: Focus on the audio track to find the answer.' : '🎧 Bài nghe: Hãy chú ý lắng nghe đoạn băng để chọn đáp án đúng.')}
+            </span>
           </div>
-          {question.audioText && (
+          {(question.audioText || question.audioUrl) && (
             <button
               type="button"
-              onClick={() => onPlayAudio?.(question.audioText)}
+              onClick={() => onPlayAudio?.(question.audioText, question)}
               className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-md font-bold text-xs transition-colors cursor-pointer shrink-0"
             >
               {isEn ? 'Replay Audio' : 'Nghe lại'}

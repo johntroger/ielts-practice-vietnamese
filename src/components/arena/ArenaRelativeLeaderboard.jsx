@@ -63,29 +63,32 @@ export default function ArenaRelativeLeaderboard({
 
       {/* Ghost Rival Near-Pacing Callout */}
       {pacing.aheadRival && (
-        <div className="bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-purple-500/15 border border-amber-500/40 rounded-xl px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in">
-          <div className="flex items-center gap-1.5 text-amber-300 font-bold truncate">
+        <div className="bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-purple-500/15 border border-amber-500/40 rounded-xl px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in gap-2">
+          <div className="flex items-center gap-1.5 text-amber-300 font-bold min-w-0 truncate">
             <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0 animate-pulse" />
-            <span>{isEn ? `Just +${pacing.xpToOvertake} XP to pass` : `Chỉ cần +${pacing.xpToOvertake} XP để vượt`}</span>
-            <span className="text-white font-black underline">@{pacing.aheadRival.display_name}</span>
-            <span className="text-amber-400 font-mono text-[10px]">#{pacing.aheadRival.rank}</span>
+            <span className="truncate">
+              {isEn ? `+${pacing.xpToOvertake} XP to pass` : `+${pacing.xpToOvertake} XP để vượt`} <strong className="text-white underline">@{pacing.aheadRival.display_name}</strong>
+            </span>
+            <span className="text-amber-400/80 font-mono text-[10px] shrink-0">#{pacing.aheadRival.rank}</span>
           </div>
-          <span className="text-[10px] text-amber-200/80 font-mono shrink-0 pl-1 font-semibold">1 sprint ⚡</span>
+          <span className="text-[10px] text-amber-300 font-mono font-bold shrink-0 px-1.5 py-0.5 rounded bg-amber-500/20 whitespace-nowrap">
+            ⚡ 1 sprint
+          </span>
         </div>
       )}
 
       {pacing.isLeader && (
-        <div className="bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-indigo-950/40 border border-amber-400/50 rounded-xl px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in">
-          <div className="flex items-center gap-1.5 text-amber-200 font-bold truncate">
+        <div className="bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-indigo-950/40 border border-amber-400/50 rounded-xl px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in gap-2">
+          <div className="flex items-center gap-1.5 text-amber-200 font-bold min-w-0 truncate">
             <span>👑</span>
-            <span>{isEn ? 'Dominating League #1!' : 'Thống lĩnh Bảng đấu #1!'}</span>
+            <span className="truncate">{isEn ? 'Dominating League #1!' : 'Thống lĩnh Bảng đấu #1!'}</span>
             {pacing.behindRival && (
-              <span className="text-amber-300/80 font-semibold text-[10px]">
+              <span className="text-amber-300/80 font-semibold text-[10px] shrink-0">
                 (+{pacing.leadXp} XP {isEn ? 'lead' : 'cách biệt'})
               </span>
             )}
           </div>
-          <span className="text-[10px] text-amber-300 font-mono uppercase font-black shrink-0">Top 1</span>
+          <span className="text-[10px] text-amber-300 font-mono uppercase font-black shrink-0 px-1.5 py-0.5 rounded bg-amber-500/20 whitespace-nowrap">Top 1</span>
         </div>
       )}
 
@@ -162,65 +165,65 @@ export default function ArenaRelativeLeaderboard({
                   title={t('arena.learnerTitle', { name: rival.display_name || t('arena.anonymousLearner') })}
                 >
                   {/* Rank, Glowing Avatar & Level Info */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className={`w-5 font-mono font-black text-center text-sm ${
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-1.5">
+                    <span className={`w-4 sm:w-5 font-mono font-black text-center text-xs sm:text-sm shrink-0 ${
                       rank === 1 ? 'text-amber-400' : rank === 2 ? 'text-slate-300' : rank === 3 ? 'text-amber-600' : 'text-slate-500'
                     }`}>
                       {rank}
                     </span>
 
                     {/* Glowing Frame Avatar */}
-                    <div className={`relative w-8 h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm ring-2 ${titanTier.ringColor} transition-transform group-hover:scale-105`}>
+                    <div className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-800 overflow-hidden shrink-0 shadow-sm ring-2 ${titanTier.ringColor} transition-transform group-hover:scale-105`}>
                       <img
                         src={rival.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${rival.display_name}`}
                         alt={rival.display_name}
                         className="w-full h-full object-cover"
                       />
                       {isOwner && (
-                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-amber-400 rounded-full ring-1 ring-slate-950" title="Admin Verified" />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 bg-amber-400 rounded-full ring-1 ring-slate-950" title="Admin Verified" />
                       )}
                     </div>
 
                     {/* Names, Level Badge & Titan Tier Title */}
-                    <div className="flex flex-col min-w-0">
-                      <div className="flex items-center gap-1.5 truncate">
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
                         {/* Level Badge */}
-                        <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border shadow-xs shrink-0 ${titanTier.badgeColor}`}>
+                        <span className={`text-[9px] sm:text-[10px] font-black px-1 sm:px-1.5 py-0.2 rounded border shadow-xs shrink-0 whitespace-nowrap ${titanTier.badgeColor}`}>
                           Lv.{level}
                         </span>
 
-                        <span className={`font-bold truncate text-xs group-hover:text-white transition-colors ${
+                        <span className={`font-bold truncate text-xs min-w-0 group-hover:text-white transition-colors ${
                           isOwner ? 'text-amber-300' : isUser ? 'text-indigo-200' : 'text-slate-100'
                         }`}>
                           {rival.display_name || t('arena.anonymousLearner')}
                         </span>
 
-                        {/* Prominent Badges */}
+                        {/* Prominent Badges - strictly shrink-0 & whitespace-nowrap to prevent clipping */}
                         {isOwner && (
-                          <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0">
+                          <span className="text-[9px] sm:text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
                             👑 ADMIN
                           </span>
                         )}
 
                         {isUser && (
-                          <span className="text-[10px] bg-indigo-500/30 text-indigo-300 border border-indigo-500/50 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0">
+                          <span className="text-[9px] sm:text-[10px] bg-indigo-500/30 text-indigo-300 border border-indigo-500/50 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
                             YOU
                           </span>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                        <span className={`font-semibold ${titanTier.accentText}`}>
+                      <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-slate-400 min-w-0 truncate">
+                        <span className={`font-semibold truncate ${titanTier.accentText}`}>
                           {isEn ? (titanTier.titleEn || titanTier.titleVi) : (titanTier.titleVi || titanTier.titleEn)}
                         </span>
-                        <span>•</span>
-                        <span className="capitalize">{rival.league_tier || 'Bronze'}</span>
+                        <span className="shrink-0">•</span>
+                        <span className="capitalize shrink-0">{rival.league_tier || 'Bronze'}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Stats & Click Chevron */}
-                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                     {rival.streak_count > 0 && (
                       <div className="flex items-center gap-1 text-amber-400 font-bold text-xs" title={`Streak: ${rival.streak_count}d`}>
                         <Flame className="w-3.5 h-3.5 fill-amber-400" />

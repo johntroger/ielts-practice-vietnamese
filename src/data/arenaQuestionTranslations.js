@@ -1008,6 +1008,121 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Select the sentence demonstrating sophisticated academic counter-argument refutation:",
     "contextEn": "Addressing the replication crisis in psychological and social sciences.",
     "explanationEn": "Effective concession and refutation balances opposing viewpoints with empirical evidence. \"While irreproducibility challenges the epistemic authority of empirical findings, it ostensibly catalyzes methodological rigor rather than fatally compromising the scientific enterprise.\" achieves this Band 8.5+ standard."
+  },
+  "easy_lis_b_vs_d_01": {
+    "promptEn": "Listen to the membership code clarification: What is the correct membership ID?",
+    "contextEn": "What's your membership number? - It's B1074. - Sorry, did you say D1074? - No, B1074.",
+    "explanationEn": "Phonetic similarity trap: The assistant asks if the code begins with 'D', but the caller clarifies that it begins with 'B1074'."
+  },
+  "easy_lis_price_02": {
+    "promptEn": "Listen to the shop cashier: What is the accurate total amount due?",
+    "contextEn": "That's £53.72 please. - Sorry, did you say £43.72? - No, £53.72.",
+    "explanationEn": "Number pronunciation distractor (43 vs 53): The cashier explicitly confirms the total amount is £53.72."
+  },
+  "med_lis_phone_03": {
+    "promptEn": "Listen to the phone message: What is the real phone number for Mr. Hemmings to call back?",
+    "contextEn": "Did you say 01857 629 730? - No, it's 01897 625 730.",
+    "explanationEn": "Double digit reversal trap: The speaker corrects both middle numbers from 857/629 to 01897 625 730."
+  },
+  "hard_lis_dim_04": {
+    "promptEn": "What is the width of the football field mentioned in the conversation?",
+    "contextEn": "It's 110 meters by 55 meters. - 110 meters long and 55 meters wide?",
+    "explanationEn": "Length vs Width distractor: 110 meters refers to length, while 55 meters is specifically the width."
+  },
+  "easy_lis_decision_offer": {
+    "promptEn": "What does Caroline explicitly decide to do at the end of the house viewing?",
+    "contextEn": "So, would you like to put in an offer? - Yes, please! This is the best property I've seen so far.",
+    "explanationEn": "Direct buyer decision: Caroline confirms her choice immediately with 'Yes, please! This is the best property I have seen so far.'"
+  },
+  "med_lis_asking_price_trap": {
+    "promptEn": "What is the actual current asking price stated by the estate agent?",
+    "contextEn": "If I remember rightly, it's £340,000? - Actually, it's £350,000 at the moment...",
+    "explanationEn": "Misremembered price distractor: The buyer recalls £340,000, but the estate agent clarifies the current asking price is £350,000."
+  },
+  "med_lis_bath_fixture_trap": {
+    "promptEn": "Does the en-suite bathroom in the master bedroom contain a full-sized bathtub?",
+    "contextEn": "...though it only has a shower unit and not a big bath like the main bathroom.",
+    "explanationEn": "En-suite specification: The agent confirms the en-suite only has a shower unit, unlike the main family bathroom with a full bath."
+  },
+  "hard_lis_dim_correction_trap": {
+    "promptEn": "What is the corrected length of the main master bedroom?",
+    "contextEn": "It's 4.91 meters by 3.95 meters... Oh sorry, that's 4.9 meters long and 3.95 meters wide.",
+    "explanationEn": "Self-correction distractor: The agent first says 4.91 meters, then immediately corrects to 4.9 meters long."
+  },
+  "easy_lis_postcode_ke7": {
+    "promptEn": "Listen to the caller stating her postcode: What is the correct alphanumeric postcode?",
+    "contextEn": "The postcode is KE7 8UD.",
+    "explanationEn": "Alphanumeric postcode transcription: The caller clearly dictates KE7 8UD."
+  },
+  "med_lis_current_stay": {
+    "promptEn": "Why is the buyer ready to move in immediately without waiting to sell a home?",
+    "contextEn": "No, we sold it a couple of months ago and we're staying with relatives...",
+    "explanationEn": "Relocation readiness: The family already sold their house months ago and are currently staying with relatives, allowing an immediate move."
+  },
+  "med_lis_main_worry": {
+    "promptEn": "What is Caroline's MAIN motivation for wanting the sale completed before the end of summer?",
+    "contextEn": "It's not easy living a long time with relatives, and my husband has a long journey to get to work. But those aren't the things I'm really worried about. If we can move in before the end of the summer, it'll be much easier for the children to go to their new school.",
+    "explanationEn": "Core priority trap: Caroline notes that while commuting and living with relatives are inconvenient, her primary worry is helping her children settle into their new school."
+  },
+  "hard_lis_deposit_cash": {
+    "promptEn": "What percentage of cash deposit does Caroline's family currently hold in their bank account?",
+    "contextEn": "We also have a 15% deposit in our bank account, about £52,000...",
+    "explanationEn": "Financial reserve figure: The buyer holds a 15% cash deposit in their bank account (around £52,000)."
+  },
+  "easy_lis_ensuite_routine": {
+    "promptEn": "According to the buyer, when will the extra en-suite bathroom be most beneficial?",
+    "contextEn": "That would come in very useful when we all get up to get ready for school or work.",
+    "explanationEn": "Daily morning routine: The extra en-suite bathroom is most useful in the morning when the family gets ready for school and work."
+  },
+  "med_lis_idiom_useful": {
+    "promptEn": "In conversational British English, what does the idiom \"come in very useful\" mean?",
+    "contextEn": "That would come in very useful when we all get up to get ready for school or work.",
+    "explanationEn": "Idiomatic usage: 'Come in useful' (or 'come in handy') means to prove especially practical, convenient, or helpful in a particular situation."
+  },
+  "easy_lis_flat_01": {
+    "promptEn": "Listen and identify the total number of bathrooms/toilets in Flat 1:",
+    "contextEn": "The main bedroom is a double bedroom with an en-suite bathroom and toilet, in addition to the main bathroom and toilet.",
+    "explanationEn": "Addition arithmetic: Flat 1 features one en-suite bathroom in the master bedroom in addition to the main bathroom, giving a total of two bathrooms and toilets."
+  },
+  "med_lis_flat_02": {
+    "promptEn": "Listen to the property agent: How many bedrooms does Flat 2 CURRENTLY have?",
+    "contextEn": "There are two double bedrooms, one bathroom, a newly fitted kitchen, a living room, and a separate dining room which could be turned into a third bedroom.",
+    "explanationEn": "Current status vs Potential modification: The speaker states the dining room could be converted in future, but currently Flat 2 has exactly two double bedrooms."
+  },
+  "hard_lis_flat_03": {
+    "promptEn": "Listen carefully: Which floor levels does Flat 3 occupy?",
+    "contextEn": "The flat is on two levels; there's a first floor and a second floor above a separate ground floor flat.",
+    "explanationEn": "Distractor trap ('ground floor'): The ground floor flat is completely separate; Flat 3 occupies the first and second floors only."
+  },
+  "med_vocab_flat_04": {
+    "promptEn": "In UK housing advertisements, an \"en-suite\" bathroom specifically denotes:",
+    "contextEn": "The main bedroom is a double bedroom with an en-suite bathroom and toilet.",
+    "explanationEn": "Property terminology: An 'en-suite' bathroom is a private bathroom accessed directly from inside a bedroom."
+  },
+  "hard_paraphrase_flat_05": {
+    "promptEn": "Select the Band 8.0 academic synonym closest in meaning to \"well kept\" in property valuation:",
+    "contextEn": "The flat needs some modernization, but it is very well kept and would be an excellent family home.",
+    "explanationEn": "Academic synonym: 'Well kept' in property appraisal corresponds directly to 'meticulously maintained'."
+  },
+  "easy_lis_addr_01": {
+    "promptEn": "Listen to the caller spelling the street name: What is the correct street name?",
+    "contextEn": "Sorry, did you say Church Mill Road? - No, Church Hill Road. C-H-U-R-C-H H-I-double L.",
+    "explanationEn": "Acoustic distractor (Mill vs Hill): The estate agent mishears the address, but the caller clarifies 'Church Hill Road' (H-I-double L)."
+  },
+  "med_lis_appt_02": {
+    "promptEn": "Listen and identify the finalized viewing appointment time:",
+    "contextEn": "I'm free tomorrow morning. Is 11:00 okay? - Oh no, I'm sorry, I'm busy then. - How about 1:00 then, or 1:45? - 1:00 would be best for me.",
+    "explanationEn": "Appointment negotiation: The morning slot (11:00 AM) is unavailable; the parties agree that 1:00 PM is the best viewing time."
+  },
+  "med_lis_spell_03": {
+    "promptEn": "Listen carefully: What is the accurate spelling of the estate agent's surname?",
+    "contextEn": "Is that with two Ls? - No, one. E-L-I-O-T.",
+    "explanationEn": "Spelling clarification: The caller clarifies whether the surname contains two Ls, and the agent responds 'No, one', spelling E-L-I-O-T."
+  },
+  "hard_lis_appliances_04": {
+    "promptEn": "Will the prospective buyer need to purchase a cooker or dishwasher for this property?",
+    "contextEn": "It's fully fitted, so it includes a cooker and a dishwasher and all the other things you'd expect in a kitchen. - That sounds great! Not having to buy a cooker and dishwasher.",
+    "explanationEn": "Fitted kitchen inclusions: Because the kitchen is fully fitted with a cooker and dishwasher, the buyer does not need to purchase either appliance."
   }
 };
 
