@@ -68,17 +68,107 @@ export function calculateTimeBonusXp({ remainingSeconds = 0, baseScore = 0, corr
   return Math.min(rawBonus, cap);
 }
 
+export const ARENA_LOOT_TIERS = {
+  SCROLL: {
+    id: 'cambridge_scroll',
+    nameVi: 'Cuộn Giấy Cổ Cambridge',
+    nameEn: 'Ancient Cambridge Scroll',
+    icon: '📜',
+    bonusXp: 15,
+    badgeColor: 'border-blue-500/50 bg-blue-500/10 text-blue-300',
+    descVi: 'Bí kíp ghi chép các cặp từ paraphrase bất hủ (+15 XP)',
+    descEn: 'Sacred notes revealing timeless Cambridge paraphrases (+15 XP)'
+  },
+  CRYSTAL: {
+    id: 'acoustic_crystal',
+    nameVi: 'Pha Lê Thính Giác',
+    nameEn: 'Acoustic Resonance Crystal',
+    icon: '💎',
+    bonusXp: 20,
+    badgeColor: 'border-purple-500/50 bg-purple-500/10 text-purple-300',
+    descVi: 'Tinh thể tăng cường khả năng miễn nhiễm bẫy âm học (+20 XP)',
+    descEn: 'Resonating crystal heightening trap immunity (+20 XP)'
+  },
+  CROWN: {
+    id: 'titan_crown',
+    nameVi: 'Vương Miện Titan Học Giả',
+    nameEn: 'Titan Scholar Crown',
+    icon: '👑',
+    bonusXp: 30,
+    badgeColor: 'border-amber-500/50 bg-amber-500/10 text-amber-300',
+    descVi: 'Biểu tượng vinh danh học giả xuất sắc toàn thắng (+30 XP)',
+    descEn: 'Exalted crown honoring peerless academic speed (+30 XP)'
+  },
+  QUILL: {
+    id: 'scholar_quill',
+    nameVi: 'Lông Vũ Tốc Ký',
+    nameEn: 'Swift Quill of the Scribe',
+    icon: '🪶',
+    bonusXp: 10,
+    badgeColor: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300',
+    descVi: 'Lông vũ gia tốc tốc độ gõ chính tả thần tốc (+10 XP)',
+    descEn: 'Aerodynamic quill elevating typing reflex (+10 XP)'
+  }
+};
+
 /**
- * Calculates total XP for a completed sprint.
+ * Evaluates whether a sprint qualifies for a surprise Mystery Relic Loot Drop.
+ * 
  * @param {Object} params
- * @param {number} params.correctAnswers - Number of correct questions (0 to 10)
+ * @param {number} params.correctAnswers
+ * @param {number} params.totalQuestions
+ * @param {boolean} params.isBossCleared
+ * @param {number} params.maxCombo
+ * @param {() => number} [params.rng=Math.random]
+ * @returns {Object|null}
+ */
+export function evaluateMysteryLootDrop({
+  correctAnswers = 0,
+  totalQuestions = 7,
+  isBossCleared = false,
+  maxCombo = 0,
+  rng = Math.random
+} = {}) {
+  const validCorrect = Number(correctAnswers) || 0;
+  if (validCorrect < 3) return null;
+
+  let dropChance = 0.40;
+  if (validCorrect >= totalQuestions && totalQuestions > 0) {
+    dropChance = 1.0; // 100% guarantee on perfect clear
+  } else if (isBossCleared && maxCombo >= 4) {
+    dropChance = 1.0; // 100% guarantee on boss slay with combo
+  } else if (validCorrect >= 5) {
+    dropChance = 0.70;
+  }
+
+  const roll = rng();
+  if (roll > dropChance) return null;
+
+  if (validCorrect >= totalQuestions && isBossCleared) {
+    return ARENA_LOOT_TIERS.CROWN;
+  }
+  if (validCorrect >= totalQuestions || (isBossCleared && maxCombo >= 4)) {
+    return ARENA_LOOT_TIERS.CRYSTAL;
+  }
+  if (roll < 0.35) {
+    return ARENA_LOOT_TIERS.SCROLL;
+  }
+  return ARENA_LOOT_TIERS.QUILL;
+}
+
+/**
+ * Computes transparent, decomposed XP for a completed sprint.
+ * 
+ * @param {Object} params
+ * @param {number} [params.correctAnswers=0] - Number of correctly answered questions (max 10)
  * @param {number} [params.streakCount=0] - Current daily streak count
  * @param {number} [params.totalSeconds=60] - Time taken to complete the sprint
  * @param {string} [params.difficulty='medium'] - Selected difficulty level ('easy' | 'medium' | 'hard' | 'nightmare')
  * @param {number} [params.timeRemaining=0] - Time remaining in seconds (for time bonus)
  * @param {boolean} [params.isBossCleared=false] - Whether question 10 (Boss) was answered correctly
  * @param {boolean} [params.isAudioSprint=false] - Whether sprint is a dedicated Audio Blitz round
- * @returns {{ finalXp: number, rawXp: number, baseScore: number, bossBonus: number, audioBonus: number, timeBonus: number, streakBonus: number, speedBonus: number, softCapMultiplier: number, difficulty: string, isAudioSprint: boolean }}
+ * @param {number} [params.lootBonus=0] - Additional bonus XP from Mystery Relic Loot Drop
+ * @returns {{ finalXp: number, rawXp: number, baseScore: number, bossBonus: number, audioBonus: number, lootBonus: number, timeBonus: number, streakBonus: number, speedBonus: number, softCapMultiplier: number, difficulty: string, isAudioSprint: boolean }}
  */
 export function calculateSprintXp({
   correctAnswers = 0,
@@ -87,7 +177,8 @@ export function calculateSprintXp({
   difficulty = 'medium',
   timeRemaining = 0,
   isBossCleared = false,
-  isAudioSprint = false
+  isAudioSprint = false,
+  lootBonus = 0
 } = {}) {
   // Support up to 10 questions for Atlas Arena v8.0
   const validCorrect = Math.max(0, Math.min(10, Number(correctAnswers) || 0));
@@ -98,6 +189,7 @@ export function calculateSprintXp({
       baseScore: 0, 
       bossBonus: 0, 
       audioBonus: 0,
+      lootBonus: 0,
       timeBonus: 0, 
       streakBonus: 0, 
       speedBonus: 0, 
@@ -111,7 +203,10 @@ export function calculateSprintXp({
   const baseXpPerQuestion = diffConfig.baseXpPerQuestion || ARENA_XP_CAPS.BASE_QUESTION_XP;
   const standardCap = diffConfig.maxSprintXp || ARENA_XP_CAPS.MAX_XP_PER_SPRINT;
   // If isAudioSprint, expand max sprint cap to reward dedicated audio practice (+25%)
-  const maxSprintCap = isAudioSprint ? Math.round(standardCap * 1.25) : standardCap;
+  let maxSprintCap = isAudioSprint ? Math.round(standardCap * 1.25) : standardCap;
+  if (lootBonus > 0) {
+    maxSprintCap += Number(lootBonus);
+  }
 
   // 1. Base XP: scaled by difficulty level
   const baseScore = validCorrect * baseXpPerQuestion;
@@ -149,7 +244,8 @@ export function calculateSprintXp({
   const streakBonus = Math.min(40, Math.floor(Math.max(0, streakCount) * 2));
 
   // Raw Total before Soft-Cap
-  const rawXp = baseScore + bossBonus + audioBonus + timeBonus + speedBonus + streakBonus;
+  const validLootBonus = Math.max(0, Number(lootBonus) || 0);
+  const rawXp = baseScore + bossBonus + audioBonus + timeBonus + speedBonus + streakBonus + validLootBonus;
 
   // 6. Apply Daily Soft-Cap Curve
   const multiplier = getDailySoftCapMultiplier();
@@ -164,6 +260,7 @@ export function calculateSprintXp({
     baseScore,
     bossBonus,
     audioBonus,
+    lootBonus: validLootBonus,
     timeBonus,
     streakBonus,
     speedBonus,

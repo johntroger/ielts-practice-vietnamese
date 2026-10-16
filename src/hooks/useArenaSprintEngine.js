@@ -19,7 +19,8 @@ import {
 } from '../services/gamification/shieldManager.js';
 import { 
   calculateSprintXp, 
-  incrementDailySprintCount 
+  incrementDailySprintCount,
+  evaluateMysteryLootDrop
 } from '../services/gamification/xpCalculator.js';
 import { getUnifiedStreakCount } from '../services/gamification/leagueEngine.js';
 import { recordGuestPendingXp } from '../services/gamification/guestMigrationService.js';
@@ -586,6 +587,14 @@ export function retrySprintAction(state) {
 export function finishSprintAction(state, user = null) {
   const totalSeconds = (state.duration || INITIAL_SPRINT_TIMER_SECONDS) - Math.max(0, state.timeRemaining);
   const streak = getUnifiedStreakCount();
+  const mysteryLoot = evaluateMysteryLootDrop({
+    correctAnswers: state.score,
+    totalQuestions: state.questions.length,
+    isBossCleared: state.isBossCleared,
+    maxCombo: state.maxCombo
+  });
+  const lootBonus = mysteryLoot?.bonusXp || 0;
+
   const rawXpResult = calculateSprintXp({
     correctAnswers: state.score,
     streakCount: streak,
@@ -593,14 +602,17 @@ export function finishSprintAction(state, user = null) {
     difficulty: state.difficulty || 'medium',
     timeRemaining: Math.max(0, state.timeRemaining),
     isBossCleared: state.isBossCleared,
-    isAudioSprint: Boolean(state.isAudioSprint)
+    isAudioSprint: Boolean(state.isAudioSprint),
+    lootBonus
   });
 
   const finalXpWithRevenge = (rawXpResult.finalXp || 0) + (state.revengeBonusXp || 0);
   const xpResult = {
     ...rawXpResult,
     finalXp: finalXpWithRevenge,
-    revengeBonusXp: state.revengeBonusXp || 0
+    revengeBonusXp: state.revengeBonusXp || 0,
+    lootBonus,
+    mysteryLoot
   };
 
   recordMatchCompleted();
@@ -633,6 +645,8 @@ export function finishSprintAction(state, user = null) {
     isDefeated: state.phase === ARENA_SPRINT_PHASES.DEFEATED,
     revengeClearedCount: state.revengeClearedCount || 0,
     revengeBonusXp: state.revengeBonusXp || 0,
+    lootBonus,
+    mysteryLoot,
     diagnosticSkills: diagnostics.axes,
     weakestSkill: diagnostics.weakestSkill,
     prescription

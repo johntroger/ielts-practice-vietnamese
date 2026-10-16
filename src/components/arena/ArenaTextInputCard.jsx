@@ -14,6 +14,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Keyboard, CheckCircle2, XCircle, Sparkles, X, SkipForward, CornerDownLeft } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import { triggerHaptic } from '../../utils/hapticHelper.js';
 
 export default function ArenaTextInputCard({
   value = '',
@@ -172,6 +173,34 @@ export default function ArenaTextInputCard({
           </div>
         )}
       </div>
+
+      {/* Mobile Ergonomics Quick-Affix & Special Character Bar */}
+      {!isAnswerChecked && (
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 px-0.5 select-none text-xs">
+          <span className="text-[10px] uppercase font-bold text-slate-500 shrink-0">
+            {isEn ? '⚡ Suffix:' : '⚡ Đuôi từ:'}
+          </span>
+          {['-tion', '-ment', '-able', '-ible', '-ly', '-ness', '-ing', '-ed', '-al', '-ity', '-'].map((affix) => (
+            <button
+              key={affix}
+              type="button"
+              onClick={() => {
+                triggerHaptic('chipTap');
+                const cleanAffix = affix.startsWith('-') ? affix.slice(1) : affix;
+                const newVal = (activeValue || '') + cleanAffix;
+                activeChange?.(newVal);
+                if (inputRef.current) {
+                  inputRef.current.focus();
+                }
+              }}
+              className="px-2 py-1 bg-slate-800/80 hover:bg-slate-700/80 active:bg-indigo-600/30 border border-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-mono font-semibold transition-all shrink-0 cursor-pointer shadow-xs active:scale-95"
+              title={isEn ? `Append "${affix}"` : `Chèn nhanh "${affix}"`}
+            >
+              {affix}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Mobile Ergonomics Action Bar (Quick thumb buttons directly below input) */}
       {!isAnswerChecked && (

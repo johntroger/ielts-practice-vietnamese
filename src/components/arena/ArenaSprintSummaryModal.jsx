@@ -1,7 +1,8 @@
-import React from 'react';
-import { Award, Zap, Timer, CheckCircle, RotateCcw, X, BookOpen, Crown, ExternalLink, Activity } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Award, Zap, Timer, CheckCircle, RotateCcw, X, BookOpen, Crown, ExternalLink, Activity, Sparkles, Gift } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { openModal } from '../../core/modalStore.js';
+import { triggerHaptic } from '../../utils/hapticHelper.js';
 
 /**
  * src/components/arena/ArenaSprintSummaryModal.jsx
@@ -39,6 +40,15 @@ export default function ArenaSprintSummaryModal({
 
   const diagnosticSkills = summary.diagnosticSkills || [];
 
+  // Tactile fanfare ripple when victory or loot is presented
+  useEffect(() => {
+    if (summary.mysteryLoot) {
+      triggerHaptic('loot');
+    } else if (summary.isBossCleared) {
+      triggerHaptic('boss');
+    }
+  }, [summary.mysteryLoot, summary.isBossCleared]);
+
   return (
     <div className="w-full max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 text-white shadow-2xl flex flex-col items-center gap-3.5 text-center animate-fade-in max-h-[92vh] overflow-y-auto">
       {/* Icon Badge */}
@@ -70,6 +80,34 @@ export default function ArenaSprintSummaryModal({
           {t('arena.subtitle')}
         </p>
       </div>
+
+      {/* Mystery Loot Drop Reveal Card */}
+      {summary.mysteryLoot && (
+        <div className="w-full bg-gradient-to-r from-amber-950/40 via-purple-950/30 to-indigo-950/40 border border-amber-500/40 rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 shadow-md shadow-amber-950/20 animate-in zoom-in-95 duration-200">
+          <div className="flex items-center gap-2.5 min-w-0 text-left">
+            <span className="text-2xl p-1.5 rounded-xl bg-slate-900/80 border border-amber-400/40 shrink-0 shadow-xs">
+              {summary.mysteryLoot.icon}
+            </span>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs sm:text-sm font-black text-amber-200">
+                  {isEn ? summary.mysteryLoot.nameEn : summary.mysteryLoot.nameVi}
+                </span>
+                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  {t('arena.mysteryRelicBadge')}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-slate-300 truncate">
+                {isEn ? summary.mysteryLoot.descEn : summary.mysteryLoot.descVi}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-baseline gap-0.5 shrink-0 px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 font-mono font-black text-xs sm:text-sm">
+            <span>+{summary.mysteryLoot.bonusXp}</span>
+            <span className="text-[9px]">XP</span>
+          </div>
+        </div>
+      )}
 
       {/* XP Hero Card with Transparent 3-Tier Breakdown */}
       <div className="w-full bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-800/40 rounded-2xl p-3 sm:p-3.5 flex flex-col items-center gap-1.5">
@@ -107,6 +145,13 @@ export default function ArenaSprintSummaryModal({
             <div className="flex flex-col items-center bg-cyan-950/40 rounded-lg p-1.5 border border-cyan-800/60 col-span-2 sm:col-span-4">
               <span className="text-cyan-300 text-[10px] font-bold">🎧 {t('arena.audioBonusLabel')}</span>
               <span className="font-extrabold text-cyan-300 text-xs sm:text-sm">+{summary.audioBonus} XP</span>
+            </div>
+          )}
+
+          {summary.lootBonus > 0 && (
+            <div className="flex flex-col items-center bg-amber-950/40 rounded-lg p-1.5 border border-amber-800/60 col-span-2 sm:col-span-4">
+              <span className="text-amber-300 text-[10px] font-bold">🎁 {t('arena.mysteryLootLabel')}</span>
+              <span className="font-extrabold text-amber-300 text-xs sm:text-sm">+{summary.lootBonus} XP</span>
             </div>
           )}
 

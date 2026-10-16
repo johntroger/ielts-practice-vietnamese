@@ -5,6 +5,7 @@ import ArenaMediaViewer from './ArenaMediaViewer.jsx';
 import ArenaTextInputCard from './ArenaTextInputCard.jsx';
 import { ARENA_DIFFICULTY_CONFIG, ARENA_IELTS_TOPICS } from '../../utils/arenaStorageKeys.js';
 import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.js';
+import { triggerHaptic } from '../../utils/hapticHelper.js';
 
 /**
  * Renders question prompt with distinct bold styling for statements, quotes, and target terms.
@@ -348,7 +349,10 @@ export default function ArenaQuestionCard({
                 key={idx}
                 type="button"
                 disabled={isAnswerChecked}
-                onClick={() => onSelectOption?.(idx)}
+                onClick={() => {
+                  triggerHaptic('chipTap');
+                  onSelectOption?.(idx);
+                }}
                 className={`group flex items-center justify-between py-2.5 px-3.5 sm:py-3 sm:px-4 rounded-xl border text-left transition-all active:scale-[0.99] select-none ${btnStyle}`}
               >
                 <div className="flex items-center gap-3 sm:gap-3.5 flex-1 min-w-0">

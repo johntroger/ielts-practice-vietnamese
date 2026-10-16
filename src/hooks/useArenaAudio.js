@@ -15,6 +15,7 @@ import {
   unlockAudioContext,
   playArenaSfx
 } from '../utils/audioHelper.js';
+import { triggerHaptic } from '../utils/hapticHelper.js';
 
 export function useArenaAudio() {
   const [isMuted, setIsMuted] = useState(false);
@@ -34,6 +35,7 @@ export function useArenaAudio() {
   }, []);
 
   const playChime = useCallback((callbacks = {}) => {
+    triggerHaptic('combo');
     if (isMuted) return;
     playChimeTone(callbacks);
   }, [isMuted]);
@@ -48,6 +50,7 @@ export function useArenaAudio() {
   }, [isMuted]);
 
   const playSfx = useCallback((type = 'correct') => {
+    triggerHaptic(type);
     if (isMuted) return;
     playArenaSfx(type);
   }, [isMuted]);
@@ -69,6 +72,7 @@ export function useArenaAudio() {
     playSfx,
     speak,
     stopAudio,
-    unlockAudio
+    unlockAudio,
+    triggerHaptic
   };
 }

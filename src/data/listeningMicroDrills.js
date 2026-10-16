@@ -1328,5 +1328,55 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'The speaker relies on an isolated local observation ("amount of snow we had last winter") to dismiss broader scientific consensus on climate change.',
     explanation: 'Đáp án là A vì người nói nêu rõ "Look at the amount of snow we had last winter".',
     explanationEn: 'Option A is correct: the speaker points specifically to "the amount of snow we had last winter".'
+  },
+  {
+    id: 'ldrill-dist-track22-pluto-rejection',
+    type: 'listening-distractor',
+    title: 'Bẫy tính khả thi đề tài: Đã hoàn tất (Pluto) vs Đang diễn ra (Mars) (Track 22)',
+    titleEn: 'Feasibility Trap: Completed Mission (Pluto) vs Ongoing Simulation (Mars) (Track 22)',
+    category: 'Academic Project Evaluation',
+    categoryEn: 'Academic Project Evaluation',
+    audioSnippetText: 'Well, I\'m not so sure about that one. I mean, it\'s already been going for 10 years, and I think we should look at something which is planned for the future, but hasn\'t started yet. It would give you a better chance to study it in depth, and do far more analysis for your monthly update reports.',
+    audioText: 'Well, I\'m not so sure about that one. I mean, it\'s already been going for 10 years, and I think we should look at something which is planned for the future, but hasn\'t started yet. It would give you a better chance to study it in depth, and do far more analysis for your monthly update reports.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track22-space-expedition-project-meeting.mp3',
+    clipStart: 34,
+    clipEnd: 54,
+    question: 'Lý do chính khiến Tiến sĩ Thornton nghi ngại về việc chọn đề tài tàu thám hiểm Sao Diêm Vương (Pluto) là gì?',
+    questionEn: 'What is the primary reason Dr. Thornton expresses reservations about choosing the Pluto expedition?',
+    options: [
+      { id: 'A', text: 'Nhiệm vụ đã diễn ra suốt 10 năm qua nên không còn nhiều dư địa phân tích tiến trình cho các báo cáo hàng tháng', textEn: 'The mission has already been underway for 10 years, offering limited scope for ongoing monthly progress analysis' },
+      { id: 'B', text: 'Tàu vũ trụ đã gặp sự cố liên lạc nghiêm trọng trước khi tiếp cận hành tinh', textEn: 'The spacecraft encountered catastrophic communication issues prior to arrival' },
+      { id: 'C', text: 'Hình ảnh gửi về không đủ độ phân giải để thực hiện nghiên cứu học thuật', textEn: 'Transmitted photographs lack adequate resolution for academic research' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Simon tưởng việc tin tức đưa tin rầm rộ vài tuần tới là lợi thế, nhưng giảng viên chỉ ra dự án học thuật cần theo dõi tiến trình thực tế kéo dài vài tháng, trong khi tàu Pluto đã khởi hành 10 năm trước và đã thành công từ trước.',
+    distractorMechanismEn: 'Simon views imminent media coverage as an advantage, but the supervisor emphasizes that monthly academic reports require tracking an evolving project from scratch, whereas Pluto has run for 10 years and is already an established success.',
+    explanation: 'Đáp án là A vì Tiến sĩ Thornton lưu ý nhiệm vụ đã kéo dài 10 năm và cần một đề tài tương lai để viết báo cáo hàng tháng.',
+    explanationEn: 'Option A is correct: Dr. Thornton points out the 10-year track record and insists on a future mission that permits ongoing monthly analysis.'
+  },
+  {
+    id: 'ldrill-dist-track22-mars-group-dynamics',
+    type: 'listening-distractor',
+    title: 'Bẫy trọng tâm học thuật: Kỹ thuật không gian vs Tâm lý nhóm người (Track 22)',
+    titleEn: 'Academic Focus Trap: Technical Hardware vs Human Group Dynamics (Track 22)',
+    category: 'Space Science & Psychology',
+    categoryEn: 'Space Science & Psychology',
+    audioSnippetText: 'Okay, if you ask me, I\'d prefer to see how a group of people get along living together in a difficult situation, like they\'ll be doing in Arizona in preparation for their trip. I think you\'d get far more out of that, but the final decision is yours.',
+    audioText: 'Okay, if you ask me, I\'d prefer to see how a group of people get along living together in a difficult situation, like they\'ll be doing in Arizona in preparation for their trip. I think you\'d get far more out of that, but the final decision is yours.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track22-space-expedition-project-meeting.mp3',
+    clipStart: 173,
+    clipEnd: 189,
+    question: 'Theo Tiến sĩ Thornton, giá trị học thuật nổi bật nhất của dự án mô phỏng tại Arizona là gì?',
+    questionEn: 'According to Dr. Thornton, what is the most rewarding academic dimension of the Arizona simulation project?',
+    options: [
+      { id: 'A', text: 'Theo dõi cách các thành viên tương tác, hợp tác và chung sống trong hoàn cảnh khắc nghiệt', textEn: 'Observing how participants interact, cooperate, and cohabit in an arduous environment' },
+      { id: 'B', text: 'Kiểm tra độ bền cơ học của vật liệu vỏ tàu trước tác động của bão cát sa mạc', textEn: 'Testing the mechanical durability of hull composites against desert sandstorms' },
+      { id: 'C', text: 'Tính toán chính xác lượng nhiên liệu tên lửa cần thiết để rời khỏi quỹ đạo Trái Đất', textEn: 'Calculating the precise rocket propulsion fuel required to escape Earth\'s orbit' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe thường liên tưởng đến các yếu tố kỹ thuật cơ khí, nhưng giảng viên nhấn mạnh giá trị học thuật cao nhất nằm ở tâm lý xã hội: "how a group of people get along living together in a difficult situation".',
+    distractorMechanismEn: 'Test-takers frequently gravitate toward mechanical space engineering, but the supervisor highlights social psychology ("how a group of people get along living together in a difficult situation") as the most beneficial aspect.',
+    explanation: 'Đáp án là A vì Tiến sĩ Thornton nhấn mạnh việc quan sát "how a group of people get along living together in a difficult situation".',
+    explanationEn: 'Option A is correct: Dr. Thornton specifically emphasizes observing "how a group of people get along living together in a difficult situation".'
   }
 ];

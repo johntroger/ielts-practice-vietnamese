@@ -1787,6 +1787,49 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Support renewable energy and significantly reduce reliance on oil and gas',
     explanation: 'Người nói chủ trương chính phủ phải thúc đẩy năng lượng tái tạo và giảm thiểu phụ thuộc vào dầu mỏ và khí đốt ("reduce our dependence on oil and gas").',
     explanationEn: 'Strategic priority: Speaker 1 urges supporting renewable energy while reducing dependence on oil and gas.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 22 SPACE EXPEDITION RESEARCH PROJECTS TUTORIAL
+  // ==========================================
+  {
+    id: 'easy_lis_mars_desert_camp_t22',
+    difficulty: 'easy',
+    topic: 'science',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Where has the six-month Mars simulation camp been constructed according to Simon?',
+    context: 'They\'ve built a sort of camp in the desert in Arizona. There are 10 people living there for six months...',
+    audioText: 'They\'ve built a sort of camp in the desert in Arizona. There are 10 people living there for six months...',
+    options: [
+      'In the desert in Arizona',
+      'In an underground bunker in Texas',
+      'In an Arctic research outpost in Alaska',
+      'On an uninhabited volcanic island in Hawaii'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'In the desert in Arizona',
+    explanation: 'Simon xác nhận khu trại mô phỏng môi trường Sao Hỏa được xây dựng tại vùng sa mạc thuộc bang Arizona ("in the desert in Arizona").',
+    explanationEn: 'Location identification: Simon confirms the simulation camp is located in the desert in Arizona.'
+  },
+  {
+    id: 'med_lis_space_project_outline_t22',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What concrete assignment must Maria and Simon hand in to Dr. Thornton next Wednesday?',
+    context: 'We\'ll meet again next Wednesday and you can give me your project outline.',
+    audioText: 'We\'ll meet again next Wednesday and you can give me your project outline.',
+    options: [
+      'A preliminary project outline',
+      'The full statistical results of the Arizona trial',
+      'A signed ethics approval letter from the university department',
+      'A 20-page comprehensive literature review'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A preliminary project outline',
+    explanation: 'Giảng viên hướng dẫn Dr. Thornton yêu cầu hai sinh viên nộp dàn ý đề tài ("give me your project outline") vào thứ Tư tuần sau.',
+    explanationEn: 'Task assignment: Dr. Thornton asks the students to bring their project outline to the meeting next Wednesday.'
   }
 ];
 
@@ -1881,7 +1924,10 @@ const R2_AUDIO_METADATA_BY_ID = {
   med_lis_robot_football_messi_t20: { audioUrl: `${R2_BASE}/ielts-listening-track20-discussions-politics-film-robotics.mp3`, clipStart: 77, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 20 • Robot Football Messi Goal' },
   // Track 21: Public Opinions on Modern Art & Climate Change
   easy_lis_modern_art_takeleave_t21: { audioUrl: `${R2_BASE}/ielts-listening-track21-opinions-modern-art-climate-change.mp3`, clipStart: 18, clipEnd: 27, isR2Audio: true, trackLabel: 'Track 21 • Modern Art Idiom' },
-  med_lis_climate_action_oilgas_t21: { audioUrl: `${R2_BASE}/ielts-listening-track21-opinions-modern-art-climate-change.mp3`, clipStart: 100, clipEnd: 112, isR2Audio: true, trackLabel: 'Track 21 • Renewable Energy Action' }
+  med_lis_climate_action_oilgas_t21: { audioUrl: `${R2_BASE}/ielts-listening-track21-opinions-modern-art-climate-change.mp3`, clipStart: 100, clipEnd: 112, isR2Audio: true, trackLabel: 'Track 21 • Renewable Energy Action' },
+  // Track 22: Space Expedition Research Projects Tutorial
+  easy_lis_mars_desert_camp_t22: { audioUrl: `${R2_BASE}/ielts-listening-track22-space-expedition-project-meeting.mp3`, clipStart: 81, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 22 • Arizona Mars Habitat' },
+  med_lis_space_project_outline_t22: { audioUrl: `${R2_BASE}/ielts-listening-track22-space-expedition-project-meeting.mp3`, clipStart: 200, clipEnd: 211, isR2Audio: true, trackLabel: 'Track 22 • Project Outline Deadline' }
 };
 
 export const ARENA_QUESTION_BANK = [

@@ -552,7 +552,9 @@ export const vi = {
     untestedAxis: 'Chưa xuất hiện',
     audioBlitzTitle: 'Thính Giác Siêu Tốc (+25% XP)',
     audioBlitzDesc: 'Thử thách 7 câu phản xạ Nghe Audio Cambridge thực chiến — Nhận thêm +25% XP và Thưởng Perfect Ear!',
-    audioBonusLabel: 'Thưởng Thính Lực Thực Chiến (+25% XP)'
+    audioBonusLabel: 'Thưởng Thính Lực Thực Chiến (+25% XP)',
+    mysteryLootLabel: 'Thưởng Cổ Vật Bí Ẩn',
+    mysteryRelicBadge: 'CỔ VẬT BÍ ẨN'
   },
   about: {
     badge: 'NỀN TẢNG LUYỆN THI IELTS 4 KỸ NĂNG • 100% LOCAL-FIRST & MIỄN PHÍ',

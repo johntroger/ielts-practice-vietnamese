@@ -552,7 +552,9 @@ export const en = {
     untestedAxis: 'Not tested',
     audioBlitzTitle: 'Cambridge Audio Blitz (+25% XP)',
     audioBlitzDesc: '7-Question Cambridge Studio Audio Challenge — Earn +25% Bonus XP and Perfect Ear mastery reward!',
-    audioBonusLabel: 'Audio Mastery Bonus (+25% XP)'
+    audioBonusLabel: 'Audio Mastery Bonus (+25% XP)',
+    mysteryLootLabel: 'Mystery Relic Bonus',
+    mysteryRelicBadge: 'MYSTERY RELIC'
   },
   about: {
     badge: 'CAMBRIDGE-STANDARD 4-SKILL IELTS PLATFORM • 100% LOCAL-FIRST & FREE',
