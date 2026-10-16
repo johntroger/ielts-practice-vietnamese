@@ -28,6 +28,7 @@ import { track16EventDuties } from './listening/track16EventDuties.js';
 import { track17SportsBenefits } from './listening/track17SportsBenefits.js';
 import { track18SportsAchievements } from './listening/track18SportsAchievements.js';
 import { track19SportsPreferences } from './listening/track19SportsPreferences.js';
+import { track20Discussions } from './listening/track20Discussions.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -50,6 +51,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track20Discussions,
   track19SportsPreferences,
   track18SportsAchievements,
   track17SportsBenefits,

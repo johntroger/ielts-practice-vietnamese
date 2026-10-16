@@ -1701,6 +1701,49 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'There is a shortage of swimming venues in their residential area',
     explanation: 'Cấu trúc câu ước "I wish there were more places to swim where I live" cho thấy vấn đề là khu vực sinh sống thiếu địa điểm bơi lội.',
     explanationEn: 'Wish clause analysis: The speaker desires "more places to swim where I live", confirming an inadequate number of local swimming facilities.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 20 TOPICAL DISCUSSIONS ON POLITICS, CINEMA & ROBOTICS
+  // ==========================================
+  {
+    id: 'easy_lis_election_economy_t20',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to the first speaker in Discussion 1, why are citizens experiencing severe economic strain?',
+    context: 'People are already finding it difficult to live with prices going up and salaries staying the same.',
+    audioText: 'People are already finding it difficult to live with prices going up and salaries staying the same.',
+    options: [
+      'Prices are escalating while personal salaries remain unchanged',
+      'High taxation on luxury imports has burdened local businesses',
+      'Mortgage interest rates have tripled over the last five years',
+      'Unemployment figures have surged after manufacturing shutdowns'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Prices are escalating while personal salaries remain unchanged',
+    explanation: 'Nguyên nhân trực tiếp được người nói nêu ra là giá cả leo thang trong khi tiền lương không đổi ("with prices going up and salaries staying the same").',
+    explanationEn: 'Direct cause identification: The speaker explicitly attributes living difficulty to prices going up while salaries stay the same.'
+  },
+  {
+    id: 'med_lis_robot_football_messi_t20',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Discussion 3, how does the male speaker praise the winning goal in the robotic soccer match?',
+    context: 'And that winning goal was like Messi scoring.',
+    audioText: 'And that winning goal was like Messi scoring.',
+    options: [
+      'By likening its brilliance to a goal scored by Lionel Messi',
+      'By noting it was an accidental rebound caused by a sensory glitch',
+      'By comparing the robot\'s movement speed to an Olympic sprinter',
+      'By praising the goalkeeper robot for an impossible acrobatic dive'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'By likening its brilliance to a goal scored by Lionel Messi',
+    explanation: 'Người nam khen ngợi bàn thắng quyết định bằng cách ví von nó đỉnh cao như một pha lập công của Lionel Messi ("was like Messi scoring").',
+    explanationEn: 'Figurative comparison: The man praises the winning goal by comparing it to a strike by Lionel Messi.'
   }
 ];
 
@@ -1789,7 +1832,10 @@ const R2_AUDIO_METADATA_BY_ID = {
   med_lis_jordan_record_t18: { audioUrl: `${R2_BASE}/ielts-listening-track18-sports-facts-and-achievements.mp3`, clipStart: 31, clipEnd: 43, isR2Audio: true, trackLabel: 'Track 18 • NBA Playoff Record' },
   // Track 19: Sports Preferences & Lifestyle Constraints
   easy_lis_hockey_t19: { audioUrl: `${R2_BASE}/ielts-listening-track19-sports-preferences-and-hobbies.mp3`, clipStart: 2, clipEnd: 14, isR2Audio: true, trackLabel: 'Track 19 • Favorite Sport Hockey' },
-  med_lis_swimming_wish_t19: { audioUrl: `${R2_BASE}/ielts-listening-track19-sports-preferences-and-hobbies.mp3`, clipStart: 15, clipEnd: 27, isR2Audio: true, trackLabel: 'Track 19 • Swimming Facility Shortage' }
+  med_lis_swimming_wish_t19: { audioUrl: `${R2_BASE}/ielts-listening-track19-sports-preferences-and-hobbies.mp3`, clipStart: 15, clipEnd: 27, isR2Audio: true, trackLabel: 'Track 19 • Swimming Facility Shortage' },
+  // Track 20: Topical Discussions on Politics, Cinema & Robotics
+  easy_lis_election_economy_t20: { audioUrl: `${R2_BASE}/ielts-listening-track20-discussions-politics-film-robotics.mp3`, clipStart: 15, clipEnd: 22, isR2Audio: true, trackLabel: 'Track 20 • Election Economic Strain' },
+  med_lis_robot_football_messi_t20: { audioUrl: `${R2_BASE}/ielts-listening-track20-discussions-politics-film-robotics.mp3`, clipStart: 77, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 20 • Robot Football Messi Goal' }
 };
 
 export const ARENA_QUESTION_BANK = [

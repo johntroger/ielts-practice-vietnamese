@@ -1228,5 +1228,55 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'Test-takers frequently assume the speaker lost enthusiasm upon hearing "don\'t ... anymore", but "I\'ve always liked" demonstrates lasting affinity; the genuine barrier is strictly a shortage of time.',
     explanation: 'Đáp án là A vì câu nói nêu rõ "don\'t have time to do it anymore".',
     explanationEn: 'Option A is correct: the speaker explicitly accounts for stopping with "don\'t have time to do it anymore".'
+  },
+  {
+    id: 'ldrill-dist-track20-election-opinion',
+    type: 'listening-distractor',
+    title: 'Bẫy quan điểm chính trị & kinh tế: Ruling Party vs Living Costs (Track 20)',
+    titleEn: 'Political & Economic Stance Trap: Ruling Party vs Living Costs (Track 20)',
+    category: 'Politics & Macroeconomics',
+    categoryEn: 'Politics & Macroeconomics',
+    audioSnippetText: 'All I\'m saying is that if this government wins the election tomorrow, I think they\'ll just continue with the same things they\'ve been doing over the last 5 years, and make the economic situation worse in this country. People are already finding it difficult to live with prices going up and salaries staying the same.',
+    audioText: 'All I\'m saying is that if this government wins the election tomorrow, I think they\'ll just continue with the same things they\'ve been doing over the last 5 years, and make the economic situation worse in this country. People are already finding it difficult to live with prices going up and salaries staying the same.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track20-discussions-politics-film-robotics.mp3',
+    clipStart: 4,
+    clipEnd: 21,
+    question: 'Theo người phụ nữ, đâu là nguyên nhân trực tiếp khiến đời sống người dân ngày càng khó khăn?',
+    questionEn: 'According to the female speaker, what is the direct cause of citizens\' worsening financial hardship?',
+    options: [
+      { id: 'A', text: 'Mức giá sinh hoạt tăng cao trong khi tiền lương không hề thay đổi', textEn: 'Rising living costs combined with stagnant salaries' },
+      { id: 'B', text: 'Tỷ lệ thất nghiệp gia tăng nhanh chóng sau kỳ bầu cử', textEn: 'Rapidly escalating unemployment rates following the election' },
+      { id: 'C', text: 'Chính phủ cắt giảm đột ngột các gói trợ cấp xã hội', textEn: 'Abrupt government reductions in public welfare subsidies' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói nêu rõ sự cộng hưởng áp lực tài chính: "prices going up and salaries staying the same" (giá cả tăng trong khi tiền lương dậm chân tại chỗ).',
+    distractorMechanismEn: 'The speaker directly identifies the economic crunch: "prices going up and salaries staying the same" (cost-of-living inflation alongside wage stagnation).',
+    explanation: 'Đáp án là A vì câu nói nêu rõ "with prices going up and salaries staying the same".',
+    explanationEn: 'Option A is correct: the speaker explicitly identifies "prices going up and salaries staying the same".'
+  },
+  {
+    id: 'ldrill-dist-track20-scifi-character-depth',
+    type: 'listening-distractor',
+    title: 'Bẫy phê bình điện ảnh: Character Depth vs Sci-Fi Spectacle (Track 20)',
+    titleEn: 'Cinema Critique Trap: Character Depth vs Sci-Fi Spectacle (Track 20)',
+    category: 'Arts & Media Review',
+    categoryEn: 'Arts & Media Review',
+    audioSnippetText: 'I think it was really good the way that all the characters were actually well developed and interacted with each other. The danger with that kind of film is that the science fiction aspect just takes over, and you get spaceships and battles with aliens who are trying to take over the Earth.',
+    audioText: 'I think it was really good the way that all the characters were actually well developed and interacted with each other. The danger with that kind of film is that the science fiction aspect just takes over, and you get spaceships and battles with aliens who are trying to take over the Earth.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track20-discussions-politics-film-robotics.mp3',
+    clipStart: 35,
+    clipEnd: 53,
+    question: 'Yếu tố nào được người nam đánh giá cao nhất ở bộ phim đã xem?',
+    questionEn: 'Which element does the male speaker praise most about the film he watched?',
+    options: [
+      { id: 'A', text: 'Các tuyến nhân vật được xây dựng có chiều sâu và tương tác xuất sắc với nhau', textEn: 'Well-developed characters and their meaningful interactions with one another' },
+      { id: 'B', text: 'Những trận chiến vũ trụ mãn nhãn với người ngoài hành tinh xâm lăng', textEn: 'Spectacular spaceship battles against alien invaders' },
+      { id: 'C', text: 'Kỹ xảo hình ảnh viễn tưởng hoành tráng áp đảo nội dung kịch bản', textEn: 'Overwhelming sci-fi visual effects dominating the script' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Các phương án B và C miêu tả cạm bẫy mà người nói cảnh báo thể loại phim này hay mắc phải ("The danger with that kind of film is that the science fiction aspect just takes over"), còn điểm khen ngợi thực sự là "characters were actually well developed".',
+    distractorMechanismEn: 'Options B and C represent the pitfall the speaker warns against ("The danger with that kind of film is that the science fiction aspect just takes over"), whereas his genuine praise focuses on character development.',
+    explanation: 'Đáp án là A vì người nói khen ngợi "characters were actually well developed and interacted with each other".',
+    explanationEn: 'Option A is correct: the speaker commends the film because "characters were actually well developed and interacted with each other".'
   }
 ];
