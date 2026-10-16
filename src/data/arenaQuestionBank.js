@@ -1246,6 +1246,89 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The Woodland Hotel on the right-hand side',
     explanation: 'Dấu mốc định vị cuối cùng là đi qua Khách sạn Woodland (Woodland Hotel) ở bên tay phải.',
     explanationEn: 'Final landmark: North Henton Sports Centre is located on Green Lane directly past the Woodland Hotel on the right.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 13 SPORTS & PHYSICAL REQUIREMENTS
+  // ==========================================
+  {
+    id: 'easy_lis_shuttlecock_t13',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What distinguishes the projectile used in the first sport (badminton) from that of tennis?',
+    context: 'The playing area is smaller and people hit a shuttlecock, a light object with feathers, instead of a ball.',
+    audioText: 'The playing area is smaller and people hit a shuttlecock, a light object with feathers, instead of a ball.',
+    options: [
+      'A light feathered shuttlecock is used rather than a ball',
+      'A heavier rubber ball is used with greater racket tension',
+      'A hollow plastic sphere with aerodynamic holes is hit',
+      'A specialized felt disc designed for indoor wooden courts'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A light feathered shuttlecock is used rather than a ball',
+    explanation: 'Người chơi đánh quả cầu lông (shuttlecock) – một vật thể nhẹ có gắn lông vũ – thay vì quả bóng thông thường.',
+    explanationEn: 'Equipment identification: Badminton utilizes a feathered shuttlecock rather than a conventional ball.'
+  },
+  {
+    id: 'med_lis_gymnastics_t13',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to description 2, what physical combination is mandatory for the athlete?',
+    context: 'You have to be very strong in your arms and legs, but also light and flexible to do this sport, because you use your whole body all the time.',
+    audioText: 'You have to be very strong in your arms and legs, but also light and flexible to do this sport, because you use your whole body all the time.',
+    options: [
+      'Extreme limb strength combined with lightness and flexibility',
+      'Tall stature and maximum muscle mass',
+      'Heavy bodyweight to maintain equilibrium on apparatus',
+      'Fast sprinting ability over long outdoor distances'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Extreme limb strength combined with lightness and flexibility',
+    explanation: 'Vận động viên cần kết hợp cả cơ bắp tay chân rất khỏe ("very strong in your arms and legs") lẫn thân hình nhẹ và dẻo dai ("light and flexible").',
+    explanationEn: 'Physical requirements: Gymnastics demands simultaneous limb power, light weight, and body flexibility.'
+  },
+  {
+    id: 'med_lis_tabletennis_t13',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why must participants in the third sport (table tennis) move their arms with high speed and precision?',
+    context: 'You need to think very fast, and move your arms quickly and accurately, because the playing area is so small, and the ball is so light.',
+    audioText: 'You need to think very fast, and move your arms quickly and accurately, because the playing area is so small, and the ball is so light.',
+    options: [
+      'Because the playing area is extremely compact and the ball is very light',
+      'Because opponents stand far apart across a windy court',
+      'Because the racket is unusually heavy and unwieldy',
+      'Because players are required to sprint across the hall constantly'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Because the playing area is extremely compact and the ball is very light',
+    explanation: 'Lý do cánh tay phải phản xạ vừa nhanh vừa chuẩn xác là vì diện tích bàn đấu rất nhỏ và quả bóng rất nhẹ.',
+    explanationEn: 'Reflex demands: The miniature playing surface and lightweight ball mandate rapid, accurate arm movement.'
+  },
+  {
+    id: 'hard_lis_weightlifting_t13',
+    difficulty: 'hard',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What key mobility characteristic sets the fourth sport (weightlifting) apart from dynamic ball games?',
+    context: 'You also need to have very strong legs to support yourself, but you don\'t move around to do it.',
+    audioText: 'You also need to have very strong legs to support yourself, but you don\'t move around to do it.',
+    options: [
+      'The athlete remains stationary and does not move around the floor',
+      'The athlete must continuously change directions at high velocity',
+      'The athlete relies solely on arm power without leg involvement',
+      'The athlete must leap vertically into the air repeatedly'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The athlete remains stationary and does not move around the floor',
+    explanation: 'Điểm đặc trưng là người tập giữ vị trí cố định, không di chuyển vòng quanh ("you don\'t move around to do it"), dùng chân làm bệ đỡ cơ thể.',
+    explanationEn: 'Mobility constraint: Unlike mobile sports, weightlifting is performed statically without moving around.'
   }
 ];
 
@@ -1305,7 +1388,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_flood_damage_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 10, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 12 • Flooding Damage' },
   med_lis_meeting_time_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 37, clipEnd: 43, isR2Audio: true, trackLabel: 'Track 12 • Meeting Time' },
   med_lis_bramley_turn_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 83, clipEnd: 94, isR2Audio: true, trackLabel: 'Track 12 • Bramley Road Junction' },
-  hard_lis_landmark_final_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 111, clipEnd: 121, isR2Audio: true, trackLabel: 'Track 12 • Woodland Hotel Landmark' }
+  hard_lis_landmark_final_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 111, clipEnd: 121, isR2Audio: true, trackLabel: 'Track 12 • Woodland Hotel Landmark' },
+  // Track 13: Sports & Athletic Requirements
+  easy_lis_shuttlecock_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 2, clipEnd: 21, isR2Audio: true, trackLabel: 'Track 13 • Badminton Shuttlecock' },
+  med_lis_gymnastics_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 22, clipEnd: 34, isR2Audio: true, trackLabel: 'Track 13 • Gymnastics Flexibility' },
+  med_lis_tabletennis_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 35, clipEnd: 50, isR2Audio: true, trackLabel: 'Track 13 • Table Tennis Precision' },
+  hard_lis_weightlifting_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 51, clipEnd: 66, isR2Audio: true, trackLabel: 'Track 13 • Weightlifting Stance' }
 };
 
 export const ARENA_QUESTION_BANK = [

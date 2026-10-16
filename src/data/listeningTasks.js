@@ -21,6 +21,7 @@ import { track9HometownSentences } from './listening/track9HometownSentences.js'
 import { track10WordStressPronunciation } from './listening/track10WordStressPronunciation.js';
 import { track11MapDirections } from './listening/track11MapDirections.js';
 import { track12SportsCentreMap } from './listening/track12SportsCentreMap.js';
+import { track13SportsAndSkills } from './listening/track13SportsAndSkills.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -43,6 +44,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track13SportsAndSkills,
   track12SportsCentreMap,
   track11MapDirections,
   track10WordStressPronunciation,

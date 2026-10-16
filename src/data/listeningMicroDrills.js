@@ -761,5 +761,43 @@ export const LISTENING_MICRO_DRILLS = [
     correctOption: 'A',
     distractorMechanism: 'Người nói nêu nguyên nhân trực tiếp: "because of the flooding last week which caused damage to our equipment and the floor".',
     explanation: 'Đáp án là A vì lý do di dời là do ngập nước (flooding) làm hư hại thiết bị và sàn thể thao.'
+  },
+  {
+    id: 'ldrill-spell-track13-shuttlecock',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ từ vựng dụng cụ thể thao: Shuttlecock (Track 13)',
+    category: 'Sports & Athletic Gear',
+    promptAudioText: 'The playing area is smaller and people hit a shuttlecock, a light object with feathers, instead of a ball.',
+    audioText: 'The playing area is smaller and people hit a shuttlecock, a light object with feathers, instead of a ball.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track13-sports-and-physical-skills.mp3',
+    clipStart: 10,
+    clipEnd: 18,
+    correctAnswer: 'shuttlecock',
+    questionPrompt: 'Badminton projectile: ................',
+    questionPromptVi: 'Quả cầu lông: .........',
+    acceptableAnswers: ['shuttlecock', 'Shuttlecock'],
+    trapNote: 'Từ vựng ghép: "shuttlecock" (shuttle + cock). Tránh viết tách rời thành "shuttle cock" hoặc sai chính tả "shuttlecook".',
+    explanation: 'Quả cầu lông trong tiếng Anh là "shuttlecock" (vật nhẹ có gắn lông vũ dùng trong môn cầu lông).'
+  },
+  {
+    id: 'ldrill-dist-track13-mobility',
+    type: 'listening-distractor',
+    title: 'Bẫy điều kiện vận động: Cố định vs Di chuyển liên tục (Track 13)',
+    category: 'Athletic Training & Movements',
+    audioSnippetText: "You also need to have very strong legs to support yourself, but you don't move around to do it.",
+    audioText: "You also need to have very strong legs to support yourself, but you don't move around to do it.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track13-sports-and-physical-skills.mp3',
+    clipStart: 58,
+    clipEnd: 66,
+    question: 'Trong môn cử tạ (mô tả số 4), vận động viên sử dụng đôi chân để làm gì?',
+    options: [
+      { id: 'A', text: 'Làm trụ đỡ vững vàng cơ thể tại một chỗ chứ không di chuyển qua lại' },
+      { id: 'B', text: 'Chạy nước rút và đổi hướng linh hoạt trên sàn thi đấu' },
+      { id: 'C', text: 'Nhảy cao để tạo lực quán tính khi nâng tạ' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: "Người nói dùng liên từ \"but you don't move around to do it\" để loại trừ phương án di chuyển, nhấn mạnh đôi chân chỉ có nhiệm vụ \"support yourself\" (trụ vững cơ thể).",
+    explanation: 'Đáp án chính xác là A vì vận động viên cử tạ cần chân rất khỏe để trụ đỡ cơ thể tại chỗ ("support yourself, but you don\'t move around").'
   }
 ];
