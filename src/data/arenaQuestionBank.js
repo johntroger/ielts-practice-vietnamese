@@ -1494,6 +1494,89 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The stand containing powdered chalk for athletes\' hands',
     explanation: 'Bẫy phân biệt: Ghế tập (bench press) đã có sẵn trong phòng; thứ bắt buộc phải mang vào từ kho là giá đựng bột phấn ("stand with the chalk for the lifters to put on their hands").',
     explanationEn: 'Equipment distinction: The bench is pre-installed, but helpers must transport the chalk stand into the room.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 16 TOURNAMENT DUTY ALLOCATIONS
+  // ==========================================
+  {
+    id: 'easy_lis_geoff_absence_t16',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is Geoff unable to be present at the start of the inter-college sports tournament?',
+    context: 'I\'ve just realized that I probably won\'t be able to be there at the start of the competition, because I have an appointment that I can\'t cancel.',
+    audioText: 'I\'ve just realized that I probably won\'t be able to be there at the start of the competition, because I have an appointment that I can\'t cancel.',
+    options: [
+      'He has an unavoidable personal appointment that cannot be rescheduled',
+      'He was caught in severe morning traffic around the town centre',
+      'He had to fetch replacement equipment from South Henton',
+      'He was held up inspecting the flooded gym floor'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He has an unavoidable personal appointment that cannot be rescheduled',
+    explanation: 'Geoff nêu rõ nguyên nhân vắng mặt đầu buổi là do một cuộc hẹn không thể hủy ("an appointment that I can\'t cancel").',
+    explanationEn: 'Geoff states directly that he cannot be there at the start because he has an appointment he cannot cancel.'
+  },
+  {
+    id: 'med_lis_amanda_badminton_t16',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'For what reason is Amanda assigned to organize the badminton event rather than gymnastics?',
+    context: 'Amanda, if I remember rightly, you also once did some training in the rules of badminton, so it might be best if you take that on, rather than the gymnastics. It will be useful to have you there to help with judging line calls and so on.',
+    audioText: 'Amanda, if I remember rightly, you also once did some training in the rules of badminton, so it might be best if you take that on, rather than the gymnastics. It will be useful to have you there to help with judging line calls and so on.',
+    options: [
+      'She previously completed formal training in the rules of the sport',
+      'She is the only volunteer who currently plays competitive badminton',
+      'Gymnastics already had too many volunteer coordinators assigned',
+      'Her physical fitness is best suited for judging active line calls'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'She previously completed formal training in the rules of the sport',
+    explanation: 'Amanda được chọn cho cầu lông vì từng được đào tạo về luật thi đấu ("did some training in the rules of badminton") và có thể bắt lỗi vạch sân ("judging line calls").',
+    explanationEn: 'Amanda is selected for badminton because of her previous training in the rules of badminton, enabling her to assist with line calls.'
+  },
+  {
+    id: 'med_lis_basketball_reversal_t16',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Following Geoff\'s on-the-spot reconsideration, which volunteer is definitively given charge of afternoon basketball?',
+    context: 'But Malik, you\'re already doing the weightlifting, so perhaps Amanda, you can do the basketball. Actually, no. I\'ve just thought: I\'m pretty certain I\'ll be in for the afternoon... How about you do the basketball, Malik?',
+    audioText: 'But Malik, you\'re already doing the weightlifting, so perhaps Amanda, you can do the basketball. Actually, no. I\'ve just thought: I\'m pretty certain I\'ll be in for the afternoon... How about you do the basketball, Malik?',
+    options: [
+      'Malik',
+      'Amanda',
+      'Steve',
+      'Geoff'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Malik',
+    explanation: 'Bẫy tự đính chính: Geoff ban đầu đề xuất Amanda, nhưng lập tức tự phủ nhận ("Actually, no. I\'ve just thought...") và chốt giao bóng rổ cho Malik ("How about you do the basketball, Malik?").',
+    explanationEn: 'Self-correction trap: Geoff initially suggested Amanda, but changed his mind ("Actually, no") and ultimately assigned basketball to Malik.'
+  },
+  {
+    id: 'hard_lis_steve_reserve_t16',
+    difficulty: 'hard',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What contingency responsibility is Steve assigned if Geoff experiences an unexpected delay in the early afternoon?',
+    context: 'Steve, you can be available to help wherever you\'re needed in the afternoon. And if something happens and I can\'t make it in the early afternoon, you can take care of the weightlifting till I arrive...',
+    audioText: 'Steve, you can be available to help wherever you\'re needed in the afternoon. And if something happens and I can\'t make it in the early afternoon, you can take care of the weightlifting till I arrive...',
+    options: [
+      'Supervising weightlifting until Geoff arrives at the sports centre',
+      'Officiating table tennis matches alongside Amanda',
+      'Managing the reception storeroom and visitor registration',
+      'Coordinating line judges for the basketball tournament'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Supervising weightlifting until Geoff arrives at the sports centre',
+    explanation: 'Nhiệm vụ dự phòng: Mặc dù vai trò chính của Steve là hỗ trợ linh hoạt, nhưng nếu Geoff đến muộn thì Steve sẽ trông coi môn cử tạ cho đến khi Geoff tới ("take care of the weightlifting till I arrive").',
+    explanationEn: 'Contingency duty: Although Steve is a flexible helper, he must oversee weightlifting if Geoff is delayed early in the afternoon.'
   }
 ];
 
@@ -1568,7 +1651,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_geoff_arrival_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 102, clipEnd: 111, isR2Audio: true, trackLabel: 'Track 15 • Geoff Arrival 10:00' },
   med_lis_gymnastics_mats_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 38, clipEnd: 48, isR2Audio: true, trackLabel: 'Track 15 • Vaulting Horse & Mats' },
   med_lis_tabletennis_storage_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 63, clipEnd: 76, isR2Audio: true, trackLabel: 'Track 15 • Folded Tables' },
-  hard_lis_chalk_stand_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 92, clipEnd: 101, isR2Audio: true, trackLabel: 'Track 15 • Chalk Stand' }
+  hard_lis_chalk_stand_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 92, clipEnd: 101, isR2Audio: true, trackLabel: 'Track 15 • Chalk Stand' },
+  // Track 16: Competition Staff Duty Allocations
+  easy_lis_geoff_absence_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 8, clipEnd: 18, isR2Audio: true, trackLabel: 'Track 16 • Geoff Absence' },
+  med_lis_amanda_badminton_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 38, clipEnd: 56, isR2Audio: true, trackLabel: 'Track 16 • Badminton Rules' },
+  med_lis_basketball_reversal_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 86, clipEnd: 110, isR2Audio: true, trackLabel: 'Track 16 • Basketball Reversal' },
+  hard_lis_steve_reserve_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 124, clipEnd: 142, isR2Audio: true, trackLabel: 'Track 16 • Steve Contingency' }
 };
 
 export const ARENA_QUESTION_BANK = [
