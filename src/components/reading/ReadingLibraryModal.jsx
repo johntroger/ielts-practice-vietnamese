@@ -243,10 +243,12 @@ export default function ReadingLibraryModal({
 
     // 1. Tab filter
     let matchesTab = true;
-    if (activeTab === 'cambridge') {
-      matchesTab = Boolean(test.isCambridge || !test.isCustom);
+    if (activeTab === 'past_papers') {
+      matchesTab = Boolean(test.source === '101_past_papers' || test.is101PastPaper || test.title?.includes('101 Past Papers'));
+    } else if (activeTab === 'cambridge') {
+      matchesTab = Boolean((test.isCambridge || !test.isCustom) && test.source !== '101_past_papers' && !test.is101PastPaper && !test.title?.includes('101 Past Papers'));
     } else if (activeTab === 'ai') {
-      matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo') && !test.title?.includes('[Full Test'));
+      matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo') && !test.title?.includes('[Full Test') && test.source !== '101_past_papers' && !test.is101PastPaper);
     } else if (activeTab === 'ingest') {
       matchesTab = test.isCustom && (test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí'));
     } else if (activeTab === 'public') {
@@ -298,16 +300,20 @@ export default function ReadingLibraryModal({
   }, [filteredTests, sortBy]);
 
   // Calculate statistics
-  const stats = useMemo(() => ({
-    total: allReadingTests.length,
-    cambridge: allReadingTests.filter(t => t.isCambridge || !t.isCustom).length,
-    ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test')).length,
-    ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰') || t.title?.includes('[Báo chí'))).length,
-    public: allReadingTests.filter(t => t.isPublic).length,
-    mastered: allReadingTests.filter(t => masteredIds.includes(t.id)).length,
-    fullTests: allReadingTests.filter(t => (t.passages?.length || 1) > 1).length,
-    totalPassages: passageBank.length
-  }), [allReadingTests, masteredIds, passageBank.length]);
+  const stats = useMemo(() => {
+    const pastPapersCount = allReadingTests.filter(t => t.source === '101_past_papers' || t.is101PastPaper || t.title?.includes('101 Past Papers')).length;
+    return {
+      total: allReadingTests.length,
+      pastPapers: pastPapersCount,
+      cambridge: allReadingTests.filter(t => (t.isCambridge || !t.isCustom) && t.source !== '101_past_papers' && !t.is101PastPaper && !t.title?.includes('101 Past Papers')).length,
+      ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test') && t.source !== '101_past_papers' && !t.is101PastPaper).length,
+      ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰') || t.title?.includes('[Báo chí'))).length,
+      public: allReadingTests.filter(t => t.isPublic).length,
+      mastered: allReadingTests.filter(t => masteredIds.includes(t.id)).length,
+      fullTests: allReadingTests.filter(t => (t.passages?.length || 1) > 1).length,
+      totalPassages: passageBank.length
+    };
+  }, [allReadingTests, masteredIds, passageBank.length]);
 
   // ----------------------------------------------------
   // DYNAMIC TABS & DROPBOX PICKER ARCHITECTURE
@@ -321,6 +327,15 @@ export default function ReadingLibraryModal({
       count: stats.total,
       activeTheme: 'bg-blue-600 text-white border-blue-600 shadow-2xs font-bold',
       iconColor: 'text-blue-600'
+    },
+    {
+      id: 'past_papers',
+      icon: BookOpen,
+      label: `📖 101 Past Papers (${stats.pastPapers})`,
+      shortLabel: '101 Papers',
+      count: stats.pastPapers,
+      activeTheme: 'bg-teal-700 text-white border-teal-700 shadow-2xs font-bold',
+      iconColor: 'text-teal-700'
     },
     {
       id: 'custom_builder',
@@ -383,10 +398,15 @@ export default function ReadingLibraryModal({
       const saved = localStorage.getItem('ielts_reading_lib_open_tabs');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          if (!parsed.includes('past_papers')) {
+            parsed.splice(1, 0, 'past_papers');
+          }
+          return parsed;
+        }
       }
     } catch (e) {}
-    return ['all', 'custom_builder', 'cambridge', 'ai', 'mastered'];
+    return ['all', 'past_papers', 'custom_builder', 'cambridge', 'ai', 'mastered'];
   });
 
   const [isTabDropdownOpen, setIsTabDropdownOpen] = useState(false);

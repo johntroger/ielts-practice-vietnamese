@@ -15,6 +15,7 @@ export const pastPaper101Test1 = {
   timeLimitMinutes: 60,
   isPublic: true,
   isCambridge: false,
+  is101PastPaper: true,
   source: '101_past_papers',
   creatorEmail: 'IELTS Past Papers Archive',
   sourcePdfUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/101-ielts-reading-past-papers-with-answers-2019.pdf',
