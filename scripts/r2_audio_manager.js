@@ -36,6 +36,12 @@ function getMimeType(filePath) {
     case '.ogg': return 'audio/ogg';
     case '.aac': return 'audio/aac';
     case '.json': return 'application/json';
+    case '.pdf': return 'application/pdf';
+    case '.png': return 'image/png';
+    case '.jpg':
+    case '.jpeg': return 'image/jpeg';
+    case '.webp': return 'image/webp';
+    case '.svg': return 'image/svg+xml';
     default: return 'application/octet-stream';
   }
 }

@@ -9,6 +9,26 @@
  */
 
 export const ARENA_QUESTION_TRANSLATIONS = {
+  "visual_map_village_bypass_01": {
+    "promptEn": "Based on the proposed road development map, which landmark will be bypassed by the new dual carriageway?",
+    "contextEn": "Examine the proposed infrastructure blueprint: The existing A42 route cuts directly through Highbridge Market Square, whereas the new bypass arcs north between the Industrial Park and North Meadow.",
+    "explanationEn": "The new bypass diverts heavy transit traffic away from Highbridge Market Square by skirting northward around the settlement."
+  },
+  "visual_process_water_filtration_02": {
+    "promptEn": "At which stage in the purification sequence is chemical disinfectant introduced?",
+    "contextEn": "Diagram shows: Stage 1 (Screening coarse debris) -> Stage 2 (Sedimentation Tank) -> Stage 3 (Sand & Carbon Filtration) -> Stage 4 (Chlorination Chamber) -> Stage 5 (Storage & Distribution).",
+    "explanationEn": "Chemical disinfectant (chlorine) is injected during Stage 4 immediately following fine sand and activated carbon filtration."
+  },
+  "visual_chart_renewable_energy_03": {
+    "promptEn": "According to the comparative bar chart, which clean energy sector experienced the highest percentage-point increase?",
+    "contextEn": "Solar PV expanded from 4% to 28% (+24%), Wind energy rose from 12% to 26% (+14%), Hydro remained stable at 15% to 16% (+1%), and Biomass grew from 5% to 8% (+3%).",
+    "explanationEn": "Solar PV surged by 24 percentage points (from 4% to 28%), significantly outpacing wind (+14%) and hydro (+1%)."
+  },
+  "visual_map_harbor_quayside_04": {
+    "promptEn": "Looking at the quayside layout, where has the new Pedestrian Footbridge been constructed relative to the Old Customs House?",
+    "contextEn": "The Old Customs House sits at the eastern end of Pier 1. The newly constructed swing footbridge links the south pier directly to the Promenade on the opposite bank.",
+    "explanationEn": "The pedestrian footbridge spans across the southern channel directly opposite and south of the Old Customs House."
+  },
   "b1_easy_spell_01": {
     "promptEn": "Select the authentic Cambridge spelling to complete the sentence:",
     "contextEn": "The university offers on-campus _____ for first-year international students.",

@@ -37,6 +37,8 @@ import {
   isNearMissAnswer 
 } from '../services/gamification/cambridgeAnswerValidator.js';
 import { recordTypingAttempt } from '../services/gamification/typingStatsService.js';
+import { safeGet } from '../utils/storageService.js';
+import { ARENA_STORAGE_KEYS } from '../utils/arenaStorageKeys.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -68,6 +70,9 @@ export const INITIAL_SPRINT_STATE = {
   duration: INITIAL_SPRINT_TIMER_SECONDS,
   difficulty: 'medium',
   isAudioSprint: false,
+  equippedPerk: 'none',
+  isPerkUsed: false,
+  eliminatedOptions: [],
   isBossCleared: false,
   revengeClearedCount: 0,
   revengeBonusXp: 0,
@@ -295,6 +300,8 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     options.isAudioSprint ||
     (Array.isArray(questions) && questions.length > 0 && questions.every(q => q && (q.audioUrl || q.isR2Audio)))
   );
+  const equippedPerk = options.equippedPerk || safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
+  const extraShields = equippedPerk === 'titan_armor' ? 1 : 0;
 
   return {
     ...INITIAL_SPRINT_STATE,
@@ -304,7 +311,10 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     duration,
     difficulty,
     isAudioSprint,
-    shieldState: createSprintShieldState(),
+    equippedPerk,
+    isPerkUsed: false,
+    eliminatedOptions: [],
+    shieldState: createSprintShieldState(extraShields),
     questionHistory: []
   };
 }
@@ -551,7 +561,8 @@ export function nextQuestionAction(state) {
       isCorrect: null,
       isSkipped: false,
       nearMissState: null,
-      hasUsedNearMiss: false
+      hasUsedNearMiss: false,
+      eliminatedOptions: []
     };
   }
 
@@ -580,8 +591,61 @@ export function retrySprintAction(state) {
     isCorrect: null,
     isSkipped: false,
     nearMissState: null,
-    hasUsedNearMiss: false
+    hasUsedNearMiss: false,
+    eliminatedOptions: []
   };
+}
+
+export function activatePerkAction(state) {
+  if (state.phase !== ARENA_SPRINT_PHASES.ACTIVE || state.isAnswerChecked || state.isPerkUsed) {
+    return state;
+  }
+
+  const perkId = state.equippedPerk;
+  if (!perkId || perkId === 'none' || perkId === 'titan_armor') {
+    return state;
+  }
+
+  if (perkId === 'chronos_freeze') {
+    // Add 15 seconds to remaining time
+    const addedTime = 15;
+    return {
+      ...state,
+      isPerkUsed: true,
+      timeRemaining: Math.min((state.duration || INITIAL_SPRINT_TIMER_SECONDS) + 30, state.timeRemaining + addedTime)
+    };
+  }
+
+  if (perkId === 'oracle_insight') {
+    const currentQ = state.questions[state.currentIndex];
+    if (!currentQ || currentQ.interactionType === 'text_input' || !Array.isArray(currentQ.options)) {
+      return state;
+    }
+
+    // Find indices of incorrect options that haven't been eliminated yet
+    const correctIdx = typeof currentQ.correctIndex === 'number' 
+      ? currentQ.correctIndex 
+      : currentQ.options.findIndex(opt => opt === currentQ.correctAnswer);
+
+    const eligibleWrongIndices = currentQ.options
+      .map((_, idx) => idx)
+      .filter(idx => idx !== correctIdx && !(state.eliminatedOptions || []).includes(idx));
+
+    if (eligibleWrongIndices.length === 0) {
+      return state;
+    }
+
+    // Eliminate 1 false distractor trap
+    const eliminatedIdx = eligibleWrongIndices[0];
+
+    return {
+      ...state,
+      isPerkUsed: true,
+      eliminatedOptions: [...(state.eliminatedOptions || []), eliminatedIdx]
+    };
+  }
+
+  return state;
 }
 
 export function finishSprintAction(state, user = null) {
@@ -778,6 +842,22 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     setState(prev => setUserInputTextAction(prev, text));
   }, []);
 
+  const activatePerk = useCallback(() => {
+    setState(prev => {
+      const next = activatePerkAction(prev);
+      if (next.isPerkUsed && !prev.isPerkUsed) {
+        if (prev.equippedPerk === 'chronos_freeze' && next.timeRemaining > prev.timeRemaining) {
+          if (startTimeRef.current) {
+            const addedMs = (next.timeRemaining - prev.timeRemaining) * 1000;
+            startTimeRef.current += addedMs;
+          }
+        }
+        emit('arena:perk_activated', { perkId: prev.equippedPerk });
+      }
+      return next;
+    });
+  }, []);
+
   return {
     ...state,
     startSprint,
@@ -787,6 +867,7 @@ export function useArenaSprintEngine({ user = null, onSprintEnd = null } = {}) {
     skipQuestion,
     nextQuestion,
     retrySprint,
-    resetSprint
+    resetSprint,
+    activatePerk
   };
 }

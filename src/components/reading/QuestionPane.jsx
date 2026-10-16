@@ -189,7 +189,9 @@ export default function QuestionPane({
     return (
       <button
         onClick={() => onToggleFlag && onToggleFlag(order)}
-        title={isFlagged ? "Bỏ cắm cờ xem lại" : "Cắm cờ để xem lại sau (Review flag)"}
+        title={isFlagged 
+          ? (isEn ? "Remove review flag" : "Bỏ cắm cờ xem lại") 
+          : (isEn ? "Flag for review" : "Cắm cờ để xem lại sau (Review flag)")}
         className={`p-1 rounded-md transition-colors ${
           isFlagged 
             ? 'text-amber-500 bg-amber-50 border border-amber-300 shadow-2xs' 

@@ -16,6 +16,82 @@ import { ARENA_QUESTION_TRANSLATIONS } from './arenaQuestionTranslations.js';
 
 export const ARENA_BASE_QUESTION_BANK = [
   // ==========================================
+  // MICRO VISUAL DATA & RAPID MAP/CHART DECODER
+  // ==========================================
+  {
+    id: 'visual_map_village_bypass_01',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'visual_data',
+    type: 'visual_data',
+    prompt: 'Based on the proposed road development map, which landmark will be bypassed by the new dual carriageway?',
+    context: 'Examine the proposed infrastructure blueprint: The existing A42 route cuts directly through Highbridge Market Square, whereas the new bypass arcs north between the Industrial Park and North Meadow.',
+    media: {
+      type: 'map',
+      caption: 'Cambridge Map: Proposed Northern Bypass for Highbridge Village',
+      svg: '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto max-h-48 rounded-lg bg-slate-950/80 p-2"><rect width="400" height="200" fill="#0f172a" rx="8"/><g transform="translate(360, 30)"><circle cx="0" cy="0" r="16" fill="#1e293b" stroke="#475569" stroke-width="1.5"/><path d="M0 -12 L4 2 L0 0 L-4 2 Z" fill="#ef4444"/><path d="M0 12 L4 0 L0 0 L-4 0 Z" fill="#94a3b8"/><text x="0" y="-14" fill="#ef4444" font-size="9" font-weight="bold" text-anchor="middle">N</text></g><path d="M 20 110 Q 150 115 200 110 T 380 110" fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round"/><path d="M 50 110 Q 200 25 350 110" fill="none" stroke="#6366f1" stroke-width="5" stroke-dasharray="6,4" stroke-linecap="round"/><rect x="160" y="90" width="80" height="40" fill="#334155" stroke="#f59e0b" stroke-width="2" rx="4"/><text x="200" y="112" fill="#fde68a" font-size="10" font-weight="bold" text-anchor="middle">Market Square</text><text x="200" y="124" fill="#94a3b8" font-size="8" text-anchor="middle">(Highbridge Village)</text><rect x="140" y="40" width="120" height="22" fill="#064e3b" stroke="#10b981" stroke-width="1" rx="4"/><text x="200" y="55" fill="#a7f3d0" font-size="9" font-weight="bold" text-anchor="middle">North Meadow Reservoir</text><rect x="40" y="55" width="80" height="25" fill="#1e293b" stroke="#64748b" stroke-width="1" rx="4"/><text x="80" y="71" fill="#cbd5e1" font-size="8.5" font-weight="bold" text-anchor="middle">Industrial Park</text><line x1="30" y1="175" x2="60" y2="175" stroke="#64748b" stroke-width="4"/><text x="65" y="178" fill="#94a3b8" font-size="8.5">Existing A42</text><line x1="160" y1="175" x2="190" y2="175" stroke="#6366f1" stroke-width="3" stroke-dasharray="4,3"/><text x="195" y="178" fill="#818cf8" font-size="8.5">Proposed Bypass</text></svg>'
+    },
+    options: ['Highbridge Market Square', 'Industrial Park', 'North Meadow Reservoir', 'Railway Station Junction'],
+    correctIndex: 0,
+    correctAnswer: 'Highbridge Market Square',
+    explanation: 'The new bypass diverts heavy transit traffic away from Highbridge Market Square by skirting northward around the settlement.'
+  },
+  {
+    id: 'visual_process_water_filtration_02',
+    difficulty: 'hard',
+    topic: 'science',
+    skillCategory: 'visual_data',
+    type: 'visual_data',
+    prompt: 'At which stage in the purification sequence is chemical disinfectant introduced?',
+    context: 'Diagram shows: Stage 1 (Screening coarse debris) -> Stage 2 (Sedimentation Tank) -> Stage 3 (Sand & Carbon Filtration) -> Stage 4 (Chlorination Chamber) -> Stage 5 (Storage & Distribution).',
+    media: {
+      type: 'diagram',
+      caption: 'Cambridge Process: Multi-Stage Water Filtration Plant',
+      svg: '<svg viewBox="0 0 460 180" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto max-h-48 rounded-lg bg-slate-950/80 p-2"><rect width="460" height="180" fill="#0f172a" rx="8"/><rect x="15" y="55" width="70" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="6"/><text x="50" y="78" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">Stage 1</text><text x="50" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">Coarse Screen</text><path d="M 88 85 L 102 85" stroke="#64748b" stroke-width="2"/><rect x="105" y="55" width="70" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="6"/><text x="140" y="78" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">Stage 2</text><text x="140" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">Sedimentation</text><path d="M 178 85 L 192 85" stroke="#64748b" stroke-width="2"/><rect x="195" y="55" width="70" height="60" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" rx="6"/><text x="230" y="78" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">Stage 3</text><text x="230" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">Sand & Carbon</text><path d="M 268 85 L 282 85" stroke="#64748b" stroke-width="2"/><rect x="285" y="50" width="75" height="70" fill="#431407" stroke="#f97316" stroke-width="2.5" rx="6"/><text x="322" y="74" fill="#fb923c" font-size="9.5" font-weight="black" text-anchor="middle">Stage 4 ⚠️</text><text x="322" y="90" fill="#ffedd5" font-size="8" font-weight="bold" text-anchor="middle">Chlorination</text><text x="322" y="104" fill="#fdba74" font-size="7.5" text-anchor="middle">(Disinfectant)</text><path d="M 363 85 L 377 85" stroke="#64748b" stroke-width="2"/><rect x="380" y="55" width="65" height="60" fill="#1e293b" stroke="#10b981" stroke-width="1.5" rx="6"/><text x="412" y="78" fill="#34d399" font-size="9" font-weight="bold" text-anchor="middle">Stage 5</text><text x="412" y="95" fill="#e2e8f0" font-size="8" text-anchor="middle">Distribution</text></svg>'
+    },
+    options: ['Stage 4 (Chlorination Chamber)', 'Stage 2 (Sedimentation Tank)', 'Stage 3 (Sand & Carbon Filtration)', 'Stage 1 (Coarse Screening)'],
+    correctIndex: 0,
+    correctAnswer: 'Stage 4 (Chlorination Chamber)',
+    explanation: 'Chemical disinfectant (chlorine) is injected during Stage 4 immediately following fine sand and activated carbon filtration.'
+  },
+  {
+    id: 'visual_chart_renewable_energy_03',
+    difficulty: 'medium',
+    topic: 'environment',
+    skillCategory: 'visual_data',
+    type: 'visual_data',
+    prompt: 'According to the comparative bar chart, which clean energy sector experienced the highest percentage-point increase?',
+    context: 'Solar PV expanded from 4% to 28% (+24%), Wind energy rose from 12% to 26% (+14%), Hydro remained stable at 15% to 16% (+1%), and Biomass grew from 5% to 8% (+3%).',
+    media: {
+      type: 'chart',
+      caption: 'Task 1 Trend: Renewable Energy Share in Grid (2010 vs 2025)',
+      svg: '<svg viewBox="0 0 420 190" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto max-h-48 rounded-lg bg-slate-950/80 p-2"><rect width="420" height="190" fill="#0f172a" rx="8"/><line x1="50" y1="140" x2="390" y2="140" stroke="#334155" stroke-width="1"/><line x1="50" y1="100" x2="390" y2="100" stroke="#1e293b" stroke-dasharray="3,3"/><line x1="50" y1="60" x2="390" y2="60" stroke="#1e293b" stroke-dasharray="3,3"/><text x="42" y="144" fill="#64748b" font-size="8" text-anchor="end">0%</text><text x="42" y="104" fill="#64748b" font-size="8" text-anchor="end">15%</text><text x="42" y="64" fill="#64748b" font-size="8" text-anchor="end">30%</text><rect x="70" y="129" width="22" height="11" fill="#64748b" rx="2"/><rect x="96" y="65" width="22" height="75" fill="#f59e0b" rx="2"/><text x="94" y="58" fill="#fde68a" font-size="9" font-weight="bold" text-anchor="middle">28%</text><text x="94" y="156" fill="#cbd5e1" font-size="8" font-weight="bold" text-anchor="middle">Solar PV</text><rect x="150" y="108" width="22" height="32" fill="#64748b" rx="2"/><rect x="176" y="71" width="22" height="69" fill="#06b6d4" rx="2"/><text x="174" y="156" fill="#cbd5e1" font-size="8" font-weight="bold" text-anchor="middle">Wind</text><rect x="230" y="100" width="22" height="40" fill="#64748b" rx="2"/><rect x="256" y="97" width="22" height="43" fill="#3b82f6" rx="2"/><text x="254" y="156" fill="#cbd5e1" font-size="8" font-weight="bold" text-anchor="middle">Hydro</text><rect x="310" y="127" width="22" height="13" fill="#64748b" rx="2"/><rect x="336" y="119" width="22" height="21" fill="#10b981" rx="2"/><text x="334" y="156" fill="#cbd5e1" font-size="8" font-weight="bold" text-anchor="middle">Biomass</text><rect x="140" y="15" width="14" height="8" fill="#64748b" rx="1"/><text x="158" y="22" fill="#94a3b8" font-size="8.5">2010</text><rect x="220" y="15" width="14" height="8" fill="#f59e0b" rx="1"/><text x="238" y="22" fill="#fde68a" font-size="8.5">2025</text></svg>'
+    },
+    options: ['Solar Photovoltaic', 'Wind Turbines', 'Hydroelectric Power', 'Biomass'],
+    correctIndex: 0,
+    correctAnswer: 'Solar Photovoltaic',
+    explanation: 'Solar PV surged by 24 percentage points (from 4% to 28%), significantly outpacing wind (+14%) and hydro (+1%).'
+  },
+  {
+    id: 'visual_map_harbor_quayside_04',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'visual_data',
+    type: 'visual_data',
+    prompt: 'Looking at the quayside layout, where has the new Pedestrian Footbridge been constructed relative to the Old Customs House?',
+    context: 'The Old Customs House sits at the eastern end of Pier 1. The newly constructed swing footbridge links the south pier directly to the Promenade on the opposite bank.',
+    media: {
+      type: 'map',
+      caption: 'Listening Section 2: Portfield Quayside Redevelopment',
+      svg: '<svg viewBox="0 0 420 190" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto max-h-48 rounded-lg bg-slate-950/80 p-2"><rect width="420" height="190" fill="#0f172a" rx="8"/><rect x="20" y="70" width="380" height="55" fill="#0c4a6e" stroke="#0284c7" stroke-width="1.5" rx="4"/><text x="210" y="102" fill="#7dd3fc" font-size="10" font-weight="bold" text-anchor="middle">Inner Harbor Channel</text><rect x="20" y="20" width="380" height="45" fill="#1e293b" stroke="#475569" stroke-width="1" rx="4"/><rect x="280" y="26" width="105" height="32" fill="#312e81" stroke="#818cf8" stroke-width="1.5" rx="3"/><text x="332" y="46" fill="#e0e7ff" font-size="9" font-weight="bold" text-anchor="middle">Old Customs House</text><rect x="20" y="130" width="380" height="45" fill="#1e293b" stroke="#475569" stroke-width="1" rx="4"/><text x="100" y="158" fill="#94a3b8" font-size="9" font-weight="bold">South Promenade</text><rect x="315" y="65" width="34" height="65" fill="#b45309" stroke="#fbbf24" stroke-width="2" rx="3"/><text x="332" y="100" fill="#fef3c7" font-size="7.5" font-weight="black" text-anchor="middle">Footbridge</text><circle cx="55" cy="42" r="14" fill="#78350f" stroke="#f59e0b" stroke-width="1.5"/><text x="55" y="45" fill="#fef3c7" font-size="8" font-weight="bold" text-anchor="middle">Lighthouse</text></svg>'
+    },
+    options: ['Immediately south of the Old Customs House', 'Directly north of the Lighthouse', 'Western boundary of the Cargo Terminal', 'At the entrance of the Fish Market'],
+    correctIndex: 0,
+    correctAnswer: 'Immediately south of the Old Customs House',
+    explanation: 'The pedestrian footbridge spans across the southern channel directly opposite and south of the Old Customs House.'
+  },
+
+  // ==========================================
   // TIER 1: EASY (Band 4.0 - 5.0) - Base XP: 12
   // ==========================================
   {

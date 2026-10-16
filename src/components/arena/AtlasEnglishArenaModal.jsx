@@ -43,6 +43,8 @@ import {
   generateRevengeSprintQuestions 
 } from '../../services/gamification/mistakeVaultService.js';
 import { generateR2ListeningSprintQuestions } from '../../adapters/sprintQuestionAdapter.js';
+import { ARENA_PERK_LIST, getPerkById } from '../../services/gamification/tacticalPerksService.js';
+import { triggerHaptic } from '../../utils/hapticHelper.js';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -96,6 +98,10 @@ export default function AtlasEnglishArenaModal({
     const idx = Math.floor(Math.random() * ARENA_IELTS_TOPICS.length);
     return ARENA_IELTS_TOPICS[idx] || ARENA_IELTS_TOPICS[0];
   });
+
+  const [selectedPerk, setSelectedPerk] = useState(() => 
+    safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none')
+  );
 
   const handleDifficultyChange = useCallback((diff) => {
     setSelectedDifficulty(diff);
@@ -593,6 +599,44 @@ export default function AtlasEnglishArenaModal({
                     currentTopic={currentTopic}
                   />
 
+                  {/* Compact Tactical Perk Selector (Select 1 of 4) */}
+                  <div className="flex flex-col gap-1 pt-0.5">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-slate-300">
+                      <span className="flex items-center gap-1.5 uppercase tracking-wider text-indigo-300">
+                        <span>⚡</span>
+                        <span>{isEn ? 'Tactical Perk:' : 'Thẻ Bổ Trợ Chiến Thuật:'}</span>
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-normal">
+                        {isEn ? getPerkById(selectedPerk).descEn : getPerkById(selectedPerk).descVi}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                      {ARENA_PERK_LIST.map((perk) => {
+                        const isSelected = selectedPerk === perk.id;
+                        return (
+                          <button
+                            key={perk.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedPerk(perk.id);
+                              safeSet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, perk.id);
+                              triggerHaptic('chipTap');
+                            }}
+                            className={`flex items-center gap-1.5 py-1.5 px-2 rounded-lg border text-left transition-all cursor-pointer select-none text-[11px] font-bold ${
+                              isSelected
+                                ? 'bg-indigo-600/30 border-indigo-400 text-white ring-1 ring-indigo-500/50 shadow-xs'
+                                : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                            }`}
+                            title={isEn ? perk.descEn : perk.descVi}
+                          >
+                            <span className="text-sm shrink-0">{perk.icon}</span>
+                            <span className="truncate">{isEn ? perk.nameEn : perk.nameVi}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   <div className="mt-1 sm:mt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <button
                       type="button"
@@ -694,6 +738,10 @@ export default function AtlasEnglishArenaModal({
                     isCorrect={sprint.isCorrect}
                     isSkipped={sprint.isSkipped}
                     nearMissState={sprint.nearMissState}
+                    equippedPerk={sprint.equippedPerk}
+                    isPerkUsed={sprint.isPerkUsed}
+                    eliminatedOptions={sprint.eliminatedOptions}
+                    onActivatePerk={sprint.activatePerk}
                     onSelectOption={handleSelectOption}
                     onCheckAnswer={handleCheckAnswer}
                     onSubmitAnswer={handleCheckAnswer}

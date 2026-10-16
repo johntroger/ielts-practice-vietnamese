@@ -19,6 +19,8 @@ export const ARENA_STORAGE_KEYS = {
   DAILY_SPRINT_DATE: 'ielts_arena_daily_sprint_date',
   // Last chosen difficulty preference
   LAST_DIFFICULTY: 'ielts_arena_last_difficulty',
+  // Equipped tactical booster perk
+  EQUIPPED_PERK: 'ielts_arena_equipped_perk',
   // Weekly league rollover evaluation tracker
   LAST_EVALUATED_WEEK: 'ielts_arena_last_evaluated_week'
 };

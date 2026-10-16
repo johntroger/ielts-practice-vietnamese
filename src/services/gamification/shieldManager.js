@@ -12,11 +12,13 @@ export const INITIAL_SHIELDS = 5;
 
 /**
  * Initializes a new shield state for a 7-question sprint.
+ * Supports extraShields from tactical perks (e.g. Titan Armor +1 Shield).
  */
-export function createSprintShieldState() {
+export function createSprintShieldState(extraShields = 0) {
+  const total = INITIAL_SHIELDS + Math.max(0, Number(extraShields) || 0);
   return {
-    remainingShields: INITIAL_SHIELDS,
-    maxShields: INITIAL_SHIELDS,
+    remainingShields: total,
+    maxShields: total,
     retryUsed: false,
     mistakesRecorded: []
   };

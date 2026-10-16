@@ -214,7 +214,9 @@ export default function PassagePane({
         y: posY,
         loading: false,
         data: null,
-        error: '🛡️ Trong Chế độ Thi Thử (Strict Exam), tính năng tra từ điển bị vô hiệu hóa để bảo đảm tính trung thực phòng thi.',
+        error: isEn
+          ? '🛡️ In Strict Exam Mode, dictionary lookup is disabled to simulate authentic exam conditions.'
+          : '🛡️ Trong Chế độ Thi Thử (Strict Exam), tính năng tra từ điển bị vô hiệu hóa để bảo đảm tính trung thực phòng thi.',
         saved: false
       });
       return;
@@ -227,7 +229,9 @@ export default function PassagePane({
       y: posY,
       loading: !!apiKey,
       data: null,
-      error: apiKey ? null : 'Vui lòng cấu hình AI API Key để tra từ điển tự động.',
+      error: apiKey 
+        ? null 
+        : (isEn ? 'Please configure your AI API Key to enable instant dictionary lookup.' : 'Vui lòng cấu hình AI API Key để tra từ điển tự động.'),
       saved: false
     });
 
@@ -249,7 +253,7 @@ export default function PassagePane({
       setTooltip(prev => (prev && prev.word === cleanWord ? {
         ...prev,
         loading: false,
-        error: 'Không thể tra từ lúc này.'
+        error: isEn ? 'Unable to look up word at this time.' : 'Không thể tra từ lúc này.'
       } : prev));
     }
   };
@@ -298,7 +302,9 @@ export default function PassagePane({
                 <mark
                   key={`${para.id}-${text}-${i}`}
                   className={`${colorDef.bg} px-1 py-0.5 rounded-sm shadow-2xs font-medium cursor-pointer inline-flex items-center gap-1 group`}
-                  title={note ? `Ghi chú: ${note} (Nhấp để sửa)` : 'Đã đánh dấu (Nhấp để thêm ghi chú)'}
+                  title={note 
+                    ? (isEn ? `Note: ${note} (Click to edit)` : `Ghi chú: ${note} (Nhấp để sửa)`) 
+                    : (isEn ? 'Highlighted text (Click to add note)' : 'Đã đánh dấu (Nhấp để thêm ghi chú)')}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleOpenNoteModal(para.id, text);
@@ -308,7 +314,7 @@ export default function PassagePane({
                   {note && (
                     <span 
                       className="px-1 py-0.2 rounded bg-amber-500 text-white text-[10px] font-bold shadow-2xs group-hover:scale-110 transition-transform"
-                      title={`Ghi chú: ${note}`}
+                      title={isEn ? `Note: ${note}` : `Ghi chú: ${note}`}
                     >
                       📝
                     </span>
@@ -533,7 +539,7 @@ export default function PassagePane({
                       ? 'bg-amber-500 text-white shadow-sm'
                       : ts.paraBadgeDefault
                   }`}
-                  title={`Đoạn ${para.id}`}
+                  title={isEn ? `Paragraph ${para.id}` : `Đoạn ${para.id}`}
                 >
                   {para.id}
                 </div>
@@ -548,7 +554,7 @@ export default function PassagePane({
         </div>
 
         <div className="pt-8 pb-4 text-center text-xs text-slate-400 border-t border-slate-100">
-          --- HẾT BÀI ĐỌC PASSAGE {passage?.passageNumber || 1} ---
+          --- {isEn ? `END OF READING PASSAGE ${passage?.passageNumber || 1}` : `HẾT BÀI ĐỌC PASSAGE ${passage?.passageNumber || 1}`} ---
         </div>
       </div>
 
@@ -580,7 +586,7 @@ export default function PassagePane({
           {tooltip.loading ? (
             <div className="flex items-center space-x-2 text-slate-400 py-3 justify-center">
               <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-400" />
-              <span>Đang tra cứu từ điển học thuật...</span>
+              <span>{isEn ? 'Searching academic dictionary...' : 'Đang tra cứu từ điển học thuật...'}</span>
             </div>
           ) : tooltip.error ? (
             <div className="space-y-2 py-1">
@@ -593,7 +599,7 @@ export default function PassagePane({
                   }}
                   className="w-full py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold text-[11px]"
                 >
-                  Cài đặt API Key
+                  {isEn ? 'Configure API Key' : 'Cài đặt API Key'}
                 </button>
               )}
             </div>

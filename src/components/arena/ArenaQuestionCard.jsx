@@ -6,6 +6,7 @@ import ArenaTextInputCard from './ArenaTextInputCard.jsx';
 import { ARENA_DIFFICULTY_CONFIG, ARENA_IELTS_TOPICS } from '../../utils/arenaStorageKeys.js';
 import { getLocalizedArenaQuestion } from '../../data/arenaQuestionTranslations.js';
 import { triggerHaptic } from '../../utils/hapticHelper.js';
+import { getPerkById } from '../../services/gamification/tacticalPerksService.js';
 
 /**
  * Renders question prompt with distinct bold styling for statements, quotes, and target terms.
@@ -168,6 +169,10 @@ export default function ArenaQuestionCard({
   isCorrect = null,
   isSkipped = false,
   nearMissState = null,
+  equippedPerk = 'none',
+  isPerkUsed = false,
+  eliminatedOptions = [],
+  onActivatePerk,
   onSelectOption,
   onCheckAnswer,
   onSubmitAnswer,
@@ -196,6 +201,7 @@ export default function ArenaQuestionCard({
   const isListening = question.skillCategory === 'listening' || question.type === 'listening_trap' || Boolean(question.audioText);
   const activeContext = localizedQ.context || question.context;
   const isTextInput = question.interactionType === 'text_input';
+  const perkInfo = getPerkById(equippedPerk);
 
   return (
     <div className={`w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-2 sm:gap-2.5 py-0.5 transition-all duration-300 ${
@@ -218,6 +224,14 @@ export default function ArenaQuestionCard({
             <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-slate-300 flex items-center gap-1.5 shadow-xs">
               <span className="text-xs sm:text-sm">{topicObj.icon}</span>
               <span>{isEn ? topicObj.nameEn : topicObj.nameVi}</span>
+            </span>
+          )}
+
+          {equippedPerk && equippedPerk !== 'none' && (
+            <span className={`text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg border shadow-xs flex items-center gap-1.5 ${perkInfo.badgeColor}`}>
+              <span>{perkInfo.icon}</span>
+              <span>{isEn ? perkInfo.nameEn : perkInfo.nameVi}</span>
+              {isPerkUsed && <span className="opacity-60 text-[10px]">({isEn ? 'Used' : 'Đã dùng'})</span>}
             </span>
           )}
 
@@ -330,9 +344,12 @@ export default function ArenaQuestionCard({
             const isSelected = selectedOption === idx;
             const isOptionCorrect = idx === question.correctIndex;
             const isSpelling = question.type === 'spelling' || question.skillCategory === 'spelling';
+            const isEliminated = Array.isArray(eliminatedOptions) && eliminatedOptions.includes(idx);
             
             let btnStyle = 'bg-slate-800/50 hover:bg-slate-800/80 border-slate-700/70 text-slate-100 hover:border-slate-600 cursor-pointer';
-            if (isSelected && !isAnswerChecked) {
+            if (isEliminated) {
+              btnStyle = 'opacity-35 line-through bg-slate-950/70 border-slate-800 text-slate-500 cursor-not-allowed pointer-events-none';
+            } else if (isSelected && !isAnswerChecked) {
               btnStyle = 'bg-indigo-600/25 border-indigo-400 text-white ring-2 ring-indigo-500/40 cursor-pointer shadow-md shadow-indigo-950/40';
             } else if (isAnswerChecked) {
               if (isOptionCorrect) {
@@ -348,7 +365,7 @@ export default function ArenaQuestionCard({
               <button
                 key={idx}
                 type="button"
-                disabled={isAnswerChecked}
+                disabled={isAnswerChecked || isEliminated}
                 onClick={() => {
                   triggerHaptic('chipTap');
                   onSelectOption?.(idx);
@@ -364,6 +381,11 @@ export default function ArenaQuestionCard({
                   </span>
                 </div>
 
+                {isEliminated && (
+                  <span className="text-[10px] sm:text-xs font-bold text-purple-400 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800/80 shrink-0 ml-2">
+                    🚫 {isEn ? 'TRAP REMOVED' : 'ĐÃ TRIỆT TIÊU'}
+                  </span>
+                )}
                 {isAnswerChecked && isOptionCorrect && (
                   <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400 shrink-0 ml-2 animate-in zoom-in-75 duration-200" />
                 )}
@@ -428,19 +450,45 @@ export default function ArenaQuestionCard({
         </div>
       )}
 
-      {/* 2-Step Action CTA & Skip Button */}
-      <div className="mt-1 sm:mt-1.5 flex items-center justify-between gap-2.5">
+      {/* 2-Step Action CTA & Skip Button & Active Perk Trigger */}
+      <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center justify-between gap-2.5">
         {!isAnswerChecked ? (
           <>
-            <button
-              type="button"
-              onClick={() => (onSkipQuestion || onSkip)?.()}
-              className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs"
-              title={isEn ? "Don't know this answer? Skip to reveal explanation (Esc)" : "Không biết câu này? Bỏ qua để xem đáp án (Esc)"}
-            >
-              <SkipForward className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-              <span>{t('arena.skipQuestion') || (isEn ? 'Skip (Esc)' : 'Bỏ Qua (Esc)')}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => (onSkipQuestion || onSkip)?.()}
+                className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer select-none active:scale-95 shadow-xs"
+                title={isEn ? "Don't know this answer? Skip to reveal explanation (Esc)" : "Không biết câu này? Bỏ qua để xem đáp án (Esc)"}
+              >
+                <SkipForward className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+                <span>{t('arena.skipQuestion') || (isEn ? 'Skip (Esc)' : 'Bỏ Qua (Esc)')}</span>
+              </button>
+
+              {/* Active Perk Trigger Button */}
+              {equippedPerk && equippedPerk !== 'none' && equippedPerk !== 'titan_armor' && !isPerkUsed && !(equippedPerk === 'oracle_insight' && isTextInput) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic('combo');
+                    onActivatePerk?.();
+                  }}
+                  className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl border font-bold text-xs sm:text-sm transition-all cursor-pointer select-none active:scale-95 shadow-md ${
+                    equippedPerk === 'chronos_freeze'
+                      ? 'border-amber-400/80 bg-gradient-to-r from-amber-600/30 to-amber-500/20 text-amber-200 hover:bg-amber-500/30 ring-1 ring-amber-400/50 animate-pulse'
+                      : 'border-purple-400/80 bg-gradient-to-r from-purple-600/30 to-indigo-500/20 text-purple-200 hover:bg-purple-500/30 ring-1 ring-purple-400/50 animate-pulse'
+                  }`}
+                  title={isEn ? perkInfo.descEn : perkInfo.descVi}
+                >
+                  <span>{perkInfo.icon}</span>
+                  <span>
+                    {equippedPerk === 'chronos_freeze'
+                      ? (isEn ? 'Freeze (+15s)' : 'Đóng Băng (+15s)')
+                      : (isEn ? 'Eliminate Trap' : 'Triệt Tiêu Bẫy')}
+                  </span>
+                </button>
+              )}
+            </div>
 
             <button
               type="button"

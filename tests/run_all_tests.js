@@ -169,7 +169,8 @@ const testSuites = [
   { name: 'Step 160: Arena Audio Blitz Dedicated XP & Audio Leak Prevention', file: 'tests/test_step160_arena_audio_blitz_and_audio_leak_fix.js' },
   { name: 'Step 161: Speaking Workspace Mobile UI Optimization & Consolidated Dropdowns', file: 'tests/test_step161_speaking_mobile_ui_optimization.js' },
   { name: 'Step 162: Soundcheck Modal Responsive Viewport & Non-Clipping Architecture', file: 'tests/test_step162_soundcheck_modal_responsive_viewport_fix.js' },
-  { name: 'Step 163: Arena Haptic Feedback, Mobile Quick-Affixes & Mystery Loot Drop', file: 'tests/test_step163_arena_haptic_tactile_mobile_affixes_and_loot_drop.js' }
+  { name: 'Step 163: Arena Haptic Feedback, Mobile Quick-Affixes & Mystery Loot Drop', file: 'tests/test_step163_arena_haptic_tactile_mobile_affixes_and_loot_drop.js' },
+  { name: 'Step 164: Arena Tactical Perks, Active Boosters & Visual Data Decoder', file: 'tests/test_step164_arena_tactile_perks_and_visual_data_tasks.js' }
 ];
 
 console.log('===============================================================');
