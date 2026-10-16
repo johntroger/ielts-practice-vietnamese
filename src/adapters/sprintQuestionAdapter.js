@@ -253,15 +253,17 @@ const DRILL_LOCALIZATION = {
 
 export function adaptListeningDrill(item) {
   const loc = DRILL_LOCALIZATION[item.id] || {};
-  const sourceOpts = loc.optionsEn || item.options || [];
-  const rawOpts = sourceOpts.map(o => {
-    const text = typeof o === 'string' ? o : o.text;
-    // Strip out Vietnamese annotations in parentheses, e.g. "8:15 AM (Thời gian dự kiến ban đầu)" -> "8:15 AM"
+  const optionsEn = (loc.optionsEn || item.options || []).map(o => {
+    const text = typeof o === 'string' ? o : (o.textEn || o.text || '');
     return text.replace(/\s*\([^)]*[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ][^)]*\)/g, '').trim();
+  });
+  const optionsVi = (item.options || []).map(o => {
+    const text = typeof o === 'string' ? o : (o.text || o.textEn || '');
+    return text;
   });
   const correctIdx = item.options?.findIndex(o => o.id === item.correctOption) ?? 0;
   const safeIdx = correctIdx >= 0 ? correctIdx : 0;
-  const cleanAns = rawOpts[safeIdx] || '';
+  const cleanAns = optionsEn[safeIdx] || '';
   const defaultEnglishExp = loc.explanationEn || item.explanationEn || `The recording confirms "${cleanAns}" as the correct response based on speaker clarification.`;
   const enQuestion = loc.questionEn || item.questionEn || (item.question && !/[à-ỹÀ-Ỹ]/.test(item.question) ? item.question : 'Listen carefully to the audio and answer:');
 
@@ -281,7 +283,9 @@ export function adaptListeningDrill(item) {
     context: item.audioSnippetText || item.audioText || '',
     contextEn: item.audioSnippetText || item.audioText || '',
     audioText: item.audioText || item.audioSnippetText || '',
-    options: rawOpts,
+    options: optionsEn,
+    optionsEn,
+    optionsVi,
     correctIndex: safeIdx,
     correctAnswer: cleanAns,
     explanation: defaultEnglishExp,

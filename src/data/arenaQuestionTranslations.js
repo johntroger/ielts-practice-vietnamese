@@ -1143,7 +1143,8 @@ export function getLocalizedArenaQuestion(question, isEn = true) {
       ...question,
       prompt: question.promptVi || question.prompt,
       context: question.contextVi || question.context,
-      explanation: question.explanationVi || question.explanation
+      explanation: question.explanationVi || question.explanation,
+      options: question.optionsVi || question.options
     };
   }
 
@@ -1152,6 +1153,7 @@ export function getLocalizedArenaQuestion(question, isEn = true) {
     ...question,
     prompt: question.promptEn || translation.promptEn || question.prompt,
     context: question.contextEn || translation.contextEn || question.context,
-    explanation: question.explanationEn || translation.explanationEn || question.explanation
+    explanation: question.explanationEn || translation.explanationEn || question.explanation,
+    options: question.optionsEn || translation.optionsEn || question.options
   };
 }

@@ -1178,5 +1178,55 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'The grammatical structure "was going to" signals an unfulfilled intention, while "but I decided not to bother" definitively confirms that the gym trip was cancelled.',
     explanation: 'Đáp án là A vì cụm "decided not to bother" đồng nghĩa với việc không thực hiện hành động đã định.',
     explanationEn: 'Option A is correct: "decided not to bother" expresses abandoning the intended action completely.'
+  },
+  {
+    id: 'ldrill-dist-track19-swimming-wish',
+    type: 'listening-distractor',
+    title: 'Bẫy cấu trúc câu ước: Wish vs Thực tế cơ sở vật chất (Track 19)',
+    titleEn: 'Wish Clause Trap: Hypothetical Desire vs Physical Venue Shortage (Track 19)',
+    category: 'Sports Facilities & Preferences',
+    categoryEn: 'Sports Facilities & Preferences',
+    audioSnippetText: 'I like swimming, but I wish there were more places to swim where I live.',
+    audioText: 'I like swimming, but I wish there were more places to swim where I live.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track19-sports-preferences-and-hobbies.mp3',
+    clipStart: 15,
+    clipEnd: 27,
+    question: 'Phát biểu nào sau đây phản ánh đúng nhất thực trạng bơi lội của người nói?',
+    questionEn: 'Which statement accurately reflects the speaker\'s current situation regarding swimming?',
+    options: [
+      { id: 'A', text: 'Người nói yêu thích bơi lội nhưng khu vực họ sống bị thiếu địa điểm bơi', textEn: 'The speaker enjoys swimming but their local area lacks sufficient swimming facilities' },
+      { id: 'B', text: 'Người nói đã mất hoàn toàn hứng thú với việc đi bơi', textEn: 'The speaker has completely lost interest in swimming' },
+      { id: 'C', text: 'Khu vực người nói sinh sống có rất nhiều hồ bơi hiện đại', textEn: 'The speaker\'s neighborhood has an abundance of modern swimming pools' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Cấu trúc "I wish there were more..." biểu thị điều mong muốn trái ngược với thực tế: người nói vẫn thích bơi ("I like swimming") nhưng thực tế thiếu thốn cơ sở vật chất bơi lội tại nơi ở.',
+    distractorMechanismEn: 'The hypothetical structure "I wish there were more..." indicates an unfulfilled desire contrasting with reality: the speaker enjoys swimming, but suffers from an inadequate supply of local venues.',
+    explanation: 'Đáp án là A vì cấu trúc câu ước "wish there were more places" khẳng định nơi ở hiện tại không có đủ địa điểm bơi.',
+    explanationEn: 'Option A is correct: "wish there were more places" proves that there are currently not enough swimming venues where the speaker lives.'
+  },
+  {
+    id: 'ldrill-dist-track19-fishing-constraint',
+    type: 'listening-distractor',
+    title: 'Bẫy sở thích trường tồn vs Rào cản thời gian: Always liked vs No time (Track 19)',
+    titleEn: 'Enduring Hobby vs Time Constraint Trap: Always liked vs No time (Track 19)',
+    category: 'Leisure Habits & Constraints',
+    categoryEn: 'Leisure Habits & Constraints',
+    audioSnippetText: 'I\'ve always liked fishing, but I don\'t have time to do it anymore.',
+    audioText: 'I\'ve always liked fishing, but I don\'t have time to do it anymore.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track19-sports-preferences-and-hobbies.mp3',
+    clipStart: 28,
+    clipEnd: 42,
+    question: 'Vì sao người nói hiện tại không còn đi câu cá nữa?',
+    questionEn: 'Why does the speaker no longer participate in fishing at present?',
+    options: [
+      { id: 'A', text: 'Do quỹ thời gian bận rộn không còn cho phép dù vẫn luôn yêu thích thú vui này', textEn: 'Due to a packed schedule and lack of free time, despite still enjoying the activity' },
+      { id: 'B', text: 'Vì đã cảm thấy nhàm chán và không còn hứng thú với việc câu cá', textEn: 'Because they have become bored and lost all personal interest in fishing' },
+      { id: 'C', text: 'Do chi phí mua sắm cần câu và dụng cụ quá đắt đỏ', textEn: 'Because the expense of purchasing fishing tackle and equipment is prohibitive' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe dễ ngộ nhận người nói đã chán câu cá khi nghe "don\'t ... anymore", nhưng vế đầu "I\'ve always liked" chứng minh sở thích không đổi, rào cản thực tế duy nhất là thiếu thời gian ("don\'t have time to do it").',
+    distractorMechanismEn: 'Test-takers frequently assume the speaker lost enthusiasm upon hearing "don\'t ... anymore", but "I\'ve always liked" demonstrates lasting affinity; the genuine barrier is strictly a shortage of time.',
+    explanation: 'Đáp án là A vì câu nói nêu rõ "don\'t have time to do it anymore".',
+    explanationEn: 'Option A is correct: the speaker explicitly accounts for stopping with "don\'t have time to do it anymore".'
   }
 ];

@@ -15,7 +15,7 @@ export function playIELTSSoundcheck({ volume = 1.0, onStart, onEnd } = {}) {
   try {
     stopIELTSSoundcheck();
 
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const AudioContext = (typeof window !== 'undefined') ? (window.AudioContext || window.webkitAudioContext) : null;
     if (!AudioContext) return false;
     
     activeAudioCtx = new AudioContext();

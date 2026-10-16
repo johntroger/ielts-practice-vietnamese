@@ -190,7 +190,7 @@ for (const suite of testSuites) {
     console.log('✅ PASSED');
   } catch (err) {
     console.log('❌ FAILED');
-    console.error(`\nError in ${suite.file}:\n`, err.stdout || err.message);
+    console.error(`\nError in ${suite.file}:\n`, err.stderr || err.stdout || err.message);
     process.exit(1);
   }
 }

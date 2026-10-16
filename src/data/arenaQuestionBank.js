@@ -1663,6 +1663,44 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'He currently holds the number one all-time playoff scoring position, but LeBron James is closing the gap',
     explanation: 'Michael Jordan hiện vẫn giữ vị trí dẫn đầu ghi điểm vòng playoff ("number one all-time point scorer"), dù LeBron James đang theo sát phía sau ("is catching up") chứ chưa vượt qua.',
     explanationEn: 'Record status: Michael Jordan remains the number one all-time playoff scorer, with LeBron James actively catching up but not having overtaken him yet.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 19 SPORTS PREFERENCES & LIFESTYLE CONSTRAINTS
+  // ==========================================
+  {
+    id: 'easy_lis_hockey_t19',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to the first speaker, what is their favorite sporting activity?',
+    context: 'My favorite sport is hockey. It\'s amazing.',
+    audioText: 'My favorite sport is hockey. It\'s amazing.',
+    options: ['Hockey', 'Football', 'Tennis', 'Badminton'],
+    correctIndex: 0,
+    correctAnswer: 'Hockey',
+    explanation: 'Người nói thứ nhất khẳng định rõ ràng môn thể thao yêu thích của mình là khúc côn cầu ("My favorite sport is hockey").',
+    explanationEn: 'Favorite sport identification: The first speaker explicitly states that hockey is their favorite sport.'
+  },
+  {
+    id: 'med_lis_swimming_wish_t19',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What local issue does the second speaker express frustration about regarding swimming?',
+    context: 'I like swimming, but I wish there were more places to swim where I live.',
+    audioText: 'I like swimming, but I wish there were more places to swim where I live.',
+    options: [
+      'There is a shortage of swimming venues in their residential area',
+      'Admission tickets to local swimming pools have become too expensive',
+      'Indoor pools in the area are frequently overcrowded during weekends',
+      'Water hygiene and maintenance standards are below expectations'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'There is a shortage of swimming venues in their residential area',
+    explanation: 'Cấu trúc câu ước "I wish there were more places to swim where I live" cho thấy vấn đề là khu vực sinh sống thiếu địa điểm bơi lội.',
+    explanationEn: 'Wish clause analysis: The speaker desires "more places to swim where I live", confirming an inadequate number of local swimming facilities.'
   }
 ];
 
@@ -1748,7 +1786,10 @@ const R2_AUDIO_METADATA_BY_ID = {
   med_lis_tennis_competitive_t17: { audioUrl: `${R2_BASE}/ielts-listening-track17-sports-benefits-and-opinions.mp3`, clipStart: 10, clipEnd: 18, isR2Audio: true, trackLabel: 'Track 17 • Tennis Motivation' },
   // Track 18: Sporting Achievements & Athletic Feats
   easy_lis_olympics_t18: { audioUrl: `${R2_BASE}/ielts-listening-track18-sports-facts-and-achievements.mp3`, clipStart: 11, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 18 • Olympic Rankings' },
-  med_lis_jordan_record_t18: { audioUrl: `${R2_BASE}/ielts-listening-track18-sports-facts-and-achievements.mp3`, clipStart: 31, clipEnd: 43, isR2Audio: true, trackLabel: 'Track 18 • NBA Playoff Record' }
+  med_lis_jordan_record_t18: { audioUrl: `${R2_BASE}/ielts-listening-track18-sports-facts-and-achievements.mp3`, clipStart: 31, clipEnd: 43, isR2Audio: true, trackLabel: 'Track 18 • NBA Playoff Record' },
+  // Track 19: Sports Preferences & Lifestyle Constraints
+  easy_lis_hockey_t19: { audioUrl: `${R2_BASE}/ielts-listening-track19-sports-preferences-and-hobbies.mp3`, clipStart: 2, clipEnd: 14, isR2Audio: true, trackLabel: 'Track 19 • Favorite Sport Hockey' },
+  med_lis_swimming_wish_t19: { audioUrl: `${R2_BASE}/ielts-listening-track19-sports-preferences-and-hobbies.mp3`, clipStart: 15, clipEnd: 27, isR2Audio: true, trackLabel: 'Track 19 • Swimming Facility Shortage' }
 };
 
 export const ARENA_QUESTION_BANK = [
