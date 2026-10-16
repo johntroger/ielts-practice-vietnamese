@@ -267,6 +267,17 @@ export default function AboutPage({
               )}
             </button>
 
+            {/* Direct Atlas Arena Entry */}
+            <button
+              type="button"
+              onClick={() => onOpenArena && onOpenArena()}
+              className="inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold rounded-xl border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
+              title={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Atlas Arena"}
+            >
+              <Swords className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 fill-current shrink-0" />
+              <span className="font-extrabold text-[11px] sm:text-xs">Arena</span>
+            </button>
+
             {/* Return to Practice Button - Clean, Non-wrapping, Space-saving */}
             <button
               onClick={() => onStartPractice && onStartPractice()}

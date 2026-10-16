@@ -551,8 +551,8 @@ export function generateArenaSprintQuestions({
     const normalized = {
       ...q,
       type: q.type || (q.skillCategory === 'reading' ? 'tfng' : q.skillCategory === 'listening' ? 'listening_trap' : 'vocab'),
-      difficulty: q.difficulty || difficulty,
-      topic: q.topic || activeTopic,
+      difficulty: difficulty || q.difficulty || 'medium',
+      topic: topic || q.topic || activeTopic,
       isBossQuestion: q.isBossQuestion || (idx === count - 1 && count >= 5)
     };
     // Apply Safe Distractor Shuffling (preserves TFNG standard layout)

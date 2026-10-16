@@ -582,7 +582,7 @@ export default function AtlasEnglishArenaModal({
                         setCurrentTopic(nextTopic);
                         sprint.startSprint(null, selectedDifficulty);
                       }}
-                      className="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                      className="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
                     >
                       <Play className="w-4 h-4 fill-white shrink-0" />
                       <span>{t('arena.startSprint')}</span>

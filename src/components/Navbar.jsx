@@ -830,15 +830,32 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* About Page (/about) Link Button - Compact Home Icon */}
-            <button
-              onClick={doOpenAbout}
-              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-indigo-600 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
-              title={isEn ? "About & Introduction (/about)" : "Giới thiệu & Trang chủ (/about)"}
-              aria-label={isEn ? "About Page" : "Trang Giới Thiệu"}
-            >
-              <Home className="w-4 h-4 text-slate-600 group-hover:text-indigo-600 transition-colors shrink-0" />
-            </button>
+            {/* Quick Navigation Hub: Atlas Arena & Home (/about) */}
+            <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+              {/* Atlas Arena (Compact 'Arena' label on mobile, full on tablet/desktop) */}
+              <button
+                type="button"
+                onClick={() => openModal('atlasArena')}
+                className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 h-9 sm:h-10 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 whitespace-nowrap"
+                title={isEn ? "Atlas English Arena (fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ nhịp độ cao & BXH)"}
+                aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
+              >
+                <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
+                <span className="hidden sm:inline font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
+                <span className="sm:hidden font-extrabold text-[11px]">{isEn ? 'Arena' : 'Arena'}</span>
+              </button>
+
+              {/* About Page (/about) Link Button - Compact Home Icon */}
+              <button
+                type="button"
+                onClick={doOpenAbout}
+                className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-indigo-600 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
+                title={isEn ? "About & Introduction (/about)" : "Giới thiệu & Trang chủ (/about)"}
+                aria-label={isEn ? "About Page" : "Trang Giới Thiệu"}
+              >
+                <Home className="w-4 h-4 text-slate-600 group-hover:text-indigo-600 transition-colors shrink-0" />
+              </button>
+            </div>
 
             {/* Help Center (F1) - 100% Công khai, hiển thị trên màn hình rộng >= 1536px; trên tablet nằm trong menu Tiến Độ */}
             <button
@@ -876,11 +893,11 @@ export default function Navbar({
               </span>
             </button>
 
-            {/* Theme Toggle Button (Light / Dark Mode) */}
+            {/* Theme Toggle Button (Light / Dark Mode) - Hidden on mobile (< sm) to prevent header crowding, accessible in mobile drawer */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-amber-500 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
+              className="hidden sm:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-amber-500 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95 group"
               title={currentTheme === 'dark' ? (isEn ? "Switch to Light Mode" : "Chuyển sang Giao diện Sáng (Light Mode)") : (isEn ? "Switch to Dark Mode" : "Chuyển sang Giao diện Ban Đêm (Dark Mode)")}
               aria-label={isEn ? "Toggle Light / Dark mode" : "Chuyển đổi giao diện Sáng / Tối"}
             >
