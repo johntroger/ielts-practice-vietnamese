@@ -54,9 +54,10 @@ export default function MicroDrillAudioBar({
   const fileInputRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
-  // Sound source mode: 'tts' (native precision speech) | 'custom-file' (uploaded mp3)
+  // Sound source mode: 'r2' (Cloudflare R2 studio MP3) | 'tts' (native precision speech) | 'custom-file' (uploaded mp3)
   const [customAudioSrc, setCustomAudioSrc] = useState(null);
   const [customUploadedName, setCustomUploadedName] = useState(null);
+  const [useR2Stream, setUseR2Stream] = useState(Boolean(audioUrl));
 
   // Playback states
   const [isPlaying, setIsPlaying] = useState(false);
@@ -67,19 +68,25 @@ export default function MicroDrillAudioBar({
   const [elapsedSec, setElapsedSec] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Estimated duration in seconds based on word count (~130 words per minute at 1.0x)
-  const estimatedDuration = Math.max(
-    4,
-    Math.round(((audioText || '').trim().split(/\s+/).filter(Boolean).length / (130 * playbackRate)) * 60) + 1
-  );
+  const effectiveStreamSrc = customAudioSrc || (useR2Stream && audioUrl ? audioUrl : null);
+  const hasClipBounds = !customAudioSrc && useR2Stream && audioUrl && Number(clipEnd) > Number(clipStart);
+  const clipDuration = hasClipBounds ? Math.max(2, Math.round(Number(clipEnd) - Number(clipStart))) : 0;
 
-  // Reset playback state when drillId changes
+  // Estimated duration in seconds based on clip bounds or word count (~130 words per minute at 1.0x)
+  const estimatedDuration = clipDuration > 0
+    ? clipDuration
+    : Math.max(
+        4,
+        Math.round(((audioText || '').trim().split(/\s+/).filter(Boolean).length / (130 * playbackRate)) * 60) + 1
+      );
+
+  // Reset playback state when drillId or audioUrl changes
   useEffect(() => {
     stopSpeech();
     if (audioRef.current) {
       try {
         audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        audioRef.current.currentTime = Number(clipStart) > 0 ? Number(clipStart) : 0;
       } catch (e) {}
     }
     if (timerIntervalRef.current) {
@@ -91,6 +98,7 @@ export default function MicroDrillAudioBar({
     setErrorMessage(null);
     setCustomAudioSrc(null);
     setCustomUploadedName(null);
+    setUseR2Stream(Boolean(audioUrl));
 
     return () => {
       stopSpeech();
@@ -98,7 +106,7 @@ export default function MicroDrillAudioBar({
         clearInterval(timerIntervalRef.current);
       }
     };
-  }, [drillId, audioText]);
+  }, [drillId, audioText, audioUrl, clipStart]);
 
   // Clean up timer on unmount
   useEffect(() => {
@@ -130,7 +138,7 @@ export default function MicroDrillAudioBar({
   const togglePlay = () => {
     if (isPlaying) {
       // Pause
-      if (customAudioSrc && audioRef.current) {
+      if (effectiveStreamSrc && audioRef.current) {
         audioRef.current.pause();
       } else {
         stopSpeech();
@@ -143,18 +151,49 @@ export default function MicroDrillAudioBar({
     // Start Playing
     setErrorMessage(null);
 
-    // If user uploaded a custom audio file
-    if (customAudioSrc && audioRef.current) {
-      audioRef.current.playbackRate = playbackRate;
-      audioRef.current.volume = isMuted ? 0 : volume;
-      audioRef.current.play()
+    // If drill has Cloudflare R2 audioUrl or user uploaded a custom audio file
+    if (effectiveStreamSrc && audioRef.current) {
+      const audioEl = audioRef.current;
+      audioEl.playbackRate = playbackRate;
+      audioEl.volume = isMuted ? 0 : volume;
+      try {
+        const startSec = (!customAudioSrc && Number(clipStart) > 0) ? Number(clipStart) : 0;
+        const endSec = (!customAudioSrc && Number(clipEnd) > startSec) ? Number(clipEnd) : 0;
+        if (startSec > 0 && (audioEl.currentTime < startSec || (endSec > 0 && audioEl.currentTime >= endSec))) {
+          audioEl.currentTime = startSec;
+        }
+      } catch (e) {}
+
+      audioEl.play()
         .then(() => {
           setIsPlaying(true);
         })
         .catch(err => {
-          console.warn('Custom audio playback error:', err);
-          setErrorMessage('Không thể phát tệp âm thanh tải lên.');
-          setIsPlaying(false);
+          console.warn('Audio stream playback error, falling back to TTS:', err);
+          if (audioText && audioText.trim()) {
+            setUseR2Stream(false);
+            setIsPlaying(true);
+            startElapsedTimer();
+            speakText(audioText, {
+              rate: playbackRate,
+              lang: selectedAccent,
+              volume: isMuted ? 0 : volume,
+              playChimeFirst: true,
+              onStart: () => setIsPlaying(true),
+              onEnd: () => {
+                setIsPlaying(false);
+                stopElapsedTimer();
+                setElapsedSec(0);
+              },
+              onError: () => {
+                setIsPlaying(false);
+                stopElapsedTimer();
+              }
+            });
+          } else {
+            setErrorMessage('Không thể phát tệp âm thanh.');
+            setIsPlaying(false);
+          }
         });
       return;
     }
@@ -192,8 +231,12 @@ export default function MicroDrillAudioBar({
 
   // Replay from beginning
   const handleReplay = () => {
-    if (customAudioSrc && audioRef.current) {
-      audioRef.current.currentTime = 0;
+    if (effectiveStreamSrc && audioRef.current) {
+      const startSec = (!customAudioSrc && Number(clipStart) > 0) ? Number(clipStart) : 0;
+      try {
+        audioRef.current.currentTime = startSec;
+      } catch (e) {}
+      setElapsedSec(0);
       audioRef.current.play()
         .then(() => setIsPlaying(true))
         .catch(() => {});
@@ -269,17 +312,36 @@ export default function MicroDrillAudioBar({
 
   return (
     <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-950 text-slate-100 border border-slate-800 shadow-xl space-y-3">
-      {/* Hidden audio element for custom upload mode */}
-      {customAudioSrc && (
+      {/* Hidden audio element for Cloudflare R2 stream or custom upload mode */}
+      {effectiveStreamSrc && (
         <audio
           ref={audioRef}
-          src={customAudioSrc}
+          src={effectiveStreamSrc}
+          preload="metadata"
+          onLoadedMetadata={(e) => {
+            if (!customAudioSrc && Number(clipStart) > 0) {
+              try {
+                e.currentTarget.currentTime = Number(clipStart);
+              } catch (err) {}
+            }
+          }}
           onEnded={() => {
             setIsPlaying(false);
             setElapsedSec(0);
           }}
           onTimeUpdate={(e) => {
-            setElapsedSec(Math.round(e.currentTarget.currentTime || 0));
+            const cur = e.currentTarget.currentTime || 0;
+            const startSec = (!customAudioSrc && Number(clipStart) > 0) ? Number(clipStart) : 0;
+            const endSec = (!customAudioSrc && Number(clipEnd) > startSec) ? Number(clipEnd) : 0;
+            setElapsedSec(Math.max(0, Math.round(cur - startSec)));
+            if (endSec > 0 && cur >= endSec) {
+              e.currentTarget.pause();
+              setIsPlaying(false);
+              setElapsedSec(0);
+              try {
+                e.currentTarget.currentTime = startSec;
+              } catch (err) {}
+            }
           }}
         />
       )}
@@ -311,24 +373,54 @@ export default function MicroDrillAudioBar({
       )}
 
       {/* HEADER: Title & Audio Engine Status */}
-      <div className="flex items-center justify-between text-xs gap-2">
+      <div className="flex flex-wrap items-center justify-between text-xs gap-2">
         <div className="flex items-center space-x-2 font-bold text-slate-200 truncate">
-          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-400 animate-pulse ring-4 ring-emerald-400/20' : 'bg-purple-500'}`} />
+          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-400 animate-pulse ring-4 ring-emerald-400/20' : (useR2Stream && audioUrl ? 'bg-cyan-400' : 'bg-purple-500')}`} />
           <span className="truncate">
             {customUploadedName ? (isEn ? `Uploaded File: ${customUploadedName}` : `Tệp tải lên: ${customUploadedName}`) : title}
           </span>
         </div>
 
-        {/* Status badge */}
+        {/* Status badge & R2 vs TTS Switcher */}
         <div className="flex items-center space-x-1.5 shrink-0">
-          <span className="px-2.5 py-0.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 font-mono text-[10px] font-bold flex items-center space-x-1 shadow-sm">
-            <Sparkles className="w-3 h-3 text-purple-400" />
-            <span>
-              {customUploadedName 
-                ? (isEn ? 'Custom Audio' : 'Tệp MP3 cá nhân') 
-                : (isEn ? 'Exam Aligned Native TTS' : 'Giọng Chuẩn Bản Xứ (100% Khớp Đề)')}
+          {audioUrl && !customUploadedName && (
+            <button
+              type="button"
+              onClick={() => {
+                stopSpeech();
+                if (audioRef.current) {
+                  try { audioRef.current.pause(); } catch (e) {}
+                }
+                setIsPlaying(false);
+                setElapsedSec(0);
+                setUseR2Stream(prev => !prev);
+              }}
+              className={`px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold flex items-center space-x-1 shadow-sm cursor-pointer transition-all border ${
+                useR2Stream
+                  ? 'bg-cyan-900/70 border-cyan-400/50 text-cyan-200 hover:bg-cyan-800/80'
+                  : 'bg-purple-900/60 border-purple-500/40 text-purple-200 hover:bg-purple-800/70'
+              }`}
+              title={isEn ? 'Click to switch between Cloudflare R2 Original MP3 and Sentence TTS Voice' : 'Bấm để chuyển đổi giữa Audio Gốc R2 (MP3) và Giọng Đọc Từng Câu (TTS)'}
+            >
+              <span>{useR2Stream ? '☁️' : '🗣️'}</span>
+              <span>
+                {useR2Stream
+                  ? (isEn ? 'Cloudflare R2 Studio Audio (Click for TTS)' : 'Audio Gốc R2 MP3 (Bấm đổi sang TTS)')
+                  : (isEn ? 'Sentence TTS Mode (Click for R2 Audio)' : 'Giọng Đọc Từng Câu (Bấm về Audio R2)')}
+              </span>
+            </button>
+          )}
+
+          {(!audioUrl || customUploadedName) && (
+            <span className="px-2.5 py-0.5 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-200 font-mono text-[10px] font-bold flex items-center space-x-1 shadow-sm">
+              <Sparkles className="w-3 h-3 text-purple-400" />
+              <span>
+                {customUploadedName 
+                  ? (isEn ? 'Custom Audio' : 'Tệp MP3 cá nhân') 
+                  : (isEn ? 'Exam Aligned Native TTS' : 'Giọng Chuẩn Bản Xứ (100% Khớp Đề)')}
+              </span>
             </span>
-          </span>
+          )}
         </div>
       </div>
 

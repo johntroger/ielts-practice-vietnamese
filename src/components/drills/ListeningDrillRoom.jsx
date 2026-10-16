@@ -78,9 +78,17 @@ export default function ListeningDrillRoom({
               {activeTab === 'listening-dictation' && currentDictation && (
                 <div className="space-y-4">
                   <div>
-                    <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
-                      {getLocalizedDrillCategory(currentDictation, isEn)} • {isEn ? (currentDictation.difficulty?.replace(/Cơ bản/gi, 'Basic').replace(/Thực chiến/gi, 'Combat').replace(/Học thuật/gi, 'Academic')) : currentDictation.difficulty}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-700 text-[11px] font-bold uppercase">
+                        {getLocalizedDrillCategory(currentDictation, isEn)} • {isEn ? (currentDictation.difficulty?.replace(/Cơ bản/gi, 'Basic').replace(/Thực chiến/gi, 'Combat').replace(/Học thuật/gi, 'Academic')) : currentDictation.difficulty}
+                      </span>
+                      {currentDictation.audioUrl && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-cyan-100 text-cyan-800 border border-cyan-300 text-[11px] font-black uppercase flex items-center gap-1">
+                          <span>☁️</span>
+                          <span>{isEn ? 'Cloudflare R2 Studio Audio' : 'Audio Thực Chiến R2 (MP3 Gốc)'}</span>
+                        </span>
+                      )}
+                    </div>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentDictation, isEn)}
                     </h3>
@@ -90,6 +98,9 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentDictation.id}
                     audioText={currentDictation.audioText || currentDictation.ttsText}
+                    audioUrl={currentDictation.audioUrl}
+                    clipStart={currentDictation.clipStart || 0}
+                    clipEnd={currentDictation.clipEnd || 0}
                     title={isEn ? `Dictation: ${getLocalizedDrillTitle(currentDictation, isEn)}` : `Chép chính tả: ${getLocalizedDrillTitle(currentDictation, isEn)}`}
                     accent="en-GB"
                     currentUser={currentUser}
@@ -319,9 +330,17 @@ export default function ListeningDrillRoom({
               {activeTab === 'listening-spelling' && currentSpelling && (
                 <div className="space-y-4">
                   <div>
-                    <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
-                      {getLocalizedDrillCategory(currentSpelling, isEn)} • {isEn ? 'Type' : 'Dạng'} {isEn ? String(currentSpelling.subType || '').replace(/spelling/gi, 'Spelling').replace(/numbers/gi, 'Numbers').replace(/currency-date/gi, 'Currency & Date') : currentSpelling.subType}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[11px] font-bold uppercase">
+                        {getLocalizedDrillCategory(currentSpelling, isEn)} • {isEn ? 'Type' : 'Dạng'} {isEn ? String(currentSpelling.subType || '').replace(/spelling/gi, 'Spelling').replace(/numbers/gi, 'Numbers').replace(/currency-date/gi, 'Currency & Date') : currentSpelling.subType}
+                      </span>
+                      {currentSpelling.audioUrl && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-cyan-100 text-cyan-800 border border-cyan-300 text-[11px] font-black uppercase flex items-center gap-1">
+                          <span>☁️</span>
+                          <span>{isEn ? 'Cloudflare R2 Studio Audio' : 'Audio Thực Chiến R2 (MP3 Gốc)'}</span>
+                        </span>
+                      )}
+                    </div>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentSpelling, isEn)}
                     </h3>
@@ -331,6 +350,9 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentSpelling.id}
                     audioText={currentSpelling.audioText || currentSpelling.promptAudioText}
+                    audioUrl={currentSpelling.audioUrl}
+                    clipStart={currentSpelling.clipStart || 0}
+                    clipEnd={currentSpelling.clipEnd || 0}
                     title={isEn ? `Spelling / Number: ${getLocalizedDrillTitle(currentSpelling, isEn)}` : `Đánh vần / Số: ${currentSpelling.title}`}
                     accent="en-GB"
                     currentUser={currentUser}
@@ -464,9 +486,17 @@ export default function ListeningDrillRoom({
               {activeTab === 'listening-distractor' && currentDistractor && (
                 <div className="space-y-4">
                   <div>
-                    <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
-                      {getLocalizedDrillCategory(currentDistractor, isEn)} • {isEn ? 'Distractor Trap' : 'Bẫy Distractor'}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold uppercase">
+                        {getLocalizedDrillCategory(currentDistractor, isEn)} • {isEn ? 'Distractor Trap' : 'Bẫy Distractor'}
+                      </span>
+                      {currentDistractor.audioUrl && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-cyan-100 text-cyan-800 border border-cyan-300 text-[11px] font-black uppercase flex items-center gap-1">
+                          <span>☁️</span>
+                          <span>{isEn ? 'Cloudflare R2 Studio Audio' : 'Audio Thực Chiến R2 (MP3 Gốc)'}</span>
+                        </span>
+                      )}
+                    </div>
                     <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
                       {getLocalizedDrillTitle(currentDistractor, isEn)}
                     </h3>
@@ -476,6 +506,9 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentDistractor.id}
                     audioText={currentDistractor.audioText || currentDistractor.audioSnippetText}
+                    audioUrl={currentDistractor.audioUrl}
+                    clipStart={currentDistractor.clipStart || 0}
+                    clipEnd={currentDistractor.clipEnd || 0}
                     title={isEn ? `Trap Dialogue: ${getLocalizedDrillTitle(currentDistractor, isEn)}` : `Hội thoại bẫy: ${currentDistractor.title}`}
                     accent="en-GB"
                     currentUser={currentUser}
@@ -641,6 +674,9 @@ export default function ListeningDrillRoom({
                   <MicroDrillAudioBar
                     drillId={currentMap.id}
                     audioText={currentMap.audioText || currentMap.audioDirectionsText}
+                    audioUrl={currentMap.audioUrl}
+                    clipStart={currentMap.clipStart || 0}
+                    clipEnd={currentMap.clipEnd || 0}
                     title={isEn ? `Map Directions: ${getLocalizedDrillTitle(currentMap, isEn)}` : `Chỉ dẫn bản đồ: ${currentMap.title}`}
                     accent="en-GB"
                     currentUser={currentUser}

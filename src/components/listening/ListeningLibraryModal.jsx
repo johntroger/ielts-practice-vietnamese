@@ -160,7 +160,9 @@ export default function ListeningLibraryModal({
 
       // 1. Tab filter
       let matchesTab = true;
-      if (activeTab === 'cambridge') {
+      if (activeTab === 'r2_cloud') {
+        matchesTab = Boolean(test.audioUrl?.includes('.r2.dev'));
+      } else if (activeTab === 'cambridge') {
         matchesTab = Boolean(test.isCambridge || !test.isCustom);
       } else if (activeTab === 'mastered') {
         matchesTab = isMastered;
@@ -215,6 +217,7 @@ export default function ListeningLibraryModal({
 
   const stats = useMemo(() => ({
     total: allListeningTests.length,
+    r2Cloud: allListeningTests.filter(t => t.audioUrl?.includes('.r2.dev')).length,
     cambridge: allListeningTests.filter(t => t.isCambridge || !t.isCustom).length,
     mastered: allListeningTests.filter(t => masteredIds.includes(t.id)).length,
     ai: allListeningTests.filter(t => t.isCustom && !t.isAssembled).length,
@@ -238,6 +241,15 @@ export default function ListeningLibraryModal({
       count: stats.total,
       activeTheme: 'bg-purple-600 text-white border-purple-600 shadow-2xs font-bold',
       iconColor: 'text-purple-600'
+    },
+    {
+      id: 'r2_cloud',
+      icon: Radio,
+      label: `☁️ ${isEn ? 'R2 Studio Audio' : 'Audio Thực Chiến R2'} (${stats.r2Cloud})`,
+      shortLabel: 'R2 Audio',
+      count: stats.r2Cloud,
+      activeTheme: 'bg-cyan-600 text-white border-cyan-600 shadow-2xs font-bold',
+      iconColor: 'text-cyan-600'
     },
     {
       id: 'cambridge',
@@ -847,16 +859,22 @@ export default function ListeningLibraryModal({
                     <div>
                       {/* Badge Top Line */}
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <div className="flex items-center space-x-1.5">
-                          <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
-                            test.isCustom 
-                              ? 'bg-purple-100 text-purple-800' 
-                              : 'bg-emerald-100 text-emerald-800'
-                          }`}>
-                            {test.isCustom 
-                              ? '✨ AI Audio Test' 
-                              : (isEn ? `📚 Cambridge Standard${test.cambridgeBook ? ` (Book ${test.cambridgeBook})` : ''}` : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`)}
-                          </span>
+                        <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                          {test.audioUrl?.includes('.r2.dev') ? (
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-cyan-100 text-cyan-800 border border-cyan-300">
+                              ☁️ {isEn ? 'R2 Studio Audio • New' : 'Audio Thực Chiến R2 • Mới'}
+                            </span>
+                          ) : (
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                              test.isCustom 
+                                ? 'bg-purple-100 text-purple-800' 
+                                : 'bg-emerald-100 text-emerald-800'
+                            }`}>
+                              {test.isCustom 
+                                ? '✨ AI Audio Test' 
+                                : (isEn ? `📚 Cambridge Standard${test.cambridgeBook ? ` (Book ${test.cambridgeBook})` : ''}` : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`)}
+                            </span>
+                          )}
 
                           {masteredIds.includes(test.id) && (
                             <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">

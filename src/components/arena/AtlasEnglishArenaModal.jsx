@@ -42,6 +42,7 @@ import {
   getUnresolvedMistakeCount, 
   generateRevengeSprintQuestions 
 } from '../../services/gamification/mistakeVaultService.js';
+import { generateR2ListeningSprintQuestions } from '../../adapters/sprintQuestionAdapter.js';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -437,12 +438,21 @@ export default function AtlasEnglishArenaModal({
       },
       onSpaceAudio: () => {
         const curQ = sprint.questions[sprint.currentIndex];
-        if (curQ?.audioText) {
-          speak(curQ.audioText);
+        if (curQ?.audioText || curQ?.audioUrl) {
+          speak(curQ.audioText || 'audio', curQ);
         }
       }
     });
   }, [isOpen, sprint, speak, handleCheckAnswer, handleSelectOption, handleSkipQuestion]);
+
+  // Auto-play audio when an active Listening question loads
+  useEffect(() => {
+    if (!isOpen || sprint.phase !== ARENA_SPRINT_PHASES.ACTIVE) return;
+    const curQ = sprint.questions[sprint.currentIndex];
+    if (curQ && (curQ.skillCategory === 'listening' || curQ.type === 'listening_trap' || curQ.type === 'listening_spelling' || curQ.isR2Audio)) {
+      speak(curQ.audioText || 'audio', curQ);
+    }
+  }, [isOpen, sprint.phase, sprint.currentIndex, sprint.questions, speak]);
 
   if (!isOpen) return null;
 
@@ -572,10 +582,30 @@ export default function AtlasEnglishArenaModal({
                         setCurrentTopic(nextTopic);
                         sprint.startSprint(null, selectedDifficulty);
                       }}
-                      className="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                      className="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
                     >
                       <Play className="w-4 h-4 fill-white shrink-0" />
                       <span>{t('arena.startSprint')}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const r2SprintQuestions = generateR2ListeningSprintQuestions({
+                          count: 7,
+                          difficulty: selectedDifficulty
+                        });
+                        if (r2SprintQuestions.length > 0) {
+                          sprint.startSprint(r2SprintQuestions, selectedDifficulty);
+                        } else {
+                          sprint.startSprint(null, selectedDifficulty);
+                        }
+                      }}
+                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40"
+                      title={isEn ? "Launch a 7-question Listening Audio Sprint using Cloudflare R2 studio tracks (Tracks 2-7)" : "Chạy ngay Sprint 7 câu chuyên biệt Luyện Nghe Audio Thực Chiến từ kho Cloudflare R2 (Tracks 2-7)"}
+                    >
+                      <span>🎧</span>
+                      <span>{isEn ? 'R2 Audio Sprint (Tracks 2-7)' : 'Sprint Nghe Audio R2 (Mới)'}</span>
                     </button>
 
                     {getUnresolvedMistakeCount() > 0 && (
@@ -587,7 +617,7 @@ export default function AtlasEnglishArenaModal({
                             sprint.startSprint(revengeQuestions, selectedDifficulty);
                           }
                         }}
-                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3.5 px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
                         title={t('arena.revengeSprintTitle')}
                       >
                         <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
@@ -651,7 +681,7 @@ export default function AtlasEnglishArenaModal({
                     onSkipQuestion={handleSkipQuestion}
                     onSkip={handleSkipQuestion}
                     onNextQuestion={sprint.nextQuestion}
-                    onPlayAudio={(text) => speak(text)}
+                    onPlayAudio={(text, qObj) => speak(text, qObj || currentQ)}
                   />
                 )}
               </div>

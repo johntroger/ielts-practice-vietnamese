@@ -60,7 +60,7 @@ export default function ListeningWorkspace({
   onSaveToVocabNotebook,
   onListeningSubmitted,
   onOpenDrills,
-  initialTestId = 'cambridge-18-test-1',
+  initialTestId = INITIAL_LISTENING_TESTS[0]?.id || 'track2-flat-descriptions',
   initialExamMode = 'practice',
   openGeneratorTrigger,
   openLibraryTrigger,
@@ -707,9 +707,15 @@ export default function ListeningWorkspace({
                   <h2 className="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[280px] md:max-w-[360px] lg:max-w-[260px] xl:max-w-[360px]">
                     {currentTest.title}
                   </h2>
-                  <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">
-                    {t('listening.cambridgeOfficial', 'Cambridge Official')}
-                  </span>
+                  {currentTest?.audioUrl?.includes('.r2.dev') ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-800 text-[10px] font-black border border-cyan-300 shrink-0 shadow-2xs">
+                      ☁️ {isEn ? 'Cloudflare R2 Studio Audio' : 'Audio Thực Chiến R2 (MP3 Gốc)'}
+                    </span>
+                  ) : (
+                    <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">
+                      {t('listening.cambridgeOfficial', 'Cambridge Official')}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center space-x-1.5 text-[10px] sm:text-[11px] text-slate-500 whitespace-nowrap shrink-0">
                   <span className="shrink-0 font-medium">{t('listening.questionsCount', { count: currentTest.totalQuestions })}</span>
@@ -768,7 +774,7 @@ export default function ListeningWorkspace({
                   const selectedId = e.target.value;
                   const selectedTest = allListeningTests.find(t => t.id === selectedId);
                   setCurrentTestId(selectedId);
-                  setActivePart(1);
+                  setActivePart(selectedTest?.targetPart || selectedTest?.parts?.[0]?.partNumber || 1);
                   setHasStartedExam(true);
                   exam.resetExam();
                   setBandResult(null);
@@ -776,12 +782,12 @@ export default function ListeningWorkspace({
                     audioEngine.loadAudio(selectedTest.audioUrl || selectedTest.fallbackAudioUrl);
                   }
                 }}
-                className="hidden xl:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[170px] truncate cursor-pointer shrink-0"
+                className="hidden xl:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[210px] truncate cursor-pointer shrink-0"
                 title={isEn ? "Select listening test" : "Chọn bộ đề nghe"}
               >
                 {allListeningTests.map(t => (
                   <option key={t.id} value={t.id}>
-                    {t.isCustom ? '✨ ' : '📚 '}
+                    {t.audioUrl?.includes('.r2.dev') ? '☁️ [R2] ' : t.isCustom ? '✨ ' : '📚 '}
                     {t.title}
                   </option>
                 ))}
@@ -1031,6 +1037,54 @@ export default function ListeningWorkspace({
                 <span className="hidden sm:inline">{isEn ? 'Retake' : 'Làm lại'}</span>
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 1.5 Quick Cloudflare R2 Studio Audio Switcher Bar (Practice Mode) */}
+      {examMode !== 'strict' && (
+        <div className="bg-gradient-to-r from-cyan-50/90 via-sky-50/90 to-emerald-50/90 border-b border-cyan-200/80 px-3 sm:px-6 py-1.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-600 text-white text-[10px] font-black uppercase tracking-wider shadow-2xs">
+              ☁️ R2 Audio Mới
+            </span>
+            <span className="hidden sm:inline text-[11px] font-bold text-cyan-950">
+              {isEn ? 'Real Studio MP3 Tracks:' : 'Bộ đề Audio MP3 thực chiến:'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            {allListeningTests
+              .filter(t => t.audioUrl?.includes('.r2.dev'))
+              .map((r2Test, idx) => {
+                const isSelected = currentTestId === r2Test.id;
+                const shortTitle = r2Test.title.replace(/^Cambridge Practice\s*[—-]\s*/i, '');
+                return (
+                  <button
+                    key={r2Test.id}
+                    type="button"
+                    onClick={() => {
+                      setCurrentTestId(r2Test.id);
+                      setActivePart(r2Test.targetPart || r2Test.parts?.[0]?.partNumber || 1);
+                      setHasStartedExam(true);
+                      exam.resetExam();
+                      setBandResult(null);
+                      if (r2Test.audioUrl) {
+                        audioEngine.loadAudio(r2Test.audioUrl || r2Test.fallbackAudioUrl);
+                      }
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1 border ${
+                      isSelected
+                        ? 'bg-cyan-700 text-white border-cyan-800 shadow-xs ring-2 ring-cyan-400/40'
+                        : 'bg-white/90 hover:bg-cyan-100/80 text-slate-700 hover:text-cyan-950 border-cyan-200/90'
+                    }`}
+                    title={r2Test.title}
+                  >
+                    <span>🎧</span>
+                    <span className="max-w-[150px] sm:max-w-[190px] truncate">{shortTitle}</span>
+                  </button>
+                );
+              })}
           </div>
         </div>
       )}

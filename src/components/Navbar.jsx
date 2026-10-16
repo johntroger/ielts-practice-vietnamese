@@ -421,33 +421,17 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Direct Quick Access: Atlas Arena & Luyện Phản Xạ */}
-            <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-              {/* Atlas Arena (Compact 'Arena' label on mobile, full on tablet/desktop) */}
-              <button
-                type="button"
-                onClick={() => openModal('atlasArena')}
-                className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 h-9 sm:h-10 rounded-xl border border-purple-200 bg-purple-50/90 hover:bg-purple-100 text-purple-700 hover:text-purple-900 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-                title={isEn ? "Atlas English Arena (fast-paced micro-sprint & relative leagues)" : "Đấu Trường Anh Ngữ Atlas (Phản xạ nhịp độ cao & BXH)"}
-                aria-label={isEn ? "Open Atlas English Arena" : "Mở Đấu Trường Anh Ngữ Atlas"}
-              >
-                <Swords className="w-3.5 h-3.5 text-purple-600 fill-current shrink-0" />
-                <span className="hidden sm:inline font-extrabold">{isEn ? 'Atlas Arena' : 'Atlas Arena'}</span>
-                <span className="sm:hidden font-extrabold text-[11px]">{isEn ? 'Arena' : 'Arena'}</span>
-              </button>
-
-              {/* Luyện Phản Xạ (Micro-Drills) - Shown on tablet & desktop (>= 768px), accessible in mobile drawer */}
-              <button
-                type="button"
-                onClick={doOpenDrills}
-                className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-                title={isEn ? "Targeted Reflex Studio (Deliberate sentence, dictation & scanning practice)" : "Phòng Luyện Phản Xạ (Luyện câu đơn, ghép ý, dictation & scanning)"}
-                aria-label={isEn ? "Open Targeted Reflex Studio" : "Mở Phòng Luyện Phản Xạ"}
-              >
-                <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span className="font-extrabold">{isEn ? 'Micro-Drills' : 'Luyện Phản Xạ'}</span>
-              </button>
-            </div>
+            {/* Direct Quick Access: Luyện Phản Xạ (Micro-Drills) - Shown on tablet & desktop (>= 768px), accessible in mobile drawer */}
+            <button
+              type="button"
+              onClick={doOpenDrills}
+              className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
+              title={isEn ? "Targeted Reflex Studio (Deliberate sentence, dictation & scanning practice)" : "Phòng Luyện Phản Xạ (Luyện câu đơn, ghép ý, dictation & scanning)"}
+              aria-label={isEn ? "Open Targeted Reflex Studio" : "Mở Phòng Luyện Phản Xạ"}
+            >
+              <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span className="font-extrabold">{isEn ? 'Micro-Drills' : 'Luyện Phản Xạ'}</span>
+            </button>
           </div>
 
           {/* 2. RIGHT ZONE: Actions & Mobile Hamburger */}

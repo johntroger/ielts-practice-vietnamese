@@ -329,16 +329,28 @@ export function applySmartFilterAndSort(items = [], criteria = {}) {
       }
     }
 
+    const isR2Featured = Boolean(
+      item.isR2Audio ||
+      (typeof item.audioUrl === 'string' && item.audioUrl.includes('.r2.dev'))
+    );
+
     processed.push({
       ...item,
-      _metrics: metrics,
+      _isR2Featured: isR2Featured,
+      _metrics: isR2Featured
+        ? { ...metrics, rating: 5.0, isTopRated: true, isHot: true }
+        : metrics,
       _isMastered: isMastered,
       _isAttempted: isAttempted
     });
   }
 
-  // 2. Multi-Dimensional Sorting
+  // 2. Multi-Dimensional Sorting (Always keep R2 Featured Audio items at the very top so new audio drills are immediately visible)
   processed.sort((a, b) => {
+    if (a._isR2Featured !== b._isR2Featured) {
+      return a._isR2Featured ? -1 : 1;
+    }
+
     switch (sortBy) {
       case 'rating_desc':
         if (b._metrics.rating !== a._metrics.rating) {

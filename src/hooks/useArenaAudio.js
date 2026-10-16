@@ -38,9 +38,13 @@ export function useArenaAudio() {
     playChimeTone(callbacks);
   }, [isMuted]);
 
-  const speak = useCallback((text, callbacks = {}) => {
-    if (isMuted || !text) return;
-    speakArenaText(text, callbacks);
+  const speak = useCallback((textOrQuestion, questionOrCallbacks = {}) => {
+    if (isMuted || !textOrQuestion) return;
+    if (questionOrCallbacks && typeof questionOrCallbacks === 'object' && (questionOrCallbacks.audioUrl || questionOrCallbacks.isR2Audio || questionOrCallbacks.audioText)) {
+      speakArenaText(questionOrCallbacks);
+      return;
+    }
+    speakArenaText(textOrQuestion, questionOrCallbacks);
   }, [isMuted]);
 
   const playSfx = useCallback((type = 'correct') => {
