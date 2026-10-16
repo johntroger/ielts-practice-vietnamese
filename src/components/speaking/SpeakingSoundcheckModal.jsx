@@ -168,34 +168,35 @@ export default function SpeakingSoundcheckModal({
   const canProceed = testedSpeaker && (testedMic || hasDetectedAudioWave || soundcheckClip);
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-150">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col text-slate-100">
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden animate-in fade-in duration-150">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[88vh] my-auto text-slate-100">
         
         {/* Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-purple-950/60 to-slate-900">
+        <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-purple-950/80 to-slate-900 shrink-0">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-purple-600/30 text-purple-400 border border-purple-500/30 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-purple-600/30 text-purple-400 border border-purple-500/30 flex items-center justify-center font-bold shrink-0">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-black text-white">
+              <h3 className="text-sm sm:text-base font-black text-white leading-tight">
                 {isEn ? 'Equipment Soundcheck' : 'Kiểm Tra Thiết Bị (Soundcheck)'}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400">
                 {isEn ? 'Ensure Speaker and Microphone function properly before the test' : 'Đảm bảo Loa và Micro hoạt động ổn định trước khi thi'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+            title={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Body Steps */}
-        <div className="p-6 space-y-5">
+        <div className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto flex-1 overscroll-contain">
           
           {/* Browser check indicator */}
           {isChrome ? (
@@ -539,10 +540,10 @@ export default function SpeakingSoundcheckModal({
         </div>
 
         {/* Footer Proceed Action */}
-        <div className="p-5 border-t border-slate-800 bg-slate-950 flex items-center justify-between gap-3">
+        <div className="p-3.5 sm:p-4 md:p-5 border-t border-slate-800 bg-slate-950 flex items-center justify-between gap-2 sm:gap-3 shrink-0">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+            className="px-3 sm:px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
           >
             {isEn ? 'Back' : 'Quay Lại'}
           </button>
@@ -560,10 +561,10 @@ export default function SpeakingSoundcheckModal({
               }
               onPassedSoundcheck();
             }}
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/40 flex items-center space-x-2 transition-all cursor-pointer"
+            className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/40 flex items-center justify-center space-x-2 transition-all cursor-pointer"
           >
             <span>{isEn ? 'I Am Ready to Enter Exam Room' : 'Tôi Đã Sẵn Sàng Vào Phòng Thi'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
 
