@@ -514,7 +514,7 @@ export default function ListeningQuestionPane({
                                     ? 'text-amber-500 bg-amber-50 border border-amber-300'
                                     : 'text-slate-400 hover:text-slate-600'
                                 }`}
-                                title={isFlagged ? 'Bỏ cắm cờ' : 'Cắm cờ xem lại'}
+                                title={isFlagged ? (isEn ? 'Unflag question' : 'Bỏ cắm cờ') : (isEn ? 'Flag for review' : 'Cắm cờ xem lại')}
                               >
                                 <Flag className={`w-3.5 h-3.5 ${isFlagged ? 'fill-current' : ''}`} />
                               </button>
@@ -524,11 +524,11 @@ export default function ListeningQuestionPane({
                               <span className="flex items-center space-x-1 text-xs font-bold">
                                 {status.isCorrect ? (
                                   <span className="text-emerald-600 flex items-center space-x-1">
-                                    <CheckCircle2 className="w-4 h-4" /> <span>Đúng</span>
+                                    <CheckCircle2 className="w-4 h-4" /> <span>{isEn ? 'Correct' : 'Đúng'}</span>
                                   </span>
                                 ) : (
                                   <span className="text-rose-600 flex items-center space-x-1">
-                                    <XCircle className="w-4 h-4" /> <span>Sai</span>
+                                    <XCircle className="w-4 h-4" /> <span>{isEn ? 'Incorrect' : 'Sai'}</span>
                                   </span>
                                 )}
                               </span>
@@ -575,28 +575,28 @@ export default function ListeningQuestionPane({
                         {isSubmitted && (
                           <div className="mt-3 pt-3 border-t border-slate-200 text-xs space-y-1.5 bg-white/80 p-3 rounded-lg">
                             <div className="flex items-baseline space-x-2">
-                              <span className="font-bold text-slate-600">Đáp án chuẩn:</span>
+                              <span className="font-bold text-slate-600">{isEn ? 'Correct Answer:' : 'Đáp án chuẩn:'}</span>
                               <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
                                 {q.answer}
                               </span>
                               {q.acceptableAnswers && q.acceptableAnswers.length > 1 && (
                                 <span className="text-[11px] text-slate-500">
-                                  (Chấp nhận: {q.acceptableAnswers.join(', ')})
+                                  ({isEn ? 'Acceptable:' : 'Chấp nhận:'} {q.acceptableAnswers.join(', ')})
                                 </span>
                               )}
                             </div>
 
                             {q.evidenceQuote && (
                               <div className="text-slate-700">
-                                <span className="font-bold text-slate-600">Trích dẫn audio: </span>
+                                <span className="font-bold text-slate-600">{isEn ? 'Audio quote: ' : 'Trích dẫn audio: '}</span>
                                 <span className="italic font-serif">"{q.evidenceQuote}"</span>
                               </div>
                             )}
 
-                            {q.explanation && (
+                            {(q.explanation || q.explanationEn) && (
                               <div className="text-slate-600">
-                                <span className="font-bold text-slate-600">Giải thích: </span>
-                                <span>{q.explanation}</span>
+                                <span className="font-bold text-slate-600">{isEn ? 'Explanation: ' : 'Giải thích: '}</span>
+                                <span>{isEn ? (q.explanationEn || q.explanation) : (q.explanationVi || q.explanation)}</span>
                               </div>
                             )}
 
@@ -606,7 +606,7 @@ export default function ListeningQuestionPane({
                                 className="mt-1 px-2.5 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] flex items-center space-x-1 transition-colors cursor-pointer"
                               >
                                 <Volume2 className="w-3 h-3" />
-                                <span>Nghe lại đoạn này ({formatTimestamp(q.evidenceTimestamp)})</span>
+                                <span>{isEn ? `Replay this segment (${formatTimestamp(q.evidenceTimestamp)})` : `Nghe lại đoạn này (${formatTimestamp(q.evidenceTimestamp)})`}</span>
                               </button>
                             )}
 
@@ -662,7 +662,7 @@ export default function ListeningQuestionPane({
                                     ? 'text-amber-500 bg-amber-50 border border-amber-300'
                                     : 'text-slate-400 hover:text-slate-600'
                                 }`}
-                                title={isFlagged ? 'Bỏ cắm cờ' : 'Cắm cờ xem lại'}
+                                title={isFlagged ? (isEn ? 'Unflag question' : 'Bỏ cắm cờ') : (isEn ? 'Flag for review' : 'Cắm cờ xem lại')}
                               >
                                 <Flag className={`w-3.5 h-3.5 ${isFlagged ? 'fill-current' : ''}`} />
                               </button>
@@ -672,11 +672,11 @@ export default function ListeningQuestionPane({
                               <span className="flex items-center space-x-1 text-xs font-bold">
                                 {status.isCorrect ? (
                                   <span className="text-emerald-600 flex items-center space-x-1">
-                                    <CheckCircle2 className="w-4 h-4" /> <span>Đúng</span>
+                                    <CheckCircle2 className="w-4 h-4" /> <span>{isEn ? 'Correct' : 'Đúng'}</span>
                                   </span>
                                 ) : (
                                   <span className="text-rose-600 flex items-center space-x-1">
-                                    <XCircle className="w-4 h-4" /> <span>Sai</span>
+                                    <XCircle className="w-4 h-4" /> <span>{isEn ? 'Incorrect' : 'Sai'}</span>
                                   </span>
                                 )}
                               </span>
@@ -728,7 +728,7 @@ export default function ListeningQuestionPane({
                                   {opt.key}
                                 </span>
                                 <span className={`flex-1 leading-snug ${fontSizeClasses.body}`}>
-                                  {opt.text}
+                                  {isEn && opt.textEn ? opt.textEn : opt.text}
                                 </span>
                               </button>
                             );
@@ -738,21 +738,21 @@ export default function ListeningQuestionPane({
                         {isSubmitted && (
                           <div className="mt-3 pt-3 border-t border-slate-200 text-xs space-y-1.5 bg-white/80 p-3 rounded-lg pl-2 sm:pl-9">
                             <div className="flex items-baseline space-x-2">
-                              <span className="font-bold text-slate-600">Đáp án chuẩn:</span>
+                              <span className="font-bold text-slate-600">{isEn ? 'Correct Answer:' : 'Đáp án chuẩn:'}</span>
                               <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
                                 {q.answer}
                               </span>
                             </div>
                             {q.evidenceQuote && (
                               <div className="text-slate-700">
-                                <span className="font-bold text-slate-600">Trích dẫn audio: </span>
+                                <span className="font-bold text-slate-600">{isEn ? 'Audio quote: ' : 'Trích dẫn audio: '}</span>
                                 <span className="italic font-serif">"{q.evidenceQuote}"</span>
                               </div>
                             )}
-                            {q.explanation && (
+                            {(q.explanation || q.explanationEn) && (
                               <div className="text-slate-600">
-                                <span className="font-bold text-slate-600">Giải thích: </span>
-                                <span>{q.explanation}</span>
+                                <span className="font-bold text-slate-600">{isEn ? 'Explanation: ' : 'Giải thích: '}</span>
+                                <span>{isEn ? (q.explanationEn || q.explanation) : (q.explanationVi || q.explanation)}</span>
                               </div>
                             )}
                             {q.evidenceTimestamp !== undefined && onSeekAudio && (
@@ -761,7 +761,7 @@ export default function ListeningQuestionPane({
                                 className="mt-1 px-2.5 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] flex items-center space-x-1 transition-colors cursor-pointer"
                               >
                                 <Volume2 className="w-3 h-3" />
-                                <span>Nghe lại đoạn này ({formatTimestamp(q.evidenceTimestamp)})</span>
+                                <span>{isEn ? `Replay this segment (${formatTimestamp(q.evidenceTimestamp)})` : `Nghe lại đoạn này (${formatTimestamp(q.evidenceTimestamp)})`}</span>
                               </button>
                             )}
 
@@ -868,9 +868,9 @@ export default function ListeningQuestionPane({
                           {isSubmitted && (
                             <div className="mt-2 text-[11px] text-slate-600 space-y-1">
                               <div>
-                                <span className="font-bold">Đáp án: </span>
+                                <span className="font-bold">{isEn ? 'Answer: ' : 'Đáp án: '}</span>
                                 <span className="font-bold text-emerald-700">
-                                  {q.acceptableAnswers?.join(' hoặc ') || q.answer}
+                                  {q.acceptableAnswers?.join(isEn ? ' or ' : ' hoặc ') || q.answer}
                                 </span>
                               </div>
                               {q.evidenceQuote && (
@@ -1183,7 +1183,7 @@ export default function ListeningQuestionPane({
 
                           {isSubmitted && (
                             <div className="mt-2 text-xs text-slate-600">
-                              <span className="font-bold">Đáp án: </span>
+                              <span className="font-bold">{isEn ? 'Answer: ' : 'Đáp án: '}</span>
                               <span className="font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-sm">
                                 {q.answer}
                               </span>
@@ -1324,7 +1324,7 @@ export default function ListeningQuestionPane({
           <div className="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-200">
             <div className="flex items-center space-x-2 mb-3 text-slate-900 font-bold text-sm">
               <MessageSquare className="w-4 h-4 text-indigo-600" />
-              <span>Thêm ghi chú cho cụm từ đã chọn</span>
+              <span>{isEn ? 'Add note for selected text' : 'Thêm ghi chú cho cụm từ đã chọn'}</span>
             </div>
             <div className="p-2.5 rounded-lg bg-slate-50 text-xs text-slate-600 italic border border-slate-200 mb-3">
               "{activeNoteModal.text}"

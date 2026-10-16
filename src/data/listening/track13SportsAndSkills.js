@@ -11,7 +11,11 @@
 export const track13SportsAndSkills = {
   id: 'ielts-listening-track13-sports-skills',
   title: 'IELTS Listening Practice: Athletic Requirements & Sports Identification (Track 13)',
+  titleEn: 'IELTS Listening Practice: Athletic Requirements & Sports Identification (Track 13)',
+  titleVi: 'Luyện đề IELTS Listening: Yêu cầu thể lực & Nhận diện môn thể thao (Track 13)',
   description: 'Bộ luyện thi IELTS Listening mô phỏng chuẩn Cambridge: Phân tích các đặc thù thể thao, yêu cầu thể lực và kỹ năng vận động (Badminton, Gymnastics, Table Tennis, Weightlifting, Basketball) qua 5 đoạn mô tả ngắn.',
+  descriptionEn: 'Authentic Cambridge IELTS practice: Analysis of athletic requirements and movement profiles across five sports (badminton, gymnastics, table tennis, weightlifting, basketball) via short descriptive recordings.',
+  descriptionVi: 'Bộ luyện thi IELTS Listening mô phỏng chuẩn Cambridge: Phân tích các đặc thù thể thao, yêu cầu thể lực và kỹ năng vận động (Badminton, Gymnastics, Table Tennis, Weightlifting, Basketball) qua 5 đoạn mô tả ngắn.',
   totalQuestions: 10,
   timeLimitMinutes: 12,
   isPublic: true,
@@ -56,7 +60,9 @@ export const track13SportsAndSkills = {
               answer: 'B',
               evidenceQuote: "This game is similar to tennis... people hit a shuttlecock, a light object with feathers, instead of a ball. You need to think and move quickly.",
               evidenceTimestamp: 13,
-              explanation: 'Môn thể thao tương tự quần vợt nhưng dùng quả cầu lông (shuttlecock - light object with feathers) và sân nhỏ hơn chính là cầu lông (Badminton).'
+              explanation: 'Badminton is played with a feathered shuttlecock instead of a ball in a smaller area.',
+              explanationEn: 'Badminton is played with a feathered shuttlecock instead of a ball in a smaller area.',
+              explanationVi: 'Môn thể thao tương tự quần vợt nhưng dùng quả cầu lông (shuttlecock - light object with feathers) và sân nhỏ hơn chính là cầu lông (Badminton).'
             },
             {
               id: 2,
@@ -71,7 +77,9 @@ export const track13SportsAndSkills = {
               answer: 'A',
               evidenceQuote: 'You have to be very strong in your arms and legs, but also light and flexible to do this sport, because you use your whole body all the time.',
               evidenceTimestamp: 27,
-              explanation: 'Môn thể thao đòi hỏi tay chân khỏe, cơ thể nhẹ nhàng dẻo dai (light and flexible) và dùng toàn bộ cơ thể liên tục chính là thể dục dụng cụ (Gymnastics).'
+              explanation: 'Gymnastics requires strong limbs while remaining light, flexible, and engaging the whole body.',
+              explanationEn: 'Gymnastics requires strong limbs while remaining light, flexible, and engaging the whole body.',
+              explanationVi: 'Môn thể thao đòi hỏi tay chân khỏe, cơ thể nhẹ nhàng dẻo dai (light and flexible) và dùng toàn bộ cơ thể liên tục chính là thể dục dụng cụ (Gymnastics).'
             },
             {
               id: 3,
@@ -86,7 +94,9 @@ export const track13SportsAndSkills = {
               answer: 'B',
               evidenceQuote: "You don't need to move around a lot... move your arms quickly and accurately, because the playing area is so small, and the ball is so light.",
               evidenceTimestamp: 44,
-              explanation: 'Môn thể thao không cần di chuyển nhiều, suy nghĩ cực nhanh, tay cử động nhanh và chuẩn xác, sân chơi rất nhỏ và bóng rất nhẹ chính là bóng bàn (Table tennis).'
+              explanation: 'Table tennis involves minimal foot movement, rapid reflexes, and high arm precision over a compact surface.',
+              explanationEn: 'Table tennis involves minimal foot movement, rapid reflexes, and high arm precision over a compact surface.',
+              explanationVi: 'Môn thể thao không cần di chuyển nhiều, suy nghĩ cực nhanh, tay cử động nhanh và chuẩn xác, sân chơi rất nhỏ và bóng rất nhẹ chính là bóng bàn (Table tennis).'
             },
             {
               id: 4,
@@ -101,7 +111,9 @@ export const track13SportsAndSkills = {
               answer: 'A',
               evidenceQuote: 'train hard every day to get very strong arms... very strong legs to support yourself, but you don\'t move around to do it.',
               evidenceTimestamp: 57,
-              explanation: 'Môn thể thao cần tay cực khỏe, chân khỏe để trụ vững và không di chuyển vòng quanh chính là cử tạ (Weightlifting).'
+              explanation: 'Weightlifting demands daily training for powerful arms and strong supporting legs without moving across the floor.',
+              explanationEn: 'Weightlifting demands daily training for powerful arms and strong supporting legs without moving across the floor.',
+              explanationVi: 'Môn thể thao cần tay cực khỏe, chân khỏe để trụ vững và không di chuyển vòng quanh chính là cử tạ (Weightlifting).'
             },
             {
               id: 5,
@@ -116,7 +128,9 @@ export const track13SportsAndSkills = {
               answer: 'B',
               evidenceQuote: 'People who play this sport are usually very tall, but you also have to be able to run a lot, move quickly, and throw very well.',
               evidenceTimestamp: 72,
-              explanation: 'Môn thể thao mà vận động viên thường rất cao (very tall), chạy nhiều, di chuyển nhanh và ném bóng chuẩn (throw very well) chính là bóng rổ (Basketball).'
+              explanation: 'Basketball players are typically tall and must run extensively, maneuver quickly, and throw accurately.',
+              explanationEn: 'Basketball players are typically tall and must run extensively, maneuver quickly, and throw accurately.',
+              explanationVi: 'Môn thể thao mà vận động viên thường rất cao (very tall), chạy nhiều, di chuyển nhanh và ném bóng chuẩn (throw very well) chính là bóng rổ (Basketball).'
             }
           ]
         },
@@ -137,7 +151,9 @@ export const track13SportsAndSkills = {
               acceptableAnswers: ['shuttlecock', 'a shuttlecock'],
               evidenceQuote: 'people hit a shuttlecock, a light object with feathers, instead of a ball.',
               evidenceTimestamp: 14,
-              explanation: 'Quả cầu lông trong tiếng Anh là "shuttlecock".'
+              explanation: 'The projectile used in badminton is called a "shuttlecock".',
+              explanationEn: 'The projectile used in badminton is called a "shuttlecock".',
+              explanationVi: 'Quả cầu lông trong tiếng Anh là "shuttlecock".'
             },
             {
               id: 7,
@@ -149,7 +165,9 @@ export const track13SportsAndSkills = {
               acceptableAnswers: ['flexible'],
               evidenceQuote: 'You have to be very strong in your arms and legs, but also light and flexible to do this sport',
               evidenceTimestamp: 28,
-              explanation: 'Vận động viên thể dục dụng cụ cần "light and flexible" (nhẹ nhàng và dẻo dai).'
+              explanation: 'Gymnasts must remain both "light and flexible".',
+              explanationEn: 'Gymnasts must remain both "light and flexible".',
+              explanationVi: 'Vận động viên thể dục dụng cụ cần "light and flexible" (nhẹ nhàng và dẻo dai).'
             },
             {
               id: 8,
@@ -161,7 +179,9 @@ export const track13SportsAndSkills = {
               acceptableAnswers: ['accurately'],
               evidenceQuote: 'move your arms quickly and accurately, because the playing area is so small',
               evidenceTimestamp: 43,
-              explanation: 'Người chơi bóng bàn phải di chuyển cánh tay "quickly and accurately" (nhanh chóng và chính xác).'
+              explanation: 'Players must move their arms "quickly and accurately".',
+              explanationEn: 'Players must move their arms "quickly and accurately".',
+              explanationVi: 'Người chơi bóng bàn phải di chuyển cánh tay "quickly and accurately" (nhanh chóng và chính xác).'
             },
             {
               id: 9,
@@ -173,7 +193,9 @@ export const track13SportsAndSkills = {
               acceptableAnswers: ['support themselves', 'support'],
               evidenceQuote: 'You also need to have very strong legs to support yourself, but you don\'t move around to do it.',
               evidenceTimestamp: 61,
-              explanation: 'Chân khỏe dùng để "support yourself" (trụ vững cơ thể).'
+              explanation: 'Athletes rely on leg power to "support themselves".',
+              explanationEn: 'Athletes rely on leg power to "support themselves".',
+              explanationVi: 'Chân khỏe dùng để "support yourself" (trụ vững cơ thể).'
             },
             {
               id: 10,
@@ -185,7 +207,9 @@ export const track13SportsAndSkills = {
               acceptableAnswers: ['throw very well', 'throw'],
               evidenceQuote: 'run a lot, move quickly, and throw very well.',
               evidenceTimestamp: 77,
-              explanation: 'Kỹ năng ném bóng trong đoạn băng là "throw very well".'
+              explanation: 'Basketball players must possess the ability to "throw very well".',
+              explanationEn: 'Basketball players must possess the ability to "throw very well".',
+              explanationVi: 'Kỹ năng ném bóng trong đoạn băng là "throw very well".'
             }
           ]
         }

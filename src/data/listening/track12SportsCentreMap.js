@@ -11,7 +11,11 @@
 export const track12SportsCentreMap = {
   id: 'ielts-listening-track12-sports-map',
   title: 'IELTS Listening Practice: Sports Centre Relocation & Road Navigation (Track 12)',
+  titleEn: 'IELTS Listening Practice: Sports Centre Relocation & Road Navigation (Track 12)',
+  titleVi: 'Luyện nghe IELTS: Đổi địa điểm Nhà thi đấu & Chỉ đường (Track 12)',
   description: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Thông báo khẩn đổi địa điểm thi đấu do ngập nước (flooding, damaged floors & equipment), giờ tập trung chuẩn bị (Tuesday at 9:00), và hướng dẫn lộ trình bản đồ tránh tắc đường trung tâm (roundabout, flyover over motorway, Bramley Road, petrol station, Woodland Hotel).',
+  descriptionEn: 'IELTS Listening Section 2 practice: Emergency venue relocation due to flooding, damaged floors & equipment, meeting schedule (Tuesday at 9:00), and roundabout/flyover bypass navigation directions to North Henton Sports Centre.',
+  descriptionVi: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Thông báo khẩn đổi địa điểm thi đấu do ngập nước (flooding, damaged floors & equipment), giờ tập trung chuẩn bị (Tuesday at 9:00), và hướng dẫn lộ trình bản đồ tránh tắc đường trung tâm (roundabout, flyover over motorway, Bramley Road, petrol station, Woodland Hotel).',
   totalQuestions: 12,
   timeLimitMinutes: 15,
   isPublic: true,
@@ -53,7 +57,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['flooding', 'the flooding', 'flood'],
               evidenceQuote: "We can't have the competition at the centre because of the flooding last week after all the rain.",
               evidenceTimestamp: 16,
-              explanation: 'Nguyên nhân không tổ chức được ở South Henton là do ngập nước (flooding) sau đợt mưa lớn.'
+              explanation: 'Nguyên nhân không tổ chức được ở South Henton là do ngập nước (flooding) sau đợt mưa lớn.',
+              explanationEn: 'The reason the competition cannot be held at South Henton is the flooding caused by heavy rainfall last week.',
+              explanationVi: 'Nguyên nhân không tổ chức được ở South Henton là do ngập nước (flooding) sau đợt mưa lớn.'
             },
             {
               id: 2,
@@ -65,7 +71,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['floors', 'floor'],
               evidenceQuote: 'It damaged a lot of our equipment, and also the floors in some of the rooms.',
               evidenceTimestamp: 21,
-              explanation: 'Nước ngập làm hư hỏng nhiều thiết bị và sàn nhà ở một số phòng (the floors in some of the rooms).'
+              explanation: 'Nước ngập làm hư hỏng nhiều thiết bị và sàn nhà ở một số phòng (the floors in some of the rooms).',
+              explanationEn: 'The water damaged much of the equipment as well as the floors in some of the rooms.',
+              explanationVi: 'Nước ngập làm hư hỏng nhiều thiết bị và sàn nhà ở một số phòng (the floors in some of the rooms).'
             },
             {
               id: 3,
@@ -77,7 +85,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['North Henton', 'north henton'],
               evidenceQuote: 'Luckily, I contacted the North Henton Sports Centre...',
               evidenceTimestamp: 25,
-              explanation: 'Địa điểm thay thế là Trung tâm Thể thao North Henton.'
+              explanation: 'Địa điểm thay thế là Trung tâm Thể thao North Henton.',
+              explanationEn: 'The alternative venue arranged for the event is North Henton Sports Centre.',
+              explanationVi: 'Địa điểm thay thế là Trung tâm Thể thao North Henton.'
             },
             {
               id: 4,
@@ -89,7 +99,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['Tuesday', 'tuesday'],
               evidenceQuote: "You'll need to meet the others there next Tuesday at about 9:00 to get the centre ready.",
               evidenceTimestamp: 39,
-              explanation: 'Nhóm chuẩn bị cần có mặt vào thứ Ba tuần tới (next Tuesday) lúc 9:00.'
+              explanation: 'Nhóm chuẩn bị cần có mặt vào thứ Ba tuần tới (next Tuesday) lúc 9:00.',
+              explanationEn: 'Helpers need to meet the team next Tuesday at around 9:00 to prepare the centre.',
+              explanationVi: 'Nhóm chuẩn bị cần có mặt vào thứ Ba tuần tới (next Tuesday) lúc 9:00.'
             },
             {
               id: 5,
@@ -101,7 +113,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['town centre', 'town center', 'center of town', 'centre of town'],
               evidenceQuote: "I'll give you directions avoiding the town centre, because it can be quite busy in the morning.",
               evidenceTimestamp: 48,
-              explanation: 'Lộ trình được hướng dẫn tránh đi qua trung tâm thị trấn (town centre) để không bị kẹt xe vào buổi sáng.'
+              explanation: 'Lộ trình được hướng dẫn tránh đi qua trung tâm thị trấn (town centre) để không bị kẹt xe vào buổi sáng.',
+              explanationEn: 'The suggested directions avoid the town centre because it becomes heavily congested in the morning.',
+              explanationVi: 'Lộ trình được hướng dẫn tránh đi qua trung tâm thị trấn (town centre) để không bị kẹt xe vào buổi sáng.'
             },
             {
               id: 6,
@@ -113,7 +127,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['Lily', 'lily'],
               evidenceQuote: 'First, come out of our sports centre into Lily Road.',
               evidenceTimestamp: 54,
-              explanation: 'Điểm xuất phát bắt đầu khi rẽ ra đường Lily (Lily Road).'
+              explanation: 'Điểm xuất phát bắt đầu khi rẽ ra đường Lily (Lily Road).',
+              explanationEn: 'Drivers start their journey by coming out of the sports centre into Lily Road.',
+              explanationVi: 'Điểm xuất phát bắt đầu khi rẽ ra đường Lily (Lily Road).'
             }
           ]
         }
@@ -155,7 +171,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['straight over', 'straight across', 'straight'],
               evidenceQuote: 'Go straight over that roundabout and you come to a crossroads.',
               evidenceTimestamp: 69,
-              explanation: 'Tại bùng binh đầu tiên, tài xế phải đi thẳng qua (Go straight over that roundabout).'
+              explanation: 'Tại bùng binh đầu tiên, tài xế phải đi thẳng qua (Go straight over that roundabout).',
+              explanationEn: 'At the first roundabout 200 metres away, drivers must go straight over rather than turning left into town.',
+              explanationVi: 'Tại bùng binh đầu tiên, tài xế phải đi thẳng qua (Go straight over that roundabout).'
             },
             {
               id: 8,
@@ -167,7 +185,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['flyover', 'a flyover'],
               evidenceQuote: 'The road goes up onto a flyover over the motorway to Longchester.',
               evidenceTimestamp: 80,
-              explanation: 'Đường đi vượt qua đường cao tốc nhờ một cầu vượt (flyover).'
+              explanation: 'Đường đi vượt qua đường cao tốc nhờ một cầu vượt (flyover).',
+              explanationEn: 'The road elevates onto a flyover crossing over the motorway to Longchester.',
+              explanationVi: 'Đường đi vượt qua đường cao tốc nhờ một cầu vượt (flyover).'
             },
             {
               id: 9,
@@ -179,7 +199,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['left'],
               evidenceQuote: 'After the flyover, you come to the junction with Bramley Road. This is where you go left...',
               evidenceTimestamp: 88,
-              explanation: 'Tại ngã giao với đường Bramley, rẽ trái (go left) để đi vòng quanh thị trấn.'
+              explanation: 'Tại ngã giao với đường Bramley, rẽ trái (go left) để đi vòng quanh thị trấn.',
+              explanationEn: 'At the junction with Bramley Road, turn left to skirt around the town perimeter to the sports centre.',
+              explanationVi: 'Tại ngã giao với đường Bramley, rẽ trái (go left) để đi vòng quanh thị trấn.'
             },
             {
               id: 10,
@@ -191,7 +213,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['petrol station', 'gas station'],
               evidenceQuote: 'and just after the bend, you see a petrol station on the left.',
               evidenceTimestamp: 100,
-              explanation: 'Ngay sau khúc cua bên trái sẽ nhìn thấy một trạm xăng (petrol station) ở bên trái.'
+              explanation: 'Ngay sau khúc cua bên trái sẽ nhìn thấy một trạm xăng (petrol station) ở bên trái.',
+              explanationEn: 'Directly after negotiating the left bend, you will spot a petrol station located on the left.',
+              explanationVi: 'Ngay sau khúc cua bên trái sẽ nhìn thấy một trạm xăng (petrol station) ở bên trái.'
             },
             {
               id: 11,
@@ -203,7 +227,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['right'],
               evidenceQuote: 'Turn right into West Road and carry on.',
               evidenceTimestamp: 109,
-              explanation: 'Tại cụm đèn giao thông, rẽ phải (Turn right) vào đường West Road.'
+              explanation: 'Tại cụm đèn giao thông, rẽ phải (Turn right) vào đường West Road.',
+              explanationEn: 'At the traffic lights right after the petrol station, make a right turn into West Road.',
+              explanationVi: 'Tại cụm đèn giao thông, rẽ phải (Turn right) vào đường West Road.'
             },
             {
               id: 12,
@@ -215,7 +241,9 @@ export const track12SportsCentreMap = {
               acceptableAnswers: ['Woodland Hotel', 'woodland hotel'],
               evidenceQuote: 'The sports centre is on Green Lane, which is just past the Woodland Hotel on the right.',
               evidenceTimestamp: 116,
-              explanation: 'Trung tâm thể thao nằm trên đường Green Lane, ngay sau khách sạn Woodland (Woodland Hotel) ở bên phải.'
+              explanation: 'Trung tâm thể thao nằm trên đường Green Lane, ngay sau khách sạn Woodland (Woodland Hotel) ở bên phải.',
+              explanationEn: 'The destination sports centre sits on Green Lane, positioned just past the Woodland Hotel on the right.',
+              explanationVi: 'Trung tâm thể thao nằm trên đường Green Lane, ngay sau khách sạn Woodland (Woodland Hotel) ở bên phải.'
             }
           ]
         }

@@ -9,8 +9,9 @@
  * @param {boolean} isEn 
  * @returns {string}
  */
-export function formatTestTitle(title, isEn) {
-  if (!title || !isEn) return title || '';
+export function formatTestTitle(title, isEn, test = {}) {
+  if (!title || !isEn) return (test && test.titleVi) || title || '';
+  if (test && test.titleEn) return test.titleEn;
   return title
     .replace(/\[AI Cộng Đồng\]/g, '[Community AI]')
     .replace(/\[Cộng Đồng\]/g, '[Community]')
@@ -28,7 +29,8 @@ export function formatTestTitle(title, isEn) {
  * @returns {string}
  */
 export function formatTestDescription(desc, isEn, test = {}) {
-  if (!isEn) return desc || '';
+  if (!isEn) return (test && test.descriptionVi) || desc || '';
+  if (test && test.descriptionEn) return test.descriptionEn;
   if (!desc) {
     return 'Standard academic IELTS test with multiple-choice and completion questions.';
   }

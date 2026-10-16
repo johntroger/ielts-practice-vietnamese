@@ -1401,7 +1401,7 @@ export default function ListeningWorkspace({
             </span>
 
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
-              {formatTestTitle(currentTest.title, isEn)}
+              {formatTestTitle(currentTest.title, isEn, currentTest)}
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-600 max-w-xl mb-6 leading-relaxed">

@@ -11,7 +11,11 @@
 export const track14RoomSchedule = {
   id: 'ielts-listening-track14-room-schedule',
   title: 'IELTS Listening Practice: Sports Competition Room Scheduling & Setup (Track 14)',
+  titleEn: 'IELTS Listening Practice: Sports Competition Room Scheduling & Setup (Track 14)',
+  titleVi: 'Luyện đề IELTS Listening: Lịch thi đấu & Sắp xếp phòng thi (Track 14)',
   description: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Phân bổ 3 phòng thi đấu (Dean, Carsley, Forster) cho 5 bộ môn (Badminton, Gymnastics, Weightlifting, Basketball, Table tennis), bẫy tự sửa thông tin (Self-Correction Trap) buổi chiều và thủ tục nhận chìa khóa kho tại Reception.',
+  descriptionEn: 'Authentic Cambridge IELTS Section 2 practice: Room scheduling and setup instructions for three competition halls (Dean, Carsley, Forster) across five sports, featuring an afternoon self-correction trap and storeroom key logistics.',
+  descriptionVi: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Phân bổ 3 phòng thi đấu (Dean, Carsley, Forster) cho 5 bộ môn (Badminton, Gymnastics, Weightlifting, Basketball, Table tennis), bẫy tự sửa thông tin (Self-Correction Trap) buổi chiều và thủ tục nhận chìa khóa kho tại Reception.',
   totalQuestions: 10,
   timeLimitMinutes: 12,
   isPublic: true,
@@ -59,7 +63,9 @@ export const track14RoomSchedule = {
               acceptableAnswers: ['reception', 'the reception'],
               evidenceQuote: 'There\'s a big storeroom with all the equipment in it. You should be able to get the key from reception.',
               evidenceTimestamp: 19,
-              explanation: 'Chìa khóa nhà kho đựng dụng cụ lấy trực tiếp tại bàn tiếp tân ("from reception").'
+              explanation: 'The storeroom key can be collected directly from reception.',
+              explanationEn: 'The storeroom key can be collected directly from reception.',
+              explanationVi: 'Chìa khóa nhà kho đựng dụng cụ lấy trực tiếp tại bàn tiếp tân ("from reception").'
             },
             {
               id: 2,
@@ -71,7 +77,9 @@ export const track14RoomSchedule = {
               acceptableAnswers: ['two', '2', 'both'],
               evidenceQuote: 'The Dean Room is for the badminton competition. There are two courts in there, so you\'ll have to set up both of them.',
               evidenceTimestamp: 40,
-              explanation: 'Tại phòng Dean có 2 sân cầu lông ("two courts"), tình nguyện viên cần chuẩn bị cả hai sân.'
+              explanation: 'There are two badminton courts that both need to be set up.',
+              explanationEn: 'There are two badminton courts that both need to be set up.',
+              explanationVi: 'Tại phòng Dean có 2 sân cầu lông ("two courts"), tình nguyện viên cần chuẩn bị cả hai sân.'
             },
             {
               id: 3,
@@ -83,7 +91,9 @@ export const track14RoomSchedule = {
               acceptableAnswers: ['gymnastics'],
               evidenceQuote: "Then, the Carsley Room is where the gymnastics will be, and there's quite a lot of equipment to bring in for that.",
               evidenceTimestamp: 46,
-              explanation: 'Buổi sáng phòng Carsley được dành cho môn thể dục dụng cụ (gymnastics).'
+              explanation: 'The Carsley Room hosts gymnastics during the morning.',
+              explanationEn: 'The Carsley Room hosts gymnastics during the morning.',
+              explanationVi: 'Buổi sáng phòng Carsley được dành cho môn thể dục dụng cụ (gymnastics).'
             },
             {
               id: 4,
@@ -95,7 +105,9 @@ export const track14RoomSchedule = {
               acceptableAnswers: ['all day'],
               evidenceQuote: 'We have to get the Forster Room ready for the weightlifting, which is taking place in there all day.',
               evidenceTimestamp: 54,
-              explanation: 'Môn cử tạ tại phòng Forster diễn ra suốt cả ngày ("all day") nên không cần đổi phòng buổi chiều.'
+              explanation: 'Weightlifting continues throughout the entire day ("all day").',
+              explanationEn: 'Weightlifting continues throughout the entire day ("all day").',
+              explanationVi: 'Môn cử tạ tại phòng Forster diễn ra suốt cả ngày ("all day") nên không cần đổi phòng buổi chiều.'
             },
             {
               id: 5,
@@ -107,7 +119,9 @@ export const track14RoomSchedule = {
               acceptableAnswers: ['basketball'],
               evidenceQuote: 'actually, the basketball will be in the Dean Room, but as the nets are already there, you won\'t need to set anything up for that.',
               evidenceTimestamp: 77,
-              explanation: 'Sau khi đính chính, môn bóng rổ (basketball) sẽ diễn ra tại Dean Room vì lưới đã lắp sẵn.'
+              explanation: 'Basketball will be hosted in the Dean Room because the nets are already mounted.',
+              explanationEn: 'Basketball will be hosted in the Dean Room because the nets are already mounted.',
+              explanationVi: 'Sau khi đính chính, môn bóng rổ (basketball) sẽ diễn ra tại Dean Room vì lưới đã lắp sẵn.'
             }
           ]
         },
@@ -129,7 +143,9 @@ export const track14RoomSchedule = {
               answer: 'B',
               evidenceQuote: 'That means the table tennis will be taking place in the Carsley Room in the afternoon',
               evidenceTimestamp: 84,
-              explanation: 'Bẫy tự đính chính: Ban đầu người nói bảo table tennis ở Dean Room, nhưng sau đó đổi lại thành Carsley Room.'
+              explanation: 'Table tennis was moved to the Carsley Room following the speaker\'s self-correction.',
+              explanationEn: 'Table tennis was moved to the Carsley Room following the speaker\'s self-correction.',
+              explanationVi: 'Bẫy tự đính chính: Ban đầu người nói bảo table tennis ở Dean Room, nhưng sau đó đổi lại thành Carsley Room.'
             },
             {
               id: 7,
@@ -143,7 +159,9 @@ export const track14RoomSchedule = {
               answer: 'A',
               evidenceQuote: 'We had to change that because there are no basketball nets in the Carsley Room',
               evidenceTimestamp: 73,
-              explanation: 'Lý do phải đổi là vì phòng Carsley không có lưới bóng rổ ("there are no basketball nets in the Carsley Room").'
+              explanation: 'The swap occurred because the Carsley Room does not have basketball nets.',
+              explanationEn: 'The swap occurred because the Carsley Room does not have basketball nets.',
+              explanationVi: 'Lý do phải đổi là vì phòng Carsley không có lưới bóng rổ ("there are no basketball nets in the Carsley Room").'
             },
             {
               id: 8,
@@ -157,7 +175,9 @@ export const track14RoomSchedule = {
               answer: 'B',
               evidenceQuote: "as the nets are already there, you won't need to set anything up for that.",
               evidenceTimestamp: 80,
-              explanation: 'Không cần chuẩn bị gì vì lưới bóng rổ đã có sẵn trong phòng Dean ("as the nets are already there").'
+              explanation: 'No setup is needed because the nets are already present and ready in the room.',
+              explanationEn: 'No setup is needed because the nets are already present and ready in the room.',
+              explanationVi: 'Không cần chuẩn bị gì vì lưới bóng rổ đã có sẵn trong phòng Dean ("as the nets are already there").'
             },
             {
               id: 9,
@@ -171,7 +191,9 @@ export const track14RoomSchedule = {
               answer: 'B',
               evidenceQuote: "the equipment they've got is not as good as ours, but it'll be okay.",
               evidenceTimestamp: 12,
-              explanation: 'Geoff nhận xét dụng cụ ở đó không tốt bằng trường mình nhưng vẫn dùng ổn ("not as good as ours, but it\'ll be okay").'
+              explanation: 'Geoff notes that the gear is not as good as theirs, but acceptable.',
+              explanationEn: 'Geoff notes that the gear is not as good as theirs, but acceptable.',
+              explanationVi: 'Geoff nhận xét dụng cụ ở đó không tốt bằng trường mình nhưng vẫn dùng ổn ("not as good as ours, but it\'ll be okay").'
             },
             {
               id: 10,
@@ -185,7 +207,9 @@ export const track14RoomSchedule = {
               answer: 'C',
               evidenceQuote: "once you set up the room for the weightlifting, you won't have to change anything",
               evidenceTimestamp: 57,
-              explanation: 'Phòng Forster tổ chức môn cử tạ cả ngày ("all day") nên sau khi dựng xong sáng sớm thì không cần thay đổi gì.'
+              explanation: 'The Forster Room hosts weightlifting all day, so no rearrangements are necessary.',
+              explanationEn: 'The Forster Room hosts weightlifting all day, so no rearrangements are necessary.',
+              explanationVi: 'Phòng Forster tổ chức môn cử tạ cả ngày ("all day") nên sau khi dựng xong sáng sớm thì không cần thay đổi gì.'
             }
           ]
         }

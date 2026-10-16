@@ -924,7 +924,7 @@ export default function ListeningLibraryModal({
 
                       {/* Title & Description */}
                       <h4 className="font-bold text-slate-900 text-sm mb-1.5 line-clamp-2">
-                        {formatTestTitle(test.title, isEn)}
+                        {formatTestTitle(test.title, isEn, test)}
                       </h4>
                       <p className="text-xs text-slate-600 line-clamp-2 mb-2 leading-relaxed">
                         {formatTestDescription(test.description, isEn, test)}

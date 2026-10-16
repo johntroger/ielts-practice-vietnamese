@@ -11,7 +11,11 @@
 export const track15EquipmentPrep = {
   id: 'ielts-listening-track15-equipment-prep',
   title: 'IELTS Listening Practice: Sports Equipment Setup & Room Logistics (Track 15)',
+  titleEn: 'IELTS Listening Practice: Sports Equipment Setup & Room Logistics (Track 15)',
+  titleVi: 'Luyện đề IELTS Listening: Bố trí dụng cụ thể thao & Hậu cần thi đấu (Track 15)',
   description: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Hướng dẫn lắp đặt dụng cụ thể thao chi tiết (lưới cầu lông, vợt dự phòng, ngựa nhảy vaulting horse, thảm mat, xà kép/đơn nam nữ, bàn bóng bàn gấp gọn, tạ barbell, giá phấn chalk) và lịch xuất hiện của điều phối viên Geoff lúc 10:00.',
+  descriptionEn: 'Authentic Cambridge IELTS Section 2 practice: Setup instructions for tournament equipment (badminton nets, spare rackets, gymnastics vaulting horse, safety mats, men & women bars, folded table tennis tables, barbells, chalk stand), and coordinator Geoff\'s 10:00 am arrival.',
+  descriptionVi: 'Bộ luyện thi IELTS Listening Section 2 thực chiến: Hướng dẫn lắp đặt dụng cụ thể thao chi tiết (lưới cầu lông, vợt dự phòng, ngựa nhảy vaulting horse, thảm mat, xà kép/đơn nam nữ, bàn bóng bàn gấp gọn, tạ barbell, giá phấn chalk) và lịch xuất hiện của điều phối viên Geoff lúc 10:00.',
   totalQuestions: 12,
   timeLimitMinutes: 15,
   isPublic: true,
@@ -62,7 +66,9 @@ export const track15EquipmentPrep = {
               acceptableAnswers: ['rackets', 'racquets', 'spare rackets'],
               evidenceQuote: 'The players will bring their own rackets with them, but there are some spare ones, so take them into the badminton room as well, just in case.',
               evidenceTimestamp: 16,
-              explanation: 'Người chơi tự mang vợt nhưng tình nguyện viên cần mang thêm vợt dự phòng ("spare rackets") đề phòng.'
+              explanation: 'Players provide their own rackets, but volunteers must also supply spare ones to the hall.',
+              explanationEn: 'Players provide their own rackets, but volunteers must also supply spare ones to the hall.',
+              explanationVi: 'Người chơi tự mang vợt nhưng tình nguyện viên cần mang thêm vợt dự phòng ("spare rackets") đề phòng.'
             },
             {
               id: 2,
@@ -74,7 +80,9 @@ export const track15EquipmentPrep = {
               acceptableAnswers: ['vaulting'],
               evidenceQuote: 'That means bringing in the vaulting horse and putting it in the middle.',
               evidenceTimestamp: 39,
-              explanation: 'Dụng cụ thể dục dụng cụ đặt ở giữa phòng là ngựa nhảy ("vaulting horse").'
+              explanation: 'The vaulting horse must be situated centrally in the middle of the hall.',
+              explanationEn: 'The vaulting horse must be situated centrally in the middle of the hall.',
+              explanationVi: 'Dụng cụ thể dục dụng cụ đặt ở giữa phòng là ngựa nhảy ("vaulting horse").'
             },
             {
               id: 3,
@@ -86,7 +94,9 @@ export const track15EquipmentPrep = {
               acceptableAnswers: ['behind'],
               evidenceQuote: 'Put one mat in front and another behind the horse',
               evidenceTimestamp: 43,
-              explanation: 'Thảm bảo hộ được đặt ở phía trước và phía sau con ngựa nhảy ("another behind the horse").'
+              explanation: 'Safety mats are placed directly in front of and behind the horse.',
+              explanationEn: 'Safety mats are placed directly in front of and behind the horse.',
+              explanationVi: 'Thảm bảo hộ được đặt ở phía trước và phía sau con ngựa nhảy ("another behind the horse").'
             },
             {
               id: 4,
@@ -98,7 +108,9 @@ export const track15EquipmentPrep = {
               acceptableAnswers: ['women', 'the women'],
               evidenceQuote: 'There are two sets of bars, one for the men, and one for the women.',
               evidenceTimestamp: 54,
-              explanation: 'Có hai bộ xà thể dục ở bên hông: một cho nam và một cho nữ ("one for the women").'
+              explanation: 'Two separate sets of bars are assembled: one for men and one for women.',
+              explanationEn: 'Two separate sets of bars are assembled: one for men and one for women.',
+              explanationVi: 'Có hai bộ xà thể dục ở bên hông: một cho nam và một cho nữ ("one for the women").'
             },
             {
               id: 5,
@@ -110,7 +122,9 @@ export const track15EquipmentPrep = {
               acceptableAnswers: ['folded'],
               evidenceQuote: 'There\'s enough room to leave them folded while the gymnastics is going on',
               evidenceTimestamp: 69,
-              explanation: 'Bàn bóng bàn mang vào sớm và để ở trạng thái gấp gọn ("leave them folded") trong lúc thi đấu thể dục dụng cụ.'
+              explanation: 'Tables can be left folded along the wall while morning gymnastics proceeds.',
+              explanationEn: 'Tables can be left folded along the wall while morning gymnastics proceeds.',
+              explanationVi: 'Bàn bóng bàn mang vào sớm và để ở trạng thái gấp gọn ("leave them folded") trong lúc thi đấu thể dục dụng cụ.'
             },
             {
               id: 6,
@@ -122,7 +136,9 @@ export const track15EquipmentPrep = {
               acceptableAnswers: ['chalk', 'the chalk'],
               evidenceQuote: "you'll need to bring in the stand with the chalk for the lifters to put on their hands.",
               evidenceTimestamp: 98,
-              explanation: 'Vận động viên cử tạ cần giá đỡ đựng bột phấn ("chalk") để xoa vào tay trước khi nâng.'
+              explanation: 'Lifters require the chalk stand to coat their palms and maintain grip.',
+              explanationEn: 'Lifters require the chalk stand to coat their palms and maintain grip.',
+              explanationVi: 'Vận động viên cử tạ cần giá đỡ đựng bột phấn ("chalk") để xoa vào tay trước khi nâng.'
             }
           ]
         },
@@ -144,7 +160,9 @@ export const track15EquipmentPrep = {
               answer: 'A',
               evidenceQuote: 'The other equipment, such as the rings and pommel horse, are already in there, so you don\'t need to worry about those.',
               evidenceTimestamp: 59,
-              explanation: 'Vòng treo (rings) và ngựa tay quay (pommel horse) đã có sẵn trong phòng nên không cần chuyển vào.'
+              explanation: 'The rings and pommel horse are already stored inside the Carsley Room.',
+              explanationEn: 'The rings and pommel horse are already stored inside the Carsley Room.',
+              explanationVi: 'Vòng treo (rings) và ngựa tay quay (pommel horse) đã có sẵn trong phòng nên không cần chuyển vào.'
             },
             {
               id: 8,
@@ -158,7 +176,9 @@ export const track15EquipmentPrep = {
               answer: 'A',
               evidenceQuote: 'you only need to bring in the balls, because the nets are always up and ready',
               evidenceTimestamp: 29,
-              explanation: 'Chỉ cần mang bóng vào vì lưới bóng rổ lúc nào cũng được giăng sẵn ("nets are always up and ready").'
+              explanation: 'Volunteers only transport the balls because the nets remain permanently mounted.',
+              explanationEn: 'Volunteers only transport the balls because the nets remain permanently mounted.',
+              explanationVi: 'Chỉ cần mang bóng vào vì lưới bóng rổ lúc nào cũng được giăng sẵn ("nets are always up and ready").'
             },
             {
               id: 9,
@@ -172,7 +192,9 @@ export const track15EquipmentPrep = {
               answer: 'B',
               evidenceQuote: 'get someone to help you bring in the barbells and the other weights, so that you don\'t try to carry too much.',
               evidenceTimestamp: 86,
-              explanation: 'Geoff nhắc nhờ người phụ giúp để không phải tự vác quá nặng ("don\'t try to carry too much").'
+              explanation: 'Helpers should seek assistance so they do not attempt to lift hazardous weights single-handedly.',
+              explanationEn: 'Helpers should seek assistance so they do not attempt to lift hazardous weights single-handedly.',
+              explanationVi: 'Geoff nhắc nhờ người phụ giúp để không phải tự vác quá nặng ("don\'t try to carry too much").'
             },
             {
               id: 10,
@@ -186,7 +208,9 @@ export const track15EquipmentPrep = {
               answer: 'B',
               evidenceQuote: 'The bench for the bench press should be in there already, so check that it is when you arrive.',
               evidenceTimestamp: 93,
-              explanation: 'Ghế đẩy tạ (bench for the bench press) đáng lẽ đã có sẵn trong phòng, cần kiểm tra lại khi đến.'
+              explanation: 'The bench for the bench press should already be positioned in the room upon arrival.',
+              explanationEn: 'The bench for the bench press should already be positioned in the room upon arrival.',
+              explanationVi: 'Ghế đẩy tạ (bench for the bench press) đáng lẽ đã có sẵn trong phòng, cần kiểm tra lại khi đến.'
             },
             {
               id: 11,
@@ -200,7 +224,9 @@ export const track15EquipmentPrep = {
               answer: 'B',
               evidenceQuote: "I'll be there at about 10:00, as I have an appointment first thing, so you should be ready by then.",
               evidenceTimestamp: 104,
-              explanation: 'Geoff sẽ đến lúc khoảng 10:00 sáng ("at about 10:00") sau cuộc hẹn đầu giờ.'
+              explanation: 'Geoff expects to arrive at approximately 10:00 am.',
+              explanationEn: 'Geoff expects to arrive at approximately 10:00 am.',
+              explanationVi: 'Geoff sẽ đến lúc khoảng 10:00 sáng ("at about 10:00") sau cuộc hẹn đầu giờ.'
             },
             {
               id: 12,
@@ -214,7 +240,9 @@ export const track15EquipmentPrep = {
               answer: 'B',
               evidenceQuote: 'as I have an appointment first thing, so you should be ready by then.',
               evidenceTimestamp: 106,
-              explanation: 'Lý do Geoff đến muộn hơn là vì có một cuộc hẹn vào sáng sớm ("an appointment first thing").'
+              explanation: 'Geoff cannot arrive earlier because he has a prior appointment first thing in the morning.',
+              explanationEn: 'Geoff cannot arrive earlier because he has a prior appointment first thing in the morning.',
+              explanationVi: 'Lý do Geoff đến muộn hơn là vì có một cuộc hẹn vào sáng sớm ("an appointment first thing").'
             }
           ]
         }
