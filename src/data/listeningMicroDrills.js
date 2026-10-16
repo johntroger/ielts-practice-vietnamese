@@ -1278,5 +1278,55 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'Options B and C represent the pitfall the speaker warns against ("The danger with that kind of film is that the science fiction aspect just takes over"), whereas his genuine praise focuses on character development.',
     explanation: 'Đáp án là A vì người nói khen ngợi "characters were actually well developed and interacted with each other".',
     explanationEn: 'Option A is correct: the speaker commends the film because "characters were actually well developed and interacted with each other".'
+  },
+  {
+    id: 'ldrill-dist-track21-art-idiom-take-leave',
+    type: 'listening-distractor',
+    title: 'Bẫy thành ngữ thái độ: "Take it or leave it" trong nghệ thuật (Track 21)',
+    titleEn: 'Attitude Idiom Trap: "Take it or leave it" in Modern Art (Track 21)',
+    category: 'Arts & Media Review',
+    categoryEn: 'Arts & Media Review',
+    audioSnippetText: 'Personally, I like some of it, but I\'m not really bothered. I can take it or leave it.',
+    audioText: 'Personally, I like some of it, but I\'m not really bothered. I can take it or leave it.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track21-opinions-modern-art-climate-change.mp3',
+    clipStart: 18,
+    clipEnd: 27,
+    question: 'Thành ngữ "I can take it or leave it" phản ánh tâm thế gì của người nói đối với nghệ thuật hiện đại?',
+    questionEn: 'What attitude towards modern art does the idiom "I can take it or leave it" convey?',
+    options: [
+      { id: 'A', text: 'Thái độ tương đối thờ ơ, không quá đam mê cũng chẳng phản đối kịch liệt', textEn: 'A neutral, indifferent attitude without intense passion or strong objection' },
+      { id: 'B', text: 'Sự khao khát mãnh liệt muốn sưu tầm và sở hữu các tác phẩm đắt giá', textEn: 'An intense desire to collect and own expensive modern artworks' },
+      { id: 'C', text: 'Lòng căm ghét sâu sắc và mong muốn bài xích hoàn toàn các nghệ sĩ trừu tượng', textEn: 'A deep resentment and total rejection of abstract artists' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Cụm từ "take it or leave it" trong ngữ cảnh này thể hiện sự bàng quan, không có sở thích đặc biệt hay cảm xúc mãnh liệt ("not really bothered").',
+    distractorMechanismEn: 'The colloquial expression "take it or leave it" conveys mild indifference, signifying the speaker has no strong preference either way.',
+    explanation: 'Đáp án là A vì cụm "I can take it or leave it" đồng nghĩa với thái độ thờ ơ, sao cũng được.',
+    explanationEn: 'Option A is correct: "I can take it or leave it" denotes indifference or moderate neutrality.'
+  },
+  {
+    id: 'ldrill-dist-track21-climate-anecdote-fallacy',
+    type: 'listening-distractor',
+    title: 'Bẫy ngụy biện trải nghiệm cục bộ: Lượng tuyết rơi vs Xu hướng khí hậu (Track 21)',
+    titleEn: 'Anecdotal Evidence Trap: Local Snowfall vs Global Climate Trends (Track 21)',
+    category: 'Environment & Climate Science',
+    categoryEn: 'Environment & Climate Science',
+    audioSnippetText: 'If you ask me, the climate is getting colder, at least in this country. Look at the amount of snow we had last winter. They just want to scare people for no reason.',
+    audioText: 'If you ask me, the climate is getting colder, at least in this country. Look at the amount of snow we had last winter. They just want to scare people for no reason.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track21-opinions-modern-art-climate-change.mp3',
+    clipStart: 125,
+    clipEnd: 136,
+    question: 'Người nói thứ 2 sử dụng hiện tượng thời tiết nào để cố gắng phủ nhận hiện tượng ấm lên toàn cầu?',
+    questionEn: 'Which local weather observation does Speaker 2 use to attempt to refute global warming?',
+    options: [
+      { id: 'A', text: 'Lượng tuyết rơi dày đặc tại quốc gia của ông vào mùa đông năm ngoái', textEn: 'The substantial snowfall in his country during the previous winter' },
+      { id: 'B', text: 'Những đợt sóng nhiệt bất thường vào giữa mùa hè tại vùng xích đạo', textEn: 'Unusual midsummer heatwaves observed in equatorial regions' },
+      { id: 'C', text: 'Tình trạng hạn hán kéo dài làm cạn kiệt các đập thủy điện', textEn: 'Prolonged regional droughts that depleted hydroelectric dams' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói dựa vào hiện tượng thời tiết đơn lẻ trong một mùa đông ("amount of snow we had last winter") tại địa phương để phủ nhận các nghiên cứu khoa học khí hậu quy mô rộng lớn.',
+    distractorMechanismEn: 'The speaker relies on an isolated local observation ("amount of snow we had last winter") to dismiss broader scientific consensus on climate change.',
+    explanation: 'Đáp án là A vì người nói nêu rõ "Look at the amount of snow we had last winter".',
+    explanationEn: 'Option A is correct: the speaker points specifically to "the amount of snow we had last winter".'
   }
 ];

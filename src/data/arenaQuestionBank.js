@@ -1744,6 +1744,49 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'By likening its brilliance to a goal scored by Lionel Messi',
     explanation: 'Người nam khen ngợi bàn thắng quyết định bằng cách ví von nó đỉnh cao như một pha lập công của Lionel Messi ("was like Messi scoring").',
     explanationEn: 'Figurative comparison: The man praises the winning goal by comparing it to a strike by Lionel Messi.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 21 PUBLIC OPINIONS ON MODERN ART & CLIMATE CHANGE
+  // ==========================================
+  {
+    id: 'easy_lis_modern_art_takeleave_t21',
+    difficulty: 'easy',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'vocab',
+    prompt: 'In Topic 1, what does the colloquial idiom "I can take it or leave it" express about Speaker 1\'s stance on modern art?',
+    context: 'Personally, I like some of it, but I\'m not really bothered. I can take it or leave it.',
+    audioText: 'Personally, I like some of it, but I\'m not really bothered. I can take it or leave it.',
+    options: [
+      'Mild indifference without intense emotional attachment either way',
+      'Extreme indignation towards contemporary abstract sculptures',
+      'An obsessive passion to purchase and exhibit modern paintings',
+      'Complete inability to comprehend the artwork\'s visual composition'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Mild indifference without intense emotional attachment either way',
+    explanation: 'Thành ngữ "take it or leave it" thể hiện tâm lý thờ ơ, không mặn mà nhưng cũng không căm ghét (thế nào cũng được).',
+    explanationEn: 'Idiomatic meaning: "Take it or leave it" conveys mild indifference or a neutral attitude without strong attachment.'
+  },
+  {
+    id: 'med_lis_climate_action_oilgas_t21',
+    difficulty: 'medium',
+    topic: 'environment',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Topic 2, what strategic change does Speaker 1 urge society to execute to combat climate change?',
+    context: 'The government should be supporting renewable forms of energy, and we really need to reduce our dependence on oil and gas.',
+    audioText: 'The government should be supporting renewable forms of energy, and we really need to reduce our dependence on oil and gas.',
+    options: [
+      'Support renewable energy and significantly reduce reliance on oil and gas',
+      'Construct high-capacity nuclear reactors in municipal residential zones',
+      'Impose immediate penalties on households failing to compost organic waste',
+      'Halt all technological research until international climate consensus is reached'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Support renewable energy and significantly reduce reliance on oil and gas',
+    explanation: 'Người nói chủ trương chính phủ phải thúc đẩy năng lượng tái tạo và giảm thiểu phụ thuộc vào dầu mỏ và khí đốt ("reduce our dependence on oil and gas").',
+    explanationEn: 'Strategic priority: Speaker 1 urges supporting renewable energy while reducing dependence on oil and gas.'
   }
 ];
 
@@ -1835,7 +1878,10 @@ const R2_AUDIO_METADATA_BY_ID = {
   med_lis_swimming_wish_t19: { audioUrl: `${R2_BASE}/ielts-listening-track19-sports-preferences-and-hobbies.mp3`, clipStart: 15, clipEnd: 27, isR2Audio: true, trackLabel: 'Track 19 • Swimming Facility Shortage' },
   // Track 20: Topical Discussions on Politics, Cinema & Robotics
   easy_lis_election_economy_t20: { audioUrl: `${R2_BASE}/ielts-listening-track20-discussions-politics-film-robotics.mp3`, clipStart: 15, clipEnd: 22, isR2Audio: true, trackLabel: 'Track 20 • Election Economic Strain' },
-  med_lis_robot_football_messi_t20: { audioUrl: `${R2_BASE}/ielts-listening-track20-discussions-politics-film-robotics.mp3`, clipStart: 77, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 20 • Robot Football Messi Goal' }
+  med_lis_robot_football_messi_t20: { audioUrl: `${R2_BASE}/ielts-listening-track20-discussions-politics-film-robotics.mp3`, clipStart: 77, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 20 • Robot Football Messi Goal' },
+  // Track 21: Public Opinions on Modern Art & Climate Change
+  easy_lis_modern_art_takeleave_t21: { audioUrl: `${R2_BASE}/ielts-listening-track21-opinions-modern-art-climate-change.mp3`, clipStart: 18, clipEnd: 27, isR2Audio: true, trackLabel: 'Track 21 • Modern Art Idiom' },
+  med_lis_climate_action_oilgas_t21: { audioUrl: `${R2_BASE}/ielts-listening-track21-opinions-modern-art-climate-change.mp3`, clipStart: 100, clipEnd: 112, isR2Audio: true, trackLabel: 'Track 21 • Renewable Energy Action' }
 };
 
 export const ARENA_QUESTION_BANK = [
