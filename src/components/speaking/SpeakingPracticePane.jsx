@@ -3,7 +3,8 @@ import {
   Mic, MicOff, Volume2, Play, Pause, Square, RotateCcw, CheckCircle2, 
   Sparkles, BookOpen, Layers, Clock, Award, Shield, Compass, Headphones, 
   ChevronRight, ArrowRight, Lightbulb, Copy, Info, AlertCircle, Plus,
-  Trash2, Loader2, GraduationCap, Zap, Edit3, Check
+  Trash2, Loader2, GraduationCap, Zap, Edit3, Check,
+  ChevronDown, Sliders
 } from 'lucide-react';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
 import SpeakingFillerTracker from './SpeakingFillerTracker';
@@ -21,45 +22,13 @@ import SpeakingPart3Room from './subrooms/SpeakingPart3Room';
 import { useTranslation } from '../../context/LanguageContext.jsx';
 
 export default function SpeakingPracticePane({
-  practicePart = 1,
-  setPracticePart,
-  // Part 1 data & state
-  part1Topics = [],
-  onAddP1Topic,
-  onDeleteP1Topic,
-  selectedP1TopicId,
-  setSelectedP1TopicId,
-  activeP1QuestionIndex,
-  setActiveP1QuestionIndex,
-  // Part 2 data & state
-  part2Cards = [],
-  onAddP2Card,
-  onDeleteP2Card,
-  selectedP2CueCardId,
-  setSelectedP2CueCardId,
-  // Part 3 data & state
-  part3Sets = [],
-  onAddP3Set,
-  onDeleteP3Set,
-  selectedP3Id: externalSelectedP3Id,
-  setSelectedP3Id: externalSetSelectedP3Id,
-  onAddP1Question,
-  onDeleteP1Question,
-  onAddP3Question,
-  onDeleteP3Question,
-  activeP3Set,
-  // Engine & callbacks
-  speechEngine,
-  activeExaminer,
-  apiKey,
-  model,
-  onOpenSettings,
-  onOpenIdeaMatrix,
-  onOpenShadowing,
-  onSaveToVocabNotebook,
-  onPracticeAnswerSubmitted,
-  masteredIds = [],
-  onToggleMastered
+  practicePart = 1, setPracticePart,
+  part1Topics = [], onAddP1Topic, onDeleteP1Topic, selectedP1TopicId, setSelectedP1TopicId, activeP1QuestionIndex, setActiveP1QuestionIndex,
+  part2Cards = [], onAddP2Card, onDeleteP2Card, selectedP2CueCardId, setSelectedP2CueCardId,
+  part3Sets = [], onAddP3Set, onDeleteP3Set, selectedP3Id: externalSelectedP3Id, setSelectedP3Id: externalSetSelectedP3Id,
+  onAddP1Question, onDeleteP1Question, onAddP3Question, onDeleteP3Question, activeP3Set,
+  speechEngine, activeExaminer, apiKey, model, onOpenSettings, onOpenIdeaMatrix, onOpenShadowing,
+  onSaveToVocabNotebook, onPracticeAnswerSubmitted, masteredIds = [], onToggleMastered
 }) {
   const { isEn } = useTranslation();
   // Common state
@@ -102,6 +71,26 @@ export default function SpeakingPracticePane({
   const [micErrorDetail, setMicErrorDetail] = useState(null);
   const [editingTranscriptKey, setEditingTranscriptKey] = useState('');
   const [editedTranscriptText, setEditedTranscriptText] = useState('');
+
+  // Mobile Practice Tools Dropdown State & Ref
+  const [isPracticeToolsOpen, setIsPracticeToolsOpen] = useState(false);
+  const practiceToolsRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (practiceToolsRef.current && !practiceToolsRef.current.contains(e.target)) {
+        setIsPracticeToolsOpen(false);
+      }
+    };
+    if (isPracticeToolsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isPracticeToolsOpen]);
 
   // Quick Add Question modal/prompt state
   const [isQuickAddQOpen, setIsQuickAddQOpen] = useState(false);
@@ -388,10 +377,6 @@ export default function SpeakingPracticePane({
     }
   };
 
-  // -------------------------------------------------------------
-  // DUAL-ENGINE EVALUATION HANDLERS & ZERO VOICE RETENTION
-  // -------------------------------------------------------------
-
   // 1. ALGORITHMIC EVALUATION (100% Offline, Instant 0.02ms, Free)
   const handleEvaluateAlgorithmically = (clipKey, questionText, topicTitle, partNum) => {
     let currentTranscript = evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
@@ -625,16 +610,11 @@ export default function SpeakingPracticePane({
 
     const handleTogglePlay = () => {
       if (!clip?.url) return;
-      if (!practiceAudioRef.current) {
+      if (!practiceAudioRef.current || practiceAudioRef.current.src !== clip.url) {
         practiceAudioRef.current = new Audio(clip.url);
         practiceAudioRef.current.onended = () => setIsPlayingPracticeAudio(false);
         practiceAudioRef.current.onerror = () => setIsPlayingPracticeAudio(false);
-      } else if (practiceAudioRef.current.src !== clip.url) {
-        practiceAudioRef.current.src = clip.url;
-        practiceAudioRef.current.onended = () => setIsPlayingPracticeAudio(false);
-        practiceAudioRef.current.onerror = () => setIsPlayingPracticeAudio(false);
       }
-
       if (isPlayingPracticeAudio) {
         practiceAudioRef.current.pause();
         practiceAudioRef.current.currentTime = 0;
@@ -939,7 +919,8 @@ export default function SpeakingPracticePane({
         </div>
 
         {/* Action Tools: AI Generator, Idea Matrix & Shadowing Studio */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0 overflow-x-auto no-scrollbar max-w-full pb-0.5 sm:pb-0">
+        {/* DESKTOP (>= sm) */}
+        <div className="hidden sm:flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           <button
             onClick={() => {
               setTopicModalPart(practicePart);
@@ -969,6 +950,81 @@ export default function SpeakingPracticePane({
             <Headphones className="w-3.5 h-3.5 shrink-0" />
             <span>Shadowing 8.5</span>
           </button>
+        </div>
+
+        {/* MOBILE (< sm) */}
+        <div className="flex sm:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-1">
+          <button
+            onClick={() => {
+              setTopicModalPart(practicePart);
+              setIsTopicModalOpen(true);
+            }}
+            className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
+            title={isEn ? 'Use AI to generate new topics and questions for this Part' : 'Dùng AI để tạo chủ đề và câu hỏi mới cho Part này'}
+          >
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span>{isEn ? '✨ AI Topics' : '✨ Sinh Đề (AI)'}</span>
+          </button>
+
+          <div className="relative shrink-0" ref={practiceToolsRef}>
+            <button
+              type="button"
+              onClick={() => setIsPracticeToolsOpen(prev => !prev)}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer shadow-2xs shrink-0 ${
+                isPracticeToolsOpen
+                  ? 'bg-purple-900/70 text-purple-200 border-purple-500/60 ring-1 ring-purple-400/40'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+              }`}
+              title={isEn ? "Open practice tools" : "Mở công cụ bổ trợ luyện nói"}
+            >
+              <Compass className="w-3.5 h-3.5 text-purple-400" />
+              <span>{isEn ? 'Tools' : 'Công Cụ'}</span>
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-150 ${isPracticeToolsOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isPracticeToolsOpen && (
+              <div className="absolute right-0 top-full mt-1.5 z-50 bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-2 min-w-[210px] space-y-1 animate-in fade-in zoom-in-95 text-slate-200">
+                <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1 flex items-center justify-between">
+                  <span>{isEn ? 'Practice Tools' : 'Công Cụ Luyện Nói'}</span>
+                  <Sliders className="w-3 h-3 text-purple-400" />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPracticeToolsOpen(false);
+                    onOpenIdeaMatrix && onOpenIdeaMatrix();
+                  }}
+                  className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-purple-200 flex items-center space-x-2.5 cursor-pointer transition-colors"
+                >
+                  <Compass className="w-4 h-4 text-purple-400 shrink-0" />
+                  <div className="flex-1 truncate">
+                    <span>Idea Matrix (5W1H)</span>
+                    <span className="text-[10px] text-slate-400 block font-normal">
+                      {isEn ? 'Multi-perspective ideas' : 'Gợi ý ý tưởng đa góc nhìn'}
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPracticeToolsOpen(false);
+                    onOpenShadowing && onOpenShadowing();
+                  }}
+                  className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-emerald-300 flex items-center space-x-2.5 cursor-pointer transition-colors"
+                >
+                  <Headphones className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="flex-1 truncate">
+                    <span>Shadowing 8.5+</span>
+                    <span className="text-[10px] text-slate-400 block font-normal">
+                      {isEn ? 'Pronunciation mimic' : 'Nhại giọng chuẩn bản xứ'}
+                    </span>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

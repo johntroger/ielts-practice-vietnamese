@@ -97,28 +97,31 @@ export default function SpeakingPart1Room({
   return (
     <div className="space-y-4 animate-in fade-in duration-150">
       {/* Sleek Unified Part 1 Topic Selector Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/90 p-3 rounded-2xl border border-slate-800 shadow-md">
-        <div className="flex items-center space-x-2 flex-wrap sm:flex-nowrap min-w-0 flex-1">
-          <span className="text-xs font-bold text-slate-300 shrink-0">
-            {isEn ? 'Topic:' : 'Chủ đề:'}
-          </span>
+      <div className="flex flex-col gap-2.5 sm:gap-3 bg-slate-900/90 p-2.5 sm:p-3 rounded-2xl border border-slate-800 shadow-md">
+        {/* Top: Topic Selector + Stepper */}
+        <div className="flex items-center justify-between gap-2 min-w-0">
+          <div className="flex items-center space-x-1.5 flex-1 min-w-0">
+            <span className="text-xs font-bold text-slate-400 shrink-0 hidden sm:inline">
+              {isEn ? 'Topic:' : 'Chủ đề:'}
+            </span>
 
-          <select
-            value={selectedP1TopicId}
-            onChange={(e) => {
-              setSelectedP1TopicId(e.target.value);
-              setActiveP1QuestionIndex(0);
-              setShowSampleAnswer(false);
-              if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
-            }}
-            className="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-white font-bold focus:outline-hidden focus:border-purple-500 max-w-[260px] sm:max-w-[320px] truncate cursor-pointer shrink-0"
-          >
-            {displayedTopics.map(t => (
-              <option key={t.id} value={t.id}>
-                {t.title} {masteredIds.includes(t.id) ? '🎓' : ''}
-              </option>
-            ))}
-          </select>
+            <select
+              value={selectedP1TopicId}
+              onChange={(e) => {
+                setSelectedP1TopicId(e.target.value);
+                setActiveP1QuestionIndex(0);
+                setShowSampleAnswer(false);
+                if (speechEngine?.resetTranscript) speechEngine.resetTranscript();
+              }}
+              className="bg-slate-950 border border-slate-700/80 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs text-white font-bold focus:outline-hidden focus:border-purple-500 w-full truncate cursor-pointer"
+            >
+              {displayedTopics.map(t => (
+                <option key={t.id} value={t.id}>
+                  {t.title} {masteredIds.includes(t.id) ? '🎓' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Prev / Next Buttons with Counter */}
           <div className="flex items-center space-x-1 shrink-0 bg-slate-950 border border-slate-800 rounded-xl p-0.5">
@@ -131,8 +134,8 @@ export default function SpeakingPart1Room({
             >
               ◀
             </button>
-            <span className="px-1.5 text-[11px] font-black text-purple-300 min-w-[50px] text-center">
-              {displayedTopics.length > 0 ? `${currentTopicIndex + 1} / ${displayedTopics.length}` : '0 / 0'}
+            <span className="px-1.5 text-[11px] font-black text-purple-300 min-w-[46px] text-center">
+              {displayedTopics.length > 0 ? `${currentTopicIndex + 1}/${displayedTopics.length}` : '0/0'}
             </span>
             <button
               type="button"
@@ -144,46 +147,48 @@ export default function SpeakingPart1Room({
               ▶
             </button>
           </div>
-
-          {/* Mastered badge */}
-          {masteredIds.includes(activeP1Topic?.id) && (
-            <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 flex items-center space-x-1">
-              <GraduationCap className="w-3 h-3 text-emerald-400" />
-              <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
-            </span>
-          )}
-
-          {/* Custom / Community tags */}
-          {activeP1Topic?.isCommunity || (activeP1Topic?.isPublic && activeP1Topic?.isCustom) ? (
-            <span className="text-[9px] px-1.5 py-0.5 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40 shrink-0">
-              {isEn ? '🌐 Community' : '🌐 Cộng Đồng'}
-            </span>
-          ) : activeP1Topic?.isCustom ? (
-            <span className="text-[9px] px-1.5 py-0.5 bg-amber-950/80 rounded text-amber-300 border border-amber-500/40 shrink-0">
-              {isEn ? '🔒 Custom' : '🔒 Riêng'}
-            </span>
-          ) : null}
         </div>
 
-        {/* Right side: Hide Mastered checkbox & Single AI Generator CTA */}
-        <div className="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
-          <label className="flex items-center space-x-1.5 text-xs text-slate-400 cursor-pointer select-none px-2 py-1 rounded-lg hover:bg-slate-800 transition-colors">
-            <input
-              type="checkbox"
-              checked={hideMastered}
-              onChange={handleToggleHideMastered}
-              className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-800 text-purple-600 focus:ring-purple-500 cursor-pointer"
-            />
-            <span className="whitespace-nowrap font-medium text-[11px]">{isEn ? 'Hide mastered' : 'Ẩn đã thuộc'}</span>
-          </label>
+        {/* Bottom Sub-row: Badges, Hide Mastered & Add Topic Button */}
+        <div className="flex items-center justify-between gap-2 pt-0.5 border-t border-slate-800/60">
+          <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
+            {/* Mastered badge */}
+            {masteredIds.includes(activeP1Topic?.id) && (
+              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 flex items-center space-x-1">
+                <GraduationCap className="w-3 h-3 text-emerald-400" />
+                <span>{isEn ? 'Mastered' : 'Đã thuộc'}</span>
+              </span>
+            )}
+
+            {/* Custom / Community tags */}
+            {activeP1Topic?.isCommunity || (activeP1Topic?.isPublic && activeP1Topic?.isCustom) ? (
+              <span className="text-[9px] px-1.5 py-0.5 bg-emerald-950/80 rounded text-emerald-300 border border-emerald-500/40 shrink-0">
+                {isEn ? '🌐 Community' : '🌐 Cộng Đồng'}
+              </span>
+            ) : activeP1Topic?.isCustom ? (
+              <span className="text-[9px] px-1.5 py-0.5 bg-amber-950/80 rounded text-amber-300 border border-amber-500/40 shrink-0">
+                {isEn ? '🔒 Custom' : '🔒 Riêng'}
+              </span>
+            ) : null}
+
+            <label className="flex items-center space-x-1.5 text-xs text-slate-400 cursor-pointer select-none px-1.5 py-0.5 rounded-lg hover:bg-slate-800 transition-colors">
+              <input
+                type="checkbox"
+                checked={hideMastered}
+                onChange={handleToggleHideMastered}
+                className="w-3.5 h-3.5 rounded border-slate-700 bg-slate-800 text-purple-600 focus:ring-purple-500 cursor-pointer"
+              />
+              <span className="whitespace-nowrap font-medium text-[11px]">{isEn ? 'Hide mastered' : 'Ẩn đã thuộc'}</span>
+            </label>
+          </div>
 
           <button
             onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
-            className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer transition-all shrink-0"
+            className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold flex items-center space-x-1 shadow-md shadow-purple-900/30 cursor-pointer transition-all shrink-0"
             title={isEn ? 'Create or generate Part 1 topics with AI' : 'Thêm hoặc sinh chủ đề Part 1 mới bằng AI'}
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-            <span>{isEn ? '+ New Topic (AI)' : '+ Thêm Chủ Đề (AI)'}</span>
+            <span>{isEn ? '+ Topic' : '+ Thêm Đề (AI)'}</span>
           </button>
         </div>
       </div>

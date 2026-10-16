@@ -1620,6 +1620,49 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The fierce competitive nature and the pleasure of defeating friends',
     explanation: 'Người nói số 2 thích tennis vì tính cạnh tranh cao và cảm giác đánh bại bạn bè ("as it is very competitive, and I like to beat my friends").',
     explanationEn: 'Speaker 2 enjoys tennis specifically because of its competitiveness and the thrill of beating friends.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 18 SPORTING ACHIEVEMENTS & ATHLETIC FEATS
+  // ==========================================
+  {
+    id: 'easy_lis_olympics_t18',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to statement two, which country finished in second place on the London 2012 medals table?',
+    context: 'At London 2012, the United States was top of the medals table, followed by China, then Great Britain and Northern Ireland.',
+    audioText: 'At London 2012, the United States was top of the medals table, followed by China, then Great Britain and Northern Ireland.',
+    options: [
+      'China',
+      'The United States',
+      'Great Britain and Northern Ireland',
+      'Russia'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'China',
+    explanation: 'Bảng xếp hạng nêu rõ Hoa Kỳ đứng đầu ("top"), theo sau bởi Trung Quốc ở vị trí thứ hai ("followed by China"), rồi mới tới Vương quốc Anh và Bắc Ireland ("then Great Britain and Northern Ireland").',
+    explanationEn: 'Ranking sequence: The United States was top, followed immediately by China in second place, and Great Britain and Northern Ireland in third.'
+  },
+  {
+    id: 'med_lis_jordan_record_t18',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What does statement four confirm about Michael Jordan\'s NBA playoff record?',
+    context: 'Michael Jordan is the number one all-time point scorer in the NBA playoffs, although LeBron James is catching up.',
+    audioText: 'Michael Jordan is the number one all-time point scorer in the NBA playoffs, although LeBron James is catching up.',
+    options: [
+      'He currently holds the number one all-time playoff scoring position, but LeBron James is closing the gap',
+      'His all-time scoring record has already been surpassed by LeBron James',
+      'He retired as second behind LeBron James in overall tournament scoring',
+      'He and LeBron James share an exact tie for the highest playoff points'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He currently holds the number one all-time playoff scoring position, but LeBron James is closing the gap',
+    explanation: 'Michael Jordan hiện vẫn giữ vị trí dẫn đầu ghi điểm vòng playoff ("number one all-time point scorer"), dù LeBron James đang theo sát phía sau ("is catching up") chứ chưa vượt qua.',
+    explanationEn: 'Record status: Michael Jordan remains the number one all-time playoff scorer, with LeBron James actively catching up but not having overtaken him yet.'
   }
 ];
 
@@ -1702,7 +1745,10 @@ const R2_AUDIO_METADATA_BY_ID = {
   hard_lis_steve_reserve_t16: { audioUrl: `${R2_BASE}/ielts-listening-track16-sports-event-organizers-duty.mp3`, clipStart: 124, clipEnd: 142, isR2Audio: true, trackLabel: 'Track 16 • Steve Contingency' },
   // Track 17: Athletic Motivations & Benefits
   easy_lis_rowing_health_t17: { audioUrl: `${R2_BASE}/ielts-listening-track17-sports-benefits-and-opinions.mp3`, clipStart: 2, clipEnd: 8, isR2Audio: true, trackLabel: 'Track 17 • Rowing Benefits' },
-  med_lis_tennis_competitive_t17: { audioUrl: `${R2_BASE}/ielts-listening-track17-sports-benefits-and-opinions.mp3`, clipStart: 10, clipEnd: 18, isR2Audio: true, trackLabel: 'Track 17 • Tennis Motivation' }
+  med_lis_tennis_competitive_t17: { audioUrl: `${R2_BASE}/ielts-listening-track17-sports-benefits-and-opinions.mp3`, clipStart: 10, clipEnd: 18, isR2Audio: true, trackLabel: 'Track 17 • Tennis Motivation' },
+  // Track 18: Sporting Achievements & Athletic Feats
+  easy_lis_olympics_t18: { audioUrl: `${R2_BASE}/ielts-listening-track18-sports-facts-and-achievements.mp3`, clipStart: 11, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 18 • Olympic Rankings' },
+  med_lis_jordan_record_t18: { audioUrl: `${R2_BASE}/ielts-listening-track18-sports-facts-and-achievements.mp3`, clipStart: 31, clipEnd: 43, isR2Audio: true, trackLabel: 'Track 18 • NBA Playoff Record' }
 };
 
 export const ARENA_QUESTION_BANK = [

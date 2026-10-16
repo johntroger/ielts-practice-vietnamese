@@ -119,7 +119,8 @@ export default function SpeakingPart3Room({
             )}
           </div>
 
-          <div className="flex items-center space-x-2 flex-wrap gap-2">
+          {/* DESKTOP (>= sm) */}
+          <div className="hidden sm:flex items-center space-x-2 shrink-0">
             <button
               type="button"
               onClick={() => openTheoryModalWithContext({
@@ -139,11 +140,39 @@ export default function SpeakingPart3Room({
             {/* ADD PART 3 TOPIC BUTTON */}
             <button
               onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
-              className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
+              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
               title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
             >
               <Sparkles className="w-3.5 h-3.5 text-purple-200" />
               <span>{isEn ? '+ Generate Discussion Set (AI)' : '+ Sinh Bộ Thảo Luận Bằng AI'}</span>
+            </button>
+          </div>
+
+          {/* MOBILE (< sm) */}
+          <div className="flex sm:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-1">
+            <button
+              onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
+              className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
+              title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+              <span>{isEn ? '+ AI Discussion' : '+ Thảo Luận AI'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => openTheoryModalWithContext({
+                skill: 'speaking',
+                category: 'part3',
+                subType: 'critical-thinking',
+                topicId: 'critical-thinking-part3',
+                title: isEn ? 'Critical Thinking & PEEL Matrix in Part 3' : 'Tư Duy Phản Biện & Ma Trận PEEL Trong Part 3'
+              })}
+              className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 text-[11px] font-bold flex items-center space-x-1 cursor-pointer shrink-0"
+              title={isEn ? 'Open PEEL guide' : 'Mở cẩm nang PEEL'}
+            >
+              <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+              <span>{isEn ? 'PEEL Guide' : 'Cẩm Nang PEEL'}</span>
             </button>
           </div>
         </div>

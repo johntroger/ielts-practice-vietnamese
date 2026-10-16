@@ -1128,5 +1128,55 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'Test-takers often confuse the rationale with speaker 1\'s "stay fit and healthy" (applicable to rowing), whereas tennis is motivated by "very competitive, and I like to beat my friends".',
     explanation: 'Đáp án là A vì lý do của tennis được nêu trực tiếp: "as it is very competitive, and I like to beat my friends".',
     explanationEn: 'Option A is correct: the speaker explicitly accounts for tennis with "as it is very competitive, and I like to beat my friends".'
+  },
+  {
+    id: 'ldrill-dist-track18-olympic-rankings',
+    type: 'listening-distractor',
+    title: 'Bẫy thứ tự xếp hạng huy chương Olympic: Top vs Followed by vs Then (Track 18)',
+    titleEn: 'Olympic Medal Ranking Sequence Trap: Top vs Followed by vs Then (Track 18)',
+    category: 'Sporting Achievements & Rankings',
+    categoryEn: 'Sporting Achievements & Rankings',
+    audioSnippetText: 'At London 2012, the United States was top of the medals table, followed by China, then Great Britain and Northern Ireland.',
+    audioText: 'At London 2012, the United States was top of the medals table, followed by China, then Great Britain and Northern Ireland.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track18-sports-facts-and-achievements.mp3',
+    clipStart: 11,
+    clipEnd: 23,
+    question: 'Quốc gia nào xếp ở vị trí thứ hai trên bảng tổng sắp huy chương tại Thế vận hội London 2012?',
+    questionEn: 'Which country finished in second place on the medal table at the London 2012 Olympics?',
+    options: [
+      { id: 'A', text: 'Trung Quốc (Xếp thứ hai, ngay sau Hoa Kỳ)', textEn: 'China (Finished second, immediately following the USA)' },
+      { id: 'B', text: 'Hoa Kỳ (Đứng đầu bảng tổng sắp)', textEn: 'The United States (Finished at the top of the table)' },
+      { id: 'C', text: 'Vương quốc Anh và Bắc Ireland (Đứng thứ ba)', textEn: 'Great Britain and Northern Ireland (Finished in third place)' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói sử dụng chuỗi liên từ chỉ thứ tự: "top of the medals table" (hạng 1: Hoa Kỳ), "followed by" (hạng 2: Trung Quốc), và "then" (hạng 3: Great Britain & Northern Ireland).',
+    distractorMechanismEn: 'The speaker uses a sequence of ranking markers: "top of the medals table" (1st: United States), "followed by" (2nd: China), and "then" (3rd: Great Britain & Northern Ireland).',
+    explanation: 'Đáp án là A vì "followed by China" xác định Trung Quốc xếp ở vị trí thứ hai sau Hoa Kỳ.',
+    explanationEn: 'Option A is correct: "followed by China" confirms China in the second position directly behind the United States.'
+  },
+  {
+    id: 'ldrill-dist-track18-gym-mind-change',
+    type: 'listening-distractor',
+    title: 'Bẫy thay đổi ý định: Intention (Was going to) vs Reality (Decided not to bother) (Track 18)',
+    titleEn: 'Intention vs Reality Trap: Was going to vs Decided not to bother (Track 18)',
+    category: 'Athletic Routines & Habits',
+    categoryEn: 'Athletic Routines & Habits',
+    audioSnippetText: 'Last weekend, I was going to go to the gym, but I decided not to bother.',
+    audioText: 'Last weekend, I was going to go to the gym, but I decided not to bother.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track18-sports-facts-and-achievements.mp3',
+    clipStart: 23,
+    clipEnd: 31,
+    question: 'Người nói đã thực sự làm gì vào cuối tuần trước liên quan đến việc tập thể hình (gym)?',
+    questionEn: 'What did the speaker actually end up doing regarding the gym last weekend?',
+    options: [
+      { id: 'A', text: 'Không đi tập vì đã đổi ý và quyết định không bận tâm đến việc đó nữa', textEn: 'Did not go because they changed their mind and decided not to bother' },
+      { id: 'B', text: 'Đã đến phòng gym tập luyện đúng như kế hoạch ban đầu', textEn: 'Went to the gym and completed their workout as originally planned' },
+      { id: 'C', text: 'Tập thể dục tại nhà vì phòng gym quá đông', textEn: 'Exercised at home because the gym was too crowded' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Cấu trúc "was going to" thể hiện ý định chưa thành trong quá khứ, vế sau với liên từ "but I decided not to bother" (quyết định khỏi bận tâm) xác nhận việc đi gym đã bị hủy bỏ.',
+    distractorMechanismEn: 'The grammatical structure "was going to" signals an unfulfilled intention, while "but I decided not to bother" definitively confirms that the gym trip was cancelled.',
+    explanation: 'Đáp án là A vì cụm "decided not to bother" đồng nghĩa với việc không thực hiện hành động đã định.',
+    explanationEn: 'Option A is correct: "decided not to bother" expresses abandoning the intended action completely.'
   }
 ];

@@ -5,7 +5,7 @@ import {
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
   RotateCcw, X, Loader2, GraduationCap, PenTool,
-  Maximize2, Minimize2
+  Maximize2, Minimize2, ChevronDown, Sliders
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -88,6 +88,26 @@ export default function SpeakingWorkspace({
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
+
+  // Consolidated Mobile Tools Dropdown State & Ref
+  const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
+  const mobileToolsRef = React.useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (mobileToolsRef.current && !mobileToolsRef.current.contains(e.target)) {
+        setIsMobileToolsOpen(false);
+      }
+    };
+    if (isMobileToolsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isMobileToolsOpen]);
 
   // Sync external generator trigger
   useEffect(() => {
@@ -601,7 +621,8 @@ export default function SpeakingWorkspace({
         </div>
 
         {/* Right / Row 2 on Mobile: Examiner Profile Picker & Quick Tools */}
-        <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 shrink-0 overflow-x-auto no-scrollbar">
+        {/* DESKTOP LAYOUT (>= md) */}
+        <div className="hidden md:flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           {/* AI Generator Quick Button */}
           <button
             onClick={() => {
@@ -706,6 +727,173 @@ export default function SpeakingWorkspace({
             </button>
           )}
         </div>
+
+        {/* MOBILE CONSOLIDATED CONTROLS (< md) */}
+        <div className="flex md:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-0.5">
+          {/* Left: AI Generator Button */}
+          <button
+            onClick={() => {
+              if (activeMode === 'practice') {
+                setIsPracticeTopicModalOpen(true);
+              } else {
+                setIsGeneratorOpen(true);
+              }
+            }}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-bold shadow-sm cursor-pointer shrink-0"
+            title={activeMode === 'practice' ? (isEn ? "Generate speaking practice topics with AI" : "Dùng AI để sinh chủ đề luyện tập mới") : (isEn ? "Generate new speaking mock test with AI" : "Dùng AI để tạo bộ đề thi Speaking mới")}
+          >
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span>{activeMode === 'practice' ? (isEn ? 'AI Topics' : 'Sinh Đề AI') : (isEn ? 'AI Test' : 'Sinh Đề AI')}</span>
+          </button>
+
+          {/* Middle: Examiner Picker */}
+          <div className="relative flex items-center bg-slate-800/80 border border-slate-700/60 rounded-xl px-2 py-1 text-[11px] shrink-0 max-w-[150px]">
+            <span className="text-sm mr-1 shrink-0">{activeExaminer.avatar}</span>
+            <select
+              value={selectedExaminerId}
+              onChange={(e) => setSelectedExaminerId(e.target.value)}
+              className="bg-transparent text-slate-200 text-[11px] font-bold focus:outline-none cursor-pointer truncate"
+            >
+              {SPEAKING_EXAMINER_PROFILES.map(ex => (
+                <option key={ex.id} value={ex.id} className="bg-slate-900 text-slate-200">
+                  {ex.name} ({ex.accent.split(' ')[0]})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Right: Consolidated Mobile Tools Dropdown (Dropbox) */}
+          <div className="relative shrink-0" ref={mobileToolsRef}>
+            <button
+              type="button"
+              onClick={() => setIsMobileToolsOpen(prev => !prev)}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer shadow-2xs shrink-0 ${
+                isMobileToolsOpen
+                  ? 'bg-purple-900/70 text-purple-200 border-purple-500/60 ring-1 ring-purple-400/40'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+              }`}
+              title={isEn ? "Open speaking utilities" : "Mở tiện ích phòng thi Speaking"}
+            >
+              <Sliders className="w-3.5 h-3.5 text-purple-400" />
+              <span>{isEn ? 'Tools' : 'Tiện Ích'}</span>
+              <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-150 ${isMobileToolsOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Mobile Tools Dropdown Popup */}
+            {isMobileToolsOpen && (
+              <div className="absolute right-0 top-full mt-1.5 z-50 bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-2 min-w-[220px] max-w-[280px] space-y-1 animate-in fade-in zoom-in-95 text-slate-200">
+                <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1.5 flex items-center justify-between">
+                  <span>{isEn ? 'Speaking Utilities' : 'Tiện Ích Phòng Thi'}</span>
+                  <Sliders className="w-3 h-3 text-purple-400" />
+                </div>
+
+                {/* Library Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileToolsOpen(false);
+                    if (activeMode === 'mock') {
+                      setIsMockLibraryOpen(true);
+                    } else {
+                      setIsPracticeTopicModalOpen(true);
+                    }
+                  }}
+                  className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-purple-200 flex items-center space-x-2.5 cursor-pointer transition-colors"
+                >
+                  <Layers className="w-4 h-4 text-purple-400 shrink-0" />
+                  <div className="flex-1 truncate">
+                    <span>{isEn ? 'Mock Test Library' : 'Kho Đề Thi Thử'}</span>
+                    <span className="text-[10px] text-slate-400 block font-normal">
+                      {allMockPacks.length} {isEn ? 'Test Packs' : 'bộ đề chuẩn IDP/BC'}
+                    </span>
+                  </div>
+                </button>
+
+                {/* Soundcheck Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileToolsOpen(false);
+                    setIsSoundcheckOpen(true);
+                  }}
+                  className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-emerald-300 flex items-center space-x-2.5 cursor-pointer transition-colors"
+                >
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="flex-1 truncate">
+                    <span>{isEn ? 'Soundcheck Device' : 'Kiểm Tra Micro & Loa'}</span>
+                    <span className="text-[10px] text-slate-400 block font-normal">
+                      {isEn ? 'Test voice recorder' : 'Đảm bảo micro thu âm tốt'}
+                    </span>
+                  </div>
+                </button>
+
+                {/* Theory Handbook Button */}
+                {onOpenTheory && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileToolsOpen(false);
+                      onOpenTheory();
+                    }}
+                    className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-amber-200 flex items-center space-x-2.5 cursor-pointer transition-colors"
+                  >
+                    <BookOpen className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="flex-1 truncate">
+                      <span>{isEn ? 'Strategy Handbook' : 'Cẩm Nang Chiến Thuật'}</span>
+                      <span className="text-[10px] text-slate-400 block font-normal">
+                        {isEn ? 'A.R.E.A & PEEL Matrix' : 'Chiến thuật 4 tiêu chí'}
+                      </span>
+                    </div>
+                  </button>
+                )}
+
+                {/* Settings Button */}
+                {onOpenSettings && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileToolsOpen(false);
+                      onOpenSettings();
+                    }}
+                    className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-slate-300 flex items-center space-x-2.5 cursor-pointer transition-colors"
+                  >
+                    <Settings className="w-4 h-4 text-slate-400 shrink-0" />
+                    <div className="flex-1 truncate">
+                      <span>{isEn ? 'API & Audio Settings' : 'Cài Đặt API & Âm Thanh'}</span>
+                      <span className="text-[10px] text-slate-500 block font-normal">
+                        Gemini & AI Audio Key
+                      </span>
+                    </div>
+                  </button>
+                )}
+
+                {/* Workspace Expansion Toggle (Alt + Z) */}
+                {toggleSlimHeader && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileToolsOpen(false);
+                      toggleSlimHeader();
+                    }}
+                    className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-cyan-300 flex items-center space-x-2.5 cursor-pointer transition-colors border-t border-slate-800/80 pt-2"
+                  >
+                    {isSlimHeader ? (
+                      <>
+                        <Minimize2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                        <span>{isEn ? 'Exit Expanded View' : 'Thu Gọn Mở Rộng'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Maximize2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                        <span>{isEn ? 'Maximize Screen' : 'Toàn Màn Hình (Alt+Z)'}</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* 1. BROWSER PRE-FLIGHT NOTICE BANNER */}
@@ -773,14 +961,14 @@ export default function SpeakingWorkspace({
                   <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                     {isEn ? 'IELTS Speaking Mock Exam Room with AI Examiner' : 'Phòng Thi Thử IELTS Speaking Với Giám Khảo AI'}
                   </h1>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed hidden sm:block">
                     {isEn
                       ? 'Live 1-on-1 voice interaction with AI Examiner: Part 1 interview, 60s Part 2 cue card scratchpad, and deep analytical follow-up questions in Part 3.'
                       : 'Trải nghiệm tương tác giọng nói 1-on-1 trực tiếp với Giám khảo AI: hỏi đáp Part 1, 60s nháp ghi chú Part 2, và câu hỏi follow-up phản biện chuyên sâu ở Part 3.'}
                   </p>
 
                   {/* Persistent Browser Advice Box */}
-                  <div className={`mt-3 p-2.5 rounded-xl border text-xs flex items-center space-x-2.5 ${
+                  <div className={`mt-3 p-2.5 rounded-xl border text-xs hidden sm:flex items-center space-x-2.5 ${
                     isChrome 
                       ? 'bg-emerald-950/40 border-emerald-600/40 text-emerald-200' 
                       : 'bg-amber-950/60 border-amber-500/50 text-amber-200'
@@ -799,9 +987,9 @@ export default function SpeakingWorkspace({
                 </div>
 
                 {/* Examiner Card with Voice Test & Instant Enter Button */}
-                <div className="flex flex-col gap-2.5 shrink-0">
+                <div className="flex flex-col gap-2.5 shrink-0 w-full sm:w-auto">
                   <div className="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 flex items-center space-x-3 shadow-md">
-                    <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-700/50 flex items-center justify-center text-2xl">
+                    <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-700/50 flex items-center justify-center text-2xl shrink-0">
                       {activeExaminer.avatar}
                     </div>
                     <div>
@@ -850,7 +1038,7 @@ export default function SpeakingWorkspace({
                   <button
                     type="button"
                     onClick={() => setIsMockLibraryOpen(true)}
-                    className="px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 hover:text-white border border-purple-500/50 font-bold text-xs shadow-md shadow-purple-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                    className="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 hover:text-white border border-purple-500/50 font-bold text-xs shadow-md shadow-purple-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
                     title={isEn ? 'View all test packs in full library modal' : 'Mở toàn bộ kho đề thi trong cửa sổ riêng để tiết kiệm diện tích'}
                   >
                     <Layers className="w-4 h-4 text-purple-400" />
@@ -862,7 +1050,7 @@ export default function SpeakingWorkspace({
                       setGeneratorInitialMode('manual');
                       setIsGeneratorOpen(true);
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                    className="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-950/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
                     title={isEn ? 'Create custom Speaking test pack manually' : 'Tự tay tạo bộ đề Speaking mới theo chủ đề mong muốn'}
                   >
                     <PenTool className="w-4 h-4" />
@@ -874,7 +1062,7 @@ export default function SpeakingWorkspace({
                       setGeneratorInitialMode('ai');
                       setIsGeneratorOpen(true);
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                    className="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
                     title={isEn ? 'Use AI to generate new Speaking test pack' : 'Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn'}
                   >
                     <Sparkles className="w-4 h-4" />
@@ -885,7 +1073,23 @@ export default function SpeakingWorkspace({
 
               {/* FILTER PILLS & SWITCHER */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                <div className="flex flex-wrap items-center gap-1.5">
+                {/* On Mobile: Compact Filter Dropdown (Dropbox) */}
+                <div className="flex sm:hidden items-center space-x-1.5 flex-1 min-w-0">
+                  <span className="text-[11px] font-bold text-slate-400 shrink-0">{isEn ? 'Filter:' : 'Lọc:'}</span>
+                  <select
+                    value={mockFilter}
+                    onChange={(e) => setMockFilter(e.target.value)}
+                    className="bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1 text-xs text-purple-300 font-bold focus:outline-hidden focus:border-purple-500 flex-1 truncate cursor-pointer"
+                  >
+                    <option value="all">{isEn ? `All Tests (${mockPackCounts.all})` : `Tất Cả (${mockPackCounts.all})`}</option>
+                    <option value="cambridge">🏛️ {isEn ? `Cambridge Standard (${mockPackCounts.cambridge})` : `Chuẩn Cam (${mockPackCounts.cambridge})`}</option>
+                    <option value="manual">✍️ {isEn ? `Manual Custom (${mockPackCounts.manual})` : `Thủ Công (${mockPackCounts.manual})`}</option>
+                    <option value="ai">🤖 {isEn ? `AI Generated (${mockPackCounts.ai})` : `AI Sinh (${mockPackCounts.ai})`}</option>
+                  </select>
+                </div>
+
+                {/* On Desktop: Full Pills */}
+                <div className="hidden sm:flex flex-wrap items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setMockFilter('all')}
