@@ -1002,6 +1002,84 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Heavy vehicular traffic congestion',
     explanation: 'Chất lượng môi trường giảm sút được người nói quy trực tiếp cho lưu lượng và ách tắc giao thông (due to the traffic).',
     explanationEn: 'Environmental impact: The speaker directly attributes the deteriorating local environment to traffic.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 10 WORD STRESS & PRONUNCIATION
+  // ==========================================
+  {
+    id: 'easy_lis_stress_accommodation_t10',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to the word "accommodation". On which syllable does the PRIMARY stress fall?',
+    context: '2. Accommodation',
+    audioText: 'Accommodation',
+    options: [
+      'The fourth syllable (ac-com-mo-DA-tion)',
+      'The second syllable (ac-COM-mo-da-tion)',
+      'The first syllable (AC-com-mo-da-tion)',
+      'The third syllable (ac-com-MO-da-tion)'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The fourth syllable (ac-com-mo-DA-tion)',
+    explanation: 'Từ "accommodation" (/əˌkɒm.əˈdeɪ.ʃən/) có trọng âm chính rơi vào âm tiết thứ tư (DA), ngay trước hậu tố -tion.',
+    explanationEn: "Syllable stress rule: In 'accommodation' (/əˌkɒm.əˈdeɪ.ʃən/), the primary stress falls on the fourth syllable immediately preceding the suffix -tion."
+  },
+  {
+    id: 'med_lis_silent_env_t10',
+    difficulty: 'medium',
+    topic: 'environment',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In the spoken word "environment", which consonant letter is often silent or elided before "m"?',
+    context: '12. Environment',
+    audioText: 'Environment',
+    options: [
+      'The letter "n" (en-vi-ro[n]-ment)',
+      'The letter "v" (en-[v]i-ron-ment)',
+      'The letter "r" (en-vi-[r]on-ment)',
+      'The letter "t" (en-vi-ron-men[t])'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The letter "n" (en-vi-ro[n]-ment)',
+    explanation: 'Bẫy chính tả & phát âm: Người bản xứ thường phát âm /ɪnˈvaɪ.rən.mənt/ hoặc nuốt nhẹ chữ "n" trước "m", khiến nhiều thí sinh viết sai chính tả thiếu chữ "n".',
+    explanationEn: "Acoustic elision: The letter 'n' before 'ment' is frequently suppressed or softened in native speech, making it a classic IELTS spelling trap."
+  },
+  {
+    id: 'med_lis_stress_geography_t10',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'vocab',
+    type: 'vocab',
+    prompt: 'Listen to the word "geography". Where does the primary stress fall?',
+    context: '13. Geography',
+    audioText: 'Geography',
+    options: [
+      'The second syllable (ge-OG-ra-phy)',
+      'The first syllable (GE-o-gra-phy)',
+      'The third syllable (ge-o-GRA-phy)',
+      'The fourth syllable (ge-o-gra-PHY)'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The second syllable (ge-OG-ra-phy)',
+    explanation: 'Các từ kết thúc bằng hậu tố "-graphy" luôn có trọng âm rơi vào âm tiết đứng ngay trước nó: ge-OG-ra-phy (/dʒiˈɒɡ.rə.fi/).',
+    explanationEn: "Stress pattern: Words terminating in '-graphy' consistently place primary stress on the antepenultimate syllable (ge-OG-ra-phy)."
+  },
+  {
+    id: 'hard_lis_spell_scenery_t10',
+    difficulty: 'hard',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to Item 16. What is the correct orthographic spelling of this landscape noun?',
+    context: '16. Scenery',
+    audioText: 'Scenery',
+    options: ['Scenery', 'Seanery', 'Senery', 'Scenary'],
+    correctIndex: 0,
+    correctAnswer: 'Scenery',
+    explanation: 'Từ "scenery" (/ˈsiː.nər.i/) có chữ "c" câm đứng sau "s", và kết thúc bằng đuôi "-ery", không phải "-ary" hay "sea-".',
+    explanationEn: "Orthographic trap: 'Scenery' features a silent 'c' after 's' and terminates in '-ery'."
   }
 ];
 
@@ -1046,7 +1124,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_inhabitants_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 68, clipEnd: 84, isR2Audio: true, trackLabel: 'Track 9 • Inhabitants & Weather' },
   med_lis_architecture_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 26, clipEnd: 37, isR2Audio: true, trackLabel: 'Track 9 • Architecture Vocab' },
   med_lis_residential_dull_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 114, clipEnd: 131, isR2Audio: true, trackLabel: 'Track 9 • Residential Areas' },
-  hard_lis_traffic_env_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 163, clipEnd: 179, isR2Audio: true, trackLabel: 'Track 9 • Traffic & Environment' }
+  hard_lis_traffic_env_t9: { audioUrl: `${R2_BASE}/ielts-listening-track9-hometown-architecture-and-living.mp3`, clipStart: 163, clipEnd: 179, isR2Audio: true, trackLabel: 'Track 9 • Traffic & Environment' },
+  // Track 10: Word Stress & Pronunciation Lab
+  easy_lis_stress_accommodation_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 5, clipEnd: 9, isR2Audio: true, trackLabel: 'Track 10 • Stress: Accommodation' },
+  med_lis_silent_env_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 50, clipEnd: 55, isR2Audio: true, trackLabel: 'Track 10 • Spelling: Environment' },
+  med_lis_stress_geography_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 55, clipEnd: 60, isR2Audio: true, trackLabel: 'Track 10 • Stress: Geography' },
+  hard_lis_spell_scenery_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 69, clipEnd: 74, isR2Audio: true, trackLabel: 'Track 10 • Spelling: Scenery' }
 };
 
 export const ARENA_QUESTION_BANK = [

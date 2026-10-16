@@ -645,5 +645,43 @@ export const LISTENING_MICRO_DRILLS = [
     correctOption: 'A',
     distractorMechanism: 'Người nói nhấn mạnh yếu tố môi trường trong lành ("where it\'s cleaner"). Đừng suy diễn các lý do kinh tế hay chi phí không được đề cập.',
     explanation: 'Đáp án là A vì câu nói nêu rõ "to go to the countryside, where it\'s cleaner".'
+  },
+  {
+    id: 'ldrill-spell-track10-accommodation',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ chính tả chữ kép: Accommodation (Track 10)',
+    category: 'Housing & Accommodation',
+    promptAudioText: 'Accommodation.',
+    audioText: 'Accommodation.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track10-word-stress-and-pronunciation.mp3',
+    clipStart: 5,
+    clipEnd: 9,
+    correctAnswer: 'accommodation',
+    questionPrompt: 'Lodging or living quarters: ................',
+    questionPromptVi: 'Chỗ ở, phòng trọ: .........',
+    acceptableAnswers: ['accommodation', 'Accommodation'],
+    trapNote: 'Bẫy chính tả kinh điển: "accommodation" có 2 chữ c và 2 chữ m (cc + mm). Tránh viết thiếu chữ c hoặc m.',
+    explanation: 'Từ vựng cần điền là "accommodation" (nghĩa: chỗ ở).'
+  },
+  {
+    id: 'ldrill-stress-track10-residential',
+    type: 'listening-distractor',
+    title: 'Phản xạ nhận diện trọng âm âm tiết thứ 3: Residential (Track 10)',
+    category: 'Word Stress & Phonetics',
+    audioSnippetText: 'Residential.',
+    audioText: 'Residential.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track10-word-stress-and-pronunciation.mp3',
+    clipStart: 37,
+    clipEnd: 42,
+    question: 'Trọng âm chính (primary stress) của từ "Residential" rơi vào âm tiết thứ mấy?',
+    options: [
+      { id: 'A', text: 'Âm tiết thứ ba: res-i-DEN-tial' },
+      { id: 'B', text: 'Âm tiết thứ nhất: RES-i-den-tial' },
+      { id: 'C', text: 'Âm tiết thứ hai: res-I-den-tial' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Các từ tận cùng bằng đuôi "-tial" (/ʃəl/) luôn có trọng âm chính rơi vào âm tiết đứng ngay trước nó (res-i-DEN-tial).',
+    explanation: 'Đáp án là A vì "residential" có trọng âm chính ở âm tiết thứ 3 (DEN).'
   }
 ];
