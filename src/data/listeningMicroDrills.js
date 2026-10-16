@@ -721,5 +721,45 @@ export const LISTENING_MICRO_DRILLS = [
     correctOption: 'A',
     distractorMechanism: 'Người nói nêu nguyên nhân rõ ràng "because it goes to the left quite sharply". Tránh suy diễn các bẫy giao thông khác.',
     explanation: 'Đáp án là A vì câu nói nêu rõ "goes to the left quite sharply".'
+  },
+  {
+    id: 'ldrill-map-track12-route-bramley',
+    type: 'listening-map',
+    title: 'Định hướng lộ trình tránh kẹt xe qua cầu vượt: Bramley Road (Track 12)',
+    category: 'Map & Road Directions',
+    audioDirectionsText: "Go straight over that crossroads, and after about a kilometre you'll come to a flyover. Go up onto that and it'll take you right over the motorway that heads off towards Longchester. Follow that down to the junction with Bramley Road, where you turn left.",
+    audioText: "Go straight over that crossroads, and after about a kilometre you'll come to a flyover. Go up onto that and it'll take you right over the motorway that heads off towards Longchester. Follow that down to the junction with Bramley Road, where you turn left.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track12-sports-centre-relocation-and-map.mp3',
+    clipStart: 60,
+    clipEnd: 84,
+    question: 'Tại điểm giao cắt với Bramley Road (sau khi xuống cầu vượt flyover), người lái xe cần thực hiện hành động nào?',
+    options: [
+      { id: 'A', text: 'Rẽ trái để đi men theo hướng vòng quanh thị trấn' },
+      { id: 'B', text: 'Rẽ phải để hướng thẳng vào trung tâm Longchester' },
+      { id: 'C', text: 'Tiếp tục đi thẳng qua cây xăng trên Bramley Road' }
+    ],
+    correctOption: 'A',
+    spatialClues: ['Crossroads -> straight over', 'Flyover over motorway to Longchester', 'Junction with Bramley Road -> turn left'],
+    explanation: "Chỉ dẫn ghi rõ: \"Follow that down to the junction with Bramley Road, where you turn left. That way you'll skirt around the town and avoid all the traffic\"."
+  },
+  {
+    id: 'ldrill-dist-track12-flood-venue',
+    type: 'listening-distractor',
+    title: 'Bẫy nguyên nhân di dời địa điểm giải thi đấu (Track 12)',
+    category: 'Sports & Event Relocation',
+    audioSnippetText: 'The tournament has had to be moved to the North Henton Sports Centre because of the flooding last week which caused damage to our equipment and the floor.',
+    audioText: 'The tournament has had to be moved to the North Henton Sports Centre because of the flooding last week which caused damage to our equipment and the floor.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track12-sports-centre-relocation-and-map.mp3',
+    clipStart: 10,
+    clipEnd: 24,
+    question: 'Lý do chính khiến giải đấu thể thao giữa các trường đại học phải chuyển địa điểm sang North Henton Sports Centre là gì?',
+    options: [
+      { id: 'A', text: 'Ngập lụt tuần trước đã gây hư hại thiết bị và mặt sàn' },
+      { id: 'B', text: 'Địa điểm cũ không đủ sức chứa cho lượng cổ động viên' },
+      { id: 'C', text: 'Đường vào trung tâm cũ đang bị tắc nghẽn giao thông' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói nêu nguyên nhân trực tiếp: "because of the flooding last week which caused damage to our equipment and the floor".',
+    explanation: 'Đáp án là A vì lý do di dời là do ngập nước (flooding) làm hư hại thiết bị và sàn thể thao.'
   }
 ];

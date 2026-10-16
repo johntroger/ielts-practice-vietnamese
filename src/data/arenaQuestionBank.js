@@ -1163,6 +1163,89 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Take the left turn',
     explanation: 'Khi đến cuối đường (ngã ba), chỉ dẫn yêu cầu rẽ trái ("take the left turn").',
     explanationEn: 'T-junction directive: Reaching the end of the road mandates taking the left turn.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 12 SPORTS COMPETITION MAP & RELOCATION
+  // ==========================================
+  {
+    id: 'easy_lis_flood_damage_t12',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why was the inter-college sports competition relocated from South Henton Sports Centre?',
+    context: 'We can\'t have the competition at the centre because of the flooding last week after all the rain. It damaged a lot of our equipment, and also the floors in some of the rooms.',
+    audioText: 'We can\'t have the competition at the centre because of the flooding last week after all the rain. It damaged a lot of our equipment, and also the floors in some of the rooms.',
+    options: [
+      'Flooding following heavy rain damaged equipment and room floors',
+      'The venue was double-booked for an international athletic meet',
+      'The building is undergoing scheduled electrical renovations',
+      'Local transport strikes prevented access to South Henton'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Flooding following heavy rain damaged equipment and room floors',
+    explanation: 'Lý do đổi địa điểm là do mưa lớn gây ngập lụt (flooding), làm hỏng hóc nhiều thiết bị và sàn nhà tại một số phòng.',
+    explanationEn: 'Event disruption: Heavy flooding damaged sports gear and flooring, necessitating an urgent venue relocation.'
+  },
+  {
+    id: 'med_lis_meeting_time_t12',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'When are student preparation volunteers instructed to assemble at North Henton Sports Centre?',
+    context: 'You\'ll need to meet the others there next Tuesday at about 9:00 to get the centre ready.',
+    audioText: 'You\'ll need to meet the others there next Tuesday at about 9:00 to get the centre ready.',
+    options: [
+      'Next Tuesday at approximately 9:00 am',
+      'Next Monday afternoon at 2:00 pm',
+      'Next Wednesday morning at 8:30 am',
+      'This Friday evening at 6:00 pm'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Next Tuesday at approximately 9:00 am',
+    explanation: 'Thời gian tập trung để chuẩn bị trung tâm là vào thứ Ba tuần tới lúc 9:00 sáng ("next Tuesday at about 9:00").',
+    explanationEn: 'Schedule timing: Preparation helpers must meet next Tuesday at approximately 9:00 am.'
+  },
+  {
+    id: 'med_lis_bramley_turn_t12',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'After descending from the motorway flyover, what turn should motorists take at the Bramley Road junction?',
+    context: 'After the flyover, you come to the junction with Bramley Road. This is where you go left, because that takes you round the town to the sports centre.',
+    audioText: 'After the flyover, you come to the junction with Bramley Road. This is where you go left, because that takes you round the town to the sports centre.',
+    options: [
+      'Turn left to navigate around the town perimeter',
+      'Turn right to enter the busy shopping district',
+      'Go straight ahead onto the northbound dual carriageway',
+      'Make a U-turn under the bridge'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Turn left to navigate around the town perimeter',
+    explanation: 'Tại nút giao với đường Bramley, lái xe phải rẽ trái ("go left") để đi vòng quanh thị trấn đến khu thể thao.',
+    explanationEn: 'Route navigation: Drivers turn left at Bramley Road junction to skirt around town.'
+  },
+  {
+    id: 'hard_lis_landmark_final_t12',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which prominent landmark indicates that North Henton Sports Centre is immediately ahead on Green Lane?',
+    context: 'The sports centre is on Green Lane, which is just past the Woodland Hotel on the right. You can\'t miss it.',
+    audioText: 'The sports centre is on Green Lane, which is just past the Woodland Hotel on the right. You can\'t miss it.',
+    options: [
+      'The Woodland Hotel on the right-hand side',
+      'The central railway station on the left',
+      'A large Texaco petrol station',
+      'The municipal town hall and clock tower'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The Woodland Hotel on the right-hand side',
+    explanation: 'Dấu mốc định vị cuối cùng là đi qua Khách sạn Woodland (Woodland Hotel) ở bên tay phải.',
+    explanationEn: 'Final landmark: North Henton Sports Centre is located on Green Lane directly past the Woodland Hotel on the right.'
   }
 ];
 
@@ -1217,7 +1300,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_lane_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 2, clipEnd: 7, isR2Audio: true, trackLabel: 'Track 11 • Motorway Lane' },
   med_lis_roundabout_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 15, clipEnd: 21, isR2Audio: true, trackLabel: 'Track 11 • Roundabout Exit' },
   med_lis_bend_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 22, clipEnd: 28, isR2Audio: true, trackLabel: 'Track 11 • Sharp Turn' },
-  hard_lis_junction_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 35, clipEnd: 42, isR2Audio: true, trackLabel: 'Track 11 • End of Road' }
+  hard_lis_junction_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 35, clipEnd: 42, isR2Audio: true, trackLabel: 'Track 11 • End of Road' },
+  // Track 12: Sports Centre Relocation & Road Navigation
+  easy_lis_flood_damage_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 10, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 12 • Flooding Damage' },
+  med_lis_meeting_time_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 37, clipEnd: 43, isR2Audio: true, trackLabel: 'Track 12 • Meeting Time' },
+  med_lis_bramley_turn_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 83, clipEnd: 94, isR2Audio: true, trackLabel: 'Track 12 • Bramley Road Junction' },
+  hard_lis_landmark_final_t12: { audioUrl: `${R2_BASE}/ielts-listening-track12-sports-centre-relocation-and-map.mp3`, clipStart: 111, clipEnd: 121, isR2Audio: true, trackLabel: 'Track 12 • Woodland Hotel Landmark' }
 };
 
 export const ARENA_QUESTION_BANK = [
