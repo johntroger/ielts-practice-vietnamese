@@ -1329,6 +1329,89 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The athlete remains stationary and does not move around the floor',
     explanation: 'Điểm đặc trưng là người tập giữ vị trí cố định, không di chuyển vòng quanh ("you don\'t move around to do it"), dùng chân làm bệ đỡ cơ thể.',
     explanationEn: 'Mobility constraint: Unlike mobile sports, weightlifting is performed statically without moving around.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 14 SPORTS ROOM SCHEDULING & LOGISTICS
+  // ==========================================
+  {
+    id: 'easy_lis_storeroom_key_t14',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'From which department or counter can volunteers collect the storeroom key?',
+    context: 'There\'s a big storeroom with all the equipment in it. You should be able to get the key from reception. They\'ll be there waiting for us.',
+    audioText: 'There\'s a big storeroom with all the equipment in it. You should be able to get the key from reception. They\'ll be there waiting for us.',
+    options: [
+      'The reception desk',
+      'The security control booth at the gate',
+      'The sports coordinator\'s private office',
+      'The college equipment supervisor'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The reception desk',
+    explanation: 'Tình nguyện viên lấy chìa khóa nhà kho từ quầy lễ tân ("get the key from reception").',
+    explanationEn: 'Logistics: The storeroom key is retrieved from reception where staff are expecting them.'
+  },
+  {
+    id: 'med_lis_dean_morning_t14',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How many badminton courts must be prepared in the Dean Room for the morning competition?',
+    context: 'The Dean Room is for the badminton competition. There are two courts in there, so you\'ll have to set up both of them.',
+    audioText: 'The Dean Room is for the badminton competition. There are two courts in there, so you\'ll have to set up both of them.',
+    options: [
+      'Two full courts',
+      'Only one single practice court',
+      'Three championship courts',
+      'Four half-size training courts'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Two full courts',
+    explanation: 'Có hai sân cầu lông trong phòng Dean và người phụ trách yêu cầu dựng cả 2 sân ("set up both of them").',
+    explanationEn: 'Court setup: Volunteers must assemble both of the two badminton courts in the Dean Room.'
+  },
+  {
+    id: 'med_lis_correction_trap_t14',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In the afternoon, which sport will ACTUALLY be played in the Dean Room following Geoff\'s self-correction?',
+    context: 'Now, in the afternoon, the table tennis is taking place in the Dean Room, so you\'ll need to... Oh, wait a minute! We had to change that because there are no basketball nets in the Carsley Room, so actually, the basketball will be in the Dean Room...',
+    audioText: 'Now, in the afternoon, the table tennis is taking place in the Dean Room, so you\'ll need to... Oh, wait a minute! We had to change that because there are no basketball nets in the Carsley Room, so actually, the basketball will be in the Dean Room...',
+    options: [
+      'Basketball',
+      'Table tennis',
+      'Weightlifting',
+      'Gymnastics'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Basketball',
+    explanation: 'Bẫy tự đính chính kinh điển: Ban đầu Geoff nói table tennis ở Dean Room, nhưng ngay sau đó đổi ý ("Oh, wait a minute! ... actually, the basketball will be in the Dean Room").',
+    explanationEn: 'Self-correction trap: Although table tennis was initially mentioned, basketball was finalized for the Dean Room.'
+  },
+  {
+    id: 'hard_lis_carsley_swap_t14',
+    difficulty: 'hard',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is there a considerable amount of work required in the Carsley Room during the lunchtime changeover?',
+    context: 'That means the table tennis will be taking place in the Carsley Room in the afternoon, so you\'ll have to make sure all the equipment is in there, as there will be a lot to do to change the room around.',
+    audioText: 'That means the table tennis will be taking place in the Carsley Room in the afternoon, so you\'ll have to make sure all the equipment is in there, as there will be a lot to do to change the room around.',
+    options: [
+      'Gymnastics apparatus from the morning must be cleared away and replaced with table tennis tables',
+      'The floor needs to be thoroughly mopped and polished for badminton',
+      'Weightlifting mats must be unbolted from the foundation',
+      'Temporary spectator stands have to be constructed'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Gymnastics apparatus from the morning must be cleared away and replaced with table tennis tables',
+    explanation: 'Phòng Carsley buổi sáng tổ chức thể dục dụng cụ (rất nhiều dụng cụ cồng kềnh), buổi chiều chuyển sang bóng bàn nên cần rất nhiều công sức để dọn dẹp và sắp xếp lại phòng ("a lot to do to change the room around").',
+    explanationEn: 'Changeover workload: Transitioning Carsley Room from morning gymnastics to afternoon table tennis entails extensive equipment swap.'
   }
 ];
 
@@ -1393,7 +1476,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_shuttlecock_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 2, clipEnd: 21, isR2Audio: true, trackLabel: 'Track 13 • Badminton Shuttlecock' },
   med_lis_gymnastics_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 22, clipEnd: 34, isR2Audio: true, trackLabel: 'Track 13 • Gymnastics Flexibility' },
   med_lis_tabletennis_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 35, clipEnd: 50, isR2Audio: true, trackLabel: 'Track 13 • Table Tennis Precision' },
-  hard_lis_weightlifting_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 51, clipEnd: 66, isR2Audio: true, trackLabel: 'Track 13 • Weightlifting Stance' }
+  hard_lis_weightlifting_t13: { audioUrl: `${R2_BASE}/ielts-listening-track13-sports-and-physical-skills.mp3`, clipStart: 51, clipEnd: 66, isR2Audio: true, trackLabel: 'Track 13 • Weightlifting Stance' },
+  // Track 14: Sports Room Scheduling & Logistics
+  easy_lis_storeroom_key_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 16, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 14 • Storeroom Key' },
+  med_lis_dean_morning_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 35, clipEnd: 44, isR2Audio: true, trackLabel: 'Track 14 • Dean Room Morning' },
+  med_lis_correction_trap_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 64, clipEnd: 82, isR2Audio: true, trackLabel: 'Track 14 • Basketball Self-Correction' },
+  hard_lis_carsley_swap_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 83, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 14 • Carsley Afternoon Swap' }
 };
 
 export const ARENA_QUESTION_BANK = [

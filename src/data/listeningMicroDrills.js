@@ -799,5 +799,43 @@ export const LISTENING_MICRO_DRILLS = [
     correctOption: 'A',
     distractorMechanism: "Người nói dùng liên từ \"but you don't move around to do it\" để loại trừ phương án di chuyển, nhấn mạnh đôi chân chỉ có nhiệm vụ \"support yourself\" (trụ vững cơ thể).",
     explanation: 'Đáp án chính xác là A vì vận động viên cử tạ cần chân rất khỏe để trụ đỡ cơ thể tại chỗ ("support yourself, but you don\'t move around").'
+  },
+  {
+    id: 'ldrill-dist-track14-self-correction',
+    type: 'listening-distractor',
+    title: 'Bẫy tự đính chính địa điểm thi đấu buổi chiều (Track 14)',
+    category: 'Schedule & Self-Correction',
+    audioSnippetText: "Now, in the afternoon, the table tennis is taking place in the Dean Room, so you'll need to... Oh, wait a minute! We had to change that because there are no basketball nets in the Carsley Room, so actually, the basketball will be in the Dean Room...",
+    audioText: "Now, in the afternoon, the table tennis is taking place in the Dean Room, so you'll need to... Oh, wait a minute! We had to change that because there are no basketball nets in the Carsley Room, so actually, the basketball will be in the Dean Room...",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track14-sports-centre-room-schedule.mp3',
+    clipStart: 64,
+    clipEnd: 82,
+    question: 'Môn thể thao nào CUỐI CÙNG được chốt sẽ diễn ra tại phòng Dean Room vào buổi chiều?',
+    options: [
+      { id: 'A', text: 'Bóng rổ (Basketball)' },
+      { id: 'B', text: 'Bóng bàn (Table tennis)' },
+      { id: 'C', text: 'Cầu lông (Badminton)' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói khởi đầu bằng "table tennis is taking place in the Dean Room", nhưng ngay sau đó ngắt lời với "Oh, wait a minute! We had to change that... actually, the basketball will be in the Dean Room". Thí sinh nghe nhanh sẽ dễ chọn ngay table tennis.',
+    explanation: 'Đáp án chính xác là A (Bóng rổ). Dấu hiệu đổi ý: "Oh, wait a minute! We had to change that... actually, the basketball will be in the Dean Room".'
+  },
+  {
+    id: 'ldrill-spell-track14-reception',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ từ vựng vị trí thủ tục: Reception Key (Track 14)',
+    category: 'Facility Locations & Keys',
+    promptAudioText: "There's a big storeroom with all the equipment in it. You should be able to get the key from reception.",
+    audioText: "There's a big storeroom with all the equipment in it. You should be able to get the key from reception.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track14-sports-centre-room-schedule.mp3',
+    clipStart: 16,
+    clipEnd: 23,
+    correctAnswer: 'reception',
+    questionPrompt: 'Collect the storeroom key from: ................',
+    questionPromptVi: 'Lấy chìa khóa kho tại: .........',
+    acceptableAnswers: ['reception', 'the reception', 'Reception'],
+    trapNote: 'Từ vựng hành chính quen thuộc trong IELTS Section 1/2: "reception" (chữ p không câm, hậu tố -tion).',
+    explanation: 'Chìa khóa nhà kho đựng dụng cụ lấy trực tiếp tại bàn tiếp tân ("reception").'
   }
 ];
