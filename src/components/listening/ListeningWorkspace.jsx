@@ -867,22 +867,6 @@ export default function ListeningWorkspace({
 
           {/* RIGHT: Action Controls & Tools Dropdown */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 shrink-0 max-w-full">
-            {/* Quick Test Switcher Dropdown (Desktop only) */}
-            {allListeningTests.length > 1 && (
-              <select
-                value={currentTestId}
-                onChange={(e) => handleSwitchTest(e.target.value)}
-                className="hidden xl:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[210px] truncate cursor-pointer shrink-0"
-                title={isEn ? "Select listening test" : "Chọn bộ đề nghe"}
-              >
-                {allListeningTests.map(t => (
-                  <option key={t.id} value={t.id}>
-                    {t.audioUrl?.includes('.r2.dev') ? '☁️ [R2] ' : t.isCustom ? '✨ ' : '📚 '}
-                    {t.title}
-                  </option>
-                ))}
-              </select>
-            )}
 
             {/* Kho Đề Nghe Button */}
             <button

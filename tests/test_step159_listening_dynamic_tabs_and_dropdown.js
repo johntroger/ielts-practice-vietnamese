@@ -62,10 +62,10 @@ assert.ok(workspaceSrc.includes("e.stopPropagation()"), 'handleCloseTestTab must
 passedTests++;
 console.log('  ✓ Tab close button with event isolation verified\n');
 
-// Test 6: Verify Bar 1 desktop select is harmonized with handleSwitchTest
-console.log('Test 6: Bar 1 select dropdown harmonization...');
-assert.ok(workspaceSrc.includes("onChange={(e) => handleSwitchTest(e.target.value)}"), 'Bar 1 select must call handleSwitchTest');
+// Test 6: Verify Bar 1 redundant select dropdown is removed in favor of Bar 1.5 unified tab switcher
+console.log('Test 6: Redundant Bar 1 select dropdown removal...');
+assert.ok(!workspaceSrc.includes("hidden xl:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[210px]"), 'Redundant select dropdown in Bar 1 must be removed');
 passedTests++;
-console.log('  ✓ Bar 1 select dropdown calls handleSwitchTest\n');
+console.log('  ✓ Redundant select removed, Bar 1.5 dynamic dropdown tabs is now the single source of truth\n');
 
 console.log(`🎉 Step 159: All ${passedTests}/6 tests PASSED successfully!`);
