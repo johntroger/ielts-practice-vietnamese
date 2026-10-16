@@ -16,3 +16,4 @@ export { default as LevelUpCelebrationModal } from './LevelUpCelebrationModal.js
 export { default as ArenaTextInputCard } from './ArenaTextInputCard.jsx';
 export { default as ArenaGhostDuelBar } from './ArenaGhostDuelBar.jsx';
 export { default as ArenaWorldBossCard } from './ArenaWorldBossCard.jsx';
+export { default as ArenaWorldBossModal } from './ArenaWorldBossModal.jsx';

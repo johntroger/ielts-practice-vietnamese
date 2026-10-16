@@ -713,7 +713,10 @@ export default function AtlasEnglishArenaModal({
                     leagueTier={leaderboardData.leagueTier}
                     onSelectLearner={setSelectedLearner}
                   />
-                  <ArenaWorldBossCard isEn={isEn} />
+                  <ArenaWorldBossCard 
+                    isEn={isEn} 
+                    onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
+                  />
                 </div>
               </div>
             </main>

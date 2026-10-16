@@ -320,4 +320,17 @@ it('10. ArenaSprintSummaryModal renders Ghost Duel victory/defeat and World Boss
   assert.ok(code.includes('summary.worldBossDamage?.bonusXp'), 'Must render boss raid bonus XP row in decomposition grid');
 });
 
+it('11. ArenaWorldBossCard is interactive, opens ArenaWorldBossModal and supports 1-click sprint launch', () => {
+  const cardPath = path.join(rootDir, 'src/components/arena/ArenaWorldBossCard.jsx');
+  const cardCode = fs.readFileSync(cardPath, 'utf-8');
+  assert.ok(cardCode.includes('ArenaWorldBossModal'), 'ArenaWorldBossCard must import and render ArenaWorldBossModal');
+  assert.ok(cardCode.includes('onClick={() => setIsModalOpen(true)}'), 'Card must open modal on click');
+  assert.ok(cardCode.includes('cursor-pointer'), 'Card must have cursor-pointer');
+
+  const modalPath = path.join(rootDir, 'src/components/arena/ArenaWorldBossModal.jsx');
+  const modalCode = fs.readFileSync(modalPath, 'utf-8');
+  assert.ok(modalCode.includes('DAILY_WORLD_BOSSES'), 'Modal must reference 7 rotating world bosses');
+  assert.ok(modalCode.includes('onStartSprint'), 'Modal must support onStartSprint callback');
+});
+
 console.log(`\nAll ${passedTests}/${totalTests} Step 165 checks passed successfully!`);
