@@ -683,5 +683,43 @@ export const LISTENING_MICRO_DRILLS = [
     correctOption: 'A',
     distractorMechanism: 'Các từ tận cùng bằng đuôi "-tial" (/ʃəl/) luôn có trọng âm chính rơi vào âm tiết đứng ngay trước nó (res-i-DEN-tial).',
     explanation: 'Đáp án là A vì "residential" có trọng âm chính ở âm tiết thứ 3 (DEN).'
+  },
+  {
+    id: 'ldrill-map-track11-roundabout',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ điều hướng bản đồ: Lối ra bùng binh & Làn đường (Track 11)',
+    category: 'Map & Plan Labelling',
+    promptAudioText: 'Go round and take the third exit on the right.',
+    audioText: 'Go round and take the third exit on the right.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track11-map-directions-and-navigation.mp3',
+    clipStart: 15,
+    clipEnd: 21,
+    correctAnswer: 'third exit',
+    questionPrompt: 'Roundabout navigation: Take the ................',
+    questionPromptVi: 'Điều hướng tại bùng binh: Chọn lối ra .........',
+    acceptableAnswers: ['third exit', '3rd exit', 'Third exit'],
+    trapNote: 'Bẫy số thứ tự trong chỉ đường: "third exit on the right". Tránh nhầm với first exit hay second exit.',
+    explanation: 'Chỉ dẫn yêu cầu rẽ vào lối ra thứ 3 (third exit).'
+  },
+  {
+    id: 'ldrill-dist-track11-sharp-turn',
+    type: 'listening-distractor',
+    title: 'Bẫy phản xạ lái xe & Khúc cua gắt bên trái (Track 11)',
+    category: 'Map & Road Safety',
+    audioSnippetText: 'Slow down here because it goes to the left quite sharply.',
+    audioText: 'Slow down here because it goes to the left quite sharply.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track11-map-directions-and-navigation.mp3',
+    clipStart: 22,
+    clipEnd: 28,
+    question: 'Tài xế được yêu cầu giảm tốc độ (Slow down) vì lý do cụ thể nào?',
+    options: [
+      { id: 'A', text: 'Con đường ngoặt gấp về phía bên trái' },
+      { id: 'B', text: 'Có camera kiểm soát tốc độ phía trước' },
+      { id: 'C', text: 'Đường đang có công trường thi công nâng cấp' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói nêu nguyên nhân rõ ràng "because it goes to the left quite sharply". Tránh suy diễn các bẫy giao thông khác.',
+    explanation: 'Đáp án là A vì câu nói nêu rõ "goes to the left quite sharply".'
   }
 ];

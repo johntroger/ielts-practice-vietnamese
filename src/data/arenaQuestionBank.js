@@ -1080,6 +1080,89 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Scenery',
     explanation: 'Từ "scenery" (/ˈsiː.nər.i/) có chữ "c" câm đứng sau "s", và kết thúc bằng đuôi "-ery", không phải "-ary" hay "sea-".',
     explanationEn: "Orthographic trap: 'Scenery' features a silent 'c' after 's' and terminates in '-ery'."
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 11 MAP & ROAD DIRECTIONS
+  // ==========================================
+  {
+    id: 'easy_lis_lane_t11',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Directive 1, which lane must motorists maintain to cross over the motorway?',
+    context: '1. Stay in the middle lane so that you can go over the motorway.',
+    audioText: 'Stay in the middle lane so that you can go over the motorway.',
+    options: [
+      'The middle lane',
+      'The left-hand slip road',
+      'The right-hand fast lane',
+      'The emergency hard shoulder'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The middle lane',
+    explanation: 'Chỉ dẫn nêu rõ phải giữ xe ở làn giữa ("Stay in the middle lane") để đi qua đường cao tốc.',
+    explanationEn: 'Direction clarity: The speaker directly specifies staying in the middle lane to cross over the motorway.'
+  },
+  {
+    id: 'med_lis_roundabout_t11',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Directive 3, which exit must the driver take upon entering the roundabout?',
+    context: '3. Go round and take the third exit on the right.',
+    audioText: 'Go round and take the third exit on the right.',
+    options: [
+      'The third exit on the right',
+      'The first exit on the left',
+      'The second exit straight ahead',
+      'The final exit before the bridge'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The third exit on the right',
+    explanation: 'Khi đi vào bùng binh ("Go round"), lái xe phải rẽ vào lối ra thứ 3 ở bên phải ("third exit on the right").',
+    explanationEn: 'Roundabout navigation: The instruction requires going round and taking the third exit on the right.'
+  },
+  {
+    id: 'med_lis_bend_t11',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is the driver advised to decelerate in Directive 4?',
+    context: '4. Slow down here because it goes to the left quite sharply.',
+    audioText: 'Slow down here because it goes to the left quite sharply.',
+    options: [
+      'Because the road bends sharply to the left',
+      'Because an automated speed camera is operating',
+      'Because the road surface is under construction',
+      'Because school children are crossing ahead'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Because the road bends sharply to the left',
+    explanation: 'Yêu cầu giảm tốc ("Slow down") do khúc cua ngoặt gấp về bên trái ("goes to the left quite sharply").',
+    explanationEn: 'Hazard warning: Deceleration is required because the road turns sharply to the left.'
+  },
+  {
+    id: 'hard_lis_junction_t11',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What driving manoeuvre is prescribed upon reaching the end of the road in Directive 6?',
+    context: '6. When you get to the end of this road, take the left turn.',
+    audioText: 'When you get to the end of this road, take the left turn.',
+    options: [
+      'Take the left turn',
+      'Make a sharp right turn',
+      'Perform a U-turn at the lights',
+      'Drive straight into the car park'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Take the left turn',
+    explanation: 'Khi đến cuối đường (ngã ba), chỉ dẫn yêu cầu rẽ trái ("take the left turn").',
+    explanationEn: 'T-junction directive: Reaching the end of the road mandates taking the left turn.'
   }
 ];
 
@@ -1129,7 +1212,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_stress_accommodation_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 5, clipEnd: 9, isR2Audio: true, trackLabel: 'Track 10 • Stress: Accommodation' },
   med_lis_silent_env_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 50, clipEnd: 55, isR2Audio: true, trackLabel: 'Track 10 • Spelling: Environment' },
   med_lis_stress_geography_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 55, clipEnd: 60, isR2Audio: true, trackLabel: 'Track 10 • Stress: Geography' },
-  hard_lis_spell_scenery_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 69, clipEnd: 74, isR2Audio: true, trackLabel: 'Track 10 • Spelling: Scenery' }
+  hard_lis_spell_scenery_t10: { audioUrl: `${R2_BASE}/ielts-listening-track10-word-stress-and-pronunciation.mp3`, clipStart: 69, clipEnd: 74, isR2Audio: true, trackLabel: 'Track 10 • Spelling: Scenery' },
+  // Track 11: Map & Road Directions
+  easy_lis_lane_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 2, clipEnd: 7, isR2Audio: true, trackLabel: 'Track 11 • Motorway Lane' },
+  med_lis_roundabout_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 15, clipEnd: 21, isR2Audio: true, trackLabel: 'Track 11 • Roundabout Exit' },
+  med_lis_bend_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 22, clipEnd: 28, isR2Audio: true, trackLabel: 'Track 11 • Sharp Turn' },
+  hard_lis_junction_t11: { audioUrl: `${R2_BASE}/ielts-listening-track11-map-directions-and-navigation.mp3`, clipStart: 35, clipEnd: 42, isR2Audio: true, trackLabel: 'Track 11 • End of Road' }
 };
 
 export const ARENA_QUESTION_BANK = [
