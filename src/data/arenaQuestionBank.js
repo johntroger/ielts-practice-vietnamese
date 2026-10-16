@@ -1412,6 +1412,88 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Gymnastics apparatus from the morning must be cleared away and replaced with table tennis tables',
     explanation: 'Phòng Carsley buổi sáng tổ chức thể dục dụng cụ (rất nhiều dụng cụ cồng kềnh), buổi chiều chuyển sang bóng bàn nên cần rất nhiều công sức để dọn dẹp và sắp xếp lại phòng ("a lot to do to change the room around").',
     explanationEn: 'Changeover workload: Transitioning Carsley Room from morning gymnastics to afternoon table tennis entails extensive equipment swap.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 15 SPORTS EQUIPMENT & LOGISTICS
+  // ==========================================
+  {
+    id: 'easy_lis_geoff_arrival_t15',
+    difficulty: 'easy',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'At what time does Geoff anticipate reaching North Henton Sports Centre?',
+    context: 'I\'ll be there at about 10:00, as I have an appointment first thing, so you should be ready by then.',
+    audioText: 'I\'ll be there at about 10:00, as I have an appointment first thing, so you should be ready by then.',
+    options: [
+      'Around 10:00 am',
+      'At 9:00 am sharp',
+      'At 8:30 am before doors open',
+      'During the 12:30 pm lunch break'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Around 10:00 am',
+    explanation: 'Geoff cho biết sẽ có mặt vào khoảng 10:00 sáng ("at about 10:00") do bận cuộc hẹn đầu giờ.',
+    explanationEn: 'Staff arrival: Geoff will reach the sports centre around 10:00 am after completing an early appointment.'
+  },
+  {
+    id: 'med_lis_gymnastics_mats_t15',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How should the landing and safety mats be arranged around the vaulting horse?',
+    context: 'That means bringing in the vaulting horse and putting it in the middle. Put one mat in front and another behind the horse, and have some other mats ready for the floor exercises.',
+    audioText: 'That means bringing in the vaulting horse and putting it in the middle. Put one mat in front and another behind the horse, and have some other mats ready for the floor exercises.',
+    options: [
+      'One mat positioned in front and another placed behind the horse',
+      'Mats placed exclusively on the left and right sides',
+      'A single circular mat directly underneath the apparatus',
+      'Double-stacked mats piled only at the rear dismount zone'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'One mat positioned in front and another placed behind the horse',
+    explanation: 'Vị trí đặt thảm: Một tấm ở phía trước và một tấm khác ở phía sau con ngựa nhảy ("one mat in front and another behind the horse").',
+    explanationEn: 'Apparatus layout: Safety mats must be situated both directly in front of and behind the vaulting horse.'
+  },
+  {
+    id: 'med_lis_tabletennis_storage_t15',
+    difficulty: 'medium',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why are volunteers advised to bring table tennis tables into the Carsley Room during the morning?',
+    context: 'It\'s also a good idea to bring in the tables and nets for the table tennis at the same time. There\'s enough room to leave them folded while the gymnastics is going on, but you\'ll be able to set them up more quickly later.',
+    audioText: 'It\'s also a good idea to bring in the tables and nets for the table tennis at the same time. There\'s enough room to leave them folded while the gymnastics is going on, but you\'ll be able to set them up more quickly later.',
+    options: [
+      'They can be kept folded safely without obstructing gymnastics and speed up afternoon transition',
+      'The storeroom needs to be completely locked down after 9:30 am',
+      'Table tennis umpires want to inspect the table surfaces early',
+      'The folding wheels will be needed for moving the gymnastics bars'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They can be kept folded safely without obstructing gymnastics and speed up afternoon transition',
+    explanation: 'Mang bàn bóng bàn vào sớm để gọn (ở trạng thái gấp - folded) để buổi chiều mở ra nhanh chóng hơn ("set them up more quickly later").',
+    explanationEn: 'Strategic preparation: Storing folded table tennis tables along the wall facilitates a rapid afternoon changeover.'
+  },
+  {
+    id: 'hard_lis_chalk_stand_t15',
+    difficulty: 'hard',
+    topic: 'sports',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which specific accessory MUST volunteers transport into the Forster Room for the weightlifters?',
+    context: 'The bench for the bench press should be in there already, so check that it is when you arrive. But you\'ll need to bring in the stand with the chalk for the lifters to put on their hands.',
+    audioText: 'The bench for the bench press should be in there already, so check that it is when you arrive. But you\'ll need to bring in the stand with the chalk for the lifters to put on their hands.',
+    options: [
+      'The stand containing powdered chalk for athletes\' hands',
+      'The heavy bench press structure itself',
+      'Electronic scoreboards and timers'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The stand containing powdered chalk for athletes\' hands',
+    explanation: 'Bẫy phân biệt: Ghế tập (bench press) đã có sẵn trong phòng; thứ bắt buộc phải mang vào từ kho là giá đựng bột phấn ("stand with the chalk for the lifters to put on their hands").',
+    explanationEn: 'Equipment distinction: The bench is pre-installed, but helpers must transport the chalk stand into the room.'
   }
 ];
 
@@ -1481,7 +1563,12 @@ const R2_AUDIO_METADATA_BY_ID = {
   easy_lis_storeroom_key_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 16, clipEnd: 23, isR2Audio: true, trackLabel: 'Track 14 • Storeroom Key' },
   med_lis_dean_morning_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 35, clipEnd: 44, isR2Audio: true, trackLabel: 'Track 14 • Dean Room Morning' },
   med_lis_correction_trap_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 64, clipEnd: 82, isR2Audio: true, trackLabel: 'Track 14 • Basketball Self-Correction' },
-  hard_lis_carsley_swap_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 83, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 14 • Carsley Afternoon Swap' }
+  hard_lis_carsley_swap_t14: { audioUrl: `${R2_BASE}/ielts-listening-track14-sports-centre-room-schedule.mp3`, clipStart: 83, clipEnd: 95, isR2Audio: true, trackLabel: 'Track 14 • Carsley Afternoon Swap' },
+  // Track 15: Sports Equipment & Logistics
+  easy_lis_geoff_arrival_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 102, clipEnd: 111, isR2Audio: true, trackLabel: 'Track 15 • Geoff Arrival 10:00' },
+  med_lis_gymnastics_mats_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 38, clipEnd: 48, isR2Audio: true, trackLabel: 'Track 15 • Vaulting Horse & Mats' },
+  med_lis_tabletennis_storage_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 63, clipEnd: 76, isR2Audio: true, trackLabel: 'Track 15 • Folded Tables' },
+  hard_lis_chalk_stand_t15: { audioUrl: `${R2_BASE}/ielts-listening-track15-sports-equipment-and-preparation.mp3`, clipStart: 92, clipEnd: 101, isR2Audio: true, trackLabel: 'Track 15 • Chalk Stand' }
 };
 
 export const ARENA_QUESTION_BANK = [

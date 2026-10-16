@@ -837,5 +837,43 @@ export const LISTENING_MICRO_DRILLS = [
     acceptableAnswers: ['reception', 'the reception', 'Reception'],
     trapNote: 'Từ vựng hành chính quen thuộc trong IELTS Section 1/2: "reception" (chữ p không câm, hậu tố -tion).',
     explanation: 'Chìa khóa nhà kho đựng dụng cụ lấy trực tiếp tại bàn tiếp tân ("reception").'
+  },
+  {
+    id: 'ldrill-dist-track15-equipment-presence',
+    type: 'listening-distractor',
+    title: 'Bẫy dụng cụ có sẵn vs Cần chuyển vào (Track 15)',
+    category: 'Facility Equipment & Traps',
+    audioSnippetText: "The other equipment, such as the rings and pommel horse, are already in there, so you don't need to worry about those.",
+    audioText: "The other equipment, such as the rings and pommel horse, are already in there, so you don't need to worry about those.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track15-sports-equipment-and-preparation.mp3',
+    clipStart: 56,
+    clipEnd: 63,
+    question: 'Thiết bị thể dục dụng cụ nào ĐÃ CÓ SẴN trong phòng Carsley Room và tình nguyện viên không cần chuyển từ kho vào?',
+    options: [
+      { id: 'A', text: 'Vòng treo và ngựa tay quay (Rings & Pommel horse)' },
+      { id: 'B', text: 'Ngựa nhảy và thảm an toàn (Vaulting horse & mats)' },
+      { id: 'C', text: 'Các bộ xà đơn và xà kép (Gymnastics bars)' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói liên tục liệt kê nhiều thiết bị cần mang vào (vaulting horse, mats, bars), sau đó phân biệt với "rings and pommel horse, are already in there, so you don\'t need to worry".',
+    explanation: 'Đáp án là A vì câu nói nêu rõ "rings and pommel horse, are already in there, so you don\'t need to worry about those".'
+  },
+  {
+    id: 'ldrill-spell-track15-chalk',
+    type: 'listening-spelling',
+    subType: 'spelling',
+    title: 'Phản xạ từ vựng dụng cụ cử tạ: Chalk Stand (Track 15)',
+    category: 'Sports Equipment & Vocabulary',
+    promptAudioText: "you'll need to bring in the stand with the chalk for the lifters to put on their hands.",
+    audioText: "you'll need to bring in the stand with the chalk for the lifters to put on their hands.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track15-sports-equipment-and-preparation.mp3',
+    clipStart: 96,
+    clipEnd: 102,
+    correctAnswer: 'chalk',
+    questionPrompt: 'Bring the stand with the ................ for the lifters.',
+    questionPromptVi: 'Mang giá đựng ......... cho vận động viên cử tạ.',
+    acceptableAnswers: ['chalk', 'Chalk'],
+    trapNote: 'Bẫy phát âm và chính tả: "chalk" có chữ "l" câm (/tʃɔːk/), tránh viết sai thành "chock" hay "chawk".',
+    explanation: 'Từ cần điền là "chalk" (bột phấn chống trơn trượt tay dùng trong cử tạ).'
   }
 ];
