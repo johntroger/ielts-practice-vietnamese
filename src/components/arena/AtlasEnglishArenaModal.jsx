@@ -45,6 +45,10 @@ import {
 import { generateR2ListeningSprintQuestions } from '../../adapters/sprintQuestionAdapter.js';
 import { ARENA_PERK_LIST, getPerkById } from '../../services/gamification/tacticalPerksService.js';
 import { triggerHaptic } from '../../utils/hapticHelper.js';
+import ArenaGhostDuelBar from './ArenaGhostDuelBar.jsx';
+import ArenaWorldBossCard from './ArenaWorldBossCard.jsx';
+import { createGhostDuel } from '../../services/gamification/ghostDuelService.js';
+import { initOfflineQueueAutoSync } from '../../services/gamification/offlineQueueService.js';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -120,6 +124,15 @@ export default function AtlasEnglishArenaModal({
       }
     });
     return () => { isMounted = false; };
+  }, [isOpen, currentUser]);
+
+  // Resilient offline queue auto-sync upon network reconnection
+  useEffect(() => {
+    if (!isOpen) return;
+    const cleanup = initOfflineQueueAutoSync(currentUser);
+    return () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
   }, [isOpen, currentUser]);
 
   // Evaluate weekly league rollover upon opening modal
@@ -592,6 +605,9 @@ export default function AtlasEnglishArenaModal({
                     </div>
                   </div>
 
+                  {/* Daily Cambridge World Boss Raid Event Card */}
+                  <ArenaWorldBossCard isEn={isEn} />
+
                   {/* 4-Tier Difficulty Selector & Topic Preview */}
                   <ArenaDifficultySelector
                     selectedDifficulty={selectedDifficulty}
@@ -727,6 +743,16 @@ export default function AtlasEnglishArenaModal({
               <div className={`w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl pb-2 sm:pb-3 transition-all duration-300 ${
                 isScreenShaking ? 'animate-arena-shake ring-2 ring-rose-500/50 rounded-2xl' : ''
               }`}>
+                {sprint.activeGhostDuel && (
+                  <ArenaGhostDuelBar
+                    duel={sprint.activeGhostDuel}
+                    elapsedSeconds={(sprint.duration || 180) - Math.max(0, sprint.timeRemaining)}
+                    userScore={sprint.score}
+                    userQuestionIndex={sprint.currentIndex}
+                    totalQuestions={sprint.questions.length}
+                    isEn={isEn}
+                  />
+                )}
                 {currentQ && (
                   <ArenaQuestionCard
                     question={currentQ}
@@ -847,6 +873,7 @@ export default function AtlasEnglishArenaModal({
             learner={selectedLearner}
             onClose={() => setSelectedLearner(null)}
             onChallengeSprint={() => {
+              createGhostDuel(selectedLearner);
               setSelectedLearner(null);
               sprint.startSprint();
             }}

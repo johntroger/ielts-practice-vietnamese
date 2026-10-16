@@ -39,6 +39,9 @@ import {
 import { recordTypingAttempt } from '../services/gamification/typingStatsService.js';
 import { safeGet } from '../utils/storageService.js';
 import { ARENA_STORAGE_KEYS } from '../utils/arenaStorageKeys.js';
+import { getActiveGhostDuel, resolveGhostDuelResult } from '../services/gamification/ghostDuelService.js';
+import { dealWorldBossDamage } from '../services/gamification/worldBossRaidService.js';
+import { enqueueOfflinePayload } from '../services/gamification/offlineQueueService.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -77,6 +80,7 @@ export const INITIAL_SPRINT_STATE = {
   revengeClearedCount: 0,
   revengeBonusXp: 0,
   isCurrentRevengeCleared: false,
+  activeGhostDuel: null,
   questionHistory: [],
   summary: null
 };
@@ -302,6 +306,7 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
   );
   const equippedPerk = options.equippedPerk || safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none');
   const extraShields = equippedPerk === 'titan_armor' ? 1 : 0;
+  const activeGhostDuel = options.ghostDuel !== undefined ? options.ghostDuel : getActiveGhostDuel();
 
   return {
     ...INITIAL_SPRINT_STATE,
@@ -315,6 +320,7 @@ export function startSprintAction(questions = [], duration = INITIAL_SPRINT_TIME
     isPerkUsed: false,
     eliminatedOptions: [],
     shieldState: createSprintShieldState(extraShields),
+    activeGhostDuel,
     questionHistory: []
   };
 }
@@ -659,6 +665,28 @@ export function finishSprintAction(state, user = null) {
   });
   const lootBonus = mysteryLoot?.bonusXp || 0;
 
+  // Resolve Ghost Duel if active
+  const activeDuel = state.activeGhostDuel || getActiveGhostDuel();
+  let ghostDuelResult = null;
+  if (activeDuel) {
+    ghostDuelResult = resolveGhostDuelResult({
+      userScore: state.score,
+      totalQuestions: state.questions.length,
+      userTimeSpent: totalSeconds,
+      duel: activeDuel
+    });
+  }
+
+  // Inflict damage to Daily World Boss Raid
+  const worldBossDamage = dealWorldBossDamage({
+    score: state.score,
+    combo: state.maxCombo,
+    isBossCleared: state.isBossCleared
+  });
+
+  const duelBonusXp = ghostDuelResult?.bonusXp || 0;
+  const bossBonusXp = worldBossDamage?.bonusXp || 0;
+
   const rawXpResult = calculateSprintXp({
     correctAnswers: state.score,
     streakCount: streak,
@@ -670,25 +698,41 @@ export function finishSprintAction(state, user = null) {
     lootBonus
   });
 
-  const finalXpWithRevenge = (rawXpResult.finalXp || 0) + (state.revengeBonusXp || 0);
+  const finalXpWithExtras = (rawXpResult.finalXp || 0) + (state.revengeBonusXp || 0) + duelBonusXp + bossBonusXp;
   const xpResult = {
     ...rawXpResult,
-    finalXp: finalXpWithRevenge,
+    finalXp: finalXpWithExtras,
     revengeBonusXp: state.revengeBonusXp || 0,
     lootBonus,
-    mysteryLoot
+    mysteryLoot,
+    duelBonusXp,
+    bossBonusXp
   };
 
   recordMatchCompleted();
   incrementDailySprintCount();
 
   if (user && user.id) {
-    submitSprintXp({
-      userId: user.id,
-      deltaXp: xpResult.finalXp,
-      streakCount: streak + 1,
-      displayName: user.user_metadata?.display_name || user.user_metadata?.full_name
-    });
+    try {
+      submitSprintXp({
+        userId: user.id,
+        deltaXp: xpResult.finalXp,
+        streakCount: streak + 1,
+        displayName: user.user_metadata?.display_name || user.user_metadata?.full_name
+      }).catch(() => {
+        enqueueOfflinePayload('SPRINT_SUBMISSION', {
+          userId: user.id,
+          deltaXp: xpResult.finalXp,
+          streakCount: streak + 1
+        });
+      });
+    } catch {
+      enqueueOfflinePayload('SPRINT_SUBMISSION', {
+        userId: user.id,
+        deltaXp: xpResult.finalXp,
+        streakCount: streak + 1
+      });
+    }
   } else {
     recordGuestPendingXp(xpResult.finalXp);
   }
@@ -711,6 +755,8 @@ export function finishSprintAction(state, user = null) {
     revengeBonusXp: state.revengeBonusXp || 0,
     lootBonus,
     mysteryLoot,
+    ghostDuelResult,
+    worldBossDamage,
     diagnosticSkills: diagnostics.axes,
     weakestSkill: diagnostics.weakestSkill,
     prescription
@@ -719,7 +765,8 @@ export function finishSprintAction(state, user = null) {
   return {
     ...state,
     phase: ARENA_SPRINT_PHASES.COMPLETED,
-    summary
+    summary,
+    activeGhostDuel: null
   };
 }
 

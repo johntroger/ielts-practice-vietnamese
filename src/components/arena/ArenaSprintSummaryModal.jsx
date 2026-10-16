@@ -109,6 +109,79 @@ export default function ArenaSprintSummaryModal({
         </div>
       )}
 
+      {/* Ghost Duel Outcome Banner */}
+      {summary.ghostDuelResult && (
+        <div className={`w-full rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 border shadow-md animate-in zoom-in-95 duration-200 ${
+          summary.ghostDuelResult.isVictory
+            ? 'bg-gradient-to-r from-emerald-950/40 via-teal-950/30 to-indigo-950/40 border-emerald-500/40'
+            : 'bg-gradient-to-r from-slate-900 via-rose-950/20 to-slate-900 border-slate-700'
+        }`}>
+          <div className="flex items-center gap-2.5 min-w-0 text-left">
+            <img
+              src={summary.ghostDuelResult.rivalAvatar}
+              alt={summary.ghostDuelResult.rivalName}
+              className="w-9 h-9 rounded-full border border-indigo-400/40 object-cover shrink-0"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className={`text-xs sm:text-sm font-black ${summary.ghostDuelResult.isVictory ? 'text-emerald-300' : 'text-slate-200'}`}>
+                  {summary.ghostDuelResult.isVictory 
+                    ? (isEn ? '⚔️ DUEL VICTORY!' : '⚔️ CHIẾN THẮNG ĐỐI THỦ!')
+                    : (isEn ? '⚔️ DUEL FINISHED' : '⚔️ HOÀN THÀNH ĐẤU ĐỐI THỦ')}
+                </span>
+                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  {summary.ghostDuelResult.rivalName}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-slate-300">
+                {isEn 
+                  ? `You: ${summary.ghostDuelResult.userScore}/${summary.totalQuestions} (${summary.ghostDuelResult.userTimeSpent}s) vs Rival: ${summary.ghostDuelResult.ghostScore}/${summary.totalQuestions} (${summary.ghostDuelResult.ghostTime}s)`
+                  : `Bạn: ${summary.ghostDuelResult.userScore}/${summary.totalQuestions} (${summary.ghostDuelResult.userTimeSpent}s) vs Đối thủ: ${summary.ghostDuelResult.ghostScore}/${summary.totalQuestions} (${summary.ghostDuelResult.ghostTime}s)`}
+              </span>
+            </div>
+          </div>
+          {summary.ghostDuelResult.bonusXp > 0 && (
+            <div className="flex items-baseline gap-0.5 shrink-0 px-2 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-mono font-black text-xs sm:text-sm">
+              <span>+{summary.ghostDuelResult.bonusXp}</span>
+              <span className="text-[9px]">XP</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* World Boss Raid Contribution Card */}
+      {summary.worldBossDamage && (
+        <div className="w-full bg-gradient-to-r from-rose-950/30 via-slate-900 to-amber-950/20 border border-rose-500/30 rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 shadow-md">
+          <div className="flex items-center gap-2.5 min-w-0 text-left">
+            <span className="text-2xl p-1 rounded-lg bg-rose-500/10 border border-rose-500/30 shrink-0">
+              {summary.worldBossDamage.bossIcon || '👹'}
+            </span>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs sm:text-sm font-black text-rose-200">
+                  {isEn ? summary.worldBossDamage.bossNameEn : summary.worldBossDamage.bossNameVi}
+                </span>
+                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  {isEn ? 'Boss Raid Damage' : 'Sát thương Raid'}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-slate-300">
+                {isEn 
+                  ? `Dealt ${summary.worldBossDamage.damageDealt.toLocaleString()} dmg • Boss HP: ${summary.worldBossDamage.hpPercentage}%`
+                  : `Gây ${summary.worldBossDamage.damageDealt.toLocaleString()} dmg • Máu Boss: ${summary.worldBossDamage.hpPercentage}%`}
+              </span>
+            </div>
+          </div>
+          {summary.worldBossDamage.bonusXp > 0 && (
+            <div className="flex items-baseline gap-0.5 shrink-0 px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 font-mono font-black text-xs sm:text-sm">
+              <span>+{summary.worldBossDamage.bonusXp}</span>
+              <span className="text-[9px]">XP</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* XP Hero Card with Transparent 3-Tier Breakdown */}
       <div className="w-full bg-gradient-to-br from-indigo-950/60 to-purple-950/40 border border-indigo-800/40 rounded-2xl p-3 sm:p-3.5 flex flex-col items-center gap-1.5">
         <span className="text-[10px] sm:text-xs uppercase tracking-wider font-bold text-indigo-400">
@@ -159,6 +232,20 @@ export default function ArenaSprintSummaryModal({
             <div className="flex flex-col items-center bg-amber-950/40 rounded-lg p-1.5 border border-amber-800/60 col-span-2 sm:col-span-4">
               <span className="text-amber-300 text-[10px] font-bold">⚡ {isEn ? 'Revenge Clearance Bonus' : 'Thưởng Chuộc Lỗi Phục Thù'}</span>
               <span className="font-extrabold text-amber-300 text-xs sm:text-sm">+{summary.revengeBonusXp} XP ({summary.revengeClearedCount} {isEn ? 'cleared' : 'câu'})</span>
+            </div>
+          )}
+
+          {summary.ghostDuelResult?.bonusXp > 0 && (
+            <div className="flex flex-col items-center bg-indigo-950/40 rounded-lg p-1.5 border border-indigo-800/60 col-span-2 sm:col-span-4">
+              <span className="text-indigo-300 text-[10px] font-bold">⚔️ {isEn ? 'Ghost Duel Victory Bonus' : 'Thưởng Thắng Đối Thủ Ảo'}</span>
+              <span className="font-extrabold text-indigo-300 text-xs sm:text-sm">+{summary.ghostDuelResult.bonusXp} XP</span>
+            </div>
+          )}
+
+          {summary.worldBossDamage?.bonusXp > 0 && (
+            <div className="flex flex-col items-center bg-rose-950/40 rounded-lg p-1.5 border border-rose-800/60 col-span-2 sm:col-span-4">
+              <span className="text-rose-300 text-[10px] font-bold">👑 {isEn ? 'World Boss Raid Milestone' : 'Thưởng Mốc Săn Boss Thế Giới'}</span>
+              <span className="font-extrabold text-rose-300 text-xs sm:text-sm">+{summary.worldBossDamage.bonusXp} XP</span>
             </div>
           )}
         </div>

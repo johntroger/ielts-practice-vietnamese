@@ -14,3 +14,5 @@ export { default as ArenaMediaViewer } from './ArenaMediaViewer.jsx';
 export { default as PublicLearnerProfileModal } from './PublicLearnerProfileModal.jsx';
 export { default as LevelUpCelebrationModal } from './LevelUpCelebrationModal.jsx';
 export { default as ArenaTextInputCard } from './ArenaTextInputCard.jsx';
+export { default as ArenaGhostDuelBar } from './ArenaGhostDuelBar.jsx';
+export { default as ArenaWorldBossCard } from './ArenaWorldBossCard.jsx';
