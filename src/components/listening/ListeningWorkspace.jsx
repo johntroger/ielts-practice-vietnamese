@@ -96,6 +96,107 @@ export default function ListeningWorkspace({
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
 
+  // Dynamic Open Listening Tabs state with localStorage persistence
+  const [isTestDropdownOpen, setIsTestDropdownOpen] = useState(false);
+  const testDropdownRef = useRef(null);
+
+  const [openListeningTabs, setOpenListeningTabs] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_listening_open_tabs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return [initialTestId || 'cambridge-16-test-1'];
+  });
+
+  // Persist open tabs whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('ielts_listening_open_tabs', JSON.stringify(openListeningTabs));
+    } catch (e) {}
+  }, [openListeningTabs]);
+
+  // Ensure currentTestId is always included in openListeningTabs
+  useEffect(() => {
+    if (currentTestId && !openListeningTabs.includes(currentTestId)) {
+      setOpenListeningTabs(prev => [...prev, currentTestId]);
+    }
+  }, [currentTestId]);
+
+  // Outside click listener for test dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (testDropdownRef.current && !testDropdownRef.current.contains(e.target)) {
+        setIsTestDropdownOpen(false);
+      }
+    };
+    if (isTestDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isTestDropdownOpen]);
+
+  // Helper to switch test cleanly
+  const handleSwitchTest = (testId) => {
+    const selectedTest = allListeningTests.find(t => t.id === testId);
+    if (!selectedTest) return;
+    setCurrentTestId(testId);
+    setActivePart(selectedTest.targetPart || selectedTest.parts?.[0]?.partNumber || 1);
+    setHasStartedExam(true);
+    exam.resetExam();
+    setBandResult(null);
+    if (selectedTest.audioUrl) {
+      audioEngine.loadAudio(selectedTest.audioUrl || selectedTest.fallbackAudioUrl);
+    }
+  };
+
+  const handleSelectTestFromDropdown = (testId) => {
+    if (!openListeningTabs.includes(testId)) {
+      setOpenListeningTabs(prev => [...prev, testId]);
+    }
+    handleSwitchTest(testId);
+    setIsTestDropdownOpen(false);
+  };
+
+  const handleCloseTestTab = (testId, e) => {
+    if (e) e.stopPropagation();
+    const nextTabs = openListeningTabs.filter(id => id !== testId);
+    if (nextTabs.length === 0) {
+      const r2Tests = allListeningTests.filter(t => t.audioUrl?.includes('.r2.dev'));
+      const fallbackId = r2Tests.find(t => t.id !== testId)?.id || allListeningTests[0]?.id;
+      if (fallbackId) {
+        setOpenListeningTabs([fallbackId]);
+        handleSwitchTest(fallbackId);
+      }
+      return;
+    }
+    setOpenListeningTabs(nextTabs);
+    if (currentTestId === testId) {
+      const closedIdx = openListeningTabs.indexOf(testId);
+      const newActiveId = nextTabs[Math.min(closedIdx, nextTabs.length - 1)];
+      handleSwitchTest(newActiveId);
+    }
+  };
+
+  const handleOpenAllTestTabs = () => {
+    const r2Ids = allListeningTests.filter(t => t.audioUrl?.includes('.r2.dev')).map(t => t.id);
+    setOpenListeningTabs(r2Ids);
+    setIsTestDropdownOpen(false);
+  };
+
+  const handleCloseOtherTestTabs = () => {
+    setOpenListeningTabs([currentTestId]);
+    setIsTestDropdownOpen(false);
+  };
+
   // Sync external generator trigger
   useEffect(() => {
     if (openGeneratorTrigger) {
@@ -770,18 +871,7 @@ export default function ListeningWorkspace({
             {allListeningTests.length > 1 && (
               <select
                 value={currentTestId}
-                onChange={(e) => {
-                  const selectedId = e.target.value;
-                  const selectedTest = allListeningTests.find(t => t.id === selectedId);
-                  setCurrentTestId(selectedId);
-                  setActivePart(selectedTest?.targetPart || selectedTest?.parts?.[0]?.partNumber || 1);
-                  setHasStartedExam(true);
-                  exam.resetExam();
-                  setBandResult(null);
-                  if (selectedTest?.audioUrl) {
-                    audioEngine.loadAudio(selectedTest.audioUrl || selectedTest.fallbackAudioUrl);
-                  }
-                }}
+                onChange={(e) => handleSwitchTest(e.target.value)}
                 className="hidden xl:block bg-white border border-slate-200 text-xs font-bold text-slate-700 px-2 py-1 rounded-lg focus:outline-none focus:ring-1 focus:ring-purple-500 max-w-[210px] truncate cursor-pointer shrink-0"
                 title={isEn ? "Select listening test" : "Chọn bộ đề nghe"}
               >
@@ -1041,50 +1131,124 @@ export default function ListeningWorkspace({
         </div>
       )}
 
-      {/* 1.5 Quick Cloudflare R2 Studio Audio Switcher Bar (Practice Mode) */}
+      {/* 1.5 Dynamic Listening Test Tab Bar & Dropdown Switcher (Practice Mode) */}
       {examMode !== 'strict' && (
-        <div className="bg-gradient-to-r from-cyan-50/90 via-sky-50/90 to-emerald-50/90 border-b border-cyan-200/80 px-3 sm:px-6 py-1.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar shrink-0">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-600 text-white text-[10px] font-black uppercase tracking-wider shadow-2xs">
-              ☁️ R2 Audio Mới
-            </span>
-            <span className="hidden sm:inline text-[11px] font-bold text-cyan-950">
-              {isEn ? 'Real Studio MP3 Tracks:' : 'Bộ đề Audio MP3 thực chiến:'}
-            </span>
+        <div className="bg-gradient-to-r from-cyan-50/90 via-sky-50/90 to-emerald-50/90 border-b border-cyan-200/80 px-2 sm:px-4 py-1.5 flex items-center justify-between gap-2 shrink-0 select-none">
+          {/* Left: Dropdown Trigger to open any test as a tab */}
+          <div className="relative shrink-0" ref={testDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsTestDropdownOpen(prev => !prev)}
+              className="px-2.5 py-1 rounded-lg bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              title={isEn ? "Select listening test to open as tab" : "Chọn đề thi để mở thành tab"}
+            >
+              <span>☁️ {isEn ? 'Tests' : 'Đề R2 Audio'}</span>
+              <span className="text-[10px] bg-cyan-900/60 px-1.5 py-0.2 rounded-full font-semibold">
+                {allListeningTests.filter(t => t.audioUrl?.includes('.r2.dev')).length}
+              </span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-150 ${isTestDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {isTestDropdownOpen && (
+              <div className="absolute left-0 top-full mt-1.5 z-40 bg-white rounded-xl shadow-xl border border-cyan-200 p-2 min-w-[280px] sm:min-w-[340px] max-h-[380px] overflow-y-auto animate-in fade-in zoom-in-95 space-y-1 text-slate-800">
+                <div className="px-2 py-1 flex items-center justify-between border-b border-slate-100 pb-1.5">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    {isEn ? 'Audio Tests Library' : 'Danh Sách Đề Nghe'}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={handleOpenAllTestTabs}
+                      className="text-[10px] font-bold text-cyan-700 hover:text-cyan-900 px-1.5 py-0.5 rounded bg-cyan-50 hover:bg-cyan-100 cursor-pointer"
+                      title={isEn ? "Open all R2 tests as tabs" : "Mở tất cả đề R2 thành tab"}
+                    >
+                      {isEn ? 'Open all' : 'Mở hết'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCloseOtherTestTabs}
+                      className="text-[10px] font-bold text-slate-500 hover:text-slate-700 px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 cursor-pointer"
+                      title={isEn ? "Keep only active test" : "Chỉ giữ bài hiện tại"}
+                    >
+                      {isEn ? 'Only active' : 'Chỉ bài này'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="py-1 space-y-0.5">
+                  {allListeningTests.map((t) => {
+                    const isSelected = currentTestId === t.id;
+                    const isTabOpen = openListeningTabs.includes(t.id);
+                    const isR2 = Boolean(t.audioUrl?.includes('.r2.dev'));
+
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => handleSelectTestFromDropdown(t.id)}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                          isSelected
+                            ? 'bg-cyan-100 text-cyan-950 font-bold'
+                            : 'hover:bg-slate-100 text-slate-700 font-medium'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate pr-2">
+                          <span className="shrink-0">{isR2 ? '☁️' : t.isCustom ? '✨' : '🎧'}</span>
+                          <span className="truncate">{t.title}</span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {isTabOpen && (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800 font-bold">
+                              {isEn ? 'Tab Open' : 'Đang mở'}
+                            </span>
+                          )}
+                          {isSelected && (
+                            <span className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            {allListeningTests
-              .filter(t => t.audioUrl?.includes('.r2.dev'))
-              .map((r2Test, idx) => {
-                const isSelected = currentTestId === r2Test.id;
-                const shortTitle = r2Test.title.replace(/^Cambridge Practice\s*[—-]\s*/i, '');
-                return (
+          {/* Right: Dynamic Closable Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-1 min-w-0">
+            {openListeningTabs.map((tabId) => {
+              const testItem = allListeningTests.find(t => t.id === tabId);
+              if (!testItem) return null;
+              const isSelected = currentTestId === testItem.id;
+              const shortTitle = testItem.title.replace(/^Cambridge Practice\s*[—-]\s*/i, '');
+
+              return (
+                <div
+                  key={testItem.id}
+                  onClick={() => handleSwitchTest(testItem.id)}
+                  className={`group px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer shrink-0 flex items-center gap-1.5 border select-none ${
+                    isSelected
+                      ? 'bg-cyan-700 text-white border-cyan-800 shadow-xs ring-1 ring-cyan-400/40 font-bold'
+                      : 'bg-white/95 hover:bg-cyan-100/80 text-slate-700 hover:text-cyan-950 border-cyan-200/90 font-medium'
+                  }`}
+                  title={testItem.title}
+                >
+                  <span className="shrink-0">{testItem.audioUrl?.includes('.r2.dev') ? '☁️' : '🎧'}</span>
+                  <span className="max-w-[130px] sm:max-w-[180px] truncate">{shortTitle}</span>
                   <button
-                    key={r2Test.id}
                     type="button"
-                    onClick={() => {
-                      setCurrentTestId(r2Test.id);
-                      setActivePart(r2Test.targetPart || r2Test.parts?.[0]?.partNumber || 1);
-                      setHasStartedExam(true);
-                      exam.resetExam();
-                      setBandResult(null);
-                      if (r2Test.audioUrl) {
-                        audioEngine.loadAudio(r2Test.audioUrl || r2Test.fallbackAudioUrl);
-                      }
-                    }}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1 border ${
-                      isSelected
-                        ? 'bg-cyan-700 text-white border-cyan-800 shadow-xs ring-2 ring-cyan-400/40'
-                        : 'bg-white/90 hover:bg-cyan-100/80 text-slate-700 hover:text-cyan-950 border-cyan-200/90'
+                    onClick={(e) => handleCloseTestTab(testItem.id, e)}
+                    className={`p-0.5 rounded-full hover:bg-black/15 transition-colors cursor-pointer shrink-0 ml-0.5 ${
+                      isSelected ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-red-500'
                     }`}
-                    title={r2Test.title}
+                    title={isEn ? "Close tab" : "Đóng tab"}
                   >
-                    <span>🎧</span>
-                    <span className="max-w-[150px] sm:max-w-[190px] truncate">{shortTitle}</span>
+                    <X className="w-3 h-3" />
                   </button>
-                );
-              })}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
