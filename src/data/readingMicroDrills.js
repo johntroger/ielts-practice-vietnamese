@@ -442,5 +442,75 @@ export const READING_MICRO_DRILLS = [
     optionsEn: ['wooded interglacials', 'cold glacial oscillations', 'abrupt climate shifts', 'repeated ice advances'],
     explanation: '"Wooded interglacials" (các thời kỳ gian băng rợp bóng rừng) là từ khóa chính thức câu 31 Test 3, diễn đạt việc loài hươu sinh sống trong các thời kỳ ấm giữa hai kỷ băng hà.',
     explanationEn: '"Wooded interglacials" refers to forested warm phases between glacial advances, matching official Question 31 in Test 3.'
+  },
+
+  // ==========================================
+  // 7. 101 PAST PAPERS BATCH 2 DRILLS (Tests 6, 7, 8, 9)
+  // ==========================================
+  {
+    id: 'drill-101-batch2-tfng-4',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định Not Given: Sự Bùng Nổ Của Khủng Long (Test 7)',
+    titleEn: 'Not Given Trap: Dinosaur Boom & Asteroids (Test 7)',
+    category: 'Paleontology & Geology',
+    categoryEn: 'Paleontology & Geology',
+    passage: 'Dinosaurs first appear in the fossil record 230m years ago during the Triassic. They shared the earth with lots of other reptiles until the Jurassic period, when they turned into the monsters depicted in the book and movie Jurassic Park. Actually, though, the dinosaurs that appeared on screen were from the still more recent Cretaceous period.',
+    statement: 'Books and movies like Jurassic Park often exaggerate the physical dimensions and body weight of dinosaurs.',
+    answer: 'NOT GIVEN',
+    trapType: 'Extrapolation Trap (Bẫy suy diễn ngoài văn bản)',
+    trapTypeEn: 'Extrapolation Trap (Unsubstantiated speculation beyond text)',
+    explanation: 'Đáp án là NOT GIVEN. Mặc dù bài đọc nhắc đến bộ phim "Jurassic Park" và đính chính rằng khủng long trên màn ảnh thực chất thuộc kỷ Phấn trắng, tác giả không hề bàn luận xem phim có phóng đại (exaggerate) kích thước hay trọng lượng của khủng long hay không.',
+    explanationEn: 'The answer is NOT GIVEN. While the text mentions "Jurassic Park" and clarifies that the dinosaurs on screen were actually from the Cretaceous period, it never mentions whether movies or books exaggerated their physical dimensions or weight.',
+    evidence: '...the monsters depicted in the book and movie Jurassic Park. (Actually, though, the dinosaurs that appeared on screen were from the still more recent Cretaceous period.)',
+    evidenceEn: '...the monsters depicted in the book and movie Jurassic Park. (Actually, though, the dinosaurs that appeared on screen were from the still more recent Cretaceous period.)'
+  },
+  {
+    id: 'drill-101-batch2-para-5',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Tiến Hóa Mỏ Chim Sẻ (Test 8)',
+    titleEn: 'Cambridge Paraphrase Pair: Finch Evolution & Human Impact (Test 8)',
+    category: 'Evolutionary Biology',
+    categoryEn: 'Evolutionary Biology',
+    passage: 'On Santa Cruz island, scientists documented a distinct reversal in finch evolution, where intermediate-billed birds thrived due to the expanding human population introducing non-native plants and table scraps.',
+    question: 'Cụm từ nào trong bài thể hiện nguyên nhân gốc rễ thúc đẩy sự biến đổi đặc điểm sinh học của chim sẻ?',
+    questionEn: 'Which phrase in the text indicates the root cause driving the biological shift in the finches?',
+    correctAnswer: 'expanding human population',
+    options: ['expanding human population', 'distinct reversal', 'intermediate-billed birds', 'table scraps'],
+    optionsEn: ['expanding human population', 'distinct reversal', 'intermediate-billed birds', 'table scraps'],
+    explanation: '"Expanding human population" (dân số con người ngày càng gia tăng) là nguyên nhân cốt lõi dẫn đến việc xuất hiện thức ăn nhân tạo và làm đảo ngược hướng chọn lọc tự nhiên của chim sẻ.',
+    explanationEn: '"Expanding human population" is the root cause introducing alien seeds and human food that reversed the natural selection process of finch bills.'
+  },
+  {
+    id: 'drill-101-batch2-tfng-6',
+    type: 'reading-tfng',
+    title: 'Bẫy True / False: Lịch Sử Tên Lửa Cổ Đại Trung Hoa (Test 9)',
+    titleEn: 'True / False Trap: Ancient Chinese Rocketry (Test 9)',
+    category: 'History of Technology',
+    categoryEn: 'History of Technology',
+    passage: 'Rocket technology has progressed considerably since the days of "fire arrows" first used in China around 500 BC, and, during the Sung Dynasty, deployed to repel Mongol invaders at the battle of Kaifeng in AD 1232.',
+    statement: 'Ancient China had already deployed rockets for military purposes as early as 500 years ago.',
+    answer: 'FALSE',
+    trapType: 'Numerical Chronology Trap (Bẫy mốc thời gian lịch sử)',
+    trapTypeEn: 'Numerical Chronology Trap (Contradictory timeline calculation)',
+    explanation: 'Đáp án là FALSE. Trận Khai Phong diễn ra vào năm 1232 SCN (hơn 700 - 800 năm trước), do đó phát biểu rằng Trung Quốc chỉ mới dùng tên lửa cho mục đích quân sự cách đây 500 năm là mâu thuẫn trực tiếp với văn bản.',
+    explanationEn: 'The answer is FALSE. Rockets were deployed in the battle of Kaifeng in AD 1232 (over 700-800 years ago). Stating they were deployed "as early as 500 years ago" directly contradicts the historical date in the text.',
+    evidence: '...and, during the Sung Dynasty, to repel Mongol invaders at the battle of Kaifeng in AD 1232.',
+    evidenceEn: '...and, during the Sung Dynasty, to repel Mongol invaders at the battle of Kaifeng in AD 1232.'
+  },
+  {
+    id: 'drill-101-batch2-para-7',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Bột Talc Công Nghiệp (Test 6)',
+    titleEn: 'Cambridge Paraphrase Pair: Industrial Talc Applications (Test 6)',
+    category: 'Material Science',
+    categoryEn: 'Material Science',
+    passage: 'In the manufacture of chewing gum, micronised talc powder is dusted across product sheets to prevent tackiness during the lamination and packing process.',
+    question: 'Từ "tackiness" trong câu trên đồng nghĩa với khái niệm nào trong bài đọc?',
+    questionEn: 'In the passage above, "tackiness" is the exact paraphrase for which operational challenge?',
+    correctAnswer: 'sticking',
+    options: ['sticking', 'lamination', 'micronised', 'packing'],
+    optionsEn: ['sticking', 'lamination', 'micronised', 'packing'],
+    explanation: '"Tackiness" (độ dính/bám dính) đồng nghĩa với "sticking". Bột talc được rắc để kẹo cao su không bị dính trong quá trình dát mỏng và đóng gói.',
+    explanationEn: '"Tackiness" means stickiness. Talc prevents chewing gum from sticking during the lamination and packaging operations.'
   }
 ];
