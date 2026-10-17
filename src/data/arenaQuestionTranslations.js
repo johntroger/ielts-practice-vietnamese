@@ -1393,6 +1393,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What proposal does Robert infer would effectively alleviate traffic around Central Park and the Town Hall?",
     "contextEn": "Robert: So you're saying that if we stop them coming in early to the area by Central Park where the Town Hall is, that would make the traffic a lot lighter? Sophie: I'm sure it would.",
     "explanationEn": "Solution deduction: Restricting early morning lorry access near Central Park and the Town Hall makes traffic much lighter."
+  },
+  "easy_lis_bus_lane_displacement_t33": {
+    "promptEn": "According to Sophie, why can dedicated bus and cycle lanes inadvertently worsen local traffic?",
+    "contextEn": "Sophie: ...car traffic tends to go off into the areas around town where people live, and that causes more traffic in places where there haven't been problems before. Drivers think they can find emptier roads in residential areas, and it just sends the problem there instead.",
+    "explanationEn": "Traffic displacement: Drivers attempt to find emptier streets in residential areas, shifting congestion into previously quiet neighborhoods."
+  },
+  "med_lis_park_ride_takeup_t33": {
+    "promptEn": "What principal shortcoming of park-and-ride schemes does Robert identify?",
+    "contextEn": "Robert: The main problem is lack of take-up. Drivers just don't use them. A lot of these car parks stay empty for a long time, and the buses are often less than half full.",
+    "explanationEn": "Underutilization finding: Robert specifies that a lack of public take-up leaves car parks empty and buses running less than half full."
+  },
+  "hard_lis_pedestrian_delivery_threat_t33": {
+    "promptEn": "Why could fully pedestrianizing the town center shopping district drive some retailers out of business?",
+    "contextEn": "Robert: ...the biggest problem would actually be with the shops themselves. It's fine to stop traffic around the shopping areas, but there would be huge problems with deliveries. Some shops could go out of business if they have difficulty getting lorries in with their goods.",
+    "explanationEn": "Logistical impediment: Robert warns that heavy goods lorries will struggle with deliveries, which could force shops out of business."
+  },
+  "med_lis_tram_network_scope_t33": {
+    "promptEn": "What route layout does Sophie outline for the proposed municipal tram system?",
+    "contextEn": "Sophie: We'll have to lay down a new line through the center of town, and also from north to south. It's quite a popular solution to traffic problems.",
+    "explanationEn": "Route alignment: The tram network proposal involves laying down lines through the town center and connecting north to south."
+  },
+  "easy_lis_tram_council_budget_t33": {
+    "promptEn": "According to Robert, what is the primary financial obstacle to constructing a new tram system?",
+    "contextEn": "Robert: That may be so, but the main problem with that kind of project is the expense. The initial financial requirements would be huge, and so would the maintenance expenses. It might well be far more than the council is prepared to spend on a solution.",
+    "explanationEn": "Prohibitive expense: Robert stresses that massive initial capital requirements and ongoing maintenance exceed the council's spending appetite."
   }
 };
 

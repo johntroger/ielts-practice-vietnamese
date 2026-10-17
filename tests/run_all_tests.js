@@ -189,7 +189,8 @@ const testSuites = [
   { name: 'Step 180: Multilingual Documentation Architecture (English Variant Foundation)', file: 'tests/test_step180_multilang_docs_architecture.js' },
   { name: 'Step 181: English Core Documentation & Zero Broken Links Verification', file: 'tests/test_step181_english_core_documentation_integrity.js' },
   { name: 'Step 182: Track 31 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step182_track31_audio_integration.js' },
-  { name: 'Step 183: Track 32 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step183_track32_audio_integration.js' }
+  { name: 'Step 183: Track 32 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step183_track32_audio_integration.js' },
+  { name: 'Step 184: Track 33 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step184_track33_audio_integration.js' }
 ];
 
 console.log('===============================================================');

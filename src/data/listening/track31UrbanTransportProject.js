@@ -112,7 +112,7 @@ export const track31UrbanTransportProject = {
               correctAnswer: 'money',
               explanation: 'Sophie đề xuất giải pháp tài chính: "I think the town council can find some extra money to support the train service...". Danh từ cần điền sau "extra" là "money".',
               explanationEn: 'Sophie suggests: "I think the town council can find some extra money to support the train service...". The missing noun after "extra" is "money".',
-              audioTimestamp: 111
+              audioTimestamp: 71
             },
             {
               id: 't31-q5',
@@ -126,7 +126,7 @@ export const track31UrbanTransportProject = {
               correctAnswer: 'accident',
               explanation: 'Nam sinh viên phân tích điểm tích cực bất ngờ: "...the road accident rate has been falling recently, partly due to the high volume of traffic on the roads." Từ cần điền là "accident".',
               explanationEn: 'The male student observes: "...the road accident rate has been falling recently, partly due to the high volume of traffic on the roads." The missing noun is "accident".',
-              audioTimestamp: 132
+              audioTimestamp: 92
             }
           ]
         }
@@ -220,7 +220,7 @@ export const track31UrbanTransportProject = {
               correctAnswer: 'Local roads will become safer, particularly during school commute hours',
               explanation: 'Sophie lập luận: "The more people travel by rail, the less they\'ll use the road, and we would have the added benefit of safer roads, especially at school travel times." Đáp án A đúng.',
               explanationEn: 'Sophie underscores: "The more people travel by rail, the less they\'ll use the road, and we would have the added benefit of safer roads, especially at school travel times." Option A is correct.',
-              audioTimestamp: 121
+              audioTimestamp: 65
             },
             {
               id: 't31-q8',
@@ -251,7 +251,7 @@ export const track31UrbanTransportProject = {
               correctAnswer: 'Intense vehicle congestion forces traffic to crawl at lower speeds',
               explanation: 'Nam sinh viên giải thích: "...partly due to the high volume of traffic on the roads. After all, when there\'s too much traffic, it moves more slowly, and fewer people, especially children, are in danger." Đáp án A đúng.',
               explanationEn: 'The student explains: "...partly due to the high volume of traffic on the roads. After all, when there\'s too much traffic, it moves more slowly, and fewer people, especially children, are in danger." Option A is correct.',
-              audioTimestamp: 135
+              audioTimestamp: 95
             },
             {
               id: 't31-q9',
@@ -282,7 +282,7 @@ export const track31UrbanTransportProject = {
               correctAnswer: 'Severely deteriorated air quality triggering respiratory illnesses like asthma and bronchitis',
               explanation: 'Sophie nhấn mạnh: "...the air quality is much worse. We don\'t want to have more medical problems like asthma and bronchitis, especially for children and older people." Đáp án A đúng.',
               explanationEn: 'Sophie warns: "...the air quality is much worse. We don\'t want to have more medical problems like asthma and bronchitis, especially for children and older people." Option A is correct.',
-              audioTimestamp: 154
+              audioTimestamp: 114
             },
             {
               id: 't31-q10',
@@ -313,7 +313,7 @@ export const track31UrbanTransportProject = {
               correctAnswer: 'Businesses suffer financial losses because employees arrive late and motorists become stressed',
               explanation: 'Nam sinh viên kết luận: "...heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed." Do đó đáp án A hoàn toàn chính xác.',
               explanationEn: 'The student concludes: "...heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed." Thus Option A is strictly supported.',
-              audioTimestamp: 206
+              audioTimestamp: 126
             }
           ]
         }

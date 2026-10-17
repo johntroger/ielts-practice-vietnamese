@@ -41,6 +41,7 @@ import { track29IntonationAttitude } from './listening/track29IntonationAttitude
 import { track30TransportConversations } from './listening/track30TransportConversations.js';
 import { track31UrbanTransportProject } from './listening/track31UrbanTransportProject.js';
 import { track32UrbanTrafficHotspots } from './listening/track32UrbanTrafficHotspots.js';
+import { track33TransportProposalsEvaluation } from './listening/track33TransportProposalsEvaluation.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -63,6 +64,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track33TransportProposalsEvaluation,
   track32UrbanTrafficHotspots,
   track31UrbanTransportProject,
   track30TransportConversations,

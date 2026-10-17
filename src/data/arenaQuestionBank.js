@@ -3154,25 +3154,210 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Restricting heavy delivery lorries from entering the Central Park and Town Hall area early in the morning',
     explanation: 'Robert suy luận và Sophie đồng tình rằng nếu ngăn xe tải vào sớm quanh Central Park nơi có Tòa thị chính thì giao thông sẽ nhẹ nhàng hơn nhiều.',
     explanationEn: 'Solution deduction: Restricting early morning lorry access near Central Park and the Town Hall makes traffic much lighter.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 33 TRANSPORT PROPOSALS & FEASIBILITY EVALUATION
+  // ==========================================
+  {
+    id: 'easy_lis_bus_lane_displacement_t33',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Sophie, why can dedicated bus and cycle lanes inadvertently worsen local traffic?',
+    promptVi: 'Theo Sophie, tại sao làn đường dành riêng cho xe buýt và xe đạp lại vô tình khiến giao thông địa phương tồi tệ hơn?',
+    promptEn: 'According to Sophie, why can dedicated bus and cycle lanes inadvertently worsen local traffic?',
+    context: 'Sophie: ...car traffic tends to go off into the areas around town where people live, and that causes more traffic in places where there haven\'t been problems before. Drivers think they can find emptier roads in residential areas, and it just sends the problem there instead.',
+    contextEn: 'Sophie: ...car traffic tends to go off into the areas around town where people live, and that causes more traffic in places where there haven\'t been problems before. Drivers think they can find emptier roads in residential areas, and it just sends the problem there instead.',
+    audioText: '...car traffic tends to go off into the areas around town where people live, and that causes more traffic in places where there haven\'t been problems before. Drivers think they can find emptier roads in residential areas, and it just sends the problem there instead.',
+    options: [
+      'Motorists divert into residential areas to seek emptier roads, creating new congestion',
+      'Buses and bicycles frequently collide on narrow roadway shoulders',
+      'Street sweepers cannot access segregated lanes during regular night shifts',
+      'Emergency fire trucks cannot legally cross solid white bus-lane dividers'
+    ],
+    optionsVi: [
+      'Người lái ô tô chuyển hướng vào các khu dân cư để tìm đường vắng hơn, tạo ra điểm nghẽn mới',
+      'Xe buýt và xe đạp thường xuyên va chạm trên lề đường hẹp',
+      'Xe quét đường không thể tiếp cận các làn đường tách biệt trong ca đêm',
+      'Xe cứu hỏa không được phép vượt qua vạch phân cách trắng liền mạch của làn xe buýt'
+    ],
+    optionsEn: [
+      'Motorists divert into residential areas to seek emptier roads, creating new congestion',
+      'Buses and bicycles frequently collide on narrow roadway shoulders',
+      'Street sweepers cannot access segregated lanes during regular night shifts',
+      'Emergency fire trucks cannot legally cross solid white bus-lane dividers'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Motorists divert into residential areas to seek emptier roads, creating new congestion',
+    explanation: 'Sophie giải thích: ô tô sẽ chuyển hướng vào khu dân cư ("residential areas") để tìm đường thoáng hơn, làm phát sinh kẹt xe ở nơi trước giờ chưa từng có.',
+    explanationEn: 'Traffic displacement: Drivers attempt to find emptier streets in residential areas, shifting congestion into previously quiet neighborhoods.'
+  },
+  {
+    id: 'med_lis_park_ride_takeup_t33',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What principal shortcoming of park-and-ride schemes does Robert identify?',
+    promptVi: 'Khuyết điểm chủ yếu của mô hình park-and-ride được Robert chỉ ra là gì?',
+    promptEn: 'What principal shortcoming of park-and-ride schemes does Robert identify?',
+    context: 'Robert: The main problem is lack of take-up. Drivers just don\'t use them. A lot of these car parks stay empty for a long time, and the buses are often less than half full.',
+    contextEn: 'Robert: The main problem is lack of take-up. Drivers just don\'t use them. A lot of these car parks stay empty for a long time, and the buses are often less than half full.',
+    audioText: 'The main problem is lack of take-up. Drivers just don\'t use them. A lot of these car parks stay empty for a long time, and the buses are often less than half full.',
+    options: [
+      'A lack of take-up, leaving car parks vacant and shuttle buses under-utilized',
+      'Excessive commuter ticket prices charged by private transit subcontractors',
+      'Vandalism and car theft occurring in remote edge-of-town parking lots',
+      'A shortage of licensed shuttle bus drivers during weekend shopping hours'
+    ],
+    optionsVi: [
+      'Tỷ lệ người dùng thấp, khiến bãi đỗ bị bỏ trống và xe buýt trung chuyển vắng khách',
+      'Giá vé trung chuyển quá đắt đỏ do các nhà thầu tư nhân áp đặt',
+      'Nạn phá hoại và trộm cắp ô tô xảy ra tại các bãi đỗ xe hẻo lánh ven đô',
+      'Tình trạng thiếu hụt tài xế xe buýt có bằng lái vào các khung giờ mua sắm cuối tuần'
+    ],
+    optionsEn: [
+      'A lack of take-up, leaving car parks vacant and shuttle buses under-utilized',
+      'Excessive commuter ticket prices charged by private transit subcontractors',
+      'Vandalism and car theft occurring in remote edge-of-town parking lots',
+      'A shortage of licensed shuttle bus drivers during weekend shopping hours'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A lack of take-up, leaving car parks vacant and shuttle buses under-utilized',
+    explanation: 'Robert nhấn mạnh: "The main problem is lack of take-up. Drivers just don\'t use them. A lot of these car parks stay empty for a long time, and the buses are often less than half full."',
+    explanationEn: 'Underutilization finding: Robert specifies that a lack of public take-up leaves car parks empty and buses running less than half full.'
+  },
+  {
+    id: 'hard_lis_pedestrian_delivery_threat_t33',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why could fully pedestrianizing the town center shopping district drive some retailers out of business?',
+    promptVi: 'Tại sao việc chuyển đổi hoàn toàn khu mua sắm trung tâm thị trấn thành phố đi bộ có thể khiến một số cửa hàng bị phá sản?',
+    promptEn: 'Why could fully pedestrianizing the town center shopping district drive some retailers out of business?',
+    context: 'Robert: ...the biggest problem would actually be with the shops themselves. It\'s fine to stop traffic around the shopping areas, but there would be huge problems with deliveries. Some shops could go out of business if they have difficulty getting lorries in with their goods.',
+    contextEn: 'Robert: ...the biggest problem would actually be with the shops themselves. It\'s fine to stop traffic around the shopping areas, but there would be huge problems with deliveries. Some shops could go out of business if they have difficulty getting lorries in with their goods.',
+    audioText: '...the biggest problem would actually be with the shops themselves. It\'s fine to stop traffic around the shopping areas, but there would be huge problems with deliveries. Some shops could go out of business if they have difficulty getting lorries in with their goods.',
+    options: [
+      'Severe freight delivery restrictions would prevent lorries from stocking shops with goods',
+      'Shoppers will refuse to walk without motorized wheelchair shuttle carts',
+      'Street musicians and unauthorized hawkers will crowd retail storefront entrances',
+      'Retail property taxes will be quadrupled to finance pedestrian cobblestone paving'
+    ],
+    optionsVi: [
+      'Hạn chế giao hàng nghiêm ngặt sẽ ngăn xe tải tiếp tế hàng hóa cho các cửa hàng',
+      'Người mua sắm từ chối đi bộ nếu không có xe điện đưa đón',
+      'Nghệ sĩ đường phố và người bán hàng rong sẽ tụ tập chắn kín cửa hàng',
+      'Thuế bất động sản bán lẻ sẽ tăng gấp bốn lần để chi trả tiền lát đá vỉa hè'
+    ],
+    optionsEn: [
+      'Severe freight delivery restrictions would prevent lorries from stocking shops with goods',
+      'Shoppers will refuse to walk without motorized wheelchair shuttle carts',
+      'Street musicians and unauthorized hawkers will crowd retail storefront entrances',
+      'Retail property taxes will be quadrupled to finance pedestrian cobblestone paving'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Severe freight delivery restrictions would prevent lorries from stocking shops with goods',
+    explanation: 'Robert chỉ ra: cấm xe sẽ gây ra vấn đề lớn cho việc giao hàng của xe tải ("huge problems with deliveries"), khiến một số cửa hàng có thể phá sản ("go out of business").',
+    explanationEn: 'Supply chain disruption: Robert warns that delivery lorries would face severe obstacles bringing in goods, threatening retailers\' commercial viability.'
+  },
+  {
+    id: 'med_lis_tram_network_scope_t33',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What track layout does Sophie outline for the proposed municipal tram system?',
+    promptVi: 'Quy hoạch tuyến ray nào được Sophie vạch ra cho hệ thống tàu điện tramway được đề xuất của thị trấn?',
+    promptEn: 'What track layout does Sophie outline for the proposed municipal tram system?',
+    context: 'Sophie: We\'ll have to lay down a new line through the center of town, and also from north to south. It\'s quite a popular solution to traffic problems.',
+    contextEn: 'Sophie: We\'ll have to lay down a new line through the center of town, and also from north to south. It\'s quite a popular solution to traffic problems.',
+    audioText: 'We\'ll have to lay down a new line through the center of town, and also from north to south. It\'s quite a popular solution to traffic problems.',
+    options: [
+      'A new rail line running through the town center and connecting from north to south',
+      'A circular orbital loop encircling the outer edge of the residential suburbs',
+      'A dedicated spur linking the industrial district directly to the maritime cargo port',
+      'An underground subway line connecting the northern hills to the southern riverbank'
+    ],
+    optionsVi: [
+      'Một tuyến đường ray mới chạy xuyên qua trung tâm thị trấn và kết nối thông suốt từ bắc xuống nam',
+      'Một vòng cung khép kín bao quanh rìa ngoài các khu dân cư ngoại ô',
+      'Một tuyến nhánh chuyên dụng nối khu công nghiệp thẳng đến cảng hàng hải',
+      'Một tuyến tàu điện ngầm nối các ngọn đồi phía bắc với bờ sông phía nam'
+    ],
+    optionsEn: [
+      'A new rail line running through the town center and connecting from north to south',
+      'A circular orbital loop encircling the outer edge of the residential suburbs',
+      'A dedicated spur linking the industrial district directly to the maritime cargo port',
+      'An underground subway line connecting the northern hills to the southern riverbank'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A new rail line running through the town center and connecting from north to south',
+    explanation: 'Sophie nêu rõ: "We\'ll have to lay down a new line through the center of town, and also from north to south."',
+    explanationEn: 'Route description: Sophie explains the tram line will run through the center of town and connect from north to south.'
+  },
+  {
+    id: 'easy_lis_tram_council_budget_t33',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What financial conclusion does Robert reach regarding the viability of a new tram system?',
+    promptVi: 'Robert đưa ra kết luận tài chính nào liên quan đến tính khả thi của hệ thống tàu điện tram mới?',
+    promptEn: 'What financial conclusion does Robert reach regarding the viability of a new tram system?',
+    context: 'Robert: ...the main problem with that kind of project is the expense. The initial financial requirements would be huge, and so would the maintenance expenses. It might well be far more than the council is prepared to spend on a solution.',
+    contextEn: 'Robert: ...the main problem with that kind of project is the expense. The initial financial requirements would be huge, and so would the maintenance expenses. It might well be far more than the council is prepared to spend on a solution.',
+    audioText: '...the main problem with that kind of project is the expense. The initial financial requirements would be huge, and so would the maintenance expenses. It might well be far more than the council is prepared to spend on a solution.',
+    options: [
+      'The combined capital installation and maintenance costs exceed the council\'s budget',
+      'Ticket revenues will easily cover debt financing within three operating fiscal years',
+      'Federal government grants will subsidize ninety percent of total civil engineering works',
+      'Local businesses have offered to underwrite the annual maintenance deficit'
+    ],
+    optionsVi: [
+      'Tổng chi phí đầu tư ban đầu và chi phí bảo trì vượt quá ngân sách hội đồng sẵn sàng chi',
+      'Doanh thu bán vé sẽ dễ dàng bù đắp nợ vay trong vòng ba năm tài chính vận hành',
+      'Trợ cấp chính phủ liên bang sẽ chi trả 90% tổng chi phí xây dựng hạ tầng kỹ thuật',
+      'Các doanh nghiệp địa phương đã đề nghị bảo lãnh thâm hụt bảo trì hàng năm'
+    ],
+    optionsEn: [
+      'The combined capital installation and maintenance costs exceed the council\'s budget',
+      'Ticket revenues will easily cover debt financing within three operating fiscal years',
+      'Federal government grants will subsidize ninety percent of total civil engineering works',
+      'Local businesses have offered to underwrite the annual maintenance deficit'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The combined capital installation and maintenance costs exceed the council\'s budget',
+    explanation: 'Robert nhấn mạnh: chi phí ban đầu và bảo trì khổng lồ vượt xa những gì hội đồng thị trấn sẵn sàng chi trả ("far more than the council is prepared to spend").',
+    explanationEn: 'Budget constraint: Robert notes that initial and maintenance expenses are likely far more than the council is prepared to spend.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 33: Transport Proposals & Feasibility Evaluation
+  easy_lis_bus_lane_displacement_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 26.0, clipEnd: 44.5, isR2Audio: true, trackLabel: 'Track 33 • Bus Lane Displacement' },
+  med_lis_park_ride_takeup_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 69.5, clipEnd: 89.0, isR2Audio: true, trackLabel: 'Track 33 • Park & Ride Take-up' },
+  hard_lis_pedestrian_delivery_threat_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 113.0, clipEnd: 127.5, isR2Audio: true, trackLabel: 'Track 33 • Pedestrian Delivery Threat' },
+  med_lis_tram_network_scope_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 131.5, clipEnd: 142.0, isR2Audio: true, trackLabel: 'Track 33 • Tram Network Scope' },
+  easy_lis_tram_council_budget_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 146.0, clipEnd: 157.0, isR2Audio: true, trackLabel: 'Track 33 • Tram Expense vs Council' },
+
   // Track 32: Urban Traffic Hotspots & Map Analysis
   easy_lis_town_hall_worst_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 2.0, clipEnd: 15.0, isR2Audio: true, trackLabel: 'Track 32 • Town Hall Worst Spot' },
   med_lis_cinema_junction_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 38.0, clipEnd: 50.0, isR2Audio: true, trackLabel: 'Track 32 • Starview Cinema Junction' },
   hard_lis_bus_manoeuvre_issue_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 49.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 32 • Bus Right Turn Issue' },
-  med_lis_central_park_lorries_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 189.0, clipEnd: 215.0, isR2Audio: true, trackLabel: 'Track 32 • Central Park Lorries' },
-  easy_lis_lorry_restriction_solution_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 214.0, clipEnd: 226.0, isR2Audio: true, trackLabel: 'Track 32 • Lorry Time Restriction' },
+  med_lis_central_park_lorries_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 119.0, clipEnd: 135.0, isR2Audio: true, trackLabel: 'Track 32 • Central Park Lorries' },
+  easy_lis_lorry_restriction_solution_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 135.0, clipEnd: 146.0, isR2Audio: true, trackLabel: 'Track 32 • Lorry Time Restriction' },
 
   // Track 31: Town Transport System & Project Discussion
   easy_lis_project_subject_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 2.0, clipEnd: 15.0, isR2Audio: true, trackLabel: 'Track 31 • Project Scope' },
   med_lis_rail_budget_trouble_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 53.0, clipEnd: 65.0, isR2Audio: true, trackLabel: 'Track 31 • Rail Financial Problems' },
-  hard_lis_accident_paradox_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 130.0, clipEnd: 145.0, isR2Audio: true, trackLabel: 'Track 31 • Accident Rate Paradox' },
-  med_lis_air_quality_illness_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 153.0, clipEnd: 168.0, isR2Audio: true, trackLabel: 'Track 31 • Air Quality & Asthma' },
-  easy_lis_business_tardiness_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 204.0, clipEnd: 216.0, isR2Audio: true, trackLabel: 'Track 31 • Business Financial Loss' },
+  hard_lis_accident_paradox_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 90.0, clipEnd: 105.0, isR2Audio: true, trackLabel: 'Track 31 • Accident Rate Paradox' },
+  med_lis_air_quality_illness_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 113.0, clipEnd: 124.0, isR2Audio: true, trackLabel: 'Track 31 • Air Quality & Asthma' },
+  easy_lis_business_tardiness_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 124.0, clipEnd: 136.0, isR2Audio: true, trackLabel: 'Track 31 • Business Financial Loss' },
 
   // Track 30: Everyday Transport & Travel Conversations
   easy_lis_bus_interval_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 10.0, clipEnd: 20.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 1 Bus Schedule' },
