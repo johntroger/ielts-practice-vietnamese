@@ -1318,6 +1318,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "In item 6, which speaker uses dramatic stress and expressive pauses to communicate sheer incredulity?",
     "contextEn": "6B: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it.",
     "explanationEn": "Intonation contrast: Speaker 6B places prominent emphatic stress on \"bizarre\" and \"incredible\"."
+  },
+  "easy_lis_bus_interval_t30": {
+    "promptEn": "According to Dialogue 1, what is the standard scheduled frequency of buses during this time of day?",
+    "contextEn": "Man: The buses are supposed to run every ten minutes, but I have already been waiting twenty minutes.",
+    "explanationEn": "Distractor trap: Buses are scheduled to run every 10 minutes (\"supposed to run every ten minutes\"), whereas 20 minutes is how long the passenger has been waiting."
+  },
+  "med_lis_train_replacement_bus_t30": {
+    "promptEn": "In Dialogue 2, why are replacement buses being provided for passengers travelling to London?",
+    "contextEn": "Station Announcer: All trains to London have been cancelled due to an accident on the track. Replacement buses will be running from outside the station.",
+    "explanationEn": "Direct factual retrieval: The station announcer clearly states that trains to London are cancelled due to a track accident, prompting the replacement bus service."
+  },
+  "med_lis_bristol_motorway_fog_t30": {
+    "promptEn": "In Dialogue 3, why did the speaker decide against driving to Bristol on the motorway?",
+    "contextEn": "Woman: There was heavy fog and the radio reported huge jams on the M4, so I left the car at home and caught the train instead.",
+    "explanationEn": "Causal reasoning: The speaker chose the train over driving because of heavy fog combined with massive traffic jams on the M4 motorway."
+  },
+  "hard_lis_car_tomorrow_reason_t30": {
+    "promptEn": "In Dialogue 4, why must the commuter take the car tomorrow instead of riding his bicycle?",
+    "contextEn": "Colleague: Cycling is great for fitness, but tomorrow I have to transport some heavy equipment, so I will definitely be driving.",
+    "explanationEn": "Specific condition check: Although he cycles today for fitness, tomorrow he must drive because he needs to transport heavy equipment."
+  },
+  "easy_lis_motorbike_gap_t30": {
+    "promptEn": "In Dialogue 5, what factor influenced the speaker to finally purchase a motorbike?",
+    "contextEn": "Man: I had not ridden one for twenty years, but after retiring I decided to buy a vintage motorbike to tour the countryside.",
+    "explanationEn": "Motivation identification: Retirement provided him with the opportunity and leisure time to buy a vintage motorbike and tour the countryside."
   }
 };
 

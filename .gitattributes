@@ -3,6 +3,7 @@
 
 # Force Markdown and documentation to always use LF line endings
 docs/**/*.md text eol=lf
+docs-en/**/*.md text eol=lf
 *.md text eol=lf
 
 # Source code files

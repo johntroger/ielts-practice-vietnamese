@@ -184,7 +184,9 @@ const testSuites = [
   { name: 'Step 175: Dedicated Two-Way URL Routing & Deep-Linking for Micro-Drills', file: 'tests/test_step175_micro_drill_dedicated_url.js' },
   { name: 'Step 176: Track 27 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step176_track27_audio_integration.js' },
   { name: 'Step 177: Track 28 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step177_track28_audio_integration.js' },
-  { name: 'Step 178: Track 29 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step178_track29_audio_integration.js' }
+  { name: 'Step 178: Track 29 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step178_track29_audio_integration.js' },
+  { name: 'Step 179: Track 30 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step179_track30_audio_integration.js' },
+  { name: 'Step 180: Multilingual Documentation Architecture (English Variant Foundation)', file: 'tests/test_step180_multilang_docs_architecture.js' }
 ];
 
 console.log('===============================================================');

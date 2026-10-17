@@ -2626,12 +2626,197 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Speaker 6B',
     explanation: 'Người nói 6B ngắt nhịp và nhấn rất mạnh vào "such a bizarre event" và "incredible" để diễn tả sự kinh ngạc trước bí ẩn.',
     explanationEn: 'Intonation contrast: Speaker 6B places prominent emphatic stress on "bizarre" and "incredible".'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 30 EVERYDAY TRANSPORT & TRAVEL CONVERSATIONS
+  // ==========================================
+  {
+    id: 'easy_lis_bus_interval_t30',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Dialogue 1, what is the standard scheduled frequency of buses during this time of day?',
+    promptVi: 'Theo Hội thoại 1, tần suất xe buýt chạy thông thường theo lịch trình là bao lâu một chuyến?',
+    promptEn: 'According to Dialogue 1, what is the standard scheduled frequency of buses during this time of day?',
+    context: 'Man: The buses are supposed to run every ten minutes, but I have already been waiting twenty minutes.',
+    contextEn: 'Man: The buses are supposed to run every ten minutes, but I have already been waiting twenty minutes.',
+    audioText: 'The buses are supposed to run every ten minutes, but I have already been waiting twenty minutes.',
+    options: [
+      'Every 10 minutes',
+      'Every 20 minutes',
+      'Every 30 minutes',
+      'Every 15 minutes'
+    ],
+    optionsVi: [
+      '10 phút một chuyến (Every 10 minutes)',
+      '20 phút một chuyến (Every 20 minutes)',
+      '30 phút một chuyến (Every 30 minutes)',
+      '15 phút một chuyến (Every 15 minutes)'
+    ],
+    optionsEn: [
+      'Every 10 minutes',
+      'Every 20 minutes',
+      'Every 30 minutes',
+      'Every 15 minutes'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Every 10 minutes',
+    explanation: 'Bẫy thời gian: Xe buýt theo lịch trình chạy 10 phút một chuyến ("supposed to run every ten minutes"). Số 20 phút ("twenty minutes") là khoảng thời gian người đàn ông đã phải đứng chờ.',
+    explanationEn: 'Distractor trap: Buses are scheduled to run every 10 minutes ("supposed to run every ten minutes"), whereas 20 minutes is how long the passenger has been waiting.'
+  },
+  {
+    id: 'med_lis_train_replacement_bus_t30',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Dialogue 2, why are replacement buses being provided for passengers travelling to London?',
+    promptVi: 'Trong Hội thoại 2, tại sao xe buýt thay thế được bố trí cho các hành khách đi London?',
+    promptEn: 'In Dialogue 2, why are replacement buses being provided for passengers travelling to London?',
+    context: 'Station Announcer: All trains to London have been cancelled due to an accident on the track. Replacement buses will be running from outside the station.',
+    contextEn: 'Station Announcer: All trains to London have been cancelled due to an accident on the track. Replacement buses will be running from outside the station.',
+    audioText: 'All trains to London have been cancelled due to an accident on the track. Replacement buses will be running from outside the station.',
+    options: [
+      'All rail services to London were cancelled following a track accident',
+      'Severe fog across the southern counties forced rail operators to halt trains',
+      'Scheduled weekend engineering maintenance closed the main rail line',
+      'A power grid outage disabled the signaling equipment at the terminal'
+    ],
+    optionsVi: [
+      'Tất cả tàu đi London bị hủy do xảy ra tai nạn trên đường ray',
+      'Sương mù dày đặc ở các quận phía nam buộc nhà điều hành phải dừng tàu',
+      'Đường ray chính phải đóng cửa để bảo trì kỹ thuật định kỳ cuối tuần',
+      'Mất điện toàn lưới làm hỏng hệ thống thiết bị tín hiệu của ga'
+    ],
+    optionsEn: [
+      'All rail services to London were cancelled following a track accident',
+      'Severe fog across the southern counties forced rail operators to halt trains',
+      'Scheduled weekend engineering maintenance closed the main rail line',
+      'A power grid outage disabled the signaling equipment at the terminal'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'All rail services to London were cancelled following a track accident',
+    explanation: 'Thông báo nhà ga nêu rõ các chuyến tàu đi London bị hủy do tai nạn trên đường ray ("due to an accident on the track"), do đó xe buýt thay thế được bố trí bên ngoài ga.',
+    explanationEn: 'Direct factual retrieval: The station announcer clearly states that trains to London are cancelled due to a track accident, prompting the replacement bus service.'
+  },
+  {
+    id: 'med_lis_bristol_motorway_fog_t30',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Dialogue 3, why did the speaker decide against driving to Bristol on the motorway?',
+    promptVi: 'Trong Hội thoại 3, nguyên nhân người phụ nữ quyết định không lái ô tô đến Bristol qua đường cao tốc là gì?',
+    promptEn: 'In Dialogue 3, why did the speaker decide against driving to Bristol on the motorway?',
+    context: 'Woman: There was heavy fog and the radio reported huge jams on the M4, so I left the car at home and caught the train instead.',
+    contextEn: 'Woman: There was heavy fog and the radio reported huge jams on the M4, so I left the car at home and caught the train instead.',
+    audioText: 'There was heavy fog and the radio reported huge jams on the M4, so I left the car at home and caught the train instead.',
+    options: [
+      'Severe fog and massive traffic congestion on the M4 motorway',
+      'Her personal car suffered unexpected engine trouble before departure',
+      'The motorway toll charges were excessively expensive for a single trip',
+      'Train ticket prices were heavily discounted for morning commuters'
+    ],
+    optionsVi: [
+      'Sương mù dày đặc kết hợp ùn tắc giao thông nghiêm trọng trên cao tốc M4',
+      'Ô tô cá nhân gặp trục trặc kỹ thuật động cơ đột xuất trước giờ khởi hành',
+      'Mức phí trạm thu phí trên cao tốc quá đắt đỏ cho một chuyến đi lẻ',
+      'Giá vé tàu hỏa vào buổi sáng được giảm giá sâu cho người đi làm'
+    ],
+    optionsEn: [
+      'Severe fog and massive traffic congestion on the M4 motorway',
+      'Her personal car suffered unexpected engine trouble before departure',
+      'The motorway toll charges were excessively expensive for a single trip',
+      'Train ticket prices were heavily discounted for morning commuters'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Severe fog and massive traffic congestion on the M4 motorway',
+    explanation: 'Người phụ nữ quyết định không lái xe vì có sương mù dày đặc và đài báo ùn tắc lớn trên cao tốc M4 ("heavy fog and the radio reported huge jams on the M4").',
+    explanationEn: 'Causal reasoning: The speaker chose the train over driving because of heavy fog combined with massive traffic jams on the M4 motorway.'
+  },
+  {
+    id: 'hard_lis_car_tomorrow_reason_t30',
+    difficulty: 'hard',
+    topic: 'health',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Dialogue 4, why must the commuter take the car tomorrow instead of riding his bicycle?',
+    promptVi: 'Trong Hội thoại 4, tại sao người đi làm lại phải lái ô tô vào ngày mai thay vì tiếp tục đạp xe?',
+    promptEn: 'In Dialogue 4, why must the commuter take the car tomorrow instead of riding his bicycle?',
+    context: 'Colleague: Cycling is great for fitness, but tomorrow I have to transport some heavy equipment, so I will definitely be driving.',
+    contextEn: 'Colleague: Cycling is great for fitness, but tomorrow I have to transport some heavy equipment, so I will definitely be driving.',
+    audioText: 'Cycling is great for fitness, but tomorrow I have to transport some heavy equipment, so I will definitely be driving.',
+    options: [
+      'He needs to transport heavy equipment that cannot be carried on a bicycle',
+      'The weather forecast predicts intense rainstorms throughout the day',
+      'His bicycle chain and gear mechanism require workshop servicing',
+      'He has a medical appointment that leaves him too fatigued to cycle'
+    ],
+    optionsVi: [
+      'Anh ấy cần vận chuyển một số thiết bị nặng không thể chở bằng xe đạp',
+      'Dự báo thời tiết cảnh báo mưa dông dữ dội kéo dài suốt cả ngày',
+      'Hệ thống xích và líp của chiếc xe đạp đang cần đem đi xưởng bảo dưỡng',
+      'Anh ấy có lịch hẹn y tế khiến cơ thể quá kiệt sức để đạp xe'
+    ],
+    optionsEn: [
+      'He needs to transport heavy equipment that cannot be carried on a bicycle',
+      'The weather forecast predicts intense rainstorms throughout the day',
+      'His bicycle chain and gear mechanism require workshop servicing',
+      'He has a medical appointment that leaves him too fatigued to cycle'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He needs to transport heavy equipment that cannot be carried on a bicycle',
+    explanation: 'Người nói giải thích mặc dù đạp xe tốt cho sức khỏe nhưng ngày mai anh ấy phải chở thiết bị nặng ("transport some heavy equipment") nên buộc phải lái ô tô.',
+    explanationEn: 'Specific condition check: Although he cycles today for fitness, tomorrow he must drive because he needs to transport heavy equipment.'
+  },
+  {
+    id: 'easy_lis_motorbike_gap_t30',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Dialogue 5, what factor influenced the speaker to finally purchase a motorbike?',
+    promptVi: 'Trong Hội thoại 5, yếu tố nào đã thúc đẩy người đàn ông quyết định mua một chiếc xe mô tô?',
+    promptEn: 'In Dialogue 5, what factor influenced the speaker to finally purchase a motorbike?',
+    context: 'Man: I had not ridden one for twenty years, but after retiring I decided to buy a vintage motorbike to tour the countryside.',
+    contextEn: 'Man: I had not ridden one for twenty years, but after retiring I decided to buy a vintage motorbike to tour the countryside.',
+    audioText: 'I had not ridden one for twenty years, but after retiring I decided to buy a vintage motorbike to tour the countryside.',
+    options: [
+      'Having more leisure time after retiring to tour the countryside',
+      'Needing a faster vehicle to commute daily across heavy city traffic',
+      'Inheriting a vintage motorcycle collection from a family relative',
+      'Taking advantage of an urgent promotional clearance sale'
+    ],
+    optionsVi: [
+      'Có nhiều thời gian thảnh thơi sau khi nghỉ hưu để đi phượt khám phá miền quê',
+      'Cần một phương tiện di chuyển nhanh hơn qua các tuyến đường nội thành tắc nghẽn',
+      'Được thừa kế bộ sưu tập xe máy cổ điển từ một người họ hàng trong gia đình',
+      'Tận dụng chương trình giảm giá thanh lý đặc biệt tại cửa hàng đại lý xe'
+    ],
+    optionsEn: [
+      'Having more leisure time after retiring to tour the countryside',
+      'Needing a faster vehicle to commute daily across heavy city traffic',
+      'Inheriting a vintage motorcycle collection from a family relative',
+      'Taking advantage of an urgent promotional clearance sale'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Having more leisure time after retiring to tour the countryside',
+    explanation: 'Sau khi nghỉ hưu ("after retiring"), người đàn ông quyết định mua một chiếc xe mô tô cổ điển để đi phượt khám phá vùng quê.',
+    explanationEn: 'Motivation identification: Retirement provided him with the opportunity and leisure time to buy a vintage motorbike and tour the countryside.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 30: Everyday Transport & Travel Conversations
+  easy_lis_bus_interval_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 10.0, clipEnd: 20.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 1 Bus Schedule' },
+  med_lis_train_replacement_bus_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 47.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 2 Train Replacement Bus' },
+  med_lis_bristol_motorway_fog_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 72.0, clipEnd: 83.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 3 Fog & Jams' },
+  hard_lis_car_tomorrow_reason_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 125.0, clipEnd: 135.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 4 Equipment Drive' },
+  easy_lis_motorbike_gap_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 154.0, clipEnd: 166.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 5 Motorbike Tour' },
+
   // Track 29: Intonation, Sentence Stress & Speaker Attitude
   easy_lis_mission_emotion_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 2.0, clipEnd: 12.0, isR2Audio: true, trackLabel: 'Track 29 • Item 1A Extraordinary' },
   med_lis_disaster_gravity_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 28.0, clipEnd: 37.0, isR2Audio: true, trackLabel: 'Track 29 • Item 2B Dreadful Tragedy' },

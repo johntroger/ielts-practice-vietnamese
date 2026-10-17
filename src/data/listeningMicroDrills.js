@@ -2069,6 +2069,103 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the prominent pitch-accented evaluative adjective "stunning".',
     explanation: 'Người nói 4A nhấn mạnh kết quả nghiên cứu là "stunning" (kinh ngạc, tuyệt vời).',
     explanationEn: 'The speaker prominently stresses that the results were "stunning".'
+  },
+
+  // ==========================================
+  // TRACK 30: EVERYDAY TRANSPORT & TRAVEL SCENARIOS
+  // ==========================================
+  {
+    id: 'ldrill-dist-track30-bus-schedule',
+    type: 'listening-distractor',
+    title: 'Bẫy thời gian xe buýt: Tần suất chuẩn quy định vs Thời gian chờ thực tế (Track 30)',
+    titleEn: 'Bus Frequency Trap: Standard 10-Min Interval vs Actual 20-Min Delay (Track 30)',
+    category: 'Public Transit Schedules & Delays',
+    categoryEn: 'Public Transit Schedules & Delays',
+    audioSnippetText: "The next bus should be here soon. No, it won't. I just checked. It's due in 20 minutes. 20? I don't believe it! It should be every 10 minutes. This service is getting worse and worse.",
+    audioText: "The next bus should be here soon. No, it won't. I just checked. It's due in 20 minutes. 20? I don't believe it! It should be every 10 minutes. This service is getting worse and worse.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track30-transport-travel-conversations.mp3',
+    clipStart: 4.0,
+    clipEnd: 20.0,
+    question: 'Theo lịch trình tiêu chuẩn của công ty vận tải, xe buýt phải xuất hiện với tần suất bao lâu một chuyến?',
+    questionEn: 'According to the transit company\'s official timetable, how frequently should buses arrive?',
+    options: [
+      { id: 'A', text: 'Cứ mỗi 10 phút một chuyến', textEn: 'Every 10 minutes' },
+      { id: 'B', text: 'Cứ mỗi 20 phút một chuyến', textEn: 'Every 20 minutes' },
+      { id: 'C', text: 'Cứ mỗi 30 phút một chuyến', textEn: 'Every 30 minutes' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người phụ nữ nói chuyến tiếp theo phải đợi 20 phút nữa ("due in 20 minutes"), nhưng người đàn ông nhấn mạnh tần suất quy định thông thường là cứ mỗi 10 phút ("It should be every 10 minutes"). Bẫy con số 20 phút là thời gian chờ thực tế hôm nay.',
+    distractorMechanismEn: 'The woman notes the next bus is 20 minutes away, but the man clarifies the standard schedule should be every 10 minutes. 20 minutes is the delay distractor.',
+    explanation: 'Đáp án là A: Người đàn ông nói rõ "It should be every 10 minutes".',
+    explanationEn: 'Option A is correct: The man states "It should be every 10 minutes".'
+  },
+  {
+    id: 'ldrill-dist-track30-cycling-versus-driving',
+    type: 'listening-distractor',
+    title: 'Bẫy phương tiện đi lại: Đạp xe hôm nay vs Đi ô tô ngày mai (Track 30)',
+    titleEn: 'Commuting Means Trap: Cycling Today vs Driving Tomorrow (Track 30)',
+    category: 'Commuting Habits & Medical Advice',
+    categoryEn: 'Commuting Habits & Medical Advice',
+    audioSnippetText: "I really think you should do some more exercise. And it's a lovely day for cycling! You can use the car when it rains. Okay, okay, I'll cycle today, but I'll need to use the car tomorrow, as I've got a lot of things to take to work.",
+    audioText: "I really think you should do some more exercise. And it's a lovely day for cycling! You can use the car when it rains. Okay, okay, I'll cycle today, but I'll need to use the car tomorrow, as I've got a lot of things to take to work.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track30-transport-travel-conversations.mp3',
+    clipStart: 118.0,
+    clipEnd: 135.0,
+    question: 'Cuối cùng người chồng quyết định lựa chọn phương tiện nào để đi làm vào ngày hôm nay?',
+    questionEn: 'Which mode of transport does the husband ultimately agree to use for his journey to work today?',
+    options: [
+      { id: 'A', text: 'Đi xe đạp vì trời đẹp và theo lời khuyên tập thể dục của bác sĩ', textEn: 'Cycling because the weather is lovely and to heed medical exercise advice' },
+      { id: 'B', text: 'Đi ô tô vì chân anh vẫn còn đau', textEn: 'Driving his car because his leg is aching' },
+      { id: 'C', text: 'Đi xe buýt công cộng để tiết kiệm chi phí', textEn: 'Taking the public bus to save travel costs' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người chồng ban đầu nại cớ đau chân đòi đi ô tô và nói ngày mai sẽ đi ô tô vì có nhiều đồ, nhưng ngày hôm nay anh đã đồng ý đạp xe theo lời vợ ("Okay, okay, I\'ll cycle today").',
+    distractorMechanismEn: 'The husband initially wanted to drive due to a sore leg and specifies driving tomorrow with luggage, but for today he agrees: "I\'ll cycle today".',
+    explanation: 'Đáp án là A: Người chồng đồng ý đạp xe đi làm hôm nay ("I\'ll cycle today").',
+    explanationEn: 'Option A is correct: The husband explicitly concedes "I\'ll cycle today".'
+  },
+  {
+    id: 'ldrill-dict-track30-motorway-fog-jams',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Sương mù và kẹt xe nghiêm trọng trên đường cao tốc (Track 30)',
+    titleEn: 'Dictation Level 2: Motorway Fog & Massive Traffic Gridlock (Track 30)',
+    category: 'Road Conditions & Weather Delays',
+    categoryEn: 'Road Conditions & Weather Delays',
+    audioSnippetText: "There's fog on the motorway, and there are massive jams all the way down. There's really no point in driving.",
+    audioText: "There's fog on the motorway, and there are massive jams all the way down. There's really no point in driving.",
+    targetTranscript: "There's fog on the motorway, and there are massive jams all the way down. There's really no point in driving.",
+    ttsText: "There's fog on the motorway, and there are massive jams all the way down. There's really no point in driving.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track30-transport-travel-conversations.mp3',
+    clipStart: 73.0,
+    clipEnd: 82.0,
+    wordCount: 19,
+    difficulty: 'Band 6.0 - 7.0',
+    audioClipTip: 'Chú ý cụm "fog on the motorway", "massive jams all the way down", và cấu trúc kết luận "no point in driving".',
+    audioClipTipEn: 'Listen for "fog on the motorway", "massive jams all the way down", and "no point in driving".'
+  },
+  {
+    id: 'ldrill-role-track30-accident-disruption',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Nguyên nhân gián đoạn tuyến tàu (Track 30)',
+    titleEn: 'Key Vocabulary Reflex: Rail Line Interruption Cause (Track 30)',
+    category: 'Rail Travel & Disruption Lexicon',
+    categoryEn: 'Rail Travel & Disruption Lexicon',
+    promptAudioText: "I'm afraid there's been an accident on the line at the station before this one.",
+    audioText: "I'm afraid there's been an accident on the line at the station before this one.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track30-transport-travel-conversations.mp3',
+    clipStart: 40.0,
+    clipEnd: 46.0,
+    questionPrompt: "The rail line to London is closed due to an ......... at the previous station.",
+    questionPromptEn: "The rail line to London is closed due to an ......... at the previous station.",
+    questionPromptVi: 'Tuyến đường sắt đi London bị đóng do một vụ ......... tại nhà ga trước đó.',
+    correctAnswer: 'accident',
+    acceptableAnswers: ['accident'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ danh từ "accident" sau mạo từ "an" ("an accident on the line").',
+    trapNoteEn: 'Core lexical keyword: Listen for the singular countable noun "accident" after indefinite article "an".',
+    explanation: 'Nhân viên nhà ga thông báo nguyên nhân là có tai nạn ("an accident on the line").',
+    explanationEn: 'The station attendant confirms "there\'s been an accident on the line".'
   }
 ];
 
