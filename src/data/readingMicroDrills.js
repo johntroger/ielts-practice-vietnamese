@@ -798,6 +798,75 @@ export const READING_MICRO_DRILLS = [
     optionsEn: ['iron wedges', 'aligned holes', 'explosives', 'natural fractures'],
     explanation: '"Iron wedges" (những chiếc nêm sắt) được thợ đục gõ vào các lỗ khoan để tách rời khối đá theo quy chuẩn trung cổ (Đáp án câu 7-8 Test 25).',
     explanationEn: '"Iron wedges" were struck with heavy hammers into drilled holes to propagate fractures and split the rock matrix.'
+  },
+
+  // ==========================================
+  // 12. 101 PAST PAPERS BATCH 7 DRILLS (Tests 26, 27, 28, 29)
+  // ==========================================
+  {
+    id: 'drill-101-batch7-tfng-26',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định True: Hiệu Quả Của Kiến Vàng Bảo Vệ Lá Cây (Test 26)',
+    titleEn: 'True Trap: Foliar Protection by Yellow Citrus Ants (Test 26)',
+    category: 'Agricultural Entomology',
+    categoryEn: 'Agricultural Entomology',
+    passage: 'Controlled trials in Guangdong orchards revealed that citrus trees lacking yellow ant colonies experienced widespread leaf curling and suffered noticeably more severe foliar damage than ant-patrolled trees.',
+    statement: 'Trees without ants had grown more unhealthy leaves than those with.',
+    answer: 'TRUE',
+    trapType: 'Direct Synonymous Alignment (Đối chiếu nguyên văn thực nghiệm)',
+    trapTypeEn: 'Direct Synonymous Alignment (Empirical validation of foliar health)',
+    explanation: 'Đáp án là TRUE. Các thí nghiệm đối chứng chỉ ra rằng cây không có kiến bị sâu hại tàn phá và mọc nhiều lá không khỏe mạnh hơn cây có kiến bảo vệ.',
+    explanationEn: 'The answer is TRUE. Controlled experiments confirmed that citrus trees without ant colonies exhibited substantially more damaged, unhealthy foliage.',
+    evidence: 'Controlled trials in Guangdong orchards revealed that citrus trees lacking yellow ant colonies experienced widespread leaf curling and suffered noticeably more severe foliar damage than ant-patrolled trees.',
+    evidenceEn: 'Controlled trials in Guangdong orchards revealed that citrus trees lacking yellow ant colonies experienced widespread leaf curling and suffered noticeably more severe foliar damage than ant-patrolled trees.'
+  },
+  {
+    id: 'drill-101-batch7-summary-27',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Thời Gian Nghỉ Ốm Do Căng Thẳng (Test 27)',
+    titleEn: 'Cambridge Paraphrase Pair: Stress-Induced Workplace Convalescence (Test 27)',
+    category: 'Occupational Psychology',
+    categoryEn: 'Occupational Psychology',
+    passage: 'According to national compensation datasets, mental distress claims necessitate extensive recovery timelines, averaging 16.6 weeks of continuous employee absence from occupational duties.',
+    question: 'Thời gian nghỉ việc trung bình do căng thẳng nghề nghiệp được ghi nhận là bao lâu?',
+    questionEn: 'According to the passage above, what is the average duration of employee absence resulting from occupational stress?',
+    correctAnswer: '16.6 weeks',
+    options: ['16.6 weeks', '7 weeks', '27 weeks', '12 months'],
+    optionsEn: ['16.6 weeks', '7 weeks', '27 weeks', '12 months'],
+    explanation: 'Thời gian nghỉ ốm trung bình của nhân viên do kiệt sức vì công việc là 16.6 tuần (Đáp án câu 23 Test 27).',
+    explanationEn: 'The average duration of absence from work caused by severe workplace stress is 16.6 weeks.'
+  },
+  {
+    id: 'drill-101-batch7-flow-28',
+    type: 'reading-paraphrase',
+    title: 'Khái Niệm Băng Chuyền Hải Lưu Toàn Cầu (Test 28)',
+    titleEn: 'Cambridge Scientific Mechanism: Deep Thermohaline Circulation (Test 28)',
+    category: 'Oceanography & Climate',
+    categoryEn: 'Oceanography & Climate',
+    passage: 'As the cooling saltwater plunges downward by over a mile in the North Atlantic, this massive vertical descent acts as the primary mechanical engine driving the global deepwater circulation known as the Great Ocean Conveyor.',
+    question: 'Hệ thống dòng hải lưu ngầm quy mô toàn cầu được vận hành bởi cột nước chìm xuống có tên gọi là gì?',
+    questionEn: 'In the passage above, what is the name of the planetary deepwater circulation system powered by sinking cold dense water?',
+    correctAnswer: 'Great ocean Conveyor',
+    options: ['Great ocean Conveyor', 'Gulf Stream', 'Labrador Current', 'Arctic Jetstream'],
+    optionsEn: ['Great ocean Conveyor', 'Gulf Stream', 'Labrador Current', 'Arctic Jetstream'],
+    explanation: '"Great ocean Conveyor" (Băng chuyền Đại dương Vĩ đại) là thuật ngữ chỉ hệ thống hải lưu ngầm vận chuyển nhiệt lượng quanh địa cầu (Đáp án câu 24 Test 28).',
+    explanationEn: 'The "Great ocean Conveyor" designates the worldwide deepwater thermohaline circulation driven by dense sinking polar water.'
+  },
+  {
+    id: 'drill-101-batch7-heading-29',
+    type: 'reading-paraphrase',
+    title: 'Bẫy Tiêu Đề Heading: Thí Nghiệm Đột Phá Của John B. Calhoun (Test 29)',
+    titleEn: 'Matching Heading Trap: John B. Calhoun Rodent Density Trial (Test 29)',
+    category: 'Environmental Psychology',
+    categoryEn: 'Environmental Psychology',
+    passage: 'John B. Calhoun placed colonies of Norway rats in confined enclosures with unlimited food and water. As numbers multiplied uncontrollably into extreme density, normal courtship vanished and hyper-aggressive pathological behaviors emerged.',
+    question: 'Tiêu đề nào tóm tắt chuẩn xác bản chất và kết quả của thí nghiệm trên?',
+    questionEn: 'Which heading accurately encapsulates the experimental setup and behavioural findings described above?',
+    correctAnswer: 'Nature and results of Calhoun’s experiment',
+    options: ['Nature and results of Calhoun’s experiment', 'Problems that result in crowding', 'Definitions of crowding and density', 'Advice for crowded work environment'],
+    optionsEn: ['Nature and results of Calhoun’s experiment', 'Problems that result in crowding', 'Definitions of crowding and density', 'Advice for crowded work environment'],
+    explanation: 'Đoạn văn mô tả bản chất thiết kế thí nghiệm nuôi chuột và kết quả sụp đổ hành vi bệnh lý của nhà nghiên cứu John B. Calhoun (Heading x, Test 29).',
+    explanationEn: '"Nature and results of Calhoun’s experiment" precisely matches the narrative detailing experimental confinement and subsequent pathological behavioral collapse.'
   }
 ];
 
