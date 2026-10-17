@@ -654,7 +654,82 @@ export const READING_MICRO_DRILLS = [
     explanationEn: 'The answer is FALSE. Neurological research confirms internal cognitive maps are subjectively distorted and fragmented, directly contradicting the claim of an "exact map".',
     evidence: 'They contain systematic angular distortions and blind spots rather than photographic exactitude.',
     evidenceEn: 'They contain systematic angular distortions and blind spots rather than photographic exactitude.'
+  },
+
+  // ==========================================
+  // 10. 101 PAST PAPERS BATCH 5 DRILLS (Tests 18, 19, 20, 21)
+  // ==========================================
+  {
+    id: 'drill-101-batch5-tfng-18',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định False: Khả Năng Tái Lập Hiệu Ứng Mozart (Test 18)',
+    titleEn: 'False Trap: Mozart Effect Replicability (Test 18)',
+    category: 'Cognitive Neuroscience',
+    categoryEn: 'Cognitive Neuroscience',
+    passage: 'When other laboratories attempted to replicate Rauscher\'s experiments, many failed to detect any enhancement in spatial scores, demonstrating that the Mozart effect is notoriously difficult to replicate consistently.',
+    statement: 'All researchers who attempted to replicate the Mozart effect successfully obtained the same results.',
+    answer: 'FALSE',
+    trapType: 'Universal Quantifier Trap (Bẫy từ định lượng tuyệt đối "All")',
+    trapTypeEn: 'Universal Quantifier Trap (Extreme quantifier contradicted by text)',
+    explanation: 'Đáp án là FALSE. Nhiều phòng thí nghiệm đã cố gắng lặp lại thí nghiệm của Rauscher nhưng thất bại, mâu thuẫn trực tiếp với từ "All".',
+    explanationEn: 'The answer is FALSE. Multiple independent laboratories failed to observe the cognitive boost, contradicting the claim that "All" researchers obtained identical results.',
+    evidence: '...many failed to detect any enhancement in spatial scores, demonstrating that the Mozart effect is notoriously difficult to replicate consistently.',
+    evidenceEn: '...many failed to detect any enhancement in spatial scores, demonstrating that the Mozart effect is notoriously difficult to replicate consistently.'
+  },
+  {
+    id: 'drill-101-batch5-para-19',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Trí Tuệ Hàng Hải Lapita (Test 19)',
+    titleEn: 'Cambridge Paraphrase Pair: Lapita Maritime Navigation (Test 19)',
+    category: 'Oceanic Archaeology',
+    categoryEn: 'Oceanic Archaeology',
+    passage: 'By deliberately sailing upwind into the prevailing trade winds, Lapita voyagers ensured a rapid and secure return path home whenever new land failed to emerge beyond the horizon.',
+    question: 'Trong đoạn văn trên, cụm từ nào giải thích lý do các thủy thủ Lapita có thể quay về quê hương an toàn?',
+    questionEn: 'In the passage above, which phrase explains why Lapita voyagers could safely journey back to their point of origin?',
+    correctAnswer: 'sailing upwind',
+    options: ['sailing upwind', 'prevailing trade winds', 'secure return path', 'beyond the horizon'],
+    optionsEn: ['sailing upwind', 'prevailing trade winds', 'secure return path', 'beyond the horizon'],
+    explanation: '"Sailing upwind" (chạy ngược hướng gió thịnh hành) chính là chiến thuật cốt lõi giúp họ có thể quay đầu chạy xuôi gió về nhà an toàn.',
+    explanationEn: '"Sailing upwind" was the strategic maritime practice ensuring that canoes could easily turn around and ride trade winds home.',
+    evidence: 'By deliberately sailing upwind into the prevailing trade winds, Lapita voyagers ensured a rapid and secure return path home...',
+    evidenceEn: 'By deliberately sailing upwind into the prevailing trade winds, Lapita voyagers ensured a rapid and secure return path home...'
+  },
+  {
+    id: 'drill-101-batch5-tfng-20',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định Not Given: Hiệu Quả Phục Hồi Đột Quỵ Của Động Tác Ngáp (Test 20)',
+    titleEn: 'Not Given Trap: Stroke Recovery & Reflex Yawning (Test 20)',
+    category: 'Neurological Medicine',
+    categoryEn: 'Neurological Medicine',
+    passage: 'Yawning can induce automatic involuntary motor contractions in the paralyzed limbs of hemiplegic stroke patients whose cerebral cortex is severely damaged.',
+    statement: 'Yawning can show an affirmative impact on the recovery from brain damage brought by a stroke.',
+    answer: 'NOT GIVEN',
+    trapType: 'Curiosity vs Therapy Trap (Bẫy nhầm lẫn giữa hiện tượng phản xạ sinh lý và liệu pháp phục hồi)',
+    trapTypeEn: 'Curiosity vs Therapy Trap (Confusing neurological reflex with therapeutic recovery)',
+    explanation: 'Đáp án là NOT GIVEN. Mặc dù ngáp kích hoạt cử động cơ bắp tự động ở cánh tay liệt, bài đọc không hề đề cập liệu nó có giúp đẩy nhanh quá trình phục hồi tổn thương não hay không.',
+    explanationEn: 'The answer is NOT GIVEN. The text reports an involuntary reflex movement in paralyzed limbs during yawns, but never claims that yawning therapeutically promotes stroke recovery.',
+    evidence: 'Yawning can induce automatic involuntary motor contractions in the paralyzed limbs of hemiplegic stroke patients...',
+    evidenceEn: 'Yawning can induce automatic involuntary motor contractions in the paralyzed limbs of hemiplegic stroke patients...'
+  },
+  {
+    id: 'drill-101-batch5-para-21',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Thiết Bị Dịch Song Song (Test 21)',
+    titleEn: 'Cambridge Paraphrase Pair: Simultaneous Interpreting Hardware (Test 21)',
+    category: 'Applied Linguistics',
+    categoryEn: 'Applied Linguistics',
+    passage: 'Unlike traditional consecutive interpreters who rely solely on memory and shorthand pads, simultaneous conference interpreters depend inextricably on soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines.',
+    question: 'Khái niệm "professional equipment" trong đề thi đồng nghĩa với những vật dụng nào trong đoạn trích?',
+    questionEn: 'In the passage above, which grouping of technological tools corresponds directly to "professional equipment"?',
+    correctAnswer: 'soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines',
+    options: ['soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines', 'traditional consecutive interpreters', 'shorthand pads', 'memory and shorthand'],
+    optionsEn: ['soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines', 'traditional consecutive interpreters', 'shorthand pads', 'memory and shorthand'],
+    explanation: 'Cabin cách âm, tai nghe đa kênh và micro là các trang thiết bị chuyên dụng phục vụ dịch song song.',
+    explanationEn: 'Soundproof booths, headsets, and microphone arrays represent the specialized hardware indispensable to simultaneous interpretation.',
+    evidence: '...simultaneous conference interpreters depend inextricably on soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines.',
+    evidenceEn: '...simultaneous conference interpreters depend inextricably on soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines.'
   }
 ];
+
 
 
