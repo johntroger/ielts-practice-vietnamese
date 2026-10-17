@@ -728,6 +728,76 @@ export const READING_MICRO_DRILLS = [
     explanationEn: 'Soundproof booths, headsets, and microphone arrays represent the specialized hardware indispensable to simultaneous interpretation.',
     evidence: '...simultaneous conference interpreters depend inextricably on soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines.',
     evidenceEn: '...simultaneous conference interpreters depend inextricably on soundproof booths, multi-channel acoustic headsets, and dedicated microphone lines.'
+  },
+
+  // ==========================================
+  // 11. 101 PAST PAPERS BATCH 6 DRILLS (Tests 22, 23, 24, 25)
+  // ==========================================
+  {
+    id: 'drill-101-batch6-tfng-22',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định False: Đợt Sóng Nhiệt Châu Âu 2003 (Test 22)',
+    titleEn: 'False Trap: 2003 European Heat Wave Baseline (Test 22)',
+    category: 'Climate Science',
+    categoryEn: 'Climate Science',
+    passage: 'The summer of 2003 was unprecedented in recorded history. Record high temperatures across southern and central Europe shattered historical records, deviating dramatically from the standard climatic range established over previous centuries.',
+    statement: 'The temperature in 2003 European summer was in the normal range.',
+    answer: 'FALSE',
+    trapType: 'Direct Contradiction Trap (Bẫy phủ định trực tiếp thông số thực nghiệm)',
+    trapTypeEn: 'Direct Contradiction Trap (Empirical extreme directly contradicts normal range)',
+    explanation: 'Đáp án là FALSE. Đợt sóng nhiệt mùa hè năm 2003 là kỷ lục chưa từng có và vượt xa dải biến thiên nhiệt độ thông thường trong lịch sử.',
+    explanationEn: 'The answer is FALSE. The 2003 summer heat was unprecedented and deviated dramatically from historical baselines, directly refuting "in the normal range".',
+    evidence: 'Record high temperatures across southern and central Europe shattered historical records, deviating dramatically from the standard climatic range...',
+    evidenceEn: 'Record high temperatures across southern and central Europe shattered historical records, deviating dramatically from the standard climatic range...'
+  },
+  {
+    id: 'drill-101-batch6-table-23',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Khả Năng Đếm Ở Khỉ Rhesus (Test 23)',
+    titleEn: 'Cambridge Paraphrase Pair: Numerical Discrimination in Rhesus Monkeys (Test 23)',
+    category: 'Cognitive Ethology',
+    categoryEn: 'Cognitive Ethology',
+    passage: 'When rhesus monkeys were presented with visual arrays on touchscreens, researchers ensured that non-numerical perceptual variables such as total surface area and shape density were identical across the stimulus sets.',
+    question: 'Trong đoạn văn trên, từ nào biểu thị rằng các biến số thị giác ngoài số lượng đã được chuẩn hóa giống hệt nhau?',
+    questionEn: 'In the passage above, which word indicates that non-numerical visual cues were controlled to be exactly the same?',
+    correctAnswer: 'identical',
+    options: ['identical', 'arrays', 'perceptual', 'stimulus'],
+    optionsEn: ['identical', 'arrays', 'perceptual', 'stimulus'],
+    explanation: '"Identical" (giống hệt nhau) là từ khóa chính xác trong bảng dữ liệu thực nghiệm (Đáp án câu 15 Test 23).',
+    explanationEn: '"Identical" indicates that total surface area and perimeter across geometric sets were kept equal to isolate numerical cognition.'
+  },
+  {
+    id: 'drill-101-batch6-tfng-24',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định False: Hợp Chất Thay Thế Long Diên Hương (Test 24)',
+    titleEn: 'False Trap: Ambergris Substitutes in Modern Perfumery (Test 24)',
+    category: 'Organic Chemistry & Perfumery',
+    categoryEn: 'Organic Chemistry & Perfumery',
+    passage: 'Due to severe supply shortages and animal conservation treaties, virtually all contemporary mainstream commercial perfumes have entirely replaced natural ambergris with synthetic substitutes such as Ambroxan.',
+    statement: 'Most modern perfume makers continue to rely heavily on natural ambergris harvests.',
+    answer: 'FALSE',
+    trapType: 'Obsolescence Trap (Bẫy nhầm lẫn giữa tập quán lịch sử và công nghệ tổng hợp hiện đại)',
+    trapTypeEn: 'Obsolescence Trap (Historical usage replaced by contemporary synthetic chemistry)',
+    explanation: 'Đáp án là FALSE. Các hãng nước hoa hiện đại hầu hết đã chuyển sang dùng hợp chất tổng hợp nhân tạo (synthetic substitutes), không còn phụ thuộc vào việc thu lượm long diên hương tự nhiên.',
+    explanationEn: 'The answer is FALSE. Mainstream perfumers have completely substituted natural ambergris with lab-synthesized chemical compounds like Ambroxan.',
+    evidence: '...virtually all contemporary mainstream commercial perfumes have entirely replaced natural ambergris with synthetic substitutes...',
+    evidenceEn: '...virtually all contemporary mainstream commercial perfumes have entirely replaced natural ambergris with synthetic substitutes...'
+  },
+  {
+    id: 'drill-101-batch6-para-25',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Kỹ Thuật Đục Đá Lâu Đài Guédelon (Test 25)',
+    titleEn: 'Cambridge Paraphrase Pair: Medieval Stone Splitting at Guédelon (Test 25)',
+    category: 'Experimental Archaeology',
+    categoryEn: 'Experimental Archaeology',
+    passage: 'To harvest building stone without modern explosives, Guédelon masons drilled aligned holes along natural fractures and drove iron wedges into the rock until mechanical shockwaves caused the block to split.',
+    question: 'Công cụ nào trong đoạn trích được dùng để tạo sóng xung kích tách rời khối đá?',
+    questionEn: 'According to the passage above, which tool was driven into drilled holes to split the limestone blocks?',
+    correctAnswer: 'iron wedges',
+    options: ['iron wedges', 'aligned holes', 'explosives', 'natural fractures'],
+    optionsEn: ['iron wedges', 'aligned holes', 'explosives', 'natural fractures'],
+    explanation: '"Iron wedges" (những chiếc nêm sắt) được thợ đục gõ vào các lỗ khoan để tách rời khối đá theo quy chuẩn trung cổ (Đáp án câu 7-8 Test 25).',
+    explanationEn: '"Iron wedges" were struck with heavy hammers into drilled holes to propagate fractures and split the rock matrix.'
   }
 ];
 
