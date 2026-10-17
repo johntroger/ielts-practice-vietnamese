@@ -2166,6 +2166,103 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the singular countable noun "accident" after indefinite article "an".',
     explanation: 'Nhân viên nhà ga thông báo nguyên nhân là có tai nạn ("an accident on the line").',
     explanationEn: 'The station attendant confirms "there\'s been an accident on the line".'
+  },
+
+  // ==========================================
+  // TRACK 31: TOWN TRANSPORT SYSTEM & PROJECT DISCUSSION
+  // ==========================================
+  {
+    id: 'ldrill-dist-track31-bus-vs-rail',
+    type: 'listening-distractor',
+    title: 'Bẫy nguyên nhân & Giải pháp: Tăng xe buýt vs Nguồn căn ùn tắc (Track 31)',
+    titleEn: 'Root Cause vs Palliative Measure: Bus Expansion Trap (Track 31)',
+    category: 'Urban Transit Planning',
+    categoryEn: 'Urban Transit Planning',
+    audioSnippetText: "It would be good if we could have more buses on the road all the time, but I don't think that's the main reason for the heavy traffic, and the problem won't go away just by improving bus services.",
+    audioText: "It would be good if we could have more buses on the road all the time, but I don't think that's the main reason for the heavy traffic, and the problem won't go away just by improving bus services.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track31-urban-transport-project-discussion.mp3',
+    clipStart: 33.0,
+    clipEnd: 48.0,
+    question: 'Theo Sophie, việc gia tăng số lượng xe buýt trên đường mang lại hiệu quả như thế nào?',
+    questionEn: 'According to Sophie, how effective would simply putting more buses on the road be?',
+    options: [
+      { id: 'A', text: 'Tuy hữu ích nhưng không thể giải quyết triệt để vấn đề ùn tắc giao thông', textEn: 'Helpful in principle, but insufficient to eliminate the underlying traffic congestion' },
+      { id: 'B', text: 'Là giải pháp duy nhất và triệt để nhất để chấm dứt tình trạng kẹt xe', textEn: 'The single most effective intervention to completely eliminate road gridlock' },
+      { id: 'C', text: 'Làm gia tăng nghiêm trọng chi phí vận hành của hội đồng thị trấn', textEn: 'Imposing severe operational financial deficits upon the local town council' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người học thường chọn ngay phương án coi xe buýt là giải pháp toàn diện, nhưng Sophie nhấn mạnh: "the problem won\'t go away just by improving bus services".',
+    distractorMechanismEn: 'Test-takers often assume expanding public transit resolves traffic entirely, but Sophie specifies "the problem won\'t go away just by improving bus services".',
+    explanation: 'Đáp án là A: Sophie thừa nhận thêm xe buýt là tốt nhưng không phải nguyên nhân cốt lõi và kẹt xe sẽ không biến mất chỉ nhờ xe buýt.',
+    explanationEn: 'Option A is correct: Sophie concedes that while additional buses are desirable, they will not solve the fundamental congestion problem.'
+  },
+  {
+    id: 'ldrill-dist-track31-accident-rate-paradox',
+    type: 'listening-distractor',
+    title: 'Bẫy nghịch lý giao thông: Kẹt xe & Tỷ lệ tai nạn sụt giảm (Track 31)',
+    titleEn: 'Traffic Paradox Trap: Road Accidents vs Traffic Volume (Track 31)',
+    category: 'Road Safety & Commuter Dynamics',
+    categoryEn: 'Road Safety & Commuter Dynamics',
+    audioSnippetText: "True, but one good thing is that the road accident rate has been falling recently, partly due to the high volume of traffic on the roads. After all, when there's too much traffic, it moves more slowly, and fewer people, especially children, are in danger.",
+    audioText: "True, but one good thing is that the road accident rate has been falling recently, partly due to the high volume of traffic on the roads. After all, when there's too much traffic, it moves more slowly, and fewer people, especially children, are in danger.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track31-urban-transport-project-discussion.mp3',
+    clipStart: 130.0,
+    clipEnd: 146.0,
+    question: 'Tại sao tỷ lệ tai nạn giao thông tại thị trấn lại sụt giảm trong thời gian gần đây?',
+    questionEn: 'Why has the municipal road accident rate declined in recent times according to the student?',
+    options: [
+      { id: 'A', text: 'Dòng xe quá đông buộc tốc độ di chuyển chậm lại, giảm nguy cơ va chạm cho người đi bộ', textEn: 'Excessive vehicle volume forces slower speeds, reducing pedestrian collision dangers' },
+      { id: 'B', text: 'Hệ thống biển báo và gờ giảm tốc mới đã được lắp đặt đồng loạt', textEn: 'Widespread installation of comprehensive traffic calming bumps and road signage' },
+      { id: 'C', text: 'Phần lớn trẻ em đã chuyển sang di chuyển hoàn toàn bằng phương tiện công cộng', textEn: 'The vast majority of school pupils now commute exclusively via municipal buses' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe thường liên tưởng đến các biện pháp an toàn hạ tầng, nhưng nam sinh viên giải thích nguyên nhân trực tiếp là do kẹt xe di chuyển quá chậm ("when there\'s too much traffic, it moves more slowly").',
+    distractorMechanismEn: 'Candidates frequently guess modern infrastructure improvements, but the speaker points to slower traffic crawling speeds caused by extreme congestion.',
+    explanation: 'Đáp án là A: Xe cộ đông đúc di chuyển chậm chạp khiến ít người gặp nguy hiểm hơn.',
+    explanationEn: 'Option A is correct: The speaker explains that heavy traffic moves more slowly, reducing danger particularly for children.'
+  },
+  {
+    id: 'ldrill-dict-track31-air-quality-asthma',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Ô nhiễm không khí & Bệnh hô hấp hen suyễn (Track 31)',
+    titleEn: 'Dictation Level 2: Deteriorating Air Quality & Respiratory Health (Track 31)',
+    category: 'Public Health & Pollution',
+    categoryEn: 'Public Health & Pollution',
+    audioSnippetText: "I know children are safer, but the air quality is much worse. We don't want to have more medical problems like asthma and bronchitis, especially for children and older people.",
+    audioText: "I know children are safer, but the air quality is much worse. We don't want to have more medical problems like asthma and bronchitis, especially for children and older people.",
+    targetTranscript: "I know children are safer, but the air quality is much worse. We don't want to have more medical problems like asthma and bronchitis, especially for children and older people.",
+    ttsText: "I know children are safer, but the air quality is much worse. We don't want to have more medical problems like asthma and bronchitis, especially for children and older people.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track31-urban-transport-project-discussion.mp3',
+    clipStart: 153.0,
+    clipEnd: 168.0,
+    wordCount: 30,
+    difficulty: 'Band 6.0 - 7.5',
+    audioClipTip: 'Chú ý các thuật ngữ y khoa học thuật: "asthma" /ˈæsmə/ và "bronchitis" /brɒŋˈkaɪtɪs/, cùng cụm "older people".',
+    audioClipTipEn: 'Listen carefully for specialized medical vocabulary: "asthma" /ˈæsmə/, "bronchitis" /brɒŋˈkaɪtɪs/, and "air quality".'
+  },
+  {
+    id: 'ldrill-role-track31-business-loss-lexicon',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Thiệt hại kinh tế do kẹt xe (Track 31)',
+    titleEn: 'Key Vocabulary Reflex: Economic Losses from Gridlock (Track 31)',
+    category: 'Urban Economics & Workplace Stress',
+    categoryEn: 'Urban Economics & Workplace Stress',
+    promptAudioText: "True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.",
+    audioText: "True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track31-urban-transport-project-discussion.mp3',
+    clipStart: 204.0,
+    clipEnd: 214.0,
+    questionPrompt: "Severe urban traffic congestion directly causes local businesses to lose ......... due to delayed employees.",
+    questionPromptEn: "Severe urban traffic congestion directly causes local businesses to lose ......... due to delayed employees.",
+    questionPromptVi: 'Tình trạng kẹt xe đô thị nghiêm trọng trực tiếp khiến các doanh nghiệp bị mất ......... vì nhân viên đi làm muộn.',
+    correctAnswer: 'money',
+    acceptableAnswers: ['money'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ cụm động từ - danh từ "businesses lose money".',
+    trapNoteEn: 'Core lexical keyword: Listen for the collocation "businesses lose money" after "means that".',
+    explanation: 'Nam sinh viên chỉ rõ: "...the heavy traffic means that businesses lose money." Từ cần điền là "money".',
+    explanationEn: 'The student explicitly remarks: "...the heavy traffic means that businesses lose money." The target word is "money".'
   }
 ];
 

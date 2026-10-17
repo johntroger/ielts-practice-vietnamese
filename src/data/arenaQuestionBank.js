@@ -2804,12 +2804,191 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Having more leisure time after retiring to tour the countryside',
     explanation: 'Sau khi nghỉ hưu ("after retiring"), người đàn ông quyết định mua một chiếc xe mô tô cổ điển để đi phượt khám phá vùng quê.',
     explanationEn: 'Motivation identification: Retirement provided him with the opportunity and leisure time to buy a vintage motorbike and tour the countryside.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 31 TOWN TRANSPORT SYSTEM & PROJECT DISCUSSION
+  // ==========================================
+  {
+    id: 'easy_lis_project_subject_t31',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Sophie, what is the principal subject of their collaborative student project?',
+    promptVi: 'Theo Sophie, chủ đề chính của đề án hợp tác của hai sinh viên là gì?',
+    promptEn: 'According to Sophie, what is the principal subject of their collaborative student project?',
+    context: 'Sophie: So the main focus of the project is the transport system in the town.',
+    contextEn: 'Sophie: So the main focus of the project is the transport system in the town.',
+    audioText: 'So the main focus of the project is the transport system in the town.',
+    options: [
+      'The transport system in the town',
+      'The architectural restoration of historic town monuments',
+      'The construction of a suburban solar energy facility',
+      'The water sanitation standards of municipal rivers'
+    ],
+    optionsVi: [
+      'Hệ thống giao thông trong thị trấn',
+      'Trùng tu kiến trúc các di tích lịch sử của thị trấn',
+      'Xây dựng nhà máy năng lượng mặt trời ở ngoại ô',
+      'Quy chuẩn vệ sinh nguồn nước sông ngòi đô thị'
+    ],
+    optionsEn: [
+      'The transport system in the town',
+      'The architectural restoration of historic town monuments',
+      'The construction of a suburban solar energy facility',
+      'The water sanitation standards of municipal rivers'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The transport system in the town',
+    explanation: 'Sophie mở đầu khẳng định rõ trọng tâm chính của đề án là hệ thống giao thông trong thị trấn ("the main focus of the project is the transport system in the town").',
+    explanationEn: 'Direct statement identification: Sophie confirms at the outset that the main focus of their project is the transport system in the town.'
+  },
+  {
+    id: 'med_lis_rail_budget_trouble_t31',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is the railway operator considering downsizing staff and cutting service frequencies?',
+    promptVi: 'Tại sao đơn vị vận hành đường sắt lại tính đến việc tinh giản nhân sự và giảm tần suất chuyến?',
+    promptEn: 'Why is the railway operator considering downsizing staff and cutting service frequencies?',
+    context: 'Male student: ...the rail company has been talking about reducing staff and services because of financial problems.',
+    contextEn: 'Male student: ...the rail company has been talking about reducing staff and services because of financial problems.',
+    audioText: '...the rail company has been talking about reducing staff and services because of financial problems.',
+    options: [
+      'Severe corporate financial problems and budget deficits',
+      'A chronic shortage of qualified train locomotive engineers',
+      'Protracted industrial union strikes shutting down maintenance depots',
+      'Government regulatory caps prohibiting passenger transit expansion'
+    ],
+    optionsVi: [
+      'Các vấn đề tài chính và thâm hụt ngân sách nghiêm trọng của công ty',
+      'Tình trạng khan hiếm kéo dài các kỹ sư lái tàu hỏa có trình độ',
+      'Các cuộc đình công kéo dài của công đoàn làm tê liệt xưởng bảo dưỡng',
+      'Quy định hạn chế của chính phủ cấm mở rộng vận tải hành khách'
+    ],
+    optionsEn: [
+      'Severe corporate financial problems and budget deficits',
+      'A chronic shortage of qualified train locomotive engineers',
+      'Protracted industrial union strikes shutting down maintenance depots',
+      'Government regulatory caps prohibiting passenger transit expansion'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Severe corporate financial problems and budget deficits',
+    explanation: 'Nam sinh viên chỉ rõ lý do công ty đường sắt dự định cắt giảm là do các vấn đề tài chính ("because of financial problems").',
+    explanationEn: 'Direct cause retrieval: The student explicitly identifies financial problems as the driver behind proposed rail staff and service cutbacks.'
+  },
+  {
+    id: 'hard_lis_accident_paradox_t31',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What counter-intuitive factor explains the recent drop in the town’s road accident rate?',
+    promptVi: 'Yếu tố nghịch lý nào giải thích cho sự sụt giảm tỷ lệ tai nạn giao thông đường bộ gần đây tại thị trấn?',
+    promptEn: 'What counter-intuitive factor explains the recent drop in the town’s road accident rate?',
+    context: 'Male student: True, but one good thing is that the road accident rate has been falling recently, partly due to the high volume of traffic on the roads. After all, when there\'s too much traffic, it moves more slowly, and fewer people, especially children, are in danger.',
+    contextEn: 'Male student: True, but one good thing is that the road accident rate has been falling recently, partly due to the high volume of traffic on the roads. After all, when there\'s too much traffic, it moves more slowly, and fewer people, especially children, are in danger.',
+    audioText: 'True, but one good thing is that the road accident rate has been falling recently, partly due to the high volume of traffic on the roads. After all, when there\'s too much traffic, it moves more slowly, and fewer people, especially children, are in danger.',
+    options: [
+      'Excessive traffic volume forces vehicles to crawl, thereby mitigating collision hazards',
+      'New smart radar sensors along school zones immediately cite reckless drivers',
+      'Mandatory defensive driving certification was imposed on commercial motorists',
+      'Widespread adoption of automated pedestrian crosswalk safety gates'
+    ],
+    optionsVi: [
+      'Lượng phương tiện quá đông buộc xe cộ phải bò chậm chạp, nhờ đó giảm nguy cơ va chạm',
+      'Cảm biến radar thông minh mới quanh trường học xử phạt ngay tài xế bất cẩn',
+      'Chứng chỉ lái xe phòng vệ bắt buộc được áp dụng cho tài xế thương mại',
+      'Cổng chắn an toàn tự động dành cho người đi bộ qua đường được lắp đặt đại trà'
+    ],
+    optionsEn: [
+      'Excessive traffic volume forces vehicles to crawl, thereby mitigating collision hazards',
+      'New smart radar sensors along school zones immediately cite reckless drivers',
+      'Mandatory defensive driving certification was imposed on commercial motorists',
+      'Widespread adoption of automated pedestrian crosswalk safety gates'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Excessive traffic volume forces vehicles to crawl, thereby mitigating collision hazards',
+    explanation: 'Nghịch lý giao thông: Kẹt xe nghiêm trọng khiến tốc độ phương tiện chậm lại, dẫn đến ít người (nhất là trẻ em) gặp nguy hiểm va chạm hơn ("when there\'s too much traffic, it moves more slowly, and fewer people... are in danger").',
+    explanationEn: 'Paradoxical causality: The student explains that excessive traffic congestion causes vehicles to travel slowly, thereby reducing danger to pedestrians and children.'
+  },
+  {
+    id: 'med_lis_air_quality_illness_t31',
+    difficulty: 'medium',
+    topic: 'health',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What respiratory illnesses does Sophie highlight when pointing out the consequences of degraded air quality?',
+    promptVi: 'Những căn bệnh hô hấp nào được Sophie nêu bật khi chỉ ra hậu quả của việc chất lượng không khí suy thoái?',
+    promptEn: 'What respiratory illnesses does Sophie highlight when pointing out the consequences of degraded air quality?',
+    context: 'Sophie: I know children are safer, but the air quality is much worse. We don\'t want to have more medical problems like asthma and bronchitis, especially for children and older people.',
+    contextEn: 'Sophie: I know children are safer, but the air quality is much worse. We don\'t want to have more medical problems like asthma and bronchitis, especially for children and older people.',
+    audioText: 'I know children are safer, but the air quality is much worse. We don\'t want to have more medical problems like asthma and bronchitis, especially for children and older people.',
+    options: [
+      'Asthma and bronchitis among children and senior citizens',
+      'Chronic allergic rhinitis and vocal cord nodules',
+      'Pneumococcal infections and sudden middle-ear inflammation',
+      'Occupational hypertension and circulatory thrombosis'
+    ],
+    optionsVi: [
+      'Bệnh hen suyễn và viêm phế quản ở trẻ em và người cao tuổi',
+      'Viêm mũi dị ứng mãn tính và hạt xơ dây thanh quản',
+      'Nhiễm khuẩn phế cầu và viêm tai giữa cấp tính',
+      'Cao huyết áp nghề nghiệp và huyết khối tuần hoàn'
+    ],
+    optionsEn: [
+      'Asthma and bronchitis among children and senior citizens',
+      'Chronic allergic rhinitis and vocal cord nodules',
+      'Pneumococcal infections and sudden middle-ear inflammation',
+      'Occupational hypertension and circulatory thrombosis'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Asthma and bronchitis among children and senior citizens',
+    explanation: 'Sophie cảnh báo nguy cơ ô nhiễm không khí gây ra bệnh hen suyễn và viêm phế quản ("medical problems like asthma and bronchitis, especially for children and older people").',
+    explanationEn: 'Lexical medical detail: Sophie specifically cites asthma and bronchitis as the medical complications stemming from worsened air quality.'
+  },
+  {
+    id: 'easy_lis_business_tardiness_t31',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In the male student’s concluding remarks, how does road gridlock directly affect local businesses?',
+    promptVi: 'Trong nhận định kết luận của nam sinh viên, tình trạng ùn tắc giao thông ảnh hưởng trực tiếp đến các doanh nghiệp địa phương như thế nào?',
+    promptEn: 'In the male student’s concluding remarks, how does road gridlock directly affect local businesses?',
+    context: 'Male student: True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.',
+    contextEn: 'Male student: True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.',
+    audioText: 'True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.',
+    options: [
+      'They lose money because employees arrive late and workers suffer stress',
+      'Corporate taxation rises sharply to fund emergency road widenings',
+      'Customer parking spaces outside retail shops are eliminated',
+      'Online ecommerce platforms dominate physical commercial storefronts'
+    ],
+    optionsVi: [
+      'Họ bị thiệt hại tiền bạc vì nhân viên đi làm trễ và người lái xe bị căng thẳng',
+      'Thuế doanh nghiệp tăng vọt để chi trả cho việc mở rộng đường khẩn cấp',
+      'Chỗ đậu xe cho khách hàng bên ngoài các cửa hàng bán lẻ bị bãi bỏ',
+      'Các nền tảng thương mại điện tử trực tuyến lấn át các mặt bằng vật lý'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They lose money because employees arrive late and workers suffer stress',
+    explanation: 'Nam sinh viên chỉ ra: "...heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed."',
+    explanationEn: 'Commercial impact: The student explicitly states that heavy traffic causes businesses to lose money due to tardy workers and driver stress.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 31: Town Transport System & Project Discussion
+  easy_lis_project_subject_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 2.0, clipEnd: 15.0, isR2Audio: true, trackLabel: 'Track 31 • Project Scope' },
+  med_lis_rail_budget_trouble_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 53.0, clipEnd: 65.0, isR2Audio: true, trackLabel: 'Track 31 • Rail Financial Problems' },
+  hard_lis_accident_paradox_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 130.0, clipEnd: 145.0, isR2Audio: true, trackLabel: 'Track 31 • Accident Rate Paradox' },
+  med_lis_air_quality_illness_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 153.0, clipEnd: 168.0, isR2Audio: true, trackLabel: 'Track 31 • Air Quality & Asthma' },
+  easy_lis_business_tardiness_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 204.0, clipEnd: 216.0, isR2Audio: true, trackLabel: 'Track 31 • Business Financial Loss' },
+
   // Track 30: Everyday Transport & Travel Conversations
   easy_lis_bus_interval_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 10.0, clipEnd: 20.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 1 Bus Schedule' },
   med_lis_train_replacement_bus_t30: { audioUrl: `${R2_BASE}/ielts-listening-track30-transport-travel-conversations.mp3`, clipStart: 47.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 30 • Dialogue 2 Train Replacement Bus' },

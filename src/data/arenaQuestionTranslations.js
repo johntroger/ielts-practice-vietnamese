@@ -1343,6 +1343,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "In Dialogue 5, what factor influenced the speaker to finally purchase a motorbike?",
     "contextEn": "Man: I had not ridden one for twenty years, but after retiring I decided to buy a vintage motorbike to tour the countryside.",
     "explanationEn": "Motivation identification: Retirement provided him with the opportunity and leisure time to buy a vintage motorbike and tour the countryside."
+  },
+  "easy_lis_project_subject_t31": {
+    "promptEn": "According to Sophie, what is the principal subject of their collaborative student project?",
+    "contextEn": "Sophie: So the main focus of the project is the transport system in the town.",
+    "explanationEn": "Direct statement identification: Sophie confirms at the outset that the main focus of their project is the transport system in the town."
+  },
+  "med_lis_rail_budget_trouble_t31": {
+    "promptEn": "Why is the railway operator considering downsizing staff and cutting service frequencies?",
+    "contextEn": "Male student: ...the rail company has been talking about reducing staff and services because of financial problems.",
+    "explanationEn": "Direct cause retrieval: The student explicitly identifies financial problems as the driver behind proposed rail staff and service cutbacks."
+  },
+  "hard_lis_accident_paradox_t31": {
+    "promptEn": "What counter-intuitive factor explains the recent drop in the town’s road accident rate?",
+    "contextEn": "Male student: True, but one good thing is that the road accident rate has been falling recently, partly due to the high volume of traffic on the roads. After all, when there's too much traffic, it moves more slowly, and fewer people, especially children, are in danger.",
+    "explanationEn": "Paradoxical causality: The student explains that excessive traffic congestion causes vehicles to travel slowly, thereby reducing danger to pedestrians and children."
+  },
+  "med_lis_air_quality_illness_t31": {
+    "promptEn": "What respiratory illnesses does Sophie highlight when pointing out the consequences of degraded air quality?",
+    "contextEn": "Sophie: I know children are safer, but the air quality is much worse. We don't want to have more medical problems like asthma and bronchitis, especially for children and older people.",
+    "explanationEn": "Lexical medical detail: Sophie specifically cites asthma and bronchitis as the medical complications stemming from worsened air quality."
+  },
+  "easy_lis_business_tardiness_t31": {
+    "promptEn": "In the male student’s concluding remarks, how does road gridlock directly affect local businesses?",
+    "contextEn": "Male student: True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.",
+    "explanationEn": "Commercial impact: The student explicitly states that heavy traffic causes businesses to lose money due to tardy workers and driver stress."
   }
 };
 
