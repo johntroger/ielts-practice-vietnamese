@@ -866,9 +866,78 @@ export const READING_MICRO_DRILLS = [
     options: ['Nature and results of Calhoun’s experiment', 'Problems that result in crowding', 'Definitions of crowding and density', 'Advice for crowded work environment'],
     optionsEn: ['Nature and results of Calhoun’s experiment', 'Problems that result in crowding', 'Definitions of crowding and density', 'Advice for crowded work environment'],
     explanation: 'Đoạn văn mô tả bản chất thiết kế thí nghiệm nuôi chuột và kết quả sụp đổ hành vi bệnh lý của nhà nghiên cứu John B. Calhoun (Heading x, Test 29).',
-    explanationEn: '"Nature and results of Calhoun’s experiment" precisely matches the narrative detailing experimental confinement and subsequent pathological behavioral collapse.'
+  },
+
+  // ==========================================
+  // 13. 101 PAST PAPERS BATCH 8 DRILLS (Tests 30, 31, 32, 33)
+  // ==========================================
+  {
+    id: 'drill-101-batch8-tfng-30',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định True: Máy Phát Hiện Nói Dối Đo Phản Xạ Sinh Lý (Test 30)',
+    titleEn: 'True Trap: Polygraph Measuring Autonomic Physical Reactions (Test 30)',
+    category: 'Forensic Psychology',
+    categoryEn: 'Forensic Psychology',
+    passage: 'Conventional polygraphs do not directly detect lies per se; instead, they measure autonomic physical reactions—such as elevated heart rate, perspiration changes, and shallow breathing—triggered by emotional arousal.',
+    statement: 'A polygraph monitors physiological bodily changes rather than deception directly.',
+    answer: 'TRUE',
+    trapType: 'Direct Synonymous Alignment (Đối chiếu nguyên văn cơ chế sinh lý)',
+    trapTypeEn: 'Direct Synonymous Alignment (Physiological monitoring vs direct lie detection)',
+    explanation: 'Đáp án là TRUE. Đoạn văn khẳng định máy đo nói dối ghi nhận những thay đổi sinh lý tự động (nhịp tim, mồ hôi, hô hấp) chứ không trực tiếp phát hiện lời nói dối.',
+    explanationEn: 'The answer is TRUE. The text confirms that polygraph instruments record involuntary physiological responses rather than deceit itself.',
+    evidence: 'Conventional polygraphs do not directly detect lies per se; instead, they measure autonomic physical reactions...',
+    evidenceEn: 'Conventional polygraphs do not directly detect lies per se; instead, they measure autonomic physical reactions...'
+  },
+  {
+    id: 'drill-101-batch8-summary-31',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Nguyên Nhân Tử Vong Của Chim Vạc Rạ Non (Test 31)',
+    titleEn: 'Cambridge Paraphrase Pair: Bittern Chick Mortality Factor (Test 31)',
+    category: 'Ornithology & Conservation',
+    categoryEn: 'Ornithology & Conservation',
+    passage: 'Field biologists radio-tracking young bitterns in drying reedbeds determined that chicks failed to fledge primarily because parent birds could not harvest enough small fish, resulting in fatal starvation.',
+    question: 'Nguyên nhân hàng đầu dẫn đến cái chết của chim vạc rạ non trong nghiên cứu là gì?',
+    questionEn: 'According to the passage above, what was identified as the primary cause of death among bittern chicks?',
+    correctAnswer: 'starvation',
+    options: ['starvation', 'predation', 'severe hypothermia', 'flooding'],
+    optionsEn: ['starvation', 'predation', 'severe hypothermia', 'flooding'],
+    explanation: '"Starvation" (chết đói do thiếu hụt cá mồi) là nguyên nhân chính dẫn đến tỷ lệ chết non của chim vạc rạ (Đáp án câu 23 Test 31).',
+    explanationEn: '"Starvation" due to insufficient fish prey was determined to be the decisive cause of chick mortality in drying reedbeds.'
+  },
+  {
+    id: 'drill-101-batch8-summary-32',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Khả Năng Nhận Thức Của Vẹt Alex (Test 32)',
+    titleEn: 'Cambridge Paraphrase Pair: Avian Cognition in Alex the African Grey (Test 32)',
+    category: 'Cognitive Ethology',
+    categoryEn: 'Cognitive Ethology',
+    passage: 'When Irene Pepperberg presented Alex with two novel green objects—a key and a cup—and inquired "What\'s same?", the African Grey bypassed sensory distractions and accurately vocalized "Color".',
+    question: 'Vẹt Alex đã xác định chính xác đặc tính tương đồng nào giữa hai vật phẩm được đưa ra?',
+    questionEn: 'Which common attribute did Alex the parrot correctly identify when shown the two objects?',
+    correctAnswer: 'color',
+    options: ['color', 'shape', 'material', 'size'],
+    optionsEn: ['color', 'shape', 'material', 'size'],
+    explanation: 'Khi được hỏi về điểm giống nhau của hai đồ vật màu xanh lục khác hình dạng, Alex đã trả lời chính xác là "Color" (Đáp án câu 11 Test 32).',
+    explanationEn: 'Alex immediately and accurately identified "color" as the shared category uniting the two dissimilar objects.'
+  },
+  {
+    id: 'drill-101-batch8-table-33',
+    type: 'reading-paraphrase',
+    title: 'Khái Niệm Y Học: Tác Động Phi Thính Giác Của Tiếng Ồn (Test 33)',
+    titleEn: 'Cambridge Medical Finding: Non-Auditory Somatic Impact of Noise (Test 33)',
+    category: 'Environmental Health',
+    categoryEn: 'Environmental Health',
+    passage: 'Controlled physiological trials revealed that prolonged exposure to ambient acoustics exceeding 85 dBA provoked involuntary visceral stress, manifesting as stomach contractions in healthy volunteers.',
+    question: 'Ngoài suy giảm thính lực, tiếng ồn vượt ngưỡng còn kích thích phản ứng co thắt ở cơ quan nào?',
+    questionEn: 'Beyond hearing impairment, loud acoustic exposure was shown to induce visceral spasms in which organ?',
+    correctAnswer: 'stomach',
+    options: ['stomach', 'lungs', 'kidneys', 'liver'],
+    optionsEn: ['stomach', 'lungs', 'kidneys', 'liver'],
+    explanation: 'Tiếp xúc với tiếng ồn lớn gây ra phản ứng co thắt dạ dày (stomach contractions) ở những người hoàn toàn khỏe mạnh (Đáp án câu 4 Test 33).',
+    explanationEn: 'High decibel acoustic exposure induced involuntary stomach contractions in healthy experimental subjects.'
   }
 ];
+
 
 
 
