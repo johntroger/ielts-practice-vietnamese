@@ -33,6 +33,7 @@ import { track21ModernArtAndClimate } from './listening/track21ModernArtAndClima
 import { track22SpaceExpeditions } from './listening/track22SpaceExpeditions.js';
 import { track23PublicOpinions } from './listening/track23PublicOpinions.js';
 import { track24SpaceComparison } from './listening/track24SpaceComparison.js';
+import { track25MarsContingency } from './listening/track25MarsContingency.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -55,6 +56,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track25MarsContingency,
   track24SpaceComparison,
   track23PublicOpinions,
   track22SpaceExpeditions,
