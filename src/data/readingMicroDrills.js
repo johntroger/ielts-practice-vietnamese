@@ -512,5 +512,77 @@ export const READING_MICRO_DRILLS = [
     optionsEn: ['sticking', 'lamination', 'micronised', 'packing'],
     explanation: '"Tackiness" (độ dính/bám dính) đồng nghĩa với "sticking". Bột talc được rắc để kẹo cao su không bị dính trong quá trình dát mỏng và đóng gói.',
     explanationEn: '"Tackiness" means stickiness. Talc prevents chewing gum from sticking during the lamination and packaging operations.'
+  },
+
+  // ==========================================
+  // 8. 101 PAST PAPERS BATCH 3 DRILLS (Tests 10, 11, 12, 13)
+  // ==========================================
+  {
+    id: 'drill-101-batch3-tfng-10',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định Not Given: Bệnh Truyền Nhiễm Ở Koala (Test 10)',
+    titleEn: 'Not Given Trap: Koala Disease Transmission (Test 10)',
+    category: 'Zoology & Conservation',
+    categoryEn: 'Zoology & Conservation',
+    passage: 'Australian zoos charge visitors to hug koalas. But people may not realise how cruel this is: because of the koala\'s delicate disposition, constant handling can push an already precariously balanced physiology over the edge.',
+    statement: 'Koalas are easily infected with human contagious disease via cuddling.',
+    answer: 'NOT GIVEN',
+    trapType: 'Assumed Mechanism Trap (Bẫy giả định nguyên nhân chưa có trong văn bản)',
+    trapTypeEn: 'Assumed Mechanism Trap (Unsubstantiated causal link)',
+    explanation: 'Đáp án là NOT GIVEN. Mặc dù bài đọc nêu rõ việc ôm ấp (cuddling) gây căng thẳng sinh lý trầm trọng cho koala, văn bản không hề nhắc đến việc chúng bị lây các bệnh truyền nhiễm từ con người.',
+    explanationEn: 'The answer is NOT GIVEN. Although the text states that cuddling causes physiological distress, it never mentions whether koalas contract contagious diseases from human contact.',
+    evidence: '...because of the koala\'s delicate disposition, constant handling can push an already precariously balanced physiology over the edge.',
+    evidenceEn: '...because of the koala\'s delicate disposition, constant handling can push an already precariously balanced physiology over the edge.'
+  },
+  {
+    id: 'drill-101-batch3-tfng-11',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định False: Khả Năng Diễn Đạt Của Chữ Hình Nêm (Test 11)',
+    titleEn: 'False Trap: Expressive Capacity of Cuneiform (Test 11)',
+    category: 'Ancient History & Linguistics',
+    categoryEn: 'Ancient History & Linguistics',
+    passage: 'The Rebus principle led to cuneiform becoming a form of logo-syllabic writing. Only when syllabic writing was introduced into cuneiform did it become possible to write prose such as myths and royal propaganda.',
+    statement: 'Cuneiform could not express abstract concepts at all.',
+    answer: 'FALSE',
+    trapType: 'Absolute Negation Trap (Bẫy phủ định tuyệt đối "not at all")',
+    trapTypeEn: 'Absolute Negation Trap (Extreme negative contradicted by text)',
+    explanation: 'Đáp án là FALSE. Nhờ sự ra đời của nguyên lý rebus và lối viết ghi âm tiết (syllabic writing), chữ cuneiform đã có thể viết văn xuôi, thần thoại và các ý niệm trừu tượng, mâu thuẫn với "could not express at all".',
+    explanationEn: 'The answer is FALSE. Syllabic signs allowed cuneiform to write prose, myths, and abstract concepts, directly contradicting "could not express abstract concepts at all".',
+    evidence: 'Only when syllabic writing was introduced into cuneiform did it become possible to write prose such as myths and royal propaganda.',
+    evidenceEn: 'Only when syllabic writing was introduced into cuneiform did it become possible to write prose such as myths and royal propaganda.'
+  },
+  {
+    id: 'drill-101-batch3-para-12',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Dây Chuyền ECME Tự Động (Test 12)',
+    titleEn: 'Cambridge Paraphrase Pair: Sargrove ECME Automation (Test 12)',
+    category: 'Industrial Engineering',
+    categoryEn: 'Industrial Engineering',
+    passage: 'Between them, these two ECME lines did what a thousand assembly workers would otherwise have done. Human hands were needed only to feed the raw material in at one end and plug the valves into their sockets at the other.',
+    question: 'Trong câu trên, từ nào biểu thị chuẩn xác bộ phận nối tiếp nhận linh kiện điện tử?',
+    questionEn: 'In the passage above, which word designates the specific component connector fitted onto circuit boards?',
+    correctAnswer: 'sockets',
+    options: ['sockets', 'valves', 'assembly', 'circuits'],
+    optionsEn: ['sockets', 'valves', 'assembly', 'circuits'],
+    explanation: '"Sockets" là các ổ cắm gắn trên bảng mạch Bakelite để lắp bóng đèn chân không (valves) và loa. Đây là đáp án chính thức câu 5 Test 12.',
+    explanationEn: '"Sockets" were the connectors fitted by robot hands to receive vacuum tubes/valves and loudspeakers (Question 5, Test 12).'
+  },
+  {
+    id: 'drill-101-batch3-tfng-13',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định False: Tên Gọi Bãi Biển Bondi (Test 13)',
+    titleEn: 'False Trap: Bondi Beach Etymology (Test 13)',
+    category: 'Cultural Geography',
+    categoryEn: 'Cultural Geography',
+    passage: '"Bondi" or "Boondi" is an Aboriginal word meaning water breaking over rocks or the sound of breaking waves. The Australian Museum records that Bondi means place where a flight of nullas took place.',
+    statement: 'The name of the Bondi beach is first called by the British settlers.',
+    answer: 'FALSE',
+    trapType: 'Origin / Etymology Trap (Bẫy nguồn gốc tên gọi)',
+    trapTypeEn: 'Origin / Etymology Trap (Attributing indigenous name to settlers)',
+    explanation: 'Đáp án là FALSE. "Bondi" vốn là từ của thổ dân Úc (Aboriginal word) từ ngàn xưa, không phải do người định cư Anh (British settlers) đặt ra.',
+    explanationEn: 'The answer is FALSE. Bondi is an indigenous Aboriginal word, directly contradicting the claim that it was first named by British settlers.',
+    evidence: '"Bondi" or "Boondi" is an Aboriginal word meaning water breaking over rocks...',
+    evidenceEn: '"Bondi" or "Boondi" is an Aboriginal word meaning water breaking over rocks...'
   }
 ];
+
