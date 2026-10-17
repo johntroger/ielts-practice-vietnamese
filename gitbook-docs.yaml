@@ -13,6 +13,5 @@ site:
       key: space-1
       title: English (IELTS Master Handbook)
       path: ielts-master-handbook-english
-      draft: true
       content:
         directory: null
