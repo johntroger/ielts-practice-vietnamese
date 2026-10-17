@@ -1293,6 +1293,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "On which day is the tutorial advisory session scheduled to convene next week?",
     "contextEn": "We can meet again next Wednesday, and I can help you structure it.",
     "explanationEn": "Meeting schedule: Dr. Thornton arranges to meet next Wednesday."
+  },
+  "easy_lis_mission_emotion_t29": {
+    "promptEn": "In item 1, which speaker conveys genuine awe and enthusiastic pride regarding the mission's success?",
+    "contextEn": "1A: When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    "explanationEn": "Prosodic analysis: Speaker 1A employs ascending pitch inflection and vowel stress on \"extraordinary\"."
+  },
+  "med_lis_disaster_gravity_t29": {
+    "promptEn": "In item 2, which speaker expresses profound sorrow and emotional gravity over the catastrophic loss of life?",
+    "contextEn": "2B: The disaster was a dreadful tragedy, with a massive loss of life.",
+    "explanationEn": "Emotive inflection: Speaker 2B uses lengthened vowels and low, somber resonance to communicate genuine mourning."
+  },
+  "med_lis_anxiety_inflection_t29": {
+    "promptEn": "In item 3, what acoustic characteristic differentiates Speaker 3B's delivery from Speaker 3A?",
+    "contextEn": "3B: I'm feeling pretty uncomfortable about the situation. I hope we can find a solution soon.",
+    "explanationEn": "Phonological feature: Speaker 3B displays an elevated pitch peak on \"pretty uncomfortable\" indicating acute anxiety."
+  },
+  "hard_lis_stunning_admiration_t29": {
+    "promptEn": "In item 4, how does Speaker 4A signal authentic admiration compared to the indifferent delivery of 4B?",
+    "contextEn": "4A: The results were stunning, and the team had done a marvelous job.",
+    "explanationEn": "Acoustic feature: Speaker 4A employs bright, ascending pitch movement on evaluative adjectives \"stunning\" and \"marvelous\"."
+  },
+  "easy_lis_bizarre_emphasis_t29": {
+    "promptEn": "In item 6, which speaker uses dramatic stress and expressive pauses to communicate sheer incredulity?",
+    "contextEn": "6B: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it.",
+    "explanationEn": "Intonation contrast: Speaker 6B places prominent emphatic stress on \"bizarre\" and \"incredible\"."
   }
 };
 

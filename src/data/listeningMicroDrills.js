@@ -1972,6 +1972,103 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the abstract noun "efficiency" ("the efficiency of the crew").',
     explanation: 'Maria khẳng định trọng tâm nghiên cứu của mình là năng suất/hiệu suất của phi hành đoàn: "the main thing is the efficiency of the crew".',
     explanationEn: 'Maria identifies her primary research variable: "the efficiency of the crew".'
+  },
+
+  // ==========================================
+  // TRACK 29: INTONATION, SENTENCE STRESS & SPEAKER ATTITUDE
+  // ==========================================
+  {
+    id: 'ldrill-dist-track29-tragedy-somber-tone',
+    type: 'listening-distractor',
+    title: 'Bẫy ngữ điệu thái độ: Đọc sự thật khách quan vs Bộc lộ nỗi đau bi kịch (Track 29)',
+    titleEn: 'Attitude Intonation Trap: Objective News Delivery vs Somber Mourning (Track 29)',
+    category: 'Phonology & Discourse Intonation',
+    categoryEn: 'Phonology & Discourse Intonation',
+    audioSnippetText: "2A: The disaster was a dreadful tragedy with a massive loss of life. 2B: The disaster was a dreadful tragedy, with a massive loss of life.",
+    audioText: "2A: The disaster was a dreadful tragedy with a massive loss of life. 2B: The disaster was a dreadful tragedy, with a massive loss of life.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track29-intonation-stress-speaker-attitude.mp3',
+    clipStart: 23.0,
+    clipEnd: 36.0,
+    question: 'Giọng nói 2B khác biệt như thế nào so với giọng nói 2A trong việc thể hiện thái độ đối với thảm kịch?',
+    questionEn: 'How does Speaker 2B differ from Speaker 2A in communicating emotional attitude toward the tragedy?',
+    options: [
+      { id: 'A', text: 'Người nói 2B kéo dài nguyên âm, hạ thấp cao độ và ngắt nhịp trang nghiêm để bộc lộ sự đau buồn sâu sắc', textEn: 'Speaker 2B elongates vowels, lowers pitch register, and utilizes solemn pauses to convey deep sorrow' },
+      { id: 'B', text: 'Người nói 2B nói với tốc độ nhanh gấp đôi để thể hiện tính cấp bách của tai nạn', textEn: 'Speaker 2B speaks at double tempo to convey operational urgency' },
+      { id: 'C', text: 'Người nói 2B sử dụng giọng cười mỉa mai để giảm nhẹ mức độ nghiêm trọng', textEn: 'Speaker 2B uses ironic laughter to downplay the severity of the loss' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe cần phân biệt giữa cách đọc thông tin phẳng (flat/matter-of-fact ở 2A) và ngữ điệu mang sức nặng cảm xúc (emotional weight/lengthened vowels ở 2B).',
+    distractorMechanismEn: 'Test-takers must distinguish flat objective reporting (2A) from somber, lengthened emotional resonance (2B).',
+    explanation: 'Đáp án là A: Người nói 2B sử dụng ngữ điệu trầm và kéo dài nguyên âm ở "dreadful tragedy" và "massive loss of life" để truyền tải sự bi thương sâu sắc.',
+    explanationEn: 'Option A is correct: Speaker 2B uses lengthened vowels and low, solemn pitch to project grief.'
+  },
+  {
+    id: 'ldrill-dist-track29-bizarre-disbelief',
+    type: 'listening-distractor',
+    title: 'Bẫy trọng âm hoài nghi: Tường thuật bình thường vs Bàng hoàng khó tin (Track 29)',
+    titleEn: 'Incredulity Stress Trap: Normal Recount vs Bewildered Disbelief (Track 29)',
+    category: 'Acoustic Stress & Speaker Conviction',
+    categoryEn: 'Acoustic Stress & Speaker Conviction',
+    audioSnippetText: "6A: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it. 6B: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it.",
+    audioText: "6A: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it. 6B: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track29-intonation-stress-speaker-attitude.mp3',
+    clipStart: 89.0,
+    clipEnd: 108.0,
+    question: 'Đặc điểm nào trong ngữ điệu của người nói 6B bộc lộ sự kinh ngạc và không thể tin nổi trước sự việc?',
+    questionEn: 'Which feature in Speaker 6B\'s delivery demonstrates sheer bewilderment and disbelief?',
+    options: [
+      { id: 'A', text: 'Nhấn rất mạnh vào "such a bizarre event" và "incredible" kèm khoảng dừng kịch tính', textEn: 'Heavy emphatic stress on "such a bizarre event" and "incredible" with dramatic pauses' },
+      { id: 'B', text: 'Phát âm cực nhanh và nuốt các tính từ mô tả', textEn: 'Rapid articulation that swallows descriptive adjectives' },
+      { id: 'C', text: 'Hạ giọng thì thầm từ đầu đến cuối câu', textEn: 'Whispering throughout the entire utterance' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Trong khi 6A đọc câu như một nhận xét thông thường, 6B dồn lực vào hai từ biểu cảm mạnh "bizarre" và "incredible" để thể hiện sự bối rối tột độ.',
+    distractorMechanismEn: 'While 6A offers a routine observation, 6B invests strong nuclear stress into "bizarre" and "incredible" to convey profound bewilderment.',
+    explanation: 'Đáp án là A: Người nói 6B nhấn mạnh và kéo dài âm ở "bizarre" và "incredible" để biểu đạt sự kinh ngạc trước bí ẩn chưa có lời giải.',
+    explanationEn: 'Option A is correct: Heavy emphasis and dramatic pausing on "bizarre" and "incredible" convey pure incredulity.'
+  },
+  {
+    id: 'ldrill-dict-track29-mission-success',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Thông báo thành công và điều phi thường của nhiệm vụ (Track 29)',
+    titleEn: 'Dictation Level 2: Extraordinary Mission Success Announcement (Track 29)',
+    category: 'Sentence Rhythm & Expressive Adjectives',
+    categoryEn: 'Sentence Rhythm & Expressive Adjectives',
+    audioSnippetText: "When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    audioText: "When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    targetTranscript: "When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    ttsText: "When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track29-intonation-stress-speaker-attitude.mp3',
+    clipStart: 3.0,
+    clipEnd: 11.5,
+    wordCount: 19,
+    difficulty: 'Band 6.0 - 7.0',
+    audioClipTip: 'Chú ý mệnh đề thời gian "When the report came in to say", danh từ "mission was a success", và tính từ trọng tâm "extraordinary".',
+    audioClipTipEn: 'Focus on "When the report came in to say", the clause "mission was a success", and the final nucleus "extraordinary".'
+  },
+  {
+    id: 'ldrill-role-track29-stunning-results',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Tính từ khen ngợi thành tựu nổi bật (Track 29)',
+    titleEn: 'Key Vocabulary Reflex: Evaluative Adjective for Remarkable Results (Track 29)',
+    category: 'Lexical Stress & Evaluative Adjectives',
+    categoryEn: 'Lexical Stress & Evaluative Adjectives',
+    promptAudioText: "The results were stunning, and the team had done a marvelous job.",
+    audioText: "The results were stunning, and the team had done a marvelous job.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track29-intonation-stress-speaker-attitude.mp3',
+    clipStart: 57.0,
+    clipEnd: 64.0,
+    questionPrompt: "Speaker 4A passionately emphasizes that the overall project results were: .........",
+    questionPromptEn: "Speaker 4A passionately emphasizes that the overall project results were: .........",
+    questionPromptVi: 'Người nói 4A hào hứng nhấn mạnh rằng kết quả tổng thể của dự án thật là: .........',
+    correctAnswer: 'stunning',
+    acceptableAnswers: ['stunning'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ tính từ đánh giá mang trọng âm cao "stunning" ("The results were stunning").',
+    trapNoteEn: 'Core lexical keyword: Listen for the prominent pitch-accented evaluative adjective "stunning".',
+    explanation: 'Người nói 4A nhấn mạnh kết quả nghiên cứu là "stunning" (kinh ngạc, tuyệt vời).',
+    explanationEn: 'The speaker prominently stresses that the results were "stunning".'
   }
 ];
 

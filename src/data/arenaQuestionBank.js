@@ -2523,12 +2523,122 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Wednesday',
     explanation: 'Tiến sĩ Thornton hẹn gặp lại vào thứ Tư tuần sau ("next Wednesday").',
     explanationEn: 'Meeting schedule: Dr. Thornton arranges to meet next Wednesday.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 29 INTONATION, STRESS & SPEAKER ATTITUDE
+  // ==========================================
+  {
+    id: 'easy_lis_mission_emotion_t29',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In item 1, which speaker conveys genuine awe and enthusiastic pride regarding the mission\'s success?',
+    context: "1A: When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    audioText: "1A: When the report came in to say the mission was a success, everyone felt that we'd seen something extraordinary.",
+    options: [
+      'Speaker 1A',
+      'Speaker 1B',
+      'Both speakers convey equal emotional detachment',
+      'Neither speaker expresses any positive evaluation'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Speaker 1A',
+    explanation: 'Người nói 1A sử dụng ngữ điệu luyến cao và nhấn mạnh biểu cảm vào "extraordinary", thể hiện sự khâm phục rõ ràng.',
+    explanationEn: 'Prosodic analysis: Speaker 1A employs ascending pitch inflection and vowel stress on "extraordinary".'
+  },
+  {
+    id: 'med_lis_disaster_gravity_t29',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In item 2, which speaker expresses profound sorrow and emotional gravity over the catastrophic loss of life?',
+    context: "2B: The disaster was a dreadful tragedy, with a massive loss of life.",
+    audioText: "2B: The disaster was a dreadful tragedy, with a massive loss of life.",
+    options: [
+      'Speaker 2B',
+      'Speaker 2A',
+      'Both speakers deliver an identical monotone reading',
+      'Speaker 2A uses a lower, more mournful register'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Speaker 2B',
+    explanation: 'Người nói 2B kéo dài nguyên âm và ngắt nhịp chậm rãi trang nghiêm ở "dreadful tragedy" và "massive loss of life" để tạo cảm giác bi thương chân thật.',
+    explanationEn: 'Emotive inflection: Speaker 2B uses lengthened vowels and low, somber resonance to communicate genuine mourning.'
+  },
+  {
+    id: 'med_lis_anxiety_inflection_t29',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In item 3, what acoustic characteristic differentiates Speaker 3B\'s delivery from Speaker 3A?',
+    context: "3B: I'm feeling pretty uncomfortable about the situation. I hope we can find a solution soon.",
+    audioText: "3B: I'm feeling pretty uncomfortable about the situation. I hope we can find a solution soon.",
+    options: [
+      'A noticeable pitch peak and anxious inflection on "pretty uncomfortable"',
+      'A completely silent pause between grammatical subject and verb',
+      'An aggressive drop in vocal volume to an inaudible murmur',
+      'A rhythmic clicking sound between adjective syllables'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A noticeable pitch peak and anxious inflection on "pretty uncomfortable"',
+    explanation: 'Người nói 3B có đỉnh cao độ vút lên ở "pretty uncomfortable", thể hiện sự lo âu và căng thẳng tâm lý.',
+    explanationEn: 'Phonological feature: Speaker 3B displays an elevated pitch peak on "pretty uncomfortable" indicating acute anxiety.'
+  },
+  {
+    id: 'hard_lis_stunning_admiration_t29',
+    difficulty: 'hard',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In item 4, how does Speaker 4A signal authentic admiration compared to the indifferent delivery of 4B?',
+    context: "4A: The results were stunning, and the team had done a marvelous job.",
+    audioText: "4A: The results were stunning, and the team had done a marvelous job.",
+    options: [
+      'Through bright, ascending stress and energetic cadence across "stunning" and "marvelous"',
+      'By whispering the closing noun phrase at low vocal amplitude',
+      'By articulating the entire compound sentence at robotic monotone cadence',
+      'By laughing sarcastically following the mention of the team'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Through bright, ascending stress and energetic cadence across "stunning" and "marvelous"',
+    explanation: 'Người nói 4A sử dụng ngữ điệu bừng sáng và nhấn âm cao vào "stunning" và "marvelous", thể hiện sự ngợi khen chân thành.',
+    explanationEn: 'Acoustic feature: Speaker 4A employs bright, ascending pitch movement on evaluative adjectives "stunning" and "marvelous".'
+  },
+  {
+    id: 'easy_lis_bizarre_emphasis_t29',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In item 6, which speaker uses dramatic stress and expressive pauses to communicate sheer incredulity?',
+    context: "6B: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it.",
+    audioText: "6B: This was such a bizarre event, and it's incredible that we haven't been able to find out what caused it.",
+    options: [
+      'Speaker 6B',
+      'Speaker 6A',
+      'Neither speaker',
+      'Both speakers maintain neutral narration'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Speaker 6B',
+    explanation: 'Người nói 6B ngắt nhịp và nhấn rất mạnh vào "such a bizarre event" và "incredible" để diễn tả sự kinh ngạc trước bí ẩn.',
+    explanationEn: 'Intonation contrast: Speaker 6B places prominent emphatic stress on "bizarre" and "incredible".'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 29: Intonation, Sentence Stress & Speaker Attitude
+  easy_lis_mission_emotion_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 2.0, clipEnd: 12.0, isR2Audio: true, trackLabel: 'Track 29 • Item 1A Extraordinary' },
+  med_lis_disaster_gravity_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 28.0, clipEnd: 37.0, isR2Audio: true, trackLabel: 'Track 29 • Item 2B Dreadful Tragedy' },
+  med_lis_anxiety_inflection_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 46.0, clipEnd: 55.0, isR2Audio: true, trackLabel: 'Track 29 • Item 3B Pretty Uncomfortable' },
+  hard_lis_stunning_admiration_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 56.0, clipEnd: 65.0, isR2Audio: true, trackLabel: 'Track 29 • Item 4A Stunning Results' },
+  easy_lis_bizarre_emphasis_t29: { audioUrl: `${R2_BASE}/ielts-listening-track29-intonation-stress-speaker-attitude.mp3`, clipStart: 98.0, clipEnd: 110.0, isR2Audio: true, trackLabel: 'Track 29 • Item 6B Bizarre Event' },
+
   // Track 28: Mars Simulation Project Review
   easy_lis_crew_completed_count_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 10.0, clipEnd: 21.0, isR2Audio: true, trackLabel: 'Track 28 • Six Finishers Ratio' },
   med_lis_budget_saving_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 239.0, clipEnd: 250.0, isR2Audio: true, trackLabel: 'Track 28 • Budget Surplus 9.5M' },
