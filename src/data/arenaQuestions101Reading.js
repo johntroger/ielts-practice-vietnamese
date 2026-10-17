@@ -1044,8 +1044,31 @@ export const ARENA_101_READING_QUESTIONS = [
     explanation: 'Nhà trường đã lắp đặt vật liệu cách âm và tiêu âm chuyên dụng trong phòng học giúp triệt tiêu tiếng ồn của tàu hỏa, khôi phục khả năng tiếp thu bài của học sinh.',
     explanationVi: 'Nhà trường đã lắp đặt vật liệu cách âm và tiêu âm chuyên dụng trong phòng học giúp triệt tiêu tiếng ồn của tàu hỏa, khôi phục khả năng tiếp thu bài của học sinh.',
     explanationEn: 'Following research proving noise hindered reading comprehension, schools fitted sound-absorbing acoustic ceiling tiles, successfully neutralizing intrusive train decibels.'
+  },
+  {
+    id: 'arena_101_read_bristlecone_climate_48',
+    difficulty: 'nightmare',
+    topic: 'science',
+    skillCategory: 'reading',
+    type: 'reading_trap',
+    cambridgeSource: '101 Past Papers - Reading Test 34 (Passage 1)',
+    prompt: 'Bằng phương pháp đối chiếu vòng gỗ (cross-dating) trên loài thông cổ đại Pinus longaeva, các nhà cổ khí hậu học đã tái hiện được dữ liệu lịch sử nào?',
+    promptVi: 'Bằng phương pháp đối chiếu vòng gỗ (cross-dating) trên loài thông cổ đại Pinus longaeva, các nhà cổ khí hậu học đã tái hiện được dữ liệu lịch sử nào?',
+    promptEn: 'By cross-dating growth rings from living and ancient dead Pinus longaeva trees, what uninterrupted historical baseline did paleoclimatologists construct?',
+    context: 'By matching overlapping sequences of wide and narrow growth rings from ancient living bristlecone pines with fallen dead trunks preserved in the arid alpine dolomite of California\'s White Mountains, scientists assembled an unbroken, accountable paleoclimate chronology extending nearly 10,000 years into the past, proving that ancient climates experienced severe multi-decade mega-droughts.',
+    contextVi: 'Bằng cách đối chiếu các chuỗi vòng sinh trưởng rộng và hẹp lặp lại giữa những cây thông bristlecone cổ thụ còn sống và các thân gỗ chết được bảo quản hoàn hảo trong lớp đá dolomit khô lạnh của dãy White Mountains ở California, các nhà khoa học đã xây dựng nên một chuỗi niên biểu cổ khí hậu liên tục, đáng tin cậy kéo dài gần 10.000 năm vào quá khứ, chứng minh khí hậu cổ đại từng trải qua những đợt đại hạn hán kéo dài hàng thập kỷ.',
+    contextEn: 'By matching overlapping sequences of wide and narrow growth rings from ancient living bristlecone pines with fallen dead trunks preserved in the arid alpine dolomite of California\'s White Mountains, scientists assembled an unbroken, accountable paleoclimate chronology extending nearly 10,000 years into the past, proving that ancient climates experienced severe multi-decade mega-droughts.',
+    options: ['Chuỗi niên biểu biến động khí hậu và hạn hán liên tục kéo dài gần 10.000 năm (Unbroken paleoclimate chronology spanning nearly 10,000 years of climate history)', 'Bản đồ di cư của các bộ lạc thổ dân tiền sử dọc bờ Tây châu Mỹ (Continental migration maps of prehistoric hunter-gatherers across the Pacific Rim)', 'Biểu đồ chính xác về cường độ bức xạ bão từ mặt trời từ thời kỷ băng hà (Exact magnetospheric solar storm intensity charts from the Pleistocene glaciation)', 'Dự báo chính xác chu kỳ động đất đứt gãy San Andreas trong 10 thế kỷ tới (Deterministic seismic cycle predictions for the San Andreas Fault over the next millennium)'],
+    optionsEn: ['An unbroken, highly reliable paleoclimate and drought chronology extending nearly 10,000 years into the past', 'A comprehensive continental migration atlas tracing prehistoric indigenous nomadic populations across the Americas', 'An empirical measurement record of geomagnetic polar reversal intensity during the late Pleistocene Epoch', 'Deterministic predictive models forecasting exact earthquake recurrences along tectonic fault lines for the next thousand years'],
+    correctIndex: 0,
+    correctAnswer: 'Chuỗi niên biểu biến động khí hậu và hạn hán liên tục kéo dài gần 10.000 năm (Unbroken paleoclimate chronology spanning nearly 10,000 years of climate history)',
+    correctAnswerEn: 'An unbroken, highly reliable paleoclimate and drought chronology extending nearly 10,000 years into the past',
+    explanation: 'Kỹ thuật định tuổi theo vòng cây đối chiếu (dendrochronological cross-dating) trên gỗ thông bristlecone cho phép thiết lập bản ghi khí hậu liên tục gần 10 thiên niên kỷ.',
+    explanationVi: 'Kỹ thuật định tuổi theo vòng cây đối chiếu (dendrochronological cross-dating) trên gỗ thông bristlecone cho phép thiết lập bản ghi khí hậu liên tục gần 10 thiên niên kỷ.',
+    explanationEn: 'Dendrochronological cross-dating of bristlecone ring sequences established an unbroken paleoclimate baseline spanning almost 10,000 years.'
   }
 ];
+
 
 
 

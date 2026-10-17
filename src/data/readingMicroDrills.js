@@ -933,10 +933,25 @@ export const READING_MICRO_DRILLS = [
     correctAnswer: 'stomach',
     options: ['stomach', 'lungs', 'kidneys', 'liver'],
     optionsEn: ['stomach', 'lungs', 'kidneys', 'liver'],
-    explanation: 'Tiếp xúc với tiếng ồn lớn gây ra phản ứng co thắt dạ dày (stomach contractions) ở những người hoàn toàn khỏe mạnh (Đáp án câu 4 Test 33).',
-    explanationEn: 'High decibel acoustic exposure induced involuntary stomach contractions in healthy experimental subjects.'
+  },
+  {
+    id: 'drill-101-test34-longevity',
+    type: 'reading-paraphrase',
+    title: 'Khái Niệm Tiến Hóa: Thích Nghi Sinh Tồn Của Thông Cổ Đại (Test 34)',
+    titleEn: 'Cambridge Botanical Mechanism: Ancient Bristlecone Energy Adaptation (Test 34)',
+    category: 'Dendrochronology & Botany',
+    categoryEn: 'Dendrochronology & Botany',
+    passage: 'By retaining individual needles for up to forty continuous years instead of shedding them seasonally, ancient bristlecone pines conserve the immense energy required for leaf replacement and secure continuous photosynthetic capacity.',
+    question: 'Việc duy trì lá kim suốt nhiều thập kỷ giúp thông cổ đại tiết kiệm được yếu tố sống còn nào?',
+    questionEn: 'According to the passage, retaining foliage for decades allows bristlecone pines to conserve which critical biological resource?',
+    correctAnswer: 'energy',
+    options: ['energy', 'moisture', 'nitrogen', 'chlorophyll'],
+    optionsEn: ['energy', 'moisture', 'nitrogen', 'chlorophyll'],
+    explanation: 'Giữ lá kim suốt nhiều thập kỷ giúp cây tiết kiệm năng lượng (energy) thay vì phải liên tục tiêu tốn tài nguyên tái tạo lá mới (Đáp án câu 8 Test 34).',
+    explanationEn: 'Retaining evergreen needles for decades conserves metabolic energy that would otherwise be expended regenerating foliage.'
   }
 ];
+
 
 
 
