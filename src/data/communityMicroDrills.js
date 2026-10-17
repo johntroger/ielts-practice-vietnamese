@@ -168,7 +168,8 @@ export const COMMUNITY_DEFAULT_DRILLS = [
     targetTranscript: 'Metropolitan authorities must incorporate green corridors to mitigate the severe thermal absorption of asphalt surfaces.',
     wordCount: 15,
     difficulty: 'Band 7.5 - 8.5',
-    audioClipTip: 'Chú ý các thuật ngữ học thuật: "Metropolitan authorities", "green corridors", "mitigate", "thermal absorption".'
+    audioClipTip: 'Chú ý các thuật ngữ học thuật: "Metropolitan authorities", "green corridors", "mitigate", "thermal absorption".',
+    audioClipTipEn: 'Pay attention to academic terminology: "Metropolitan authorities", "green corridors", "mitigate", "thermal absorption".'
   },
 
   // 7. LISTENING: DISTRACTOR TRAP BUSTER

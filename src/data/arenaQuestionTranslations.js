@@ -1031,12 +1031,12 @@ export const ARENA_QUESTION_TRANSLATIONS = {
   },
   "easy_lis_b_vs_d_01": {
     "promptEn": "Listen to the membership code clarification: What is the correct membership ID?",
-    "contextEn": "What's your membership number? - It's B1074. - Sorry, did you say D1074? - No, B1074.",
-    "explanationEn": "Phonetic similarity trap: The assistant asks if the code begins with 'D', but the caller clarifies that it begins with 'B1074'."
+    "contextEn": "What's your membership number? It's B-1074. Sorry, did you say D-1074? No, B-1074.",
+    "explanationEn": "Phonetic similarity trap: The assistant asks if the code begins with 'D', but the caller clarifies that it begins with 'B-1074'."
   },
   "easy_lis_price_02": {
     "promptEn": "Listen to the shop cashier: What is the accurate total amount due?",
-    "contextEn": "That's £53.72 please. - Sorry, did you say £43.72? - No, £53.72.",
+    "contextEn": "How much is that altogether? That's 53 pounds 72 please. Sorry, did you say 43 pounds 72? No, 53 pounds 72.",
     "explanationEn": "Number pronunciation distractor (43 vs 53): The cashier explicitly confirms the total amount is £53.72."
   },
   "med_lis_phone_03": {
@@ -1056,7 +1056,7 @@ export const ARENA_QUESTION_TRANSLATIONS = {
   },
   "med_lis_asking_price_trap": {
     "promptEn": "What is the actual current asking price stated by the estate agent?",
-    "contextEn": "If I remember rightly, it's £340,000? - Actually, it's £350,000 at the moment...",
+    "contextEn": "If I remember rightly, it's 340,000 pounds? Actually, it's 350,000 pounds at the moment, but we can discuss that later if you like.",
     "explanationEn": "Misremembered price distractor: The buyer recalls £340,000, but the estate agent clarifies the current asking price is £350,000."
   },
   "med_lis_bath_fixture_trap": {
@@ -1066,7 +1066,7 @@ export const ARENA_QUESTION_TRANSLATIONS = {
   },
   "hard_lis_dim_correction_trap": {
     "promptEn": "What is the corrected length of the main master bedroom?",
-    "contextEn": "It's 4.91 meters by 3.95 meters... Oh sorry, that's 4.9 meters long and 3.95 meters wide.",
+    "contextEn": "Here's the main bedroom. It's 4.91 meters by 3.95 meters. Perfect for a large double bed. Oh sorry that's 4.9 metres long and 3.95 metres wide.",
     "explanationEn": "Self-correction distractor: The agent first says 4.91 meters, then immediately corrects to 4.9 meters long."
   },
   "easy_lis_postcode_ke7": {
@@ -1136,12 +1136,12 @@ export const ARENA_QUESTION_TRANSLATIONS = {
   },
   "med_lis_spell_03": {
     "promptEn": "Listen carefully: What is the accurate spelling of the estate agent's surname?",
-    "contextEn": "Is that with two Ls? - No, one. E-L-I-O-T.",
-    "explanationEn": "Spelling clarification: The caller clarifies whether the surname contains two Ls, and the agent responds 'No, one', spelling E-L-I-O-T."
+    "contextEn": "Is that with 2 Ls? No, E-L-I-O-T.",
+    "explanationEn": "Spelling clarification: The caller clarifies whether the surname contains two Ls, and the agent responds 'No', spelling E-L-I-O-T."
   },
   "hard_lis_appliances_04": {
     "promptEn": "Will the prospective buyer need to purchase a cooker or dishwasher for this property?",
-    "contextEn": "It's fully fitted, so it includes a cooker and a dishwasher and all the other things you'd expect in a kitchen. - That sounds great! Not having to buy a cooker and dishwasher.",
+    "contextEn": "What about the kitchen? It's fully fitted, so it includes a cooker and a dishwasher and all the other things you'd expect in a kitchen.",
     "explanationEn": "Fitted kitchen inclusions: Because the kitchen is fully fitted with a cooker and dishwasher, the buyer does not need to purchase either appliance."
   }
 };

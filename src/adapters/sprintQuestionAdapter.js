@@ -332,7 +332,36 @@ export function adaptListeningSpellingDrill(item) {
     formStem: formStemEn,
     formStemVi,
     audioText: item.audioText || item.promptAudioText || '',
-    options: acceptable.slice(0, 4),
+    options: (() => {
+      const correct = item.correctAnswer || (acceptable && acceptable[0]) || '';
+      const optSet = new Set([correct]);
+      if (Array.isArray(acceptable)) {
+        acceptable.forEach(a => { if (a && a !== correct) optSet.add(a); });
+      }
+      const fallbackDistractors = [
+        correct.toUpperCase(),
+        correct.toLowerCase(),
+        correct.charAt(0).toUpperCase() + correct.slice(1).toLowerCase(),
+        correct.endsWith('e') ? correct.slice(0, -1) : correct + 'e',
+        correct.endsWith('s') ? correct.slice(0, -1) : correct + 's',
+        correct.replace(/c/g, 'k'),
+        correct.replace(/tion/g, 'sion'),
+        correct.replace(/mm/g, 'm'),
+        correct.replace(/ll/g, 'l'),
+        correct.replace(/tt/g, 't')
+      ];
+      for (const d of fallbackDistractors) {
+        if (d && !optSet.has(d)) {
+          optSet.add(d);
+          if (optSet.size >= 4) break;
+        }
+      }
+      let filler = 1;
+      while (optSet.size < 3) {
+        optSet.add(`${correct} (Variant ${filler++})`);
+      }
+      return Array.from(optSet);
+    })(),
     correctIndex: 0,
     correctAnswer: item.correctAnswer,
     explanation: englishExp,

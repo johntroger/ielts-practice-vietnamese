@@ -118,7 +118,7 @@ export default function ListeningDrillRoom({
                     </p>
                     {currentDictation.audioClipTip && (
                       <p className="text-purple-700 italic pt-1 border-t border-purple-200/50">
-                        💡 {isEn ? getLocalizedDrillExplanation(currentDictation.audioClipTip, true) : currentDictation.audioClipTip}
+                        💡 {isEn ? (currentDictation.audioClipTipEn || getLocalizedDrillExplanation(currentDictation.audioClipTip, true)) : currentDictation.audioClipTip}
                       </p>
                     )}
                   </div>
