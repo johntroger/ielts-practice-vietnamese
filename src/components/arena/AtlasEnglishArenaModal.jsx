@@ -728,11 +728,12 @@ export default function AtlasEnglishArenaModal({
                             sprint.startSprint(null, selectedDifficulty, { isAudioSprint: true });
                           }
                         }}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-2.5 sm:px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40 min-w-0"
                         title={t('arena.audioBlitzDesc')}
                       >
-                        <span>🎧</span>
-                        <span className="truncate">{t('arena.audioBlitzTitle')}</span>
+                        <span className="shrink-0">🎧</span>
+                        <span className="sm:hidden font-black truncate">{isEn ? 'Audio Blitz' : 'Lôi Đài Nghe'}</span>
+                        <span className="hidden sm:inline truncate">{t('arena.audioBlitzTitle')}</span>
                       </button>
 
                       {getUnresolvedMistakeCount() > 0 && (
@@ -744,11 +745,12 @@ export default function AtlasEnglishArenaModal({
                               sprint.startSprint(revengeQuestions, selectedDifficulty);
                             }
                           }}
-                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                          className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3 px-2.5 sm:px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] min-w-0"
                           title={t('arena.revengeSprintTitle')}
                         >
                           <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                          <span className="truncate">{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
+                          <span className="sm:hidden font-black truncate">{isEn ? `Revenge (${getUnresolvedMistakeCount()})` : `Phục Thù (${getUnresolvedMistakeCount()})`}</span>
+                          <span className="hidden sm:inline truncate">{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
                         </button>
                       )}
                     </div>
@@ -787,7 +789,7 @@ export default function AtlasEnglishArenaModal({
               </div>
             </main>
             {/* Safe area bottom padding for mobile devices */}
-            <div className="lg:hidden h-8 shrink-0" />
+            <div className="lg:hidden h-16 pb-[env(safe-area-inset-bottom,1.5rem)] shrink-0" />
           </div>
         )}
 
