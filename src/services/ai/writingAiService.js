@@ -798,25 +798,10 @@ Return ONLY raw parseable JSON with this structure:
       mapType: taskObj.mapType || chosenMapArchetype?.type || undefined
     };
 
-    // For Task 1 Process and Map: Generate authentic illustration with Google Banana AI Image
+    // For Task 1 Process and Map: Always use lightweight vector SVG engine to preserve bandwidth and Supabase quota
+    // (Bans raw 1.5MB base64 PNG generation that triggers Supabase egress fair use violations)
     if (isTask1 && (baseTask.type === 'process' || baseTask.type === 'map')) {
-      try {
-        const bananaPrompt = baseTask.type === 'map'
-          ? buildGoogleBananaMapPrompt(baseTask)
-          : buildGoogleBananaProcessPrompt(baseTask);
-
-        const aiImage = await generateGoogleBananaImage({
-          prompt: bananaPrompt,
-          apiKey
-        });
-
-        if (aiImage) {
-          baseTask.imageUrl = aiImage;
-          baseTask.imageSource = 'google_banana';
-        }
-      } catch (bananaErr) {
-        console.warn('[Google Banana] Image generation fallback to vector engine:', bananaErr?.message);
-      }
+      baseTask.imageSource = 'vector_svg_engine';
     }
 
     // Ensure Process and Map tasks are guaranteed to have a high-resolution illustration (imageUrl)

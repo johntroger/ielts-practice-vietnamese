@@ -1,6 +1,7 @@
 import React from 'react';
 import WorkspaceErrorBoundary from '../common/WorkspaceErrorBoundary';
 import { useModalStore } from '../../core/modalStore';
+import { useAppStore } from '../../core/appStore';
 import { countWords } from '../../utils/textAnalytics';
 import { useTranslation } from '../../i18n';
 
@@ -145,6 +146,16 @@ export default function AppModalHost({
 }) {
   const { isEn } = useTranslation();
   const { modals, openModal, closeModal } = useModalStore();
+  const appStore = useAppStore();
+
+  const resolvedActiveSkill = activeSkill ?? appStore.activeSkill;
+  const resolvedSetActiveSkill = setActiveSkill ?? appStore.setActiveSkill;
+  const resolvedMasteredIds = masteredIds ?? appStore.masteredItemIds;
+  const resolvedToggleMastered = onToggleMastered ?? appStore.toggleMasteredItem;
+  const resolvedCdiFontSize = cdiFontSize ?? appStore.cdiFontSize;
+  const resolvedChangeCdiFontSize = onChangeCdiFontSize ?? appStore.setCdiFontSize;
+  const resolvedCdiContrast = cdiContrast ?? appStore.cdiContrast;
+  const resolvedChangeCdiContrast = onChangeCdiContrast ?? appStore.setCdiContrast;
 
   return (
     <React.Suspense fallback={null}>
@@ -166,8 +177,8 @@ export default function AppModalHost({
             onSaveMockResult={onSaveMockResult}
             apiKey={apiKey}
             model={model}
-            activeSkill={activeSkill}
-            onSelectSkill={(skill) => setActiveSkill(skill)}
+            activeSkill={resolvedActiveSkill}
+            onSelectSkill={(skill) => resolvedSetActiveSkill(skill)}
             onStartReadingMockExam={onStartReadingMockExam}
             currentUser={currentUser}
             marathonSession={marathonSession}
@@ -185,7 +196,7 @@ export default function AppModalHost({
             onClose={() => closeModal('diagnostic')}
             targetBand={targetBand}
             onApplyTargetBand={(newBand) => setTargetBand(newBand)}
-            onOpenSkill={(skill) => setActiveSkill(skill)}
+            onOpenSkill={(skill) => resolvedSetActiveSkill(skill)}
           />
         )}
       </WorkspaceErrorBoundary>
@@ -194,10 +205,10 @@ export default function AppModalHost({
       <CDIDisplayModal
         isOpen={Boolean(modals.cdiDisplay)}
         onClose={() => closeModal('cdiDisplay')}
-        cdiFontSize={cdiFontSize}
-        onChangeFontSize={onChangeCdiFontSize}
-        cdiContrast={cdiContrast}
-        onChangeContrast={onChangeCdiContrast}
+        cdiFontSize={resolvedCdiFontSize}
+        onChangeFontSize={resolvedChangeCdiFontSize}
+        cdiContrast={resolvedCdiContrast}
+        onChangeContrast={resolvedChangeCdiContrast}
         onReset={onResetCDIDisplay}
       />
 
@@ -217,8 +228,8 @@ export default function AppModalHost({
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
           currentUser={currentUser}
-          masteredIds={masteredIds}
-          onToggleMastered={onToggleMastered}
+          masteredIds={resolvedMasteredIds}
+          onToggleMastered={resolvedToggleMastered}
           onOpenAuth={() => openModal('auth')}
         />
       </WorkspaceErrorBoundary>

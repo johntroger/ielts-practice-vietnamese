@@ -18,12 +18,46 @@ export const DEPRECATED_GEMINI_MODELS = [
   'gemini-pro-vision'
 ];
 
+export function isCurrentUiEnglish(langOverride = null) {
+  if (langOverride === 'en' || langOverride === true) return true;
+  if (langOverride === 'vi' || langOverride === false) return false;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('ielts_ui_language') === 'en';
+    }
+  } catch (e) {}
+  return false;
+}
+
 export const POPULAR_GEMINI_MODELS = [
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (Khuyên dùng - Thế hệ mới nhất GA, phản hồi siêu tốc & tối ưu token)' },
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Tiêu chuẩn - Ổn định cao, chấm điểm Cambridge chuẩn xác)' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite (Siêu nhẹ - Tiết kiệm tối đa hạn ngạch API 15 RPM)' },
-  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview (Chuyên sâu - Khảo thí nâng cao, lập luận Band 8.5+)' }
+  {
+    id: 'gemini-3.6-flash',
+    name: 'Gemini 3.6 Flash (Khuyên dùng - Thế hệ mới nhất GA, phản hồi siêu tốc & tối ưu token)',
+    nameEn: 'Gemini 3.6 Flash (Recommended - Latest GA generation, ultra-fast & token-optimized)'
+  },
+  {
+    id: 'gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash (Tiêu chuẩn - Ổn định cao, chấm điểm Cambridge chuẩn xác)',
+    nameEn: 'Gemini 2.5 Flash (Standard - High stability, accurate Cambridge band scoring)'
+  },
+  {
+    id: 'gemini-2.5-flash-lite',
+    name: 'Gemini 2.5 Flash-Lite (Siêu nhẹ - Tiết kiệm tối đa hạn ngạch API 15 RPM)',
+    nameEn: 'Gemini 2.5 Flash-Lite (Ultra-light - Maximizes 15 RPM free API quota)'
+  },
+  {
+    id: 'gemini-3.1-pro-preview',
+    name: 'Gemini 3.1 Pro Preview (Chuyên sâu - Khảo thí nâng cao, lập luận Band 8.5+)',
+    nameEn: 'Gemini 3.1 Pro Preview (Advanced - Deep examiner reasoning for Band 8.5+)'
+  }
 ];
+
+export function getLocalizedGeminiModels(isEn = isCurrentUiEnglish()) {
+  return POPULAR_GEMINI_MODELS.map(m => ({
+    ...m,
+    displayName: isEn ? (m.nameEn || m.name) : m.name
+  }));
+}
 
 function cleanModelName(model) {
   if (!model) return 'gemini-3.6-flash';
@@ -46,39 +80,191 @@ const MODEL_FALLBACK_CHAIN = [
 ];
 
 /**
- * Parses raw Gemini error response into friendly Vietnamese message with guidance.
+ * Parses raw Gemini error response into friendly bilingual (EN/VI) message with guidance.
  */
-export function formatFriendlyGeminiError(errorData, statusCode) {
+export function formatFriendlyGeminiError(errorData, statusCode, lang = null) {
+  const isEn = isCurrentUiEnglish(lang);
   const rawMsg = errorData?.error?.message || '';
   const status = errorData?.error?.status || '';
 
   if (statusCode === 429 || status === 'RESOURCE_EXHAUSTED' || /quota|exhausted|rate limit/i.test(rawMsg)) {
-    return 'Hạn ngạch Google Gemini API tạm thời bị giới hạn (Quá nhiều yêu cầu cùng lúc - Quota 429). Hệ thống đã thử chuyển sang mô hình dự phòng nhưng tất cả đều đang bận. Vui lòng đợi 30 - 60 giây và thử lại!';
+    return isEn
+      ? 'Google Gemini API quota is temporarily rate-limited (Too many concurrent requests - HTTP 429). The system attempted fallback models, but all are currently busy. Please wait 30–60 seconds and try again!'
+      : 'Hạn ngạch Google Gemini API tạm thời bị giới hạn (Quá nhiều yêu cầu cùng lúc - Quota 429). Hệ thống đã thử chuyển sang mô hình dự phòng nhưng tất cả đều đang bận. Vui lòng đợi 30 - 60 giây và thử lại!';
   }
 
   if (statusCode === 400 && /API_KEY_INVALID|invalid api key/i.test(rawMsg)) {
-    return 'Google Gemini API Key không hợp lệ hoặc đã bị vô hiệu hóa. Vui lòng kiểm tra lại Key trong mục Cài đặt.';
+    return isEn
+      ? 'Invalid or deactivated Google Gemini API Key. Please verify your API Key in Settings.'
+      : 'Google Gemini API Key không hợp lệ hoặc đã bị vô hiệu hóa. Vui lòng kiểm tra lại Key trong mục Cài đặt.';
   }
 
   if (statusCode === 403 || /permission|unregistered/i.test(rawMsg)) {
-    return 'API Key không có quyền truy cập mô hình này hoặc quốc gia của bạn bị hạn chế. Vui lòng kiểm tra lại tài khoản Google AI Studio.';
+    return isEn
+      ? 'Your API Key does not have permission to access this model or your region is restricted. Please check your Google AI Studio account.'
+      : 'API Key không có quyền truy cập mô hình này hoặc quốc gia của bạn bị hạn chế. Vui lòng kiểm tra lại tài khoản Google AI Studio.';
   }
 
   if (statusCode === 503 || statusCode === 500 || /overloaded/i.test(rawMsg)) {
-    return 'Máy chủ Google Gemini đang quá tải tạm thời (503 Service Unavailable). Vui lòng thử lại sau giây lát.';
+    return isEn
+      ? 'Google Gemini servers are temporarily overloaded (503 Service Unavailable). Please try again in a few moments.'
+      : 'Máy chủ Google Gemini đang quá tải tạm thời (503 Service Unavailable). Vui lòng thử lại sau giây lát.';
   }
 
-  return rawMsg || `Lỗi từ máy chủ Google Gemini (${statusCode || 'Mạng'})`;
+  return rawMsg || (isEn
+    ? `Error from Google Gemini server (${statusCode || 'Network'})`
+    : `Lỗi từ máy chủ Google Gemini (${statusCode || 'Mạng'})`);
+}
+
+const GEMINI_RESPONSE_CACHE = new Map();
+const MAX_CLIENT_CACHE_ENTRIES = 60;
+
+/**
+ * Computes a fast deterministic hash for a Gemini request payload (model + body)
+ * for client-side and Edge AI Proxy deduplication.
+ */
+export function computeClientPromptHash(model, body) {
+  const cleanModel = cleanModelName(model);
+  const raw = `${cleanModel}:${typeof body === 'string' ? body : JSON.stringify(body || {})}`;
+  let h1 = 0xdeadbeef ^ raw.length;
+  let h2 = 0x41c6ce57 ^ raw.length;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return `ai_${(h2 >>> 0).toString(16).padStart(8, '0')}${(h1 >>> 0).toString(16).padStart(8, '0')}`;
+}
+
+export function getCachedGeminiResponse(promptHash) {
+  if (!promptHash || !GEMINI_RESPONSE_CACHE.has(promptHash)) return null;
+  const entry = GEMINI_RESPONSE_CACHE.get(promptHash);
+  if (Date.now() > entry.expiresAt) {
+    GEMINI_RESPONSE_CACHE.delete(promptHash);
+    return null;
+  }
+  return entry.payload;
+}
+
+export function setCachedGeminiResponse(promptHash, payload, ttlMs = 3600 * 1000) {
+  if (!promptHash || !payload) return;
+  if (GEMINI_RESPONSE_CACHE.size >= MAX_CLIENT_CACHE_ENTRIES) {
+    const oldestKey = GEMINI_RESPONSE_CACHE.keys().next().value;
+    if (oldestKey) GEMINI_RESPONSE_CACHE.delete(oldestKey);
+  }
+  GEMINI_RESPONSE_CACHE.set(promptHash, {
+    payload,
+    expiresAt: Date.now() + ttlMs
+  });
+}
+
+export function clearGeminiResponseCache() {
+  GEMINI_RESPONSE_CACHE.clear();
+}
+
+export function resolveEdgeAiProxyUrl() {
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      if (import.meta.env.VITE_EDGE_AI_PROXY_URL) {
+        return import.meta.env.VITE_EDGE_AI_PROXY_URL;
+      }
+      if (import.meta.env.VITE_R2_PUBLIC_BASE_URL) {
+        return `${String(import.meta.env.VITE_R2_PUBLIC_BASE_URL).replace(/\/$/, '')}/api/ai/generate`;
+      }
+    }
+  } catch (e) {}
+  return '';
+}
+
+/**
+ * Calls the Cloudflare Worker AI Proxy Gateway (/api/ai/generate) which provides
+ * SHA-256 Edge + R2 prompt response caching and central API key fallback.
+ */
+export async function callGeminiViaEdgeProxy({
+  proxyUrl,
+  model,
+  apiKey,
+  body,
+  apiVersion = 'v1beta',
+  cacheable = false,
+  cacheTtlSeconds = 86400
+}) {
+  const endpoint = proxyUrl || resolveEdgeAiProxyUrl();
+  if (!endpoint) return null;
+
+  return fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: cleanModelName(model),
+      apiKey,
+      body,
+      apiVersion,
+      cacheable,
+      cacheTtlSeconds
+    })
+  });
 }
 
 /**
  * Universal Gemini API caller with automatic fallback across models & API versions:
- * 1. Automatic version switch (v1beta <-> v1) on 404/400
- * 2. Automatic model fallback on 429 Quota Exceeded (RESOURCE_EXHAUSTED) or 503 Overloaded
- * 3. Short backoff pause before retrying
+ * 1. Client-side & Cloudflare Edge AI Proxy SHA-256 response cache for deterministic requests
+ * 2. Automatic version switch (v1beta <-> v1) on 404/400
+ * 3. Automatic model fallback on 429 Quota Exceeded (RESOURCE_EXHAUSTED) or 503 Overloaded
+ * 4. Short backoff pause before retrying
  */
-export async function callGeminiApi({ model, apiKey, body, apiVersion = 'v1beta' }) {
+export async function callGeminiApi({
+  model,
+  apiKey,
+  body,
+  apiVersion = 'v1beta',
+  cacheable = false,
+  useEdgeProxy = false,
+  cacheTtlSeconds = 86400
+}) {
   const initialModel = cleanModelName(model);
+  const temperature = body?.generationConfig?.temperature;
+  const isDeterministic = cacheable === true || (typeof temperature === 'number' && temperature <= 0.25);
+  const promptHash = isDeterministic ? computeClientPromptHash(initialModel, body) : null;
+
+  if (promptHash) {
+    const cachedPayload = getCachedGeminiResponse(promptHash);
+    if (cachedPayload) {
+      return new Response(JSON.stringify(cachedPayload), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-IELTS-AI-Cache': 'CLIENT-HIT',
+          'X-IELTS-AI-Hash': promptHash
+        }
+      });
+    }
+  }
+
+  // Optional Cloudflare Worker Edge AI Proxy Gateway routing
+  if (useEdgeProxy) {
+    try {
+      const proxyRes = await callGeminiViaEdgeProxy({
+        model: initialModel,
+        apiKey,
+        body,
+        apiVersion,
+        cacheable: isDeterministic,
+        cacheTtlSeconds
+      });
+      if (proxyRes && proxyRes.ok) {
+        if (promptHash) {
+          const cloneData = await proxyRes.clone().json().catch(() => null);
+          if (cloneData) setCachedGeminiResponse(promptHash, cloneData, cacheTtlSeconds * 1000);
+        }
+        return proxyRes;
+      }
+    } catch (proxyErr) {
+      console.warn('[Gemini API] Edge AI Proxy unreachable, falling back to direct Gemini endpoint:', proxyErr?.message || proxyErr);
+    }
+  }
 
   // Build candidate model order starting with the requested model
   const modelsToTry = [
@@ -93,7 +279,7 @@ export async function callGeminiApi({ model, apiKey, body, apiVersion = 'v1beta'
     const isFallback = i > 0;
 
     if (isFallback) {
-      console.warn(`[Gemini API] Tự động fallback sang mô hình dự phòng: ${currentModel} do mô hình trước bị giới hạn ngạch.`);
+      console.warn(`[Gemini API] Automatically falling back to backup model: ${currentModel} due to rate limit on previous model.`);
       // Short backoff before retry
       await new Promise(resolve => setTimeout(resolve, 800));
     }
@@ -117,13 +303,21 @@ export async function callGeminiApi({ model, apiKey, body, apiVersion = 'v1beta'
           body: JSON.stringify(body)
         });
         if (fallbackResponse.ok) {
+          if (promptHash && typeof fallbackResponse.clone === 'function') {
+            const cloneData = await fallbackResponse.clone().json().catch(() => null);
+            if (cloneData) setCachedGeminiResponse(promptHash, cloneData, cacheTtlSeconds * 1000);
+          }
           return fallbackResponse;
         }
         response = fallbackResponse;
       }
 
-      // If call succeeds, return immediately
+      // If call succeeds, cache if deterministic and return immediately
       if (response.ok) {
+        if (promptHash && typeof response.clone === 'function') {
+          const cloneData = await response.clone().json().catch(() => null);
+          if (cloneData) setCachedGeminiResponse(promptHash, cloneData, cacheTtlSeconds * 1000);
+        }
         return response;
       }
 
@@ -216,7 +410,11 @@ export function robustJsonParse(rawText, fallback = null) {
     } catch (err2) {
       console.warn('robustJsonParse fallback parsing due to error:', err2.message);
       if (fallback !== null) return fallback;
-      throw new Error('Dữ liệu AI trả về bị ngắt quãng hoặc không đúng định dạng JSON. Vui lòng thử lại.');
+      throw new Error(
+        isCurrentUiEnglish()
+          ? 'AI response was truncated or returned invalid JSON format. Please try again.'
+          : 'Dữ liệu AI trả về bị ngắt quãng hoặc không đúng định dạng JSON. Vui lòng thử lại.'
+      );
     }
   }
 }
@@ -242,18 +440,20 @@ export async function fetchAvailableModels(apiKey) {
         .map(m => {
           const rawId = m.name.replace('models/', '');
           const matched = POPULAR_GEMINI_MODELS.find(p => p.id === rawId);
-          return matched || { id: rawId, name: rawId };
+          return matched || { id: rawId, name: rawId, nameEn: rawId };
         });
       return supported.length > 0 ? supported : POPULAR_GEMINI_MODELS;
     }
   } catch (e) {
-    console.warn('Không thể tự động tải danh sách models:', e);
+    console.warn('Failed to automatically fetch available models:', e);
   }
   return POPULAR_GEMINI_MODELS;
 }
 
 export async function testApiKey(apiKey, model = DEFAULT_MODEL) {
-  if (!apiKey) throw new Error('Vui lòng nhập AI API Key');
+  if (!apiKey) {
+    throw new Error(isCurrentUiEnglish() ? 'Please enter an AI API Key' : 'Vui lòng nhập AI API Key');
+  }
   const response = await callGeminiApi({
     model,
     apiKey,

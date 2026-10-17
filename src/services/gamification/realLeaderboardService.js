@@ -10,9 +10,19 @@ import { supabase } from '../supabaseClient.js';
 import { safeGet, safeSet } from '../../utils/storageService.js';
 import { getLeagueTier, getUnifiedStreakCount } from './leagueEngine.js';
 import { calculateLevelProgress } from './levelEngine.js';
+import {
+  EDGE_RESOURCE_KEYS,
+  fetchWithHybridEdgeCache,
+  invalidateHybridEdgeCache
+} from '../cloudflareStorageService.js';
+import {
+  ENTITY_TYPES,
+  ARENA_ANTI_CHEAT_LIMITS
+} from '../../utils/supabaseStorageGuard.js';
 
 export const REAL_LEADERBOARD_STORAGE_KEY = 'ielts_real_arena_leaderboard_v1';
 export const GUEST_ARENA_STORAGE_KEY = 'ielts_guest_arena_score_v1';
+
 
 export const DEFAULT_OWNER_PROFILE = {
   user_id: '1c5cafba-4a8e-48c3-93bf-7d2387ec6dc1',
@@ -43,6 +53,15 @@ export function isUserOwner(user) {
   );
 }
 
+function isUiEnglish() {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('ielts_ui_language') === 'en';
+    }
+  } catch (e) {}
+  return false;
+}
+
 /**
  * Reconciles the raw list of real users with the current active user/guest.
  * Guarantees tranthanhtung37 is present and that the active player is appropriately marked.
@@ -52,6 +71,7 @@ export function isUserOwner(user) {
  */
 export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
   const usersMap = new Map();
+  const isEn = isUiEnglish();
 
   // 1. Always seed the verified owner profile
   usersMap.set('tranthanhtung37', { ...DEFAULT_OWNER_PROFILE });
@@ -60,7 +80,11 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
   if (Array.isArray(rawUsers)) {
     for (const u of rawUsers) {
       if (!u || !u.display_name) continue;
-      const key = u.display_name.toLowerCase();
+      const isGuestRecord = u.user_id === 'guest_player' || u.display_name === 'Bạn (Khách)' || u.display_name === 'You (Guest)';
+      const normalizedDisplayName = isGuestRecord
+        ? (isEn ? 'You (Guest)' : 'Bạn (Khách)')
+        : u.display_name;
+      const key = isGuestRecord ? 'guest_player' : normalizedDisplayName.toLowerCase();
       const existing = usersMap.get(key);
 
       // Discard legacy mock stats (9400 total / 2850 weekly) for owner when resetting to play from scratch
@@ -73,6 +97,7 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
         usersMap.set(key, {
           ...existing,
           ...u,
+          display_name: normalizedDisplayName,
           weekly_xp: Math.max(existing.weekly_xp || 0, incomingWeekly),
           total_xp: Math.max(existing.total_xp || 0, incomingTotal),
           streak_count: Math.max(existing.streak_count || 0, incomingStreak),
@@ -82,9 +107,9 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
       } else {
         usersMap.set(key, {
           user_id: u.user_id || `user_${key}`,
-          display_name: u.display_name,
+          display_name: normalizedDisplayName,
           email: u.email || '',
-          avatar_url: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${u.display_name}`,
+          avatar_url: u.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${normalizedDisplayName}`,
           weekly_xp: incomingWeekly,
           total_xp: incomingTotal,
           streak_count: incomingStreak,
@@ -121,7 +146,7 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
       const displayName = currentUser.user_metadata?.display_name ||
                           currentUser.user_metadata?.full_name ||
                           currentUser.email?.split('@')[0] ||
-                          'Học Viên';
+                          (isEn ? 'Learner' : 'Học Viên');
       const key = displayName.toLowerCase();
       const localKey = `ielts_leaderboard_local_${currentUser.id}`;
       const localData = safeGet(localKey, {});
@@ -145,9 +170,12 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
     // Guest / Anonymous session
     const guestData = safeGet(GUEST_ARENA_STORAGE_KEY, { weekly_xp: 0, total_xp: 0, streak: 1 });
     if (guestData && (guestData.weekly_xp > 0 || guestData.total_xp > 0)) {
+      const guestLabel = isEn ? 'You (Guest)' : 'Bạn (Khách)';
       usersMap.set('guest_player', {
         user_id: 'guest_player',
-        display_name: 'Bạn (Khách)',
+        display_name: guestLabel,
+        display_name_en: 'You (Guest)',
+        display_name_vi: 'Bạn (Khách)',
         avatar_url: 'https://api.dicebear.com/7.x/bottts/svg?seed=GuestCandidate',
         weekly_xp: guestData.weekly_xp || 0,
         total_xp: guestData.total_xp || 0,
@@ -225,36 +253,53 @@ export async function fetchRealLeaderboard(currentUser = null) {
     });
   }
 
-  // Step 2: Query Cloud Supabase for real learner arena entries
+  // Step 2: Query via Cloudflare Hybrid Edge Cache (or Supabase fallback with 3-min TTL)
   try {
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('LEADERBOARD_TIMEOUT')), 3500)
-    );
+    const data = await fetchWithHybridEdgeCache({
+      resourceKey: EDGE_RESOURCE_KEYS.ARENA_LEADERBOARD,
+      ttlMs: 3 * 60 * 1000, // 3 phút TTL bảo vệ Egress tuyệt đối
+      supabaseFallbackFn: async () => {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('LEADERBOARD_TIMEOUT')), 3500)
+        );
 
-    const queryPromise = supabase
-      .from('user_custom_tasks')
-      .select('*')
-      .eq('is_public', true)
-      .ilike('id', 'arena-score-%');
+        const queryPromise = supabase
+          .from('user_custom_tasks')
+          .select('id, user_id, creator_email, created_at, task_data')
+          .eq('is_public', true)
+          .ilike('id', 'arena-score-%')
+          .limit(100);
 
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
+        const { data: rows, error } = await Promise.race([queryPromise, timeoutPromise]);
+        if (error) throw error;
+        return rows || [];
+      }
+    });
 
-    if (!error && Array.isArray(data) && data.length > 0) {
+    if (Array.isArray(data) && data.length > 0) {
       const cloudUsers = data.map(row => {
         const isOwnerAccount = row.creator_email === 'tranthanhtung37@gmail.com' || row.task_data?.display_name === 'tranthanhtung37';
         const isLegacyMock = isOwnerAccount && (!row.task_data?.version_v2 && (row.task_data?.total_xp === 9400 || row.task_data?.weekly_xp === 2850));
 
+        const rawWeekly = isLegacyMock ? 0 : (Number(row.task_data?.weekly_xp ?? row.weekly_xp) || 0);
+        const rawTotal = isLegacyMock ? 0 : (Number(row.task_data?.total_xp ?? row.total_xp) || 0);
+        const rawStreak = isLegacyMock ? 0 : (Number(row.task_data?.streak_count ?? row.streak_count) || 1);
+        const rawName = String(row.task_data?.display_name || row.display_name || row.creator_email?.split('@')[0] || 'IELTS Scholar')
+          .replace(/[<>]/g, '')
+          .trim()
+          .slice(0, 45);
+
         return {
-          user_id: row.user_id || row.id.replace('arena-score-', ''),
-          display_name: row.task_data?.display_name || row.creator_email?.split('@')[0] || 'IELTS Scholar',
-          email: row.creator_email || '',
-          avatar_url: row.task_data?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${row.task_data?.display_name || 'learner'}`,
-          weekly_xp: isLegacyMock ? 0 : (Number(row.task_data?.weekly_xp) || 0),
-          total_xp: isLegacyMock ? 0 : (Number(row.task_data?.total_xp) || 0),
-          streak_count: isLegacyMock ? 0 : (Number(row.task_data?.streak_count) || 1),
+          user_id: row.user_id || (row.id ? row.id.replace('arena-score-', '') : 'learner'),
+          display_name: rawName || 'IELTS Scholar',
+          email: row.creator_email || row.email || '',
+          avatar_url: row.task_data?.avatar_url || row.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${rawName || 'learner'}`,
+          weekly_xp: Math.max(0, Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP, rawWeekly)),
+          total_xp: Math.max(0, Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP, rawTotal)),
+          streak_count: Math.max(0, Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_STREAK, rawStreak)),
           last_updated: row.task_data?.last_updated || row.created_at,
           isOwner: isOwnerAccount,
-          version_v2: row.task_data?.version_v2 || false
+          version_v2: row.task_data?.version_v2 || row.version_v2 || false
         };
       });
 
@@ -324,7 +369,7 @@ export async function submitRealSprintScore({
     : (currentUser?.user_metadata?.display_name ||
        currentUser?.user_metadata?.full_name ||
        currentUser?.email?.split('@')[0] ||
-       'Bạn (Khách)');
+       (isUiEnglish() ? 'You (Guest)' : 'Bạn (Khách)'));
 
   const targetEmail = isOwner
     ? 'tranthanhtung37@gmail.com'
@@ -335,42 +380,48 @@ export async function submitRealSprintScore({
     : (currentUser?.id || 'guest_player');
 
   const cloudRecordId = `arena-score-${isOwner ? 'tranthanhtung37' : targetUserId}`;
+  const isNodeTestEnv = typeof window === 'undefined' && typeof process !== 'undefined' && process.env?.ENABLE_LIVE_SUPABASE_TESTS !== 'true';
 
-  // 1. Update Cloud Supabase Record
-  try {
-    const { data: existingRow } = await supabase
-      .from('user_custom_tasks')
-      .select('*')
-      .eq('id', cloudRecordId)
-      .maybeSingle();
+  // 1. Update Cloud Supabase Record (chỉ chạy trên trình duyệt thật, tránh làm bẩn DB khi chạy unit test Node.js)
+  if (!isNodeTestEnv) {
+    try {
+      const { data: existingRow } = await supabase
+        .from('user_custom_tasks')
+        .select('id, user_id, task_data')
+        .eq('id', cloudRecordId)
+        .maybeSingle();
 
-    const isLegacyCloudRow = isOwner && existingRow && (!existingRow.task_data?.version_v2 && (existingRow.task_data?.total_xp === 9400 || existingRow.task_data?.weekly_xp === 2850));
+      const isLegacyCloudRow = isOwner && existingRow && (!existingRow.task_data?.version_v2 && (existingRow.task_data?.total_xp === 9400 || existingRow.task_data?.weekly_xp === 2850));
 
-    const baseWeekly = isLegacyCloudRow ? 0 : (existingRow?.task_data?.weekly_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.weekly_xp : 0));
-    const baseTotal = isLegacyCloudRow ? 0 : (existingRow?.task_data?.total_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.total_xp : 0));
-    const baseStreak = isLegacyCloudRow ? 0 : (existingRow?.task_data?.streak_count ?? (isOwner ? DEFAULT_OWNER_PROFILE.streak_count : 1));
+      const baseWeekly = isLegacyCloudRow ? 0 : (existingRow?.task_data?.weekly_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.weekly_xp : 0));
+      const baseTotal = isLegacyCloudRow ? 0 : (existingRow?.task_data?.total_xp ?? (isOwner ? DEFAULT_OWNER_PROFILE.total_xp : 0));
+      const baseStreak = isLegacyCloudRow ? 0 : (existingRow?.task_data?.streak_count ?? (isOwner ? DEFAULT_OWNER_PROFILE.streak_count : 1));
 
-    const updatedTaskData = {
-      type: 'arena_leaderboard_entry',
-      display_name: targetName,
-      weekly_xp: baseWeekly + validXp,
-      total_xp: baseTotal + validXp,
-      streak_count: Math.max(baseStreak, streakCount),
-      avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${targetName}`,
-      last_updated: new Date().toISOString(),
-      version_v2: true
-    };
+      const updatedTaskData = {
+        type: 'arena_leaderboard_entry',
+        entityType: ENTITY_TYPES.ARENA_PROFILE,
+        display_name: targetName,
+        weekly_xp: Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP, baseWeekly + validXp),
+        total_xp: Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_TOTAL_XP, baseTotal + validXp),
+        streak_count: Math.min(ARENA_ANTI_CHEAT_LIMITS.MAX_STREAK, Math.max(baseStreak, streakCount)),
+        avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${targetName}`,
+        last_updated: new Date().toISOString(),
+        version_v2: true
+      };
 
-    await supabase.from('user_custom_tasks').upsert({
-      id: cloudRecordId,
-      user_id: currentUser?.id || null,
-      task_data: updatedTaskData,
-      is_public: true,
-      creator_email: targetEmail,
-      created_at: new Date().toISOString()
-    });
-  } catch (err) {
-    console.warn('[Leaderboard] Cloud score upsert notice:', err.message);
+      await supabase.from('user_custom_tasks').upsert({
+        id: cloudRecordId,
+        user_id: currentUser?.id || null,
+        task_data: updatedTaskData,
+        is_public: true,
+        creator_email: targetEmail,
+        created_at: new Date().toISOString()
+      });
+
+      await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.ARENA_LEADERBOARD);
+    } catch (err) {
+      console.warn('[Leaderboard] Cloud score upsert notice:', err.message);
+    }
   }
 
   // 2. Update Local Storage Cache

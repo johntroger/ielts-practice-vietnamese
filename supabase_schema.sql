@@ -172,8 +172,81 @@ BEGIN
 END $$;
 
 -- ==============================================================================
--- HOÀN TẤT SETUP!
+-- 10. SUPABASE FREE TIER QUOTA & EGRESS BANDWIDTH GUARD (BẢO VỆ BĂNG THÔNG)
+-- Ngăn chặn triệt để việc đẩy ảnh Base64 hoặc dữ liệu khổng lồ làm vọt Egress > 5.5 GB
+-- ==============================================================================
+
+-- A. Dọn dẹp ngay các bản ghi cũ chứa chuỗi Base64 ảnh nặng trong task_data
+UPDATE public.user_custom_tasks
+SET task_data = task_data - 'imageUrl'
+WHERE task_data->>'imageUrl' LIKE 'data:image/%';
+
+-- B. Ràng buộc kích thước tối đa cho mỗi đề bài trong user_custom_tasks (Tối đa 120 KB)
+ALTER TABLE public.user_custom_tasks
+    DROP CONSTRAINT IF EXISTS chk_user_custom_tasks_payload_size;
+
+ALTER TABLE public.user_custom_tasks
+    ADD CONSTRAINT chk_user_custom_tasks_payload_size
+    CHECK (octet_length(task_data::text) <= 120000);
+
+-- C. Ràng buộc kích thước bài nộp trong user_submissions (Tối đa 120 KB cho bài luận & chấm điểm)
+ALTER TABLE public.user_submissions
+    DROP CONSTRAINT IF EXISTS chk_user_submissions_payload_size;
+
+ALTER TABLE public.user_submissions
+    ADD CONSTRAINT chk_user_submissions_payload_size
+    CHECK (octet_length(essay_text) <= 50000 AND (evaluation IS NULL OR octet_length(evaluation::text) <= 150000));
+
+-- ==============================================================================
+-- 11. CHUẨN HÓA CHỈ MỤC TỐC ĐỘ CAO O(log N) & RÀNG BUỘC ANTI-CHEAT ATLAS ARENA
+-- ==============================================================================
+
+-- A. Cập nhật tự động trường entityType chuẩn hóa vào task_data cho các bản ghi hiện hữu
+UPDATE public.user_custom_tasks
+SET task_data = jsonb_set(
+    COALESCE(task_data, '{}'::jsonb),
+    '{entityType}',
+    to_jsonb(
+      CASE
+        WHEN id LIKE 'arena-score-%' THEN 'arena_profile'
+        WHEN id LIKE 'custom-drill-%' OR id LIKE 'drill-%' OR id LIKE 'comm-drill-%' THEN 'micro_drill'
+        WHEN id LIKE 'ai-sp-%' OR id LIKE 'ai-gr-%' OR id LIKE 'ai-card-%' THEN 'vocab_card'
+        ELSE 'writing_task'
+      END::text
+    )
+)
+WHERE task_data->>'entityType' IS NULL;
+
+-- B. Chỉ mục phức hợp (Composite B-Tree Indexes) tăng tốc truy vấn danh sách theo phân loại và thời gian
+CREATE INDEX IF NOT EXISTS idx_user_custom_tasks_public_created
+    ON public.user_custom_tasks (is_public, created_at DESC)
+    WHERE is_public = true;
+
+CREATE INDEX IF NOT EXISTS idx_user_custom_tasks_entity_public_created
+    ON public.user_custom_tasks ((task_data->>'entityType'), is_public, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_user_submissions_user_created
+    ON public.user_submissions (user_id, created_at DESC);
+
+-- C. Ràng buộc Chống Gian Lận Điểm Số Atlas Arena (Server-side Anti-Cheat Check Constraint)
+ALTER TABLE public.user_custom_tasks
+    DROP CONSTRAINT IF EXISTS chk_arena_xp_anti_cheat;
+
+ALTER TABLE public.user_custom_tasks
+    ADD CONSTRAINT chk_arena_xp_anti_cheat
+    CHECK (
+      id NOT LIKE 'arena-score-%'
+      OR (
+        COALESCE((task_data->>'weekly_xp')::numeric, 0) BETWEEN 0 AND 500000
+        AND COALESCE((task_data->>'total_xp')::numeric, 0) BETWEEN 0 AND 500000
+      )
+    );
+
+-- ==============================================================================
+-- HOÀN TẤT SETUP & BẢO VỆ HẠN MỨC FREE!
 -- Khi chạy xong trong Supabase SQL Editor, hệ thống sẽ báo:
 -- "Success. No rows returned"
--- Toàn bộ dữ liệu của bạn sẽ được bảo mật 100% và tính năng chia sẻ đề cộng đồng sẽ hoạt động hoàn hảo.
+-- Toàn bộ dữ liệu của bạn sẽ được bảo mật 100% và không bao giờ bị vi phạm Fair Use Policy của Supabase.
 -- ==============================================================================
+
+

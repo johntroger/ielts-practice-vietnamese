@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Image as ImageIcon, Upload, Clipboard, Trash2, ZoomIn, X, AlertCircle, Lock, ShieldCheck } from 'lucide-react';
 import ImageViewerModal from './ImageViewerModal';
 import { isOwnerUser, OWNER_EMAIL, OWNER_MEDIA_RESTRICTION_MESSAGE, getOwnerMediaRestrictionMessage } from '../utils/userPermissions';
+import { offloadMediaToCloudflareR2 } from '../services/cloudflareStorageService';
 import { useTranslation } from '../i18n';
 
 /**
  * TaskImageUploader
  * Supports uploading image files (PNG, JPG, WEBP, SVG) or pasting from Clipboard (Ctrl+V)
- * Automatically optimizes file size and resizes large images for safe storage in LocalStorage/Supabase
+ * Automatically optimizes file size and offloads to Cloudflare R2 (Zero Egress) or IndexedDB/Supabase
  * 
  * SECURITY & QUOTA NOTICE:
  * Only the Administrator (tranthanhtung37@gmail.com) can ingest/upload custom task visuals.
@@ -28,7 +29,7 @@ export default function TaskImageUploader({
 
   const displayLabel = label || (isEn ? "Task 1 Prompt Visual (Chart / Map / Process Diagram):" : "Hình ảnh đề bài Task 1 (Biểu đồ / Bản đồ / Quy trình):");
 
-  // Compress Base64 image to prevent exceeding LocalStorage/Database limits
+  // Compress Base64 image & offload to Cloudflare R2 (if configured) to prevent exceeding LocalStorage/Database limits
   const processAndSetImage = (file) => {
     if (!isOwner) {
       alert(getOwnerMediaRestrictionMessage(isEn));
@@ -45,9 +46,9 @@ export default function TaskImageUploader({
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
-      img.onload = () => {
-        // Optimize to max 1400px width/height to balance clarity and file size
-        const maxDimension = 1400;
+      img.onload = async () => {
+        // Optimize to max 800px width/height to balance crisp text clarity and minimal file size (< 35 KB)
+        const maxDimension = 800;
         let width = img.width;
         let height = img.height;
 
@@ -67,9 +68,24 @@ export default function TaskImageUploader({
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Quality 0.85
-        const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
-        onImageChange(optimizedBase64);
+        // Step-down quality compression (prefer WebP, fallback JPEG) to strictly prevent exceeding Supabase quota
+        let quality = 0.75;
+        let optimizedBase64 = canvas.toDataURL('image/webp', quality);
+        if (!optimizedBase64.startsWith('data:image/webp')) {
+          optimizedBase64 = canvas.toDataURL('image/jpeg', quality);
+        }
+        if (optimizedBase64.length > 40000) {
+          quality = 0.58;
+          optimizedBase64 = canvas.toDataURL('image/jpeg', quality);
+        }
+        if (optimizedBase64.length > 45000) {
+          quality = 0.45;
+          optimizedBase64 = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        // Offload to Cloudflare R2 if Edge Gateway is configured, otherwise use compressed WebP/JPEG
+        const offloaded = await offloadMediaToCloudflareR2(optimizedBase64, `tasks/chart-${Date.now()}.webp`);
+        onImageChange(offloaded.url || optimizedBase64);
       };
       img.src = e.target.result;
     };

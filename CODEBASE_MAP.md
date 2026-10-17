@@ -69,8 +69,12 @@ Mục tiêu của tài liệu này: **Giúp AI Agent chỉ cần đọc đúng 1
 * `algorithmicSpeakingService.js`: Chấm điểm phát âm, độ trôi chảy (WPM), từ đệm (filler words).
 * `trfExportService.js`: Bộ mô phỏng phiếu điểm chính thức TRF & quy tắc làm tròn Grand Rounding.
 * `growthPredictorService.js`: Mô hình dự đoán số giờ học cần thiết để lên Band (Cambridge Benchmark).
-* `dataSyncService.js`: Đồng bộ hóa dữ liệu thời gian thực Supabase Cloud & BroadcastChannel.
-* `processMapSvgEngine.js`: Trình vẽ vector tự động cho đề quy trình & bản đồ Task 1.
+* `dataSyncService.js`: Đồng bộ hóa dữ liệu thời gian thực Supabase Cloud & Cache Client chống ngốn Egress.
+* `cloudflareStorageService.js`: Động cơ Hybrid Storage 3 tầng (Client IndexedDB/SWR Cache + Cloudflare Worker Edge Cache & R2 Object Storage + Supabase PostgreSQL).
+* `cloudflare/worker.js`: Serverless Cloudflare Worker proxy bộ nhớ đệm toàn cầu (Edge Cache) và lưu trữ ảnh/audio R2 (Zero Egress).
+* `processMapSvgEngine.js`: Trình vẽ vector tự động cho đề quy trình & bản đồ Task 1 (thay thế ảnh PNG 1.5MB).
+* `src/utils/supabaseStorageGuard.js`: Rào chắn dung lượng & lọc sạch Base64 ảnh/âm thanh trước khi gửi Cloud.
+
 
 ---
 

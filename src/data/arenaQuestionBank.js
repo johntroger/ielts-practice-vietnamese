@@ -2007,26 +2007,71 @@ const R2_AUDIO_METADATA_BY_ID = {
   med_lis_space_project_outline_t22: { audioUrl: `${R2_BASE}/ielts-listening-track22-space-expedition-project-meeting.mp3`, clipStart: 201.3, clipEnd: 206.9, isR2Audio: true, trackLabel: 'Track 22 • Project Outline Deadline' }
 };
 
-export const ARENA_QUESTION_BANK = [
+export function hydrateArenaQuestionsWithMetadata(rawQuestions = []) {
+  return (rawQuestions || []).map(q => {
+    const r2Meta = R2_AUDIO_METADATA_BY_ID[q.id] || {};
+    const merged = { ...q, ...r2Meta };
+    const trans = ARENA_QUESTION_TRANSLATIONS[merged.id];
+    if (!trans) return merged;
+    return {
+      ...merged,
+      promptVi: merged.prompt,
+      contextVi: merged.context,
+      explanationVi: merged.explanation,
+      promptEn: trans.promptEn || merged.prompt,
+      contextEn: trans.contextEn || merged.context,
+      explanationEn: trans.explanationEn || merged.explanation
+    };
+  });
+}
+
+export const ARENA_QUESTION_BANK = hydrateArenaQuestionsWithMetadata([
   ...ARENA_BASE_QUESTION_BANK,
   ...ARENA_BATCH_1_QUESTIONS,
   ...ARENA_BATCH_2_QUESTIONS,
   ...ARENA_101_READING_QUESTIONS
-].map(q => {
-  const r2Meta = R2_AUDIO_METADATA_BY_ID[q.id] || {};
-  const merged = { ...q, ...r2Meta };
-  const trans = ARENA_QUESTION_TRANSLATIONS[merged.id];
-  if (!trans) return merged;
-  return {
-    ...merged,
-    promptVi: merged.prompt,
-    contextVi: merged.context,
-    explanationVi: merged.explanation,
-    promptEn: trans.promptEn || merged.prompt,
-    contextEn: trans.contextEn || merged.context,
-    explanationEn: trans.explanationEn || merged.explanation
-  };
-});
+]);
+
+const _asyncBatchCache = new Map();
+
+/**
+ * Staged asynchronous loader for specific Arena question batches ('base' | 'batch1' | 'batch2' | 'reading101' | 'all')
+ * Enables on-demand hydration without re-allocating arrays when called repeatedly.
+ */
+export async function loadArenaQuestionBatchAsync(batchName = 'all') {
+  if (_asyncBatchCache.has(batchName)) {
+    return _asyncBatchCache.get(batchName);
+  }
+
+  let hydrated = [];
+  if (batchName === 'base') {
+    hydrated = hydrateArenaQuestionsWithMetadata(ARENA_BASE_QUESTION_BANK);
+  } else if (batchName === 'batch1') {
+    hydrated = hydrateArenaQuestionsWithMetadata(ARENA_BATCH_1_QUESTIONS || []);
+  } else if (batchName === 'batch2') {
+    hydrated = hydrateArenaQuestionsWithMetadata(ARENA_BATCH_2_QUESTIONS || []);
+  } else if (batchName === 'reading101') {
+    hydrated = hydrateArenaQuestionsWithMetadata(ARENA_101_READING_QUESTIONS || []);
+  } else {
+    hydrated = ARENA_QUESTION_BANK;
+  }
+
+  _asyncBatchCache.set(batchName, hydrated);
+  return hydrated;
+}
+
+/**
+ * Schedules non-blocking background prefetch of all Arena batches during browser idle time.
+ */
+export function prefetchArenaQuestionBankInBackground() {
+  const schedule = (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function')
+    ? window.requestIdleCallback
+    : (cb) => setTimeout(cb, 120);
+
+  schedule(() => {
+    loadArenaQuestionBatchAsync('all').catch(() => {});
+  });
+}
 
 /**
  * Filter questions by difficulty and optional topic.

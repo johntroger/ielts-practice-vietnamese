@@ -471,7 +471,7 @@ export default function SettingsModal({
                     >
                       {availableModels.map((m) => (
                         <option key={m.id} value={m.id}>
-                          {m.name || m.id}
+                          {isEn ? (m.nameEn || m.name || m.id) : (m.name || m.id)}
                         </option>
                       ))}
                     </select>

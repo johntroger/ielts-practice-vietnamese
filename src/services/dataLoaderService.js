@@ -110,6 +110,40 @@ export class DataLoaderService {
   }
 
   /**
+   * Lazily loads Atlas English Arena Question Bank or a specific batch on demand.
+   */
+  static async loadArenaQuestionsOnDemand(batchName = 'all') {
+    const cacheKey = `arenaQuestions_${batchName}`;
+    if (dataCache.has(cacheKey)) {
+      return dataCache.get(cacheKey);
+    }
+    const module = await import('../data/arenaQuestionBank.js');
+    const items = typeof module.loadArenaQuestionBatchAsync === 'function'
+      ? await module.loadArenaQuestionBatchAsync(batchName)
+      : (module.ARENA_QUESTION_BANK || []);
+    dataCache.set(cacheKey, items);
+    return items;
+  }
+
+  /**
+   * Lazily loads Vocabulary, Grammar & Spelling Master Bank on demand.
+   */
+  static async loadVocabGrammarSpellingBankOnDemand() {
+    if (dataCache.has('vocabGrammarSpellingBank')) {
+      return dataCache.get('vocabGrammarSpellingBank');
+    }
+    const module = await import('../data/vocabGrammarSpellingData.js');
+    const bank = {
+      vocabQuiz: module.IELTS_THEMATIC_VOCAB_DECKS || module.VOCAB_QUIZ_BANK || [],
+      grammarDrills: module.IELTS_GRAMMAR_PACK || module.GRAMMAR_DRILLS_BANK || [],
+      spellingTasks: module.IELTS_SPELLING_TRAPS || module.SPELLING_TASKS_BANK || [],
+      synonymPairs: module.CAMBRIDGE_SYNONYM_PAIRS || []
+    };
+    dataCache.set('vocabGrammarSpellingBank', bank);
+    return bank;
+  }
+
+  /**
    * Clears the in-memory cache to free RAM when necessary.
    */
   static clearCache() {
@@ -119,3 +153,5 @@ export class DataLoaderService {
 
 export const loadTheoryHandbookBySkill = (skill) => DataLoaderService.loadTheoryHandbookBySkill(skill);
 export const loadTheoryArticle = (articleId) => DataLoaderService.loadTheoryArticle(articleId);
+export const loadArenaQuestionsOnDemand = (batchName = 'all') => DataLoaderService.loadArenaQuestionsOnDemand(batchName);
+export const loadVocabGrammarSpellingBankOnDemand = () => DataLoaderService.loadVocabGrammarSpellingBankOnDemand();

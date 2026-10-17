@@ -66,6 +66,8 @@ export function useSpeechEngine({
   // 1. STT State
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [transcriptsByClip, setTranscriptsByClip] = useState({}); // { [clipId]: string }
+  const [activeClipId, setActiveClipId] = useState('clip_current');
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechError, setSpeechError] = useState(null); // null | 'not-allowed' | 'no-speech' | 'network' | 'unsupported'
   const [speechConfidenceStats, setSpeechConfidenceStats] = useState({
@@ -345,7 +347,12 @@ export function useSpeechEngine({
         accumulatedTranscriptRef.current = sanitizeSpeakingTranscript(
           (accumulatedTranscriptRef.current + ' ' + newlyFinalized).replace(/\s+/g, ' ').trim()
         );
-        setTranscript(accumulatedTranscriptRef.current);
+        const currentClip = currentClipIdRef.current;
+        const currentText = accumulatedTranscriptRef.current;
+        setTranscript(currentText);
+        if (currentClip) {
+          setTranscriptsByClip(prev => ({ ...prev, [currentClip]: currentText }));
+        }
 
         const history = confidenceHistoryRef.current;
         if (history.length > 0) {
@@ -410,6 +417,7 @@ export function useSpeechEngine({
   const startListening = useCallback(async (clipId = 'clip_current') => {
     setSpeechError(null);
     currentClipIdRef.current = clipId;
+    setActiveClipId(clipId);
     isIntentionalListeningRef.current = true;
 
     // 1. Check browser mediaDevices support
@@ -586,6 +594,11 @@ export function useSpeechEngine({
       setTranscript(accumulatedTranscriptRef.current);
       interimTranscriptRef.current = '';
     }
+    const finalClip = currentClipIdRef.current;
+    const finalText = accumulatedTranscriptRef.current;
+    if (finalClip && finalText) {
+      setTranscriptsByClip(prev => ({ ...prev, [finalClip]: finalText }));
+    }
     setInterimTranscript('');
 
     if (recognitionRef.current) {
@@ -616,11 +629,15 @@ export function useSpeechEngine({
     });
   }, []);
 
-  const setCustomTranscript = useCallback((text) => {
+  const setCustomTranscript = useCallback((text, clipId = null) => {
     const cleaned = sanitizeSpeakingTranscript(text || '');
+    const targetClip = clipId || currentClipIdRef.current;
     accumulatedTranscriptRef.current = cleaned;
     interimTranscriptRef.current = '';
     setTranscript(cleaned);
+    if (targetClip) {
+      setTranscriptsByClip(prev => ({ ...prev, [targetClip]: cleaned }));
+    }
     setInterimTranscript('');
   }, []);
 
@@ -638,6 +655,12 @@ export function useSpeechEngine({
       audioClipsRef.current = updated;
       return updated;
     });
+    setTranscriptsByClip(prev => {
+      if (!prev[clipId]) return prev;
+      const updated = { ...prev };
+      delete updated[clipId];
+      return updated;
+    });
   }, []);
 
   const clearAudioClips = useCallback(() => {
@@ -651,6 +674,7 @@ export function useSpeechEngine({
     });
     audioClipsRef.current = {};
     setAudioClips({});
+    setTranscriptsByClip({});
   }, []);
 
   // Full Unmount Cleanup (Strictly executes ONCE on component unmount)
@@ -710,6 +734,8 @@ export function useSpeechEngine({
     // STT State & Methods
     isListening,
     transcript,
+    transcriptsByClip,
+    activeClipId,
     interimTranscript,
     speechError,
     speechConfidenceStats,

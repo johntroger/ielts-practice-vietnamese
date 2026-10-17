@@ -37,7 +37,9 @@ export default defineConfig({
           }
           if (
             id.includes('algorithmicEvaluationService') ||
-            id.includes('algorithmicSpeakingService')
+            id.includes('algorithmicSpeakingService') ||
+            id.includes('src/services/evaluation/') ||
+            id.includes('src\\services\\evaluation\\')
           ) {
             return 'engine-algorithmic';
           }
@@ -49,10 +51,13 @@ export default defineConfig({
             if (id.includes('cambridgeWritingTasks') || id.includes('sampleTasks') || id.includes('processAndMapTasks')) {
               return 'data-cambridge-writing';
             }
-            if (id.includes('readingTasks')) {
+            if (id.includes('readingTasks') || id.includes('src/data/reading/') || id.includes('src\\data\\reading\\')) {
               return 'data-reading-tasks';
             }
-            if (id.includes('listeningTasks')) {
+            if (id.includes('listeningTasks') || id.includes('src/data/listening/') || id.includes('src\\data\\listening\\')) {
+              if (id.includes('cambridge18') || id.includes('cambridge20') || id.includes('academicLectures')) {
+                return 'data-listening-cambridge';
+              }
               return 'data-listening-tasks';
             }
             if (id.includes('speakingTopics')) {
@@ -82,6 +87,12 @@ export default defineConfig({
             }
             if (id.includes('MicroDrills') || id.includes('microDrills') || id.includes('vocabGrammarSpellingData')) {
               return 'data-drills-bank';
+            }
+            if (id.includes('arenaQuestionTranslations') || id.includes('arenaQuestions101Reading')) {
+              return 'data-arena-translations';
+            }
+            if (id.includes('arenaQuestionBank') || id.includes('arenaQuestionsBatch') || id.includes('arenaTitansData')) {
+              return 'data-arena-bank';
             }
             return 'data-core-bank';
           }

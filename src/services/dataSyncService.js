@@ -1,8 +1,27 @@
 import { supabase } from './supabaseClient.js';
+import {
+  SUPABASE_LIMITS,
+  sanitizeTaskForCloud,
+  sanitizeSubmissionForCloud,
+  sanitizeDrillForCloud
+} from '../utils/supabaseStorageGuard.js';
+import {
+  EDGE_RESOURCE_KEYS,
+  fetchWithHybridEdgeCache,
+  invalidateHybridEdgeCache,
+  offloadMediaToCloudflareR2,
+  resolveHybridMediaUrl
+} from './cloudflareStorageService.js';
 
-/**
- * Service to sync user submissions and vocab notebook with Supabase Cloud
- */
+
+function isUiEnglish() {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('ielts_ui_language') === 'en';
+    }
+  } catch (e) {}
+  return false;
+}
 
 // --- SUBMISSIONS SYNC ---
 
@@ -13,9 +32,12 @@ export async function fetchUserSubmissions(userId) {
       .from('user_submissions')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(SUPABASE_LIMITS.MAX_SUBMISSIONS_PER_FETCH);
 
     if (error) throw error;
+
+    const locale = isUiEnglish() ? 'en-US' : 'vi-VN';
 
     // Map database rows to application submission model
     return (data || []).map(row => ({
@@ -24,7 +46,8 @@ export async function fetchUserSubmissions(userId) {
       essayText: row.essay_text,
       evaluation: row.evaluation,
       stats: row.stats,
-      date: new Date(row.created_at).toLocaleDateString('vi-VN', {
+      createdAtIso: row.created_at,
+      date: new Date(row.created_at).toLocaleDateString(locale, {
         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
       })
     }));
@@ -37,13 +60,14 @@ export async function fetchUserSubmissions(userId) {
 export async function saveUserSubmission(userId, submission) {
   if (!userId || !submission) return null;
   try {
+    const cleanSub = sanitizeSubmissionForCloud(submission);
     const row = {
-      id: submission.id || `sub-${Date.now()}`,
+      id: cleanSub.id || `sub-${Date.now()}`,
       user_id: userId,
-      task: submission.task,
-      essay_text: submission.essayText,
-      evaluation: submission.evaluation,
-      stats: submission.stats,
+      task: cleanSub.task,
+      essay_text: cleanSub.essayText,
+      evaluation: cleanSub.evaluation,
+      stats: cleanSub.stats,
       created_at: new Date().toISOString()
     };
 
@@ -83,7 +107,8 @@ export async function fetchUserVocab(userId) {
       .from('user_vocab')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(500);
 
     if (error) throw error;
 
@@ -151,7 +176,8 @@ export async function fetchUserCustomTasks(userId) {
       .from('user_custom_tasks')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(SUPABASE_LIMITS.MAX_TASKS_PER_FETCH);
 
     if (error) throw error;
 
@@ -168,58 +194,85 @@ export async function fetchUserCustomTasks(userId) {
   }
 }
 
-export async function fetchPublicTasks() {
-  try {
-    const { data, error } = await supabase
-      .from('user_custom_tasks')
-      .select('*')
-      .eq('is_public', true)
-      .order('created_at', { ascending: false })
-      .limit(1000);
+export async function fetchPublicTasks(forceRefresh = false) {
+  return fetchWithHybridEdgeCache({
+    resourceKey: EDGE_RESOURCE_KEYS.PUBLIC_TASKS,
+    forceRefresh,
+    ttlMs: SUPABASE_LIMITS.CACHE_TTL_MS,
+    supabaseFallbackFn: async () => {
+      const { data, error } = await supabase
+        .from('user_custom_tasks')
+        .select('id, is_public, creator_email, created_at, task_data')
+        .eq('is_public', true)
+        .not('id', 'like', 'custom-drill-%')
+        .not('id', 'like', 'drill-%')
+        .not('id', 'like', 'comm-drill-%')
+        .not('id', 'like', 'ai-sp-%')
+        .not('id', 'like', 'ai-gr-%')
+        .not('id', 'like', 'ai-card-%')
+        .not('id', 'like', 'arena-score-%')
+        .order('created_at', { ascending: false })
+        .limit(SUPABASE_LIMITS.MAX_TASKS_PER_FETCH);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    return (data || [])
-      .filter(row => !row.id.startsWith('custom-drill-') && !row.id.startsWith('drill-') && (!row.task_data || !row.task_data.isDrill))
-      .map(row => ({
-        ...row.task_data,
-        id: row.id,
-        isPublic: true,
-        creatorEmail: row.creator_email,
-        isCommunity: true
-      }));
-  } catch (err) {
-    console.error('Error fetching public community tasks:', err);
-    return [];
-  }
+      return (data || [])
+        .filter(row => !row.task_data || !row.task_data.isDrill)
+        .map(row => {
+          const cleanData = row.task_data ? { ...row.task_data } : {};
+          if (cleanData.imageUrl) {
+            if (cleanData.imageUrl.startsWith('data:image/') && cleanData.imageUrl.length > 35000) {
+              delete cleanData.imageUrl;
+            } else {
+              cleanData.imageUrl = resolveHybridMediaUrl(cleanData.imageUrl);
+            }
+          }
+          return {
+            ...cleanData,
+            id: row.id,
+            isPublic: true,
+            creatorEmail: row.creator_email,
+            isCommunity: true
+          };
+        });
+    }
+  });
 }
 
 /**
- * Fetch all public community micro-drills from Supabase Cloud
+ * Fetch all public community micro-drills via Cloudflare Edge Cache + Supabase Fallback
  */
-export async function fetchPublicDrills() {
-  try {
-    const { data, error } = await supabase
-      .from('user_custom_tasks')
-      .select('*')
-      .eq('is_public', true)
-      .or('id.like.custom-drill-%,id.like.drill-%')
-      .order('created_at', { ascending: false })
-      .limit(100);
+export async function fetchPublicDrills(forceRefresh = false) {
+  return fetchWithHybridEdgeCache({
+    resourceKey: EDGE_RESOURCE_KEYS.PUBLIC_DRILLS,
+    forceRefresh,
+    ttlMs: SUPABASE_LIMITS.CACHE_TTL_MS,
+    supabaseFallbackFn: async () => {
+      const { data, error } = await supabase
+        .from('user_custom_tasks')
+        .select('id, is_public, creator_email, created_at, task_data')
+        .eq('is_public', true)
+        .or('id.like.custom-drill-%,id.like.drill-%,id.like.comm-drill-%')
+        .order('created_at', { ascending: false })
+        .limit(80);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    return (data || []).map(row => ({
-      ...row.task_data,
-      id: row.id,
-      isPublic: true,
-      isCommunity: true,
-      creatorEmail: row.creator_email || 'Cộng Đồng IELTS'
-    }));
-  } catch (err) {
-    console.error('Error fetching public community drills:', err);
-    return [];
-  }
+      return (data || []).map(row => {
+        const cleanData = row.task_data ? { ...row.task_data } : {};
+        if (cleanData.imageUrl && cleanData.imageUrl.startsWith('data:image/') && cleanData.imageUrl.length > 35000) {
+          delete cleanData.imageUrl;
+        }
+        return {
+          ...cleanData,
+          id: row.id,
+          isPublic: true,
+          isCommunity: true,
+          creatorEmail: row.creator_email || (isUiEnglish() ? 'IELTS Community' : 'Cộng Đồng IELTS')
+        };
+      });
+    }
+  });
 }
 
 /**
@@ -228,11 +281,12 @@ export async function fetchPublicDrills() {
 export async function savePublicDrill(drill) {
   if (!drill || !drill.id) return null;
   try {
+    const cleanDrill = sanitizeDrillForCloud(drill);
     const row = {
-      id: drill.id,
-      task_data: { ...drill, isDrill: true },
+      id: cleanDrill.id,
+      task_data: { ...cleanDrill, isDrill: true },
       is_public: true,
-      creator_email: drill.creatorEmail || 'Cộng Đồng IELTS',
+      creator_email: cleanDrill.creatorEmail || (isUiEnglish() ? 'IELTS Community' : 'Cộng Đồng IELTS'),
       created_at: new Date().toISOString()
     };
 
@@ -244,6 +298,7 @@ export async function savePublicDrill(drill) {
       console.warn('Could not sync drill to Supabase cloud:', error.message);
       return null;
     }
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_DRILLS);
     return data;
   } catch (err) {
     console.warn('Error saving public drill to Supabase:', err);
@@ -258,6 +313,7 @@ export async function deletePublicDrill(drillId) {
   if (!drillId) return;
   try {
     await supabase.from('user_custom_tasks').delete().eq('id', drillId);
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_DRILLS);
   } catch (err) {
     console.warn('Error deleting public drill from Supabase:', err);
   }
@@ -268,11 +324,25 @@ export async function saveUserCustomTask(userId = null, task, isPublic = false, 
   // If not logged in and not public, don't attempt to sync private tasks of anonymous users to cloud
   if (!userId && !isPublic) return null;
   try {
+    const taskCopy = { ...task };
+    const taskId = taskCopy.id || `task-${Date.now()}`;
+
+    // Nếu đề bài có ảnh Base64 raster -> Tự động đẩy sang Cloudflare R2 / IndexedDB để giải phóng 100% tải cho Supabase
+    if (taskCopy.imageUrl && taskCopy.imageUrl.startsWith('data:image/') && !taskCopy.imageUrl.startsWith('data:image/svg+xml')) {
+      const offloaded = await offloadMediaToCloudflareR2(taskCopy.imageUrl, `tasks/${taskId}.webp`);
+      taskCopy.imageUrl = offloaded.url;
+      taskCopy.mediaStorageTier = offloaded.storageTier;
+    }
+
+    const cleanTask = sanitizeTaskForCloud(taskCopy);
+    const defaultCreator = isUiEnglish()
+      ? (userId ? 'Member' : 'Community')
+      : (userId ? 'Thành viên' : 'Cộng đồng');
     const row = {
-      id: task.id || `task-${Date.now()}`,
-      task_data: task,
+      id: taskId,
+      task_data: cleanTask,
       is_public: Boolean(isPublic),
-      creator_email: creatorEmail || (userId ? 'Thành viên' : 'Cộng đồng'),
+      creator_email: creatorEmail || defaultCreator,
       created_at: new Date().toISOString()
     };
     if (userId) {
@@ -287,6 +357,7 @@ export async function saveUserCustomTask(userId = null, task, isPublic = false, 
       console.warn('Supabase cloud task sync notice (RLS or offline):', error.message);
       return null;
     }
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_TASKS);
     return data;
   } catch (err) {
     console.warn('Error saving custom task to Supabase:', err);
@@ -304,6 +375,7 @@ export async function toggleTaskPublicity(userId, taskId, isPublic) {
       .eq('user_id', userId);
 
     if (error) throw error;
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_TASKS);
   } catch (err) {
     console.error('Error toggling task publicity:', err);
   }
@@ -320,6 +392,7 @@ export async function deleteUserCustomTask(userId, taskId) {
     if (error) {
       console.warn('Supabase delete custom task notice:', error.message);
     }
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_TASKS);
   } catch (err) {
     console.warn('Error deleting custom task from Supabase:', err);
   }
@@ -382,31 +455,33 @@ export async function saveUserMasteredItems(userId, masteredIds = []) {
 }
 
 /**
- * Fetch public AI-generated spelling traps, grammar drills, and flashcards from Supabase Cloud
+ * Fetch public AI-generated spelling traps, grammar drills, and flashcards via Hybrid Edge Cache
  */
-export async function fetchPublicVocabGrammarItems() {
-  try {
-    const { data, error } = await supabase
-      .from('user_custom_tasks')
-      .select('*')
-      .eq('is_public', true)
-      .or('id.like.ai-sp-%,id.like.ai-gr-%,id.like.ai-card-%')
-      .order('created_at', { ascending: false })
-      .limit(200);
+export async function fetchPublicVocabGrammarItems(forceRefresh = false) {
+  return fetchWithHybridEdgeCache({
+    resourceKey: EDGE_RESOURCE_KEYS.PUBLIC_VOCAB_GRAMMAR,
+    forceRefresh,
+    ttlMs: SUPABASE_LIMITS.CACHE_TTL_MS,
+    supabaseFallbackFn: async () => {
+      const { data, error } = await supabase
+        .from('user_custom_tasks')
+        .select('id, is_public, creator_email, created_at, task_data')
+        .eq('is_public', true)
+        .or('id.like.ai-sp-%,id.like.ai-gr-%,id.like.ai-card-%')
+        .order('created_at', { ascending: false })
+        .limit(200);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    return (data || []).map(row => ({
-      ...row.task_data,
-      id: row.id,
-      isPublic: true,
-      isCommunity: true,
-      creatorEmail: row.creator_email || 'Cộng Đồng IELTS'
-    }));
-  } catch (err) {
-    console.error('Error fetching public vocab/grammar items:', err);
-    return [];
-  }
+      return (data || []).map(row => ({
+        ...row.task_data,
+        id: row.id,
+        isPublic: true,
+        isCommunity: true,
+        creatorEmail: row.creator_email || (isUiEnglish() ? 'IELTS Community' : 'Cộng Đồng IELTS')
+      }));
+    }
+  });
 }
 
 /**
@@ -415,11 +490,12 @@ export async function fetchPublicVocabGrammarItems() {
 export async function savePublicVocabGrammarItem(item) {
   if (!item || !item.id) return null;
   try {
+    const cleanItem = sanitizeDrillForCloud(item);
     const row = {
-      id: item.id,
-      task_data: item,
+      id: cleanItem.id,
+      task_data: cleanItem,
       is_public: true,
-      creator_email: item.creatorEmail || 'Cộng Đồng IELTS',
+      creator_email: cleanItem.creatorEmail || (isUiEnglish() ? 'IELTS Community' : 'Cộng Đồng IELTS'),
       created_at: new Date().toISOString()
     };
 
@@ -431,6 +507,7 @@ export async function savePublicVocabGrammarItem(item) {
       console.warn('Could not sync vocab/grammar item to Supabase cloud:', error.message);
       return null;
     }
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_VOCAB_GRAMMAR);
     return data;
   } catch (err) {
     console.warn('Error saving public vocab/grammar item to Supabase:', err);
@@ -445,7 +522,9 @@ export async function deletePublicVocabGrammarItem(itemId) {
   if (!itemId) return;
   try {
     await supabase.from('user_custom_tasks').delete().eq('id', itemId);
+    await invalidateHybridEdgeCache(EDGE_RESOURCE_KEYS.PUBLIC_VOCAB_GRAMMAR);
   } catch (err) {
     console.warn('Error deleting public vocab/grammar item from Supabase:', err);
   }
 }
+

@@ -1,0 +1,19 @@
+# ==============================================================================
+# CẤU HÌNH CLOUDFLARE WORKER & R2 STORAGE CHO DỰ ÁN IELTS WEB
+# Hướng dẫn triển khai nhanh (Miễn phí 100%):
+#   1. Tạo R2 Bucket: npx wrangler r2 bucket create ielts-web-media
+#   2. Triển khai Worker: npx wrangler deploy --config cloudflare/wrangler.toml
+# ==============================================================================
+
+name = "ielts-web-edge-gateway"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+SUPABASE_URL = "https://cgbqodjgkswcpoawzejl.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_an9xD2xs_BZh25uWFj-tbA_FheS31Hy"
+
+# Kết nối với Cloudflare R2 Bucket (10 GB Free + $0.00 Egress)
+[[r2_buckets]]
+binding = "IELTS_R2_BUCKET"
+bucket_name = "ielts-web-media"

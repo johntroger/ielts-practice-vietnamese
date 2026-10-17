@@ -171,7 +171,12 @@ const testSuites = [
   { name: 'Step 162: Soundcheck Modal Responsive Viewport & Non-Clipping Architecture', file: 'tests/test_step162_soundcheck_modal_responsive_viewport_fix.js' },
   { name: 'Step 163: Arena Haptic Feedback, Mobile Quick-Affixes & Mystery Loot Drop', file: 'tests/test_step163_arena_haptic_tactile_mobile_affixes_and_loot_drop.js' },
   { name: 'Step 164: Arena Tactical Perks, Active Boosters & Visual Data Decoder', file: 'tests/test_step164_arena_tactile_perks_and_visual_data_tasks.js' },
-  { name: 'Step 165: Arena Ghost Duel, World Boss Raid & Resilient Offline Queue', file: 'tests/test_step165_arena_ghost_duel_boss_raid_and_offline_queue.js' }
+  { name: 'Step 165: Arena Ghost Duel, World Boss Raid & Resilient Offline Queue', file: 'tests/test_step165_arena_ghost_duel_boss_raid_and_offline_queue.js' },
+  { name: 'Step 166: Supabase + Cloudflare (R2 & Edge Cache) Hybrid Storage Architecture', file: 'tests/test_step166_supabase_cloudflare_hybrid_storage.js' },
+  { name: 'Step 167: Phase 1 & 2 Architecture Optimization (Dynamic Imports, R2 Security & Anti-Cheat)', file: 'tests/test_step167_phase1_phase2_architecture_optimization.js' },
+  { name: 'Step 168: Phase 3 Modular Architecture Refactoring (Evaluation Domain Modules & App Hooks)', file: 'tests/test_step168_phase3_modular_architecture_refactoring.js' },
+  { name: 'Step 169: Phase 4 & 5 Architecture Upgrade (Service Layer English UI, Query Limits & Component Modularization)', file: 'tests/test_step169_phase4_phase5_architecture_upgrade.js' },
+  { name: 'Step 170: Phase 6 AI Proxy Gateway, Prompt Cache, Lazy Question Banks & Fine-Grained Bundle Chunking', file: 'tests/test_step170_phase6_ai_proxy_cache_and_lazy_question_banks.js' }
 ];
 
 console.log('===============================================================');

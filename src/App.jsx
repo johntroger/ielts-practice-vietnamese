@@ -10,41 +10,25 @@ const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 
 import AppModalHost from './components/modals/AppModalHost';
 import { useStudyData } from './hooks/useStudyData';
+import { useCloudAndStorageSync } from './hooks/useCloudAndStorageSync';
+import { useSubmissionAndTaskActions } from './hooks/useSubmissionAndTaskActions';
 import WorkspaceErrorBoundary from './components/common/WorkspaceErrorBoundary';
 import { useModalStore } from './core/modalStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { safeGet, safeSet, safeRemove } from './utils/storageService';
 import { initTheme } from './utils/themeService';
-import { 
-  saveTwoTierSubmissions, 
-  loadTwoTierSubmissions, 
-  deleteSubmissionTwoTier, 
-  clearSubmissionsTwoTier, 
-  migrateSubmissionsToIndexedDb 
-} from './utils/indexedDbStorage';
 import { supabase } from './services/supabaseClient';
-import { 
-  fetchUserSubmissions, 
-  saveUserSubmission, 
-  deleteUserSubmission, 
-  fetchUserVocab, 
-  saveUserVocabItem, 
-  deleteUserVocabItem, 
-  fetchUserCustomTasks,
-  fetchPublicTasks,
-  saveUserCustomTask,
-  toggleTaskPublicity,
-  deleteUserCustomTask,
-  fetchUserMasteredItems,
-  saveUserMasteredItems
+import {
+  saveUserSubmission,
+  saveUserVocabItem,
+  deleteUserVocabItem,
+  deleteUserCustomTask
 } from './services/dataSyncService';
 
-import { INITIAL_TASKS, COMMUNITY_DEFAULT_TASKS } from './data/sampleTasks';
-import { evaluateEssay } from './services/geminiService';
-import { evaluateEssayAlgorithmically } from './services/algorithmicEvaluationService';
+import { INITIAL_TASKS } from './data/sampleTasks';
 import { countWords } from './utils/textAnalytics';
-import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore, setAppState } from './core/appStore';
-import { deduplicateWritingTasks, auditAndCleanWebsiteContent } from './services/deduplicationService';
+import { setCdiFontSize as setCdiFontSizeInStore, setCdiContrast as setCdiContrastInStore } from './core/appStore';
+import { auditAndCleanWebsiteContent } from './services/deduplicationService';
 import { trackSkillView } from './services/analyticsService.js';
 import { useTranslation } from './i18n';
 import { GITBOOK_FEATURES_BASE_URL } from './core/featureRegistry';
@@ -178,7 +162,7 @@ export default function App() {
     try {
       channel = supabase
         .channel('realtime_public_custom_tasks')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'user_custom_tasks' }, (payload) => {
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'user_custom_tasks', filter: 'is_public=eq.true' }, (payload) => {
           if (payload.eventType === 'DELETE') {
             const deletedId = payload.old?.id;
             if (deletedId) {
@@ -195,7 +179,16 @@ export default function App() {
             }
           } else if (payload.eventType === 'INSERT') {
             const row = payload.new;
-            if (row && row.is_public && !row.id.startsWith('custom-drill-') && !row.id.startsWith('drill-') && (!row.task_data || !row.task_data.isDrill)) {
+            const isNonWritingRow = (row?.entity_type && row.entity_type !== 'writing_task') || (row?.id && (
+              row.id.startsWith('custom-drill-') ||
+              row.id.startsWith('drill-') ||
+              row.id.startsWith('comm-drill-') ||
+              row.id.startsWith('ai-sp-') ||
+              row.id.startsWith('ai-gr-') ||
+              row.id.startsWith('ai-card-') ||
+              row.id.startsWith('arena-score-')
+            ));
+            if (row && row.is_public && !isNonWritingRow && (!row.task_data || (!row.task_data.isDrill && row.task_data.type !== 'arena_leaderboard_entry'))) {
               const formatted = {
                 ...row.task_data,
                 id: row.id,
@@ -389,95 +382,89 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isTimerRunning]);
 
-  // Supabase Auth listener & Cloud Sync
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(session?.user ?? null);
-    });
+  // Cloud Sync, Supabase Auth, Two-Tier IndexedDB Hydration & LocalStorage Persistence Hook
+  useCloudAndStorageSync({
+    currentUser,
+    setCurrentUser,
+    apiKey,
+    model,
+    allTasks,
+    setAllTasks,
+    communityTasks,
+    setCommunityTasks,
+    currentTaskId,
+    setCurrentTaskId,
+    essays,
+    outlines,
+    setLastSaved,
+    submissions,
+    setSubmissions,
+    readingHistory,
+    setReadingHistory,
+    listeningHistory,
+    setListeningHistory,
+    speakingHistory,
+    setSpeakingHistory,
+    vocabList,
+    setVocabList,
+    mistakes,
+    personalNotes,
+    streakCount,
+    masteredIds,
+    setMasteredIds,
+    openModal
+  });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Fetch Public Community Tasks on initial load and merge with local community bank
-  useEffect(() => {
-    fetchPublicTasks().then(cloudTasks => {
-      if (cloudTasks && cloudTasks.length > 0) {
-        setCommunityTasks(prev => {
-          const cloudIds = new Set(cloudTasks.map(t => t.id));
-          const defaultCommIds = new Set(COMMUNITY_DEFAULT_TASKS.map(d => d.id));
-          // Prune stale community tasks that were deleted from Supabase cloud
-          const validLocalOnly = (prev || []).filter(t => 
-            !cloudIds.has(t.id) && (defaultCommIds.has(t.id) || (t.isCustom && !t.isPublic))
-          );
-          const combined = [...cloudTasks];
-          for (const d of COMMUNITY_DEFAULT_TASKS) {
-            if (!cloudIds.has(d.id) && !combined.some(c => c.id === d.id)) {
-              combined.push(d);
-            }
-          }
-          for (const local of validLocalOnly) {
-            if (!combined.some(c => c.id === local.id)) {
-              combined.push(local);
-            }
-          }
-          safeSet('ielts_public_community_tasks', combined);
-          return combined;
-        });
-        setAllTasks(prev => {
-          const cloudIds = new Set(cloudTasks.map(t => t.id));
-          const defaultTaskIds = new Set([...INITIAL_TASKS, ...COMMUNITY_DEFAULT_TASKS].map(d => d.id));
-          // Prune stale public tasks that were deleted from Supabase cloud
-          const cleanedPrev = (prev || []).filter(t => {
-            if (defaultTaskIds.has(t.id)) return true;
-            if (t.isOwnTask || (t.isCustom && !t.isCommunity && !t.isPublic)) return true;
-            // For community/public tasks, keep ONLY if it exists in the fresh cloudTasks
-            return cloudIds.has(t.id);
-          });
-          const existingIds = new Set(cleanedPrev.map(t => t.id));
-          const newCloudTasks = cloudTasks.filter(t => !existingIds.has(t.id));
-          const finalAll = newCloudTasks.length > 0 ? [...newCloudTasks, ...cleanedPrev] : cleanedPrev;
-          safeSet('ielts_all_tasks', finalAll);
-          return finalAll;
-        });
-      }
-    });
-
-    // Handle Instant URL Shared Task / Question (Cross-tab & Incognito instant transfer)
-    try {
-      const hash = window.location.hash;
-      if (hash && hash.startsWith('#shared-task=')) {
-        const raw = decodeURIComponent(hash.replace('#shared-task=', ''));
-        const jsonStr = decodeURIComponent(escape(atob(raw)));
-        const parsed = JSON.parse(jsonStr);
-        if (parsed && parsed.id && (parsed.prompt || parsed.title)) {
-          const formatted = {
-            ...parsed,
-            isPublic: true,
-            isCommunity: true,
-            creatorEmail: parsed.creatorEmail || 'Chia sẻ qua liên kết'
-          };
-          setAllTasks(prev => {
-            if (prev.some(t => t.id === formatted.id)) return prev;
-            return [formatted, ...prev];
-          });
-          setCommunityTasks(prev => {
-            if (prev.some(t => t.id === formatted.id)) return prev;
-            return [formatted, ...prev];
-          });
-          setCurrentTaskId(formatted.id);
-          window.history.replaceState(null, '', window.location.pathname + window.location.search);
-        }
-      }
-    } catch (e) {
-      console.warn('Could not parse shared task from URL hash:', e);
-    }
-  }, []);
+  // Submission History, Custom Task Management & Backup Import/Export Actions Hook
+  const {
+    handleToggleMastered,
+    handleExportAllData,
+    handleImportData,
+    handleClearAllLocalData,
+    handleDeleteWritingSubmission,
+    handleClearWritingHistory,
+    handleDeleteReadingSubmission,
+    handleClearReadingHistory,
+    handleDeleteListeningSubmission,
+    handleClearListeningHistory,
+    handleDeleteSpeakingSubmission,
+    handleClearSpeakingHistory,
+    handleClearAllHistory,
+    handleAddNewCustomTask,
+    handleTogglePublic,
+    handleSaveMockResult,
+    handleSaveV2Submission,
+    handleTaskImported
+  } = useSubmissionAndTaskActions({
+    currentUser,
+    allTasks,
+    setAllTasks,
+    setCommunityTasks,
+    setCurrentTaskId,
+    essays,
+    setEssays,
+    outlines,
+    setOutlines,
+    submissions,
+    setSubmissions,
+    readingHistory,
+    setReadingHistory,
+    listeningHistory,
+    setListeningHistory,
+    speakingHistory,
+    setSpeakingHistory,
+    vocabList,
+    setVocabList,
+    mistakes,
+    setMistakes,
+    personalNotes,
+    setPersonalNotes,
+    streakCount,
+    setStreakCount,
+    setMasteredIds,
+    setApiKey,
+    openModal
+  });
 
   // Dedicated Two-Way URL Routing & Deep-Linking for Atlas Arena (/atlas-arena & /arena)
   useEffect(() => {
@@ -633,181 +620,20 @@ export default function App() {
     }
   }, [isAboutViewOpen]);
 
-  // Fetch from Cloud when user logs in with Bi-directional Auto-Sync
-  useEffect(() => {
-    if (currentUser) {
-      // 1. Fetch Cloud Submissions
-      fetchUserSubmissions(currentUser.id).then(cloudSubs => {
-        if (cloudSubs && cloudSubs.length > 0) {
-          setSubmissions(cloudSubs);
-        } else if (submissions && submissions.length > 0) {
-          // Auto-migrate local submissions to Supabase Cloud for this user
-          submissions.forEach(sub => saveUserSubmission(currentUser.id, sub));
-        }
-      });
-
-      // 2. Fetch Cloud Vocab Notebook
-      fetchUserVocab(currentUser.id).then(cloudVocab => {
-        if (cloudVocab && cloudVocab.length > 0) {
-          setVocabList(cloudVocab);
-        } else if (vocabList && vocabList.length > 0) {
-          // Auto-migrate local vocab to Supabase Cloud
-          vocabList.forEach(v => saveUserVocabItem(currentUser.id, v));
-        }
-      });
-
-      // 3. Fetch User's Cloud Custom & AI Tasks
-      fetchUserCustomTasks(currentUser.id).then(cloudTasks => {
-        if (cloudTasks && cloudTasks.length > 0) {
-          setAllTasks(prev => {
-            const existingIds = new Set(prev.map(t => t.id));
-            const newToAdd = cloudTasks.filter(t => !existingIds.has(t.id));
-            return [...newToAdd, ...prev];
-          });
-        } else {
-          // Auto-migrate local custom tasks to Supabase Cloud
-          const localCustom = (allTasks || []).filter(t => t.isOwnTask || t.id?.startsWith('task-') || t.id?.startsWith('custom-'));
-          localCustom.forEach(t => saveUserCustomTask(currentUser.id, t, t.isPublic || false, currentUser.email));
-        }
-      });
-
-      // 4. Fetch User's Mastered Tasks & Drills
-      fetchUserMasteredItems(currentUser.id).then(cloudMastered => {
-        if (cloudMastered && cloudMastered.length > 0) {
-          setMasteredIds(prev => {
-            const combined = Array.from(new Set([...prev, ...cloudMastered]));
-            safeSet('ielts_mastered_items', combined);
-            return combined;
-          });
-        } else if (masteredIds && masteredIds.length > 0) {
-          saveUserMasteredItems(currentUser.id, masteredIds);
-        }
-      });
-    }
-  }, [currentUser]);
-
-  // Mastered Items Toggle Handler (Requires Login)
-  const handleToggleMastered = (itemId) => {
-    if (!currentUser) {
-      alert('Tính năng "Đã thuộc" giúp cá nhân hóa và ẩn câu hỏi đã thuần thục khỏi giao diện luyện tập. Vui lòng Đăng nhập để lưu tiến trình!');
-      openModal('auth');
-      return;
-    }
-    setMasteredIds(prev => {
-      const isAlready = prev.includes(itemId);
-      const updated = isAlready ? prev.filter(id => id !== itemId) : [...prev, itemId];
-      safeSet('ielts_mastered_items', updated);
-      saveUserMasteredItems(currentUser.id, updated);
-      return updated;
-    });
-  };
-
   // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
     initTheme();
-    try {
-      const report = auditAndCleanWebsiteContent(0.75);
-      if (report.hasDuplicates) {
-        console.log(`[IELTS Deduplication] Auto-cleaned ${report.totalRemoved} duplicate AI prompts across storage.`, report);
-      }
-    } catch (err) {
-      console.warn('Auto deduplication audit notice:', err);
-    }
-  }, []);
-
-  // 6. Auto-save Effects with Quota-Resilient Storage Manager
-  useEffect(() => {
-    safeSet('ielts_gemini_api_key', apiKey);
-  }, [apiKey]);
-
-  useEffect(() => {
-    safeSet('ielts_gemini_model', model);
-  }, [model]);
-
-  useEffect(() => {
-    safeSet('ielts_all_tasks', allTasks);
-  }, [allTasks]);
-
-  useEffect(() => {
-    safeSet('ielts_current_task_id', currentTaskId);
-  }, [currentTaskId]);
-
-  useEffect(() => {
-    safeSet('ielts_essays_drafts', essays);
-    setLastSaved(new Date());
-  }, [essays]);
-
-  useEffect(() => {
-    safeSet('ielts_outlines_drafts', outlines);
-  }, [outlines]);
-
-  // Asynchronous Two-Tier IndexedDB Hydration & Storage Migration
-  useEffect(() => {
-    let isMounted = true;
-    async function hydrateTwoTierHistory() {
+    const idleTimer = setTimeout(() => {
       try {
-        await migrateSubmissionsToIndexedDb();
-        const [fullWriting, fullReading, fullListening, fullSpeaking] = await Promise.all([
-          loadTwoTierSubmissions('ielts_submissions_history', null),
-          loadTwoTierSubmissions('ielts_reading_submissions_history', null),
-          loadTwoTierSubmissions('ielts_listening_submissions_history', null),
-          loadTwoTierSubmissions('ielts_speaking_submissions_history', null)
-        ]);
-        if (!isMounted) return;
-        if (Array.isArray(fullWriting) && fullWriting.length > 0) setSubmissions(fullWriting);
-        if (Array.isArray(fullReading) && fullReading.length > 0) setReadingHistory(fullReading);
-        if (Array.isArray(fullListening) && fullListening.length > 0) setListeningHistory(fullListening);
-        if (Array.isArray(fullSpeaking) && fullSpeaking.length > 0) setSpeakingHistory(fullSpeaking);
+        const report = auditAndCleanWebsiteContent(0.75);
+        if (report.hasDuplicates) {
+          console.log(`[IELTS Deduplication] Auto-cleaned ${report.totalRemoved} duplicate AI prompts across storage.`, report);
+        }
       } catch (err) {
-        console.warn('[Storage] Two-tier history hydration error:', err);
+        console.warn('Auto deduplication audit notice:', err);
       }
-    }
-    hydrateTwoTierHistory();
-    return () => { isMounted = false; };
-  }, []);
-
-  // Two-Tier Submissions Persistence (Full in IndexedDB, Ultra-lightweight Summary in LocalStorage)
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_submissions_history', submissions);
-  }, [submissions]);
-
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_reading_submissions_history', readingHistory);
-  }, [readingHistory]);
-
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_listening_submissions_history', listeningHistory);
-  }, [listeningHistory]);
-
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_speaking_submissions_history', speakingHistory);
-  }, [speakingHistory]);
-
-  useEffect(() => {
-    safeSet('ielts_vocab_notebook', vocabList);
-  }, [vocabList]);
-
-  useEffect(() => {
-    safeSet('ielts_mistakes_log', mistakes);
-  }, [mistakes]);
-
-  useEffect(() => {
-    safeSet('ielts_theory_notes', personalNotes);
-  }, [personalNotes]);
-
-  useEffect(() => {
-    safeSet('ielts_streak_count', streakCount.toString());
-  }, [streakCount]);
-
-  useEffect(() => {
-    safeSet('ielts_public_community_tasks', communityTasks);
-  }, [communityTasks]);
-
-  // Launch onboarding for first-time visitors
-  useEffect(() => {
-    if (!safeGet('ielts_user_onboarded', false)) {
-      openModal('onboarding');
-    }
+    }, 1200);
+    return () => clearTimeout(idleTimer);
   }, []);
 
   // Global Keyboard Shortcuts (Phase 1 UX Improvement)
@@ -860,15 +686,19 @@ export default function App() {
       let evaluation = null;
 
       if (method === 'algorithmic') {
-        // Fast offline deterministic Cambridge grading
-        await new Promise(resolve => setTimeout(resolve, 350));
+        // Fast offline deterministic Cambridge grading (loaded on-demand)
+        const [{ evaluateEssayAlgorithmically }] = await Promise.all([
+          import('./services/algorithmicEvaluationService'),
+          new Promise(resolve => setTimeout(resolve, 350))
+        ]);
         evaluation = evaluateEssayAlgorithmically({
           task: currentTask,
           essayText: currentEssay
         });
       } else {
-        // AI In-depth Grading with Gemini
+        // AI In-depth Grading with Gemini (loaded on-demand)
         try {
+          const { evaluateEssay } = await import('./services/geminiService');
           evaluation = await evaluateEssay({
             task: currentTask,
             essayText: currentEssay,
@@ -881,6 +711,7 @@ export default function App() {
         } catch (aiErr) {
           console.warn('[Evaluation Fallback] AI API encountered error, switching to Algorithmic Evaluator:', aiErr);
           // Graceful fallback to algorithmic evaluator
+          const { evaluateEssayAlgorithmically } = await import('./services/algorithmicEvaluationService');
           evaluation = evaluateEssayAlgorithmically({
             task: currentTask,
             essayText: currentEssay
@@ -948,152 +779,6 @@ export default function App() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // Export / Import All Data JSON
-  const handleExportAllData = () => {
-    const data = {
-      allTasks,
-      essays,
-      outlines,
-      submissions,
-      readingHistory,
-      listeningHistory,
-      speakingHistory,
-      vocabList,
-      mistakes,
-      personalNotes,
-      streakCount,
-      exportDate: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `IELTS_Mastery_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImportData = (data) => {
-    if (data.allTasks) setAllTasks(data.allTasks);
-    if (data.essays) setEssays(data.essays);
-    if (data.outlines) setOutlines(data.outlines);
-    if (data.submissions) setSubmissions(data.submissions);
-    if (data.readingHistory) {
-      setReadingHistory(data.readingHistory);
-      try {
-        localStorage.setItem('ielts_reading_submissions_history', JSON.stringify(data.readingHistory));
-      } catch (e) {}
-    }
-    if (data.listeningHistory) {
-      setListeningHistory(data.listeningHistory);
-      try {
-        localStorage.setItem('ielts_listening_submissions_history', JSON.stringify(data.listeningHistory));
-      } catch (e) {}
-    }
-    if (data.speakingHistory) {
-      setSpeakingHistory(data.speakingHistory);
-      try {
-        localStorage.setItem('ielts_speaking_submissions_history', JSON.stringify(data.speakingHistory));
-      } catch (e) {}
-    }
-    if (data.vocabList) setVocabList(data.vocabList);
-    if (data.mistakes) setMistakes(data.mistakes);
-    if (data.personalNotes) setPersonalNotes(data.personalNotes);
-    alert('Đã khôi phục dữ liệu thành công!');
-  };
-
-  const handleClearAllLocalData = () => {
-    localStorage.clear();
-    setAllTasks(INITIAL_TASKS);
-    setCurrentTaskId(INITIAL_TASKS[0].id);
-    setEssays({});
-    setOutlines({});
-    setSubmissions([]);
-    setReadingHistory([]);
-    setListeningHistory([]);
-    setSpeakingHistory([]);
-    setVocabList([]);
-    setMistakes([]);
-    setPersonalNotes([]);
-    setApiKey('');
-    clearSubmissionsTwoTier('ielts_submissions_history');
-    clearSubmissionsTwoTier('ielts_reading_submissions_history');
-    clearSubmissionsTwoTier('ielts_listening_submissions_history');
-    clearSubmissionsTwoTier('ielts_speaking_submissions_history');
-    alert('Đã khôi phục toàn bộ cài đặt gốc.');
-  };
-
-  const handleDeleteWritingSubmission = (subId) => {
-    setSubmissions(prev => {
-      const updated = prev.filter(s => s.id !== subId);
-      deleteSubmissionTwoTier('ielts_submissions_history', subId);
-      return updated;
-    });
-    if (currentUser) {
-      deleteUserSubmission(currentUser.id, subId);
-    }
-  };
-
-  const handleClearWritingHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài nộp Writing? Thao tác này sẽ dọn dẹp sạch danh sách bài viết.')) return;
-    setSubmissions([]);
-    clearSubmissionsTwoTier('ielts_submissions_history');
-  };
-
-  const handleDeleteReadingSubmission = (subId) => {
-    setReadingHistory(prev => {
-      const updated = prev.filter(r => r.id !== subId);
-      deleteSubmissionTwoTier('ielts_reading_submissions_history', subId);
-      return updated;
-    });
-  };
-
-  const handleClearReadingHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Reading? Thao tác này sẽ dọn dẹp sạch danh sách bài đọc.')) return;
-    setReadingHistory([]);
-    clearSubmissionsTwoTier('ielts_reading_submissions_history');
-  };
-
-  const handleDeleteListeningSubmission = (subId) => {
-    setListeningHistory(prev => {
-      const updated = prev.filter(r => r.id !== subId);
-      deleteSubmissionTwoTier('ielts_listening_submissions_history', subId);
-      return updated;
-    });
-  };
-
-  const handleClearListeningHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Listening? Thao tác này sẽ dọn dẹp sạch danh sách bài nghe.')) return;
-    setListeningHistory([]);
-    clearSubmissionsTwoTier('ielts_listening_submissions_history');
-  };
-
-  const handleDeleteSpeakingSubmission = (subId) => {
-    setSpeakingHistory(prev => {
-      const updated = prev.filter(r => r.id !== subId);
-      deleteSubmissionTwoTier('ielts_speaking_submissions_history', subId);
-      return updated;
-    });
-  };
-
-  const handleClearSpeakingHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử bài thi Speaking? Thao tác này sẽ dọn dẹp sạch danh sách bài nói.')) return;
-    setSpeakingHistory([]);
-    clearSubmissionsTwoTier('ielts_speaking_submissions_history');
-  };
-
-  const handleClearAllHistory = () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa TOÀN BỘ lịch sử của cả 4 kỹ năng (Writing, Reading, Listening, Speaking)? Thao tác này sẽ dọn dẹp sạch sẽ toàn bộ bài làm.')) return;
-    setSubmissions([]);
-    setReadingHistory([]);
-    setListeningHistory([]);
-    setSpeakingHistory([]);
-    clearSubmissionsTwoTier('ielts_submissions_history');
-    clearSubmissionsTwoTier('ielts_reading_submissions_history');
-    clearSubmissionsTwoTier('ielts_listening_submissions_history');
-    clearSubmissionsTwoTier('ielts_speaking_submissions_history');
   };
 
   return (
@@ -1605,60 +1290,8 @@ export default function App() {
         cdiContrast={cdiContrast}
         onChangeCdiContrast={handleChangeCdiContrast}
         onResetCDIDisplay={handleResetCDIDisplay}
-        onAddNewCustomTask={(newTask, isPub) => {
-          setAllTasks(prev => {
-            const combined = [newTask, ...prev];
-            const { cleanedTasks } = deduplicateWritingTasks(combined, 0.75);
-            return cleanedTasks;
-          });
-          setCurrentTaskId(newTask.id);
-
-          if (isPub) {
-            const pubTask = {
-              ...newTask,
-              isPublic: true,
-              isCommunity: true,
-              creatorEmail: currentUser?.email || 'Thành viên cộng đồng'
-            };
-            setCommunityTasks(prev => [pubTask, ...prev.filter(t => t.id !== newTask.id)]);
-          }
-
-          saveUserCustomTask(currentUser?.id || null, newTask, isPub, currentUser?.email || 'Khách');
-          try {
-            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-              const bc = new BroadcastChannel('ielts_tasks_realtime');
-              bc.postMessage({ type: 'ADD_TASK', task: newTask, isPublic: Boolean(isPub) });
-              bc.close();
-            }
-          } catch (e) {}
-        }}
-        onTogglePublic={(taskId, isPub) => {
-          setAllTasks(prev => prev.map(t => t.id === taskId ? { ...t, isPublic: isPub } : t));
-          if (isPub) {
-            const taskToShare = allTasks.find(t => t.id === taskId);
-            if (taskToShare) {
-              const pubTask = {
-                ...taskToShare,
-                isPublic: true,
-                creatorEmail: currentUser?.email || 'Thành viên cộng đồng',
-                isCommunity: true
-              };
-              setCommunityTasks(prev => [pubTask, ...prev.filter(t => t.id !== taskId)]);
-            }
-          } else {
-            setCommunityTasks(prev => prev.filter(t => t.id !== taskId));
-          }
-          if (currentUser) {
-            toggleTaskPublicity(currentUser.id, taskId, isPub);
-          }
-          try {
-            if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-              const bc = new BroadcastChannel('ielts_tasks_realtime');
-              bc.postMessage({ type: 'TOGGLE_PUBLIC', taskId, isPublic: isPub });
-              bc.close();
-            }
-          } catch (e) {}
-        }}
+        onAddNewCustomTask={handleAddNewCustomTask}
+        onTogglePublic={handleTogglePublic}
         onDeleteTask={(id) => {
           setAllTasks(prev => {
             const updated = prev.filter(t => t.id !== id);
@@ -1682,37 +1315,9 @@ export default function App() {
             setCurrentTaskId(INITIAL_TASKS[0]?.id || 't2-ai-workplace-2025');
           }
         }}
-        onSaveMockResult={(res) => {
-          setStreakCount(prev => prev + 1);
-          setSubmissions(prev => {
-            const updated = [
-              {
-                id: `mock-${Date.now()}`,
-                task: { title: 'Full Mock Test 60 phút', taskNumber: '1 & 2' },
-                essayText: 'Completed both Task 1 and Task 2',
-                evaluation: { overallBand: res.finalOverall },
-                stats: { wordCount: res.t1Words + res.t2Words, timeSpent: '60 phút' },
-                date: res.date
-              },
-              ...prev
-            ];
-            safeSet('ielts_submissions_history', updated);
-            return updated;
-          });
-        }}
-        onSaveV2Submission={(v2Sub) => {
-          setSubmissions(prev => [v2Sub, ...prev]);
-          if (currentUser) {
-            saveUserSubmission(currentUser.id, v2Sub);
-          }
-        }}
-        onTaskImported={(newTask) => {
-          setAllTasks(prev => [newTask, ...prev]);
-          setCurrentTaskId(newTask.id);
-          if (currentUser) {
-            saveUserCustomTask(currentUser.id, newTask, false, currentUser.email);
-          }
-        }}
+        onSaveMockResult={handleSaveMockResult}
+        onSaveV2Submission={handleSaveV2Submission}
+        onTaskImported={handleTaskImported}
         onSaveUserVocab={(v) => {
           if (currentUser) saveUserVocabItem(currentUser.id, v);
         }}

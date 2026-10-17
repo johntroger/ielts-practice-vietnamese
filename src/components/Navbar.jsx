@@ -40,6 +40,7 @@ import {
   Home
 } from 'lucide-react';
 import { openModal } from '../core/modalStore';
+import { useAppStore } from '../core/appStore';
 import { GITBOOK_FEATURES_BASE_URL } from '../core/featureRegistry';
 import WebsiteQRCodeModal from './WebsiteQRCodeModal';
 import { getTheme, toggleTheme, subscribeTheme } from '../utils/themeService';
@@ -70,8 +71,8 @@ export default function Navbar({
   onOpenFeaturesGuide,
   onOpenProfile,
   onOpenContact,
-  activeSkill = 'writing',
-  onSelectSkill,
+  activeSkill: activeSkillProp,
+  onSelectSkill: onSelectSkillProp,
   mistakesCount = 0,
   apiKey,
   user,
@@ -79,6 +80,9 @@ export default function Navbar({
   onOpenCDIDisplay,
   onOpenAbout
 }) {
+  const appStore = useAppStore();
+  const activeSkill = activeSkillProp || appStore.activeSkill || 'writing';
+  const onSelectSkill = onSelectSkillProp || appStore.setActiveSkill;
   const doOpenOnboarding = onOpenOnboarding || (() => openModal('onboarding'));
   const doOpenDiagnostic = onOpenDiagnostic || (() => openModal('diagnostic'));
   const doOpenVocabGrammar = onOpenVocabGrammar || (() => openModal('vocabGrammar'));
