@@ -266,8 +266,14 @@ export default function SpeakingGeneratorModal({
           id: `p2-custom-${Date.now()}`,
           title: packData.part2Card?.title || customTopic,
           category: packData.part2Card?.category || 'AI Generated Cue Card',
-          prompt: packData.part2Card?.prompt || '',
-          cueBullets: packData.part2Card?.cueBullets || [],
+          prompt: packData.part2Card?.prompt || `Describe ${packData.part2Card?.title || customTopic}`,
+          cueBullets: packData.part2Card?.cueBullets || packData.part2Card?.prompts || [],
+          prompts: packData.part2Card?.prompts || packData.part2Card?.cueBullets || [],
+          mindmapNotes: packData.part2Card?.mindmapNotes || Object.values(packData.part2Card?.prepGuide4Quadrants || {}).filter(Boolean),
+          cueCard: {
+            intro: packData.part2Card?.prompt || packData.part2Card?.title || customTopic,
+            bullets: packData.part2Card?.cueBullets || packData.part2Card?.prompts || []
+          },
           prepGuide4Quadrants: packData.part2Card?.prepGuide4Quadrants || {},
           vocabHints: packData.part2Card?.vocabHints || [],
           sampleAnswer: packData.part2Card?.sampleAnswer || ''
@@ -312,6 +318,8 @@ export default function SpeakingGeneratorModal({
 
     const packTitle = manualTitle.trim() || `Full Mock Test: ${p2Title.trim()}`;
     const p2Id = `p2-manual-${Date.now()}`;
+    const activeBullets = p2Bullets.filter(b => b.trim());
+    const activeIntro = p2Prompt.trim() || `Describe ${p2Title.trim()}`;
 
     const newMockPack = {
       id: `mock-spk-manual-${Date.now()}`,
@@ -341,8 +349,19 @@ export default function SpeakingGeneratorModal({
         id: p2Id,
         title: p2Title.trim(),
         category: 'Speaking Part 2',
-        prompt: p2Prompt.trim() || `Describe ${p2Title.trim()}`,
-        cueBullets: p2Bullets.filter(b => b.trim()),
+        prompt: activeIntro,
+        cueBullets: activeBullets,
+        prompts: activeBullets,
+        cueCard: {
+          intro: activeIntro,
+          bullets: activeBullets
+        },
+        mindmapNotes: [
+          'Bối cảnh, nhân vật & địa điểm',
+          'Diễn biến chính & hoạt động cốt lõi',
+          'Lý do nổi bật hoặc ấn tượng nhất',
+          'Bài học, cảm xúc & tác động cá nhân'
+        ],
         vocabHints: p2VocabHints ? p2VocabHints.split(',').map(s => s.trim()).filter(Boolean) : [],
         sampleAnswer: p2SampleAnswer.trim(),
         prepGuide4Quadrants: {

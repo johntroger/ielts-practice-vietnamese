@@ -396,12 +396,13 @@ export function analyzePronunciationCadence(wpm, fillerDensityPercent, totalWord
 
   return {
     band: prBand,
-    title: 'Pronunciation',
+    title: 'Pronunciation & Intonation',
     strengths: 'Phát âm rõ ràng, nhận diện giọng nói chính xác cao, nhịp điệu và ngữ điệu câu duy trì dễ nghe đối với Giám khảo.',
     weaknesses: wpm < 90 
       ? 'Tốc độ nhả âm hơi chậm, cần luyện ngắt cụm (chunking) theo cụm nghĩa để giọng nói liền mạch hơn.'
       : 'Chú ý phát âm rõ âm đuôi (ending sounds -s, -ed, -t) và trọng âm từ đa âm tiết.',
-    pronunciationAdvice: 'Luyện tập phương pháp Shadowing theo người bản xứ để cải thiện ngữ điệu trầm bổng và nối âm tự nhiên.'
+    pronunciationAdvice: 'Luyện tập phương pháp Shadowing theo người bản xứ để cải thiện ngữ điệu trầm bổng và nối âm tự nhiên.',
+    intonationAdvice: 'Luyện tập phương pháp Shadowing theo người bản xứ để cải thiện ngữ điệu trầm bổng và nối âm tự nhiên.'
   };
 }
 
@@ -462,6 +463,11 @@ export function evaluateSpeakingAlgorithmically({
 
   if (candidateTurns.length === 0 || totalWords === 0) {
     const minBand = 2.0;
+    const emptyPlan = {
+      priority1: 'Kiểm tra lại micro và cấp quyền truy cập trình duyệt.',
+      priority2: 'Đảm bảo môi trường yên tĩnh, nói to và rõ ràng.',
+      priority3: 'Bấm nút mic hoặc phím Space để bắt đầu trả lời từng câu hỏi của giám khảo.'
+    };
     return {
       overallBand: minBand,
       evaluationMethod: 'algorithmic',
@@ -479,11 +485,8 @@ export function evaluateSpeakingAlgorithmically({
         gra: { band: minBand, strengths: 'Chưa có dữ liệu', weaknesses: 'Không ghi nhận cấu trúc câu.' },
         pr: { band: minBand, strengths: 'Chưa có dữ liệu', weaknesses: 'Không phát hiện âm thanh.' }
       },
-      top3ActionPlan: {
-        priority1: 'Kiểm tra lại micro và cấp quyền truy cập trình duyệt.',
-        priority2: 'Đảm bảo môi trường yên tĩnh, nói to và rõ ràng.',
-        priority3: 'Bấm nút mic hoặc phím Space để bắt đầu trả lời từng câu hỏi của giám khảo.'
-      },
+      top3ActionPlan: emptyPlan,
+      topActionablePriorities: [emptyPlan.priority1, emptyPlan.priority2, emptyPlan.priority3],
       turnEvaluations: [],
       submittedAt: new Date().toISOString()
     };
@@ -509,11 +512,16 @@ export function evaluateSpeakingAlgorithmically({
     p2DurationSec: fc.p2DurationSec,
     fillerDensityPercent: fc.fillerDensityPercent
   });
+  const topActionablePriorities = [
+    top3ActionPlan.priority1,
+    top3ActionPlan.priority2,
+    top3ActionPlan.priority3
+  ].filter(Boolean);
 
   // 4. Per-Turn Detailed Diagnostics & Native Upgrades
   const turnEvaluations = candidateTurns.map((turn, i) => {
-    const isP2 = turn.stage === 'part2';
-    const isP3 = turn.stage === 'part3';
+    const isP2 = turn.stage === 'part2' || turn.stage === 'part2_speak' || turn.stage?.includes('p2');
+    const isP3 = turn.stage === 'part3' || turn.stage?.includes('p3');
     const turnText = turn.text || '(Chưa ghi nhận câu trả lời)';
     const turnWords = turnText.trim().split(/\s+/).filter(Boolean).length;
 
@@ -534,7 +542,7 @@ export function evaluateSpeakingAlgorithmically({
 
     return {
       stage: turn.stage || (i === 0 ? 'part1' : i === 1 ? 'part2' : 'part3'),
-      question: turn.questionText || (isP2 ? 'Part 2 Cue Card Presentation' : isP3 ? 'Part 3 In-depth Discussion Question' : 'Part 1 Interview Question'),
+      question: turn.questionText || turn.cueCardTitle || (isP2 ? 'Part 2 Cue Card Presentation' : isP3 ? 'Part 3 In-depth Discussion Question' : 'Part 1 Interview Question'),
       candidateAnswer: turnText,
       inlineFeedback,
       corrections: [
@@ -575,6 +583,7 @@ export function evaluateSpeakingAlgorithmically({
       pr
     },
     top3ActionPlan,
+    topActionablePriorities,
     turnEvaluations,
     submittedAt: new Date().toISOString()
   };

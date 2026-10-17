@@ -429,8 +429,8 @@ export default function SpeakingResultModal({
                   <div className="text-xs space-y-1.5 text-slate-300">
                     <p><strong className="text-emerald-400">✓ {isEn ? 'Strengths:' : 'Điểm mạnh:'}</strong> {criteria.pr?.strengths}</p>
                     <p><strong className="text-rose-400">⚠️ {isEn ? 'Areas for Growth:' : 'Cần cải thiện:'}</strong> {criteria.pr?.weaknesses}</p>
-                    {criteria.pr?.intonationAdvice && (
-                      <p className="text-[11px] text-slate-400 italic">💡 {criteria.pr.intonationAdvice}</p>
+                    {(criteria.pr?.intonationAdvice || criteria.pr?.pronunciationAdvice) && (
+                      <p className="text-[11px] text-slate-400 italic">💡 {criteria.pr.intonationAdvice || criteria.pr.pronunciationAdvice}</p>
                     )}
                   </div>
                 </div>
@@ -438,24 +438,34 @@ export default function SpeakingResultModal({
               </div>
 
               {/* 3. TOP 3 ACTIONABLE PRIORITIES (ROADMAP TO +0.5 BAND) */}
-              {evaluation.topActionablePriorities && evaluation.topActionablePriorities.length > 0 && (
-                <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-950/60 to-slate-900 border border-purple-700/50 space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Zap className="w-5 h-5 text-amber-400" />
-                    <h4 className="text-sm font-black text-white tracking-wide uppercase">
-                      {isEn ? 'Top 3 Actionable Priorities to Boost +0.5 Band' : 'Top 3 Hành Động Cần Làm Để Tăng 0.5 Band'}
-                    </h4>
+              {(() => {
+                const priorities = (Array.isArray(evaluation.topActionablePriorities) && evaluation.topActionablePriorities.length > 0)
+                  ? evaluation.topActionablePriorities
+                  : evaluation.top3ActionPlan
+                  ? [evaluation.top3ActionPlan.priority1, evaluation.top3ActionPlan.priority2, evaluation.top3ActionPlan.priority3].filter(Boolean)
+                  : [];
+
+                if (priorities.length === 0) return null;
+
+                return (
+                  <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-950/60 to-slate-900 border border-purple-700/50 space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Zap className="w-5 h-5 text-amber-400" />
+                      <h4 className="text-sm font-black text-white tracking-wide uppercase">
+                        {isEn ? 'Top 3 Actionable Priorities to Boost +0.5 Band' : 'Top 3 Hành Động Cần Làm Để Tăng 0.5 Band'}
+                      </h4>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {priorities.map((item, idx) => (
+                        <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                          <span className="text-[10px] font-black text-purple-400 uppercase">{isEn ? `Priority #${idx + 1}` : `Ưu tiên #${idx + 1}`}</span>
+                          <p className="text-xs text-slate-200 leading-snug">{item}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {evaluation.topActionablePriorities.map((item, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
-                        <span className="text-[10px] font-black text-purple-400 uppercase">{isEn ? `Priority #${idx + 1}` : `Ưu tiên #${idx + 1}`}</span>
-                        <p className="text-xs text-slate-200 leading-snug">{item}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* 4. RECOMMENDED ADVANCED COLLOCATIONS */}
               {criteria.lr?.recommendedCollocations && criteria.lr.recommendedCollocations.length > 0 && (
@@ -591,11 +601,15 @@ export default function SpeakingResultModal({
                         {turn.goldenCollocations && turn.goldenCollocations.length > 0 && (
                           <div className="flex flex-wrap items-center gap-1.5 pt-1">
                             <span className="text-[10px] text-slate-400 mr-1">{isEn ? 'Key collocations:' : 'Collocations hay:'}</span>
-                            {turn.goldenCollocations.map((gc, gcIdx) => (
-                              <span key={gcIdx} className="px-2 py-0.5 rounded-md bg-purple-950/70 border border-purple-800/60 text-purple-300 font-bold text-[10px]">
-                                {gc}
-                              </span>
-                            ))}
+                            {turn.goldenCollocations.map((gc, gcIdx) => {
+                              const phraseText = typeof gc === 'string' ? gc : (gc?.phrase || '');
+                              const meaningText = typeof gc === 'object' && gc?.meaningVi ? ` (${gc.meaningVi})` : (gc?.meaning ? ` (${gc.meaning})` : '');
+                              return (
+                                <span key={gcIdx} className="px-2 py-0.5 rounded-md bg-purple-950/70 border border-purple-800/60 text-purple-300 font-bold text-[10px]">
+                                  {phraseText}{meaningText}
+                                </span>
+                              );
+                            })}
                           </div>
                         )}
 

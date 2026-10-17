@@ -389,5 +389,58 @@ export const READING_MICRO_DRILLS = [
     objectResultEn: 'the evolution of multidrug-resistant superbugs',
     takeawayVietnamese: 'Thông điệp xương sống: "Việc lạm dụng thuốc kháng sinh trong chăn nuôi thúc đẩy sự tiến hóa của siêu vi khuẩn". Mọi chi tiết ở giữa chỉ là cách thức phụ.',
     takeawayEn: 'Backbone takeaway: "Overusing antibiotics in livestock drives the evolution of superbugs." All intervening clauses are subordinate modifiers.'
+  },
+
+  // ==========================================
+  // 6. 101 PAST PAPERS BATCH 1 DRILLS (Tests 3, 4, 5)
+  // ==========================================
+  {
+    id: 'drill-101-batch1-tfng-1',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định Not Given: Sự Tuyệt Chủng Của Khủng Long (Test 5)',
+    titleEn: 'Not Given Trap: Dinosaur Extinction Dynamics (Test 5)',
+    category: 'Paleontology & Geology',
+    categoryEn: 'Paleontology & Geology',
+    passage: 'The toe-to-heel length of the foot of a meat eater from the Jurassic period was on average 20 percent longer than its Triassic ancestor. Larger feet can carry bigger bodies; the scientists infer the dinosaurs doubled in weight, eventually evolving into fearsome velociraptors, Tyrannosaurus rex and other large carnivorous dinosaurs.',
+    statement: 'Tyrannosaurus rex was larger in body size than other carnivorous dinosaurs.',
+    answer: 'NOT GIVEN',
+    trapType: 'Comparative Trap (Bẫy so sánh hơn không có trong bài)',
+    trapTypeEn: 'Comparative Trap (Unsubstantiated superlative/comparative)',
+    explanation: 'Đáp án là NOT GIVEN. Dù bài đọc liệt kê T. rex cùng với velociraptor và các loài ăn thịt lớn ("Tyrannosaurus rex and other large carnivorous dinosaurs"), tác giả không hề so sánh liệu kích thước của T. rex có lớn hơn tất cả các loài ăn thịt khác hay không.',
+    explanationEn: 'The answer is NOT GIVEN. Although the text mentions T. rex alongside other large carnivores ("Tyrannosaurus rex and other large carnivorous dinosaurs"), it never compares whether T. rex was larger in body size than the other carnivorous dinosaurs.',
+    evidence: '...eventually evolving into fearsome velociraptors, Tyrannosaurus rex and other large carnivorous dinosaurs.',
+    evidenceEn: '...eventually evolving into fearsome velociraptors, Tyrannosaurus rex and other large carnivorous dinosaurs.'
+  },
+  {
+    id: 'drill-101-batch1-para-2',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Giấy & Máy Tính Văn Phòng (Test 4)',
+    titleEn: 'Cambridge Paraphrase Pair: Paper vs Computer (Test 4)',
+    category: 'Information Technology',
+    categoryEn: 'Information Technology',
+    passage: 'Paper allows spontaneous, tactile collaboration during face-to-face meetings, allowing documents to be rapidly tailorable to personal workflows, whereas digital monitors frequently isolate individual participants behind screens.',
+    question: 'Trong câu trên, từ nào đồng nghĩa chuẩn khảo thí với "modifiable and adaptable to personal requirements"?',
+    questionEn: 'In the passage above, which word is the exact exam paraphrase for "modifiable and adaptable to personal requirements"?',
+    correctAnswer: 'tailorable',
+    options: ['tailorable', 'spontaneous', 'tactile', 'frequently'],
+    optionsEn: ['tailorable', 'spontaneous', 'tactile', 'frequently'],
+    explanation: '"Tailorable" (có thể tùy chỉnh theo nhu cầu riêng) chính là paraphrase của "modifiable / adaptable to personal requirements". Đây là đáp án chính thức câu 35 Test 4.',
+    explanationEn: '"Tailorable" means able to be adapted or modified to suit specific personal requirements. This matches official Question 35 in Test 4.'
+  },
+  {
+    id: 'drill-101-batch1-para-3',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Kỷ Băng Hà & Hươu Khổng Lồ Ireland (Test 3)',
+    titleEn: 'Cambridge Paraphrase Pair: Irish Elk & Glaciation (Test 3)',
+    category: 'Evolutionary Biology',
+    categoryEn: 'Evolutionary Biology',
+    passage: 'Fossil evidence reveals that the giant deer survived through repeated cold glacial oscillations, taking shelter in forested refugia during warmer intervals between ice advances, before abrupt climate shifts decimated its feeding grounds.',
+    question: 'Cụm từ nào trong đoạn văn trên diễn đạt tương đương với "forest shelter during warm phases"?',
+    questionEn: 'Which phrase in the text above corresponds to "forest shelter during warm phases"?',
+    correctAnswer: 'wooded interglacials',
+    options: ['wooded interglacials', 'cold glacial oscillations', 'abrupt climate shifts', 'repeated ice advances'],
+    optionsEn: ['wooded interglacials', 'cold glacial oscillations', 'abrupt climate shifts', 'repeated ice advances'],
+    explanation: '"Wooded interglacials" (các thời kỳ gian băng rợp bóng rừng) là từ khóa chính thức câu 31 Test 3, diễn đạt việc loài hươu sinh sống trong các thời kỳ ấm giữa hai kỷ băng hà.',
+    explanationEn: '"Wooded interglacials" refers to forested warm phases between glacial advances, matching official Question 31 in Test 3.'
   }
 ];

@@ -47,7 +47,13 @@ export function useSpeakingExaminer({
     if (typeof window !== 'undefined' && window.sessionStorage) {
       const saved = window.sessionStorage.getItem('ielts_speaking_session_transcript');
       if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return parsed;
+          if (parsed && parsed.packId === mockPack?.id && Array.isArray(parsed.history)) {
+            return parsed.history;
+          }
+        } catch (e) {}
       }
     }
     return [];
@@ -60,10 +66,13 @@ export function useSpeakingExaminer({
 
   // Sync dialogue to sessionStorage if browser environment
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.sessionStorage) {
-      window.sessionStorage.setItem('ielts_speaking_session_transcript', JSON.stringify(dialogueHistory));
+    if (typeof window !== 'undefined' && window.sessionStorage && currentStage !== 'completed') {
+      window.sessionStorage.setItem(
+        'ielts_speaking_session_transcript',
+        JSON.stringify({ packId: mockPack?.id, history: dialogueHistory })
+      );
     }
-  }, [dialogueHistory]);
+  }, [dialogueHistory, mockPack?.id, currentStage]);
 
   // Overall session timer
   useEffect(() => {
@@ -330,6 +339,9 @@ export function useSpeakingExaminer({
       ];
       setDialogueHistory(finalTranscript);
       setCurrentStage('completed');
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        window.sessionStorage.removeItem('ielts_speaking_session_transcript');
+      }
       if (onFinishExam) {
         onFinishExam(finalTranscript, {
           mockPack,

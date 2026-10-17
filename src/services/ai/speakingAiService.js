@@ -3,11 +3,29 @@
  * Handles full 3-part Speaking mock examinations, practice reflex drills, examiner branching, and audio transcription.
  */
 
-import { callGeminiApi, robustJsonParse } from './coreGeminiClient.js';
+import { callGeminiApi, robustJsonParse, formatFriendlyGeminiError } from './coreGeminiClient.js';
 import { 
   evaluateSpeakingAlgorithmically, 
   evaluateSinglePracticeAnswerAlgorithmically 
 } from '../algorithmicSpeakingService.js';
+
+const DEFAULT_MODEL = 'gemini-3.6-flash';
+
+/**
+ * Sub-Angle Matrices for Diversity Injection (Prevents AI repetitiveness & duplicate generation)
+ */
+export const SPEAKING_SUB_ANGLES = [
+  'Technological innovation & digital lifestyle shifts',
+  'Environmental sustainability & eco-friendly habits',
+  'Cultural heritage versus modern global trends',
+  'Work-life harmony & remote productivity dynamics',
+  'Urbanization & smart city living experiences',
+  'Personal development, resilience & lifelong learning',
+  'Interpersonal communication & social media paradoxes',
+  'Health awareness, wellness & preventative lifestyle',
+  'Education reform, critical thinking & future skills',
+  'Consumer psychology, experiential spending & minimalism'
+];
 
 export async function evaluateSpeakingMicroDrill({
   drillType,
@@ -250,8 +268,34 @@ OUTPUT FORMAT: Return ONLY valid JSON matching this schema:
       });
     }
 
+    const topPriorities = Array.isArray(parsed.topActionablePriorities)
+      ? parsed.topActionablePriorities
+      : [parsed.top3ActionPlan?.priority1, parsed.top3ActionPlan?.priority2, parsed.top3ActionPlan?.priority3].filter(Boolean);
+
+    const top3Plan = parsed.top3ActionPlan || {
+      priority1: topPriorities[0] || 'Tập trung trả lời trôi chảy, đúng trọng tâm câu hỏi.',
+      priority2: topPriorities[1] || 'Mở rộng vốn từ vựng học thuật C1-C2 và collocations.',
+      priority3: topPriorities[2] || 'Luyện tập phát âm rõ ràng, nối âm tự nhiên.'
+    };
+
+    const criteriaNormalized = { ...parsed.criteria };
+    if (criteriaNormalized.pr) {
+      const advice = criteriaNormalized.pr.intonationAdvice || criteriaNormalized.pr.pronunciationAdvice || '';
+      criteriaNormalized.pr.intonationAdvice = advice;
+      criteriaNormalized.pr.pronunciationAdvice = advice;
+    }
+
     return {
       ...parsed,
+      criteria: criteriaNormalized,
+      topActionablePriorities: topPriorities,
+      top3ActionPlan: top3Plan,
+      speechAnalytics: parsed.speechAnalytics || {
+        totalWords: wordCount,
+        wordsPerMinute,
+        fillerWordsCount: fillerCount,
+        fillerWordsSample: fillersFound.slice(0, 8)
+      },
       evaluationMethod: 'ai'
     };
   } catch (err) {
@@ -392,7 +436,27 @@ OUTPUT FORMAT: Return ONLY valid raw JSON with NO markdown fences:
     throw new Error('Dữ liệu bộ đề Speaking do AI sinh ra không đầy đủ. Vui lòng thử lại.');
   }
 
-  return parsed;
+  const rawP2 = parsed.part2Card || {};
+  const bullets = rawP2.cueBullets || rawP2.prompts || (rawP2.cueCard?.bullets) || [];
+  const intro = rawP2.prompt || rawP2.title || rawP2.cueCard?.intro || '';
+  const mindmaps = rawP2.mindmapNotes || Object.values(rawP2.prepGuide4Quadrants || {}).filter(Boolean);
+
+  const normalizedP2 = {
+    ...rawP2,
+    prompt: intro,
+    cueBullets: bullets,
+    prompts: bullets,
+    mindmapNotes: mindmaps,
+    cueCard: {
+      intro,
+      bullets
+    }
+  };
+
+  return {
+    ...parsed,
+    part2Card: normalizedP2
+  };
 }
 
 /**
@@ -502,7 +566,41 @@ OUTPUT FORMAT: Return ONLY valid raw JSON with NO markdown fences:
     throw new Error('Dữ liệu kết quả chấm điểm AI không đúng định dạng. Vui lòng thử lại.');
   }
 
-  return parsed;
+  const durationMin = Math.max(0.1, durationSec / 60);
+  const wordsPerMinute = Math.round(wordCount / durationMin);
+  const fillerRegex = /\b(um|uh|er|ah|like|you know|sort of|kind of|actually|basically|literally)\b/gi;
+  const fillersFound = (candidateTranscript || '').match(fillerRegex) || [];
+  const fillerCount = fillersFound.length;
+  const fillerDensityPercent = wordCount > 0 ? Math.round((fillerCount / wordCount) * 100) : 0;
+
+  const top3ActionPlan = {
+    priority1: parsed.examinerComment || 'Cải thiện độ trôi chảy và duy trì nhịp độ phản xạ tự nhiên.',
+    priority2: 'Bổ sung các cụm từ vựng C1-C2 và collocations học thuật.',
+    priority3: 'Luyện tập phát âm rõ ràng, nối âm tự nhiên và ngữ điệu trầm bổng.'
+  };
+
+  const criteriaNormalized = { ...parsed.criteria };
+  if (criteriaNormalized.pr) {
+    const prFeedback = criteriaNormalized.pr.feedback || criteriaNormalized.pr.intonationAdvice || criteriaNormalized.pr.pronunciationAdvice || '';
+    criteriaNormalized.pr.intonationAdvice = prFeedback;
+    criteriaNormalized.pr.pronunciationAdvice = prFeedback;
+  }
+
+  return {
+    ...parsed,
+    criteria: criteriaNormalized,
+    evaluationMethod: 'ai',
+    speechAnalytics: {
+      wordCount,
+      totalWords: wordCount,
+      wordsPerMinute,
+      fillerCount,
+      fillerWordsCount: fillerCount,
+      fillerDensityPercent,
+      durationSec
+    },
+    top3ActionPlan
+  };
 }
 
 /**
@@ -669,6 +767,23 @@ Output valid raw JSON:
   const parsed = robustJsonParse(text, null);
   if (!parsed) {
     throw new Error('Không thể phân tích dữ liệu chủ đề do AI sinh ra. Vui lòng thử lại.');
+  }
+
+  if (part === 2) {
+    const bullets = parsed.cueBullets || parsed.prompts || (parsed.cueCard?.bullets) || [];
+    const intro = parsed.prompt || parsed.title || parsed.cueCard?.intro || '';
+    const mindmaps = parsed.mindmapNotes || Object.values(parsed.prepGuide4Quadrants || {}).filter(Boolean);
+    return {
+      ...parsed,
+      prompt: intro,
+      cueBullets: bullets,
+      prompts: bullets,
+      mindmapNotes: mindmaps,
+      cueCard: {
+        intro,
+        bullets
+      }
+    };
   }
 
   return parsed;

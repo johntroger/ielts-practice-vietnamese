@@ -18,6 +18,7 @@ import {
   COMMUNITY_DEFAULT_P3_SETS
 } from '../../data/speakingTopics';
 import { useSpeechEngine } from '../../hooks/useSpeechEngine';
+import { useSpeakingTopics } from '../../hooks/useSpeakingTopics';
 import { evaluateSpeakingMockExam, evaluateSpeakingAlgorithmically } from '../../services/geminiService';
 import SpeakingSoundcheckModal from './SpeakingSoundcheckModal';
 import SpeechWaveVisualizer from './SpeechWaveVisualizer';
@@ -29,11 +30,6 @@ import SpeakingResultModal from './SpeakingResultModal';
 import SpeakingGeneratorModal from './SpeakingGeneratorModal';
 import SpeakingPracticeTopicModal from './SpeakingPracticeTopicModal';
 import SpeakingMockLibraryModal from './SpeakingMockLibraryModal';
-import { 
-  deduplicateSpeakingP1Topics, 
-  deduplicateSpeakingP2Cards, 
-  deduplicateSpeakingP3Sets 
-} from '../../services/deduplicationService';
 import { useTranslation } from '../../i18n/index.js';
 
 export default function SpeakingWorkspace({
@@ -58,27 +54,57 @@ export default function SpeakingWorkspace({
     return localStorage.getItem('ielts_speaking_examiner') || 'examiner-arthur';
   });
 
-  // Mock packs state (preloaded + user generated with AI)
-  const [allMockPacks, setAllMockPacks] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ielts_speaking_custom_packs');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return [...SPEAKING_MOCK_TEST_PACKS, ...parsed];
-        }
-      }
-    } catch (e) {}
-    return SPEAKING_MOCK_TEST_PACKS;
-  });
+  // Topics and Mock Packs Management Hook
+  const {
+    allP1Topics,
+    selectedP1TopicId,
+    setSelectedP1TopicId,
+    activeP1Topic,
+    activeP1QuestionIndex,
+    setActiveP1QuestionIndex,
+    handleAddP1Topic,
+    handleDeleteP1Topic,
+    handleAddP1Question,
+    handleDeleteP1Question,
 
-  const [selectedMockId, setSelectedMockId] = useState(SPEAKING_MOCK_TEST_PACKS[0]?.id || 'mock-spk-tech-future');
+    allP2Cards,
+    selectedP2CueCardId,
+    setSelectedP2CueCardId,
+    activeP2Card,
+    handleAddP2Card,
+    handleDeleteP2Card,
+
+    allP3Sets,
+    selectedP3Id,
+    setSelectedP3Id,
+    activeP3Set,
+    handleAddP3Set,
+    handleDeleteP3Set,
+    handleAddP3Question,
+    handleDeleteP3Question,
+
+    allMockPacks,
+    setAllMockPacks,
+    selectedMockId,
+    setSelectedMockId,
+    activeMockPack,
+    mockFilter,
+    setMockFilter,
+    mockPackCounts,
+    filteredMockPacks,
+    handlePrevPack,
+    handleNextPack,
+    handlePackGenerated,
+    handleDeleteCustomPack,
+    mockP1,
+    mockP2,
+    mockP3
+  } = useSpeakingTopics({ isEn });
   
   // Modals state
   const [isMockLibraryOpen, setIsMockLibraryOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [generatorInitialMode, setGeneratorInitialMode] = useState('ai');
-  const [mockFilter, setMockFilter] = useState('all'); // 'all' | 'cambridge' | 'manual' | 'ai'
   const [isPracticeTopicModalOpen, setIsPracticeTopicModalOpen] = useState(false);
   const [isSoundcheckOpen, setIsSoundcheckOpen] = useState(false);
   const [isIdeaMatrixOpen, setIsIdeaMatrixOpen] = useState(false);
@@ -128,250 +154,10 @@ export default function SpeakingWorkspace({
 
   // Practice Mode State
   const [practicePart, setPracticePart] = useState(1); // 1 | 2 | 3
-  const [selectedP1TopicId, setSelectedP1TopicId] = useState(SPEAKING_PART1_TOPICS[0]?.id || 'p1-work-study');
-  const [selectedP2CueCardId, setSelectedP2CueCardId] = useState(SPEAKING_PART2_CUECARDS[0]?.id || 'p2-tech-device');
-  const [activeP1QuestionIndex, setActiveP1QuestionIndex] = useState(0);
   const [showVocabHints, setShowVocabHints] = useState(true);
   const [showSampleAnswer, setShowSampleAnswer] = useState(false);
   const [isPlayingPracticeAudio, setIsPlayingPracticeAudio] = useState(false);
   const practiceAudioRef = React.useRef(null);
-
-  // Custom practice topics, cards & discussion sets with auto-deduplication
-  const [customP1Topics, setCustomP1Topics] = useState(() => {
-    try {
-      const savedCustom = localStorage.getItem('ielts_speaking_custom_p1_topics');
-      const savedCommunity = localStorage.getItem('ielts_speaking_community_p1_topics');
-      const custom = savedCustom ? JSON.parse(savedCustom) : [];
-      const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
-      const map = new Map();
-      [...comm, ...custom].forEach(t => { if (t && t.id) map.set(t.id, t); });
-      const rawList = Array.from(map.values());
-      const { cleanedTopics, removedCount } = deduplicateSpeakingP1Topics(rawList, 0.75);
-      if (removedCount > 0) {
-        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(cleanedTopics));
-      }
-      return cleanedTopics;
-    } catch (e) { return []; }
-  });
-
-  const [customP2Cards, setCustomP2Cards] = useState(() => {
-    try {
-      const savedCustom = localStorage.getItem('ielts_speaking_custom_p2_cards');
-      const savedCommunity = localStorage.getItem('ielts_speaking_community_p2_cards');
-      const custom = savedCustom ? JSON.parse(savedCustom) : [];
-      const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
-      const map = new Map();
-      [...comm, ...custom].forEach(c => { if (c && c.id) map.set(c.id, c); });
-      const rawList = Array.from(map.values());
-      const { cleanedCards, removedCount } = deduplicateSpeakingP2Cards(rawList, 0.75);
-      if (removedCount > 0) {
-        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(cleanedCards));
-      }
-      return cleanedCards;
-    } catch (e) { return []; }
-  });
-
-  const [customP3Sets, setCustomP3Sets] = useState(() => {
-    try {
-      const savedCustom = localStorage.getItem('ielts_speaking_custom_p3_sets');
-      const savedCommunity = localStorage.getItem('ielts_speaking_community_p3_sets');
-      const custom = savedCustom ? JSON.parse(savedCustom) : [];
-      const comm = savedCommunity ? JSON.parse(savedCommunity) : [];
-      const map = new Map();
-      [...comm, ...custom].forEach(s => { const key = s.linkedPart2Id || s.id; if (key) map.set(key, s); });
-      const rawList = Array.from(map.values());
-      const { cleanedSets, removedCount } = deduplicateSpeakingP3Sets(rawList, 0.75);
-      if (removedCount > 0) {
-        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(cleanedSets));
-      }
-      return cleanedSets;
-    } catch (e) { return []; }
-  });
-
-  const allP1Topics = React.useMemo(() => {
-    const combined = [...SPEAKING_PART1_TOPICS, ...COMMUNITY_DEFAULT_P1_TOPICS, ...customP1Topics];
-    const { cleanedTopics } = deduplicateSpeakingP1Topics(combined, 0.75);
-    return cleanedTopics;
-  }, [customP1Topics]);
-
-  const allP2Cards = React.useMemo(() => {
-    const combined = [...SPEAKING_PART2_CUECARDS, ...COMMUNITY_DEFAULT_P2_CARDS, ...customP2Cards];
-    const { cleanedCards } = deduplicateSpeakingP2Cards(combined, 0.75);
-    return cleanedCards;
-  }, [customP2Cards]);
-
-  const allP3Sets = React.useMemo(() => {
-    const combined = [...SPEAKING_PART3_QUESTIONS, ...COMMUNITY_DEFAULT_P3_SETS, ...customP3Sets];
-    const { cleanedSets } = deduplicateSpeakingP3Sets(combined, 0.75);
-    return cleanedSets;
-  }, [customP3Sets]);
-
-  const [selectedP3Id, setSelectedP3Id] = useState(() => {
-    return SPEAKING_PART3_QUESTIONS[0]?.linkedPart2Id || 'p3-tech-society';
-  });
-
-  const handleAddP1Topic = (newTopic) => {
-    setCustomP1Topics(prev => {
-      const combined = [newTopic, ...prev];
-      const { cleanedTopics } = deduplicateSpeakingP1Topics(combined, 0.75);
-      try { 
-        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(cleanedTopics)); 
-        if (newTopic.isPublic) {
-          const commOnly = cleanedTopics.filter(t => t.isPublic);
-          localStorage.setItem('ielts_speaking_community_p1_topics', JSON.stringify(commOnly));
-        }
-      } catch (e) {}
-      return cleanedTopics;
-    });
-    setSelectedP1TopicId(newTopic.id);
-    setActiveP1QuestionIndex(0);
-  };
-
-  const handleDeleteP1Topic = (topicId) => {
-    setCustomP1Topics(prev => {
-      const updated = prev.filter(t => t.id !== topicId);
-      try { 
-        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated));
-        const commOnly = updated.filter(t => t.isPublic);
-        localStorage.setItem('ielts_speaking_community_p1_topics', JSON.stringify(commOnly));
-      } catch (e) {}
-      return updated;
-    });
-    if (selectedP1TopicId === topicId) {
-      setSelectedP1TopicId(SPEAKING_PART1_TOPICS[0]?.id || 'p1-work-study');
-      setActiveP1QuestionIndex(0);
-    }
-  };
-
-  const handleAddP1Question = (topicId, newQuestion) => {
-    setCustomP1Topics(prev => {
-      const existing = prev.find(t => t.id === topicId) || allP1Topics.find(t => t.id === topicId);
-      if (!existing) return prev;
-      const updatedTopic = {
-        ...existing,
-        isCustom: true,
-        questions: [...(existing.questions || []), newQuestion]
-      };
-      const updated = [updatedTopic, ...prev.filter(t => t.id !== topicId)];
-      try {
-        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated));
-      } catch (e) {}
-      return updated;
-    });
-  };
-
-  const handleDeleteP1Question = (topicId, questionId) => {
-    setCustomP1Topics(prev => {
-      const existing = prev.find(t => t.id === topicId) || allP1Topics.find(t => t.id === topicId);
-      if (!existing) return prev;
-      const updatedQuestions = (existing.questions || []).filter((q, idx) => (q.qId || `q-${idx}`) !== questionId && q.id !== questionId);
-      const updatedTopic = {
-        ...existing,
-        questions: updatedQuestions
-      };
-      const updated = [updatedTopic, ...prev.filter(t => t.id !== topicId)];
-      try {
-        localStorage.setItem('ielts_speaking_custom_p1_topics', JSON.stringify(updated));
-      } catch (e) {}
-      return updated;
-    });
-  };
-
-  const handleAddP2Card = (newCard) => {
-    setCustomP2Cards(prev => {
-      const combined = [newCard, ...prev];
-      const { cleanedCards } = deduplicateSpeakingP2Cards(combined, 0.75);
-      try { 
-        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(cleanedCards)); 
-        if (newCard.isPublic) {
-          const commOnly = cleanedCards.filter(c => c.isPublic);
-          localStorage.setItem('ielts_speaking_community_p2_cards', JSON.stringify(commOnly));
-        }
-      } catch (e) {}
-      return cleanedCards;
-    });
-    setSelectedP2CueCardId(newCard.id);
-  };
-
-  const handleDeleteP2Card = (cardId) => {
-    setCustomP2Cards(prev => {
-      const updated = prev.filter(c => c.id !== cardId);
-      try { 
-        localStorage.setItem('ielts_speaking_custom_p2_cards', JSON.stringify(updated));
-        const commOnly = updated.filter(c => c.isPublic);
-        localStorage.setItem('ielts_speaking_community_p2_cards', JSON.stringify(commOnly));
-      } catch (e) {}
-      return updated;
-    });
-    if (selectedP2CueCardId === cardId) {
-      setSelectedP2CueCardId(SPEAKING_PART2_CUECARDS[0]?.id || 'p2-tech-device');
-    }
-  };
-
-  const handleAddP3Set = (newSet) => {
-    setCustomP3Sets(prev => {
-      const combined = [newSet, ...prev];
-      const { cleanedSets } = deduplicateSpeakingP3Sets(combined, 0.75);
-      try { 
-        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(cleanedSets)); 
-        if (newSet.isPublic) {
-          const commOnly = cleanedSets.filter(s => s.isPublic);
-          localStorage.setItem('ielts_speaking_community_p3_sets', JSON.stringify(commOnly));
-        }
-      } catch (e) {}
-      return cleanedSets;
-    });
-    setSelectedP3Id(newSet.linkedPart2Id || newSet.id);
-  };
-
-  const handleDeleteP3Set = (setId) => {
-    setCustomP3Sets(prev => {
-      const updated = prev.filter(s => (s.linkedPart2Id || s.id) !== setId);
-      try { 
-        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
-        const commOnly = updated.filter(s => s.isPublic);
-        localStorage.setItem('ielts_speaking_community_p3_sets', JSON.stringify(commOnly));
-      } catch (e) {}
-      return updated;
-    });
-    if (selectedP3Id === setId) {
-      setSelectedP3Id(SPEAKING_PART3_QUESTIONS[0]?.linkedPart2Id || 'p3-tech-society');
-    }
-  };
-
-  const handleAddP3Question = (setId, newQuestion) => {
-    setCustomP3Sets(prev => {
-      const existing = prev.find(s => (s.linkedPart2Id || s.id) === setId) || allP3Sets.find(s => (s.linkedPart2Id || s.id) === setId);
-      if (!existing) return prev;
-      const updatedSet = {
-        ...existing,
-        isCustom: true,
-        questions: [...(existing.questions || []), newQuestion]
-      };
-      const updated = [updatedSet, ...prev.filter(s => (s.linkedPart2Id || s.id) !== setId)];
-      try {
-        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
-      } catch (e) {}
-      return updated;
-    });
-  };
-
-  const handleDeleteP3Question = (setId, questionId) => {
-    setCustomP3Sets(prev => {
-      const existing = prev.find(s => (s.linkedPart2Id || s.id) === setId) || allP3Sets.find(s => (s.linkedPart2Id || s.id) === setId);
-      if (!existing) return prev;
-      const updatedQuestions = (existing.questions || []).filter((q, idx) => (q.qId || `q-${idx}`) !== questionId && q.id !== questionId);
-      const updatedSet = {
-        ...existing,
-        questions: updatedQuestions
-      };
-      const updated = [updatedSet, ...prev.filter(s => (s.linkedPart2Id || s.id) !== setId)];
-      try {
-        localStorage.setItem('ielts_speaking_custom_p3_sets', JSON.stringify(updated));
-      } catch (e) {}
-      return updated;
-    });
-  };
 
   const [isDismissedBrowserBanner, setIsDismissedBrowserBanner] = useState(false);
 
@@ -385,125 +171,7 @@ export default function SpeakingWorkspace({
     localStorage.setItem('ielts_speaking_examiner', selectedExaminerId);
   }, [selectedExaminerId]);
 
-  // Real-time synchronization across browser tabs and windows for Speaking
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === 'ielts_speaking_custom_p1_topics') {
-        try {
-          const updated = JSON.parse(e.newValue);
-          if (Array.isArray(updated)) setCustomP1Topics(updated);
-        } catch (err) {}
-      }
-      if (e.key === 'ielts_speaking_custom_p2_cards') {
-        try {
-          const updated = JSON.parse(e.newValue);
-          if (Array.isArray(updated)) setCustomP2Cards(updated);
-        } catch (err) {}
-      }
-      if (e.key === 'ielts_speaking_custom_p3_sets') {
-        try {
-          const updated = JSON.parse(e.newValue);
-          if (Array.isArray(updated)) setCustomP3Sets(updated);
-        } catch (err) {}
-      }
-      if (e.key === 'ielts_speaking_custom_packs') {
-        try {
-          const updated = JSON.parse(e.newValue);
-          if (Array.isArray(updated)) {
-            setAllMockPacks([...SPEAKING_MOCK_TEST_PACKS, ...updated]);
-          }
-        } catch (err) {}
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
   const activeExaminer = SPEAKING_EXAMINER_PROFILES.find(e => e.id === selectedExaminerId) || SPEAKING_EXAMINER_PROFILES[0];
-  const activeMockPack = allMockPacks.find(m => m.id === selectedMockId) || allMockPacks[0];
-
-  const mockPackCounts = React.useMemo(() => {
-    return {
-      all: allMockPacks.length,
-      cambridge: allMockPacks.filter(p => p.isCambridge || !p.isCustom).length,
-      manual: allMockPacks.filter(p => p.isManual || (p.isCustom && !p.isAiGenerated)).length,
-      ai: allMockPacks.filter(p => p.isAiGenerated).length
-    };
-  }, [allMockPacks]);
-
-  const filteredMockPacks = React.useMemo(() => {
-    if (mockFilter === 'cambridge') {
-      return allMockPacks.filter(p => p.isCambridge || !p.isCustom);
-    }
-    if (mockFilter === 'manual') {
-      return allMockPacks.filter(p => p.isManual || (p.isCustom && !p.isAiGenerated));
-    }
-    if (mockFilter === 'ai') {
-      return allMockPacks.filter(p => p.isAiGenerated);
-    }
-    return allMockPacks;
-  }, [allMockPacks, mockFilter]);
-
-  const currentPackIndex = React.useMemo(() => {
-    const idx = filteredMockPacks.findIndex(p => p.id === selectedMockId);
-    return idx >= 0 ? idx : 0;
-  }, [filteredMockPacks, selectedMockId]);
-
-  const handlePrevPack = () => {
-    if (filteredMockPacks.length === 0) return;
-    const newIdx = (currentPackIndex - 1 + filteredMockPacks.length) % filteredMockPacks.length;
-    setSelectedMockId(filteredMockPacks[newIdx].id);
-  };
-
-  const handleNextPack = () => {
-    if (filteredMockPacks.length === 0) return;
-    const newIdx = (currentPackIndex + 1) % filteredMockPacks.length;
-    setSelectedMockId(filteredMockPacks[newIdx].id);
-  };
-
-  // Derive active items for Mock Pack (support both preset IDs and custom inline items)
-  const mockP1 = activeMockPack.customPart1 
-    || SPEAKING_PART1_TOPICS.find(p => p.id === activeMockPack.part1TopicId) 
-    || SPEAKING_PART1_TOPICS[0];
-  const mockP2 = activeMockPack.customPart2 
-    || SPEAKING_PART2_CUECARDS.find(p => p.id === activeMockPack.part2CueCardId) 
-    || SPEAKING_PART2_CUECARDS[0];
-  const mockP3 = activeMockPack.customPart3 
-    || SPEAKING_PART3_QUESTIONS.find(p => p.linkedPart2Id === activeMockPack.part3DiscussionId) 
-    || SPEAKING_PART3_QUESTIONS[0];
-
-  const handlePackGenerated = (newPack) => {
-    setAllMockPacks(prev => {
-      const updated = [newPack, ...prev];
-      try {
-        const customOnly = updated.filter(p => p.isCustom);
-        localStorage.setItem('ielts_speaking_custom_packs', JSON.stringify(customOnly));
-      } catch (e) {}
-      return updated;
-    });
-    setSelectedMockId(newPack.id);
-  };
-
-  const handleDeleteCustomPack = (packId, e) => {
-    e.stopPropagation();
-    if (!window.confirm(isEn ? 'Are you sure you want to delete this custom speaking test pack?' : 'Bạn có chắc chắn muốn xóa bộ đề thi Speaking tự sinh này?')) return;
-    setAllMockPacks(prev => {
-      const updated = prev.filter(p => p.id !== packId);
-      try {
-        const customOnly = updated.filter(p => p.isCustom);
-        localStorage.setItem('ielts_speaking_custom_packs', JSON.stringify(customOnly));
-      } catch (err) {}
-      return updated;
-    });
-    if (selectedMockId === packId) {
-      setSelectedMockId(SPEAKING_MOCK_TEST_PACKS[0]?.id || 'mock-spk-tech-future');
-    }
-  };
-
-  // Practice items
-  const activeP1Topic = allP1Topics.find(p => p.id === selectedP1TopicId) || allP1Topics[0];
-  const activeP2Card = allP2Cards.find(p => p.id === selectedP2CueCardId) || allP2Cards[0];
-  const activeP3Set = allP3Sets.find(p => p.linkedPart2Id === selectedP2CueCardId) || allP3Sets[0];
 
   // 2. Hook up Speech Engine Core
   const speechEngine = useSpeechEngine({
@@ -533,6 +201,7 @@ export default function SpeakingWorkspace({
   const handleEnterExamRoom = () => {
     if (speechEngine.isSpeaking) speechEngine.stopSpeaking();
     if (speechEngine.isListening) speechEngine.stopListening();
+    try { sessionStorage.removeItem('ielts_speaking_session_transcript'); } catch (e) {}
     setIsInMockExamRoom(true);
   };
 
@@ -1642,6 +1311,7 @@ export default function SpeakingWorkspace({
         examiner={activeExaminer}
         totalDurationSec={completedExamData?.meta?.totalDurationSec || 600}
         onRetryExam={() => {
+          try { sessionStorage.removeItem('ielts_speaking_session_transcript'); } catch (e) {}
           setIsResultModalOpen(false);
           setIsInMockExamRoom(true);
         }}

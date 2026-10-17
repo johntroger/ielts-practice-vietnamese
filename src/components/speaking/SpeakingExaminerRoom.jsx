@@ -58,7 +58,13 @@ export default function SpeakingExaminerRoom({
   const [dialogueHistory, setDialogueHistory] = useState(() => {
     const saved = sessionStorage.getItem('ielts_speaking_session_transcript');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+        if (parsed && parsed.packId === mockPack?.id && Array.isArray(parsed.history)) {
+          return parsed.history;
+        }
+      } catch (e) {}
     }
     return [];
   });
@@ -113,10 +119,15 @@ export default function SpeakingExaminerRoom({
   const [isAnsweringFollowUp, setIsAnsweringFollowUp] = useState(false);
   const [activeFollowUpPrompt, setActiveFollowUpPrompt] = useState(null);
 
-  // Autosave to sessionStorage
+  // Autosave to sessionStorage (scoped by mockPack.id)
   useEffect(() => {
-    sessionStorage.setItem('ielts_speaking_session_transcript', JSON.stringify(dialogueHistory));
-  }, [dialogueHistory]);
+    if (!isExamCompleted) {
+      sessionStorage.setItem(
+        'ielts_speaking_session_transcript',
+        JSON.stringify({ packId: mockPack?.id, history: dialogueHistory })
+      );
+    }
+  }, [dialogueHistory, mockPack?.id, isExamCompleted]);
 
   // Overall session elapsed timer
   useEffect(() => {
@@ -125,6 +136,21 @@ export default function SpeakingExaminerRoom({
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Cleanup speech engine and synthesis when exiting room or unmounting
+  useEffect(() => {
+    return () => {
+      if (speechEngine?.isSpeaking) {
+        speechEngine.stopSpeaking();
+      }
+      if (speechEngine?.isListening) {
+        speechEngine.stopListening();
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [speechEngine]);
 
   // Format MM:SS
   const formatTime = (secs) => {
@@ -222,8 +248,9 @@ export default function SpeakingExaminerRoom({
 
     setCurrentStage('part1');
     setP1Index(0);
-    const firstQ = part1Topic.questions[0]?.question || 'Can you tell me about your hometown?';
-    const transitionPrompt = `Thank you. Now, in this first part, I would like to ask you some questions about yourself. Let's talk about ${part1Topic.title}. ${firstQ}`;
+    const p1Questions = part1Topic?.questions || [];
+    const firstQ = p1Questions[0]?.question || p1Questions[0] || 'Can you tell me about your hometown?';
+    const transitionPrompt = `Thank you. Now, in this first part, I would like to ask you some questions about yourself. Let's talk about ${part1Topic?.title || 'your daily life'}. ${firstQ}`;
     setActivePromptText(firstQ);
 
     setTimeout(() => {
@@ -241,13 +268,14 @@ export default function SpeakingExaminerRoom({
   // Next Question in Part 1
   const handleNextPart1Question = () => {
     // Commit current candidate answer to transcript history
+    const p1Questions = part1Topic?.questions || [];
     const currentAnswer = speechEngine.transcript || speechEngine.interimTranscript || '(Candidate answered orally)';
     setDialogueHistory(prev => [
       ...prev,
       { 
         speaker: 'candidate', 
         stage: 'part1', 
-        questionText: isAnsweringFollowUp ? activeFollowUpPrompt : part1Topic.questions[p1Index]?.question,
+        questionText: isAnsweringFollowUp ? activeFollowUpPrompt : (p1Questions[p1Index]?.question || p1Questions[p1Index]),
         text: currentAnswer, 
         timestamp: new Date().toISOString() 
       }
@@ -279,9 +307,9 @@ export default function SpeakingExaminerRoom({
     setActiveFollowUpPrompt(null);
 
     const nextIndex = p1Index + 1;
-    if (nextIndex < part1Topic.questions.length) {
+    if (nextIndex < p1Questions.length) {
       setP1Index(nextIndex);
-      const nextQ = part1Topic.questions[nextIndex].question;
+      const nextQ = p1Questions[nextIndex]?.question || p1Questions[nextIndex];
       setActivePromptText(nextQ);
       speechEngine.speak(nextQ, { examinerId: examiner.id }, () => {
         setDialogueHistory(prev => [
@@ -349,7 +377,7 @@ export default function SpeakingExaminerRoom({
       { 
         speaker: 'candidate', 
         stage: 'part2_speak', 
-        cueCardTitle: part2Card.title,
+        cueCardTitle: part2Card?.title || 'Part 2 Topic',
         notes: part2Notes,
         text: currentP2Speech, 
         durationSec: part2SpeakSeconds,
@@ -360,8 +388,9 @@ export default function SpeakingExaminerRoom({
     setCurrentStage('part3');
     setP3Index(0);
 
-    const firstP3Q = part3Set.questions[0]?.question || 'How has technology influenced communication?';
-    const p3Intro = `We've been talking about ${part2Card.title}, and I'd like to discuss with you one or two more general questions related to this. Let's consider ${part3Set.topic}. ${firstP3Q}`;
+    const p3Questions = part3Set?.questions || [];
+    const firstP3Q = p3Questions[0]?.question || p3Questions[0] || 'How has technology influenced communication?';
+    const p3Intro = `We've been talking about ${part2Card?.title || 'this topic'}, and I'd like to discuss with you one or two more general questions related to this. Let's consider ${part3Set?.topic || 'broader perspectives'}. ${firstP3Q}`;
     setActivePromptText(firstP3Q);
 
     setTimeout(() => {
@@ -378,13 +407,14 @@ export default function SpeakingExaminerRoom({
 
   // Next Question in Part 3
   const handleNextPart3Question = () => {
+    const p3Questions = part3Set?.questions || [];
     const currentAnswer = speechEngine.transcript || speechEngine.interimTranscript || '(Candidate answered)';
     setDialogueHistory(prev => [
       ...prev,
       { 
         speaker: 'candidate', 
         stage: 'part3', 
-        questionText: isAnsweringFollowUp ? activeFollowUpPrompt : part3Set.questions[p3Index]?.question,
+        questionText: isAnsweringFollowUp ? activeFollowUpPrompt : (p3Questions[p3Index]?.question || p3Questions[p3Index]),
         text: currentAnswer, 
         timestamp: new Date().toISOString() 
       }
@@ -416,9 +446,9 @@ export default function SpeakingExaminerRoom({
     setActiveFollowUpPrompt(null);
 
     const nextIndex = p3Index + 1;
-    if (nextIndex < part3Set.questions.length) {
+    if (nextIndex < p3Questions.length) {
       setP3Index(nextIndex);
-      const nextQ = part3Set.questions[nextIndex].question;
+      const nextQ = p3Questions[nextIndex]?.question || p3Questions[nextIndex];
       setActivePromptText(nextQ);
       speechEngine.speak(nextQ, { examinerId: examiner.id }, () => {
         setDialogueHistory(prev => [
@@ -452,6 +482,7 @@ export default function SpeakingExaminerRoom({
       ];
       setDialogueHistory(finalTranscript);
       setIsExamCompleted(true);
+      sessionStorage.removeItem('ielts_speaking_session_transcript');
       if (onFinishExam) {
         onFinishExam(finalTranscript, {
           mockPack,
@@ -522,10 +553,10 @@ export default function SpeakingExaminerRoom({
           <div className="h-4 w-px bg-slate-800 shrink-0" />
           <span className="text-xs font-bold text-slate-300 truncate max-w-[130px] sm:max-w-none">
             {currentStage === 'greeting' && (isEn ? 'Procedure: ID & Verification' : 'Thủ tục: Chào hỏi & ID')}
-            {currentStage === 'part1' && `Part 1 (${p1Index + 1}/${part1Topic.questions.length})`}
+            {currentStage === 'part1' && `Part 1 (${p1Index + 1}/${(part1Topic?.questions || []).length})`}
             {currentStage === 'part2_prep' && (isEn ? 'Part 2: Prep (60s)' : 'Part 2: Nháp (60s)')}
             {currentStage === 'part2_speak' && (isEn ? 'Part 2: Speaking (2 min)' : 'Part 2: Nói (2 phút)')}
-            {currentStage === 'part3' && `Part 3 (${p3Index + 1}/${part3Set.questions.length})`}
+            {currentStage === 'part3' && `Part 3 (${p3Index + 1}/${(part3Set?.questions || []).length})`}
             {currentStage === 'finishing' && (isEn ? 'Completed' : 'Hoàn thành')}
           </span>
         </div>
@@ -565,7 +596,10 @@ export default function SpeakingExaminerRoom({
           </button>
 
           <button
-            onClick={onExitRoom}
+            onClick={() => {
+              sessionStorage.removeItem('ielts_speaking_session_transcript');
+              if (onExitRoom) onExitRoom();
+            }}
             className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
             title={isEn ? "Exit exam room" : "Thoát phòng thi"}
           >
@@ -628,12 +662,12 @@ export default function SpeakingExaminerRoom({
               </div>
 
               <h2 className="text-base sm:text-lg font-black text-white leading-snug">
-                {part2Card.title}
+                {part2Card?.cueCard?.intro || part2Card?.prompt || part2Card?.title}
               </h2>
 
               <p className="text-xs text-slate-300 font-medium">You should say:</p>
               <ul className="list-disc list-inside space-y-1 text-xs text-slate-300 pl-1">
-                {part2Card.prompts.map((p, idx) => (
+                {(part2Card?.cueCard?.bullets || part2Card?.cueBullets || part2Card?.prompts || []).map((p, idx) => (
                   <li key={idx} className="leading-relaxed">{p}</li>
                 ))}
               </ul>

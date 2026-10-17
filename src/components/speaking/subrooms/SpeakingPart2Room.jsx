@@ -52,7 +52,6 @@ export default function SpeakingPart2Room({
   isRefiningTranscript,
   refiningClipKey,
   refinedClips = {},
-  part2PacingSeconds,
   handleTogglePart2Speaking,
   isMicConnecting,
   micErrorDetail,
@@ -347,9 +346,14 @@ export default function SpeakingPart2Room({
       {/* Cue Card Frame */}
       <div className="p-5 rounded-2xl bg-slate-950 border-2 border-purple-500/40 space-y-3 shadow-inner">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-extrabold text-purple-400 uppercase tracking-wider">{activeP2Card.cueCard?.intro}</span>
+          <span className="text-xs font-extrabold text-purple-400 uppercase tracking-wider">
+            {activeP2Card.cueCard?.intro || activeP2Card.prompt || activeP2Card.title}
+          </span>
           <button
-            onClick={() => handleReadText(`${activeP2Card.title}. ${activeP2Card.cueCard?.bullets.join('. ')}`)}
+            onClick={() => {
+              const bulletsList = activeP2Card.cueCard?.bullets || activeP2Card.cueBullets || activeP2Card.prompts || [];
+              handleReadText(`${activeP2Card.title}. ${bulletsList.join('. ')}`);
+            }}
             className="text-xs text-purple-300 hover:text-white font-bold flex items-center space-x-1 cursor-pointer"
           >
             <Volume2 className="w-3.5 h-3.5" />
@@ -357,7 +361,7 @@ export default function SpeakingPart2Room({
           </button>
         </div>
         <ul className="space-y-2 pl-4 list-disc text-xs sm:text-sm text-slate-200 leading-relaxed font-medium">
-          {activeP2Card.cueCard?.bullets.map((b, idx) => (
+          {(activeP2Card.cueCard?.bullets || activeP2Card.cueBullets || activeP2Card.prompts || []).map((b, idx) => (
             <li key={idx}>{b}</li>
           ))}
         </ul>
@@ -418,7 +422,11 @@ export default function SpeakingPart2Room({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {(customQuadrantNotes || activeP2Card.mindmapNotes || []).map((note, idx) => (
+          {(
+            customQuadrantNotes ||
+            activeP2Card.mindmapNotes ||
+            (activeP2Card.prepGuide4Quadrants ? Object.values(activeP2Card.prepGuide4Quadrants).filter(Boolean) : [])
+          ).map((note, idx) => (
             <div key={idx} className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
               <span className="font-bold text-purple-400 mr-1.5">{isEn ? `Box ${idx + 1}:` : `Ô ${idx + 1}:`}</span>
               <span>{note}</span>
@@ -511,7 +519,7 @@ export default function SpeakingPart2Room({
         {speechEngine.transcript && !speechEngine.isListening && (
           <SpeakingFillerTracker 
             transcript={speechEngine.transcript}
-            durationSec={speechEngine.audioClips?.[`p2_${activeP2Card.id}`]?.duration || (120 - part2PacingSeconds)}
+            durationSec={speechEngine.audioClips?.[`p2_${activeP2Card.id}`]?.duration || speakSecondsElapsed || 60}
           />
         )}
 
