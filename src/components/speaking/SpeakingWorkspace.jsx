@@ -5,7 +5,7 @@ import {
   CheckCircle2, ChevronRight, RefreshCw, BarChart2, Flame,
   FileText, Compass, MessageSquare, ArrowRight, Info, ShieldCheck,
   RotateCcw, X, Loader2, GraduationCap, PenTool,
-  Maximize2, Minimize2, ChevronDown, Sliders
+  Maximize2, Minimize2, ChevronDown, Sliders, Zap
 } from 'lucide-react';
 import { 
   SPEAKING_EXAMINER_PROFILES, 
@@ -120,6 +120,23 @@ export default function SpeakingWorkspace({
   // Consolidated Mobile Tools Dropdown State
   const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
 
+  // Fault-Tolerant Draft Storage & Recovery
+  const [pendingDraft, setPendingDraft] = useState(null);
+
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem('ielts_speaking_draft_backup');
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed && Array.isArray(parsed.finalTranscript) && parsed.finalTranscript.length > 0) {
+          setPendingDraft(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse ielts_speaking_draft_backup:', e);
+    }
+  }, []);
+
   // Sync external generator trigger
   useEffect(() => {
     if (openGeneratorTrigger) {
@@ -222,6 +239,91 @@ export default function SpeakingWorkspace({
     setCurrentEvaluation(evalResult);
   };
 
+  const handleRecoverDraft = async (evalWithAi = false) => {
+    if (!pendingDraft) return;
+    const { finalTranscript, meta, mockPack: draftPack, examiner: draftExaminer } = pendingDraft;
+    const targetPack = draftPack || activeMockPack;
+    const targetExaminer = draftExaminer || activeExaminer;
+    const duration = meta?.totalDurationSec || 600;
+
+    if (evalWithAi && apiKey) {
+      setIsEvaluating(true);
+      setIsResultModalOpen(true);
+      try {
+        const evalResult = await evaluateSpeakingMockExam({
+          dialogueHistory: finalTranscript,
+          mockPack: targetPack,
+          examiner: targetExaminer,
+          totalDurationSec: duration,
+          apiKey,
+          model,
+          language
+        });
+        setCurrentEvaluation(evalResult);
+        setCompletedExamData({ finalTranscript, meta, evaluation: evalResult });
+        try { localStorage.removeItem('ielts_speaking_draft_backup'); } catch (e) {}
+        setPendingDraft(null);
+
+        if (onSpeakingSubmitted) {
+          onSpeakingSubmitted({
+            id: `spk-${Date.now()}`,
+            submittedAt: new Date().toISOString(),
+            mockPack: { id: targetPack.id, title: targetPack.title, targetBand: targetPack.targetBand },
+            examiner: { name: targetExaminer.name, accent: targetExaminer.accent },
+            durationSec: duration,
+            evaluation: evalResult,
+            dialogueHistory: finalTranscript
+          });
+        }
+      } catch (err) {
+        console.error('Error recovering draft with AI, fallback to algorithmic:', err);
+        const fallbackResult = evaluateSpeakingAlgorithmically({
+          dialogueHistory: finalTranscript,
+          mockPack: targetPack,
+          examiner: targetExaminer,
+          totalDurationSec: duration
+        });
+        setCurrentEvaluation(fallbackResult);
+        setCompletedExamData({ finalTranscript, meta, evaluation: fallbackResult });
+        try { localStorage.removeItem('ielts_speaking_draft_backup'); } catch (e) {}
+        setPendingDraft(null);
+      } finally {
+        setIsEvaluating(false);
+      }
+    } else {
+      const evalResult = evaluateSpeakingAlgorithmically({
+        dialogueHistory: finalTranscript,
+        mockPack: targetPack,
+        examiner: targetExaminer,
+        totalDurationSec: duration
+      });
+      setCurrentEvaluation(evalResult);
+      setCompletedExamData({ finalTranscript, meta, evaluation: evalResult });
+      setIsResultModalOpen(true);
+      try { localStorage.removeItem('ielts_speaking_draft_backup'); } catch (e) {}
+      setPendingDraft(null);
+
+      if (onSpeakingSubmitted) {
+        onSpeakingSubmitted({
+          id: `spk-${Date.now()}`,
+          submittedAt: new Date().toISOString(),
+          mockPack: { id: targetPack.id, title: targetPack.title, targetBand: targetPack.targetBand },
+          examiner: { name: targetExaminer.name, accent: targetExaminer.accent },
+          durationSec: duration,
+          evaluation: evalResult,
+          dialogueHistory: finalTranscript
+        });
+      }
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    try {
+      localStorage.removeItem('ielts_speaking_draft_backup');
+    } catch (e) {}
+    setPendingDraft(null);
+  };
+
   return (
     <div className="flex-1 flex flex-col bg-slate-950 text-slate-100 h-full min-h-0 overflow-hidden">
       
@@ -245,6 +347,62 @@ export default function SpeakingWorkspace({
         isMobileToolsOpen={isMobileToolsOpen}
         setIsMobileToolsOpen={setIsMobileToolsOpen}
       />
+
+      {/* RECOVERABLE DRAFT BANNER (Fault-Tolerant Mock Exam Recovery) */}
+      {pendingDraft && (
+        <div className="bg-gradient-to-r from-purple-950 via-slate-900 to-indigo-950 border-b border-purple-500/50 px-4 py-3 flex flex-wrap items-center justify-between text-xs text-purple-100 shrink-0 shadow-lg animate-in slide-in-from-top-2 duration-300 gap-3">
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300 shrink-0">
+              <Sparkles className="w-4 h-4 text-purple-300 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center space-x-2">
+                <span className="font-extrabold text-white text-xs sm:text-sm">
+                  {isEn ? 'Recoverable Speaking Exam Found' : 'Phát hiện bài thi Speaking chưa chấm'}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-mono">
+                  {pendingDraft.mockPack?.title || (isEn ? 'Mock Test' : 'Đề thi thử')}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 truncate mt-0.5">
+                {isEn
+                  ? `You have an un-evaluated speaking dialogue record (${pendingDraft.finalTranscript?.length || 0} turns) from your previous session.`
+                  : `Bạn có bản ghi cuộc hội thoại thi (${pendingDraft.finalTranscript?.length || 0} lượt nói) từ phiên làm việc trước chưa được chấm điểm.`}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 shrink-0">
+            <button
+              onClick={() => handleRecoverDraft(false)}
+              className="px-3 py-1.5 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 border border-emerald-500/40 text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm"
+              title={isEn ? "Instantly grade via 0.02ms offline algorithmic evaluator" : "Chấm điểm ngay tức thì bằng thuật toán ngoại tuyến"}
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-300" />
+              <span>{isEn ? 'Quick Grade (Offline)' : 'Chấm ngay (Offline)'}</span>
+            </button>
+
+            {apiKey && (
+              <button
+                onClick={() => handleRecoverDraft(true)}
+                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all cursor-pointer flex items-center space-x-1.5 shadow-md shadow-purple-950/40"
+                title={isEn ? "Grade using Gemini AI 4-criteria examiner" : "Chấm điểm toàn diện bằng Giám khảo AI"}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{isEn ? 'Grade with AI' : 'Chấm bằng AI'}</span>
+              </button>
+            )}
+
+            <button
+              onClick={handleDiscardDraft}
+              className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 border border-slate-700/60 transition-colors cursor-pointer"
+              title={isEn ? 'Discard draft' : 'Bỏ qua bản nháp này'}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 1. BROWSER PRE-FLIGHT NOTICE BANNER */}
       {isEdge ? (
@@ -437,6 +595,28 @@ export default function SpeakingWorkspace({
             if (speechEngine.isListening) speechEngine.stopListening();
             if (speechEngine.clearAudioClips) speechEngine.clearAudioClips();
 
+            // Fault-Tolerant Draft Storage: Write backup draft immediately
+            const draftPayload = {
+              finalTranscript,
+              meta,
+              mockPack: {
+                id: activeMockPack.id,
+                title: activeMockPack.title,
+                targetBand: activeMockPack.targetBand
+              },
+              examiner: {
+                id: activeExaminer.id,
+                name: activeExaminer.name,
+                accent: activeExaminer.accent
+              },
+              savedAt: new Date().toISOString()
+            };
+            try {
+              localStorage.setItem('ielts_speaking_draft_backup', JSON.stringify(draftPayload));
+            } catch (e) {
+              console.warn('Unable to persist speaking draft to localStorage:', e);
+            }
+
             // Read learner's preferred engine from Settings
             let preferredEngine = 'algorithmic';
             try {
@@ -457,6 +637,10 @@ export default function SpeakingWorkspace({
               setCurrentEvaluation(evalResult);
               setCompletedExamData({ finalTranscript, meta, evaluation: evalResult });
               setIsResultModalOpen(true);
+              try {
+                localStorage.removeItem('ielts_speaking_draft_backup');
+                setPendingDraft(null);
+              } catch (e) {}
 
               const submissionRecord = {
                 id: `spk-${Date.now()}`,
@@ -498,6 +682,10 @@ export default function SpeakingWorkspace({
 
               setCurrentEvaluation(evalResult);
               setCompletedExamData({ finalTranscript, meta, evaluation: evalResult });
+              try {
+                localStorage.removeItem('ielts_speaking_draft_backup');
+                setPendingDraft(null);
+              } catch (e) {}
 
               const submissionRecord = {
                 id: `spk-${Date.now()}`,
@@ -529,6 +717,10 @@ export default function SpeakingWorkspace({
               });
               setCurrentEvaluation(fallbackResult);
               setCompletedExamData({ finalTranscript, meta, evaluation: fallbackResult });
+              try {
+                localStorage.removeItem('ielts_speaking_draft_backup');
+                setPendingDraft(null);
+              } catch (e) {}
             } finally {
               setIsEvaluating(false);
             }
