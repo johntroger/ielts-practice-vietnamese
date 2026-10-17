@@ -105,6 +105,43 @@ export default function PassagePane({
     return count;
   }, [highlights]);
 
+  // Fallback paragraph parser if passage.paragraphs is missing
+  const resolvedParagraphs = useMemo(() => {
+    if (Array.isArray(passage?.paragraphs) && passage.paragraphs.length > 0) {
+      return passage.paragraphs;
+    }
+    const raw = passage?.passage || passage?.text || '';
+    if (!raw) return [];
+    const re = /(?:^|[\.\?!]\s+|\n\s*|\s{2,}|\b[a-zA-Z]{2,}\s+)([A-L])\.\s+/g;
+    const matches = [];
+    let m;
+    let expectedChar = 65;
+    while ((m = re.exec(raw)) !== null) {
+      if (m[1].charCodeAt(0) === expectedChar) {
+        const letterPos = m.index + m[0].indexOf(m[1]);
+        matches.push({ letter: m[1], pos: letterPos });
+        expectedChar++;
+      }
+    }
+    if (matches.length >= 2) {
+      const list = [];
+      for (let i = 0; i < matches.length; i++) {
+        const cur = matches[i];
+        const start = cur.pos + 2;
+        let end = raw.length;
+        if (i + 1 < matches.length) {
+          end = matches[i + 1].pos;
+          while (end > start && /[\s\.\?!]/.test(raw[end - 1])) end--;
+        }
+        list.push({ id: cur.letter, text: raw.slice(start, end).trim() });
+      }
+      return list;
+    }
+    const chunks = raw.split(/\n\s*\n/).map(c => c.trim()).filter(Boolean);
+    const letters = 'ABCDEFGHIJKL'.split('');
+    return chunks.map((c, idx) => ({ id: letters[idx] || String(idx + 1), text: c }));
+  }, [passage]);
+
   // Double-Click / Selection Dictionary Tooltip State
   const [tooltip, setTooltip] = useState(null); // { word, context, x, y, loading, data, error, saved }
   const paneRef = useRef(null);
@@ -587,7 +624,7 @@ export default function PassagePane({
 
         {/* Paragraphs */}
         <div className={`space-y-6 ${ts.paraText}`}>
-          {passage?.paragraphs?.map(para => {
+          {resolvedParagraphs.map(para => {
             const isTargetEvidence = activeEvidencePara === para.id;
             return (
               <div

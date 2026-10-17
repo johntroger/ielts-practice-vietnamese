@@ -209,20 +209,24 @@ export default function QuestionPane({
     );
   };
   const renderTFNGGroup = (group) => {
-    const isYesNo = group.type === 'yes_no_not_given';
+    const rawType = (group.type || '').replace(/-/g, '_').toLowerCase();
+    const isYesNo = rawType === 'yes_no_not_given';
     const options = isYesNo ? ['YES', 'NO', 'NOT GIVEN'] : ['TRUE', 'FALSE', 'NOT GIVEN'];
 
     return (
       <div className="space-y-4">
         {group.questions.map(q => {
-          const currentAns = userAnswers[q.order] || '';
-          const isCorrect = isSubmitted && currentAns.trim().toUpperCase() === q.answer.trim().toUpperCase();
+          const qOrder = q.order || q.questionNumber || q.id;
+          const qText = q.questionText || q.text || '';
+          const qAns = String(q.answer || q.correctAnswer || '').trim();
+          const currentAns = userAnswers[qOrder] || '';
+          const isCorrect = isSubmitted && currentAns.trim().toUpperCase() === qAns.toUpperCase();
           const isWrong = isSubmitted && currentAns && !isCorrect;
 
           return (
             <div 
-              key={q.order}
-              id={`question-card-${q.order}`}
+              key={qOrder}
+              id={`question-card-${qOrder}`}
               className={`p-4 rounded-xl border transition-all ${
                 isSubmitted
                   ? isCorrect 
@@ -234,13 +238,13 @@ export default function QuestionPane({
               <div className="flex items-start gap-3">
                 <div className="flex flex-col items-center gap-1 shrink-0">
                   <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
-                    {q.order}
+                    {qOrder}
                   </span>
-                  {renderFlagButton(q.order)}
+                  {renderFlagButton(qOrder)}
                 </div>
                 <div className="flex-1 space-y-3">
                   <p className="text-sm font-medium text-slate-900 leading-relaxed">
-                    {q.questionText}
+                    {qText}
                   </p>
 
                   {/* Segmented Button Choice */}
@@ -252,8 +256,8 @@ export default function QuestionPane({
                           key={opt}
                           type="button"
                           disabled={isSubmitted}
-                          onClick={() => handleOptionSelect(q.order, opt)}
-                          onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt)}
+                          onClick={() => handleOptionSelect(qOrder, opt)}
+                          onDoubleClick={(e) => handleOptionDoubleClick(e, qOrder, opt)}
                           title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
                           className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all border select-none touch-manipulation ${
                             isSelected
@@ -281,13 +285,32 @@ export default function QuestionPane({
     return (
       <div className="space-y-4">
         {group.questions.map(q => {
-          const currentAns = userAnswers[q.order] || '';
-          const isCorrect = isSubmitted && currentAns.trim().toUpperCase() === q.answer.trim().toUpperCase();
+          const qOrder = q.order || q.questionNumber || q.id;
+          const qText = q.questionText || q.text || '';
+          const qAns = String(q.answer || q.correctAnswer || '').trim();
+          const currentAns = userAnswers[qOrder] || '';
+          const isCorrect = isSubmitted && currentAns.trim().toUpperCase() === qAns.toUpperCase();
+
+          const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+          const normalizedOptions = (q.options || []).map((opt, idx) => {
+            if (typeof opt === 'object' && opt !== null) {
+              return {
+                letter: String(opt.letter || opt.value || letters[idx]).toUpperCase(),
+                text: opt.text || opt.label || ''
+              };
+            }
+            const str = String(opt || '').trim();
+            const m = str.match(/^([A-H])[\.\)\:\-\s]\s*(.*)$/i);
+            if (m) {
+              return { letter: m[1].toUpperCase(), text: m[2].trim() || str };
+            }
+            return { letter: letters[idx] || String.fromCharCode(65 + idx), text: str };
+          });
 
           return (
             <div 
-              key={q.order}
-              id={`question-card-${q.order}`}
+              key={qOrder}
+              id={`question-card-${qOrder}`}
               className={`p-4 rounded-xl border transition-all ${
                 isSubmitted
                   ? isCorrect 
@@ -299,27 +322,27 @@ export default function QuestionPane({
               <div className="flex items-start gap-3">
                 <div className="flex flex-col items-center gap-1 shrink-0">
                   <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
-                    {q.order}
+                    {qOrder}
                   </span>
-                  {renderFlagButton(q.order)}
+                  {renderFlagButton(qOrder)}
                 </div>
                 <div className="flex-1 space-y-3">
                   <p className="text-sm font-semibold text-slate-900 leading-relaxed">
-                    {q.questionText}
+                    {qText}
                   </p>
 
                   <div className="space-y-2 pt-1 select-none">
-                    {q.options?.map(opt => {
+                    {normalizedOptions.map(opt => {
                       const isSelected = currentAns.toUpperCase() === opt.letter.toUpperCase();
-                      const isKey = isSubmitted && q.answer.toUpperCase() === opt.letter.toUpperCase();
+                      const isKey = isSubmitted && qAns.toUpperCase() === opt.letter.toUpperCase();
 
                       return (
                         <button
                           key={opt.letter}
                           type="button"
                           disabled={isSubmitted}
-                          onClick={() => handleOptionSelect(q.order, opt.letter)}
-                          onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt.letter)}
+                          onClick={() => handleOptionSelect(qOrder, opt.letter)}
+                          onDoubleClick={(e) => handleOptionDoubleClick(e, qOrder, opt.letter)}
                           title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
                           className={`w-full text-left p-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-start gap-2.5 border select-none touch-manipulation ${
                             isSelected
@@ -455,16 +478,17 @@ export default function QuestionPane({
         )}
 
         {group.questions.map(q => {
-          const currentAns = userAnswers[q.order] || '';
-          const isCorrect = isSubmitted && (
-            q.answer.toLowerCase() === currentAns.trim().toLowerCase() ||
-            (q.acceptableAnswers && q.acceptableAnswers.some(a => a.toLowerCase() === currentAns.trim().toLowerCase()))
-          );
+          const qOrder = q.order || q.questionNumber || q.id;
+          const qText = q.questionText || q.text || '';
+          const qAns = String(q.answer || q.correctAnswer || '').trim();
+          const currentAns = userAnswers[qOrder] || '';
+          const evalRes = evaluateQuestionAnswer(q, currentAns);
+          const isCorrect = isSubmitted && evalRes.isCorrect;
 
           return (
             <div 
-              key={q.order}
-              id={`question-card-${q.order}`}
+              key={qOrder}
+              id={`question-card-${qOrder}`}
               className={`p-4 rounded-xl border transition-all ${
                 isSubmitted
                   ? isCorrect 
@@ -476,13 +500,13 @@ export default function QuestionPane({
               <div className="flex items-start gap-3">
                 <div className="flex flex-col items-center gap-1 shrink-0">
                   <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
-                    {q.order}
+                    {qOrder}
                   </span>
-                  {renderFlagButton(q.order)}
+                  {renderFlagButton(qOrder)}
                 </div>
                 <div className="flex-1 space-y-2">
                   <p className="text-sm font-medium text-slate-800 leading-relaxed">
-                    {q.questionText}
+                    {qText}
                   </p>
 
                   <div className="pt-1">
@@ -490,7 +514,7 @@ export default function QuestionPane({
                       type="text"
                       disabled={isSubmitted}
                       value={currentAns}
-                      onChange={(e) => onAnswerChange(q.order, e.target.value)}
+                      onChange={(e) => onAnswerChange(qOrder, e.target.value)}
                       placeholder={group.wordBank ? "Enter letter (e.g. A, B...)" : "Type your answer..."}
                       className={`w-full sm:max-w-md px-3.5 py-2 rounded-xl text-sm border focus:outline-hidden focus:ring-2 transition-all ${
                         isSubmitted
@@ -533,19 +557,26 @@ export default function QuestionPane({
         )}
 
         {group.questions.map(q => {
-          const currentAns = userAnswers[q.order] || '';
-          const isCorrect = isSubmitted && currentAns.trim().toUpperCase() === q.answer.trim().toUpperCase();
+          const qOrder = q.order || q.questionNumber || q.id;
+          const qText = q.questionText || q.text || '';
+          const qAns = String(q.answer || q.correctAnswer || '').trim();
+          const currentAns = userAnswers[qOrder] || '';
+          const isCorrect = isSubmitted && currentAns.trim().toUpperCase() === qAns.toUpperCase();
 
           const optionsList = group.headings 
-            ? group.headings.map(h => h.id) 
+            ? group.headings.map(h => h.id || h.letter) 
             : group.features 
-              ? group.features.map(f => f.letter) 
-              : [];
+              ? group.features.map(f => f.letter || f.id) 
+              : group.options && group.options.length > 0
+                ? group.options.map(o => (typeof o === 'object' ? (o.letter || o.id || o.value) : o))
+                : (q.options && q.options.length > 0)
+                  ? q.options.map(o => (typeof o === 'object' ? (o.letter || o.id || o.value) : o))
+                  : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
           return (
             <div 
-              key={q.order}
-              id={`question-card-${q.order}`}
+              key={qOrder}
+              id={`question-card-${qOrder}`}
               className={`p-4 rounded-xl border transition-all ${
                 isSubmitted
                   ? isCorrect 
@@ -557,28 +588,28 @@ export default function QuestionPane({
               <div className="flex items-start gap-3">
                 <div className="flex flex-col items-center gap-1 shrink-0">
                   <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">
-                    {q.order}
+                    {qOrder}
                   </span>
-                  {renderFlagButton(q.order)}
+                  {renderFlagButton(qOrder)}
                 </div>
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold text-slate-900 leading-relaxed">
-                      {q.questionText}
+                      {qText}
                     </p>
                   </div>
 
                   {/* Dropdown / Segmented selector */}
                   <div className="flex flex-wrap gap-1.5 pt-1 select-none">
                     {optionsList.map(opt => {
-                      const isSelected = currentAns.toUpperCase() === opt.toUpperCase();
+                      const isSelected = currentAns.toUpperCase() === String(opt).toUpperCase();
                       return (
                         <button
                           key={opt}
                           type="button"
                           disabled={isSubmitted}
-                          onClick={() => handleOptionSelect(q.order, opt)}
-                          onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt)}
+                          onClick={() => handleOptionSelect(qOrder, opt)}
+                          onDoubleClick={(e) => handleOptionDoubleClick(e, qOrder, opt)}
                           title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
                           className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border select-none touch-manipulation ${
                             isSelected
@@ -961,11 +992,21 @@ export default function QuestionPane({
           )}
 
           {/* Render by Question Group Type */}
-          {(group.type === 'true_false_not_given' || group.type === 'yes_no_not_given') && renderTFNGGroup(group)}
-          {group.type === 'multiple_choice_single' && renderMultipleChoiceGroup(group)}
-          {group.type === 'multiple_choice_multi' && renderMultiSelectGroup(group)}
-          {(group.type === 'summary_completion' || group.type === 'sentence_completion') && renderCompletionGroup(group)}
-          {(group.type === 'matching_headings' || group.type === 'matching_features') && renderMatchingGroup(group)}
+          {(() => {
+            const rawType = (group.type || '').replace(/-/g, '_').toLowerCase();
+            const isTFNG = rawType === 'true_false_not_given' || rawType === 'yes_no_not_given';
+            const isMCSingle = rawType === 'multiple_choice_single' || rawType === 'multiple_choice';
+            const isMCMulti = rawType === 'multiple_choice_multi' || rawType === 'multiple_choice_multiple';
+            const isMatching = rawType.includes('matching') || rawType.includes('classification');
+            const isCompletion = rawType.includes('completion') || rawType.includes('short_answer');
+
+            if (isTFNG) return renderTFNGGroup(group);
+            if (isMCSingle) return renderMultipleChoiceGroup(group);
+            if (isMCMulti) return renderMultiSelectGroup(group);
+            if (isCompletion) return renderCompletionGroup(group);
+            if (isMatching) return renderMatchingGroup(group);
+            return renderCompletionGroup(group);
+          })()}
         </div>
       ))}
 

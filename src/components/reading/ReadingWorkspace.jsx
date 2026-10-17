@@ -313,21 +313,23 @@ export default function ReadingWorkspace({
 
   // Active Passage object
   const activePassage = useMemo(() => {
-    return currentTest?.passages.find(p => p.passageNumber === selectedPassageNum) || currentTest?.passages[0];
+    const list = currentTest?.passages || currentTest?.sections || [];
+    return list.find(p => (p.passageNumber || p.sectionNumber) === selectedPassageNum) || list[0];
   }, [currentTest, selectedPassageNum]);
 
   // Flatten all questions for palette checks and exam hook
   const allQuestions = useMemo(() => {
-    if (!currentTest?.passages) return [];
-    const list = [];
-    currentTest.passages.forEach(p => {
-      p.questionGroups.forEach(g => {
-        g.questions.forEach(q => {
-          list.push({ ...q, passageNumber: p.passageNumber, type: g.type });
+    const list = currentTest?.passages || currentTest?.sections;
+    if (!list) return [];
+    const questions = [];
+    list.forEach(p => {
+      (p.questionGroups || []).forEach(g => {
+        (g.questions || []).forEach(q => {
+          questions.push({ ...q, passageNumber: p.passageNumber || p.sectionNumber || 1, type: g.type });
         });
       });
     });
-    return list;
+    return questions;
   }, [currentTest]);
 
   // useReadingExam Hook

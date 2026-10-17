@@ -243,12 +243,21 @@ export default function ReadingLibraryModal({
 
     // 1. Tab filter
     let matchesTab = true;
+    const is101Test = Boolean(
+      test.source === '101_past_papers' ||
+      test.is101PastPaper ||
+      test.title?.includes('101 Past Papers') ||
+      test.title?.includes('101 IELTS Reading') ||
+      test.id?.startsWith('101-reading-test-') ||
+      test.id?.startsWith('past-paper-101-reading-test-')
+    );
+
     if (activeTab === 'past_papers') {
-      matchesTab = Boolean(test.source === '101_past_papers' || test.is101PastPaper || test.title?.includes('101 Past Papers'));
+      matchesTab = is101Test;
     } else if (activeTab === 'cambridge') {
-      matchesTab = Boolean((test.isCambridge || !test.isCustom) && test.source !== '101_past_papers' && !test.is101PastPaper && !test.title?.includes('101 Past Papers'));
+      matchesTab = Boolean((test.isCambridge || !test.isCustom) && !is101Test);
     } else if (activeTab === 'ai') {
-      matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo') && !test.title?.includes('[Full Test') && test.source !== '101_past_papers' && !test.is101PastPaper);
+      matchesTab = test.isCustom && (test.id.startsWith('custom-test-') && !test.description?.includes('trích xuất từ bài báo') && !test.title?.includes('[Full Test') && !is101Test);
     } else if (activeTab === 'ingest') {
       matchesTab = test.isCustom && (test.description?.includes('trích xuất từ bài báo') || test.title?.includes('📰') || test.title?.includes('[Báo chí'));
     } else if (activeTab === 'public') {
@@ -301,12 +310,20 @@ export default function ReadingLibraryModal({
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const pastPapersCount = allReadingTests.filter(t => t.source === '101_past_papers' || t.is101PastPaper || t.title?.includes('101 Past Papers')).length;
+    const is101 = (t) => Boolean(
+      t.source === '101_past_papers' ||
+      t.is101PastPaper ||
+      t.title?.includes('101 Past Papers') ||
+      t.title?.includes('101 IELTS Reading') ||
+      t.id?.startsWith('101-reading-test-') ||
+      t.id?.startsWith('past-paper-101-reading-test-')
+    );
+    const pastPapersCount = allReadingTests.filter(is101).length;
     return {
       total: allReadingTests.length,
       pastPapers: pastPapersCount,
-      cambridge: allReadingTests.filter(t => (t.isCambridge || !t.isCustom) && t.source !== '101_past_papers' && !t.is101PastPaper && !t.title?.includes('101 Past Papers')).length,
-      ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test') && t.source !== '101_past_papers' && !t.is101PastPaper).length,
+      cambridge: allReadingTests.filter(t => (t.isCambridge || !t.isCustom) && !is101(t)).length,
+      ai: allReadingTests.filter(t => t.isCustom && !t.description?.includes('trích xuất từ bài báo') && !t.title?.includes('[Full Test') && !is101(t)).length,
       ingest: allReadingTests.filter(t => t.isCustom && (t.description?.includes('trích xuất từ bài báo') || t.title?.includes('📰') || t.title?.includes('[Báo chí'))).length,
       public: allReadingTests.filter(t => t.isPublic).length,
       mastered: allReadingTests.filter(t => masteredIds.includes(t.id)).length,
