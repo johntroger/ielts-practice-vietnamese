@@ -94,6 +94,7 @@ export default function SpeakingWorkspace({
     setMockFilter,
     mockPackCounts,
     filteredMockPacks,
+    currentPackIndex,
     handlePrevPack,
     handleNextPack,
     handlePackGenerated,

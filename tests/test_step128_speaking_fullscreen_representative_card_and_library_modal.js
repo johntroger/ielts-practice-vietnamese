@@ -29,21 +29,26 @@ assert.ok(fs.existsSync(modalPath), 'SpeakingMockLibraryModal.jsx must exist');
 const workspaceContent = fs.readFileSync(workspacePath, 'utf8');
 const modalContent = fs.readFileSync(modalPath, 'utf8');
 
+const heroPath = path.join(__dirname, '../src/components/speaking/SpeakingMockHero.jsx');
+const heroContent = fs.existsSync(heroPath) ? fs.readFileSync(heroPath, 'utf8') : '';
+
 // 1. Fullscreen layout verification
 assert.ok(
   workspaceContent.includes('h-full min-h-0 overflow-hidden'),
   'SpeakingWorkspace root container must use h-full min-h-0 overflow-hidden'
 );
 assert.ok(
-  workspaceContent.includes('max-w-5xl xl:max-w-6xl'),
-  'SpeakingWorkspace main stage must use wide responsive container max-w-5xl xl:max-w-6xl'
+  workspaceContent.includes('max-w-5xl xl:max-w-6xl') || heroContent.includes('max-w-5xl xl:max-w-6xl'),
+  'SpeakingWorkspace / SpeakingMockHero main stage must use wide responsive container max-w-5xl xl:max-w-6xl'
 );
 
 // 2. Representative card verification
 assert.ok(
   workspaceContent.includes('Selected Mock Test Pack (Representative)') ||
-  workspaceContent.includes('Bộ Đề Thi Thử Đang Chọn (Đại Diện)'),
-  'SpeakingWorkspace must display representative test pack header'
+  workspaceContent.includes('Bộ Đề Thi Thử Đang Chọn (Đại Diện)') ||
+  heroContent.includes('Selected Mock Test Pack (Representative)') ||
+  heroContent.includes('Bộ Đề Thi Thử Đang Chọn (Đại Diện)'),
+  'SpeakingMockHero must display representative test pack header'
 );
 assert.ok(
   workspaceContent.includes('handlePrevPack') && workspaceContent.includes('handleNextPack'),

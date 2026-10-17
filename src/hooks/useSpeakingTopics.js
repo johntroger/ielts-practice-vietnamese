@@ -467,6 +467,7 @@ export function useSpeakingTopics({ isEn = false } = {}) {
     setMockFilter,
     mockPackCounts,
     filteredMockPacks,
+    currentPackIndex,
     handlePrevPack,
     handleNextPack,
     handlePackGenerated,
