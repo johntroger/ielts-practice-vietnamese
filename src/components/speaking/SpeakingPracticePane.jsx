@@ -363,7 +363,7 @@ export default function SpeakingPracticePane({
       });
 
       if (accurateTranscript && speechEngine.setCustomTranscript) {
-        speechEngine.setCustomTranscript(accurateTranscript);
+        speechEngine.setCustomTranscript(accurateTranscript, clipKey);
         setRefinedClips(prev => ({ ...prev, [clipKey]: true }));
       }
       return accurateTranscript;
@@ -379,10 +379,10 @@ export default function SpeakingPracticePane({
 
   // 1. ALGORITHMIC EVALUATION (100% Offline, Instant 0.02ms, Free)
   const handleEvaluateAlgorithmically = (clipKey, questionText, topicTitle, partNum) => {
-    let currentTranscript = evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
-    if (clipKey && speechEngine.transcript?.trim()) {
-      currentTranscript = speechEngine.transcript.trim();
-    }
+    const clipSpecificText = clipKey
+      ? (speechEngine.transcriptsByClip?.[clipKey] ?? (speechEngine.activeClipId === clipKey ? speechEngine.transcript : ''))
+      : speechEngine.transcript;
+    let currentTranscript = clipSpecificText?.trim() || evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
     const clip = clipKey ? speechEngine.audioClips?.[clipKey] : null;
 
     if (!currentTranscript || currentTranscript.split(/\s+/).filter(Boolean).length < 3) {
@@ -402,7 +402,7 @@ export default function SpeakingPracticePane({
         part: activePart,
         topicTitle: finalTopic,
         questionText: finalQuestion,
-        cueBullets: activePart === 2 ? (activeP2Card?.cueCard?.bullets || []) : null,
+        cueBullets: activePart === 2 ? (activeP2Card?.cueCard?.bullets || activeP2Card?.cueBullets || activeP2Card?.prompts || []) : null,
         candidateTranscript: currentTranscript,
         durationSec
       });
@@ -436,10 +436,10 @@ export default function SpeakingPracticePane({
       return;
     }
 
-    let currentTranscript = evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
-    if (clipKey && speechEngine.transcript?.trim()) {
-      currentTranscript = speechEngine.transcript.trim();
-    }
+    const clipSpecificText = clipKey
+      ? (speechEngine.transcriptsByClip?.[clipKey] ?? (speechEngine.activeClipId === clipKey ? speechEngine.transcript : ''))
+      : speechEngine.transcript;
+    let currentTranscript = clipSpecificText?.trim() || evaluationContext?.candidateTranscript || speechEngine.transcript?.trim();
     const clip = clipKey ? speechEngine.audioClips?.[clipKey] : null;
 
     // AUTO GEMINI MULTIMODAL STT FALLBACK:
@@ -456,7 +456,7 @@ export default function SpeakingPracticePane({
         if (aiTranscribed) {
           currentTranscript = aiTranscribed.trim();
           if (speechEngine.setCustomTranscript) {
-            speechEngine.setCustomTranscript(aiTranscribed);
+            speechEngine.setCustomTranscript(aiTranscribed, clipKey);
           }
         }
       } catch (sttErr) {
@@ -487,7 +487,7 @@ export default function SpeakingPracticePane({
         part: activePart,
         topicTitle: finalTopic,
         questionText: finalQuestion,
-        cueBullets: activePart === 2 ? (activeP2Card?.cueCard?.bullets || []) : null,
+        cueBullets: activePart === 2 ? (activeP2Card?.cueCard?.bullets || activeP2Card?.cueBullets || activeP2Card?.prompts || []) : null,
         candidateTranscript: currentTranscript,
         durationSec,
         apiKey,
@@ -604,9 +604,13 @@ export default function SpeakingPracticePane({
   // Render Playback Voice Box & AI Evaluation
   const renderAudioPlayback = (clipKey, questionText, topicTitle, partNum) => {
     const clip = speechEngine.audioClips[clipKey];
-    const hasTranscript = !!speechEngine.transcript?.trim();
+    const clipTranscript = (
+      speechEngine.transcriptsByClip?.[clipKey] ??
+      (speechEngine.activeClipId === clipKey ? speechEngine.transcript : '')
+    )?.trim() || '';
+    const hasTranscript = !!clipTranscript;
     if (!clip && !hasTranscript) return null;
-    if (speechEngine.isListening) return null;
+    if (speechEngine.isListening && (activeRecordClipKey === clipKey || speechEngine.activeClipId === clipKey)) return null;
 
     const handleTogglePlay = () => {
       if (!clip?.url) return;
@@ -634,7 +638,9 @@ export default function SpeakingPracticePane({
       if (speechEngine.deleteAudioClip) {
         speechEngine.deleteAudioClip(clipKey);
       }
-      speechEngine.resetTranscript();
+      if (speechEngine.activeClipId === clipKey) {
+        speechEngine.resetTranscript();
+      }
       setRefinedClips(prev => {
         const next = { ...prev };
         delete next[clipKey];
@@ -657,9 +663,9 @@ export default function SpeakingPracticePane({
         </div>
 
         {/* Live Speaking Fluency & Filler Words Tracker */}
-        {speechEngine.transcript && (
+        {clipTranscript && (
           <SpeakingFillerTracker 
-            transcript={speechEngine.transcript} 
+            transcript={clipTranscript} 
             durationSec={clip?.duration || 30} 
           />
         )}
@@ -705,7 +711,7 @@ export default function SpeakingPracticePane({
         )}
 
         {/* Live Transcript Display with Inline Manual Quick Edit */}
-        {speechEngine.transcript && (
+        {clipTranscript && (
           <div className="p-3 rounded-xl bg-slate-900/95 border border-purple-800/40 text-xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-300 flex items-center space-x-1.5">
@@ -717,7 +723,7 @@ export default function SpeakingPracticePane({
                     setEditingTranscriptKey('');
                   } else {
                     setEditingTranscriptKey(clipKey);
-                    setEditedTranscriptText(speechEngine.transcript);
+                    setEditedTranscriptText(clipTranscript);
                   }
                 }}
                 className="px-2 py-0.5 rounded text-[11px] font-bold text-purple-300 hover:text-white bg-purple-950/70 hover:bg-purple-900 border border-purple-700/50 flex items-center space-x-1 cursor-pointer transition-colors"
@@ -747,7 +753,7 @@ export default function SpeakingPracticePane({
                   <button
                     onClick={() => {
                       if (speechEngine.setCustomTranscript) {
-                        speechEngine.setCustomTranscript(editedTranscriptText.trim());
+                        speechEngine.setCustomTranscript(editedTranscriptText.trim(), clipKey);
                       }
                       setEditingTranscriptKey('');
                     }}
@@ -760,7 +766,7 @@ export default function SpeakingPracticePane({
               </div>
             ) : (
               <p className="italic text-slate-200 leading-relaxed text-[11px] sm:text-xs">
-                "{speechEngine.transcript}"
+                "{clipTranscript}"
               </p>
             )}
           </div>
@@ -1116,7 +1122,6 @@ export default function SpeakingPracticePane({
           isRefiningTranscript={isRefiningTranscript}
           refiningClipKey={refiningClipKey}
           refinedClips={refinedClips}
-          part2PacingSeconds={part2PacingSeconds}
           handleTogglePart2Speaking={handleTogglePart2Speaking}
           isMicConnecting={isMicConnecting}
           micErrorDetail={micErrorDetail}
