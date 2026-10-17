@@ -2263,6 +2263,103 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the collocation "businesses lose money" after "means that".',
     explanation: 'Nam sinh viên chỉ rõ: "...the heavy traffic means that businesses lose money." Từ cần điền là "money".',
     explanationEn: 'The student explicitly remarks: "...the heavy traffic means that businesses lose money." The target word is "money".'
+  },
+
+  // ==========================================
+  // TRACK 32: URBAN TRAFFIC HOTSPOTS & MAP ANALYSIS
+  // ==========================================
+  {
+    id: 'ldrill-dist-track32-cinema-location-trap',
+    type: 'listening-distractor',
+    title: 'Bẫy vị trí bản đồ: Rạp chiếu phim Starview Cinema (Track 32)',
+    titleEn: 'Map Location Trap: Starview Cinema Junction vs Roundabout (Track 32)',
+    category: 'Map Navigation & Urban Geography',
+    categoryEn: 'Map Navigation & Urban Geography',
+    audioSnippetText: "Robert: I thought it was by the main roundabout. Sophie: Well, in actual fact, it's by the junction of East Road and Station Road. That's where the traffic has been getting really bad, especially in the mornings.",
+    audioText: "Robert: I thought it was by the main roundabout. Sophie: Well, in actual fact, it's by the junction of East Road and Station Road. That's where the traffic has been getting really bad, especially in the mornings.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3',
+    clipStart: 37.0,
+    clipEnd: 48.0,
+    question: 'Rạp chiếu phim Starview Cinema trên thực tế nằm ở vị trí nào trên bản đồ thị trấn?',
+    questionEn: 'Where is the Starview Cinema actually situated on the town map according to Sophie?',
+    options: [
+      { id: 'A', text: 'Tại nút giao giữa đường East Road và Station Road', textEn: 'At the junction between East Road and Station Road' },
+      { id: 'B', text: 'Ngay sát cạnh bùng binh vòng xuyến chính của thị trấn', textEn: 'Directly adjacent to the town\'s main roundabout' },
+      { id: 'C', text: 'Bên trong sảnh chờ trung tâm của nhà ga xe lửa', textEn: 'Inside the main concourse of the railway passenger station' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người học dễ bị đánh lừa bởi phỏng đoán ban đầu của Robert ("by the main roundabout"), nhưng Sophie đính chính sự thật ("in actual fact, it\'s by the junction of East Road and Station Road").',
+    distractorMechanismEn: 'Candidates are often deceived by Robert\'s initial assumption ("main roundabout"), but Sophie corrects him: "in actual fact, it\'s by the junction of East Road and Station Road".',
+    explanation: 'Đáp án là A: Sophie khẳng định rạp chiếu phim nằm tại ngã tư giữa East Road và Station Road.',
+    explanationEn: 'Option A is correct: Sophie clarifies that the cinema is situated at the intersection of East Road and Station Road.'
+  },
+  {
+    id: 'ldrill-dist-track32-park-side-contrast',
+    type: 'listening-distractor',
+    title: 'Bẫy so sánh hai phía: Central Park & Xe tải giờ cao điểm (Track 32)',
+    titleEn: 'Contrast Trap: Central Park Perimeter & Peak Freight (Track 32)',
+    category: 'Spatial Contrast & Urban Logistics',
+    categoryEn: 'Spatial Contrast & Urban Logistics',
+    audioSnippetText: "It's bad enough right by the shopping centre on the other side of Central Park, but it's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town.",
+    audioText: "It's bad enough right by the shopping centre on the other side of Central Park, but it's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3',
+    clipStart: 189.0,
+    clipEnd: 211.0,
+    question: 'Khu vực nào xung quanh Central Park chịu ảnh hưởng nghiêm trọng nhất từ các xe tải giao hàng?',
+    questionEn: 'Which sector bordering Central Park is most acutely congested by delivery freight lorries?',
+    options: [
+      { id: 'A', text: 'Phía giáp Tòa thị chính (Town Hall side)', textEn: 'The side adjacent to the Town Hall' },
+      { id: 'B', text: 'Phía đối diện giáp trung tâm mua sắm (Shopping Centre side)', textEn: 'The opposite side facing the shopping centre' },
+      { id: 'C', text: 'Cổng phía bắc dẫn vào khu di tích văn hóa lịch sử', textEn: 'The northern gate leading into the historic heritage quarter' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói đề cập cả hai phía ("shopping centre" và "Town Hall"), nhưng dùng cấu trúc tương phản nhấn mạnh "particularly bad on the Town Hall side".',
+    distractorMechanismEn: 'Both sides are mentioned, but Sophie uses contrastive framing ("particularly bad on the Town Hall side") to establish the worse location.',
+    explanation: 'Đáp án là A: Phía giáp Tòa thị chính chịu cảnh kẹt xe nặng nề nhất do xe tải hạng nặng đổ về từ khu công nghiệp.',
+    explanationEn: 'Option A is correct: Sophie specifies that congestion is worst on the Town Hall side due to heavy lorries from the industrial estate.'
+  },
+  {
+    id: 'ldrill-dict-track32-lorry-deliveries',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Xe tải nặng và giao hàng giờ cao điểm (Track 32)',
+    titleEn: 'Dictation Level 2: Heavy Lorries & Peak Rush Hour Deliveries (Track 32)',
+    category: 'Freight Logistics & Urban Traffic',
+    categoryEn: 'Freight Logistics & Urban Traffic',
+    audioSnippetText: "It's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.",
+    audioText: "It's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.",
+    targetTranscript: "It's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.",
+    ttsText: "It's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3',
+    clipStart: 202.0,
+    clipEnd: 215.0,
+    wordCount: 38,
+    difficulty: 'Band 6.0 - 7.5',
+    audioClipTip: 'Chú ý chính tả danh từ số nhiều "heavy lorries" /ˈlɒriz/ và cụm từ "industrial estate".',
+    audioClipTipEn: 'Pay close attention to spelling of plural "heavy lorries" /ˈlɒriz/ and the compound noun "industrial estate".'
+  },
+  {
+    id: 'ldrill-role-track32-bus-right-turn-lexicon',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Hướng rẽ của xe buýt bị cản trở (Track 32)',
+    titleEn: 'Key Vocabulary Reflex: Obstructed Bus Turn Direction (Track 32)',
+    category: 'Bus Transit Operations',
+    categoryEn: 'Bus Transit Operations',
+    promptAudioText: "It's especially bad for the buses coming from the station, as they can't turn right into East Road to get to the center.",
+    audioText: "It's especially bad for the buses coming from the station, as they can't turn right into East Road to get to the center.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3',
+    clipStart: 49.0,
+    clipEnd: 56.0,
+    questionPrompt: "Public buses departing from the station encounter delays because they cannot turn ......... into East Road.",
+    questionPromptEn: "Public buses departing from the station encounter delays because they cannot turn ......... into East Road.",
+    questionPromptVi: 'Xe buýt công cộng rời nhà ga bị chậm trễ vì không thể rẽ ......... vào đường East Road.',
+    correctAnswer: 'right',
+    acceptableAnswers: ['right'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ từ chỉ phương hướng "turn right into East Road".',
+    trapNoteEn: 'Core directional keyword: Listen for the adverb of direction "right" in "turn right into East Road".',
+    explanation: 'Sophie chỉ ra hướng rẽ bị kẹt: "...as they can\'t turn right into East Road to get to the center." Từ cần điền là "right".',
+    explanationEn: 'Sophie highlights the blocked movement: "...as they can\'t turn right into East Road to get to the center." The missing word is "right".'
   }
 ];
 

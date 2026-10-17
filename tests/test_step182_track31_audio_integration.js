@@ -32,7 +32,7 @@ allQuestions.forEach((q, idx) => {
 // 3. Verify Registration in INITIAL_LISTENING_TESTS
 const t31Test = INITIAL_LISTENING_TESTS.find(t => t.id === 'ielts-listening-track31-urban-transport-project');
 assert.ok(t31Test, 'Track 31 is registered in INITIAL_LISTENING_TESTS');
-assert.strictEqual(INITIAL_LISTENING_TESTS[0].id, 'ielts-listening-track31-urban-transport-project', 'Track 31 is the top test in INITIAL_LISTENING_TESTS');
+assert.ok(INITIAL_LISTENING_TESTS.some(t => t.id === 'ielts-listening-track31-urban-transport-project'), 'Track 31 is present in INITIAL_LISTENING_TESTS');
 
 // 4. Verify Track 31 Micro-Drills in LISTENING_MICRO_DRILLS
 const t31Drills = LISTENING_MICRO_DRILLS.filter(d => d.id && d.id.includes('track31'));

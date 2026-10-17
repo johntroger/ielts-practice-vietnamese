@@ -2976,12 +2976,197 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'They lose money because employees arrive late and workers suffer stress',
     explanation: 'Nam sinh viên chỉ ra: "...heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed."',
     explanationEn: 'Commercial impact: The student explicitly states that heavy traffic causes businesses to lose money due to tardy workers and driver stress.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 32 URBAN TRAFFIC HOTSPOTS & MAP ANALYSIS
+  // ==========================================
+  {
+    id: 'easy_lis_town_hall_worst_t32',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to official statistics cited by Sophie, which site is identified as the single worst traffic area in town?',
+    promptVi: 'Theo số liệu thống kê chính thức được Sophie trích dẫn, địa điểm nào là khu vực kẹt xe tồi tệ nhất trong thị trấn?',
+    promptEn: 'According to official statistics cited by Sophie, which site is identified as the single worst traffic area in town?',
+    context: 'Sophie: Statistics show that the worst place is by the Town Hall.',
+    contextEn: 'Sophie: Statistics show that the worst place is by the Town Hall.',
+    audioText: 'Statistics show that the worst place is by the Town Hall.',
+    options: [
+      'By the Town Hall',
+      'By the Arts Centre',
+      'At the main roundabout',
+      'Outside the suburban railway station'
+    ],
+    optionsVi: [
+      'Khu vực Tòa thị chính',
+      'Khu vực Trung tâm Nghệ thuật',
+      'Tại bùng binh vòng xuyến chính',
+      'Bên ngoài nhà ga đường sắt ngoại ô'
+    ],
+    optionsEn: [
+      'By the Town Hall',
+      'By the Arts Centre',
+      'At the main roundabout',
+      'Outside the suburban railway station'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'By the Town Hall',
+    explanation: 'Sophie chỉ ra: "Statistics show that the worst place is by the Town Hall."',
+    explanationEn: 'Direct statistical confirmation: Sophie points out that statistics prove the Town Hall is the worst location.'
+  },
+  {
+    id: 'med_lis_cinema_junction_t32',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'At which specific intersection is the Starview Cinema located according to Sophie?',
+    promptVi: 'Theo Sophie, rạp chiếu phim Starview Cinema tọa lạc tại nút giao cụ thể nào?',
+    promptEn: 'At which specific intersection is the Starview Cinema located according to Sophie?',
+    context: 'Sophie: Well, in actual fact, it\'s by the junction of East Road and Station Road. That\'s where the traffic has been getting really bad...',
+    contextEn: 'Sophie: Well, in actual fact, it\'s by the junction of East Road and Station Road. That\'s where the traffic has been getting really bad...',
+    audioText: 'Well, in actual fact, it\'s by the junction of East Road and Station Road. That\'s where the traffic has been getting really bad...',
+    options: [
+      'At the junction of East Road and Station Road',
+      'Directly circling the central town roundabout',
+      'Next to the eastern bus terminal entrance gate',
+      'On the corner of Scottsfield Avenue and High Street'
+    ],
+    optionsVi: [
+      'Tại ngã tư giữa đường East Road và Station Road',
+      'Trực tiếp bao quanh vòng xuyến trung tâm thị trấn',
+      'Cạnh cổng vào của bến xe buýt phía đông',
+      'Ở góc đường giữa đại lộ Scottsfield và High Street'
+    ],
+    optionsEn: [
+      'At the junction of East Road and Station Road',
+      'Directly circling the central town roundabout',
+      'Next to the eastern bus terminal entrance gate',
+      'On the corner of Scottsfield Avenue and High Street'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'At the junction of East Road and Station Road',
+    explanation: 'Sophie khẳng định vị trí chính xác: "...in actual fact, it\'s by the junction of East Road and Station Road."',
+    explanationEn: 'Spatial verification: Sophie clarifies that the cinema stands at the junction of East Road and Station Road.'
+  },
+  {
+    id: 'hard_lis_bus_manoeuvre_issue_t32',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why do public buses coming from the railway station face severe morning delays?',
+    promptVi: 'Tại sao xe buýt công cộng đi từ nhà ga xe lửa lại gặp tình trạng chậm trễ nghiêm trọng vào buổi sáng?',
+    promptEn: 'Why do public buses coming from the railway station face severe morning delays?',
+    context: 'Sophie: It\'s especially bad for the buses coming from the station, as they can\'t turn right into East Road to get to the center.',
+    contextEn: 'Sophie: It\'s especially bad for the buses coming from the station, as they can\'t turn right into East Road to get to the center.',
+    audioText: 'It\'s especially bad for the buses coming from the station, as they can\'t turn right into East Road to get to the center.',
+    options: [
+      'They are physically prevented from turning right into East Road to reach the center',
+      'Their automated ticketing validation consoles fail frequently during morning moisture',
+      'The rail station forecourt has been restricted to licensed taxicabs only',
+      'Bridge weight restrictions prohibit double-decker buses from crossing the river'
+    ],
+    optionsVi: [
+      'Xe buýt bị cản trở không thể rẽ phải vào đường East Road để tiến về trung tâm',
+      'Đầu đọc vé tự động thường xuyên bị lỗi khi gặp độ ẩm buổi sáng',
+      'Khuôn viên nhà ga chỉ giới hạn cho taxi có giấy phép ra vào',
+      'Giới hạn tải trọng cầu cấm xe buýt hai tầng đi qua sông'
+    ],
+    optionsEn: [
+      'They are physically prevented from turning right into East Road to reach the center',
+      'Their automated ticketing validation consoles fail frequently during morning moisture',
+      'The rail station forecourt has been restricted to licensed taxicabs only',
+      'Bridge weight restrictions prohibit double-decker buses from crossing the river'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They are physically prevented from turning right into East Road to reach the center',
+    explanation: 'Sophie giải thích khó khăn thao tác: "...as they can\'t turn right into East Road to get to the center."',
+    explanationEn: 'Manoeuvre bottleneck: Buses are unable to turn right into East Road to head into the town center.'
+  },
+  {
+    id: 'med_lis_central_park_lorries_t32',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What factor makes the Town Hall side of Central Park notably more congested than the shopping centre side?',
+    promptVi: 'Yếu tố nào khiến phía Tòa thị chính cạnh Central Park bị ùn tắc đáng kể hơn so với phía trung tâm mua sắm?',
+    promptEn: 'What factor makes the Town Hall side of Central Park notably more congested than the shopping centre side?',
+    context: 'Sophie: ...it\'s particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.',
+    contextEn: 'Sophie: ...it\'s particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.',
+    audioText: '...it\'s particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.',
+    options: [
+      'Heavy freight lorries from the western industrial estate making morning rush-hour deliveries',
+      'A high volume of student pedestrians crossing to the nearby municipal college',
+      'Frequent parade processions and civic ceremonies closing primary road lanes',
+      'Severe lack of traffic signals at the roundabout perimeter'
+    ],
+    optionsVi: [
+      'Xe tải chở hàng hạng nặng từ khu công nghiệp phía tây giao hàng dồn dập trong giờ cao điểm sáng',
+      'Lượng lớn sinh viên đi bộ băng qua đường để đến trường cao đẳng gần đó',
+      'Các đoàn diễu hành và nghi lễ thường xuyên làm đóng các làn đường chính',
+      'Thiếu hụt trầm trọng hệ thống đèn tín hiệu giao thông quanh vòng xuyến'
+    ],
+    optionsEn: [
+      'Heavy freight lorries from the western industrial estate making morning rush-hour deliveries',
+      'A high volume of student pedestrians crossing to the nearby municipal college',
+      'Frequent parade processions and civic ceremonies closing primary road lanes',
+      'Severe lack of traffic signals at the roundabout perimeter'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Heavy freight lorries from the western industrial estate making morning rush-hour deliveries',
+    explanation: 'Sophie chỉ ra nguyên nhân là xe tải hạng nặng đến từ khu công nghiệp phía tây giao hàng vào giờ cao điểm sáng.',
+    explanationEn: 'Freight congestion trigger: Sophie specifies heavy lorries from the western industrial estate making morning rush hour deliveries.'
+  },
+  {
+    id: 'easy_lis_lorry_restriction_solution_t32',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What proposal does Robert infer would effectively alleviate traffic around Central Park and the Town Hall?',
+    promptVi: 'Robert suy luận đề xuất nào sẽ giúp giảm nhẹ hiệu quả tình trạng kẹt xe quanh Central Park và Tòa thị chính?',
+    promptEn: 'What proposal does Robert infer would effectively alleviate traffic around Central Park and the Town Hall?',
+    context: 'Robert: So you\'re saying that if we stop them coming in early to the area by Central Park where the Town Hall is, that would make the traffic a lot lighter? Sophie: I\'m sure it would.',
+    contextEn: 'Robert: So you\'re saying that if we stop them coming in early to the area by Central Park where the Town Hall is, that would make the traffic a lot lighter? Sophie: I\'m sure it would.',
+    audioText: 'So you\'re saying that if we stop them coming in early to the area by Central Park where the Town Hall is, that would make the traffic a lot lighter? Sophie: I\'m sure it would.',
+    options: [
+      'Restricting heavy delivery lorries from entering the Central Park and Town Hall area early in the morning',
+      'Tearing down the older peripheral park wall to construct four wider express vehicle lanes',
+      'Imposing a high congestion tax charge on all private diesel passenger motor cars',
+      'Permanently closing down all manufacturing operations in the western industrial estate'
+    ],
+    optionsVi: [
+      'Cấm các xe tải giao hàng nặng tiến vào khu vực Central Park và Tòa thị chính vào sáng sớm',
+      'Phá bỏ tường rào công viên cũ để xây thêm bốn làn đường cao tốc rộng hơn',
+      'Áp mức phí chống ùn tắc rất cao đối với mọi xe ô tô cá nhân chạy dầu diesel',
+      'Đóng cửa vĩnh viễn toàn bộ hoạt động sản xuất trong khu công nghiệp phía tây'
+    ],
+    optionsEn: [
+      'Restricting heavy delivery lorries from entering the Central Park and Town Hall area early in the morning',
+      'Tearing down the older peripheral park wall to construct four wider express vehicle lanes',
+      'Imposing a high congestion tax charge on all private diesel passenger motor cars',
+      'Permanently closing down all manufacturing operations in the western industrial estate'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Restricting heavy delivery lorries from entering the Central Park and Town Hall area early in the morning',
+    explanation: 'Robert suy luận và Sophie đồng tình rằng nếu ngăn xe tải vào sớm quanh Central Park nơi có Tòa thị chính thì giao thông sẽ nhẹ nhàng hơn nhiều.',
+    explanationEn: 'Solution deduction: Restricting early morning lorry access near Central Park and the Town Hall makes traffic much lighter.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 32: Urban Traffic Hotspots & Map Analysis
+  easy_lis_town_hall_worst_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 2.0, clipEnd: 15.0, isR2Audio: true, trackLabel: 'Track 32 • Town Hall Worst Spot' },
+  med_lis_cinema_junction_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 38.0, clipEnd: 50.0, isR2Audio: true, trackLabel: 'Track 32 • Starview Cinema Junction' },
+  hard_lis_bus_manoeuvre_issue_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 49.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 32 • Bus Right Turn Issue' },
+  med_lis_central_park_lorries_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 189.0, clipEnd: 215.0, isR2Audio: true, trackLabel: 'Track 32 • Central Park Lorries' },
+  easy_lis_lorry_restriction_solution_t32: { audioUrl: `${R2_BASE}/ielts-listening-track32-urban-traffic-hotspots-mapping.mp3`, clipStart: 214.0, clipEnd: 226.0, isR2Audio: true, trackLabel: 'Track 32 • Lorry Time Restriction' },
+
   // Track 31: Town Transport System & Project Discussion
   easy_lis_project_subject_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 2.0, clipEnd: 15.0, isR2Audio: true, trackLabel: 'Track 31 • Project Scope' },
   med_lis_rail_budget_trouble_t31: { audioUrl: `${R2_BASE}/ielts-listening-track31-urban-transport-project-discussion.mp3`, clipStart: 53.0, clipEnd: 65.0, isR2Audio: true, trackLabel: 'Track 31 • Rail Financial Problems' },

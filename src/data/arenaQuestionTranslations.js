@@ -1368,6 +1368,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "In the male student’s concluding remarks, how does road gridlock directly affect local businesses?",
     "contextEn": "Male student: True. And when I think about it, I can see that the heavy traffic means that businesses lose money. People are late for work, and drivers get more stressed.",
     "explanationEn": "Commercial impact: The student explicitly states that heavy traffic causes businesses to lose money due to tardy workers and driver stress."
+  },
+  "easy_lis_town_hall_worst_t32": {
+    "promptEn": "According to official statistics cited by Sophie, which site is identified as the single worst traffic area in town?",
+    "contextEn": "Sophie: Statistics show that the worst place is by the Town Hall.",
+    "explanationEn": "Direct statistical confirmation: Sophie points out that statistics prove the Town Hall is the worst location."
+  },
+  "med_lis_cinema_junction_t32": {
+    "promptEn": "At which specific intersection is the Starview Cinema located according to Sophie?",
+    "contextEn": "Sophie: Well, in actual fact, it's by the junction of East Road and Station Road. That's where the traffic has been getting really bad...",
+    "explanationEn": "Spatial verification: Sophie clarifies that the cinema stands at the junction of East Road and Station Road."
+  },
+  "hard_lis_bus_manoeuvre_issue_t32": {
+    "promptEn": "Why do public buses coming from the railway station face severe morning delays?",
+    "contextEn": "Sophie: It's especially bad for the buses coming from the station, as they can't turn right into East Road to get to the center.",
+    "explanationEn": "Manoeuvre bottleneck: Buses are unable to turn right into East Road to head into the town center."
+  },
+  "med_lis_central_park_lorries_t32": {
+    "promptEn": "What factor makes the Town Hall side of Central Park notably more congested than the shopping centre side?",
+    "contextEn": "Sophie: ...it's particularly bad on the Town Hall side, with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.",
+    "explanationEn": "Freight congestion trigger: Sophie specifies heavy lorries from the western industrial estate making morning rush hour deliveries."
+  },
+  "easy_lis_lorry_restriction_solution_t32": {
+    "promptEn": "What proposal does Robert infer would effectively alleviate traffic around Central Park and the Town Hall?",
+    "contextEn": "Robert: So you're saying that if we stop them coming in early to the area by Central Park where the Town Hall is, that would make the traffic a lot lighter? Sophie: I'm sure it would.",
+    "explanationEn": "Solution deduction: Restricting early morning lorry access near Central Park and the Town Hall makes traffic much lighter."
   }
 };
 
