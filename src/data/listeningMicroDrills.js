@@ -1779,6 +1779,102 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the past participle "isolated" denoting total segregation from the outside world.',
     explanation: 'Maria nhấn mạnh nguyên nhân bắt nguồn từ việc họ đã bị cô lập cùng nhau quá lâu ("isolated together for so long").',
     explanationEn: 'Maria highlights the prolonged confinement: "they\'d been isolated together for so long".'
+  },
+
+  // ==========================================
+  // TRACK 27: ENVIRONMENTAL ENGINEER & ISOLATION PSYCHOLOGY
+  // ==========================================
+  {
+    id: 'ldrill-dist-track27-engineer-irreplaceability',
+    type: 'listening-distractor',
+    title: 'Bẫy tính chất không thể thay thế: Kỷ luật nhân sự vs Rủi ro sụp đổ sinh quyển (Track 27)',
+    titleEn: 'Irreplaceability Trap: Disciplinary Expulsion vs Life Support Collapse (Track 27)',
+    category: 'Habitat Engineering & Crew Retention',
+    categoryEn: 'Habitat Engineering & Crew Retention',
+    audioSnippetText: "So what do you think will happen? Will they make him leave? I don't think they can. It's all part of the program, and anyway, as the environmental engineer, Joe is an essential member of the team. If he left, then the whole environment of the building would go wrong.",
+    audioText: "So what do you think will happen? Will they make him leave? I don't think they can. It's all part of the program, and anyway, as the environmental engineer, Joe is an essential member of the team. If he left, then the whole environment of the building would go wrong.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track27-environmental-engineer-isolation.mp3',
+    clipStart: 74.0,
+    clipEnd: 91.0,
+    question: 'Tại sao phi hành đoàn không thể trục xuất Joe ra khỏi dự án dù anh vừa gây ra vụ xô xát bạo lực?',
+    questionEn: 'Why can the crew NOT expel Joe from the habitat despite his violent misconduct?',
+    options: [
+      { id: 'A', text: 'Joe là kỹ sư môi trường phụ trách vận hành toàn bộ hệ sinh thái của tòa nhà, nếu anh rời đi môi trường sẽ sụp đổ', textEn: 'Joe is the environmental engineer maintaining the whole habitat building, and without him the environment would fail' },
+      { id: 'B', text: 'Joe có người thân nắm giữ vị trí quản lý cấp cao trong ban tổ chức dự án', textEn: 'Joe has close family connections within senior project management' },
+      { id: 'C', text: 'Quy định của NASA cấm thay đổi nhân sự trong vòng 6 tháng đầu', textEn: 'NASA protocols strictly forbid crew alterations within the first six months' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe có thể nghĩ đến quy chế kỷ luật hoặc thủ tục hành chính, nhưng Simon giải thích lý do kỹ thuật mang tính sống còn: Joe là kỹ sư môi trường ("environmental engineer"), nếu anh đi thì toàn bộ môi trường của trạm sẽ sụp đổ ("whole environment of the building would go wrong").',
+    distractorMechanismEn: 'Test-takers might anticipate administrative discipline, but Simon reveals a critical operational reality: Joe is the environmental engineer, and without him the entire habitat ecosystem would collapse.',
+    explanation: 'Đáp án là A: Simon nhấn mạnh vai trò kỹ sư môi trường của Joe là thiết yếu và nếu anh rời đi thì toàn bộ môi trường tòa nhà sẽ trục trặc ("whole environment of the building would go wrong").',
+    explanationEn: 'Option A is correct: Simon points out Joe is the essential environmental engineer and without him the habitat ecology fails.'
+  },
+  {
+    id: 'ldrill-dist-track27-scientific-vs-media',
+    type: 'listening-distractor',
+    title: 'Bẫy phân định bản chất: Nghiên cứu khoa học hàn lâm vs Gameshow truyền hình (Track 27)',
+    titleEn: 'Project Nature Trap: Rigorous Academic Science vs Sensationalist Reality TV (Track 27)',
+    category: 'Scientific Methodology & Public Perception',
+    categoryEn: 'Scientific Methodology & Public Perception',
+    audioSnippetText: "how people can control their emotions and feelings over a long time when they can't get away from each other. True, but we have to remember that this is a science project and not some soap opera or television series with lots of silly people locked up in a big house or something.",
+    audioText: "how people can control their emotions and feelings over a long time when they can't get away from each other. True, but we have to remember that this is a science project and not some soap opera or television series with lots of silly people locked up in a big house or something.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track27-environmental-engineer-isolation.mp3',
+    clipStart: 38.0,
+    clipEnd: 56.5,
+    question: 'Maria cảnh báo Simon cần lưu ý điều gì khi đánh giá khía cạnh cảm xúc của các thành viên?',
+    questionEn: 'What crucial distinction does Maria remind Simon of when evaluating crew emotions?',
+    options: [
+      { id: 'A', text: 'Đây là một dự án nghiên cứu khoa học nghiêm túc chứ không phải một bộ phim truyền hình hay chương trình thực tế giật gân', textEn: 'This is a serious scientific project rather than an entertainment soap opera or reality television series' },
+      { id: 'B', text: 'Chi phí nghiên cứu vượt trội so với các chương trình truyền hình thương mại', textEn: 'Research funding far exceeds that of commercial entertainment broadcasts' },
+      { id: 'C', text: 'Các thành viên tham gia đều có bằng tiến sĩ tâm lý học hành vi', textEn: 'All participating crew members hold doctorates in behavioral psychology' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Maria cảnh báo không được tầm thường hóa dự án bằng cách so sánh với các gameshow giải trí giật gân ("not some soap opera or television series with lots of silly people locked up in a big house").',
+    distractorMechanismEn: 'Maria cautions against trivializing the study, insisting it must be treated as a rigorous science project, not sensationalist television drama.',
+    explanation: 'Đáp án là A: Maria nhấn mạnh "this is a science project and not some soap opera or television series".',
+    explanationEn: 'Option A is correct: Maria stresses the fundamental scientific nature of the endeavor.'
+  },
+  {
+    id: 'ldrill-dict-track27-ventilation-emergency',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Sự cố khẩn cấp hệ thống thông gió đe dọa nguồn dưỡng khí (Track 27)',
+    titleEn: 'Dictation Level 2: Urgent Ventilation Breakdown Threatening Fresh Air Supply (Track 27)',
+    category: 'Habitat Life Support & Crisis Response',
+    categoryEn: 'Habitat Life Support & Crisis Response',
+    ttsText: "Remember last month when the ventilation system broke down? They almost lost all their fresh air.",
+    audioText: "Remember last month when the ventilation system broke down? They almost lost all their fresh air.",
+    targetTranscript: "Remember last month when the ventilation system broke down? They almost lost all their fresh air.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track27-environmental-engineer-isolation.mp3',
+    clipStart: 94.0,
+    clipEnd: 101.5,
+    wordCount: 16,
+    difficulty: 'Band 6.0 - 7.0',
+    audioClipTip: 'Lưu ý cụm từ chỉ thời gian "last month", mệnh đề quan hệ "when the ventilation system broke down", và cụm "almost lost all their fresh air".',
+    audioClipTipEn: 'Pay close attention to "ventilation system broke down" and the consequence clause "almost lost all their fresh air".'
+  },
+  {
+    id: 'ldrill-role-track27-control-emotions',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Khả năng tự kiểm soát cảm xúc (Track 27)',
+    titleEn: 'Key Vocabulary Reflex: Regulating Personal Emotions Under Isolation (Track 27)',
+    category: 'Isolation Psychology & Self-Regulation',
+    categoryEn: 'Isolation Psychology & Self-Regulation',
+    promptAudioText: "how people can control their emotions and feelings over a long time when they can't get away from each other.",
+    audioText: "how people can control their emotions and feelings over a long time when they can't get away from each other.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track27-environmental-engineer-isolation.mp3',
+    clipStart: 38.0,
+    clipEnd: 45.0,
+    questionPrompt: "A major research takeaway is understanding how long-term isolation impacts people's ability to control their ......... and feelings.",
+    questionPromptEn: "A major research takeaway is understanding how long-term isolation impacts people's ability to control their ......... and feelings.",
+    questionPromptVi: 'Một phát hiện nghiên cứu trọng tâm là tìm hiểu tác động của sự cô lập kéo dài lên khả năng kiểm soát ......... và cảm xúc của con người.',
+    correctAnswer: 'emotions',
+    acceptableAnswers: ['emotions'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ danh từ số nhiều "emotions" đi kèm với "and feelings" ("control their emotions and feelings").',
+    trapNoteEn: 'Core lexical keyword: Listen for the plural noun "emotions" collocated with "and feelings" ("control their emotions and feelings").',
+    explanation: 'Simon nhấn mạnh trọng tâm là cách mọi người kiểm soát cảm xúc của mình ("control their emotions and feelings").',
+    explanationEn: 'Simon specifies the critical capability: "how people can control their emotions and feelings".'
   }
 ];
 

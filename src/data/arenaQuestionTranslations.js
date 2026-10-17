@@ -1243,6 +1243,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What specific role did Joe hold within the Arizona Mars research team?",
     "contextEn": "Joe, the engineer, attacked Martin. It's on the news today.",
     "explanationEn": "Role identification: Simon specifies Joe's occupational role as \"the engineer\"."
+  },
+  "easy_lis_tutor_role_t27": {
+    "promptEn": "What academic role and departmental affiliation does Dr. Thornton hold?",
+    "contextEn": "Well, as a psychology tutor, I find that really interesting.",
+    "explanationEn": "Academic role identification: Dr. Thornton explicitly identifies herself as a psychology tutor."
+  },
+  "med_lis_positive_three_months_t27": {
+    "promptEn": "Why does Dr. Thornton consider the crew's emotional state relatively positive despite the recent conflict?",
+    "contextEn": "In fact, this is the first time someone has got really angry in the first three months, so I think that's quite a positive thing.",
+    "explanationEn": "Evaluation of progress: Dr. Thornton views the three-month delay before any severe anger flared as a positive milestone."
+  },
+  "med_lis_joe_vital_responsibility_t27": {
+    "promptEn": "Why is it practically impossible to expel Joe from the Arizona Mars simulation?",
+    "contextEn": "as the environmental engineer, Joe is an essential member of the team. If he left, then the whole environment of the building would go wrong.",
+    "explanationEn": "Critical operational dependency: Without Joe, the environmental engineer, the habitat life support system would fail."
+  },
+  "hard_lis_ventilation_crisis_t27": {
+    "promptEn": "What critical mechanical crisis did Joe resolve during the previous month?",
+    "contextEn": "Remember last month when the ventilation system broke down? They almost lost all their fresh air. He only had a couple of hours to fix it, and he managed to do it.",
+    "explanationEn": "Past crisis resolution: Joe averted disaster by repairing the failed ventilation system in a couple of hours when fresh air was nearly depleted."
+  },
+  "easy_lis_media_contrast_t27": {
+    "promptEn": "How does Maria distinguish their Mars research endeavor from entertainment media?",
+    "contextEn": "we have to remember that this is a science project and not some soap opera or television series with lots of silly people locked up in a big house or something.",
+    "explanationEn": "Project genre distinction: Maria insists the simulation is a scientific study rather than an entertainment drama or reality show."
   }
 };
 

@@ -2319,12 +2319,120 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The engineer',
     explanation: 'Simon nêu rõ chức danh của Joe là kỹ sư ("Joe, the engineer").',
     explanationEn: 'Role identification: Simon specifies Joe\'s occupational role as "the engineer".'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 27 ENVIRONMENTAL ENGINEER & ISOLATION PSYCHOLOGY
+  // ==========================================
+  {
+    id: 'easy_lis_tutor_role_t27',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What academic role and departmental affiliation does Dr. Thornton hold?',
+    context: "Well, as a psychology tutor, I find that really interesting.",
+    audioText: "Well, as a psychology tutor, I find that really interesting.",
+    options: [
+      'A psychology tutor',
+      'An environmental engineer',
+      'A planetary geologist',
+      'An aerospace physician'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A psychology tutor',
+    explanation: 'Tiến sĩ Thornton xác nhận chức danh chuyên môn của mình là giảng viên tâm lý học ("as a psychology tutor").',
+    explanationEn: 'Academic role identification: Dr. Thornton explicitly identifies herself as a psychology tutor.'
+  },
+  {
+    id: 'med_lis_positive_three_months_t27',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does Dr. Thornton consider the crew\'s emotional state relatively positive despite the recent conflict?',
+    context: "In fact, this is the first time someone has got really angry in the first three months, so I think that's quite a positive thing.",
+    audioText: "In fact, this is the first time someone has got really angry in the first three months, so I think that's quite a positive thing.",
+    options: [
+      'It is the first instance of severe anger during three full months of isolation',
+      'The participants immediately volunteered to undergo group cognitive therapy',
+      'The conflict resulted in zero physical damage to scientific laboratory hardware',
+      'Both crew members agreed to swap their daily hydroponic cleaning shifts'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It is the first instance of severe anger during three full months of isolation',
+    explanation: 'Tiến sĩ Thornton nhận định đây là dấu hiệu tích cực vì phải sau 3 tháng đầu tiên mới có người thực sự tức giận ("first time someone has got really angry in the first three months").',
+    explanationEn: 'Evaluation of progress: Dr. Thornton views the three-month delay before any severe anger flared as a positive milestone.'
+  },
+  {
+    id: 'med_lis_joe_vital_responsibility_t27',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is it practically impossible to expel Joe from the Arizona Mars simulation?',
+    context: "as the environmental engineer, Joe is an essential member of the team. If he left, then the whole environment of the building would go wrong.",
+    audioText: "as the environmental engineer, Joe is an essential member of the team. If he left, then the whole environment of the building would go wrong.",
+    options: [
+      'As environmental engineer, the entire building ecosystem depends on him',
+      'His departure would forfeit the project\'s university sponsorship grant',
+      'He holds exclusive biometric authorization to open the outer habitat airlock',
+      'No replacement personnel are allowed to enter the desert compound under any terms'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'As environmental engineer, the entire building ecosystem depends on him',
+    explanation: 'Simon giải thích Joe là kỹ sư môi trường phụ trách vận hành tòa nhà, nếu anh đi thì toàn bộ môi trường trạm sẽ hỏng ("whole environment of the building would go wrong").',
+    explanationEn: 'Critical operational dependency: Without Joe, the environmental engineer, the habitat life support system would fail.'
+  },
+  {
+    id: 'hard_lis_ventilation_crisis_t27',
+    difficulty: 'hard',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What critical mechanical crisis did Joe resolve during the previous month?',
+    context: "Remember last month when the ventilation system broke down? They almost lost all their fresh air. He only had a couple of hours to fix it, and he managed to do it.",
+    audioText: "Remember last month when the ventilation system broke down? They almost lost all their fresh air. He only had a couple of hours to fix it, and he managed to do it.",
+    options: [
+      'He repaired a failed ventilation system within a couple of hours, preventing total loss of fresh air',
+      'He reprogrammed the hydroponic greenhouse watering schedule after an automated valve ruptured',
+      'He restored external telecommunications before a severe desert sandstorm severed power cables'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He repaired a failed ventilation system within a couple of hours, preventing total loss of fresh air',
+    explanation: 'Tháng trước hệ thống thông gió hỏng và suýt làm mất sạch không khí tươi, Joe đã sửa thành công trong vòng vài giờ ("only had a couple of hours to fix it, and he managed to do it").',
+    explanationEn: 'Past crisis resolution: Joe averted disaster by repairing the failed ventilation system in a couple of hours when fresh air was nearly depleted.'
+  },
+  {
+    id: 'easy_lis_media_contrast_t27',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How does Maria distinguish their Mars research endeavor from entertainment media?',
+    context: "we have to remember that this is a science project and not some soap opera or television series with lots of silly people locked up in a big house or something.",
+    audioText: "we have to remember that this is a science project and not some soap opera or television series with lots of silly people locked up in a big house or something.",
+    options: [
+      'It is a genuine scientific investigation, not a commercial soap opera or reality television show',
+      'It receives direct national funding rather than commercial network television advertising',
+      'All dialogue inside the habitat is strictly confidential and exempt from public release'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It is a genuine scientific investigation, not a commercial soap opera or reality television show',
+    explanation: 'Maria nhấn mạnh dự án là một nghiên cứu khoa học ("science project") chứ không phải phim truyền hình hay chương trình thực tế giật gân ("not some soap opera or television series").',
+    explanationEn: 'Project genre distinction: Maria insists the simulation is a scientific study rather than an entertainment drama or reality show.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 27: Environmental Engineer & Isolation Psychology
+  easy_lis_tutor_role_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 2.0, clipEnd: 12.0, isR2Audio: true, trackLabel: 'Track 27 • Psychology Tutor Role' },
+  med_lis_positive_three_months_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 104.0, clipEnd: 114.0, isR2Audio: true, trackLabel: 'Track 27 • Three Months Milestone' },
+  med_lis_joe_vital_responsibility_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 117.0, clipEnd: 132.0, isR2Audio: true, trackLabel: 'Track 27 • Environmental Engineer Vital Role' },
+  hard_lis_ventilation_crisis_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 134.0, clipEnd: 145.0, isR2Audio: true, trackLabel: 'Track 27 • Ventilation System Emergency' },
+  easy_lis_media_contrast_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 45.0, clipEnd: 56.5, isR2Audio: true, trackLabel: 'Track 27 • Science vs Soap Opera' },
+
   // Track 26: Mars Crew Psychological Crisis
   easy_lis_joe_temperament_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 2.0, clipEnd: 18.0, isR2Audio: true, trackLabel: 'Track 26 • Quiet Crew Member Contrast' },
   med_lis_victim_martin_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 2.0, clipEnd: 14.0, isR2Audio: true, trackLabel: 'Track 26 • Altercation Victim Martin' },
