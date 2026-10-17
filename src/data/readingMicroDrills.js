@@ -583,6 +583,78 @@ export const READING_MICRO_DRILLS = [
     explanationEn: 'The answer is FALSE. Bondi is an indigenous Aboriginal word, directly contradicting the claim that it was first named by British settlers.',
     evidence: '"Bondi" or "Boondi" is an Aboriginal word meaning water breaking over rocks...',
     evidenceEn: '"Bondi" or "Boondi" is an Aboriginal word meaning water breaking over rocks...'
+  },
+
+  // ==========================================
+  // 9. 101 PAST PAPERS BATCH 4 DRILLS (Tests 14, 15, 16, 17)
+  // ==========================================
+  {
+    id: 'drill-101-batch4-tfng-14',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định Not Given: Lao Động Trẻ Em Vụ Mùa (Test 14)',
+    titleEn: 'Not Given Trap: Seasonal Child Labor Dynamics (Test 14)',
+    category: 'Agricultural Anthropology',
+    categoryEn: 'Agricultural Anthropology',
+    passage: 'Tillage is performed manually using hand hoes with virtually no draught animals due to tsetse flies. Adult family members allocate extensive hours clearing bush for the citemene ash beds.',
+    statement: 'When it is a busy time, children usually took part in the labor force.',
+    answer: 'NOT GIVEN',
+    trapType: 'Extrapolation Trap (Bẫy suy đoán tập tính không có trong văn bản)',
+    trapTypeEn: 'Extrapolation Trap (Unwarranted assumption regarding family labor)',
+    explanation: 'Đáp án là NOT GIVEN. Mặc dù bài đọc nhắc đến việc người lớn cuốc đất và canh tác citemene vất vả, văn bản không hề đề cập liệu trẻ em có tham gia lao động vào mùa vụ bận rộn hay không.',
+    explanationEn: 'The answer is NOT GIVEN. Although the text describes intensive manual labor by adult family members, it never mentions whether children participated in field labor during peak seasons.',
+    evidence: 'Tillage is performed manually using hand hoes with virtually no draught animals...',
+    evidenceEn: 'Tillage is performed manually using hand hoes with virtually no draught animals...'
+  },
+  {
+    id: 'drill-101-batch4-tfng-15',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định True: Khử Trùng Nước Nhờ Trà Và Bia (Test 15)',
+    titleEn: 'True Trap: Antiseptic Beverages & Waterborne Disease (Test 15)',
+    category: 'Historical Epidemiology',
+    categoryEn: 'Historical Epidemiology',
+    passage: 'The antiseptic properties of tannin in tea and hops in beer, plus the fact that both were made with boiled water, protected people from waterborne disease.',
+    statement: 'Tea and beer contributed to protect people from waterborne disease.',
+    answer: 'TRUE',
+    trapType: 'Direct Synonymous Alignment (Đối chiếu nhân quả trùng khớp trực tiếp)',
+    trapTypeEn: 'Direct Synonymous Alignment (Verbatim causal validation)',
+    explanation: 'Đáp án là TRUE. Đặc tính sát khuẩn của tanin trong trà và hoa bia trong bia, kết hợp với việc đun sôi nước đã giúp bảo vệ người dân Anh khỏi các dịch bệnh lây qua nguồn nước.',
+    explanationEn: 'The answer is TRUE. The text explicitly asserts that both boiled beverages possessed antiseptic agents that shielded urban populations from waterborne diseases.',
+    evidence: 'The antiseptic properties of tannin in tea and hops in beer, plus the fact that both were made with boiled water, protected people from waterborne disease.',
+    evidenceEn: 'The antiseptic properties of tannin in tea and hops in beer, plus the fact that both were made with boiled water, protected people from waterborne disease.'
+  },
+  {
+    id: 'drill-101-batch4-para-16',
+    type: 'reading-paraphrase',
+    title: 'Cặp Paraphrase Khảo Thí: Cơn Sốt Hoa Tulip Hà Lan (Test 16)',
+    titleEn: 'Cambridge Paraphrase Pair: Dutch Tulip Mania Market (Test 16)',
+    category: 'Economic History',
+    categoryEn: 'Economic History',
+    passage: 'Prosperous Dutch traders demonstrated their status by building great estates with gardens in surroundings. Attracted by the profit on rare varieties, traders kept looking for flower lovers and speculators for sale.',
+    question: 'Trong câu trên, từ nào đồng nghĩa với "wealthy residential country properties"?',
+    questionEn: 'In the passage above, which word is the exact synonym for "wealthy residential country properties"?',
+    correctAnswer: 'estates',
+    options: ['estates', 'surroundings', 'varieties', 'speculators'],
+    optionsEn: ['estates', 'surroundings', 'varieties', 'speculators'],
+    explanation: '"Estates" (các trang viên/dinh thự điền trang) chính là từ chỉ bất động sản nghỉ dưỡng của giới thương gia Hà Lan thế kỷ 17 (Đáp án câu 26 Test 16).',
+    explanationEn: '"Estates" refers to the grand residential country properties constructed by prosperous burghers (Question 26, Test 16).'
+  },
+  {
+    id: 'drill-101-batch4-tfng-17',
+    type: 'reading-tfng',
+    title: 'Bẫy Phân Định False: Tính Tuyệt Đối Của Bản Đồ Nhận Thức (Test 17)',
+    titleEn: 'False Trap: Photographic Precision of Cognitive Maps (Test 17)',
+    category: 'Cognitive Neuroscience',
+    categoryEn: 'Cognitive Neuroscience',
+    passage: 'Research indicates that mental cognitive charts are topological, highly fragmented, and subjective. They contain systematic angular distortions and blind spots rather than photographic exactitude.',
+    statement: 'In a familiar surrounding, an exact map of where you are will automatically emerge in your head.',
+    answer: 'FALSE',
+    trapType: 'Extreme Absoluteness Trap (Bẫy từ ngữ tuyệt đối "exact map")',
+    trapTypeEn: 'Extreme Absoluteness Trap (Distorted mental model vs exact photographic chart)',
+    explanation: 'Đáp án là FALSE. Nghiên cứu thần kinh học chứng minh bản đồ nhận thức trong đầu luôn mang tính méo mó, phân mảnh và tương đối chứ không bao giờ tự động tạo ra một "bản đồ chính xác tuyệt đối" (exact map).',
+    explanationEn: 'The answer is FALSE. Neurological research confirms internal cognitive maps are subjectively distorted and fragmented, directly contradicting the claim of an "exact map".',
+    evidence: 'They contain systematic angular distortions and blind spots rather than photographic exactitude.',
+    evidenceEn: 'They contain systematic angular distortions and blind spots rather than photographic exactitude.'
   }
 ];
+
 
