@@ -609,8 +609,8 @@ export default function AtlasEnglishArenaModal({
                 <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl ${
                   activeMobileTab === 'match' ? 'flex' : 'hidden lg:flex'
                 }`}>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                  <div className="flex items-center justify-between gap-1.5 min-w-0">
+                    <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider min-w-0">
                       <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                       <span className="truncate">{t('arena.rulesBadge')}</span>
                     </div>
@@ -619,23 +619,19 @@ export default function AtlasEnglishArenaModal({
                     <button
                       type="button"
                       onClick={() => setActiveMobileTab('leaderboard')}
-                      className="lg:hidden flex items-center gap-1 text-[10px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full cursor-pointer"
+                      className="lg:hidden shrink-0 flex items-center gap-1 text-[10px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full cursor-pointer active:scale-95 transition-transform"
                     >
-                      <span>🔥 {isEn ? 'Boss Raid Active' : 'Săn Boss Hôm Nay'}</span>
+                      <span>🔥 {isEn ? 'Boss Raid' : 'Săn Boss'}</span>
                       <span>→</span>
                     </button>
                   </div>
 
-                  <h2 className="text-base sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight">
+                  <h2 className="text-sm sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight">
                     {t('arena.heroTitle')}
                   </h2>
 
                   <p className="text-xs text-slate-300/90 leading-relaxed font-sans hidden sm:block line-clamp-2">
                     {t('arena.heroDescription')}
-                  </p>
-
-                  <p className="text-[11px] text-slate-400 leading-normal sm:hidden">
-                    {isEn ? 'Conquer Cambridge traps, boost reflex speed & rank up on the live leaderboard.' : 'Triệt tiêu bẫy Cambridge, tăng tốc phản xạ & thăng hạng trực tiếp.'}
                   </p>
 
                   <div className="grid grid-cols-3 gap-2 pt-0.5">
@@ -790,6 +786,8 @@ export default function AtlasEnglishArenaModal({
                 </div>
               </div>
             </main>
+            {/* Safe area bottom padding for mobile devices */}
+            <div className="lg:hidden h-8 shrink-0" />
           </div>
         )}
 
