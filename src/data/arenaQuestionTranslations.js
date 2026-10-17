@@ -1193,6 +1193,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Why does the student argue that Pluto represents a genuinely compelling research subject?",
     "contextEn": "I mean, no one has ever seen Pluto close up, and no one has tried to go to Mars, so I think they'd be more interesting expeditions to do.",
     "explanationEn": "Scientific novelty: Pluto is unique because human probes have never observed it at close range."
+  },
+  "easy_lis_alfonso_role_t25": {
+    "promptEn": "What specific responsibility did Alfonso hold in the Arizona Mars habitat?",
+    "contextEn": "Alfonso, the biologist. That means that they won't be able to monitor the plants they've been growing for food.",
+    "explanationEn": "Mission responsibility: Alfonso was the dedicated biologist monitoring crops cultivated for food."
+  },
+  "med_lis_simulation_no_entry_rule_t25": {
+    "promptEn": "What foundational protocol forbids dispatching a replacement into the Arizona habitat?",
+    "contextEn": "Well, as you know, according to the rules of the project, no one else can come in once it's started, so they'll just have to make the best of it.",
+    "explanationEn": "Isolation protocol: The simulation strictly prohibits outside personnel once the mission is underway."
+  },
+  "med_lis_carla_qualification_t25": {
+    "promptEn": "Why does Maria argue that Carla is the most suitable participant to take over plant care?",
+    "contextEn": "I think Carla would be the best person to take over. As chief medical officer, she's had training in biology.",
+    "explanationEn": "Candidate credentials: Carla is chief medical officer and possesses academic training in biology."
+  },
+  "hard_lis_cross_training_advantage_t25": {
+    "promptEn": "According to Dr. Thornton, what is the crucial strategic advantage of distributing the plant care duties across the entire crew?",
+    "contextEn": "Maybe, but I personally think the best solution would be to share the work... they can make sure that if anything else happens to one of them, the others will have a good idea of what to do.",
+    "explanationEn": "Operational redundancy: Cross-training guarantees collective contingency preparedness if another crew member is incapacitated."
+  },
+  "easy_lis_simon_endorsement_t25": {
+    "promptEn": "What conclusion do the students and advisor ultimately converge upon regarding the vacant duties?",
+    "contextEn": "Yeah, I agree with Dr. Thornton. That would be the best solution. But I'm sure they'll announce their plans later.",
+    "explanationEn": "Consensus: Simon agrees that distributing the workload among the crew represents the optimal approach."
   }
 };
 

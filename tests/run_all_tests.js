@@ -179,6 +179,7 @@ const testSuites = [
   { name: 'Step 170: Phase 6 AI Proxy Gateway, Prompt Cache, Lazy Question Banks & Fine-Grained Bundle Chunking', file: 'tests/test_step170_phase6_ai_proxy_cache_and_lazy_question_banks.js' },
   { name: 'Step 171: Track 23 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step171_track23_audio_integration.js' },
   { name: 'Step 172: Track 24 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step172_track24_audio_integration.js' },
+  { name: 'Step 173: Track 25 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step173_track25_audio_integration.js' },
   { name: 'Step 175: Dedicated Two-Way URL Routing & Deep-Linking for Micro-Drills', file: 'tests/test_step175_micro_drill_dedicated_url.js' }
 ];
 

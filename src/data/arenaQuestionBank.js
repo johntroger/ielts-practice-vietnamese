@@ -2113,18 +2113,129 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Humankind has never observed Pluto at close range before',
     explanation: 'Nữ sinh lý giải sức hút của Pluto là bởi chưa ai từng được nhìn thấy hành tinh này ở cự ly gần ("no one has ever seen Pluto close up").',
     explanationEn: 'Scientific novelty: Pluto is unique because human probes have never observed it at close range.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 25 MARS SIMULATION CONTINGENCY PLAN
+  // ==========================================
+  {
+    id: 'easy_lis_alfonso_role_t25',
+    difficulty: 'easy',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What specific responsibility did Alfonso hold in the Arizona Mars habitat?',
+    context: "Alfonso, the biologist. That means that they won't be able to monitor the plants they've been growing for food.",
+    audioText: "Alfonso, the biologist. That means that they won't be able to monitor the plants they've been growing for food.",
+    options: [
+      'Serving as mission biologist overseeing food-producing crops',
+      'Maintaining the high-pressure oxygen recirculation pumps',
+      'Operating the radio telescope link to mission command',
+      'Supervising rover trajectory calculations in the field'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Serving as mission biologist overseeing food-producing crops',
+    explanation: 'Dr. Thornton xác nhận Alfonso là nhà sinh vật học chịu trách nhiệm theo dõi các loại cây trồng phục vụ lương thực ("monitor the plants they\'ve been growing for food").',
+    explanationEn: 'Mission responsibility: Alfonso was the dedicated biologist monitoring crops cultivated for food.'
+  },
+  {
+    id: 'med_lis_simulation_no_entry_rule_t25',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What foundational protocol forbids dispatching a replacement into the Arizona habitat?',
+    context: "Well, as you know, according to the rules of the project, no one else can come in once it's started, so they'll just have to make the best of it.",
+    audioText: "Well, as you know, according to the rules of the project, no one else can come in once it's started, so they'll just have to make the best of it.",
+    options: [
+      'Simulation guidelines prohibit external arrivals once the trial begins',
+      'Extreme desert dust storms have blocked access roads to the habitat',
+      'The budget strictly caps astronaut personnel at nine members',
+      'The local county sheriff restricted access to non-residents'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Simulation guidelines prohibit external arrivals once the trial begins',
+    explanation: 'Quy tắc của dự án cấm tuyệt đối người mới vào một khi nhiệm vụ đã bắt đầu ("no one else can come in once it\'s started").',
+    explanationEn: 'Isolation protocol: The simulation strictly prohibits outside personnel once the mission is underway.'
+  },
+  {
+    id: 'med_lis_carla_qualification_t25',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does Maria argue that Carla is the most suitable participant to take over plant care?',
+    context: "I think Carla would be the best person to take over. As chief medical officer, she's had training in biology.",
+    audioText: "I think Carla would be the best person to take over. As chief medical officer, she's had training in biology.",
+    options: [
+      'She is the chief medical officer and has background training in biology',
+      'She has the most free hours in her daily experiment roster',
+      'She published several botanical papers prior to selection',
+      'She volunteered immediately after Alfonso received the news'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'She is the chief medical officer and has background training in biology',
+    explanation: 'Maria đề xuất Carla vì cô là bác sĩ trưởng ("chief medical officer") và từng được đào tạo về sinh học ("had training in biology").',
+    explanationEn: 'Candidate credentials: Carla is chief medical officer and possesses academic training in biology.'
+  },
+  {
+    id: 'hard_lis_cross_training_advantage_t25',
+    difficulty: 'hard',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Dr. Thornton, what is the crucial strategic advantage of distributing the plant care duties across the entire crew?',
+    context: "Maybe, but I personally think the best solution would be to share the work... they can make sure that if anything else happens to one of them, the others will have a good idea of what to do.",
+    audioText: "Maybe, but I personally think the best solution would be to share the work... they can make sure that if anything else happens to one of them, the others will have a good idea of what to do.",
+    options: [
+      'It ensures operational redundancy so the crew can cope if another emergency strikes',
+      'It frees Carla up to conduct daily psychological interviews',
+      'It cuts daily required sleep cycles by thirty percent',
+      'It allows all members to receive equal academic publication credit'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It ensures operational redundancy so the crew can cope if another emergency strikes',
+    explanation: 'Dr. Thornton lập luận việc chia sẻ công việc giúp toàn đội có năng lực ứng phó nếu một thành viên khác lại gặp sự cố bất ngờ ("if anything else happens to one of them, the others will have a good idea of what to do").',
+    explanationEn: 'Operational redundancy: Cross-training guarantees collective contingency preparedness if another crew member is incapacitated.'
+  },
+  {
+    id: 'easy_lis_simon_endorsement_t25',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What conclusion do the students and advisor ultimately converge upon regarding the vacant duties?',
+    context: "Yeah, I agree with Dr. Thornton. That would be the best solution. But I'm sure they'll announce their plans later.",
+    audioText: "Yeah, I agree with Dr. Thornton. That would be the best solution. But I'm sure they'll announce their plans later.",
+    options: [
+      'Simon explicitly endorses Dr. Thornton\'s recommendation to distribute the workload',
+      'Maria persuades Dr. Thornton that Carla should lead the botanical lab alone',
+      'The group agrees that an external supply drone must be requested',
+      'Simon recommends postponing their student project until Alfonso returns'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Simon explicitly endorses Dr. Thornton\'s recommendation to distribute the workload',
+    explanation: 'Simon đồng tình hoàn toàn với Dr. Thornton rằng chia sẻ công việc là giải pháp tốt nhất ("Yeah, I agree with Dr. Thornton. That would be the best solution").',
+    explanationEn: 'Consensus: Simon agrees that distributing the workload among the crew represents the optimal approach.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 25: Mars Simulation Contingency Plan
+  easy_lis_alfonso_role_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 17.0, clipEnd: 25.0, isR2Audio: true, trackLabel: 'Track 25 • Biologist Food Crop Role' },
+  med_lis_simulation_no_entry_rule_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 43.0, clipEnd: 57.0, isR2Audio: true, trackLabel: 'Track 25 • Isolation Protocol Rule' },
+  med_lis_carla_qualification_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 58.0, clipEnd: 75.0, isR2Audio: true, trackLabel: 'Track 25 • Medical Officer Role' },
+  hard_lis_cross_training_advantage_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 75.0, clipEnd: 93.0, isR2Audio: true, trackLabel: 'Track 25 • Cross-Training Redundancy' },
+  easy_lis_simon_endorsement_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 91.0, clipEnd: 98.0, isR2Audio: true, trackLabel: 'Track 25 • Workload Sharing Consensus' },
+
   // Track 24: Comparing Space Missions & Project Decisions
   easy_lis_mars_timeline_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 2.0, clipEnd: 11.5, isR2Audio: true, trackLabel: 'Track 24 • Mars Project Duration' },
   med_lis_moon_mission_type_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 44.0, clipEnd: 60.0, isR2Audio: true, trackLabel: 'Track 24 • Robotic Lunar Mission' },
   med_lis_lunar_colony_goal_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 50.0, clipEnd: 61.0, isR2Audio: true, trackLabel: 'Track 24 • Lunar Colony Objective' },
   hard_lis_advisor_arizona_priority_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 78.0, clipEnd: 97.0, isR2Audio: true, trackLabel: 'Track 24 • Arizona Team Dynamics' },
   easy_lis_pluto_novelty_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 61.0, clipEnd: 74.0, isR2Audio: true, trackLabel: 'Track 24 • Pluto Close-Up Novelty' },
+
 
   // Track 2: Flat Descriptions
   easy_lis_flat_01: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 11.6, clipEnd: 18.9, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions' },
