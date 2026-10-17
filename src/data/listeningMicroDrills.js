@@ -1683,6 +1683,102 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the prepositional phrase indicating agricultural objective: "growing for food".',
     explanation: 'Dr. Thornton nêu rõ các loại cây này được trồng để cung cấp thức ăn/lương thực ("growing for food").',
     explanationEn: 'The tutor specifies that the cultivated crops are grown specifically for "food".'
+  },
+
+  // ==========================================
+  // TRACK 26: MARS CREW PSYCHOLOGICAL CRISIS
+  // ==========================================
+  {
+    id: 'ldrill-dist-track26-conflict-cause',
+    type: 'listening-distractor',
+    title: 'Bẫy nguyên nhân cốt lõi: Vấn đề cảm xúc do cô lập vs Tranh chấp chuyên môn (Track 26)',
+    titleEn: 'Root Cause Trap: Isolation-Induced Emotional Strain vs Technical Disputes (Track 26)',
+    category: 'Extreme Isolation & Crew Psychology',
+    categoryEn: 'Extreme Isolation & Crew Psychology',
+    audioSnippetText: "Well, we have to remember they'd been isolated together for so long. Even though they'd practiced for an emergency, they couldn't prepare for the emotional problems that came from being in such a confined space for months.",
+    audioText: "Well, we have to remember they'd been isolated together for so long. Even though they'd practiced for an emergency, they couldn't prepare for the emotional problems that came from being in such a confined space for months.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track26-mars-crew-psychological-crisis.mp3',
+    clipStart: 25.0,
+    clipEnd: 39.0,
+    question: 'Lý do cốt lõi dẫn đến cuộc tấn công bạo lực giữa các thành viên phi hành đoàn là gì?',
+    questionEn: 'What was the underlying root cause of the violent altercation between crew members?',
+    options: [
+      { id: 'A', text: 'Áp lực tâm lý và cảm xúc phát sinh từ việc bị cô lập trong không gian chật hẹp suốt nhiều tháng', textEn: 'The psychological and emotional strain arising from months of isolation in confined quarters' },
+      { id: 'B', text: 'Tranh chấp kéo dài về quyền điều hành thiết bị phân tích mẫu vật địa chất', textEn: 'Prolonged operational disputes concerning planetary geological instruments' },
+      { id: 'C', text: 'Thiếu hụt nghiêm trọng khẩu phần lương thực và nước uống dự trữ của trạm', textEn: 'Severe depletion of emergency food supplies and potable water reserves' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe dễ suy đoán do tranh chấp chuyên môn hoặc thiếu thốn vật tư, nhưng Maria giải thích rõ dù đã diễn tập các sự cố kỹ thuật, họ không thể lường trước các vấn đề cảm xúc và tâm lý khi bị cô lập lâu ngày ("couldn\'t prepare for the emotional problems that came from being in such a confined space for months").',
+    distractorMechanismEn: 'Test-takers often assume procedural disagreements or resource scarcity, but Maria clarifies that despite practicing for emergencies, they could not prepare for emotional problems stemming from months of confined isolation.',
+    explanation: 'Đáp án là A: Maria nêu rõ nguyên nhân là các vấn đề cảm xúc do sống trong không gian giam hãm suốt nhiều tháng ("emotional problems that came from being in such a confined space for months").',
+    explanationEn: 'Option A is correct: Maria attributes the altercation directly to "emotional problems that came from being in such a confined space for months".'
+  },
+  {
+    id: 'ldrill-dist-track26-quietest-member',
+    type: 'listening-distractor',
+    title: 'Bẫy tính cách đối lập: Thành viên trầm lặng nhất vs Hành vi hung hãn (Track 26)',
+    titleEn: 'Character Contrast Trap: Quietest Crew Member vs Sudden Aggression (Track 26)',
+    category: 'Behavioral Psychology & Shock Value',
+    categoryEn: 'Behavioral Psychology & Shock Value',
+    audioSnippetText: "Did you hear about what happened on the Mars project in Arizona? Joe, the engineer, attacked Martin. It's on the news today. Really? But Joe's the quietest member of the crew. I can't believe he'd do that.",
+    audioText: "Did you hear about what happened on the Mars project in Arizona? Joe, the engineer, attacked Martin. It's on the news today. Really? But Joe's the quietest member of the crew. I can't believe he'd do that.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track26-mars-crew-psychological-crisis.mp3',
+    clipStart: 2.0,
+    clipEnd: 18.0,
+    question: 'Tại sao Maria lại kinh ngạc và khó tin khi nghe tin Joe tấn công Martin?',
+    questionEn: 'Why is Maria astonished and incredulous upon learning that Joe attacked Martin?',
+    options: [
+      { id: 'A', text: 'Joe vốn là thành viên trầm tính và ít nói nhất trong toàn bộ đội ngũ', textEn: 'Joe had always been regarded as the quietest and most reserved member of the crew' },
+      { id: 'B', text: 'Joe và Martin vốn là bạn thân thiết từ thời đại học', textEn: 'Joe and Martin were close personal friends since university' },
+      { id: 'C', text: 'Joe là chỉ huy có kỷ luật nghiêm ngặt nhất của dự án', textEn: 'Joe was the project commander renowned for the strictest discipline' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Maria thốt lên "But Joe\'s the quietest member of the crew. I can\'t believe he\'d do that." Sự đối lập giữa bản tính trầm lặng thường ngày và hành vi tấn công bất ngờ là lý do gây sốc.',
+    distractorMechanismEn: 'Maria exclaims: "But Joe\'s the quietest member of the crew. I can\'t believe he\'d do that." The stark contrast between his quiet disposition and sudden violent aggression produces the shock.',
+    explanation: 'Đáp án là A: Maria ngạc nhiên vì Joe luôn là thành viên trầm tính nhất đoàn ("the quietest member of the crew").',
+    explanationEn: 'Option A is correct: Maria expresses shock because Joe was regarded as "the quietest member of the crew".'
+  },
+  {
+    id: 'ldrill-dict-track26-inescapable-environment',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Môi trường không thể trốn chạy dẫn đến bùng nổ ức chế (Track 26)',
+    titleEn: 'Dictation Level 2: Inescapable Environment Inducing Psychological Snapping (Track 26)',
+    category: 'Space Exploration & Human Psychology',
+    categoryEn: 'Space Exploration & Human Psychology',
+    ttsText: "I suppose if you can't walk away from someone, tension builds up. Exactly. You can't escape, so you snap.",
+    audioText: "I suppose if you can't walk away from someone, tension builds up. Exactly. You can't escape, so you snap.",
+    targetTranscript: "I suppose if you can't walk away from someone, tension builds up. Exactly. You can't escape, so you snap.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track26-mars-crew-psychological-crisis.mp3',
+    clipStart: 43.0,
+    clipEnd: 55.0,
+    wordCount: 19,
+    difficulty: 'Band 6.0 - 7.0',
+    audioClipTip: 'Chú ý mệnh đề điều kiện "if you can\'t walk away from someone", cụm động từ "tension builds up", và động từ mạnh diễn tả bùng nổ ức chế "snap".',
+    audioClipTipEn: 'Listen carefully for the conditional clause "if you can\'t walk away from someone", phrasal verb "tension builds up", and the emphatic final verb "snap".'
+  },
+  {
+    id: 'ldrill-role-track26-isolated-duration',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Trạng thái cô lập kéo dài (Track 26)',
+    titleEn: 'Key Vocabulary Reflex: Prolonged Isolated Confinement (Track 26)',
+    category: 'Crew Dynamics & Behavioral Reflex',
+    categoryEn: 'Crew Dynamics & Behavioral Reflex',
+    promptAudioText: "Well, we have to remember they'd been isolated together for so long.",
+    audioText: "Well, we have to remember they'd been isolated together for so long.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track26-mars-crew-psychological-crisis.mp3',
+    clipStart: 25.0,
+    clipEnd: 32.5,
+    questionPrompt: "The crew experienced intense psychological friction because they had been ......... together for a prolonged period.",
+    questionPromptEn: "The crew experienced intense psychological friction because they had been ......... together for a prolonged period.",
+    questionPromptVi: 'Phi hành đoàn gặp phải xung đột tâm lý căng thẳng vì họ đã bị ......... cùng nhau trong một thời gian dài.',
+    correctAnswer: 'isolated',
+    acceptableAnswers: ['isolated'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ phân từ "isolated" chỉ trạng thái bị cách ly, cô lập với thế giới bên ngoài.',
+    trapNoteEn: 'Core lexical keyword: Listen for the past participle "isolated" denoting total segregation from the outside world.',
+    explanation: 'Maria nhấn mạnh nguyên nhân bắt nguồn từ việc họ đã bị cô lập cùng nhau quá lâu ("isolated together for so long").',
+    explanationEn: 'Maria highlights the prolonged confinement: "they\'d been isolated together for so long".'
   }
 ];
 

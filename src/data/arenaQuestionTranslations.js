@@ -1218,6 +1218,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What conclusion do the students and advisor ultimately converge upon regarding the vacant duties?",
     "contextEn": "Yeah, I agree with Dr. Thornton. That would be the best solution. But I'm sure they'll announce their plans later.",
     "explanationEn": "Consensus: Simon agrees that distributing the workload among the crew represents the optimal approach."
+  },
+  "easy_lis_joe_temperament_t26": {
+    "promptEn": "Why does Maria find the news of Joe's aggressive conduct particularly astonishing?",
+    "contextEn": "Really? But Joe's the quietest member of the crew. I can't believe he'd do that.",
+    "explanationEn": "Unexpected aggression: Maria expresses disbelief because Joe was renowned as the quietest member of the crew."
+  },
+  "med_lis_victim_martin_t26": {
+    "promptEn": "Who was the specific crew member targeted in the violent altercation inside the habitat?",
+    "contextEn": "Did you hear about what happened on the Mars project in Arizona? Joe, the engineer, attacked Martin. It's on the news today.",
+    "explanationEn": "Altercation target: Simon explicitly mentions that Joe attacked Martin inside the Arizona habitat."
+  },
+  "med_lis_root_cause_isolation_t26": {
+    "promptEn": "What underlying factor does Maria identify as the catalyst for the psychological crisis?",
+    "contextEn": "Even though they'd practiced for an emergency, they couldn't prepare for the emotional problems that came from being in such a confined space for months.",
+    "explanationEn": "Underlying catalyst: Maria highlights emotional problems provoked by months of confinement in tight quarters."
+  },
+  "hard_lis_inescapable_environment_t26": {
+    "promptEn": "According to Simon and Maria, why did the psychological tension escalate into a sudden explosion of violence?",
+    "contextEn": "I suppose if you can't walk away from someone, tension builds up. Exactly. You can't escape, so you snap.",
+    "explanationEn": "Escalation dynamics: Inability to walk away or escape causes interpersonal friction to compound until an individual snaps."
+  },
+  "easy_lis_nature_of_attack_t26": {
+    "promptEn": "What specific role did Joe hold within the Arizona Mars research team?",
+    "contextEn": "Joe, the engineer, attacked Martin. It's on the news today.",
+    "explanationEn": "Role identification: Simon specifies Joe's occupational role as \"the engineer\"."
   }
 };
 

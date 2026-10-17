@@ -2216,12 +2216,122 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Simon explicitly endorses Dr. Thornton\'s recommendation to distribute the workload',
     explanation: 'Simon đồng tình hoàn toàn với Dr. Thornton rằng chia sẻ công việc là giải pháp tốt nhất ("Yeah, I agree with Dr. Thornton. That would be the best solution").',
     explanationEn: 'Consensus: Simon agrees that distributing the workload among the crew represents the optimal approach.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 26 MARS CREW PSYCHOLOGICAL CRISIS
+  // ==========================================
+  {
+    id: 'easy_lis_joe_temperament_t26',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does Maria find the news of Joe\'s aggressive conduct particularly astonishing?',
+    context: "Really? But Joe's the quietest member of the crew. I can't believe he'd do that.",
+    audioText: "Really? But Joe's the quietest member of the crew. I can't believe he'd do that.",
+    options: [
+      'He had earned the reputation of being the quietest member among the crew',
+      'He had served as the conflict resolution mediator during pre-flight training',
+      'He was scheduled to rotate back to Earth the following morning',
+      'He had submitted a formal request for independent living quarters'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He had earned the reputation of being the quietest member among the crew',
+    explanation: 'Maria bất ngờ và không thể tin được vì Joe vốn là người trầm tính nhất trong cả đội ("Joe\'s the quietest member of the crew").',
+    explanationEn: 'Unexpected aggression: Maria expresses disbelief because Joe was renowned as the quietest member of the crew.'
+  },
+  {
+    id: 'med_lis_victim_martin_t26',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Who was the specific crew member targeted in the violent altercation inside the habitat?',
+    context: "Did you hear about what happened on the Mars project in Arizona? Joe, the engineer, attacked Martin. It's on the news today.",
+    audioText: "Did you hear about what happened on the Mars project in Arizona? Joe, the engineer, attacked Martin. It's on the news today.",
+    options: [
+      'Martin',
+      'Alfonso',
+      'Carla',
+      'Dr. Thornton'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Martin',
+    explanation: 'Simon thông báo bản tin xác nhận Joe, kỹ sư, đã tấn công Martin ("Joe, the engineer, attacked Martin").',
+    explanationEn: 'Altercation target: Simon explicitly mentions that Joe attacked Martin inside the Arizona habitat.'
+  },
+  {
+    id: 'med_lis_root_cause_isolation_t26',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What underlying factor does Maria identify as the catalyst for the psychological crisis?',
+    context: "Even though they'd practiced for an emergency, they couldn't prepare for the emotional problems that came from being in such a confined space for months.",
+    audioText: "Even though they'd practiced for an emergency, they couldn't prepare for the emotional problems that came from being in such a confined space for months.",
+    options: [
+      'Emotional problems stemming from months of confinement in an isolated space',
+      'Malfunction of the primary atmospheric oxygen recycling filters',
+      'Irreconcilable disputes regarding daily geological workload allocation',
+      'Contamination of the hydroponic water reservoir inside the dome'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Emotional problems stemming from months of confinement in an isolated space',
+    explanation: 'Maria chỉ ra nguyên nhân cốt lõi là các vấn đề cảm xúc và tâm lý khi bị giam cầm trong không gian chật hẹp suốt nhiều tháng ("emotional problems that came from being in such a confined space for months").',
+    explanationEn: 'Underlying catalyst: Maria highlights emotional problems provoked by months of confinement in tight quarters.'
+  },
+  {
+    id: 'hard_lis_inescapable_environment_t26',
+    difficulty: 'hard',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Simon and Maria, why did the psychological tension escalate into a sudden explosion of violence?',
+    context: "I suppose if you can't walk away from someone, tension builds up. Exactly. You can't escape, so you snap.",
+    audioText: "I suppose if you can't walk away from someone, tension builds up. Exactly. You can't escape, so you snap.",
+    options: [
+      'Because participants cannot walk away or escape from one another, causing stress to accumulate until they snap',
+      'Because mission directors refused to grant temporary communication blackouts with families',
+      'Because emergency sedation supplies were depleted during the initial three weeks',
+      'Because external media leaks created acute public pressure on the participants'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Because participants cannot walk away or escape from one another, causing stress to accumulate until they snap',
+    explanation: 'Hai bạn thảo luận rằng khi không thể rời đi hay trốn thoát khỏi người khác ("can\'t walk away", "can\'t escape"), căng thẳng sẽ tích tụ ("tension builds up") cho đến khi bùng nổ ("snap").',
+    explanationEn: 'Escalation dynamics: Inability to walk away or escape causes interpersonal friction to compound until an individual snaps.'
+  },
+  {
+    id: 'easy_lis_nature_of_attack_t26',
+    difficulty: 'easy',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What specific role did Joe hold within the Arizona Mars research team?',
+    context: "Joe, the engineer, attacked Martin. It's on the news today.",
+    audioText: "Joe, the engineer, attacked Martin. It's on the news today.",
+    options: [
+      'The engineer',
+      'The chief medical doctor',
+      'The research botanist',
+      'The mission commander'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The engineer',
+    explanation: 'Simon nêu rõ chức danh của Joe là kỹ sư ("Joe, the engineer").',
+    explanationEn: 'Role identification: Simon specifies Joe\'s occupational role as "the engineer".'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 26: Mars Crew Psychological Crisis
+  easy_lis_joe_temperament_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 2.0, clipEnd: 18.0, isR2Audio: true, trackLabel: 'Track 26 • Quiet Crew Member Contrast' },
+  med_lis_victim_martin_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 2.0, clipEnd: 14.0, isR2Audio: true, trackLabel: 'Track 26 • Altercation Victim Martin' },
+  med_lis_root_cause_isolation_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 25.0, clipEnd: 40.0, isR2Audio: true, trackLabel: 'Track 26 • Emotional Strain Isolation' },
+  hard_lis_inescapable_environment_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 42.0, clipEnd: 55.0, isR2Audio: true, trackLabel: 'Track 26 • Inescapable Stress Snapping' },
+  easy_lis_nature_of_attack_t26: { audioUrl: `${R2_BASE}/ielts-listening-track26-mars-crew-psychological-crisis.mp3`, clipStart: 2.0, clipEnd: 13.0, isR2Audio: true, trackLabel: 'Track 26 • Engineer Role Identification' },
+
   // Track 25: Mars Simulation Contingency Plan
   easy_lis_alfonso_role_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 17.0, clipEnd: 25.0, isR2Audio: true, trackLabel: 'Track 25 • Biologist Food Crop Role' },
   med_lis_simulation_no_entry_rule_t25: { audioUrl: `${R2_BASE}/ielts-listening-track25-arizona-mars-contingency.mp3`, clipStart: 43.0, clipEnd: 57.0, isR2Audio: true, trackLabel: 'Track 25 • Isolation Protocol Rule' },

@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banner Micro-Drills Studio - IELTS Practice Vietnamese</title>
+  <title>Banner Micro-Drills Studio (1080x1080) - Elegant Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     * {
@@ -15,50 +15,53 @@
       padding: 0;
     }
     body {
-      background-color: #0b1120;
+      background-color: #05080f;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      padding: 40px 20px;
+      padding: 30px 20px;
+      color: #f1f5f9;
     }
+
+    /* TOP ACTION BAR (Not exported) */
     .action-bar {
       margin-bottom: 24px;
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 14px;
       align-items: center;
       justify-content: center;
     }
     .btn-download {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #0f172a;
-      border: none;
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: 800;
-      border-radius: 12px;
+      background: #f8fafc;
+      color: #090d16;
+      border: 1px solid #ffffff;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 999px;
       cursor: pointer;
-      box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .btn-download:hover {
       transform: translateY(-2px);
-      box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.5);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.25);
     }
     .btn-lang {
-      background: #1e293b;
-      color: #f8fafc;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 14px 22px;
-      font-size: 15px;
-      font-weight: 700;
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 999px;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -66,11 +69,13 @@
       gap: 8px;
     }
     .btn-lang:hover {
-      background: #334155;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .status-text {
-      color: #94a3b8;
-      font-size: 14px;
+      color: #64748b;
+      font-size: 13.5px;
+      margin-left: 8px;
     }
 
     /* BANNER CONTAINER (1080 x 1080 px) */
@@ -78,45 +83,34 @@
       width: 1080px;
       height: 1080px;
       position: relative;
-      background: radial-gradient(circle at 85% 15%, #1e1b4b 0%, #0a0f1d 55%, #030712 100%);
+      background: #090d16;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 64px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      padding: 68px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.07);
     }
 
-    /* Ambient glow elements */
-    .glow-amber {
+    /* Muted, Elegant Ambient Background (No harsh glare) */
+    .ambient-bg {
       position: absolute;
-      top: -120px;
-      right: -80px;
-      width: 550px;
-      height: 550px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0) 70%);
-      filter: blur(50px);
+      inset: 0;
+      background: 
+        radial-gradient(circle at 50% -10%, rgba(56, 96, 172, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 90% 90%, rgba(217, 119, 6, 0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #0c121e 0%, #090d16 100%);
       pointer-events: none;
     }
-    .glow-indigo {
-      position: absolute;
-      bottom: -140px;
-      left: -100px;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0) 70%);
-      filter: blur(60px);
-      pointer-events: none;
-    }
-    .grid-pattern {
+    .subtle-grid {
       position: absolute;
       inset: 0;
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: 36px 36px;
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at 50% 40%, black 40%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at 50% 40%, black 40%, transparent 85%);
       pointer-events: none;
     }
 
@@ -128,341 +122,334 @@
       justify-content: space-between;
       align-items: center;
     }
-    .brand-logo {
+    .brand-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
-    .logo-badge {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #f59e0b, #ef4444);
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-      font-size: 26px;
-    }
-    .brand-name {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: #ffffff;
-      text-transform: uppercase;
-    }
-    .brand-name span {
+      font-size: 18px;
       color: #fbbf24;
     }
-    .tag-feature {
+    .brand-text {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-text span {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+    .tag-release {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fde68a;
-      padding: 8px 18px;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 6px 14px;
       border-radius: 999px;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 1px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
     }
-    .dot-pulse {
-      width: 8px;
-      height: 8px;
+    .dot-amber {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #fbbf24;
-      box-shadow: 0 0 10px #fbbf24;
+      background: #e2b36e;
     }
 
-    /* MAIN CONTENT */
-    .main-content {
+    /* HERO COPY */
+    .hero-section {
       position: relative;
       z-index: 10;
-      margin: 20px 0;
+      margin: 10px 0 20px 0;
     }
-    .hero-pill {
+    .eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(99, 102, 241, 0.18);
-      border: 1px solid rgba(129, 140, 248, 0.35);
-      color: #a5b4fc;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 13px;
+      gap: 6px;
+      color: #e2b36e;
+      font-size: 12.5px;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
     }
     .headline {
       font-size: 46px;
-      line-height: 1.15;
-      font-weight: 900;
+      line-height: 1.14;
+      font-weight: 800;
       color: #ffffff;
       letter-spacing: -1px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
-    .headline .highlight {
-      background: linear-gradient(135deg, #fbbf24 0%, #fef08a 45%, #f59e0b 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .headline .sub-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: #94a3b8;
+      font-size: 42px;
+      display: block;
+      margin-top: 2px;
     }
-    .subhead {
-      font-size: 16.5px;
-      line-height: 1.5;
-      color: #cbd5e1;
-      max-width: 900px;
+    .summary {
+      font-size: 16px;
+      line-height: 1.55;
+      color: #94a3b8;
+      max-width: 860px;
       font-weight: 400;
-      margin-bottom: 24px;
     }
 
-    /* 4 SPECIALIZED SUB-ROOMS GRID */
-    .features-grid {
+    /* 4 BENTO CARDS (Double-Bezel Architecture) */
+    .bento-grid {
+      position: relative;
+      z-index: 10;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
-      max-width: 952px;
+      margin-bottom: 18px;
     }
-    .feature-card {
+    .bento-shell {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 3px;
+    }
+    .bento-core {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 15px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      height: 100%;
+    }
+    .bento-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 15px 18px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      backdrop-filter: blur(12px);
-    }
-    .feature-icon-wrap {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 19px;
       flex-shrink: 0;
+      margin-top: 1px;
     }
-    .icon-writing {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #f87171;
-    }
-    .icon-reading {
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
-    }
-    .icon-listening {
-      background: rgba(168, 85, 247, 0.2);
-      border: 1px solid rgba(168, 85, 247, 0.4);
-      color: #c084fc;
-    }
-    .icon-speaking {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid rgba(168, 85, 247, 0.4);
-      color: #34d399;
-    }
-    .feature-title {
-      font-size: 15.5px;
-      font-weight: 800;
-      color: #ffffff;
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
       margin-bottom: 3px;
     }
-    .feature-desc {
+    .card-desc {
       font-size: 12.5px;
-      color: #94a3b8;
-      line-height: 1.35;
+      color: #64748b;
+      line-height: 1.45;
+      font-weight: 400;
     }
 
-    /* BOTTOM ROW: QR CODE CARD & HIGHLIGHTS */
-    .bottom-row {
+    /* BOTTOM QR ISLAND */
+    .qr-island-shell {
       position: relative;
       z-index: 10;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 4px;
+    }
+    .qr-island-core {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.7) 0%, rgba(11, 17, 30, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 20px 24px;
       display: flex;
       align-items: center;
       gap: 24px;
-      background: linear-gradient(135deg, rgba(30, 27, 75, 0.6) 0%, rgba(15, 23, 42, 0.85) 100%);
-      border: 1.5px solid rgba(245, 158, 11, 0.35);
-      border-radius: 20px;
-      padding: 22px 28px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-    .qr-card {
+    .qr-frame {
       background: #ffffff;
       border-radius: 14px;
-      padding: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
       flex-shrink: 0;
     }
     .qr-image {
-      width: 130px;
-      height: 130px;
+      width: 120px;
+      height: 120px;
       display: block;
     }
-    .cta-content {
+    .cta-column {
       display: flex;
       flex-direction: column;
       justify-content: center;
       flex-grow: 1;
     }
     .cta-eyebrow {
-      font-size: 12.5px;
-      font-weight: 800;
-      color: #fbbf24;
+      font-size: 12px;
+      font-weight: 700;
+      color: #e2b36e;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 5px;
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .cta-heading {
-      font-size: 22px;
-      font-weight: 900;
+    .cta-title {
+      font-size: 20px;
+      font-weight: 800;
       color: #ffffff;
       margin-bottom: 4px;
       line-height: 1.25;
     }
-    .cta-url {
-      font-size: 14px;
-      font-weight: 700;
-      color: #93c5fd;
-      font-family: monospace;
+    .cta-link {
+      font-family: 'Space Grotesk', monospace;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #94a3b8;
       letter-spacing: -0.2px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-    .badges-row {
+    .cta-chips {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .mini-pill {
+    .chip {
       font-size: 11.5px;
-      font-weight: 700;
-      color: #e2e8f0;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 4px 10px;
+      font-weight: 600;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3px 10px;
       border-radius: 6px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Controls for Exporting & Language Switching -->
+  <!-- Controls for Exporting (Outside banner canvas) -->
   <div class="action-bar">
     <button class="btn-download" id="downloadBtn" onclick="downloadBanner()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span id="btnText">Tải ảnh PNG (1080 x 1080 px)</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span id="btnLabel">Tải ảnh PNG (1080 x 1080 px)</span>
     </button>
     <button class="btn-lang" onclick="toggleLanguage()">
       <span id="langFlag">🌐</span>
-      <span id="langText">Chuyển sang English</span>
+      <span id="langLabel">Switch to English</span>
     </button>
-    <span class="status-text" id="statusMsg">Kích thước chuẩn vuông 1080x1080 (Facebook / Instagram / Feed / Zalo)</span>
+    <span class="status-text" id="statusMsg">Kích thước 1080x1080 • Tone màu nhã nhặn, sang trọng, êm mắt</span>
   </div>
 
   <!-- THE 1080x1080 BANNER CANVAS -->
   <div id="banner-canvas">
     
-    <!-- Ambient Lights & Grid -->
-    <div class="glow-amber"></div>
-    <div class="glow-indigo"></div>
-    <div class="grid-pattern"></div>
+    <!-- Gentle Ambient Lighting -->
+    <div class="ambient-bg"></div>
+    <div class="subtle-grid"></div>
 
-    <!-- TOP BAR -->
+    <!-- 1. TOP HEADER -->
     <div class="top-bar">
-      <div class="brand-logo">
-        <div class="logo-badge">⚡</div>
-        <div class="brand-name">IELTS Practice <span>Vietnamese</span></div>
+      <div class="brand-group">
+        <div class="brand-mark">✦</div>
+        <div class="brand-text">IELTS Practice <span>Vietnamese</span></div>
       </div>
-      <div class="tag-feature">
-        <div class="dot-pulse"></div>
-        <span id="badgeText">Tính Năng Mới • 2026 Release</span>
+      <div class="tag-release">
+        <div class="dot-amber"></div>
+        <span id="badgeText">Reflex Studio 2026</span>
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-      <div class="hero-pill">
-        <span id="heroPill">🎯 Phương Pháp Luyện Tập Có Chủ Đích (Deliberate Practice)</span>
-      </div>
-      <h1 class="headline" id="mainHeadline">
-        Phòng Luyện Phản Xạ Vi Mô<br>
-        <span class="highlight">Targeted Reflex Studio</span>
+    <!-- 2. HERO STATEMENT -->
+    <div class="hero-section">
+      <div class="eyebrow" id="eyebrowText">Deliberate Practice for IELTS Band 7.5+</div>
+      <h1 class="headline" id="headlineMain">
+        Phòng Luyện Phản Xạ Vi Mô
+        <span class="sub-title" id="headlineSub">Targeted Reflex Studio</span>
       </h1>
-      <p class="subhead" id="subHeadline">
-        Rèn luyện phản xạ ngôn ngữ thực chiến • Xóa tan nỗi sợ bẫy thi • Bứt phá Band 7.5+ chỉ với 3-5 phút mỗi bài tập mà không lo quá tải!
+      <p class="summary" id="summaryText">
+        Rèn luyện có chủ đích theo từng mắt xích ngôn ngữ. Mỗi bài tập chỉ 3–5 phút, giúp xóa bỏ cảm giác quá tải và bẻ gãy mọi bẫy đề thi Cambridge kinh điển.
       </p>
+    </div>
 
-      <!-- 4 SPECIALIZED SUB-ROOMS -->
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon-wrap icon-writing">✍️</div>
+    <!-- 3. 4 BENTO SUB-ROOMS -->
+    <div class="bento-grid">
+      <div class="bento-shell">
+        <div class="bento-core">
+          <div class="bento-icon">✍️</div>
           <div>
-            <div class="feature-title" id="card1Title">Chuyên Writing: Cú Pháp & Ý Tưởng</div>
-            <div class="feature-desc" id="card1Desc">Luyện câu phức GRA, ngắt cụm mệnh đề Chunking, Paraphrase C1/C2 & gài từ nối.</div>
+            <div class="card-title" id="c1Title">Chuyên Writing: Cú Pháp & Ý Tưởng</div>
+            <div class="card-desc" id="c1Desc">Luyện câu phức GRA, ngắt cụm mệnh đề Chunking, Paraphrase C1/C2 & gài từ nối Cohesion.</div>
           </div>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <div class="feature-icon-wrap icon-reading">📖</div>
+      <div class="bento-shell">
+        <div class="bento-core">
+          <div class="bento-icon">📖</div>
           <div>
-            <div class="feature-title" id="card2Title">Chuyên Reading: Phá Bẫy Distractor</div>
-            <div class="feature-desc" id="card2Desc">Bóc tách 6 archetype bẫy True/False/Not Given, Matching Headings & quét từ khóa 3s.</div>
+            <div class="card-title" id="c2Title">Chuyên Reading: Phá Bẫy Distractor</div>
+            <div class="card-desc" id="c2Desc">Bóc tách 6 archetype bẫy True/False/Not Given, Matching Headings & quét từ khóa 3s.</div>
           </div>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <div class="feature-icon-wrap icon-listening">🎧</div>
+      <div class="bento-shell">
+        <div class="bento-core">
+          <div class="bento-icon">🎧</div>
           <div>
-            <div class="feature-title" id="card3Title">Chuyên Listening: Âm Nhạc & Bẻ Lái</div>
-            <div class="feature-desc" id="card3Desc">Phản xạ bẻ lái 180° Turnaround, số liệu nhiễu, chính tả âm câm & Dictation tốc độ thực.</div>
+            <div class="card-title" id="c3Title">Chuyên Listening: Âm Thanh & Bẻ Lái</div>
+            <div class="card-desc" id="c3Desc">Phản xạ bẻ lái 180° Turnaround, số liệu nhiễu, chính tả âm câm & Dictation tốc độ thực.</div>
           </div>
         </div>
+      </div>
 
-        <div class="feature-card">
-          <div class="feature-icon-wrap icon-speaking">🎙️</div>
+      <div class="bento-shell">
+        <div class="bento-core">
+          <div class="bento-icon">🎙️</div>
           <div>
-            <div class="feature-title" id="card4Title">Chuyên Speaking: Trôi Chảy 2 Phút</div>
-            <div class="feature-desc" id="card4Desc">Căn nhịp 4 chặng Pacing Bar, lọc sạch từ đệm ngập ngừng (uh/um) & phản xạ Part 3.</div>
+            <div class="card-title" id="c4Title">Chuyên Speaking: Trôi Chảy 2 Phút</div>
+            <div class="card-desc" id="c4Desc">Căn nhịp 4 chặng Pacing Bar, lọc sạch filler words (uh/um) & phản xạ phản biện Part 3.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- BOTTOM ROW: QR CODE CARD & HIGHLIGHTS -->
-    <div class="bottom-row">
-      <div class="qr-card">
-        <!-- Direct High-Resolution QR Code leading to /micro-drills -->
-        <img class="qr-image" src="data:image/png;base64,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" alt="QR Code Micro-Drills">
-      </div>
-      <div class="cta-content">
-        <div class="cta-eyebrow">
-          <span>🔍 <span id="ctaEyebrow">Quét mã QR để luyện tập ngay</span></span>
+    <!-- 4. BOTTOM QR CODE DOCK -->
+    <div class="qr-island-shell">
+      <div class="qr-island-core">
+        <div class="qr-frame">
+          <img class="qr-image" src="data:image/png;base64,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" alt="QR Code Micro-Drills">
         </div>
-        <div class="cta-heading" id="ctaHeading">Vào Phòng Luyện Phản Xạ 3 Phút</div>
-        <div class="cta-url">ielts-practice-vietnamese.vercel.app/micro-drills</div>
-        
-        <div class="badges-row">
-          <div class="mini-pill"><span>⚡</span> <span id="pill1">Luyện 3-5 Phút</span></div>
-          <div class="mini-pill"><span>🎯</span> <span id="pill2">Không Áp Lực</span></div>
-          <div class="mini-pill"><span>🤖</span> <span id="pill3">AI Chữa Tức Thì</span></div>
-          <div class="mini-pill"><span>📱</span> <span id="pill4">100% Web & Mobile</span></div>
+        <div class="cta-column">
+          <div class="cta-eyebrow">
+            <span>✦ <span id="ctaEyebrowText">Quét camera hoặc truy cập trực tiếp</span></span>
+          </div>
+          <div class="cta-title" id="ctaTitleText">Vào Phòng Luyện Phản Xạ 3 Phút</div>
+          <div class="cta-link">ielts-practice-vietnamese.vercel.app/micro-drills</div>
+          <div class="cta-chips">
+            <div class="chip">⏱️ <span id="p1">3–5 Phút / Drill</span></div>
+            <div class="chip">🛡️ <span id="p2">Zero Overwhelm</span></div>
+            <div class="chip">🤖 <span id="p3">AI Feedback 0.02s</span></div>
+            <div class="chip">📱 <span id="p4">100% Web & Mobile</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -472,76 +459,79 @@
   <script>
     let currentLang = 'vi';
 
-    const content = {
+    const translations = {
       vi: {
-        badge: 'Tính Năng Mới • 2026 Release',
-        heroPill: '🎯 Phương Pháp Luyện Tập Có Chủ Đích (Deliberate Practice)',
-        headline: 'Phòng Luyện Phản Xạ Vi Mô<br><span class="highlight">Targeted Reflex Studio</span>',
-        subhead: 'Rèn luyện phản xạ ngôn ngữ thực chiến • Xóa tan nỗi sợ bẫy thi • Bứt phá Band 7.5+ chỉ với 3-5 phút mỗi bài tập mà không lo quá tải!',
-        card1Title: 'Chuyên Writing: Cú Pháp & Ý Tưởng',
-        card1Desc: 'Luyện câu phức GRA, ngắt cụm mệnh đề Chunking, Paraphrase C1/C2 & gài từ nối.',
-        card2Title: 'Chuyên Reading: Phá Bẫy Distractor',
-        card2Desc: 'Bóc tách 6 archetype bẫy True/False/Not Given, Matching Headings & quét từ khóa 3s.',
-        card3Title: 'Chuyên Listening: Âm Nhạc & Bẻ Lái',
-        card3Desc: 'Phản xạ bẻ lái 180° Turnaround, số liệu nhiễu, chính tả âm câm & Dictation tốc độ thực.',
-        card4Title: 'Chuyên Speaking: Trôi Chảy 2 Phút',
-        card4Desc: 'Căn nhịp 4 chặng Pacing Bar, lọc sạch từ đệm ngập ngừng (uh/um) & phản xạ Part 3.',
-        ctaEyebrow: 'Quét mã QR để luyện tập ngay',
-        ctaHeading: 'Vào Phòng Luyện Phản Xạ 3 Phút',
-        pill1: 'Luyện 3-5 Phút',
-        pill2: 'Không Áp Lực',
-        pill3: 'AI Chữa Tức Thì',
-        pill4: '100% Web & Mobile',
+        badge: 'Reflex Studio 2026',
+        eyebrow: 'Deliberate Practice for IELTS Band 7.5+',
+        hMain: 'Phòng Luyện Phản Xạ Vi Mô',
+        hSub: 'Targeted Reflex Studio',
+        summary: 'Rèn luyện có chủ đích theo từng mắt xích ngôn ngữ. Mỗi bài tập chỉ 3–5 phút, giúp xóa bỏ cảm giác quá tải và bẻ gãy mọi bẫy đề thi Cambridge kinh điển.',
+        c1T: 'Chuyên Writing: Cú Pháp & Ý Tưởng',
+        c1D: 'Luyện câu phức GRA, ngắt cụm mệnh đề Chunking, Paraphrase C1/C2 & gài từ nối Cohesion.',
+        c2T: 'Chuyên Reading: Phá Bẫy Distractor',
+        c2D: 'Bóc tách 6 archetype bẫy True/False/Not Given, Matching Headings & quét từ khóa 3s.',
+        c3T: 'Chuyên Listening: Âm Thanh & Bẻ Lái',
+        c3D: 'Phản xạ bẻ lái 180° Turnaround, số liệu nhiễu, chính tả âm câm & Dictation tốc độ thực.',
+        c4T: 'Chuyên Speaking: Trôi Chảy 2 Phút',
+        c4D: 'Căn nhịp 4 chặng Pacing Bar, lọc sạch filler words (uh/um) & phản xạ phản biện Part 3.',
+        ctaEye: 'Quét camera hoặc truy cập trực tiếp',
+        ctaTitle: 'Vào Phòng Luyện Phản Xạ 3 Phút',
+        p1: '3–5 Phút / Drill',
+        p2: 'Zero Overwhelm',
+        p3: 'AI Feedback 0.02s',
+        p4: '100% Web & Mobile',
         btnText: 'Tải ảnh PNG (1080 x 1080 px)',
-        langText: 'Chuyển sang English'
+        langText: 'Switch to English'
       },
       en: {
-        badge: 'New Feature • 2026 Release',
-        heroPill: '🎯 Deliberate Practice for IELTS 7.5+',
-        headline: 'Targeted Reflex Studio<br><span class="highlight">IELTS Micro-Drills</span>',
-        subhead: 'Sharpen real exam reflexes • Conquer tricky distractor traps • Elevate your band score in bite-sized 3-5 min deliberate drills with zero overwhelm!',
-        card1Title: 'Writing Drills: GRA & Cohesion',
-        card1Desc: 'Master complex sentence syntax, clause chunking, C1/C2 paraphrase & cohesive devices.',
-        card2Title: 'Reading Drills: Distractor Busting',
-        card2Desc: 'Neutralize 6 deceptive True/False/Not Given traps, Headings & 3-sec keyword scanning.',
-        card3Title: 'Listening Drills: Turnaround Pivots',
-        card3Desc: 'Trap pivots 180°, noise figures, silent-letter spelling & real-speed dictation.',
-        card4Title: 'Speaking Drills: 2-Min Fluency',
-        card4Desc: 'Master 4-stage pacing bar, eradicate hesitation fillers (uh/um) & Part 3 reflexes.',
-        ctaEyebrow: 'Scan QR Code or visit directly',
-        ctaHeading: 'Enter 3-Min Micro-Drill Studio',
-        pill1: '3-5 Min Drills',
-        pill2: 'Zero Overwhelm',
-        pill3: 'Instant AI Feedback',
-        pill4: '100% Web & Mobile',
+        badge: 'Reflex Studio 2026',
+        eyebrow: 'Deliberate Practice for IELTS Band 7.5+',
+        hMain: 'Targeted Reflex Studio',
+        hSub: 'IELTS Micro-Drills',
+        summary: 'Deliberate micro-practice across vital language links. Each session takes just 3–5 minutes, eliminating cognitive overload while conquering classic Cambridge exam traps.',
+        c1T: 'Writing Drills: GRA Syntax & Cohesion',
+        c1D: 'Master complex clauses, sentence chunking, C1/C2 paraphrasing & cohesive transitions.',
+        c2T: 'Reading Drills: Distractor Trap Buster',
+        c2D: 'Deconstruct 6 deceptive True/False/Not Given archetypes & 3-sec keyword scanning.',
+        c3T: 'Listening Drills: Turnaround Pivots',
+        c3D: 'Reflexive 180° turnaround cues, distractor numerals, silent letters & real-pace dictation.',
+        c4T: 'Speaking Drills: 2-Min Fluency Pacing',
+        c4D: 'Internalize the 4-stage pacing bar, eradicate filler words & elevate Part 3 counter-arguments.',
+        ctaEye: 'Scan with camera or visit directly',
+        ctaTitle: 'Enter 3-Min Micro-Drill Studio',
+        p1: '3–5 Min / Drill',
+        p2: 'Zero Overwhelm',
+        p3: 'Instant AI Feedback',
+        p4: '100% Web & Mobile',
         btnText: 'Download PNG (1080 x 1080 px)',
-        langText: 'Switch to Vietnamese'
+        langText: 'Chuyển sang Tiếng Việt'
       }
     };
 
     function toggleLanguage() {
       currentLang = currentLang === 'vi' ? 'en' : 'vi';
-      const c = content[currentLang];
-      document.getElementById('badgeText').textContent = c.badge;
-      document.getElementById('heroPill').textContent = c.heroPill;
-      document.getElementById('mainHeadline').innerHTML = c.headline;
-      document.getElementById('subHeadline').textContent = c.subhead;
-      document.getElementById('card1Title').textContent = c.card1Title;
-      document.getElementById('card1Desc').textContent = c.card1Desc;
-      document.getElementById('card2Title').textContent = c.card2Title;
-      document.getElementById('card2Desc').textContent = c.card2Desc;
-      document.getElementById('card3Title').textContent = c.card3Title;
-      document.getElementById('card3Desc').textContent = c.card3Desc;
-      document.getElementById('card4Title').textContent = c.card4Title;
-      document.getElementById('card4Desc').textContent = c.card4Desc;
-      document.getElementById('ctaEyebrow').textContent = c.ctaEyebrow;
-      document.getElementById('ctaHeading').textContent = c.ctaHeading;
-      document.getElementById('pill1').textContent = c.pill1;
-      document.getElementById('pill2').textContent = c.pill2;
-      document.getElementById('pill3').textContent = c.pill3;
-      document.getElementById('pill4').textContent = c.pill4;
-      document.getElementById('btnText').textContent = c.btnText;
-      document.getElementById('langText').textContent = c.langText;
+      const t = translations[currentLang];
+      document.getElementById('badgeText').textContent = t.badge;
+      document.getElementById('eyebrowText').textContent = t.eyebrow;
+      document.getElementById('headlineMain').childNodes[0].nodeValue = t.hMain + ' ';
+      document.getElementById('headlineSub').textContent = t.hSub;
+      document.getElementById('summaryText').textContent = t.summary;
+      document.getElementById('c1Title').textContent = t.c1T;
+      document.getElementById('c1Desc').textContent = t.c1D;
+      document.getElementById('c2Title').textContent = t.c2T;
+      document.getElementById('c2Desc').textContent = t.c2D;
+      document.getElementById('c3Title').textContent = t.c3T;
+      document.getElementById('c3Desc').textContent = t.c3D;
+      document.getElementById('c4Title').textContent = t.c4T;
+      document.getElementById('c4Desc').textContent = t.c4D;
+      document.getElementById('ctaEyebrowText').textContent = t.ctaEye;
+      document.getElementById('ctaTitleText').textContent = t.ctaTitle;
+      document.getElementById('p1').textContent = t.p1;
+      document.getElementById('p2').textContent = t.p2;
+      document.getElementById('p3').textContent = t.p3;
+      document.getElementById('p4').textContent = t.p4;
+      document.getElementById('btnLabel').textContent = t.btnText;
+      document.getElementById('langLabel').textContent = t.langText;
     }
 
     function downloadBanner() {
@@ -550,15 +540,15 @@
       const element = document.getElementById('banner-canvas');
       
       btn.disabled = true;
-      statusMsg.textContent = 'Đang kết xuất ảnh chất lượng cao 1080x1080...';
+      statusMsg.textContent = 'Đang xử lý ảnh chất lượng cao 1080x1080...';
       
       html2canvas(element, {
-        scale: 1,
+        scale: 2, // 2x retina clarity (2160x2160)
         width: 1080,
         height: 1080,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#0a0f1d'
+        backgroundColor: '#090d16'
       }).then(canvas => {
         const link = document.createElement('a');
         link.download = `banner-micro-drills-1080x1080-${currentLang}.png`;
@@ -566,9 +556,9 @@
         link.click();
         
         btn.disabled = false;
-        statusMsg.textContent = '✓ Đã tải ảnh banner thành công!';
+        statusMsg.textContent = '✓ Đã tải ảnh banner thành công (2x Retina)!';
         setTimeout(() => {
-          statusMsg.textContent = 'Kích thước chuẩn vuông 1080x1080 (Facebook / Instagram / Feed / Zalo)';
+          statusMsg.textContent = 'Kích thước 1080x1080 • Tone màu nhã nhặn, sang trọng, êm mắt';
         }, 3500);
       }).catch(err => {
         console.error(err);
