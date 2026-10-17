@@ -147,7 +147,7 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 const appContent = fs.readFileSync(path.join(rootDir, 'src', 'App.jsx'), 'utf8');
-const speakingContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'speaking', 'SpeakingWorkspace.jsx'), 'utf8');
+const speakingContent = (fs.existsSync(path.join(rootDir, 'src', 'hooks', 'useSpeakingTopics.js')) ? fs.readFileSync(path.join(rootDir, 'src', 'hooks', 'useSpeakingTopics.js'), 'utf8') : '') + fs.readFileSync(path.join(rootDir, 'src', 'components', 'speaking', 'SpeakingWorkspace.jsx'), 'utf8');
 const readingContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'reading', 'ReadingWorkspace.jsx'), 'utf8');
 const listeningContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'listening', 'ListeningWorkspace.jsx'), 'utf8');
 

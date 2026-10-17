@@ -16,15 +16,15 @@ assert(readingContent.includes('handleOptionSelect'), 'QuestionPane must have ha
 assert(readingContent.includes('handleOptionDoubleClick'), 'QuestionPane must have handleOptionDoubleClick');
 
 // 2. Verify TFNG group has double-click and touch support in QuestionPane.jsx
-assert(readingContent.includes('onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt)}'), 'QuestionPane TFNG must handle onDoubleClick');
+assert(readingContent.includes('handleOptionDoubleClick(e, qOrder, opt)') || readingContent.includes('handleOptionDoubleClick(e, q.order, opt)'), 'QuestionPane TFNG must handle onDoubleClick');
 assert(readingContent.includes('touch-manipulation'), 'QuestionPane must include touch-manipulation for responsive taps');
 assert(readingContent.includes('Double-click to deselect') || readingContent.includes('Double-click để bỏ chọn'), 'QuestionPane must have bilingual tooltip for deselection');
 
 // 3. Verify Multiple Choice group has double-click support in QuestionPane.jsx
-assert(readingContent.includes('onDoubleClick={(e) => handleOptionDoubleClick(e, q.order, opt.letter)}'), 'QuestionPane MCQ must handle onDoubleClick');
+assert(readingContent.includes('handleOptionDoubleClick(e, qOrder, opt.letter)') || readingContent.includes('handleOptionDoubleClick(e, q.order, opt.letter)'), 'QuestionPane MCQ must handle onDoubleClick');
 
 // 4. Verify Matching group has double-click support in QuestionPane.jsx
-assert(readingContent.includes('handleOptionDoubleClick(e, q.order, opt)'), 'QuestionPane Matching must handle onDoubleClick');
+assert(readingContent.includes('handleOptionDoubleClick(e, qOrder, opt)') || readingContent.includes('handleOptionDoubleClick(e, q.order, opt)'), 'QuestionPane Matching must handle onDoubleClick');
 
 // 5. Verify ListeningQuestionPane has lastOptionClickRef and handlers
 assert(listeningContent.includes('lastOptionClickRef'), 'ListeningQuestionPane must have lastOptionClickRef');

@@ -21,8 +21,9 @@ const __dirname = path.dirname(__filename);
 
 console.log('--- Testing Step 50: Speaking Action Box Overflow Fix ---');
 
+const heroPath = path.join(__dirname, '../src/components/speaking/SpeakingMockHero.jsx');
 const workspacePath = path.join(__dirname, '../src/components/speaking/SpeakingWorkspace.jsx');
-const source = fs.readFileSync(workspacePath, 'utf8');
+const source = fs.existsSync(heroPath) ? fs.readFileSync(heroPath, 'utf8') : fs.readFileSync(workspacePath, 'utf8');
 
 console.log('Test 1: Verifying Ready Action Box uses xl:flex-row instead of sm:flex-row');
 assert(!source.includes('sm:flex-row items-center justify-between gap-3 pt-4'), 

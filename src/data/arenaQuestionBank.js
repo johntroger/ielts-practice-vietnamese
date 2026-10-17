@@ -1907,6 +1907,109 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'A preliminary project outline',
     explanation: 'Giảng viên hướng dẫn Dr. Thornton yêu cầu hai sinh viên nộp dàn ý đề tài ("give me your project outline") vào thứ Tư tuần sau.',
     explanationEn: 'Task assignment: Dr. Thornton asks the students to bring their project outline to the meeting next Wednesday.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 23 PUBLIC POLICIES & SOCIAL OPINIONS
+  // ==========================================
+  {
+    id: 'easy_lis_bus_fare_time_t23',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'At what time do discounted bus fares take effect according to the local broadcast?',
+    context: 'They just said on the local news that the bus companies are planning to reduce fares for travel after 10:00 to get more people to come into town.',
+    audioText: 'They just said on the local news that the bus companies are planning to reduce fares for travel after 10:00 to get more people to come into town.',
+    options: [
+      'After 10:00',
+      'Before 08:30',
+      'After 17:00',
+      'Throughout the entire weekend'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'After 10:00',
+    explanation: 'Bản tin địa phương thông báo các công ty xe buýt dự kiến giảm giá vé cho hành khách di chuyển sau 10:00 sáng ("after 10:00").',
+    explanationEn: 'Time identification: The news report indicates that discounted fares apply to journeys after 10:00.'
+  },
+  {
+    id: 'med_lis_tax_impact_t23',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What major economic consequence does the woman anticipate if taxes are increased?',
+    context: "It looks like the government is going to raise taxes in the budget tomorrow. - Seriously? I really don't see how that could be a good idea. It'll reduce spending and affect the economy without a doubt.",
+    audioText: "It looks like the government is going to raise taxes in the budget tomorrow. - Seriously? I really don't see how that could be a good idea. It'll reduce spending and affect the economy without a doubt.",
+    options: [
+      'It will reduce consumer spending and negatively impact the economy',
+      'It will cause immediate widespread public sector redundancies',
+      'It will lead to a drastic decrease in housing prices nationwide',
+      'It will stimulate business investment and capital expenditure'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It will reduce consumer spending and negatively impact the economy',
+    explanation: 'Người phụ nữ nêu rõ việc tăng thuế sẽ giảm mức chi tiêu và tác động tiêu cực đến nền kinh tế ("reduce spending and affect the economy without a doubt").',
+    explanationEn: 'Economic consequence: The woman argues that raising taxes will inevitably reduce spending and damage the wider economy.'
+  },
+  {
+    id: 'med_lis_air_strike_train_t23',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: "Why does the impending air traffic controllers' strike cause no concern for the woman?",
+    context: "Well, to be honest, I'm not really worried. I'm traveling by train for my holiday.",
+    audioText: "Well, to be honest, I'm not really worried. I'm traveling by train for my holiday.",
+    options: [
+      'She is traveling by train for her holiday',
+      'Her international flight departs from an unaffected private airfield',
+      'Her vacation has been postponed until the following month',
+      'She received written compensation guaranteeing her flight schedule'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'She is traveling by train for her holiday',
+    explanation: 'Người phụ nữ không lo ngại cuộc đình công của kiểm soát viên không lưu vì cô ấy đi nghỉ bằng tàu hỏa ("I\'m traveling by train for my holiday").',
+    explanationEn: 'Alternative transportation: The woman is unconcerned because she is taking the train rather than flying.'
+  },
+  {
+    id: 'hard_lis_striker_valuation_t23',
+    difficulty: 'hard',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is the man doubtful about the club paying £40 million for striker Reginaldo?',
+    context: "That much? I can't seriously believe that. I really don't think he's as good as the experts say he is.",
+    audioText: "That much? I can't seriously believe that. I really don't think he's as good as the experts say he is.",
+    options: [
+      "He believes the player's true abilities do not match the experts' exaggerated claims",
+      'He is convinced Athletic have already exceeded their annual financial transfer cap',
+      'He suspects the player has unresolved disciplinary and contract issues',
+      'He believes the striker wants to transfer to an Italian championship team instead'
+    ],
+    correctIndex: 0,
+    correctAnswer: "He believes the player's true abilities do not match the experts' exaggerated claims",
+    explanation: 'Người đàn ông cho rằng cầu thủ không giỏi như các chuyên gia tán dương ("I really don\'t think he\'s as good as the experts say he is") nên mức giá 40 triệu bảng là không hợp lý.',
+    explanationEn: 'Valuation skepticism: The man feels the player is overrated compared to media and expert claims.'
+  },
+  {
+    id: 'easy_lis_dental_age_t23',
+    difficulty: 'easy',
+    topic: 'health',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which demographic group is offered free dental checkups in the newspaper report?',
+    context: 'It says here in today\'s paper that the government is going to offer free dental checks to people over 60.',
+    audioText: 'It says here in today\'s paper that the government is going to offer free dental checks to people over 60.',
+    options: [
+      'People aged 60 and above',
+      'Primary school pupils under 12',
+      'Full-time apprentice trainees',
+      'All registered military veterans'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'People aged 60 and above',
+    explanation: 'Báo chí đưa tin chính phủ sẽ cung cấp dịch vụ khám răng miễn phí cho người trên 60 tuổi ("people over 60").',
+    explanationEn: 'Eligibility criterion: Free dental checks are specifically designated for individuals over 60 years old.'
   }
 ];
 
@@ -2004,7 +2107,13 @@ const R2_AUDIO_METADATA_BY_ID = {
   med_lis_climate_action_oilgas_t21: { audioUrl: `${R2_BASE}/ielts-listening-track21-opinions-modern-art-climate-change.mp3`, clipStart: 100.6, clipEnd: 108.5, isR2Audio: true, trackLabel: 'Track 21 • Renewable Energy Action' },
   // Track 22: Space Expedition Research Projects Tutorial
   easy_lis_mars_desert_camp_t22: { audioUrl: `${R2_BASE}/ielts-listening-track22-space-expedition-project-meeting.mp3`, clipStart: 84.6, clipEnd: 91.6, isR2Audio: true, trackLabel: 'Track 22 • Arizona Mars Habitat' },
-  med_lis_space_project_outline_t22: { audioUrl: `${R2_BASE}/ielts-listening-track22-space-expedition-project-meeting.mp3`, clipStart: 201.3, clipEnd: 206.9, isR2Audio: true, trackLabel: 'Track 22 • Project Outline Deadline' }
+  med_lis_space_project_outline_t22: { audioUrl: `${R2_BASE}/ielts-listening-track22-space-expedition-project-meeting.mp3`, clipStart: 201.3, clipEnd: 206.9, isR2Audio: true, trackLabel: 'Track 22 • Project Outline Deadline' },
+  // Track 23: Public Policies, Transport & Community Opinions
+  easy_lis_bus_fare_time_t23: { audioUrl: `${R2_BASE}/ielts-listening-track23-public-policies-and-opinions.mp3`, clipStart: 19.0, clipEnd: 29.5, isR2Audio: true, trackLabel: 'Track 23 • Off-Peak Bus Fares' },
+  med_lis_tax_impact_t23: { audioUrl: `${R2_BASE}/ielts-listening-track23-public-policies-and-opinions.mp3`, clipStart: 2.0, clipEnd: 16.8, isR2Audio: true, trackLabel: 'Track 23 • Budget Tax Hike Impact' },
+  med_lis_air_strike_train_t23: { audioUrl: `${R2_BASE}/ielts-listening-track23-public-policies-and-opinions.mp3`, clipStart: 39.0, clipEnd: 55.5, isR2Audio: true, trackLabel: 'Track 23 • Air Strike & Train Travel' },
+  hard_lis_striker_valuation_t23: { audioUrl: `${R2_BASE}/ielts-listening-track23-public-policies-and-opinions.mp3`, clipStart: 115.0, clipEnd: 133.0, isR2Audio: true, trackLabel: 'Track 23 • £40M Striker Valuation' },
+  easy_lis_dental_age_t23: { audioUrl: `${R2_BASE}/ielts-listening-track23-public-policies-and-opinions.mp3`, clipStart: 58.0, clipEnd: 72.8, isR2Audio: true, trackLabel: 'Track 23 • Senior Dental Checkups' }
 };
 
 export function hydrateArenaQuestionsWithMetadata(rawQuestions = []) {

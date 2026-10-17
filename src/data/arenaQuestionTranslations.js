@@ -1143,6 +1143,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Will the prospective buyer need to purchase a cooker or dishwasher for this property?",
     "contextEn": "What about the kitchen? It's fully fitted, so it includes a cooker and a dishwasher and all the other things you'd expect in a kitchen.",
     "explanationEn": "Fitted kitchen inclusions: Because the kitchen is fully fitted with a cooker and dishwasher, the buyer does not need to purchase either appliance."
+  },
+  "easy_lis_bus_fare_time_t23": {
+    "promptEn": "At what time do discounted bus fares take effect according to the local broadcast?",
+    "contextEn": "They just said on the local news that the bus companies are planning to reduce fares for travel after 10:00 to get more people to come into town.",
+    "explanationEn": "Time identification: The news report indicates that discounted fares apply to journeys after 10:00."
+  },
+  "med_lis_tax_impact_t23": {
+    "promptEn": "What major economic consequence does the woman anticipate if taxes are increased?",
+    "contextEn": "It looks like the government is going to raise taxes in the budget tomorrow. - Seriously? I really don't see how that could be a good idea. It'll reduce spending and affect the economy without a doubt.",
+    "explanationEn": "Economic consequence: The woman argues that raising taxes will inevitably reduce spending and damage the wider economy."
+  },
+  "med_lis_air_strike_train_t23": {
+    "promptEn": "Why does the impending air traffic controllers' strike cause no concern for the woman?",
+    "contextEn": "Well, to be honest, I'm not really worried. I'm traveling by train for my holiday.",
+    "explanationEn": "Alternative transportation: The woman is unconcerned because she is taking the train rather than flying."
+  },
+  "hard_lis_striker_valuation_t23": {
+    "promptEn": "Why is the man doubtful about the club paying £40 million for striker Reginaldo?",
+    "contextEn": "That much? I can't seriously believe that. I really don't think he's as good as the experts say he is.",
+    "explanationEn": "Valuation skepticism: The man feels the player is overrated compared to media and expert claims."
+  },
+  "easy_lis_dental_age_t23": {
+    "promptEn": "Which demographic group is offered free dental checkups in the newspaper report?",
+    "contextEn": "It says here in today's paper that the government is going to offer free dental checks to people over 60.",
+    "explanationEn": "Eligibility criterion: Free dental checks are specifically designated for individuals over 60 years old."
   }
 };
 

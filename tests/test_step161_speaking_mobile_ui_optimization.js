@@ -17,7 +17,13 @@ console.log('🧪 Running Step 161: Speaking Workspace Mobile UI Optimization Ve
 let passedTests = 0;
 
 const workspacePath = path.resolve(__dirname, '../src/components/speaking/SpeakingWorkspace.jsx');
-const workspaceSrc = fs.readFileSync(workspacePath, 'utf-8');
+const headerPath = path.resolve(__dirname, '../src/components/speaking/SpeakingTopHeader.jsx');
+const heroPath = path.resolve(__dirname, '../src/components/speaking/SpeakingMockHero.jsx');
+const workspaceSrc = [
+  fs.readFileSync(workspacePath, 'utf-8'),
+  fs.existsSync(headerPath) ? fs.readFileSync(headerPath, 'utf-8') : '',
+  fs.existsSync(heroPath) ? fs.readFileSync(heroPath, 'utf-8') : ''
+].join('\n');
 
 const practicePanePath = path.resolve(__dirname, '../src/components/speaking/SpeakingPracticePane.jsx');
 const practicePaneSrc = fs.readFileSync(practicePanePath, 'utf-8');
@@ -50,8 +56,7 @@ passedTests++;
 console.log('  ✓ Mobile dropdown consolidates Soundcheck, Handbook, Settings, and Expand\n');
 
 // Test 3: Verify Mock Mode mobile test pack filter dropdown (Dropbox)
-console.log('Test 3: Mock Exam mobile test filter dropdown...');
-assert.ok(workspaceSrc.includes("On Mobile: Compact Filter Dropdown (Dropbox)"), 'Must provide compact filter dropbox for mobile');
+assert.ok(workspaceSrc.includes("On Mobile: Compact Filter Dropdown"), 'Must provide compact filter dropbox for mobile');
 assert.ok(workspaceSrc.includes("value={mockFilter}"), 'Dropbox selector must control mockFilter');
 assert.ok(workspaceSrc.includes("flex sm:hidden items-center"), 'Filter dropbox is rendered on mobile viewport');
 passedTests++;

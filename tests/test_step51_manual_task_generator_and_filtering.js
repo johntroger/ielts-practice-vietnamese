@@ -66,7 +66,13 @@ test('SpeakingGeneratorModal provides full 3-part manual test creator and Cambri
 
 // 4. SpeakingWorkspace.jsx Verification
 test('SpeakingWorkspace includes ✍️ Tạo Đề Thủ Công button and source filter pills', () => {
-  const fileContent = fs.readFileSync(path.join(__dirname, '../src/components/speaking/SpeakingWorkspace.jsx'), 'utf-8');
+  const speakingDir = path.join(__dirname, '../src/components/speaking');
+  const workspaceFiles = ['SpeakingWorkspace.jsx', 'SpeakingMockHero.jsx', 'SpeakingMockLibraryModal.jsx'];
+  const fileContent = workspaceFiles
+    .map(f => path.join(speakingDir, f))
+    .filter(p => fs.existsSync(p))
+    .map(p => fs.readFileSync(p, 'utf-8'))
+    .join('\n');
   assert.ok(fileContent.includes('✍️ Tạo Đề Thủ Công'), 'Must contain ✍️ Tạo Đề Thủ Công button');
   assert.ok(fileContent.includes("mockFilter === 'manual'"), 'Must filter by manual mock packs');
   assert.ok(fileContent.includes("mockFilter === 'cambridge'"), 'Must filter by cambridge mock packs');

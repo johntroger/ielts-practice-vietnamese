@@ -20,16 +20,6 @@ export const WRITING_SUB_ANGLES = [
   'Modern workplace dynamics (remote/hybrid employment vs traditional office life)'
 ];
 
-export const SPEAKING_SUB_ANGLES = [
-  'Evolving personal routines & lifestyle adaptations in modern society',
-  'The double-edged sword of digital technology on interpersonal relationships',
-  'Emotional connections & psychological significance of everyday spaces/objects',
-  'Contrasts between fast-paced urban lifestyle and tranquil escapes',
-  'Changing cultural traditions and the perspectives of younger vs older generations',
-  'Sustainability, eco-friendly habits and conscious personal consumption',
-  'Balancing professional/academic ambitions with leisure and community bonding'
-];
-
 /**
  * Task 1 Visual Illustration Archetypes to guarantee authentic diversity
  */

@@ -1403,5 +1403,101 @@ export const LISTENING_MICRO_DRILLS = [
     distractorMechanismEn: 'Test-takers frequently gravitate toward mechanical space engineering, but the supervisor highlights social psychology ("how a group of people get along living together in a difficult situation") as the most beneficial aspect.',
     explanation: 'Đáp án là A vì Tiến sĩ Thornton nhấn mạnh việc quan sát "how a group of people get along living together in a difficult situation".',
     explanationEn: 'Option A is correct: Dr. Thornton specifically emphasizes observing "how a group of people get along living together in a difficult situation".'
+  },
+
+  // ==========================================
+  // TRACK 23: PUBLIC POLICIES & OPINIONS
+  // ==========================================
+  {
+    id: 'ldrill-dist-track23-tax-spending',
+    type: 'listening-distractor',
+    title: 'Bẫy quan điểm chính sách: Tăng thuế & Tác động tiêu dùng (Track 23)',
+    titleEn: 'Policy Stance Trap: Tax Hikes & Consumer Spending (Track 23)',
+    category: 'Economics & Public Policy',
+    categoryEn: 'Economics & Public Policy',
+    audioSnippetText: "It looks like the government is going to raise taxes in the budget tomorrow. Seriously? I really don't see how that could be a good idea. It'll reduce spending and affect the economy without a doubt.",
+    audioText: "It looks like the government is going to raise taxes in the budget tomorrow. Seriously? I really don't see how that could be a good idea. It'll reduce spending and affect the economy without a doubt.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track23-public-policies-and-opinions.mp3',
+    clipStart: 2.0,
+    clipEnd: 16.8,
+    question: 'Người phụ nữ phản đối việc tăng thuế chủ yếu vì lý do gì?',
+    questionEn: "What is the woman's principal reason for opposing the proposed tax increase?",
+    options: [
+      { id: 'A', text: 'Làm suy giảm mức chi tiêu tiêu dùng và tác động xấu đến nền kinh tế', textEn: 'It will depress consumer spending and harm overall economic performance' },
+      { id: 'B', text: 'Khiến chính phủ bị thâm hụt ngân sách nặng nề hơn vào năm tới', textEn: "It will cause a severe widening of next year's government budget deficit" },
+      { id: 'C', text: 'Buộc các doanh nghiệp địa phương phải cắt giảm việc làm ngay lập tức', textEn: 'It will force local enterprises to immediately downsize their workforces' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói khẳng định không nghi ngờ gì ("without a doubt") việc tăng thuế sẽ giảm chi tiêu ("reduce spending") và tác động tiêu cực đến nền kinh tế.',
+    distractorMechanismEn: 'The speaker asserts unequivocally ("without a doubt") that tax hikes will "reduce spending and affect the economy", rejecting any theoretical policy benefits.',
+    explanation: 'Đáp án là A vì người phụ nữ giải thích tăng thuế sẽ "reduce spending and affect the economy without a doubt".',
+    explanationEn: 'Option A is correct: the speaker explicitly identifies reduced spending and negative economic fallout as her primary concern.'
+  },
+  {
+    id: 'ldrill-num-track23-bus-fare',
+    type: 'listening-numbers',
+    subType: 'numbers',
+    title: 'Phản xạ ghi chép thời gian: Khung giờ giảm giá vé xe buýt (Track 23)',
+    titleEn: 'Off-Peak Bus Fare Time Window Reflex (Track 23)',
+    category: 'Public Transport & City Life',
+    categoryEn: 'Public Transport & City Life',
+    promptAudioText: 'They just said on the local news that the bus companies are planning to reduce fares for travel after 10:00 to get more people to come into town.',
+    audioText: 'They just said on the local news that the bus companies are planning to reduce fares for travel after 10:00 to get more people to come into town.',
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track23-public-policies-and-opinions.mp3',
+    clipStart: 19.0,
+    clipEnd: 29.5,
+    questionPrompt: 'Discounted bus fares commence for journeys after: .........',
+    questionPromptVi: 'Giá vé xe buýt ưu đãi áp dụng cho các chuyến đi sau: .........',
+    questionPromptEn: 'Discounted bus fares commence for journeys after: .........',
+    correctAnswer: '10:00',
+    acceptableAnswers: ['10:00', '10', '10.00', '10 am', '10:00 am', "ten o'clock", "10 o'clock"],
+    trapNote: 'Bẫy số đếm giờ: Chú ý giới từ "after 10:00" chỉ thời điểm bắt đầu biểu giá ưu đãi ngoài giờ cao điểm.',
+    trapNoteEn: 'Time notation trap: Note the preposition "after 10:00" indicating when off-peak discounted tickets begin.',
+    explanation: 'Đoạn tin nêu rõ thời điểm bắt đầu giảm giá vé là sau 10 giờ ("after 10:00").',
+    explanationEn: 'The recording explicitly specifies that fare reductions take effect for travel "after 10:00".'
+  },
+  {
+    id: 'ldrill-dict-track23-dental-seniors',
+    type: 'listening-dictation',
+    level: 'basic',
+    title: 'Dictation Cấp 1: Chính sách khám nha khoa miễn phí cho người cao tuổi (Track 23)',
+    titleEn: 'Dictation Level 1: Free Dental Healthcare Policy for Seniors (Track 23)',
+    category: 'Healthcare & Social Welfare',
+    categoryEn: 'Healthcare & Social Welfare',
+    ttsText: "It says here in today's paper that the government is going to offer free dental checks to people over 60.",
+    audioText: "It says here in today's paper that the government is going to offer free dental checks to people over 60.",
+    targetTranscript: "It says here in today's paper that the government is going to offer free dental checks to people over 60.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track23-public-policies-and-opinions.mp3',
+    clipStart: 58.0,
+    clipEnd: 66.5,
+    wordCount: 18,
+    difficulty: 'Band 5.5 - 6.5',
+    audioClipTip: 'Chú ý phát âm cụm từ chỉ độ tuổi "people over 60" và kết hợp từ "free dental checks".',
+    audioClipTipEn: 'Pay attention to the age collocation "people over 60" and compound noun "free dental checks".'
+  },
+  {
+    id: 'ldrill-dist-track23-striker-valuation',
+    type: 'listening-distractor',
+    title: 'Bẫy quan điểm & Hoài nghi định giá cầu thủ bóng đá (Track 23)',
+    titleEn: 'Attitude & Valuation Skepticism Trap: £40 Million Transfer (Track 23)',
+    category: 'Sports Industry & Media',
+    categoryEn: 'Sports Industry & Media',
+    audioSnippetText: "There's a report in the sports section that says Athletic are going to buy that Brazilian striker Reginaldo for 40 million pounds. That much? I can't seriously believe that. I really don't think he's as good as the experts say he is.",
+    audioText: "There's a report in the sports section that says Athletic are going to buy that Brazilian striker Reginaldo for 40 million pounds. That much? I can't seriously believe that. I really don't think he's as good as the experts say he is.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track23-public-policies-and-opinions.mp3',
+    clipStart: 115.0,
+    clipEnd: 133.0,
+    question: 'Thái độ của người đàn ông đối với thương vụ chuyển nhượng 40 triệu bảng là gì?',
+    questionEn: "What is the man's genuine sentiment toward the reported £40 million transfer deal?",
+    options: [
+      { id: 'A', text: 'Hoài nghi sâu sắc và cho rằng năng lực thực tế của cầu thủ bị thổi phồng so với nhận định của chuyên gia', textEn: 'Deeply skeptical, considering the player overrated compared to expert acclaim' },
+      { id: 'B', text: 'Phấn khích vì tin rằng bản hợp đồng đắt giá sẽ lập tức nâng tầm đẳng cấp câu lạc bộ', textEn: 'Enthusiastic, believing a marquee signing will instantly elevate the squad' },
+      { id: 'C', text: 'Tức giận vì ban lãnh đạo đội bóng từ chối đầu tư nâng cấp cơ sở vật chất đào tạo trẻ', textEn: 'Indignant that the board refuses to allocate funds toward youth academy facilities' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói thốt lên ngạc nhiên ("That much? I can\'t seriously believe that") và trực tiếp phản bác nhận định của chuyên gia ("I really don\'t think he\'s as good as the experts say he is").',
+    distractorMechanismEn: 'The speaker expresses disbelief ("That much? I can\'t seriously believe that") and explicitly refutes expert appraisals ("I really don\'t think he\'s as good as the experts say he is").',
+    explanation: 'Đáp án là A vì người đàn ông thắc mắc "That much?" và nhận định "I really don\'t think he\'s as good as the experts say he is".',
+    explanationEn: 'Option A is correct: the speaker directly disputes the valuation, stating the player is not as accomplished as commentators claim.'
   }
 ];

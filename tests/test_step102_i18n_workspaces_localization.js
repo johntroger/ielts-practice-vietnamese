@@ -149,7 +149,11 @@ it('5. Listening Workspace components (ListeningWorkspace, ListeningPaletteBar) 
 // 6. Speaking Workspace Integration Check
 it('6. Speaking Workspace (SpeakingWorkspace.jsx) integrates useTranslation and mode pills', () => {
   const speakingPath = path.resolve(__dirname, '../src/components/speaking/SpeakingWorkspace.jsx');
-  const speakingContent = fs.readFileSync(speakingPath, 'utf-8');
+  const speakingHeaderPath = path.resolve(__dirname, '../src/components/speaking/SpeakingTopHeader.jsx');
+  const speakingContent = [
+    fs.readFileSync(speakingPath, 'utf-8'),
+    fs.existsSync(speakingHeaderPath) ? fs.readFileSync(speakingHeaderPath, 'utf-8') : ''
+  ].join('\n');
   assert.ok(speakingContent.includes('useTranslation'), 'SpeakingWorkspace must import useTranslation');
   assert.ok(speakingContent.includes("isEn ? 'Mock Exam' : 'Thi Thử'"), 'SpeakingWorkspace must localize mock exam mode pill');
   assert.ok(speakingContent.includes("isEn ? 'Practice Mode' : 'Luyện Tự Do'"), 'SpeakingWorkspace must localize practice mode pill');

@@ -95,8 +95,12 @@ console.log('  ✅ 4. Listening workspace: Expansion toggle integrated in Practi
 
 // 5. Verify Speaking Workspace
 const speakingFile = path.resolve(__dirname, '../src/components/speaking/SpeakingWorkspace.jsx');
+const speakingHeaderFile = path.resolve(__dirname, '../src/components/speaking/SpeakingTopHeader.jsx');
 assert(fs.existsSync(speakingFile), 'SpeakingWorkspace.jsx must exist');
-const speakingCode = fs.readFileSync(speakingFile, 'utf8');
+const speakingCode = [
+  fs.readFileSync(speakingFile, 'utf8'),
+  fs.existsSync(speakingHeaderFile) ? fs.readFileSync(speakingHeaderFile, 'utf8') : ''
+].join('\n');
 
 assert(
   speakingCode.includes('isSlimHeader = false') && speakingCode.includes('toggleSlimHeader'),
