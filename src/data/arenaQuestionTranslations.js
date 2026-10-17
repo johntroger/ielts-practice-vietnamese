@@ -1268,6 +1268,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "How does Maria distinguish their Mars research endeavor from entertainment media?",
     "contextEn": "we have to remember that this is a science project and not some soap opera or television series with lots of silly people locked up in a big house or something.",
     "explanationEn": "Project genre distinction: Maria insists the simulation is a scientific study rather than an entertainment drama or reality show."
+  },
+  "easy_lis_crew_completed_count_t28": {
+    "promptEn": "How many of the original ten participants successfully finished the full simulation project?",
+    "contextEn": "Yes, I never thought that of the ten who started, only six would finish in the end, and it was really hard for them to get through the whole program.",
+    "explanationEn": "Direct factual retrieval: Maria confirms that only six participants out of ten completed the full project."
+  },
+  "med_lis_budget_saving_t28": {
+    "promptEn": "What financial outcome was achieved relative to the original ten-million-dollar budget?",
+    "contextEn": "Well, actually, it says here that the final cost was 9.5 million dollars, so they saved half a million in the end.",
+    "explanationEn": "Financial performance: Dr. Thornton reveals the final cost was $9.5 million, saving half a million dollars."
+  },
+  "med_lis_simon_project_focus_t28": {
+    "promptEn": "What is the central focus of Simon's individual project report?",
+    "contextEn": "Well, I've got lots of data on the environmental systems and life support, and that's the key focus of my project report, especially considering the events last week when the whole system came close to failing.",
+    "explanationEn": "Topic identification: Simon declares environmental systems and life support as his primary report focus."
+  },
+  "hard_lis_future_trial_duration_t28": {
+    "promptEn": "What timeline duration are planners considering for the prospective follow-up isolation experiment?",
+    "contextEn": "Depending on the results from this one, they're going to decide whether to have another one that will last a year.",
+    "explanationEn": "Prospective duration: Dr. Thornton mentions that the prospective follow-up trial will last a full year."
+  },
+  "easy_lis_meeting_day_t28": {
+    "promptEn": "On which day is the tutorial advisory session scheduled to convene next week?",
+    "contextEn": "We can meet again next Wednesday, and I can help you structure it.",
+    "explanationEn": "Meeting schedule: Dr. Thornton arranges to meet next Wednesday."
   }
 };
 

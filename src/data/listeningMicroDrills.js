@@ -1875,6 +1875,103 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the plural noun "emotions" collocated with "and feelings" ("control their emotions and feelings").',
     explanation: 'Simon nhấn mạnh trọng tâm là cách mọi người kiểm soát cảm xúc của mình ("control their emotions and feelings").',
     explanationEn: 'Simon specifies the critical capability: "how people can control their emotions and feelings".'
+  },
+
+  // ==========================================
+  // TRACK 28: MARS SIMULATION PROJECT REVIEW
+  // ==========================================
+  {
+    id: 'ldrill-dist-track28-budget-surplus',
+    type: 'listening-distractor',
+    title: 'Bẫy số liệu tài chính: Bội chi dự tính vs Thặng dư thực tế (Track 28)',
+    titleEn: 'Financial Figures Trap: Projected Cost Overrun vs Actual Surplus (Track 28)',
+    category: 'Budget Audit & Financial Figures',
+    categoryEn: 'Budget Audit & Financial Figures',
+    audioSnippetText: "Everyone was expecting it to go over the original ten million dollars. I personally thought that it might even go up to something like twelve million dollars. Well, actually, it says here that the final cost was 9.5 million dollars, so they saved half a million in the end.",
+    audioText: "Everyone was expecting it to go over the original ten million dollars. I personally thought that it might even go up to something like twelve million dollars. Well, actually, it says here that the final cost was 9.5 million dollars, so they saved half a million in the end.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track28-mars-simulation-project-review.mp3',
+    clipStart: 231.0,
+    clipEnd: 249.0,
+    question: 'Số liệu tài chính cuối cùng của dự án mô phỏng tại Arizona có kết quả như thế nào so với dự toán ban đầu?',
+    questionEn: 'What was the actual final financial expenditure of the Arizona project compared to initial projections?',
+    options: [
+      { id: 'A', text: 'Dự án hoàn thành ở mức 9,5 triệu đô la, tiết kiệm được 500.000 đô la so với ngân sách 10 triệu ban đầu', textEn: 'The project finished at $9.5 million, saving $500,000 below the original $10 million budget' },
+      { id: 'B', text: 'Dự án bị đội vốn lên 12 triệu đô la do sự cố khẩn cấp của hệ thống thông gió', textEn: 'The project incurred cost overruns reaching $12 million due to the ventilation emergency' },
+      { id: 'C', text: 'Dự án tiêu tốn chính xác 10 triệu đô la không thừa không thiếu', textEn: 'The project expended precisely $10 million with neither surplus nor deficit' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe thường bị nhiễu bởi các con số Simon dự đoán (10 triệu, 12 triệu), nhưng Tiến sĩ Thornton đính chính dựa trên báo cáo chính thức: chi phí thực tế chỉ là 9,5 triệu đô la ("final cost was 9.5 million dollars"), tức tiết kiệm được nửa triệu USD ("saved half a million in the end").',
+    distractorMechanismEn: 'Test-takers often get distracted by Simon\'s speculative numbers ($10 million, $12 million), but Dr. Thornton clarifies from the official report that the final cost was $9.5 million, yielding a $500,000 surplus.',
+    explanation: 'Đáp án là A: Tiến sĩ Thornton nêu rõ chi phí thực tế là 9,5 triệu đô la, tiết kiệm được nửa triệu USD so với 10 triệu dự toán ban đầu.',
+    explanationEn: 'Option A is correct: Dr. Thornton confirms the final cost was $9.5 million, saving half a million.'
+  },
+  {
+    id: 'ldrill-dist-track28-crew-retention',
+    type: 'listening-distractor',
+    title: 'Bẫy số lượng thành viên: Tổng số xuất phát vs Số lượng hoàn thành (Track 28)',
+    titleEn: 'Crew Numbers Trap: Initial Intake vs Ultimate Completion (Track 28)',
+    category: 'Mission Demographics & Endurance',
+    categoryEn: 'Mission Demographics & Endurance',
+    audioSnippetText: "Yes, I never thought that of the ten who started, only six would finish in the end, and it was really hard for them to get through the whole program.",
+    audioText: "Yes, I never thought that of the ten who started, only six would finish in the end, and it was really hard for them to get through the whole program.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track28-mars-simulation-project-review.mp3',
+    clipStart: 10.0,
+    clipEnd: 21.0,
+    question: 'Bao nhiêu thành viên phi hành đoàn đã kiên trì và hoàn thành trọn vẹn chương trình thử nghiệm?',
+    questionEn: 'How many crew members persevered and completed the full simulation program?',
+    options: [
+      { id: 'A', text: '6 thành viên', textEn: 'Six members' },
+      { id: 'B', text: '10 thành viên', textEn: 'Ten members' },
+      { id: 'C', text: '4 thành viên', textEn: 'Four members' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Có 10 người tham gia ban đầu ("ten who started"), nhưng chỉ có 6 người hoàn tất ("only six would finish in the end"). Bẫy con số 10 xuất hiện đầu câu.',
+    distractorMechanismEn: 'Ten individuals started the program, but only six completed it ("only six would finish in the end"). The number 10 is an initial distractor.',
+    explanation: 'Đáp án là A: Maria xác nhận chỉ có 6 người hoàn thành đến cuối cùng.',
+    explanationEn: 'Option A is correct: Maria explicitly states "only six would finish in the end".'
+  },
+  {
+    id: 'ldrill-dict-track28-life-support-offline',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Hệ thống hỗ trợ sinh tồn sập nguồn trong bốn giờ (Track 28)',
+    titleEn: 'Dictation Level 2: Life Support Systems Offline For Four Hours (Track 28)',
+    category: 'Habitat Emergency & Life Support',
+    categoryEn: 'Habitat Emergency & Life Support',
+    audioSnippetText: "When the life support system went offline for four hours. They had to really race to fix it.",
+    audioText: "When the life support system went offline for four hours. They had to really race to fix it.",
+    targetTranscript: "When the life support system went offline for four hours. They had to really race to fix it.",
+    ttsText: "When the life support system went offline for four hours. They had to really race to fix it.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track28-mars-simulation-project-review.mp3',
+    clipStart: 36.0,
+    clipEnd: 44.0,
+    wordCount: 18,
+    difficulty: 'Band 6.0 - 7.0',
+    audioClipTip: 'Lưu ý cụm từ chỉ thời gian "for four hours", cụm "went offline", và động từ mang tính hành động khẩn trương "race to fix it".',
+    audioClipTipEn: 'Listen for "life support system went offline", "for four hours", and the idiomatic urgency "race to fix it".'
+  },
+  {
+    id: 'ldrill-role-track28-crew-efficiency',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Năng suất và hiệu suất làm việc của phi hành đoàn (Track 28)',
+    titleEn: 'Key Vocabulary Reflex: Crew Operational Efficiency (Track 28)',
+    category: 'Human Performance & Operational Metrics',
+    categoryEn: 'Human Performance & Operational Metrics',
+    promptAudioText: "But for me, the main thing is the efficiency of the crew, and how well they managed to perform their duties.",
+    audioText: "But for me, the main thing is the efficiency of the crew, and how well they managed to perform their duties.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track28-mars-simulation-project-review.mp3',
+    clipStart: 138.0,
+    clipEnd: 146.0,
+    questionPrompt: "Maria's assignment investigates the ......... of the crew and how well they performed under extreme confinement.",
+    questionPromptEn: "Maria's assignment investigates the ......... of the crew and how well they performed under extreme confinement.",
+    questionPromptVi: 'Đề tài của Maria nghiên cứu về ......... của phi hành đoàn và mức độ hoàn thành nhiệm vụ của họ dưới sự giam cầm khắc nghiệt.',
+    correctAnswer: 'efficiency',
+    acceptableAnswers: ['efficiency'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ danh từ chỉ năng suất "efficiency" ("the efficiency of the crew").',
+    trapNoteEn: 'Core lexical keyword: Listen for the abstract noun "efficiency" ("the efficiency of the crew").',
+    explanation: 'Maria khẳng định trọng tâm nghiên cứu của mình là năng suất/hiệu suất của phi hành đoàn: "the main thing is the efficiency of the crew".',
+    explanationEn: 'Maria identifies her primary research variable: "the efficiency of the crew".'
   }
 ];
 

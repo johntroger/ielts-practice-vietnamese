@@ -2420,12 +2420,122 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'It is a genuine scientific investigation, not a commercial soap opera or reality television show',
     explanation: 'Maria nhấn mạnh dự án là một nghiên cứu khoa học ("science project") chứ không phải phim truyền hình hay chương trình thực tế giật gân ("not some soap opera or television series").',
     explanationEn: 'Project genre distinction: Maria insists the simulation is a scientific study rather than an entertainment drama or reality show.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 28 MARS SIMULATION PROJECT REVIEW
+  // ==========================================
+  {
+    id: 'easy_lis_crew_completed_count_t28',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How many of the original ten participants successfully finished the full simulation project?',
+    context: "Yes, I never thought that of the ten who started, only six would finish in the end, and it was really hard for them to get through the whole program.",
+    audioText: "Yes, I never thought that of the ten who started, only six would finish in the end, and it was really hard for them to get through the whole program.",
+    options: [
+      'Six',
+      'Ten',
+      'Four',
+      'Eight'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Six',
+    explanation: 'Maria cho biết trong số 10 người bắt đầu thì chỉ có 6 người hoàn tất chương trình ("of the ten who started, only six would finish in the end").',
+    explanationEn: 'Direct factual retrieval: Maria confirms that only six participants out of ten completed the full project.'
+  },
+  {
+    id: 'med_lis_budget_saving_t28',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What financial outcome was achieved relative to the original ten-million-dollar budget?',
+    context: "Well, actually, it says here that the final cost was 9.5 million dollars, so they saved half a million in the end.",
+    audioText: "Well, actually, it says here that the final cost was 9.5 million dollars, so they saved half a million in the end.",
+    options: [
+      'The project achieved a half-million-dollar savings, finishing at $9.5 million',
+      'The budget suffered a two-million-dollar overrun due to emergency hardware fixes',
+      'The total cost reached exactly twelve million dollars as Simon predicted',
+      'The administration refunded five million dollars to commercial space investors'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The project achieved a half-million-dollar savings, finishing at $9.5 million',
+    explanation: 'Tiến sĩ Thornton xác nhận chi phí thực tế là 9,5 triệu đô la, tiết kiệm được nửa triệu USD ("saved half a million in the end").',
+    explanationEn: 'Financial performance: Dr. Thornton reveals the final cost was $9.5 million, saving half a million dollars.'
+  },
+  {
+    id: 'med_lis_simon_project_focus_t28',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the central focus of Simon\'s individual project report?',
+    context: "Well, I've got lots of data on the environmental systems and life support, and that's the key focus of my project report, especially considering the events last week when the whole system came close to failing.",
+    audioText: "Well, I've got lots of data on the environmental systems and life support, and that's the key focus of my project report, especially considering the events last week when the whole system came close to failing.",
+    options: [
+      'Environmental systems and life support data',
+      'Nutritional biochemistry of hydroponic vegetables',
+      'Satellite telemetry and planetary rover steering',
+      'Legal arbitration protocols for space contractors'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Environmental systems and life support data',
+    explanation: 'Simon xác nhận trọng tâm báo cáo của mình là hệ thống môi trường và hỗ trợ sinh tồn ("environmental systems and life support").',
+    explanationEn: 'Topic identification: Simon declares environmental systems and life support as his primary report focus.'
+  },
+  {
+    id: 'hard_lis_future_trial_duration_t28',
+    difficulty: 'hard',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What timeline duration are planners considering for the prospective follow-up isolation experiment?',
+    context: "Depending on the results from this one, they're going to decide whether to have another one that will last a year.",
+    audioText: "Depending on the results from this one, they're going to decide whether to have another one that will last a year.",
+    options: [
+      'A full year',
+      'Six months',
+      'Three years',
+      'Eighteen months'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A full year',
+    explanation: 'Tiến sĩ Thornton thông báo ban tổ chức đang cân nhắc đợt thử nghiệm tiếp theo kéo dài trọn vẹn 1 năm ("last a year").',
+    explanationEn: 'Prospective duration: Dr. Thornton mentions that the prospective follow-up trial will last a full year.'
+  },
+  {
+    id: 'easy_lis_meeting_day_t28',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'On which day is the tutorial advisory session scheduled to convene next week?',
+    context: "We can meet again next Wednesday, and I can help you structure it.",
+    audioText: "We can meet again next Wednesday, and I can help you structure it.",
+    options: [
+      'Wednesday',
+      'Friday',
+      'Monday',
+      'Thursday'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Wednesday',
+    explanation: 'Tiến sĩ Thornton hẹn gặp lại vào thứ Tư tuần sau ("next Wednesday").',
+    explanationEn: 'Meeting schedule: Dr. Thornton arranges to meet next Wednesday.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 28: Mars Simulation Project Review
+  easy_lis_crew_completed_count_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 10.0, clipEnd: 21.0, isR2Audio: true, trackLabel: 'Track 28 • Six Finishers Ratio' },
+  med_lis_budget_saving_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 239.0, clipEnd: 250.0, isR2Audio: true, trackLabel: 'Track 28 • Budget Surplus 9.5M' },
+  med_lis_simon_project_focus_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 21.0, clipEnd: 36.0, isR2Audio: true, trackLabel: 'Track 28 • Life Support Report Focus' },
+  hard_lis_future_trial_duration_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 275.0, clipEnd: 288.0, isR2Audio: true, trackLabel: 'Track 28 • One-Year Follow-Up Trial' },
+  easy_lis_meeting_day_t28: { audioUrl: `${R2_BASE}/ielts-listening-track28-mars-simulation-project-review.mp3`, clipStart: 191.0, clipEnd: 200.0, isR2Audio: true, trackLabel: 'Track 28 • Next Wednesday Meeting' },
+
   // Track 27: Environmental Engineer & Isolation Psychology
   easy_lis_tutor_role_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 2.0, clipEnd: 12.0, isR2Audio: true, trackLabel: 'Track 27 • Psychology Tutor Role' },
   med_lis_positive_three_months_t27: { audioUrl: `${R2_BASE}/ielts-listening-track27-environmental-engineer-isolation.mp3`, clipStart: 104.0, clipEnd: 114.0, isR2Audio: true, trackLabel: 'Track 27 • Three Months Milestone' },
