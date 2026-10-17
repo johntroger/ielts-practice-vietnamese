@@ -2010,12 +2010,122 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'People aged 60 and above',
     explanation: 'Báo chí đưa tin chính phủ sẽ cung cấp dịch vụ khám răng miễn phí cho người trên 60 tuổi ("people over 60").',
     explanationEn: 'Eligibility criterion: Free dental checks are specifically designated for individuals over 60 years old.'
+  },
+  // ==========================================
+  // LISTENING DRILLS: TRACK 24 COMPARING SPACE MISSIONS & PROJECT DECISIONS
+  // ==========================================
+  {
+    id: 'easy_lis_mars_timeline_t24',
+    difficulty: 'easy',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Dr. Thornton, why is the six-month timeline ideal for the students?',
+    context: 'That would be ideal. Six months is just right for you. You could follow their progress and how the project develops.',
+    audioText: 'That would be ideal. Six months is just right for you. You could follow their progress and how the project develops.',
+    options: [
+      'It allows them to track progress and observe how the project develops',
+      'It coincides perfectly with their summer holiday break',
+      'It is the shortest available project duration',
+      'It guarantees immediate funding from the university'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It allows them to track progress and observe how the project develops',
+    explanation: 'Dr. Thornton nhận xét 6 tháng là lý tưởng vì sinh viên có thể theo dõi tiến độ và diễn biến của dự án ("follow their progress and how the project develops").',
+    explanationEn: 'Duration justification: Six months enables students to observe continuous progress and project evolution.'
+  },
+  {
+    id: 'med_lis_moon_mission_type_t24',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What key operational detail does the advisor clarify about the Chinese lunar expedition?',
+    context: "I don't think they're sending any astronauts, I think it's just an expedition with robots and machines to find the best place to start a colony.",
+    audioText: "I don't think they're sending any astronauts, I think it's just an expedition with robots and machines to find the best place to start a colony.",
+    options: [
+      'It is an unmanned robotic mission rather than a crewed flight',
+      'It is a joint private venture with commercial space tourists',
+      'It aims to retrieve samples of ice from deep lunar craters',
+      'It has already completed its preliminary landing phase'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It is an unmanned robotic mission rather than a crewed flight',
+    explanation: 'Dr. Thornton giải thích nhiệm vụ không gửi phi hành gia mà là chuyến thám hiểm bằng robot và máy móc tự hành ("it\'s just an expedition with robots and machines").',
+    explanationEn: 'Mission configuration: The Chinese lunar expedition operates autonomously using robots and machinery without human astronauts.'
+  },
+  {
+    id: 'med_lis_lunar_colony_goal_t24',
+    difficulty: 'medium',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the primary objective of the Chinese automated lunar expedition?',
+    context: "I think it's just an expedition with robots and machines to find the best place to start a colony.",
+    audioText: "I think it's just an expedition with robots and machines to find the best place to start a colony.",
+    options: [
+      'To locate the most viable site for establishing a future human settlement',
+      'To salvage spare components from historic Apollo landing sites',
+      'To install international deep-space solar telescope arrays',
+      'To test high-speed magnetic train tracks in zero gravity'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'To locate the most viable site for establishing a future human settlement',
+    explanation: 'Mục đích chính của nhiệm vụ là khảo sát tìm vị trí tối ưu để thành lập một khu định cư ("find the best place to start a colony").',
+    explanationEn: 'Mission objective: Robotic equipment is tasked with identifying the optimum location to establish a colony.'
+  },
+  {
+    id: 'hard_lis_advisor_arizona_priority_t24',
+    difficulty: 'hard',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What specific research dimension does the advisor encourage the students to focus on?',
+    context: "If you ask me, I'd prefer to see how a group of people get along living together in a difficult situation, like they'll be doing in Arizona in preparation for their trip.",
+    audioText: "If you ask me, I'd prefer to see how a group of people get along living together in a difficult situation, like they'll be doing in Arizona in preparation for their trip.",
+    options: [
+      'How a team functions and coexists under stressful, isolated conditions',
+      'The structural engineering of pressurized subterranean habitats',
+      'The nutritional synthesis of artificial greenhouse food supplies',
+      'The automated flight trajectory calculations for planetary transit'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'How a team functions and coexists under stressful, isolated conditions',
+    explanation: 'Giảng viên khuyến khích sinh viên nghiên cứu cách một nhóm người sống chung hòa thuận trong hoàn cảnh khó khăn tại Arizona ("see how a group of people get along living together in a difficult situation").',
+    explanationEn: 'Research priority: Dr. Thornton prioritizes the psychological and interpersonal dynamics of confined group cohabitation.'
+  },
+  {
+    id: 'easy_lis_pluto_novelty_t24',
+    difficulty: 'easy',
+    topic: 'technology',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does the student argue that Pluto represents a genuinely compelling research subject?',
+    context: "I mean, no one has ever seen Pluto close up, and no one has tried to go to Mars, so I think they'd be more interesting expeditions to do.",
+    audioText: "I mean, no one has ever seen Pluto close up, and no one has tried to go to Mars, so I think they'd be more interesting expeditions to do.",
+    options: [
+      'Humankind has never observed Pluto at close range before',
+      'Pluto is confirmed to have active subterranean oceans',
+      'It is the coldest planetary body known in the solar system',
+      'The spacecraft travel time was completed in record time'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Humankind has never observed Pluto at close range before',
+    explanation: 'Nữ sinh lý giải sức hút của Pluto là bởi chưa ai từng được nhìn thấy hành tinh này ở cự ly gần ("no one has ever seen Pluto close up").',
+    explanationEn: 'Scientific novelty: Pluto is unique because human probes have never observed it at close range.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 24: Comparing Space Missions & Project Decisions
+  easy_lis_mars_timeline_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 2.0, clipEnd: 11.5, isR2Audio: true, trackLabel: 'Track 24 • Mars Project Duration' },
+  med_lis_moon_mission_type_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 44.0, clipEnd: 60.0, isR2Audio: true, trackLabel: 'Track 24 • Robotic Lunar Mission' },
+  med_lis_lunar_colony_goal_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 50.0, clipEnd: 61.0, isR2Audio: true, trackLabel: 'Track 24 • Lunar Colony Objective' },
+  hard_lis_advisor_arizona_priority_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 78.0, clipEnd: 97.0, isR2Audio: true, trackLabel: 'Track 24 • Arizona Team Dynamics' },
+  easy_lis_pluto_novelty_t24: { audioUrl: `${R2_BASE}/ielts-listening-track24-space-missions-comparison.mp3`, clipStart: 61.0, clipEnd: 74.0, isR2Audio: true, trackLabel: 'Track 24 • Pluto Close-Up Novelty' },
+
   // Track 2: Flat Descriptions
   easy_lis_flat_01: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 11.6, clipEnd: 18.9, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions' },
   med_lis_flat_02: { audioUrl: `${R2_BASE}/ielts-listening-track2-flat-descriptions.mp3`, clipStart: 44.3, clipEnd: 54.3, isR2Audio: true, trackLabel: 'Track 2 • Flat Descriptions' },

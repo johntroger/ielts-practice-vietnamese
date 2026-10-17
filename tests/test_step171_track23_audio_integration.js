@@ -31,8 +31,8 @@ allQuestions.forEach((q, idx) => {
 });
 
 // 3. Verify Registration in INITIAL_LISTENING_TESTS
-const firstTest = INITIAL_LISTENING_TESTS[0];
-assert.strictEqual(firstTest.id, 'ielts-listening-track23-public-opinions', 'Track 23 is registered as first test in INITIAL_LISTENING_TESTS');
+const t23Test = INITIAL_LISTENING_TESTS.find(t => t.id === 'ielts-listening-track23-public-opinions');
+assert.ok(t23Test, 'Track 23 is registered in INITIAL_LISTENING_TESTS');
 
 // 4. Verify Track 23 Micro-Drills in LISTENING_MICRO_DRILLS
 const t23Drills = LISTENING_MICRO_DRILLS.filter(d => d.id && d.id.includes('track23'));

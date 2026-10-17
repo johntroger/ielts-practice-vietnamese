@@ -430,8 +430,8 @@ export default function Navbar({
               type="button"
               onClick={doOpenDrills}
               className="hidden md:flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 xl:px-3 py-1.5 rounded-xl border border-amber-200 bg-amber-50/90 hover:bg-amber-100 text-amber-800 hover:text-amber-950 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
-              title={isEn ? "Targeted Reflex Studio (Deliberate sentence, dictation & scanning practice)" : "Phòng Luyện Phản Xạ (Luyện câu đơn, ghép ý, dictation & scanning)"}
-              aria-label={isEn ? "Open Targeted Reflex Studio" : "Mở Phòng Luyện Phản Xạ"}
+              title={isEn ? "Targeted Reflex Studio (/micro-drills) - Deliberate sentence, dictation & scanning practice" : "Phòng Luyện Phản Xạ (/micro-drills) - Luyện câu đơn, ghép ý, dictation & scanning"}
+              aria-label={isEn ? "Open Targeted Reflex Studio (/micro-drills)" : "Mở Phòng Luyện Phản Xạ (/micro-drills)"}
             >
               <Puzzle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
               <span className="font-extrabold">{isEn ? 'Micro-Drills' : 'Luyện Phản Xạ'}</span>
@@ -599,7 +599,10 @@ export default function Navbar({
                         <Puzzle className="w-4 h-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="font-bold truncate whitespace-nowrap">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Vi Mô)'}</div>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold truncate whitespace-nowrap">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Vi Mô)'}</span>
+                          <span className="text-[10px] text-amber-700 font-extrabold bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded-full shrink-0">/micro-drills</span>
+                        </div>
                         <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Sentence structures, dictation, scanning & idea linking' : 'Luyện câu đơn, ghép ý, dictation, scanning'}</div>
                       </div>
                     </button>
@@ -1205,6 +1208,7 @@ export default function Navbar({
                       <Puzzle className="w-4 h-4 text-amber-600 shrink-0" />
                       <span className="truncate whitespace-nowrap">{isEn ? 'Micro-Drills (Deliberate Practice)' : 'Micro-Drills (Luyện Kỹ Năng Vi Mô)'}</span>
                     </div>
+                    <span className="text-[10px] text-amber-700 font-extrabold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full shrink-0">/micro-drills</span>
                   </button>
 
                   <button

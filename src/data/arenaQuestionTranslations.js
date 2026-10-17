@@ -1168,6 +1168,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Which demographic group is offered free dental checkups in the newspaper report?",
     "contextEn": "It says here in today's paper that the government is going to offer free dental checks to people over 60.",
     "explanationEn": "Eligibility criterion: Free dental checks are specifically designated for individuals over 60 years old."
+  },
+  "easy_lis_mars_timeline_t24": {
+    "promptEn": "According to Dr. Thornton, why is the six-month timeline ideal for the students?",
+    "contextEn": "That would be ideal. Six months is just right for you. You could follow their progress and how the project develops.",
+    "explanationEn": "Duration justification: Six months enables students to observe continuous progress and project evolution."
+  },
+  "med_lis_moon_mission_type_t24": {
+    "promptEn": "What key operational detail does the advisor clarify about the Chinese lunar expedition?",
+    "contextEn": "I don't think they're sending any astronauts, I think it's just an expedition with robots and machines to find the best place to start a colony.",
+    "explanationEn": "Mission configuration: The Chinese lunar expedition operates autonomously using robots and machinery without human astronauts."
+  },
+  "med_lis_lunar_colony_goal_t24": {
+    "promptEn": "What is the primary objective of the Chinese automated lunar expedition?",
+    "contextEn": "I think it's just an expedition with robots and machines to find the best place to start a colony.",
+    "explanationEn": "Mission objective: Robotic equipment is tasked with identifying the optimum location to establish a colony."
+  },
+  "hard_lis_advisor_arizona_priority_t24": {
+    "promptEn": "What specific research dimension does the advisor encourage the students to focus on?",
+    "contextEn": "If you ask me, I'd prefer to see how a group of people get along living together in a difficult situation, like they'll be doing in Arizona in preparation for their trip.",
+    "explanationEn": "Research priority: Dr. Thornton prioritizes the psychological and interpersonal dynamics of confined group cohabitation."
+  },
+  "easy_lis_pluto_novelty_t24": {
+    "promptEn": "Why does the student argue that Pluto represents a genuinely compelling research subject?",
+    "contextEn": "I mean, no one has ever seen Pluto close up, and no one has tried to go to Mars, so I think they'd be more interesting expeditions to do.",
+    "explanationEn": "Scientific novelty: Pluto is unique because human probes have never observed it at close range."
   }
 };
 

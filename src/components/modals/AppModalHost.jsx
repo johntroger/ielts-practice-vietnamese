@@ -245,6 +245,9 @@ export default function AppModalHost({
         masteredIds={masteredIds}
         onToggleMastered={onToggleMastered}
         onOpenAuth={() => openModal('auth')}
+        initialRoom={typeof modals.drills === 'object' && modals.drills !== null ? (modals.drills.room || modals.drills.skill) : undefined}
+        initialTab={typeof modals.drills === 'object' && modals.drills !== null ? modals.drills.tab : undefined}
+        targetDrillId={typeof modals.drills === 'object' && modals.drills !== null ? (modals.drills.drillId || modals.drills.id) : undefined}
       />
 
       {/* 2.3 Weekly Report Modal */}

@@ -620,6 +620,164 @@ export default function App() {
     }
   }, [isAboutViewOpen]);
 
+  // Dedicated Two-Way URL Routing & Deep-Linking for Micro-Drills (/micro-drills, /micro-drill, /drills)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkIsDrillsRoute = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const hash = window.location.hash.toLowerCase();
+      const search = new URLSearchParams(window.location.search);
+
+      const isPathMatch = (
+        pathname === '/micro-drills' ||
+        pathname.endsWith('/micro-drills') ||
+        pathname === '/micro-drill' ||
+        pathname.endsWith('/micro-drill') ||
+        pathname === '/microdrills' ||
+        pathname.endsWith('/microdrills') ||
+        pathname === '/microdrill' ||
+        pathname.endsWith('/microdrill') ||
+        pathname === '/drills' ||
+        pathname.endsWith('/drills') ||
+        pathname === '/drill' ||
+        pathname.endsWith('/drill') ||
+        pathname === '/luyen-phan-xa' ||
+        pathname.endsWith('/luyen-phan-xa') ||
+        pathname.startsWith('/micro-drills/') ||
+        pathname.startsWith('/micro-drill/') ||
+        pathname.startsWith('/drills/')
+      );
+
+      const isHashMatch = (
+        hash === '#micro-drills' ||
+        hash === '#micro-drill' ||
+        hash === '#microdrills' ||
+        hash === '#microdrill' ||
+        hash === '#drills' ||
+        hash === '#drill' ||
+        hash === '#luyen-phan-xa' ||
+        hash.startsWith('#micro-drills') ||
+        hash.startsWith('#drills')
+      );
+
+      const mode = search.get('mode');
+      const view = search.get('view');
+      const page = search.get('page');
+      const modal = search.get('modal');
+      const isSearchMatch = (
+        mode === 'drills' || mode === 'micro-drills' || mode === 'micro-drill' || mode === 'microdrills' ||
+        view === 'drills' || view === 'micro-drills' || view === 'micro-drill' || view === 'microdrills' ||
+        page === 'drills' || page === 'micro-drills' || page === 'micro-drill' ||
+        modal === 'drills' || modal === 'micro-drills'
+      );
+
+      return isPathMatch || isHashMatch || isSearchMatch;
+    };
+
+    const extractDrillParams = () => {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+      const search = new URLSearchParams(window.location.search);
+      let room = search.get('room') || search.get('skill');
+      let tab = search.get('tab');
+      let drillId = search.get('drill') || search.get('id') || search.get('drillid');
+
+      // Check subpath e.g. /micro-drills/reading or /micro-drills/listening
+      const subpathMatch = pathname.match(/\/(?:micro-drills|micro-drill|drills|drill)\/([a-z0-9_-]+)/i);
+      if (subpathMatch && subpathMatch[1]) {
+        const sub = subpathMatch[1].toLowerCase();
+        if (['general', 'writing', 'reading', 'listening', 'speaking'].includes(sub)) {
+          room = sub;
+        }
+      }
+
+      return { room, tab, drillId };
+    };
+
+    // 1. Direct entry check on mount (e.g. user visits domain.com/micro-drills)
+    if (checkIsDrillsRoute()) {
+      const { room, tab, drillId } = extractDrillParams();
+      openModal('drills', { room, tab, drillId });
+    }
+
+    // 2. Handle browser Back / Forward navigation (popstate & hashchange)
+    const handleLocationChange = () => {
+      const isRouteMatch = checkIsDrillsRoute();
+      if (isRouteMatch) {
+        const { room, tab, drillId } = extractDrillParams();
+        openModal('drills', { room, tab, drillId });
+      } else {
+        closeModal('drills');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, [openModal, closeModal]);
+
+  // Sync address bar when modals.drills opens or closes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isDrillsOpen = Boolean(modals.drills);
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const hash = window.location.hash.toLowerCase();
+    const isCurrentlyOnDrillsUrl = (
+      pathname === '/micro-drills' ||
+      pathname.endsWith('/micro-drills') ||
+      pathname === '/micro-drill' ||
+      pathname.endsWith('/micro-drill') ||
+      pathname === '/microdrills' ||
+      pathname.endsWith('/microdrills') ||
+      pathname === '/microdrill' ||
+      pathname.endsWith('/microdrill') ||
+      pathname === '/drills' ||
+      pathname.endsWith('/drills') ||
+      pathname === '/drill' ||
+      pathname.endsWith('/drill') ||
+      pathname === '/luyen-phan-xa' ||
+      pathname.endsWith('/luyen-phan-xa') ||
+      pathname.startsWith('/micro-drills/') ||
+      pathname.startsWith('/micro-drill/') ||
+      pathname.startsWith('/drills/') ||
+      hash === '#micro-drills' ||
+      hash === '#micro-drill' ||
+      hash === '#microdrills' ||
+      hash === '#microdrill' ||
+      hash === '#drills' ||
+      hash === '#drill' ||
+      hash === '#luyen-phan-xa' ||
+      hash.startsWith('#micro-drills') ||
+      hash.startsWith('#drills')
+    );
+
+    if (isDrillsOpen && !isCurrentlyOnDrillsUrl) {
+      try {
+        const drillsPayload = typeof modals.drills === 'object' && modals.drills !== null ? modals.drills : null;
+        const targetUrl = drillsPayload?.room 
+          ? `/micro-drills?room=${drillsPayload.room}` 
+          : '/micro-drills';
+        window.history.pushState({ modal: 'drills' }, '', targetUrl);
+      } catch (e) {
+        window.location.hash = 'micro-drills';
+      }
+    } else if (!isDrillsOpen && isCurrentlyOnDrillsUrl) {
+      try {
+        if (hash.startsWith('#micro-drill') || hash.startsWith('#drills') || hash === '#drill' || hash === '#luyen-phan-xa') {
+          window.history.pushState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+      } catch (e) {
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [modals.drills]);
+
   // 5. Automated Content Deduplication & Sanitization & Theme init on startup
   useEffect(() => {
     initTheme();

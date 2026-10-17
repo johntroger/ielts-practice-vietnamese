@@ -177,7 +177,9 @@ const testSuites = [
   { name: 'Step 168: Phase 3 Modular Architecture Refactoring (Evaluation Domain Modules & App Hooks)', file: 'tests/test_step168_phase3_modular_architecture_refactoring.js' },
   { name: 'Step 169: Phase 4 & 5 Architecture Upgrade (Service Layer English UI, Query Limits & Component Modularization)', file: 'tests/test_step169_phase4_phase5_architecture_upgrade.js' },
   { name: 'Step 170: Phase 6 AI Proxy Gateway, Prompt Cache, Lazy Question Banks & Fine-Grained Bundle Chunking', file: 'tests/test_step170_phase6_ai_proxy_cache_and_lazy_question_banks.js' },
-  { name: 'Step 171: Track 23 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step171_track23_audio_integration.js' }
+  { name: 'Step 171: Track 23 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step171_track23_audio_integration.js' },
+  { name: 'Step 172: Track 24 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step172_track24_audio_integration.js' },
+  { name: 'Step 175: Dedicated Two-Way URL Routing & Deep-Linking for Micro-Drills', file: 'tests/test_step175_micro_drill_dedicated_url.js' }
 ];
 
 console.log('===============================================================');

@@ -41,7 +41,8 @@ import {
   Minimize2,
   AlertCircle,
   Plus,
-  ChevronDown
+  ChevronDown,
+  Share2
 } from 'lucide-react';
 import { INITIAL_MICRO_DRILLS } from '../data/microDrills';
 import { READING_MICRO_DRILLS } from '../data/readingMicroDrills';
@@ -75,7 +76,10 @@ export default function MicroDrillsModal({
   currentUser,
   masteredIds = [],
   onToggleMastered,
-  onOpenAuth
+  onOpenAuth,
+  initialRoom,
+  initialTab,
+  targetDrillId
 }) {
   if (!isOpen) return null;
 
@@ -83,6 +87,9 @@ export default function MicroDrillsModal({
 
   // Active Room: 'general' | 'writing' | 'reading' | 'listening' | 'speaking'
   const [activeRoom, setActiveRoom] = useState(() => {
+    if (initialRoom && ['general', 'writing', 'reading', 'listening', 'speaking'].includes(initialRoom)) {
+      return initialRoom;
+    }
     if (activeSkill === 'reading') return 'reading';
     if (activeSkill === 'listening') return 'listening';
     if (activeSkill === 'speaking') return 'speaking';
@@ -96,11 +103,84 @@ export default function MicroDrillsModal({
   // Listening: 'listening-dictation' | 'listening-spelling' | 'listening-distractor' | 'listening-map' | 'listening-signposting'
   // Speaking: 'speaking-area' | 'speaking-fillers' | 'speaking-collocations' | 'speaking-part3-counter'
   const [activeTab, setActiveTab] = useState(() => {
-    if (activeSkill === 'reading') return 'reading-tfng';
-    if (activeSkill === 'listening') return 'listening-dictation';
-    if (activeSkill === 'speaking') return 'speaking-area';
+    if (initialTab) return initialTab;
+    const room = (initialRoom && ['general', 'writing', 'reading', 'listening', 'speaking'].includes(initialRoom)) ? initialRoom : activeSkill;
+    if (room === 'reading') return 'reading-tfng';
+    if (room === 'listening') return 'listening-dictation';
+    if (room === 'speaking') return 'speaking-area';
+    if (room === 'general') return 'collocation';
     return 'fill-blanks';
   });
+
+  // React to prop changes when modal opens or deep link params arrive
+  useEffect(() => {
+    if (isOpen) {
+      if (initialRoom && ['general', 'writing', 'reading', 'listening', 'speaking'].includes(initialRoom)) {
+        setActiveRoom(initialRoom);
+      }
+      if (initialTab) {
+        setActiveTab(initialTab);
+      }
+    }
+  }, [isOpen, initialRoom, initialTab]);
+
+  // Two-way synchronization of active room with URL query parameter (?room=...)
+  useEffect(() => {
+    if (!isOpen || typeof window === 'undefined') return;
+    const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const isDrillsRoute = (
+      pathname === '/micro-drills' ||
+      pathname.endsWith('/micro-drills') ||
+      pathname === '/micro-drill' ||
+      pathname.endsWith('/micro-drill') ||
+      pathname === '/microdrills' ||
+      pathname.endsWith('/microdrills') ||
+      pathname === '/microdrill' ||
+      pathname.endsWith('/microdrill') ||
+      pathname === '/drills' ||
+      pathname.endsWith('/drills') ||
+      pathname === '/drill' ||
+      pathname.endsWith('/drill') ||
+      pathname === '/luyen-phan-xa' ||
+      pathname.endsWith('/luyen-phan-xa') ||
+      window.location.hash.includes('drill')
+    );
+
+    if (isDrillsRoute) {
+      try {
+        const url = new URL(window.location.href);
+        const currentParam = url.searchParams.get('room') || url.searchParams.get('skill');
+        if (currentParam !== activeRoom) {
+          url.searchParams.set('room', activeRoom);
+          window.history.replaceState({ modal: 'drills', room: activeRoom }, '', url.pathname + url.search);
+        }
+      } catch (e) {
+        // Fallback silently if history API is restricted
+      }
+    }
+  }, [isOpen, activeRoom]);
+
+  // Copy Direct Shareable URL state & handler
+  const [isCopiedUrl, setIsCopiedUrl] = useState(false);
+  const handleCopyShareUrl = () => {
+    try {
+      const shareUrl = `${window.location.origin}/micro-drills?room=${activeRoom}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl);
+      } else {
+        const input = document.createElement('input');
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+      setIsCopiedUrl(true);
+      setTimeout(() => setIsCopiedUrl(false), 2200);
+    } catch (e) {
+      console.error('Failed to copy share URL:', e);
+    }
+  };
 
   // When room changes, auto-select the first tab of that room
   const handleRoomChange = (room) => {
@@ -1538,6 +1618,23 @@ export default function MicroDrillsModal({
           </div>
 
           <div className="flex items-center space-x-1.5 shrink-0">
+            {/* Copy Shareable Direct URL Button */}
+            <button
+              type="button"
+              onClick={handleCopyShareUrl}
+              className={`p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl transition-all cursor-pointer ${
+                isCopiedUrl 
+                  ? 'bg-emerald-600 text-white shadow-xs' 
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
+              }`}
+              title={isCopiedUrl 
+                ? (isEn ? "URL Copied to clipboard! (/micro-drills)" : "Đã sao chép link vào clipboard! (/micro-drills)")
+                : (isEn ? "Copy direct URL to this drill room (/micro-drills)" : "Sao chép link trực tiếp phòng luyện (/micro-drills)")}
+              aria-label={isEn ? "Copy Direct URL" : "Sao chép liên kết trực tiếp"}
+            >
+              {isCopiedUrl ? <Check className="w-5 h-5 text-white" /> : <Share2 className="w-5 h-5" />}
+            </button>
+
             {/* Fullscreen / Expanded Workspace Toggle */}
             <button 
               type="button"
