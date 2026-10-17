@@ -142,8 +142,8 @@ export default function ArenaDifficultySelector({
         </div>
 
         {/* Selected Difficulty Full Un-truncated Detail Card */}
-        <div className={`p-2.5 rounded-xl border transition-all ${activeMobileTheme.border} ${activeMobileTheme.bg}`}>
-          <div className="flex items-center justify-between mb-1">
+        <div className={`p-2 rounded-xl border transition-all ${activeMobileTheme.border} ${activeMobileTheme.bg}`}>
+          <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1.5">
               <selectedDiffObj.icon className={`w-3.5 h-3.5 ${activeMobileTheme.text} shrink-0`} />
               <span className="text-xs font-black text-slate-100">
@@ -156,7 +156,7 @@ export default function ArenaDifficultySelector({
               <span className="text-amber-400 font-bold">~{selectedDiffObj.maxSprintXp} XP</span>
             </div>
           </div>
-          <p className="text-[11px] text-slate-300 leading-snug">
+          <p className="text-[10.5px] text-slate-300 leading-tight">
             {isEn ? selectedDiffObj.descEn : selectedDiffObj.descVi}
           </p>
         </div>

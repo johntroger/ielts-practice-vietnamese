@@ -107,6 +107,9 @@ export default function AtlasEnglishArenaModal({
     safeGet(ARENA_STORAGE_KEYS.EQUIPPED_PERK, 'none')
   );
 
+  // Mobile Tab Navigation State: 'match' | 'leaderboard'
+  const [activeMobileTab, setActiveMobileTab] = useState('match');
+
   const handleDifficultyChange = useCallback((diff) => {
     setSelectedDifficulty(diff);
     safeSet(ARENA_STORAGE_KEYS.LAST_DIFFICULTY, diff);
@@ -505,8 +508,8 @@ export default function AtlasEnglishArenaModal({
         {/* State 1: IDLE / Full-Screen Lobby Screen */}
         {sprint.phase === ARENA_SPRINT_PHASES.IDLE && (
           <div className="flex flex-col flex-1 h-full overflow-y-auto">
-            {/* Top Navigation Bar */}
-            <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between shrink-0">
+            {/* Top Navigation Bar (Sticky on Mobile to prevent clipping) */}
+            <header className="sticky top-0 z-30 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between shrink-0 shadow-md">
               <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 shrink-0">
                   <Swords className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -563,14 +566,64 @@ export default function AtlasEnglishArenaModal({
               </div>
             </header>
 
+            {/* Mobile Tab Navigation Bar (Sticky Segmented Controller for < lg screens) */}
+            <div className="lg:hidden sticky top-[49px] sm:top-[53px] z-20 w-full px-3 pt-2 pb-1 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80">
+              <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMobileTab('match');
+                    triggerHaptic('chipTap');
+                  }}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    activeMobileTab === 'match'
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <Swords className="w-3.5 h-3.5" />
+                  <span>{isEn ? 'Arena Battle' : 'Đấu Trường'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveMobileTab('leaderboard');
+                    triggerHaptic('chipTap');
+                  }}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    activeMobileTab === 'leaderboard'
+                      ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <Trophy className="w-3.5 h-3.5 text-amber-300" />
+                  <span>{isEn ? 'Ranks & Boss' : 'Bảng Vàng & Boss'}</span>
+                </button>
+              </div>
+            </div>
+
             {/* Main Fullscreen Lobby Body */}
             <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
-                {/* Left: Hero Banner & Rules */}
-                <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl">
-                  <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider">
-                    <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span className="truncate">{t('arena.rulesBadge')}</span>
+                {/* Left: Hero Banner, Difficulty & Action Controls */}
+                <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl ${
+                  activeMobileTab === 'match' ? 'flex' : 'hidden lg:flex'
+                }`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-indigo-400 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                      <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span className="truncate">{t('arena.rulesBadge')}</span>
+                    </div>
+
+                    {/* Mobile Quick Switch Pill to World Boss */}
+                    <button
+                      type="button"
+                      onClick={() => setActiveMobileTab('leaderboard')}
+                      className="lg:hidden flex items-center gap-1 text-[10px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full cursor-pointer"
+                    >
+                      <span>🔥 {isEn ? 'Boss Raid Active' : 'Săn Boss Hôm Nay'}</span>
+                      <span>→</span>
+                    </button>
                   </div>
 
                   <h2 className="text-base sm:text-xl lg:text-2xl font-black text-slate-100 leading-tight sm:leading-snug tracking-tight">
@@ -650,6 +703,7 @@ export default function AtlasEnglishArenaModal({
                     </div>
                   </div>
 
+                  {/* Action Buttons: Primary Full-Width + Secondary Row on Mobile */}
                   <div className="mt-1 sm:mt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <button
                       type="button"
@@ -658,53 +712,57 @@ export default function AtlasEnglishArenaModal({
                         setCurrentTopic(nextTopic);
                         sprint.startSprint(null, selectedDifficulty);
                       }}
-                      className="flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                      className="w-full sm:flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
                     >
                       <Play className="w-4 h-4 fill-white shrink-0" />
                       <span>{t('arena.startSprint')}</span>
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const r2SprintQuestions = generateR2ListeningSprintQuestions({
-                          count: 7,
-                          difficulty: selectedDifficulty
-                        });
-                        if (r2SprintQuestions.length > 0) {
-                          sprint.startSprint(r2SprintQuestions, selectedDifficulty, { isAudioSprint: true });
-                        } else {
-                          sprint.startSprint(null, selectedDifficulty, { isAudioSprint: true });
-                        }
-                      }}
-                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40"
-                      title={t('arena.audioBlitzDesc')}
-                    >
-                      <span>🎧</span>
-                      <span>{t('arena.audioBlitzTitle')}</span>
-                    </button>
-
-                    {getUnresolvedMistakeCount() > 0 && (
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => {
-                          const revengeQuestions = generateRevengeSprintQuestions({ count: 10 });
-                          if (revengeQuestions.length > 0) {
-                            sprint.startSprint(revengeQuestions, selectedDifficulty);
+                          const r2SprintQuestions = generateR2ListeningSprintQuestions({
+                            count: 7,
+                            difficulty: selectedDifficulty
+                          });
+                          if (r2SprintQuestions.length > 0) {
+                            sprint.startSprint(r2SprintQuestions, selectedDifficulty, { isAudioSprint: true });
+                          } else {
+                            sprint.startSprint(null, selectedDifficulty, { isAudioSprint: true });
                           }
                         }}
-                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
-                        title={t('arena.revengeSprintTitle')}
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40"
+                        title={t('arena.audioBlitzDesc')}
                       >
-                        <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                        <span>{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
+                        <span>🎧</span>
+                        <span className="truncate">{t('arena.audioBlitzTitle')}</span>
                       </button>
-                    )}
+
+                      {getUnresolvedMistakeCount() > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const revengeQuestions = generateRevengeSprintQuestions({ count: 10 });
+                            if (revengeQuestions.length > 0) {
+                              sprint.startSprint(revengeQuestions, selectedDifficulty);
+                            }
+                          }}
+                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3 px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                          title={t('arena.revengeSprintTitle')}
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                          <span className="truncate">{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Right: Real Learner Leaderboard & Daily World Boss Raid */}
-                <div className="lg:col-span-6 xl:col-span-5 w-full flex flex-col gap-2.5 sm:gap-3 min-w-0">
+                <div className={`lg:col-span-6 xl:col-span-5 w-full flex flex-col gap-2.5 sm:gap-3 min-w-0 ${
+                  activeMobileTab === 'leaderboard' ? 'flex' : 'hidden lg:flex'
+                }`}>
                   <ArenaRelativeLeaderboard
                     rivals={leaderboardData.leaderboard}
                     currentUserId={currentUser?.id}
@@ -717,6 +775,18 @@ export default function AtlasEnglishArenaModal({
                     isEn={isEn} 
                     onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
                   />
+
+                  {/* Mobile Back-to-Battle Quick Action */}
+                  <div className="lg:hidden pt-1 pb-3">
+                    <button
+                      type="button"
+                      onClick={() => setActiveMobileTab('match')}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-98"
+                    >
+                      <Swords className="w-4 h-4" />
+                      <span>{isEn ? 'Return to Battle Setup' : 'Quay Lại Sảnh Trận Đấu'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </main>
