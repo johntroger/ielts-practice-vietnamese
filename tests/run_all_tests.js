@@ -202,7 +202,8 @@ const testSuites = [
   { name: 'Step 193: Track 39 Speaking Part 2 Candidate Sample & Audio Integration', file: 'tests/test_step193_track39_audio_integration.js' },
   { name: 'Step 194: Track 40 Complex Sentences & Connectors Audio Integration', file: 'tests/test_step194_track40_audio_integration.js' },
   { name: 'Step 195: Track 41 Travel Experiences & Follow-up Questions Integration', file: 'tests/test_step195_track41_audio_integration.js' },
-  { name: 'Step 196: Track 42 UK Business Structures & Self-Employment Integration', file: 'tests/test_step196_track42_audio_integration.js' }
+  { name: 'Step 196: Track 42 UK Business Structures & Self-Employment Integration', file: 'tests/test_step196_track42_audio_integration.js' },
+  { name: 'Step 197: Track 43 Sole Trader Pros & Cons Integration', file: 'tests/test_step197_track43_audio_integration.js' }
 ];
 
 console.log('===============================================================');

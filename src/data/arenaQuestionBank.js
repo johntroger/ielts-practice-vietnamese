@@ -4889,12 +4889,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Limited companies pay corporation tax on profits, whereas sole traders and partners pay income tax',
     explanation: 'Công ty TNHH nộp corporation tax trên lợi nhuận, còn sole traders và partnerships nộp income tax trên thu nhập.',
     explanationEn: 'Limited companies are subject to corporation tax on profits, whereas sole traders and partnerships pay personal income tax.'
+  },
+  // ==========================================
+  // TRACK 43: THE SOLE TRADER BUSINESS MODEL
+  // ==========================================
+  {
+    id: 'easy_lis_home_working_sole_trader_t43',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why is a sole trader in the UK able to operate their business directly from home without extra administrative burden?',
+    promptEn: 'Why is a sole trader in the UK able to operate their business directly from home without extra administrative burden?',
+    context: 'Dr Corpus: "There\'s no need to register an office, so the trader can even work from home."',
+    contextEn: 'Dr Corpus: "There\'s no need to register an office, so the trader can even work from home."',
+    audioText: "There's no need to register an office, so the trader can even work from home.",
+    options: [
+      'There is no legal requirement to register a separate commercial office',
+      'The government automatically subsidizes domestic commercial rents',
+      'Residential properties are exempt from commercial utility charges',
+      'Local borough councils provide free office furniture'
+    ],
+    optionsVi: [
+      'Không có yêu cầu pháp lý nào buộc phải đăng ký văn phòng thương mại riêng',
+      'Chính phủ tự động trợ cấp chi phí thuê mặt bằng thương mại tại gia',
+      'Bất động sản nhà ở được miễn toàn bộ phí dịch vụ tiện ích thương mại',
+      'Hội đồng quận địa phương cung cấp miễn phí bàn ghế văn phòng'
+    ],
+    optionsEn: [
+      'There is no legal requirement to register a separate commercial office',
+      'The government automatically subsidizes domestic commercial rents',
+      'Residential properties are exempt from commercial utility charges',
+      'Local borough councils provide free office furniture'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'There is no legal requirement to register a separate commercial office',
+    explanation: 'TS. Corpus giải thích: "There\'s no need to register an office, so the trader can even work from home."',
+    explanationEn: 'Dr Corpus confirms: "There\'s no need to register an office, so the trader can even work from home."'
+  },
+  {
+    id: 'med_lis_annual_accounts_exemption_t43',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What corporate filing exemption applies to sole traders compared to registered limited companies?',
+    promptEn: 'What corporate filing exemption applies to sole traders compared to registered limited companies?',
+    context: 'Dr Corpus: "There are also no legal requirements to submit financial accounts to Companies House. As a result, this is the simplest and most straightforward way to start out in business and work for yourself."',
+    contextEn: 'Dr Corpus: "There are also no legal requirements to submit financial accounts to Companies House. As a result, this is the simplest and most straightforward way to start out in business and work for yourself."',
+    audioText: "There are also no legal requirements to submit financial accounts to Companies House. As a result, this is the simplest and most straightforward way to start out in business and work for yourself.",
+    options: [
+      'They are not legally required to submit financial accounts to Companies House',
+      'They are exempt from keeping any track of income or expenses',
+      'They never have to interact with Her Majesty\'s Revenue and Customs',
+      'They are permitted to issue unregistered stock options'
+    ],
+    optionsVi: [
+      'Họ không bắt buộc phải nộp báo cáo tài chính hàng năm cho Companies House',
+      'Họ được miễn trừ việc theo dõi sổ sách thu chi kinh doanh',
+      'Họ không bao giờ phải làm việc với Cơ quan Thuế & Hải quan Hoàng gia',
+      'Họ được phép phát hành quyền chọn cổ phiếu không qua đăng ký'
+    ],
+    optionsEn: [
+      'They are not legally required to submit financial accounts to Companies House',
+      'They are exempt from keeping any track of income or expenses',
+      'They never have to interact with Her Majesty\'s Revenue and Customs',
+      'They are permitted to issue unregistered stock options'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They are not legally required to submit financial accounts to Companies House',
+    explanation: 'Hộ kinh doanh cá thể không phải nộp báo cáo tài chính cho cơ quan đăng ký kinh doanh: "no legal requirements to submit financial accounts to Companies House".',
+    explanationEn: 'Sole traders are exempt from submitting financial accounts to Companies House, keeping administration simple.'
+  },
+  {
+    id: 'easy_lis_partner_earnings_sharing_t43',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is an operational advantage regarding revenue distribution for a sole trader?',
+    promptEn: 'What is an operational advantage regarding revenue distribution for a sole trader?',
+    context: 'Dr Corpus: "You make your own decisions and you don\'t have to share your earnings with a partner."',
+    contextEn: 'Dr Corpus: "You make your own decisions and you don\'t have to share your earnings with a partner."',
+    audioText: "You make your own decisions and you don't have to share your earnings with a partner.",
+    options: [
+      'They do not have to divide or share their business earnings with a partner',
+      'They receive double dividend allocations from local chambers of commerce',
+      'Profits are tax-free for the first decade of commercial activity',
+      'They can claim fifty percent of all client revenue in sovereign gold'
+    ],
+    optionsVi: [
+      'Họ không cần phải phân chia hay san sẻ lợi nhuận kinh doanh với bất kỳ đối tác nào',
+      'Họ nhận được tỷ lệ cổ tức nhân đôi từ phòng thương mại địa phương',
+      'Lợi nhuận được miễn thuế hoàn toàn trong mười năm hoạt động đầu tiên',
+      'Họ được quyền yêu cầu thanh toán 50% doanh thu bằng vàng dự trữ quốc gia'
+    ],
+    optionsEn: [
+      'They do not have to divide or share their business earnings with a partner',
+      'They receive double dividend allocations from local chambers of commerce',
+      'Profits are tax-free for the first decade of commercial activity',
+      'They can claim fifty percent of all client revenue in sovereign gold'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They do not have to divide or share their business earnings with a partner',
+    explanation: 'Chủ hộ kinh doanh hưởng toàn bộ lợi nhuận: "you don\'t have to share your earnings with a partner".',
+    explanationEn: 'The business owner retains full earnings: "you don\'t have to share your earnings with a partner".'
+  },
+  {
+    id: 'med_lis_taxed_at_source_difference_t43',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How does tax payment for salaried employees differ from that of self-employed sole traders?',
+    promptEn: 'How does tax payment for salaried employees differ from that of self-employed sole traders?',
+    context: 'Dr Corpus: "When you\'re in employment, you are taxed at source, which means your employer takes your tax from your earnings every month... However, as a sole trader, you are self-employed... you have to complete an annual tax return."',
+    contextEn: 'Dr Corpus: "When you\'re in employment, you are taxed at source, which means your employer takes your tax from your earnings every month... However, as a sole trader, you are self-employed... you have to complete an annual tax return."',
+    audioText: "When you're in employment, you are taxed at source, which means your employer takes your tax from your earnings every month... However, as a sole trader, you are self-employed... you have to complete an annual tax return.",
+    options: [
+      'Employees are taxed at source by their employer each month, whereas sole traders must file an annual tax return',
+      'Employees file quarterly returns whereas sole traders are exempt from personal tax',
+      'Sole traders pay taxes via employers whereas employees settle directly with banks',
+      'Both groups submit identical corporate payroll accounts'
+    ],
+    optionsVi: [
+      'Nhân viên được khấu trừ thuế tại nguồn hàng tháng bởi chủ lao động, còn sole trader phải tự nộp tờ khai thuế hàng năm',
+      'Nhân viên nộp tờ khai hàng quý trong khi sole trader được miễn trừ thuế thu nhập cá nhân',
+      'Sole trader nộp thuế thông qua chủ lao động còn nhân viên thanh toán trực tiếp qua ngân hàng',
+      'Cả hai nhóm đều nộp tài khoản bảng lương doanh nghiệp hoàn toàn giống nhau'
+    ],
+    optionsEn: [
+      'Employees are taxed at source by their employer each month, whereas sole traders must file an annual tax return',
+      'Employees file quarterly returns whereas sole traders are exempt from personal tax',
+      'Sole traders pay taxes via employers whereas employees settle directly with banks',
+      'Both groups submit identical corporate payroll accounts'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Employees are taxed at source by their employer each month, whereas sole traders must file an annual tax return',
+    explanation: 'Nhân viên hưởng lương bị khấu trừ tại nguồn ("taxed at source"), còn người tự làm chủ phải tự điền tờ khai thuế hàng năm ("complete an annual tax return").',
+    explanationEn: 'Employed individuals are taxed at source monthly by employers, whereas sole traders must complete an annual tax return.'
+  },
+  {
+    id: 'hard_lis_unlimited_liability_forfeiture_t43',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Under the legal principle of unlimited liability, what private possessions might an insolvent sole trader lose to settle business debts?',
+    promptEn: 'Under the legal principle of unlimited liability, what private possessions might an insolvent sole trader lose to settle business debts?',
+    context: 'Dr Corpus: "You\'ll also have unlimited liability, which means that if you can\'t pay your business debts, you may lose your house and car to pay for them, as you are your business."',
+    contextEn: 'Dr Corpus: "You\'ll also have unlimited liability, which means that if you can\'t pay your business debts, you may lose your house and car to pay for them, as you are your business."',
+    audioText: "You'll also have unlimited liability, which means that if you can't pay your business debts, you may lose your house and car to pay for them, as you are your business.",
+    options: [
+      'Their private residential house and personal motor vehicle',
+      'Only shares and bonds deposited with the national central bank',
+      'Exclusively physical stock remaining within the commercial workshop',
+      'Patents and trademarks registered under international copyright treaties'
+    ],
+    optionsVi: [
+      'Nhà ở riêng tư và phương tiện xe cơ giới cá nhân',
+      'Chỉ cổ phiếu và trái phiếu gửi tại ngân hàng trung ương quốc gia',
+      'Duy nhất lượng hàng hóa tồn kho vật chất còn lại trong xưởng thương mại',
+      'Các bằng sáng chế và nhãn hiệu đã đăng ký theo hiệp ước bản quyền quốc tế'
+    ],
+    optionsEn: [
+      'Their private residential house and personal motor vehicle',
+      'Only shares and bonds deposited with the national central bank',
+      'Exclusively physical stock remaining within the commercial workshop',
+      'Patents and trademarks registered under international copyright treaties'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Their private residential house and personal motor vehicle',
+    explanation: 'TS. Corpus cảnh báo trách nhiệm vô hạn có thể khiến chủ kinh doanh mất nhà và xe ("lose your house and car to pay for them").',
+    explanationEn: 'Dr Corpus warns that under unlimited liability, insolvent traders risk forfeiting personal property including house and car.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 43: The Sole Trader Business Model
+  easy_lis_home_working_sole_trader_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 29.0, clipEnd: 40.0, isR2Audio: true, trackLabel: 'Track 43 • Home Office Flexibility' },
+  med_lis_annual_accounts_exemption_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 40.0, clipEnd: 53.0, isR2Audio: true, trackLabel: 'Track 43 • Accounts Exemption' },
+  easy_lis_partner_earnings_sharing_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 53.0, clipEnd: 65.0, isR2Audio: true, trackLabel: 'Track 43 • Sole Earnings Retention' },
+  med_lis_taxed_at_source_difference_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 90.0, clipEnd: 118.0, isR2Audio: true, trackLabel: 'Track 43 • Taxed at Source vs Return' },
+  hard_lis_unlimited_liability_forfeiture_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 148.0, clipEnd: 160.0, isR2Audio: true, trackLabel: 'Track 43 • Unlimited Liability Forfeiture' },
+
   // Track 42: UK Business Structures & Self-Employment
   easy_lis_companies_house_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 50.0, clipEnd: 63.0, isR2Audio: true, trackLabel: 'Track 42 • Companies House Registry' },
   med_lis_limited_liability_loss_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 63.0, clipEnd: 76.0, isR2Audio: true, trackLabel: 'Track 42 • Limited Liability Scope' },

@@ -1643,6 +1643,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What fundamental tax distinction is highlighted between limited companies and sole traders/partnerships?",
     "contextEn": "Lecturer: \"Regarding tax, limited companies pay corporation tax, which, unlike income tax, is a tax on business profits, not personal earnings... with sole traders and partnerships... the owners must pay income tax\"",
     "explanationEn": "Limited companies are subject to corporation tax on profits, whereas sole traders and partnerships pay personal income tax."
+  },
+  "easy_lis_home_working_sole_trader_t43": {
+    "promptEn": "Why is a sole trader in the UK able to operate their business directly from home without extra administrative burden?",
+    "contextEn": "Dr Corpus: \"There's no need to register an office, so the trader can even work from home.\"",
+    "explanationEn": "Dr Corpus confirms: \"There's no need to register an office, so the trader can even work from home.\""
+  },
+  "med_lis_annual_accounts_exemption_t43": {
+    "promptEn": "What corporate filing exemption applies to sole traders compared to registered limited companies?",
+    "contextEn": "Dr Corpus: \"There are also no legal requirements to submit financial accounts to Companies House. As a result, this is the simplest and most straightforward way to start out in business and work for yourself.\"",
+    "explanationEn": "Sole traders are exempt from submitting financial accounts to Companies House, keeping administration simple."
+  },
+  "easy_lis_partner_earnings_sharing_t43": {
+    "promptEn": "What is an operational advantage regarding revenue distribution for a sole trader?",
+    "contextEn": "Dr Corpus: \"You make your own decisions and you don't have to share your earnings with a partner.\"",
+    "explanationEn": "The business owner retains full earnings: \"you don't have to share your earnings with a partner\"."
+  },
+  "med_lis_taxed_at_source_difference_t43": {
+    "promptEn": "How does tax payment for salaried employees differ from that of self-employed sole traders?",
+    "contextEn": "Dr Corpus: \"When you're in employment, you are taxed at source, which means your employer takes your tax from your earnings every month... However, as a sole trader, you are self-employed... you have to complete an annual tax return.\"",
+    "explanationEn": "Employed individuals are taxed at source monthly by employers, whereas sole traders must complete an annual tax return."
+  },
+  "hard_lis_unlimited_liability_forfeiture_t43": {
+    "promptEn": "Under the legal principle of unlimited liability, what private possessions might an insolvent sole trader lose to settle business debts?",
+    "contextEn": "Dr Corpus: \"You'll also have unlimited liability, which means that if you can't pay your business debts, you may lose your house and car to pay for them, as you are your business.\"",
+    "explanationEn": "Dr Corpus warns that under unlimited liability, insolvent traders risk forfeiting personal property including house and car."
   }
 };
 

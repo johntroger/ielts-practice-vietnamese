@@ -126,7 +126,7 @@ export default function ListeningWorkspace({
         }
       }
     } catch (e) {}
-    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track42-uk-business-structures'];
+    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track43-sole-trader-pros-cons'];
   });
 
   // Persist open tabs whenever they change
