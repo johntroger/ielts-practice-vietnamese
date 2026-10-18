@@ -2739,8 +2739,102 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for "point" in the idiomatic concession phrase "Up to a point".',
     explanation: 'Robert dùng cụm thành ngữ nhượng bộ: "Up to a point, yes." Từ còn thiếu trong ngữ cảnh là "point".',
     explanationEn: 'Robert employs the standard idiomatic hedge "Up to a point, yes." The target noun is "point".'
+  },
+  {
+    id: 'ldrill-dist-track37-bus-patronage-fall-trap',
+    type: 'listening-distractor',
+    title: 'Bẫy quy kết nguyên nhân: Lượng khách đi xe buýt sụt giảm (Track 37)',
+    titleEn: 'Causal Attribution Distractor: Declining Bus Ridership (Track 37)',
+    category: 'Urban Transit Economics',
+    categoryEn: 'Urban Transit Economics',
+    audioSnippetText: "A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.",
+    audioText: "A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track37-ashtown-urban-transformation.mp3',
+    clipStart: 33.0,
+    clipEnd: 58.0,
+    question: 'Theo Bill, lý do thực tế khiến ít người dân Ashtown đi xe buýt hơn là gì?',
+    questionEn: 'According to Bill, what is the actual reason fewer residents in Ashtown use buses today?',
+    options: [
+      { id: 'A', text: 'Mạng lưới tuyến bị thu hẹp chỉ còn phục vụ các điểm đến phổ biến và trung tâm cấm xe cơ giới', textEn: 'Route coverage has shrunk to limited popular corridors and buses are barred from the pedestrianized center' },
+      { id: 'B', text: 'Giá vé xe buýt tăng vọt vượt quá khả năng chi trả của người có mức lương trung bình', textEn: 'Bus fares have skyrocketed beyond the financial means of average salary earners' },
+      { id: 'C', text: 'Chất lượng tiện nghi của đội xe mới gây thất vọng nặng nề cho hành khách', textEn: 'Passenger satisfaction plummeted due to uncomfortable seating on new buses' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe thường bị đánh lừa bởi nhận định phổ biến "fares are higher", nhưng Bill lập tức phản bác: "but that isn\'t true" vì chi phí so với lương vẫn không đổi. Nguyên nhân thực sự là mạng lưới thu hẹp và trung tâm cấm xe.',
+    distractorMechanismEn: 'Candidates are baited by the misconception "fares are higher", which Bill promptly debunks ("that isn\'t true") before stating the operational reality: limited destinations and vehicle bans.',
+    explanation: 'Đáp án là A: Xe buýt chỉ chạy tới các điểm đông khách nhất và không thể vào lõi trung tâm do lệnh cấm xe.',
+    explanationEn: 'Option A is correct: the true cause is rationalized routing to popular hubs and total restriction from the pedestrianized town core.'
+  },
+  {
+    id: 'ldrill-dist-track37-bypass-promise-trap',
+    type: 'listening-distractor',
+    title: 'Bẫy kỳ vọng chưa hoàn thành: Dự án đường tránh trung tâm (Track 37)',
+    titleEn: 'Unrealized Infrastructure Trap: The City Center Bypass (Track 37)',
+    category: 'Urban Planning Reality',
+    categoryEn: 'Urban Planning Reality',
+    audioSnippetText: "Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened.",
+    audioText: "Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track37-ashtown-urban-transformation.mp3',
+    clipStart: 63.5,
+    clipEnd: 77.0,
+    question: 'Tình trạng thực tế của dự án đường vành đai tránh trung tâm Ashtown hiện nay như thế nào?',
+    questionEn: 'What is the actual current status of the proposed bypass around Ashtown town center?',
+    options: [
+      { id: 'A', text: 'Dự án vẫn chưa hề được triển khai thực hiện dù đã lên kế hoạch từ 5 năm trước', textEn: 'The project remains completely unbuilt despite being planned five years ago' },
+      { id: 'B', text: 'Tuyến đường đã thông xe và giải tỏa phần lớn áp lực giao thông xuyên tâm', textEn: 'The dual carriageway was successfully completed and alleviated downtown congestion' },
+      { id: 'C', text: 'Dự án đã bị hủy bỏ vĩnh viễn để nhường ngân sách mở rộng làn xe đạp', textEn: 'The scheme was officially cancelled to reallocate funds toward dedicated cycleways' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe nghe thấy "a bypass was supposed to be built", nhưng cụm đảo ngược then chốt "But those plans still haven\'t happened" xác nhận đường tránh vẫn nằm trên giấy.',
+    distractorMechanismEn: 'The modal structure "was supposed to be built" is counterbalanced by the decisive negation "those plans still haven\'t happened", confirming it remains unconstructed.',
+    explanation: 'Đáp án là A: Kế hoạch xây đường tránh vẫn chưa trở thành hiện thực ("still haven\'t happened").',
+    explanationEn: 'Option A is correct: Bill confirms that the bypass has still not been built.'
+  },
+  {
+    id: 'ldrill-dict-track37-cycling-facilities-success',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Thành công vượt mong đợi của hạ tầng xe đạp (Track 37)',
+    titleEn: 'Dictation Level 2: Unprecedented Uptake of Cycling Infrastructure (Track 37)',
+    category: 'Active Transport & Modal Shift',
+    categoryEn: 'Active Transport & Modal Shift',
+    audioSnippetText: "Far more people are travelling by bike and using the facilities than anybody could have imagined.",
+    audioText: "Far more people are travelling by bike and using the facilities than anybody could have imagined.",
+    targetTranscript: "Far more people are travelling by bike and using the facilities than anybody could have imagined.",
+    ttsText: "Far more people are travelling by bike and using the facilities than anybody could have imagined.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track37-ashtown-urban-transformation.mp3',
+    clipStart: 82.5,
+    clipEnd: 89.0,
+    wordCount: 16,
+    difficulty: 'Band 6.5 - 7.5',
+    audioClipTip: 'Chú ý cấu trúc so sánh hơn "Far more people", cách phát âm cụm từ "using the facilities" và mệnh đề giả định quá khứ "than anybody could have imagined".',
+    audioClipTipEn: 'Listen for comparative structure "Far more people", plural noun "facilities", and past modal clause "than anybody could have imagined".'
+  },
+  {
+    id: 'ldrill-role-track37-art-college-surgery',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Công năng y tế mới của trường nghệ thuật (Track 37)',
+    titleEn: 'Key Vocabulary Reflex: Art College Repurposed as Surgery (Track 37)',
+    category: 'Civic Architecture Adaptive Reuse',
+    categoryEn: 'Civic Architecture Adaptive Reuse',
+    promptAudioText: "In fact, the art college is now used as a doctor's surgery.",
+    audioText: "In fact, the art college is now used as a doctor's surgery.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track37-ashtown-urban-transformation.mp3',
+    clipStart: 274.0,
+    clipEnd: 279.5,
+    questionPrompt: "Following municipal restructuring, the historical art college building now serves as a local doctor's .........",
+    questionPromptEn: "Following municipal restructuring, the historical art college building now serves as a local doctor's .........",
+    questionPromptVi: 'Sau quá trình tái cấu trúc đô thị, tòa nhà trường cao đẳng nghệ thuật lịch sử hiện phục vụ như một ......... của bác sĩ địa phương.',
+    correctAnswer: 'surgery',
+    acceptableAnswers: ['surgery', 'clinic'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ danh từ "surgery" /ˈsɜːdʒəri/ (phòng khám bệnh bác sĩ gia đình trong tiếng Anh Anh).',
+    trapNoteEn: 'Core lexical keyword: Listen for British English medical noun "surgery" in the compound phrase "doctor\'s surgery".',
+    explanation: 'Bill chỉ ra sự chuyển đổi công năng đáng ngạc nhiên: "the art college is now used as a doctor\'s surgery." Từ cần điền là "surgery".',
+    explanationEn: 'Bill highlights the unexpected adaptive reuse: "the art college is now used as a doctor\'s surgery." The target noun is "surgery".'
   }
 ];
+
 
 
 

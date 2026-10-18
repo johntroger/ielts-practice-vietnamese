@@ -1493,6 +1493,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Listen to Statement 6. What empirical evidence does the speaker cite to challenge the assumption about pollution hotspots?",
     "contextEn": "Sophie: \"I'm not sure about that. Statistics show that the worst place is by the town hall.\"",
     "explanationEn": "Sophie supports her doubt by invoking empirical records: \"Statistics show that the worst place is by the town hall.\""
+  },
+  "med_lis_bus_destination_fall_t37": {
+    "promptEn": "According to Bill, why do fewer commuters in Ashtown use the public bus service nowadays?",
+    "contextEn": "Bill: \"A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.\"",
+    "explanationEn": "Bill rejects fare inflation and highlights route rationalization to popular hubs and downtown vehicle prohibitions as the true determinants of reduced patronage."
+  },
+  "easy_lis_bypass_unbuilt_status_t37": {
+    "promptEn": "What happened to the planned municipal bypass around Ashtown town center?",
+    "contextEn": "Bill: \"Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened.\"",
+    "explanationEn": "Bill confirms that the bypass conceived five years ago remains unconstructed (\"those plans still haven't happened\")."
+  },
+  "med_lis_education_job_growth_t37": {
+    "promptEn": "According to Bill, which sector accounts for the largest concentration of employment in Ashtown today?",
+    "contextEn": "Bill: \"Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now.\"",
+    "explanationEn": "Bill identifies colleges and universities opened over the past quarter-century as the primary source of contemporary town employment."
+  },
+  "easy_lis_cinema_relocation_t37": {
+    "promptEn": "What was the eventual fate of the Grand Cinema near the railway station?",
+    "contextEn": "Bill: \"The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street.\"",
+    "explanationEn": "The original theater beside the station was torn down and rebuilt in an identical architectural style on King Street."
+  },
+  "hard_lis_art_college_surgery_t37": {
+    "promptEn": "What unexpected adaptive reuse took place with Ashtown's former art college building?",
+    "contextEn": "Bill: \"The thing that I found surprising was that although education has become more important to the economy of the town, there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery.\"",
+    "explanationEn": "Bill finds it paradoxical that despite educational expansion, the historic art college was converted into a medical practice (\"doctor's surgery\")."
   }
 };
 

@@ -3851,12 +3851,189 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Statistical data demonstrating that the most severe pollution occurs beside the town hall',
     explanation: 'Sophie phản bác bằng chứng cứ thực nghiệm rõ ràng: "Statistics show that the worst place is by the town hall."',
     explanationEn: 'Sophie supports her doubt by invoking empirical records: "Statistics show that the worst place is by the town hall."'
+  },
+  {
+    id: 'med_lis_bus_destination_fall_t37',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Bill, why do fewer commuters in Ashtown use the public bus service nowadays?',
+    promptEn: 'According to Bill, why do fewer commuters in Ashtown use the public bus service nowadays?',
+    context: 'Bill: "A lot of people think it\'s because fares are higher, but that isn\'t true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go."',
+    contextEn: 'Bill: "A lot of people think it\'s because fares are higher, but that isn\'t true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go."',
+    audioText: "A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.",
+    options: [
+      'Buses now exclusively serve popular corridors and are banned from the city center',
+      'Ticket fares have surged significantly compared to average household salaries',
+      'Modern replacement buses provide inferior comfort compared to vintage models',
+      'Most commuters have transitioned entirely to private automotive travel'
+    ],
+    optionsVi: [
+      'Xe buýt hiện chỉ phục vụ các tuyến hành lang phổ biến và bị cấm vào trung tâm',
+      'Giá vé xe buýt tăng vọt đáng kể so với mức lương trung bình của hộ gia đình',
+      'Xe buýt mới thay thế đem lại sự thoải mái kém hơn các dòng xe cũ',
+      'Phần lớn người đi làm đã chuyển hoàn toàn sang đi xe ô tô cá nhân'
+    ],
+    optionsEn: [
+      'Buses now exclusively serve popular corridors and are banned from the city center',
+      'Ticket fares have surged significantly compared to average household salaries',
+      'Modern replacement buses provide inferior comfort compared to vintage models',
+      'Most commuters have transitioned entirely to private automotive travel'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Buses now exclusively serve popular corridors and are banned from the city center',
+    explanation: 'Bill phản bác giả định về giá vé và khẳng định nguyên nhân thực sự là mạng lưới tuyến bị thu hẹp và xe buýt bị cấm vào khu lõi trung tâm đi bộ.',
+    explanationEn: 'Bill rejects fare inflation and highlights route rationalization to popular hubs and downtown vehicle prohibitions as the true determinants of reduced patronage.'
+  },
+  {
+    id: 'easy_lis_bypass_unbuilt_status_t37',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'What happened to the planned municipal bypass around Ashtown town center?',
+    promptEn: 'What happened to the planned municipal bypass around Ashtown town center?',
+    context: 'Bill: "Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven\'t happened."',
+    contextEn: 'Bill: "Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven\'t happened."',
+    audioText: "Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened.",
+    options: [
+      'The construction plans have never materialized into reality',
+      'It was completed successfully under the municipal budget ceiling',
+      'It was rerouted through the historic town square to assist shoppers',
+      'It was repurposed into a subterranean light transit corridor'
+    ],
+    optionsVi: [
+      'Các kế hoạch xây dựng vẫn chưa bao giờ được hiện thực hóa',
+      'Tuyến đường đã hoàn thành thành công trong hạn mức ngân sách',
+      'Tuyến đường được đổi hướng qua quảng trường lịch sử để hỗ trợ người mua sắm',
+      'Tuyến đường được chuyển đổi thành hành lang giao thông ngầm'
+    ],
+    optionsEn: [
+      'The construction plans have never materialized into reality',
+      'It was completed successfully under the municipal budget ceiling',
+      'It was rerouted through the historic town square to assist shoppers',
+      'It was repurposed into a subterranean light transit corridor'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The construction plans have never materialized into reality',
+    explanation: 'Bill khẳng định kế hoạch xây đường vành đai tránh trung tâm từ 5 năm trước vẫn chưa hề diễn ra ("those plans still haven\'t happened").',
+    explanationEn: 'Bill confirms that the bypass conceived five years ago remains unconstructed ("those plans still haven\'t happened").'
+  },
+  {
+    id: 'med_lis_education_job_growth_t37',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'According to Bill, which sector accounts for the largest concentration of employment in Ashtown today?',
+    promptEn: 'According to Bill, which sector accounts for the largest concentration of employment in Ashtown today?',
+    context: 'Bill: "Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now."',
+    contextEn: 'Bill: "Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now."',
+    audioText: "Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now.",
+    options: [
+      'Higher education institutions (universities and colleges)',
+      'Professional business services such as accounting and IT firms',
+      'Traditional manufacturing and product assembly plants',
+      'Hospitality and cultural heritage tourist attractions'
+    ],
+    optionsVi: [
+      'Các cơ sở giáo dục đại học (trường đại học và cao đẳng)',
+      'Dịch vụ chuyên môn như các công ty kế toán và công nghệ thông tin',
+      'Các nhà máy sản xuất truyền thống và lắp ráp sản phẩm',
+      'Các điểm tham quan du lịch di sản văn hóa và khách sạn'
+    ],
+    optionsEn: [
+      'Higher education institutions (universities and colleges)',
+      'Professional business services such as accounting and IT firms',
+      'Traditional manufacturing and product assembly plants',
+      'Hospitality and cultural heritage tourist attractions'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Higher education institutions (universities and colleges)',
+    explanation: 'Bill nhấn mạnh rằng sự gia tăng nhanh chóng của các trường đại học và cao đẳng chính là nơi tập trung phần lớn việc làm hiện nay.',
+    explanationEn: 'Bill identifies colleges and universities opened over the past quarter-century as the primary source of contemporary town employment.'
+  },
+  {
+    id: 'easy_lis_cinema_relocation_t37',
+    difficulty: 'easy',
+    topic: 'culture',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'What was the eventual fate of the Grand Cinema near the railway station?',
+    promptEn: 'What was the eventual fate of the Grand Cinema near the railway station?',
+    context: 'Bill: "The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street."',
+    contextEn: 'Bill: "The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street."',
+    audioText: "The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street.",
+    options: [
+      'It was demolished and rebuilt identically at a new site in King Street',
+      'It was converted into additional long-stay parking for rail passengers',
+      'It was acquired by the municipal council as a performing arts stage',
+      'It was permanently demolished without any replacement facility'
+    ],
+    optionsVi: [
+      'Nó bị phá dỡ và được xây dựng lại nguyên mẫu tại địa điểm mới ở phố King Street',
+      'Nó được chuyển đổi thành bãi đỗ xe dài hạn bổ sung cho hành khách đi tàu',
+      'Nó được hội đồng thành phố mua lại làm sân khấu biểu diễn nghệ thuật',
+      'Nó bị phá dỡ vĩnh viễn mà không có bất kỳ cơ sở thay thế nào'
+    ],
+    optionsEn: [
+      'It was demolished and rebuilt identically at a new site in King Street',
+      'It was converted into additional long-stay parking for rail passengers',
+      'It was acquired by the municipal council as a performing arts stage',
+      'It was permanently demolished without any replacement facility'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It was demolished and rebuilt identically at a new site in King Street',
+    explanation: 'Bill giải thích rạp Grand Cinema ban đầu cạnh ga tàu đã được xây dựng lại y hệt bản cũ nhưng đặt tại phố King Street.',
+    explanationEn: 'The original theater beside the station was torn down and rebuilt in an identical architectural style on King Street.'
+  },
+  {
+    id: 'hard_lis_art_college_surgery_t37',
+    difficulty: 'hard',
+    topic: 'health',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What unexpected adaptive reuse took place with Ashtown\'s former art college building?',
+    promptEn: 'What unexpected adaptive reuse took place with Ashtown\'s former art college building?',
+    context: 'Bill: "The thing that I found surprising was that although education has become more important to the economy of the town, there isn\'t an art college anymore. In fact, the art college is now used as a doctor\'s surgery."',
+    contextEn: 'Bill: "The thing that I found surprising was that although education has become more important to the economy of the town, there isn\'t an art college anymore. In fact, the art college is now used as a doctor\'s surgery."',
+    audioText: "The thing that I found surprising was that although education has become more important to the economy of the town, there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery.",
+    options: [
+      'It was repurposed into a clinical healthcare facility (doctor\'s surgery)',
+      'It was merged into the university central design academy',
+      'It was transformed into a commercial retail indoor marketplace',
+      'It was condemned by safety inspectors and marked for demolition'
+    ],
+    optionsVi: [
+      'Nó được chuyển đổi công năng thành phòng khám bệnh của bác sĩ (doctor\'s surgery)',
+      'Nó được sáp nhập vào học viện thiết kế trung tâm của trường đại học',
+      'Nó được biến đổi thành khu chợ bán lẻ thương mại trong nhà',
+      'Nó bị thanh tra an toàn kết luận không đạt chuẩn và chờ phá dỡ'
+    ],
+    optionsEn: [
+      'It was repurposed into a clinical healthcare facility (doctor\'s surgery)',
+      'It was merged into the university central design academy',
+      'It was transformed into a commercial retail indoor marketplace',
+      'It was condemned by safety inspectors and marked for demolition'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It was repurposed into a clinical healthcare facility (doctor\'s surgery)',
+    explanation: 'Bill bất ngờ vì dù giáo dục phát triển nhưng trường cao đẳng nghệ thuật đã không còn tồn tại mà trở thành một phòng khám bác sĩ ("doctor\'s surgery").',
+    explanationEn: 'Bill finds it paradoxical that despite educational expansion, the historic art college was converted into a medical practice ("doctor\'s surgery").'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 37: Ashtown 25-Year Urban Transformation & Survey Review
+  med_lis_bus_destination_fall_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 33.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 37 • Bus Destination Constraints' },
+  easy_lis_bypass_unbuilt_status_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 63.5, clipEnd: 77.0, isR2Audio: true, trackLabel: 'Track 37 • Unrealized Bypass Scheme' },
+  med_lis_education_job_growth_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 104.0, clipEnd: 128.0, isR2Audio: true, trackLabel: 'Track 37 • Higher Education Employment' },
+  easy_lis_cinema_relocation_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 165.0, clipEnd: 177.0, isR2Audio: true, trackLabel: 'Track 37 • Grand Cinema King Street' },
+  hard_lis_art_college_surgery_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 265.0, clipEnd: 285.0, isR2Audio: true, trackLabel: 'Track 37 • Art College Doctor Surgery' },
+
   // Track 36: Agreement, Disagreement & Discourse Stance
   easy_lis_discourse_hedge_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 2.0, clipEnd: 7.0, isR2Audio: true, trackLabel: 'Track 36 • Polite Hedge Disagreement' },
   med_lis_concession_reality_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 12.0, clipEnd: 20.0, isR2Audio: true, trackLabel: 'Track 36 • Superficial Concession' },
