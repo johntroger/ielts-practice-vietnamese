@@ -3681,12 +3681,189 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Inattentive cyclists colliding with walkers on shared surfaces',
     explanation: 'Robert lưu ý rằng người đi bộ vẫn phải né người đi xe đạp vốn thường không để ý ("don\'t always pay attention"), nên khu phố đi bộ cấm xe đạp là an toàn nhất.',
     explanationEn: 'Pedestrian safety distinction: Cyclists often neglect pedestrian safety on shared corridors, making completely car- and bike-free pedestrian areas the safest option.'
+  },
+  {
+    id: 'easy_lis_discourse_hedge_t36',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'Listen to Statement 1. How does the speaker politely signal that Robert made an error?',
+    promptEn: 'Listen to Statement 1. How does the speaker politely signal that Robert made an error?',
+    context: 'Sophie: "Actually, Robert, that\'s not quite right."',
+    contextEn: 'Sophie: "Actually, Robert, that\'s not quite right."',
+    audioText: "Actually, Robert, that's not quite right.",
+    options: [
+      '"Actually, Robert, that\'s not quite right."',
+      '"Robert, you are completely mistaken about everything."',
+      '"I totally agree with your calculations, Robert."',
+      '"Let\'s stop the discussion and take a short break."'
+    ],
+    optionsVi: [
+      '"Actually, Robert, that\'s not quite right."',
+      '"Robert, anh đã hoàn toàn nhầm lẫn về mọi thứ."',
+      '"Tôi hoàn toàn đồng ý với các phép tính của anh, Robert."',
+      '"Hãy dừng cuộc thảo luận và giải lao một lát."'
+    ],
+    optionsEn: [
+      '"Actually, Robert, that\'s not quite right."',
+      '"Robert, you are completely mistaken about everything."',
+      '"I totally agree with your calculations, Robert."',
+      '"Let\'s stop the discussion and take a short break."'
+    ],
+    correctIndex: 0,
+    correctAnswer: '"Actually, Robert, that\'s not quite right."',
+    explanation: 'Sophie sử dụng trạng từ "Actually" và cấu trúc nói giảm nói tránh "that\'s not quite right" để đính chính lỗi sai một cách nhã nhặn.',
+    explanationEn: 'Sophie utilizes the conversational marker "Actually" paired with the hedge "that\'s not quite right" to offer a polite correction.'
+  },
+  {
+    id: 'med_lis_concession_reality_t36',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to Statement 3. What is the speaker\'s real opinion of the proposed transport solution?',
+    promptEn: 'Listen to Statement 3. What is the speaker\'s real opinion of the proposed transport solution?',
+    context: 'Sophie: "On the face of it, yes, but in actual fact, it can make things worse."',
+    contextEn: 'Sophie: "On the face of it, yes, but in actual fact, it can make things worse."',
+    audioText: "On the face of it, yes, but in actual fact, it can make things worse.",
+    options: [
+      'While superficially attractive, in reality it may aggravate urban problems',
+      'The proposal is overwhelmingly successful and has no drawbacks',
+      'The municipality lacks the technical workforce to carry out roadworks',
+      'She strongly recommends adopting the measure without modifications'
+    ],
+    optionsVi: [
+      'Dù nhìn bề ngoài có vẻ hấp dẫn, trên thực tế nó có thể làm tình hình giao thông tồi tệ hơn',
+      'Đề xuất cực kỳ thành công và hoàn toàn không có bất kỳ nhược điểm nào',
+      'Chính quyền thành phố thiếu hụt lực lượng kỹ thuật để tiến hành sửa đường',
+      'Cô ấy nhiệt liệt khuyến nghị áp dụng biện pháp mà không cần chỉnh sửa'
+    ],
+    optionsEn: [
+      'While superficially attractive, in reality it may aggravate urban problems',
+      'The proposal is overwhelmingly successful and has no drawbacks',
+      'The municipality lacks the technical workforce to carry out roadworks',
+      'She strongly recommends adopting the measure without modifications'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'While superficially attractive, in reality it may aggravate urban problems',
+    explanation: 'Cụm "On the face of it, yes, but in actual fact, it can make things worse" biểu thị sự thừa nhận bề ngoài nhưng khẳng định thực tế nó gây hại nhiều hơn.',
+    explanationEn: 'The utterance establishes a concession to surface appeal ("On the face of it, yes") followed by empirical refutation ("in actual fact, it can make things worse").'
+  },
+  {
+    id: 'easy_lis_agenda_transition_t36',
+    difficulty: 'easy',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'Listen to Statement 4. Which transport scheme does Robert introduce next for discussion?',
+    promptEn: 'Listen to Statement 4. Which transport scheme does Robert introduce next for discussion?',
+    context: 'Robert: "What about the second one? A park-and-ride scheme?"',
+    contextEn: 'Robert: "What about the second one? A park-and-ride scheme?"',
+    audioText: "What about the second one? A park-and-ride scheme?",
+    options: [
+      'A park-and-ride scheme',
+      'A light tramway network',
+      'A high-speed suburban railway',
+      'A pedestrian precinct and one-way grid'
+    ],
+    optionsVi: [
+      'Bãi đỗ xe trung chuyển ngoại ô (Park-and-ride)',
+      'Mạng lưới tàu điện nhẹ (Tramway)',
+      'Tuyến đường sắt ngoại ô tốc độ cao',
+      'Khu phố đi bộ và mạng lưới một chiều'
+    ],
+    optionsEn: [
+      'A park-and-ride scheme',
+      'A light tramway network',
+      'A high-speed suburban railway',
+      'A pedestrian precinct and one-way grid'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A park-and-ride scheme',
+    explanation: 'Robert hỏi: "What about the second one? A park-and-ride scheme?" nhằm chuyển mạch thảo luận sang đề án số 2 (park-and-ride).',
+    explanationEn: 'Robert transitions to the next item on the project agenda: "What about the second one? A park-and-ride scheme?".'
+  },
+  {
+    id: 'hard_lis_persuasion_common_ground_t36',
+    difficulty: 'hard',
+    topic: 'health',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to Statement 5. Which communicative strategy does Robert employ to win Sophie\'s agreement?',
+    promptEn: 'Listen to Statement 5. Which communicative strategy does Robert employ to win Sophie\'s agreement?',
+    context: 'Robert: "Up to a point, yes. But I\'m sure you\'d agree that encouraging people to do more cycling would help health far more."',
+    contextEn: 'Robert: "Up to a point, yes. But I\'m sure you\'d agree that encouraging people to do more cycling would help health far more."',
+    audioText: "Up to a point, yes. But I'm sure you'd agree that encouraging people to do more cycling would help health far more.",
+    options: [
+      'He concedes partially before presuming mutual consensus with "I\'m sure you\'d agree"',
+      'He presents official hospital admission statistics regarding coronary illness',
+      'He criticizes Sophie\'s lack of medical knowledge regarding cardiovascular fitness',
+      'He suggests cycling routes should replace all existing municipal bus services'
+    ],
+    optionsVi: [
+      'Anh ấy nhượng bộ một phần trước khi tạo lập điểm chung bằng "I\'m sure you\'d agree"',
+      'Anh ấy đưa ra số liệu nhập viện chính thức về các bệnh tim mạch',
+      'Anh ấy chỉ trích việc Sophie thiếu kiến thức y khoa về sức khỏe tim mạch',
+      'Anh ấy đề xuất làn xe đạp nên thay thế toàn bộ dịch vụ xe buýt hiện tại'
+    ],
+    optionsEn: [
+      'He concedes partially before presuming mutual consensus with "I\'m sure you\'d agree"',
+      'He presents official hospital admission statistics regarding coronary illness',
+      'He criticizes Sophie\'s lack of medical knowledge regarding cardiovascular fitness',
+      'He suggests cycling routes should replace all existing municipal bus services'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He concedes partially before presuming mutual consensus with "I\'m sure you\'d agree"',
+    explanation: 'Robert sử dụng hai bước tu từ: nhượng bộ chừng mực ("Up to a point, yes") và định hướng đồng thuận ("But I\'m sure you\'d agree...").',
+    explanationEn: 'Robert combines qualified concession ("Up to a point, yes") with assumed consensus ("But I\'m sure you\'d agree...") to persuasively introduce cycling health benefits.'
+  },
+  {
+    id: 'med_lis_empirical_town_hall_t36',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'Listen to Statement 6. What empirical evidence does the speaker cite to challenge the assumption about pollution hotspots?',
+    promptEn: 'Listen to Statement 6. What empirical evidence does the speaker cite to challenge the assumption about pollution hotspots?',
+    context: 'Sophie: "I\'m not sure about that. Statistics show that the worst place is by the town hall."',
+    contextEn: 'Sophie: "I\'m not sure about that. Statistics show that the worst place is by the town hall."',
+    audioText: "I'm not sure about that. Statistics show that the worst place is by the town hall.",
+    options: [
+      'Statistical data demonstrating that the most severe pollution occurs beside the town hall',
+      'Eyewitness complaints submitted by shopkeepers on High Street',
+      'Satellite thermal imagery of urban heat island concentrations',
+      'Traffic camera footage showing long vehicular delays outside the library'
+    ],
+    optionsVi: [
+      'Dữ liệu thống kê chứng minh nơi ô nhiễm nghiêm trọng nhất nằm cạnh tòa thị chính',
+      'Khiếu nại của các chủ cửa hàng trên phố High Street',
+      'Hình ảnh nhiệt vệ tinh về hiện tượng đảo nhiệt đô thị',
+      'Dữ liệu camera giao thông ghi nhận ùn tắc trước thư viện'
+    ],
+    optionsEn: [
+      'Statistical data demonstrating that the most severe pollution occurs beside the town hall',
+      'Eyewitness complaints submitted by shopkeepers on High Street',
+      'Satellite thermal imagery of urban heat island concentrations',
+      'Traffic camera footage showing long vehicular delays outside the library'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Statistical data demonstrating that the most severe pollution occurs beside the town hall',
+    explanation: 'Sophie phản bác bằng chứng cứ thực nghiệm rõ ràng: "Statistics show that the worst place is by the town hall."',
+    explanationEn: 'Sophie supports her doubt by invoking empirical records: "Statistics show that the worst place is by the town hall."'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 36: Agreement, Disagreement & Discourse Stance
+  easy_lis_discourse_hedge_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 2.0, clipEnd: 7.0, isR2Audio: true, trackLabel: 'Track 36 • Polite Hedge Disagreement' },
+  med_lis_concession_reality_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 12.0, clipEnd: 20.0, isR2Audio: true, trackLabel: 'Track 36 • Superficial Concession' },
+  easy_lis_agenda_transition_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 21.0, clipEnd: 27.0, isR2Audio: true, trackLabel: 'Track 36 • Agenda Transition' },
+  hard_lis_persuasion_common_ground_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 27.0, clipEnd: 36.5, isR2Audio: true, trackLabel: 'Track 36 • Persuasive Common Ground' },
+  med_lis_empirical_town_hall_t36: { audioUrl: `${R2_BASE}/ielts-listening-track36-agreement-disagreement-intonation.mp3`, clipStart: 37.0, clipEnd: 46.5, isR2Audio: true, trackLabel: 'Track 36 • Empirical Town Hall Evidence' },
+
   // Track 35: Transport Scheme Benefits & Recommendations
   med_lis_transit_mode_winner_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 33.0, clipEnd: 55.0, isR2Audio: true, trackLabel: 'Track 35 • Tramway Transit Superiority' },
   hard_lis_visitor_retail_rationale_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 86.0, clipEnd: 103.0, isR2Audio: true, trackLabel: 'Track 35 • Pedestrian Precinct Footfall' },

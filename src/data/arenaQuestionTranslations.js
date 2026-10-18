@@ -1468,6 +1468,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What safety hazard prompted Sophie and Robert to choose the pedestrian zone over cycle routes for safety?",
     "contextEn": "Robert: \"They still have to avoid cyclists, who don't always pay attention to pedestrians.\" Sophie: \"And with the pedestrian area, they wouldn't have to deal with that because there aren't any cyclists there.\"",
     "explanationEn": "Pedestrian safety distinction: Cyclists often neglect pedestrian safety on shared corridors, making completely car- and bike-free pedestrian areas the safest option."
+  },
+  "easy_lis_discourse_hedge_t36": {
+    "promptEn": "Listen to Statement 1. How does the speaker politely signal that Robert made an error?",
+    "contextEn": "Sophie: \"Actually, Robert, that's not quite right.\"",
+    "explanationEn": "Sophie utilizes the conversational marker \"Actually\" paired with the hedge \"that's not quite right\" to offer a polite correction."
+  },
+  "med_lis_concession_reality_t36": {
+    "promptEn": "Listen to Statement 3. What is the speaker's real opinion of the proposed transport solution?",
+    "contextEn": "Sophie: \"On the face of it, yes, but in actual fact, it can make things worse.\"",
+    "explanationEn": "The utterance establishes a concession to surface appeal (\"On the face of it, yes\") followed by empirical refutation (\"in actual fact, it can make things worse\")."
+  },
+  "easy_lis_agenda_transition_t36": {
+    "promptEn": "Listen to Statement 4. Which transport scheme does Robert introduce next for discussion?",
+    "contextEn": "Robert: \"What about the second one? A park-and-ride scheme?\"",
+    "explanationEn": "Robert transitions to the next item on the project agenda: \"What about the second one? A park-and-ride scheme?\"."
+  },
+  "hard_lis_persuasion_common_ground_t36": {
+    "promptEn": "Listen to Statement 5. Which communicative strategy does Robert employ to win Sophie's agreement?",
+    "contextEn": "Robert: \"Up to a point, yes. But I'm sure you'd agree that encouraging people to do more cycling would help health far more.\"",
+    "explanationEn": "Robert combines qualified concession (\"Up to a point, yes\") with assumed consensus (\"But I'm sure you'd agree...\") to persuasively introduce cycling health benefits."
+  },
+  "med_lis_empirical_town_hall_t36": {
+    "promptEn": "Listen to Statement 6. What empirical evidence does the speaker cite to challenge the assumption about pollution hotspots?",
+    "contextEn": "Sophie: \"I'm not sure about that. Statistics show that the worst place is by the town hall.\"",
+    "explanationEn": "Sophie supports her doubt by invoking empirical records: \"Statistics show that the worst place is by the town hall.\""
   }
 };
 

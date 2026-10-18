@@ -192,7 +192,8 @@ const testSuites = [
   { name: 'Step 183: Track 32 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step183_track32_audio_integration.js' },
   { name: 'Step 184: Track 33 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step184_track33_audio_integration.js' },
   { name: 'Step 185: Track 34 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step185_track34_audio_integration.js' },
-  { name: 'Step 186: Track 35 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step186_track35_audio_integration.js' }
+  { name: 'Step 186: Track 35 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step186_track35_audio_integration.js' },
+  { name: 'Step 187: Track 36 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step187_track36_audio_integration.js' }
 ];
 
 console.log('===============================================================');

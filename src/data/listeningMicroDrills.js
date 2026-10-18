@@ -2646,8 +2646,102 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Focus on the comparative adjective "cleaner" describing air quality ("air\'s cleaner").',
     explanation: 'Robert chỉ ra lợi ích thụ động cho người đi bộ: "Though I suppose even people who only walk benefit, because the air\'s cleaner." Từ cần điền là "cleaner".',
     explanationEn: 'Robert points out passive advantages for pedestrians: "...because the air\'s cleaner." The missing comparative adjective is "cleaner".'
+  },
+  {
+    id: 'ldrill-dist-track36-concession-rebuttal-trap',
+    type: 'listening-distractor',
+    title: 'Bẫy nhượng bộ ngụy biện: Phản biện thực tế đối lập vẻ bề ngoài (Track 36)',
+    titleEn: 'Academic Concession Trap: Superficial vs Empirical Reality (Track 36)',
+    category: 'Discourse Pragmatics & Critical Analysis',
+    categoryEn: 'Discourse Pragmatics & Critical Analysis',
+    audioSnippetText: "On the face of it, yes, but in actual fact, it can make things worse.",
+    audioText: "On the face of it, yes, but in actual fact, it can make things worse.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track36-agreement-disagreement-intonation.mp3',
+    clipStart: 13.0,
+    clipEnd: 20.0,
+    question: 'Khi người nói mở đầu bằng "On the face of it, yes", lập trường thực sự của cô ấy về đề án là gì?',
+    questionEn: 'When the speaker opens with "On the face of it, yes", what is her true stance regarding the scheme?',
+    options: [
+      { id: 'A', text: 'Cô ấy phản đối mạnh mẽ vì trên thực tế đề án có thể làm tình hình tồi tệ hơn', textEn: 'She fundamentally objects because in reality it can exacerbate existing problems' },
+      { id: 'B', text: 'Cô ấy đồng ý tuyệt đối với kế hoạch và muốn triển khai ngay lập tức', textEn: 'She agrees unreservedly with the scheme and urges immediate implementation' },
+      { id: 'C', text: 'Cô ấy chưa có ý kiến và yêu cầu người đối thoại giải thích lại từ đầu', textEn: 'She has formed no opinion and requests a complete reiteration of the plan' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe thiếu kinh nghiệm thường chỉ nghe từ "yes" ở đầu câu mà bỏ qua liên từ tương phản then chốt "but in actual fact, it can make things worse" lật ngược hoàn toàn kết luận.',
+    distractorMechanismEn: 'Unwary candidates often fixate on the introductory concession "yes" while missing the pivotal discourse reversal "but in actual fact, it can make things worse".',
+    explanation: 'Đáp án là A: "On the face of it, yes" chỉ là sự công nhận vẻ bề ngoài; vế chính "but in actual fact, it can make things worse" khẳng định đề án phản tác dụng.',
+    explanationEn: 'Option A is correct: "On the face of it, yes" is merely an apparent concession immediately refuted by "but in actual fact, it can make things worse".'
+  },
+  {
+    id: 'ldrill-dist-track36-hedged-disagreement-trap',
+    type: 'listening-distractor',
+    title: 'Bẫy đính chính lịch sự: Nhận diện phản bác gián tiếp (Track 36)',
+    titleEn: 'Polite Hedging Trap: Indirect Academic Refutation (Track 36)',
+    category: 'Pragmatic Stance Detection',
+    categoryEn: 'Pragmatic Stance Detection',
+    audioSnippetText: "Actually, Robert, that's not quite right.",
+    audioText: "Actually, Robert, that's not quite right.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track36-agreement-disagreement-intonation.mp3',
+    clipStart: 2.5,
+    clipEnd: 6.8,
+    question: 'Mục đích giao tiếp của người nói khi dùng cấu trúc "Actually, ... that\'s not quite right" là gì?',
+    questionEn: 'What is the speaker\'s communicative intention when using "Actually, ... that\'s not quite right"?',
+    options: [
+      { id: 'A', text: 'Bác bỏ nhận định của đối phương một cách lịch sự, nhã nhặn', textEn: 'Politely refuting and correcting the partner\'s inaccurate assertion' },
+      { id: 'B', text: 'Tỏ ý tán thưởng và hoàn toàn tin tưởng vào số liệu của Robert', textEn: 'Expressing admiration and unconditional faith in Robert\'s data' },
+      { id: 'C', text: 'Yêu cầu hoãn cuộc họp do không có đủ thời gian thảo luận', textEn: 'Calling for an immediate adjournment due to insufficient meeting time' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Từ "not quite right" (không hẳn đúng) là cách nói giảm nói tránh (understatement/hedging) đặc trưng trong văn hóa học thuật Anh để nói rằng bạn đã sai mà không làm mất lòng đối phương.',
+    distractorMechanismEn: 'The hedge "not quite right" serves as typical academic understatement, courteously indicating an error without abrasive confrontation.',
+    explanation: 'Đáp án là A: Cụm từ mang chức năng bác bỏ và đính chính một cách lịch thiệp ("polite refutation").',
+    explanationEn: 'Option A is correct: the utterance functions as a polite academic correction to a factual error.'
+  },
+  {
+    id: 'ldrill-dict-track36-town-hall-statistics',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Dẫn chứng số liệu phản bác vị trí ô nhiễm (Track 36)',
+    titleEn: 'Dictation Level 2: Empirical Counter-Evidence at Town Hall (Track 36)',
+    category: 'Academic Argumentation & Evidence',
+    categoryEn: 'Academic Argumentation & Evidence',
+    audioSnippetText: "Statistics show that the worst place is by the town hall.",
+    audioText: "Statistics show that the worst place is by the town hall.",
+    targetTranscript: "Statistics show that the worst place is by the town hall.",
+    ttsText: "Statistics show that the worst place is by the town hall.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track36-agreement-disagreement-intonation.mp3',
+    clipStart: 40.5,
+    clipEnd: 46.5,
+    wordCount: 11,
+    difficulty: 'Band 6.5 - 7.5',
+    audioClipTip: 'Chú ý phát âm danh từ số nhiều "Statistics" /stəˈtɪstɪks/, động từ "show", tính từ so sánh nhất "the worst place" và cụm "town hall".',
+    audioClipTipEn: 'Listen for plural noun "Statistics" /stəˈtɪstɪks/, superlative "the worst place", and location "town hall".'
+  },
+  {
+    id: 'ldrill-role-track36-concession-phrase',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Cụm từ nhượng bộ có điều kiện (Track 36)',
+    titleEn: 'Key Vocabulary Reflex: Qualified Concession Marker (Track 36)',
+    category: 'Academic Discourse Markers',
+    categoryEn: 'Academic Discourse Markers',
+    promptAudioText: "Up to a point, yes. But I'm sure you'd agree that encouraging people to do more cycling would help health far more.",
+    audioText: "Up to a point, yes. But I'm sure you'd agree that encouraging people to do more cycling would help health far more.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track36-agreement-disagreement-intonation.mp3',
+    clipStart: 28.0,
+    clipEnd: 32.5,
+    questionPrompt: "Robert expresses qualified agreement by conceding that Sophie's proposal is valid up to a ......... before introducing his alternative.",
+    questionPromptEn: "Robert expresses qualified agreement by conceding that Sophie's proposal is valid up to a ......... before introducing his alternative.",
+    questionPromptVi: 'Robert biểu thị sự đồng ý có điều kiện bằng cách thừa nhận đề xuất của Sophie đúng tới một ......... nhất định trước khi đưa ra phương án thay thế.',
+    correctAnswer: 'point',
+    acceptableAnswers: ['point'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ danh từ "point" trong cụm cố định biểu đạt nhượng bộ "Up to a point".',
+    trapNoteEn: 'Core lexical keyword: Listen for "point" in the idiomatic concession phrase "Up to a point".',
+    explanation: 'Robert dùng cụm thành ngữ nhượng bộ: "Up to a point, yes." Từ còn thiếu trong ngữ cảnh là "point".',
+    explanationEn: 'Robert employs the standard idiomatic hedge "Up to a point, yes." The target noun is "point".'
   }
 ];
+
 
 
 
