@@ -4543,12 +4543,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The speaker dropped their camera over the side of the bus',
     explanation: 'Tai nạn được mô tả: "I dropped my camera over the side".',
     explanationEn: 'The incident is explicitly stated: "I dropped my camera over the side".'
+  },
+  // ==========================================
+  // TRACK 41: TRAVEL EXPERIENCES & FOLLOW-UP QUESTIONS
+  // ==========================================
+  {
+    id: 'easy_lis_tibet_memory_t41',
+    difficulty: 'easy',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which destination does Candidate A affirm he will always remember visiting?',
+    promptEn: 'Which destination does Candidate A affirm he will always remember visiting?',
+    context: 'Candidate A: "And it was a great experience. I think I\'ll always remember going to Tibet."',
+    contextEn: 'Candidate A: "And it was a great experience. I think I\'ll always remember going to Tibet."',
+    audioText: "And it was a great experience. I think I'll always remember going to Tibet.",
+    options: [
+      'Tibet',
+      'Paris',
+      'Rome',
+      'London'
+    ],
+    optionsVi: [
+      'Tây Tạng',
+      'Paris',
+      'Rome',
+      'Luân Đôn'
+    ],
+    optionsEn: [
+      'Tibet',
+      'Paris',
+      'Rome',
+      'London'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Tibet',
+    explanation: 'Thí sinh A khẳng định: "I think I\'ll always remember going to Tibet."',
+    explanationEn: 'Candidate A explicitly states: "I think I\'ll always remember going to Tibet."'
+  },
+  {
+    id: 'med_lis_travel_value_t41',
+    difficulty: 'medium',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does Candidate A consider travelling to be of primary importance to his life?',
+    promptEn: 'Why does Candidate A consider travelling to be of primary importance to his life?',
+    context: 'Candidate A: "Yes, I would say I like to try new things, meet new people, so travelling is something that is very important to me."',
+    contextEn: 'Candidate A: "Yes, I would say I like to try new things, meet new people, so travelling is something that is very important to me."',
+    audioText: "Yes, I would say I like to try new things, meet new people, so travelling is something that is very important to me.",
+    options: [
+      'It lets him try new things and meet new people',
+      'It allows him to earn professional international credentials',
+      'It provides relief from demanding domestic employment',
+      'It fulfills his academic research requirements'
+    ],
+    optionsVi: [
+      'Giúp anh ấy thử nghiệm những điều mới và gặp gỡ nhiều người mới',
+      'Cho phép anh đạt được các chứng chỉ quốc tế chuyên nghiệp',
+      'Mang lại sự giải tỏa khỏi áp lực công việc bận rộn trong nước',
+      'Đáp ứng các yêu cầu nghiên cứu học thuật của anh'
+    ],
+    optionsEn: [
+      'It lets him try new things and meet new people',
+      'It allows him to earn professional international credentials',
+      'It provides relief from demanding domestic employment',
+      'It fulfills his academic research requirements'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It lets him try new things and meet new people',
+    explanation: 'Thí sinh A trả lời: "I like to try new things, meet new people, so travelling is something that is very important to me."',
+    explanationEn: 'Candidate A states: "I like to try new things, meet new people, so travelling is something that is very important to me."'
+  },
+  {
+    id: 'easy_lis_paris_culture_t41',
+    difficulty: 'easy',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What standout quality makes Paris one of the finest places on Earth according to Candidate B?',
+    promptEn: 'What standout quality makes Paris one of the finest places on Earth according to Candidate B?',
+    context: 'Candidate B: "And it was a great experience. I think Paris is one of the best places on Earth for culture."',
+    contextEn: 'Candidate B: "And it was a great experience. I think Paris is one of the best places on Earth for culture."',
+    audioText: "And it was a great experience. I think Paris is one of the best places on Earth for culture.",
+    options: [
+      'Its rich cultural heritage',
+      'Its modern high-tech transport infrastructure',
+      'Its affordable shopping boutiques',
+      'Its subtropical sunny climate'
+    ],
+    optionsVi: [
+      'Di sản và đời sống văn hóa phong phú',
+      'Hạ tầng giao thông công nghệ cao hiện đại',
+      'Các cửa hiệu mua sắm giá cả phải chăng',
+      'Khí hậu cận nhiệt đới ngập tràn ánh nắng'
+    ],
+    optionsEn: [
+      'Its rich cultural heritage',
+      'Its modern high-tech transport infrastructure',
+      'Its affordable shopping boutiques',
+      'Its subtropical sunny climate'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Its rich cultural heritage',
+    explanation: 'Thí sinh B nhận định: "I think Paris is one of the best places on Earth for culture."',
+    explanationEn: 'Candidate B notes: "I think Paris is one of the best places on Earth for culture."'
+  },
+  {
+    id: 'med_lis_rome_opera_t41',
+    difficulty: 'medium',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What two personal passions motivate Candidate B to place Rome next on her destination list?',
+    promptEn: 'What two personal passions motivate Candidate B to place Rome next on her destination list?',
+    context: 'Candidate B: "Yes, I\'ve always thought about going to Rome. I mean, I\'m a big fan of the opera and love Italian food, so it\'s next on my list of destinations."',
+    contextEn: 'Candidate B: "Yes, I\'ve always thought about going to Rome. I mean, I\'m a big fan of the opera and love Italian food, so it\'s next on my list of destinations."',
+    audioText: "Yes, I've always thought about going to Rome. I mean, I'm a big fan of the opera and love Italian food, so it's next on my list of destinations.",
+    options: [
+      'Her passion for opera and love of Italian food',
+      'Her interest in ancient architecture and classical sculpture',
+      'Her enthusiasm for fashion shopping and beach resorts',
+      'Her research on Renaissance philosophy and literature'
+    ],
+    optionsVi: [
+      'Niềm đam mê với opera và tình yêu ẩm thực Ý',
+      'Sự quan tâm đến kiến trúc cổ đại và điêu khắc cổ điển',
+      'Sự hào hứng với mua sắm thời trang và nghỉ dưỡng bãi biển',
+      'Đề tài nghiên cứu về triết học và văn học thời kỳ Phục hưng'
+    ],
+    optionsEn: [
+      'Her passion for opera and love of Italian food',
+      'Her interest in ancient architecture and classical sculpture',
+      'Her enthusiasm for fashion shopping and beach resorts',
+      'Her research on Renaissance philosophy and literature'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Her passion for opera and love of Italian food',
+    explanation: 'Thí sinh B giải thích: "I\'m a big fan of the opera and love Italian food, so it\'s next on my list of destinations."',
+    explanationEn: 'Candidate B explains: "I\'m a big fan of the opera and love Italian food, so it\'s next on my list of destinations."'
+  },
+  {
+    id: 'hard_lis_london_umbrella_advice_t41',
+    difficulty: 'hard',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Despite complaining about the bad weather, what is Candidate C\'s ultimate stance on recommending London?',
+    promptEn: 'Despite complaining about the bad weather, what is Candidate C\'s ultimate stance on recommending London?',
+    context: 'Candidate C: "Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though. I would definitely recommend it."',
+    contextEn: 'Candidate C: "Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though. I would definitely recommend it."',
+    audioText: "Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though. I would definitely recommend it.",
+    options: [
+      'He recommends it wholeheartedly but advises packing an umbrella',
+      'He strongly discourages visiting due to relentless rainstorms',
+      'He suggests visiting only during heatwaves in midsummer',
+      'He remains indecisive until meteorological records improve'
+    ],
+    optionsVi: [
+      'Nhiệt tình đề xuất điểm đến nhưng khuyên nên mang theo ô',
+      'Kiên quyết khuyên không nên đến vì những cơn mưa tầm tã liên tục',
+      'Đề xuất chỉ nên đến vào những đợt nắng nóng giữa mùa hè',
+      'Vẫn do dự chưa quyết cho đến khi dữ liệu khí tượng có dấu hiệu cải thiện'
+    ],
+    optionsEn: [
+      'He recommends it wholeheartedly but advises packing an umbrella',
+      'He strongly discourages visiting due to relentless rainstorms',
+      'He suggests visiting only during heatwaves in midsummer',
+      'He remains indecisive until meteorological records improve'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'He recommends it wholeheartedly but advises packing an umbrella',
+    explanation: 'Thí sinh C trả lời: "Yes, definitely. But they would have to bring an umbrella... Everything else was wonderful though. I would definitely recommend it."',
+    explanationEn: 'Candidate C confirms: "Yes, definitely. But they would have to bring an umbrella... Everything else was wonderful though. I would definitely recommend it."'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 41: Speaking Part 2 & 3 Travel Experiences & Follow-up Questions
+  easy_lis_tibet_memory_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 3.0, clipEnd: 10.0, isR2Audio: true, trackLabel: 'Track 41 • Tibet Memory' },
+  med_lis_travel_value_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 9.0, clipEnd: 21.0, isR2Audio: true, trackLabel: 'Track 41 • Value of Travelling' },
+  easy_lis_paris_culture_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 21.0, clipEnd: 30.0, isR2Audio: true, trackLabel: 'Track 41 • Paris Culture' },
+  med_lis_rome_opera_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 39.0, clipEnd: 54.0, isR2Audio: true, trackLabel: 'Track 41 • Rome Opera & Food' },
+  hard_lis_london_umbrella_advice_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 63.0, clipEnd: 91.0, isR2Audio: true, trackLabel: 'Track 41 • London Umbrella Advice' },
+
   // Track 40: Complex Sentences & Discourse Connectors
   easy_lis_sentential_which_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 2.0, clipEnd: 10.0, isR2Audio: true, trackLabel: 'Track 40 • Sentential Relative Clause' },
   med_lis_causal_since_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 10.0, clipEnd: 22.0, isR2Audio: true, trackLabel: 'Track 40 • Causal Subordinator Since' },

@@ -49,6 +49,7 @@ import { track37AshtownUrbanTransformation } from './listening/track37AshtownUrb
 import { track38SpeakingPart2ExaminerPrompt } from './listening/track38SpeakingPart2ExaminerPrompt.js';
 import { track39SpeakingPart2CandidateSample } from './listening/track39SpeakingPart2CandidateSample.js';
 import { track40ComplexSentencesConnectors } from './listening/track40ComplexSentencesConnectors.js';
+import { track41TravelExperiencesFollowUp } from './listening/track41TravelExperiencesFollowUp.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -71,6 +72,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track41TravelExperiencesFollowUp,
   track40ComplexSentencesConnectors,
   track39SpeakingPart2CandidateSample,
   track38SpeakingPart2ExaminerPrompt,

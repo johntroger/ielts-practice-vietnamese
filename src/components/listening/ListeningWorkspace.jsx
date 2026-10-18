@@ -126,7 +126,7 @@ export default function ListeningWorkspace({
         }
       }
     } catch (e) {}
-    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track40-complex-sentences-connectors'];
+    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track41-speaking-followup-travel'];
   });
 
   // Persist open tabs whenever they change

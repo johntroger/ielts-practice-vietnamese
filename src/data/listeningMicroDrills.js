@@ -3118,8 +3118,103 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Target purpose noun: "shopping" within "in order to do a bit of shopping".',
     explanation: 'Người nói nêu mục đích: "in order to do a bit of shopping." Từ cần điền là "shopping".',
     explanationEn: 'The candidate explains purpose: "in order to do a bit of shopping." The missing noun is "shopping".'
+  },
+  // ==========================================
+  // TRACK 41: TRAVEL EXPERIENCES & FOLLOW-UP QUESTIONS
+  // ==========================================
+  {
+    id: 'ldrill-dist-track41-london-weather',
+    type: 'listening-distractor',
+    title: 'Bẫy tương phản cảm nhận: Thời tiết xấu nhưng trải nghiệm tuyệt vời (Track 41)',
+    titleEn: 'Contrast Sentiment Trap: Bad Weather vs Wonderful Trip (Track 41)',
+    category: 'Speaker Attitude & Distractors',
+    categoryEn: 'Speaker Attitude & Distractors',
+    audioSnippetText: "Maybe the weather. London isn't exactly famous for being a hot, sunny place to visit, but I didn't think the weather would be quite so bad as it was... Everything else was wonderful though.",
+    audioText: "Maybe the weather. London isn't exactly famous for being a hot, sunny place to visit, but I didn't think the weather would be quite so bad as it was... Everything else was wonderful though.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track41-speaking-followup-travel.mp3',
+    clipStart: 63.0,
+    clipEnd: 90.0,
+    question: 'Thí sinh C đánh giá như thế nào về chuyến đi Luân Đôn một cách tổng thể?',
+    questionEn: 'How does Candidate C overall evaluate his holiday in London?',
+    options: [
+      { id: 'A', text: 'Rất tuyệt vời dù thời tiết xấu hơn mong đợi', textEn: 'Wonderful overall despite worse weather than expected' },
+      { id: 'B', text: 'Hoàn toàn thất vọng vì trời liên tục mưa', textEn: 'Utterly disappointed because of persistent rainfall' },
+      { id: 'C', text: 'Không thích các điểm tham quan văn hóa', textEn: 'Disliked the cultural sightseeing landmarks' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nói thừa nhận thời tiết xấu ("quite so bad as it was"), nhưng ngay sau đó dùng liên từ tương phản "though" để khẳng định: "Everything else was wonderful though. I would definitely recommend it".',
+    distractorMechanismEn: 'The candidate mentions bad weather as a negative, but concludes with the contrastive clause: "Everything else was wonderful though. I would definitely recommend it".',
+    explanation: 'Đáp án A: Ngoài yếu tố thời tiết không thuận lợi, mọi thứ khác đều tuyệt vời và thí sinh nhiệt tình giới thiệu địa điểm.',
+    explanationEn: 'Option A is correct: Candidate C emphasizes that apart from the weather, everything else was wonderful and recommends the destination.'
+  },
+  {
+    id: 'ldrill-dict-track41-paris-culture',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Đánh giá văn hóa thủ đô Paris (Track 41)',
+    titleEn: 'Dictation Level 2: Cultural Evaluation of Paris (Track 41)',
+    category: 'Travel Opinions Dictation',
+    categoryEn: 'Travel Opinions Dictation',
+    audioSnippetText: "And it was a great experience. I think Paris is one of the best places on Earth for culture.",
+    audioText: "And it was a great experience. I think Paris is one of the best places on Earth for culture.",
+    targetTranscript: "And it was a great experience. I think Paris is one of the best places on Earth for culture.",
+    ttsText: "And it was a great experience. I think Paris is one of the best places on Earth for culture.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track41-speaking-followup-travel.mp3',
+    clipStart: 21.0,
+    clipEnd: 30.0,
+    wordCount: 18,
+    difficulty: 'Band 6.5 - 7.5',
+    audioClipTip: 'Lưu ý cụm từ so sánh bậc nhất "one of the best places on Earth for culture".',
+    audioClipTipEn: 'Focus on superlative superlative phrase "one of the best places on Earth for culture".'
+  },
+  {
+    id: 'ldrill-role-track41-rome-opera',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng sở thích: Đam mê Opera tại Rome (Track 41)',
+    titleEn: 'Interest Lexical Reflex: Passion for Opera in Rome (Track 41)',
+    category: 'Travel Interests & Arts',
+    categoryEn: 'Travel Interests & Arts',
+    promptAudioText: "I've always thought about going to Rome. I mean, I'm a big fan of the opera and love Italian food, so it's next on my list of destinations.",
+    audioText: "I've always thought about going to Rome. I mean, I'm a big fan of the opera and love Italian food, so it's next on my list of destinations.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track41-speaking-followup-travel.mp3',
+    clipStart: 39.0,
+    clipEnd: 54.0,
+    questionPrompt: "Candidate B considers Rome her next travel priority because she is a devoted follower of the .........",
+    questionPromptEn: "Candidate B considers Rome her next travel priority because she is a devoted follower of the .........",
+    questionPromptVi: 'Thí sinh B coi Rome là ưu tiên tiếp theo vì cô ấy là người rất yêu thích môn nghệ thuật .........',
+    correctAnswer: 'opera',
+    acceptableAnswers: ['opera', 'the opera'],
+    trapNote: 'Từ vựng chủ đề nghệ thuật biểu diễn: "opera".',
+    trapNoteEn: 'Performing arts lexical item: "opera".',
+    explanation: 'Thí sinh nói rõ: "I\'m a big fan of the opera and love Italian food." Từ cần điền là "opera".',
+    explanationEn: 'The candidate states: "I\'m a big fan of the opera and love Italian food." The target word is "opera".'
+  },
+  {
+    id: 'ldrill-vocab-track41-london-umbrella',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng vật dụng: Mang theo ô khi đến London (Track 41)',
+    titleEn: 'Practical Item Reflex: Bringing an Umbrella to London (Track 41)',
+    category: 'Practical Advice & Lexis',
+    categoryEn: 'Practical Advice & Lexis',
+    promptAudioText: "Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though.",
+    audioText: "Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track41-speaking-followup-travel.mp3',
+    clipStart: 118.0,
+    clipEnd: 129.0,
+    questionPrompt: "Anyone planning a visit to London is advised to bring an ......... due to unpredictable weather.",
+    questionPromptEn: "Anyone planning a visit to London is advised to bring an ......... due to unpredictable weather.",
+    questionPromptVi: 'Bất kỳ ai dự định đến Luân Đôn đều được khuyên nên mang theo một chiếc .........',
+    correctAnswer: 'umbrella',
+    acceptableAnswers: ['umbrella', 'an umbrella'],
+    trapNote: 'Từ vựng vật dụng che mưa phổ biến trong IELTS: "umbrella" (chú ý chính tả hai chữ l).',
+    trapNoteEn: 'Common rain protection item: "umbrella" (note double "l").',
+    explanation: 'Thí sinh khuyên bạn bè: "they would have to bring an umbrella." Từ cần điền là "umbrella".',
+    explanationEn: 'The candidate advises: "they would have to bring an umbrella." The missing word is "umbrella".'
   }
 ];
+
 
 
 

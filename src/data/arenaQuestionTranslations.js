@@ -1593,6 +1593,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "In Sentence 5, what mishap occurred while taking pictures from the tour bus?",
     "contextEn": "Narrator: \"When I got back on the tour bus and started taking pictures, I dropped my camera over the side.\"",
     "explanationEn": "The incident is explicitly stated: \"I dropped my camera over the side\"."
+  },
+  "easy_lis_tibet_memory_t41": {
+    "promptEn": "Which destination does Candidate A affirm he will always remember visiting?",
+    "contextEn": "Candidate A: \"And it was a great experience. I think I'll always remember going to Tibet.\"",
+    "explanationEn": "Candidate A explicitly states: \"I think I'll always remember going to Tibet.\""
+  },
+  "med_lis_travel_value_t41": {
+    "promptEn": "Why does Candidate A consider travelling to be of primary importance to his life?",
+    "contextEn": "Candidate A: \"Yes, I would say I like to try new things, meet new people, so travelling is something that is very important to me.\"",
+    "explanationEn": "Candidate A states: \"I like to try new things, meet new people, so travelling is something that is very important to me.\""
+  },
+  "easy_lis_paris_culture_t41": {
+    "promptEn": "What standout quality makes Paris one of the finest places on Earth according to Candidate B?",
+    "contextEn": "Candidate B: \"And it was a great experience. I think Paris is one of the best places on Earth for culture.\"",
+    "explanationEn": "Candidate B notes: \"I think Paris is one of the best places on Earth for culture.\""
+  },
+  "med_lis_rome_opera_t41": {
+    "promptEn": "What two personal passions motivate Candidate B to place Rome next on her destination list?",
+    "contextEn": "Candidate B: \"Yes, I've always thought about going to Rome. I mean, I'm a big fan of the opera and love Italian food, so it's next on my list of destinations.\"",
+    "explanationEn": "Candidate B explains: \"I'm a big fan of the opera and love Italian food, so it's next on my list of destinations.\""
+  },
+  "hard_lis_london_umbrella_advice_t41": {
+    "promptEn": "Despite complaining about the bad weather, what is Candidate C's ultimate stance on recommending London?",
+    "contextEn": "Candidate C: \"Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though. I would definitely recommend it.\"",
+    "explanationEn": "Candidate C confirms: \"Yes, definitely. But they would have to bring an umbrella... Everything else was wonderful though. I would definitely recommend it.\""
   }
 };
 
