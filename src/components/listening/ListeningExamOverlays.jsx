@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { getEffectiveTranscripts } from '../../utils/transcriptParser';
 import {
   Headphones,
   Volume2,
@@ -464,6 +465,11 @@ export function ListeningInlineTranscriptPane({
   audioEngine,
   isEn
 }) {
+  const effectiveTranscripts = useMemo(
+    () => getEffectiveTranscripts(currentPartData),
+    [currentPartData]
+  );
+
   return (
     <div className="space-y-3 text-left">
       {examMode === 'strict' && !isSubmitted ? (
@@ -510,37 +516,51 @@ export function ListeningInlineTranscriptPane({
           </div>
 
           {/* Real-time Synced Transcript Sentences */}
-          <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
-            {(currentPartData.transcripts || [])
-              .filter(s => !transcriptSearch || s.text.toLowerCase().includes(transcriptSearch.toLowerCase()) || (s.speaker && s.speaker.toLowerCase().includes(transcriptSearch.toLowerCase())))
-              .map((s, idx) => {
-                const isSentenceActive = audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end;
-                return (
-                  <div
-                    key={idx}
-                    onClick={() => {
-                      audioEngine.seek(s.start);
-                      if (!audioEngine.isPlaying) audioEngine.play();
-                    }}
-                    className={`p-3 rounded-xl border text-xs leading-relaxed transition-all cursor-pointer ${
-                      isSentenceActive
-                        ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-200 shadow-xs'
-                        : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-[11px] mb-1 font-mono">
-                      <span className="font-bold text-slate-700">{s.speaker || `Speaker`}</span>
-                      <span className={isSentenceActive ? 'text-purple-700 font-bold' : 'text-slate-400'}>
-                        {Math.floor(s.start / 60)}:{String(Math.floor(s.start % 60)).padStart(2, '0')}
-                      </span>
+          {effectiveTranscripts.length === 0 ? (
+            <div className="p-8 text-center rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <FileText className="w-8 h-8 text-slate-300 mx-auto" />
+              <h4 className="font-bold text-xs text-slate-700">
+                {isEn ? 'Transcript is being updated' : 'Lời thoại đang được cập nhật'}
+              </h4>
+              <p className="text-[11px] text-slate-500 leading-relaxed max-w-xs mx-auto">
+                {isEn
+                  ? 'Audio transcript for this section is being prepared. You can switch parts or continue practicing.'
+                  : 'Lời thoại cho phần này đang được cập nhật. Bạn có thể chuyển phần hoặc tiếp tục làm bài.'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+              {effectiveTranscripts
+                .filter(s => !transcriptSearch || s.text.toLowerCase().includes(transcriptSearch.toLowerCase()) || (s.speaker && s.speaker.toLowerCase().includes(transcriptSearch.toLowerCase())))
+                .map((s, idx) => {
+                  const isSentenceActive = audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end;
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        audioEngine.seek(s.start);
+                        if (!audioEngine.isPlaying) audioEngine.play();
+                      }}
+                      className={`p-3 rounded-xl border text-xs leading-relaxed transition-all cursor-pointer ${
+                        isSentenceActive
+                          ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-200 shadow-xs'
+                          : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between text-[11px] mb-1 font-mono">
+                        <span className="font-bold text-slate-700">{s.speaker || `Speaker`}</span>
+                        <span className={isSentenceActive ? 'text-purple-700 font-bold' : 'text-slate-400'}>
+                          {Math.floor(s.start / 60)}:{String(Math.floor(s.start % 60)).padStart(2, '0')}
+                        </span>
+                      </div>
+                      <p className={isSentenceActive ? 'text-purple-950 font-medium' : 'text-slate-700'}>
+                        {s.text}
+                      </p>
                     </div>
-                    <p className={isSentenceActive ? 'text-purple-950 font-medium' : 'text-slate-700'}>
-                      {s.text}
-                    </p>
-                  </div>
-                );
-              })}
-          </div>
+                  );
+                })}
+            </div>
+          )}
         </>
       )}
     </div>

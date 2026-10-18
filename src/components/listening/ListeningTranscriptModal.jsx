@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   FileText, 
   Play, 
@@ -14,6 +14,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import { getEffectiveTranscripts } from '../../utils/transcriptParser';
 
 export default function ListeningTranscriptModal({
   isOpen,
@@ -36,12 +37,14 @@ export default function ListeningTranscriptModal({
   }, [activePart, isOpen]);
 
   const activePartData = currentTest?.parts?.find(p => p.partNumber === selectedPartNum) || currentTest?.parts?.[0];
-  const transcripts = activePartData?.transcripts || [];
+  const transcripts = useMemo(() => getEffectiveTranscripts(activePartData), [activePartData]);
 
-  // Find currently active sentence based on audio currentTime
-  const currentSentenceIdx = transcripts.findIndex(
-    s => audioEngine && audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end
-  );
+  // Find currently active sentence index based on audio currentTime
+  const currentSentenceIdx = useMemo(() => {
+    return transcripts.findIndex(
+      s => audioEngine && audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end
+    );
+  }, [transcripts, audioEngine?.currentTime]);
 
   // Auto scroll active sentence into view
   useEffect(() => {
@@ -75,6 +78,20 @@ export default function ListeningTranscriptModal({
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const getSpeakerBadgeClass = (speaker) => {
+    const s = (speaker || '').toLowerCase();
+    if (s.includes('officer') || s.includes('interviewer') || s.includes('jane') || s.includes('woman') || s.includes('wife')) {
+      return 'bg-blue-100 text-blue-800 border border-blue-200/50';
+    }
+    if (s.includes('martin') || s.includes('student') || s.includes('bill') || s.includes('man') || s.includes('husband')) {
+      return 'bg-emerald-100 text-emerald-800 border border-emerald-200/50';
+    }
+    if (s.includes('narrator') || s.includes('guide')) {
+      return 'bg-purple-100 text-purple-800 border border-purple-200/50';
+    }
+    return 'bg-slate-100 text-slate-700 border border-slate-200/50';
   };
 
   return (
@@ -180,7 +197,7 @@ export default function ListeningTranscriptModal({
             </div>
           ) : (
             filteredTranscripts.map((item, idx) => {
-              const isActive = currentSentenceIdx === idx;
+              const isActive = audioEngine && audioEngine.currentTime >= item.start && audioEngine.currentTime < item.end;
               const hasEvidence = item.targetQuestion !== undefined;
 
               return (
@@ -198,13 +215,7 @@ export default function ListeningTranscriptModal({
                 >
                   <div className="flex items-start justify-between gap-3 mb-1.5">
                     <div className="flex items-center space-x-2">
-                      <span className={`text-[11px] font-black px-2 py-0.5 rounded-md ${
-                        item.speaker === 'Officer' || item.speaker === 'Interviewer' 
-                          ? 'bg-blue-100 text-blue-800' 
-                          : item.speaker === 'Martin' || item.speaker === 'Student' 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : 'bg-slate-100 text-slate-700'
-                      }`}>
+                      <span className={`text-[11px] font-black px-2 py-0.5 rounded-md ${getSpeakerBadgeClass(item.speaker)}`}>
                         {item.speaker || 'Speaker'}
                       </span>
 
