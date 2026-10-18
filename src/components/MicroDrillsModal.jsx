@@ -460,7 +460,9 @@ export default function MicroDrillsModal({
   const [drillSortBy, setDrillSortBy] = useState('rating_desc');
 
   const getDrillsByType = (type) => {
-    const rawForType = allDrills.filter(d => d.type === type);
+    const rawForType = Array.isArray(type)
+      ? allDrills.filter(d => type.includes(d.type))
+      : allDrills.filter(d => d.type === type);
     return applySmartFilterAndSort(rawForType, {
       searchQuery: drillSearchQuery,
       quickFilter: drillQuickFilter,
@@ -536,7 +538,7 @@ export default function MicroDrillsModal({
   const [userDictationInput, setUserDictationInput] = useState('');
   const [showDictationFeedback, setShowDictationFeedback] = useState(false);
 
-  const listeningSpellingDrills = getDrillsByType('listening-spelling');
+  const listeningSpellingDrills = getDrillsByType(['listening-spelling', 'listening-numbers', 'listening-number-reflex']);
   const [selectedSpellingIndex, setSelectedSpellingIndex] = useState(0);
   const [userSpellingInput, setUserSpellingInput] = useState('');
   const [showSpellingResult, setShowSpellingResult] = useState(false);
@@ -555,6 +557,11 @@ export default function MicroDrillsModal({
   const [selectedSignIndex, setSelectedSignIndex] = useState(0);
   const [userSignChoice, setUserSignChoice] = useState(null);
   const [showSignResult, setShowSignResult] = useState(false);
+
+  const listeningFormDrills = getDrillsByType('listening-form-completion');
+  const [selectedFormIndex, setSelectedFormIndex] = useState(0);
+  const [userFormInput, setUserFormInput] = useState('');
+  const [showFormResult, setShowFormResult] = useState(false);
   const [showListeningTranscript, setShowListeningTranscript] = useState(false);
 
   // AI Evaluation State for Listening Micro-Drills
@@ -616,6 +623,10 @@ export default function MicroDrillsModal({
         payload.correctOption = currentSign.correctOption;
         payload.userChoice = userSignChoice;
         payload.options = currentSign.options;
+      } else if (activeTab === 'listening-form-completion') {
+        payload.targetTranscript = currentForm?.acceptableAnswers?.join(' / ') || currentForm?.correctAnswer || currentForm?.answer || '';
+        payload.userInput = userFormInput;
+        payload.questionPrompt = currentForm?.questionPrompt || currentForm?.question || '';
       }
 
       const res = await evaluateListeningDrill(payload);
@@ -624,7 +635,8 @@ export default function MicroDrillsModal({
         activeTab === 'listening-dictation' ? currentDictation :
         activeTab === 'listening-spelling' ? currentSpelling :
         activeTab === 'listening-distractor' ? currentDistractor :
-        activeTab === 'listening-map' ? currentMap : currentSign,
+        activeTab === 'listening-map' ? currentMap :
+        activeTab === 'listening-signposting' ? currentSign : currentForm,
         res.isFullyCorrect,
         res.trapAnalysis
       );
@@ -836,6 +848,7 @@ export default function MicroDrillsModal({
   const currentDistractor = listeningDistractorDrills[selectedDistractorIndex] || listeningDistractorDrills[0];
   const currentMap = listeningMapDrills[selectedMapIndex] || listeningMapDrills[0];
   const currentSign = listeningSignDrills[selectedSignIndex] || listeningSignDrills[0];
+  const currentForm = listeningFormDrills[selectedFormIndex] || listeningFormDrills[0];
   const currentArea = speakingAreaDrills[selectedAreaIndex] || speakingAreaDrills[0];
   const currentFiller = speakingFillersDrills[selectedFillerIndex] || speakingFillersDrills[0];
   const currentSpeakingColloc = speakingCollocDrills[selectedSpeakingCollocIndex] || speakingCollocDrills[0];
@@ -878,6 +891,8 @@ export default function MicroDrillsModal({
         return { list: listeningMapDrills, index: selectedMapIndex, setIndex: setSelectedMapIndex, onReset: () => { setUserMapChoice(null); setShowMapResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
       case 'listening-signposting':
         return { list: listeningSignDrills, index: selectedSignIndex, setIndex: setSelectedSignIndex, onReset: () => { setUserSignChoice(null); setShowSignResult(false); setShowListeningTranscript(false); setListeningEvaluation(null); stopSpeech(); } };
+      case 'listening-form-completion':
+        return { list: listeningFormDrills, index: selectedFormIndex, setIndex: setSelectedFormIndex, onReset: () => { setUserFormInput(''); setShowFormResult(false); setListeningEvaluation(null); stopSpeech(); } };
       // Speaking
       case 'speaking-area':
         return { 
@@ -957,7 +972,8 @@ export default function MicroDrillsModal({
       { id: 'listening-spelling', icon: FileText, badgeColor: 'text-indigo-600', labelEn: `2. Spelling & Numbers (${listeningSpellingDrills.length})`, labelVi: `2. Đánh Vần & Con Số (${listeningSpellingDrills.length})` },
       { id: 'listening-distractor', icon: Zap, badgeColor: 'text-amber-500', labelEn: `3. Mind-Change Distractor Hunter (${listeningDistractorDrills.length})`, labelVi: `3. Phá Bẫy Đổi Ý (${listeningDistractorDrills.length})` },
       { id: 'listening-map', icon: Compass, badgeColor: 'text-emerald-600', labelEn: `4. Maps & Directions Reflex (${listeningMapDrills.length})`, labelVi: `4. Bản Đồ & Hướng Đi (${listeningMapDrills.length})` },
-      { id: 'listening-signposting', icon: Target, badgeColor: 'text-indigo-600', labelEn: `5. Part 4 Signposting Signals (${listeningSignDrills.length})`, labelVi: `5. Bắt Tín Hiệu Part 4 (${listeningSignDrills.length})` }
+      { id: 'listening-signposting', icon: Target, badgeColor: 'text-indigo-600', labelEn: `5. Part 4 Signposting Signals (${listeningSignDrills.length})`, labelVi: `5. Bắt Tín Hiệu Part 4 (${listeningSignDrills.length})` },
+      { id: 'listening-form-completion', icon: PenTool, badgeColor: 'text-teal-600', labelEn: `6. Key Lexicon & Form Completion (${listeningFormDrills.length})`, labelVi: `6. Điền Biểu Mẫu & Từ Khóa (${listeningFormDrills.length})` }
     ],
     speaking: [
       { id: 'speaking-area', icon: Sparkles, badgeColor: 'text-emerald-600', labelEn: `1. A.R.E.A Expansion Formula (${speakingAreaDrills.length})`, labelVi: `1. Mở Rộng Ý A.R.E.A (${speakingAreaDrills.length})` },
@@ -2105,6 +2121,11 @@ export default function MicroDrillsModal({
               setUserSignChoice={setUserSignChoice}
               showSignResult={showSignResult}
               setShowSignResult={setShowSignResult}
+              currentForm={currentForm}
+              userFormInput={userFormInput}
+              setUserFormInput={setUserFormInput}
+              showFormResult={showFormResult}
+              setShowFormResult={setShowFormResult}
               saveListeningHistory={saveListeningHistory}
               handleEvaluateCurrentListening={handleEvaluateCurrentListening}
               isEvaluatingListening={isEvaluatingListening}

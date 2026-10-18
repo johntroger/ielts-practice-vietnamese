@@ -44,7 +44,11 @@ export const track39SpeakingPart2CandidateSample = {
       "questionGroups": [
         {
           "id": "qg-t39-p1",
-          "groupType": "note-completion",
+          "type": "note_completion",
+          "groupType": "note_completion",
+          "title": "Questions 1–5: Candidate Travel Itinerary & Sightseeing Notes",
+          "titleEn": "Questions 1–5: Candidate Travel Itinerary & Sightseeing Notes",
+          "titleVi": "Câu 1–5: Lịch trình du lịch & Ghi chú tham quan của thí sinh",
           "groupTitle": "Questions 1–5: Candidate Travel Itinerary & Sightseeing Notes",
           "groupTitleEn": "Questions 1–5: Candidate Travel Itinerary & Sightseeing Notes",
           "groupTitleVi": "Câu 1–5: Lịch trình du lịch & Ghi chú tham quan của thí sinh",
@@ -56,7 +60,7 @@ export const track39SpeakingPart2CandidateSample = {
               "id": "t39-q1",
               "number": 1,
               "order": 1,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "The speaker recalls departing on a memorable trip last year on the [1] .........",
               "questionTextEn": "The speaker recalls departing on a memorable trip last year on the [1] .........",
               "questionTextVi": "Người nói nhớ lại chuyến đi đáng nhớ bắt đầu vào ngày [1] ......... năm ngoái.",
@@ -73,13 +77,24 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "12th of August",
               "explanation": "Người nói mở đầu bài độc thoại: \"I remember a trip I took last year, on the 12th of August, I believe.\" Ngày cần điền là \"12th of August\".",
               "explanationEn": "The candidate begins: \"I remember a trip I took last year, on the 12th of August, I believe.\" The target calendar date is \"12th of August\".",
-              "audioTimestamp": 5
+              "audioTimestamp": 5,
+              "questionNumber": 1,
+              "prefix": "The speaker recalls departing on a memorable trip last year on the",
+              "prefixEn": "The speaker recalls departing on a memorable trip last year on the",
+              "prefixVi": "Người nói nhớ lại chuyến đi đáng nhớ bắt đầu vào ngày",
+              "prefixTextEn": "The speaker recalls departing on a memorable trip last year on the",
+              "prefixTextVi": "Người nói nhớ lại chuyến đi đáng nhớ bắt đầu vào ngày",
+              "suffix": ".",
+              "suffixEn": ".",
+              "suffixVi": "năm ngoái.",
+              "suffixTextEn": ".",
+              "suffixTextVi": "năm ngoái."
             },
             {
               "id": "t39-q2",
               "number": 2,
               "order": 2,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Because it was their first overseas journey, the speaker felt excited when boarding a [2] ......... to Paris.",
               "questionTextEn": "Because it was their first overseas journey, the speaker felt excited when boarding a [2] ......... to Paris.",
               "questionTextVi": "Vì đây là chuyến bay đầu tiên ra nước ngoài, người nói cảm thấy rất hào hứng khi bước lên [2] ......... tới Paris.",
@@ -94,13 +109,24 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "plane",
               "explanation": "Người nói thuật lại: \"I boarded a plane to Paris, which was rather exciting as I'd never done that before.\" Phương tiện cần điền là \"plane\".",
               "explanationEn": "The speaker recounts: \"I boarded a plane to Paris, which was rather exciting as I'd never done that before.\" The missing mode of transit is \"plane\".",
-              "audioTimestamp": 9
+              "audioTimestamp": 9,
+              "questionNumber": 2,
+              "prefix": "Because it was their first overseas journey, the speaker felt excited when boarding a",
+              "prefixEn": "Because it was their first overseas journey, the speaker felt excited when boarding a",
+              "prefixVi": "Vì đây là chuyến bay đầu tiên ra nước ngoài, người nói cảm thấy rất hào hứng khi bước lên",
+              "prefixTextEn": "Because it was their first overseas journey, the speaker felt excited when boarding a",
+              "prefixTextVi": "Vì đây là chuyến bay đầu tiên ra nước ngoài, người nói cảm thấy rất hào hứng khi bước lên",
+              "suffix": "to Paris.",
+              "suffixEn": "to Paris.",
+              "suffixVi": "tới Paris.",
+              "suffixTextEn": "to Paris.",
+              "suffixTextVi": "tới Paris."
             },
             {
               "id": "t39-q3",
               "number": 3,
               "order": 3,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "At the entrance of the famous Louvre Museum, the speaker noticed a prominent large [3] ......... where they stopped to take photos.",
               "questionTextEn": "At the entrance of the famous Louvre Museum, the speaker noticed a prominent large [3] ......... where they stopped to take photos.",
               "questionTextVi": "Tại lối vào của bảo tàng Louvre nổi tiếng, người nói chú ý tới một cấu trúc hình [3] ......... lớn nơi họ dừng lại chụp ảnh.",
@@ -114,13 +140,24 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "triangle",
               "explanation": "Người nói miêu tả kiến trúc đặc trưng tại bảo tàng Louvre: \"where the big triangle is by the entrance, and took some pictures.\" Từ cần điền là \"triangle\".",
               "explanationEn": "The candidate describes the landmark entrance: \"where the big triangle is by the entrance, and took some pictures.\" The target shape is \"triangle\".",
-              "audioTimestamp": 24
+              "audioTimestamp": 24,
+              "questionNumber": 3,
+              "prefix": "At the entrance of the famous Louvre Museum, the speaker noticed a prominent large",
+              "prefixEn": "At the entrance of the famous Louvre Museum, the speaker noticed a prominent large",
+              "prefixVi": "Tại lối vào của bảo tàng Louvre nổi tiếng, người nói chú ý tới một cấu trúc hình",
+              "prefixTextEn": "At the entrance of the famous Louvre Museum, the speaker noticed a prominent large",
+              "prefixTextVi": "Tại lối vào của bảo tàng Louvre nổi tiếng, người nói chú ý tới một cấu trúc hình",
+              "suffix": "where they stopped to take photos.",
+              "suffixEn": "where they stopped to take photos.",
+              "suffixVi": "lớn nơi họ dừng lại chụp ảnh.",
+              "suffixTextEn": "where they stopped to take photos.",
+              "suffixTextVi": "lớn nơi họ dừng lại chụp ảnh."
             },
             {
               "id": "t39-q4",
               "number": 4,
               "order": 4,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "To travel onward to the Eiffel Tower, the speaker boarded a [4] ......... train.",
               "questionTextEn": "To travel onward to the Eiffel Tower, the speaker boarded a [4] ......... train.",
               "questionTextVi": "Để tiếp tục di chuyển tới tháp Eiffel, người nói đã đón một chuyến tàu [4] ..........",
@@ -135,13 +172,24 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "subway",
               "explanation": "Người nói chỉ rõ: \"After that, I boarded a subway train to the Eiffel Tower to take more pictures.\" Từ bổ nghĩa cho train là \"subway\".",
               "explanationEn": "The candidate specifies: \"After that, I boarded a subway train to the Eiffel Tower to take more pictures.\" The modifier is \"subway\".",
-              "audioTimestamp": 30
+              "audioTimestamp": 30,
+              "questionNumber": 4,
+              "prefix": "To travel onward to the Eiffel Tower, the speaker boarded a",
+              "prefixEn": "To travel onward to the Eiffel Tower, the speaker boarded a",
+              "prefixVi": "Để tiếp tục di chuyển tới tháp Eiffel, người nói đã đón một chuyến tàu",
+              "prefixTextEn": "To travel onward to the Eiffel Tower, the speaker boarded a",
+              "prefixTextVi": "Để tiếp tục di chuyển tới tháp Eiffel, người nói đã đón một chuyến tàu",
+              "suffix": "train.",
+              "suffixEn": "train.",
+              "suffixVi": "train.",
+              "suffixTextEn": "train.",
+              "suffixTextVi": "train."
             },
             {
               "id": "t39-q5",
               "number": 5,
               "order": 5,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "While dining at a restaurant, the speaker encountered difficulty [5] ......... due to having zero knowledge of French.",
               "questionTextEn": "While dining at a restaurant, the speaker encountered difficulty [5] ......... due to having zero knowledge of French.",
               "questionTextVi": "Khi dùng bữa tại nhà hàng, người nói gặp khó khăn trong việc [5] ......... vì không biết tiếng Pháp.",
@@ -155,7 +203,18 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "ordering food",
               "explanation": "Người nói chia sẻ sự cố giao tiếp: \"although I had trouble ordering food because I don't speak any French.\" Cụm hành động cần điền là \"ordering food\".",
               "explanationEn": "The speaker mentions the language obstacle: \"although I had trouble ordering food because I don't speak any French.\" The target phrase is \"ordering food\".",
-              "audioTimestamp": 41
+              "audioTimestamp": 41,
+              "questionNumber": 5,
+              "prefix": "While dining at a restaurant, the speaker encountered difficulty",
+              "prefixEn": "While dining at a restaurant, the speaker encountered difficulty",
+              "prefixVi": "Khi dùng bữa tại nhà hàng, người nói gặp khó khăn trong việc",
+              "prefixTextEn": "While dining at a restaurant, the speaker encountered difficulty",
+              "prefixTextVi": "Khi dùng bữa tại nhà hàng, người nói gặp khó khăn trong việc",
+              "suffix": "due to having zero knowledge of French.",
+              "suffixEn": "due to having zero knowledge of French.",
+              "suffixVi": "vì không biết tiếng Pháp.",
+              "suffixTextEn": "due to having zero knowledge of French.",
+              "suffixTextVi": "vì không biết tiếng Pháp."
             }
           ]
         }
@@ -185,7 +244,11 @@ export const track39SpeakingPart2CandidateSample = {
       "questionGroups": [
         {
           "id": "qg-t39-p2",
-          "groupType": "multiple-choice",
+          "type": "multiple_choice",
+          "groupType": "multiple_choice",
+          "title": "Questions 6–10: Souvenir Selection, Tour Mishap & Retrospective Advice",
+          "titleEn": "Questions 6–10: Souvenir Selection, Tour Mishap & Retrospective Advice",
+          "titleVi": "Câu 6–10: Quà lưu niệm, Sự cố tham quan & Bài học kinh nghiệm",
           "groupTitle": "Questions 6–10: Souvenir Selection, Tour Mishap & Retrospective Advice",
           "groupTitleEn": "Questions 6–10: Souvenir Selection, Tour Mishap & Retrospective Advice",
           "groupTitleVi": "Câu 6–10: Quà lưu niệm, Sự cố tham quan & Bài học kinh nghiệm",
@@ -233,7 +296,8 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "A",
               "explanation": "Người nói giải thích: \"Once I had eaten, I then took a tour bus to the Champs-Élysées in order to do a bit of shopping.\" Phương tiện là xe buýt du lịch (tour bus).",
               "explanationEn": "The speaker confirms: \"Once I had eaten, I then took a tour bus to the Champs-Elysees in order to do a bit of shopping.\" Option A is correct.",
-              "audioTimestamp": 47
+              "audioTimestamp": 47,
+              "questionNumber": 6
             },
             {
               "id": "t39-q7",
@@ -275,7 +339,8 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "A",
               "explanation": "Người nói chia sẻ: \"I even bought a souvenir snow globe for my friend Julie, as she collects them.\" Đáp án A là quả cầu tuyết.",
               "explanationEn": "The candidate notes: \"I even bought a souvenir snow globe for my friend Julie, as she collects them.\" Option A is correct.",
-              "audioTimestamp": 55
+              "audioTimestamp": 55,
+              "questionNumber": 7
             },
             {
               "id": "t39-q8",
@@ -317,7 +382,8 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "A",
               "explanation": "Người nói kể lại tai nạn: \"I dropped my camera over the side, watching it break on the ground.\" Chiếc máy ảnh rơi qua mạn xe buýt và vỡ nát dưới đất.",
               "explanationEn": "The speaker recalls: \"I dropped my camera over the side, watching it break on the ground.\" Option A is correct.",
-              "audioTimestamp": 65
+              "audioTimestamp": 65,
+              "questionNumber": 8
             },
             {
               "id": "t39-q9",
@@ -359,7 +425,8 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "A",
               "explanation": "Người nói xác nhận điểm đến trở về: \"After everything was over, I took the flight back to China.\" Đáp án đúng là China (A).",
               "explanationEn": "The candidate remarks: \"After everything was over, I took the flight back to China.\" Option A is correct.",
-              "audioTimestamp": 72
+              "audioTimestamp": 72,
+              "questionNumber": 9
             },
             {
               "id": "t39-q10",
@@ -401,7 +468,8 @@ export const track39SpeakingPart2CandidateSample = {
               "correctAnswer": "A",
               "explanation": "Người nói kết luận: \"It was a great experience, although next time, I think I should study some French before I go.\" Bài học là học một chút tiếng Pháp trước khi đi.",
               "explanationEn": "The candidate concludes: \"It was a great experience, although next time, I think I should study some French before I go.\" Option A is correct.",
-              "audioTimestamp": 78
+              "audioTimestamp": 78,
+              "questionNumber": 10
             }
           ]
         }

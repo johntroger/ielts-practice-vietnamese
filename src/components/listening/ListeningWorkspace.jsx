@@ -46,6 +46,7 @@ import { calculateListeningBandScore } from '../../data/listeningTasks';
 import { scoreListeningExam } from '../../utils/listeningScorer';
 import { deleteAudioBlob } from '../../utils/audioStorage';
 import { useTranslation } from '../../i18n';
+import { getListeningTestDisplayInfo } from '../../utils/testLocalizationHelper';
 import {
   ListeningStrictHeaderBar,
   ListeningStatusBanners,
@@ -108,6 +109,7 @@ export default function ListeningWorkspace({
 
   // Dynamic Open Listening Tabs state with localStorage persistence
   const [isTestDropdownOpen, setIsTestDropdownOpen] = useState(false);
+  const [dropdownSearch, setDropdownSearch] = useState('');
   const testDropdownRef = useRef(null);
 
   const [openListeningTabs, setOpenListeningTabs] = useState(() => {
@@ -116,11 +118,15 @@ export default function ListeningWorkspace({
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          const targetId = initialTestId || INITIAL_LISTENING_TESTS[0]?.id;
+          if (targetId && !parsed.includes(targetId)) {
+            return [targetId, ...parsed];
+          }
           return parsed;
         }
       }
     } catch (e) {}
-    return [initialTestId || 'cambridge-16-test-1'];
+    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track40-complex-sentences-connectors'];
   });
 
   // Persist open tabs whenever they change
@@ -133,7 +139,7 @@ export default function ListeningWorkspace({
   // Ensure currentTestId is always included in openListeningTabs
   useEffect(() => {
     if (currentTestId && !openListeningTabs.includes(currentTestId)) {
-      setOpenListeningTabs(prev => [...prev, currentTestId]);
+      setOpenListeningTabs(prev => [currentTestId, ...prev]);
     }
   }, [currentTestId]);
 
@@ -1060,8 +1066,8 @@ export default function ListeningWorkspace({
 
             {/* Dropdown Menu */}
             {isTestDropdownOpen && (
-              <div className="absolute left-0 top-full mt-1.5 z-40 bg-white rounded-xl shadow-xl border border-cyan-200 p-2 min-w-[280px] sm:min-w-[340px] max-h-[380px] overflow-y-auto animate-in fade-in zoom-in-95 space-y-1 text-slate-800">
-                <div className="px-2 py-1 flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <div className="absolute left-0 top-full mt-1.5 z-40 bg-white rounded-xl shadow-xl border border-cyan-200 p-2 min-w-[300px] sm:min-w-[360px] max-h-[420px] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 space-y-1.5 text-slate-800">
+                <div className="px-2 py-1 flex items-center justify-between border-b border-slate-100 pb-1.5 shrink-0">
                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     {isEn ? 'Audio Tests Library' : 'Danh Sách Đề Nghe'}
                   </span>
@@ -1085,40 +1091,59 @@ export default function ListeningWorkspace({
                   </div>
                 </div>
 
-                <div className="py-1 space-y-0.5">
-                  {allListeningTests.map((t) => {
-                    const isSelected = currentTestId === t.id;
-                    const isTabOpen = openListeningTabs.includes(t.id);
-                    const isR2 = Boolean(t.audioUrl?.includes('.r2.dev'));
+                {/* Quick Search Filter */}
+                <div className="relative px-1 shrink-0">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={dropdownSearch}
+                    onChange={(e) => setDropdownSearch(e.target.value)}
+                    placeholder={isEn ? "Filter track (e.g. Track 40, transport)..." : "Lọc bài nghe (ví dụ Track 40, transport)..."}
+                    className="w-full pl-8 pr-2.5 py-1 text-xs rounded-lg border border-cyan-200 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-slate-50 text-slate-800"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
 
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => handleSelectTestFromDropdown(t.id)}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors cursor-pointer ${
-                          isSelected
-                            ? 'bg-cyan-100 text-cyan-950 font-bold'
-                            : 'hover:bg-slate-100 text-slate-700 font-medium'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 truncate pr-2">
-                          <span className="shrink-0">{isR2 ? '☁️' : t.isCustom ? '✨' : '🎧'}</span>
-                          <span className="truncate">{t.title}</span>
-                        </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          {isTabOpen && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800 font-bold">
-                              {isEn ? 'Tab Open' : 'Đang mở'}
-                            </span>
-                          )}
-                          {isSelected && (
-                            <span className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
+                <div className="py-1 space-y-0.5 overflow-y-auto max-h-[300px]">
+                  {allListeningTests
+                    .filter((t) => {
+                      if (!dropdownSearch.trim()) return true;
+                      const q = dropdownSearch.toLowerCase().trim();
+                      const info = getListeningTestDisplayInfo(t, isEn);
+                      return t.title?.toLowerCase().includes(q) || t.id?.toLowerCase().includes(q) || info.trackBadge?.toLowerCase().includes(q) || info.shortTitle?.toLowerCase().includes(q);
+                    })
+                    .map((t) => {
+                      const isSelected = currentTestId === t.id;
+                      const isTabOpen = openListeningTabs.includes(t.id);
+                      const isR2 = Boolean(t.audioUrl?.includes('.r2.dev'));
+                      const { trackBadge, shortTitle, fullTitle } = getListeningTestDisplayInfo(t, isEn);
+
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => handleSelectTestFromDropdown(t.id)}
+                          className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                            isSelected ? 'bg-cyan-100 text-cyan-950 font-bold' : 'hover:bg-slate-100 text-slate-700 font-medium'
+                          }`}
+                          title={fullTitle}
+                        >
+                          <div className="flex items-center gap-1.5 truncate pr-2 min-w-0">
+                            <span className="shrink-0">{isR2 ? '☁️' : t.isCustom ? '✨' : '🎧'}</span>
+                            {trackBadge && (
+                              <span className={`px-1.5 py-0.2 rounded text-[10px] font-black shrink-0 ${isSelected ? 'bg-cyan-700 text-white' : 'bg-cyan-100 text-cyan-800'}`}>
+                                {trackBadge}
+                              </span>
+                            )}
+                            <span className="truncate">{shortTitle}</span>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            {isTabOpen && <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800 font-bold">{isEn ? 'Tab Open' : 'Đang mở'}</span>}
+                            {isSelected && <span className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />}
+                          </div>
+                        </button>
+                      );
+                    })}
                 </div>
               </div>
             )}
@@ -1130,27 +1155,28 @@ export default function ListeningWorkspace({
               const testItem = allListeningTests.find(t => t.id === tabId);
               if (!testItem) return null;
               const isSelected = currentTestId === testItem.id;
-              const shortTitle = testItem.title.replace(/^Cambridge Practice\s*[—-]\s*/i, '');
+              const { trackBadge, shortTitle, fullTitle } = getListeningTestDisplayInfo(testItem, isEn);
 
               return (
                 <div
                   key={testItem.id}
                   onClick={() => handleSwitchTest(testItem.id)}
                   className={`group px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer shrink-0 flex items-center gap-1.5 border select-none ${
-                    isSelected
-                      ? 'bg-cyan-700 text-white border-cyan-800 shadow-xs ring-1 ring-cyan-400/40 font-bold'
-                      : 'bg-white/95 hover:bg-cyan-100/80 text-slate-700 hover:text-cyan-950 border-cyan-200/90 font-medium'
+                    isSelected ? 'bg-cyan-700 text-white border-cyan-800 shadow-xs ring-1 ring-cyan-400/40 font-bold' : 'bg-white/95 hover:bg-cyan-100/80 text-slate-700 hover:text-cyan-950 border-cyan-200/90 font-medium'
                   }`}
-                  title={testItem.title}
+                  title={fullTitle}
                 >
                   <span className="shrink-0">{testItem.audioUrl?.includes('.r2.dev') ? '☁️' : '🎧'}</span>
-                  <span className="max-w-[130px] sm:max-w-[180px] truncate">{shortTitle}</span>
+                  {trackBadge && (
+                    <span className={`px-1.5 py-0.2 rounded text-[10px] font-black shrink-0 ${isSelected ? 'bg-cyan-900/80 text-cyan-200 ring-1 ring-cyan-400/30' : 'bg-cyan-100 text-cyan-800'}`}>
+                      {trackBadge}
+                    </span>
+                  )}
+                  <span className="max-w-[120px] sm:max-w-[160px] truncate">{shortTitle}</span>
                   <button
                     type="button"
                     onClick={(e) => handleCloseTestTab(testItem.id, e)}
-                    className={`p-0.5 rounded-full hover:bg-black/15 transition-colors cursor-pointer shrink-0 ml-0.5 ${
-                      isSelected ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-red-500'
-                    }`}
+                    className={`p-0.5 rounded-full hover:bg-black/15 transition-colors cursor-pointer shrink-0 ml-0.5 ${isSelected ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-red-500'}`}
                     title={isEn ? "Close tab" : "Đóng tab"}
                   >
                     <X className="w-3 h-3" />
@@ -1553,7 +1579,7 @@ export default function ListeningWorkspace({
             const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
             if (targetPart) {
               const qs = (targetPart.questionGroups || []).flatMap(g => g.questions || []);
-              const firstQ = qs.map(q => q.order ?? q.number).filter(n => typeof n === 'number')[0];
+              const firstQ = qs.map(q => q.order ?? q.number ?? q.questionNumber).filter(n => typeof n === 'number')[0];
               if (firstQ) {
                 exam.setActiveQuestionOrder(firstQ);
                 return;
@@ -1568,7 +1594,7 @@ export default function ListeningWorkspace({
             if (currentTest.parts && currentTest.parts.length > 1) {
               const targetPart = currentTest.parts.find(p => {
                 const qs = (p.questionGroups || []).flatMap(g => g.questions || []);
-                return qs.some(q => (q.order ?? q.number) === order);
+                return qs.some(q => (q.order ?? q.number ?? q.questionNumber) === order);
               });
               if (targetPart && targetPart.partNumber !== activePart) {
                 handleSelectPart(targetPart.partNumber);

@@ -51,9 +51,13 @@ export const track36AgreementDisagreementIntonation = {
         {
           "id": "qg-t36-p1",
           "type": "multiple_choice",
+          "groupType": "multiple_choice",
           "title": "Questions 1–6: Pragmatic Function Classification",
           "titleEn": "Questions 1–6: Pragmatic Function Classification",
           "titleVi": "Câu hỏi 1–6: Phân loại chức năng ngữ dụng",
+          "groupTitle": "Questions 1–6: Pragmatic Function Classification",
+          "groupTitleEn": "Questions 1–6: Pragmatic Function Classification",
+          "groupTitleVi": "Câu hỏi 1–6: Phân loại chức năng ngữ dụng",
           "instruction": "Listen to statements 1–6 and classify the primary stance of each speaker.\nChoose A, B, C, or D from the list below:\nA: Direct polite disagreement / correction\nB: Full agreement / validation\nC: Partial concession followed by a strong counter-argument\nD: Topic transition / exploring an alternative scheme",
           "instructionEn": "Listen to statements 1–6 and classify the primary stance of each speaker.\nChoose A, B, C, or D from the list below:\nA: Direct polite disagreement / correction\nB: Full agreement / validation\nC: Partial concession followed by a strong counter-argument\nD: Topic transition / exploring an alternative scheme",
           "instructionVi": "Lắng nghe các câu 1–6 và phân loại lập trường chính của người nói.\nChọn A, B, C, hoặc D từ danh sách bên dưới:\nA: Bất đồng / đính chính trực tiếp một cách lịch sự\nB: Hoàn toàn đồng thuận / công nhận luận điểm\nC: Nhượng bộ một phần kèm lập luận phản bác mạnh mẽ\nD: Chuyển hướng chủ đề / tìm hiểu phương án thay thế",
@@ -103,7 +107,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "Người nói sử dụng trạng từ \"Actually\" kết hợp cụm giảm nhẹ \"that's not quite right\" để bày tỏ sự bất đồng và đính chính một cách lịch sự.",
               "explanationEn": "The speaker uses the discourse marker \"Actually\" followed by the polite hedge \"that's not quite right\" to indicate direct, courteous disagreement.",
               "audioTimestamp": 3,
-              "order": 1
+              "order": 1,
+              "number": 1,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-2",
@@ -150,7 +156,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "\"I think you have a good point there\" là phát ngôn chuẩn mực biểu thị sự công nhận và đồng tình hoàn toàn với luận điểm của đối phương.",
               "explanationEn": "\"I think you have a good point there\" is a standard academic phrase expressing unambiguous agreement and endorsement of the peer's assertion.",
               "audioTimestamp": 8,
-              "order": 2
+              "order": 2,
+              "number": 2,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-3",
@@ -197,7 +205,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "\"On the face of it, yes\" thể hiện sự nhượng bộ ban đầu (nhìn bề ngoài thì đúng), nhưng liên từ \"but in actual fact\" lật lại vấn đề rằng thực tế có thể làm tình hình tồi tệ hơn.",
               "explanationEn": "\"On the face of it, yes\" provides an initial apparent concession, immediately overturned by \"but in actual fact, it can make things worse\" (concession + counter-argument).",
               "audioTimestamp": 13,
-              "order": 3
+              "order": 3,
+              "number": 3,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-4",
@@ -244,7 +254,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "Câu hỏi gợi mở \"What about the second one?\" dùng để chuyển mạch thảo luận sang một đề án tiếp theo.",
               "explanationEn": "The question \"What about the second one?\" functions as a conversational transition to introduce and examine the next agenda item.",
               "audioTimestamp": 21,
-              "order": 4
+              "order": 4,
+              "number": 4,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-5",
@@ -291,7 +303,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "\"Up to a point, yes\" là cụm từ kinh điển biểu thị nhượng bộ có mức độ (đồng ý tới một chừng mực nào đó), theo sau bởi \"But...\" đưa ra một lựa chọn vượt trội hơn.",
               "explanationEn": "\"Up to a point, yes\" represents a qualified concession, which is immediately balanced by a strong comparative rebuttal introducing a superior health intervention.",
               "audioTimestamp": 28,
-              "order": 5
+              "order": 5,
+              "number": 5,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-6",
@@ -338,7 +352,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "\"I'm not sure about that\" là cách nói lịch sự để biểu thị sự hoài nghi / không đồng ý, kèm theo dẫn chứng cụ thể (\"Statistics show...\") để chỉnh sửa thông tin.",
               "explanationEn": "\"I'm not sure about that\" expresses polite skepticism and disagreement, reinforced by empirical evidence (\"Statistics show...\") that refutes the claim.",
               "audioTimestamp": 37,
-              "order": 6
+              "order": 6,
+              "number": 6,
+              "type": "multiple_choice"
             }
           ]
         }
@@ -371,9 +387,13 @@ export const track36AgreementDisagreementIntonation = {
         {
           "id": "qg-t36-p2",
           "type": "multiple_choice",
+          "groupType": "multiple_choice",
           "title": "Questions 7–10: Pragmatic Comprehension & Discourse Strategies",
           "titleEn": "Questions 7–10: Pragmatic Comprehension & Discourse Strategies",
           "titleVi": "Câu hỏi 7–10: Hiểu biết ngữ dụng & Chiến lược hội thoại học thuật",
+          "groupTitle": "Questions 7–10: Pragmatic Comprehension & Discourse Strategies",
+          "groupTitleEn": "Questions 7–10: Pragmatic Comprehension & Discourse Strategies",
+          "groupTitleVi": "Câu hỏi 7–10: Hiểu biết ngữ dụng & Chiến lược hội thoại học thuật",
           "instruction": "Choose the correct letter, A, B, C, or D.",
           "instructionEn": "Choose the correct letter, A, B, C, or D.",
           "instructionVi": "Chọn chữ cái chính xác, A, B, C, hoặc D.",
@@ -423,7 +443,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "Trong tiếng Anh học thuật, \"not quite right\" là một biện pháp giảm nhẹ (hedging) giúp làm dịu lời đính chính, tránh tỏ ra đối đầu gay gắt.",
               "explanationEn": "In British academic etiquette, \"not quite right\" acts as a pragmatic minimizer to prevent face-threatening conflict while correcting peer input.",
               "audioTimestamp": 4,
-              "order": 7
+              "order": 7,
+              "number": 7,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-8",
@@ -470,7 +492,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "\"On the face of it\" biểu thị góc nhìn hời hợt ban đầu (superficial plausibility), đối lập với \"in actual fact\" thể hiện thực tế không mong muốn (negative reality).",
               "explanationEn": "The idiom \"on the face of it\" refers to surface impressions, while \"in actual fact\" reveals underlying counterproductive realities.",
               "audioTimestamp": 15,
-              "order": 8
+              "order": 8,
+              "number": 8,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-9",
@@ -517,7 +541,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "Cụm từ \"I'm sure you'd agree\" là một chiến lược xây dựng sự đồng thuận (assumed consensus / common ground) rất phổ biến trong đàm phán học thuật.",
               "explanationEn": "The phrase \"I'm sure you'd agree\" establishes assumed consensus and shared perspective to steer the listener toward agreement.",
               "audioTimestamp": 30,
-              "order": 9
+              "order": 9,
+              "number": 9,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t36-10",
@@ -564,7 +590,9 @@ export const track36AgreementDisagreementIntonation = {
               "explanation": "Người nói đưa ra chứng cứ xác thực (\"Statistics show that the worst place is by the town hall\") thay vì chỉ nêu ý kiến cảm tính.",
               "explanationEn": "The speaker bolsters her refutation with empirical evidence (\"Statistics show...\"), transforming subjective skepticism into grounded factual correction.",
               "audioTimestamp": 40,
-              "order": 10
+              "order": 10,
+              "number": 10,
+              "type": "multiple_choice"
             }
           ]
         }

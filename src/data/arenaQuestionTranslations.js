@@ -1568,6 +1568,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What strategic language preparation does the candidate resolve to undertake before travelling abroad in future?",
     "contextEn": "Candidate: \"It was a great experience, although next time, I think I should study some French before I go.\"",
     "explanationEn": "The candidate reflects: \"next time, I think I should study some French before I go.\""
+  },
+  "easy_lis_sentential_which_t40": {
+    "promptEn": "What grammatical function does the relative clause introduced by \"which\" perform in Sentence 1?",
+    "contextEn": "Narrator: \"I boarded a plane to Paris, which was rather exciting as I'd never done that before.\"",
+    "explanationEn": "The non-defining relative clause \"which was rather exciting\" modifies the entire preceding event."
+  },
+  "med_lis_causal_since_t40": {
+    "promptEn": "In Sentence 2, what semantic relationship does the subordinator \"Since\" establish?",
+    "contextEn": "Narrator: \"Since I come from China, it took a long time to arrive, but when I got there, the first thing I did was go to the Louvre Museum.\"",
+    "explanationEn": "\"Since I come from China\" functions as a causal subordinator of established background."
+  },
+  "easy_lis_reason_because_t40": {
+    "promptEn": "According to Sentence 3, why did the speaker encounter trouble ordering food?",
+    "contextEn": "Narrator: \"I had trouble ordering food, because I don't speak any French.\"",
+    "explanationEn": "The direct cause is explicitly given: \"because I don't speak any French\"."
+  },
+  "med_lis_time_once_t40": {
+    "promptEn": "In Sentence 4, what is the role of the temporal subordinator \"Once\"?",
+    "contextEn": "Narrator: \"Once I had eaten, I then took a tour bus to the Champs-Elysees, in order to do a bit of shopping.\"",
+    "explanationEn": "\"Once I had eaten\" establishes a completed condition precedent prior to taking the bus."
+  },
+  "hard_lis_dropped_camera_t40": {
+    "promptEn": "In Sentence 5, what mishap occurred while taking pictures from the tour bus?",
+    "contextEn": "Narrator: \"When I got back on the tour bus and started taking pictures, I dropped my camera over the side.\"",
+    "explanationEn": "The incident is explicitly stated: \"I dropped my camera over the side\"."
   }
 };
 

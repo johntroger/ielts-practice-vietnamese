@@ -93,3 +93,54 @@ export function formatTestDescription(desc, isEn, test = {}) {
 
   return desc;
 }
+
+/**
+ * Extracts a clean, prominent badge (e.g. "Track 40", "Cam 20 T1") and concise title
+ * for tabs, switcher dropdowns, and cards across both English and Vietnamese modes.
+ * Strictly respects isEn (zero Vietnamese leaks when isEn is true).
+ * @param {object} testItem 
+ * @param {boolean} isEn 
+ * @returns {{ trackBadge: string|null, shortTitle: string, fullTitle: string }}
+ */
+export function getListeningTestDisplayInfo(testItem, isEn = false) {
+  if (!testItem) return { trackBadge: null, shortTitle: '', fullTitle: '' };
+
+  const rawTitle = (isEn ? testItem.titleEn : testItem.titleVi) || testItem.title || '';
+
+  // 1. Extract Track Number (e.g. Track 40, Track 31, Track 2)
+  const trackMatch = rawTitle.match(/Track\s*(\d+)/i) || 
+    (testItem.title && testItem.title.match(/Track\s*(\d+)/i)) ||
+    (testItem.id && testItem.id.match(/track(\d+)/i));
+  const trackBadge = trackMatch ? `Track ${trackMatch[1]}` : null;
+
+  // 2. Extract Cambridge Book & Test Number if official Cambridge (e.g. Cam 20 T1, Cam 8 T2)
+  let camBadge = null;
+  if (!trackBadge) {
+    const camMatch = rawTitle.match(/Cambridge\s*(\d+)\s*(?:Test\s*(\d+))?/i) || 
+      (testItem.title && testItem.title.match(/Cambridge\s*(\d+)\s*(?:Test\s*(\d+))?/i)) ||
+      (testItem.id && testItem.id.match(/cam(?:bridge)?-?(\d+)-?t(?:est)?-?(\d+)/i));
+    if (camMatch) {
+      camBadge = `Cam ${camMatch[1]}${camMatch[2] ? ` T${camMatch[2]}` : ''}`;
+    }
+  }
+
+  // 3. Clean and concise short title for tabs & dropdowns
+  let shortTitle = rawTitle
+    .replace(/^Cambridge Practice\s*[—-]\s*/i, '')
+    .replace(/^IELTS\s+(?:Listening & Speaking|Speaking & Listening|Grammar & Speaking|Speaking Part \d+|Listening Practice|Listening|Speaking|Grammar)\s*(?:Practice|Model Response)?\s*[:—-]\s*/i, '')
+    .replace(/^Luyện đề IELTS Listening\s*[:—-]\s*/i, '')
+    .replace(/^Ngữ pháp & Nói IELTS\s*[:—-]\s*/i, '')
+    .replace(/\s*\(Track\s*\d+\)$/i, '')
+    .trim();
+
+  if (!shortTitle) {
+    shortTitle = rawTitle;
+  }
+
+  return {
+    trackBadge: trackBadge || camBadge || (testItem.isCustom ? (isEn ? 'Custom' : 'Tự tạo') : null),
+    shortTitle,
+    fullTitle: rawTitle
+  };
+}
+

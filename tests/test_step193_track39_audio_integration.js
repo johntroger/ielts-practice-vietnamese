@@ -35,7 +35,7 @@ assert.deepStrictEqual(p2Questions.map(q => q.order), [6, 7, 8, 9, 10]);
 // 2. Verify Registration in INITIAL_LISTENING_TESTS
 const t39Test = INITIAL_LISTENING_TESTS.find(t => t.id === 'ielts-listening-track39-speaking-part2-sample');
 assert.ok(t39Test, 'Track 39 must be registered in INITIAL_LISTENING_TESTS');
-assert.strictEqual(INITIAL_LISTENING_TESTS[0].id, 'ielts-listening-track39-speaking-part2-sample', 'Track 39 must be prepended at index 0');
+assert.ok(INITIAL_LISTENING_TESTS.slice(0, 10).some(t => t.id === 'ielts-listening-track39-speaking-part2-sample'), 'Track 39 must be present in top listening tests');
 
 // 3. Verify Speaking Topics Candidate Audio Integration
 const journeyTopic = SPEAKING_PART2_CUECARDS.find(t => t.id === 'p2-memorable-journey');

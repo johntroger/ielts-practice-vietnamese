@@ -199,7 +199,8 @@ const testSuites = [
   { name: 'Step 190: Listening Timestamped Transcript Parser & Fallback Synchronization', file: 'tests/test_step190_listening_transcript_parser_fallback.js' },
   { name: 'Step 191: Cambridge Listening Full Transcripts Coverage & Normalization', file: 'tests/test_step191_cambridge_listening_transcripts_integrity.js' },
   { name: 'Step 192: Track 38 Audio Integration, Micro-Drills & Dynamic Part Routing', file: 'tests/test_step192_track38_audio_integration.js' },
-  { name: 'Step 193: Track 39 Speaking Part 2 Candidate Sample & Audio Integration', file: 'tests/test_step193_track39_audio_integration.js' }
+  { name: 'Step 193: Track 39 Speaking Part 2 Candidate Sample & Audio Integration', file: 'tests/test_step193_track39_audio_integration.js' },
+  { name: 'Step 194: Track 40 Complex Sentences & Connectors Audio Integration', file: 'tests/test_step194_track40_audio_integration.js' }
 ];
 
 console.log('===============================================================');

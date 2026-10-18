@@ -47,15 +47,23 @@ export const track34TransportProjectCostAnalysis = {
       "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
       "questionGroups": [
         {
-          "groupType": "note-completion",
+          "id": "qg-t34-p1",
+          "type": "note_completion",
+          "groupType": "note_completion",
+          "title": "Questions 1–5: Municipal Transport Scheme Cost Estimation Table",
+          "titleEn": "Questions 1–5: Municipal Transport Scheme Cost Estimation Table",
+          "titleVi": "Câu 1–5: Bảng dự toán chi phí các đề xuất giao thông đô thị",
           "groupTitle": "Questions 1–5: Municipal Transport Scheme Cost Estimation Table",
           "groupTitleEn": "Questions 1–5: Municipal Transport Scheme Cost Estimation Table",
           "groupTitleVi": "Câu 1–5: Bảng dự toán chi phí các đề xuất giao thông đô thị",
+          "instruction": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
+          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
           "questions": [
             {
               "id": "t34-q1",
               "number": 1,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Under the Tramway proposal, initial preparation, line-laying, and road widening require over [1] ......... pounds.",
               "questionTextEn": "Under the Tramway proposal, initial preparation, line-laying, and road widening require over [1] ......... pounds.",
               "questionTextVi": "Theo đề xuất Tàu điện, chi phí chuẩn bị tuyến, đặt đường ray và mở rộng đường đòi hỏi hơn [1] ......... bảng.",
@@ -72,12 +80,23 @@ export const track34TransportProjectCostAnalysis = {
               "audioTimestamp": 10,
               "order": 1,
               "prefixText": "Under the Tramway proposal, initial preparation, line-laying, and road widening require over",
-              "suffixText": "pounds."
+              "suffixText": "pounds.",
+              "questionNumber": 1,
+              "prefix": "Under the Tramway proposal, initial preparation, line-laying, and road widening require over",
+              "prefixEn": "Under the Tramway proposal, initial preparation, line-laying, and road widening require over",
+              "prefixVi": "Theo đề xuất Tàu điện, chi phí chuẩn bị tuyến, đặt đường ray và mở rộng đường đòi hỏi hơn",
+              "prefixTextEn": "Under the Tramway proposal, initial preparation, line-laying, and road widening require over",
+              "prefixTextVi": "Theo đề xuất Tàu điện, chi phí chuẩn bị tuyến, đặt đường ray và mở rộng đường đòi hỏi hơn",
+              "suffix": "pounds.",
+              "suffixEn": "pounds.",
+              "suffixVi": "bảng.",
+              "suffixTextEn": "pounds.",
+              "suffixTextVi": "bảng."
             },
             {
               "id": "t34-q2",
               "number": 2,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Project planners must aim to restrict the comprehensive expenditure of the tram network to [2] ......... pounds.",
               "questionTextEn": "Project planners must aim to restrict the comprehensive expenditure of the tram network to [2] ......... pounds.",
               "questionTextVi": "Các nhà quy hoạch dự án phải đặt mục tiêu kiềm chế toàn bộ chi phí hệ thống tàu điện trong mức [2] ......... bảng.",
@@ -94,12 +113,23 @@ export const track34TransportProjectCostAnalysis = {
               "audioTimestamp": 25,
               "order": 2,
               "prefixText": "Project planners must aim to restrict the comprehensive expenditure of the tram network to",
-              "suffixText": "pounds."
+              "suffixText": "pounds.",
+              "questionNumber": 2,
+              "prefix": "Project planners must aim to restrict the comprehensive expenditure of the tram network to",
+              "prefixEn": "Project planners must aim to restrict the comprehensive expenditure of the tram network to",
+              "prefixVi": "Các nhà quy hoạch dự án phải đặt mục tiêu kiềm chế toàn bộ chi phí hệ thống tàu điện trong mức",
+              "prefixTextEn": "Project planners must aim to restrict the comprehensive expenditure of the tram network to",
+              "prefixTextVi": "Các nhà quy hoạch dự án phải đặt mục tiêu kiềm chế toàn bộ chi phí hệ thống tàu điện trong mức",
+              "suffix": "pounds.",
+              "suffixEn": "pounds.",
+              "suffixVi": "bảng.",
+              "suffixTextEn": "pounds.",
+              "suffixTextVi": "bảng."
             },
             {
               "id": "t34-q3",
               "number": 3,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Setting up roadway signs and line painting for bus and cycle corridors will take approximately [3] ......... pounds.",
               "questionTextEn": "Setting up roadway signs and line painting for bus and cycle corridors will take approximately [3] ......... pounds.",
               "questionTextVi": "Việc lắp đặt biển báo và sơn kẻ vạch cho hành lang xe buýt và xe đạp sẽ tốn khoảng [3] ......... bảng.",
@@ -116,12 +146,23 @@ export const track34TransportProjectCostAnalysis = {
               "audioTimestamp": 57,
               "order": 3,
               "prefixText": "Setting up roadway signs and line painting for bus and cycle corridors will take approximately",
-              "suffixText": "pounds."
+              "suffixText": "pounds.",
+              "questionNumber": 3,
+              "prefix": "Setting up roadway signs and line painting for bus and cycle corridors will take approximately",
+              "prefixEn": "Setting up roadway signs and line painting for bus and cycle corridors will take approximately",
+              "prefixVi": "Việc lắp đặt biển báo và sơn kẻ vạch cho hành lang xe buýt và xe đạp sẽ tốn khoảng",
+              "prefixTextEn": "Setting up roadway signs and line painting for bus and cycle corridors will take approximately",
+              "prefixTextVi": "Việc lắp đặt biển báo và sơn kẻ vạch cho hành lang xe buýt và xe đạp sẽ tốn khoảng",
+              "suffix": "pounds.",
+              "suffixEn": "pounds.",
+              "suffixVi": "bảng.",
+              "suffixTextEn": "pounds.",
+              "suffixTextVi": "bảng."
             },
             {
               "id": "t34-q4",
               "number": 4,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Acquiring peripheral parcels of land for the park-and-ride facility is projected to cost around [4] ......... pounds.",
               "questionTextEn": "Acquiring peripheral parcels of land for the park-and-ride facility is projected to cost around [4] ......... pounds.",
               "questionTextVi": "Việc mua các khu đất ngoại vi để làm bãi đỗ xe park-and-ride dự kiến tiêu tốn khoảng [4] ......... bảng.",
@@ -138,12 +179,23 @@ export const track34TransportProjectCostAnalysis = {
               "audioTimestamp": 83,
               "order": 4,
               "prefixText": "Acquiring peripheral parcels of land for the park-and-ride facility is projected to cost around",
-              "suffixText": "pounds."
+              "suffixText": "pounds.",
+              "questionNumber": 4,
+              "prefix": "Acquiring peripheral parcels of land for the park-and-ride facility is projected to cost around",
+              "prefixEn": "Acquiring peripheral parcels of land for the park-and-ride facility is projected to cost around",
+              "prefixVi": "Việc mua các khu đất ngoại vi để làm bãi đỗ xe park-and-ride dự kiến tiêu tốn khoảng",
+              "prefixTextEn": "Acquiring peripheral parcels of land for the park-and-ride facility is projected to cost around",
+              "prefixTextVi": "Việc mua các khu đất ngoại vi để làm bãi đỗ xe park-and-ride dự kiến tiêu tốn khoảng",
+              "suffix": "pounds.",
+              "suffixEn": "pounds.",
+              "suffixVi": "bảng.",
+              "suffixTextEn": "pounds.",
+              "suffixTextVi": "bảng."
             },
             {
               "id": "t34-q5",
               "number": 5,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "The council can cap vehicle procurement costs at 3 million pounds if they choose to [5] ......... the shuttle buses.",
               "questionTextEn": "The council can cap vehicle procurement costs at 3 million pounds if they choose to [5] ......... the shuttle buses.",
               "questionTextVi": "Hội đồng có thể khống chế chi phí mua sắm phương tiện ở mức 3 triệu bảng nếu họ chọn [5] ......... các xe buýt trung chuyển.",
@@ -159,17 +211,20 @@ export const track34TransportProjectCostAnalysis = {
               "audioTimestamp": 95,
               "order": 5,
               "prefixText": "The council can cap vehicle procurement costs at 3 million pounds if they choose to",
-              "suffixText": "the shuttle buses."
+              "suffixText": "the shuttle buses.",
+              "questionNumber": 5,
+              "prefix": "The council can cap vehicle procurement costs at 3 million pounds if they choose to",
+              "prefixEn": "The council can cap vehicle procurement costs at 3 million pounds if they choose to",
+              "prefixVi": "Hội đồng có thể khống chế chi phí mua sắm phương tiện ở mức 3 triệu bảng nếu họ chọn",
+              "prefixTextEn": "The council can cap vehicle procurement costs at 3 million pounds if they choose to",
+              "prefixTextVi": "Hội đồng có thể khống chế chi phí mua sắm phương tiện ở mức 3 triệu bảng nếu họ chọn",
+              "suffix": "the shuttle buses.",
+              "suffixEn": "the shuttle buses.",
+              "suffixVi": "các xe buýt trung chuyển.",
+              "suffixTextEn": "the shuttle buses.",
+              "suffixTextVi": "các xe buýt trung chuyển."
             }
-          ],
-          "id": "qg-t34-p1",
-          "type": "note_completion",
-          "title": "Questions 1–5: Municipal Transport Scheme Cost Estimation Table",
-          "titleEn": "Questions 1–5: Municipal Transport Scheme Cost Estimation Table",
-          "titleVi": "Câu 1–5: Bảng dự toán chi phí các đề xuất giao thông đô thị",
-          "instruction": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
-          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe."
+          ]
         }
       ]
     },
@@ -201,10 +256,18 @@ export const track34TransportProjectCostAnalysis = {
       "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
       "questionGroups": [
         {
-          "groupType": "multiple-choice",
+          "id": "qg-t34-p2",
+          "type": "multiple_choice",
+          "groupType": "multiple_choice",
+          "title": "Questions 6–10: Strategic Financial Comparison & Analytical Summation",
+          "titleEn": "Questions 6–10: Strategic Financial Comparison & Analytical Summation",
+          "titleVi": "Câu 6–10: So sánh tài chính chiến lược & Tổng hợp phân tích",
           "groupTitle": "Questions 6–10: Strategic Financial Comparison & Analytical Summation",
           "groupTitleEn": "Questions 6–10: Strategic Financial Comparison & Analytical Summation",
           "groupTitleVi": "Câu 6–10: So sánh tài chính chiến lược & Tổng hợp phân tích",
+          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
+          "instructionEn": "Choose the correct letter, A, B, C, or D.",
+          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
           "questions": [
             {
               "id": "t34-q6",
@@ -253,7 +316,8 @@ export const track34TransportProjectCostAnalysis = {
               "explanationEn": "Robert calculates the total: 8 million pounds for signs and paint plus 2 million for other changes equals approximately 10 million pounds. Option A is correct.",
               "audioTimestamp": 66,
               "order": 6,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 6
             },
             {
               "id": "t34-q7",
@@ -302,7 +366,8 @@ export const track34TransportProjectCostAnalysis = {
               "explanationEn": "Sophie breaks down this specific component: \"...lay out the car parks and put in bus shelters, which should be around 6 or 7 million pounds.\" Option A is correct.",
               "audioTimestamp": 89,
               "order": 7,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 7
             },
             {
               "id": "t34-q8",
@@ -351,7 +416,8 @@ export const track34TransportProjectCostAnalysis = {
               "explanationEn": "Sophie explicitly allocates the 12 million pounds: \"...then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.\" Option A is correct.",
               "audioTimestamp": 116,
               "order": 8,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 8
             },
             {
               "id": "t34-q9",
@@ -400,7 +466,8 @@ export const track34TransportProjectCostAnalysis = {
               "explanationEn": "Sophie confirms the financial ranking: \"That's the second highest\", totaling 25 million pounds (second only to the tramway's 30 million pounds). Option A is correct.",
               "audioTimestamp": 110,
               "order": 9,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 9
             },
             {
               "id": "t34-q10",
@@ -449,17 +516,10 @@ export const track34TransportProjectCostAnalysis = {
               "explanationEn": "When Sophie corrects the sum to 25 million pounds (12 + 5 + 8 = 25), Robert admits: \"So it is! My mistake. Maths was never my strong point.\" Option A is correct.",
               "audioTimestamp": 139,
               "order": 10,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 10
             }
-          ],
-          "id": "qg-t34-p2",
-          "type": "multiple_choice",
-          "title": "Questions 6–10: Strategic Financial Comparison & Analytical Summation",
-          "titleEn": "Questions 6–10: Strategic Financial Comparison & Analytical Summation",
-          "titleVi": "Câu 6–10: So sánh tài chính chiến lược & Tổng hợp phân tích",
-          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
-          "instructionEn": "Choose the correct letter, A, B, C, or D.",
-          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi."
+          ]
         }
       ]
     }

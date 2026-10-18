@@ -151,6 +151,7 @@ export function useAudioEngine({
 
     const handleError = (e) => {
       console.warn('Audio error on src:', audio.src, e);
+      const wasPlaying = audioState === 'playing' || (!audio.paused && audio.currentTime > 0);
       // Auto fallback if initial source fails
       if (fallbackSrc && !fallbackTriedRef.current && lastLoadedSrcRef.current !== fallbackSrc) {
         console.log('Switching to fallback audio source:', fallbackSrc);
@@ -159,7 +160,11 @@ export function useAudioEngine({
         setCurrentActiveSrc(fallbackSrc);
         audio.src = fallbackSrc;
         audio.load();
-        audio.play().catch(() => {});
+        if (wasPlaying) {
+          audio.play().catch(() => {});
+        } else {
+          setAudioState('ready');
+        }
         return;
       } else if (audio.src && !audio.src.includes('/audio/cam18_test1_audio.mp3')) {
         console.log('Switching to local offline fallback audio source');
@@ -168,11 +173,18 @@ export function useAudioEngine({
         setCurrentActiveSrc('/audio/cam18_test1_audio.mp3');
         audio.src = '/audio/cam18_test1_audio.mp3';
         audio.load();
-        audio.play().catch(() => {});
+        if (wasPlaying) {
+          audio.play().catch(() => {});
+        } else {
+          setAudioState('ready');
+        }
         return;
       }
       setAudioState('error');
-      const err = audio.error ? ('Lỗi âm thanh: code ' + audio.error.code) : 'Không thể tải tệp âm thanh. Vui lòng kiểm tra kết nối mạng.';
+      const isEn = typeof window !== 'undefined' && localStorage.getItem('i18nextLng') === 'en';
+      const err = audio.error 
+        ? (isEn ? `Audio error: code ${audio.error.code}` : `Lỗi âm thanh: code ${audio.error.code}`) 
+        : (isEn ? 'Cannot load audio file. Please check your network connection.' : 'Không thể tải tệp âm thanh. Vui lòng kiểm tra kết nối mạng.');
       setErrorMessage(err);
       if (onError) {
         onError(err);

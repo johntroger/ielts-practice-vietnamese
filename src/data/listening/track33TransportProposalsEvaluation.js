@@ -47,15 +47,23 @@ export const track33TransportProposalsEvaluation = {
       "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
       "questionGroups": [
         {
-          "groupType": "note-completion",
+          "id": "qg-t33-p1",
+          "type": "note_completion",
+          "groupType": "note_completion",
+          "title": "Questions 1–5: Municipal Transport Scheme Assessment Table",
+          "titleEn": "Questions 1–5: Municipal Transport Scheme Assessment Table",
+          "titleVi": "Câu 1–5: Bảng đánh giá các đề xuất giao thông đô thị",
           "groupTitle": "Questions 1–5: Municipal Transport Scheme Assessment Table",
           "groupTitleEn": "Questions 1–5: Municipal Transport Scheme Assessment Table",
           "groupTitleVi": "Câu 1–5: Bảng đánh giá các đề xuất giao thông đô thị",
+          "instruction": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
+          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
           "questions": [
             {
               "id": "t33-q1",
               "number": 1,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Under Proposal 1, dedicated lanes often cause motorists to divert into [1] ......... areas in search of clearer roads.",
               "questionTextEn": "Under Proposal 1, dedicated lanes often cause motorists to divert into [1] ......... areas in search of clearer roads.",
               "questionTextVi": "Theo Đề xuất 1, các làn đường ưu tiên thường khiến người lái ô tô rẽ vào các khu [1] ......... để tìm đường thoáng hơn.",
@@ -70,12 +78,23 @@ export const track33TransportProposalsEvaluation = {
               "audioTimestamp": 41,
               "order": 1,
               "prefixText": "Under Proposal 1, dedicated lanes often cause motorists to divert into",
-              "suffixText": "areas in search of clearer roads."
+              "suffixText": "areas in search of clearer roads.",
+              "questionNumber": 1,
+              "prefix": "Under Proposal 1, dedicated lanes often cause motorists to divert into",
+              "prefixEn": "Under Proposal 1, dedicated lanes often cause motorists to divert into",
+              "prefixVi": "Theo Đề xuất 1, các làn đường ưu tiên thường khiến người lái ô tô rẽ vào các khu",
+              "prefixTextEn": "Under Proposal 1, dedicated lanes often cause motorists to divert into",
+              "prefixTextVi": "Theo Đề xuất 1, các làn đường ưu tiên thường khiến người lái ô tô rẽ vào các khu",
+              "suffix": "areas in search of clearer roads.",
+              "suffixEn": "areas in search of clearer roads.",
+              "suffixVi": "để tìm đường thoáng hơn.",
+              "suffixTextEn": "areas in search of clearer roads.",
+              "suffixTextVi": "để tìm đường thoáng hơn."
             },
             {
               "id": "t33-q2",
               "number": 2,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Proposal 2 entails constructing perimeter car parks located on the [2] ......... of town along incoming arterial routes.",
               "questionTextEn": "Proposal 2 entails constructing perimeter car parks located on the [2] ......... of town along incoming arterial routes.",
               "questionTextVi": "Đề xuất 2 liên quan đến việc xây dựng các bãi đỗ xe ngoại vi nằm ở [2] ......... thị trấn dọc theo các trục đường chính tiến vào.",
@@ -89,12 +108,23 @@ export const track33TransportProposalsEvaluation = {
               "audioTimestamp": 51,
               "order": 2,
               "prefixText": "Proposal 2 entails constructing perimeter car parks located on the",
-              "suffixText": "of town along incoming arterial routes."
+              "suffixText": "of town along incoming arterial routes.",
+              "questionNumber": 2,
+              "prefix": "Proposal 2 entails constructing perimeter car parks located on the",
+              "prefixEn": "Proposal 2 entails constructing perimeter car parks located on the",
+              "prefixVi": "Đề xuất 2 liên quan đến việc xây dựng các bãi đỗ xe ngoại vi nằm ở",
+              "prefixTextEn": "Proposal 2 entails constructing perimeter car parks located on the",
+              "prefixTextVi": "Đề xuất 2 liên quan đến việc xây dựng các bãi đỗ xe ngoại vi nằm ở",
+              "suffix": "of town along incoming arterial routes.",
+              "suffixEn": "of town along incoming arterial routes.",
+              "suffixVi": "thị trấn dọc theo các trục đường chính tiến vào.",
+              "suffixTextEn": "of town along incoming arterial routes.",
+              "suffixTextVi": "thị trấn dọc theo các trục đường chính tiến vào."
             },
             {
               "id": "t33-q3",
               "number": 3,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Robert observes that shuttle buses serving park-and-ride car parks frequently run at less than [3] ......... occupancy.",
               "questionTextEn": "Robert observes that shuttle buses serving park-and-ride car parks frequently run at less than [3] ......... occupancy.",
               "questionTextVi": "Robert nhận thấy các xe buýt trung chuyển phục vụ bãi đỗ park-and-ride thường chỉ hoạt động dưới [3] ......... công suất ghế ngồi.",
@@ -109,12 +139,23 @@ export const track33TransportProposalsEvaluation = {
               "audioTimestamp": 79,
               "order": 3,
               "prefixText": "Robert observes that shuttle buses serving park-and-ride car parks frequently run at less than",
-              "suffixText": "occupancy."
+              "suffixText": "occupancy.",
+              "questionNumber": 3,
+              "prefix": "Robert observes that shuttle buses serving park-and-ride car parks frequently run at less than",
+              "prefixEn": "Robert observes that shuttle buses serving park-and-ride car parks frequently run at less than",
+              "prefixVi": "Robert nhận thấy các xe buýt trung chuyển phục vụ bãi đỗ park-and-ride thường chỉ hoạt động dưới",
+              "prefixTextEn": "Robert observes that shuttle buses serving park-and-ride car parks frequently run at less than",
+              "prefixTextVi": "Robert nhận thấy các xe buýt trung chuyển phục vụ bãi đỗ park-and-ride thường chỉ hoạt động dưới",
+              "suffix": "occupancy.",
+              "suffixEn": "occupancy.",
+              "suffixVi": "công suất ghế ngồi.",
+              "suffixTextEn": "occupancy.",
+              "suffixTextVi": "công suất ghế ngồi."
             },
             {
               "id": "t33-q4",
               "number": 4,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Proposal 3 (Pedestrian Zone) could endanger local businesses due to severe bottlenecks involving commercial lorry [4] ..........",
               "questionTextEn": "Proposal 3 (Pedestrian Zone) could endanger local businesses due to severe bottlenecks involving commercial lorry [4] ..........",
               "questionTextVi": "Đề xuất 3 (Phố đi bộ) có thể gây nguy hiểm cho các doanh nghiệp địa phương do tắc nghẽn nghiêm trọng trong việc [4] ......... hàng của xe tải.",
@@ -128,12 +169,23 @@ export const track33TransportProposalsEvaluation = {
               "audioTimestamp": 120,
               "order": 4,
               "prefixText": "Proposal 3 (Pedestrian Zone) could endanger local businesses due to severe bottlenecks involving commercial lorry",
-              "suffixText": ""
+              "suffixText": "",
+              "questionNumber": 4,
+              "prefix": "Proposal 3 (Pedestrian Zone) could endanger local businesses due to severe bottlenecks involving commercial lorry",
+              "prefixEn": "Proposal 3 (Pedestrian Zone) could endanger local businesses due to severe bottlenecks involving commercial lorry",
+              "prefixVi": "Đề xuất 3 (Phố đi bộ) có thể gây nguy hiểm cho các doanh nghiệp địa phương do tắc nghẽn nghiêm trọng trong việc",
+              "prefixTextEn": "Proposal 3 (Pedestrian Zone) could endanger local businesses due to severe bottlenecks involving commercial lorry",
+              "prefixTextVi": "Đề xuất 3 (Phố đi bộ) có thể gây nguy hiểm cho các doanh nghiệp địa phương do tắc nghẽn nghiêm trọng trong việc",
+              "suffix": "",
+              "suffixEn": "",
+              "suffixVi": "hàng của xe tải.",
+              "suffixTextEn": "",
+              "suffixTextVi": "hàng của xe tải."
             },
             {
               "id": "t33-q5",
               "number": 5,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "A newly laid tram network would impose substantial initial capital outlay alongside recurring [5] ......... expenditures.",
               "questionTextEn": "A newly laid tram network would impose substantial initial capital outlay alongside recurring [5] ......... expenditures.",
               "questionTextVi": "Tuyến tàu điện mới sẽ đòi hỏi vốn đầu tư ban đầu khổng lồ cùng với các chi phí [5] ......... phát sinh định kỳ.",
@@ -148,17 +200,20 @@ export const track33TransportProposalsEvaluation = {
               "audioTimestamp": 150,
               "order": 5,
               "prefixText": "A newly laid tram network would impose substantial initial capital outlay alongside recurring",
-              "suffixText": "expenditures."
+              "suffixText": "expenditures.",
+              "questionNumber": 5,
+              "prefix": "A newly laid tram network would impose substantial initial capital outlay alongside recurring",
+              "prefixEn": "A newly laid tram network would impose substantial initial capital outlay alongside recurring",
+              "prefixVi": "Tuyến tàu điện mới sẽ đòi hỏi vốn đầu tư ban đầu khổng lồ cùng với các chi phí",
+              "prefixTextEn": "A newly laid tram network would impose substantial initial capital outlay alongside recurring",
+              "prefixTextVi": "Tuyến tàu điện mới sẽ đòi hỏi vốn đầu tư ban đầu khổng lồ cùng với các chi phí",
+              "suffix": "expenditures.",
+              "suffixEn": "expenditures.",
+              "suffixVi": "phát sinh định kỳ.",
+              "suffixTextEn": "expenditures.",
+              "suffixTextVi": "phát sinh định kỳ."
             }
-          ],
-          "id": "qg-t33-p1",
-          "type": "note_completion",
-          "title": "Questions 1–5: Municipal Transport Scheme Assessment Table",
-          "titleEn": "Questions 1–5: Municipal Transport Scheme Assessment Table",
-          "titleVi": "Câu 1–5: Bảng đánh giá các đề xuất giao thông đô thị",
-          "instruction": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
-          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe."
+          ]
         }
       ]
     },
@@ -190,10 +245,18 @@ export const track33TransportProposalsEvaluation = {
       "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
       "questionGroups": [
         {
-          "groupType": "multiple-choice",
+          "id": "qg-t33-p2",
+          "type": "multiple_choice",
+          "groupType": "multiple_choice",
+          "title": "Questions 6–10: Strategic Proposal Feasibility Critique",
+          "titleEn": "Questions 6–10: Strategic Proposal Feasibility Critique",
+          "titleVi": "Câu 6–10: Phản biện tính khả thi của các đề xuất chiến lược",
           "groupTitle": "Questions 6–10: Strategic Proposal Feasibility Critique",
           "groupTitleEn": "Questions 6–10: Strategic Proposal Feasibility Critique",
           "groupTitleVi": "Câu 6–10: Phản biện tính khả thi của các đề xuất chiến lược",
+          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
+          "instructionEn": "Choose the correct letter, A, B, C, or D.",
+          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
           "questions": [
             {
               "id": "t33-q6",
@@ -242,7 +305,8 @@ export const track33TransportProposalsEvaluation = {
               "explanationEn": "Sophie explains traffic leakage: \"...car traffic tends to go off into the areas around town where people live... Drivers think they can find emptier roads in residential areas...\" Option A is correct.",
               "audioTimestamp": 33,
               "order": 6,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 6
             },
             {
               "id": "t33-q7",
@@ -291,7 +355,8 @@ export const track33TransportProposalsEvaluation = {
               "explanationEn": "Robert points out: \"The main problem is lack of take-up. Drivers just don't use them... especially when drivers avoid using the services and prefer to come into town and pay higher parking fees.\" Option A is correct.",
               "audioTimestamp": 70,
               "order": 7,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 7
             },
             {
               "id": "t33-q8",
@@ -340,7 +405,8 @@ export const track33TransportProposalsEvaluation = {
               "explanationEn": "Robert warns: \"...the biggest problem would actually be with the shops themselves... there would be huge problems with deliveries. Some shops could go out of business if they have difficulty getting lorries in with their goods.\" Option A is correct.",
               "audioTimestamp": 118,
               "order": 8,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 8
             },
             {
               "id": "t33-q9",
@@ -389,7 +455,8 @@ export const track33TransportProposalsEvaluation = {
               "explanationEn": "Sophie describes the tramline layout: \"We'll have to lay down a new line through the center of town, and also from north to south.\" Option A is correct.",
               "audioTimestamp": 134,
               "order": 9,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 9
             },
             {
               "id": "t33-q10",
@@ -438,17 +505,10 @@ export const track33TransportProposalsEvaluation = {
               "explanationEn": "Robert concludes: \"The initial financial requirements would be huge, and so would the maintenance expenses. It might well be far more than the council is prepared to spend on a solution.\" Option A is correct.",
               "audioTimestamp": 146,
               "order": 10,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 10
             }
-          ],
-          "id": "qg-t33-p2",
-          "type": "multiple_choice",
-          "title": "Questions 6–10: Strategic Proposal Feasibility Critique",
-          "titleEn": "Questions 6–10: Strategic Proposal Feasibility Critique",
-          "titleVi": "Câu 6–10: Phản biện tính khả thi của các đề xuất chiến lược",
-          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
-          "instructionEn": "Choose the correct letter, A, B, C, or D.",
-          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi."
+          ]
         }
       ]
     }

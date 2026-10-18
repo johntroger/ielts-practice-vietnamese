@@ -57,6 +57,11 @@ export default function ListeningDrillRoom({
   setUserSignChoice,
   showSignResult,
   setShowSignResult,
+  currentForm,
+  userFormInput,
+  setUserFormInput,
+  showFormResult,
+  setShowFormResult,
   saveListeningHistory,
   handleEvaluateCurrentListening,
   isEvaluatingListening,
@@ -998,6 +1003,165 @@ export default function ListeningDrillRoom({
                           <strong>{isEn ? 'Tactical analysis:' : 'Phân tích chiến thuật:'}</strong> {isEn && currentSign.explanationEn ? currentSign.explanationEn : (isEn ? getLocalizedDrillExplanation(currentSign.explanation, true) : currentSign.explanation)}
                         </p>
                       </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 6. ĐIỀN BIỂU MẪU & TỪ KHÓA HỌC THUẬT (FORM / NOTE COMPLETION) */}
+              {activeTab === 'listening-form-completion' && currentForm && (
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2.5 py-0.5 rounded-md bg-teal-100 text-teal-800 text-[11px] font-bold uppercase">
+                        {getLocalizedDrillCategory(currentForm, isEn)} • {isEn ? 'Form & Lexicon Reflex' : 'Điền Biểu Mẫu & Từ Khóa'}
+                      </span>
+                      {currentForm.audioUrl && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-cyan-100 text-cyan-800 border border-cyan-300 text-[11px] font-black uppercase flex items-center gap-1">
+                          <span>☁️</span>
+                          <span>{isEn ? 'Cloudflare R2 Studio Audio' : 'Audio Thực Chiến R2 (MP3 Gốc)'}</span>
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base mt-1">
+                      {getLocalizedDrillTitle(currentForm, isEn)}
+                    </h3>
+                  </div>
+
+                  {/* Authentic CD-IELTS Style Audio Player Bar */}
+                  <MicroDrillAudioBar
+                    drillId={currentForm.id}
+                    audioText={currentForm.audioText || currentForm.ttsText || currentForm.context}
+                    audioUrl={currentForm.audioUrl}
+                    clipStart={currentForm.clipStart || 0}
+                    clipEnd={currentForm.clipEnd || 0}
+                    title={isEn ? `Form Completion: ${getLocalizedDrillTitle(currentForm, isEn)}` : `Điền Biểu Mẫu: ${currentForm.title}`}
+                    accent="en-GB"
+                    currentUser={currentUser}
+                  />
+
+                  <div className="p-4 rounded-xl bg-teal-50/70 border border-teal-200 text-xs text-teal-950 space-y-1">
+                    <p className="font-bold">{isEn ? 'Task Prompt & Note Sentence:' : 'Đề bài & Câu ghi chú cần điền:'}</p>
+                    <p className="text-slate-800 text-xs sm:text-sm font-medium leading-relaxed">
+                      {isEn && currentForm.questionPromptEn
+                        ? currentForm.questionPromptEn
+                        : (isEn && currentForm.promptEn
+                            ? currentForm.promptEn
+                            : (isEn ? (currentForm.questionPrompt || currentForm.prompt || 'Listen to the audio and fill in the missing word or phrase.') : (currentForm.questionPrompt || currentForm.prompt || 'Lắng nghe audio và điền từ hoặc cụm từ còn thiếu.')))}
+                    </p>
+                    {currentForm.trapNote && (
+                      <p className="text-teal-700 font-medium pt-1 border-t border-teal-200/60">
+                        ⚠️ {isEn ? 'Exam Trap Alert:' : 'Cảnh giác bẫy thi:'} {isEn && currentForm.trapNoteEn ? currentForm.trapNoteEn : (isEn ? getLocalizedDrillExplanation(currentForm.trapNote, true) : currentForm.trapNote)}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-700">{isEn ? 'Your answer (Word or Number):' : 'Đáp án của bạn (Từ hoặc Số):'}</label>
+                    <input
+                      type="text"
+                      value={userFormInput}
+                      onChange={(e) => setUserFormInput(e.target.value)}
+                      placeholder={isEn ? 'Type the exact missing keyword heard...' : 'Gõ chính xác từ khóa nghe được...'}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono font-bold focus:outline-hidden focus:ring-2 focus:ring-teal-500/20 bg-white"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => {
+                        setUserFormInput('');
+                        setShowFormResult(false);
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs text-slate-600 font-semibold cursor-pointer"
+                    >
+                      {isEn ? 'Clear & Retry' : 'Xóa làm lại'}
+                    </button>
+
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={handleEvaluateCurrentListening}
+                        disabled={isEvaluatingListening || !userFormInput.trim()}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-teal-700 to-indigo-700 hover:from-teal-600 hover:to-indigo-600 text-white text-xs font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center space-x-1.5 cursor-pointer"
+                        title={isEn ? 'Ask AI to evaluate spelling, grammar, and word-limit compliance' : 'Nhờ AI đánh giá chính tả, ngữ pháp và giới hạn từ'}
+                      >
+                        {isEvaluatingListening ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>{isEn ? 'AI analyzing...' : 'AI đang phân tích...'}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>{isEn ? 'AI Form Diagnostic' : 'AI Chẩn Đoán Điền Từ'}</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setShowFormResult(true);
+                          const acceptable = (currentForm.acceptableAnswers || [currentForm.correctAnswer || currentForm.answer || '']).map(a => String(a).trim().toLowerCase());
+                          const isCorrect = acceptable.includes(userFormInput.trim().toLowerCase());
+                          saveListeningHistory(currentForm, isCorrect);
+                        }}
+                        className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+                      >
+                        {isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* AI Evaluation Card if available */}
+                  {listeningEvaluation && (
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-teal-50 to-indigo-50 border border-teal-200 text-xs space-y-2 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="text-teal-950 flex items-center space-x-1.5">
+                          <Sparkles className="w-4 h-4 text-teal-600" />
+                          <span>{isEn ? 'AI Form Completion Diagnostic:' : 'AI Chẩn Đoán Điền Từ Học Thuật:'}</span>
+                        </span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                          listeningEvaluation.accuracyScore >= 85 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          {isEn ? 'Accuracy:' : 'Độ chính xác:'} {listeningEvaluation.accuracyScore}%
+                        </span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed">
+                        <strong>{isEn ? 'Linguistic & Lexical Feedback:' : 'Nhận xét ngôn ngữ & từ vựng:'}</strong> {listeningEvaluation.phoneticFeedback}
+                      </p>
+                      {listeningEvaluation.trapAnalysis && (
+                        <p className="text-teal-900 bg-white/80 p-2.5 rounded-lg border border-teal-100">
+                          <strong>{isEn ? 'Identified Distractor:' : 'Bẫy nhận diện:'}</strong> {listeningEvaluation.trapAnalysis}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {showFormResult && (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs animate-in fade-in duration-150">
+                      <div className="font-bold flex items-center space-x-2">
+                        {((currentForm.acceptableAnswers || [currentForm.correctAnswer || currentForm.answer || '']).map(a => String(a).trim().toLowerCase()).includes(userFormInput.trim().toLowerCase())) ? (
+                          <span className="text-emerald-700 flex items-center space-x-1">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>{isEn ? 'CORRECT! Accurate keyword identified.' : 'CHÍNH XÁC! Bạn đã nghe và điền đúng từ khóa.'}</span>
+                          </span>
+                        ) : (
+                          <span className="text-rose-700 flex items-center space-x-1">
+                            <XCircle className="w-4 h-4" />
+                            <span>{isEn ? 'INCORRECT! Standard answer:' : 'CHƯA ĐÚNG! Đáp án chuẩn:'} <strong className="text-emerald-700 ml-1">{currentForm.correctAnswer || currentForm.answer || (currentForm.acceptableAnswers && currentForm.acceptableAnswers[0])}</strong></span>
+                          </span>
+                        )}
+                      </div>
+                      {currentForm.acceptableAnswers && currentForm.acceptableAnswers.length > 1 && (
+                        <p className="text-slate-500 text-[11px]">
+                          {isEn ? 'Acceptable variations:' : 'Các biến thể được chấp nhận:'} {currentForm.acceptableAnswers.join(', ')}
+                        </p>
+                      )}
+                      {currentForm.explanation && (
+                        <p className="text-slate-600 leading-relaxed pt-1 border-t border-slate-200">
+                          <strong>{isEn ? 'Explanation:' : 'Giải thích:'}</strong> {isEn && currentForm.explanationEn ? currentForm.explanationEn : (isEn ? getLocalizedDrillExplanation(currentForm.explanation, true) : currentForm.explanation)}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>

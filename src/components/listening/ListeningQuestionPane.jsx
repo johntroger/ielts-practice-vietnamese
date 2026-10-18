@@ -282,9 +282,13 @@ export default function ListeningQuestionPane({
         type === 'note_completion' ||
         type === 'form_completion' ||
         type === 'sentence_completion' ||
-        type === 'summary_completion'
+        type === 'summary_completion' ||
+        type === 'fill_in_blank' ||
+        type === 'fill_in_the_blank' ||
+        type === 'fill_blanks' ||
+        type === 'completion'
       ) {
-        // keep
+        type = 'note_completion';
       } else if (type === 'multiple_choice' || type === 'classification') {
         type = 'multiple_choice';
       } else if (type === 'matching') {
@@ -297,7 +301,9 @@ export default function ListeningQuestionPane({
         type = 'table_completion';
       } else if (type === 'short_answer') {
         type = 'short_answer';
-      } else if (!type) {
+      } else if (type === 'pick_multiple') {
+        type = 'pick_multiple';
+      } else {
         // Infer based on question properties
         const firstQ = rawGroup.questions?.[0];
         if (firstQ?.options?.length) {
@@ -357,10 +363,23 @@ export default function ListeningQuestionPane({
         const qId = rawQ.id || `q-${order}`;
         
         let questionText = (isEn ? rawQ.questionTextEn : rawQ.questionTextVi) || rawQ.questionText || '';
-        let prefixText = (isEn ? (rawQ.prefixTextEn || rawQ.prefixEn) : (rawQ.prefixTextVi || rawQ.prefixVi)) || rawQ.prefixText || rawQ.prefix || '';
-        let suffixText = (isEn ? (rawQ.suffixTextEn || rawQ.suffixEn) : (rawQ.suffixTextVi || rawQ.suffixVi)) || rawQ.suffixText || rawQ.suffix || '';
+        let prefixText = (isEn ? (rawQ.prefixTextEn || rawQ.prefixEn) : (rawQ.prefixTextVi || rawQ.prefixVi));
+        let suffixText = (isEn ? (rawQ.suffixTextEn || rawQ.suffixEn) : (rawQ.suffixTextVi || rawQ.suffixVi));
 
-        // If fill-in-the-blank and prefixText/suffixText are empty, try extracting from questionText
+        if (!prefixText && !suffixText && !isEn && rawQ.questionTextVi) {
+          const blankMatch = rawQ.questionTextVi.split(/\[\d+\]\s*\.{2,}|\[\d+\]|_{2,}|\.{3,}/);
+          if (blankMatch.length >= 2) {
+            prefixText = blankMatch[0].trim();
+            suffixText = blankMatch.slice(1).join('').trim();
+          }
+        }
+
+        if (!prefixText && !suffixText) {
+          prefixText = rawQ.prefixText || rawQ.prefix || '';
+          suffixText = rawQ.suffixText || rawQ.suffix || '';
+        }
+
+        // If fill-in-the-blank and prefixText/suffixText are still empty, try extracting from questionText
         if (!prefixText && !suffixText && questionText) {
           const blankMatch = questionText.split(/\[\d+\]\s*\.{2,}|\[\d+\]|_{2,}|\.{3,}/);
           if (blankMatch.length >= 2) {
@@ -1437,6 +1456,105 @@ export default function ListeningQuestionPane({
                           placeholder="Type your short answer..."
                           className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs sm:text-sm"
                         />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* TYPE 9: RESILIENT FALLBACK RENDERER */}
+              {![
+                'note_completion',
+                'form_completion',
+                'sentence_completion',
+                'summary_completion',
+                'multiple_choice',
+                'pick_multiple',
+                'matching',
+                'map_labelling',
+                'flow_chart',
+                'table_completion',
+                'short_answer'
+              ].includes(group.type) && (
+                <div className="space-y-3">
+                  {group.questions?.map((q) => {
+                    const status = checkAnswerStatus(q);
+                    const userVal = userAnswers[q.order] || '';
+                    const isFlagged = !!flaggedQuestions[q.order];
+                    const isActive = activeQuestionOrder === q.order;
+
+                    return (
+                      <div
+                        key={q.id}
+                        id={`listening-q-${q.order}`}
+                        ref={el => (questionRefs.current[q.order] = el)}
+                        onClick={() => onSelectQuestion && onSelectQuestion(q.order)}
+                        className={`p-3.5 rounded-xl border transition-all ${
+                          isActive
+                            ? 'ring-2 ring-emerald-500 border-emerald-400 bg-emerald-50/30'
+                            : 'border-slate-200 bg-white hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="w-7 h-7 rounded-lg bg-red-100 text-red-700 font-bold font-mono text-xs flex items-center justify-center shrink-0">
+                              {q.order}
+                            </span>
+                            <span className={`font-semibold text-slate-900 ${fontSizeClasses.body}`}>
+                              {q.questionText || (q.prefixText ? `${q.prefixText} [${q.order}] ${q.suffixText || ''}` : `Question ${q.order}`)}
+                            </span>
+                          </div>
+                          {!isSubmitted && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleFlag && onToggleFlag(q.order);
+                              }}
+                              className={`p-1 rounded-md transition-colors cursor-pointer ${
+                                isFlagged ? 'text-amber-500 bg-amber-50 border border-amber-300' : 'text-slate-400 hover:text-slate-600'
+                              }`}
+                            >
+                              <Flag className={`w-3.5 h-3.5 ${isFlagged ? 'fill-current' : ''}`} />
+                            </button>
+                          )}
+                        </div>
+
+                        {q.options && q.options.length > 0 ? (
+                          <div className="space-y-2 pl-9 mt-2">
+                            {q.options.map(opt => (
+                              <button
+                                key={opt.key}
+                                type="button"
+                                disabled={isSubmitted}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onSelectQuestion && onSelectQuestion(q.order);
+                                  handleOptionSelect(q.order, opt.key);
+                                }}
+                                className={`w-full text-left p-2.5 rounded-xl border flex items-center space-x-2 transition-all ${
+                                  userVal === opt.key ? 'border-red-600 bg-red-50 text-red-950 font-bold' : 'border-slate-200 bg-white'
+                                }`}
+                              >
+                                <span className="w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs bg-slate-100 text-slate-700">
+                                  {opt.key}
+                                </span>
+                                <span className={fontSizeClasses.body}>{isEn && opt.textEn ? opt.textEn : opt.text}</span>
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="pl-9 mt-2">
+                            <input
+                              type="text"
+                              value={userVal}
+                              disabled={isSubmitted}
+                              tabIndex={100 + q.order}
+                              onChange={(e) => onAnswerChange && onAnswerChange(q.order, e.target.value)}
+                              placeholder={isEn ? `Type answer for [${q.order}]...` : `Nhập câu trả lời cho [${q.order}]...`}
+                              className={`w-full max-w-md px-3 py-1.5 rounded-lg border border-slate-300 font-medium ${fontSizeClasses.input}`}
+                            />
+                          </div>
+                        )}
                       </div>
                     );
                   })}

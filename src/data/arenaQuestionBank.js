@@ -4369,12 +4369,193 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Acquire basic destination language proficiency (study French) before departure',
     explanation: 'Lời tự nhủ và kinh nghiệm rút ra: "next time, I think I should study some French before I go."',
     explanationEn: 'The candidate reflects: "next time, I think I should study some French before I go."'
+  },
+
+  // ==========================================
+  // TRACK 40: COMPLEX SENTENCES & CONNECTORS (GRA BAND 7.5 - 8.5)
+  // ==========================================
+  {
+    id: 'easy_lis_sentential_which_t40',
+    difficulty: 'easy',
+    topic: 'grammar',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What grammatical function does the relative clause introduced by "which" perform in Sentence 1?',
+    promptEn: 'What grammatical function does the relative clause introduced by "which" perform in Sentence 1?',
+    context: 'Narrator: "I boarded a plane to Paris, which was rather exciting as I\'d never done that before."',
+    contextEn: 'Narrator: "I boarded a plane to Paris, which was rather exciting as I\'d never done that before."',
+    audioText: "I boarded a plane to Paris, which was rather exciting as I'd never done that before.",
+    options: [
+      'It provides an evaluative commentary modifying the entire preceding clause',
+      'It defines the geographical airport location in Paris',
+      'It introduces a hypothetical conditional circumstance',
+      'It acts as an imperative instruction to flight personnel'
+    ],
+    optionsVi: [
+      'Nó cung cấp lời bình luận đánh giá bổ nghĩa cho toàn bộ mệnh đề đi trước',
+      'Nó xác định vị trí địa lý của sân bay tại Paris',
+      'Nó giới thiệu một điều kiện giả định trong quá khứ',
+      'Nó đóng vai trò như một câu mệnh lệnh cho tiếp viên hàng không'
+    ],
+    optionsEn: [
+      'It provides an evaluative commentary modifying the entire preceding clause',
+      'It defines the geographical airport location in Paris',
+      'It introduces a hypothetical conditional circumstance',
+      'It acts as an imperative instruction to flight personnel'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It provides an evaluative commentary modifying the entire preceding clause',
+    explanation: 'Mệnh đề "which was rather exciting" bổ nghĩa cho cả hành động đi máy bay đến Paris.',
+    explanationEn: 'The non-defining relative clause "which was rather exciting" modifies the entire preceding event.'
+  },
+  {
+    id: 'med_lis_causal_since_t40',
+    difficulty: 'medium',
+    topic: 'grammar',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Sentence 2, what semantic relationship does the subordinator "Since" establish?',
+    promptEn: 'In Sentence 2, what semantic relationship does the subordinator "Since" establish?',
+    context: 'Narrator: "Since I come from China, it took a long time to arrive, but when I got there, the first thing I did was go to the Louvre Museum."',
+    contextEn: 'Narrator: "Since I come from China, it took a long time to arrive, but when I got there, the first thing I did was go to the Louvre Museum."',
+    audioText: "Since I come from China, it took a long time to arrive, but when I got there, the first thing I did was go to the Louvre Museum.",
+    options: [
+      'A known causal background explaining why the journey was lengthy',
+      'A chronological point in time beginning in a specific calendar year',
+      'A concessive counter-argument contradicting the flight schedule',
+      'An unexpected negative consequence of visiting France'
+    ],
+    optionsVi: [
+      'Một bối cảnh nguyên nhân đã biết giải thích tại sao chuyến đi mất nhiều thời gian',
+      'Một mốc thời gian tuần tự bắt đầu từ một năm cụ thể',
+      'Một lập luận nhượng bộ mâu thuẫn với lịch trình bay',
+      'Một hệ quả tiêu cực bất ngờ của chuyến thăm nước Pháp'
+    ],
+    optionsEn: [
+      'A known causal background explaining why the journey was lengthy',
+      'A chronological point in time beginning in a specific calendar year',
+      'A concessive counter-argument contradicting the flight schedule',
+      'An unexpected negative consequence of visiting France'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A known causal background explaining why the journey was lengthy',
+    explanation: '"Since I come from China" đóng vai trò là liên từ chỉ nguyên nhân/bối cảnh đã rõ.',
+    explanationEn: '"Since I come from China" functions as a causal subordinator of established background.'
+  },
+  {
+    id: 'easy_lis_reason_because_t40',
+    difficulty: 'easy',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Sentence 3, why did the speaker encounter trouble ordering food?',
+    promptEn: 'According to Sentence 3, why did the speaker encounter trouble ordering food?',
+    context: 'Narrator: "I had trouble ordering food, because I don\'t speak any French."',
+    contextEn: 'Narrator: "I had trouble ordering food, because I don\'t speak any French."',
+    audioText: "I had trouble ordering food, because I don't speak any French.",
+    options: [
+      'The speaker does not speak any French',
+      'The restaurant had run out of printed menus',
+      'The restaurant only accepted local cash currency',
+      'The waiter refused to serve foreign tourists'
+    ],
+    optionsVi: [
+      'Người nói hoàn toàn không thể nói được tiếng Pháp',
+      'Nhà hàng đã hết thực đơn in sẵn',
+      'Nhà hàng chỉ chấp nhận thanh toán bằng tiền mặt địa phương',
+      'Bồi bàn từ chối phục vụ khách du lịch nước ngoài'
+    ],
+    optionsEn: [
+      'The speaker does not speak any French',
+      'The restaurant had run out of printed menus',
+      'The restaurant only accepted local cash currency',
+      'The waiter refused to serve foreign tourists'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The speaker does not speak any French',
+    explanation: 'Lý do được nêu rõ: "because I don\'t speak any French".',
+    explanationEn: 'The direct cause is explicitly given: "because I don\'t speak any French".'
+  },
+  {
+    id: 'med_lis_time_once_t40',
+    difficulty: 'medium',
+    topic: 'grammar',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Sentence 4, what is the role of the temporal subordinator "Once"?',
+    promptEn: 'In Sentence 4, what is the role of the temporal subordinator "Once"?',
+    context: 'Narrator: "Once I had eaten, I then took a tour bus to the Champs-Élysées, in order to do a bit of shopping."',
+    contextEn: 'Narrator: "Once I had eaten, I then took a tour bus to the Champs-Elysees, in order to do a bit of shopping."',
+    audioText: "Once I had eaten, I then took a tour bus to the Champs-Elysees, in order to do a bit of shopping.",
+    options: [
+      'Specifying that the bus boarding immediately followed the completed meal',
+      'Indicating that the speaker had visited the Champs-Elysees only a single time',
+      'Hypothesizing about an imaginary dining experience in Paris',
+      'Explaining why shopping was prohibitively expensive on the avenue'
+    ],
+    optionsVi: [
+      'Chỉ rõ việc lên xe buýt diễn ra ngay sau khi bữa ăn đã hoàn thành',
+      'Chỉ ra rằng người nói chỉ mới đến Champs-Élysées đúng một lần duy nhất',
+      'Giả định về một trải nghiệm ăn uống tưởng tượng ở Paris',
+      'Giải thích tại sao việc mua sắm lại cực kỳ đắt đỏ trên đại lộ'
+    ],
+    optionsEn: [
+      'Specifying that the bus boarding immediately followed the completed meal',
+      'Indicating that the speaker had visited the Champs-Elysees only a single time',
+      'Hypothesizing about an imaginary dining experience in Paris',
+      'Explaining why shopping was prohibitively expensive on the avenue'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Specifying that the bus boarding immediately followed the completed meal',
+    explanation: '"Once I had eaten" diễn tả sự hoàn tất của một hành động trước khi hành động kế tiếp xảy ra.',
+    explanationEn: '"Once I had eaten" establishes a completed condition precedent prior to taking the bus.'
+  },
+  {
+    id: 'hard_lis_dropped_camera_t40',
+    difficulty: 'hard',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In Sentence 5, what mishap occurred while taking pictures from the tour bus?',
+    promptEn: 'In Sentence 5, what mishap occurred while taking pictures from the tour bus?',
+    context: 'Narrator: "When I got back on the tour bus and started taking pictures, I dropped my camera over the side."',
+    contextEn: 'Narrator: "When I got back on the tour bus and started taking pictures, I dropped my camera over the side."',
+    audioText: "When I got back on the tour bus and started taking pictures, I dropped my camera over the side.",
+    options: [
+      'The speaker dropped their camera over the side of the bus',
+      'The camera battery overheated and ceased functioning',
+      'The camera lens was scratched by tree branches along the avenue',
+      'The memory card corrupted after recording video clips'
+    ],
+    optionsVi: [
+      'Người nói đã làm rơi máy ảnh qua mạn xe buýt',
+      'Pin máy ảnh bị quá nhiệt và ngừng hoạt động',
+      'Ống kính máy ảnh bị trầy xước bởi cành cây dọc đại lộ',
+      'Thẻ nhớ bị lỗi sau khi quay các đoạn video'
+    ],
+    optionsEn: [
+      'The speaker dropped their camera over the side of the bus',
+      'The camera battery overheated and ceased functioning',
+      'The camera lens was scratched by tree branches along the avenue',
+      'The memory card corrupted after recording video clips'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The speaker dropped their camera over the side of the bus',
+    explanation: 'Tai nạn được mô tả: "I dropped my camera over the side".',
+    explanationEn: 'The incident is explicitly stated: "I dropped my camera over the side".'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 40: Complex Sentences & Discourse Connectors
+  easy_lis_sentential_which_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 2.0, clipEnd: 10.0, isR2Audio: true, trackLabel: 'Track 40 • Sentential Relative Clause' },
+  med_lis_causal_since_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 10.0, clipEnd: 22.0, isR2Audio: true, trackLabel: 'Track 40 • Causal Subordinator Since' },
+  easy_lis_reason_because_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 22.0, clipEnd: 28.5, isR2Audio: true, trackLabel: 'Track 40 • Food Ordering Barrier' },
+  med_lis_time_once_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 29.0, clipEnd: 39.0, isR2Audio: true, trackLabel: 'Track 40 • Time Sequence Once' },
+  hard_lis_dropped_camera_t40: { audioUrl: `${R2_BASE}/ielts-listening-track40-complex-sentences-connectors.mp3`, clipStart: 39.0, clipEnd: 49.0, isR2Audio: true, trackLabel: 'Track 40 • Tour Bus Dropped Camera' },
+
   // Track 39: Speaking Part 2 Candidate Sample (Paris Journey)
   easy_lis_paris_departure_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 2.0, clipEnd: 13.5, isR2Audio: true, trackLabel: 'Track 39 • Departure Date to Paris' },
   easy_lis_louvre_triangle_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 18.0, clipEnd: 28.0, isR2Audio: true, trackLabel: 'Track 39 • Louvre Triangle Entrance' },

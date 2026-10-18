@@ -47,15 +47,23 @@ export const track32UrbanTrafficHotspots = {
       "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
       "questionGroups": [
         {
-          "groupType": "note-completion",
+          "id": "qg-t32-p1",
+          "type": "note_completion",
+          "groupType": "note_completion",
+          "title": "Questions 1–5: Town Traffic Hotspot Mapping Notes",
+          "titleEn": "Questions 1–5: Town Traffic Hotspot Mapping Notes",
+          "titleVi": "Câu 1–5: Ghi chú xác định điểm nóng kẹt xe trên bản đồ",
           "groupTitle": "Questions 1–5: Town Traffic Hotspot Mapping Notes",
           "groupTitleEn": "Questions 1–5: Town Traffic Hotspot Mapping Notes",
           "groupTitleVi": "Câu 1–5: Ghi chú xác định điểm nóng kẹt xe trên bản đồ",
+          "instruction": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
+          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
           "questions": [
             {
               "id": "t32-q1",
               "number": 1,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Sophie clarifies that the Starview Cinema hotspot is situated precisely at the junction of East Road and [1] ......... Road.",
               "questionTextEn": "Sophie clarifies that the Starview Cinema hotspot is situated precisely at the junction of East Road and [1] ......... Road.",
               "questionTextVi": "Sophie làm rõ rằng điểm nóng rạp chiếu phim Starview Cinema nằm chính xác tại nút giao giữa East Road và đường [1] ..........",
@@ -70,12 +78,23 @@ export const track32UrbanTrafficHotspots = {
               "audioTimestamp": 42,
               "order": 1,
               "prefixText": "Sophie clarifies that the Starview Cinema hotspot is situated precisely at the junction of East Road and",
-              "suffixText": "Road."
+              "suffixText": "Road.",
+              "questionNumber": 1,
+              "prefix": "Sophie clarifies that the Starview Cinema hotspot is situated precisely at the junction of East Road and",
+              "prefixEn": "Sophie clarifies that the Starview Cinema hotspot is situated precisely at the junction of East Road and",
+              "prefixVi": "Sophie làm rõ rằng điểm nóng rạp chiếu phim Starview Cinema nằm chính xác tại nút giao giữa East Road và đường",
+              "prefixTextEn": "Sophie clarifies that the Starview Cinema hotspot is situated precisely at the junction of East Road and",
+              "prefixTextVi": "Sophie làm rõ rằng điểm nóng rạp chiếu phim Starview Cinema nằm chính xác tại nút giao giữa East Road và đường",
+              "suffix": "Road.",
+              "suffixEn": "Road.",
+              "suffixVi": "Road.",
+              "suffixTextEn": "Road.",
+              "suffixTextVi": "Road."
             },
             {
               "id": "t32-q2",
               "number": 2,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "During morning peak hours, public buses exiting the station encounter difficulty because they are unable to make a [2] ......... turn into East Road.",
               "questionTextEn": "During morning peak hours, public buses exiting the station encounter difficulty because they are unable to make a [2] ......... turn into East Road.",
               "questionTextVi": "Vào giờ cao điểm buổi sáng, xe buýt rời nhà ga gặp trở ngại vì không thể rẽ [2] ......... vào đường East Road.",
@@ -90,12 +109,23 @@ export const track32UrbanTrafficHotspots = {
               "audioTimestamp": 52,
               "order": 2,
               "prefixText": "During morning peak hours, public buses exiting the station encounter difficulty because they are unable to make a",
-              "suffixText": "turn into East Road."
+              "suffixText": "turn into East Road.",
+              "questionNumber": 2,
+              "prefix": "During morning peak hours, public buses exiting the station encounter difficulty because they are unable to make a",
+              "prefixEn": "During morning peak hours, public buses exiting the station encounter difficulty because they are unable to make a",
+              "prefixVi": "Vào giờ cao điểm buổi sáng, xe buýt rời nhà ga gặp trở ngại vì không thể rẽ",
+              "prefixTextEn": "During morning peak hours, public buses exiting the station encounter difficulty because they are unable to make a",
+              "prefixTextVi": "Vào giờ cao điểm buổi sáng, xe buýt rời nhà ga gặp trở ngại vì không thể rẽ",
+              "suffix": "turn into East Road.",
+              "suffixEn": "turn into East Road.",
+              "suffixVi": "vào đường East Road.",
+              "suffixTextEn": "turn into East Road.",
+              "suffixTextVi": "vào đường East Road."
             },
             {
               "id": "t32-q3",
               "number": 3,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "In the evening rush hour, severe traffic queues back up all the way to the town’s main [3] ..........",
               "questionTextEn": "In the evening rush hour, severe traffic queues back up all the way to the town’s main [3] ..........",
               "questionTextVi": "Vào giờ tan tầm buổi tối, các đoàn xe ùn ứ kéo dài ngược về tận [3] ......... chính của thị trấn.",
@@ -109,12 +139,23 @@ export const track32UrbanTrafficHotspots = {
               "audioTimestamp": 67,
               "order": 3,
               "prefixText": "In the evening rush hour, severe traffic queues back up all the way to the town’s main",
-              "suffixText": ""
+              "suffixText": "",
+              "questionNumber": 3,
+              "prefix": "In the evening rush hour, severe traffic queues back up all the way to the town’s main",
+              "prefixEn": "In the evening rush hour, severe traffic queues back up all the way to the town’s main",
+              "prefixVi": "Vào giờ tan tầm buổi tối, các đoàn xe ùn ứ kéo dài ngược về tận",
+              "prefixTextEn": "In the evening rush hour, severe traffic queues back up all the way to the town’s main",
+              "prefixTextVi": "Vào giờ tan tầm buổi tối, các đoàn xe ùn ứ kéo dài ngược về tận",
+              "suffix": "",
+              "suffixEn": "",
+              "suffixVi": "chính của thị trấn.",
+              "suffixTextEn": "",
+              "suffixTextVi": "chính của thị trấn."
             },
             {
               "id": "t32-q4",
               "number": 4,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Significant commuter traffic flows into the town from Liverton in the north and [4] ......... in the south.",
               "questionTextEn": "Significant commuter traffic flows into the town from Liverton in the north and [4] ......... in the south.",
               "questionTextVi": "Lượng lớn người đi làm đổ dồn vào thị trấn từ Liverton ở phía bắc và [4] ......... ở phía nam.",
@@ -128,12 +169,23 @@ export const track32UrbanTrafficHotspots = {
               "audioTimestamp": 77,
               "order": 4,
               "prefixText": "Significant commuter traffic flows into the town from Liverton in the north and",
-              "suffixText": "in the south."
+              "suffixText": "in the south.",
+              "questionNumber": 4,
+              "prefix": "Significant commuter traffic flows into the town from Liverton in the north and",
+              "prefixEn": "Significant commuter traffic flows into the town from Liverton in the north and",
+              "prefixVi": "Lượng lớn người đi làm đổ dồn vào thị trấn từ Liverton ở phía bắc và",
+              "prefixTextEn": "Significant commuter traffic flows into the town from Liverton in the north and",
+              "prefixTextVi": "Lượng lớn người đi làm đổ dồn vào thị trấn từ Liverton ở phía bắc và",
+              "suffix": "in the south.",
+              "suffixEn": "in the south.",
+              "suffixVi": "ở phía nam.",
+              "suffixTextEn": "in the south.",
+              "suffixTextVi": "ở phía nam."
             },
             {
               "id": "t32-q5",
               "number": 5,
-              "type": "fill_in_blank",
+              "type": "note_completion",
               "questionText": "Heavy lorries entering the Town Hall sector originate from the [5] ......... estate situated on the west side of town.",
               "questionTextEn": "Heavy lorries entering the Town Hall sector originate from the [5] ......... estate situated on the west side of town.",
               "questionTextVi": "Những chiếc xe tải hạng nặng tiến vào khu vực Tòa thị chính bắt nguồn từ khu [5] ......... nằm ở phía tây thị trấn.",
@@ -148,17 +200,20 @@ export const track32UrbanTrafficHotspots = {
               "audioTimestamp": 126,
               "order": 5,
               "prefixText": "Heavy lorries entering the Town Hall sector originate from the",
-              "suffixText": "estate situated on the west side of town."
+              "suffixText": "estate situated on the west side of town.",
+              "questionNumber": 5,
+              "prefix": "Heavy lorries entering the Town Hall sector originate from the",
+              "prefixEn": "Heavy lorries entering the Town Hall sector originate from the",
+              "prefixVi": "Những chiếc xe tải hạng nặng tiến vào khu vực Tòa thị chính bắt nguồn từ khu",
+              "prefixTextEn": "Heavy lorries entering the Town Hall sector originate from the",
+              "prefixTextVi": "Những chiếc xe tải hạng nặng tiến vào khu vực Tòa thị chính bắt nguồn từ khu",
+              "suffix": "estate situated on the west side of town.",
+              "suffixEn": "estate situated on the west side of town.",
+              "suffixVi": "nằm ở phía tây thị trấn.",
+              "suffixTextEn": "estate situated on the west side of town.",
+              "suffixTextVi": "nằm ở phía tây thị trấn."
             }
-          ],
-          "id": "qg-t32-p1",
-          "type": "note_completion",
-          "title": "Questions 1–5: Town Traffic Hotspot Mapping Notes",
-          "titleEn": "Questions 1–5: Town Traffic Hotspot Mapping Notes",
-          "titleVi": "Câu 1–5: Ghi chú xác định điểm nóng kẹt xe trên bản đồ",
-          "instruction": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
-          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe."
+          ]
         }
       ]
     },
@@ -190,10 +245,18 @@ export const track32UrbanTrafficHotspots = {
       "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
       "questionGroups": [
         {
-          "groupType": "multiple-choice",
+          "id": "qg-t32-p2",
+          "type": "multiple_choice",
+          "groupType": "multiple_choice",
+          "title": "Questions 6–10: Strategic Hotspot Evaluation & Action Plan",
+          "titleEn": "Questions 6–10: Strategic Hotspot Evaluation & Action Plan",
+          "titleVi": "Câu 6–10: Đánh giá điểm nghẽn chiến lược & Kế hoạch hành động",
           "groupTitle": "Questions 6–10: Strategic Hotspot Evaluation & Action Plan",
           "groupTitleEn": "Questions 6–10: Strategic Hotspot Evaluation & Action Plan",
           "groupTitleVi": "Câu 6–10: Đánh giá điểm nghẽn chiến lược & Kế hoạch hành động",
+          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
+          "instructionEn": "Choose the correct letter, A, B, C, or D.",
+          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
           "questions": [
             {
               "id": "t32-q6",
@@ -242,7 +305,8 @@ export const track32UrbanTrafficHotspots = {
               "explanationEn": "Sophie quotes official figures: \"Statistics show that the worst place is by the Town Hall.\" Option A is directly supported.",
               "audioTimestamp": 12,
               "order": 6,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 6
             },
             {
               "id": "t32-q7",
@@ -291,7 +355,8 @@ export const track32UrbanTrafficHotspots = {
               "explanationEn": "When Sophie asks if he has ever been there, Robert admits: \"No, I haven't. I thought it was by the main roundabout.\" Option A is correct.",
               "audioTimestamp": 37,
               "order": 7,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 7
             },
             {
               "id": "t32-q8",
@@ -340,7 +405,8 @@ export const track32UrbanTrafficHotspots = {
               "explanationEn": "Robert relates his firsthand commute: \"It's especially bad just by the Arts Centre, where the road comes into the roundabout. The buses have a lot of trouble getting through that as well.\" Option A is correct.",
               "audioTimestamp": 93,
               "order": 8,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 8
             },
             {
               "id": "t32-q9",
@@ -389,7 +455,8 @@ export const track32UrbanTrafficHotspots = {
               "explanationEn": "Sophie explains the source of gridlock: \"...with all the heavy lorries coming into the center from the industrial estate on the west side of town. They usually make their deliveries in the morning rush hour.\" Option A is correct.",
               "audioTimestamp": 125,
               "order": 9,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 9
             },
             {
               "id": "t32-q10",
@@ -438,17 +505,10 @@ export const track32UrbanTrafficHotspots = {
               "explanationEn": "Robert deduces: \"So you're saying that if we stop them coming in early to the area by Central Park where the Town Hall is, that would make the traffic a lot lighter?\" and Sophie confirms \"I'm sure it would.\" Option A is correct.",
               "audioTimestamp": 135,
               "order": 10,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 10
             }
-          ],
-          "id": "qg-t32-p2",
-          "type": "multiple_choice",
-          "title": "Questions 6–10: Strategic Hotspot Evaluation & Action Plan",
-          "titleEn": "Questions 6–10: Strategic Hotspot Evaluation & Action Plan",
-          "titleVi": "Câu 6–10: Đánh giá điểm nghẽn chiến lược & Kế hoạch hành động",
-          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
-          "instructionEn": "Choose the correct letter, A, B, C, or D.",
-          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi."
+          ]
         }
       ]
     }

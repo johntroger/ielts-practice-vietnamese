@@ -32,7 +32,7 @@ import {
   createRandomFullListeningTest 
 } from '../../utils/listeningTestAssembler';
 import { useTranslation } from '../../i18n';
-import { formatTestTitle, formatTestDescription } from '../../utils/testLocalizationHelper';
+import { formatTestTitle, formatTestDescription, getListeningTestDisplayInfo } from '../../utils/testLocalizationHelper';
 
 export default function ListeningLibraryModal({
   isOpen,
@@ -184,8 +184,12 @@ export default function ListeningLibraryModal({
 
       // 2. Search query
       const q = searchQuery.toLowerCase().trim();
+      const displayInfo = q ? getListeningTestDisplayInfo(test, isEn) : null;
       const matchesSearch = !q ||
         test.title?.toLowerCase().includes(q) ||
+        test.id?.toLowerCase().includes(q) ||
+        displayInfo?.trackBadge?.toLowerCase().includes(q) ||
+        displayInfo?.shortTitle?.toLowerCase().includes(q) ||
         test.description?.toLowerCase().includes(q) ||
         test.parts?.some(p => 
           p.title?.toLowerCase().includes(q) || 
@@ -195,7 +199,7 @@ export default function ListeningLibraryModal({
 
       return matchesTab && matchesSearch;
     });
-  }, [allListeningTests, activeTab, searchQuery, hideMastered, masteredIds]);
+  }, [allListeningTests, activeTab, searchQuery, hideMastered, masteredIds, isEn]);
 
   const sortedTests = useMemo(() => {
     if (sortBy === 'rating-desc') {
@@ -875,6 +879,15 @@ export default function ListeningLibraryModal({
                                 : (isEn ? `📚 Cambridge Standard${test.cambridgeBook ? ` (Book ${test.cambridgeBook})` : ''}` : `📚 Chuẩn Cambridge${test.cambridgeBook ? ` (Cam ${test.cambridgeBook})` : ''}`)}
                             </span>
                           )}
+
+                          {(() => {
+                            const { trackBadge } = getListeningTestDisplayInfo(test, isEn);
+                            return trackBadge ? (
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-cyan-700 text-white shadow-2xs">
+                                {trackBadge}
+                              </span>
+                            ) : null;
+                          })()}
 
                           {masteredIds.includes(test.id) && (
                             <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">

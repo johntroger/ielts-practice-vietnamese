@@ -48,25 +48,90 @@ export const track37AshtownUrbanTransformation = {
       ],
       "transcript": "[00:00] Track 37.\n[00:02] Jane: Have you got the results from the survey we did about the changes that have been made to Ashtown in the last 25 years, Bill?\n[00:10] Bill: Yes, Jane. And there've been a lot of changes. Some of them people are happy about, and some of them they aren't.\n[00:18] Jane: What, for example?\n[00:20] Bill: Well, for example, the bus system used to be much better. And even though the old uncomfortable buses have been replaced with new stylish ones, fewer people use them.\n[00:32] Jane: Why is that?\n[00:33] Bill: A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.\n[00:58] Jane: Most people must be happy with fewer cars in the town centre though?\n[01:03] Bill: I'm not so sure. Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened. The biggest success, in my opinion, is the building of areas for cyclists. Far more people are travelling by bike and using the facilities than anybody could have imagined.\n[01:29] Jane: That's all very interesting, but how have the jobs that people do in this city changed? That's sure to have had an impact on what the town looks like.\n[01:39] Bill: You're not wrong there. The town used to be a lot more polluted due to all of the products that were made in factories here. Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now.",
       "transcripts": [
-        { "start": 0, "end": 2, "speaker": "Narrator", "text": "Track 37." },
-        { "start": 2, "end": 10, "speaker": "Jane", "text": "Have you got the results from the survey we did about the changes that have been made to Ashtown in the last 25 years, Bill?" },
-        { "start": 10, "end": 18, "speaker": "Bill", "text": "Yes, Jane. And there've been a lot of changes. Some of them people are happy about, and some of them they aren't." },
-        { "start": 18, "end": 20, "speaker": "Jane", "text": "What, for example?" },
-        { "start": 20, "end": 32, "speaker": "Bill", "text": "Well, for example, the bus system used to be much better. And even though the old uncomfortable buses have been replaced with new stylish ones, fewer people use them." },
-        { "start": 32, "end": 33, "speaker": "Jane", "text": "Why is that?" },
-        { "start": 33, "end": 58, "speaker": "Bill", "text": "A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.", "targetQuestion": 1, "speechTip": "Key evidence for Q1: Buses now serve a limited number of destinations" },
-        { "start": 58, "end": 63, "speaker": "Jane", "text": "Most people must be happy with fewer cars in the town centre though?" },
-        { "start": 63, "end": 89, "speaker": "Bill", "text": "I'm not so sure. Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened. The biggest success, in my opinion, is the building of areas for cyclists. Far more people are travelling by bike and using the facilities than anybody could have imagined.", "targetQuestion": 2, "speechTip": "Key evidence for Q2 (unbuilt bypass) and Q3 (cycling infrastructure success)" },
-        { "start": 89, "end": 99, "speaker": "Jane", "text": "That's all very interesting, but how have the jobs that people do in this city changed? That's sure to have had an impact on what the town looks like." },
-        { "start": 99, "end": 128, "speaker": "Bill", "text": "You're not wrong there. The town used to be a lot more polluted due to all of the products that were made in factories here. Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now.", "targetQuestion": 4, "speechTip": "Key evidence for Q4 & Q5: Jobs in universities and colleges" }
+        {
+          "start": 0,
+          "end": 2,
+          "speaker": "Narrator",
+          "text": "Track 37."
+        },
+        {
+          "start": 2,
+          "end": 10,
+          "speaker": "Jane",
+          "text": "Have you got the results from the survey we did about the changes that have been made to Ashtown in the last 25 years, Bill?"
+        },
+        {
+          "start": 10,
+          "end": 18,
+          "speaker": "Bill",
+          "text": "Yes, Jane. And there've been a lot of changes. Some of them people are happy about, and some of them they aren't."
+        },
+        {
+          "start": 18,
+          "end": 20,
+          "speaker": "Jane",
+          "text": "What, for example?"
+        },
+        {
+          "start": 20,
+          "end": 32,
+          "speaker": "Bill",
+          "text": "Well, for example, the bus system used to be much better. And even though the old uncomfortable buses have been replaced with new stylish ones, fewer people use them."
+        },
+        {
+          "start": 32,
+          "end": 33,
+          "speaker": "Jane",
+          "text": "Why is that?"
+        },
+        {
+          "start": 33,
+          "end": 58,
+          "speaker": "Bill",
+          "text": "A lot of people think it's because fares are higher, but that isn't true. In fact, the cost compared to average salaries is pretty much the same as 25 years ago. The fact is that the buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.",
+          "targetQuestion": 1,
+          "speechTip": "Key evidence for Q1: Buses now serve a limited number of destinations"
+        },
+        {
+          "start": 58,
+          "end": 63,
+          "speaker": "Jane",
+          "text": "Most people must be happy with fewer cars in the town centre though?"
+        },
+        {
+          "start": 63,
+          "end": 89,
+          "speaker": "Bill",
+          "text": "I'm not so sure. Five years ago, a bypass was supposed to be built, so that people could easily get from one side of the town to the other without going into the centre. But those plans still haven't happened. The biggest success, in my opinion, is the building of areas for cyclists. Far more people are travelling by bike and using the facilities than anybody could have imagined.",
+          "targetQuestion": 2,
+          "speechTip": "Key evidence for Q2 (unbuilt bypass) and Q3 (cycling infrastructure success)"
+        },
+        {
+          "start": 89,
+          "end": 99,
+          "speaker": "Jane",
+          "text": "That's all very interesting, but how have the jobs that people do in this city changed? That's sure to have had an impact on what the town looks like."
+        },
+        {
+          "start": 99,
+          "end": 128,
+          "speaker": "Bill",
+          "text": "You're not wrong there. The town used to be a lot more polluted due to all of the products that were made in factories here. Manufacturing is still important of course, and services such as accountancy firms and website developers employ a lot of people in the town, but you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now.",
+          "targetQuestion": 4,
+          "speechTip": "Key evidence for Q4 & Q5: Jobs in universities and colleges"
+        }
       ],
       "questionGroups": [
         {
           "id": "qg-t37-p1",
           "type": "multiple_choice",
+          "groupType": "multiple_choice",
           "title": "Questions 1–5: Multiple Choice on Urban Infrastructure Changes",
           "titleEn": "Questions 1–5: Multiple Choice on Urban Infrastructure Changes",
           "titleVi": "Câu hỏi 1–5: Trắc nghiệm về những chuyển biến hạ tầng đô thị",
+          "groupTitle": "Questions 1–5: Multiple Choice on Urban Infrastructure Changes",
+          "groupTitleEn": "Questions 1–5: Multiple Choice on Urban Infrastructure Changes",
+          "groupTitleVi": "Câu hỏi 1–5: Trắc nghiệm về những chuyển biến hạ tầng đô thị",
           "instruction": "Choose the correct letter, A, B, or C.",
           "instructionEn": "Choose the correct letter, A, B, or C.",
           "instructionVi": "Chọn chữ cái chính xác, A, B hoặc C.",
@@ -109,7 +174,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Bill bác bỏ bẫy giá vé (\"that isn't true... cost compared to average salaries is pretty much the same\") và chỉ ra nguyên nhân cốt lõi: \"buses now just go to the most popular destinations, and as the city centre no longer allows vehicles, there are even fewer places where buses can go.\"",
               "explanationEn": "Bill refutes the fare trap (\"that isn't true\") and confirms that buses now only operate along limited corridors serving popular destinations, compounded by the vehicle-free city center.",
               "audioTimestamp": 46,
-              "order": 1
+              "order": 1,
+              "number": 1,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t37-2",
@@ -149,7 +216,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Bill giải thích rằng cách đây 5 năm, một tuyến đường tránh (bypass) đã được dự kiến xây dựng để đi từ phía này sang phía kia mà không cần vào trung tâm, \"but those plans still haven't happened.\"",
               "explanationEn": "Bill highlights that the bypass meant to divert cross-town traffic away from the city center was never executed (\"those plans still haven't happened\").",
               "audioTimestamp": 65,
-              "order": 2
+              "order": 2,
+              "number": 2,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t37-3",
@@ -189,7 +258,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Bill khẳng định: \"The biggest success, in my opinion, is the building of areas for cyclists. Far more people are travelling by bike and using the facilities than anybody could have imagined.\"",
               "explanationEn": "Bill explicitly states: \"The biggest success, in my opinion, is the building of areas for cyclists\", which surpassed all initial usage expectations.",
               "audioTimestamp": 77,
-              "order": 3
+              "order": 3,
+              "number": 3,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t37-4",
@@ -229,7 +300,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Dù kế toán và phát triển web tạo nhiều việc làm, Bill nhấn mạnh: \"you only have to see the number of universities and colleges that have opened in the town in the last 25 years to see that is where most of the jobs are now.\"",
               "explanationEn": "While professional services employ many, Bill emphasizes that the influx of universities and colleges over the past 25 years represents \"where most of the jobs are now\".",
               "audioTimestamp": 118,
-              "order": 4
+              "order": 4,
+              "number": 4,
+              "type": "multiple_choice"
             },
             {
               "id": "q-t37-5",
@@ -269,7 +342,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Bill nhận định: \"The town used to be a lot more polluted due to all of the products that were made in factories here\", cho thấy hiện nay mức độ ô nhiễm đã giảm đáng kể so với trước.",
               "explanationEn": "Bill notes that \"the town used to be a lot more polluted due to all of the products that were made in factories here\", indicating a cleaner present-day atmosphere.",
               "audioTimestamp": 101,
-              "order": 5
+              "order": 5,
+              "number": 5,
+              "type": "multiple_choice"
             }
           ]
         }
@@ -299,25 +374,94 @@ export const track37AshtownUrbanTransformation = {
       ],
       "transcript": "[02:08] Jane: Okay. Now shall we have a look at how some of the buildings have changed?\n[02:14] Bill: I think that, first of all, we should look at how the railway station has changed. As there are now fewer buses, more people drive to the railway station to take a train. 25 years ago, the car park was much smaller. And although it might not look very modern, most of the spaces have only been there for five years.\n[02:36] Jane: Oh yes. Didn't the cinema used to be quite near the railway station? I suppose they built more spaces when they knocked it down?\n[02:44] Bill: That's right. The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street.\n[02:54] Jane: What about the indoor market? My mum says there used to be an outdoor one, but that closed down a long time ago.\n[03:03] Bill: Yes, and when the outdoor market closed down, the indoor market became a lot more popular. 10 years ago, it looked like it would close down too, as the building was really old and it had become dangerous. It used to be owned by the council, but a private business bought it and made the changes so that it could stay open.\n[03:25] Jane: It's good to see it's so popular still, despite all the new supermarkets in town. I bet the library isn't as popular as it used to be though.\n[03:35] Bill: You'd be surprised! A lot of people still use the library. Most people think that people are less keen on borrowing books than in the past, but the library has adapted to changes. It's true that fewer people go in there to borrow books, but since they made tablets and computers available, more people have started visiting it. It has really fast Wi-Fi too, so people like it because of that.\n[04:03] Jane: Quite a few of the factories have closed down or been sold in the last 25 years though. So what happened to all the buildings that used to house them? I suppose they're all shut down now?\n[04:16] Bill: Some of them have been demolished, and some have been converted for other uses, but that isn't surprising. The thing that I found surprising was that although education has become more important to the economy of the town, there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery.\n[04:39] Jane: Oh, really? Anyway, I think we need to look at how we're going to present these findings...",
       "transcripts": [
-        { "start": 128, "end": 134, "speaker": "Jane", "text": "Okay. Now shall we have a look at how some of the buildings have changed?" },
-        { "start": 134, "end": 156, "speaker": "Bill", "text": "I think that, first of all, we should look at how the railway station has changed. As there are now fewer buses, more people drive to the railway station to take a train. 25 years ago, the car park was much smaller. And although it might not look very modern, most of the spaces have only been there for five years.", "targetQuestion": 6, "speechTip": "Q6: Railway station car park capacity expanded five years ago" },
-        { "start": 156, "end": 164, "speaker": "Jane", "text": "Oh yes. Didn't the cinema used to be quite near the railway station? I suppose they built more spaces when they knocked it down?" },
-        { "start": 164, "end": 174, "speaker": "Bill", "text": "That's right. The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street.", "targetQuestion": 7, "speechTip": "Q7: Grand Cinema was rebuilt in King Street" },
-        { "start": 174, "end": 183, "speaker": "Jane", "text": "What about the indoor market? My mum says there used to be an outdoor one, but that closed down a long time ago." },
-        { "start": 183, "end": 205, "speaker": "Bill", "text": "Yes, and when the outdoor market closed down, the indoor market became a lot more popular. 10 years ago, it looked like it would close down too, as the building was really old and it had become dangerous. It used to be owned by the council, but a private business bought it and made the changes so that it could stay open.", "targetQuestion": 8, "speechTip": "Q8: Indoor market privately owned and renovated" },
-        { "start": 205, "end": 215, "speaker": "Jane", "text": "It's good to see it's so popular still, despite all the new supermarkets in town. I bet the library isn't as popular as it used to be though." },
-        { "start": 215, "end": 243, "speaker": "Bill", "text": "You'd be surprised! A lot of people still use the library. Most people think that people are less keen on borrowing books than in the past, but the library has adapted to changes. It's true that fewer people go in there to borrow books, but since they made tablets and computers available, more people have started visiting it. It has really fast Wi-Fi too, so people like it because of that.", "targetQuestion": 9, "speechTip": "Q9: Library adapted with tablets, computers, and fast Wi-Fi" },
-        { "start": 243, "end": 256, "speaker": "Jane", "text": "Quite a few of the factories have closed down or been sold in the last 25 years though. So what happened to all the buildings that used to house them? I suppose they're all shut down now?" },
-        { "start": 256, "end": 279, "speaker": "Bill", "text": "Some of them have been demolished, and some have been converted for other uses, but that isn't surprising. The thing that I found surprising was that although education has become more important to the economy of the town, there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery.", "targetQuestion": 10, "speechTip": "Q10: Art college repurposed as doctor's surgery" },
-        { "start": 279, "end": 288, "speaker": "Jane", "text": "Oh, really? Anyway, I think we need to look at how we're going to present these findings..." }
+        {
+          "start": 128,
+          "end": 134,
+          "speaker": "Jane",
+          "text": "Okay. Now shall we have a look at how some of the buildings have changed?"
+        },
+        {
+          "start": 134,
+          "end": 156,
+          "speaker": "Bill",
+          "text": "I think that, first of all, we should look at how the railway station has changed. As there are now fewer buses, more people drive to the railway station to take a train. 25 years ago, the car park was much smaller. And although it might not look very modern, most of the spaces have only been there for five years.",
+          "targetQuestion": 6,
+          "speechTip": "Q6: Railway station car park capacity expanded five years ago"
+        },
+        {
+          "start": 156,
+          "end": 164,
+          "speaker": "Jane",
+          "text": "Oh yes. Didn't the cinema used to be quite near the railway station? I suppose they built more spaces when they knocked it down?"
+        },
+        {
+          "start": 164,
+          "end": 174,
+          "speaker": "Bill",
+          "text": "That's right. The Grand Cinema used to be next to the railway station, but they rebuilt one exactly the same as the old one over in King Street.",
+          "targetQuestion": 7,
+          "speechTip": "Q7: Grand Cinema was rebuilt in King Street"
+        },
+        {
+          "start": 174,
+          "end": 183,
+          "speaker": "Jane",
+          "text": "What about the indoor market? My mum says there used to be an outdoor one, but that closed down a long time ago."
+        },
+        {
+          "start": 183,
+          "end": 205,
+          "speaker": "Bill",
+          "text": "Yes, and when the outdoor market closed down, the indoor market became a lot more popular. 10 years ago, it looked like it would close down too, as the building was really old and it had become dangerous. It used to be owned by the council, but a private business bought it and made the changes so that it could stay open.",
+          "targetQuestion": 8,
+          "speechTip": "Q8: Indoor market privately owned and renovated"
+        },
+        {
+          "start": 205,
+          "end": 215,
+          "speaker": "Jane",
+          "text": "It's good to see it's so popular still, despite all the new supermarkets in town. I bet the library isn't as popular as it used to be though."
+        },
+        {
+          "start": 215,
+          "end": 243,
+          "speaker": "Bill",
+          "text": "You'd be surprised! A lot of people still use the library. Most people think that people are less keen on borrowing books than in the past, but the library has adapted to changes. It's true that fewer people go in there to borrow books, but since they made tablets and computers available, more people have started visiting it. It has really fast Wi-Fi too, so people like it because of that.",
+          "targetQuestion": 9,
+          "speechTip": "Q9: Library adapted with tablets, computers, and fast Wi-Fi"
+        },
+        {
+          "start": 243,
+          "end": 256,
+          "speaker": "Jane",
+          "text": "Quite a few of the factories have closed down or been sold in the last 25 years though. So what happened to all the buildings that used to house them? I suppose they're all shut down now?"
+        },
+        {
+          "start": 256,
+          "end": 279,
+          "speaker": "Bill",
+          "text": "Some of them have been demolished, and some have been converted for other uses, but that isn't surprising. The thing that I found surprising was that although education has become more important to the economy of the town, there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery.",
+          "targetQuestion": 10,
+          "speechTip": "Q10: Art college repurposed as doctor's surgery"
+        },
+        {
+          "start": 279,
+          "end": 288,
+          "speaker": "Jane",
+          "text": "Oh, really? Anyway, I think we need to look at how we're going to present these findings..."
+        }
       ],
       "questionGroups": [
         {
           "id": "qg-t37-p2",
           "type": "matching",
+          "groupType": "matching",
           "title": "Questions 6–10: Matching Civic Buildings with Current Situation",
           "titleEn": "Questions 6–10: Matching Civic Buildings with Current Situation",
           "titleVi": "Câu hỏi 6–10: Nối các công trình công cộng với tình trạng hiện tại",
+          "groupTitle": "Questions 6–10: Matching Civic Buildings with Current Situation",
+          "groupTitleEn": "Questions 6–10: Matching Civic Buildings with Current Situation",
+          "groupTitleVi": "Câu hỏi 6–10: Nối các công trình công cộng với tình trạng hiện tại",
           "instruction": "What is the current situation regarding each of the following buildings in Ashtown?\nChoose five answers from the box and write the correct letter, A–G, next to Questions 6–10.\n\nList of Situations:\nA: It was rebuilt in a completely different location\nB: It is now privately owned and has undergone renovations\nC: Its parking capacity was expanded five years ago\nD: It has attracted more users by introducing modern digital technology\nE: It has been repurposed as a medical healthcare facility\nF: It was permanently shut down due to structural decay\nG: It was converted into a contemporary art museum",
           "instructionEn": "What is the current situation regarding each of the following buildings in Ashtown?\nChoose five answers from the box and write the correct letter, A–G, next to Questions 6–10.\n\nList of Situations:\nA: It was rebuilt in a completely different location\nB: It is now privately owned and has undergone renovations\nC: Its parking capacity was expanded five years ago\nD: It has attracted more users by introducing modern digital technology\nE: It has been repurposed as a medical healthcare facility\nF: It was permanently shut down due to structural decay\nG: It was converted into a contemporary art museum",
           "instructionVi": "Tình trạng hiện tại của mỗi công trình sau đây tại Ashtown là gì?\nChọn 5 đáp án từ khung và điền chữ cái A–G bên cạnh Câu hỏi 6–10.\n\nDanh sách tình trạng:\nA: Đã được xây dựng lại tại một địa điểm hoàn toàn khác\nB: Hiện thuộc sở hữu tư nhân và đã qua tu sửa nâng cấp\nC: Bãi đỗ xe đã được mở rộng thêm sức chứa từ 5 năm trước\nD: Thu hút thêm nhiều người nhờ bổ sung công nghệ kỹ thuật số hiện đại\nE: Đã được chuyển đổi công năng thành cơ sở y tế khám chữa bệnh\nF: Bị đóng cửa vĩnh viễn do xuống cấp hư hỏng kết cấu\nG: Đã được chuyển đổi thành bảo tàng mỹ thuật đương đại",
@@ -360,7 +504,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Bill nói: \"25 years ago, the car park was much smaller... most of the spaces have only been there for five years.\" Bãi đỗ xe đã được cơi nới mở rộng 5 năm trước (đáp án C).",
               "explanationEn": "Bill explains that the railway station parking capacity was significantly enlarged five years ago: \"most of the spaces have only been there for five years\" (Option C).",
               "audioTimestamp": 154,
-              "order": 6
+              "order": 6,
+              "number": 6,
+              "type": "matching"
             },
             {
               "id": "q-t37-7",
@@ -400,7 +546,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Rạp Grand Cinema cũ cạnh ga tàu đã bị phá dỡ, và \"they rebuilt one exactly the same as the old one over in King Street\" (xây lại tại địa điểm khác ở phố King Street -> đáp án A).",
               "explanationEn": "The original cinema near the station was demolished and reconstructed identically on a different street: \"rebuilt one exactly the same as the old one over in King Street\" (Option A).",
               "audioTimestamp": 172,
-              "order": 7
+              "order": 7,
+              "number": 7,
+              "type": "matching"
             },
             {
               "id": "q-t37-8",
@@ -440,7 +588,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Chợ từng có nguy cơ đóng cửa vì nguy hiểm, \"It used to be owned by the council, but a private business bought it and made the changes so that it could stay open\" (thuộc sở hữu tư nhân và tu sửa -> đáp án B).",
               "explanationEn": "The municipal council sold the indoor market to a commercial operator: \"a private business bought it and made the changes so that it could stay open\" (Option B).",
               "audioTimestamp": 202,
-              "order": 8
+              "order": 8,
+              "number": 8,
+              "type": "matching"
             },
             {
               "id": "q-t37-9",
@@ -480,7 +630,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Thư viện thu hút đông khách hơn nhờ công nghệ số: \"since they made tablets and computers available, more people have started visiting it. It has really fast Wi-Fi too\" (đáp án D).",
               "explanationEn": "The library diversified beyond physical books: \"since they made tablets and computers available, more people have started visiting it\" with fast Wi-Fi (Option D).",
               "audioTimestamp": 235,
-              "order": 9
+              "order": 9,
+              "number": 9,
+              "type": "matching"
             },
             {
               "id": "q-t37-10",
@@ -520,44 +672,9 @@ export const track37AshtownUrbanTransformation = {
               "explanation": "Bill chia sẻ sự thật bất ngờ: \"there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery\" (chuyển đổi thành phòng khám y tế -> đáp án E).",
               "explanationEn": "The former art college was adapted for clinical healthcare: \"the art college is now used as a doctor's surgery\" (Option E).",
               "audioTimestamp": 277,
-              "order": 10
-            }
-          ],
-          "options": [
-            {
-              "key": "A",
-              "text": "It was rebuilt in a completely different location",
-              "textEn": "It was rebuilt in a completely different location"
-            },
-            {
-              "key": "B",
-              "text": "It is now privately owned and has undergone renovations",
-              "textEn": "It is now privately owned and has undergone renovations"
-            },
-            {
-              "key": "C",
-              "text": "Its parking capacity was expanded five years ago",
-              "textEn": "Its parking capacity was expanded five years ago"
-            },
-            {
-              "key": "D",
-              "text": "It has attracted more users by introducing modern digital technology",
-              "textEn": "It has attracted more users by introducing modern digital technology"
-            },
-            {
-              "key": "E",
-              "text": "It has been repurposed as a medical healthcare facility",
-              "textEn": "It has been repurposed as a medical healthcare facility"
-            },
-            {
-              "key": "F",
-              "text": "It was permanently shut down due to structural decay",
-              "textEn": "It was permanently shut down due to structural decay"
-            },
-            {
-              "key": "G",
-              "text": "It was converted into a contemporary art museum",
-              "textEn": "It was converted into a contemporary art museum"
+              "order": 10,
+              "number": 10,
+              "type": "matching"
             }
           ]
         }

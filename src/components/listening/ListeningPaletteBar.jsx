@@ -42,7 +42,7 @@ export default function ListeningPaletteBar({
       return partsData.map(p => {
         const qs = (p.questionGroups || []).flatMap(g => g.questions || []);
         if (qs.length > 0) {
-          const orders = qs.map(q => q.order ?? q.number).filter(n => typeof n === 'number');
+          const orders = qs.map(q => q.order ?? q.number ?? q.questionNumber).filter(n => typeof n === 'number');
           if (orders.length > 0) {
             const minO = Math.min(...orders);
             const maxO = Math.max(...orders);

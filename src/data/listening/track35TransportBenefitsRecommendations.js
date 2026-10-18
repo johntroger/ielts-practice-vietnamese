@@ -47,32 +47,18 @@ export const track35TransportBenefitsRecommendations = {
       "instructionVi": "Chọn phương án thích hợp (A–D) cho mỗi tiêu chí dưới đây theo sự thống nhất cuối cùng của hai sinh viên.",
       "questionGroups": [
         {
+          "id": "qg-t35-p1",
+          "type": "matching",
           "groupType": "matching",
+          "title": "Questions 1–5: Final Scheme Recommendations by Primary Benefit",
+          "titleEn": "Questions 1–5: Final Scheme Recommendations by Primary Benefit",
+          "titleVi": "Câu 1–5: Khuyến nghị đề án cuối cùng theo từng lợi ích then chốt",
           "groupTitle": "Questions 1–5: Final Scheme Recommendations by Primary Benefit",
           "groupTitleEn": "Questions 1–5: Final Scheme Recommendations by Primary Benefit",
           "groupTitleVi": "Câu 1–5: Khuyến nghị đề án cuối cùng theo từng lợi ích then chốt",
-          "optionsPool": [
-            {
-              "id": "A",
-              "text": "The new tram system",
-              "textEn": "The new tram system"
-            },
-            {
-              "id": "B",
-              "text": "Bus and cycle only routes",
-              "textEn": "Bus and cycle only routes"
-            },
-            {
-              "id": "C",
-              "text": "The park-and-ride scheme",
-              "textEn": "The park-and-ride scheme"
-            },
-            {
-              "id": "D",
-              "text": "The pedestrian area and one-way system",
-              "textEn": "The pedestrian area and one-way system"
-            }
-          ],
+          "instruction": "Chọn phương án thích hợp (A–D) cho mỗi tiêu chí dưới đây theo sự thống nhất cuối cùng của hai sinh viên.",
+          "instructionEn": "Which scheme do the students finally agree is the best for each objective? Write the correct letter, A, B, C, or D, next to Questions 1–5.",
+          "instructionVi": "Chọn phương án thích hợp (A–D) cho mỗi tiêu chí dưới đây theo sự thống nhất cuối cùng của hai sinh viên.",
           "questions": [
             {
               "id": "t35-q1",
@@ -91,7 +77,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanation": "Robert lập luận rằng hệ thống tàu điện (A) sẽ cải thiện giao thông công cộng tốt nhất vì tạo ra phương thức mới ở trung tâm mà không ảnh hưởng xấu đến các khu vực khác. Sophie đồng ý đây là giải pháp dài hạn tốt nhất.",
               "explanationEn": "Robert argues the tram system (A) improves public transit the most by providing a new inner-city mode without displacing traffic into other areas. Sophie concurs it is the best long-term choice.",
               "audioTimestamp": 48,
-              "order": 1
+              "order": 1,
+              "questionNumber": 1
             },
             {
               "id": "t35-q2",
@@ -110,7 +97,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanation": "Dù ban đầu nghĩ đến park-and-ride, Sophie kết luận rằng việc đi lại thuận tiện để mua sắm trong khu phố đi bộ (D) sẽ hút khách nhất. Robert đồng ý vì từng thấy các thị trấn khác rất nhộn nhịp khi mở phố đi bộ.",
               "explanationEn": "Though initially debating park-and-ride, Sophie concludes that ease of walking and shopping in the pedestrian zone (D) attracts the most visitors. Robert agrees, citing observed precedents in other towns.",
               "audioTimestamp": 98,
-              "order": 2
+              "order": 2,
+              "questionNumber": 2
             },
             {
               "id": "t35-q3",
@@ -129,7 +117,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanation": "Robert chỉ ra rằng khuyến khích đi xe đạp có lợi cho sức khỏe hơn nhiều so với chỉ đi bộ. Sophie đồng ý tuyến đường riêng cho xe buýt và xe đạp (B) là cách tốt nhất để vận động.",
               "explanationEn": "Robert points out cycling benefits health far more than casual walking. Sophie agrees that dedicated bus and cycle routes (B) are optimal for promoting active exercise.",
               "audioTimestamp": 126,
-              "order": 3
+              "order": 3,
+              "questionNumber": 3
             },
             {
               "id": "t35-q4",
@@ -148,7 +137,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanation": "Robert thuyết phục Sophie rằng park-and-ride (C) mang lại kết quả tốt nhất vì giữ được lượng lớn xe ô tô không vào trung tâm, giúp không khí trong lành hơn hẳn.",
               "explanationEn": "Robert persuades Sophie that park-and-ride (C) achieves superior environmental outcomes by keeping far more automobiles completely outside the central zone.",
               "audioTimestamp": 168,
-              "order": 4
+              "order": 4,
+              "questionNumber": 4
             },
             {
               "id": "t35-q5",
@@ -167,37 +157,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanation": "Robert thay đổi ý kiến vào phút chót: trên làn xe đạp người đi bộ vẫn có nguy cơ bị người đi xe đạp va phải, trong khi khu phố đi bộ (D) cấm hoàn toàn xe đạp, chỉ có người đi bộ nên an toàn tuyệt đối. Sophie đồng ý đổi sang D.",
               "explanationEn": "Robert changes his stance, emphasizing that pedestrian zones (D) ban cyclists completely, preventing pedestrian-cyclist collisions and ensuring maximum safety. Sophie agrees to the amendment.",
               "audioTimestamp": 204,
-              "order": 5
-            }
-          ],
-          "id": "qg-t35-p1",
-          "type": "matching",
-          "title": "Questions 1–5: Final Scheme Recommendations by Primary Benefit",
-          "titleEn": "Questions 1–5: Final Scheme Recommendations by Primary Benefit",
-          "titleVi": "Câu 1–5: Khuyến nghị đề án cuối cùng theo từng lợi ích then chốt",
-          "instruction": "Chọn phương án thích hợp (A–D) cho mỗi tiêu chí dưới đây theo sự thống nhất cuối cùng của hai sinh viên.",
-          "instructionEn": "Which scheme do the students finally agree is the best for each objective? Write the correct letter, A, B, C, or D, next to Questions 1–5.",
-          "instructionVi": "Chọn phương án thích hợp (A–D) cho mỗi tiêu chí dưới đây theo sự thống nhất cuối cùng của hai sinh viên.",
-          "options": [
-            {
-              "key": "A",
-              "text": "The new tram system",
-              "textEn": "The new tram system"
-            },
-            {
-              "key": "B",
-              "text": "Bus and cycle only routes",
-              "textEn": "Bus and cycle only routes"
-            },
-            {
-              "key": "C",
-              "text": "The park-and-ride scheme",
-              "textEn": "The park-and-ride scheme"
-            },
-            {
-              "key": "D",
-              "text": "The pedestrian area and one-way system",
-              "textEn": "The pedestrian area and one-way system"
+              "order": 5,
+              "questionNumber": 5
             }
           ]
         }
@@ -231,10 +192,18 @@ export const track35TransportBenefitsRecommendations = {
       "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
       "questionGroups": [
         {
-          "groupType": "multiple-choice",
+          "id": "qg-t35-p2",
+          "type": "multiple_choice",
+          "groupType": "multiple_choice",
+          "title": "Questions 6–10: Critical Rationale & Policy Trade-offs",
+          "titleEn": "Questions 6–10: Critical Rationale & Policy Trade-offs",
+          "titleVi": "Câu 6–10: Cơ sở lý luận & Đánh đổi chính sách",
           "groupTitle": "Questions 6–10: Critical Rationale & Policy Trade-offs",
           "groupTitleEn": "Questions 6–10: Critical Rationale & Policy Trade-offs",
           "groupTitleVi": "Câu 6–10: Cơ sở lý luận & Đánh đổi chính sách",
+          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
+          "instructionEn": "Choose the correct letter, A, B, C, or D.",
+          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
           "questions": [
             {
               "id": "t35-q6",
@@ -283,7 +252,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanationEn": "Robert explains that bus lanes push cars outward and impede outer buses, whereas the tram offers a new transit mode without adversely affecting other districts. Option A is correct.",
               "audioTimestamp": 48,
               "order": 6,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 6
             },
             {
               "id": "t35-q7",
@@ -332,7 +302,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanationEn": "Sophie highlights consumer behavior: when people know they can stroll conveniently and complete their shopping, they visit in greater numbers. Option A is correct.",
               "audioTimestamp": 89,
               "order": 7,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 7
             },
             {
               "id": "t35-q8",
@@ -381,7 +352,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanationEn": "Sophie highlights the public health externality: reduced pollution ensures that non-cyclists also breathe cleaner air. Option A is correct.",
               "audioTimestamp": 133,
               "order": 8,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 8
             },
             {
               "id": "t35-q9",
@@ -430,7 +402,8 @@ export const track35TransportBenefitsRecommendations = {
               "explanationEn": "Robert demonstrates that diverting commuter cars to the perimeter results in far fewer cars downtown and cleaner air. Option A is correct.",
               "audioTimestamp": 163,
               "order": 9,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 9
             },
             {
               "id": "t35-q10",
@@ -479,17 +452,10 @@ export const track35TransportBenefitsRecommendations = {
               "explanationEn": "Robert reconsiders because pedestrians still have to dodge cyclists who fail to pay attention, whereas pedestrian areas completely exclude cyclists. Option A is correct.",
               "audioTimestamp": 198,
               "order": 10,
-              "answer": "A"
+              "answer": "A",
+              "questionNumber": 10
             }
-          ],
-          "id": "qg-t35-p2",
-          "type": "multiple_choice",
-          "title": "Questions 6–10: Critical Rationale & Policy Trade-offs",
-          "titleEn": "Questions 6–10: Critical Rationale & Policy Trade-offs",
-          "titleVi": "Câu 6–10: Cơ sở lý luận & Đánh đổi chính sách",
-          "instruction": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi.",
-          "instructionEn": "Choose the correct letter, A, B, C, or D.",
-          "instructionVi": "Chọn đáp án chính xác nhất A, B, C hoặc D cho mỗi câu hỏi."
+          ]
         }
       ]
     }
