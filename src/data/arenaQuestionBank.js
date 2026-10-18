@@ -5235,12 +5235,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Professional service practices like accountancy, law, and financial consultancies',
     explanation: 'Mô hình LLP phù hợp nhất với các chuyên gia dịch vụ: "accountants, lawyers, consultants and financial service providers".',
     explanationEn: 'The LLP structure is typically chosen by service professionals including accountants, lawyers, and financial consultants.'
+  },
+  // ==========================================
+  // TRACK 45: LIMITED LIABILITY COMPANIES (LTD)
+  // ==========================================
+  {
+    id: 'easy_lis_shareholder_definition_t45',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What title is formally given to the proprietary owners of a limited liability company?',
+    promptEn: 'What title is formally given to the proprietary owners of a limited liability company?',
+    context: 'Lecturer: "The owners of a limited liability company are called members or shareholders, as they own shares in the company."',
+    contextEn: 'Lecturer: "The owners of a limited liability company are called members or shareholders, as they own shares in the company."',
+    audioText: "The owners of a limited liability company are called members or shareholders, as they own shares in the company.",
+    options: [
+      'Members or shareholders',
+      'Sole proprietors',
+      'Commercial trustees',
+      'Silent general partners'
+    ],
+    optionsVi: [
+      'Thành viên hoặc cổ đông',
+      'Chủ sở hữu duy nhất',
+      'Người ủy thác thương mại',
+      'Đối tác hợp danh gián tiếp'
+    ],
+    optionsEn: [
+      'Members or shareholders',
+      'Sole proprietors',
+      'Commercial trustees',
+      'Silent general partners'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Members or shareholders',
+    explanation: 'Chủ sở hữu của công ty TNHH được gọi là thành viên hoặc cổ đông: "The owners of a limited liability company are called members or shareholders".',
+    explanationEn: 'Owners of limited companies are defined as members or shareholders because they hold equity shares.'
+  },
+  {
+    id: 'med_lis_separate_legal_entity_debts_t45',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In what crucial way does asset liability in a limited company differ from a sole trader structure upon insolvency?',
+    promptEn: 'In what crucial way does asset liability in a limited company differ from a sole trader structure upon insolvency?',
+    context: 'Lecturer: "With LLPs and limited liability companies, the owners and the businesses are separate, so property and goods owned by the business can be sold to pay debts, but not property and goods personally owned by the members or company shareholders."',
+    contextEn: 'Lecturer: "With LLPs and limited liability companies, the owners and the businesses are separate, so property and goods owned by the business can be sold to pay debts, but not property and goods personally owned by the members or company shareholders."',
+    audioText: "With LLPs and limited liability companies, the owners and the businesses are separate, so property and goods owned by the business can be sold to pay debts, but not property and goods personally owned by the members or company shareholders.",
+    options: [
+      'Only corporate-owned property can be sold to satisfy debts, shielding personal possessions',
+      'All personal family real estate must be surrendered immediately to the liquidator',
+      'Shareholders are personally liable for unlimited commercial debts',
+      'The company assets are completely immune from any creditor claims'
+    ],
+    optionsVi: [
+      'Chỉ tài sản thuộc sở hữu công ty mới bị bán để trả nợ, bảo vệ tài sản cá nhân',
+      'Toàn bộ bất động sản cá nhân phải nộp ngay cho người thanh lý',
+      'Cổ đông phải chịu trách nhiệm cá nhân vô hạn đối với các khoản nợ thương mại',
+      'Tài sản công ty được miễn trừ hoàn toàn khỏi mọi yêu cầu bồi hoàn của chủ nợ'
+    ],
+    optionsEn: [
+      'Only corporate-owned property can be sold to satisfy debts, shielding personal possessions',
+      'All personal family real estate must be surrendered immediately to the liquidator',
+      'Shareholders are personally liable for unlimited commercial debts',
+      'The company assets are completely immune from any creditor claims'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Only corporate-owned property can be sold to satisfy debts, shielding personal possessions',
+    explanation: 'Tư cách pháp nhân độc lập bảo vệ tài sản cá nhân của cổ đông: chỉ tài sản đứng tên công ty mới bị đem bán để trả nợ.',
+    explanationEn: 'The corporate legal identity ensures only company-owned assets are liquidated, protecting shareholders\' private goods.'
+  },
+  {
+    id: 'easy_lis_registered_address_records_t45',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What legal requirement must a UK limited company fulfill regarding its official records and documentation?',
+    promptEn: 'What legal requirement must a UK limited company fulfill regarding its official records and documentation?',
+    context: 'Lecturer: "This means they must have a registered address where all the company documents and records must be kept."',
+    contextEn: 'Lecturer: "This means they must have a registered address where all the company documents and records must be kept."',
+    audioText: "This means they must have a registered address where all the company documents and records must be kept.",
+    options: [
+      'Maintain a formally registered address where all company records are held',
+      'Mail physical duplicates of all invoices to each bank monthly',
+      'Store all paperwork exclusively on encrypted foreign servers',
+      'Publish all internal employee communication transcripts online'
+    ],
+    optionsVi: [
+      'Duy trì một địa chỉ đăng ký chính thức nơi lưu giữ toàn bộ hồ sơ công ty',
+      'Gửi bản sao hóa đơn giấy tới từng ngân hàng hàng tháng',
+      'Lưu trữ toàn bộ giấy tờ độc quyền trên các máy chủ nước ngoài',
+      'Đăng tải toàn bộ nội dung trao đổi nội bộ của nhân viên lên mạng'
+    ],
+    optionsEn: [
+      'Maintain a formally registered address where all company records are held',
+      'Mail physical duplicates of all invoices to each bank monthly',
+      'Store all paperwork exclusively on encrypted foreign servers',
+      'Publish all internal employee communication transcripts online'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Maintain a formally registered address where all company records are held',
+    explanation: 'Công ty TNHH bắt buộc phải có địa chỉ đăng ký để lưu giữ hồ sơ công ty: "must have a registered address where all the company documents and records must be kept".',
+    explanationEn: 'UK limited companies are legally required to establish a registered address for statutory corporate records.'
+  },
+  {
+    id: 'med_lis_governance_director_shareholder_t45',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the statutory minimum personnel requirement to incorporate and operate a UK limited company?',
+    promptEn: 'What is the statutory minimum personnel requirement to incorporate and operate a UK limited company?',
+    context: 'Lecturer: "The level of administration is higher than with other business structures, and you need to have a managing director and at least one shareholder."',
+    contextEn: 'Lecturer: "The level of administration is higher than with other business structures, and you need to have a managing director and at least one shareholder."',
+    audioText: "The level of administration is higher than with other business structures, and you need to have a managing director and at least one shareholder.",
+    options: [
+      'A managing director and at least one shareholder',
+      'A board of seven chartered directors and twenty shareholders',
+      'Two managing directors and three non-executive supervisors',
+      'A minimum of ten founding partners with identical voting rights'
+    ],
+    optionsVi: [
+      'Một giám đốc điều hành và tối thiểu một cổ đông',
+      'Hội đồng gồm 7 giám đốc công chứng và 20 cổ đông',
+      'Hai giám đốc điều hành và ba giám sát viên không điều hành',
+      'Tối thiểu 10 đối tác sáng lập có quyền biểu quyết ngang nhau'
+    ],
+    optionsEn: [
+      'A managing director and at least one shareholder',
+      'A board of seven chartered directors and twenty shareholders',
+      'Two managing directors and three non-executive supervisors',
+      'A minimum of ten founding partners with identical voting rights'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A managing director and at least one shareholder',
+    explanation: 'Quy định tối thiểu bao gồm một giám đốc điều hành và một cổ đông: "a managing director and at least one shareholder".',
+    explanationEn: 'Governance rules mandate at least one managing director and one shareholder to form a limited company.'
+  },
+  {
+    id: 'hard_lis_corporation_vs_income_tax_t45',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'At what profitability benchmark does corporation tax deliver significant financial savings over individual income tax?',
+    promptEn: 'At what profitability benchmark does corporation tax deliver significant financial savings over individual income tax?',
+    context: 'Lecturer: "In terms of paying tax, the company has to pay corporation tax on its profits, which is far less than income tax on large amounts, especially over around 50,000 pounds."',
+    contextEn: 'Lecturer: "In terms of paying tax, the company has to pay corporation tax on its profits, which is far less than income tax on large amounts, especially over around 50,000 pounds."',
+    audioText: "In terms of paying tax, the company has to pay corporation tax on its profits, which is far less than income tax on large amounts, especially over around 50,000 pounds.",
+    options: [
+      'When taxable profits exceed approximately £50,000',
+      'When quarterly revenues cross £10,000',
+      'Only when foreign exports generate over £250,000',
+      'Whenever total assets surpass £1,000,000'
+    ],
+    optionsVi: [
+      'Khi lợi nhuận chịu thuế vượt khoảng 50.000 bảng',
+      'Khi doanh thu hàng quý đạt 10.000 bảng',
+      'Chỉ khi kim ngạch xuất khẩu đạt trên 250.000 bảng',
+      'Bất cứ khi nào tổng tài sản vượt 1.000.000 bảng'
+    ],
+    optionsEn: [
+      'When taxable profits exceed approximately £50,000',
+      'When quarterly revenues cross £10,000',
+      'Only when foreign exports generate over £250,000',
+      'Whenever total assets surpass £1,000,000'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'When taxable profits exceed approximately £50,000',
+    explanation: 'Thuế doanh nghiệp thấp hơn nhiều so với thuế thu nhập cá nhân đối với các khoản lợi nhuận lớn, đặc biệt trên 50.000 bảng ("especially over around 50,000 pounds").',
+    explanationEn: 'The lecturer highlights that corporation tax rates are significantly lower than personal income tax on large profits, especially beyond £50,000.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 45: Limited Liability Companies (Ltd) in the UK
+  easy_lis_shareholder_definition_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 10.0, clipEnd: 21.0, isR2Audio: true, trackLabel: 'Track 45 • Shareholders & Members' },
+  med_lis_separate_legal_entity_debts_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 67.0, clipEnd: 83.0, isR2Audio: true, trackLabel: 'Track 45 • Asset Separation & Shield' },
+  easy_lis_registered_address_records_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 83.0, clipEnd: 99.0, isR2Audio: true, trackLabel: 'Track 45 • Statutory Registered Address' },
+  med_lis_governance_director_shareholder_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 111.0, clipEnd: 121.0, isR2Audio: true, trackLabel: 'Track 45 • Minimum Governance Personnel' },
+  hard_lis_corporation_vs_income_tax_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 121.0, clipEnd: 135.0, isR2Audio: true, trackLabel: 'Track 45 • £50k Corporation Tax Advantage' },
+
   // Track 44: Business Partnerships & LLPs in the UK
   easy_lis_simple_partnership_continuity_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 44.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 44 • Operational Continuity' },
   med_lis_formal_arrangement_disagreements_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 58.0, clipEnd: 68.0, isR2Audio: true, trackLabel: 'Track 44 • Formal Agreement' },

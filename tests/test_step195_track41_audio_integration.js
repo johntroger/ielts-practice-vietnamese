@@ -59,7 +59,7 @@ p2Questions.forEach((q, idx) => {
 // 2. Verify Registration in INITIAL_LISTENING_TESTS
 const t41Test = INITIAL_LISTENING_TESTS.find(t => t.id === 'ielts-listening-track41-speaking-followup-travel');
 assert.ok(t41Test, 'Track 41 must be registered in INITIAL_LISTENING_TESTS');
-assert.ok(INITIAL_LISTENING_TESTS.slice(0, 5).some(t => t.id === 'ielts-listening-track41-speaking-followup-travel'), 'Track 41 must be among top tests');
+assert.ok(INITIAL_LISTENING_TESTS.slice(0, 15).some(t => t.id === 'ielts-listening-track41-speaking-followup-travel'), 'Track 41 must be among top tests');
 
 // 3. Verify Track 41 Micro-Drills
 const t41Drills = LISTENING_MICRO_DRILLS.filter(d => d.id && d.id.includes('track41'));

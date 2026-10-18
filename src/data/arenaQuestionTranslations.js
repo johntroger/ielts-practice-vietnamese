@@ -1693,6 +1693,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Which category of commercial entities most frequently adopts the Limited Liability Partnership (LLP) structure?",
     "contextEn": "Dr Lethbridge: \"Usually, an LLP suits certain types of professionals who provide services, such as accountants, lawyers, consultants and financial service providers.\"",
     "explanationEn": "The LLP structure is typically chosen by service professionals including accountants, lawyers, and financial consultants."
+  },
+  "easy_lis_shareholder_definition_t45": {
+    "promptEn": "What title is formally given to the proprietary owners of a limited liability company?",
+    "contextEn": "Lecturer: \"The owners of a limited liability company are called members or shareholders, as they own shares in the company.\"",
+    "explanationEn": "Owners of limited companies are defined as members or shareholders because they hold equity shares."
+  },
+  "med_lis_separate_legal_entity_debts_t45": {
+    "promptEn": "In what crucial way does asset liability in a limited company differ from a sole trader structure upon insolvency?",
+    "contextEn": "Lecturer: \"With LLPs and limited liability companies, the owners and the businesses are separate, so property and goods owned by the business can be sold to pay debts, but not property and goods personally owned by the members or company shareholders.\"",
+    "explanationEn": "The corporate legal identity ensures only company-owned assets are liquidated, protecting shareholders' private goods."
+  },
+  "easy_lis_registered_address_records_t45": {
+    "promptEn": "What legal requirement must a UK limited company fulfill regarding its official records and documentation?",
+    "contextEn": "Lecturer: \"This means they must have a registered address where all the company documents and records must be kept.\"",
+    "explanationEn": "UK limited companies are legally required to establish a registered address for statutory corporate records."
+  },
+  "med_lis_governance_director_shareholder_t45": {
+    "promptEn": "What is the statutory minimum personnel requirement to incorporate and operate a UK limited company?",
+    "contextEn": "Lecturer: \"The level of administration is higher than with other business structures, and you need to have a managing director and at least one shareholder.\"",
+    "explanationEn": "Governance rules mandate at least one managing director and one shareholder to form a limited company."
+  },
+  "hard_lis_corporation_vs_income_tax_t45": {
+    "promptEn": "At what profitability benchmark does corporation tax deliver significant financial savings over individual income tax?",
+    "contextEn": "Lecturer: \"In terms of paying tax, the company has to pay corporation tax on its profits, which is far less than income tax on large amounts, especially over around 50,000 pounds.\"",
+    "explanationEn": "The lecturer highlights that corporation tax rates are significantly lower than personal income tax on large profits, especially beyond £50,000."
   }
 };
 

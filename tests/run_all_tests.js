@@ -204,7 +204,8 @@ const testSuites = [
   { name: 'Step 195: Track 41 Travel Experiences & Follow-up Questions Integration', file: 'tests/test_step195_track41_audio_integration.js' },
   { name: 'Step 196: Track 42 UK Business Structures & Self-Employment Integration', file: 'tests/test_step196_track42_audio_integration.js' },
   { name: 'Step 197: Track 43 Sole Trader Pros & Cons Integration', file: 'tests/test_step197_track43_audio_integration.js' },
-  { name: 'Step 198: Track 44 Business Partnerships & LLPs Integration', file: 'tests/test_step198_track44_audio_integration.js' }
+  { name: 'Step 198: Track 44 Business Partnerships & LLPs Integration', file: 'tests/test_step198_track44_audio_integration.js' },
+  { name: 'Step 199: Track 45 Limited Liability Companies Integration', file: 'tests/test_step199_track45_audio_integration.js' }
 ];
 
 console.log('===============================================================');

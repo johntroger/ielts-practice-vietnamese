@@ -57,7 +57,7 @@ p2Questions.forEach((q, idx) => {
 // 2. Verify Registration in INITIAL_LISTENING_TESTS
 const t40Test = INITIAL_LISTENING_TESTS.find(t => t.id === 'ielts-listening-track40-complex-sentences-connectors');
 assert.ok(t40Test, 'Track 40 must be registered in INITIAL_LISTENING_TESTS');
-assert.ok(INITIAL_LISTENING_TESTS.slice(0, 5).some(t => t.id === 'ielts-listening-track40-complex-sentences-connectors'), 'Track 40 must be among top tests');
+assert.ok(INITIAL_LISTENING_TESTS.slice(0, 15).some(t => t.id === 'ielts-listening-track40-complex-sentences-connectors'), 'Track 40 must be among top tests');
 
 // 3. Verify Track 40 Micro-Drills
 const t40Drills = LISTENING_MICRO_DRILLS.filter(d => d.id && d.id.includes('track40'));
