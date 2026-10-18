@@ -5062,12 +5062,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'Their private residential house and personal motor vehicle',
     explanation: 'TS. Corpus cảnh báo trách nhiệm vô hạn có thể khiến chủ kinh doanh mất nhà và xe ("lose your house and car to pay for them").',
     explanationEn: 'Dr Corpus warns that under unlimited liability, insolvent traders risk forfeiting personal property including house and car.'
+  },
+  // ==========================================
+  // TRACK 44: BUSINESS PARTNERSHIPS & LLPS IN THE UK
+  // ==========================================
+  {
+    id: 'easy_lis_simple_partnership_continuity_t44',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What operational benefit does a simple partnership provide when one partner is ill or taking a vacation?',
+    promptEn: 'What operational benefit does a simple partnership provide when one partner is ill or taking a vacation?',
+    context: 'Dr Lethbridge: "One obvious advantage of this is that if one partner is sick or on holiday, the other partner can carry on the business."',
+    contextEn: 'Dr Lethbridge: "One obvious advantage of this is that if one partner is sick or on holiday, the other partner can carry on the business."',
+    audioText: "One obvious advantage of this is that if one partner is sick or on holiday, the other partner can carry on the business.",
+    options: [
+      'The other partner can maintain and carry on normal business operations',
+      'The firm is granted automatic temporary tax exemption status',
+      'The government assigns temporary replacement apprentices',
+      'The business bank accounts are legally protected from overdraft charges'
+    ],
+    optionsVi: [
+      'Đối tác còn lại có thể duy trì và tiếp tục vận hành hoạt động kinh doanh bình thường',
+      'Doanh nghiệp được cấp quy chế miễn thuế tạm thời tự động',
+      'Chính phủ cử những người học việc thay thế tạm thời',
+      'Các tài khoản ngân hàng của doanh nghiệp được pháp luật bảo vệ khỏi phí thấu chi'
+    ],
+    optionsEn: [
+      'The other partner can maintain and carry on normal business operations',
+      'The firm is granted automatic temporary tax exemption status',
+      'The government assigns temporary replacement apprentices',
+      'The business bank accounts are legally protected from overdraft charges'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'The other partner can maintain and carry on normal business operations',
+    explanation: 'TS. Lethbridge khẳng định: "if one partner is sick or on holiday, the other partner can carry on the business."',
+    explanationEn: 'Dr Lethbridge confirms: "if one partner is sick or on holiday, the other partner can carry on the business."'
+  },
+  {
+    id: 'med_lis_formal_arrangement_disagreements_t44',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does Dr Lethbridge advocate having a formal written arrangement in a partnership even when informal agreements are typical?',
+    promptEn: 'Why does Dr Lethbridge advocate having a formal written arrangement in a partnership even when informal agreements are typical?',
+    context: 'Dr Lethbridge: "Of course, partners usually have an informal agreement to work together, but it\'s always better to have a formal arrangement to avoid disagreements."',
+    contextEn: 'Dr Lethbridge: "Of course, partners usually have an informal agreement to work together, but it\'s always better to have a formal arrangement to avoid disagreements."',
+    audioText: "Of course, partners usually have an informal agreement to work together, but it's always better to have a formal arrangement to avoid disagreements.",
+    options: [
+      'To avert and resolve potential future disagreements between partners',
+      'To legally bar partners from ever withdrawing capital',
+      'To qualify for discounted business rates from municipal councils',
+      'To bypass annual tax filing requirements'
+    ],
+    optionsVi: [
+      'Để phòng ngừa và giải quyết những bất đồng tiềm ẩn trong tương lai giữa các bên',
+      'Để ngăn cấm hợp pháp các đối tác không bao giờ được rút vốn',
+      'Để đủ điều kiện nhận mức phí kinh doanh ưu đãi từ hội đồng thành phố',
+      'Để bỏ qua các yêu cầu nộp hồ sơ thuế hàng năm'
+    ],
+    optionsEn: [
+      'To avert and resolve potential future disagreements between partners',
+      'To legally bar partners from ever withdrawing capital',
+      'To qualify for discounted business rates from municipal councils',
+      'To bypass annual tax filing requirements'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'To avert and resolve potential future disagreements between partners',
+    explanation: 'TS. Lethbridge nhấn mạnh văn bản chính thức giúp phòng tránh bất đồng: "always better to have a formal arrangement to avoid disagreements".',
+    explanationEn: 'Dr Lethbridge advises a formal arrangement to prevent disputes: "better to have a formal arrangement to avoid disagreements".'
+  },
+  {
+    id: 'easy_lis_llp_companies_house_registry_t44',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which regulatory authority must a Limited Liability Partnership (LLP) be legally registered with in the UK?',
+    promptEn: 'Which regulatory authority must a Limited Liability Partnership (LLP) be legally registered with in the UK?',
+    context: 'Dr Lethbridge: "On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership."',
+    contextEn: 'Dr Lethbridge: "On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership."',
+    audioText: "On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership.",
+    options: [
+      'Companies House',
+      'The London Stock Exchange',
+      'The British Chamber of Commerce',
+      'The Ministry of Justice'
+    ],
+    optionsVi: [
+      'Companies House (Cơ quan đăng ký kinh doanh)',
+      'Sở giao dịch chứng khoán Luân Đôn',
+      'Phòng Thương mại Vương quốc Anh',
+      'Bộ Tư pháp'
+    ],
+    optionsEn: [
+      'Companies House',
+      'The London Stock Exchange',
+      'The British Chamber of Commerce',
+      'The Ministry of Justice'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Companies House',
+    explanation: 'LLP bắt buộc phải đăng ký với Companies House: "LLPs have to be legally registered with Companies House".',
+    explanationEn: 'LLPs must be formally registered with Companies House under UK commercial law.'
+  },
+  {
+    id: 'hard_lis_llp_annual_return_penalty_t44',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What severe statutory penalty can be imposed on designated partners who fail to submit mandatory annual returns for an LLP?',
+    promptEn: 'What severe statutory penalty can be imposed on designated partners who fail to submit mandatory annual returns for an LLP?',
+    context: 'Dr Lethbridge: "They also need to send in an annual return, which is a document showing the name, address and members of the partnership, and any changes. If they don\'t do this, they may go to prison, so it\'s important to understand exactly what setting up an LLP means."',
+    contextEn: 'Dr Lethbridge: "They also need to send in an annual return, which is a document showing the name, address and members of the partnership, and any changes. If they don\'t do this, they may go to prison, so it\'s important to understand exactly what setting up an LLP means."',
+    audioText: "They also need to send in an annual return, which is a document showing the name, address and members of the partnership, and any changes. If they don't do this, they may go to prison, so it's important to understand exactly what setting up an LLP means.",
+    options: [
+      'They may face custodial criminal sentences including imprisonment',
+      'A permanent freeze on their domestic passport validity',
+      'An automatic fifty percent surcharge on personal credit card balances',
+      'Compulsory re-examination of their professional degrees'
+    ],
+    optionsVi: [
+      'Họ có thể phải chịu án phạt hình sự bao gồm phạt tù',
+      'Bị đình chỉ hiệu lực hộ chiếu cá nhân vĩnh viễn',
+      'Khoản phụ phí tự động 50% tính trên số dư thẻ tín dụng cá nhân',
+      'Bắt buộc phải thi lại các chứng chỉ chuyên môn nghề nghiệp'
+    ],
+    optionsEn: [
+      'They may face custodial criminal sentences including imprisonment',
+      'A permanent freeze on their domestic passport validity',
+      'An automatic fifty percent surcharge on personal credit card balances',
+      'Compulsory re-examination of their professional degrees'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They may face custodial criminal sentences including imprisonment',
+    explanation: 'TS. Lethbridge cảnh báo nếu không nộp tờ khai thường niên, các thành viên chịu trách nhiệm có thể bị phạt tù: "If they don\'t do this, they may go to prison".',
+    explanationEn: 'Dr Lethbridge explicitly warns that failure to submit the annual return carries prison penalties: "they may go to prison".'
+  },
+  {
+    id: 'med_lis_llp_professional_sectors_t44',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which category of commercial entities most frequently adopts the Limited Liability Partnership (LLP) structure?',
+    promptEn: 'Which category of commercial entities most frequently adopts the Limited Liability Partnership (LLP) structure?',
+    context: 'Dr Lethbridge: "Usually, an LLP suits certain types of professionals who provide services, such as accountants, lawyers, consultants and financial service providers."',
+    contextEn: 'Dr Lethbridge: "Usually, an LLP suits certain types of professionals who provide services, such as accountants, lawyers, consultants and financial service providers."',
+    audioText: "Usually, an LLP suits certain types of professionals who provide services, such as accountants, lawyers, consultants and financial service providers.",
+    options: [
+      'Professional service practices like accountancy, law, and financial consultancies',
+      'Heavy industrial manufacturers and automobile assembly factories',
+      'Agricultural livestock farms and fishery cooperatives',
+      'Retail department store chains and shopping mall developers'
+    ],
+    optionsVi: [
+      'Các công ty cung cấp dịch vụ chuyên môn như kế toán, luật và tư vấn tài chính',
+      'Các nhà sản xuất công nghiệp nặng và nhà máy lắp ráp ô tô',
+      'Các trang trại chăn nuôi nông nghiệp và hợp tác xã thủy hải sản',
+      'Các chuỗi cửa hàng bách hóa bán lẻ và nhà phát triển trung tâm thương mại'
+    ],
+    optionsEn: [
+      'Professional service practices like accountancy, law, and financial consultancies',
+      'Heavy industrial manufacturers and automobile assembly factories',
+      'Agricultural livestock farms and fishery cooperatives',
+      'Retail department store chains and shopping mall developers'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Professional service practices like accountancy, law, and financial consultancies',
+    explanation: 'Mô hình LLP phù hợp nhất với các chuyên gia dịch vụ: "accountants, lawyers, consultants and financial service providers".',
+    explanationEn: 'The LLP structure is typically chosen by service professionals including accountants, lawyers, and financial consultants.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 44: Business Partnerships & LLPs in the UK
+  easy_lis_simple_partnership_continuity_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 44.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 44 • Operational Continuity' },
+  med_lis_formal_arrangement_disagreements_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 58.0, clipEnd: 68.0, isR2Audio: true, trackLabel: 'Track 44 • Formal Agreement' },
+  easy_lis_llp_companies_house_registry_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 112.0, clipEnd: 124.0, isR2Audio: true, trackLabel: 'Track 44 • LLP Companies House' },
+  hard_lis_llp_annual_return_penalty_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 132.0, clipEnd: 148.0, isR2Audio: true, trackLabel: 'Track 44 • Annual Return Penalties' },
+  med_lis_llp_professional_sectors_t44: { audioUrl: `${R2_BASE}/ielts-listening-track44-partnerships-simple-llp.mp3`, clipStart: 148.0, clipEnd: 164.0, isR2Audio: true, trackLabel: 'Track 44 • Professional Sectors' },
+
   // Track 43: The Sole Trader Business Model
   easy_lis_home_working_sole_trader_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 29.0, clipEnd: 40.0, isR2Audio: true, trackLabel: 'Track 43 • Home Office Flexibility' },
   med_lis_annual_accounts_exemption_t43: { audioUrl: `${R2_BASE}/ielts-listening-track43-sole-trader-advantages-disadvantages.mp3`, clipStart: 40.0, clipEnd: 53.0, isR2Audio: true, trackLabel: 'Track 43 • Accounts Exemption' },

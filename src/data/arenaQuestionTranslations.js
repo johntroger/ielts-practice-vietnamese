@@ -1668,6 +1668,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Under the legal principle of unlimited liability, what private possessions might an insolvent sole trader lose to settle business debts?",
     "contextEn": "Dr Corpus: \"You'll also have unlimited liability, which means that if you can't pay your business debts, you may lose your house and car to pay for them, as you are your business.\"",
     "explanationEn": "Dr Corpus warns that under unlimited liability, insolvent traders risk forfeiting personal property including house and car."
+  },
+  "easy_lis_simple_partnership_continuity_t44": {
+    "promptEn": "What operational benefit does a simple partnership provide when one partner is ill or taking a vacation?",
+    "contextEn": "Dr Lethbridge: \"One obvious advantage of this is that if one partner is sick or on holiday, the other partner can carry on the business.\"",
+    "explanationEn": "Dr Lethbridge confirms: \"if one partner is sick or on holiday, the other partner can carry on the business.\""
+  },
+  "med_lis_formal_arrangement_disagreements_t44": {
+    "promptEn": "Why does Dr Lethbridge advocate having a formal written arrangement in a partnership even when informal agreements are typical?",
+    "contextEn": "Dr Lethbridge: \"Of course, partners usually have an informal agreement to work together, but it's always better to have a formal arrangement to avoid disagreements.\"",
+    "explanationEn": "Dr Lethbridge advises a formal arrangement to prevent disputes: \"better to have a formal arrangement to avoid disagreements\"."
+  },
+  "easy_lis_llp_companies_house_registry_t44": {
+    "promptEn": "Which regulatory authority must a Limited Liability Partnership (LLP) be legally registered with in the UK?",
+    "contextEn": "Dr Lethbridge: \"On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership.\"",
+    "explanationEn": "LLPs must be formally registered with Companies House under UK commercial law."
+  },
+  "hard_lis_llp_annual_return_penalty_t44": {
+    "promptEn": "What severe statutory penalty can be imposed on designated partners who fail to submit mandatory annual returns for an LLP?",
+    "contextEn": "Dr Lethbridge: \"They also need to send in an annual return, which is a document showing the name, address and members of the partnership, and any changes. If they don't do this, they may go to prison, so it's important to understand exactly what setting up an LLP means.\"",
+    "explanationEn": "Dr Lethbridge explicitly warns that failure to submit the annual return carries prison penalties: \"they may go to prison\"."
+  },
+  "med_lis_llp_professional_sectors_t44": {
+    "promptEn": "Which category of commercial entities most frequently adopts the Limited Liability Partnership (LLP) structure?",
+    "contextEn": "Dr Lethbridge: \"Usually, an LLP suits certain types of professionals who provide services, such as accountants, lawyers, consultants and financial service providers.\"",
+    "explanationEn": "The LLP structure is typically chosen by service professionals including accountants, lawyers, and financial consultants."
   }
 };
 
