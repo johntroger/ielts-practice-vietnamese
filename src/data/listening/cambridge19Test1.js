@@ -158,6 +158,23 @@ export const cambridge19Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 0, end: 15, speaker: 'Narrator', text: 'Part 1. You will hear a conversation between a customer and a music school administrator about evening guitar classes.' },
+        { start: 16, end: 32, speaker: 'Receptionist', text: 'Good morning, Northern Music Academy, how can I help you today?' },
+        { start: 33, end: 60, speaker: 'David', text: 'Hello! I was hoping to get some details about your evening guitar workshops. I have never played an instrument before, so I want to sign up for your beginner guitar course for adults.', targetQuestion: 1, speechTip: 'Q1: Level of class: beginner' },
+        { start: 61, end: 85, speaker: 'Receptionist', text: 'You have come to the right place. Our studios are very convenient to reach. We are situated right opposite the central town library.', targetQuestion: 2, speechTip: 'Q2: Location: opposite the library' },
+        { start: 86, end: 115, speaker: 'David', text: 'That is great, very easy to get to after work. Which evening does the group meet?' },
+        { start: 116, end: 125, speaker: 'Receptionist', text: 'The adult group convenes every Thursday at 7 pm.', targetQuestion: 3, speechTip: 'Q3: Day: Thursday' },
+        { start: 126, end: 145, speaker: 'Receptionist', text: 'The lead instructor is Julian Barker, spelt B-A-R-K-E-R.', targetQuestion: 4, speechTip: 'Q4: Instructor name: Barker' },
+        { start: 146, end: 175, speaker: 'David', text: 'And how much does the tuition cost?' },
+        { start: 176, end: 185, speaker: 'Receptionist', text: 'The total fee for the ten-week block comes to £145.', targetQuestion: 5, speechTip: 'Q5: Course fee: £145' },
+        { start: 186, end: 215, speaker: 'Receptionist', text: 'You do not need to bring much equipment. However, every learner should bring a small digital tuner to every workshop.', targetQuestion: 6, speechTip: 'Q6: Bring digital tuner' },
+        { start: 216, end: 245, speaker: 'Receptionist', text: 'Do not worry if one snaps, the studio keeps spare strings in the store room.', targetQuestion: 7, speechTip: 'Q7: Studio provides spare strings' },
+        { start: 246, end: 280, speaker: 'David', text: 'Wonderful. Is there parking near the academy?' },
+        { start: 281, end: 295, speaker: 'Receptionist', text: 'Parking is easiest in the public lot right behind the railway station.', targetQuestion: 8, speechTip: 'Q8: Parking behind railway station' },
+        { start: 296, end: 320, speaker: 'Receptionist', text: 'You can reach Julian directly on 01482 772901.', targetQuestion: 9, speechTip: 'Q9: Phone number: 772901' },
+        { start: 321, end: 360, speaker: 'Receptionist', text: 'Enrollment must be finalised with deposit paid by the end of October.', targetQuestion: 10, speechTip: 'Q10: Payment deadline: end of October' }
       ]
     },
     {
@@ -320,6 +337,19 @@ export const cambridge19Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 360, end: 385, speaker: 'Narrator', text: 'Part 2. You will hear the coordinator of a local river conservation trust introducing a community volunteering scheme.' },
+        { start: 386, end: 425, speaker: 'Volunteer Coordinator', text: 'Good evening everyone, thank you for volunteering with the River Park Scheme. Our primary purpose is to rehabilitate wildlife habitats along neglected urban waterways.', targetQuestion: 11, speechTip: 'Q11: Primary focus on restoring wildlife habitats (Option A)' },
+        { start: 426, end: 470, speaker: 'Volunteer Coordinator', text: 'Regarding working hours, we do not expect full-day commitments: our work parties run strictly on Saturday mornings from 9 to 12 noon.', targetQuestion: 12, speechTip: 'Q12: Saturday morning sessions only (Option B)' },
+        { start: 471, end: 520, speaker: 'Volunteer Coordinator', text: 'For your safety, heavy-duty gloves and high-visibility vests will be provided, but you must bring your own sturdy rubber wellington boots.', targetQuestion: 13, speechTip: 'Q13: Volunteers supply their own rubber boots (Option C)' },
+        { start: 521, end: 570, speaker: 'Volunteer Coordinator', text: 'We have also partnered with local businesses who generously provide hot soup and fresh bread rolls at our field tent.', targetQuestion: 14, speechTip: 'Q14: Hot soup provided by local bakeries (Option B)' },
+        { start: 571, end: 610, speaker: 'Volunteer Coordinator', text: 'Now look at the map of the five designated river intervention zones.' },
+        { start: 611, end: 635, speaker: 'Volunteer Coordinator', text: 'Starting at Pebble Beach, our main task is clearing plastic refuse along the shoreline.', targetQuestion: 16, speechTip: 'Q16: Pebble Beach - plastic refuse clearing (Location F)' },
+        { start: 636, end: 655, speaker: 'Volunteer Coordinator', text: 'Over at Willow Bend, our primary fight is eradicating thick patches of invasive knotweed.', targetQuestion: 17, speechTip: 'Q17: Willow Bend - eradicating invasive knotweed (Location D)' },
+        { start: 656, end: 680, speaker: 'Volunteer Coordinator', text: 'Kingfisher Point is ideal for quiet timber hides where bird lovers can watch kingfishers dive.', targetQuestion: 18, speechTip: 'Q18: Kingfisher Point - bird observation hides (Location C)' },
+        { start: 681, end: 700, speaker: 'Volunteer Coordinator', text: 'At South Weir, civil engineers are leveling the steep slope with gentle ramps for wheelchair users.', targetQuestion: 19, speechTip: 'Q19: South Weir - ramps for wheelchair users (Location E)' },
+        { start: 701, end: 720, speaker: 'Volunteer Coordinator', text: 'Lastly, in Mill Race Orchard, schools will plant hundreds of native willow saplings.', targetQuestion: 20, speechTip: 'Q20: Mill Race Orchard - native willow saplings (Location G)' }
       ]
     },
     {
@@ -485,6 +515,20 @@ export const cambridge19Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 720, end: 745, speaker: 'Narrator', text: 'Part 3. You will hear two undergraduate engineering students discussing their presentation on ocean wave and tidal energy.' },
+        { start: 746, end: 775, speaker: 'Liam', text: 'Chloe, have you looked through the industrial feasibility papers on ocean energy devices?' },
+        { start: 776, end: 815, speaker: 'Chloe', text: 'Yes, Kieran. Wave devices struggle because the saline marine environment destroys moving mechanical components with aggressive rust and corrosion.', targetQuestion: 21, speechTip: 'Q21: Corrosion from saline seawater (Option A)' },
+        { start: 816, end: 865, speaker: 'Liam', text: 'In contrast, tidal turbines have an enormous commercial advantage: tides are governed by lunar orbits, making energy yields completely forecastable decades in advance.', targetQuestion: 22, speechTip: 'Q22: Predictable energy output based on tides (Option B)' },
+        { start: 866, end: 915, speaker: 'Chloe', text: 'And regarding the environmental impact survey, what amazed me was how the underwater concrete pilings functioned as vibrant artificial reefs for cod and lobsters.', targetQuestion: 23, speechTip: 'Q23: Foundations act as artificial reefs (Option C)' },
+        { start: 916, end: 960, speaker: 'Liam', text: 'For our lecture slides, audiences understand much better if we include detailed cutaway diagrams of the internal generator turbines.', targetQuestion: 24, speechTip: 'Q24: Detailed cutaway diagrams (Option B)' },
+        { start: 961, end: 985, speaker: 'Chloe', text: 'Good idea. I will present the technical mechanics and mechanical torque, while you take the economic cost-benefit models.', targetQuestion: 25, speechTip: 'Q25: Split tasks: mechanics vs economic models (Option B)' },
+        { start: 986, end: 1005, speaker: 'Liam', text: 'Now for maintenance: covering rotor surfaces in an eco-safe polymer stops barnacles from anchoring.', targetQuestion: 26, speechTip: 'Q26: Rotor coating: eco-safe polymer' },
+        { start: 1006, end: 1030, speaker: 'Chloe', text: 'Modern mooring wires incorporate acoustic sensors to monitor micro-fractures.', targetQuestion: 27, speechTip: 'Q27: Structural monitoring: acoustic sensors' },
+        { start: 1031, end: 1050, speaker: 'Liam', text: 'Electrical converters must sit securely atop elevated steel platforms above tidal surges.', targetQuestion: 28, speechTip: 'Q28: Mounted on elevated steel platforms' },
+        { start: 1051, end: 1070, speaker: 'Chloe', text: 'Frequencies must gently warn approaching harbor porpoises to steer clear of spinning blades.', targetQuestion: 29, speechTip: 'Q29: Warning signal for harbor porpoises' },
+        { start: 1071, end: 1080, speaker: 'Liam', text: 'And regulators must establish a mandatory global safety standard across all yards.', targetQuestion: 30, speechTip: 'Q30: Mandatory global safety standard' }
       ]
     },
     {
@@ -626,6 +670,19 @@ export const cambridge19Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 1080, end: 1105, speaker: 'Narrator', text: 'Part 4. You will hear an academic lecture examining the global economic impact and botanical history of black pepper.' },
+        { start: 1106, end: 1130, speaker: 'Professor Wallace', text: 'Good morning. Today we examine the extraordinary history of Piper nigrum, commonly known as black pepper. Piper nigrum originated in the lush, humid rain forests along India\'s southwest Malabar coast.', targetQuestion: 31, speechTip: 'Q31: Origin: southwest Malabar coast' },
+        { start: 1131, end: 1165, speaker: 'Professor Wallace', text: 'In antiquity, its value was immense. Its antibacterial qualities made it an indispensable preservative for cured meats before refrigeration.', targetQuestion: 32, speechTip: 'Q32: Valued as meat preservative' },
+        { start: 1166, end: 1205, speaker: 'Professor Wallace', text: 'To ward off competitors, Arab traders spun fantastical myths about winged serpents defending the dense forest plantations.', targetQuestion: 33, speechTip: 'Q33: Guarded by mythical winged serpents' },
+        { start: 1206, end: 1240, speaker: 'Professor Wallace', text: 'In imperial Rome, demand reached fever pitch: Pliny the Elder lamented the astronomical drain of Roman silver coinage flowing eastwards.', targetQuestion: 34, speechTip: 'Q34: Drained vast quantities of Roman silver' },
+        { start: 1241, end: 1275, speaker: 'Professor Wallace', text: 'During the European Middle Ages, peppercorns served literally as currency: feudal lords routinely allowed tenant farmers to settle their annual rent in peppercorns.', targetQuestion: 35, speechTip: 'Q35: Used to settle annual tenant rent' },
+        { start: 1276, end: 1315, speaker: 'Professor Wallace', text: 'By the fourteenth century, Venetian merchants maintained a strict commercial monopoly across Mediterranean ports.', targetQuestion: 36, speechTip: 'Q36: Venetian merchants held commercial monopoly' },
+        { start: 1316, end: 1355, speaker: 'Professor Wallace', text: 'This sparked the Age of Discovery. When Portuguese caravels rounded the Cape of Good Hope, their single clarion cry was for Christians and spices.', targetQuestion: 37, speechTip: 'Q37: Famous voyage motive: spices' },
+        { start: 1356, end: 1390, speaker: 'Professor Wallace', text: 'Turning to botany: it surprises many people to learn that all three varieties stem from the identical plant species.', targetQuestion: 38, speechTip: 'Q38: Black, green, white pepper from same plant' },
+        { start: 1391, end: 1420, speaker: 'Professor Wallace', text: 'The characteristic sharp bite is chemically produced by the crystalline compound piperine.', targetQuestion: 39, speechTip: 'Q39: Pungency produced by piperine' },
+        { start: 1421, end: 1440, speaker: 'Professor Wallace', text: 'In the twenty-first century, Vietnam became the world\'s undisputed leading exporter of high-grade pepper.', targetQuestion: 40, speechTip: 'Q40: World leading exporter: Vietnam' }
       ]
     }
   ]

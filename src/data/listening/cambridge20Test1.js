@@ -158,6 +158,22 @@ export const cambridge20Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 0, end: 15, speaker: 'Narrator', text: 'Part 1. You will hear a conversation between two colleagues discussing dining options and booking a celebration dinner.' },
+        { start: 16, end: 35, speaker: 'Angela', text: 'Marcus, have you thought about where we should book our team celebration next Friday?' },
+        { start: 36, end: 65, speaker: 'Marcus', text: 'Yes, I checked two places. The first one is The Junction. The Junction is located on Greyson Street, that is G-R-E-Y-S-O-N.', targetQuestion: 1, speechTip: 'Q1: Greyson Street (spelled G-R-E-Y-S-O-N)' },
+        { start: 66, end: 95, speaker: 'Marcus', text: 'It has wonderful food. Everyone raves about their authentic wood-fired pizza baked in stone ovens.', targetQuestion: 2, speechTip: 'Q2: Renowned for authentic wood-fired pizza' },
+        { start: 96, end: 130, speaker: 'Marcus', text: 'And if the weather stays mild, they have a wonderful heated rooftop terrace with panoramic river views.', targetQuestion: 3, speechTip: 'Q3: Heated rooftop terrace' },
+        { start: 131, end: 165, speaker: 'Angela', text: 'That sounds delightful! What was the second option you found?' },
+        { start: 166, end: 175, speaker: 'Marcus', text: 'Paloma is situated right by the historic medieval stone bridge.', targetQuestion: 4, speechTip: 'Q4: Located beside the historic stone bridge' },
+        { start: 176, end: 205, speaker: 'Marcus', text: 'Their chef prepares innovative Spanish tapas with organic local ingredients.', targetQuestion: 5, speechTip: 'Q5: Cuisine type: Spanish tapas' },
+        { start: 206, end: 240, speaker: 'Angela', text: 'Spanish tapas would suit everyone nicely. How does the pricing compare?' },
+        { start: 241, end: 250, speaker: 'Marcus', text: 'The set dinner menu comes to exactly £32 per head.', targetQuestion: 6, speechTip: 'Q6: Set menu cost: £32 per person' },
+        { start: 251, end: 280, speaker: 'Angela', text: 'Sarah has celiac disease, so it is great that Paloma has a certified gluten-free menu.', targetQuestion: 7, speechTip: 'Q7: Special dietary menu: gluten-free' },
+        { start: 281, end: 310, speaker: 'Marcus', text: 'To reserve a table for ten people on a Friday requires a £50 deposit.', targetQuestion: 8, speechTip: 'Q8: Reservation deposit: £50' },
+        { start: 311, end: 335, speaker: 'Angela', text: 'What time should we book? Let us book it for a quarter to eight—7:45 pm sharp.', targetQuestion: 9, speechTip: 'Q9: Booking time: 7:45 pm (45)' },
+        { start: 336, end: 360, speaker: 'Marcus', text: 'Perfect. I will put the reservation under Marcus Sinclair, S-I-N-C-L-A-I-R.', targetQuestion: 10, speechTip: 'Q10: Surname spelling: S-I-N-C-L-A-I-R' }
       ]
     },
     {
@@ -320,6 +336,19 @@ export const cambridge20Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 360, end: 385, speaker: 'Narrator', text: 'Part 2. You will hear the project director of a municipal community arts center delivering an update on recent renovations.' },
+        { start: 386, end: 435, speaker: 'Project Director', text: 'Welcome everyone! The driving impulse was the massive influx of local youths eager for digital animation and music production studios.', targetQuestion: 11, speechTip: 'Q11: Demand from youth for creative media studios (Option A)' },
+        { start: 436, end: 485, speaker: 'Project Director', text: 'Funding came from civic pride. Our patrons rallied brilliantly through an online crowdfunding appeal that raised thirty thousand pounds in four weeks.', targetQuestion: 12, speechTip: 'Q12: Community online crowdfunding campaign (Option B)' },
+        { start: 486, end: 535, speaker: 'Project Director', text: 'Sustainability is embedded throughout. The pottery workshop features a closed-loop greywater filtration circuit to reuse water from clay washing.', targetQuestion: 13, speechTip: 'Q13: Closed-loop greywater recycling in pottery (Option A)' },
+        { start: 536, end: 585, speaker: 'Project Director', text: 'We also ensure arts access for all: concessionary rates apply to registered students and unemployed jobseekers attending weekday matinee sessions.', targetQuestion: 14, speechTip: 'Q14: Subsidized entry for jobseekers and students (Option A)' },
+        { start: 586, end: 620, speaker: 'Project Director', text: 'Now look at your floorplans. The premier exhibition will illuminate our breathtaking new central Glass Atrium.', targetQuestion: 15, speechTip: 'Q15: Premier exhibition in Glass Atrium (Location A)' },
+        { start: 621, end: 645, speaker: 'Project Director', text: 'On the first floor of the North Wing, podcasters can book our brand new acoustic soundproof recording booth.', targetQuestion: 16, speechTip: 'Q16: First floor North Wing - recording booth (Location B)' },
+        { start: 646, end: 665, speaker: 'Project Director', text: 'Ascending to the second floor brings you to the digital makerspace with 3D laser printers.', targetQuestion: 17, speechTip: 'Q17: Second floor - digital makerspace (Location A)' },
+        { start: 666, end: 685, speaker: 'Project Director', text: 'The South Gallery corridor maintains a vintage darkroom for traditional chemical photography development.', targetQuestion: 18, speechTip: 'Q18: South Gallery corridor - vintage darkroom (Location E)' },
+        { start: 686, end: 705, speaker: 'Project Director', text: 'Families with young toddlers will appreciate the sensory sculpture playground in the East Pavilion.', targetQuestion: 19, speechTip: 'Q19: East Pavilion - sensory sculpture playground (Location D)' },
+        { start: 706, end: 720, speaker: 'Project Director', text: 'Lastly, the tranquil garden cloister includes a sunken outdoor amphitheatre for acoustic poetry readings.', targetQuestion: 20, speechTip: 'Q20: Garden cloister - outdoor amphitheatre (Location G)' }
       ]
     },
     {
@@ -485,6 +514,19 @@ export const cambridge20Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 720, end: 745, speaker: 'Narrator', text: 'Part 3. You will hear two marine biology students discussing preparation for their undergraduate seminar on abyssal ecosystem biodiversity.' },
+        { start: 746, end: 785, speaker: 'Oliver', text: 'Dr. Evans, what utterly fascinated me is how entire biological communities thrive on chemosynthesis, totally independent of solar light.', targetQuestion: 21, speechTip: 'Q21: Fascination with solar-independent chemosynthesis (Option A)' },
+        { start: 786, end: 835, speaker: 'Dr. Rebecca Evans', text: 'Fascinating indeed. Consider Riftia tubeworms: they host billions of endosymbiotic bacteria inside a specialized organ that converts toxic hydrogen sulfide into organic nutrients.', targetQuestion: 22, speechTip: 'Q22: Endosymbiotic bacteria convert hydrogen sulfide (Option B)' },
+        { start: 836, end: 885, speaker: 'Dr. Rebecca Evans', text: 'Oliver, reviewing your draft slides, your tectonic diagrams are overloaded with obscure petrological jargon; you need to streamline them for general peers.', targetQuestion: 23, speechTip: 'Q23: Simplify obscure petrological jargon (Option A)' },
+        { start: 886, end: 935, speaker: 'Oliver', text: 'Understood. An animated visual graphic contrasting the 400-degree hydrothermal plume against the 2-degree freezing abyssal water will blow them away.', targetQuestion: 24, speechTip: 'Q24: Dynamic contrast animation of plume temperatures (Option B)' },
+        { start: 936, end: 975, speaker: 'Dr. Rebecca Evans', text: 'In your conclusion, you must emphasize the imminent ecological catastrophe posed by deep-sea polymetallic nodule mining rigs.', targetQuestion: 25, speechTip: 'Q25: Danger posed by deep-sea mining rigs (Option A)' },
+        { start: 976, end: 1005, speaker: 'Oliver', text: 'Now for specific adaptations: Rimicaris shrimp and yeti crabs cultivate dense mats of filamentous bacteria on their hairy limbs.', targetQuestion: 26, speechTip: 'Q26: Cultivate filamentous bacteria' },
+        { start: 1006, end: 1030, speaker: 'Dr. Rebecca Evans', text: 'The scaly-foot snail Chrysomallon squamiferum incorporates toxic iron sulfide into its armor plating.', targetQuestion: 27, speechTip: 'Q27: Armor incorporates iron sulfide' },
+        { start: 1031, end: 1050, speaker: 'Oliver', text: 'Extremophiles prevent thermal degradation using specialized heat-shock proteins.', targetQuestion: 28, speechTip: 'Q28: Stabilized by heat-shock proteins' },
+        { start: 1051, end: 1070, speaker: 'Dr. Rebecca Evans', text: 'They navigate around deadly boiling jets by detecting faint infrared radiation.', targetQuestion: 29, speechTip: 'Q29: Detect faint infrared radiation' },
+        { start: 1071, end: 1080, speaker: 'Oliver', text: 'And thermostable polymerase enzymes from vents have led to multi-million-dollar pharmaceutical patents.', targetQuestion: 30, speechTip: 'Q30: Resulted in breakthrough pharmaceutical patents' }
       ]
     },
     {
@@ -626,6 +668,19 @@ export const cambridge20Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 1080, end: 1105, speaker: 'Narrator', text: 'Part 4. You will hear an ornithology lecture explaining the sensory mechanisms birds utilize to navigate across thousands of kilometers.' },
+        { start: 1106, end: 1130, speaker: 'Professor Julian Davenport', text: 'Good morning, everyone. Today we examine avian navigational biophysics. Day-flying migrants rely on a sun compass, recalibrating angles continuously using their internal circadian clock.', targetQuestion: 31, speechTip: 'Q31: Recalibrate heading using internal circadian clock' },
+        { start: 1131, end: 1170, speaker: 'Professor Julian Davenport', text: 'For nocturnal migrants, stellar alignment is key. Emlen funnel experiments proved young birds imprint on stellar patterns rotating around the northern pole star.', targetQuestion: 32, speechTip: 'Q32: Constellations rotating around northern pole star' },
+        { start: 1171, end: 1205, speaker: 'Professor Julian Davenport', text: 'The geomagnetism mechanism is truly quantum: biophysicists discovered that specialized retinal proteins called cryptochromes undergo quantum spin shifts in magnetic fields.', targetQuestion: 33, speechTip: 'Q33: Retinal proteins called cryptochromes' },
+        { start: 1206, end: 1245, speaker: 'Professor Julian Davenport', text: 'Olfaction is another vital sensory layer: pigeons construct olfactory regional maps by associating unique smells with atmospheric wind currents.', targetQuestion: 34, speechTip: 'Q34: Smells associated with atmospheric wind currents' },
+        { start: 1246, end: 1280, speaker: 'Professor Julian Davenport', text: 'Seabirds tap into acoustic cues: pelagic seabirds listen to infrasonic frequencies generated by massive oceanic swells thousands of miles away.', targetQuestion: 35, speechTip: 'Q35: Infrasonic frequencies from oceanic swells' },
+        { start: 1281, end: 1320, speaker: 'Professor Julian Davenport', text: 'At close proximity, nerve endings in the upper beak contain microscopic crystals of the mineral magnetite.', targetQuestion: 36, speechTip: 'Q36: Upper beak contains crystals of magnetite' },
+        { start: 1321, end: 1355, speaker: 'Professor Julian Davenport', text: 'Sadly, human infrastructure disrupts these fine instruments: urban broadband and radio interference severely deranges birds\' delicate magnetic orientation.', targetQuestion: 37, speechTip: 'Q37: Radio interference deranges magnetic orientation' },
+        { start: 1356, end: 1390, speaker: 'Professor Julian Davenport', text: 'Furthermore, city light pollution causes disoriented songbirds to plunge into glass facades, causing millions of fatal building collisions.', targetQuestion: 38, speechTip: 'Q38: Millions of fatal building collisions' },
+        { start: 1391, end: 1420, speaker: 'Professor Julian Davenport', text: 'Habitat degradation poses another threat: the draining of stopover wetlands along migratory flyways deprives shorebirds of vital refueling grounds.', targetQuestion: 39, speechTip: 'Q39: Draining of stopover wetlands' },
+        { start: 1421, end: 1440, speaker: 'Professor Julian Davenport', text: 'Ultimately, protecting transcontinental flyways demands enforceable multinational conservation treaties.', targetQuestion: 40, speechTip: 'Q40: Unified multinational conservation treaties' }
       ]
     }
   ]

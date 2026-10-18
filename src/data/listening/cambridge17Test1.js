@@ -158,6 +158,21 @@ export const cambridge17Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 0, end: 15, speaker: 'Narrator', text: 'Part 1. You will hear a phone call between a volunteer coordinator and a new resident interested in weekend conservation activities.' },
+        { start: 16, end: 35, speaker: 'Janice', text: 'Good morning, is this the Buckworth Conservation Group? I moved to the village recently and would love to join your weekend activities.' },
+        { start: 36, end: 60, speaker: 'Peter', text: 'Good morning, Janice! Welcome to Buckworth. Our top priority is rehabilitating the endangered wetland ecosystem.', targetQuestion: 1, speechTip: 'Q1: Preserving local wetland habitat' },
+        { start: 61, end: 95, speaker: 'Peter', text: 'We hold regular volunteer sessions. All volunteers meet on the second Saturday of the calendar month.', targetQuestion: 2, speechTip: 'Q2: Regular meeting day: second Saturday' },
+        { start: 96, end: 125, speaker: 'Peter', text: 'It is very easy to find us. We assemble promptly outside the renovated timber barn beside the old weir.', targetQuestion: 3, speechTip: 'Q3: Assemble outside the timber barn' },
+        { start: 126, end: 155, speaker: 'Peter', text: 'When you arrive, look out for your team leader on-site. Your team leader on-site is Mr Henley, spelt H-E-N-L-E-Y.', targetQuestion: 4, speechTip: 'Q4: Name spelling: H-E-N-L-E-Y' },
+        { start: 156, end: 190, speaker: 'Peter', text: 'As for gear, please remember that the riverbanks get soggy. Due to thick mud, everyone must wear a sturdy pair of waterproof boots.', targetQuestion: 5, speechTip: 'Q5: Footwear requirement: boots' },
+        { start: 191, end: 230, speaker: 'Peter', text: 'We have lots of practical tasks planned. Our main morning duty will be restoring broken wooden fences around the duck pond.', targetQuestion: 6, speechTip: 'Q6: Restoring broken wooden fences' },
+        { start: 231, end: 270, speaker: 'Peter', text: 'Do not worry about refreshments during our break. We serve hot tea and freshly baked biscuits for mid-morning tea.', targetQuestion: 7, speechTip: 'Q7: Mid-morning refreshments: biscuits' },
+        { start: 271, end: 305, speaker: 'Peter', text: 'There is a small annual membership contribution. Annual voluntary dues to cover our tool insurance are just £18.', targetQuestion: 8, speechTip: 'Q8: Annual dues: £18' },
+        { start: 306, end: 335, speaker: 'Janice', text: 'That sounds very reasonable. What about public transport to the weir?' },
+        { start: 336, end: 350, speaker: 'Peter', text: 'The number 44 bus drops passengers right by the village canal bridge.', targetQuestion: 9, speechTip: 'Q9: Bus service: number 44' },
+        { start: 351, end: 360, speaker: 'Peter', text: 'And please write down my personal mobile in case of fog: 07941 883210.', targetQuestion: 10, speechTip: 'Q10: Emergency telephone: 883210' }
       ]
     },
     {
@@ -320,6 +335,19 @@ export const cambridge17Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 360, end: 385, speaker: 'Narrator', text: 'Part 2. You will hear an information officer giving an overview of scenic riverboat excursions along the River Ouse.' },
+        { start: 386, end: 435, speaker: 'Tour Coordinator', text: 'Welcome to River Ouse Excursions! Our twilight cruise is our most popular trip. Passengers rave about the breathtaking floodlit reflections of the Norman cathedral towers along the waterfront.', targetQuestion: 11, speechTip: 'Q11: Norman cathedral floodlit reflections (Option C)' },
+        { start: 436, end: 485, speaker: 'Tour Coordinator', text: 'We offer great family packages. A family pass covers two adults and grants complimentary entry to two children under twelve.', targetQuestion: 12, speechTip: 'Q12: Family ticket policy (Option A)' },
+        { start: 486, end: 535, speaker: 'Tour Coordinator', text: 'Our vessels are purpose-built for year-round comfort. Our modern catamaran features heated panoramic glass canopies so bad weather never spoils the voyage.', targetQuestion: 13, speechTip: 'Q13: Heated panoramic glass canopies (Option B)' },
+        { start: 536, end: 585, speaker: 'Tour Coordinator', text: 'Before embarking, make sure to visit our heritage exhibition. In the main reception hall sits a genuine nineteenth-century cast iron paddle wheel from an early steam tug.', targetQuestion: 14, speechTip: 'Q14: 19th-century cast iron paddle wheel (Option A)' },
+        { start: 586, end: 615, speaker: 'Tour Coordinator', text: 'For private charters and dinners, please note our reservation deadline: catering requirements must be confirmed forty-eight hours ahead of boarding.', targetQuestion: 15, speechTip: 'Q15: Catering confirmed 48 hours ahead (Option C)' },
+        { start: 616, end: 645, speaker: 'Tour Coordinator', text: 'Now let me highlight key river piers. At St. Jude’s Pier, a high-tech bicycle rental depot allows disembarking cyclists to explore the valley trail.', targetQuestion: 16, speechTip: 'Q16: St. Jude’s Pier - bicycle rental depot (Location E)' },
+        { start: 646, end: 665, speaker: 'Tour Coordinator', text: 'At Bishop’s Reach, weekend voyagers find a bustling artisanal farmers market selling organic cheeses.', targetQuestion: 17, speechTip: 'Q17: Bishop’s Reach - artisanal farmers market (Location C)' },
+        { start: 666, end: 685, speaker: 'Tour Coordinator', text: 'Anchor Wharf features the acclaimed historic shipyard museum detailing four centuries of boat building.', targetQuestion: 18, speechTip: 'Q18: Anchor Wharf - historic shipyard museum (Location D)' },
+        { start: 686, end: 705, speaker: 'Tour Coordinator', text: 'Osprey Quay is dedicated to an expansive waterfowl sanctuary protecting nesting herons.', targetQuestion: 19, speechTip: 'Q19: Osprey Quay - waterfowl sanctuary (Location F)' },
+        { start: 706, end: 720, speaker: 'Tour Coordinator', text: 'Finally, Castle Steps lets visitors climb a stone panoramic viewing tower over the river bends.', targetQuestion: 20, speechTip: 'Q20: Castle Steps - stone panoramic viewing tower (Location G)' }
       ]
     },
     {
@@ -485,6 +513,20 @@ export const cambridge17Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 720, end: 745, speaker: 'Narrator', text: 'Part 3. You will hear two architecture students and their tutor discussing the structural potential and sustainability of bamboo in building design.' },
+        { start: 746, end: 785, speaker: 'Dr. Harris', text: 'Maya, Tom, your research proposal on structural bamboo is very promising. Why is it gaining popularity in modern sustainable engineering?' },
+        { start: 786, end: 825, speaker: 'Maya', text: 'The hollow cylindrical stem has exceptional tensile strength while being astonishingly lightweight, making it an extraordinary renewable substitute for steel.', targetQuestion: 21, speechTip: 'Q21: High tensile strength combined with light weight (Option A)' },
+        { start: 826, end: 855, speaker: 'Tom', text: 'However, joining the culms together poses tricky structural issues. Standard mechanical fasteners like steel bolts often cause the straight parallel fibres to crack and split.', targetQuestion: 22, speechTip: 'Q22: Fasteners cause parallel fibres to crack (Option A)' },
+        { start: 856, end: 890, speaker: 'Maya', text: 'Durability is another hurdle. Natural starches in the raw timber make untreated bamboo delicious prey for powder-post beetles and fungal rot.', targetQuestion: 23, speechTip: 'Q23: Starches attract wood-boring insects (Option B)' },
+        { start: 891, end: 935, speaker: 'Dr. Harris', text: 'Yes, preservation treatment is essential. Soaking the culms in a non-toxic mixture of natural borax salts permanently removes edible sugars and neutralizes pests.', targetQuestion: 24, speechTip: 'Q24: Borax salt preservation (Option B)' },
+        { start: 936, end: 975, speaker: 'Tom', text: 'For our design model, we will construct curved scale-model trusses and measure how much load they withstand before bending.', targetQuestion: 25, speechTip: 'Q25: Curved scale-model trusses tested under load (Option A)' },
+        { start: 976, end: 1005, speaker: 'Maya', text: 'Now regarding the harvesting protocol. Cutting must take place in the dawn chill of the early morning before sunlight draws sap upward.', targetQuestion: 26, speechTip: 'Q26: Harvested in the early morning' },
+        { start: 1006, end: 1028, speaker: 'Tom', text: 'Workers rub coarse wet sand across the outer culm to scrub away fungus and surface wax.', targetQuestion: 27, speechTip: 'Q27: Cleaned using coarse wet sand' },
+        { start: 1029, end: 1050, speaker: 'Maya', text: 'Long iron rebar is pushed down the core to puncture the internal membranes between nodes to facilitate drying.', targetQuestion: 28, speechTip: 'Q28: Puncturing internal membranes' },
+        { start: 1051, end: 1070, speaker: 'Tom', text: 'Culms are stacked vertically inside ventilated drying sheds away from scorching rays.', targetQuestion: 29, speechTip: 'Q29: Stacked inside ventilated sheds' },
+        { start: 1071, end: 1080, speaker: 'Dr. Harris', text: 'Finally, ultrasonic resonance validates that the timber achieves the required elasticity index before shipment.', targetQuestion: 30, speechTip: 'Q30: Checked for target elasticity index' }
       ]
     },
     {
@@ -626,6 +668,19 @@ export const cambridge17Test1 = {
             }
           ]
         }
+      ],
+      transcripts: [
+        { start: 1080, end: 1105, speaker: 'Narrator', text: 'Part 4. You will hear an agricultural entomologist delivering a lecture on biological pest control using lacewings.' },
+        { start: 1106, end: 1130, speaker: 'Dr. Howard Vance', text: 'Good afternoon. Today we examine Chrysoperla carnea, the common green lacewing. Because of their ferocious feeding habit, the larvae are popularly dubbed aphid lions.', targetQuestion: 31, speechTip: 'Q31: Larvae nicknamed aphid lions' },
+        { start: 1131, end: 1165, speaker: 'Dr. Howard Vance', text: 'They are formidable natural predators. They seize aphids using sickled, hollow jaws through which paralyzing enzymes are injected.', targetQuestion: 32, speechTip: 'Q32: Prey captured using hollow jaws' },
+        { start: 1166, end: 1205, speaker: 'Dr. Howard Vance', text: 'Reproduction exhibits curious adaptations. Mothers place each oval egg at the pinnacle of a slender silken stalk off the leaf surface to protect them from sibling cannibalism.', targetQuestion: 33, speechTip: 'Q33: Eggs laid atop a slender silken stalk' },
+        { start: 1206, end: 1240, speaker: 'Dr. Howard Vance', text: 'Camouflage in certain species is remarkable: the nymph cleverly heaps empty insect skins across its carapace to disguise itself from birds.', targetQuestion: 34, speechTip: 'Q34: Camouflaged with empty insect skins' },
+        { start: 1241, end: 1275, speaker: 'Dr. Howard Vance', text: 'Upon pupation, feeding habits undergo a complete shift. Unlike their predatory young, adult lacewings subsist peacefully on nectar and pollen grains.', targetQuestion: 35, speechTip: 'Q35: Adult diet consists of nectar and pollen' },
+        { start: 1276, end: 1315, speaker: 'Dr. Howard Vance', text: 'For commercial agronomy, suppliers package eggs blended with lightweight rice hulls for uniform mechanical spreading over orchards.', targetQuestion: 36, speechTip: 'Q36: Distributed using lightweight rice hulls' },
+        { start: 1316, end: 1355, speaker: 'Dr. Howard Vance', text: 'An enormous advantage of biological control is evolutionary: crucially, pest populations cannot develop biological resistance against physical predators.', targetQuestion: 37, speechTip: 'Q37: Pests cannot develop resistance' },
+        { start: 1356, end: 1390, speaker: 'Dr. Howard Vance', text: 'Integrated pest management thrives on synergy. They coexist harmoniously with parasitic wasps in commercial glasshouse crops.', targetQuestion: 38, speechTip: 'Q38: Compatible alongside parasitic wasps' },
+        { start: 1391, end: 1420, speaker: 'Dr. Howard Vance', text: 'Farmers can foster wild populations year-round. Establishing native hedgerows along field boundaries guarantees warm winter shelter.', targetQuestion: 39, speechTip: 'Q39: Overwintering habitat: native hedgerows' },
+        { start: 1421, end: 1440, speaker: 'Dr. Howard Vance', text: 'Economic analyses show striking returns: over five consecutive crop cycles, growers slashed their pesticide expenditure by over forty percent.', targetQuestion: 40, speechTip: 'Q40: Substantial reduction in pesticide expenditure' }
       ]
     }
   ]

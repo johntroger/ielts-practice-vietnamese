@@ -313,6 +313,21 @@ export const cambridge18Test1 = {
               }
             ]
           }
+        ],
+        transcripts: [
+          { start: 381, end: 405, speaker: 'Narrator', text: 'Part 2. You will hear a guide giving an introductory talk about facilities and renovations at a local nature reserve.' },
+          { start: 406, end: 435, speaker: 'Tour Guide', text: 'Welcome everyone to the Blackwood Community Heritage Centre and Nature Reserve. The sanctuary was founded back in 1985 specifically to shield vulnerable wetland birds from urban encroachment.', targetQuestion: 11, speechTip: 'Q11: Protect rare wetland birds (founded in 1985)' },
+          { start: 436, end: 460, speaker: 'Tour Guide', text: 'Since those early days, our community volunteers and rangers have worked tirelessly to maintain the delicate ecological balance.' },
+          { start: 461, end: 495, speaker: 'Tour Guide', text: 'You will also notice several major modernizations around our main visitor complex. Over the winter break, we installed comprehensive wheelchair ramps to guarantee full accessibility.', targetQuestion: 12, speechTip: 'Q12: Wheelchair ramps installed throughout the building' },
+          { start: 496, end: 535, speaker: 'Tour Guide', text: 'None of this would be possible without our dedicated team of local volunteers. We warmly invite new volunteers, asking only that you dedicate one weekend monthly to assist our rangers.', targetQuestion: 13, speechTip: 'Q13: Commit to at least one full weekend per month' },
+          { start: 536, end: 580, speaker: 'Tour Guide', text: 'Before we set off on the walking trail, let me mention dining options. Delicious light lunches and organic teas are served daily in our refurbished Lakeside Pavilion.', targetQuestion: 14, speechTip: 'Q14: Refreshments served at Lakeside Pavilion' },
+          { start: 581, end: 605, speaker: 'Tour Guide', text: 'Now, please turn your attention to the map of the reserve on your brochure so you can orient yourselves.' },
+          { start: 606, end: 635, speaker: 'Tour Guide', text: 'If you walk directly north along the willow path until the fork, take the left track; the Bird Observatory Hide is right at the end overlooking the marsh.', targetQuestion: 15, speechTip: 'Q15: Bird Observatory Hide is at Location D' },
+          { start: 636, end: 670, speaker: 'Tour Guide', text: 'Immediately south of the main entrance, situated safely behind the picnic lawn, you will find the Children Adventure Playground.', targetQuestion: 16, speechTip: 'Q16: Children’s Adventure Playground is at Location B' },
+          { start: 671, end: 705, speaker: 'Tour Guide', text: 'Passing the information kiosk and heading due east towards the sun terrace, the Herb and Butterfly Garden is enclosed within a brick courtyard.', targetQuestion: 17, speechTip: 'Q17: Herb & Butterfly Garden is at Location F' },
+          { start: 706, end: 735, speaker: 'Tour Guide', text: 'On the western bank of the river, just beside the wooden footbridge, lies our Canoe Launching Dock.', targetQuestion: 18, speechTip: 'Q18: Canoe Launching Dock is at Location A' },
+          { start: 736, end: 760, speaker: 'Tour Guide', text: 'Centrally positioned at the crossroads between the main trail and forest trail is the wooden cabin housing the Ranger Station.', targetQuestion: 19, speechTip: 'Q19: Ranger Station & First Aid is at Location E' },
+          { start: 761, end: 790, speaker: 'Tour Guide', text: 'Tucked away quietly at the far southeastern tip of the pine woods is the discreet Photography Shelter.', targetQuestion: 20, speechTip: 'Q20: Wildlife Photography Shelter is at Location C' }
         ]
       },
       {
@@ -471,6 +486,21 @@ export const cambridge18Test1 = {
               }
             ]
           }
+        ],
+        transcripts: [
+          { start: 791, end: 815, speaker: 'Narrator', text: 'Part 3. You will hear two undergraduate biology students, Maya and Liam, discussing their university assignment on sustainable urban agriculture.' },
+          { start: 816, end: 840, speaker: 'Maya', text: 'Hi Liam, thanks for meeting up. We need to finalize our presentation on vertical farming for Dr. Henderson’s seminar.' },
+          { start: 841, end: 875, speaker: 'Liam', text: 'Hi Maya. I agree. Looking at the environmental benefits first, the closed hydroponic loop recycles up to 95% of moisture! Yes, that water saving is undisputed.', targetQuestion: 21, speechTip: 'Q21: Significant reduction in commercial water usage (95%)' },
+          { start: 876, end: 915, speaker: 'Maya', text: 'And another huge advantage is production consistency. You can harvest leafy vegetables in December just as reliably as in June because external storms do not matter. Absolutely, stable harvests all year round.', targetQuestion: 22, speechTip: 'Q22: Year-round crop yields independent of weather fluctuations' },
+          { start: 916, end: 945, speaker: 'Liam', text: 'Right. But we also have to evaluate the specific engineering bottlenecks for each component in the system.' },
+          { start: 946, end: 980, speaker: 'Maya', text: 'For the closed hydroponic reservoir, biosecurity is critical. If a root pathogen enters the circulating water tank, it infects every single plant within hours.', targetQuestion: 23, speechTip: 'Q23: Vulnerability to rapid spread of bacterial pathogens in water' },
+          { start: 981, end: 1030, speaker: 'Liam', text: 'And regarding the full-spectrum LED arrays, energy intensity is massive. Keeping lights powered 16 hours a day creates huge electricity bills and leaves farmers crippled if a blackout strikes.', targetQuestion: 24, speechTip: 'Q24: High dependency on continuous electrical power' },
+          { start: 1031, end: 1075, speaker: 'Maya', text: 'What about retrofitting rooftop multi-tier racks on existing architecture? Wet soil and water towers are incredibly dense; many historical city roofs simply cannot bear that physical load.', targetQuestion: 25, speechTip: 'Q25: Heavy weight placing stress on building structural foundations' },
+          { start: 1076, end: 1115, speaker: 'Liam', text: 'And then there is the consumer reaction to marketed produce. Some organic shoppers still feel greens grown under neon lights without real sunlight are fake or sterile.', targetQuestion: 26, speechTip: 'Q26: Lack of consumer acceptance due to perceived unnaturalness' },
+          { start: 1116, end: 1150, speaker: 'Maya', text: 'Now for our own experimental trial methodology. We agreed to start the pilot trial using 50 uniform seedlings of crisp romaine lettuce.', targetQuestion: 27, speechTip: 'Q27: 50 uniform seedlings of romaine lettuce' },
+          { start: 1151, end: 1180, speaker: 'Liam', text: 'The climate control unit must keep the ambient temperature steady at 22 degrees Celsius.', targetQuestion: 28, speechTip: 'Q28: Maintain constant temperature at 22 degrees Celsius' },
+          { start: 1181, end: 1205, speaker: 'Maya', text: 'Using our digital flow meters, we will log daily nutrient uptake by each rack.', targetQuestion: 29, speechTip: 'Q29: Measure daily nutrient uptake through digital flow meters' },
+          { start: 1206, end: 1220, speaker: 'Liam', text: 'Finally, we compile our findings into comparative charts to present to our tutorial classmates.', targetQuestion: 30, speechTip: 'Q30: Present final comparative charts to tutorial group' }
         ]
       },
       {
@@ -612,6 +642,19 @@ export const cambridge18Test1 = {
               }
             ]
           }
+        ],
+        transcripts: [
+          { start: 1221, end: 1245, speaker: 'Narrator', text: 'Part 4. You will hear a lecture by a behavioral ecologist examining low-frequency acoustic signaling in African savanna elephants.' },
+          { start: 1246, end: 1305, speaker: 'Dr. Alistair Finch', text: 'Good morning, everyone. Today we examine subterranean bioacoustics in African elephants. These deep rumbles drop well below 20 Hertz into the infrasound spectrum, undetectable by ordinary human ears.', targetQuestion: 31, speechTip: 'Q31: Sounds in the infrasound range' },
+          { start: 1306, end: 1365, speaker: 'Dr. Alistair Finch', text: 'What makes this acoustic modality so effective across vast landscapes is atmospheric layering. When evening temperature inversions take place, these rumbles travel unimpeded for up to ten kilometres across the savanna.', targetQuestion: 32, speechTip: 'Q32: Propagate across distances of up to ten kilometres' },
+          { start: 1366, end: 1425, speaker: 'Dr. Alistair Finch', text: 'How do receiving elephants pick up these subtle terrestrial shockwaves? Pacinian corpuscles—densely packed tactile mechanoreceptors nestled within their spongy foot pads—detect ground tremors.', targetQuestion: 33, speechTip: 'Q33: Nerve receptors inside foot pads' },
+          { start: 1426, end: 1485, speaker: 'Dr. Alistair Finch', text: 'From the extremities, seismic signals travel up the skeletal column, channeled straight into the hypertrophied middle ear cavities.', targetQuestion: 34, speechTip: 'Q34: Upward through leg bones directly into middle ear' },
+          { start: 1486, end: 1540, speaker: 'Dr. Alistair Finch', text: 'In social terms, this communication network coordinates the entire matriarchy. The experienced matriarch emits a sharp low growl to warn calves of imminent danger, such as nearby predators.', targetQuestion: 35, speechTip: 'Q35: Herd matriarch signals danger to younger calves' },
+          { start: 1541, end: 1595, speaker: 'Dr. Alistair Finch', text: 'Over greater distances, satellite tracking demonstrates herds miles apart synchronizing marches towards vital water holes.', targetQuestion: 36, speechTip: 'Q36: Coordinate travel directions towards distant water holes' },
+          { start: 1596, end: 1650, speaker: 'Dr. Alistair Finch', text: 'Infrasound is equally crucial during breeding cycles. Receptive females vocalize powerful estrus calls that summon competitive dominant bulls across regional territories.', targetQuestion: 37, speechTip: 'Q37: Female elephants announce reproductive status via estrus calls' },
+          { start: 1651, end: 1705, speaker: 'Dr. Alistair Finch', text: 'Unfortunately, anthropogenic disturbance is severing these ancient channels. Mining drills, highway traffic, and low-flying aircraft contribute severe acoustic pollution that drowns out natural seismic cues.', targetQuestion: 38, speechTip: 'Q38: Continuous acoustic pollution masks elephant signaling' },
+          { start: 1706, end: 1750, speaker: 'Dr. Alistair Finch', text: 'To counter this, wildlife researchers have adapted seismic monitoring gear. Instruments originally fabricated to record miniature earthquakes have been repurposed along national park borders.', targetQuestion: 39, speechTip: 'Q39: Sensors originally developed for monitoring earthquakes' },
+          { start: 1751, end: 1800, speaker: 'Dr. Alistair Finch', text: 'Ultimately, we must safeguard open migration corridors so these intelligent creatures can maintain their ancient acoustic dialogue without fragmentation.', targetQuestion: 40, speechTip: 'Q40: Preserving uninterrupted ecological migration corridors' }
         ]
       }
     ]

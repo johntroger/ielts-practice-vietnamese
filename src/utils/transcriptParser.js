@@ -123,13 +123,32 @@ export function parseTranscriptStringToKaraoke(transcriptText, audioTimestampEnd
 
 /**
  * Universal helper that retrieves parsed karaoke sentences for any listening part.
- * Checks for pre-computed `partData.transcripts` array first.
+ * Checks for pre-computed `partData.transcripts` array first, normalizing legacy `timestamp` fields into `start` and `end`.
  * If absent or empty, falls back to parsing `partData.transcript` string on-the-fly.
  */
 export function getEffectiveTranscripts(partData) {
   if (!partData) return [];
   if (Array.isArray(partData.transcripts) && partData.transcripts.length > 0) {
-    return partData.transcripts;
+    return partData.transcripts.map((item, idx, arr) => {
+      const start = typeof item.start === 'number' ? item.start : (typeof item.timestamp === 'number' ? item.timestamp : 0);
+      let end = typeof item.end === 'number' ? item.end : null;
+      if (end === null) {
+        const next = arr[idx + 1];
+        const nextStart = next ? (typeof next.start === 'number' ? next.start : next.timestamp) : null;
+        if (typeof nextStart === 'number' && nextStart > start) {
+          end = nextStart;
+        } else if (typeof partData.audioTimestampEnd === 'number' && partData.audioTimestampEnd > start) {
+          end = partData.audioTimestampEnd;
+        } else {
+          end = start + 8;
+        }
+      }
+      return {
+        ...item,
+        start,
+        end
+      };
+    });
   }
   if (typeof partData.transcript === 'string' && partData.transcript.trim()) {
     return parseTranscriptStringToKaraoke(partData.transcript, partData.audioTimestampEnd);
