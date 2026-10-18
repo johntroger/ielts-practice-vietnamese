@@ -205,7 +205,8 @@ const testSuites = [
   { name: 'Step 196: Track 42 UK Business Structures & Self-Employment Integration', file: 'tests/test_step196_track42_audio_integration.js' },
   { name: 'Step 197: Track 43 Sole Trader Pros & Cons Integration', file: 'tests/test_step197_track43_audio_integration.js' },
   { name: 'Step 198: Track 44 Business Partnerships & LLPs Integration', file: 'tests/test_step198_track44_audio_integration.js' },
-  { name: 'Step 199: Track 45 Limited Liability Companies Integration', file: 'tests/test_step199_track45_audio_integration.js' }
+  { name: 'Step 199: Track 45 Limited Liability Companies Integration', file: 'tests/test_step199_track45_audio_integration.js' },
+  { name: 'Step 200: Track 46 Business Structures Summary Integration', file: 'tests/test_step200_track46_audio_integration.js' }
 ];
 
 console.log('===============================================================');

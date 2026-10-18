@@ -5408,12 +5408,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'When taxable profits exceed approximately £50,000',
     explanation: 'Thuế doanh nghiệp thấp hơn nhiều so với thuế thu nhập cá nhân đối với các khoản lợi nhuận lớn, đặc biệt trên 50.000 bảng ("especially over around 50,000 pounds").',
     explanationEn: 'The lecturer highlights that corporation tax rates are significantly lower than personal income tax on large profits, especially beyond £50,000.'
+  },
+  // ==========================================
+  // TRACK 46: COMPARATIVE SUMMARY OF UK BUSINESS STRUCTURES
+  // ==========================================
+  {
+    id: 'easy_lis_sole_trader_control_autonomy_t46',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What operational freedom is preserved when establishing a business as a sole trader?',
+    promptEn: 'What operational freedom is preserved when establishing a business as a sole trader?',
+    context: 'Lecturer: "You don\'t have to worry about lots of administration and financial organization, and you can keep total control of your business and decision making."',
+    contextEn: 'Lecturer: "You don\'t have to worry about lots of administration and financial organization, and you can keep total control of your business and decision making."',
+    audioText: "You don't have to worry about lots of administration and financial organization, and you can keep total control of your business and decision making.",
+    options: [
+      'Total control over business operations and decision making',
+      'Exemption from submitting any annual income tax assessments',
+      'Automatic insurance coverage for commercial vehicle accidents',
+      'Unlimited access to interest-free government venture loans'
+    ],
+    optionsVi: [
+      'Toàn quyền kiểm soát hoạt động kinh doanh và ra quyết định',
+      'Được miễn nộp mọi tờ khai thuế thu nhập hàng năm',
+      'Tự động được bảo hiểm chi trả cho tai nạn xe thương mại',
+      'Tiếp cận không giới hạn các khoản vay mạo hiểm không lãi suất của chính phủ'
+    ],
+    optionsEn: [
+      'Total control over business operations and decision making',
+      'Exemption from submitting any annual income tax assessments',
+      'Automatic insurance coverage for commercial vehicle accidents',
+      'Unlimited access to interest-free government venture loans'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Total control over business operations and decision making',
+    explanation: 'Chủ cơ sở sole trader nắm toàn quyền kiểm soát kinh doanh và ra quyết định: "keep total control of your business and decision making".',
+    explanationEn: 'Sole traders retain total autonomy over their commercial strategies without needing co-partner consensus.'
+  },
+  {
+    id: 'med_lis_valuable_contracts_liability_t46',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why might a sole trader face obstacles when competing for valuable commercial contracts?',
+    promptEn: 'Why might a sole trader face obstacles when competing for valuable commercial contracts?',
+    context: 'Lecturer: "and it might be more difficult to get valuable contracts if your business does not have limited liability."',
+    contextEn: 'Lecturer: "and it might be more difficult to get valuable contracts if your business does not have limited liability."',
+    audioText: "and it might be more difficult to get valuable contracts if your business does not have limited liability.",
+    options: [
+      'Institutional clients often prefer trading with entities protected by limited liability',
+      'Sole traders are legally barred from signing contracts over £1,000',
+      'Independent contractors cannot issue VAT invoices to commercial clients',
+      'Sole proprietors cannot legally own business computers or machinery'
+    ],
+    optionsVi: [
+      'Các khách hàng tổ chức thường ưu tiên ký hợp đồng với các pháp nhân có trách nhiệm hữu hạn',
+      'Sole trader bị pháp luật cấm ký các hợp đồng có giá trị trên 1.000 bảng',
+      'Nhà thầu độc lập không thể xuất hóa đơn VAT cho khách hàng thương mại',
+      'Sole trader không được phép sở hữu máy tính hay máy móc kinh doanh'
+    ],
+    optionsEn: [
+      'Institutional clients often prefer trading with entities protected by limited liability',
+      'Sole traders are legally barred from signing contracts over £1,000',
+      'Independent contractors cannot issue VAT invoices to commercial clients',
+      'Sole proprietors cannot legally own business computers or machinery'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Institutional clients often prefer trading with entities protected by limited liability',
+    explanation: 'Các tổ chức lớn thường ưu tiên hợp tác với doanh nghiệp có tư cách pháp nhân TNHH ("if your business does not have limited liability").',
+    explanationEn: 'Larger organizations often require contract partners to have limited liability status to mitigate commercial insolvency risks.'
+  },
+  {
+    id: 'easy_lis_partnership_interpersonal_trust_t46',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What severe financial dilemma can occur in a simple partnership if mutual trust collapses?',
+    promptEn: 'What severe financial dilemma can occur in a simple partnership if mutual trust collapses?',
+    context: 'Lecturer: "If a partnership has serious money problems, one partner may leave the other to deal with the debts. Clearly this is not a problem for sole traders."',
+    contextEn: 'Lecturer: "If a partnership has serious money problems, one partner may leave the other to deal with the debts. Clearly this is not a problem for sole traders."',
+    audioText: "If a partnership has serious money problems, one partner may leave the other to deal with the debts. Clearly this is not a problem for sole traders.",
+    options: [
+      'One partner may abscond, leaving the remaining member personally liable for all collective debts',
+      'The bank immediately forecloses on all municipal council properties',
+      'The tax office forces all partners into compulsory civil service',
+      'All client accounts are permanently nationalized by the central government'
+    ],
+    optionsVi: [
+      'Một đối tác có thể bỏ đi, để người còn lại phải tự chịu trách nhiệm toàn bộ nợ chung',
+      'Ngân hàng lập tức tịch thu toàn bộ tài sản của hội đồng thành phố',
+      'Cơ quan thuế buộc mọi đối tác phải đi lao động công ích bắt buộc',
+      'Mọi tài khoản khách hàng đều bị quốc hữu hóa bởi chính phủ trung ương'
+    ],
+    optionsEn: [
+      'One partner may abscond, leaving the remaining member personally liable for all collective debts',
+      'The bank immediately forecloses on all municipal council properties',
+      'The tax office forces all partners into compulsory civil service',
+      'All client accounts are permanently nationalized by the central government'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'One partner may abscond, leaving the remaining member personally liable for all collective debts',
+    explanation: 'Trách nhiệm liên đới có thể dẫn tới việc một người bỏ trốn và đẩy toàn bộ nợ cho đối tác còn lại ("one partner may leave the other to deal with the debts").',
+    explanationEn: 'Shared liability means an unfaithful partner can desert the venture, dumping all debt onto the remaining partner.'
+  },
+  {
+    id: 'med_lis_llp_accounts_companies_house_t46',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which formal filing obligation applies strictly to LLPs but is exempted for simple partnerships?',
+    promptEn: 'Which formal filing obligation applies strictly to LLPs but is exempted for simple partnerships?',
+    context: 'Lecturer: "For example, LLPs are legally required to submit their accounts and annual returns to Companies House. This is not something that is required for simple partnerships."',
+    contextEn: 'Lecturer: "For example, LLPs are legally required to submit their accounts and annual returns to Companies House. This is not something that is required for simple partnerships."',
+    audioText: "For example, LLPs are legally required to submit their accounts and annual returns to Companies House. This is not something that is required for simple partnerships.",
+    options: [
+      'Submitting statutory accounts and an annual return to Companies House',
+      'Filing quarterly environmental impact disclosures with the Forestry Commission',
+      'Submitting monthly staff attendance logs to the local Magistrate Court',
+      'Registering personal credit scores with the British Bankers Association'
+    ],
+    optionsVi: [
+      'Nộp báo cáo tài chính và tờ khai thường niên cho Companies House',
+      'Nộp báo cáo tác động môi trường hàng quý cho Ủy ban Lâm nghiệp',
+      'Nộp nhật ký chấm công nhân viên hàng tháng cho Tòa án địa phương',
+      'Đăng ký điểm tín dụng cá nhân với Hiệp hội Ngân hàng Anh'
+    ],
+    optionsEn: [
+      'Submitting statutory accounts and an annual return to Companies House',
+      'Filing quarterly environmental impact disclosures with the Forestry Commission',
+      'Submitting monthly staff attendance logs to the local Magistrate Court',
+      'Registering personal credit scores with the British Bankers Association'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Submitting statutory accounts and an annual return to Companies House',
+    explanation: 'LLP bắt buộc phải nộp tài khoản và báo cáo thường niên cho Companies House ("submit their accounts and annual returns to Companies House").',
+    explanationEn: 'LLPs must submit corporate accounts and annual returns to Companies House, whereas simple partnerships do not.'
+  },
+  {
+    id: 'hard_lis_ltd_statutory_records_address_t46',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Where does the law mandate that limited companies maintain their official records and registers?',
+    promptEn: 'Where does the law mandate that limited companies maintain their official records and registers?',
+    context: 'Lecturer: "Similarly, there is a legal requirement to keep company records at the registered address."',
+    contextEn: 'Lecturer: "Similarly, there is a legal requirement to keep company records at the registered address."',
+    audioText: "Similarly, there is a legal requirement to keep company records at the registered address.",
+    options: [
+      'At the company\'s formally registered address',
+      'Inside the private vehicle of the external auditor',
+      'At the local commercial branch of the primary lender',
+      'In the public archives of the city council'
+    ],
+    optionsVi: [
+      'Tại địa chỉ đăng ký kinh doanh chính thức của công ty',
+      'Bên trong xe riêng của kiểm toán viên độc lập',
+      'Tại chi nhánh thương mại của ngân hàng đối tác chính',
+      'Trong kho lưu trữ công cộng của hội đồng thành phố'
+    ],
+    optionsEn: [
+      'At the company\'s formally registered address',
+      'Inside the private vehicle of the external auditor',
+      'At the local commercial branch of the primary lender',
+      'In the public archives of the city council'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'At the company\'s formally registered address',
+    explanation: 'Luật quy định công ty phải lưu giữ hồ sơ tại địa chỉ đã đăng ký: "keep company records at the registered address".',
+    explanationEn: 'UK company law imposes a strict statutory requirement to keep official company records at its registered office address.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 46: Comparative Summary of UK Business Structures
+  easy_lis_sole_trader_control_autonomy_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 12.0, clipEnd: 24.0, isR2Audio: true, trackLabel: 'Track 46 • Sole Trader Autonomy' },
+  med_lis_valuable_contracts_liability_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 27.0, clipEnd: 39.0, isR2Audio: true, trackLabel: 'Track 46 • Contract Credibility Barrier' },
+  easy_lis_partnership_interpersonal_trust_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 74.0, clipEnd: 90.0, isR2Audio: true, trackLabel: 'Track 46 • Partner Desertion & Debt' },
+  med_lis_llp_accounts_companies_house_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 107.0, clipEnd: 124.0, isR2Audio: true, trackLabel: 'Track 46 • Companies House Requirement' },
+  hard_lis_ltd_statutory_records_address_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 168.0, clipEnd: 180.0, isR2Audio: true, trackLabel: 'Track 46 • Registered Address Preservation' },
+
   // Track 45: Limited Liability Companies (Ltd) in the UK
   easy_lis_shareholder_definition_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 10.0, clipEnd: 21.0, isR2Audio: true, trackLabel: 'Track 45 • Shareholders & Members' },
   med_lis_separate_legal_entity_debts_t45: { audioUrl: `${R2_BASE}/ielts-listening-track45-limited-liability-company-ltd.mp3`, clipStart: 67.0, clipEnd: 83.0, isR2Audio: true, trackLabel: 'Track 45 • Asset Separation & Shield' },

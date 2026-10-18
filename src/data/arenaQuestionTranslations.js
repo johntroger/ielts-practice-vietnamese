@@ -1718,6 +1718,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "At what profitability benchmark does corporation tax deliver significant financial savings over individual income tax?",
     "contextEn": "Lecturer: \"In terms of paying tax, the company has to pay corporation tax on its profits, which is far less than income tax on large amounts, especially over around 50,000 pounds.\"",
     "explanationEn": "The lecturer highlights that corporation tax rates are significantly lower than personal income tax on large profits, especially beyond £50,000."
+  },
+  "easy_lis_sole_trader_control_autonomy_t46": {
+    "promptEn": "What operational freedom is preserved when establishing a business as a sole trader?",
+    "contextEn": "Lecturer: \"You don't have to worry about lots of administration and financial organization, and you can keep total control of your business and decision making.\"",
+    "explanationEn": "Sole traders retain total autonomy over their commercial strategies without needing co-partner consensus."
+  },
+  "med_lis_valuable_contracts_liability_t46": {
+    "promptEn": "Why might a sole trader face obstacles when competing for valuable commercial contracts?",
+    "contextEn": "Lecturer: \"and it might be more difficult to get valuable contracts if your business does not have limited liability.\"",
+    "explanationEn": "Larger organizations often require contract partners to have limited liability status to mitigate commercial insolvency risks."
+  },
+  "easy_lis_partnership_interpersonal_trust_t46": {
+    "promptEn": "What severe financial dilemma can occur in a simple partnership if mutual trust collapses?",
+    "contextEn": "Lecturer: \"If a partnership has serious money problems, one partner may leave the other to deal with the debts. Clearly this is not a problem for sole traders.\"",
+    "explanationEn": "Shared liability means an unfaithful partner can desert the venture, dumping all debt onto the remaining partner."
+  },
+  "med_lis_llp_accounts_companies_house_t46": {
+    "promptEn": "Which formal filing obligation applies strictly to LLPs but is exempted for simple partnerships?",
+    "contextEn": "Lecturer: \"For example, LLPs are legally required to submit their accounts and annual returns to Companies House. This is not something that is required for simple partnerships.\"",
+    "explanationEn": "LLPs must submit corporate accounts and annual returns to Companies House, whereas simple partnerships do not."
+  },
+  "hard_lis_ltd_statutory_records_address_t46": {
+    "promptEn": "Where does the law mandate that limited companies maintain their official records and registers?",
+    "contextEn": "Lecturer: \"Similarly, there is a legal requirement to keep company records at the registered address.\"",
+    "explanationEn": "UK company law imposes a strict statutory requirement to keep official company records at its registered office address."
   }
 };
 
