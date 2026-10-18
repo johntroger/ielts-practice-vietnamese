@@ -4021,12 +4021,193 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'It was repurposed into a clinical healthcare facility (doctor\'s surgery)',
     explanation: 'Bill bất ngờ vì dù giáo dục phát triển nhưng trường cao đẳng nghệ thuật đã không còn tồn tại mà trở thành một phòng khám bác sĩ ("doctor\'s surgery").',
     explanationEn: 'Bill finds it paradoxical that despite educational expansion, the historic art college was converted into a medical practice ("doctor\'s surgery").'
+  },
+
+  // ==========================================
+  // TRACK 38: SPEAKING PART 2 EXAMINER PROMPT
+  // ==========================================
+  {
+    id: 'easy_lis_prep_time_t38',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How much preparation time is officially granted to candidates before speaking in IELTS Speaking Part 2?',
+    promptEn: 'How much preparation time is officially granted to candidates before speaking in IELTS Speaking Part 2?',
+    context: 'Examiner: "You have 1 minute to think about your answer. Here\'s a piece of paper and a pencil for you to make some notes if you wish."',
+    contextEn: 'Examiner: "You have 1 minute to think about your answer. Here\'s a piece of paper and a pencil for you to make some notes if you wish."',
+    audioText: "You have 1 minute to think about your answer. Here's a piece of paper and a pencil for you to make some notes if you wish.",
+    options: [
+      'Exactly 1 minute',
+      'Between 1 to 2 minutes depending on topic complexity',
+      '30 seconds quick reflection',
+      '3 minutes structured outlining'
+    ],
+    optionsVi: [
+      'Chính xác 1 phút',
+      'Từ 1 đến 2 phút tùy độ phức tạp của đề',
+      '30 giây suy nghĩ nhanh',
+      '3 phút lập dàn ý chi tiết'
+    ],
+    optionsEn: [
+      'Exactly 1 minute',
+      'Between 1 to 2 minutes depending on topic complexity',
+      '30 seconds quick reflection',
+      '3 minutes structured outlining'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Exactly 1 minute',
+    explanation: 'Giám khảo nêu rõ thời gian suy nghĩ: "You have 1 minute to think about your answer."',
+    explanationEn: 'The examiner explicitly announces: "You have 1 minute to think about your answer."'
+  },
+  {
+    id: 'easy_lis_paper_pencil_t38',
+    difficulty: 'easy',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What items does the examiner hand over to the candidate for preparing notes?',
+    promptEn: 'What items does the examiner hand over to the candidate for preparing notes?',
+    context: 'Examiner: "Here\'s a piece of paper and a pencil for you to make some notes if you wish."',
+    contextEn: 'Examiner: "Here\'s a piece of paper and a pencil for you to make some notes if you wish."',
+    audioText: "Here's a piece of paper and a pencil for you to make some notes if you wish.",
+    options: [
+      'A piece of paper and a pencil',
+      'A digital tablet and stylus',
+      'A laminated whiteboard and dry-erase marker',
+      'A ballpoint pen and printed cue booklet'
+    ],
+    optionsVi: [
+      'Một tờ giấy và một cây bút chì',
+      'Máy tính bảng kỹ thuật số và bút cảm ứng',
+      'Bảng trắng ép nhựa và bút dạ xóa được',
+      'Bút bi và tập sách in gợi ý'
+    ],
+    optionsEn: [
+      'A piece of paper and a pencil',
+      'A digital tablet and stylus',
+      'A laminated whiteboard and dry-erase marker',
+      'A ballpoint pen and printed cue booklet'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A piece of paper and a pencil',
+    explanation: 'Giám khảo đưa cho thí sinh một tờ giấy và bút chì ("a piece of paper and a pencil").',
+    explanationEn: 'The examiner provides the candidate with "a piece of paper and a pencil".'
+  },
+  {
+    id: 'med_lis_interruption_procedure_t38',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How should the candidate react if the examiner cuts in and interrupts their monologue?',
+    promptEn: 'How should the candidate react if the examiner cuts in and interrupts their monologue?',
+    context: 'Examiner: "Remember you have 1 to 2 minutes for this, so don\'t worry if I stop you. I\'ll tell you when the time is up."',
+    contextEn: 'Examiner: "Remember you have 1 to 2 minutes for this, so don\'t worry if I stop you. I\'ll tell you when the time is up."',
+    audioText: "Remember you have 1 to 2 minutes for this, so don't worry if I stop you. I'll tell you when the time is up.",
+    options: [
+      'Remain calm without concern as examiner interruption is standard timed procedure',
+      'Apologize immediately and request thirty seconds extra time',
+      'Restart the cue card narrative from the introductory background',
+      'Complain to the exam center supervisor regarding premature disruption'
+    ],
+    optionsVi: [
+      'Giữ bình tĩnh không cần lo lắng vì ngắt lời là thủ tục quy chuẩn khi hết thời gian',
+      'Xin lỗi ngay lập tức và xin thêm 30 giây',
+      'Bắt đầu nói lại từ phần giới thiệu',
+      'Khiếu nại giám thị trung tâm thi về việc bị ngắt lời sớm'
+    ],
+    optionsEn: [
+      'Remain calm without concern as examiner interruption is standard timed procedure',
+      'Apologize immediately and request thirty seconds extra time',
+      'Restart the cue card narrative from the introductory background',
+      'Complain to the exam center supervisor regarding premature disruption'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Remain calm without concern as examiner interruption is standard timed procedure',
+    explanation: 'Giám khảo trấn an: "don\'t worry if I stop you. I\'ll tell you when the time is up" - đây là quy trình kiểm soát thời gian tiêu chuẩn.',
+    explanationEn: 'The examiner reassures: "don\'t worry if I stop you. I\'ll tell you when the time is up" as it is standard timing control.'
+  },
+  {
+    id: 'med_lis_time_ceiling_t38',
+    difficulty: 'medium',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the maximum target time ceiling for the candidate\'s monologue in Speaking Part 2?',
+    promptEn: 'What is the maximum target time ceiling for the candidate\'s monologue in Speaking Part 2?',
+    context: 'Examiner: "Now, I\'m going to give you a topic, and I\'d like you to talk about it for between 1 to 2 minutes... Remember you have 1 to 2 minutes for this..."',
+    contextEn: 'Examiner: "Now, I\'m going to give you a topic, and I\'d like you to talk about it for between 1 to 2 minutes... Remember you have 1 to 2 minutes for this..."',
+    audioText: "Now, I'm going to give you a topic, and I'd like you to talk about it for between 1 to 2 minutes... Remember you have 1 to 2 minutes for this...",
+    options: [
+      '2 minutes',
+      '1 minute',
+      '3 minutes',
+      '90 seconds'
+    ],
+    optionsVi: [
+      '2 phút',
+      '1 phút',
+      '3 phút',
+      '90 giây'
+    ],
+    optionsEn: [
+      '2 minutes',
+      '1 minute',
+      '3 minutes',
+      '90 seconds'
+    ],
+    correctIndex: 0,
+    correctAnswer: '2 minutes',
+    explanation: 'Trần thời gian tối đa là 2 phút ("between 1 to 2 minutes").',
+    explanationEn: 'The upper threshold limit is 2 minutes ("between 1 to 2 minutes").'
+  },
+  {
+    id: 'hard_lis_cue_card_journey_t38',
+    difficulty: 'hard',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What topic is the candidate required to elaborate on in this Cambridge IELTS Speaking Part 2 cue card?',
+    promptEn: 'What topic is the candidate required to elaborate on in this Cambridge IELTS Speaking Part 2 cue card?',
+    context: 'Examiner cue card instructions: "Describe a memorable journey that you made. You should say where you went, how you travelled, why you went there, and explain why that journey was memorable to you."',
+    contextEn: 'Examiner cue card instructions: "Describe a memorable journey that you made. You should say where you went, how you travelled, why you went there, and explain why that journey was memorable to you."',
+    audioText: "Describe a memorable journey that you made. You should say where you went, how you travelled, why you went there, and explain why that journey was memorable to you.",
+    options: [
+      'A memorable personal journey and reasons why it left a lasting impression',
+      'A municipal public transport initiative to expand electric rail commuter lines',
+      'An academic presentation evaluating urban highway construction environmental costs',
+      'A childhood sports competition where team collaboration overcame equipment deficits'
+    ],
+    optionsVi: [
+      'Một chuyến đi đáng nhớ của cá nhân và lý do tại sao chuyến đi để lại ấn tượng sâu đậm',
+      'Sáng kiến giao thông công cộng đô thị nhằm mở rộng các tuyến đường sắt điện',
+      'Bài thuyết trình học thuật đánh giá tác động môi trường của việc xây dựng đường cao tốc',
+      'Một cuộc thi thể thao thời thơ ấu nơi tinh thần đồng đội vượt qua khó khăn thiếu thốn thiết bị'
+    ],
+    optionsEn: [
+      'A memorable personal journey and reasons why it left a lasting impression',
+      'A municipal public transport initiative to expand electric rail commuter lines',
+      'An academic presentation evaluating urban highway construction environmental costs',
+      'A childhood sports competition where team collaboration overcame equipment deficits'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A memorable personal journey and reasons why it left a lasting impression',
+    explanation: 'Chủ đề của Cue Card là "Describe a memorable journey that you made".',
+    explanationEn: 'The target cue card theme is "Describe a memorable journey that you made".'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 38: Speaking Part 2 Examiner Prompt
+  easy_lis_prep_time_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 9.0, clipEnd: 12.0, isR2Audio: true, trackLabel: 'Track 38 • Speaking Part 2 Preparation Time' },
+  easy_lis_paper_pencil_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 12.0, clipEnd: 16.5, isR2Audio: true, trackLabel: 'Track 38 • Note-Taking Stationery' },
+  med_lis_interruption_procedure_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 16.0, clipEnd: 24.5, isR2Audio: true, trackLabel: 'Track 38 • Examiner Interruption Protocol' },
+  med_lis_time_ceiling_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 2.0, clipEnd: 9.0, isR2Audio: true, trackLabel: 'Track 38 • Speaking Delivery Ceiling' },
+  hard_lis_cue_card_journey_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 2.0, clipEnd: 28.0, isR2Audio: true, trackLabel: 'Track 38 • Memorable Journey Cue Card' },
+
   // Track 37: Ashtown 25-Year Urban Transformation & Survey Review
   med_lis_bus_destination_fall_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 33.0, clipEnd: 58.0, isR2Audio: true, trackLabel: 'Track 37 • Bus Destination Constraints' },
   easy_lis_bypass_unbuilt_status_t37: { audioUrl: `${R2_BASE}/ielts-listening-track37-ashtown-urban-transformation.mp3`, clipStart: 63.5, clipEnd: 77.0, isR2Audio: true, trackLabel: 'Track 37 • Unrealized Bypass Scheme' },

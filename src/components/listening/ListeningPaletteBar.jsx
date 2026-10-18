@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { Flag, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from '../../i18n/index.js';
 
@@ -13,7 +13,8 @@ export default function ListeningPaletteBar({
   onToggleFlag,
   onSubmitExam,
   isSubmitted = false,
-  availableParts = null
+  availableParts = null,
+  partsData = null
 }) {
   const { t, isEn } = useTranslation();
   const activePillRef = useRef(null);
@@ -29,18 +30,46 @@ export default function ListeningPaletteBar({
     }
   }, [activeQuestionOrder]);
 
-  const defaultParts = [
-    { partNumber: 1, range: [1, 10] },
-    { partNumber: 2, range: [11, 20] },
-    { partNumber: 3, range: [21, 30] },
-    { partNumber: 4, range: [31, 40] }
-  ];
+  const defaultParts = useMemo(() => [
+    { partNumber: 1, range: [1, 10], firstQuestionOrder: 1 },
+    { partNumber: 2, range: [11, 20], firstQuestionOrder: 11 },
+    { partNumber: 3, range: [21, 30], firstQuestionOrder: 21 },
+    { partNumber: 4, range: [31, 40], firstQuestionOrder: 31 }
+  ], []);
 
-  const parts = (Array.isArray(availableParts) && availableParts.length > 0)
-    ? (availableParts.length === 1
-        ? [{ partNumber: availableParts[0], range: [1, totalQuestions] }]
-        : defaultParts.filter(p => availableParts.includes(p.partNumber)))
-    : defaultParts;
+  const parts = useMemo(() => {
+    if (Array.isArray(partsData) && partsData.length > 0) {
+      return partsData.map(p => {
+        const qs = (p.questionGroups || []).flatMap(g => g.questions || []);
+        if (qs.length > 0) {
+          const orders = qs.map(q => q.order ?? q.number).filter(n => typeof n === 'number');
+          if (orders.length > 0) {
+            const minO = Math.min(...orders);
+            const maxO = Math.max(...orders);
+            return {
+              partNumber: p.partNumber,
+              range: [minO, maxO],
+              firstQuestionOrder: minO
+            };
+          }
+        }
+        return {
+          partNumber: p.partNumber,
+          range: [(p.partNumber - 1) * 10 + 1, p.partNumber * 10],
+          firstQuestionOrder: (p.partNumber - 1) * 10 + 1
+        };
+      });
+    }
+
+    if (Array.isArray(availableParts) && availableParts.length > 0) {
+      if (availableParts.length === 1) {
+        return [{ partNumber: availableParts[0], range: [1, totalQuestions], firstQuestionOrder: 1 }];
+      }
+      return defaultParts.filter(p => availableParts.includes(p.partNumber));
+    }
+
+    return defaultParts;
+  }, [partsData, availableParts, totalQuestions, defaultParts]);
 
   const isCurrentFlagged = !isSubmitted && !!flaggedQuestions[activeQuestionOrder];
 
@@ -86,7 +115,7 @@ export default function ListeningPaletteBar({
                   type="button"
                   onClick={() => {
                     if (onSelectPart) onSelectPart(p.partNumber);
-                    if (onSelectQuestion && p.range) onSelectQuestion(p.range[0]);
+                    if (onSelectQuestion) onSelectQuestion(p.firstQuestionOrder ?? (p.range ? p.range[0] : 1));
                   }}
                   className={`px-2 py-0.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
                     activePart === p.partNumber
@@ -212,7 +241,7 @@ export default function ListeningPaletteBar({
                   type="button"
                   onClick={() => {
                     if (onSelectPart) onSelectPart(p.partNumber);
-                    if (onSelectQuestion && p.range) onSelectQuestion(p.range[0]);
+                    if (onSelectQuestion) onSelectQuestion(p.firstQuestionOrder ?? (p.range ? p.range[0] : 1));
                   }}
                   className={`px-1.5 py-0.5 rounded text-[11px] font-bold shrink-0 cursor-pointer ${
                     activePart === p.partNumber ? 'bg-red-600 text-white font-black' : 'text-slate-300'
@@ -238,7 +267,15 @@ export default function ListeningPaletteBar({
                     key={order}
                     ref={isActive ? activePillRef : null}
                     type="button"
-                    onClick={() => onSelectQuestion(order)}
+                    onClick={() => {
+                      onSelectQuestion(order);
+                      if (parts.length > 1) {
+                        const newPart = parts.find(p => order >= p.range[0] && order <= p.range[1]);
+                        if (newPart && newPart.partNumber !== activePart && onSelectPart) {
+                          onSelectPart(newPart.partNumber);
+                        }
+                      }
+                    }}
                     className={`relative min-w-[24px] h-6 px-1 rounded text-[11px] font-mono font-bold shrink-0 flex items-center justify-center cursor-pointer ${
                       isActive
                         ? 'bg-emerald-500 text-slate-950 font-black'

@@ -33,7 +33,7 @@ allQuestions.forEach((q, idx) => {
 // 2. Verify Registration in INITIAL_LISTENING_TESTS
 const t37Test = INITIAL_LISTENING_TESTS.find(t => t.id === 'ielts-listening-track37-ashtown-urban-transformation');
 assert.ok(t37Test, 'Track 37 must be registered in INITIAL_LISTENING_TESTS');
-assert.strictEqual(INITIAL_LISTENING_TESTS[0].id, 'ielts-listening-track37-ashtown-urban-transformation', 'Track 37 must be prepended at index 0');
+assert.ok(INITIAL_LISTENING_TESTS.slice(0, 5).some(t => t.id === 'ielts-listening-track37-ashtown-urban-transformation'), 'Track 37 must be present in top listening tests');
 
 // 3. Verify Track 37 Micro-Drills
 const t37Drills = LISTENING_MICRO_DRILLS.filter(d => d.id && d.id.includes('track37'));

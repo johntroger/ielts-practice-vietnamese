@@ -377,7 +377,9 @@ export const SPEAKING_PART2_CUECARDS = [
       { phrase: 'etch indelibly in my memory', meaningVi: 'khắc sâu không bao giờ phai mờ' }
     ],
     sampleAnswer: 'I would like to reminisce about an exhilarating road trip I took through the breathtaking Ha Giang Loop in the northern highlands of Vietnam.\n\nThis adventure took place last autumn alongside two of my closest university confidants. Rather than opting for a mundane packaged tour, we rented rugged motorbikes to traverse the legendary mountain passes independently.\n\nThe route is globally famed for its perilous hairpin turns and sheer cliff faces, particularly the awe-inspiring Ma Pi Leng Pass. Riding beneath the towering limestone peaks while overlooking the emerald Nho Que River winding below was an ethereal experience. Along the journey, we stayed at traditional ethnic homestays, savoured local delicacies cooked over open hearths, and interacted with radiant local children whose smiles were contagious.\n\nWhat makes this expedition etched indelibly in my memory was not merely the unvarnished natural splendour, but the intense feeling of liberation and self-reliance. Overcoming the physical fatigue of navigating treacherous mountain terrains bonded us for life and reminded me of the transformative power of venturing off the beaten track.',
-    examinerFollowUp: 'Do you prefer travelling alone or with a group of companions?'
+    examinerFollowUp: 'Do you prefer travelling alone or with a group of companions?',
+    examinerAudioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track38-speaking-part2-journey-prompt.mp3',
+    examinerAudioDuration: 30
   },
   {
     id: 'p2-inspiring-person',

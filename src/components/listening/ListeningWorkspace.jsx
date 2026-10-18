@@ -1546,9 +1546,19 @@ export default function ListeningWorkspace({
         <ListeningPaletteBar 
           totalQuestions={currentTest.totalQuestions || 40}
           activePart={activePart}
+          partsData={currentTest.parts}
           availableParts={currentTest.parts?.map(p => p.partNumber) || [1]}
           onSelectPart={(pNum) => {
             handleSelectPart(pNum);
+            const targetPart = currentTest.parts?.find(p => p.partNumber === pNum);
+            if (targetPart) {
+              const qs = (targetPart.questionGroups || []).flatMap(g => g.questions || []);
+              const firstQ = qs.map(q => q.order ?? q.number).filter(n => typeof n === 'number')[0];
+              if (firstQ) {
+                exam.setActiveQuestionOrder(firstQ);
+                return;
+              }
+            }
             const startQ = (pNum - 1) * 10 + 1;
             exam.setActiveQuestionOrder(startQ);
           }}
@@ -1556,9 +1566,12 @@ export default function ListeningWorkspace({
           onSelectQuestion={(order) => {
             exam.setActiveQuestionOrder(order);
             if (currentTest.parts && currentTest.parts.length > 1) {
-              const pNum = Math.ceil(order / 10);
-              if (pNum !== activePart) {
-                setActivePart(pNum);
+              const targetPart = currentTest.parts.find(p => {
+                const qs = (p.questionGroups || []).flatMap(g => g.questions || []);
+                return qs.some(q => (q.order ?? q.number) === order);
+              });
+              if (targetPart && targetPart.partNumber !== activePart) {
+                handleSelectPart(targetPart.partNumber);
               }
             }
           }}
@@ -1624,9 +1637,14 @@ export default function ListeningWorkspace({
           }}
           onJumpToQuestion={(order) => {
             exam.setActiveQuestionOrder(order);
-            const pNum = Math.ceil(order / 10);
-            if (pNum !== activePart) {
-              setActivePart(pNum);
+            if (currentTest.parts && currentTest.parts.length > 1) {
+              const targetPart = currentTest.parts.find(p => {
+                const qs = (p.questionGroups || []).flatMap(g => g.questions || []);
+                return qs.some(q => (q.order ?? q.number) === order);
+              });
+              if (targetPart && targetPart.partNumber !== activePart) {
+                handleSelectPart(targetPart.partNumber);
+              }
             }
           }}
           onSeekAudio={(timestamp) => {

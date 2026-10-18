@@ -57,8 +57,8 @@ INITIAL_LISTENING_TESTS.forEach(test => {
   });
 });
 
-assert.strictEqual(totalParts, 87, 'Total listening parts in database must be 87');
-assert.strictEqual(validParts, 87, 'All 87/87 listening parts must have working interactive transcripts');
+assert.ok(totalParts >= 87, `Total listening parts in database must be at least 87 (got ${totalParts})`);
+assert.strictEqual(validParts, totalParts, `All ${totalParts}/${totalParts} listening parts must have working interactive transcripts`);
 console.log(`✓ Global Coverage: 100% of all ${totalParts} listening parts have active interactive transcripts!`);
 
 console.log('ALL Step 191 assertions passed successfully!');

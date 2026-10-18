@@ -1518,6 +1518,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What unexpected adaptive reuse took place with Ashtown's former art college building?",
     "contextEn": "Bill: \"The thing that I found surprising was that although education has become more important to the economy of the town, there isn't an art college anymore. In fact, the art college is now used as a doctor's surgery.\"",
     "explanationEn": "Bill finds it paradoxical that despite educational expansion, the historic art college was converted into a medical practice (\"doctor's surgery\")."
+  },
+  "easy_lis_prep_time_t38": {
+    "promptEn": "How much preparation time is officially granted to candidates before speaking in IELTS Speaking Part 2?",
+    "contextEn": "Examiner: \"You have 1 minute to think about your answer. Here's a piece of paper and a pencil for you to make some notes if you wish.\"",
+    "explanationEn": "The examiner explicitly announces: \"You have 1 minute to think about your answer.\""
+  },
+  "easy_lis_paper_pencil_t38": {
+    "promptEn": "What items does the examiner hand over to the candidate for preparing notes?",
+    "contextEn": "Examiner: \"Here's a piece of paper and a pencil for you to make some notes if you wish.\"",
+    "explanationEn": "The examiner provides the candidate with \"a piece of paper and a pencil\"."
+  },
+  "med_lis_interruption_procedure_t38": {
+    "promptEn": "How should the candidate react if the examiner cuts in and interrupts their monologue?",
+    "contextEn": "Examiner: \"Remember you have 1 to 2 minutes for this, so don't worry if I stop you. I'll tell you when the time is up.\"",
+    "explanationEn": "The examiner reassures: \"don't worry if I stop you. I'll tell you when the time is up\" as it is standard timing control."
+  },
+  "med_lis_time_ceiling_t38": {
+    "promptEn": "What is the maximum target time ceiling for the candidate's monologue in Speaking Part 2?",
+    "contextEn": "Examiner: \"Now, I'm going to give you a topic, and I'd like you to talk about it for between 1 to 2 minutes... Remember you have 1 to 2 minutes for this...\"",
+    "explanationEn": "The upper threshold limit is 2 minutes (\"between 1 to 2 minutes\")."
+  },
+  "hard_lis_cue_card_journey_t38": {
+    "promptEn": "What topic is the candidate required to elaborate on in this Cambridge IELTS Speaking Part 2 cue card?",
+    "contextEn": "Examiner cue card instructions: \"Describe a memorable journey that you made. You should say where you went, how you travelled, why you went there, and explain why that journey was memorable to you.\"",
+    "explanationEn": "The target cue card theme is \"Describe a memorable journey that you made\"."
   }
 };
 
