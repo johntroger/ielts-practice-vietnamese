@@ -1543,6 +1543,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What topic is the candidate required to elaborate on in this Cambridge IELTS Speaking Part 2 cue card?",
     "contextEn": "Examiner cue card instructions: \"Describe a memorable journey that you made. You should say where you went, how you travelled, why you went there, and explain why that journey was memorable to you.\"",
     "explanationEn": "The target cue card theme is \"Describe a memorable journey that you made\"."
+  },
+  "easy_lis_paris_departure_t39": {
+    "promptEn": "On which date did the candidate embark on their flight to Paris?",
+    "contextEn": "Candidate: \"I remember a trip I took last year, on the 12th of August, I believe. I boarded a plane to Paris, which was rather exciting as I'd never done that before.\"",
+    "explanationEn": "The candidate confirms: \"on the 12th of August, I believe\"."
+  },
+  "easy_lis_louvre_triangle_t39": {
+    "promptEn": "What prominent architectural landmark at the Louvre Museum entrance did the speaker describe?",
+    "contextEn": "Candidate: \"when I got there, the first thing I did was go to the Louvre Museum, you know, where the big triangle is by the entrance, and took some pictures.\"",
+    "explanationEn": "The candidate highlights: \"where the big triangle is by the entrance\"."
+  },
+  "med_lis_julie_snow_globe_t39": {
+    "promptEn": "Why did the candidate specifically purchase a souvenir snow globe on the Champs-Elysees?",
+    "contextEn": "Candidate: \"I even bought a souvenir snow globe for my friend Julie, as she collects them.\"",
+    "explanationEn": "The rationale is stated directly: \"for my friend Julie, as she collects them\"."
+  },
+  "med_lis_tour_bus_camera_t39": {
+    "promptEn": "What happened to the candidate's camera on the open-top tour bus?",
+    "contextEn": "Candidate: \"However, when I got back on the tour bus and started taking pictures, I dropped my camera over the side, watching it break on the ground.\"",
+    "explanationEn": "The mishap is: \"I dropped my camera over the side, watching it break on the ground.\""
+  },
+  "hard_lis_french_study_reflection_t39": {
+    "promptEn": "What strategic language preparation does the candidate resolve to undertake before travelling abroad in future?",
+    "contextEn": "Candidate: \"It was a great experience, although next time, I think I should study some French before I go.\"",
+    "explanationEn": "The candidate reflects: \"next time, I think I should study some French before I go.\""
   }
 };
 

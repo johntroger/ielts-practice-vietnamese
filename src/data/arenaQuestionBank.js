@@ -4195,12 +4195,193 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'A memorable personal journey and reasons why it left a lasting impression',
     explanation: 'Chủ đề của Cue Card là "Describe a memorable journey that you made".',
     explanationEn: 'The target cue card theme is "Describe a memorable journey that you made".'
+  },
+
+  // ==========================================
+  // TRACK 39: SPEAKING PART 2 CANDIDATE SAMPLE (PARIS JOURNEY)
+  // ==========================================
+  {
+    id: 'easy_lis_paris_departure_t39',
+    difficulty: 'easy',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'On which date did the candidate embark on their flight to Paris?',
+    promptEn: 'On which date did the candidate embark on their flight to Paris?',
+    context: 'Candidate: "I remember a trip I took last year, on the 12th of August, I believe. I boarded a plane to Paris, which was rather exciting as I\'d never done that before."',
+    contextEn: 'Candidate: "I remember a trip I took last year, on the 12th of August, I believe. I boarded a plane to Paris, which was rather exciting as I\'d never done that before."',
+    audioText: "I remember a trip I took last year, on the 12th of August, I believe. I boarded a plane to Paris, which was rather exciting as I'd never done that before.",
+    options: [
+      '12th of August',
+      '20th of August',
+      '2nd of August',
+      '15th of August'
+    ],
+    optionsVi: [
+      'Ngày 12 tháng 8',
+      'Ngày 20 tháng 8',
+      'Ngày 2 tháng 8',
+      'Ngày 15 tháng 8'
+    ],
+    optionsEn: [
+      '12th of August',
+      '20th of August',
+      '2nd of August',
+      '15th of August'
+    ],
+    correctIndex: 0,
+    correctAnswer: '12th of August',
+    explanation: 'Thí sinh xác nhận ngày khởi hành: "on the 12th of August, I believe".',
+    explanationEn: 'The candidate confirms: "on the 12th of August, I believe".'
+  },
+  {
+    id: 'easy_lis_louvre_triangle_t39',
+    difficulty: 'easy',
+    topic: 'arts',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What prominent architectural landmark at the Louvre Museum entrance did the speaker describe?',
+    promptEn: 'What prominent architectural landmark at the Louvre Museum entrance did the speaker describe?',
+    context: 'Candidate: "when I got there, the first thing I did was go to the Louvre Museum, you know, where the big triangle is by the entrance, and took some pictures."',
+    contextEn: 'Candidate: "when I got there, the first thing I did was go to the Louvre Museum, you know, where the big triangle is by the entrance, and took some pictures."',
+    audioText: "when I got there, the first thing I did was go to the Louvre Museum, you know, where the big triangle is by the entrance, and took some pictures.",
+    options: [
+      'A large glass triangle (pyramid) structure',
+      'A towering bronze obelisk',
+      'A spiral stone staircase',
+      'A classical triumphal marble arch'
+    ],
+    optionsVi: [
+      'Cấu trúc hình tam giác (kim tự tháp) kính lớn',
+      'Cột tháp đá đài bằng đồng cao chót vót',
+      'Cầu thang xoắn ốc bằng đá',
+      'Khải hoàn môn bằng đá cẩm thạch cổ điển'
+    ],
+    optionsEn: [
+      'A large glass triangle (pyramid) structure',
+      'A towering bronze obelisk',
+      'A spiral stone staircase',
+      'A classical triumphal marble arch'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'A large glass triangle (pyramid) structure',
+    explanation: 'Người nói miêu tả: "where the big triangle is by the entrance".',
+    explanationEn: 'The candidate highlights: "where the big triangle is by the entrance".'
+  },
+  {
+    id: 'med_lis_julie_snow_globe_t39',
+    difficulty: 'medium',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why did the candidate specifically purchase a souvenir snow globe on the Champs-Elysees?',
+    promptEn: 'Why did the candidate specifically purchase a souvenir snow globe on the Champs-Elysees?',
+    context: 'Candidate: "I even bought a souvenir snow globe for my friend Julie, as she collects them."',
+    contextEn: 'Candidate: "I even bought a souvenir snow globe for my friend Julie, as she collects them."',
+    audioText: "I even bought a souvenir snow globe for my friend Julie, as she collects them.",
+    options: [
+      'Her friend Julie has a personal hobby of collecting snow globes',
+      'It was offered at a mandatory 50% boutique promotional discount',
+      'It depicted the rare winter snowfall of the French Alps',
+      'Her family tradition requires bringing home a musical ornament'
+    ],
+    optionsVi: [
+      'Bạn của cô là Julie có sở thích sưu tầm các quả cầu tuyết',
+      'Nó được giảm giá khuyến mãi bắt buộc 50% tại cửa hàng',
+      'Nó mô tả cảnh tuyết rơi mùa đông hiếm có của dãy Alps nước Pháp',
+      'Truyền thống gia đình yêu cầu mang về một món đồ trang trí phát nhạc'
+    ],
+    optionsEn: [
+      'Her friend Julie has a personal hobby of collecting snow globes',
+      'It was offered at a mandatory 50% boutique promotional discount',
+      'It depicted the rare winter snowfall of the French Alps',
+      'Her family tradition requires bringing home a musical ornament'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Her friend Julie has a personal hobby of collecting snow globes',
+    explanation: 'Lý do mua quả cầu tuyết: "for my friend Julie, as she collects them".',
+    explanationEn: 'The rationale is stated directly: "for my friend Julie, as she collects them".'
+  },
+  {
+    id: 'med_lis_tour_bus_camera_t39',
+    difficulty: 'medium',
+    topic: 'travel',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What happened to the candidate\'s camera on the open-top tour bus?',
+    promptEn: 'What happened to the candidate\'s camera on the open-top tour bus?',
+    context: 'Candidate: "However, when I got back on the tour bus and started taking pictures, I dropped my camera over the side, watching it break on the ground."',
+    contextEn: 'Candidate: "However, when I got back on the tour bus and started taking pictures, I dropped my camera over the side, watching it break on the ground."',
+    audioText: "However, when I got back on the tour bus and started taking pictures, I dropped my camera over the side, watching it break on the ground.",
+    options: [
+      'It slipped over the railing and smashed into pieces on the ground below',
+      'The memory card malfunctioned due to severe heat exposure',
+      'A passing cyclist accidentally snatched it from her hands',
+      'It fell into the tour bus mechanical gear compartment'
+    ],
+    optionsVi: [
+      'Nó trượt qua mạn xe buýt và vỡ nát trên mặt đất phía dưới',
+      'Thẻ nhớ bị hỏng do tiếp xúc với nhiệt độ quá cao',
+      'Một người đi xe đạp ngang qua vô tình giật mất khỏi tay',
+      'Nó rơi vào khoang bánh răng cơ khí của xe buýt du lịch'
+    ],
+    optionsEn: [
+      'It slipped over the railing and smashed into pieces on the ground below',
+      'The memory card malfunctioned due to severe heat exposure',
+      'A passing cyclist accidentally snatched it from her hands',
+      'It fell into the tour bus mechanical gear compartment'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It slipped over the railing and smashed into pieces on the ground below',
+    explanation: 'Tai nạn rơi máy ảnh: "I dropped my camera over the side, watching it break on the ground."',
+    explanationEn: 'The mishap is: "I dropped my camera over the side, watching it break on the ground."'
+  },
+  {
+    id: 'hard_lis_french_study_reflection_t39',
+    difficulty: 'hard',
+    topic: 'education',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What strategic language preparation does the candidate resolve to undertake before travelling abroad in future?',
+    promptEn: 'What strategic language preparation does the candidate resolve to undertake before travelling abroad in future?',
+    context: 'Candidate: "It was a great experience, although next time, I think I should study some French before I go."',
+    contextEn: 'Candidate: "It was a great experience, although next time, I think I should study some French before I go."',
+    audioText: "It was a great experience, although next time, I think I should study some French before I go.",
+    options: [
+      'Acquire basic destination language proficiency (study French) before departure',
+      'Hire a professional round-the-clock simultaneous interpreter',
+      'Rely exclusively on international English-speaking hotel staff',
+      'Download offline computer translation software onto their mobile device'
+    ],
+    optionsVi: [
+      'Trau dồi năng lực ngôn ngữ cơ bản của điểm đến (học tiếng Pháp) trước khi khởi hành',
+      'Thuê một thông dịch viên cabin chuyên nghiệp phục vụ suốt ngày đêm',
+      'Chỉ dựa vào nhân viên khách sạn nói tiếng Anh quốc tế',
+      'Tải phần mềm dịch thuật ngoại tuyến vào thiết bị di động'
+    ],
+    optionsEn: [
+      'Acquire basic destination language proficiency (study French) before departure',
+      'Hire a professional round-the-clock simultaneous interpreter',
+      'Rely exclusively on international English-speaking hotel staff',
+      'Download offline computer translation software onto their mobile device'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Acquire basic destination language proficiency (study French) before departure',
+    explanation: 'Lời tự nhủ và kinh nghiệm rút ra: "next time, I think I should study some French before I go."',
+    explanationEn: 'The candidate reflects: "next time, I think I should study some French before I go."'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 39: Speaking Part 2 Candidate Sample (Paris Journey)
+  easy_lis_paris_departure_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 2.0, clipEnd: 13.5, isR2Audio: true, trackLabel: 'Track 39 • Departure Date to Paris' },
+  easy_lis_louvre_triangle_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 18.0, clipEnd: 28.0, isR2Audio: true, trackLabel: 'Track 39 • Louvre Triangle Entrance' },
+  med_lis_julie_snow_globe_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 53.0, clipEnd: 60.0, isR2Audio: true, trackLabel: 'Track 39 • Julie Souvenir Snow Globe' },
+  med_lis_tour_bus_camera_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 59.5, clipEnd: 69.5, isR2Audio: true, trackLabel: 'Track 39 • Dropped Camera Mishap' },
+  hard_lis_french_study_reflection_t39: { audioUrl: `${R2_BASE}/ielts-listening-track39-speaking-part2-candidate-sample.mp3`, clipStart: 70.0, clipEnd: 82.5, isR2Audio: true, trackLabel: 'Track 39 • French Study Reflection' },
+
   // Track 38: Speaking Part 2 Examiner Prompt
   easy_lis_prep_time_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 9.0, clipEnd: 12.0, isR2Audio: true, trackLabel: 'Track 38 • Speaking Part 2 Preparation Time' },
   easy_lis_paper_pencil_t38: { audioUrl: `${R2_BASE}/ielts-listening-track38-speaking-part2-journey-prompt.mp3`, clipStart: 12.0, clipEnd: 16.5, isR2Audio: true, trackLabel: 'Track 38 • Note-Taking Stationery' },
