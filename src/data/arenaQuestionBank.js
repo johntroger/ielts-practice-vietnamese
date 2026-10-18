@@ -4716,12 +4716,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'He recommends it wholeheartedly but advises packing an umbrella',
     explanation: 'Thí sinh C trả lời: "Yes, definitely. But they would have to bring an umbrella... Everything else was wonderful though. I would definitely recommend it."',
     explanationEn: 'Candidate C confirms: "Yes, definitely. But they would have to bring an umbrella... Everything else was wonderful though. I would definitely recommend it."'
+  },
+  // ==========================================
+  // TRACK 42: UK BUSINESS STRUCTURES & SELF-EMPLOYMENT
+  // ==========================================
+  {
+    id: 'easy_lis_companies_house_t42',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which UK government agency is legally tasked with the registration of limited companies?',
+    promptEn: 'Which UK government agency is legally tasked with the registration of limited companies?',
+    context: 'Lecturer: "those wanting to set up a limited liability company have to legally register the company with Companies House, the government department responsible for businesses."',
+    contextEn: 'Lecturer: "those wanting to set up a limited liability company have to legally register the company with Companies House, the government department responsible for businesses."',
+    audioText: "those wanting to set up a limited liability company have to legally register the company with Companies House, the government department responsible for businesses.",
+    options: [
+      'Companies House',
+      'HM Revenue and Customs',
+      'The Bank of England',
+      'The Department of Work and Pensions'
+    ],
+    optionsVi: [
+      'Companies House (Cơ quan đăng ký kinh doanh)',
+      'HM Revenue and Customs (Cơ quan Thuế & Hải quan)',
+      'The Bank of England (Ngân hàng Trung ương Anh)',
+      'The Department of Work and Pensions (Bộ Lao động & Lương hưu)'
+    ],
+    optionsEn: [
+      'Companies House',
+      'HM Revenue and Customs',
+      'The Bank of England',
+      'The Department of Work and Pensions'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Companies House',
+    explanation: 'Giảng viên nêu rõ cơ quan phụ trách là "Companies House, the government department responsible for businesses".',
+    explanationEn: 'The lecturer explicitly identifies the agency: "Companies House, the government department responsible for businesses".'
+  },
+  {
+    id: 'med_lis_limited_liability_loss_t42',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What constitutes the extent of financial loss for company owners under limited liability if the firm collapses?',
+    promptEn: 'What constitutes the extent of financial loss for company owners under limited liability if the firm collapses?',
+    context: 'Lecturer: "Limited liability means that if the business fails and the owners owe a lot of money, they only lose the money and goods which are in the business, and not their own personal money and goods."',
+    contextEn: 'Lecturer: "Limited liability means that if the business fails and the owners owe a lot of money, they only lose the money and goods which are in the business, and not their own personal money and goods."',
+    audioText: "Limited liability means that if the business fails and the owners owe a lot of money, they only lose the money and goods which are in the business, and not their own personal money and goods.",
+    options: [
+      'Only the money and goods held within the business',
+      'Their private residential property and personal bank accounts',
+      'An automatic fine equivalent to ten years of projected revenue',
+      'All assets belonging to their immediate family members'
+    ],
+    optionsVi: [
+      'Chỉ số tiền và hàng hóa thuộc quyền sở hữu của doanh nghiệp',
+      'Bất động sản nhà ở riêng và tài khoản ngân hàng cá nhân',
+      'Khoản tiền phạt tự động tương đương 10 năm doanh thu dự kiến',
+      'Toàn bộ tài sản thuộc về các thành viên gia đình trực hệ'
+    ],
+    optionsEn: [
+      'Only the money and goods held within the business',
+      'Their private residential property and personal bank accounts',
+      'An automatic fine equivalent to ten years of projected revenue',
+      'All assets belonging to their immediate family members'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Only the money and goods held within the business',
+    explanation: 'Chế độ TNHH quy định chủ sở hữu chỉ chịu thiệt hại đối với tài sản thuộc công ty ("only lose the money and goods which are in the business").',
+    explanationEn: 'Limited liability stipulates owners only lose business money and goods, keeping personal assets safe.'
+  },
+  {
+    id: 'easy_lis_sole_trader_registration_t42',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What legal registration is required before a sole trader can start doing business in the UK?',
+    promptEn: 'What legal registration is required before a sole trader can start doing business in the UK?',
+    context: 'Lecturer: "On the other hand, a sole trader doesn\'t need to set up a company. He or she can simply start working without any legal registration."',
+    contextEn: 'Lecturer: "On the other hand, a sole trader doesn\'t need to set up a company. He or she can simply start working without any legal registration."',
+    audioText: "On the other hand, a sole trader doesn't need to set up a company. He or she can simply start working without any legal registration.",
+    options: [
+      'No legal registration is required to start working',
+      'Compulsory registration with the High Court of Justice',
+      'A corporate charter approved by Parliament',
+      'A mandatory partnership deed registered at town hall'
+    ],
+    optionsVi: [
+      'Không yêu cầu bất kỳ thủ tục đăng ký pháp lý nào để bắt đầu làm việc',
+      'Đăng ký bắt buộc với Tòa án Công lý Tối cao',
+      'Hiến chương doanh nghiệp được Quốc hội phê chuẩn',
+      'Khế ước hợp danh bắt buộc được đăng ký tại tòa thị chính'
+    ],
+    optionsEn: [
+      'No legal registration is required to start working',
+      'Compulsory registration with the High Court of Justice',
+      'A corporate charter approved by Parliament',
+      'A mandatory partnership deed registered at town hall'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'No legal registration is required to start working',
+    explanation: 'Giảng viên khẳng định hộ kinh doanh cá thể có thể bắt đầu làm việc mà không cần bất kỳ đăng ký pháp lý nào ("simply start working without any legal registration").',
+    explanationEn: 'The lecturer affirms that a sole trader can commence operations without any legal registration.'
+  },
+  {
+    id: 'med_lis_bank_loan_trust_t42',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why do UK commercial banks generally exhibit greater willingness to lend to limited companies over sole traders?',
+    promptEn: 'Why do UK commercial banks generally exhibit greater willingness to lend to limited companies over sole traders?',
+    context: 'Lecturer: "For example, it might be difficult to borrow money from the bank if you\'re a sole trader, but easier if you have a limited company, as banks trust companies more."',
+    contextEn: 'Lecturer: "For example, it might be difficult to borrow money from the bank if you\'re a sole trader, but easier if you have a limited company, as banks trust companies more."',
+    audioText: "For example, it might be difficult to borrow money from the bank if you're a sole trader, but easier if you have a limited company, as banks trust companies more.",
+    options: [
+      'Banks place higher trust and confidence in corporate business structures',
+      'Sole traders are barred from holding commercial bank accounts',
+      'The central bank underwrites all debts incurred by limited companies',
+      'Limited companies offer higher personal collateral from individual partners'
+    ],
+    optionsVi: [
+      'Các ngân hàng đặt mức độ tín nhiệm và tin tưởng cao hơn vào mô hình công ty',
+      'Hộ kinh doanh cá thể bị cấm mở tài khoản ngân hàng thương mại',
+      'Ngân hàng trung ương bảo lãnh toàn bộ các khoản nợ của công ty TNHH',
+      'Các công ty cung cấp tài sản thế chấp cá nhân cao hơn từ các cổ đông'
+    ],
+    optionsEn: [
+      'Banks place higher trust and confidence in corporate business structures',
+      'Sole traders are barred from holding commercial bank accounts',
+      'The central bank underwrites all debts incurred by limited companies',
+      'Limited companies offer higher personal collateral from individual partners'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Banks place higher trust and confidence in corporate business structures',
+    explanation: 'Ngân hàng tin tưởng công ty hơn cá nhân kinh doanh: "as banks trust companies more".',
+    explanationEn: 'Commercial banks display greater willingness to lend to limited companies because they trust incorporated firms more.'
+  },
+  {
+    id: 'hard_lis_corporation_vs_income_tax_t42',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What fundamental tax distinction is highlighted between limited companies and sole traders/partnerships?',
+    promptEn: 'What fundamental tax distinction is highlighted between limited companies and sole traders/partnerships?',
+    context: 'Lecturer: "Regarding tax, limited companies pay corporation tax, which, unlike income tax, is a tax on business profits, not personal earnings... with sole traders and partnerships... the owners must pay income tax"',
+    contextEn: 'Lecturer: "Regarding tax, limited companies pay corporation tax, which, unlike income tax, is a tax on business profits, not personal earnings... with sole traders and partnerships... the owners must pay income tax"',
+    audioText: "Regarding tax, limited companies pay corporation tax, which, unlike income tax, is a tax on business profits, not personal earnings... with sole traders and partnerships... the owners must pay income tax",
+    options: [
+      'Limited companies pay corporation tax on profits, whereas sole traders and partners pay income tax',
+      'Sole traders pay corporation tax whereas limited companies pay zero direct taxes',
+      'Partnerships pay corporation tax on behalf of local municipal councils',
+      'Limited companies pay income tax quarterly whereas sole traders pay annually'
+    ],
+    optionsVi: [
+      'Công ty TNHH nộp thuế TNDN trên lợi nhuận, còn chủ hộ kinh doanh và hợp danh nộp thuế TNCN',
+      'Hộ kinh doanh cá thể nộp thuế TNDN còn công ty TNHH không phải nộp thuế trực thu',
+      'Các công ty hợp danh nộp thuế TNDN thay mặt cho hội đồng thành phố',
+      'Công ty TNHH nộp thuế TNCN hàng quý trong khi hộ kinh doanh nộp theo năm'
+    ],
+    optionsEn: [
+      'Limited companies pay corporation tax on profits, whereas sole traders and partners pay income tax',
+      'Sole traders pay corporation tax whereas limited companies pay zero direct taxes',
+      'Partnerships pay corporation tax on behalf of local municipal councils',
+      'Limited companies pay income tax quarterly whereas sole traders pay annually'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Limited companies pay corporation tax on profits, whereas sole traders and partners pay income tax',
+    explanation: 'Công ty TNHH nộp corporation tax trên lợi nhuận, còn sole traders và partnerships nộp income tax trên thu nhập.',
+    explanationEn: 'Limited companies are subject to corporation tax on profits, whereas sole traders and partnerships pay personal income tax.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 42: UK Business Structures & Self-Employment
+  easy_lis_companies_house_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 50.0, clipEnd: 63.0, isR2Audio: true, trackLabel: 'Track 42 • Companies House Registry' },
+  med_lis_limited_liability_loss_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 63.0, clipEnd: 76.0, isR2Audio: true, trackLabel: 'Track 42 • Limited Liability Scope' },
+  easy_lis_sole_trader_registration_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 80.0, clipEnd: 90.0, isR2Audio: true, trackLabel: 'Track 42 • Sole Trader Registration' },
+  med_lis_bank_loan_trust_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 138.0, clipEnd: 148.0, isR2Audio: true, trackLabel: 'Track 42 • Bank Loan Credibility' },
+  hard_lis_corporation_vs_income_tax_t42: { audioUrl: `${R2_BASE}/ielts-listening-track42-uk-business-structures.mp3`, clipStart: 149.0, clipEnd: 175.0, isR2Audio: true, trackLabel: 'Track 42 • Corporate vs Income Tax' },
+
   // Track 41: Speaking Part 2 & 3 Travel Experiences & Follow-up Questions
   easy_lis_tibet_memory_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 3.0, clipEnd: 10.0, isR2Audio: true, trackLabel: 'Track 41 • Tibet Memory' },
   med_lis_travel_value_t41: { audioUrl: `${R2_BASE}/ielts-listening-track41-speaking-followup-travel.mp3`, clipStart: 9.0, clipEnd: 21.0, isR2Audio: true, trackLabel: 'Track 41 • Value of Travelling' },

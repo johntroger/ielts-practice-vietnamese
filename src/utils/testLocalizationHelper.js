@@ -127,8 +127,9 @@ export function getListeningTestDisplayInfo(testItem, isEn = false) {
   // 3. Clean and concise short title for tabs & dropdowns
   let shortTitle = rawTitle
     .replace(/^Cambridge Practice\s*[—-]\s*/i, '')
-    .replace(/^IELTS\s+(?:Listening & Speaking|Speaking & Listening|Grammar & Speaking|Speaking Part \d+(?:\s*(?:&|and)\s*\d+)?|Listening Practice|Listening|Speaking|Grammar)\s*(?:Practice|Model Response)?\s*[:—-]\s*/i, '')
+    .replace(/^IELTS\s+(?:Listening & Speaking|Speaking & Listening|Grammar & Speaking|Speaking Part \d+(?:\s*(?:&|and)\s*\d+)?|Academic Lecture|Listening Practice|Listening|Speaking|Grammar)\s*(?:Practice|Model Response)?\s*[:—-]\s*/i, '')
     .replace(/^IELTS\s+Speaking\s+Phần\s+\d+(?:\s*(?:&|và)\s*\d+)?\s*[:—-]\s*/i, '')
+    .replace(/^Bài giảng học thuật IELTS\s*[:—-]\s*/i, '')
     .replace(/^Luyện đề IELTS Listening\s*[:—-]\s*/i, '')
     .replace(/^Ngữ pháp & Nói IELTS\s*[:—-]\s*/i, '')
     .replace(/\s*\(Track\s*\d+\)$/i, '')

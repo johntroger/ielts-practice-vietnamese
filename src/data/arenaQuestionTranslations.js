@@ -1618,6 +1618,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Despite complaining about the bad weather, what is Candidate C's ultimate stance on recommending London?",
     "contextEn": "Candidate C: \"Yes, definitely. But they would have to bring an umbrella. Everything else was wonderful though. I would definitely recommend it.\"",
     "explanationEn": "Candidate C confirms: \"Yes, definitely. But they would have to bring an umbrella... Everything else was wonderful though. I would definitely recommend it.\""
+  },
+  "easy_lis_companies_house_t42": {
+    "promptEn": "Which UK government agency is legally tasked with the registration of limited companies?",
+    "contextEn": "Lecturer: \"those wanting to set up a limited liability company have to legally register the company with Companies House, the government department responsible for businesses.\"",
+    "explanationEn": "The lecturer explicitly identifies the agency: \"Companies House, the government department responsible for businesses\"."
+  },
+  "med_lis_limited_liability_loss_t42": {
+    "promptEn": "What constitutes the extent of financial loss for company owners under limited liability if the firm collapses?",
+    "contextEn": "Lecturer: \"Limited liability means that if the business fails and the owners owe a lot of money, they only lose the money and goods which are in the business, and not their own personal money and goods.\"",
+    "explanationEn": "Limited liability stipulates owners only lose business money and goods, keeping personal assets safe."
+  },
+  "easy_lis_sole_trader_registration_t42": {
+    "promptEn": "What legal registration is required before a sole trader can start doing business in the UK?",
+    "contextEn": "Lecturer: \"On the other hand, a sole trader doesn't need to set up a company. He or she can simply start working without any legal registration.\"",
+    "explanationEn": "The lecturer affirms that a sole trader can commence operations without any legal registration."
+  },
+  "med_lis_bank_loan_trust_t42": {
+    "promptEn": "Why do UK commercial banks generally exhibit greater willingness to lend to limited companies over sole traders?",
+    "contextEn": "Lecturer: \"For example, it might be difficult to borrow money from the bank if you're a sole trader, but easier if you have a limited company, as banks trust companies more.\"",
+    "explanationEn": "Commercial banks display greater willingness to lend to limited companies because they trust incorporated firms more."
+  },
+  "hard_lis_corporation_vs_income_tax_t42": {
+    "promptEn": "What fundamental tax distinction is highlighted between limited companies and sole traders/partnerships?",
+    "contextEn": "Lecturer: \"Regarding tax, limited companies pay corporation tax, which, unlike income tax, is a tax on business profits, not personal earnings... with sole traders and partnerships... the owners must pay income tax\"",
+    "explanationEn": "Limited companies are subject to corporation tax on profits, whereas sole traders and partnerships pay personal income tax."
   }
 };
 
