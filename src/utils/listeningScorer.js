@@ -269,17 +269,19 @@ export function expandOptionalBrackets(targetAnswer) {
 }
 
 export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction = '') {
+  const qOrder = question.order ?? question.number ?? question.questionNumber;
+  const targetAns = question.answer || question.correctAnswer || '';
   const userNorm = normalizeAnswer(rawUserAnswer);
-  const targetNorm = normalizeAnswer(question.answer);
+  const targetNorm = normalizeAnswer(targetAns);
 
   // 1. Unanswered check
   if (!userNorm) {
     return {
-      order: question.order,
+      order: qOrder,
       questionId: question.id,
       userAnswer: '',
-      correctAnswer: question.answer,
-      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      correctAnswer: targetAns,
+      acceptableAnswers: question.acceptableAnswers || [targetAns],
       isCorrect: false,
       status: 'UNANSWERED',
       badgeLabel: 'Chưa làm',
@@ -296,11 +298,11 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
   const limitCheck = validateWordLimit(rawUserAnswer, activeInstruction);
   if (!limitCheck.isValid) {
     return {
-      order: question.order,
+      order: qOrder,
       questionId: question.id,
       userAnswer: rawUserAnswer,
-      correctAnswer: question.answer,
-      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      correctAnswer: targetAns,
+      acceptableAnswers: question.acceptableAnswers || [targetAns],
       isCorrect: false,
       status: 'WORD_LIMIT_ERROR',
       badgeLabel: 'Quá số từ (0đ)',
@@ -313,7 +315,7 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
   }
 
   // 3. Exact or Acceptable Match (CORRECT with Optional Bracket Expansion)
-  const rawAcceptable = [question.answer, ...(question.acceptableAnswers || [])];
+  const rawAcceptable = [targetAns, ...(question.acceptableAnswers || [])];
   const allAcceptableExpanded = [];
   rawAcceptable.forEach(ans => {
     expandOptionalBrackets(ans).forEach(exp => {
@@ -323,7 +325,7 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
   const acceptableList = Array.from(new Set(allAcceptableExpanded.map(normalizeAnswer)));
 
   const userCanon = canonicalizeIELTSAnswer(rawUserAnswer);
-  const targetCanon = canonicalizeIELTSAnswer(question.answer);
+  const targetCanon = canonicalizeIELTSAnswer(targetAns);
   const acceptableCanonList = allAcceptableExpanded.map(canonicalizeIELTSAnswer);
 
   if (
@@ -332,11 +334,11 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
     (userCanon && (userCanon === targetCanon || acceptableCanonList.includes(userCanon)))
   ) {
     return {
-      order: question.order,
+      order: qOrder,
       questionId: question.id,
       userAnswer: rawUserAnswer,
-      correctAnswer: question.answer,
-      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      correctAnswer: targetAns,
+      acceptableAnswers: question.acceptableAnswers || [targetAns],
       isCorrect: true,
       status: 'CORRECT',
       badgeLabel: 'Đúng',
@@ -350,7 +352,7 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
 
   // 3. Plural / Singular Error (-s / -es) check across targetNorm & acceptableList
   let pluralCheck = checkPluralDiscrepancy(userNorm, targetNorm);
-  let matchedTarget = question.answer;
+  let matchedTarget = targetAns;
   if (!pluralCheck && acceptableList.length > 0) {
     for (const acc of acceptableList) {
       const p = checkPluralDiscrepancy(userNorm, acc);
@@ -365,11 +367,11 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
   if (pluralCheck) {
     const isMissing = pluralCheck === 'missing_s';
     return {
-      order: question.order,
+      order: qOrder,
       questionId: question.id,
       userAnswer: rawUserAnswer,
-      correctAnswer: question.answer,
-      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      correctAnswer: targetAns,
+      acceptableAnswers: question.acceptableAnswers || [targetAns],
       isCorrect: false,
       status: 'PLURAL_ERROR',
       badgeLabel: isMissing ? 'Thiếu đuôi -s' : 'Thừa đuôi -s',
@@ -387,11 +389,11 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
   const stemTrap = checkStemRepetition(userNorm, targetNorm, question.prefixText, question.suffixText);
   if (stemTrap) {
     return {
-      order: question.order,
+      order: qOrder,
       questionId: question.id,
       userAnswer: rawUserAnswer,
-      correctAnswer: question.answer,
-      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      correctAnswer: targetAns,
+      acceptableAnswers: question.acceptableAnswers || [targetAns],
       isCorrect: false,
       status: 'STEM_REPETITION_ERROR',
       badgeLabel: 'Bẫy lặp từ đề',
@@ -405,7 +407,7 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
 
   // 5. Spelling Mistake Check (Levenshtein distance <= 2 for words >= 4 chars)
   let bestDist = levenshtein(userNorm, targetNorm);
-  let bestTarget = question.answer;
+  let bestTarget = targetAns;
   if (acceptableList.length > 0) {
     for (const acc of acceptableList) {
       const d = levenshtein(userNorm, acc);
@@ -418,11 +420,11 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
 
   if (bestDist <= 2 && bestTarget.length >= 4 && userNorm.length >= 3) {
     return {
-      order: question.order,
+      order: qOrder,
       questionId: question.id,
       userAnswer: rawUserAnswer,
-      correctAnswer: question.answer,
-      acceptableAnswers: question.acceptableAnswers || [question.answer],
+      correctAnswer: targetAns,
+      acceptableAnswers: question.acceptableAnswers || [targetAns],
       isCorrect: false,
       status: 'SPELLING_ERROR',
       badgeLabel: 'Sai chính tả',
@@ -436,16 +438,16 @@ export function diagnoseQuestionAnswer(question, rawUserAnswer, groupInstruction
 
   // 6. Completely Wrong / Distractor Trap
   return {
-    order: question.order,
+    order: qOrder,
     questionId: question.id,
     userAnswer: rawUserAnswer,
-    correctAnswer: question.answer,
-    acceptableAnswers: question.acceptableAnswers || [question.answer],
+    correctAnswer: targetAns,
+    acceptableAnswers: question.acceptableAnswers || [targetAns],
     isCorrect: false,
     status: 'WRONG_ANSWER',
     badgeLabel: 'Sai',
     badgeColor: 'bg-red-100 text-red-800 border-red-300',
-    diagnosticMessage: "Đáp án đúng là \"" + question.answer + "\". Hãy chú ý các thông tin tự sửa (self-correction) của người nói.",
+    diagnosticMessage: "Đáp án đúng là \"" + targetAns + "\". Hãy chú ý các thông tin tự sửa (self-correction) của người nói.",
     evidenceQuote: question.evidenceQuote || '',
     evidenceTimestamp: question.evidenceTimestamp,
     explanation: question.explanation || ''
@@ -481,14 +483,17 @@ export function scoreListeningExam({
     let partTotal = 0;
 
     part.questionGroups?.forEach(group => {
-      group.questions?.forEach(q => {
+      const groupType = (group.type || group.groupType || '').trim().toLowerCase().replace(/-/g, '_') || 'other';
+
+      group.questions?.forEach((q, qIdx) => {
         partTotal++;
-        const rawAns = userAnswers[q.order] || '';
-        const diag = diagnoseQuestionAnswer(q, rawAns, group.instruction);
+        const qOrder = q.order ?? q.number ?? q.questionNumber ?? (qIdx + 1);
+        const rawAns = userAnswers[qOrder] || '';
+        const diag = diagnoseQuestionAnswer(q, rawAns, group.instruction || group.instructionEn);
         
         diag.partNumber = part.partNumber;
-        diag.questionType = group.type;
-        diag.questionTitle = q.questionText || ("Câu " + q.order);
+        diag.questionType = groupType;
+        diag.questionTitle = q.questionText || q.questionTextEn || (`Question ${qOrder}`);
 
         allQuestions.push(diag);
 
@@ -502,7 +507,7 @@ export function scoreListeningExam({
         }
 
         // Type Stats Mapping
-        const t = group.type || 'other';
+        const t = groupType;
         if (!typeStatsMap[t]) {
           typeStatsMap[t] = { type: t, total: 0, correct: 0 };
         }

@@ -273,15 +273,166 @@ export default function ListeningQuestionPane({
     );
   };
 
+  const normalizedGroups = useMemo(() => {
+    if (!partData?.questionGroups) return [];
+    return partData.questionGroups.map((rawGroup, gIdx) => {
+      // 1. groupType / type normalization
+      let type = (rawGroup.type || rawGroup.groupType || '').trim().toLowerCase().replace(/-/g, '_');
+      if (
+        type === 'note_completion' ||
+        type === 'form_completion' ||
+        type === 'sentence_completion' ||
+        type === 'summary_completion'
+      ) {
+        // keep
+      } else if (type === 'multiple_choice' || type === 'classification') {
+        type = 'multiple_choice';
+      } else if (type === 'matching') {
+        type = 'matching';
+      } else if (type === 'map_labelling' || type === 'map_labeling' || type === 'diagram_labeling') {
+        type = 'map_labelling';
+      } else if (type === 'flow_chart' || type === 'flow_chart_completion') {
+        type = 'flow_chart';
+      } else if (type === 'table_completion') {
+        type = 'table_completion';
+      } else if (type === 'short_answer') {
+        type = 'short_answer';
+      } else if (!type) {
+        // Infer based on question properties
+        const firstQ = rawGroup.questions?.[0];
+        if (firstQ?.options?.length) {
+          type = 'multiple_choice';
+        } else {
+          type = 'note_completion';
+        }
+      }
+
+      const id = rawGroup.id || `qg-${partData.partNumber || 1}-${gIdx + 1}`;
+      const title = (isEn ? (rawGroup.titleEn || rawGroup.groupTitleEn) : (rawGroup.titleVi || rawGroup.groupTitleVi))
+        || rawGroup.title
+        || rawGroup.groupTitle
+        || (isEn ? `Questions (Part ${partData.partNumber || 1})` : `Câu hỏi (Phần ${partData.partNumber || 1})`);
+      const instruction = (isEn ? (rawGroup.instructionEn || rawGroup.groupInstructionEn) : (rawGroup.instructionVi || rawGroup.groupInstructionVi))
+        || rawGroup.instruction
+        || (isEn ? partData.instructionEn : partData.instructionVi)
+        || partData.instruction
+        || '';
+
+      // Normalize group-level options (for matching / options box)
+      let options = rawGroup.options || rawGroup.optionsPool;
+      if (options && Array.isArray(options)) {
+        options = options.map((opt, oIdx) => {
+          if (typeof opt === 'string') {
+            const match = opt.match(/^([A-Za-z])[\s:.)-]+(.*)$/);
+            if (match) {
+              return { key: match[1].toUpperCase(), text: match[2].trim() };
+            }
+            return { key: String.fromCharCode(65 + oIdx), text: opt };
+          }
+          return {
+            key: (opt.key || opt.id || opt.letter || String.fromCharCode(65 + oIdx)).toUpperCase(),
+            text: (isEn ? (opt.textEn || opt.text) : (opt.textVi || opt.text)) || opt.text || opt.label || ''
+          };
+        });
+      }
+
+      // If matching type but group.options is missing, synthesize from instruction if it contains A:, B:, etc.
+      if (type === 'matching' && (!options || options.length === 0)) {
+        const instrLines = instruction.split('\n');
+        const extracted = [];
+        instrLines.forEach(line => {
+          const m = line.trim().match(/^([A-Za-z])[:.)-]\s+(.+)$/);
+          if (m) {
+            extracted.push({ key: m[1].toUpperCase(), text: m[2].trim() });
+          }
+        });
+        if (extracted.length > 0) {
+          options = extracted;
+        }
+      }
+
+      // Normalize questions
+      const questions = (rawGroup.questions || []).map((rawQ, qIdx) => {
+        const order = rawQ.order ?? rawQ.number ?? rawQ.questionNumber ?? (qIdx + 1);
+        const qId = rawQ.id || `q-${order}`;
+        
+        let questionText = (isEn ? rawQ.questionTextEn : rawQ.questionTextVi) || rawQ.questionText || '';
+        let prefixText = (isEn ? (rawQ.prefixTextEn || rawQ.prefixEn) : (rawQ.prefixTextVi || rawQ.prefixVi)) || rawQ.prefixText || rawQ.prefix || '';
+        let suffixText = (isEn ? (rawQ.suffixTextEn || rawQ.suffixEn) : (rawQ.suffixTextVi || rawQ.suffixVi)) || rawQ.suffixText || rawQ.suffix || '';
+
+        // If fill-in-the-blank and prefixText/suffixText are empty, try extracting from questionText
+        if (!prefixText && !suffixText && questionText) {
+          const blankMatch = questionText.split(/\[\d+\]\s*\.{2,}|\[\d+\]|_{2,}|\.{3,}/);
+          if (blankMatch.length >= 2) {
+            prefixText = blankMatch[0].trim();
+            suffixText = blankMatch.slice(1).join('').trim();
+          }
+        }
+
+        // Options normalization
+        let qOptions = rawQ.options || rawQ.optionsEn || (isEn ? rawQ.optionsEn : rawQ.optionsVi);
+        if (qOptions && Array.isArray(qOptions)) {
+          qOptions = qOptions.map((opt, oIdx) => {
+            if (typeof opt === 'string') {
+              const match = opt.match(/^([A-Za-z])[\s:.)-]+(.*)$/);
+              if (match) {
+                return { key: match[1].toUpperCase(), text: match[2].trim(), textEn: match[2].trim() };
+              }
+              return { key: String.fromCharCode(65 + oIdx), text: opt, textEn: opt };
+            }
+            return {
+              key: (opt.key || opt.letter || opt.id || String.fromCharCode(65 + oIdx)).toUpperCase(),
+              text: (isEn ? (opt.textEn || opt.text) : (opt.textVi || opt.text)) || opt.text || '',
+              textEn: opt.textEn || opt.text || ''
+            };
+          });
+        }
+
+        // Answer normalization
+        let answer = rawQ.answer ?? rawQ.correctAnswer;
+        if (rawQ.correctIndex !== undefined && !rawQ.answer) {
+          answer = String.fromCharCode(65 + rawQ.correctIndex);
+        } else if (answer && qOptions && qOptions.length > 0) {
+          const matchOpt = qOptions.find(o => o.text.trim().toLowerCase() === String(answer).trim().toLowerCase() || o.key.toLowerCase() === String(answer).trim().toLowerCase());
+          if (matchOpt) {
+            answer = matchOpt.key;
+          }
+        }
+
+        return {
+          ...rawQ,
+          id: qId,
+          order,
+          questionText,
+          prefixText,
+          suffixText,
+          options: qOptions,
+          answer,
+          acceptableAnswers: rawQ.acceptableAnswers || (answer ? [answer] : [])
+        };
+      });
+
+      return {
+        ...rawGroup,
+        id,
+        type,
+        title,
+        instruction,
+        options,
+        questions
+      };
+    });
+  }, [partData, isEn]);
+
   if (!partData) {
     return (
       <div className="p-8 text-center text-slate-500 font-medium">
-        Không có dữ liệu câu hỏi cho phần thi này.
+        {isEn ? 'No question data available for this section.' : 'Không có dữ liệu câu hỏi cho phần thi này.'}
       </div>
     );
   }
 
-  const mapGroup = partData.questionGroups?.find(g => g.type === 'map_labelling' && g.mapImageUrl);
+  const mapGroup = normalizedGroups.find(g => (g.type === 'map_labelling' || g.type === 'diagram_labeling') && g.mapImageUrl);
 
   return (
     <div
@@ -395,7 +546,7 @@ export default function ListeningQuestionPane({
 
       {/* QUESTION GROUPS */}
       <div className="space-y-6">
-        {partData.questionGroups?.map((group) => {
+        {normalizedGroups.map((group) => {
           const wordLimit = parseWordLimit(group.instruction);
 
           return (
@@ -538,7 +689,13 @@ export default function ListeningQuestionPane({
 
                         {/* Question Text with inline Blank Input */}
                         <div className={`leading-relaxed ${fontSizeClasses.body} text-slate-800`}>
-                          {q.prefixText && <span>{q.prefixText} </span>}
+                          {q.prefixText ? (
+                            <span>{q.prefixText} </span>
+                          ) : (
+                            (!q.suffixText && q.questionText) && (
+                              <div className="font-medium text-slate-900 mb-2">{q.questionText}</div>
+                            )
+                          )}
 
                           <div className="inline-block my-1 mx-1.5 relative">
                             <input
@@ -956,7 +1113,7 @@ export default function ListeningQuestionPane({
                               <option value="">-- Select A–{group.options ? group.options[group.options.length - 1]?.key : 'F'} --</option>
                               {group.options?.map(opt => (
                                 <option key={opt.key} value={opt.key}>
-                                  {opt.key}: {opt.text.substring(0, 40)}...
+                                  {opt.key}: {(opt.text || '').substring(0, 40)}...
                                 </option>
                               ))}
                             </select>
@@ -1008,28 +1165,28 @@ export default function ListeningQuestionPane({
                         <button
                           onClick={() => setMapZoom(prev => Math.min(prev + 0.25, 2.5))}
                           className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
-                          title="Phóng to"
+                          title={isEn ? "Zoom In" : "Phóng to"}
                         >
                           <ZoomIn className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => setMapZoom(prev => Math.max(prev - 0.25, 0.75))}
                           className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
-                          title="Thu nhỏ"
+                          title={isEn ? "Zoom Out" : "Thu nhỏ"}
                         >
                           <ZoomOut className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => setMapZoom(1)}
                           className="px-1.5 py-0.5 text-[10px] font-bold hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
-                          title="Cỡ chuẩn"
+                          title={isEn ? "Reset Zoom" : "Cỡ chuẩn"}
                         >
                           100%
                         </button>
                         <button
                           onClick={() => setIsMapModalOpen(true)}
                           className="p-1.5 hover:bg-slate-700 rounded-md transition-colors cursor-pointer"
-                          title="Mở toàn màn hình"
+                          title={isEn ? "Enlarge Map" : "Mở toàn màn hình"}
                         >
                           <Maximize2 className="w-3.5 h-3.5" />
                         </button>
@@ -1333,7 +1490,7 @@ export default function ListeningQuestionPane({
               rows={3}
               value={noteInput}
               onChange={(e) => setNoteInput(e.target.value)}
-              placeholder="Nhập ghi chú cá nhân của bạn..."
+              placeholder={isEn ? "Enter your private note..." : "Nhập ghi chú cá nhân của bạn..."}
               className="w-full p-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden mb-3"
             />
             <div className="flex items-center justify-end space-x-2">
@@ -1341,13 +1498,13 @@ export default function ListeningQuestionPane({
                 onClick={() => setActiveNoteModal(null)}
                 className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
               >
-                Hủy
+                {isEn ? 'Cancel' : 'Hủy'}
               </button>
               <button
                 onClick={handleSaveNote}
                 className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs cursor-pointer"
               >
-                Lưu Ghi Chú
+                {isEn ? 'Save Note' : 'Lưu Ghi Chú'}
               </button>
             </div>
           </div>
