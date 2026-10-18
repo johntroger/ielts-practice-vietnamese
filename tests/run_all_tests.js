@@ -194,7 +194,8 @@ const testSuites = [
   { name: 'Step 185: Track 34 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step185_track34_audio_integration.js' },
   { name: 'Step 186: Track 35 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step186_track35_audio_integration.js' },
   { name: 'Step 187: Track 36 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step187_track36_audio_integration.js' },
-  { name: 'Step 188: Track 37 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step188_track37_audio_integration.js' }
+  { name: 'Step 188: Track 37 Audio Integration, Micro-Drills & Arena Question Bank', file: 'tests/test_step188_track37_audio_integration.js' },
+  { name: 'Step 189: Listening Modals Hooks Order Invariant (React Error #310 Fix)', file: 'tests/test_step189_listening_transcript_modal_hook_order_310.js' }
 ];
 
 console.log('===============================================================');

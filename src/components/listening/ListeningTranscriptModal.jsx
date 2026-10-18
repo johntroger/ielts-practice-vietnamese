@@ -25,27 +25,25 @@ export default function ListeningTranscriptModal({
   onSaveToVocabNotebook
 }) {
   const { t, isEn } = useTranslation();
-  if (!isOpen || !currentTest) return null;
-
   const [selectedPartNum, setSelectedPartNum] = useState(activePart);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSentenceIndex, setSelectedSentenceIndex] = useState(null);
+  const activeSentenceRef = useRef(null);
 
   // Sync selectedPartNum when activePart changes or modal reopens
   useEffect(() => {
     setSelectedPartNum(activePart);
   }, [activePart, isOpen]);
 
-  const activePartData = currentTest.parts?.find(p => p.partNumber === selectedPartNum) || currentTest.parts?.[0];
+  const activePartData = currentTest?.parts?.find(p => p.partNumber === selectedPartNum) || currentTest?.parts?.[0];
   const transcripts = activePartData?.transcripts || [];
 
   // Find currently active sentence based on audio currentTime
   const currentSentenceIdx = transcripts.findIndex(
-    s => audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end
+    s => audioEngine && audioEngine.currentTime >= s.start && audioEngine.currentTime < s.end
   );
 
   // Auto scroll active sentence into view
-  const activeSentenceRef = useRef(null);
   useEffect(() => {
     if (activeSentenceRef.current) {
       activeSentenceRef.current.scrollIntoView({
@@ -54,6 +52,8 @@ export default function ListeningTranscriptModal({
       });
     }
   }, [currentSentenceIdx]);
+
+  if (!isOpen || !currentTest) return null;
 
   // Jump audio to specific timestamp
   const handleSeekSentence = (startTime) => {

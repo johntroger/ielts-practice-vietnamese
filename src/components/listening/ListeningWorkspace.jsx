@@ -1598,96 +1598,104 @@ export default function ListeningWorkspace({
       />
 
       {/* 9. Comprehensive Cambridge Test Report Modal */}
-      <ListeningResultModal
-        isOpen={isResultModalOpen}
-        onClose={() => {
-          setIsResultModalOpen(false);
-          if (!allListeningTests.some(t => t.id === currentTestId)) {
-            const fallbackId = allListeningTests[0]?.id || INITIAL_LISTENING_TESTS[0].id;
-            setCurrentTestId(fallbackId);
-            setActivePart(1);
-          }
-        }}
-        bandResult={bandResult}
-        testTitle={currentTest?.title || bandResult?.testTitle}
-        apiKey={apiKey}
-        model={model}
-        onResetExam={() => {
-          exam.resetExam();
-          audioEngine.seek(0);
-          setHasStartedExam(false);
-          setBandResult(null);
-          try {
-            localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
-          } catch (e) {}
-        }}
-        onJumpToQuestion={(order) => {
-          exam.setActiveQuestionOrder(order);
-          const pNum = Math.ceil(order / 10);
-          if (pNum !== activePart) {
-            setActivePart(pNum);
-          }
-        }}
-        onSeekAudio={(timestamp) => {
-          audioEngine.seek(timestamp);
-          audioEngine.play();
-        }}
-        onOpenDrills={onOpenDrills}
-      />
+      {isResultModalOpen && (
+        <ListeningResultModal
+          isOpen={isResultModalOpen}
+          onClose={() => {
+            setIsResultModalOpen(false);
+            if (!allListeningTests.some(t => t.id === currentTestId)) {
+              const fallbackId = allListeningTests[0]?.id || INITIAL_LISTENING_TESTS[0].id;
+              setCurrentTestId(fallbackId);
+              setActivePart(1);
+            }
+          }}
+          bandResult={bandResult}
+          testTitle={currentTest?.title || bandResult?.testTitle}
+          apiKey={apiKey}
+          model={model}
+          onResetExam={() => {
+            exam.resetExam();
+            audioEngine.seek(0);
+            setHasStartedExam(false);
+            setBandResult(null);
+            try {
+              localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
+            } catch (e) {}
+          }}
+          onJumpToQuestion={(order) => {
+            exam.setActiveQuestionOrder(order);
+            const pNum = Math.ceil(order / 10);
+            if (pNum !== activePart) {
+              setActivePart(pNum);
+            }
+          }}
+          onSeekAudio={(timestamp) => {
+            audioEngine.seek(timestamp);
+            audioEngine.play();
+          }}
+          onOpenDrills={onOpenDrills}
+        />
+      )}
 
       {/* 10. Karaoke Interactive Transcript Modal */}
-      <ListeningTranscriptModal
-        isOpen={isTranscriptOpen}
-        onClose={() => setIsTranscriptOpen(false)}
-        currentTest={currentTest}
-        audioEngine={audioEngine}
-        activePart={activePart}
-        onSelectPart={setActivePart}
-        onSaveToVocabNotebook={onSaveToVocabNotebook}
-      />
+      {isTranscriptOpen && (
+        <ListeningTranscriptModal
+          isOpen={isTranscriptOpen}
+          onClose={() => setIsTranscriptOpen(false)}
+          currentTest={currentTest}
+          audioEngine={audioEngine}
+          activePart={activePart}
+          onSelectPart={setActivePart}
+          onSaveToVocabNotebook={onSaveToVocabNotebook}
+        />
+      )}
 
       {/* 11. Listening Library Modal (Browse Cambridge & AI generated tests) */}
-      <ListeningLibraryModal
-        isOpen={isLibraryOpen}
-        onClose={() => setIsLibraryOpen(false)}
-        allListeningTests={allListeningTests}
-        currentTestId={currentTestId}
-        onSelectTest={(selected) => {
-          const testObj = typeof selected === 'object' ? selected : allListeningTests.find(t => t.id === selected);
-          if (!testObj) return;
-          setCurrentTestId(testObj.id);
-          setIsLibraryOpen(false);
-          const startPart = testObj.targetPart || testObj.parts?.[0]?.partNumber || 1;
-          setActivePart(startPart);
-          setHasStartedExam(true);
-          exam.resetExam();
-          setBandResult(null);
-          if (testObj.audioUrl) {
-            audioEngine.loadAudio(testObj.audioUrl);
-          }
-        }}
-        onDeleteTest={handleDeleteCustomTest}
-        onAddCustomTest={handleAddCustomTest}
-        onTogglePublic={handleToggleListeningPublic}
-        onOpenGenerator={() => {
-          setIsLibraryOpen(false);
-          setIsGeneratorOpen(true);
-        }}
-        user={user}
-        masteredIds={masteredIds}
-        onToggleMastered={onToggleMastered}
-      />
+      {isLibraryOpen && (
+        <ListeningLibraryModal
+          isOpen={isLibraryOpen}
+          onClose={() => setIsLibraryOpen(false)}
+          allListeningTests={allListeningTests}
+          currentTestId={currentTestId}
+          onSelectTest={(selected) => {
+            const testObj = typeof selected === 'object' ? selected : allListeningTests.find(t => t.id === selected);
+            if (!testObj) return;
+            setCurrentTestId(testObj.id);
+            setIsLibraryOpen(false);
+            const startPart = testObj.targetPart || testObj.parts?.[0]?.partNumber || 1;
+            setActivePart(startPart);
+            setHasStartedExam(true);
+            exam.resetExam();
+            setBandResult(null);
+            if (testObj.audioUrl) {
+              audioEngine.loadAudio(testObj.audioUrl);
+            }
+          }}
+          onDeleteTest={handleDeleteCustomTest}
+          onAddCustomTest={handleAddCustomTest}
+          onTogglePublic={handleToggleListeningPublic}
+          onOpenGenerator={() => {
+            setIsLibraryOpen(false);
+            setIsGeneratorOpen(true);
+          }}
+          user={user}
+          masteredIds={masteredIds}
+          onToggleMastered={onToggleMastered}
+        />
+      )}
 
       {/* 12. Listening AI Test Generator from Audio URL Modal */}
-      <ListeningURLExerciseGeneratorModal
-        isOpen={isGeneratorOpen}
-        onClose={() => setIsGeneratorOpen(false)}
-        apiKey={apiKey}
-        model={model}
-        user={user}
-        onTestGenerated={handleAddCustomTest}
-        onOpenSettings={onOpenSettings}
-      />
+      {isGeneratorOpen && (
+        <ListeningURLExerciseGeneratorModal
+          isOpen={isGeneratorOpen}
+          onClose={() => setIsGeneratorOpen(false)}
+          apiKey={apiKey}
+          model={model}
+          user={user}
+          onTestGenerated={handleAddCustomTest}
+          onOpenSettings={onOpenSettings}
+        />
+      )}
 
     </div>
   );
