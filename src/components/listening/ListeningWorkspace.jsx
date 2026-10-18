@@ -126,7 +126,7 @@ export default function ListeningWorkspace({
         }
       }
     } catch (e) {}
-    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track46-business-structures-comparative-summary'];
+    return [initialTestId || INITIAL_LISTENING_TESTS[0]?.id || 'ielts-listening-track47-business-structures-case-studies'];
   });
 
   // Persist open tabs whenever they change

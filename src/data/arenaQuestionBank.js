@@ -5581,12 +5581,192 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'At the company\'s formally registered address',
     explanation: 'Luật quy định công ty phải lưu giữ hồ sơ tại địa chỉ đã đăng ký: "keep company records at the registered address".',
     explanationEn: 'UK company law imposes a strict statutory requirement to keep official company records at its registered office address.'
+  },
+  // ==========================================
+  // TRACK 47: CASE STUDIES IN BUSINESS STRUCTURES
+  // ==========================================
+  {
+    id: 'easy_lis_catering_expansion_strategy_t47',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Which geographical market do Sanjay and Tanya plan to target initially before expanding further afield?',
+    promptEn: 'Which geographical market do Sanjay and Tanya plan to target initially before expanding further afield?',
+    context: 'Lecturer: "They aim to target businesses in their local area to begin with, and then further afield as they expand."',
+    contextEn: 'Lecturer: "They aim to target businesses in their local area to begin with, and then further afield as they expand."',
+    audioText: "They aim to target businesses in their local area to begin with, and then further afield as they expand.",
+    options: [
+      'Commercial offices situated within their immediate local area',
+      'Nationwide supermarket distribution centres across the country',
+      'Overseas airport departure lounge concessionaires',
+      'University dining halls throughout mainland Europe'
+    ],
+    optionsVi: [
+      'Các văn phòng thương mại nằm trong khu vực địa phương của họ',
+      'Các trung tâm phân phối siêu thị trên toàn quốc',
+      'Các điểm bán hàng tại phòng chờ sân bay quốc tế',
+      'Các nhà ăn trường đại học trên khắp châu Âu'
+    ],
+    optionsEn: [
+      'Commercial offices situated within their immediate local area',
+      'Nationwide supermarket distribution centres across the country',
+      'Overseas airport departure lounge concessionaires',
+      'University dining halls throughout mainland Europe'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Commercial offices situated within their immediate local area',
+    explanation: 'Kế hoạch ban đầu là tiếp cận các doanh nghiệp tại địa phương: "target businesses in their local area to begin with".',
+    explanationEn: 'The founders intend to consolidate market share in their immediate local area before pursuing broader expansion.'
+  },
+  {
+    id: 'med_lis_catering_llp_rationale_t47',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Why does the lecturer recommend that Sanjay and Tanya launch their catering business as an LLP rather than a limited company?',
+    promptEn: 'Why does the lecturer recommend that Sanjay and Tanya launch their catering business as an LLP rather than a limited company?',
+    context: 'Lecturer: "However, I would say the LLP model would work better here, giving them more time to focus on growing the business, rather than dealing with a lot of administration from the start."',
+    contextEn: 'Lecturer: "However, I would say the LLP model would work better here, giving them more time to focus on growing the business, rather than dealing with a lot of administration from the start."',
+    audioText: "However, I would say the LLP model would work better here, giving them more time to focus on growing the business, rather than dealing with a lot of administration from the start.",
+    options: [
+      'It frees up their schedule to concentrate on growth instead of handling heavy startup administration',
+      'LLPs are exempt from paying any wholesale ingredient taxes indefinitely',
+      'Commercial banks provide non-repayable grants exclusively to food LLPs',
+      'Limited companies are forbidden from preparing hot meals for office workers'
+    ],
+    optionsVi: [
+      'Giúp họ có thêm thời gian tập trung tăng trưởng thay vì xử lý quá nhiều thủ tục hành chính ban đầu',
+      'LLP được miễn vĩnh viễn mọi loại thuế nguyên liệu bán buôn',
+      'Các ngân hàng thương mại cung cấp viện trợ không hoàn lại riêng cho LLP thực phẩm',
+      'Công ty TNHH bị cấm nấu các bữa ăn nóng cho nhân viên văn phòng'
+    ],
+    optionsEn: [
+      'It frees up their schedule to concentrate on growth instead of handling heavy startup administration',
+      'LLPs are exempt from paying any wholesale ingredient taxes indefinitely',
+      'Commercial banks provide non-repayable grants exclusively to food LLPs',
+      'Limited companies are forbidden from preparing hot meals for office workers'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It frees up their schedule to concentrate on growth instead of handling heavy startup administration',
+    explanation: 'Mô hình LLP giúp tránh bớt gánh nặng hành chính ban đầu để tập trung phát triển kinh doanh: "focus on growing the business, rather than dealing with a lot of administration".',
+    explanationEn: 'The LLP model avoids cumbersome administrative overhead early on, giving founders time to scale operations.'
+  },
+  {
+    id: 'easy_lis_software_engineers_background_t47',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What technical discipline did Melissa and Jane study together during their university education?',
+    promptEn: 'What technical discipline did Melissa and Jane study together during their university education?',
+    context: 'Lecturer: "They both studied software engineering at university, and so they are both well-skilled in their field."',
+    contextEn: 'Lecturer: "They both studied software engineering at university, and so they are both well-skilled in their field."',
+    audioText: "They both studied software engineering at university, and so they are both well-skilled in their field.",
+    options: [
+      'Software engineering',
+      'Civil architecture',
+      'Corporate accountancy',
+      'Automotive mechanics'
+    ],
+    optionsVi: [
+      'Kỹ thuật phần mềm (Software engineering)',
+      'Kiến trúc dân dụng',
+      'Kế toán doanh nghiệp',
+      'Cơ khí ô tô'
+    ],
+    optionsEn: [
+      'Software engineering',
+      'Civil architecture',
+      'Corporate accountancy',
+      'Automotive mechanics'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Software engineering',
+    explanation: 'Cả hai cùng theo học ngành kỹ thuật phần mềm tại trường đại học: "studied software engineering at university".',
+    explanationEn: 'Both founders graduated in software engineering and possessed professional design experience in major firms.'
+  },
+  {
+    id: 'med_lis_sleeping_partner_concept_t47',
+    difficulty: 'medium',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'In corporate law, how is a sleeping partner formally distinguished within a business enterprise?',
+    promptEn: 'In corporate law, how is a sleeping partner formally distinguished within a business enterprise?',
+    context: 'Lecturer: "This person wouldn\'t take an active part in the business; they would be known as a sleeping partner."',
+    contextEn: 'Lecturer: "This person wouldn\'t take an active part in the business; they would be known as a sleeping partner."',
+    audioText: "This person wouldn't take an active part in the business; they would be known as a sleeping partner.",
+    options: [
+      'They hold an ownership stake or provide capital but do not participate in operational management',
+      'They are legally restricted to working during night shifts only',
+      'They hold 100% executive voting rights without any financial investment',
+      'They are exempt from paying taxes on all personal and business income'
+    ],
+    optionsVi: [
+      'Họ sở hữu cổ phần hoặc góp vốn nhưng không tham gia quản lý điều hành hàng ngày',
+      'Họ bị giới hạn về mặt pháp lý chỉ được làm việc vào ca đêm',
+      'Họ nắm 100% quyền biểu quyết điều hành mà không cần đầu tư tài chính',
+      'Họ được miễn nộp thuế đối với toàn bộ thu nhập cá nhân và doanh nghiệp'
+    ],
+    optionsEn: [
+      'They hold an ownership stake or provide capital but do not participate in operational management',
+      'They are legally restricted to working during night shifts only',
+      'They hold 100% executive voting rights without any financial investment',
+      'They are exempt from paying taxes on all personal and business income'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'They hold an ownership stake or provide capital but do not participate in operational management',
+    explanation: 'Thành viên góp vốn thụ động không tham gia vào hoạt động vận hành thường nhật: "wouldn\'t take an active part in the business".',
+    explanationEn: 'A sleeping partner contributes financial stake or name equity without engaging in day-to-day business administration.'
+  },
+  {
+    id: 'hard_lis_barry_sole_trader_transition_t47',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What structured evolutionary path is advised for Barry before committing to incorporate a limited company?',
+    promptEn: 'What structured evolutionary path is advised for Barry before committing to incorporate a limited company?',
+    context: 'Lecturer: "On balance, the best option for him would be to start off as a sole trader with his own work bike, and do that for a year or two to see how well it went, and then make a decision about whether to set up a limited company in the future."',
+    contextEn: 'Lecturer: "On balance, the best option for him would be to start off as a sole trader with his own work bike, and do that for a year or two to see how well it went, and then make a decision about whether to set up a limited company in the future."',
+    audioText: "On balance, the best option for him would be to start off as a sole trader with his own work bike, and do that for a year or two to see how well it went, and then make a decision about whether to set up a limited company in the future.",
+    options: [
+      'Trade as an independent sole trader for one to two years to evaluate viability before incorporating',
+      'Form an immediate limited liability company with all former company delivery riders',
+      'Abandon courier work entirely to enroll in a postgraduate business degree',
+      'Liquidate all three personal motorbikes to purchase a fleet of electric delivery vans'
+    ],
+    optionsVi: [
+      'Kinh doanh dưới hình thức Sole Trader trong 1–2 năm để đánh giá hiệu quả trước khi thành lập công ty',
+      'Thành lập ngay công ty TNHH cùng toàn bộ các tài xế chuyển phát cũ',
+      'Từ bỏ hoàn toàn nghề chuyển phát để theo học chương trình thạc sĩ kinh doanh',
+      'Bán cả ba chiếc xe máy cá nhân để mua một đội xe tải giao hàng chạy điện'
+    ],
+    optionsEn: [
+      'Trade as an independent sole trader for one to two years to evaluate viability before incorporating',
+      'Form an immediate limited liability company with all former company delivery riders',
+      'Abandon courier work entirely to enroll in a postgraduate business degree',
+      'Liquidate all three personal motorbikes to purchase a fleet of electric delivery vans'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Trade as an independent sole trader for one to two years to evaluate viability before incorporating',
+    explanation: 'Giảng viên khuyên nên bắt đầu dưới hình thức sole trader từ 1 đến 2 năm trước khi quyết định lên công ty TNHH: "start off as a sole trader with his own work bike, and do that for a year or two".',
+    explanationEn: 'The lecturer advises testing self-employment viability as a sole trader for 1–2 years prior to undertaking the compliance overhead of a limited company.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 47: Case Studies in Business Structures
+  easy_lis_catering_expansion_strategy_t47: { audioUrl: `${R2_BASE}/ielts-listening-track47-business-structures-case-studies.mp3`, clipStart: 32.0, clipEnd: 42.0, isR2Audio: true, trackLabel: 'Track 47 • Local Market Target' },
+  med_lis_catering_llp_rationale_t47: { audioUrl: `${R2_BASE}/ielts-listening-track47-business-structures-case-studies.mp3`, clipStart: 95.0, clipEnd: 114.0, isR2Audio: true, trackLabel: 'Track 47 • LLP Recommendation Rationale' },
+  easy_lis_software_engineers_background_t47: { audioUrl: `${R2_BASE}/ielts-listening-track47-business-structures-case-studies.mp3`, clipStart: 118.0, clipEnd: 129.0, isR2Audio: true, trackLabel: 'Track 47 • Technical Background' },
+  med_lis_sleeping_partner_concept_t47: { audioUrl: `${R2_BASE}/ielts-listening-track47-business-structures-case-studies.mp3`, clipStart: 234.0, clipEnd: 247.0, isR2Audio: true, trackLabel: 'Track 47 • Sleeping Partner Role' },
+  hard_lis_barry_sole_trader_transition_t47: { audioUrl: `${R2_BASE}/ielts-listening-track47-business-structures-case-studies.mp3`, clipStart: 253.0, clipEnd: 271.0, isR2Audio: true, trackLabel: 'Track 47 • Staged Incorporation Path' },
+
   // Track 46: Comparative Summary of UK Business Structures
   easy_lis_sole_trader_control_autonomy_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 12.0, clipEnd: 24.0, isR2Audio: true, trackLabel: 'Track 46 • Sole Trader Autonomy' },
   med_lis_valuable_contracts_liability_t46: { audioUrl: `${R2_BASE}/ielts-listening-track46-business-structures-comparative-summary.mp3`, clipStart: 27.0, clipEnd: 39.0, isR2Audio: true, trackLabel: 'Track 46 • Contract Credibility Barrier' },

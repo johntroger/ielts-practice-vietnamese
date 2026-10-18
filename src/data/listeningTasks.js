@@ -55,6 +55,7 @@ import { track43SoleTraderProsCons } from './listening/track43SoleTraderProsCons
 import { track44PartnershipsSimpleLLP } from './listening/track44PartnershipsSimpleLLP.js';
 import { track45LimitedLiabilityCompanyLtd } from './listening/track45LimitedLiabilityCompanyLtd.js';
 import { track46BusinessStructuresSummary } from './listening/track46BusinessStructuresSummary.js';
+import { track47BusinessStructuresCaseStudies } from './listening/track47BusinessStructuresCaseStudies.js';
 
 // Cambridge IELTS Listening Raw Score to Band Score Conversion Table
 export function calculateListeningBandScore(rawScore) {
@@ -77,6 +78,7 @@ export function calculateListeningBandScore(rawScore) {
 
 // Master collection of pre-loaded official Cambridge simulation tests
 export const INITIAL_LISTENING_TESTS = [
+  track47BusinessStructuresCaseStudies,
   track46BusinessStructuresSummary,
   track45LimitedLiabilityCompanyLtd,
   track44PartnershipsSimpleLLP,

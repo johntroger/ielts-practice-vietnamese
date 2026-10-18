@@ -1743,6 +1743,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "Where does the law mandate that limited companies maintain their official records and registers?",
     "contextEn": "Lecturer: \"Similarly, there is a legal requirement to keep company records at the registered address.\"",
     "explanationEn": "UK company law imposes a strict statutory requirement to keep official company records at its registered office address."
+  },
+  "easy_lis_catering_expansion_strategy_t47": {
+    "promptEn": "Which geographical market do Sanjay and Tanya plan to target initially before expanding further afield?",
+    "contextEn": "Lecturer: \"They aim to target businesses in their local area to begin with, and then further afield as they expand.\"",
+    "explanationEn": "The founders intend to consolidate market share in their immediate local area before pursuing broader expansion."
+  },
+  "med_lis_catering_llp_rationale_t47": {
+    "promptEn": "Why does the lecturer recommend that Sanjay and Tanya launch their catering business as an LLP rather than a limited company?",
+    "contextEn": "Lecturer: \"However, I would say the LLP model would work better here, giving them more time to focus on growing the business, rather than dealing with a lot of administration from the start.\"",
+    "explanationEn": "The LLP model avoids cumbersome administrative overhead early on, giving founders time to scale operations."
+  },
+  "easy_lis_software_engineers_background_t47": {
+    "promptEn": "What technical discipline did Melissa and Jane study together during their university education?",
+    "contextEn": "Lecturer: \"They both studied software engineering at university, and so they are both well-skilled in their field.\"",
+    "explanationEn": "Both founders graduated in software engineering and possessed professional design experience in major firms."
+  },
+  "med_lis_sleeping_partner_concept_t47": {
+    "promptEn": "In corporate law, how is a sleeping partner formally distinguished within a business enterprise?",
+    "contextEn": "Lecturer: \"This person wouldn't take an active part in the business; they would be known as a sleeping partner.\"",
+    "explanationEn": "A sleeping partner contributes financial stake or name equity without engaging in day-to-day business administration."
+  },
+  "hard_lis_barry_sole_trader_transition_t47": {
+    "promptEn": "What structured evolutionary path is advised for Barry before committing to incorporate a limited company?",
+    "contextEn": "Lecturer: \"On balance, the best option for him would be to start off as a sole trader with his own work bike, and do that for a year or two to see how well it went, and then make a decision about whether to set up a limited company in the future.\"",
+    "explanationEn": "The lecturer advises testing self-employment viability as a sole trader for 1–2 years prior to undertaking the compliance overhead of a limited company."
   }
 };
 
