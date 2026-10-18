@@ -1443,6 +1443,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "What corrected total sum does Sophie provide for the pedestrian and one-way system?",
     "contextEn": "Robert: So that's around 23 million pounds. We might be able to manage that. Sophie: Actually, that's 25 million pounds, Robert. Robert: So it is! My mistake. Maths was never my strong point.",
     "explanationEn": "Budget verification: Robert miscalculates 23 million pounds, but Sophie corrects the sum to 25 million pounds (12m + 5m + 8m = 25m)."
+  },
+  "med_lis_transit_mode_winner_t35": {
+    "promptEn": "Listen to Sophie and Robert. Which municipal scheme do they agree would improve public transport the most?",
+    "contextEn": "Sophie: \"So which schemes would help the most with public transport? ... It would certainly be good to have the tram. The bus and cycle routes would help, but traffic would just be diverted through other streets.\"",
+    "explanationEn": "Modal consensus: Robert and Sophie agree that the tram system delivers genuine public transit improvements, whereas bus/cycle routes merely divert vehicular traffic elsewhere."
+  },
+  "hard_lis_visitor_retail_rationale_t35": {
+    "promptEn": "According to Sophie, why does the pedestrian precinct encourage visitors even more than the tram system?",
+    "contextEn": "Sophie: \"And people who are shopping like to be able to walk around without having to dodge cars and buses. That really encourages visitors. More than the tram? Yes, definitely.\"",
+    "explanationEn": "Pedestrian attraction rationale: Shoppers appreciate navigating the central retail zone without vehicular intimidation (\"walk around without having to dodge cars and buses\")."
+  },
+  "easy_lis_exercise_health_winner_t35": {
+    "promptEn": "Which scheme is explicitly commended for getting people moving and exercising outdoors?",
+    "contextEn": "Sophie: \"And of course having more cycling routes would mean that more people will be getting some exercise.\" Robert: \"Yes, definitely.\"",
+    "explanationEn": "Health and active mobility: Having more dedicated cycling routes directly stimulates regular physical exercise among residents."
+  },
+  "med_lis_pollution_park_ride_t35": {
+    "promptEn": "Why does Robert argue that the park-and-ride scheme does the most to reduce city center pollution?",
+    "contextEn": "Robert: \"The park-and-ride, I'd say. Far fewer cars would be coming into the town centre, so you wouldn't get as much dirty air.\"",
+    "explanationEn": "Air quality mechanism: Retaining private vehicles in suburban perimeter lots prevents exhaust emissions inside the historic center."
+  },
+  "hard_lis_safety_cyclist_blindspot_t35": {
+    "promptEn": "What safety hazard prompted Sophie and Robert to choose the pedestrian zone over cycle routes for safety?",
+    "contextEn": "Robert: \"They still have to avoid cyclists, who don't always pay attention to pedestrians.\" Sophie: \"And with the pedestrian area, they wouldn't have to deal with that because there aren't any cyclists there.\"",
+    "explanationEn": "Pedestrian safety distinction: Cyclists often neglect pedestrian safety on shared corridors, making completely car- and bike-free pedestrian areas the safest option."
   }
 };
 

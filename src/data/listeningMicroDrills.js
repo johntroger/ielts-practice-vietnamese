@@ -2553,9 +2553,102 @@ export const LISTENING_MICRO_DRILLS = [
     trapNote: 'Từ vựng cốt lõi: Nghe rõ động từ nguyên mẫu "rent" trong mệnh đề điều kiện "If they rent them".',
     trapNoteEn: 'Core lexical keyword: Listen for the base verb "rent" inside the conditional clause "If they rent them".',
     explanation: 'Sophie chỉ ra phương án tiết kiệm: "If they rent them, they could keep the cost down to around 3 million pounds." Từ cần điền là "rent".',
-    explanationEn: 'Sophie highlights leasing instead of buying: "If they rent them, they could keep the cost down...". The missing operative verb is "rent".'
+  },
+  {
+    id: 'ldrill-dist-track35-tram-vs-bus-transit',
+    type: 'listening-distractor',
+    title: 'Bẫy đánh giá phân tán: Lợi ích vượt trội của hệ thống xe điện (Track 35)',
+    titleEn: 'Mode Evaluation Distractor Trap: Superior Public Transit Scheme (Track 35)',
+    category: 'Urban Transit Optimization',
+    categoryEn: 'Urban Transit Optimization',
+    audioSnippetText: "So which schemes would help the most with public transport? ... It would certainly be good to have the tram. The bus and cycle routes would help, but traffic would just be diverted through other streets.",
+    audioText: "So which schemes would help the most with public transport? ... It would certainly be good to have the tram. The bus and cycle routes would help, but traffic would just be diverted through other streets.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track35-transport-benefits-recommendations.mp3',
+    clipStart: 33.0,
+    clipEnd: 55.0,
+    question: 'Theo Robert và Sophie, vì sao hệ thống xe điện (Tram) được đánh giá cao hơn làn đường xe buýt và xe đạp?',
+    questionEn: 'According to Robert and Sophie, why is the tram system judged superior to bus and cycle routes for public transport?',
+    options: [
+      { id: 'A', text: 'Vì làn buýt/xe đạp chỉ khiến luồng ô tô dồn ứ sang các đường ngõ khác, trong khi xe điện tạo hành lang vận chuyển chuyên biệt', textEn: 'Because bus and cycle routes merely displace car traffic into residential streets, whereas the tram provides dedicated transit' },
+      { id: 'B', text: 'Vì chi phí đầu tư xe điện thấp hơn đáng kể so với mở rộng các tuyến đường xe buýt', textEn: 'Because capital expenditure on trams is significantly lower than bus route expansions' },
+      { id: 'C', text: 'Vì dịch vụ xe buýt trung tâm thường xuyên trễ giờ vào khung giờ cao điểm', textEn: 'Because central bus services are notoriously unpunctual during peak traffic hours' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe dễ bị phân tâm khi nghe Sophie nhắc tới "bus and cycle routes would help", nhưng Robert phản bác nhược điểm cốt tử: "traffic would just be diverted through other streets". Do đó Tramway mới là phương án hỗ trợ giao thông công cộng tối ưu nhất.',
+    distractorMechanismEn: 'Test-takers may latch onto Sophie mentioning "bus and cycle routes would help", but Robert exposes its fatal flaw: "traffic would just be diverted through other streets". Hence, the tram system provides the true structural improvement.',
+    explanation: 'Đáp án là A: Xe buýt/xe đạp chỉ đẩy luồng xe sang các phố khác ("diverted through other streets"), nên hệ thống xe điện (tram) là giải pháp nâng cấp giao thông công cộng hiệu quả nhất.',
+    explanationEn: 'Option A is correct: bus and cycle lanes divert vehicle congestion onto neighboring streets, making the tram the genuinely effective public transit solution.'
+  },
+  {
+    id: 'ldrill-dist-track35-visitor-magnet-shift',
+    type: 'listening-distractor',
+    title: 'Bẫy động cơ kích cầu du lịch & mua sắm: Phố đi bộ hay Hệ thống xe điện (Track 35)',
+    titleEn: 'Visitor & Retail Attraction Trap: Pedestrian Zone vs Tram Network (Track 35)',
+    category: 'Commercial Revitalization',
+    categoryEn: 'Commercial Revitalization',
+    audioSnippetText: "And people who are shopping like to be able to walk around without having to dodge cars and buses. That really encourages visitors. More than the tram? Yes, definitely.",
+    audioText: "And people who are shopping like to be able to walk around without having to dodge cars and buses. That really encourages visitors. More than the tram? Yes, definitely.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track35-transport-benefits-recommendations.mp3',
+    clipStart: 73.0,
+    clipEnd: 102.0,
+    question: 'Giải pháp nào được Sophie khẳng định chắc chắn sẽ thu hút nhiều khách ghé thăm thành phố nhất?',
+    questionEn: 'Which municipal scheme does Sophie firmly assert will draw the highest influx of visitors to the city?',
+    options: [
+      { id: 'A', text: 'Khu vực đi bộ và đường một chiều vì người mua sắm thích tản bộ tự do mà không phải né tránh xe cộ', textEn: 'The pedestrian area and one-way system because shoppers prefer wandering freely without dodging vehicles' },
+      { id: 'B', text: 'Mạng lưới xe điện vì khách phương xa có thể di chuyển nhanh chóng quanh lõi trung tâm', textEn: 'The modern tram network because visiting tourists can travel rapidly throughout the historic center' },
+      { id: 'C', text: 'Bãi đỗ xe trung chuyển ngoại ô nhằm cung cấp vé xe buýt miễn phí cho khách mua sắm', textEn: 'The peripheral park-and-ride facility offering subsidized shuttle tickets for shoppers' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Robert thăm dò bằng câu hỏi so sánh: "More than the tram?", và Sophie khẳng định không ngần ngại: "Yes, definitely", giải thích rằng người mua sắm muốn đi lại thoải mái mà không phải né ô tô, xe buýt.',
+    distractorMechanismEn: 'Robert poses a comparative probe: "More than the tram?", to which Sophie resolutely answers: "Yes, definitely", citing shoppers\' desire to stroll safely without vehicle intimidation.',
+    explanation: 'Đáp án là A: Sophie khẳng định khu phố đi bộ ("pedestrian area") khuyến khích khách ghé thăm nhiều nhất ("More than the tram? Yes, definitely").',
+    explanationEn: 'Option A is correct: Sophie explicitly prioritizes the pedestrian precinct over the tramway for visitor attraction ("More than the tram? Yes, definitely").'
+  },
+  {
+    id: 'ldrill-dict-track35-cyclist-attention-hazard',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Rủi ro va chạm giữa người đi xe đạp và người đi bộ (Track 35)',
+    titleEn: 'Dictation Level 2: Shared-Surface Cyclist Collision Hazards (Track 35)',
+    category: 'Pedestrian & Urban Safety',
+    categoryEn: 'Pedestrian & Urban Safety',
+    audioSnippetText: "They still have to avoid cyclists, who don't always pay attention to pedestrians.",
+    audioText: "They still have to avoid cyclists, who don't always pay attention to pedestrians.",
+    targetTranscript: "They still have to avoid cyclists, who don't always pay attention to pedestrians.",
+    ttsText: "They still have to avoid cyclists, who don't always pay attention to pedestrians.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track35-transport-benefits-recommendations.mp3',
+    clipStart: 193.0,
+    clipEnd: 203.0,
+    wordCount: 12,
+    difficulty: 'Band 6.5 - 7.5',
+    audioClipTip: 'Chú ý mệnh đề quan hệ không xác định "who don\'t always pay attention to pedestrians" và phát âm danh từ số nhiều "pedestrians" /pəˈdestriənz/.',
+    audioClipTipEn: 'Listen for the relative clause "who don\'t always pay attention to pedestrians" and the plural pronunciation of "pedestrians".'
+  },
+  {
+    id: 'ldrill-role-track35-pedestrian-air-quality',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Lợi ích hít thở không khí sạch hơn (Track 35)',
+    titleEn: 'Key Vocabulary Reflex: Cleaner Ambient Air for Walkers (Track 35)',
+    category: 'Environmental Health',
+    categoryEn: 'Environmental Health',
+    promptAudioText: "Though I suppose even people who only walk benefit, because the air's cleaner.",
+    audioText: "Though I suppose even people who only walk benefit, because the air's cleaner.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track35-transport-benefits-recommendations.mp3',
+    clipStart: 130.0,
+    clipEnd: 137.5,
+    questionPrompt: "Pedestrians who never cycle also experience tangible health benefits because the surrounding ambient air becomes .........",
+    questionPromptEn: "Pedestrians who never cycle also experience tangible health benefits because the surrounding ambient air becomes .........",
+    questionPromptVi: 'Người đi bộ dù không bao giờ đi xe đạp vẫn nhận được lợi ích sức khỏe rõ rệt vì bầu không khí xung quanh trở nên .........',
+    correctAnswer: 'cleaner',
+    acceptableAnswers: ['cleaner', 'much cleaner'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ tính từ so sánh hơn "cleaner" /ˈkliːnə/ miêu tả chất lượng không khí ("air\'s cleaner").',
+    trapNoteEn: 'Core lexical keyword: Focus on the comparative adjective "cleaner" describing air quality ("air\'s cleaner").',
+    explanation: 'Robert chỉ ra lợi ích thụ động cho người đi bộ: "Though I suppose even people who only walk benefit, because the air\'s cleaner." Từ cần điền là "cleaner".',
+    explanationEn: 'Robert points out passive advantages for pedestrians: "...because the air\'s cleaner." The missing comparative adjective is "cleaner".'
   }
 ];
+
 
 
 

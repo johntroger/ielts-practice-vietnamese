@@ -3511,12 +3511,189 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: '25 million pounds',
     explanation: 'Robert cộng nhầm ra 23 triệu, Sophie lập tức đính chính: "Actually, that\'s 25 million pounds, Robert." Robert thừa nhận: "So it is! My mistake."',
     explanationEn: 'Budget verification: Robert miscalculates 23 million pounds, but Sophie corrects the sum to 25 million pounds (12m + 5m + 8m = 25m).'
+  },
+  {
+    id: 'med_lis_transit_mode_winner_t35',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Listen to Sophie and Robert. Which municipal scheme do they agree would improve public transport the most?',
+    promptEn: 'Listen to Sophie and Robert. Which municipal scheme do they agree would improve public transport the most?',
+    context: 'Sophie: "So which schemes would help the most with public transport? ... It would certainly be good to have the tram. The bus and cycle routes would help, but traffic would just be diverted through other streets."',
+    contextEn: 'Sophie: "So which schemes would help the most with public transport? ... It would certainly be good to have the tram. The bus and cycle routes would help, but traffic would just be diverted through other streets."',
+    audioText: "So which schemes would help the most with public transport? ... It would certainly be good to have the tram. The bus and cycle routes would help, but traffic would just be diverted through other streets.",
+    options: [
+      'Tram system',
+      'Bus and cycle only routes',
+      'Park-and-ride scheme',
+      'Pedestrian area and one-way system'
+    ],
+    optionsVi: [
+      'Hệ thống xe điện (Tram)',
+      'Làn đường dành riêng cho xe buýt và xe đạp',
+      'Bãi đỗ xe trung chuyển ngoại ô (Park-and-ride)',
+      'Phố đi bộ và phân luồng một chiều'
+    ],
+    optionsEn: [
+      'Tram system',
+      'Bus and cycle only routes',
+      'Park-and-ride scheme',
+      'Pedestrian area and one-way system'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Tram system',
+    explanation: 'Sophie và Robert đồng thuận rằng xe điện (tram) mang lại lợi ích lớn nhất cho giao thông công cộng, trong khi làn xe buýt chỉ đẩy luồng xe sang các phố khác.',
+    explanationEn: 'Modal consensus: Robert and Sophie agree that the tram system delivers genuine public transit improvements, whereas bus/cycle routes merely divert vehicular traffic elsewhere.'
+  },
+  {
+    id: 'hard_lis_visitor_retail_rationale_t35',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'According to Sophie, why does the pedestrian precinct encourage visitors even more than the tram system?',
+    promptEn: 'According to Sophie, why does the pedestrian precinct encourage visitors even more than the tram system?',
+    context: 'Sophie: "And people who are shopping like to be able to walk around without having to dodge cars and buses. That really encourages visitors. More than the tram? Yes, definitely."',
+    contextEn: 'Sophie: "And people who are shopping like to be able to walk around without having to dodge cars and buses. That really encourages visitors. More than the tram? Yes, definitely."',
+    audioText: "And people who are shopping like to be able to walk around without having to dodge cars and buses. That really encourages visitors. More than the tram? Yes, definitely.",
+    options: [
+      'Shoppers can stroll leisurely without having to evade traffic',
+      'Trams cannot access the narrowest historical retail alleys',
+      'Shops offer special discounts to pedestrians arriving on foot',
+      'Parking fees in the city center are eliminated for shoppers'
+    ],
+    optionsVi: [
+      'Khách mua sắm có thể tản bộ an nhàn mà không phải né tránh các phương tiện giao thông',
+      'Xe điện không thể tiếp cận các ngõ phố bán lẻ lịch sử chật hẹp',
+      'Các cửa hàng áp dụng chương trình giảm giá đặc biệt cho người đi bộ',
+      'Phí đỗ xe ở khu trung tâm được miễn phí hoàn toàn cho khách mua sắm'
+    ],
+    optionsEn: [
+      'Shoppers can stroll leisurely without having to evade traffic',
+      'Trams cannot access the narrowest historical retail alleys',
+      'Shops offer special discounts to pedestrians arriving on foot',
+      'Parking fees in the city center are eliminated for shoppers'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Shoppers can stroll leisurely without having to evade traffic',
+    explanation: 'Sophie giải thích người mua sắm thích đi bộ tự do mà không phải né tránh xe ô tô hay xe buýt ("walk around without having to dodge cars and buses"), vượt trội hơn hẳn xe điện.',
+    explanationEn: 'Pedestrian attraction rationale: Shoppers appreciate navigating the central retail zone without vehicular intimidation ("walk around without having to dodge cars and buses").'
+  },
+  {
+    id: 'easy_lis_exercise_health_winner_t35',
+    difficulty: 'easy',
+    topic: 'health',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'Which scheme is explicitly commended for getting people moving and exercising outdoors?',
+    promptEn: 'Which scheme is explicitly commended for getting people moving and exercising outdoors?',
+    context: 'Sophie: "And of course having more cycling routes would mean that more people will be getting some exercise." Robert: "Yes, definitely."',
+    contextEn: 'Sophie: "And of course having more cycling routes would mean that more people will be getting some exercise." Robert: "Yes, definitely."',
+    audioText: "And of course having more cycling routes would mean that more people will be getting some exercise. Yes, definitely.",
+    options: [
+      'Bus and cycle only routes',
+      'Tram system',
+      'Park-and-ride scheme',
+      'Pedestrian area and one-way system'
+    ],
+    optionsVi: [
+      'Làn đường dành riêng cho xe buýt và xe đạp',
+      'Hệ thống xe điện (Tram)',
+      'Bãi đỗ xe trung chuyển ngoại ô (Park-and-ride)',
+      'Phố đi bộ và phân luồng một chiều'
+    ],
+    optionsEn: [
+      'Bus and cycle only routes',
+      'Tram system',
+      'Park-and-ride scheme',
+      'Pedestrian area and one-way system'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Bus and cycle only routes',
+    explanation: 'Sophie và Robert đều đồng ý rằng việc mở thêm các tuyến xe đạp (trong đề án Bus and cycle only routes) giúp thúc đẩy người dân vận động rèn luyện thân thể.',
+    explanationEn: 'Health and active mobility: Having more dedicated cycling routes directly stimulates regular physical exercise among residents.'
+  },
+  {
+    id: 'med_lis_pollution_park_ride_t35',
+    difficulty: 'medium',
+    topic: 'environment',
+    skillCategory: 'listening',
+    type: 'listening_comprehension',
+    prompt: 'Why does Robert argue that the park-and-ride scheme does the most to reduce city center pollution?',
+    promptEn: 'Why does Robert argue that the park-and-ride scheme does the most to reduce city center pollution?',
+    context: 'Robert: "The park-and-ride, I\'d say. Far fewer cars would be coming into the town centre, so you wouldn\'t get as much dirty air."',
+    contextEn: 'Robert: "The park-and-ride, I\'d say. Far fewer cars would be coming into the town centre, so you wouldn\'t get as much dirty air."',
+    audioText: "The park-and-ride, I'd say. Far fewer cars would be coming into the town centre, so you wouldn't get as much dirty air.",
+    options: [
+      'It drastically curtails the number of private motorcars penetrating the urban core',
+      'It replaces older diesel buses with zero-emission electric shuttles',
+      'It penalizes heavy goods vehicles entering residential areas with congestion taxes',
+      'It mandates carpooling for all commuters driving into central business districts'
+    ],
+    optionsVi: [
+      'Nó làm giảm mạnh lượng ô tô cá nhân di chuyển vào lõi trung tâm thành phố',
+      'Nó thay thế xe buýt diesel cũ bằng đội xe buýt điện không phát thải',
+      'Nó áp thuế tắc nghẽn đối với xe tải hạng nặng đi vào khu dân cư',
+      'Nó bắt buộc đi chung xe đối với tất cả người đi làm vào khu trung tâm'
+    ],
+    optionsEn: [
+      'It drastically curtails the number of private motorcars penetrating the urban core',
+      'It replaces older diesel buses with zero-emission electric shuttles',
+      'It penalizes heavy goods vehicles entering residential areas with congestion taxes',
+      'It mandates carpooling for all commuters driving into central business districts'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'It drastically curtails the number of private motorcars penetrating the urban core',
+    explanation: 'Robert chỉ rõ: "Far fewer cars would be coming into the town centre, so you wouldn\'t get as much dirty air." Bãi đỗ xe trung chuyển giúp giữ lượng lớn ô tô ở ngoài rìa thành phố.',
+    explanationEn: 'Air quality mechanism: Retaining private vehicles in suburban perimeter lots prevents exhaust emissions inside the historic center.'
+  },
+  {
+    id: 'hard_lis_safety_cyclist_blindspot_t35',
+    difficulty: 'hard',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What safety hazard prompted Sophie and Robert to choose the pedestrian zone over cycle routes for safety?',
+    promptEn: 'What safety hazard prompted Sophie and Robert to choose the pedestrian zone over cycle routes for safety?',
+    context: 'Robert: "They still have to avoid cyclists, who don\'t always pay attention to pedestrians." Sophie: "And with the pedestrian area, they wouldn\'t have to deal with that because there aren\'t any cyclists there."',
+    contextEn: 'Robert: "They still have to avoid cyclists, who don\'t always pay attention to pedestrians." Sophie: "And with the pedestrian area, they wouldn\'t have to deal with that because there aren\'t any cyclists there."',
+    audioText: "They still have to avoid cyclists, who don't always pay attention to pedestrians. And with the pedestrian area, they wouldn't have to deal with that because there aren't any cyclists there.",
+    options: [
+      'Inattentive cyclists colliding with walkers on shared surfaces',
+      'Buses speeding dangerously along segregated rapid corridors',
+      'Delivery vans reversing blindly into alleyway pedestrian crossings',
+      'Lack of adequate illumination along nocturnal commuter cycleways'
+    ],
+    optionsVi: [
+      'Người đi xe đạp thiếu chú ý dễ đâm va vào người đi bộ trên cùng tuyến đường',
+      'Xe buýt chạy quá tốc độ trên các hành lang ưu tiên riêng biệt',
+      'Xe tải giao hàng lùi bất cẩn tại các điểm qua đường cho người đi bộ',
+      'Thiếu hệ thống chiếu sáng ban đêm dọc các tuyến đường xe đạp'
+    ],
+    optionsEn: [
+      'Inattentive cyclists colliding with walkers on shared surfaces',
+      'Buses speeding dangerously along segregated rapid corridors',
+      'Delivery vans reversing blindly into alleyway pedestrian crossings',
+      'Lack of adequate illumination along nocturnal commuter cycleways'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Inattentive cyclists colliding with walkers on shared surfaces',
+    explanation: 'Robert lưu ý rằng người đi bộ vẫn phải né người đi xe đạp vốn thường không để ý ("don\'t always pay attention"), nên khu phố đi bộ cấm xe đạp là an toàn nhất.',
+    explanationEn: 'Pedestrian safety distinction: Cyclists often neglect pedestrian safety on shared corridors, making completely car- and bike-free pedestrian areas the safest option.'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 35: Transport Scheme Benefits & Recommendations
+  med_lis_transit_mode_winner_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 33.0, clipEnd: 55.0, isR2Audio: true, trackLabel: 'Track 35 • Tramway Transit Superiority' },
+  hard_lis_visitor_retail_rationale_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 86.0, clipEnd: 103.0, isR2Audio: true, trackLabel: 'Track 35 • Pedestrian Precinct Footfall' },
+  easy_lis_exercise_health_winner_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 120.0, clipEnd: 136.0, isR2Audio: true, trackLabel: 'Track 35 • Cycling Exercise Benefits' },
+  med_lis_pollution_park_ride_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 154.0, clipEnd: 171.0, isR2Audio: true, trackLabel: 'Track 35 • Park & Ride Pollution Slash' },
+  hard_lis_safety_cyclist_blindspot_t35: { audioUrl: `${R2_BASE}/ielts-listening-track35-transport-benefits-recommendations.mp3`, clipStart: 184.0, clipEnd: 207.0, isR2Audio: true, trackLabel: 'Track 35 • Shared Cyclist Hazard Resolution' },
+
   // Track 34: Transport Project Cost Analysis & Budget Estimation
   easy_lis_tram_max_cost_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 22.0, clipEnd: 35.0, isR2Audio: true, trackLabel: 'Track 34 • Tram Budget Ceiling' },
   med_lis_bus_lane_total_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 54.0, clipEnd: 71.0, isR2Audio: true, trackLabel: 'Track 34 • Bus Corridor Cost' },
