@@ -2457,7 +2457,105 @@ export const LISTENING_MICRO_DRILLS = [
     trapNoteEn: 'Core lexical keyword: Listen for the plural noun "deliveries" after preposition "with".',
     explanation: 'Robert chỉ ra trở ngại giao nhận hàng: "...there would be huge problems with deliveries." Từ cần điền là "deliveries".',
     explanationEn: 'Robert specifies the retail supply disruption: "...there would be huge problems with deliveries." The missing word is "deliveries".'
+  },
+
+  // ==========================================
+  // TRACK 34: TRANSPORT PROJECT COST ANALYSIS & BUDGET ESTIMATION
+  // ==========================================
+  {
+    id: 'ldrill-dist-track34-tram-budget-ceiling',
+    type: 'listening-distractor',
+    title: 'Bẫy hạn mức ngân sách: Dự toán cơ sở vs Chi phí trần tàu điện (Track 34)',
+    titleEn: 'Budget Ceiling Trap: Route Preparation vs Overall Tram Cap (Track 34)',
+    category: 'Municipal Capital Budgeting',
+    categoryEn: 'Municipal Capital Budgeting',
+    audioSnippetText: "The tram system comes out as the costliest. It would cost over 20 million pounds just to prepare the route and to lay the lines down, including widening the roads. Then there's the cost of buying the trams themselves, and organizing the system. And what does it all come to? No less than 30 million pounds in the end.",
+    audioText: "The tram system comes out as the costliest. It would cost over 20 million pounds just to prepare the route and to lay the lines down, including widening the roads. Then there's the cost of buying the trams themselves, and organizing the system. And what does it all come to? No less than 30 million pounds in the end.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track34-transport-project-cost-analysis.mp3',
+    clipStart: 6.0,
+    clipEnd: 28.0,
+    question: 'Tổng chi phí dự kiến cuối cùng cho toàn bộ hệ thống tàu điện tramway là bao nhiêu?',
+    questionEn: 'What is the ultimate total expenditure anticipated for the entire municipal tram system?',
+    options: [
+      { id: 'A', text: 'Không dưới 30 triệu bảng', textEn: 'No less than 30 million pounds' },
+      { id: 'B', text: 'Khoảng 20 triệu bảng', textEn: 'Around 20 million pounds' },
+      { id: 'C', text: 'Khoảng 25 triệu bảng', textEn: 'Close to 25 million pounds' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Người nghe thường nhầm lẫn giữa chi phí làm đường/đặt ray ban đầu (hơn 20 triệu bảng) hoặc ước tính chủ quan của Robert (25 triệu bảng), nhưng Sophie khẳng định tổng kinh phí thực tế của toàn bộ hệ thống tàu điện là không dưới 30 triệu bảng ("No less than 30 million pounds in the end").',
+    distractorMechanismEn: 'Candidates often confuse the civil infrastructure outlay (>£20m) or Robert\'s speculative estimate (£25m), but Sophie confirms the comprehensive cost is no less than 30 million pounds.',
+    explanation: 'Đáp án là A: Sophie xác nhận chi phí cuối cùng của dự án tàu điện là không dưới 30 triệu bảng.',
+    explanationEn: 'Option A is correct: Sophie specifies that the total tramway cost comes to no less than 30 million pounds in the end.'
+  },
+  {
+    id: 'ldrill-dist-track34-bus-lane-breakdown',
+    type: 'listening-distractor',
+    title: 'Bẫy cộng dồn chi phí: Biển báo & Sơn kẻ vs Tổng ngân sách làn xe buýt (Track 34)',
+    titleEn: 'Cumulative Addition Trap: Road Markings vs Total Bus Corridor Cost (Track 34)',
+    category: 'Urban Transit Engineering',
+    categoryEn: 'Urban Transit Engineering',
+    audioSnippetText: "The changes wouldn't be so large. They estimate around 8 million pounds to set up the signs, paint the roads, and so on, and at least another 2 million pounds or so to make other changes. So you're saying it's around 10 million pounds. That seems quite reasonable.",
+    audioText: "The changes wouldn't be so large. They estimate around 8 million pounds to set up the signs, paint the roads, and so on, and at least another 2 million pounds or so to make other changes. So you're saying it's around 10 million pounds. That seems quite reasonable.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track34-transport-project-cost-analysis.mp3',
+    clipStart: 54.0,
+    clipEnd: 71.0,
+    question: 'Tổng ngân sách dự toán trọn gói cho đề án làn đường xe buýt và xe đạp là bao nhiêu?',
+    questionEn: 'What is the total comprehensive budget estimated for the dedicated bus and cycle corridors?',
+    options: [
+      { id: 'A', text: 'Khoảng 10 triệu bảng', textEn: 'Around 10 million pounds' },
+      { id: 'B', text: 'Khoảng 8 triệu bảng', textEn: 'Around 8 million pounds' },
+      { id: 'C', text: 'Khoảng 2 triệu bảng', textEn: 'Around 2 million pounds' }
+    ],
+    correctOption: 'A',
+    distractorMechanism: 'Con số 8 triệu bảng chỉ dành riêng cho biển báo và sơn đường, cộng thêm 2 triệu bảng cho các thay đổi phụ trợ khác, đưa tổng kinh phí của đề án lên 10 triệu bảng ("around 10 million pounds").',
+    distractorMechanismEn: 'The 8 million figure covers only signage and painting; adding 2 million for other modifications brings the total cumulative budget to around 10 million pounds.',
+    explanation: 'Đáp án là A: Robert và Sophie chốt con số tổng thể là khoảng 10 triệu bảng.',
+    explanationEn: 'Option A is correct: Summing £8m and £2m yields a total of approximately 10 million pounds.'
+  },
+  {
+    id: 'ldrill-dict-track34-cyclist-safety-expenditure',
+    type: 'listening-dictation',
+    level: 'intermediate',
+    title: 'Dictation Cấp 2: Cải tạo đường bộ an toàn cho người đi xe đạp (Track 34)',
+    titleEn: 'Dictation Level 2: Road Surface Upgrades for Cyclist Safety (Track 34)',
+    category: 'Active Travel Infrastructure',
+    categoryEn: 'Active Travel Infrastructure',
+    audioSnippetText: "Then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    audioText: "Then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    targetTranscript: "Then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    ttsText: "Then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track34-transport-project-cost-analysis.mp3',
+    clipStart: 114.5,
+    clipEnd: 122.5,
+    wordCount: 18,
+    difficulty: 'Band 6.0 - 7.5',
+    audioClipTip: 'Chú ý cách phát âm nối âm của "along the routes", danh từ số nhiều "cyclists" /ˈsaɪklɪsts/ và con số "12 million pounds".',
+    audioClipTipEn: 'Listen for connected speech in "along the routes", plural noun "cyclists" /ˈsaɪklɪsts/, and "12 million pounds".'
+  },
+  {
+    id: 'ldrill-role-track34-shuttle-bus-rental',
+    type: 'listening-form-completion',
+    subType: 'form_completion',
+    title: 'Phản xạ từ vựng trọng tâm: Thuê xe buýt trung chuyển park-and-ride (Track 34)',
+    titleEn: 'Key Vocabulary Reflex: Shuttle Bus Rental Option (Track 34)',
+    category: 'Public Fleet Management',
+    categoryEn: 'Public Fleet Management',
+    promptAudioText: "And then get the buses. If they rent them, they could keep the cost down to around 3 million pounds.",
+    audioText: "And then get the buses. If they rent them, they could keep the cost down to around 3 million pounds.",
+    audioUrl: 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev/ielts-listening-track34-transport-project-cost-analysis.mp3',
+    clipStart: 93.0,
+    clipEnd: 100.0,
+    questionPrompt: "The municipality can limit rolling fleet expenditure to 3 million pounds if they decide to ......... the shuttle buses.",
+    questionPromptEn: "The municipality can limit rolling fleet expenditure to 3 million pounds if they decide to ......... the shuttle buses.",
+    questionPromptVi: 'Chính quyền thành phố có thể hạn chế chi phí mua sắm đội xe ở mức 3 triệu bảng nếu họ quyết định ......... các xe buýt trung chuyển.',
+    correctAnswer: 'rent',
+    acceptableAnswers: ['rent', 'lease', 'hire'],
+    trapNote: 'Từ vựng cốt lõi: Nghe rõ động từ nguyên mẫu "rent" trong mệnh đề điều kiện "If they rent them".',
+    trapNoteEn: 'Core lexical keyword: Listen for the base verb "rent" inside the conditional clause "If they rent them".',
+    explanation: 'Sophie chỉ ra phương án tiết kiệm: "If they rent them, they could keep the cost down to around 3 million pounds." Từ cần điền là "rent".',
+    explanationEn: 'Sophie highlights leasing instead of buying: "If they rent them, they could keep the cost down...". The missing operative verb is "rent".'
   }
 ];
+
 
 

@@ -1418,6 +1418,31 @@ export const ARENA_QUESTION_TRANSLATIONS = {
     "promptEn": "According to Robert, what is the primary financial obstacle to constructing a new tram system?",
     "contextEn": "Robert: That may be so, but the main problem with that kind of project is the expense. The initial financial requirements would be huge, and so would the maintenance expenses. It might well be far more than the council is prepared to spend on a solution.",
     "explanationEn": "Prohibitive expense: Robert stresses that massive initial capital requirements and ongoing maintenance exceed the council's spending appetite."
+  },
+  "easy_lis_tram_max_cost_t34": {
+    "promptEn": "What is the maximum targeted expenditure cap for the entire new tram network?",
+    "contextEn": "Robert: And what does it all come to? Sophie: No less than 30 million pounds in the end. At least that's what they need to try to keep the cost down to.",
+    "explanationEn": "Capital expenditure ceiling: Sophie states the tram project total will be \"no less than 30 million pounds in the end\"."
+  },
+  "med_lis_bus_lane_total_t34": {
+    "promptEn": "What is the overall projected cost of implementing the bus and cycle lanes scheme?",
+    "contextEn": "Sophie: They estimate around 8 million pounds to set up the signs, paint the roads, and so on, and at least another 2 million pounds or so to make other changes. Robert: So you're saying it's around 10 million pounds. That seems quite reasonable.",
+    "explanationEn": "Cumulative sum: Robert calculates that £8m for signs and painting plus £2m for other modifications totals around 10 million pounds."
+  },
+  "hard_lis_park_ride_component_t34": {
+    "promptEn": "How can municipal planners limit the shuttle bus expenditure for the park-and-ride facility to 3 million pounds?",
+    "contextEn": "Sophie: And then get the buses. If they rent them, they could keep the cost down to around 3 million pounds.",
+    "explanationEn": "Procurement model: Sophie clarifies that renting the buses allows the municipality to contain the expenditure to approximately 3 million pounds."
+  },
+  "med_lis_pedestrian_cyclist_safety_t34": {
+    "promptEn": "Within the pedestrian zone scheme, what specific work accounts for approximately 12 million pounds?",
+    "contextEn": "Sophie: We'd have to reroute all the traffic while the works are done, then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    "explanationEn": "Infrastructure upgrading: Sophie specifies that altering road design along diversion routes to protect cyclists accounts for 12 million pounds."
+  },
+  "easy_lis_robert_math_error_t34": {
+    "promptEn": "What corrected total sum does Sophie provide for the pedestrian and one-way system?",
+    "contextEn": "Robert: So that's around 23 million pounds. We might be able to manage that. Sophie: Actually, that's 25 million pounds, Robert. Robert: So it is! My mistake. Maths was never my strong point.",
+    "explanationEn": "Budget verification: Robert miscalculates 23 million pounds, but Sophie corrects the sum to 25 million pounds (12m + 5m + 8m = 25m)."
   }
 };
 

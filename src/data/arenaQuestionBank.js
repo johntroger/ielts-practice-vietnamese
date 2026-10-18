@@ -3332,12 +3332,198 @@ export const ARENA_BASE_QUESTION_BANK = [
     correctAnswer: 'The combined capital installation and maintenance costs exceed the council\'s budget',
     explanation: 'Robert nhấn mạnh: chi phí ban đầu và bảo trì khổng lồ vượt xa những gì hội đồng thị trấn sẵn sàng chi trả ("far more than the council is prepared to spend").',
     explanationEn: 'Budget constraint: Robert notes that initial and maintenance expenses are likely far more than the council is prepared to spend.'
+  },
+
+  // ==========================================
+  // LISTENING DRILLS: TRACK 34 TRANSPORT PROJECT COST ANALYSIS & BUDGET ESTIMATION
+  // ==========================================
+  {
+    id: 'easy_lis_tram_max_cost_t34',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the maximum targeted expenditure cap for the entire new tram network?',
+    promptVi: 'Mức trần chi phí mục tiêu tối đa cho toàn bộ mạng lưới tàu điện mới là bao nhiêu?',
+    promptEn: 'What is the maximum targeted expenditure cap for the entire new tram network?',
+    context: "Robert: And what does it all come to? Sophie: No less than 30 million pounds in the end. At least that's what they need to try to keep the cost down to.",
+    contextEn: "Robert: And what does it all come to? Sophie: No less than 30 million pounds in the end. At least that's what they need to try to keep the cost down to.",
+    audioText: "And what does it all come to? No less than 30 million pounds in the end. At least that's what they need to try to keep the cost down to.",
+    options: [
+      'No less than 30 million pounds',
+      'Approximately 20 million pounds',
+      'Between 12 and 15 million pounds',
+      'Exactly 25 million pounds'
+    ],
+    optionsVi: [
+      'Không dưới 30 triệu bảng',
+      'Khoảng 20 triệu bảng',
+      'Trong khoảng từ 12 đến 15 triệu bảng',
+      'Chính xác 25 triệu bảng'
+    ],
+    optionsEn: [
+      'No less than 30 million pounds',
+      'Approximately 20 million pounds',
+      'Between 12 and 15 million pounds',
+      'Exactly 25 million pounds'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'No less than 30 million pounds',
+    explanation: 'Sophie xác nhận: con số tổng kết của toàn bộ dự án tàu điện là không dưới 30 triệu bảng ("No less than 30 million pounds in the end").',
+    explanationEn: 'Capital expenditure ceiling: Sophie states the tram project total will be "no less than 30 million pounds in the end".'
+  },
+  {
+    id: 'med_lis_bus_lane_total_t34',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What is the overall projected cost of implementing the bus and cycle lanes scheme?',
+    promptVi: 'Tổng chi phí dự kiến cho việc triển khai đề án làn xe buýt và xe đạp là bao nhiêu?',
+    promptEn: 'What is the overall projected cost of implementing the bus and cycle lanes scheme?',
+    context: "Sophie: They estimate around 8 million pounds to set up the signs, paint the roads, and so on, and at least another 2 million pounds or so to make other changes. Robert: So you're saying it's around 10 million pounds. That seems quite reasonable.",
+    contextEn: "Sophie: They estimate around 8 million pounds to set up the signs, paint the roads, and so on, and at least another 2 million pounds or so to make other changes. Robert: So you're saying it's around 10 million pounds. That seems quite reasonable.",
+    audioText: "They estimate around 8 million pounds to set up the signs, paint the roads, and so on, and at least another 2 million pounds or so to make other changes. So you're saying it's around 10 million pounds. That seems quite reasonable.",
+    options: [
+      'Around 10 million pounds',
+      'Around 8 million pounds',
+      'Around 2 million pounds',
+      'Around 15 million pounds'
+    ],
+    optionsVi: [
+      'Khoảng 10 triệu bảng',
+      'Khoảng 8 triệu bảng',
+      'Khoảng 2 triệu bảng',
+      'Khoảng 15 triệu bảng'
+    ],
+    optionsEn: [
+      'Around 10 million pounds',
+      'Around 8 million pounds',
+      'Around 2 million pounds',
+      'Around 15 million pounds'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Around 10 million pounds',
+    explanation: 'Robert cộng 8 triệu bảng (biển báo & sơn đường) với 2 triệu bảng (thay đổi khác), chốt tổng số là khoảng 10 triệu bảng ("around 10 million pounds").',
+    explanationEn: 'Cumulative sum: Robert calculates that £8m for signs and painting plus £2m for other modifications totals around 10 million pounds.'
+  },
+  {
+    id: 'hard_lis_park_ride_component_t34',
+    difficulty: 'hard',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'How can municipal planners limit the shuttle bus expenditure for the park-and-ride facility to 3 million pounds?',
+    promptVi: 'Các nhà quy hoạch thành phố có thể hạn chế chi phí xe buýt trung chuyển của bãi đỗ park-and-ride ở mức 3 triệu bảng bằng cách nào?',
+    promptEn: 'How can municipal planners limit the shuttle bus expenditure for the park-and-ride facility to 3 million pounds?',
+    context: "Sophie: And then get the buses. If they rent them, they could keep the cost down to around 3 million pounds.",
+    contextEn: "Sophie: And then get the buses. If they rent them, they could keep the cost down to around 3 million pounds.",
+    audioText: "And then get the buses. If they rent them, they could keep the cost down to around 3 million pounds.",
+    options: [
+      'By renting the shuttle bus fleet instead of purchasing them',
+      'By purchasing second-hand diesel double-deckers from airport auctions',
+      'By soliciting corporate sponsorships to display on bus exteriors',
+      'By replacing standard buses with driverless autonomous electric shuttles'
+    ],
+    optionsVi: [
+      'Bằng cách thuê đội xe buýt trung chuyển thay vì mua mới',
+      'Bằng cách mua xe buýt hai tầng chạy dầu đã qua sử dụng từ đấu giá sân bay',
+      'Bằng cách kêu gọi tài trợ từ các doanh nghiệp để dán quảng cáo trên thân xe',
+      'Bằng cách thay thế xe buýt tiêu chuẩn bằng xe điện tự hành không người lái'
+    ],
+    optionsEn: [
+      'By renting the shuttle bus fleet instead of purchasing them',
+      'By purchasing second-hand diesel double-deckers from airport auctions',
+      'By soliciting corporate sponsorships to display on bus exteriors',
+      'By replacing standard buses with driverless autonomous electric shuttles'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'By renting the shuttle bus fleet instead of purchasing them',
+    explanation: 'Sophie nêu rõ biện pháp tiết kiệm ngân sách: "If they rent them, they could keep the cost down to around 3 million pounds."',
+    explanationEn: 'Procurement model: Sophie clarifies that renting the buses allows the municipality to contain the expenditure to approximately 3 million pounds.'
+  },
+  {
+    id: 'med_lis_pedestrian_cyclist_safety_t34',
+    difficulty: 'medium',
+    topic: 'urbanization',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'Within the pedestrian zone scheme, what specific work accounts for approximately 12 million pounds?',
+    promptVi: 'Trong đề xuất khu phố đi bộ, hạng mục thi công cụ thể nào chiếm khoảng 12 triệu bảng?',
+    promptEn: 'Within the pedestrian zone scheme, what specific work accounts for approximately 12 million pounds?',
+    context: "Sophie: We'd have to reroute all the traffic while the works are done, then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    contextEn: "Sophie: We'd have to reroute all the traffic while the works are done, then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    audioText: "We'd have to reroute all the traffic while the works are done, then change the roads along the routes to make it safer for cyclists, which is around 12 million pounds.",
+    options: [
+      'Altering roadway layouts along the routes to make them safer for cyclists',
+      'Erecting electronic variable-message display boards at peripheral junctions',
+      'Resurfacing pedestrian malls with permeable decorative clay paving bricks',
+      'Constructing overhead glass-covered skywalks above high-traffic intersections'
+    ],
+    optionsVi: [
+      'Cải tạo quy hoạch mặt đường dọc các tuyến lộ trình để giúp người đi xe đạp an toàn hơn',
+      'Dựng các bảng hiển thị thông điệp điện tử biến đổi tại các ngã tư ngoại vi',
+      'Thảm lại mặt đường phố đi bộ bằng gạch đất sét trang trí có khả năng thoát nước',
+      'Xây dựng các cầu đi bộ trên cao có mái che bằng kính bắc qua các giao lộ lớn'
+    ],
+    optionsEn: [
+      'Altering roadway layouts along the routes to make them safer for cyclists',
+      'Erecting electronic variable-message display boards at peripheral junctions',
+      'Resurfacing pedestrian malls with permeable decorative clay paving bricks',
+      'Constructing overhead glass-covered skywalks above high-traffic intersections'
+    ],
+    correctIndex: 0,
+    correctAnswer: 'Altering roadway layouts along the routes to make them safer for cyclists',
+    explanation: 'Sophie nói rõ: "...change the roads along the routes to make it safer for cyclists, which is around 12 million pounds."',
+    explanationEn: 'Infrastructure upgrading: Sophie specifies that altering road design along diversion routes to protect cyclists accounts for 12 million pounds.'
+  },
+  {
+    id: 'easy_lis_robert_math_error_t34',
+    difficulty: 'easy',
+    topic: 'economy',
+    skillCategory: 'listening',
+    type: 'listening_trap',
+    prompt: 'What corrected total sum does Sophie provide for the pedestrian and one-way system?',
+    promptVi: 'Con số tổng chi phí đã được Sophie đính chính lại cho hệ thống phố đi bộ và đường một chiều là bao nhiêu?',
+    promptEn: 'What corrected total sum does Sophie provide for the pedestrian and one-way system?',
+    context: "Robert: So that's around 23 million pounds. We might be able to manage that. Sophie: Actually, that's 25 million pounds, Robert. Robert: So it is! My mistake. Maths was never my strong point.",
+    contextEn: "Robert: So that's around 23 million pounds. We might be able to manage that. Sophie: Actually, that's 25 million pounds, Robert. Robert: So it is! My mistake. Maths was never my strong point.",
+    audioText: "So that's around 23 million pounds. We might be able to manage that. Sophie: Actually, that's 25 million pounds, Robert. Robert: So it is! My mistake. Maths was never my strong point.",
+    options: [
+      '25 million pounds',
+      '23 million pounds',
+      '30 million pounds',
+      '15 million pounds'
+    ],
+    optionsVi: [
+      '25 triệu bảng',
+      '23 triệu bảng',
+      '30 triệu bảng',
+      '15 triệu bảng'
+    ],
+    optionsEn: [
+      '25 million pounds',
+      '23 million pounds',
+      '30 million pounds',
+      '15 million pounds'
+    ],
+    correctIndex: 0,
+    correctAnswer: '25 million pounds',
+    explanation: 'Robert cộng nhầm ra 23 triệu, Sophie lập tức đính chính: "Actually, that\'s 25 million pounds, Robert." Robert thừa nhận: "So it is! My mistake."',
+    explanationEn: 'Budget verification: Robert miscalculates 23 million pounds, but Sophie corrects the sum to 25 million pounds (12m + 5m + 8m = 25m).'
   }
 ];
 
 const R2_BASE = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
 
 const R2_AUDIO_METADATA_BY_ID = {
+  // Track 34: Transport Project Cost Analysis & Budget Estimation
+  easy_lis_tram_max_cost_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 22.0, clipEnd: 35.0, isR2Audio: true, trackLabel: 'Track 34 • Tram Budget Ceiling' },
+  med_lis_bus_lane_total_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 54.0, clipEnd: 71.0, isR2Audio: true, trackLabel: 'Track 34 • Bus Corridor Cost' },
+  hard_lis_park_ride_component_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 84.0, clipEnd: 102.0, isR2Audio: true, trackLabel: 'Track 34 • Shuttle Bus Rental' },
+  med_lis_pedestrian_cyclist_safety_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 112.0, clipEnd: 124.0, isR2Audio: true, trackLabel: 'Track 34 • Cyclist Road Safety' },
+  easy_lis_robert_math_error_t34: { audioUrl: `${R2_BASE}/ielts-listening-track34-transport-project-cost-analysis.mp3`, clipStart: 133.0, clipEnd: 146.0, isR2Audio: true, trackLabel: 'Track 34 • Pedestrian Total Correction' },
+
   // Track 33: Transport Proposals & Feasibility Evaluation
   easy_lis_bus_lane_displacement_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 26.0, clipEnd: 44.5, isR2Audio: true, trackLabel: 'Track 33 • Bus Lane Displacement' },
   med_lis_park_ride_takeup_t33: { audioUrl: `${R2_BASE}/ielts-listening-track33-transport-solutions-evaluation.mp3`, clipStart: 69.5, clipEnd: 89.0, isR2Audio: true, trackLabel: 'Track 33 • Park & Ride Take-up' },
