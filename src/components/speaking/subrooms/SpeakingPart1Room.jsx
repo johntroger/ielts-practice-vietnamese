@@ -196,7 +196,7 @@ export default function SpeakingPart1Room({
       {/* Question Card */}
       {currentP1Question && activeP1Topic && (
         <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-5 shadow-xl">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
             <div className="flex items-center space-x-2">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
                 {isEn ? 'Question' : 'Câu'} {activeP1QuestionIndex + 1} / {activeP1Topic.questions?.length || 1}

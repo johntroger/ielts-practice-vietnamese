@@ -893,54 +893,59 @@ export default function SpeakingExaminerRoom({
         </div>
 
         {/* Right: Next / Submit Step Button */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 shrink-0">
           {currentStage === 'greeting' && (
             <button
               onClick={handleProceedToPart1}
-              className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40 shrink-0"
             >
-              <span>{isEn ? 'Start Part 1 [Enter]' : 'Vào Part 1 [Enter]'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">{isEn ? 'Start Part 1 [Enter]' : 'Vào Part 1 [Enter]'}</span>
+              <span className="sm:hidden">{isEn ? 'Start P1' : 'Vào P1'}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           )}
 
           {currentStage === 'part1' && (
             <button
               onClick={handleNextPart1Question}
-              className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40 shrink-0"
             >
-              <span>{p1Index + 1 >= part1Topic.questions.length ? (isEn ? 'Proceed to Part 2 [Enter]' : 'Chuyển sang Part 2 [Enter]') : (isEn ? 'Next Question [Enter]' : 'Câu tiếp theo [Enter]')}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">{p1Index + 1 >= part1Topic.questions.length ? (isEn ? 'Proceed to Part 2 [Enter]' : 'Chuyển sang Part 2 [Enter]') : (isEn ? 'Next Question [Enter]' : 'Câu tiếp theo [Enter]')}</span>
+              <span className="sm:hidden">{p1Index + 1 >= part1Topic.questions.length ? (isEn ? 'Part 2' : 'Sang P2') : (isEn ? 'Next' : 'Câu tiếp')}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           )}
 
           {currentStage === 'part2_prep' && (
             <button
               onClick={handleStartPart2Speaking}
-              className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shrink-0"
             >
-              <span>{isEn ? 'Finished Prep ➔ Start Speaking' : 'Xong nháp ➔ Bắt đầu nói'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">{isEn ? 'Finished Prep ➔ Start Speaking' : 'Xong nháp ➔ Bắt đầu nói'}</span>
+              <span className="sm:hidden">{isEn ? 'Start Speaking' : 'Bắt đầu nói'}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           )}
 
           {currentStage === 'part2_speak' && (
             <button
               onClick={handleMoveToPart3}
-              className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-purple-900/40 shrink-0"
             >
-              <span>{isEn ? 'Done Part 2 ➔ Proceed to Part 3' : 'Xong Part 2 ➔ Sang Part 3'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">{isEn ? 'Done Part 2 ➔ Proceed to Part 3' : 'Xong Part 2 ➔ Sang Part 3'}</span>
+              <span className="sm:hidden">{isEn ? 'Part 3' : 'Sang P3'}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           )}
 
           {currentStage === 'part3' && (
             <button
               onClick={handleNextPart3Question}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg"
+              className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shrink-0"
             >
-              <span>{p3Index + 1 >= part3Set.questions.length ? (isEn ? 'Finish Exam [Enter]' : 'Hoàn Thành Bài Thi [Enter]') : (isEn ? 'Next Question [Enter]' : 'Câu tiếp theo [Enter]')}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">{p3Index + 1 >= part3Set.questions.length ? (isEn ? 'Finish Exam [Enter]' : 'Hoàn Thành Bài Thi [Enter]') : (isEn ? 'Next Question [Enter]' : 'Câu tiếp theo [Enter]')}</span>
+              <span className="sm:hidden">{p3Index + 1 >= part3Set.questions.length ? (isEn ? 'Finish' : 'Hoàn thành') : (isEn ? 'Next' : 'Câu tiếp')}</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           )}
         </div>
