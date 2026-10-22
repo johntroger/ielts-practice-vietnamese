@@ -150,8 +150,9 @@ export default function ArenaHeaderBar({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 sm:p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
             title={t('common.close')}
+            aria-label={t('common.close')}
           >
             <X className="w-4 h-4" />
           </button>

@@ -494,7 +494,7 @@ export default function ArenaQuestionCard({
               type="button"
               disabled={isTextInput ? !userInputText?.trim() : selectedOption === null}
               onClick={() => handleCheck?.()}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all select-none ml-auto active:scale-95"
+              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all select-none w-full sm:w-auto sm:ml-auto active:scale-95"
             >
               <span>{t('arena.checkAnswer') || (isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án')} (Enter)</span>
             </button>
@@ -504,7 +504,7 @@ export default function ArenaQuestionCard({
             <button
               type="button"
               onClick={() => onNextQuestion?.()}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all select-none active:scale-95"
+              className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-2.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all select-none w-full sm:w-auto active:scale-95"
             >
               <span>{t('arena.nextQuestion') || (isEn ? 'Next Question' : 'Câu Tiếp Theo')} (Enter)</span>
               <ArrowRight className="w-4 h-4" />
