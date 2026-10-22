@@ -1136,9 +1136,9 @@ export default function App() {
         </div>
       )}
 
-      {/* 1.6 Global Beginner & Zero-Overwhelm Guidance Banner (Slim & Dismissible) */}
+      {/* 1.6 Global Beginner & Zero-Overwhelm Guidance Banner (Slim & Dismissible - Secondary to API banner on phone to avoid clutter) */}
       {!isFocusMode && !isBeginnerBannerDismissed && (
-        <div className="bg-emerald-50/95 border-b border-emerald-200/90 text-emerald-950 px-3 sm:px-6 py-1.5 text-xs transition-all duration-300 shadow-2xs shrink-0 z-20 flex items-center justify-between gap-2">
+        <div className={`bg-emerald-50/95 border-b border-emerald-200/90 text-emerald-950 px-3 sm:px-6 py-1.5 text-xs transition-all duration-300 shadow-2xs shrink-0 z-20 flex items-center justify-between gap-2 ${(!apiKey && !isApiKeyBannerDismissed) ? 'hidden sm:flex' : ''}`}>
           <div className="flex items-center space-x-2 min-w-0">
             <span className="text-base shrink-0 leading-none">🌱</span>
             <div className="text-[11px] sm:text-xs text-emerald-900 leading-tight min-w-0 truncate">

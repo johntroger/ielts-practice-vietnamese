@@ -645,12 +645,12 @@ export default function ReadingWorkspace({
 
             {/* Mobile Right Action Group */}
             <div className="flex items-center space-x-1 shrink-0">
-              {/* Sinh Đề AI (Chỉ hiện khi Luyện tập để không phân tâm khi Thi thật) */}
+              {/* Sinh Đề AI (Chỉ hiện khi Luyện tập để không phân tâm khi Thi thật - Gọn trong menu trên mobile) */}
               {examMode === 'practice' ? (
                 <button
                   type="button"
                   onClick={() => setIsGeneratorOpen(true)}
-                  className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs shrink-0 cursor-pointer shadow-2xs"
+                  className="hidden sm:flex items-center space-x-1 px-2 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs shrink-0 cursor-pointer shadow-2xs"
                   title={isEn ? "Generate New Reading Test with AI" : "Sinh Đề Reading Mới Bằng AI"}
                 >
                   <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
@@ -711,6 +711,17 @@ export default function ReadingWorkspace({
                       <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         {t('reading.utilitiesMenu', 'Tiện Ích & Công Cụ')}
                       </div>
+                      {/* AI Reading Generator */}
+                      {examMode === 'practice' && (
+                        <button
+                          type="button"
+                          onClick={() => { setIsGeneratorOpen(true); setIsToolsDropdownOpen(false); }}
+                          className="w-full flex items-center space-x-2 px-2.5 py-2 rounded-xl hover:bg-purple-50 text-left text-xs font-semibold text-purple-900 cursor-pointer transition-colors"
+                        >
+                          <Sparkles className="w-4 h-4 text-purple-600 shrink-0" />
+                          <span>{t('reading.generateAi', 'Sinh Đề Reading Mới (AI)')}</span>
+                        </button>
+                      )}
                       {/* CDI Computer Exam Simulation */}
                       <button
                         onClick={() => { setCdiFullscreen(prev => !prev); setIsToolsDropdownOpen(false); }}

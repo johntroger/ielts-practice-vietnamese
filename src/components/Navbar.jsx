@@ -118,6 +118,7 @@ export default function Navbar({
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
   const [isProgressMenuOpen, setIsProgressMenuOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [mobileDrawerCategory, setMobileDrawerCategory] = useState('all');
   const [mobileSkillMenuOpen, setMobileSkillMenuOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState(() => getTheme());
@@ -838,7 +839,7 @@ export default function Navbar({
             </div>
 
             {/* Quick Navigation Hub: Atlas Arena & Home (/about) */}
-            <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            <div className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 shrink-0">
               {/* Atlas Arena (Compact 'Arena' label on mobile, full on tablet/desktop) */}
               <button
                 type="button"
@@ -1021,69 +1022,33 @@ export default function Navbar({
                 </button>
               </div>
 
-              {/* 0. Beginner Card in Mobile Drawer */}
-              <button
-                onClick={() => {
-                  openModal('beginnerGuide');
-                  setIsMobileDrawerOpen(false);
-                }}
-                className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-xs shadow-2xs active:scale-95 transition-all min-h-[44px] cursor-pointer text-left group"
-              >
-                <div className="flex items-center space-x-2.5 min-w-0">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <span className="text-base leading-none">🌱</span>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-black text-emerald-950 flex items-center gap-1.5">
-                      <span>{isEn ? 'New to IELTS? Start Here' : 'Chưa Có Nền Tảng? Bắt Đầu Từ Đây'}</span>
-                      <span className="px-1.5 py-0.2 rounded-full bg-emerald-200 text-emerald-900 text-[9px] font-black">{isEn ? 'EASY' : 'DỄ'}</span>
-                    </div>
-                    <div className="text-[10px] text-emerald-800 font-normal truncate">
-                      {isEn ? 'Zero-overwhelm 4-step roadmap & mini-games' : 'Lộ trình 4 bước không áp lực, vừa sức'}
-                    </div>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
-              </button>
-
-              {/* 1. Hero CTA & Goal Target in Mobile Drawer */}
-              <div className="space-y-2">
-                <button
-                  onClick={() => { doOpenMockTest(); setIsMobileDrawerOpen(false); }}
-                  className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs shadow-md active:scale-95 transition-all min-h-[44px] cursor-pointer"
-                >
-                  <div className="flex items-center space-x-2.5">
-                    <ShieldAlert className="w-5 h-5 text-amber-300 animate-pulse" />
-                    <div className="text-left">
-                      <div className="text-sm font-black">{isEn ? 'IELTS Mock Test Room (60m)' : 'Phòng Thi Thử IELTS (60p)'}</div>
-                      <div className="text-[10px] text-red-100 font-normal">{isEn ? 'Writing 60m, Reading 60m, Listening & Speaking' : 'Writing 60p, Reading 60p, Listening & Speaking'}</div>
-                    </div>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-wider">
-                    {isEn ? 'Enter Test' : 'Vào Thi'}
-                  </span>
-                </button>
-
-                <div className="p-3 rounded-2xl bg-gradient-to-r from-slate-50 via-red-50/30 to-amber-50/30 border border-slate-200 flex items-center justify-between min-h-[44px]">
-                  <div className="flex items-center space-x-2.5">
-                    <div className="p-2 rounded-xl bg-red-600 text-white shadow-xs">
-                      <Target className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-black text-slate-900">{isEn ? `Target: Band ${targetBand}` : `Mục Tiêu: Band ${targetBand}`}</div>
-                      <div className="text-[10px] text-slate-500">{isEn ? 'Personalized difficulty & AI scoring' : 'Cá nhân hóa độ khó & chấm điểm AI'}</div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      doOpenOnboarding();
-                      setIsMobileDrawerOpen(false);
-                    }}
-                    className="px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-700 text-xs font-bold hover:bg-red-50 shadow-2xs cursor-pointer"
-                  >
-                    {isEn ? 'Change' : 'Đổi'}
-                  </button>
-                </div>
+              {/* Category Segmented Control Pills for Clean Mobile Organization */}
+              <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-1 border-b border-slate-100 shrink-0">
+                {[
+                  { id: 'all', label: isEn ? 'All' : 'Tất Cả', icon: Sparkles },
+                  { id: 'practice', label: isEn ? 'Practice' : 'Luyện Thi', icon: GraduationCap },
+                  { id: 'study', label: isEn ? 'Study' : 'Học Liệu', icon: BookOpen },
+                  { id: 'progress', label: isEn ? 'Progress' : 'Tiến Độ', icon: TrendingUp },
+                  { id: 'system', label: isEn ? 'Settings' : 'Cài Đặt', icon: Settings },
+                ].map((cat) => {
+                  const Icon = cat.icon;
+                  const isActive = mobileDrawerCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setMobileDrawerCategory(cat.id)}
+                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 active:scale-95 ${
+                        isActive
+                          ? 'bg-slate-900 text-white shadow-xs'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5 shrink-0" />
+                      <span>{cat.label}</span>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* 2. Skill Switcher in Mobile Drawer */}
@@ -1140,34 +1105,32 @@ export default function Navbar({
                 </div>
               </div>
 
-              {/* 3. Luyện Tập & Đề Thi */}
-              <div>
-                <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  {isEn ? 'Practice & Tests' : 'Luyện Tập & Đề Thi'}
-                </div>
-                <div className="space-y-1">
+              {/* CATEGORY 1: 🎯 LUYỆN TẬP & ĐỀ THI (PRACTICE) */}
+              {(mobileDrawerCategory === 'all' || mobileDrawerCategory === 'practice') && (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>{isEn ? 'Practice & Test Rooms' : 'Luyện Tập & Phòng Thi'}</span>
+                    <span className="text-[10px] text-red-600 bg-red-50 px-1.5 py-0.2 rounded font-black">6 {isEn ? 'Rooms' : 'Phòng'}</span>
+                  </div>
+                  
+                  {/* Mock Test Hero CTA */}
                   <button
-                    onClick={() => { doOpenDiagnostic(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-left text-xs font-bold text-indigo-900 border border-indigo-200 min-h-[44px] cursor-pointer"
+                    onClick={() => { doOpenMockTest(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs shadow-md active:scale-95 transition-all min-h-[44px] cursor-pointer"
                   >
-                    <div className="flex items-center space-x-2.5 min-w-0">
-                      <Award className="w-4 h-4 text-indigo-600 shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? 'Band Diagnostic & 30-Day Plan' : 'Định Vị Band & Lộ Trình 30 Ngày'}</span>
+                    <div className="flex items-center space-x-2.5">
+                      <ShieldAlert className="w-5 h-5 text-amber-300 animate-pulse" />
+                      <div className="text-left">
+                        <div className="text-sm font-black">{isEn ? 'IELTS Mock Test Room (60m)' : 'Phòng Thi Thử IELTS (60p)'}</div>
+                        <div className="text-[10px] text-red-100 font-normal">{isEn ? 'Writing 60m, Reading 60m, Listening & Speaking' : 'Writing 60p, Reading 60p, Listening & Speaking'}</div>
+                      </div>
                     </div>
-                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded shrink-0">{isEn ? '15 Min' : '15 Phút'}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-wider">
+                      {isEn ? 'Enter Test' : 'Vào Thi'}
+                    </span>
                   </button>
 
-                  <button
-                    onClick={() => { openModal('adaptiveSprint'); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200 min-h-[44px] cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-2.5 min-w-0">
-                      <Zap className="w-4 h-4 text-amber-600 fill-current shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? '30-Min Coach (Adaptive Sprint)' : 'Huấn Luyện Viên 30P (Adaptive Sprint)'}</span>
-                    </div>
-                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'NEW' : 'MỚI'}</span>
-                  </button>
-
+                  {/* Atlas English Arena */}
                   <button
                     onClick={() => { openModal('atlasArena'); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-left text-xs font-bold text-purple-900 border border-purple-200 min-h-[44px] cursor-pointer"
@@ -1179,27 +1142,7 @@ export default function Navbar({
                     <span className="text-[10px] text-purple-700 font-bold bg-purple-200 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'eSPORTS' : 'ĐẤU TRƯỜNG'}</span>
                   </button>
 
-                  <button
-                    onClick={() => { doOpenLibrary(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-2.5 min-w-0">
-                      <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? 'Cambridge Standard Test Library' : 'Thư Viện Đề Thi Chuẩn Cambridge'}</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => { doOpenGenerator(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-2.5 min-w-0">
-                      <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
-                    </div>
-                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded shrink-0">AI</span>
-                  </button>
-
+                  {/* Micro-Drills */}
                   <button
                     onClick={() => { doOpenDrills(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1211,6 +1154,77 @@ export default function Navbar({
                     <span className="text-[10px] text-amber-700 font-extrabold bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full shrink-0">/micro-drills</span>
                   </button>
 
+                  {/* 30-Min Sprint Coach */}
+                  <button
+                    onClick={() => { openModal('adaptiveSprint'); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Zap className="w-4 h-4 text-amber-600 fill-current shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? '30-Min Coach (Adaptive Sprint)' : 'Huấn Luyện Viên 30P (Adaptive Sprint)'}</span>
+                    </div>
+                    <span className="text-[10px] text-amber-700 font-bold bg-amber-200 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'NEW' : 'MỚI'}</span>
+                  </button>
+
+                  {/* Cambridge Test Library */}
+                  <button
+                    onClick={() => { doOpenLibrary(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <BookOpen className="w-4 h-4 text-blue-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Cambridge Standard Test Library' : 'Thư Viện Đề Thi Chuẩn Cambridge'}</span>
+                    </div>
+                  </button>
+
+                  {/* AI Prompt Generator */}
+                  <button
+                    onClick={() => { doOpenGenerator(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
+                    </div>
+                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded shrink-0">AI</span>
+                  </button>
+                </div>
+              )}
+
+              {/* CATEGORY 2: 📚 HỌC LIỆU & NỀN TẢNG (STUDY) */}
+              {(mobileDrawerCategory === 'all' || mobileDrawerCategory === 'study') && (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>{isEn ? 'Study Materials & Foundations' : 'Học Liệu & Nền Tảng'}</span>
+                    <span className="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded font-black">6 {isEn ? 'Tools' : 'Mục'}</span>
+                  </div>
+
+                  {/* Beginner Card in Mobile Drawer */}
+                  <button
+                    onClick={() => {
+                      openModal('beginnerGuide');
+                      setIsMobileDrawerOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-xs shadow-2xs active:scale-95 transition-all min-h-[44px] cursor-pointer text-left group"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <span className="text-base leading-none">🌱</span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+                          <span>{isEn ? 'New to IELTS? Start Here' : 'Chưa Có Nền Tảng? Bắt Đầu Từ Đây'}</span>
+                          <span className="px-1.5 py-0.2 rounded-full bg-emerald-200 text-emerald-900 text-[9px] font-black">{isEn ? 'EASY' : 'DỄ'}</span>
+                        </div>
+                        <div className="text-[10px] text-emerald-800 font-normal truncate">
+                          {isEn ? 'Zero-overwhelm 4-step roadmap & mini-games' : 'Lộ trình 4 bước không áp lực, vừa sức'}
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                  </button>
+
+                  {/* Theory & Strategy Handbook */}
                   <button
                     onClick={() => { doOpenTheory(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-left text-xs font-bold text-amber-900 border border-amber-200/70 min-h-[44px] cursor-pointer"
@@ -1222,24 +1236,7 @@ export default function Navbar({
                     <span className="text-[10px] text-sky-700 font-bold bg-sky-100 px-1.5 py-0.5 rounded shrink-0">{isEn ? 'Online Web' : 'Bản Web Online'}</span>
                   </button>
 
-                  <button
-                    onClick={() => { doOpenIngest(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-2.5 min-w-0">
-                      <FileUp className="w-4 h-4 text-purple-600 shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? 'Import Prompts & Samples' : 'Nạp Đề & Bài Mẫu Thô'}</span>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* 4. Bộ Công Cụ Bổ Trợ */}
-              <div>
-                <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  {isEn ? 'Support Tools' : 'Bộ Công Cụ Bổ Trợ'}
-                </div>
-                <div className="space-y-1">
+                  {/* Personal Vocabulary Notebook */}
                   <button
                     onClick={() => { doOpenNotebook(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1250,6 +1247,7 @@ export default function Navbar({
                     </div>
                   </button>
 
+                  {/* Common Mistake Log */}
                   <button
                     onClick={() => { doOpenMistakeLog(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1265,6 +1263,7 @@ export default function Navbar({
                     )}
                   </button>
 
+                  {/* Vocab, Grammar & Spelling */}
                   <button
                     onClick={() => { doOpenVocabGrammar(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1274,15 +1273,63 @@ export default function Navbar({
                       <span>{isEn ? 'Vocab, Grammar & Spelling' : 'Vocab, Grammar & Chính Tả'}</span>
                     </div>
                   </button>
-                </div>
-              </div>
 
-              {/* 5. Tiến Độ & Cài Đặt */}
-              <div>
-                <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
-                  {isEn ? 'Progress & Settings' : 'Tiến Độ & Cài Đặt'}
+                  {/* Import Prompts & Samples */}
+                  <button
+                    onClick={() => { doOpenIngest(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <FileUp className="w-4 h-4 text-purple-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Import Prompts & Samples' : 'Nạp Đề & Bài Mẫu Thô'}</span>
+                    </div>
+                  </button>
                 </div>
-                <div className="space-y-1">
+              )}
+
+              {/* CATEGORY 3: 📊 TIẾN ĐỘ & CÁ NHÂN (PROGRESS) */}
+              {(mobileDrawerCategory === 'all' || mobileDrawerCategory === 'progress') && (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>{isEn ? 'Progress & Performance' : 'Tiến Độ & Kết Quả'}</span>
+                    <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded font-black">5 {isEn ? 'Stats' : 'Mục'}</span>
+                  </div>
+
+                  {/* Target Band Goal Card */}
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-slate-50 via-red-50/30 to-amber-50/30 border border-slate-200 flex items-center justify-between min-h-[44px]">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="p-2 rounded-xl bg-red-600 text-white shadow-xs">
+                        <Target className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-black text-slate-900">{isEn ? `Target: Band ${targetBand}` : `Mục Tiêu: Band ${targetBand}`}</div>
+                        <div className="text-[10px] text-slate-500">{isEn ? 'Personalized difficulty & AI scoring' : 'Cá nhân hóa độ khó & chấm điểm AI'}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        doOpenOnboarding();
+                        setIsMobileDrawerOpen(false);
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-700 text-xs font-bold hover:bg-red-50 shadow-2xs cursor-pointer"
+                    >
+                      {isEn ? 'Change' : 'Đổi'}
+                    </button>
+                  </div>
+
+                  {/* Band Diagnostic & 30-Day Plan */}
+                  <button
+                    onClick={() => { doOpenDiagnostic(); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-left text-xs font-bold text-indigo-900 border border-indigo-200 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Award className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <span className="truncate whitespace-nowrap">{isEn ? 'Band Diagnostic & 30-Day Plan' : 'Định Vị Band & Lộ Trình 30 Ngày'}</span>
+                    </div>
+                    <span className="text-[10px] text-indigo-700 font-bold bg-indigo-100 px-1.5 py-0.5 rounded shrink-0">{isEn ? '15 Min' : '15 Phút'}</span>
+                  </button>
+
+                  {/* Submission History & Scores */}
                   <button
                     onClick={() => { doOpenHistory(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1293,6 +1340,7 @@ export default function Navbar({
                     </div>
                   </button>
 
+                  {/* Weekly Progress Report */}
                   <button
                     onClick={() => { doOpenWeeklyReport(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1303,6 +1351,29 @@ export default function Navbar({
                     </div>
                   </button>
 
+                  {/* Growth Forecast (ETA) */}
+                  <button
+                    onClick={() => { openModal('growthAnalytics'); setIsMobileDrawerOpen(false); }}
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-purple-50 text-left text-xs font-semibold text-purple-900 border border-purple-100 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <Target className="w-4 h-4 text-purple-600" />
+                      <span>{isEn ? 'Growth Forecast (ETA)' : 'Dự Báo Tăng Trưởng (ETA)'}</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-purple-100 text-purple-700">{isEn ? 'NEW' : 'MỚI'}</span>
+                  </button>
+                </div>
+              )}
+
+              {/* CATEGORY 4: ⚙️ HỆ THỐNG & CÀI ĐẶT (SETTINGS) */}
+              {(mobileDrawerCategory === 'all' || mobileDrawerCategory === 'system') && (
+                <div className="space-y-2 animate-in fade-in duration-150">
+                  <div className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>{isEn ? 'Settings & Preferences' : 'Cài Đặt & Hệ Thống'}</span>
+                    <span className="text-[10px] text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded font-black">8 {isEn ? 'Items' : 'Mục'}</span>
+                  </div>
+
+                  {/* System & AI API Settings */}
                   <button
                     onClick={() => { doOpenSettings(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
@@ -1314,6 +1385,7 @@ export default function Navbar({
                     <span className={`w-2 h-2 rounded-full ${apiKey ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                   </button>
 
+                  {/* CDI Accessibility Display */}
                   <button
                     onClick={() => { doOpenCDIDisplay(); setIsMobileDrawerOpen(false); }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50 text-left text-xs font-bold text-blue-900 border border-blue-200/80 bg-blue-50/50 min-h-[44px] cursor-pointer"
@@ -1330,7 +1402,7 @@ export default function Navbar({
                     onClick={() => {
                       toggleLanguage();
                     }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
                       <div className="p-1.5 rounded-lg bg-blue-100 text-blue-700">
@@ -1351,7 +1423,7 @@ export default function Navbar({
                     onClick={() => {
                       toggleTheme();
                     }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
                       <div className={`p-1.5 rounded-lg ${currentTheme === 'dark' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700'}`}>
@@ -1369,9 +1441,10 @@ export default function Navbar({
                     </span>
                   </button>
 
+                  {/* About Platform (/about) */}
                   <button
                     onClick={() => { doOpenAbout(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 text-left text-xs font-bold text-indigo-700 border border-indigo-200 mt-2 min-h-[44px] cursor-pointer shadow-2xs"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 text-left text-xs font-bold text-indigo-700 border border-indigo-200 min-h-[44px] cursor-pointer shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
                       <Home className="w-4 h-4 text-indigo-600" />
@@ -1380,9 +1453,10 @@ export default function Navbar({
                     <span className="text-[10px] text-indigo-700 font-extrabold bg-white border border-indigo-200 px-1.5 py-0.5 rounded-full">/about</span>
                   </button>
 
+                  {/* Help Center & Guides */}
                   <button
                     onClick={() => { doOpenFeaturesGuide(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 border border-red-200 mt-2 min-h-[44px] cursor-pointer shadow-2xs"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 text-left text-xs font-bold text-red-700 border border-red-200 min-h-[44px] cursor-pointer shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
                       <HelpCircle className="w-4 h-4 text-red-600" />
@@ -1391,9 +1465,10 @@ export default function Navbar({
                     <span className="text-[10px] text-red-600 font-extrabold bg-white border border-red-200 px-1.5 py-0.5 rounded-full">{isEn ? 'Public' : 'Công Khai'}</span>
                   </button>
 
+                  {/* Website QR Code */}
                   <button
                     onClick={() => { setIsQrModalOpen(true); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-left text-xs font-bold text-slate-800 border border-slate-200 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
                       <QrCode className="w-4 h-4 text-red-600" />
@@ -1402,9 +1477,10 @@ export default function Navbar({
                     <span className="text-[10px] text-red-600 font-bold bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">Scan QR</span>
                   </button>
 
+                  {/* Send Feedback */}
                   <button
                     onClick={() => { doOpenContact(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 mt-2 min-h-[44px] cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-200 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center space-x-2.5">
                       <Mail className="w-4 h-4 text-rose-600" />
@@ -1413,7 +1489,7 @@ export default function Navbar({
                     <span className="text-[10px] text-slate-400 font-medium">{isEn ? '24/7 Support' : 'Hỗ trợ 24/7'}</span>
                   </button>
                 </div>
-              </div>
+              )}
 
             </div>
           </div>
