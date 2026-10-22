@@ -259,7 +259,7 @@ export default function QuestionPane({
                           onClick={() => handleOptionSelect(qOrder, opt)}
                           onDoubleClick={(e) => handleOptionDoubleClick(e, qOrder, opt)}
                           title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
-                          className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all border select-none touch-manipulation ${
+                          className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all border select-none touch-manipulation min-h-[40px] flex items-center justify-center ${
                             isSelected
                               ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-200'
                               : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
@@ -344,7 +344,7 @@ export default function QuestionPane({
                           onClick={() => handleOptionSelect(qOrder, opt.letter)}
                           onDoubleClick={(e) => handleOptionDoubleClick(e, qOrder, opt.letter)}
                           title={isSelected ? (isEn ? "Double-click to deselect" : "Double-click để bỏ chọn") : ""}
-                          className={`w-full text-left p-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-start gap-2.5 border select-none touch-manipulation ${
+                          className={`w-full text-left p-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all flex items-start gap-2.5 border select-none touch-manipulation min-h-[44px] ${
                             isSelected
                               ? 'bg-blue-50 text-blue-900 border-blue-400 ring-2 ring-blue-100 font-semibold'
                               : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'

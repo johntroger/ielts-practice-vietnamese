@@ -121,11 +121,11 @@ export default function SlideOverToolPanel({
         onClick={onClose} 
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md sm:max-w-lg bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-250 border-l border-slate-200">
           
           {/* Top Panel Header */}
-          <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+          <div className="p-3.5 sm:p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-white shadow-sm">
                 <Layers className="w-4 h-4" />
@@ -137,7 +137,7 @@ export default function SlideOverToolPanel({
             </div>
             <button
               onClick={onClose}
-              className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
               aria-label={isEn ? "Close tool panel" : "Đóng bảng công cụ"}
             >
               <X className="w-5 h-5" />

@@ -541,7 +541,8 @@ export default function ReadingWorkspace({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                {t('reading.passageTab', '📖 Bài Đọc')}
+                <span className="hidden sm:inline">{t('reading.passageTab', '📖 Bài Đọc')}</span>
+                <span className="sm:hidden">{isEn ? '📖 Text' : '📖 Đọc'}</span>
               </button>
               <button
                 type="button"
@@ -552,7 +553,8 @@ export default function ReadingWorkspace({
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                {t('reading.questionsTab', '📝 Câu Hỏi')}
+                <span className="hidden sm:inline">{t('reading.questionsTab', '📝 Câu Hỏi')}</span>
+                <span className="sm:hidden">{isEn ? '📝 Qs' : '📝 Câu'}</span>
               </button>
             </div>
 

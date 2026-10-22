@@ -142,21 +142,21 @@ export default function WritingSubHeaderToolbar({
   const missionsDone = [hasWrittenToday, hasPrescriptionToday, hasVocabToday].filter(Boolean).length;
 
   return (
-    <div className={`bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-6 shadow-2xs shrink-0 relative z-30 transition-all duration-300 ${
+    <div className={`bg-white border-b border-slate-200 px-2.5 sm:px-4 lg:px-6 shadow-2xs shrink-0 relative z-30 transition-all duration-300 ${
       isSlimHeader 
         ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
-        : 'py-2 flex flex-col md:flex-row md:items-center md:justify-between md:flex-wrap gap-1.5 sm:gap-2'
+        : 'py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2'
     }`}>
       
       {/* ============================================================ */}
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
       {/* ============================================================ */}
-      <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 max-w-[62%] xs:max-w-none overflow-hidden py-0.5">
         {/* 1. Task Selector Dropdown Trigger & Rating */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 min-w-0">
           <button 
             onClick={onOpenLibrary}
-            className="flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-2.5 lg:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0 flex-1 md:flex-initial"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 lg:px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer min-w-0"
             title={isEn ? "Click to switch task or select from IELTS library" : "Nhấn để đổi đề thi hoặc chọn từ thư viện đề IELTS"}
           >
             <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-black uppercase tracking-wider shrink-0 ${
@@ -164,7 +164,7 @@ export default function WritingSubHeaderToolbar({
             }`}>
               Task {currentTask?.taskNumber || 2}
             </span>
-            <span className="text-xs font-bold text-slate-800 max-w-[120px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[240px] xl:max-w-[320px] truncate">
+            <span className="text-xs font-bold text-slate-800 max-w-[95px] xs:max-w-[140px] md:max-w-[160px] lg:max-w-[240px] xl:max-w-[320px] truncate">
               {currentTask?.title || (isEn ? 'IELTS Writing Task' : 'Đề IELTS Writing')}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform shrink-0" />
@@ -190,7 +190,7 @@ export default function WritingSubHeaderToolbar({
       {/* ============================================================ */}
       {/* ZONE 2 (Right): ESSENTIAL CONTROLS & UNIFIED TOOLS DROPDOWN  */}
       {/* ============================================================ */}
-      <div className="flex items-center justify-between md:justify-end space-x-1.5 sm:space-x-2 text-xs shrink-0 max-w-full py-0.5">
+      <div className="flex items-center justify-end space-x-1 sm:space-x-1.5 text-xs shrink-0 py-0.5">
         <div className="flex items-center space-x-1 sm:space-x-1.5">
           
           {/* Minimal Focus View vs Pro Studio View Mode Switcher (Visible on tablet & desktop, managed in Tools on phone) */}

@@ -235,8 +235,14 @@ export default function TaskImageUploader({
               onClick={() => setIsZoomModalOpen(true)}
             />
 
-            {/* Quick Action Overlay */}
-            <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            {/* Mobile-visible tap-to-zoom badge */}
+            <div className="absolute bottom-2 right-2 sm:hidden px-2 py-1 rounded-md bg-slate-900/75 text-white text-[10px] font-semibold flex items-center gap-1 pointer-events-none shadow-sm backdrop-blur-xs">
+              <ZoomIn className="w-3 h-3 text-blue-400" />
+              <span>{isEn ? 'Tap to zoom' : 'Chạm để phóng to'}</span>
+            </div>
+
+            {/* Quick Action Overlay (Desktop hover) */}
+            <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center justify-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsZoomModalOpen(true)}
