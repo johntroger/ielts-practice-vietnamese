@@ -223,7 +223,7 @@ export default function ListeningQuestionPane({
         return {
           body: 'text-xs sm:text-sm',
           heading: 'text-sm sm:text-base',
-          input: 'text-xs sm:text-sm py-1.5 px-3'
+          input: 'text-base sm:text-sm py-1.5 px-3'
         };
     }
   }, [fontSizeMode]);
