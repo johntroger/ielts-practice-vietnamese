@@ -719,7 +719,7 @@ export default function TheoryHandbookModal({
             </a>
             <button 
               onClick={onClose} 
-              className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
               aria-label={isEn ? "Close handbook" : "Đóng cẩm nang"}
             >
               <X className="w-5 h-5" />

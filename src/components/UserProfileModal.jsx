@@ -187,8 +187,9 @@ export default function UserProfileModal({
                 )}
                 <button 
                   onClick={onClose}
-                  className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                  className="p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 hover:text-white"
                   title={isEn ? 'Close user profile' : 'Đóng trang cá nhân'}
+                  aria-label={isEn ? 'Close user profile' : 'Đóng trang cá nhân'}
                 >
                   <X className="w-4 h-4" />
                 </button>

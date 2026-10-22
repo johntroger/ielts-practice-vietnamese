@@ -538,7 +538,7 @@ export default function MockTestModal({
 
           <button
             onClick={onClose}
-            className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            className="p-2 sm:p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
             title={isEn ? 'Close mock exam room' : 'Đóng phòng thi thử'}
             aria-label={isEn ? 'Close mock exam room' : 'Đóng phòng thi thử'}
           >

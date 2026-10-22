@@ -1162,7 +1162,7 @@ export default function VocabGrammarSpellingModal({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
               aria-label={isEn ? "Close vocabulary & grammar studio" : "Đóng bảng luyện từ vựng ngữ pháp"}
             >
               <X className="w-5 h-5" />

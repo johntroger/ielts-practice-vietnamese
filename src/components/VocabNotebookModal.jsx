@@ -135,8 +135,9 @@ export default function VocabNotebookModal({
           </div>
           <button 
             onClick={onClose} 
-            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
-            aria-label="Đóng"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+            aria-label={isEn ? "Close" : "Đóng"}
+            title={isEn ? "Close" : "Đóng"}
           >
             <X className="w-5 h-5" />
           </button>
