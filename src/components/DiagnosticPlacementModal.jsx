@@ -368,7 +368,7 @@ export default function DiagnosticPlacementModal({
                         key={opt.key}
                         type="button"
                         onClick={() => handleSelectOption(currentQ.id, opt.key)}
-                        className={`w-full text-left p-3 sm:p-3.5 rounded-xl border text-xs sm:text-sm font-medium transition-all flex items-start space-x-3 cursor-pointer ${
+                        className={`w-full text-left p-3 sm:p-3.5 min-h-[44px] rounded-xl border text-xs sm:text-sm font-medium transition-all flex items-start space-x-3 cursor-pointer ${
                           isSelected
                             ? 'bg-blue-50 border-blue-500 text-blue-900 shadow-2xs'
                             : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'

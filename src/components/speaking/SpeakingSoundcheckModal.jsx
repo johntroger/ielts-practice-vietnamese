@@ -188,7 +188,7 @@ export default function SpeakingSoundcheckModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+            className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
             title={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-5 h-5" />

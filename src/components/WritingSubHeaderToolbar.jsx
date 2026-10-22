@@ -142,7 +142,7 @@ export default function WritingSubHeaderToolbar({
   const missionsDone = [hasWrittenToday, hasPrescriptionToday, hasVocabToday].filter(Boolean).length;
 
   return (
-    <div className={`bg-white border-b border-slate-200 px-2.5 sm:px-4 lg:px-6 shadow-2xs shrink-0 relative z-30 transition-all duration-300 ${
+    <div className={`bg-white border-b border-slate-200 px-2.5 sm:px-4 lg:px-6 shadow-2xs shrink-0 relative z-30 transition-all duration-300 md:flex-wrap ${
       isSlimHeader 
         ? 'py-1 min-h-[38px] flex items-center justify-between gap-1.5' 
         : 'py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2'
@@ -151,7 +151,7 @@ export default function WritingSubHeaderToolbar({
       {/* ============================================================ */}
       {/* ZONE 1 (Left): CORE WRITING TASK ACTIONS                     */}
       {/* ============================================================ */}
-      <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 max-w-[62%] xs:max-w-none overflow-hidden py-0.5">
+      <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0 max-w-full overflow-x-auto no-scrollbar py-0.5">
         {/* 1. Task Selector Dropdown Trigger & Rating */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 min-w-0">
           <button 

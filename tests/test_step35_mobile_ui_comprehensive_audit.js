@@ -38,17 +38,17 @@ console.log('Test 4: Verifying VocabNotebookModal and MistakeLogModal mobile hea
 const vocabPath = path.join(__dirname, '../src/components/VocabNotebookModal.jsx');
 const vocabSource = fs.readFileSync(vocabPath, 'utf8');
 assert(vocabSource.includes('overflow-x-auto no-scrollbar'), 'Vocab tabs must be horizontally scrollable on mobile');
-assert(vocabSource.includes('min-w-[40px] min-h-[40px]'), 'VocabModal close button must have 40px touch target');
+assert(vocabSource.includes('min-w-[40px] min-h-[40px]') || vocabSource.includes('min-w-[44px] min-h-[44px]'), 'VocabModal close button must have at least 40px touch target');
 
 const mistakePath = path.join(__dirname, '../src/components/MistakeLogModal.jsx');
 const mistakeSource = fs.readFileSync(mistakePath, 'utf8');
-assert(mistakeSource.includes('min-w-[40px] min-h-[40px]'), 'MistakeLogModal close button must have 40px touch target');
+assert(mistakeSource.includes('min-w-[40px] min-h-[40px]') || mistakeSource.includes('min-w-[44px] min-h-[44px]'), 'MistakeLogModal close button must have at least 40px touch target');
 
 // 5. TheoryHandbookModal & DailyErrorPrescriptionModal
 console.log('Test 5: Verifying TheoryHandbookModal and DailyErrorPrescriptionModal mobile touch targets');
 const theoryPath = path.join(__dirname, '../src/components/TheoryHandbookModal.jsx');
 const theorySource = fs.readFileSync(theoryPath, 'utf8');
-assert(theorySource.includes('min-w-[40px] min-h-[40px]'), 'TheoryHandbookModal close button must have 40px touch target');
+assert(theorySource.includes('min-w-[40px] min-h-[40px]') || theorySource.includes('min-w-[44px] min-h-[44px]'), 'TheoryHandbookModal close button must have at least 40px touch target');
 
 const rxPath = path.join(__dirname, '../src/components/DailyErrorPrescriptionModal.jsx');
 const rxSource = fs.readFileSync(rxPath, 'utf8');

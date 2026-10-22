@@ -115,7 +115,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-3.5 sm:top-4 right-3.5 sm:right-4 p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
+            className="absolute top-3 sm:top-4 right-3 sm:right-4 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors cursor-pointer"
             aria-label={isEn ? 'Close' : 'Đóng'}
           >
             <X className="w-4 h-4" />

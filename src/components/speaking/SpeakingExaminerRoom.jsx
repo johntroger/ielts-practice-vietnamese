@@ -588,7 +588,7 @@ export default function SpeakingExaminerRoom({
                 handleConcludeExam();
               }
             }}
-            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center justify-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 min-h-[36px] rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 text-xs font-bold transition-colors cursor-pointer"
             title={isEn ? "Submit test and grade" : "Nộp bài và chấm điểm"}
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-purple-300 shrink-0" />
@@ -600,7 +600,7 @@ export default function SpeakingExaminerRoom({
               sessionStorage.removeItem('ielts_speaking_session_transcript');
               if (onExitRoom) onExitRoom();
             }}
-            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
+            className="flex items-center justify-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 min-h-[36px] rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold transition-colors cursor-pointer shrink-0"
             title={isEn ? "Exit exam room" : "Thoát phòng thi"}
           >
             <LogOut className="w-3.5 h-3.5 shrink-0" />
