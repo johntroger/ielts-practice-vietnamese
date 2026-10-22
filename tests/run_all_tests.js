@@ -208,7 +208,8 @@ const testSuites = [
   { name: 'Step 199: Track 45 Limited Liability Companies Integration', file: 'tests/test_step199_track45_audio_integration.js' },
   { name: 'Step 200: Track 46 Business Structures Summary Integration', file: 'tests/test_step200_track46_audio_integration.js' },
   { name: 'Step 201: Track 47 Business Structures Case Studies Integration', file: 'tests/test_step201_track47_audio_integration.js' },
-  { name: 'Step 202: Clean Mobile UI Optimization & Ergonomics Audit', file: 'tests/test_step192_clean_mobile_ui_optimization.js' }
+  { name: 'Step 202: Clean Mobile UI Optimization & Ergonomics Audit', file: 'tests/test_step192_clean_mobile_ui_optimization.js' },
+  { name: 'Step 203: Micro-Drills Mobile Dynamic Closable Tabs & Dropbox Pickers', file: 'tests/test_step203_micro_drills_mobile_room_tabs_and_dropbox.js' }
 ];
 
 console.log('===============================================================');

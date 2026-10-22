@@ -64,6 +64,7 @@ import {
   ListeningDrillRoom,
   SpeakingDrillRoom
 } from './drills';
+import MicroDrillPaginationBar from './drills/MicroDrillPaginationBar';
 import { getLocalizedDrillTitle, getLocalizedDrillCategory } from '../utils/drillLocalization';
 
 
@@ -182,14 +183,151 @@ export default function MicroDrillsModal({
     }
   };
 
+  // ----------------------------------------------------
+  // DYNAMIC ROOM TABS & ROOM DROPBOX ARCHITECTURE
+  // ----------------------------------------------------
+  const roomCatalog = [
+    { 
+      id: 'general', 
+      icon: Compass, 
+      labelEn: t('modals.microDrills.roomGeneral', null, 'General Studio'), 
+      labelVi: t('modals.microDrills.roomGeneral', null, 'Phòng Chung'),
+      activeClass: 'bg-amber-500 text-white shadow-xs ring-2 ring-amber-400/30',
+      badgeColor: 'text-amber-400'
+    },
+    { 
+      id: 'writing', 
+      icon: FileText, 
+      labelEn: t('modals.microDrills.roomWriting', null, 'Writing Drills'), 
+      labelVi: t('modals.microDrills.roomWriting', null, 'Chuyên Writing'),
+      activeClass: 'bg-red-600 text-white shadow-xs ring-2 ring-red-500/30',
+      badgeColor: 'text-red-400'
+    },
+    { 
+      id: 'reading', 
+      icon: BookOpen, 
+      labelEn: t('modals.microDrills.roomReading', null, 'Reading Drills'), 
+      labelVi: t('modals.microDrills.roomReading', null, 'Chuyên Reading'),
+      activeClass: 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-500/30',
+      badgeColor: 'text-blue-400',
+      isNew: true
+    },
+    { 
+      id: 'listening', 
+      icon: Headphones, 
+      labelEn: t('modals.microDrills.roomListening', null, 'Listening Drills'), 
+      labelVi: t('modals.microDrills.roomListening', null, 'Chuyên Listening'),
+      activeClass: 'bg-purple-600 text-white shadow-xs ring-2 ring-purple-500/30',
+      badgeColor: 'text-purple-400',
+      isNew: true
+    },
+    { 
+      id: 'speaking', 
+      icon: Mic, 
+      labelEn: t('modals.microDrills.roomSpeaking', null, 'Speaking Drills'), 
+      labelVi: t('modals.microDrills.roomSpeaking', null, 'Chuyên Speaking'),
+      activeClass: 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-500/30',
+      badgeColor: 'text-emerald-400',
+      isNew: true
+    }
+  ];
+
+  const [openRooms, setOpenRooms] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ielts_micro_drills_open_rooms');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return [activeRoom || 'writing'];
+  });
+
+  const [isRoomDropdownOpen, setIsRoomDropdownOpen] = useState(false);
+  const roomDropdownRef = React.useRef(null);
+  const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
+  const mobileToolsDropdownRef = React.useRef(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('ielts_micro_drills_open_rooms', JSON.stringify(openRooms));
+    } catch (e) {}
+  }, [openRooms]);
+
+  // Click-outside listener for room dropdown and mobile tools dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (roomDropdownRef.current && !roomDropdownRef.current.contains(event.target)) {
+        setIsRoomDropdownOpen(false);
+      }
+      if (mobileToolsDropdownRef.current && !mobileToolsDropdownRef.current.contains(event.target)) {
+        setIsMobileToolsOpen(false);
+      }
+    };
+    if (isRoomDropdownOpen || isMobileToolsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isRoomDropdownOpen, isMobileToolsOpen]);
+
+  // Ensure activeRoom is always present in openRooms
+  useEffect(() => {
+    if (activeRoom) {
+      setOpenRooms(prev => {
+        if (!prev.includes(activeRoom)) {
+          return [...prev, activeRoom];
+        }
+        return prev;
+      });
+    }
+  }, [activeRoom]);
+
   // When room changes, auto-select the first tab of that room
   const handleRoomChange = (room) => {
     setActiveRoom(room);
+    setOpenRooms(prev => {
+      if (!prev.includes(room)) {
+        return [...prev, room];
+      }
+      return prev;
+    });
     if (room === 'general') setActiveTab('collocation');
     else if (room === 'writing') setActiveTab('fill-blanks');
     else if (room === 'reading') setActiveTab('reading-tfng');
     else if (room === 'listening') setActiveTab('listening-dictation');
     else if (room === 'speaking') setActiveTab('speaking-area');
+  };
+
+  const handleSelectRoomFromDropdown = (roomId) => {
+    handleRoomChange(roomId);
+    setIsRoomDropdownOpen(false);
+  };
+
+  const handleCloseRoomTab = (roomId, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (openRooms.length <= 1) return;
+    const remaining = openRooms.filter(r => r !== roomId);
+    setOpenRooms(remaining);
+    if (activeRoom === roomId) {
+      const closedIdx = openRooms.indexOf(roomId);
+      const nextActiveIdx = Math.max(0, closedIdx - 1);
+      const nextRoom = remaining[nextActiveIdx] || remaining[0];
+      handleRoomChange(nextRoom);
+    }
+  };
+
+  const handleOpenAllRooms = () => {
+    setOpenRooms(['general', 'writing', 'reading', 'listening', 'speaking']);
+    setIsRoomDropdownOpen(false);
+  };
+
+  const handleCloseOtherRooms = () => {
+    setOpenRooms([activeRoom]);
+    setIsRoomDropdownOpen(false);
   };
 
   // Fullscreen / Expanded Workspace Mode
@@ -454,7 +592,7 @@ export default function MicroDrillsModal({
     } catch (e) {}
   };
 
-  // Smart Discovery, Rating & Sort State for Micro-Drills
+  // Smart Discovery, Rating & Sort State for Micro-Drills (drillQuickFilter === 'manual' | drillQuickFilter === 'ai' ✍️ Thủ Công)
   const [drillSearchQuery, setDrillSearchQuery] = useState('');
   const [drillQuickFilter, setDrillQuickFilter] = useState('all');
   const [drillSortBy, setDrillSortBy] = useState('rating_desc');
@@ -1148,326 +1286,35 @@ export default function MicroDrillsModal({
     }
   };
 
+  // Localized drill title resolver for jump-to dropdown options
+  const resolveDrillOptionTitle = (d) => getLocalizedDrillTitle(d, isEn) || getLocalizedDrillCategory(d, isEn) || (isEn ? 'Exercise' : 'Bài tập');
+
   /**
    * Smart pagination toolbar that scales gracefully from 1 to 50+ drills
    * Integrated with Smart Content Filter Bar, StarRatingWidget & Real Attempts Count
    */
-  const renderPaginationBar = () => {
-    const { list, index } = getActiveDrillInfo();
-    const currentItem = list[index];
-    const total = list.length;
-    const totalMasteredInThisTab = allDrills.filter(d => d.type === activeTab && masteredIds.includes(d.id)).length;
-
-    if (total === 0) {
-      if (currentUser && hideMasteredDrills && totalMasteredInThisTab > 0) {
-        return (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
-            <div className="flex items-center justify-center space-x-2 text-emerald-800 font-bold">
-              <GraduationCap className="w-5 h-5 text-emerald-600" />
-              <span>
-                {isEn 
-                  ? `Great job! You have marked all ${totalMasteredInThisTab} exercises in this type as "Mastered".` 
-                  : `Tuyệt vời! Bạn đã đánh dấu "Đã thuộc" toàn bộ ${totalMasteredInThisTab} bài tập trong dạng này.`}
-              </span>
-            </div>
-            <p className="text-xs text-emerald-700">
-              {isEn 
-                ? 'Mastered exercises are automatically hidden from the practice list. You can click the button below to review anytime.' 
-                : 'Các bài đã thuộc được tự động ẩn khỏi danh sách luyện tập. Bạn có thể bấm nút bên dưới để ôn tập lại bất kỳ lúc nào.'}
-            </p>
-            <button
-              type="button"
-              onClick={() => handleToggleHideMastered(false)}
-              className="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition cursor-pointer shadow-xs inline-flex items-center space-x-1.5"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Unhide all mastered exercises to review' : 'Hiện lại tất cả bài đã thuộc để ôn tập'}</span>
-            </button>
-          </div>
-        );
-      }
-      if (drillSearchQuery || drillQuickFilter !== 'all') {
-        return (
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-2 text-xs">
-            <p className="text-slate-600 font-semibold">
-              {isEn ? 'No exercises found matching the current filter.' : 'Không tìm thấy bài tập phù hợp với bộ lọc hiện tại.'}
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setDrillSearchQuery('');
-                setDrillQuickFilter('all');
-                setDrillSortBy('rating_desc');
-              }}
-              className="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-bold cursor-pointer hover:bg-slate-800 transition"
-            >
-              {isEn ? 'Reset Filters' : 'Đặt lại bộ lọc'}
-            </button>
-          </div>
-        );
-      }
-      return null;
-    }
-
-    return (
-      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2.5">
-        {/* ROW 1: Smart Filter Controls (Search, Quick Chips, Sort) */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          {/* Instant Search Input */}
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={drillSearchQuery}
-              onChange={(e) => {
-                setDrillSearchQuery(e.target.value);
-                const { setIndex, onReset } = getActiveDrillInfo();
-                setIndex(0);
-                onReset();
-              }}
-              placeholder={isEn ? "Search exercises, topics..." : "Tìm bài tập, chủ đề..."}
-              className="pl-8 pr-7 py-1 text-xs bg-white rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500/20 w-40 sm:w-52 font-medium text-slate-800 shadow-2xs placeholder:text-slate-400"
-            />
-            {drillSearchQuery && (
-              <button
-                type="button"
-                onClick={() => {
-                  setDrillSearchQuery('');
-                  const { setIndex, onReset } = getActiveDrillInfo();
-                  setIndex(0);
-                  onReset();
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                title={isEn ? "Clear search" : "Xóa tìm kiếm"}
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center flex-wrap gap-2">
-            {/* Quick Filter Chips */}
-            <div className="flex items-center space-x-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setDrillQuickFilter('all')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                  drillQuickFilter === 'all' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                {isEn ? 'All' : 'Tất cả'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setDrillQuickFilter('top_rated')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                  drillQuickFilter === 'top_rated' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-                title={isEn ? "Rated 4.8★ and above" : "Đánh giá từ 4.8★ trở lên"}
-              >
-                ⭐ 4.8★+
-              </button>
-              <button
-                type="button"
-                onClick={() => setDrillQuickFilter('trending')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                  drillQuickFilter === 'trending' ? 'bg-rose-500 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-                title={isEn ? "Most practiced" : "Nhiều lượt luyện tập nhất"}
-              >
-                🔥 Hot
-              </button>
-              <button
-                type="button"
-                onClick={() => setDrillQuickFilter('manual')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center space-x-1 ${
-                  drillQuickFilter === 'manual' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-                title={isEn ? "Show manually created exercises only" : "Chỉ hiển thị bài tập tạo thủ công"}
-              >
-                <PenTool className="w-2.5 h-2.5" />
-                <span>{isEn ? '✍️ Manual' : '✍️ Thủ công'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setDrillQuickFilter('ai')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer flex items-center space-x-1 ${
-                  drillQuickFilter === 'ai' ? 'bg-purple-600 text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-                title={isEn ? "Show AI-generated exercises only" : "Chỉ hiển thị bài tập do AI sinh"}
-              >
-                <Sparkles className="w-2.5 h-2.5 text-amber-300" />
-                <span>{isEn ? '🤖 AI Generated' : '🤖 AI sinh'}</span>
-              </button>
-            </div>
-
-            {/* Sort Select */}
-            <select
-              value={drillSortBy}
-              onChange={(e) => setDrillSortBy(e.target.value)}
-              className="px-2 py-1 text-[11px] font-bold bg-white text-slate-700 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs cursor-pointer"
-            >
-              <option value="rating_desc">{isEn ? '⭐ Highest Rated' : '⭐ Rating cao nhất'}</option>
-              <option value="attempts_desc">{isEn ? '🔥 Most Practiced' : '🔥 Luyện nhiều nhất'}</option>
-              <option value="difficulty_desc">{isEn ? '💎 Advanced' : '💎 Độ khó cao'}</option>
-              <option value="difficulty_asc">{isEn ? '🌱 Basic' : '🌱 Độ khó cơ bản'}</option>
-              <option value="title_asc">{isEn ? '🔤 Title A-Z' : '🔤 Tên A-Z'}</option>
-            </select>
-          </div>
-        </div>
-
-        {/* ROW 2: Navigation, Attempts, Star Rating & Mastered Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-200/70">
-          <div className="flex items-center flex-wrap gap-2">
-            <span className="font-bold text-slate-700 whitespace-nowrap">
-              {isEn ? 'Exercise:' : 'Bài tập:'} <span className="text-red-600 font-extrabold text-sm">{index + 1}</span> / {total}
-            </span>
-            {total > 1 && (
-              <div className="flex items-center space-x-1">
-                <button
-                  type="button"
-                  onClick={() => handleSelectDrill(index - 1)}
-                  disabled={index === 0}
-                  className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs cursor-pointer"
-                  title={isEn ? "Previous exercise" : "Bài trước"}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectDrill(index + 1)}
-                  disabled={index === total - 1}
-                  className="p-1 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-slate-700 transition-colors shadow-2xs cursor-pointer"
-                  title={isEn ? "Next exercise" : "Bài tiếp theo"}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Hide Mastered Checkbox */}
-            {currentUser && totalMasteredInThisTab > 0 && (
-              <label className="flex items-center space-x-1.5 text-xs text-slate-600 cursor-pointer bg-emerald-50/80 px-2 py-1 rounded-md border border-emerald-200 shadow-2xs">
-                <input
-                  type="checkbox"
-                  checked={hideMasteredDrills}
-                  onChange={(e) => handleToggleHideMastered(e.target.checked)}
-                  className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                />
-                <span className="font-semibold text-emerald-800 text-[11px]">
-                  {isEn ? `Hide mastered (${totalMasteredInThisTab})` : `Ẩn câu đã thuộc (${totalMasteredInThisTab})`}
-                </span>
-              </label>
-            )}
-          </div>
-
-          {/* Current Drill Star Rating, Publicity Badge & Mastered Action */}
-          {currentItem && (
-            <div className="flex items-center flex-wrap gap-1.5">
-              {/* Interactive 5-Star Rating & Real Attempts Count */}
-              <StarRatingWidget
-                itemId={currentItem.id}
-                size="xs"
-                showAttempts={true}
-              />
-
-              {/* Mastered Toggle Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (!currentUser) {
-                    alert(isEn 
-                      ? 'The "Mastered" feature hides mastered exercises from your practice list. Please sign in to save your progress!' 
-                      : 'Tính năng "Đã thuộc" giúp ẩn bài tập đã thuần thục khỏi danh sách luyện tập. Vui lòng đăng nhập để lưu tiến trình!');
-                    onOpenAuth?.();
-                    return;
-                  }
-                  onToggleMastered?.(currentItem.id);
-                }}
-                className={`px-2 py-0.5 rounded-full text-[11px] font-bold border flex items-center space-x-1 transition-all cursor-pointer shadow-2xs ${
-                  masteredIds.includes(currentItem.id)
-                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200'
-                    : 'bg-white text-slate-600 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200'
-                }`}
-                title={masteredIds.includes(currentItem.id)
-                  ? (isEn ? "This drill is mastered. Click to unmark (Review)" : "Bài này đã thuộc. Bấm để bỏ đánh dấu (Ôn tập lại)")
-                  : (isEn ? "Mark as 'Mastered' (Will be hidden if 'Hide mastered' is checked)" : "Đánh dấu 'Đã thuộc' (Sẽ ẩn khỏi danh sách luyện tập nếu bạn bật 'Ẩn câu đã thuộc')")}
-              >
-                <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
-                <span>{masteredIds.includes(currentItem.id) ? (isEn ? 'Mastered' : 'Đã thuộc') : (isEn ? 'Master Drill' : 'Thuộc bài')}</span>
-              </button>
-
-              {currentItem.isCommunity || currentItem.isPublic ? (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
-                  <Globe className="w-3 h-3 text-emerald-600" />
-                  <span>{isEn ? '🌐 Community' : '🌐 Cộng Đồng'}</span>
-                </span>
-              ) : (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-300 flex items-center gap-1 shadow-2xs">
-                  <Lock className="w-3 h-3 text-amber-600" />
-                  <span>{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
-                </span>
-              )}
-              {(currentItem.isManual || (currentItem.isCustom && !currentItem.isAiGenerated)) && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-bold border border-emerald-300 flex items-center gap-1 shadow-2xs">
-                  <PenTool className="w-3 h-3 text-emerald-700" />
-                  <span>{isEn ? '✍️ Manual' : '✍️ Thủ Công'}</span>
-                </span>
-              )}
-              {currentItem.isAiGenerated && (
-                <button
-                  type="button"
-                  onClick={() => handleToggleDrillPublic(currentItem.id)}
-                  className="text-[10px] px-2 py-0.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 transition-colors shadow-2xs cursor-pointer"
-                  title={currentItem.isPublic 
-                    ? (isEn ? 'Make this drill Private' : 'Chuyển bài tập này sang Riêng tư') 
-                    : (isEn ? 'Share this drill with the IELTS Community' : 'Chia sẻ bài tập này thành tài nguyên chung của web')}
-                >
-                  {currentItem.isPublic ? (isEn ? 'Make Private' : 'Khóa riêng') : (isEn ? 'Share Public' : 'Mở chia sẻ')}
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Quick Jump Dropdown / Pill Buttons */}
-          <div className="flex items-center space-x-2 overflow-x-auto max-w-full py-1">
-            {total > 12 ? (
-              <div className="flex items-center space-x-1.5">
-                <span className="text-slate-500 font-medium whitespace-nowrap">{isEn ? 'Jump to:' : 'Chuyển nhanh:'}</span>
-                <select
-                  value={index}
-                  onChange={(e) => handleSelectDrill(Number(e.target.value))}
-                  className="px-2.5 py-1 rounded-lg border border-slate-300 bg-white font-bold text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs"
-                >
-                  {list.map((d, i) => (
-                    <option key={d.id || i} value={i}>
-                      {isEn ? `Drill ${i + 1}: ` : `Bài ${i + 1}: `}{getLocalizedDrillTitle(d, isEn) || getLocalizedDrillCategory(d, isEn) || (isEn ? `Exercise ${i + 1}` : `Bài tập ${i + 1}`)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-1 overflow-x-auto py-0.5 max-w-md">
-                {list.map((d, i) => (
-                  <button
-                    key={d.id || i}
-                    onClick={() => handleSelectDrill(i)}
-                    className={`min-w-[28px] h-7 px-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                      index === i
-                        ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-500/20 scale-105'
-                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const renderPaginationBar = () => (
+    <MicroDrillPaginationBar
+      activeTab={activeTab}
+      activeDrillInfo={getActiveDrillInfo()}
+      allDrills={allDrills}
+      masteredIds={masteredIds}
+      onToggleMastered={onToggleMastered}
+      currentUser={currentUser}
+      onOpenAuth={onOpenAuth}
+      hideMasteredDrills={hideMasteredDrills}
+      handleToggleHideMastered={handleToggleHideMastered}
+      drillSearchQuery={drillSearchQuery}
+      setDrillSearchQuery={setDrillSearchQuery}
+      drillQuickFilter={drillQuickFilter}
+      setDrillQuickFilter={setDrillQuickFilter}
+      drillSortBy={drillSortBy}
+      setDrillSortBy={setDrillSortBy}
+      handleSelectDrill={handleSelectDrill}
+      handleToggleDrillPublic={handleToggleDrillPublic}
+      isEn={isEn}
+    />
+  );
 
   const handleEvaluateParaphrase = async () => {
     if (!apiKey) {
@@ -1676,86 +1523,171 @@ export default function MicroDrillsModal({
           </div>
         </div>
 
-        {/* Level 1: Room Selector Bar */}
-        <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar touch-pan-x shrink-0">
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:inline">
-              {isEn ? t('modals.microDrills.roomLabel', null, 'Practice Room:') : t('modals.microDrills.roomLabel', null, 'Phòng Luyện:')}
-            </span>
+        {/* Level 1: Practice Rooms Bar with Dynamic Closable Tabs & Dropbox */}
+        <div className="bg-slate-900/95 border-b border-slate-800 px-2 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2 shrink-0 select-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
+            {/* Left: Practice Room Dropbox Trigger & Dropdown Menu */}
+            <div ref={roomDropdownRef} className="relative shrink-0 z-40">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsRoomDropdownOpen(prev => !prev);
+                }}
+                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs select-none ${
+                  isRoomDropdownOpen
+                    ? 'bg-amber-500 text-white border-amber-400 ring-2 ring-amber-400/30'
+                    : 'bg-slate-800/90 hover:bg-slate-800 text-slate-200 hover:text-white border-slate-700'
+                }`}
+                title={isEn ? "Select practice room to open as tab" : "Chọn phòng luyện để mở thành tab"}
+                aria-expanded={isRoomDropdownOpen}
+              >
+                <Compass className={`w-3.5 h-3.5 ${isRoomDropdownOpen ? 'text-white' : 'text-amber-400'}`} />
+                <span className="font-bold">{isEn ? 'Rooms' : 'Phòng Luyện'}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  isRoomDropdownOpen ? 'bg-amber-600 text-white' : 'bg-slate-900 text-amber-300'
+                }`}>
+                  {openRooms.length}/5
+                </span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isRoomDropdownOpen ? 'rotate-180 text-white' : 'text-slate-400'}`} />
+              </button>
 
-            {/* Room 1: General */}
-            <button
-              onClick={() => handleRoomChange('general')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
-                activeRoom === 'general'
-                  ? 'bg-amber-500 text-white shadow-xs ring-2 ring-amber-400/30'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Compass className="w-3.5 h-3.5" />
-              <span>{isEn ? t('modals.microDrills.roomGeneral', null, 'General Studio') : t('modals.microDrills.roomGeneral', null, 'Phòng Chung')}</span>
-            </button>
+              {/* Room Dropbox Menu Floating Dropdown */}
+              {isRoomDropdownOpen && (
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute left-0 top-full mt-1.5 z-50 min-w-[280px] sm:min-w-[320px] max-w-[92vw] bg-slate-900 rounded-xl shadow-2xl border border-slate-700 p-2.5 text-xs text-slate-100 animate-in fade-in slide-in-from-top-1 duration-150"
+                >
+                  <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-800">
+                    <span className="font-bold text-slate-300 text-[11px] uppercase tracking-wider flex items-center gap-1">
+                      <span>{isEn ? 'Practice Studios' : 'Danh Sách Phòng Luyện'}</span>
+                    </span>
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenAllRooms();
+                        }}
+                        className="text-amber-400 hover:text-amber-300 hover:underline font-semibold cursor-pointer"
+                      >
+                        {isEn ? 'Open all' : 'Mở tất cả'}
+                      </button>
+                      {openRooms.length > 1 && (
+                        <>
+                          <span className="text-slate-600">|</span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCloseOtherRooms();
+                            }}
+                            className="text-slate-400 hover:text-rose-400 hover:underline cursor-pointer"
+                          >
+                            {isEn ? 'Only active' : 'Chỉ phòng này'}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-            {/* Room 2: Writing */}
-            <button
-              onClick={() => handleRoomChange('writing')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
-                activeRoom === 'writing'
-                  ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-500/30'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>{isEn ? t('modals.microDrills.roomWriting', null, 'Writing Drills') : t('modals.microDrills.roomWriting', null, 'Chuyên Writing')}</span>
-            </button>
+                  <div className="space-y-1">
+                    {roomCatalog.map(room => {
+                      const isOpen = openRooms.includes(room.id);
+                      const isActive = activeRoom === room.id;
+                      const IconComponent = room.icon;
 
-            {/* Room 3: Reading */}
-            <button
-              onClick={() => handleRoomChange('reading')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
-                activeRoom === 'reading'
-                  ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-500/30'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>{isEn ? t('modals.microDrills.roomReading', null, 'Reading Drills') : t('modals.microDrills.roomReading', null, 'Chuyên Reading')}</span>
-              <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black">
-                {isEn ? 'NEW' : 'MỚI'}
-              </span>
-            </button>
+                      return (
+                        <button
+                          key={room.id}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectRoomFromDropdown(room.id);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg cursor-pointer transition-colors text-left ${
+                            isActive
+                              ? 'bg-slate-800 text-white font-bold border border-amber-500/50'
+                              : isOpen
+                                ? 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 border border-transparent'
+                                : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 border border-transparent'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2 truncate pr-2">
+                            <IconComponent className={`w-3.5 h-3.5 shrink-0 ${room.badgeColor || 'text-slate-400'}`} />
+                            <span className="truncate">{isEn ? room.labelEn : room.labelVi}</span>
+                            {room.isNew && (
+                              <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black shrink-0">
+                                {isEn ? 'NEW' : 'MỚI'}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-1 shrink-0">
+                            {isOpen ? (
+                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                                isActive ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'
+                              }`}>
+                                <Check className="w-2.5 h-2.5 mr-0.5" />
+                                {isActive ? (isEn ? 'Active' : 'Đang luyện') : (isEn ? 'Open' : 'Đã mở')}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-amber-300 hover:bg-slate-700">
+                                <Plus className="w-2.5 h-2.5 mr-0.5" />
+                                {isEn ? 'Add' : 'Mở tab'}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
 
-            {/* Room 4: Listening */}
-            <button
-              onClick={() => handleRoomChange('listening')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
-                activeRoom === 'listening'
-                  ? 'bg-purple-600 text-white shadow-xs ring-2 ring-purple-500/30'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Headphones className="w-3.5 h-3.5" />
-              <span>{isEn ? t('modals.microDrills.roomListening', null, 'Listening Drills') : t('modals.microDrills.roomListening', null, 'Chuyên Listening')}</span>
-              <span className="px-1.5 py-0.2 rounded bg-purple-400 text-slate-900 text-[9px] font-black">
-                {isEn ? 'NEW' : 'MỚI'}
-              </span>
-            </button>
+            {/* Opened Practice Room Tabs Bar with ✕ button */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x py-0.5 flex-1 min-w-0">
+              {openRooms.map((roomId) => {
+                const roomItem = roomCatalog.find(r => r.id === roomId);
+                if (!roomItem) return null;
+                const isActive = activeRoom === roomId;
+                const RoomIcon = roomItem.icon;
 
-            {/* Room 5: Speaking */}
-            <button
-              onClick={() => handleRoomChange('speaking')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
-                activeRoom === 'speaking'
-                  ? 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-500/30'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Mic className="w-3.5 h-3.5" />
-              <span>{isEn ? t('modals.microDrills.roomSpeaking', null, 'Speaking Drills') : t('modals.microDrills.roomSpeaking', null, 'Chuyên Speaking')}</span>
-              <span className="px-1.5 py-0.2 rounded bg-emerald-400 text-slate-900 text-[9px] font-black">
-                {isEn ? 'NEW' : 'MỚI'}
-              </span>
-            </button>
+                return (
+                  <div
+                    key={roomId}
+                    onClick={() => handleRoomChange(roomId)}
+                    className={`group shrink-0 flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none ${
+                      isActive
+                        ? roomItem.activeClass
+                        : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-700/60'
+                    }`}
+                  >
+                    <RoomIcon className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate max-w-[130px] sm:max-w-none">
+                      {isEn ? roomItem.labelEn : roomItem.labelVi}
+                    </span>
+                    {roomItem.isNew && (
+                      <span className="px-1.5 py-0.2 rounded bg-amber-400 text-slate-900 text-[9px] font-black shrink-0">
+                        {isEn ? 'NEW' : 'MỚI'}
+                      </span>
+                    )}
+                    {/* Close Tab 'x' Button */}
+                    {openRooms.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={(e) => handleCloseRoomTab(roomId, e)}
+                        className="ml-1 p-0.5 rounded-full text-slate-400 hover:text-white hover:bg-black/30 transition-colors cursor-pointer"
+                        title={isEn ? "Close room tab" : "Tắt tab phòng này"}
+                        aria-label={`Close ${roomItem.labelEn || roomId}`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -1927,83 +1859,174 @@ export default function MicroDrillsModal({
             )}
           </div>
 
-          {/* AI Generator & Privacy Control Container */}
-            <div className="flex items-center space-x-1.5 shrink-0 mb-1.5">
-              {/* Privacy Sharing Toggle */}
-              <button
-                type="button"
-                onClick={() => {
-                  const next = !isAutoShare;
-                  setIsAutoShare(next);
-                  try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
-                }}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border transition-all cursor-pointer ${
-                  isAutoShare 
-                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
-                    : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
-                }`}
-                title={isAutoShare 
-                  ? (isEn ? 'Enabled: AI-generated drills will be shared with the community (Default). Click to make private.' : 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.') 
-                  : (isEn ? 'Disabled: AI-generated drills are stored locally. Click to share with the community.' : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.')}
-              >
-                {isAutoShare ? (
-                  <>
-                    <Globe className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="hidden sm:inline">{isEn ? '🌐 Community' : '🌐 Chia sẻ web'}</span>
-                    <span className="sm:hidden">{isEn ? '🌐 Shared' : '🌐 Web'}</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-3.5 h-3.5 text-amber-600" />
-                    <span className="hidden sm:inline">{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
-                    <span className="sm:hidden">{isEn ? '🔒 Private' : '🔒 Riêng'}</span>
-                  </>
-                )}
-              </button>
+          {/* Mobile Utilities Dropdown Button (< sm) */}
+          <div ref={mobileToolsDropdownRef} className="relative sm:hidden shrink-0 z-40">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMobileToolsOpen(prev => !prev);
+              }}
+              className={`p-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center justify-center min-w-[34px] min-h-[34px] ${
+                isMobileToolsOpen
+                  ? 'bg-amber-500 text-white border-amber-500 ring-2 ring-amber-200'
+                  : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'
+              }`}
+              title={isEn ? "Studio tools & actions" : "Tiện ích & Tác vụ"}
+              aria-expanded={isMobileToolsOpen}
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${isMobileToolsOpen ? 'text-white' : 'text-amber-500'}`} />
+            </button>
 
-              {/* Manual Cloud Sync Button */}
-              <button
-                type="button"
-                onClick={handleManualSync}
-                disabled={isSyncing}
-                className="px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition-all cursor-pointer shadow-2xs"
-                title={isEn ? "Click to instantly sync all questions from Cloud and across tabs" : "Bấm để đồng bộ tức thời tất cả câu hỏi từ Cloud & giữa các tab"}
+            {isMobileToolsOpen && (
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-0 top-full mt-1.5 z-50 min-w-[240px] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2 space-y-1 text-xs text-slate-800 animate-in fade-in zoom-in-95"
               >
-                <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSyncing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">{isSyncing ? (isEn ? 'Syncing...' : 'Đang đồng bộ...') : (isEn ? 'Sync' : 'Đồng bộ')}</span>
-              </button>
+                <div className="px-1.5 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
+                  {isEn ? 'Studio Actions' : 'Tác Vụ Phòng Luyện'}
+                </div>
 
-              {/* Manual Drill Creator Button */}
-              <button
-                type="button"
-                onClick={() => setIsManualDrillModalOpen(true)}
-                className="px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 transition-all active:scale-95 cursor-pointer"
-                title={isEn ? "Manually create a new practice drill for this exercise type" : "Tự tay tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
-              >
-                <PenTool className="w-3 h-3" />
-                <span>{isEn ? '✍️ Create Drill' : '✍️ Tạo Bài Thủ Công'}</span>
-              </button>
+                {/* 1. Community Sharing Toggle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = !isAutoShare;
+                    setIsAutoShare(next);
+                    try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
+                  }}
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors text-left cursor-pointer"
+                >
+                  <div className="flex items-center space-x-2">
+                    {isAutoShare ? <Globe className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4 text-amber-600" />}
+                    <span className="font-semibold">{isEn ? 'Community Sharing' : 'Chia sẻ cộng đồng'}</span>
+                  </div>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isAutoShare ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+                    {isAutoShare ? (isEn ? 'ON' : 'BẬT') : (isEn ? 'OFF' : 'TẮT')}
+                  </span>
+                </button>
 
-              {/* AI Generator Button */}
-              <button
-                onClick={handleGenerateDrill}
-                disabled={isGeneratingDrill}
-                className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
-                title={isEn ? "Ask AI to generate a new practice drill for this exercise type" : "Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
-              >
-                {isGeneratingDrill ? (
-                  <>
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    <span>{isEn ? 'Generating...' : 'Đang tạo...'}</span>
-                  </>
-                ) : (
-                  <>
-                    <PlusCircle className="w-3 h-3" />
-                    <span>{isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới'}</span>
-                  </>
-                )}
-              </button>
-            </div>
+                {/* 2. Manual Cloud Sync Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleManualSync();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  disabled={isSyncing}
+                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-50 transition-colors text-left cursor-pointer font-semibold text-slate-700"
+                >
+                  <RefreshCw className={`w-4 h-4 text-blue-600 ${isSyncing ? 'animate-spin' : ''}`} />
+                  <span>{isSyncing ? (isEn ? 'Syncing...' : 'Đang đồng bộ...') : (isEn ? 'Sync Cloud Data' : 'Đồng bộ dữ liệu Cloud')}</span>
+                </button>
+
+                {/* 3. Manual Drill Creator */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsManualDrillModalOpen(true);
+                    setIsMobileToolsOpen(false);
+                  }}
+                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-emerald-50 text-emerald-800 transition-colors text-left cursor-pointer font-semibold"
+                >
+                  <PenTool className="w-4 h-4 text-emerald-600" />
+                  <span>{isEn ? 'Create Drill (Manual)' : 'Tạo bài tập thủ công'}</span>
+                </button>
+
+                {/* 4. AI Generator */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleGenerateDrill();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  disabled={isGeneratingDrill}
+                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-amber-50 text-amber-900 transition-colors text-left cursor-pointer font-semibold"
+                >
+                  <PlusCircle className="w-4 h-4 text-amber-600" />
+                  <span>{isGeneratingDrill ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới')}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop AI Generator & Privacy Control Container (sm:flex) */}
+          <div className="hidden sm:flex items-center space-x-1.5 shrink-0 mb-1.5">
+            {/* Privacy Sharing Toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = !isAutoShare;
+                setIsAutoShare(next);
+                try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
+              }}
+              className={`px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border transition-all cursor-pointer ${
+                isAutoShare 
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
+                  : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+              }`}
+              title={isAutoShare 
+                ? (isEn ? 'Enabled: AI-generated drills will be shared with the community (Default). Click to make private.' : 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.') 
+                : (isEn ? 'Disabled: AI-generated drills are stored locally. Click to share with the community.' : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.')}
+            >
+              {isAutoShare ? (
+                <>
+                  <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="hidden sm:inline">{isEn ? '🌐 Community' : '🌐 Chia sẻ web'}</span>
+                  <span className="sm:hidden">{isEn ? '🌐 Shared' : '🌐 Web'}</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="hidden sm:inline">{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
+                  <span className="sm:hidden">{isEn ? '🔒 Private' : '🔒 Riêng'}</span>
+                </>
+              )}
+            </button>
+
+            {/* Manual Cloud Sync Button */}
+            <button
+              type="button"
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className="px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition-all cursor-pointer shadow-2xs"
+              title={isEn ? "Click to instantly sync all questions from Cloud and across tabs" : "Bấm để đồng bộ tức thời tất cả câu hỏi từ Cloud & giữa các tab"}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isSyncing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">{isSyncing ? (isEn ? 'Syncing...' : 'Đang đồng bộ...') : (isEn ? 'Sync' : 'Đồng bộ')}</span>
+            </button>
+
+            {/* Manual Drill Creator Button */}
+            <button
+              type="button"
+              onClick={() => setIsManualDrillModalOpen(true)}
+              className="px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 transition-all active:scale-95 cursor-pointer"
+              title={isEn ? "Manually create a new practice drill for this exercise type" : "Tự tay tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
+            >
+              <PenTool className="w-3 h-3" />
+              <span>{isEn ? '✍️ Create Drill' : '✍️ Tạo Bài Thủ Công'}</span>
+            </button>
+
+            {/* AI Generator Button */}
+            <button
+              onClick={handleGenerateDrill}
+              disabled={isGeneratingDrill}
+              className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
+              title={isEn ? "Ask AI to generate a new practice drill for this exercise type" : "Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
+            >
+              {isGeneratingDrill ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span>{isEn ? 'Generating...' : 'Đang tạo...'}</span>
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="w-3 h-3" />
+                  <span>{isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới'}</span>
+                </>
+              )}
+            </button>
+          </div>
           </div>
 
         {drillGenMessage && (
