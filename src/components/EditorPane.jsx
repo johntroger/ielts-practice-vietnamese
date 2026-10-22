@@ -295,10 +295,9 @@ export default function EditorPane({
           </div>
 
           {/* Minimal Mode vs Pro Studio Mode auxiliary indicators */}
-          {writingViewMode === 'minimal' ? (
-            /* Popover gọn gom nhóm các công cụ phân tích để giảm tải nhận thức */
-            <div className="relative shrink-0" ref={metricsMenuRef}>
-              <button
+          {/* On mobile (< md), ALWAYS use the clean Metrics Menu popover to prevent row crowding. On desktop, only show popover if writingViewMode === 'minimal'. */}
+          <div className={`${writingViewMode === 'minimal' ? 'relative shrink-0' : 'md:hidden relative shrink-0'}`} ref={metricsMenuRef}>
+            <button
                 type="button"
                 onClick={() => setIsMetricsMenuOpen(!isMetricsMenuOpen)}
                 className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
@@ -459,9 +458,10 @@ export default function EditorPane({
                 </div>
               )}
             </div>
-          ) : (
-            /* Advanced Auxiliary Metrics (Pro Mode): Auto-dim during active typing to reduce visual distraction */
-            <div className={`flex items-center space-x-1 sm:space-x-1.5 transition-opacity duration-300 ${
+
+          {writingViewMode === 'pro' && (
+            /* Advanced Auxiliary Metrics (Pro Mode): Auto-dim during active typing. Hidden on phone (< md) to avoid crowding. */
+            <div className={`hidden md:flex items-center space-x-1 sm:space-x-1.5 transition-opacity duration-300 ${
               isActivelyTyping && !isToolbarHovered ? 'opacity-35 hover:opacity-100' : 'opacity-100'
             }`}>
               {/* Lexical Diversity (TTR) */}

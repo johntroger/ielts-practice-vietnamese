@@ -359,11 +359,12 @@ export default function PromptPane({
               <button
                 type="button"
                 onClick={onOpenLibrary}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold text-xs border border-slate-200 shadow-2xs transition-all cursor-pointer hover:border-slate-300 active:scale-95 whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold text-xs border border-slate-200 shadow-2xs transition-all cursor-pointer hover:border-slate-300 active:scale-95 whitespace-nowrap shrink-0"
                 title={isEn ? "Open task library to filter, view top-rated tasks & switch prompts" : "Mở Thư Viện Đề để Lọc thông minh, xem Đề Rating cao & Đổi đề thi khác"}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                <span>{isEn ? "Task Bank & Filters" : "Kho Đề & Bộ Lọc"}</span>
+                <span className="hidden sm:inline">{isEn ? "Task Bank & Filters" : "Kho Đề & Bộ Lọc"}</span>
+                <span className="sm:hidden">{isEn ? "Bank" : "Kho Đề"}</span>
               </button>
             )}
           </div>
