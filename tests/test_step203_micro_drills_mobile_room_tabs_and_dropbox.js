@@ -63,6 +63,17 @@ assert.ok(modalSrc.includes("handleCloseTab(tabId)"), 'Drill tabs close button c
 passedTests++;
 console.log('  ✓ Level 2 mobile decluttering and desktop responsiveness verified\n');
 
+// Test 6: Verify Top Header Mobile Responsiveness & Close Button Visibility
+console.log('Test 6: Top header mobile layout and unclipped close button...');
+assert.ok(modalSrc.includes("p-0 sm:p-2 lg:p-3"), 'Outer backdrop must use p-0 on mobile to maximize viewport');
+assert.ok(modalSrc.includes("rounded-none sm:rounded-2xl lg:rounded-3xl"), 'Modal container must use rounded-none on mobile to prevent corner clipping');
+assert.ok(modalSrc.includes("h-full sm:h-[96dvh]"), 'Modal container must use h-full on mobile for native viewport fit');
+assert.ok(modalSrc.includes("min-w-0 flex-1"), 'Left title container must have min-w-0 flex-1 to prevent pushing close button off-screen');
+assert.ok(modalSrc.includes("min-w-[44px] min-h-[44px]"), 'Close button must have minimum 44px touch target on mobile');
+assert.ok(modalSrc.includes("hidden sm:flex p-2 min-w-[38px]"), 'Share & Maximize buttons must be hidden on mobile screen to prevent header overflow');
+passedTests++;
+console.log('  ✓ Top header mobile responsiveness and close button visibility verified\n');
+
 console.log(`===============================================================`);
-console.log(`🎉 ALL ${passedTests}/5 TESTS PASSED CLEANLY FOR STEP 203!`);
+console.log(`🎉 ALL ${passedTests}/6 TESTS PASSED CLEANLY FOR STEP 203!`);
 console.log(`===============================================================`);

@@ -1445,34 +1445,35 @@ export default function MicroDrillsModal({
     <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden transition-all duration-200 ${
       isExpanded 
         ? 'p-0 bg-slate-950' 
-        : 'p-1 sm:p-2 lg:p-3 bg-slate-900/60 backdrop-blur-xs'
+        : 'p-0 sm:p-2 lg:p-3 bg-slate-900/60 backdrop-blur-xs'
     }`}>
       <div className={`bg-white shadow-2xl overflow-hidden overscroll-contain flex flex-col transition-all duration-200 ${
         isExpanded 
           ? 'w-screen h-screen max-w-none max-h-none rounded-none' 
-          : 'rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh]'
+          : 'rounded-none sm:rounded-2xl lg:rounded-3xl w-full max-w-[100vw] sm:max-w-[98vw] 2xl:max-w-[1600px] h-full sm:h-[96dvh] max-h-full sm:max-h-[96dvh]'
       }`}>
         
         {/* Top Header */}
-        <div className="bg-slate-900 text-white p-3.5 sm:p-5 flex items-center justify-between border-b border-slate-800 shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 text-white shadow-xs">
-              <Puzzle className="w-5 h-5 sm:w-6 sm:h-6" />
+        <div className="bg-slate-900 text-white px-3 sm:px-5 py-2.5 sm:py-3.5 flex items-center justify-between border-b border-slate-800 shrink-0 gap-2">
+          {/* Left: Icon, Title & Badge */}
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+            <div className="p-1.5 sm:p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 to-red-600 text-white shadow-xs shrink-0">
+              <Puzzle className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-xl font-bold truncate">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center space-x-1.5 min-w-0">
+                <h2 className="text-sm sm:text-base md:text-xl font-bold truncate">
                   {isEn 
                     ? t('modals.microDrills.title', null, 'Targeted Reflex Studio (Micro-Drills)') 
                     : t('modals.microDrills.title', null, 'Phòng Luyện Bổ Trợ (Micro-Drills)')}
                 </h2>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide shrink-0">
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-extrabold uppercase tracking-wide shrink-0">
                   {isEn 
                     ? t('modals.microDrills.multiSkillBadge', null, 'Multi-Skill') 
                     : t('modals.microDrills.multiSkillBadge', null, 'Đa Kỹ Năng')}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 hidden sm:block truncate">
+              <p className="text-xs text-slate-400 mt-0.5 hidden md:block truncate">
                 {isEn 
                   ? t('modals.microDrills.subtitle', null, 'Sharpen language reflexes and conquer classic trap patterns before test day') 
                   : t('modals.microDrills.subtitle', null, 'Rèn luyện phản xạ ngôn ngữ, phá các bẫy tư duy kinh điển trước khi bước vào phòng thi thật')}
@@ -1480,12 +1481,13 @@ export default function MicroDrillsModal({
             </div>
           </div>
 
-          <div className="flex items-center space-x-1.5 shrink-0">
-            {/* Copy Shareable Direct URL Button */}
+          {/* Right: Actions & Close Button */}
+          <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            {/* Copy Shareable Direct URL Button (Tablet/Desktop) */}
             <button
               type="button"
               onClick={handleCopyShareUrl}
-              className={`p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl transition-all cursor-pointer ${
+              className={`hidden sm:flex p-2 min-w-[38px] min-h-[38px] items-center justify-center rounded-xl transition-all cursor-pointer ${
                 isCopiedUrl 
                   ? 'bg-emerald-600 text-white shadow-xs' 
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
@@ -1495,14 +1497,14 @@ export default function MicroDrillsModal({
                 : (isEn ? "Copy direct URL to this drill room (/micro-drills)" : "Sao chép link trực tiếp phòng luyện (/micro-drills)")}
               aria-label={isEn ? "Copy Direct URL" : "Sao chép liên kết trực tiếp"}
             >
-              {isCopiedUrl ? <Check className="w-5 h-5 text-white" /> : <Share2 className="w-5 h-5" />}
+              {isCopiedUrl ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" /> : <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
-            {/* Fullscreen / Expanded Workspace Toggle */}
+            {/* Fullscreen / Expanded Workspace Toggle (Tablet/Desktop) */}
             <button 
               type="button"
               onClick={toggleExpanded} 
-              className={`p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl transition-all cursor-pointer ${
+              className={`hidden sm:flex p-2 min-w-[38px] min-h-[38px] items-center justify-center rounded-xl transition-all cursor-pointer ${
                 isExpanded
                   ? 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 shadow-xs'
                   : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
@@ -1510,15 +1512,17 @@ export default function MicroDrillsModal({
               title={isExpanded ? (isEn ? "Collapse drill workspace (Alt + Z)" : "Thu gọn giao diện phòng luyện (Alt + Z)") : (isEn ? "Expand full workspace (Alt + Z)" : "Mở rộng toàn màn hình phòng luyện (Alt + Z)")}
               aria-label={isExpanded ? "Collapse" : "Expand"}
             >
-              {isExpanded ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+              {isExpanded ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
 
+            {/* Close Button - ALWAYS visible with minimum 44px touch target on mobile */}
             <button 
               onClick={onClose} 
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
-              aria-label="Close"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+              aria-label={isEn ? "Close" : "Đóng"}
+              title={isEn ? "Close (Esc)" : "Đóng (Esc)"}
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
@@ -1945,6 +1949,19 @@ export default function MicroDrillsModal({
                 >
                   <PlusCircle className="w-4 h-4 text-amber-600" />
                   <span>{isGeneratingDrill ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới')}</span>
+                </button>
+
+                {/* 5. Copy Direct Room URL */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCopyShareUrl();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-50 text-slate-700 transition-colors text-left cursor-pointer font-semibold border-t border-slate-100 pt-2"
+                >
+                  <Share2 className="w-4 h-4 text-slate-500" />
+                  <span>{isCopiedUrl ? (isEn ? 'URL Copied!' : 'Đã sao chép!') : (isEn ? 'Copy Direct Link' : 'Sao chép liên kết')}</span>
                 </button>
               </div>
             )}
