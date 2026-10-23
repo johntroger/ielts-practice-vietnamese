@@ -342,6 +342,8 @@ export default function VocabGrammarSpellingModal({
   // ----------------------------------------------------
   // DYNAMIC TABS & DROPBOX PICKER ARCHITECTURE
   // ----------------------------------------------------
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
   const vgTabsCatalog = [
     {
       id: 'spelling',
@@ -1127,22 +1129,24 @@ export default function VocabGrammarSpellingModal({
               <span className="hidden sm:inline">{isSyncing ? (isEn ? 'Syncing...' : 'Đang sync...') : (isEn ? 'Cloud Sync' : 'Đồng bộ')}</span>
             </button>
 
-            {/* AI Generator Button */}
-            <button
-              onClick={handleGenerateAiItem}
-              disabled={isAiGenerating}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-              title={isEn ? "Generate authentic targeted practice with AI for selected band" : "Nhờ AI tạo thêm bài tập thực chiến theo dải điểm đã chọn"}
-            >
-              {isAiGenerating ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Sparkles className="w-3.5 h-3.5" />
-              )}
-              <span className="hidden sm:inline">
-                {isAiGenerating ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Sinh Bài Luyện')}
-              </span>
-            </button>
+            {/* AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={handleGenerateAiItem}
+                disabled={isAiGenerating}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                title={isEn ? "Generate authentic targeted practice with AI for selected band" : "Nhờ AI tạo thêm bài tập thực chiến theo dải điểm đã chọn"}
+              >
+                {isAiGenerating ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="w-3.5 h-3.5" />
+                )}
+                <span className="hidden sm:inline">
+                  {isAiGenerating ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Sinh Bài Luyện')}
+                </span>
+              </button>
+            )}
 
             {/* Fullscreen / Expanded Workspace Toggle */}
             <button

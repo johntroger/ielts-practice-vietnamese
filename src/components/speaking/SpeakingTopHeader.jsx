@@ -26,6 +26,9 @@ export default function SpeakingTopHeader({
 }) {
   const mobileToolsRef = useRef(null);
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (mobileToolsRef.current && !mobileToolsRef.current.contains(e.target)) {
@@ -94,21 +97,23 @@ export default function SpeakingTopHeader({
       {/* Right / Row 2 on Mobile: Examiner Profile Picker & Quick Tools */}
       {/* DESKTOP LAYOUT (>= md) */}
       <div className="hidden md:flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-        {/* AI Generator Quick Button */}
-        <button
-          onClick={() => {
-            if (activeMode === 'practice') {
-              onOpenPracticeTopicModal();
-            } else {
-              onOpenGenerator();
-            }
-          }}
-          className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer shrink-0"
-          title={activeMode === 'practice' ? (isEn ? "Generate speaking practice topics with AI" : "Dùng AI để sinh chủ đề luyện tập mới") : (isEn ? "Generate new speaking mock test with AI" : "Dùng AI để tạo bộ đề thi Speaking mới")}
-        >
-          <Sparkles className="w-3.5 h-3.5 shrink-0" />
-          <span>{activeMode === 'practice' ? (isEn ? 'AI Topics' : 'Sinh Chủ Đề (AI)') : (isEn ? 'AI Test' : 'Sinh Đề (AI)')}</span>
-        </button>
+        {/* AI Generator Quick Button (Tạm thời ẩn theo yêu cầu) */}
+        {SHOW_AI_GENERATOR_BUTTONS && (
+          <button
+            onClick={() => {
+              if (activeMode === 'practice') {
+                onOpenPracticeTopicModal();
+              } else {
+                onOpenGenerator();
+              }
+            }}
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-sm shadow-purple-900/40 cursor-pointer shrink-0"
+            title={activeMode === 'practice' ? (isEn ? "Generate speaking practice topics with AI" : "Dùng AI để sinh chủ đề luyện tập mới") : (isEn ? "Generate new speaking mock test with AI" : "Dùng AI để tạo bộ đề thi Speaking mới")}
+          >
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span>{activeMode === 'practice' ? (isEn ? 'AI Topics' : 'Sinh Chủ Đề (AI)') : (isEn ? 'AI Test' : 'Sinh Đề (AI)')}</span>
+          </button>
+        )}
 
         {/* Soundcheck Quick Button */}
         <button
@@ -201,21 +206,23 @@ export default function SpeakingTopHeader({
 
       {/* MOBILE CONSOLIDATED CONTROLS (< md) */}
       <div className="flex md:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-0.5">
-        {/* Left: AI Generator Button */}
-        <button
-          onClick={() => {
-            if (activeMode === 'practice') {
-              onOpenPracticeTopicModal();
-            } else {
-              onOpenGenerator();
-            }
-          }}
-          className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-bold shadow-sm cursor-pointer shrink-0"
-          title={activeMode === 'practice' ? (isEn ? "Generate speaking practice topics with AI" : "Dùng AI để sinh chủ đề luyện tập mới") : (isEn ? "Generate new speaking mock test with AI" : "Dùng AI để tạo bộ đề thi Speaking mới")}
-        >
-          <Sparkles className="w-3.5 h-3.5 shrink-0" />
-          <span>{activeMode === 'practice' ? (isEn ? 'AI Topics' : 'Sinh Đề AI') : (isEn ? 'AI Test' : 'Sinh Đề AI')}</span>
-        </button>
+        {/* Left: AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+        {SHOW_AI_GENERATOR_BUTTONS && (
+          <button
+            onClick={() => {
+              if (activeMode === 'practice') {
+                onOpenPracticeTopicModal();
+              } else {
+                onOpenGenerator();
+              }
+            }}
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-bold shadow-sm cursor-pointer shrink-0"
+            title={activeMode === 'practice' ? (isEn ? "Generate speaking practice topics with AI" : "Dùng AI để sinh chủ đề luyện tập mới") : (isEn ? "Generate new speaking mock test with AI" : "Dùng AI để tạo bộ đề thi Speaking mới")}
+          >
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span>{activeMode === 'practice' ? (isEn ? 'AI Topics' : 'Sinh Đề AI') : (isEn ? 'AI Test' : 'Sinh Đề AI')}</span>
+          </button>
+        )}
 
         {/* Middle: Examiner Picker */}
         <div className="relative flex items-center bg-slate-800/80 border border-slate-700/60 rounded-xl px-2 py-1 text-[11px] shrink-0 max-w-[150px]">

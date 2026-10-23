@@ -45,6 +45,9 @@ export default function SpeakingPart3Room({
 }) {
   const { language } = useTranslation();
   const isEn = language === 'en';
+
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
   const displayedSets = React.useMemo(() => {
     return hideMastered ? part3Sets.filter(s => !masteredIds.includes(s.linkedPart2Id || s.id)) : part3Sets;
   }, [part3Sets, hideMastered, masteredIds]);
@@ -137,27 +140,31 @@ export default function SpeakingPart3Room({
               <span>{isEn ? 'Part 3 PEEL Guide' : 'Cẩm Nang PEEL Part 3'}</span>
             </button>
 
-            {/* ADD PART 3 TOPIC BUTTON */}
-            <button
-              onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
-              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
-              title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-              <span>{isEn ? '+ Generate Discussion Set (AI)' : '+ Sinh Bộ Thảo Luận Bằng AI'}</span>
-            </button>
+            {/* ADD PART 3 TOPIC BUTTON (AI / MANUAL - Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
+                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
+                title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+                <span>{isEn ? '+ Generate Discussion Set (AI)' : '+ Sinh Bộ Thảo Luận Bằng AI'}</span>
+              </button>
+            )}
           </div>
 
           {/* MOBILE (< sm) */}
           <div className="flex sm:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-1">
-            <button
-              onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
-              className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
-              title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-              <span>{isEn ? '+ AI Discussion' : '+ Thảo Luận AI'}</span>
-            </button>
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={() => onOpenTopicModal && onOpenTopicModal(3)}
+                className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
+                title={isEn ? 'Generate new Part 3 discussion set with AI' : 'Thêm bộ câu hỏi thảo luận Part 3 mới bằng AI'}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+                <span>{isEn ? '+ AI Discussion' : '+ Thảo Luận AI'}</span>
+              </button>
+            )}
 
             <button
               type="button"

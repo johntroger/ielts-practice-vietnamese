@@ -113,6 +113,9 @@ export default function Navbar({
     }
   });
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   const [isSkillMenuOpen, setIsSkillMenuOpen] = useState(false);
   const [isPracticeMenuOpen, setIsPracticeMenuOpen] = useState(false);
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
@@ -452,8 +455,8 @@ export default function Navbar({
               <span>{isEn ? 'Mock Test' : 'Thi Thử'}</span>
             </button>
 
-            {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px) */}
-            {activeSkill === 'writing' && (
+            {/* Sinh Đề Bằng AI (Hiển thị khi activeSkill === 'writing' trên màn hình siêu rộng >= 1720px - Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && activeSkill === 'writing' && (
               <button
                 onClick={doOpenGenerator}
                 className="hidden min-[1720px]:flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-red-200 bg-red-50/90 hover:bg-red-100 text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0 group"
@@ -580,18 +583,20 @@ export default function Navbar({
                         <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Writing, Reading, Listening Cambridge tests' : 'Đề Writing, Reading, Listening chuẩn Cambridge'}</div>
                       </div>
                     </button>
-                    <button
-                      onClick={() => { doOpenGenerator(); setIsPracticeMenuOpen(false); }}
-                      className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
-                    >
-                      <div className="p-1.5 rounded-lg bg-red-100 text-red-700 shrink-0">
-                        <Sparkles className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="font-bold truncate whitespace-nowrap">{isEn ? 'AI Prompt Generator' : 'Sinh Đề Mới Bằng AI'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Create new prompts following real exam trends' : 'Tạo đề thi mới bám sát xu hướng đề thật'}</div>
-                      </div>
-                    </button>
+                    {SHOW_AI_GENERATOR_BUTTONS && (
+                      <button
+                        onClick={() => { doOpenGenerator(); setIsPracticeMenuOpen(false); }}
+                        className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+                      >
+                        <div className="p-1.5 rounded-lg bg-red-100 text-red-700 shrink-0">
+                          <Sparkles className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-bold truncate whitespace-nowrap">{isEn ? 'AI Prompt Generator' : 'Sinh Đề Mới Bằng AI'}</div>
+                          <div className="text-[10px] text-slate-400 font-normal truncate whitespace-nowrap">{isEn ? 'Create new prompts following real exam trends' : 'Tạo đề thi mới bám sát xu hướng đề thật'}</div>
+                        </div>
+                      </button>
+                    )}
                     <button
                       onClick={() => { doOpenDrills(); setIsPracticeMenuOpen(false); }}
                       className="w-full flex items-center space-x-2.5 p-2 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
@@ -1177,17 +1182,19 @@ export default function Navbar({
                     </div>
                   </button>
 
-                  {/* AI Prompt Generator */}
-                  <button
-                    onClick={() => { doOpenGenerator(); setIsMobileDrawerOpen(false); }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-2.5 min-w-0">
-                      <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
-                      <span className="truncate whitespace-nowrap">{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
-                    </div>
-                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded shrink-0">AI</span>
-                  </button>
+                  {/* AI Prompt Generator (Tạm thời ẩn theo yêu cầu) */}
+                  {SHOW_AI_GENERATOR_BUTTONS && (
+                    <button
+                      onClick={() => { doOpenGenerator(); setIsMobileDrawerOpen(false); }}
+                      className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 text-left text-xs font-semibold text-slate-700 border border-slate-100 min-h-[44px] cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2.5 min-w-0">
+                        <Sparkles className="w-4 h-4 text-red-600 shrink-0" />
+                        <span className="truncate whitespace-nowrap">{isEn ? 'Generate New Prompts with AI' : 'Sinh Đề Thi Mới Bằng AI'}</span>
+                      </div>
+                      <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded shrink-0">AI</span>
+                    </button>
+                  )}
                 </div>
               )}
 

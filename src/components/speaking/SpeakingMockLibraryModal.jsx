@@ -27,6 +27,9 @@ export default function SpeakingMockLibraryModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [hideMastered, setHideMastered] = useState(false);
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   // Filter and search logic
   const displayedPacks = useMemo(() => {
     return allMockPacks.filter(pack => {
@@ -104,7 +107,8 @@ export default function SpeakingMockLibraryModal({
               </button>
             )}
 
-            {onOpenAiGenerate && (
+            {/* AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && onOpenAiGenerate && (
               <button
                 type="button"
                 onClick={() => {

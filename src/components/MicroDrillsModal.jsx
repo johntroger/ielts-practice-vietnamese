@@ -1088,6 +1088,8 @@ export default function MicroDrillsModal({
   // ----------------------------------------------------
   // DYNAMIC TABS & DROPBOX PICKER ARCHITECTURE
   // ----------------------------------------------------
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
   const roomTabsCatalog = {
     general: [
       { id: 'collocation', icon: Layers, badgeColor: 'text-indigo-600', labelEn: `C1-C2 Collocations (${collocDrills.length})`, labelVi: `Collocations C1-C2 (${collocDrills.length})` },
@@ -1937,19 +1939,21 @@ export default function MicroDrillsModal({
                   <span>{isEn ? 'Create Drill (Manual)' : 'Tạo bài tập thủ công'}</span>
                 </button>
 
-                {/* 4. AI Generator */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleGenerateDrill();
-                    setIsMobileToolsOpen(false);
-                  }}
-                  disabled={isGeneratingDrill}
-                  className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-amber-50 text-amber-900 transition-colors text-left cursor-pointer font-semibold"
-                >
-                  <PlusCircle className="w-4 h-4 text-amber-600" />
-                  <span>{isGeneratingDrill ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới')}</span>
-                </button>
+                {/* 4. AI Generator (Tạm thời ẩn theo yêu cầu) */}
+                {SHOW_AI_GENERATOR_BUTTONS && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleGenerateDrill();
+                      setIsMobileToolsOpen(false);
+                    }}
+                    disabled={isGeneratingDrill}
+                    className="w-full flex items-center space-x-2 p-2 rounded-lg hover:bg-amber-50 text-amber-900 transition-colors text-left cursor-pointer font-semibold"
+                  >
+                    <PlusCircle className="w-4 h-4 text-amber-600" />
+                    <span>{isGeneratingDrill ? (isEn ? 'Generating...' : 'Đang tạo...') : (isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới')}</span>
+                  </button>
+                )}
 
                 {/* 5. Copy Direct Room URL */}
                 <button
@@ -1969,37 +1973,39 @@ export default function MicroDrillsModal({
 
           {/* Desktop AI Generator & Privacy Control Container (sm:flex) */}
           <div className="hidden sm:flex items-center space-x-1.5 shrink-0 mb-1.5">
-            {/* Privacy Sharing Toggle */}
-            <button
-              type="button"
-              onClick={() => {
-                const next = !isAutoShare;
-                setIsAutoShare(next);
-                try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
-              }}
-              className={`px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border transition-all cursor-pointer ${
-                isAutoShare 
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
-                  : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
-              }`}
-              title={isAutoShare 
-                ? (isEn ? 'Enabled: AI-generated drills will be shared with the community (Default). Click to make private.' : 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.') 
-                : (isEn ? 'Disabled: AI-generated drills are stored locally. Click to share with the community.' : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.')}
-            >
-              {isAutoShare ? (
-                <>
-                  <Globe className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="hidden sm:inline">{isEn ? '🌐 Community' : '🌐 Chia sẻ web'}</span>
-                  <span className="sm:hidden">{isEn ? '🌐 Shared' : '🌐 Web'}</span>
-                </>
-              ) : (
-                <>
-                  <Lock className="w-3.5 h-3.5 text-amber-600" />
-                  <span className="hidden sm:inline">{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
-                  <span className="sm:hidden">{isEn ? '🔒 Private' : '🔒 Riêng'}</span>
-                </>
-              )}
-            </button>
+            {/* Privacy Sharing Toggle (Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !isAutoShare;
+                  setIsAutoShare(next);
+                  try { localStorage.setItem('ielts_auto_share_ai_content', JSON.stringify(next)); } catch (e) {}
+                }}
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold flex items-center space-x-1 border transition-all cursor-pointer ${
+                  isAutoShare 
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' 
+                    : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+                }`}
+                title={isAutoShare 
+                  ? (isEn ? 'Enabled: AI-generated drills will be shared with the community (Default). Click to make private.' : 'Đang bật: Bài tập AI sinh ra sẽ được cập nhật vào tài nguyên chung của web (Mặc định). Bấm để chuyển sang Riêng tư.') 
+                  : (isEn ? 'Disabled: AI-generated drills are stored locally. Click to share with the community.' : 'Đang tắt: Bài tập AI sinh ra chỉ lưu riêng cho bạn trên máy này. Bấm để bật chia sẻ tài nguyên chung của web.')}
+              >
+                {isAutoShare ? (
+                  <>
+                    <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="hidden sm:inline">{isEn ? '🌐 Community' : '🌐 Chia sẻ web'}</span>
+                    <span className="sm:hidden">{isEn ? '🌐 Shared' : '🌐 Web'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="hidden sm:inline">{isEn ? '🔒 Private' : '🔒 Riêng tư'}</span>
+                    <span className="sm:hidden">{isEn ? '🔒 Private' : '🔒 Riêng'}</span>
+                  </>
+                )}
+              </button>
+            )}
 
             {/* Manual Cloud Sync Button */}
             <button
@@ -2024,25 +2030,27 @@ export default function MicroDrillsModal({
               <span>{isEn ? '✍️ Create Drill' : '✍️ Tạo Bài Thủ Công'}</span>
             </button>
 
-            {/* AI Generator Button */}
-            <button
-              onClick={handleGenerateDrill}
-              disabled={isGeneratingDrill}
-              className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
-              title={isEn ? "Ask AI to generate a new practice drill for this exercise type" : "Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
-            >
-              {isGeneratingDrill ? (
-                <>
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  <span>{isEn ? 'Generating...' : 'Đang tạo...'}</span>
-                </>
-              ) : (
-                <>
-                  <PlusCircle className="w-3 h-3" />
-                  <span>{isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới'}</span>
-                </>
-              )}
-            </button>
+            {/* AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={handleGenerateDrill}
+                disabled={isGeneratingDrill}
+                className="px-3 py-1 rounded-lg bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-[11px] shadow-xs flex items-center space-x-1.5 shrink-0 disabled:opacity-50 transition-all active:scale-95 cursor-pointer"
+                title={isEn ? "Ask AI to generate a new practice drill for this exercise type" : "Nhờ AI tạo thêm 1 bài tập mới theo đúng dạng đang xem"}
+              >
+                {isGeneratingDrill ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>{isEn ? 'Generating...' : 'Đang tạo...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="w-3 h-3" />
+                    <span>{isEn ? 'AI Generate Drill' : 'AI Tạo Bài Mới'}</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
           </div>
 

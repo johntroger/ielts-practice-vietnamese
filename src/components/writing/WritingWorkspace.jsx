@@ -117,6 +117,19 @@ export default function WritingWorkspace({
     onEssayChange?.(updated);
   };
 
+  // 1-Click Smart Random Task Picker from Cambridge Question Bank
+  const handleSelectRandomTask = () => {
+    if (!allTasks || allTasks.length === 0) return;
+    const eligible = allTasks.filter(t => !t.isCustom && !t.isAiGenerated);
+    const pool = eligible.length > 0 ? eligible : allTasks;
+    const remaining = pool.filter(t => t.id !== currentTask?.id);
+    const candidates = remaining.length > 0 ? remaining : pool;
+    const randomPick = candidates[Math.floor(Math.random() * candidates.length)];
+    if (randomPick && onSelectTask) {
+      onSelectTask(randomPick);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden" data-writing-view={writingViewMode}>
       {/* 1. Writing Workspace Sub-Header Toolbar */}
@@ -128,6 +141,7 @@ export default function WritingWorkspace({
         onToggleMastered={onToggleMastered}
         onOpenLibrary={onOpenLibrary}
         onOpenGenerator={onOpenGenerator}
+        onSelectRandomTask={handleSelectRandomTask}
         onOpenOnboarding={onOpenOnboarding}
         onOpenTheory={onOpenTheory}
         onOpenMistakeLog={onOpenMistakeLog}

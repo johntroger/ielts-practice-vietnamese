@@ -49,6 +49,9 @@ export default function ProfileVaultAndAccountTabs({
   onSignOut,
   onClose
 }) {
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   return (
     <>
       {/* ========================================================================= */}
@@ -139,7 +142,8 @@ export default function ProfileVaultAndAccountTabs({
                       <span>{isEn ? 'Ingest with AI (Smart Ingest)' : 'Nạp Đề Bằng AI (Smart Ingest)'}</span>
                     </button>
                   )}
-                  {onOpenGenerator && (
+                  {/* Sinh Đề Mới Bằng AI (Tạm thời ẩn theo yêu cầu) */}
+                  {SHOW_AI_GENERATOR_BUTTONS && onOpenGenerator && (
                     <button
                       onClick={onOpenGenerator}
                       className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all flex items-center space-x-1.5"

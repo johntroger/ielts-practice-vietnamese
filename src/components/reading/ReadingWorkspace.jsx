@@ -161,6 +161,9 @@ export default function ReadingWorkspace({
   const [isIngestOpen, setIsIngestOpen] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   // External open triggers (e.g. from global Navbar)
   useEffect(() => {
     if (openGeneratorTrigger) {
@@ -647,8 +650,8 @@ export default function ReadingWorkspace({
 
             {/* Mobile Right Action Group */}
             <div className="flex items-center space-x-1 shrink-0">
-              {/* Sinh Đề AI (Chỉ hiện khi Luyện tập để không phân tâm khi Thi thật - Gọn trong menu trên mobile) */}
-              {examMode === 'practice' ? (
+              {/* Sinh Đề AI (Chỉ hiện khi Luyện tập để không phân tâm khi Thi thật - Tạm thời ẩn theo yêu cầu) */}
+              {SHOW_AI_GENERATOR_BUTTONS && examMode === 'practice' ? (
                 <button
                   type="button"
                   onClick={() => setIsGeneratorOpen(true)}
@@ -658,7 +661,7 @@ export default function ReadingWorkspace({
                   <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse" />
                   <span>{t('reading.generateAi', 'Sinh Đề')}</span>
                 </button>
-              ) : !isSubmitted ? (
+              ) : examMode !== 'practice' && !isSubmitted ? (
                 <div className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-red-50 text-red-700 border border-red-200 font-bold text-[11px] shrink-0 select-none">
                   <Shield className="w-3.5 h-3.5 text-red-600 animate-pulse" />
                   <span>{t('reading.testRoom', 'Phòng Thi')}</span>
@@ -713,8 +716,8 @@ export default function ReadingWorkspace({
                       <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         {t('reading.utilitiesMenu', 'Tiện Ích & Công Cụ')}
                       </div>
-                      {/* AI Reading Generator */}
-                      {examMode === 'practice' && (
+                      {/* AI Reading Generator (Tạm thời ẩn theo yêu cầu) */}
+                      {SHOW_AI_GENERATOR_BUTTONS && examMode === 'practice' && (
                         <button
                           type="button"
                           onClick={() => { setIsGeneratorOpen(true); setIsToolsDropdownOpen(false); }}
@@ -913,7 +916,7 @@ export default function ReadingWorkspace({
                 <span className="hidden sm:inline">{t('reading.testRoom', 'Phòng Thi Nghiêm Ngặt')}</span>
                 <span className="sm:hidden">{t('reading.examMode', 'Thi Thử')}</span>
               </div>
-            ) : (
+            ) : SHOW_AI_GENERATOR_BUTTONS ? (
               <button
                 type="button"
                 onClick={() => setIsGeneratorOpen(true)}
@@ -923,7 +926,7 @@ export default function ReadingWorkspace({
                 <Sparkles className="w-3.5 h-3.5 text-purple-600 animate-pulse shrink-0" />
                 <span>{t('reading.generateAi', 'Sinh Đề (AI)')}</span>
               </button>
-            )}
+            ) : null}
 
             {/* Desktop Tiện Ích Dropdown */}
             <div className="relative">

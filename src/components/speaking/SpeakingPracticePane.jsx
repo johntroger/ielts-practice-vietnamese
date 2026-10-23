@@ -53,6 +53,9 @@ export default function SpeakingPracticePane({
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
   const [topicModalPart, setTopicModalPart] = useState(1);
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   // Mobile Practice Tools Dropdown State & Ref
   const [isPracticeToolsOpen, setIsPracticeToolsOpen] = useState(false);
   const practiceToolsRef = useRef(null);
@@ -588,17 +591,20 @@ export default function SpeakingPracticePane({
         {/* Action Tools: AI Generator, Idea Matrix & Shadowing Studio */}
         {/* DESKTOP (>= sm) */}
         <div className="hidden sm:flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-          <button
-            onClick={() => {
-              setTopicModalPart(practicePart);
-              setIsTopicModalOpen(true);
-            }}
-            className="flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40 shrink-0 whitespace-nowrap"
-            title={isEn ? 'Use AI to generate new topics and questions for this Part' : 'Dùng AI để tạo chủ đề và câu hỏi mới cho Part này'}
-          >
-            <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            <span>{isEn ? '✨ Generate Topic (AI)' : '✨ Sinh Chủ Đề (AI)'}</span>
-          </button>
+          {/* AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+          {SHOW_AI_GENERATOR_BUTTONS && (
+            <button
+              onClick={() => {
+                setTopicModalPart(practicePart);
+                setIsTopicModalOpen(true);
+              }}
+              className="flex items-center space-x-1 sm:space-x-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-md shadow-purple-900/40 shrink-0 whitespace-nowrap"
+              title={isEn ? 'Use AI to generate new topics and questions for this Part' : 'Dùng AI để tạo chủ đề và câu hỏi mới cho Part này'}
+            >
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>{isEn ? '✨ Generate Topic (AI)' : '✨ Sinh Chủ Đề (AI)'}</span>
+            </button>
+          )}
 
           <button
             onClick={onOpenIdeaMatrix}
@@ -621,17 +627,20 @@ export default function SpeakingPracticePane({
 
         {/* MOBILE (< sm) */}
         <div className="flex sm:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-1">
-          <button
-            onClick={() => {
-              setTopicModalPart(practicePart);
-              setIsTopicModalOpen(true);
-            }}
-            className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
-            title={isEn ? 'Use AI to generate new topics and questions for this Part' : 'Dùng AI để tạo chủ đề và câu hỏi mới cho Part này'}
-          >
-            <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            <span>{isEn ? '✨ AI Topics' : '✨ Sinh Đề (AI)'}</span>
-          </button>
+          {/* AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+          {SHOW_AI_GENERATOR_BUTTONS && (
+            <button
+              onClick={() => {
+                setTopicModalPart(practicePart);
+                setIsTopicModalOpen(true);
+              }}
+              className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
+              title={isEn ? 'Use AI to generate new topics and questions for this Part' : 'Dùng AI để tạo chủ đề và câu hỏi mới cho Part này'}
+            >
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>{isEn ? '✨ AI Topics' : '✨ Sinh Đề (AI)'}</span>
+            </button>
+          )}
 
           <div className="relative shrink-0" ref={practiceToolsRef}>
             <button

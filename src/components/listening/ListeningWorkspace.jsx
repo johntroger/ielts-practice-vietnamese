@@ -107,6 +107,9 @@ export default function ListeningWorkspace({
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   // Dynamic Open Listening Tabs state with localStorage persistence
   const [isTestDropdownOpen, setIsTestDropdownOpen] = useState(false);
   const [dropdownSearch, setDropdownSearch] = useState('');
@@ -915,19 +918,13 @@ export default function ListeningWorkspace({
                       </button>
                     )}
 
-                    <button
-                      type="button"
-                      onClick={() => { setIsToolsMenuOpen(false); setIsGeneratorOpen(true); }}
-                      className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
-                    >
-                      <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700 shrink-0">
-                        <Sparkles className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-bold">{t('listening.generateAi', 'Sinh Đề Bằng AI')}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Generate new audio scripts & questions' : 'Tự tạo đề nghe chuẩn Cambridge'}</div>
-                      </div>
-                    </button>
+                    {/* AI Generator Button - Tạm thời ẩn theo yêu cầu */}
+                    {SHOW_AI_GENERATOR_BUTTONS && (
+                      <button type="button" onClick={() => { setIsToolsMenuOpen(false); setIsGeneratorOpen(true); }} className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors">
+                        <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700 shrink-0"><Sparkles className="w-4 h-4" /></div>
+                        <div><div className="font-bold">{t('listening.generateAi', 'Sinh Đề Bằng AI')}</div><div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Generate new audio scripts & questions' : 'Tự tạo đề nghe chuẩn Cambridge'}</div></div>
+                      </button>
+                    )}
 
                     {onOpenDrills && (
                       <button

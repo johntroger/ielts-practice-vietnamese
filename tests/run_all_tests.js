@@ -209,7 +209,8 @@ const testSuites = [
   { name: 'Step 200: Track 46 Business Structures Summary Integration', file: 'tests/test_step200_track46_audio_integration.js' },
   { name: 'Step 201: Track 47 Business Structures Case Studies Integration', file: 'tests/test_step201_track47_audio_integration.js' },
   { name: 'Step 202: Clean Mobile UI Optimization & Ergonomics Audit', file: 'tests/test_step192_clean_mobile_ui_optimization.js' },
-  { name: 'Step 203: Micro-Drills Mobile Dynamic Closable Tabs & Dropbox Pickers', file: 'tests/test_step203_micro_drills_mobile_room_tabs_and_dropbox.js' }
+  { name: 'Step 203: Micro-Drills Mobile Dynamic Closable Tabs & Dropbox Pickers', file: 'tests/test_step203_micro_drills_mobile_room_tabs_and_dropbox.js' },
+  { name: 'Step 204: Hide AI Generator Buttons & Preserve Random Bank Picker', file: 'tests/test_step204_hide_ai_generator_buttons_and_keep_random_bank_pick.js' }
 ];
 
 console.log('===============================================================');

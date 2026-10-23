@@ -18,7 +18,8 @@ import {
   Bookmark,
   Sliders,
   Pill,
-  CheckCircle2
+  CheckCircle2,
+  Shuffle
 } from 'lucide-react';
 import { useTranslation } from '../i18n/index.js';
 
@@ -30,6 +31,7 @@ export default function WritingSubHeaderToolbar({
   onToggleMastered,
   onOpenLibrary,
   onOpenGenerator,
+  onSelectRandomTask,
   onOpenOnboarding,
   onOpenTheory,
   onOpenMistakeLog,
@@ -54,6 +56,9 @@ export default function WritingSubHeaderToolbar({
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
   const toolsButtonRef = useRef(null);
   const [dropdownCoords, setDropdownCoords] = useState(null);
+
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
 
   const renderPortal = (children) => {
     if (typeof document !== 'undefined' && document.body) {
@@ -176,15 +181,31 @@ export default function WritingSubHeaderToolbar({
           )}
         </div>
 
-        {/* 2. Sinh Đề Mới Bằng AI (Secondary Task Action - Compact in Tools Dropdown on phone) */}
-        <button
-          onClick={onOpenGenerator}
-          className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/90 text-rose-700 border border-rose-200/80 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs active:scale-95 group"
-          title={isEn ? "Generate new trend-aligned IELTS Writing Task with AI" : "Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng bằng AI"}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
-          <span>{isEn ? "Generate (AI)" : "Sinh Đề (AI)"}</span>
-        </button>
+        {/* 2. Chọn Đề Ngẫu Nhiên Từ Ngân Hàng Đề (AI / Smart Random Pick from Cambridge Bank) */}
+        {onSelectRandomTask && (
+          <button
+            type="button"
+            onClick={onSelectRandomTask}
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs active:scale-95 group"
+            title={isEn ? "Pick a random Cambridge task from question bank" : "Chọn ngẫu nhiên 1 đề từ ngân hàng đề Cambridge"}
+          >
+            <Shuffle className="w-3.5 h-3.5 text-indigo-600 group-hover:scale-110 transition-transform shrink-0" />
+            <span className="hidden sm:inline">{isEn ? "Random Task" : "Đề Ngẫu Nhiên"}</span>
+            <span className="sm:hidden">{isEn ? "Random" : "Ngẫu Nhiên"}</span>
+          </button>
+        )}
+
+        {/* 3. Sinh Đề Mới Bằng AI (Secondary Task Action - Tạm thời ẩn theo yêu cầu) */}
+        {SHOW_AI_GENERATOR_BUTTONS && (
+          <button
+            onClick={onOpenGenerator}
+            className="hidden sm:flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100/90 text-rose-700 border border-rose-200/80 text-xs font-bold shrink-0 transition-all cursor-pointer shadow-2xs active:scale-95 group"
+            title={isEn ? "Generate new trend-aligned IELTS Writing Task with AI" : "Sinh đề thi Writing Task 1 hoặc Task 2 mới bám sát xu hướng bằng AI"}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-rose-600 group-hover:scale-110 transition-transform shrink-0" />
+            <span>{isEn ? "Generate (AI)" : "Sinh Đề (AI)"}</span>
+          </button>
+        )}
       </div>
 
       {/* ============================================================ */}
@@ -276,26 +297,51 @@ export default function WritingSubHeaderToolbar({
                     {isEn ? "Exam Environment & Display" : "Cấu Hình Phòng Thi & Hiển Thị"}
                   </div>
 
-                  {/* AI Prompt Generator (Convenient 1-tap in Tools Menu on phone & tablet) */}
-                  <button
-                    onClick={() => {
-                      onOpenGenerator?.();
-                      setIsToolsDropdownOpen(false);
-                      setDropdownCoords(null);
-                    }}
-                    className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 text-left transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center space-x-2.5 text-left">
-                      <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700 shrink-0">
-                        <Sparkles className="w-4 h-4" />
+                  {/* Chọn Đề Ngẫu Nhiên từ Ngân Hàng Đề (Convenient 1-tap in Tools Menu) */}
+                  {onSelectRandomTask && (
+                    <button
+                      onClick={() => {
+                        onSelectRandomTask();
+                        setIsToolsDropdownOpen(false);
+                        setDropdownCoords(null);
+                      }}
+                      className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 text-slate-700 text-left transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2.5 text-left">
+                        <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 shrink-0">
+                          <Shuffle className="w-4 h-4" />
+                        </div>
+                        <div className="text-left">
+                          <div className="font-bold text-xs text-left">{isEn ? "Pick Random Task" : "Chọn Đề Ngẫu Nhiên"}</div>
+                          <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Select a Cambridge prompt from bank" : "Bốc 1 đề chuẩn Cambridge có sẵn"}</div>
+                        </div>
                       </div>
-                      <div className="text-left">
-                        <div className="font-bold text-xs text-left">{isEn ? "Generate Prompt with AI" : "Sinh Đề Mới Bằng AI"}</div>
-                        <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Create Task 1 or Task 2 prompt with AI" : "Tạo đề Task 1 & Task 2 mới chuẩn Cambridge"}</div>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700">Bank</span>
+                    </button>
+                  )}
+
+                  {/* AI Prompt Generator (Convenient 1-tap in Tools Menu on phone & tablet) - Tạm thời ẩn theo yêu cầu */}
+                  {SHOW_AI_GENERATOR_BUTTONS && (
+                    <button
+                      onClick={() => {
+                        onOpenGenerator?.();
+                        setIsToolsDropdownOpen(false);
+                        setDropdownCoords(null);
+                      }}
+                      className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-rose-50 text-slate-700 hover:text-rose-900 text-left transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2.5 text-left">
+                        <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700 shrink-0">
+                          <Sparkles className="w-4 h-4" />
+                        </div>
+                        <div className="text-left">
+                          <div className="font-bold text-xs text-left">{isEn ? "Generate Prompt with AI" : "Sinh Đề Mới Bằng AI"}</div>
+                          <div className="text-[10px] text-slate-400 font-normal text-left">{isEn ? "Create Task 1 or Task 2 prompt with AI" : "Tạo đề Task 1 & Task 2 mới chuẩn Cambridge"}</div>
+                        </div>
                       </div>
-                    </div>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">AI</span>
-                  </button>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">AI</span>
+                    </button>
+                  )}
 
                   {/* Focus Mode Toggle */}
                   <button

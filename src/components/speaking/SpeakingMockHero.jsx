@@ -34,6 +34,9 @@ export default function SpeakingMockHero({
   setGeneratorInitialMode,
   setIsSoundcheckOpen
 }) {
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   return (
     <div className="w-full max-w-5xl xl:max-w-6xl space-y-4 sm:space-y-5 animate-in fade-in duration-200">
       
@@ -148,17 +151,20 @@ export default function SpeakingMockHero({
               <span>{isEn ? '✍️ Create Manually' : '✍️ Tạo Đề Thủ Công'}</span>
             </button>
 
-            <button
-              onClick={() => {
-                setGeneratorInitialMode('ai');
-                setIsGeneratorOpen(true);
-              }}
-              className="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
-              title={isEn ? 'Use AI to generate new Speaking test pack' : 'Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn'}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>{isEn ? 'Generate Pack (AI)' : 'Sinh Bộ Đề Mới (AI)'}</span>
-            </button>
+            {/* AI Generator Button (Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={() => {
+                  setGeneratorInitialMode('ai');
+                  setIsGeneratorOpen(true);
+                }}
+                className="flex-1 sm:flex-none justify-center px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-900/40 flex items-center space-x-1.5 transition-all cursor-pointer hover:scale-[1.02] shrink-0"
+                title={isEn ? 'Use AI to generate new Speaking test pack' : 'Dùng AI để tạo bộ đề thi Speaking mới theo chủ đề mong muốn'}
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>{isEn ? 'Generate Pack (AI)' : 'Sinh Bộ Đề Mới (AI)'}</span>
+              </button>
+            )}
           </div>
         </div>
 

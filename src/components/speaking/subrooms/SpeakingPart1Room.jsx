@@ -67,6 +67,9 @@ export default function SpeakingPart1Room({
 }) {
   const { isEn } = useTranslation();
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   const displayedTopics = React.useMemo(() => {
     return hideMastered ? part1Topics.filter(t => !masteredIds.includes(t.id)) : part1Topics;
   }, [part1Topics, hideMastered, masteredIds]);
@@ -182,14 +185,17 @@ export default function SpeakingPart1Room({
             </label>
           </div>
 
-          <button
-            onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
-            className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold flex items-center space-x-1 shadow-md shadow-purple-900/30 cursor-pointer transition-all shrink-0"
-            title={isEn ? 'Create or generate Part 1 topics with AI' : 'Thêm hoặc sinh chủ đề Part 1 mới bằng AI'}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-            <span>{isEn ? '+ Topic' : '+ Thêm Đề (AI)'}</span>
-          </button>
+          {/* AI Topic Generator Button (Tạm thời ẩn theo yêu cầu) */}
+          {SHOW_AI_GENERATOR_BUTTONS && (
+            <button
+              onClick={() => onOpenTopicModal && onOpenTopicModal(1)}
+              className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-bold flex items-center space-x-1 shadow-md shadow-purple-900/30 cursor-pointer transition-all shrink-0"
+              title={isEn ? 'Create or generate Part 1 topics with AI' : 'Thêm hoặc sinh chủ đề Part 1 mới bằng AI'}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+              <span>{isEn ? '+ Topic' : '+ Thêm Đề (AI)'}</span>
+            </button>
+          )}
         </div>
       </div>
 

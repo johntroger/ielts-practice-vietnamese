@@ -68,6 +68,9 @@ export default function SpeakingPart2Room({
   const [isArchetypesModalOpen, setIsArchetypesModalOpen] = useState(false);
   const [customQuadrantNotes, setCustomQuadrantNotes] = useState(null);
 
+  // Tạm thời ẩn tất cả các nút sinh đề bằng AI trên giao diện để tinh gọn theo yêu cầu
+  const SHOW_AI_GENERATOR_BUTTONS = false;
+
   // Mobile Strategy Tools Dropdown State & Ref
   const [isStrategyMenuOpen, setIsStrategyMenuOpen] = useState(false);
   const strategyMenuRef = React.useRef(null);
@@ -194,27 +197,31 @@ export default function SpeakingPart2Room({
               <span>{isEn ? '2-Min Pacing Guide' : 'Cẩm Nang Pacing 2P'}</span>
             </button>
 
-            {/* ADD CUE CARD BUTTON (AI / MANUAL) */}
-            <button
-              onClick={() => onOpenTopicModal && onOpenTopicModal(2)}
-              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
-              title={isEn ? 'Generate new Part 2 Cue Card with AI' : 'Thêm Cue Card luyện tập Part 2 mới bằng AI'}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-              <span>{isEn ? '+ Generate Cue Card (AI)' : '+ Sinh Cue Card Bằng AI'}</span>
-            </button>
+            {/* ADD CUE CARD BUTTON (AI / MANUAL - Tạm thời ẩn theo yêu cầu) */}
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={() => onOpenTopicModal && onOpenTopicModal(2)}
+                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-purple-900/30 cursor-pointer shrink-0 transition-transform active:scale-95"
+                title={isEn ? 'Generate new Part 2 Cue Card with AI' : 'Thêm Cue Card luyện tập Part 2 mới bằng AI'}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+                <span>{isEn ? '+ Generate Cue Card (AI)' : '+ Sinh Cue Card Bằng AI'}</span>
+              </button>
+            )}
           </div>
 
           {/* MOBILE (< sm) */}
           <div className="flex sm:hidden items-center justify-between gap-1.5 shrink-0 w-full pt-1">
-            <button
-              onClick={() => onOpenTopicModal && onOpenTopicModal(2)}
-              className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
-              title={isEn ? 'Generate new Part 2 Cue Card with AI' : 'Thêm Cue Card luyện tập Part 2 mới bằng AI'}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-200" />
-              <span>{isEn ? '+ Cue Card (AI)' : '+ Sinh Card AI'}</span>
-            </button>
+            {SHOW_AI_GENERATOR_BUTTONS && (
+              <button
+                onClick={() => onOpenTopicModal && onOpenTopicModal(2)}
+                className="flex-1 py-1.5 px-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[11px] font-black shadow-md flex items-center justify-center space-x-1 cursor-pointer"
+                title={isEn ? 'Generate new Part 2 Cue Card with AI' : 'Thêm Cue Card luyện tập Part 2 mới bằng AI'}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-purple-200" />
+                <span>{isEn ? '+ Cue Card (AI)' : '+ Sinh Card AI'}</span>
+              </button>
+            )}
 
             <div className="relative shrink-0" ref={strategyMenuRef}>
               <button
