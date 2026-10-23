@@ -733,13 +733,16 @@ export default function ListeningWorkspace({
           
           {/* LEFT: Test Info & Question Count */}
           <div className="flex items-center justify-between gap-2 min-w-0">
-            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-xs">
                 <Headphones className="w-4 h-4" />
               </div>
-              <div className="min-w-0">
-                <div className="flex items-center space-x-1.5 flex-wrap">
-                  <h2 className="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[150px] xs:max-w-[200px] sm:max-w-[280px] md:max-w-[360px] lg:max-w-[260px] xl:max-w-[360px]">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center space-x-1.5 flex-nowrap">
+                  <h2 
+                    className="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[260px] xs:max-w-[320px] sm:max-w-[420px] md:max-w-[500px] lg:max-w-[260px] xl:max-w-[360px]"
+                    title={currentTest.title}
+                  >
                     {currentTest.title}
                   </h2>
                   {currentTest?.audioUrl?.includes('.r2.dev') ? (
@@ -764,24 +767,6 @@ export default function ListeningWorkspace({
                 </div>
               </div>
             </div>
-
-            {/* Mobile Mode Switcher (compact) */}
-            <div className="flex lg:hidden items-center space-x-1 shrink-0">
-              <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px] font-semibold shrink-0">
-                <button
-                  onClick={() => setExamMode('practice')}
-                  className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
-                >
-                  {t('listening.practiceMode', 'Luyện Tập')}
-                </button>
-                <button
-                  onClick={() => setExamMode('strict')}
-                  className={"px-2 py-1 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
-                >
-                  {t('listening.examMode', 'Thi Thử')}
-                </button>
-              </div>
-            </div>
           </div>
 
           {/* CENTER: Part Quick Switcher Tabs (Desktop & Tablet) */}
@@ -803,41 +788,218 @@ export default function ListeningWorkspace({
           </div>
 
           {/* RIGHT: Action Controls & Tools Dropdown */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 shrink-0 max-w-full">
+          <div className="flex items-center justify-between lg:justify-end gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 shrink-0 max-w-full w-full lg:w-auto">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+              {/* Kho Đề Nghe Button */}
+              <button
+                onClick={() => setIsLibraryOpen(true)}
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer shrink-0"
+                title={isEn ? "Open full IELTS Listening test library" : "Mở thư viện toàn bộ đề thi IELTS Listening"}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                <span>{t('listening.testLibrary', 'Kho Đề')}</span>
+                <span className="hidden sm:inline">({allListeningTests.length})</span>
+              </button>
 
-            {/* Kho Đề Nghe Button */}
-            <button
-              onClick={() => setIsLibraryOpen(true)}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors shadow-2xs cursor-pointer shrink-0"
-              title={isEn ? "Open full IELTS Listening test library" : "Mở thư viện toàn bộ đề thi IELTS Listening"}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-              <span>{t('listening.testLibrary', 'Kho Đề')}</span>
-              <span className="hidden sm:inline">({allListeningTests.length})</span>
-            </button>
-
-            {/* Đánh dấu Đã thuộc đề nghe hiện tại */}
-            <button
-              type="button"
-              onClick={() => onToggleMastered && onToggleMastered(currentTestId)}
-              className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg font-bold text-xs border transition-colors shadow-2xs cursor-pointer shrink-0 ${
-                masteredIds.includes(currentTestId)
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
-                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
-              }`}
-              title={
-                masteredIds.includes(currentTestId)
-                  ? (isEn ? 'Mastered this listening test (Click to unmark)' : 'Đã thuộc đề nghe này (Bấm để bỏ đánh dấu)')
-                  : (isEn ? 'Mark this listening test as mastered' : 'Đánh dấu đã thuộc đề nghe này')
-              }
-            >
-              <GraduationCap
-                className={`w-3.5 h-3.5 ${
-                  masteredIds.includes(currentTestId) ? 'text-emerald-600' : 'text-slate-400'
+              {/* Đánh dấu Đã thuộc đề nghe hiện tại */}
+              <button
+                type="button"
+                onClick={() => onToggleMastered && onToggleMastered(currentTestId)}
+                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg font-bold text-xs border transition-colors shadow-2xs cursor-pointer shrink-0 ${
+                  masteredIds.includes(currentTestId)
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
                 }`}
-              />
-              <span className="hidden sm:inline">{masteredIds.includes(currentTestId) ? t('listening.mastered', 'Đã thuộc') : t('listening.markMastered', 'Thuộc đề')}</span>
-            </button>
+                title={
+                  masteredIds.includes(currentTestId)
+                    ? (isEn ? 'Mastered this listening test (Click to unmark)' : 'Đã thuộc đề nghe này (Bấm để bỏ đánh dấu)')
+                    : (isEn ? 'Mark this listening test as mastered' : 'Đánh dấu đã thuộc đề nghe này')
+                }
+              >
+                <GraduationCap
+                  className={`w-3.5 h-3.5 ${
+                    masteredIds.includes(currentTestId) ? 'text-emerald-600' : 'text-slate-400'
+                  }`}
+                />
+                <span className="hidden sm:inline">{masteredIds.includes(currentTestId) ? t('listening.mastered', 'Đã thuộc') : t('listening.markMastered', 'Thuộc đề')}</span>
+              </button>
+
+              {/* Consolidated Study Tools Dropdown Menu */}
+              <div className="relative shrink-0" ref={toolsButtonRef}>
+                <button
+                  type="button"
+                  onClick={handleToggleToolsMenu}
+                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                    isToolsMenuOpen 
+                      ? 'bg-slate-200 text-slate-900 border-slate-300 ring-2 ring-slate-200' 
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                  }`}
+                  title={isEn ? "Open study tools and utilities" : "Mở công cụ và tiện ích bổ trợ"}
+                >
+                  <Sliders className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden sm:inline">{isEn ? 'Tools' : 'Tiện ích'}</span>
+                  <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-150 ${isToolsMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isToolsMenuOpen && toolsDropdownCoords && typeof document !== 'undefined' && createPortal(
+                  <>
+                    <div 
+                      className="fixed inset-0 z-50 bg-black/5" 
+                      onClick={() => setIsToolsMenuOpen(false)} 
+                    />
+                    <div 
+                      style={{
+                        position: 'fixed',
+                        top: `${toolsDropdownCoords.top}px`,
+                        left: `${toolsDropdownCoords.left}px`,
+                        width: `${toolsDropdownCoords.width}px`,
+                        maxHeight: `${toolsDropdownCoords.maxHeight}px`,
+                      }}
+                      className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-[60] overflow-y-auto animate-in fade-in zoom-in-95 duration-100 space-y-1 text-slate-800"
+                    >
+                      <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                        <span>{isEn ? 'Listening Support Tools' : 'Tiện Ích & Công Cụ Bổ Trợ'}</span>
+                        <Sliders className="w-3 h-3 text-slate-400" />
+                      </div>
+
+                      {onOpenTheory && (
+                        <button
+                          type="button"
+                          onClick={() => { setIsToolsMenuOpen(false); onOpenTheory(); }}
+                          className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
+                        >
+                          <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 shrink-0">
+                            <BookOpen className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="font-bold">{t('listening.theoryHandbook', 'Cẩm Nang Lý Thuyết')}</div>
+                            <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Strategies for 4 listening parts' : 'Chiến thuật 4 phần thi Listening'}</div>
+                          </div>
+                        </button>
+                      )}
+
+                      {/* AI Generator Button - Tạm thời ẩn theo yêu cầu */}
+                      {SHOW_AI_GENERATOR_BUTTONS && (
+                        <button type="button" onClick={() => { setIsToolsMenuOpen(false); setIsGeneratorOpen(true); }} className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors">
+                          <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700 shrink-0"><Sparkles className="w-4 h-4" /></div>
+                          <div><div className="font-bold">{t('listening.generateAi', 'Sinh Đề Bằng AI')}</div><div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Generate new audio scripts & questions' : 'Tự tạo đề nghe chuẩn Cambridge'}</div></div>
+                        </button>
+                      )}
+
+                      {onOpenDrills && (
+                        <button
+                          type="button"
+                          onClick={() => { setIsToolsMenuOpen(false); onOpenDrills(); }}
+                          className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
+                        >
+                          <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700 shrink-0">
+                            <Puzzle className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="font-bold">{t('listening.microDrills', 'Luyện Phản Xạ Bổ Trợ')}</div>
+                            <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Names, numbers, spelling demons' : 'Số liệu, tên riêng & distractor'}</div>
+                          </div>
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => { setIsToolsMenuOpen(false); setIsTranscriptOpen(true); }}
+                        className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
+                      >
+                        <div className="p-1.5 rounded-lg bg-indigo-100 text-indigo-700 shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold">{t('listening.transcript', 'Lời Thoại (Full Modal)')}</div>
+                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'View entire audioscript with evidence' : 'Toàn bộ script có kèm dẫn chứng'}</div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => { setIsToolsMenuOpen(false); setIsSoundcheckOpen(true); }}
+                        className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
+                      >
+                        <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700 shrink-0">
+                          <Volume2 className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold">{t('listening.soundcheck', 'Kiểm Tra Âm Thanh')}</div>
+                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Soundcheck & volume calibration' : 'Căn chỉnh âm lượng tai nghe chuẩn'}</div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsToolsMenuOpen(false);
+                          setLeftPaneTab('scratchpad');
+                          if (!isDesktopOrLandscape) setMobileTab('context');
+                        }}
+                        className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-rose-50 hover:text-rose-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
+                      >
+                        <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700 shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-bold">{isEn ? 'Listening Scratchpad (CDI)' : 'Bản Nháp Nghe (CDI Scratchpad)'}</div>
+                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Jot quick notes during listening' : 'Ghi chú số liệu, bẫy distractor'}</div>
+                        </div>
+                      </button>
+                    </div>
+                  </>,
+                  document.body
+                )}
+              </div>
+
+              {/* Workspace Expansion Toggle (Alt + Z) */}
+              {toggleSlimHeader && (
+                <button
+                  type="button"
+                  onClick={toggleSlimHeader}
+                  className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg border text-xs font-bold transition-colors cursor-pointer shadow-2xs shrink-0 ${
+                    isSlimHeader
+                      ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                  }`}
+                  title={isSlimHeader ? (isEn ? "Collapse workspace, show navbar (Alt + Z)" : "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)") : (isEn ? "Expand workspace, hide navbar (Alt + Z)" : "Mở rộng tối đa không gian làm bài nghe, ẩn thanh menu trên (Alt + Z)")}
+                >
+                  {isSlimHeader ? (
+                    <>
+                      <Minimize2 className="w-3.5 h-3.5 text-amber-600" />
+                      <span className="hidden sm:inline">{t('listening.collapseWorkspace', 'Thu gọn')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="hidden sm:inline">{t('listening.expandWorkspace', 'Mở rộng')}</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Reset Exam Button */}
+              {exam.isSubmitted && (
+                <button
+                  onClick={() => {
+                    if (window.confirm(isEn ? 'Do you want to retake this test from the beginning?' : 'Bạn có muốn làm lại đề thi này từ đầu không?')) {
+                      exam.resetExam();
+                      audioEngine.seek(0);
+                      setHasStartedExam(false);
+                      setBandResult(null);
+                      try {
+                        localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
+                      } catch (e) {}
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer shrink-0"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{isEn ? 'Retake' : 'Làm lại'}</span>
+                </button>
+              )}
+            </div>
 
             {/* Desktop Mode Switcher */}
             <div className="hidden lg:flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold shrink-0">
@@ -855,206 +1017,34 @@ export default function ListeningWorkspace({
               </button>
             </div>
 
-            {/* Previous or Current Result Report Button */}
-            {bandResult && (
+            {/* Mobile Mode Switcher (placed neatly on right of action bar) */}
+            <div className="flex lg:hidden items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px] font-semibold shrink-0">
               <button
-                onClick={() => setIsResultModalOpen(true)}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer shrink-0"
-                title={isEn ? "Reopen latest test result report" : "Mở lại bảng báo cáo kết quả lần thi gần nhất"}
+                onClick={() => setExamMode('practice')}
+                className={"px-2 py-0.5 rounded-md transition-all cursor-pointer " + (examMode === 'practice' ? 'bg-white text-emerald-700 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
-                <BarChart2 className="w-3.5 h-3.5" />
-                <span>Band {bandResult.band.toFixed(1)}</span>
+                {t('listening.practiceMode', 'Luyện Tập')}
               </button>
-            )}
-
-            {/* Consolidated Study Tools Dropdown Menu */}
-            <div className="relative shrink-0" ref={toolsButtonRef}>
               <button
-                type="button"
-                onClick={handleToggleToolsMenu}
-                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg border text-xs font-bold transition-all shadow-2xs cursor-pointer ${
-                  isToolsMenuOpen 
-                    ? 'bg-slate-200 text-slate-900 border-slate-300 ring-2 ring-slate-200' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-                }`}
-                title={isEn ? "Open study tools and utilities" : "Mở công cụ và tiện ích bổ trợ"}
+                onClick={() => setExamMode('strict')}
+                className={"px-2 py-0.5 rounded-md transition-all cursor-pointer " + (examMode === 'strict' ? 'bg-red-600 text-white shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900')}
               >
-                <Sliders className="w-3.5 h-3.5 text-slate-500" />
-                <span className="hidden sm:inline">{isEn ? 'Tools' : 'Tiện ích'}</span>
-                <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-150 ${isToolsMenuOpen ? 'rotate-180' : ''}`} />
+                {t('listening.examMode', 'Thi Thử')}
               </button>
-
-              {isToolsMenuOpen && toolsDropdownCoords && typeof document !== 'undefined' && createPortal(
-                <>
-                  <div 
-                    className="fixed inset-0 z-50 bg-black/5" 
-                    onClick={() => setIsToolsMenuOpen(false)} 
-                  />
-                  <div 
-                    style={{
-                      position: 'fixed',
-                      top: `${toolsDropdownCoords.top}px`,
-                      left: `${toolsDropdownCoords.left}px`,
-                      width: `${toolsDropdownCoords.width}px`,
-                      maxHeight: `${toolsDropdownCoords.maxHeight}px`,
-                    }}
-                    className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-[60] overflow-y-auto animate-in fade-in zoom-in-95 duration-100 space-y-1 text-slate-800"
-                  >
-                    <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                      <span>{isEn ? 'Listening Support Tools' : 'Tiện Ích & Công Cụ Bổ Trợ'}</span>
-                      <Sliders className="w-3 h-3 text-slate-400" />
-                    </div>
-
-                    {onOpenTheory && (
-                      <button
-                        type="button"
-                        onClick={() => { setIsToolsMenuOpen(false); onOpenTheory(); }}
-                        className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
-                      >
-                        <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 shrink-0">
-                          <BookOpen className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="font-bold">{t('listening.theoryHandbook', 'Cẩm Nang Lý Thuyết')}</div>
-                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Strategies for 4 listening parts' : 'Chiến thuật 4 phần thi Listening'}</div>
-                        </div>
-                      </button>
-                    )}
-
-                    {/* AI Generator Button - Tạm thời ẩn theo yêu cầu */}
-                    {SHOW_AI_GENERATOR_BUTTONS && (
-                      <button type="button" onClick={() => { setIsToolsMenuOpen(false); setIsGeneratorOpen(true); }} className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors">
-                        <div className="p-1.5 rounded-lg bg-purple-100 text-purple-700 shrink-0"><Sparkles className="w-4 h-4" /></div>
-                        <div><div className="font-bold">{t('listening.generateAi', 'Sinh Đề Bằng AI')}</div><div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Generate new audio scripts & questions' : 'Tự tạo đề nghe chuẩn Cambridge'}</div></div>
-                      </button>
-                    )}
-
-                    {onOpenDrills && (
-                      <button
-                        type="button"
-                        onClick={() => { setIsToolsMenuOpen(false); onOpenDrills(); }}
-                        className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
-                      >
-                        <div className="p-1.5 rounded-lg bg-amber-100 text-amber-700 shrink-0">
-                          <Puzzle className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="font-bold">{t('listening.microDrills', 'Luyện Phản Xạ Bổ Trợ')}</div>
-                          <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Names, numbers, spelling demons' : 'Số liệu, tên riêng & distractor'}</div>
-                        </div>
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => { setIsToolsMenuOpen(false); setIsTranscriptOpen(true); }}
-                      className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
-                    >
-                      <div className="p-1.5 rounded-lg bg-indigo-100 text-indigo-700 shrink-0">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-bold">{t('listening.transcript', 'Lời Thoại (Full Modal)')}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'View entire audioscript with evidence' : 'Toàn bộ script có kèm dẫn chứng'}</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => { setIsToolsMenuOpen(false); setIsSoundcheckOpen(true); }}
-                      className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
-                    >
-                      <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700 shrink-0">
-                        <Volume2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-bold">{t('listening.soundcheck', 'Kiểm Tra Âm Thanh')}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Soundcheck & volume calibration' : 'Căn chỉnh âm lượng tai nghe chuẩn'}</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsToolsMenuOpen(false);
-                        setLeftPaneTab('scratchpad');
-                        if (!isDesktopOrLandscape) setMobileTab('context');
-                      }}
-                      className="w-full px-2.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-rose-50 hover:text-rose-900 rounded-xl flex items-center space-x-2.5 cursor-pointer transition-colors"
-                    >
-                      <div className="p-1.5 rounded-lg bg-rose-100 text-rose-700 shrink-0">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-bold">{isEn ? 'Listening Scratchpad (CDI)' : 'Bản Nháp Nghe (CDI Scratchpad)'}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Jot quick notes during listening' : 'Ghi chú số liệu, bẫy distractor'}</div>
-                      </div>
-                    </button>
-                  </div>
-                </>,
-                document.body
-              )}
             </div>
-
-            {/* Workspace Expansion Toggle (Alt + Z) */}
-            {toggleSlimHeader && (
-              <button
-                type="button"
-                onClick={toggleSlimHeader}
-                className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg border text-xs font-bold transition-colors cursor-pointer shadow-2xs shrink-0 ${
-                  isSlimHeader
-                    ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                }`}
-                title={isSlimHeader ? (isEn ? "Collapse workspace, show navbar (Alt + Z)" : "Thu gọn chế độ mở rộng, hiện lại thanh menu website (Alt + Z)") : (isEn ? "Expand workspace, hide navbar (Alt + Z)" : "Mở rộng tối đa không gian làm bài nghe, ẩn thanh menu trên (Alt + Z)")}
-              >
-                {isSlimHeader ? (
-                  <>
-                    <Minimize2 className="w-3.5 h-3.5 text-amber-600" />
-                    <span className="hidden sm:inline">{t('listening.collapseWorkspace', 'Thu gọn')}</span>
-                  </>
-                ) : (
-                  <>
-                    <Maximize2 className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="hidden sm:inline">{t('listening.expandWorkspace', 'Mở rộng')}</span>
-                  </>
-                )}
-              </button>
-            )}
-
-            {/* Reset Exam Button */}
-            {exam.isSubmitted && (
-              <button
-                onClick={() => {
-                  if (window.confirm(isEn ? 'Do you want to retake this test from the beginning?' : 'Bạn có muốn làm lại đề thi này từ đầu không?')) {
-                    exam.resetExam();
-                    audioEngine.seek(0);
-                    setHasStartedExam(false);
-                    setBandResult(null);
-                    try {
-                      localStorage.removeItem('ielts_listening_last_result_' + currentTestId);
-                    } catch (e) {}
-                  }
-                }}
-                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center space-x-1 transition-colors cursor-pointer shrink-0"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{isEn ? 'Retake' : 'Làm lại'}</span>
-              </button>
-            )}
           </div>
         </div>
       )}
 
       {/* 1.5 Dynamic Listening Test Tab Bar & Dropdown Switcher (Practice Mode) */}
       {examMode !== 'strict' && (
-        <div className="bg-gradient-to-r from-cyan-50/90 via-sky-50/90 to-emerald-50/90 border-b border-cyan-200/80 px-2 sm:px-4 py-1.5 flex items-center justify-between gap-2 shrink-0 select-none">
+        <div className="bg-gradient-to-r from-cyan-50/90 via-sky-50/90 to-emerald-50/90 border-b border-cyan-200/80 px-2 sm:px-4 py-1 flex items-center justify-between gap-1.5 sm:gap-2 shrink-0 select-none">
           {/* Left: Dropdown Trigger to open any test as a tab */}
           <div className="relative shrink-0" ref={testDropdownRef}>
             <button
               type="button"
               onClick={() => setIsTestDropdownOpen(prev => !prev)}
-              className="px-2.5 py-1 rounded-lg bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-cyan-700 hover:bg-cyan-800 text-white text-[11px] sm:text-xs font-bold flex items-center gap-1 sm:gap-1.5 shadow-2xs transition-colors cursor-pointer"
               title={isEn ? "Select listening test to open as tab" : "Chọn đề thi để mở thành tab"}
             >
               <span>☁️ {isEn ? 'Tests' : 'Đề R2 Audio'}</span>
@@ -1072,6 +1062,15 @@ export default function ListeningWorkspace({
                     {isEn ? 'Audio Tests Library' : 'Danh Sách Đề Nghe'}
                   </span>
                   <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => { setIsTestDropdownOpen(false); setIsLibraryOpen(true); }}
+                      className="text-[10px] font-bold text-indigo-700 hover:text-indigo-900 px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 cursor-pointer flex items-center gap-1"
+                      title={isEn ? "Open full modal test library" : "Mở thư viện toàn bộ đề"}
+                    >
+                      <BookOpen className="w-3 h-3" />
+                      <span>{isEn ? 'Library' : 'Kho Đề'}</span>
+                    </button>
                     <button
                       type="button"
                       onClick={handleOpenAllTestTabs}
@@ -1161,18 +1160,18 @@ export default function ListeningWorkspace({
                 <div
                   key={testItem.id}
                   onClick={() => handleSwitchTest(testItem.id)}
-                  className={`group px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer shrink-0 flex items-center gap-1.5 border select-none ${
+                  className={`group px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[10px] sm:text-[11px] transition-all cursor-pointer shrink-0 flex items-center gap-1 sm:gap-1.5 border select-none ${
                     isSelected ? 'bg-cyan-700 text-white border-cyan-800 shadow-xs ring-1 ring-cyan-400/40 font-bold' : 'bg-white/95 hover:bg-cyan-100/80 text-slate-700 hover:text-cyan-950 border-cyan-200/90 font-medium'
                   }`}
                   title={fullTitle}
                 >
                   <span className="shrink-0">{testItem.audioUrl?.includes('.r2.dev') ? '☁️' : '🎧'}</span>
                   {trackBadge && (
-                    <span className={`px-1.5 py-0.2 rounded text-[10px] font-black shrink-0 ${isSelected ? 'bg-cyan-900/80 text-cyan-200 ring-1 ring-cyan-400/30' : 'bg-cyan-100 text-cyan-800'}`}>
+                    <span className={`px-1.5 py-0.2 rounded text-[9px] sm:text-[10px] font-black shrink-0 ${isSelected ? 'bg-cyan-900/80 text-cyan-200 ring-1 ring-cyan-400/30' : 'bg-cyan-100 text-cyan-800'}`}>
                       {trackBadge}
                     </span>
                   )}
-                  <span className="max-w-[120px] sm:max-w-[160px] truncate">{shortTitle}</span>
+                  <span className="max-w-[110px] sm:max-w-[160px] truncate">{shortTitle}</span>
                   <button
                     type="button"
                     onClick={(e) => handleCloseTestTab(testItem.id, e)}
@@ -1190,12 +1189,12 @@ export default function ListeningWorkspace({
 
       {/* 2. Responsive Segmented Switcher on Mobile & Portrait Tablets */}
       {!isDesktopOrLandscape && (hasStartedExam || exam.isSubmitted) && (
-        <div className="bg-slate-100 border-b border-slate-200 px-3 py-1.5 flex items-center justify-between shrink-0 select-none">
-          <div className="flex items-center space-x-1 p-0.5 bg-slate-200 rounded-lg">
+        <div className="bg-slate-100 border-b border-slate-200 px-2.5 sm:px-3 py-1 flex items-center justify-between shrink-0 select-none">
+          <div className="flex items-center space-x-1 p-0.5 bg-slate-200/80 rounded-lg">
             <button
               type="button"
               onClick={() => setMobileTab('context')}
-              className={`px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
                 mobileTab === 'context' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
               }`}
             >
@@ -1204,7 +1203,7 @@ export default function ListeningWorkspace({
             <button
               type="button"
               onClick={() => setMobileTab('questions')}
-              className={`px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
                 mobileTab === 'questions' ? 'bg-white text-red-600 shadow-2xs' : 'text-slate-600'
               }`}
             >
@@ -1219,7 +1218,7 @@ export default function ListeningWorkspace({
                 key={p.partNumber}
                 type="button"
                 onClick={() => handleSelectPart(p.partNumber)}
-                className={`w-7 h-7 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                className={`w-6 h-6 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
                   activePart === p.partNumber ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-700 border border-slate-200'
                 }`}
               >

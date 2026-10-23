@@ -115,11 +115,21 @@ console.log('  ✓ AI Evaluation and Random Test Assemblers 100% active and pres
 
 // Test 8: Compact Audio Symbol Badge in ListeningWorkspace ('☁️ R2')
 console.log('Test 8: Compact Audio Symbol Badge in ListeningWorkspace...');
-assert.ok(listeningSrc.includes('☁️ R2'), 'ListeningWorkspace must render compact symbol badge ☁️ R2');
-assert.ok(listeningSrc.includes("title={isEn ? 'Cloudflare R2 Studio Audio (Original MP3)' : 'Audio Thực Chiến Cloudflare R2 (MP3 Gốc)'}"), 'ListeningWorkspace badge must retain full title tooltip');
+const listeningWorkspacePath = path.resolve(__dirname, '../src/components/listening/ListeningWorkspace.jsx');
+const freshListeningSrc = fs.readFileSync(listeningWorkspacePath, 'utf-8');
+assert.ok(freshListeningSrc.includes('☁️ R2'), 'ListeningWorkspace must render compact symbol badge ☁️ R2');
+assert.ok(freshListeningSrc.includes("title={isEn ? 'Cloudflare R2 Studio Audio (Original MP3)' : 'Audio Thực Chiến Cloudflare R2 (MP3 Gốc)'}"), 'ListeningWorkspace badge must retain full title tooltip');
 passedTests++;
 console.log('  ✓ Compact Audio Symbol Badge verified\n');
 
+// Test 9: Listening Mobile Top Chrome Optimization & Ergonomics
+console.log('Test 9: Listening Mobile Top Chrome Optimization & Ergonomics...');
+assert.ok(freshListeningSrc.includes('max-w-[260px] xs:max-w-[320px]'), 'Title must have widened breakpoint widths to avoid truncation');
+assert.ok(freshListeningSrc.includes('flex lg:hidden items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px] font-semibold shrink-0'), 'Mobile mode switcher must be aligned in action controls');
+assert.ok(freshListeningSrc.includes('setIsTestDropdownOpen(false); setIsLibraryOpen(true)'), 'Test dropdown must include direct library link');
+passedTests++;
+console.log('  ✓ Listening Mobile Top Chrome Optimization verified\n');
+
 console.log(`===============================================================`);
-console.log(`🎉 ALL ${passedTests}/8 TESTS PASSED CLEANLY FOR STEP 204!`);
+console.log(`🎉 ALL ${passedTests}/9 TESTS PASSED CLEANLY FOR STEP 204!`);
 console.log(`===============================================================`);
