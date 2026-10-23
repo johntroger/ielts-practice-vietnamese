@@ -743,8 +743,11 @@ export default function ListeningWorkspace({
                     {currentTest.title}
                   </h2>
                   {currentTest?.audioUrl?.includes('.r2.dev') ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-800 text-[10px] font-black border border-cyan-300 shrink-0 shadow-2xs">
-                      ☁️ {isEn ? 'Cloudflare R2 Studio Audio' : 'Audio Thực Chiến R2 (MP3 Gốc)'}
+                    <span 
+                      className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-800 text-[10px] font-black border border-cyan-300 shrink-0 shadow-2xs select-none"
+                      title={isEn ? 'Cloudflare R2 Studio Audio (Original MP3)' : 'Audio Thực Chiến Cloudflare R2 (MP3 Gốc)'}
+                    >
+                      ☁️ R2
                     </span>
                   ) : (
                     <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 shrink-0">

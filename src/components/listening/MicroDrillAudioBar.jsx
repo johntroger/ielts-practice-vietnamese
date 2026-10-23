@@ -402,12 +402,7 @@ export default function MicroDrillAudioBar({
               }`}
               title={isEn ? 'Click to switch between Cloudflare R2 Original MP3 and Sentence TTS Voice' : 'Bấm để chuyển đổi giữa Audio Gốc R2 (MP3) và Giọng Đọc Từng Câu (TTS)'}
             >
-              <span>{useR2Stream ? '☁️' : '🗣️'}</span>
-              <span>
-                {useR2Stream
-                  ? (isEn ? 'Cloudflare R2 Studio Audio (Click for TTS)' : 'Audio Gốc R2 MP3 (Bấm đổi sang TTS)')
-                  : (isEn ? 'Sentence TTS Mode (Click for R2 Audio)' : 'Giọng Đọc Từng Câu (Bấm về Audio R2)')}
-              </span>
+              <span>{useR2Stream ? '☁️ R2' : '🗣️ TTS'}</span>
             </button>
           )}
 

@@ -113,6 +113,13 @@ assert.ok(listeningAssemblerSrc.includes('createRandomFullListeningTest'), 'list
 passedTests++;
 console.log('  ✓ AI Evaluation and Random Test Assemblers 100% active and preserved\n');
 
+// Test 8: Compact Audio Symbol Badge in ListeningWorkspace ('☁️ R2')
+console.log('Test 8: Compact Audio Symbol Badge in ListeningWorkspace...');
+assert.ok(listeningSrc.includes('☁️ R2'), 'ListeningWorkspace must render compact symbol badge ☁️ R2');
+assert.ok(listeningSrc.includes("title={isEn ? 'Cloudflare R2 Studio Audio (Original MP3)' : 'Audio Thực Chiến Cloudflare R2 (MP3 Gốc)'}"), 'ListeningWorkspace badge must retain full title tooltip');
+passedTests++;
+console.log('  ✓ Compact Audio Symbol Badge verified\n');
+
 console.log(`===============================================================`);
-console.log(`🎉 ALL ${passedTests}/7 TESTS PASSED CLEANLY FOR STEP 204!`);
+console.log(`🎉 ALL ${passedTests}/8 TESTS PASSED CLEANLY FOR STEP 204!`);
 console.log(`===============================================================`);
