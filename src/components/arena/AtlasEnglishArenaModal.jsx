@@ -280,9 +280,9 @@ export default function AtlasEnglishArenaModal({
     setTowerBossState(null);
   }, []);
 
-  const handleEnterTowerFloor = useCallback((floor) => {
+  const handleEnterTowerFloor = useCallback((floor, isReplay = false) => {
     if (!floor) return;
-    setActiveTowerFloor(floor);
+    setActiveTowerFloor({ ...floor, isReplay });
 
     if (floor.type === TOWER_NODE_TYPES.CAMPFIRE) {
       setIsTowerCampfireModalOpen(true);
@@ -398,17 +398,22 @@ export default function AtlasEnglishArenaModal({
     stopAudio();
     if (activeTowerFloor) {
       if (towerRun) {
-        const nextFloorIdx = Math.min((towerRun.floors?.length || 10) - 1, (towerRun.currentFloorIndex || 0) + 1);
+        const floorIdx = (activeTowerFloor.floorNumber || 1) - 1;
+        const nextFloorIdx = Math.max(
+          towerRun.currentFloorIndex || 0,
+          Math.min((towerRun.floors?.length || 10) - 1, floorIdx + 1)
+        );
         const rewardGold = activeTowerFloor.rewardGold || 50;
+        const earnedGold = activeTowerFloor.isReplay ? Math.floor(rewardGold / 2) : rewardGold;
         const updated = {
           ...towerRun,
-          gold: (towerRun.gold || 0) + rewardGold,
+          gold: (towerRun.gold || 0) + earnedGold,
           currentFloorIndex: nextFloorIdx,
           isCompleted: activeTowerFloor.type === TOWER_NODE_TYPES.BOSS && (towerBossState?.currentHp || 0) <= 0
         };
         saveActiveTowerRun(updated);
         setTowerRun(updated);
-        if (activeTowerFloor.dropsRelic) {
+        if (activeTowerFloor.dropsRelic && !activeTowerFloor.isReplay) {
           const owned = (updated.relics || []).map(r => r.id);
           const picks = generateThreeRandomRelics(owned);
           setTowerRewardRelics(picks);
@@ -446,6 +451,10 @@ export default function AtlasEnglishArenaModal({
 
   const handleDefeatedRestart = useCallback(async () => {
     stopAudio();
+    if (activeTowerFloor) {
+      handleEnterTowerFloor(activeTowerFloor, true);
+      return;
+    }
     if (sprint.score > 0) {
       const partialXp = calculateSprintXp({
         correctAnswers: sprint.score,
@@ -464,7 +473,7 @@ export default function AtlasEnglishArenaModal({
       }
     }
     sprint.startSprint(null, selectedDifficulty);
-  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio]);
+  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio, activeTowerFloor, handleEnterTowerFloor]);
 
   // Ensure all audio is immediately killed if modal is closed or unmounted
   useEffect(() => {
@@ -888,6 +897,7 @@ export default function AtlasEnglishArenaModal({
                     runState={towerRun}
                     onEnterFloor={handleEnterTowerFloor}
                     onAbandonRun={handleAbandonTowerRun}
+                    onRestartRun={handleStartNewTowerExpedition}
                   />
                 ) : (
                   <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center text-center p-5 sm:p-7 bg-gradient-to-b from-amber-950/30 via-slate-900/80 to-purple-950/30 border-2 border-amber-500/40 rounded-2xl shadow-2xl gap-3.5 animate-fade-in my-auto">
@@ -1362,7 +1372,13 @@ export default function AtlasEnglishArenaModal({
           <div className="flex flex-col flex-1 min-h-full items-center justify-center p-4">
             <ArenaSprintSummaryModal
               summary={sprint.summary}
-              onPlayAgain={() => sprint.startSprint(null, selectedDifficulty)}
+              onPlayAgain={() => {
+                if (activeTowerFloor) {
+                  handleEnterTowerFloor(activeTowerFloor, true);
+                } else {
+                  sprint.startSprint(null, selectedDifficulty);
+                }
+              }}
               onClose={handleReturnToLobby}
               onOpenTheory={handleOpenTheoryPrescription}
             />

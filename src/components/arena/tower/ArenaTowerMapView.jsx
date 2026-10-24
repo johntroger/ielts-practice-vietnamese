@@ -18,13 +18,15 @@ import {
   ChevronRight, 
   Trophy,
   Flame,
-  ArrowUpCircle
+  ArrowUpCircle,
+  RotateCcw
 } from 'lucide-react';
 
 export default function ArenaTowerMapView({
   runState,
   onEnterFloor,
-  onAbandonRun
+  onAbandonRun,
+  onRestartRun
 }) {
   const { t, isEn } = useTranslation();
 
@@ -83,14 +85,29 @@ export default function ArenaTowerMapView({
           </div>
         </div>
 
-        {/* Abandon Run */}
-        <button
-          type="button"
-          onClick={onAbandonRun}
-          className="text-xs text-slate-400 hover:text-rose-400 font-medium px-2.5 py-1 rounded-lg border border-transparent hover:border-rose-900/40 hover:bg-rose-950/20 transition-all cursor-pointer"
-        >
-          {isEn ? 'Abandon Expedition' : 'Rút Lui Khỏi Tháp'}
-        </button>
+        {/* Action Buttons: Restart Expedition & Abandon Run */}
+        <div className="flex items-center gap-2">
+          {onRestartRun && (
+            <button
+              type="button"
+              onClick={onRestartRun}
+              className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-bold px-3 py-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 transition-all cursor-pointer shadow-xs active:scale-95"
+              title={isEn ? 'Start a fresh expedition from Floor 1' : 'Bắt đầu lại chuyến leo tháp từ Tầng 1'}
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+              <span>{isEn ? 'Restart Floor 1' : 'Chơi Lại Từ Tầng 1'}</span>
+            </button>
+          )}
+
+          {/* Abandon Run */}
+          <button
+            type="button"
+            onClick={onAbandonRun}
+            className="text-xs text-slate-400 hover:text-rose-400 font-medium px-2.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/40 hover:bg-rose-950/20 transition-all cursor-pointer"
+          >
+            {isEn ? 'Abandon Expedition' : 'Rút Lui Khỏi Tháp'}
+          </button>
+        </div>
       </div>
 
       {/* Relics Deck Bar */}
@@ -131,8 +148,8 @@ export default function ArenaTowerMapView({
                 isCurrent
                   ? 'bg-gradient-to-r from-indigo-950/80 via-slate-900 to-purple-950/60 border-indigo-500 text-white shadow-lg ring-1 ring-indigo-400/40 scale-[1.01]'
                   : isPast
-                    ? 'bg-slate-900/30 border-slate-800/40 text-slate-500 opacity-60'
-                    : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+                    ? 'bg-slate-900/50 hover:bg-slate-900/80 border-slate-700/60 text-slate-300 shadow-xs'
+                    : 'bg-slate-900/60 border-slate-800/80 text-slate-400 opacity-60'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -149,9 +166,14 @@ export default function ArenaTowerMapView({
                         {isEn ? 'Current Floor' : 'Tầng Hiện Tại'}
                       </span>
                     )}
+                    {isPast && (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider">
+                        {isEn ? 'Cleared' : 'Đã Vượt Qua'}
+                      </span>
+                    )}
                   </div>
                   <span className="text-xs text-slate-400">
-                    {floor.type.toUpperCase()} • {floor.rewardGold ? `+${floor.rewardGold} Gold` : ''} {floor.dropsRelic ? '• 💎 Guaranteed Relic' : ''}
+                    {floor.type.toUpperCase()} • {floor.rewardGold ? `+${floor.rewardGold} Gold` : ''} {floor.dropsRelic ? (isEn ? '• 💎 Guaranteed Relic' : '• 💎 Rớt Cổ Vật') : ''}
                   </span>
                 </div>
               </div>
@@ -159,11 +181,23 @@ export default function ArenaTowerMapView({
               {isCurrent && (
                 <button
                   type="button"
-                  onClick={() => onEnterFloor?.(floor)}
+                  onClick={() => onEnterFloor?.(floor, false)}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
                 >
                   <span>{isEn ? 'Enter Chamber' : 'Tiến Vào Tầng'}</span>
                   <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+
+              {isPast && (
+                <button
+                  type="button"
+                  onClick={() => onEnterFloor?.(floor, true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-600/30 border border-slate-700 hover:border-indigo-500/60 text-slate-200 hover:text-indigo-200 font-bold text-xs shadow-xs transition-all cursor-pointer active:scale-95"
+                  title={isEn ? `Replay Floor ${floor.floorNumber}` : `Chơi lại Tầng ${floor.floorNumber}`}
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>{isEn ? `Replay Floor ${floor.floorNumber}` : `Chơi Lại Tầng ${floor.floorNumber}`}</span>
                 </button>
               )}
             </div>

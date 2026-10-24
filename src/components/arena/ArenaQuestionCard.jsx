@@ -100,7 +100,7 @@ function renderFormattedContext(activeContext, isEn) {
         <div className="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-indigo-950/50 border-2 border-amber-500/70 shadow-lg flex flex-col gap-1">
           <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-400">
             <span>📌</span>
-            <span>{isEn ? 'Statement to Evaluate (In Đậm):' : 'Nhận Định Cần Đánh Giá (Statement - In Đậm):'}</span>
+            <span>{isEn ? 'Statement to Evaluate:' : 'Nhận Định Cần Đánh Giá (Statement - In Đậm):'}</span>{/* Statement to Evaluate (In Đậm) */}
           </div>
           <p className="text-base sm:text-lg md:text-xl font-black text-amber-100 font-sans tracking-wide leading-snug">
             "{rawStatement}"
@@ -334,13 +334,20 @@ export default function ArenaQuestionCard({
       ) : (
         /* Option Cards: Adaptive Grid (3-column for TFNG / 3 options, 1-column or 2-column for others) */
         <div className={`grid gap-2 sm:gap-2.5 ${
-          question.options.length === 3 
+          question.options.length === 3 || (localizedQ?.options && localizedQ.options.length === 3)
             ? 'grid-cols-1 sm:grid-cols-3' 
-            : question.options.length === 2 
+            : (question.options.length === 2 || (localizedQ?.options && localizedQ.options.length === 2))
               ? 'grid-cols-1 sm:grid-cols-2' 
               : 'grid-cols-1'
         }`}>
-          {question.options.map((optText, idx) => {
+          {((isEn ? (localizedQ?.options || question.optionsEn) : (localizedQ?.options || question.optionsVi)) || question.options || []).map((rawOptText, idx) => {
+            let optText = rawOptText;
+            if (isEn && typeof rawOptText === 'string') {
+              const parenMatch = rawOptText.match(/^[^(]+\(([^)]+)\)$/);
+              if (parenMatch && /[a-zA-Z]{2,}/.test(parenMatch[1])) {
+                optText = parenMatch[1].trim();
+              }
+            }
             const isSelected = selectedOption === idx;
             const isOptionCorrect = idx === question.correctIndex;
             const isSpelling = question.type === 'spelling' || question.skillCategory === 'spelling';
