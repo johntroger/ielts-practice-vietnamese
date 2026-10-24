@@ -126,6 +126,94 @@ export default function AtlasEnglishArenaModal({
   // Mobile Tab Navigation State: 'match' | 'leaderboard'
   const [activeMobileTab, setActiveMobileTab] = useState('match');
 
+  const handleDifficultyChange = useCallback((diff) => {
+    setSelectedDifficulty(diff);
+    safeSet(ARENA_STORAGE_KEYS.LAST_DIFFICULTY, diff);
+  }, []);
+
+  const streak = useMemo(() => getUnifiedStreakCount(), []);
+
+  // Fetch real users from Supabase / cache whenever modal opens or user auth changes
+  useEffect(() => {
+    if (!isOpen) return;
+    let isMounted = true;
+    fetchRealLeaderboard(currentUser).then(res => {
+      if (isMounted && res) {
+        setLeaderboardData(res);
+      }
+    });
+    return () => { isMounted = false; };
+  }, [isOpen, currentUser]);
+
+  // Resilient offline queue auto-sync upon network reconnection
+  useEffect(() => {
+    if (!isOpen) return;
+    const cleanup = initOfflineQueueAutoSync(currentUser);
+    return () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
+  }, [isOpen, currentUser]);
+
+  // Evaluate weekly league rollover upon opening modal
+  useEffect(() => {
+    if (!isOpen || !leaderboardData?.leaderboard?.length) return;
+    const currentWeekKey = getIsoWeekKey();
+    const lastEvaluatedWeek = safeGet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, '');
+
+    if (lastEvaluatedWeek && lastEvaluatedWeek !== currentWeekKey) {
+      const result = evaluateWeeklyLeagueTransition({
+        currentWeekKey,
+        lastEvaluatedWeek,
+        currentTier: leaderboardData.leagueTier,
+        userRank: leaderboardData.currentRank,
+        totalPlayers: leaderboardData.leaderboard.length,
+        weeklyXp: leaderboardData.userWeeklyXp || 0
+      });
+
+      if (result.isNewWeek && result.action === 'promoted') {
+        setWeeklyTransition(result);
+        playChime();
+        submitRealSprintScore({
+          currentUser,
+          deltaXp: result.bonusXp,
+          streakCount: streak
+        }).catch(() => {});
+      }
+      safeSet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, currentWeekKey);
+    } else if (!lastEvaluatedWeek) {
+      safeSet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, currentWeekKey);
+    }
+  }, [isOpen, currentUser, leaderboardData, playChime, streak]);
+
+  const sprint = useArenaSprintEngine({
+    user: currentUser,
+    onSprintEnd: async (summary) => {
+      if (summary && summary.finalXp > 0) {
+        // Calculate old and new level to detect Level-Up
+        const currentTotalXp = leaderboardData.userWeeklyXp || 0;
+        const oldLevel = calculateLevelFromXp(currentTotalXp);
+        const newLevel = calculateLevelFromXp(currentTotalXp + summary.finalXp);
+
+        await submitRealSprintScore({
+          currentUser,
+          deltaXp: summary.finalXp,
+          streakCount: streak + 1
+        });
+        const updated = await fetchRealLeaderboard(currentUser);
+        setLeaderboardData(updated);
+
+        if (newLevel > oldLevel) {
+          playChime();
+          setLevelUpData({
+            oldLevel,
+            newLevel,
+            tier: getLevelTierInfo(newLevel)
+          });
+        }
+      }
+    }
+  });
+
   // Game Mode State: 'blitz' (3-Min Quick Run) | 'tower' (Roguelite Expedition)
   const [gameMode, setGameMode] = useState(() => safeGet('ielts_arena_game_mode', 'blitz'));
   const [towerRun, setTowerRun] = useState(() => getActiveTowerRun());
@@ -138,7 +226,7 @@ export default function AtlasEnglishArenaModal({
   const [towerLastDamage, setTowerLastDamage] = useState(0);
   const [towerIsCrit, setTowerIsCrit] = useState(false);
 
-  // Tower Actions
+  // Tower Actions (Declared after sprint is initialized)
   const handleStartNewTowerExpedition = useCallback(() => {
     const newRun = startNewTowerRun(selectedDifficulty);
     setTowerRun(newRun);
@@ -247,94 +335,6 @@ export default function AtlasEnglishArenaModal({
     playSfx('correct');
   }, [towerRun, playSfx]);
 
-  const handleDifficultyChange = useCallback((diff) => {
-    setSelectedDifficulty(diff);
-    safeSet(ARENA_STORAGE_KEYS.LAST_DIFFICULTY, diff);
-  }, []);
-
-  const streak = useMemo(() => getUnifiedStreakCount(), []);
-
-  // Fetch real users from Supabase / cache whenever modal opens or user auth changes
-  useEffect(() => {
-    if (!isOpen) return;
-    let isMounted = true;
-    fetchRealLeaderboard(currentUser).then(res => {
-      if (isMounted && res) {
-        setLeaderboardData(res);
-      }
-    });
-    return () => { isMounted = false; };
-  }, [isOpen, currentUser]);
-
-  // Resilient offline queue auto-sync upon network reconnection
-  useEffect(() => {
-    if (!isOpen) return;
-    const cleanup = initOfflineQueueAutoSync(currentUser);
-    return () => {
-      if (typeof cleanup === 'function') cleanup();
-    };
-  }, [isOpen, currentUser]);
-
-  // Evaluate weekly league rollover upon opening modal
-  useEffect(() => {
-    if (!isOpen || !leaderboardData?.leaderboard?.length) return;
-    const currentWeekKey = getIsoWeekKey();
-    const lastEvaluatedWeek = safeGet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, '');
-
-    if (lastEvaluatedWeek && lastEvaluatedWeek !== currentWeekKey) {
-      const result = evaluateWeeklyLeagueTransition({
-        currentWeekKey,
-        lastEvaluatedWeek,
-        currentTier: leaderboardData.leagueTier,
-        userRank: leaderboardData.currentRank,
-        totalPlayers: leaderboardData.leaderboard.length,
-        weeklyXp: leaderboardData.userWeeklyXp || 0
-      });
-
-      if (result.isNewWeek && result.action === 'promoted') {
-        setWeeklyTransition(result);
-        playChime();
-        submitRealSprintScore({
-          currentUser,
-          deltaXp: result.bonusXp,
-          streakCount: streak
-        }).catch(() => {});
-      }
-      safeSet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, currentWeekKey);
-    } else if (!lastEvaluatedWeek) {
-      safeSet(ARENA_STORAGE_KEYS.LAST_EVALUATED_WEEK, currentWeekKey);
-    }
-  }, [isOpen, currentUser, leaderboardData, playChime, streak]);
-
-  const sprint = useArenaSprintEngine({
-    user: currentUser,
-    onSprintEnd: async (summary) => {
-      if (summary && summary.finalXp > 0) {
-        // Calculate old and new level to detect Level-Up
-        const currentTotalXp = leaderboardData.userWeeklyXp || 0;
-        const oldLevel = calculateLevelFromXp(currentTotalXp);
-        const newLevel = calculateLevelFromXp(currentTotalXp + summary.finalXp);
-
-        await submitRealSprintScore({
-          currentUser,
-          deltaXp: summary.finalXp,
-          streakCount: streak + 1
-        });
-        const updated = await fetchRealLeaderboard(currentUser);
-        setLeaderboardData(updated);
-
-        if (newLevel > oldLevel) {
-          playChime();
-          setLevelUpData({
-            oldLevel,
-            newLevel,
-            tier: getLevelTierInfo(newLevel)
-          });
-        }
-      }
-    }
-  });
-
   // Fullscreen toggle support
   const toggleFullscreen = useCallback(() => {
     if (typeof document === 'undefined') return;
@@ -357,6 +357,30 @@ export default function AtlasEnglishArenaModal({
 
   const handleReturnToLobby = useCallback(async () => {
     stopAudio();
+    if (activeTowerFloor) {
+      if (towerRun) {
+        const nextFloorIdx = Math.min((towerRun.floors?.length || 10) - 1, (towerRun.currentFloorIndex || 0) + 1);
+        const rewardGold = activeTowerFloor.rewardGold || 50;
+        const updated = {
+          ...towerRun,
+          gold: (towerRun.gold || 0) + rewardGold,
+          currentFloorIndex: nextFloorIdx,
+          isCompleted: activeTowerFloor.type === TOWER_NODE_TYPES.BOSS && (towerBossState?.currentHp || 0) <= 0
+        };
+        saveActiveTowerRun(updated);
+        setTowerRun(updated);
+        if (activeTowerFloor.dropsRelic) {
+          const owned = (updated.relics || []).map(r => r.id);
+          const picks = generateThreeRandomRelics(owned);
+          setTowerRewardRelics(picks);
+          setIsTowerRelicModalOpen(true);
+        }
+      }
+      setActiveTowerFloor(null);
+      setTowerBossState(null);
+      sprint.resetSprint();
+      return;
+    }
     if (sprint.phase === ARENA_SPRINT_PHASES.DEFEATED && sprint.score > 0) {
       const partialXp = calculateSprintXp({
         correctAnswers: sprint.score,
@@ -377,7 +401,7 @@ export default function AtlasEnglishArenaModal({
     sprint.resetSprint();
     const updated = await fetchRealLeaderboard(currentUser);
     if (updated) setLeaderboardData(updated);
-  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio]);
+  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio, activeTowerFloor, towerRun, towerBossState]);
 
   const handleDefeatedRestart = useCallback(async () => {
     stopAudio();
@@ -568,6 +592,24 @@ export default function AtlasEnglishArenaModal({
       }
     }
   }, [sprint, isSpeedrunMode, playSfx, triggerShake]);
+
+  // Tower of Babel Boss Damage Trigger
+  useEffect(() => {
+    if (activeTowerFloor?.type === TOWER_NODE_TYPES.BOSS && towerBossState && sprint.score > 0) {
+      const dmg = calculateBossDamage({
+        isCorrect: true,
+        secondsTaken: 4,
+        relics: towerRun?.relics || []
+      });
+      setTowerLastDamage(dmg.damage);
+      setTowerIsCrit(dmg.isCrit);
+      setTowerBossState(prev => {
+        if (!prev) return null;
+        const nextHp = Math.max(0, prev.currentHp - dmg.damage);
+        return { ...prev, currentHp: nextHp, isEnraged: nextHp <= prev.maxHp * 0.4 };
+      });
+    }
+  }, [sprint.score]);
 
   const handleSkipQuestion = useCallback(() => {
     if (sprint.phase === ARENA_SPRINT_PHASES.ACTIVE) {
