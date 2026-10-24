@@ -40,12 +40,12 @@ export default function ArenaTowerRelicPickerModal({
             <Sparkles className="w-6 h-6" />
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-indigo-200 to-purple-300">
-            {isEn ? 'Choose 1 Scholastic Artifact Relic' : 'Chọn 1 Cổ Vật Hàn Lâm'}
+            {isEn ? 'Choose 1 Relic' : 'Chọn 1 Cổ Vật'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-400">
             {isEn 
-              ? 'This artifact will grant passive mastery bonuses for the remainder of your expedition.' 
-              : 'Cổ vật này sẽ gia tăng vĩnh viễn sức mạnh khảo thí cho suốt chuyến leo tháp.'}
+              ? 'Passive bonus for this expedition.' 
+              : 'Gia tăng sức mạnh cho chuyến leo tháp này.'}
           </p>
         </div>
 

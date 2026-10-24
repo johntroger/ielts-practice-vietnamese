@@ -46,7 +46,7 @@ export default function ArenaWorldBossCard({ isEn = false, onStartSprint = null 
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1 shrink-0">
                   <Skull className="w-2.5 h-2.5" />
-                  {isEn ? 'Daily World Boss Raid' : 'Săn Boss Thế Giới Hằng Ngày'}
+                  {isEn ? 'World Boss' : 'Boss Thế Giới'}
                 </span>
                 {boss.currentHp <= 0 ? (
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
@@ -93,7 +93,7 @@ export default function ArenaWorldBossCard({ isEn = false, onStartSprint = null 
           <div className="flex items-center justify-between text-[10px] font-medium text-slate-400 mb-0.5">
             <span className="flex items-center gap-1">
               <Flame className="w-2.5 h-2.5 text-rose-400" />
-              <span>{isEn ? 'Global Boss HP' : 'Máu Boss Toàn Máy Chủ'}</span>
+              <span>{isEn ? 'Boss HP' : 'Máu Boss'}</span>
             </span>
             <span className="font-mono text-[10px] font-bold text-slate-200">
               {boss.currentHp.toLocaleString()} / {boss.maxHp.toLocaleString()} ({hpPercent}%)

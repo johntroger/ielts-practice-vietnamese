@@ -95,7 +95,7 @@ export default function ArenaTowerMapView({
               title={isEn ? 'Start a fresh expedition from Floor 1' : 'Bắt đầu lại chuyến leo tháp từ Tầng 1'}
             >
               <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
-              <span>{isEn ? 'Restart Floor 1' : 'Chơi Lại Từ Tầng 1'}</span>
+              <span>{isEn ? 'Restart' : 'Làm Lại'}</span>
             </button>
           )}
 
@@ -105,7 +105,7 @@ export default function ArenaTowerMapView({
             onClick={onAbandonRun}
             className="text-xs text-slate-400 hover:text-rose-400 font-medium px-2.5 py-1.5 rounded-lg border border-transparent hover:border-rose-900/40 hover:bg-rose-950/20 transition-all cursor-pointer"
           >
-            {isEn ? 'Abandon Expedition' : 'Rút Lui Khỏi Tháp'}
+            {isEn ? 'Abandon' : 'Rút Lui'}
           </button>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function ArenaTowerMapView({
       <div className="w-full bg-slate-900/60 border border-slate-800/80 rounded-xl px-3 py-2 flex items-center gap-2 overflow-x-auto shrink-0 shadow-inner">
         <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>{isEn ? 'Artifact Relics:' : 'Cổ Vật Thu Thập:'}</span>
+          <span>{isEn ? 'Relics:' : 'Cổ Vật:'}</span>
         </span>
         {runState.relics && runState.relics.length > 0 ? (
           runState.relics.map((relic, idx) => (
@@ -129,7 +129,7 @@ export default function ArenaTowerMapView({
           ))
         ) : (
           <span className="text-xs text-slate-500 italic">
-            {isEn ? 'No relics found yet. Defeat Elites or find Treasure!' : 'Chưa có cổ vật nào. Hãy đánh quái Tinh Anh hoặc mở hòm báu!'}
+            {isEn ? 'No relics yet. Clear Elites or Treasure.' : 'Chưa có cổ vật. Tìm trong Hòm hoặc Tinh Anh.'}
           </span>
         )}
       </div>

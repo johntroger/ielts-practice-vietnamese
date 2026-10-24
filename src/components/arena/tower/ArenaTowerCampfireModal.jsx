@@ -33,12 +33,12 @@ export default function ArenaTowerCampfireModal({
             ⛺
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-indigo-300">
-            {isEn ? 'Scholastic Campfire Sanctuary' : 'Lửa Trại Hàn Lâm Yên Bình'}
+            {isEn ? 'Campfire Rest' : 'Lửa Trại'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
             {isEn 
-              ? 'The warm glow of the fire calms your scholarly mind. Choose your recovery action wisely before ascending.'
-              : 'Ánh lửa trại ấm áp xoa dịu tâm trí bạn. Hãy chọn một hành động hồi phục trước khi tiếp tục cuộc hành trình.'}
+              ? 'Choose an action before ascending.'
+              : 'Chọn một hành động trước khi tiếp tục cuộc hành trình.'}
           </p>
         </div>
 

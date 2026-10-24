@@ -469,7 +469,7 @@ export default function ArenaQuestionCard({
                 title={isEn ? "Don't know this answer? Skip to reveal explanation (Esc)" : "Không biết câu này? Bỏ qua để xem đáp án (Esc)"}
               >
                 <SkipForward className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
-                <span>{t('arena.skipQuestion') || (isEn ? 'Skip (Esc)' : 'Bỏ Qua (Esc)')}</span>
+                <span>{t('arena.skipQuestion') || (isEn ? 'Skip' : 'Bỏ Qua')}</span>
               </button>
 
               {/* Active Perk Trigger Button */}
@@ -503,7 +503,7 @@ export default function ArenaQuestionCard({
               onClick={() => handleCheck?.()}
               className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 disabled:cursor-not-allowed cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-2.5 rounded-xl shadow-lg shadow-indigo-600/25 transition-all select-none w-full sm:w-auto sm:ml-auto active:scale-95"
             >
-              <span>{t('arena.checkAnswer') || (isEn ? 'Check Answer' : 'Kiểm Tra Đáp Án')} (Enter)</span>
+              <span>{t('arena.checkAnswer') || (isEn ? 'Check' : 'Kiểm Tra')}</span>
             </button>
           </>
         ) : (
@@ -513,7 +513,7 @@ export default function ArenaQuestionCard({
               onClick={() => onNextQuestion?.()}
               className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 cursor-pointer text-white font-bold text-xs sm:text-sm px-6 sm:px-8 py-2.5 sm:py-2.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all select-none w-full sm:w-auto active:scale-95"
             >
-              <span>{t('arena.nextQuestion') || (isEn ? 'Next Question' : 'Câu Tiếp Theo')} (Enter)</span>
+              <span>{t('arena.nextQuestion') || (isEn ? 'Next' : 'Tiếp Tục')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

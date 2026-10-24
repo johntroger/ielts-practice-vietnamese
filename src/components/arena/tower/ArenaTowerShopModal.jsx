@@ -42,10 +42,10 @@ export default function ArenaTowerShopModal({
             </span>
             <div>
               <h2 className="text-lg sm:text-xl font-black text-white">
-                {isEn ? 'Mystic Scholar Merchant' : 'Quán Thương Nhân Cổ Ngữ'}
+                {isEn ? 'Scholar Merchant' : 'Nhà Buôn Tháp'}
               </h2>
               <p className="text-xs text-slate-400">
-                {isEn ? '"Knowledge has a price, scholar. Spend your gold wisely."' : '"Tri thức luôn có giá, hỡi người leo tháp. Hãy tiêu vàng khôn ngoan."'}
+                {isEn ? 'Purchase potions and relics.' : 'Mua bình dược và cổ vật.'}
               </p>
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function ArenaTowerShopModal({
         {/* Consumable Potions Section */}
         <div className="flex flex-col gap-2">
           <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider">
-            {isEn ? 'Consumable Elixirs & Shields' : 'Bình Dược Hồi Phục & Bùa Phép'}
+            {isEn ? 'Elixirs & Shields' : 'Bình Dược & Khiên'}
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {TOWER_CONSUMABLES_SHOP.map((item) => {
@@ -111,7 +111,7 @@ export default function ArenaTowerShopModal({
           <div className="flex flex-col gap-2 mt-1">
             <span className="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Ancient Relics for Sale' : 'Cổ Vật Quý Giá Bày Bán'}</span>
+              <span>{isEn ? 'Relics' : 'Cổ Vật'}</span>
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {unownedRelics.map((relic) => {
@@ -164,7 +164,7 @@ export default function ArenaTowerShopModal({
             onClick={onLeaveShop}
             className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-sm active:scale-95"
           >
-            {isEn ? 'Continue Ascension →' : 'Tiếp Tục Leo Tháp →'}
+            {isEn ? 'Continue →' : 'Tiếp Tục →'}
           </button>
         </div>
       </div>

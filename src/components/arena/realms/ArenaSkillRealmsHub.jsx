@@ -74,16 +74,16 @@ export default function ArenaSkillRealmsHub({
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <h2 className="text-sm sm:text-base font-black text-slate-100 tracking-tight">
-                {isEn ? 'IELTS Skill Realms' : 'Tứ Đại Cung Điện Khảo Thí'}
+                {isEn ? 'Skill Realms' : 'Cung Điện Kỹ Năng'}
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold border border-indigo-500/30">
-                {isEn ? '16 Part / Task Gates' : '16 Ải Khảo Thí'}
+                {isEn ? '16 Gates' : '16 Ải'}
               </span>
             </div>
             <p className="text-xs text-slate-400 hidden sm:block">
               {isEn 
-                ? 'Conquer authentic Cambridge Parts & Tasks, earn stars, and challenge Realm Guardians!'
-                : 'Chinh phục từng Part & Task Cambridge thật, tích lũy 3 sao và khiêu chiến Thủ Lĩnh Cung Điện!'}
+                ? 'Conquer Cambridge Parts & Tasks, earn stars & defeat Realm Guardians.'
+                : 'Chinh phục từng Part & Task Cambridge và khiêu chiến Thủ Lĩnh Cung Điện.'}
             </p>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default function ArenaSkillRealmsHub({
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
-                {isEn ? 'Guardian Trial:' : 'Thủ Lĩnh Cung Điện:'}
+                {isEn ? 'Guardian:' : 'Thủ Lĩnh:'}
               </span>
               <span className="text-xs font-extrabold text-slate-200 truncate">
                 {isEn ? activeRealm.guardian.nameEn : activeRealm.guardian.nameVi}
@@ -177,10 +177,10 @@ export default function ArenaSkillRealmsHub({
             </div>
             <span className="text-[11px] text-slate-400 truncate">
               {realmStats.isGuardianDefeated
-                ? (isEn ? 'Guardian conquered! Replay anytime to sharpen your Climax reflex.' : 'Đã khuất phục Thủ Lĩnh! Bạn có thể khiêu chiến lại bất cứ lúc nào.')
+                ? (isEn ? 'Guardian conquered! Replay anytime to practice.' : 'Đã khuất phục! Sẵn sàng đấu lại.')
                 : realmStats.isGuardianUnlocked
-                  ? (isEn ? 'All Gates passed! Ready to challenge the Guardian for a Legendary Relic!' : 'Đã vượt qua tất cả các ải! Sẵn sàng khiêu chiến để nhận Cổ Vật Huyền Thoại!')
-                  : (isEn ? `Pass all ${activeRealm.gates.length} Gates with at least 1★ to unlock this trial.` : `Vượt qua tất cả ${activeRealm.gates.length} Ải (đạt ít nhất 1★) để mở khóa khiêu chiến.`)}
+                  ? (isEn ? 'All Gates passed! Ready to challenge!' : 'Đã mở khóa! Sẵn sàng khiêu chiến!')
+                  : (isEn ? `Pass all ${activeRealm.gates.length} Gates (1★+) to unlock.` : `Đạt 1★+ tất cả ${activeRealm.gates.length} Ải để mở khóa.`)}
             </span>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function ArenaSkillRealmsHub({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-black text-xs shadow-md shadow-amber-500/20 cursor-pointer active:scale-95 transition-all"
           >
             <Crown className="w-3.5 h-3.5 text-amber-200" />
-            <span>{realmStats.isGuardianDefeated ? (isEn ? 'Replay Guardian' : 'Đấu Lại Thủ Lĩnh') : (isEn ? 'Challenge Guardian' : 'Khiêu Chiến')}</span>
+            <span>{realmStats.isGuardianDefeated ? (isEn ? 'Replay' : 'Đấu Lại') : (isEn ? 'Challenge' : 'Khiêu Chiến')}</span>
           </button>
         )}
       </div>

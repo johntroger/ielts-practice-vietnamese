@@ -52,7 +52,7 @@ export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
             <Target className="w-3.5 h-3.5" />
           </div>
           <span className="text-xs sm:text-sm font-black text-slate-100 truncate">
-            {isEn ? 'Atlas Daily Sprints' : 'Mục Tiêu Nhật Trình'}
+            {isEn ? 'Daily Objectives' : 'Mục Tiêu Ngày'}
           </span>
         </div>
 
@@ -118,7 +118,7 @@ export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
         data.isVaultClaimed ? (
           <div className="flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-300 text-xs font-bold">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Vault Claimed for Today!' : 'Đã Nhận Rương Tri Thức Hôm Nay!'}</span>
+            <span>{isEn ? 'Vault Claimed!' : 'Đã Nhận Rương!'}</span>
           </div>
         ) : (
           <button
@@ -128,13 +128,13 @@ export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
             className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] animate-pulse"
           >
             <Gift className="w-4 h-4 shrink-0" />
-            <span>{isEn ? 'Unlock Atlas Knowledge Vault' : 'Mở Khóa Rương Tri Thức Atlas'}</span>
+            <span>{isEn ? 'Claim Knowledge Vault' : 'Nhận Rương Tri Thức'}</span>
             <Sparkles className="w-3.5 h-3.5" />
           </button>
         )
       ) : (
         <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
-          <span>{isEn ? 'Complete all 3 to claim Vault:' : 'Hoàn thành 3 mục tiêu nhận Rương:'}</span>
+          <span>{isEn ? 'Complete all 3 for Vault:' : 'Hoàn thành 3 mục tiêu:'}</span>
           <span className="font-mono font-bold text-amber-300">+120 XP & Shield 💎</span>
         </div>
       )}

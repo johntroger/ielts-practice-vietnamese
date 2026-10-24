@@ -79,7 +79,7 @@ export default function ArenaGatePortalCard({
         <h3 className="text-sm sm:text-base font-extrabold text-slate-100 group-hover:text-white leading-snug">
           {isEn ? gate.titleEn : gate.titleVi}
         </h3>
-        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-slate-400 line-clamp-1 leading-relaxed">
           {isEn ? gate.descEn : gate.descVi}
         </p>
       </div>
@@ -133,7 +133,7 @@ export default function ArenaGatePortalCard({
                 </>
               ) : (
                 <>
-                  <span>{isEn ? 'Enter Gate' : 'Vào Ải'}</span>
+                  <span>{isEn ? 'Enter' : 'Vào'}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </>
               )}

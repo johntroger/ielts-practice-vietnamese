@@ -191,8 +191,8 @@ export default function ArenaSprintSummaryModal({
               </div>
               <span className="text-[10px] sm:text-[11px] text-slate-300">
                 {isEn 
-                  ? `You: ${summary.ghostDuelResult.userScore}/${summary.totalQuestions} (${summary.ghostDuelResult.userTimeSpent}s) vs Rival: ${summary.ghostDuelResult.ghostScore}/${summary.totalQuestions} (${summary.ghostDuelResult.ghostTime}s)`
-                  : `Bạn: ${summary.ghostDuelResult.userScore}/${summary.totalQuestions} (${summary.ghostDuelResult.userTimeSpent}s) vs Đối thủ: ${summary.ghostDuelResult.ghostScore}/${summary.totalQuestions} (${summary.ghostDuelResult.ghostTime}s)`}
+                  ? `You: ${summary.ghostDuelResult.userScore}/${summary.totalQuestions} (${summary.ghostDuelResult.userTimeSpent}s) • Rival: ${summary.ghostDuelResult.ghostScore}/${summary.totalQuestions} (${summary.ghostDuelResult.ghostTime}s)`
+                  : `Bạn: ${summary.ghostDuelResult.userScore}/${summary.totalQuestions} (${summary.ghostDuelResult.userTimeSpent}s) • Đối thủ: ${summary.ghostDuelResult.ghostScore}/${summary.totalQuestions} (${summary.ghostDuelResult.ghostTime}s)`}
               </span>
             </div>
           </div>

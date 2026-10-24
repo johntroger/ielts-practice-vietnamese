@@ -1033,19 +1033,19 @@ export default function AtlasEnglishArenaModal({
                     </div>
                     <div className="flex flex-col gap-1 max-w-lg">
                       <h2 className="text-lg sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-purple-300">
-                        {isEn ? 'The Cambridge Tower of Babel' : 'Tháp Khảo Thí Babel - Roguelite'}
+                        {isEn ? 'Tower of Babel' : 'Tháp Babel'}
                       </h2>
                       <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                         {isEn
-                          ? 'Embark on a procedural 10-floor roguelite expedition. Ascend through battle chambers, discover ancient relics, visit scholar merchants, rest at campfires, and defeat the Floor 10 Inquisitor Boss!'
-                          : 'Bước vào chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật thần kỳ, kiếm vàng mua bình dược, hồi phục tại lửa trại và tiêu diệt Trùm Khảo Thí Tầng 10!'}
+                          ? '10-floor roguelite ascension. Collect relics, survive chambers, and defeat Floor 10 Boss.'
+                          : 'Chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật, sinh tồn và diệt Trùm Tầng 10.'}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md my-1 text-xs">
                       <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
                         <span className="text-lg">⚔️</span>
-                        <span className="font-bold text-slate-200">{isEn ? '10 Floors' : '10 Tầng Tháp'}</span>
+                        <span className="font-bold text-slate-200">{isEn ? '10 Floors' : '10 Tầng'}</span>
                       </div>
                       <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
                         <span className="text-lg">💎</span>
@@ -1057,7 +1057,7 @@ export default function AtlasEnglishArenaModal({
                       </div>
                       <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
                         <span className="text-lg">👑</span>
-                        <span className="font-bold text-slate-200">{isEn ? 'Boss Fight' : 'Trùm Khảo Thí'}</span>
+                        <span className="font-bold text-slate-200">{isEn ? 'Boss Fight' : 'Trùm Tầng 10'}</span>
                       </div>
                     </div>
 
@@ -1066,7 +1066,7 @@ export default function AtlasEnglishArenaModal({
                       onClick={handleStartNewTowerExpedition}
                       className="w-full sm:w-auto px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-black text-xs sm:text-sm shadow-xl shadow-amber-500/25 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
                     >
-                      {isEn ? 'Begin Ascension →' : 'Bắt Đầu Chuyến Leo Tháp →'}
+                      {isEn ? 'Begin Run →' : 'Bắt Đầu Leo Tháp →'}
                     </button>
                   </div>
                 )

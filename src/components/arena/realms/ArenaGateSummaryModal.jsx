@@ -71,10 +71,10 @@ export default function ArenaGateSummaryModal({
         </h2>
         <p className="text-xs text-slate-400 mt-1">
           {isMastered
-            ? (isEn ? '🌟 Flawless Mastery! You conquered this gate with 3 Stars!' : '🌟 Đỉnh cao học thuật! Bạn đã chinh phục 3 sao hoàn hảo!')
+            ? (isEn ? '🌟 3 Stars Mastery!' : '🌟 Đạt 3 sao hoàn hảo!')
             : isPassed
-              ? (isEn ? '🎉 Gate Cleared! You unlocked the next challenge!' : '🎉 Vượt ải thành công! Cổng khảo thí tiếp theo đã mở ra!')
-              : (isEn ? 'Keep training! Reach at least 60% accuracy to clear this gate.' : 'Cố lên! Cần đạt ít nhất 60% độ chính xác để vượt qua ải này.')}
+              ? (isEn ? '🎉 Gate Cleared!' : '🎉 Vượt ải thành công!')
+              : (isEn ? 'Reach 60%+ to clear this gate.' : 'Cần đạt 60%+ để qua ải.')}
         </p>
       </div>
 
@@ -151,8 +151,8 @@ export default function ArenaGateSummaryModal({
           <Sparkles className="w-4 h-4 text-emerald-400" />
           <span>
             {isEn 
-              ? `Unlocked Next Challenge: Gate ${nextGate.gateNumber} (${nextGate.partLabel})`
-              : `Đã mở khóa ải tiếp theo: Ải ${nextGate.gateNumber} (${nextGate.partLabel})`}
+              ? `Unlocked: Gate ${nextGate.gateNumber} (${nextGate.partLabel})`
+              : `Mở khóa: Ải ${nextGate.gateNumber} (${nextGate.partLabel})`}
           </span>
         </div>
       )}
@@ -165,7 +165,7 @@ export default function ArenaGateSummaryModal({
           className="w-full sm:flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm border border-slate-700 transition-all cursor-pointer shadow-xs active:scale-95"
         >
           <RotateCcw className="w-4 h-4 text-slate-300" />
-          <span>{isEn ? 'Replay Gate' : 'Chơi Lại Ải'}</span>
+          <span>{isEn ? 'Replay' : 'Chơi Lại'}</span>
         </button>
 
         {isPassed && nextGate && onNextGate ? (
@@ -183,7 +183,7 @@ export default function ArenaGateSummaryModal({
             onClick={onClose}
             className="w-full sm:flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition-all cursor-pointer active:scale-95"
           >
-            <span>{isEn ? 'Return to Hub' : 'Về Cung Điện'}</span>
+            <span>{isEn ? 'Return' : 'Quay Lại'}</span>
           </button>
         )}
       </div>
@@ -195,7 +195,7 @@ export default function ArenaGateSummaryModal({
           onClick={onClose}
           className="text-xs text-slate-400 hover:text-indigo-300 transition-colors cursor-pointer underline underline-offset-4"
         >
-          {isEn ? '← Return to Skill Realms Hub' : '← Quay lại Sảnh 4 Kỹ Năng'}
+          {isEn ? '← Return to Hub' : '← Quay lại Sảnh'}
         </button>
       )}
     </div>
