@@ -21,26 +21,26 @@ export default function ArenaDifficultySelector({
     {
       ...ARENA_DIFFICULTY_CONFIG.easy,
       icon: ShieldCheck,
-      descVi: 'Từ vựng & bẫy cơ bản, biểu đồ đọc nhanh, nhịp độ vừa sức.',
-      descEn: 'Basic vocabulary, simple traps, quick metrics reading.'
+      descVi: 'Từ vựng & bẫy cơ bản',
+      descEn: 'Basic vocabulary & traps'
     },
     {
       ...ARENA_DIFFICULTY_CONFIG.medium,
       icon: Zap,
-      descVi: 'Paraphrase học thuật B2, True/False/Not Given, bẫy nghe tự sửa.',
-      descEn: 'B2 academic paraphrase, TFNG, self-correction audio traps.'
+      descVi: 'Paraphrase B2 & bẫy nghe',
+      descEn: 'B2 paraphrase & audio traps'
     },
     {
       ...ARENA_DIFFICULTY_CONFIG.hard,
       icon: Flame,
-      descVi: 'Từ vựng C1 sắc bén, bẫy logic suy luận ngầm, bản đồ maps.',
-      descEn: 'Sharp C1 vocabulary, implicit logic traps, spatial maps.'
+      descVi: 'Từ vựng C1 & bẫy logic',
+      descEn: 'C1 lexicon & logic traps'
     },
     {
       ...ARENA_DIFFICULTY_CONFIG.nightmare,
       icon: Skull,
-      descVi: 'Từ vựng C2 đỉnh cao, logic phản chứng kép, biểu đồ mật độ cao.',
-      descEn: 'Elite C2 lexicon, double-negative logic, dense charts.'
+      descVi: 'Từ vựng C2 & logic cao cấp',
+      descEn: 'C2 mastery & complex logic'
     }
   ];
 
@@ -99,7 +99,7 @@ export default function ArenaDifficultySelector({
       <div className="flex items-center justify-between gap-2">
         <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 shrink-0">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>{isEn ? 'Choose Difficulty' : 'Cấp Độ Thử Thách'}</span>
+          <span>{isEn ? 'Difficulty' : 'Cấp Độ'}</span>
         </label>
         {currentTopic && (
           <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 truncate max-w-[190px] sm:max-w-none">
@@ -188,7 +188,7 @@ export default function ArenaDifficultySelector({
                 <div className="flex items-center justify-between mb-1">
                   <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activeBadge}`}>
-                    +{diff.baseXpPerQuestion} {isEn ? 'XP/item' : 'XP/câu'}
+                    +{diff.baseXpPerQuestion} XP
                   </span>
                 </div>
                 <div className="text-xs sm:text-sm font-black text-slate-100 leading-tight">
@@ -200,7 +200,7 @@ export default function ArenaDifficultySelector({
               </div>
 
               <div className="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
-                <span className="text-slate-500 font-medium">{isEn ? 'Max Reward' : 'Tối Đa'}:</span>
+                <span className="text-slate-500 font-medium">{isEn ? 'Max' : 'Tối đa'}:</span>
                 <span className="font-mono font-bold text-amber-400">~{diff.maxSprintXp} XP</span>
               </div>
             </button>

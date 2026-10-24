@@ -86,10 +86,10 @@ export default function ArenaRelativeLeaderboard({
         <div className="bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-indigo-950/40 border border-amber-400/50 rounded-xl px-2.5 sm:px-3 py-1.5 flex items-center justify-between text-[11px] shadow-sm animate-fade-in gap-2">
           <div className="flex items-center gap-1.5 text-amber-200 font-bold min-w-0 truncate">
             <span>👑</span>
-            <span className="truncate">{isEn ? 'Dominating League #1!' : 'Thống lĩnh Bảng đấu #1!'}</span>
+            <span className="truncate">{isEn ? 'Rank #1' : 'Hạng #1'}</span>
             {pacing.behindRival && (
               <span className="text-amber-300/80 font-semibold text-[10px] shrink-0">
-                (+{pacing.leadXp} XP {isEn ? 'lead' : 'cách biệt'})
+                (+{pacing.leadXp} XP)
               </span>
             )}
           </div>

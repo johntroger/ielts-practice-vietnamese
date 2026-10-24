@@ -1105,7 +1105,7 @@ export default function AtlasEnglishArenaModal({
                     {t('arena.heroTitle')}
                   </h2>
 
-                  <p className="text-xs text-slate-300/90 leading-relaxed font-sans hidden sm:block line-clamp-2">
+                  <p className="text-xs text-slate-400 font-sans hidden sm:block line-clamp-1">
                     {t('arena.heroDescription')}
                   </p>
 
@@ -1141,7 +1141,7 @@ export default function AtlasEnglishArenaModal({
                     <div className="flex items-center justify-between text-[11px] font-bold text-slate-300">
                       <span className="flex items-center gap-1.5 uppercase tracking-wider text-indigo-300">
                         <span>⚡</span>
-                        <span>{isEn ? 'Tactical Perk:' : 'Thẻ Bổ Trợ Chiến Thuật:'}</span>
+                        <span>{isEn ? 'Perk:' : 'Bổ Trợ:'}</span>
                       </span>
                       <span className="text-[10px] text-slate-400 font-normal">
                         {isEn ? getPerkById(selectedPerk).descEn : getPerkById(selectedPerk).descVi}
@@ -1262,7 +1262,7 @@ export default function AtlasEnglishArenaModal({
                       }`}
                     >
                       <Trophy className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                      <span className="truncate">{isEn ? '30-Learner League' : 'Bảng Đấu'}</span>
+                      <span className="truncate">{isEn ? 'League' : 'Bảng Đấu'}</span>
                     </button>
 
                     <button

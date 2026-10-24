@@ -12,6 +12,7 @@
 
 import { ARENA_BATCH_1_QUESTIONS } from './arenaQuestionsBatch1.js';
 import { ARENA_BATCH_2_QUESTIONS } from './arenaQuestionsBatch2.js';
+import { ARENA_BATCH_3_QUESTIONS } from './arenaQuestionsBatch3.js';
 import { ARENA_QUESTION_TRANSLATIONS } from './arenaQuestionTranslations.js';
 import { ARENA_101_READING_QUESTIONS } from './arenaQuestions101Reading.js';
 
@@ -6051,13 +6052,14 @@ export const ARENA_QUESTION_BANK = hydrateArenaQuestionsWithMetadata([
   ...ARENA_BASE_QUESTION_BANK,
   ...ARENA_BATCH_1_QUESTIONS,
   ...ARENA_BATCH_2_QUESTIONS,
+  ...ARENA_BATCH_3_QUESTIONS,
   ...ARENA_101_READING_QUESTIONS
 ]);
 
 const _asyncBatchCache = new Map();
 
 /**
- * Staged asynchronous loader for specific Arena question batches ('base' | 'batch1' | 'batch2' | 'reading101' | 'all')
+ * Staged asynchronous loader for specific Arena question batches ('base' | 'batch1' | 'batch2' | 'batch3' | 'reading101' | 'all')
  * Enables on-demand hydration without re-allocating arrays when called repeatedly.
  */
 export async function loadArenaQuestionBatchAsync(batchName = 'all') {
@@ -6072,6 +6074,8 @@ export async function loadArenaQuestionBatchAsync(batchName = 'all') {
     hydrated = hydrateArenaQuestionsWithMetadata(ARENA_BATCH_1_QUESTIONS || []);
   } else if (batchName === 'batch2') {
     hydrated = hydrateArenaQuestionsWithMetadata(ARENA_BATCH_2_QUESTIONS || []);
+  } else if (batchName === 'batch3') {
+    hydrated = hydrateArenaQuestionsWithMetadata(ARENA_BATCH_3_QUESTIONS || []);
   } else if (batchName === 'reading101') {
     hydrated = hydrateArenaQuestionsWithMetadata(ARENA_101_READING_QUESTIONS || []);
   } else {

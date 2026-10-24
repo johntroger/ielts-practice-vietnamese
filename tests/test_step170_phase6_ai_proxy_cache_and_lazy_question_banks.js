@@ -95,15 +95,17 @@ await testAsync('arenaQuestionBank.js supports staged async batch loading & back
   const baseBatch = await loadArenaQuestionBatchAsync('base');
   const batch1 = await loadArenaQuestionBatchAsync('batch1');
   const batch2 = await loadArenaQuestionBatchAsync('batch2');
+  const batch3 = await loadArenaQuestionBatchAsync('batch3');
   const reading101 = await loadArenaQuestionBatchAsync('reading101');
   const allBatch = await loadArenaQuestionBatchAsync('all');
 
   assert.ok(Array.isArray(baseBatch) && baseBatch.length > 10, 'Base batch must load questions');
   assert.ok(Array.isArray(batch1) && batch1.length > 20, 'Batch 1 must load questions');
   assert.ok(Array.isArray(batch2) && batch2.length > 20, 'Batch 2 must load questions');
+  assert.ok(Array.isArray(batch3) && batch3.length > 20, 'Batch 3 must load questions');
   assert.ok(Array.isArray(reading101) && reading101.length > 0, '101 Reading batch must load questions');
   assert.equal(
-    baseBatch.length + batch1.length + batch2.length + reading101.length,
+    baseBatch.length + batch1.length + batch2.length + batch3.length + reading101.length,
     allBatch.length,
     'Sum of staged batches must match full ARENA_QUESTION_BANK count'
   );
