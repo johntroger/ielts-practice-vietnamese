@@ -3,7 +3,7 @@
  * Handles low-level HTTP requests, rate limiting, model fallback chains, and robust JSON parsing.
  */
 
-const DEFAULT_MODEL = 'gemini-3.6-flash';
+export const DEFAULT_MODEL = 'gemini-3.6-flash';
 
 export const DEPRECATED_GEMINI_MODELS = [
   'gemini-2.5-pro',

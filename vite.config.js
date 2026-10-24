@@ -48,14 +48,26 @@ export default defineConfig({
           }
           // Dynamic Data Chunking for Cambridge Bank & Learning Assets
           if (id.includes('src/data/') || id.includes('src\\data\\')) {
-            if (id.includes('cambridgeWritingTasks') || id.includes('sampleTasks') || id.includes('processAndMapTasks')) {
+            if (id.includes('cambridgeWritingTasks') || id.includes('processAndMapTasks')) {
               return 'data-cambridge-writing';
             }
+            if (id.includes('sampleTasks')) {
+              return 'data-writing-samples';
+            }
             if (id.includes('readingTasks') || id.includes('src/data/reading/') || id.includes('src\\data\\reading\\')) {
+              if (/pastPaper101Test[1-9]\.js/.test(id)) {
+                return 'data-reading-pack-1';
+              }
+              if (/pastPaper101Test1[0-9]\.js/.test(id)) {
+                return 'data-reading-pack-2';
+              }
+              if (/pastPaper101Test2[0-7]\.js/.test(id)) {
+                return 'data-reading-pack-3';
+              }
               return 'data-reading-tasks';
             }
             if (id.includes('listeningTasks') || id.includes('src/data/listening/') || id.includes('src\\data\\listening\\')) {
-              if (id.includes('cambridge18') || id.includes('cambridge20') || id.includes('academicLectures')) {
+              if (/track([2-9]|1[0-9]|2[0-8])[A-Z]/.test(id)) {
                 return 'data-listening-cambridge';
               }
               return 'data-listening-tasks';
@@ -79,9 +91,7 @@ export default defineConfig({
             if (id.includes('grammarVocabTheoryData')) {
               return 'data-theory-grammar-vocab';
             }
-            if (id.includes('theoryMetadata')) {
-              return 'data-theory-metadata';
-            }
+            // data-theory-metadata is co-located with data-theory-handbook to avoid empty Rollup chunk warnings
             if (id.includes('theoryHandbook')) {
               return 'data-theory-handbook';
             }

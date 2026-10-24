@@ -1,10 +1,5 @@
 import { useEffect } from 'react';
 import { safeGet, safeSet } from '../utils/storageService';
-import {
-  saveTwoTierSubmissions,
-  loadTwoTierSubmissions,
-  migrateSubmissionsToIndexedDb
-} from '../utils/indexedDbStorage';
 import { supabase } from '../services/supabaseClient';
 import {
   fetchUserSubmissions,
@@ -186,7 +181,7 @@ export function useCloudAndStorageSync({
     }
   }, [currentUser]);
 
-  // 4. Auto-save Effects with Quota-Resilient Storage Manager
+  // 4. Auto-save API Key & Model settings (study data persistence is handled by useStudyData)
   useEffect(() => {
     safeSet('ielts_gemini_api_key', apiKey);
   }, [apiKey]);
@@ -195,86 +190,7 @@ export function useCloudAndStorageSync({
     safeSet('ielts_gemini_model', model);
   }, [model]);
 
-  useEffect(() => {
-    safeSet('ielts_all_tasks', allTasks);
-  }, [allTasks]);
-
-  useEffect(() => {
-    safeSet('ielts_current_task_id', currentTaskId);
-  }, [currentTaskId]);
-
-  useEffect(() => {
-    safeSet('ielts_essays_drafts', essays);
-    setLastSaved(new Date());
-  }, [essays, setLastSaved]);
-
-  useEffect(() => {
-    safeSet('ielts_outlines_drafts', outlines);
-  }, [outlines]);
-
-  // 5. Asynchronous Two-Tier IndexedDB Hydration & Storage Migration
-  useEffect(() => {
-    let isMounted = true;
-    async function hydrateTwoTierHistory() {
-      try {
-        await migrateSubmissionsToIndexedDb();
-        const [fullWriting, fullReading, fullListening, fullSpeaking] = await Promise.all([
-          loadTwoTierSubmissions('ielts_submissions_history', null),
-          loadTwoTierSubmissions('ielts_reading_submissions_history', null),
-          loadTwoTierSubmissions('ielts_listening_submissions_history', null),
-          loadTwoTierSubmissions('ielts_speaking_submissions_history', null)
-        ]);
-        if (!isMounted) return;
-        if (Array.isArray(fullWriting) && fullWriting.length > 0) setSubmissions(fullWriting);
-        if (Array.isArray(fullReading) && fullReading.length > 0) setReadingHistory(fullReading);
-        if (Array.isArray(fullListening) && fullListening.length > 0) setListeningHistory(fullListening);
-        if (Array.isArray(fullSpeaking) && fullSpeaking.length > 0) setSpeakingHistory(fullSpeaking);
-      } catch (err) {
-        console.warn('[Storage] Two-tier history hydration error:', err);
-      }
-    }
-    hydrateTwoTierHistory();
-    return () => { isMounted = false; };
-  }, []);
-
-  // 6. Two-Tier Submissions Persistence (Full in IndexedDB, Ultra-lightweight Summary in LocalStorage)
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_submissions_history', submissions);
-  }, [submissions]);
-
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_reading_submissions_history', readingHistory);
-  }, [readingHistory]);
-
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_listening_submissions_history', listeningHistory);
-  }, [listeningHistory]);
-
-  useEffect(() => {
-    saveTwoTierSubmissions('ielts_speaking_submissions_history', speakingHistory);
-  }, [speakingHistory]);
-
-  useEffect(() => {
-    safeSet('ielts_vocab_notebook', vocabList);
-  }, [vocabList]);
-
-  useEffect(() => {
-    safeSet('ielts_mistakes_log', mistakes);
-  }, [mistakes]);
-
-  useEffect(() => {
-    safeSet('ielts_theory_notes', personalNotes);
-  }, [personalNotes]);
-
-  useEffect(() => {
-    safeSet('ielts_streak_count', streakCount.toString());
-  }, [streakCount]);
-
-  useEffect(() => {
-    safeSet('ielts_public_community_tasks', communityTasks);
-  }, [communityTasks]);
-
-  // 7. Launch onboarding for first-time visitors
+  // 5. Launch onboarding for first-time visitors
   useEffect(() => {
     if (!safeGet('ielts_user_onboarded', false)) {
       openModal('onboarding');

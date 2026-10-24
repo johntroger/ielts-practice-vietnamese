@@ -58,7 +58,11 @@ console.log('Test 4: Verify PromptPane uses ImageViewerModal for Task 1 exam cha
 const promptPanePath = path.resolve('src/components/PromptPane.jsx');
 const promptPaneCode = fs.readFileSync(promptPanePath, 'utf-8');
 
-assert(promptPaneCode.includes("import ImageViewerModal from './ImageViewerModal'"), 'PromptPane must import ImageViewerModal');
+assert(
+  promptPaneCode.includes("import ImageViewerModal from './ImageViewerModal'") ||
+  promptPaneCode.includes("import('./ImageViewerModal')"),
+  'PromptPane must import ImageViewerModal'
+);
 assert(promptPaneCode.includes('<ImageViewerModal'), 'PromptPane must render ImageViewerModal');
 
 testsPassed++;

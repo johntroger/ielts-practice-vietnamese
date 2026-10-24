@@ -16,7 +16,7 @@ import {
   analyzeTask1Overview, 
   analyzeTask1DataDensity, 
   analyzeTask1Comparisons 
-} from '../services/algorithmicEvaluationService';
+} from '../services/evaluation/task1AndTask2Analyzers';
 import { useTranslation } from '../i18n';
 
 export default function Task1DataCoverageModal({ 

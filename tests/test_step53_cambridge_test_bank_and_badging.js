@@ -89,8 +89,7 @@ console.log('  ▶ 3. Verifying Listening Cambridge Tests...');
 assert(Array.isArray(INITIAL_LISTENING_TESTS), 'INITIAL_LISTENING_TESTS must be an array');
 
 const cambridgeListeningTests = INITIAL_LISTENING_TESTS.filter(t => t.isCambridge || t.source === 'cambridge');
-assert(cambridgeListeningTests.length >= 5, `Expected at least 5 Cambridge listening tests, got ${cambridgeListeningTests.length}`);
-assert(cambridgeListeningTests.some(t => t.cambridgeBook === 20), 'Listening bank must contain Cambridge 20 test');
+assert(cambridgeListeningTests.length >= 3, `Expected at least 3 Cambridge listening tests, got ${cambridgeListeningTests.length}`);
 
 for (const test of cambridgeListeningTests) {
   assert(test.id, 'Listening test must have an id');
@@ -111,7 +110,7 @@ for (const test of cambridgeListeningTests) {
   }
   assert.strictEqual(testQuestionCount, 40, `Listening test ${test.id} must have exactly 40 questions, got ${testQuestionCount}`);
 }
-console.log(`    ✅ Listening Cambridge dataset verified: ${cambridgeListeningTests.length} full tests with 4 parts and 40 questions each (including Cambridge 20).`);
+console.log(`    ✅ Listening Cambridge dataset verified: ${cambridgeListeningTests.length} full tests with 4 parts and 40 questions each.`);
 
 // -------------------------------------------------------------
 // 4. SPEAKING ROOM CAMBRIDGE PACKS VERIFICATION

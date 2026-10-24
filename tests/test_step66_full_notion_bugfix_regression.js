@@ -79,7 +79,7 @@ const qrModalCode = fs.readFileSync(qrModalFile, 'utf8');
 const mockModalCode = fs.readFileSync(mockModalFile, 'utf8');
 
 assert(qrModalCode.includes('sticky top-0') && qrModalCode.includes('shrink-0'), 'Phase 3: QR Modal header must be sticky and shrink-0');
-assert(qrModalCode.includes('max-h-[92vh]') && qrModalCode.includes('overflow-y-auto flex-1'), 'Phase 3: QR Modal body must be vertically bounded and scrollable');
+assert((qrModalCode.includes('max-h-[92vh]') || qrModalCode.includes('max-h-[92dvh]')) && qrModalCode.includes('overflow-y-auto flex-1'), 'Phase 3: QR Modal body must be vertically bounded and scrollable');
 assert(!mockModalCode.match(/activeMockTab === 'reading' && \(\s*<div className="[^"]*justify-center/), 'Phase 3: Reading setup must not have justify-center on scroll container');
 assert(!mockModalCode.match(/activeMockTab === 'writing' && \(\s*<div className="[^"]*justify-center/), 'Phase 3: Writing setup must not have justify-center on scroll container');
 console.log('  ✅ Phase 3: Modal header clipping and bottom cut-off resolved');

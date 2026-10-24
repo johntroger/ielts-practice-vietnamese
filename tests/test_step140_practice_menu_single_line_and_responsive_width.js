@@ -24,8 +24,9 @@ const navbarSource = fs.readFileSync(navbarPath, 'utf8');
 // 1. Container responsive width & max-width clamp
 console.log('Test 1: Verifying Practice dropdown container width expansion');
 assert(
-  navbarSource.includes('w-[420px] sm:w-[460px] max-w-[calc(100vw-24px)]'),
-  'Practice menu container must have responsive width w-[420px] sm:w-[460px] max-w-[calc(100vw-24px)]'
+  navbarSource.includes('w-[420px] sm:w-[460px] max-w-[calc(100vw-24px)]') ||
+  navbarSource.includes('w-[min(420px,calc(100vw-24px))] sm:w-[460px] max-w-[calc(100vw-24px)]'),
+  'Practice menu container must have responsive width clamp'
 );
 
 // 2. Single line layout with whitespace-nowrap & truncate on Practice items

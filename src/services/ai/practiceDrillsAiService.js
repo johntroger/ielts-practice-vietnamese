@@ -3,7 +3,7 @@
  * Handles sentence paraphrasing, fill-in-blanks drills, spelling traps, grammar exercises, and thematic vocabulary drills.
  */
 
-import { callGeminiApi, robustJsonParse } from './coreGeminiClient.js';
+import { callGeminiApi, robustJsonParse, DEFAULT_MODEL } from './coreGeminiClient.js';
 
 export async function evaluateParaphrase({ originalSentence, candidateSentence, apiKey, model = DEFAULT_MODEL }) {
   if (!apiKey) throw new Error('Vui lòng cấu hình AI API Key.');

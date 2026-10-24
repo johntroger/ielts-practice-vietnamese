@@ -8,7 +8,17 @@
  * 4. Automatic startup & runtime sanitization for LocalStorage and Cloud sync.
  */
 
-import { calculateLexicalOverlap } from './geminiService.js';
+function calculateLexicalOverlap(str1, str2) {
+  if (!str1 || !str2) return 0;
+  const words1 = new Set(str1.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 3));
+  const words2 = new Set(str2.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 3));
+  if (words1.size === 0 || words2.size === 0) return 0;
+  let intersection = 0;
+  for (const w of words1) {
+    if (words2.has(w)) intersection++;
+  }
+  return intersection / Math.min(words1.size, words2.size);
+}
 
 /**
  * Common Cambridge rubrics and tags to strip before comparing semantic essence

@@ -4,7 +4,7 @@
  * and Listening audio source discovery, diagnostic evaluation, and test generation.
  */
 
-import { callGeminiApi, robustJsonParse } from './coreGeminiClient.js';
+import { callGeminiApi, robustJsonParse, DEFAULT_MODEL } from './coreGeminiClient.js';
 
 export async function explainReadingQuestion({
   passageTitle,

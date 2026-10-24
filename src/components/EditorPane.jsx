@@ -23,15 +23,16 @@ import {
   Zap
 } from 'lucide-react';
 import { analyzeParagraphs, analyzeLexicalDiversity, calculateWpm } from '../utils/textAnalytics';
-import Task1DataCoverageModal from './Task1DataCoverageModal';
-import Task2CoherenceModal from './Task2CoherenceModal';
-import SentenceHeatmapModal from './SentenceHeatmapModal';
 import InSituLexicalUpgrader from './InSituLexicalUpgrader';
-import { analyzeTask1Overview } from '../services/algorithmicEvaluationService';
+import { analyzeTask1Overview } from '../services/evaluation/task1AndTask2Analyzers';
 import { useTranslation } from '../i18n/index.js';
 import { analyzeTask2Coherence } from '../utils/coherenceAnalyzer';
 import { analyzeSentenceStructures } from '../services/sentenceAnalyzer';
 import { findLexicalUpgrades } from '../data/academicThesaurus';
+
+const Task1DataCoverageModal = React.lazy(() => import('./Task1DataCoverageModal'));
+const Task2CoherenceModal = React.lazy(() => import('./Task2CoherenceModal'));
+const SentenceHeatmapModal = React.lazy(() => import('./SentenceHeatmapModal'));
 
 export default function EditorPane({
   essayText,
@@ -107,10 +108,19 @@ export default function EditorPane({
     setActiveTab('essay');
   };
 
-  // Compute live analytics
-  const paragraphs = analyzeParagraphs(essayText, task.taskNumber);
-  const totalWords = paragraphs.reduce((acc, p) => acc + p.words, 0);
-  const lexicalData = analyzeLexicalDiversity(essayText);
+  // Compute live analytics (memoized so 1s timer ticks do not recompute heavy text analytics)
+  const paragraphs = React.useMemo(
+    () => analyzeParagraphs(essayText, task.taskNumber),
+    [essayText, task.taskNumber]
+  );
+  const totalWords = React.useMemo(
+    () => paragraphs.reduce((acc, p) => acc + p.words, 0),
+    [paragraphs]
+  );
+  const lexicalData = React.useMemo(
+    () => analyzeLexicalDiversity(essayText),
+    [essayText]
+  );
   const currentWpm = calculateWpm(totalWords, timeElapsed);
 
   const isWordCountMet = totalWords >= task.minWords;
@@ -1010,46 +1020,50 @@ export default function EditorPane({
         </div>
       )}
 
-      {/* Task 1 Cambridge Live Coverage Modal */}
-      {isTask1 && (
-        <Task1DataCoverageModal
-          isOpen={isTask1CoverageOpen}
-          onClose={() => setIsTask1CoverageOpen(false)}
-          paragraphs={paragraphs}
-          onInsertOverview={(sentence) => {
-            setEssayText(prev => prev ? `${sentence}\n\n${prev}` : sentence);
-            setIsTask1CoverageOpen(false);
-          }}
-        />
-      )}
+      <React.Suspense fallback={null}>
+        {/* Task 1 Cambridge Live Coverage Modal */}
+        {isTask1 && isTask1CoverageOpen && (
+          <Task1DataCoverageModal
+            isOpen={isTask1CoverageOpen}
+            onClose={() => setIsTask1CoverageOpen(false)}
+            paragraphs={paragraphs}
+            onInsertOverview={(sentence) => {
+              setEssayText(prev => prev ? `${sentence}\n\n${prev}` : sentence);
+              setIsTask1CoverageOpen(false);
+            }}
+          />
+        )}
 
-      {/* Task 2 Cambridge Live Argument Flow & Coherence Modal */}
-      {!isTask1 && (
-        <Task2CoherenceModal
-          isOpen={isTask2CoherenceOpen}
-          onClose={() => setIsTask2CoherenceOpen(false)}
-          essayText={essayText}
-          onInsertText={(text) => {
-            setEssayText(prev => prev ? `${prev}\n\n${text}` : text);
-            setIsTask2CoherenceOpen(false);
-          }}
-        />
-      )}
+        {/* Task 2 Cambridge Live Argument Flow & Coherence Modal */}
+        {!isTask1 && isTask2CoherenceOpen && (
+          <Task2CoherenceModal
+            isOpen={isTask2CoherenceOpen}
+            onClose={() => setIsTask2CoherenceOpen(false)}
+            essayText={essayText}
+            onInsertText={(text) => {
+              setEssayText(prev => prev ? `${prev}\n\n${text}` : text);
+              setIsTask2CoherenceOpen(false);
+            }}
+          />
+        )}
 
-      {/* Cambridge GRA Sentence Structure Heatmap Modal */}
-      <SentenceHeatmapModal
-        isOpen={isSentenceHeatmapOpen}
-        onClose={() => setIsSentenceHeatmapOpen(false)}
-        analysisData={sentenceAnalysis}
-        onInsertTemplate={(templateText) => {
-          if (!essayText.trim()) {
-            setEssayText(templateText);
-          } else {
-            setEssayText(prev => prev + '\n\n' + templateText);
-          }
-          setIsSentenceHeatmapOpen(false);
-        }}
-      />
+        {/* Cambridge GRA Sentence Structure Heatmap Modal */}
+        {isSentenceHeatmapOpen && (
+          <SentenceHeatmapModal
+            isOpen={isSentenceHeatmapOpen}
+            onClose={() => setIsSentenceHeatmapOpen(false)}
+            analysisData={sentenceAnalysis}
+            onInsertTemplate={(templateText) => {
+              if (!essayText.trim()) {
+                setEssayText(templateText);
+              } else {
+                setEssayText(prev => prev + '\n\n' + templateText);
+              }
+              setIsSentenceHeatmapOpen(false);
+            }}
+          />
+        )}
+      </React.Suspense>
 
     </div>
   );

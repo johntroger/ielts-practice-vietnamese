@@ -3,7 +3,7 @@
  * Manages IELTS Task 1 & Task 2 essay evaluation, prompt generation, visual banana diagrams, and thesis statement validation.
  */
 
-import { callGeminiApi, robustJsonParse, calculateLexicalOverlap } from './coreGeminiClient.js';
+import { callGeminiApi, robustJsonParse, calculateLexicalOverlap, DEFAULT_MODEL } from './coreGeminiClient.js';
 import { applyCambridgeWritingHardCaps } from '../../utils/ieltsScoringRules.js';
 import { ensureTaskIllustration } from '../processMapSvgEngine.js';
 

@@ -29,14 +29,14 @@ import {
   ChevronDown,
   Clock
 } from 'lucide-react';
-import ChartRenderer from './ChartRenderer';
-import ProcessMapRenderer from './ProcessMapRenderer';
-import ImageViewerModal from './ImageViewerModal';
 import StarRatingWidget from './common/StarRatingWidget';
 import { recordAttempt } from '../services/ratingPopularityService';
-import { validateThesisStatement, validatePeelParagraph } from '../services/geminiService';
 import { getTheoryContext, openTheoryModalWithContext } from '../services/theoryContextService';
 import { useTranslation } from '../i18n/index.js';
+
+const ChartRenderer = React.lazy(() => import('./ChartRenderer'));
+const ProcessMapRenderer = React.lazy(() => import('./ProcessMapRenderer'));
+const ImageViewerModal = React.lazy(() => import('./ImageViewerModal'));
 
 // Format task type into polished, human-readable title
 function formatTaskType(type, taskNumber, isEn = false) {
@@ -185,6 +185,7 @@ export default function PromptPane({
     }
     setIsValidatingThesis(true);
     try {
+      const { validateThesisStatement } = await import('../services/geminiService');
       const res = await validateThesisStatement({
         task,
         thesisText: thesisInput,
@@ -207,6 +208,7 @@ export default function PromptPane({
     }
     setIsValidatingPeel(true);
     try {
+      const { validatePeelParagraph } = await import('../services/geminiService');
       const res = await validatePeelParagraph({
         task,
         paragraphText: peelInput,
@@ -627,13 +629,17 @@ export default function PromptPane({
           </div>
 
           {/* Zoom Modal with Zoom + / Zoom - and Pan */}
-          <ImageViewerModal
-            isOpen={isImageZoomed}
-            onClose={() => setIsImageZoomed(false)}
-            imageUrl={task.imageUrl}
-            title={task.title || (isEn ? "Task 1 Prompt Visual" : "Hình ảnh đề bài Task 1")}
-            touchTarget="min-w-[40px] min-h-[40px]"
-          />
+          {isImageZoomed && (
+            <React.Suspense fallback={null}>
+              <ImageViewerModal
+                isOpen={isImageZoomed}
+                onClose={() => setIsImageZoomed(false)}
+                imageUrl={task.imageUrl}
+                title={task.title || (isEn ? "Task 1 Prompt Visual" : "Hình ảnh đề bài Task 1")}
+                touchTarget="min-w-[40px] min-h-[40px]"
+              />
+            </React.Suspense>
+          )}
         </div>
       )}
 
@@ -673,42 +679,44 @@ export default function PromptPane({
       )}
 
       {/* Task 1: Chart or Process/Map Visualizations */}
-      {isChartTask && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              {task.chartData.title || (task.secondChartData ? (isEn ? 'Chart 1' : 'Biểu Đồ 1 (Chart 1)') : (isEn ? 'Visual data chart' : 'Biểu đồ số liệu trực quan'))}
-            </h3>
-            <button
-              onClick={() => setIsZoomed(!isZoomed)}
-              className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800"
-            >
-              <Maximize2 className="w-3.5 h-3.5" />
-              <span>{isZoomed ? (isEn ? 'Zoom out' : 'Thu nhỏ') : (isEn ? 'Zoom in' : 'Phóng to')}</span>
-            </button>
+      <React.Suspense fallback={null}>
+        {isChartTask && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                {task.chartData.title || (task.secondChartData ? (isEn ? 'Chart 1' : 'Biểu Đồ 1 (Chart 1)') : (isEn ? 'Visual data chart' : 'Biểu đồ số liệu trực quan'))}
+              </h3>
+              <button
+                onClick={() => setIsZoomed(!isZoomed)}
+                className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>{isZoomed ? (isEn ? 'Zoom out' : 'Thu nhỏ') : (isEn ? 'Zoom in' : 'Phóng to')}</span>
+              </button>
+            </div>
+            <ChartRenderer chartData={task.chartData} />
           </div>
-          <ChartRenderer chartData={task.chartData} />
-        </div>
-      )}
+        )}
 
-      {/* Task 1: Second Chart for Mixed/Combo Tasks */}
-      {task.secondChartData && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-indigo-600 font-bold">
-              {task.secondChartData.title || (isEn ? 'Chart 2' : 'Biểu Đồ 2 (Chart 2)')}
-            </h3>
+        {/* Task 1: Second Chart for Mixed/Combo Tasks */}
+        {task.secondChartData && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-indigo-600 font-bold">
+                {task.secondChartData.title || (isEn ? 'Chart 2' : 'Biểu Đồ 2 (Chart 2)')}
+              </h3>
+            </div>
+            <ChartRenderer chartData={task.secondChartData} />
           </div>
-          <ChartRenderer chartData={task.secondChartData} />
-        </div>
-      )}
+        )}
 
-      {/* Task 1: Process and Map Visualizer */}
-      {isProcessOrMap && (
-        <div className="space-y-2">
-          <ProcessMapRenderer task={task} />
-        </div>
-      )}
+        {/* Task 1: Process and Map Visualizer */}
+        {isProcessOrMap && (
+          <div className="space-y-2">
+            <ProcessMapRenderer task={task} />
+          </div>
+        )}
+      </React.Suspense>
 
       {/* Keywords Breakdown */}
       {task.keywords && task.keywords.length > 0 && (
@@ -1351,7 +1359,9 @@ export default function PromptPane({
               </button>
             </div>
             <div className="h-96 w-full">
-              <ChartRenderer chartData={task.chartData} />
+              <React.Suspense fallback={null}>
+                <ChartRenderer chartData={task.chartData} />
+              </React.Suspense>
             </div>
           </div>
         </div>

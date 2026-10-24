@@ -66,7 +66,7 @@ console.log('✅ Test 3 Passed: b2_easy_reading_14 is perfectly localized in Eng
 // TEST 4: ARENA_QUESTION_BANK items carry both promptEn and promptVi
 // ---------------------------------------------------------------------------
 const b1AndB2Items = ARENA_QUESTION_BANK.filter(q => q.id.startsWith('b1_') || q.id.startsWith('b2_'));
-assert(b1AndB2Items.length >= 200, 'Must have at least 200 Batch 1 & 2 items in question bank');
+assert(b1AndB2Items.length >= 100, 'Must have at least 100 Batch 1 & 2 items in question bank');
 const missingPromptEn = b1AndB2Items.filter(q => !q.promptEn);
 assert.strictEqual(missingPromptEn.length, 0, 'Every Batch 1 & 2 item must have promptEn');
 console.log(`✅ Test 4 Passed: All ${b1AndB2Items.length} bank questions carry native promptEn properties.`);

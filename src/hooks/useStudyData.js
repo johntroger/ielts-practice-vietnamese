@@ -77,12 +77,18 @@ export function useStudyData(currentUser = null) {
   }, [currentTaskId]);
 
   useEffect(() => {
-    StudyProfileRepository.saveEssaysDrafts(essays);
-    setLastSaved(new Date());
+    const timer = setTimeout(() => {
+      StudyProfileRepository.saveEssaysDrafts(essays);
+      setLastSaved(new Date());
+    }, 400);
+    return () => clearTimeout(timer);
   }, [essays]);
 
   useEffect(() => {
-    StudyProfileRepository.saveOutlinesDrafts(outlines);
+    const timer = setTimeout(() => {
+      StudyProfileRepository.saveOutlinesDrafts(outlines);
+    }, 400);
+    return () => clearTimeout(timer);
   }, [outlines]);
 
   useEffect(() => {

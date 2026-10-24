@@ -202,243 +202,273 @@ export default function AppModalHost({
       </WorkspaceErrorBoundary>
 
       {/* 1.3 CDI Display & Accessibility (Font Size & Contrast) */}
-      <CDIDisplayModal
-        isOpen={Boolean(modals.cdiDisplay)}
-        onClose={() => closeModal('cdiDisplay')}
-        cdiFontSize={resolvedCdiFontSize}
-        onChangeFontSize={resolvedChangeCdiFontSize}
-        cdiContrast={resolvedCdiContrast}
-        onChangeContrast={resolvedChangeCdiContrast}
-        onReset={onResetCDIDisplay}
-      />
+      {Boolean(modals.cdiDisplay) && (
+        <CDIDisplayModal
+          isOpen={Boolean(modals.cdiDisplay)}
+          onClose={() => closeModal('cdiDisplay')}
+          cdiFontSize={resolvedCdiFontSize}
+          onChangeFontSize={resolvedChangeCdiFontSize}
+          cdiContrast={resolvedCdiContrast}
+          onChangeContrast={resolvedChangeCdiContrast}
+          onReset={onResetCDIDisplay}
+        />
+      )}
 
       {/* ========================================================= */}
       {/* CLUSTER 2: LEARNING & PRACTICE CLUSTER                    */}
       {/* ========================================================= */}
 
       {/* 2.1 Vocab, Grammar & Spelling (GRA & LR Practice) */}
-      <WorkspaceErrorBoundary skillName="IELTS Vocab, Grammar & Spelling">
-        <VocabGrammarSpellingModal
-          isOpen={Boolean(modals.vocabGrammar)}
-          onClose={() => closeModal('vocabGrammar')}
+      {Boolean(modals.vocabGrammar) && (
+        <WorkspaceErrorBoundary skillName="IELTS Vocab, Grammar & Spelling">
+          <VocabGrammarSpellingModal
+            isOpen={Boolean(modals.vocabGrammar)}
+            onClose={() => closeModal('vocabGrammar')}
+            apiKey={apiKey}
+            model={model}
+            onSaveToNotebook={(v) => {
+              setVocabList(prev => [v, ...prev]);
+              if (onSaveUserVocab) onSaveUserVocab(v);
+            }}
+            currentUser={currentUser}
+            masteredIds={resolvedMasteredIds}
+            onToggleMastered={resolvedToggleMastered}
+            onOpenAuth={() => openModal('auth')}
+          />
+        </WorkspaceErrorBoundary>
+      )}
+
+      {/* 2.2 Micro Drills Studio (Task 1 & Task 2) */}
+      {Boolean(modals.drills) && (
+        <MicroDrillsModal
+          isOpen={Boolean(modals.drills)}
+          onClose={() => closeModal('drills')}
           apiKey={apiKey}
           model={model}
+          activeSkill={activeSkill}
+          currentUser={currentUser}
+          masteredIds={masteredIds}
+          onToggleMastered={onToggleMastered}
+          onOpenAuth={() => openModal('auth')}
+          initialRoom={typeof modals.drills === 'object' && modals.drills !== null ? (modals.drills.room || modals.drills.skill) : undefined}
+          initialTab={typeof modals.drills === 'object' && modals.drills !== null ? modals.drills.tab : undefined}
+          targetDrillId={typeof modals.drills === 'object' && modals.drills !== null ? (modals.drills.drillId || modals.drills.id) : undefined}
+        />
+      )}
+
+      {/* 2.3 Weekly Report Modal */}
+      {Boolean(modals.weeklyReport) && (
+        <WeeklyReportModal
+          isOpen={Boolean(modals.weeklyReport)}
+          onClose={() => closeModal('weeklyReport')}
+          submissions={submissions}
+          readingHistory={readingHistory}
+          listeningHistory={listeningHistory}
+          speakingHistory={speakingHistory}
+          mistakes={mistakes}
+          apiKey={apiKey}
+          model={model}
+        />
+      )}
+
+      {/* 2.4 Document Ingest (PDF / Past Papers Ingestion) */}
+      {Boolean(modals.ingest) && (
+        <DocumentIngestModal
+          isOpen={Boolean(modals.ingest)}
+          onClose={() => closeModal('ingest')}
+          user={currentUser}
+          onTaskImported={onTaskImported}
+          apiKey={apiKey}
+          model={model}
+        />
+      )}
+
+      {/* 2.5 Idea Matrix Modal */}
+      {Boolean(modals.ideaMatrix) && (
+        <IdeaMatrixModal
+          isOpen={Boolean(modals.ideaMatrix)}
+          onClose={() => closeModal('ideaMatrix')}
+          promptText={currentTask?.prompt || ''}
+          onInsertToOutline={(idea) => {
+            setOutlines(prev => ({
+              ...prev,
+              [currentTaskId]: (prev[currentTaskId] || '') + `\n- [${isEn ? 'Idea' : 'Ý tưởng'}]: ${idea}`
+            }));
+          }}
+          apiKey={apiKey}
+          model={model}
+        />
+      )}
+
+      {/* 2.6 Revision Modal (V1 vs V2 Comparison) */}
+      {Boolean(modals.revision) && (
+        <RevisionModal
+          isOpen={Boolean(modals.revision)}
+          onClose={() => closeModal('revision')}
+          task={currentTask}
+          v1Essay={currentEssay}
+          v1Evaluation={currentEvaluation}
+          onSaveV2Submission={onSaveV2Submission}
+          apiKey={apiKey}
+          model={model}
+        />
+      )}
+
+      {/* 2.7 AI Essay Feedback Modal */}
+      {Boolean(modals.feedback) && (
+        <FeedbackModal
+          isOpen={Boolean(modals.feedback)}
+          onClose={() => closeModal('feedback')}
+          evaluation={currentEvaluation}
+          task={currentTask}
+          essayText={currentEssay}
+          stats={{
+            wordCount: countWords(currentEssay),
+            timeSpent: `${Math.floor(timeElapsed / 60)}p ${timeElapsed % 60}s`
+          }}
+          onSaveToMistakeLog={(m) => setMistakes(prev => [m, ...prev])}
+          onSaveToVocabNotebook={(v) => {
+            setVocabList(prev => [v, ...prev]);
+            if (onSaveUserVocab) onSaveUserVocab(v);
+          }}
+          onOpenRevision={() => openModal('revision')}
+          onReEvaluateWithAI={() => {
+            closeModal('feedback');
+            if (onSubmitEssay) onSubmitEssay('ai');
+          }}
+        />
+      )}
+
+      {/* 2.8 Task Generator Modal */}
+      {Boolean(modals.generator) && (
+        <TaskGeneratorModal
+          isOpen={Boolean(modals.generator)}
+          onClose={() => closeModal('generator')}
+          apiKey={apiKey}
+          model={model}
+          user={currentUser}
+          tasks={allTasks}
+          onTaskCreated={onAddNewCustomTask}
+          onOpenSettings={() => {
+            closeModal('generator');
+            openModal('settings');
+          }}
+        />
+      )}
+
+      {/* 2.9 Task Library Modal */}
+      {Boolean(modals.library) && (
+        <TaskLibraryModal
+          isOpen={Boolean(modals.library)}
+          onClose={() => closeModal('library')}
+          allTasks={allTasks}
+          communityTasks={communityTasks}
+          user={currentUser}
+          submissions={submissions}
+          currentTaskId={currentTaskId}
+          masteredIds={masteredIds}
+          onToggleMastered={onToggleMastered}
+          onOpenAuth={() => openModal('auth')}
+          onSelectTask={(t) => {
+            setAllTasks(prev => {
+              if (prev.some(existing => existing.id === t.id)) return prev;
+              return [t, ...prev];
+            });
+            setCurrentTaskId(t.id);
+          }}
+          onAddNewCustomTask={onAddNewCustomTask}
+          onTogglePublic={onTogglePublic}
+          onDeleteTask={onDeleteTask}
+          onExportAllData={onExportAllData}
+          onImportData={onImportData}
+        />
+      )}
+
+      {/* 2.10 Vocab Notebook Modal */}
+      {Boolean(modals.notebook) && (
+        <VocabNotebookModal
+          isOpen={Boolean(modals.notebook)}
+          onClose={() => closeModal('notebook')}
+          vocabList={vocabList}
+          onAddVocab={(v) => {
+            setVocabList(prev => [v, ...prev]);
+            if (onSaveUserVocab) onSaveUserVocab(v);
+          }}
+          onDeleteVocab={(id) => {
+            setVocabList(prev => prev.filter((v, i) => (v.id || i) !== id));
+            if (onDeleteUserVocab) onDeleteUserVocab(id);
+          }}
+          onClearAll={() => setVocabList([])}
+        />
+      )}
+
+      {/* 2.11 Mistake Log Modal */}
+      {Boolean(modals.mistakeLog) && (
+        <MistakeLogModal
+          isOpen={Boolean(modals.mistakeLog)}
+          onClose={() => closeModal('mistakeLog')}
+          mistakes={mistakes}
+          onDeleteMistake={(idx) => setMistakes(prev => prev.filter((_, i) => i !== idx))}
+          onClearAll={() => setMistakes([])}
+        />
+      )}
+
+      {/* 2.12 Comprehensive Practice History Modal */}
+      {Boolean(modals.history) && (
+        <HistoryModal
+          isOpen={Boolean(modals.history)}
+          onClose={() => closeModal('history')}
+          submissions={submissions}
+          readingHistory={readingHistory}
+          listeningHistory={listeningHistory}
+          speakingHistory={speakingHistory}
+          activeSkill={activeSkill}
+          onViewSubmission={(sub) => {
+            setCurrentTaskId(sub.task.id);
+            setCurrentEvaluation(sub.evaluation);
+            openModal('feedback');
+          }}
+          onDeleteSubmission={onDeleteWritingSubmission}
+          onClearHistory={onClearWritingHistory}
+          onDeleteReadingSubmission={onDeleteReadingSubmission}
+          onClearReadingHistory={onClearReadingHistory}
+          onDeleteListeningSubmission={onDeleteListeningSubmission}
+          onClearListeningHistory={onClearListeningHistory}
+          onDeleteSpeakingSubmission={onDeleteSpeakingSubmission}
+          onClearSpeakingHistory={onClearSpeakingHistory}
+          onClearAllHistory={onClearAllHistory}
+          onViewSpeakingSubmission={(sub) => setSelectedHistorySpeakingSub(sub)}
+          masteredIds={masteredIds}
+        />
+      )}
+
+      {/* 2.13 Cambridge Theory Handbook Modal */}
+      {Boolean(modals.theory) && (
+        <TheoryHandbookModal
+          isOpen={Boolean(modals.theory)}
+          onClose={() => closeModal('theory')}
+          activeSkill={typeof modals.theory === 'object' && modals.theory?.skill ? modals.theory.skill : activeSkill}
+          initialCategory={typeof modals.theory === 'object' && modals.theory?.category ? modals.theory.category : 'all'}
+          initialSubType={typeof modals.theory === 'object' && modals.theory?.subType ? modals.theory.subType : 'all'}
+          initialTopicId={typeof modals.theory === 'object' && modals.theory?.topicId ? modals.theory.topicId : null}
+          initialSearchQuery={typeof modals.theory === 'object' && modals.theory?.searchQuery ? modals.theory.searchQuery : ''}
+          personalNotes={personalNotes}
+          onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
+          onDeletePersonalNote={(id) => setPersonalNotes(prev => prev.filter(n => n.id !== id))}
+        />
+      )}
+
+      {/* 2.14 Quick Paraphrase Assistant */}
+      {Boolean(modals.paraphrase) && (
+        <QuickParaphraseModal
+          isOpen={Boolean(modals.paraphrase)}
+          onClose={() => closeModal('paraphrase')}
           onSaveToNotebook={(v) => {
             setVocabList(prev => [v, ...prev]);
             if (onSaveUserVocab) onSaveUserVocab(v);
           }}
-          currentUser={currentUser}
-          masteredIds={resolvedMasteredIds}
-          onToggleMastered={resolvedToggleMastered}
-          onOpenAuth={() => openModal('auth')}
         />
-      </WorkspaceErrorBoundary>
-
-      {/* 2.2 Micro Drills Studio (Task 1 & Task 2) */}
-      <MicroDrillsModal
-        isOpen={Boolean(modals.drills)}
-        onClose={() => closeModal('drills')}
-        apiKey={apiKey}
-        model={model}
-        activeSkill={activeSkill}
-        currentUser={currentUser}
-        masteredIds={masteredIds}
-        onToggleMastered={onToggleMastered}
-        onOpenAuth={() => openModal('auth')}
-        initialRoom={typeof modals.drills === 'object' && modals.drills !== null ? (modals.drills.room || modals.drills.skill) : undefined}
-        initialTab={typeof modals.drills === 'object' && modals.drills !== null ? modals.drills.tab : undefined}
-        targetDrillId={typeof modals.drills === 'object' && modals.drills !== null ? (modals.drills.drillId || modals.drills.id) : undefined}
-      />
-
-      {/* 2.3 Weekly Report Modal */}
-      <WeeklyReportModal
-        isOpen={Boolean(modals.weeklyReport)}
-        onClose={() => closeModal('weeklyReport')}
-        submissions={submissions}
-        readingHistory={readingHistory}
-        listeningHistory={listeningHistory}
-        speakingHistory={speakingHistory}
-        mistakes={mistakes}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      {/* 2.4 Document Ingest (PDF / Past Papers Ingestion) */}
-      <DocumentIngestModal
-        isOpen={Boolean(modals.ingest)}
-        onClose={() => closeModal('ingest')}
-        user={currentUser}
-        onTaskImported={onTaskImported}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      {/* 2.5 Idea Matrix Modal */}
-      <IdeaMatrixModal
-        isOpen={Boolean(modals.ideaMatrix)}
-        onClose={() => closeModal('ideaMatrix')}
-        promptText={currentTask?.prompt || ''}
-        onInsertToOutline={(idea) => {
-          setOutlines(prev => ({
-            ...prev,
-            [currentTaskId]: (prev[currentTaskId] || '') + `\n- [${isEn ? 'Idea' : 'Ý tưởng'}]: ${idea}`
-          }));
-        }}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      {/* 2.6 Revision Modal (V1 vs V2 Comparison) */}
-      <RevisionModal
-        isOpen={Boolean(modals.revision)}
-        onClose={() => closeModal('revision')}
-        task={currentTask}
-        v1Essay={currentEssay}
-        v1Evaluation={currentEvaluation}
-        onSaveV2Submission={onSaveV2Submission}
-        apiKey={apiKey}
-        model={model}
-      />
-
-      {/* 2.7 AI Essay Feedback Modal */}
-      <FeedbackModal
-        isOpen={Boolean(modals.feedback)}
-        onClose={() => closeModal('feedback')}
-        evaluation={currentEvaluation}
-        task={currentTask}
-        essayText={currentEssay}
-        stats={{
-          wordCount: countWords(currentEssay),
-          timeSpent: `${Math.floor(timeElapsed / 60)}p ${timeElapsed % 60}s`
-        }}
-        onSaveToMistakeLog={(m) => setMistakes(prev => [m, ...prev])}
-        onSaveToVocabNotebook={(v) => {
-          setVocabList(prev => [v, ...prev]);
-          if (onSaveUserVocab) onSaveUserVocab(v);
-        }}
-        onOpenRevision={() => openModal('revision')}
-        onReEvaluateWithAI={() => {
-          closeModal('feedback');
-          if (onSubmitEssay) onSubmitEssay('ai');
-        }}
-      />
-
-      {/* 2.8 Task Generator Modal */}
-      <TaskGeneratorModal
-        isOpen={Boolean(modals.generator)}
-        onClose={() => closeModal('generator')}
-        apiKey={apiKey}
-        model={model}
-        user={currentUser}
-        tasks={allTasks}
-        onTaskCreated={onAddNewCustomTask}
-        onOpenSettings={() => {
-          closeModal('generator');
-          openModal('settings');
-        }}
-      />
-
-      {/* 2.9 Task Library Modal */}
-      <TaskLibraryModal
-        isOpen={Boolean(modals.library)}
-        onClose={() => closeModal('library')}
-        allTasks={allTasks}
-        communityTasks={communityTasks}
-        user={currentUser}
-        submissions={submissions}
-        currentTaskId={currentTaskId}
-        masteredIds={masteredIds}
-        onToggleMastered={onToggleMastered}
-        onOpenAuth={() => openModal('auth')}
-        onSelectTask={(t) => {
-          setAllTasks(prev => {
-            if (prev.some(existing => existing.id === t.id)) return prev;
-            return [t, ...prev];
-          });
-          setCurrentTaskId(t.id);
-        }}
-        onAddNewCustomTask={onAddNewCustomTask}
-        onTogglePublic={onTogglePublic}
-        onDeleteTask={onDeleteTask}
-        onExportAllData={onExportAllData}
-        onImportData={onImportData}
-      />
-
-      {/* 2.10 Vocab Notebook Modal */}
-      <VocabNotebookModal
-        isOpen={Boolean(modals.notebook)}
-        onClose={() => closeModal('notebook')}
-        vocabList={vocabList}
-        onAddVocab={(v) => {
-          setVocabList(prev => [v, ...prev]);
-          if (onSaveUserVocab) onSaveUserVocab(v);
-        }}
-        onDeleteVocab={(id) => {
-          setVocabList(prev => prev.filter((v, i) => (v.id || i) !== id));
-          if (onDeleteUserVocab) onDeleteUserVocab(id);
-        }}
-        onClearAll={() => setVocabList([])}
-      />
-
-      {/* 2.11 Mistake Log Modal */}
-      <MistakeLogModal
-        isOpen={Boolean(modals.mistakeLog)}
-        onClose={() => closeModal('mistakeLog')}
-        mistakes={mistakes}
-        onDeleteMistake={(idx) => setMistakes(prev => prev.filter((_, i) => i !== idx))}
-        onClearAll={() => setMistakes([])}
-      />
-
-      {/* 2.12 Comprehensive Practice History Modal */}
-      <HistoryModal
-        isOpen={Boolean(modals.history)}
-        onClose={() => closeModal('history')}
-        submissions={submissions}
-        readingHistory={readingHistory}
-        listeningHistory={listeningHistory}
-        speakingHistory={speakingHistory}
-        activeSkill={activeSkill}
-        onViewSubmission={(sub) => {
-          setCurrentTaskId(sub.task.id);
-          setCurrentEvaluation(sub.evaluation);
-          openModal('feedback');
-        }}
-        onDeleteSubmission={onDeleteWritingSubmission}
-        onClearHistory={onClearWritingHistory}
-        onDeleteReadingSubmission={onDeleteReadingSubmission}
-        onClearReadingHistory={onClearReadingHistory}
-        onDeleteListeningSubmission={onDeleteListeningSubmission}
-        onClearListeningHistory={onClearListeningHistory}
-        onDeleteSpeakingSubmission={onDeleteSpeakingSubmission}
-        onClearSpeakingHistory={onClearSpeakingHistory}
-        onClearAllHistory={onClearAllHistory}
-        onViewSpeakingSubmission={(sub) => setSelectedHistorySpeakingSub(sub)}
-        masteredIds={masteredIds}
-      />
-
-      {/* 2.13 Cambridge Theory Handbook Modal */}
-      <TheoryHandbookModal
-        isOpen={Boolean(modals.theory)}
-        onClose={() => closeModal('theory')}
-        activeSkill={typeof modals.theory === 'object' && modals.theory?.skill ? modals.theory.skill : activeSkill}
-        initialCategory={typeof modals.theory === 'object' && modals.theory?.category ? modals.theory.category : 'all'}
-        initialSubType={typeof modals.theory === 'object' && modals.theory?.subType ? modals.theory.subType : 'all'}
-        initialTopicId={typeof modals.theory === 'object' && modals.theory?.topicId ? modals.theory.topicId : null}
-        initialSearchQuery={typeof modals.theory === 'object' && modals.theory?.searchQuery ? modals.theory.searchQuery : ''}
-        personalNotes={personalNotes}
-        onSavePersonalNote={(note) => setPersonalNotes(prev => [note, ...prev])}
-        onDeletePersonalNote={(id) => setPersonalNotes(prev => prev.filter(n => n.id !== id))}
-      />
-
-      {/* 2.14 Quick Paraphrase Assistant */}
-      <QuickParaphraseModal
-        isOpen={Boolean(modals.paraphrase)}
-        onClose={() => closeModal('paraphrase')}
-        onSaveToNotebook={(v) => {
-          setVocabList(prev => [v, ...prev]);
-          if (onSaveUserVocab) onSaveUserVocab(v);
-        }}
-      />
+      )}
 
       {/* 2.15 Speaking Result Modal (History Detail View) */}
       {selectedHistorySpeakingSub && (
@@ -459,173 +489,199 @@ export default function AppModalHost({
       )}
 
       {/* 2.16 Daily Error Prescription (Spaced Repetition) */}
-      <DailyErrorPrescriptionModal
-        isOpen={Boolean(modals.prescription)}
-        onClose={() => closeModal('prescription')}
-        mistakes={mistakes}
-        submissions={submissions}
-      />
+      {Boolean(modals.prescription) && (
+        <DailyErrorPrescriptionModal
+          isOpen={Boolean(modals.prescription)}
+          onClose={() => closeModal('prescription')}
+          mistakes={mistakes}
+          submissions={submissions}
+        />
+      )}
 
       {/* 2.16b Adaptive 30-Min Sprint Coach */}
-      <AdaptiveSprintModal
-        isOpen={Boolean(modals.adaptiveSprint)}
-        onClose={() => closeModal('adaptiveSprint')}
-        submissions={submissions}
-        mistakes={mistakes}
-        vocabList={vocabList}
-        targetBand={targetBand}
-        onSaveToVocabNotebook={(v) => {
-          setVocabList(prev => [v, ...prev]);
-          if (onSaveUserVocab) onSaveUserVocab(v);
-        }}
-      />
+      {Boolean(modals.adaptiveSprint) && (
+        <AdaptiveSprintModal
+          isOpen={Boolean(modals.adaptiveSprint)}
+          onClose={() => closeModal('adaptiveSprint')}
+          submissions={submissions}
+          mistakes={mistakes}
+          vocabList={vocabList}
+          targetBand={targetBand}
+          onSaveToVocabNotebook={(v) => {
+            setVocabList(prev => [v, ...prev]);
+            if (onSaveUserVocab) onSaveUserVocab(v);
+          }}
+        />
+      )}
 
       {/* 2.16c Atlas English Arena Fast Sprint */}
-      <AtlasEnglishArenaModal
-        isOpen={Boolean(modals.atlasArena)}
-        onClose={() => closeModal('atlasArena')}
-        currentUser={currentUser}
-      />
+      {Boolean(modals.atlasArena) && (
+        <AtlasEnglishArenaModal
+          isOpen={Boolean(modals.atlasArena)}
+          onClose={() => closeModal('atlasArena')}
+          currentUser={currentUser}
+        />
+      )}
 
       {/* 2.17 Cambridge Growth Analytics & Prediction */}
-      <GrowthAnalyticsModal
-        isOpen={Boolean(modals.growthAnalytics)}
-        onClose={() => closeModal('growthAnalytics')}
-        initialTargetBand={Number(targetBand) || 7.0}
-        userScores={{
-          listening: 6.5,
-          reading: 6.5,
-          writing: 6.0,
-          speaking: 6.0,
-          overall: 6.5
-        }}
-        onNavigateSkill={(skill) => {
-          setActiveSkill(skill);
-          closeModal('growthAnalytics');
-        }}
-      />
+      {Boolean(modals.growthAnalytics) && (
+        <GrowthAnalyticsModal
+          isOpen={Boolean(modals.growthAnalytics)}
+          onClose={() => closeModal('growthAnalytics')}
+          initialTargetBand={Number(targetBand) || 7.0}
+          userScores={{
+            listening: 6.5,
+            reading: 6.5,
+            writing: 6.0,
+            speaking: 6.0,
+            overall: 6.5
+          }}
+          onNavigateSkill={(skill) => {
+            setActiveSkill(skill);
+            closeModal('growthAnalytics');
+          }}
+        />
+      )}
 
       {/* ========================================================= */}
       {/* CLUSTER 3: SYSTEM & PROFILE CLUSTER                       */}
       {/* ========================================================= */}
 
       {/* 3.1 AI Evaluation Progress Overlay */}
-      <AIEvaluationProgressModal
-        isOpen={isSubmitting || Boolean(modals.evaluationProgress)}
-        taskNumber={currentTask?.taskNumber || 2}
-        skill="writing"
-      />
+      {(isSubmitting || Boolean(modals.evaluationProgress)) && (
+        <AIEvaluationProgressModal
+          isOpen={isSubmitting || Boolean(modals.evaluationProgress)}
+          taskNumber={currentTask?.taskNumber || 2}
+          skill="writing"
+        />
+      )}
 
       {/* 3.2 System Settings & API Key Config */}
-      <SettingsModal
-        isOpen={Boolean(modals.settings)}
-        onClose={() => closeModal('settings')}
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-        model={model}
-        setModel={setModel}
-        onClearAllLocalData={onClearAllLocalData}
-      />
+      {Boolean(modals.settings) && (
+        <SettingsModal
+          isOpen={Boolean(modals.settings)}
+          onClose={() => closeModal('settings')}
+          apiKey={apiKey}
+          setApiKey={setApiKey}
+          model={model}
+          setModel={setModel}
+          onClearAllLocalData={onClearAllLocalData}
+        />
+      )}
 
       {/* 3.3 Supabase Authentication Modal */}
-      <AuthModal
-        isOpen={Boolean(modals.auth)}
-        onClose={() => closeModal('auth')}
-        user={currentUser}
-        onAuthSuccess={(user) => setCurrentUser(user)}
-      />
+      {Boolean(modals.auth) && (
+        <AuthModal
+          isOpen={Boolean(modals.auth)}
+          onClose={() => closeModal('auth')}
+          user={currentUser}
+          onAuthSuccess={(user) => setCurrentUser(user)}
+        />
+      )}
 
       {/* 3.4 User Profile & Synchronization Hub */}
-      <UserProfileModal
-        isOpen={Boolean(modals.profile)}
-        onClose={() => closeModal('profile')}
-        user={currentUser}
-        masteredIds={masteredIds}
-        onToggleMastered={onToggleMastered}
-        submissions={submissions}
-        readingHistory={readingHistory}
-        listeningHistory={listeningHistory}
-        speakingHistory={speakingHistory}
-        vocabList={vocabList}
-        mistakes={mistakes}
-        streakCount={streakCount}
-        allTasks={allTasks}
-        onSelectTask={(t) => setCurrentTaskId(t.id)}
-        onTogglePublic={onTogglePublic}
-        onDeleteTask={onDeleteTask}
-        onViewSubmission={(sub) => {
-          setCurrentTaskId(sub.task.id);
-          setCurrentEvaluation(sub.evaluation);
-          openModal('feedback');
-        }}
-        onDeleteSubmission={onDeleteWritingSubmission}
-        onClearHistory={onClearWritingHistory}
-        onDeleteReadingSubmission={onDeleteReadingSubmission}
-        onClearReadingHistory={onClearReadingHistory}
-        onDeleteListeningSubmission={onDeleteListeningSubmission}
-        onClearListeningHistory={onClearListeningHistory}
-        onDeleteSpeakingSubmission={onDeleteSpeakingSubmission}
-        onClearSpeakingHistory={onClearSpeakingHistory}
-        onClearAllHistory={onClearAllHistory}
-        onSaveToVocabNotebook={(v) => {
-          setVocabList(prev => [v, ...prev]);
-          if (onSaveUserVocab) onSaveUserVocab(v);
-        }}
-        onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
-        onSignOut={onSignOut}
-        onOpenAuth={() => openModal('auth')}
-        onOpenIngest={() => { closeModal('profile'); openModal('ingest'); }}
-        onOpenGenerator={() => { closeModal('profile'); openModal('generator'); }}
-        onOpenLibrary={() => { closeModal('profile'); openModal('library'); }}
-        onOpenPrescription={() => { closeModal('profile'); openModal('prescription'); }}
-        onExportAllData={onExportAllData}
-        onImportData={onImportData}
-      />
+      {Boolean(modals.profile) && (
+        <UserProfileModal
+          isOpen={Boolean(modals.profile)}
+          onClose={() => closeModal('profile')}
+          user={currentUser}
+          masteredIds={masteredIds}
+          onToggleMastered={onToggleMastered}
+          submissions={submissions}
+          readingHistory={readingHistory}
+          listeningHistory={listeningHistory}
+          speakingHistory={speakingHistory}
+          vocabList={vocabList}
+          mistakes={mistakes}
+          streakCount={streakCount}
+          allTasks={allTasks}
+          onSelectTask={(t) => setCurrentTaskId(t.id)}
+          onTogglePublic={onTogglePublic}
+          onDeleteTask={onDeleteTask}
+          onViewSubmission={(sub) => {
+            setCurrentTaskId(sub.task.id);
+            setCurrentEvaluation(sub.evaluation);
+            openModal('feedback');
+          }}
+          onDeleteSubmission={onDeleteWritingSubmission}
+          onClearHistory={onClearWritingHistory}
+          onDeleteReadingSubmission={onDeleteReadingSubmission}
+          onClearReadingHistory={onClearReadingHistory}
+          onDeleteListeningSubmission={onDeleteListeningSubmission}
+          onClearListeningHistory={onClearListeningHistory}
+          onDeleteSpeakingSubmission={onDeleteSpeakingSubmission}
+          onClearSpeakingHistory={onClearSpeakingHistory}
+          onClearAllHistory={onClearAllHistory}
+          onSaveToVocabNotebook={(v) => {
+            setVocabList(prev => [v, ...prev]);
+            if (onSaveUserVocab) onSaveUserVocab(v);
+          }}
+          onSaveMistake={(m) => setMistakes(prev => [m, ...prev])}
+          onSignOut={onSignOut}
+          onOpenAuth={() => openModal('auth')}
+          onOpenIngest={() => { closeModal('profile'); openModal('ingest'); }}
+          onOpenGenerator={() => { closeModal('profile'); openModal('generator'); }}
+          onOpenLibrary={() => { closeModal('profile'); openModal('library'); }}
+          onOpenPrescription={() => { closeModal('profile'); openModal('prescription'); }}
+          onExportAllData={onExportAllData}
+          onImportData={onImportData}
+        />
+      )}
 
       {/* 3.5 Help Center, Search & Features Guide */}
-      <FeaturesGuideModal
-        isOpen={Boolean(modals.featuresGuide)}
-        onClose={() => closeModal('featuresGuide')}
-        initialSkill={activeSkill}
-        onNavigateWorkspace={(skill) => setActiveSkill(skill)}
-        onOpenModal={(modalName) => openModal(modalName)}
-      />
+      {Boolean(modals.featuresGuide) && (
+        <FeaturesGuideModal
+          isOpen={Boolean(modals.featuresGuide)}
+          onClose={() => closeModal('featuresGuide')}
+          initialSkill={activeSkill}
+          onNavigateWorkspace={(skill) => setActiveSkill(skill)}
+          onOpenModal={(modalName) => openModal(modalName)}
+        />
+      )}
 
       {/* 3.6 Contact, Feedback & Academic Advisory */}
-      <ContactModal
-        isOpen={Boolean(modals.contact)}
-        onClose={() => closeModal('contact')}
-      />
+      {Boolean(modals.contact) && (
+        <ContactModal
+          isOpen={Boolean(modals.contact)}
+          onClose={() => closeModal('contact')}
+        />
+      )}
 
       {/* 3.7 Global Keyboard Shortcuts Reference */}
-      <KeyboardShortcutsModal
-        isOpen={Boolean(modals.shortcuts)}
-        onClose={() => closeModal('shortcuts')}
-      />
+      {Boolean(modals.shortcuts) && (
+        <KeyboardShortcutsModal
+          isOpen={Boolean(modals.shortcuts)}
+          onClose={() => closeModal('shortcuts')}
+        />
+      )}
 
       {/* 3.8 Onboarding 3-Step Guided Tour */}
-      <OnboardingModal
-        isOpen={Boolean(modals.onboarding)}
-        onClose={() => closeModal('onboarding')}
-        initialTargetBand={targetBand}
-        currentApiKey={apiKey}
-        onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
-          if (newBand) setTargetBand(newBand);
-          if (newKey) setApiKey(newKey);
-        }}
-      />
+      {Boolean(modals.onboarding) && (
+        <OnboardingModal
+          isOpen={Boolean(modals.onboarding)}
+          onClose={() => closeModal('onboarding')}
+          initialTargetBand={targetBand}
+          currentApiKey={apiKey}
+          onSaveConfig={({ targetBand: newBand, apiKey: newKey }) => {
+            if (newBand) setTargetBand(newBand);
+            if (newKey) setApiKey(newKey);
+          }}
+        />
+      )}
 
       {/* 3.9 Beginner Foundation Hub & Zero-Overwhelm Guide */}
-      <BeginnerGuideModal
-        isOpen={Boolean(modals.beginnerGuide)}
-        onClose={() => closeModal('beginnerGuide')}
-        targetBand={targetBand}
-        onApplyTargetBand={(band) => setTargetBand(band)}
-        onOpenArena={() => openModal('atlasArena')}
-        onOpenDrills={() => openModal('drills')}
-        onOpenDiagnostic={() => openModal('diagnostic')}
-        onOpenTheory={() => openModal('theory')}
-      />
+      {Boolean(modals.beginnerGuide) && (
+        <BeginnerGuideModal
+          isOpen={Boolean(modals.beginnerGuide)}
+          onClose={() => closeModal('beginnerGuide')}
+          targetBand={targetBand}
+          onApplyTargetBand={(band) => setTargetBand(band)}
+          onOpenArena={() => openModal('atlasArena')}
+          onOpenDrills={() => openModal('drills')}
+          onOpenDiagnostic={() => openModal('diagnostic')}
+          onOpenTheory={() => openModal('theory')}
+        />
+      )}
     </React.Suspense>
   );
 }

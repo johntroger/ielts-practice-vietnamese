@@ -99,12 +99,12 @@ it('Reading: should toggle reading tests and filter in ReadingLibraryModal & Wor
 // 3. LISTENING MASTERED LOGIC
 // ============================================================================
 it('Listening: should toggle listening tests and filter in ListeningLibraryModal & Workspace', () => {
-  let masteredIds = ['cambridge-18-test-1'];
+  let masteredIds = ['cambridge-8-test-1'];
   const listeningTests = INITIAL_LISTENING_TESTS;
   assert(listeningTests.length > 0, 'INITIAL_LISTENING_TESTS should not be empty');
 
-  const targetTest = listeningTests.find(t => t.id === 'cambridge-18-test-1');
-  assert(targetTest, 'cambridge-18-test-1 must exist');
+  const targetTest = listeningTests.find(t => t.id === 'cambridge-8-test-1');
+  assert(targetTest, 'cambridge-8-test-1 must exist');
 
   // Stats calculation
   const stats = {
@@ -116,7 +116,7 @@ it('Listening: should toggle listening tests and filter in ListeningLibraryModal
   // Tab 'mastered'
   const masteredTab = listeningTests.filter(t => masteredIds.includes(t.id));
   assert.strictEqual(masteredTab.length, 1);
-  assert.strictEqual(masteredTab[0].id, 'cambridge-18-test-1');
+  assert.strictEqual(masteredTab[0].id, 'cambridge-8-test-1');
 
   // "Ẩn đề đã thuộc"
   const hideMastered = true;
@@ -125,7 +125,7 @@ it('Listening: should toggle listening tests and filter in ListeningLibraryModal
     if (hideMastered && activeTab !== 'mastered' && masteredIds.includes(t.id)) return false;
     return true;
   });
-  assert.strictEqual(filtered.some(t => t.id === 'cambridge-18-test-1'), false);
+  assert.strictEqual(filtered.some(t => t.id === 'cambridge-8-test-1'), false);
   assert.strictEqual(filtered.length, listeningTests.length - 1);
 });
 

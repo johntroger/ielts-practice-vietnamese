@@ -41,7 +41,9 @@ assert(
   'MicroDrillsModal must render Minimize2/Maximize2 toggle button'
 );
 assert(
-  microDrillsCode.includes('w-screen h-screen max-w-none max-h-none rounded-none'),
+  microDrillsCode.includes('w-screen h-screen max-w-none max-h-none rounded-none') ||
+  microDrillsCode.includes('w-screen h-[100dvh] max-w-none max-h-none rounded-none') ||
+  microDrillsCode.includes('w-full h-[100dvh] max-w-none max-h-none rounded-none'),
   'MicroDrillsModal must expand to edge-to-edge canvas when isExpanded is true'
 );
 console.log('  ✅ 1. MicroDrillsModal successfully implements edge-to-edge expansion and Alt+Z toggle');
@@ -68,7 +70,9 @@ assert(
   'VocabGrammarSpellingModal must render Minimize2/Maximize2 toggle button'
 );
 assert(
-  vocabModalCode.includes('w-screen h-screen max-w-none max-h-none rounded-none'),
+  vocabModalCode.includes('w-screen h-screen max-w-none max-h-none rounded-none') ||
+  vocabModalCode.includes('w-screen h-[100dvh] max-w-none max-h-none rounded-none') ||
+  vocabModalCode.includes('w-full h-[100dvh] max-w-none max-h-none rounded-none'),
   'VocabGrammarSpellingModal must expand to edge-to-edge canvas when isExpanded is true'
 );
 console.log('  ✅ 2. VocabGrammarSpellingModal successfully implements edge-to-edge expansion and Alt+Z toggle');

@@ -55,7 +55,11 @@ assert(!readingCode.includes('Hộp Từ Vựng Tham Khảo:'), 'QuestionPane mu
 assert(readingCode.includes('Word Bank / Reference Options:'), 'QuestionPane must contain "Word Bank / Reference Options:"');
 
 assert(readingCode.includes('Choose {q.maxSelect || 2} options. Selected:'), 'QuestionPane must use English multi-select status');
-assert(readingCode.includes('placeholder={group.wordBank ? "Enter letter (e.g. A, B...)" : "Type your answer..."}'), 'QuestionPane must use English completion placeholder');
+assert(
+  readingCode.includes('"Enter letter (e.g. A, B...)" : "Type your answer..."') ||
+  readingCode.includes('"Enter letter or phrase..." : "Type your answer..."'),
+  'QuestionPane must use English completion placeholder'
+);
 assert(readingCode.includes('List of Headings:'), 'QuestionPane must contain "List of Headings:"');
 console.log('  ✅ 2. QuestionPane standardizes 100% exam question labels and context to English');
 

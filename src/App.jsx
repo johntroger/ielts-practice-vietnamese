@@ -349,9 +349,12 @@ export default function App() {
   const currentEssay = essays[currentTaskId] || '';
   const currentOutline = outlines[currentTaskId] || '';
 
-  // Weekly Word Target calculation (Target: 2500 words/week)
+  // Weekly Word Target calculation (Target: 2500 words/week) - Memoized to avoid recounting on 1s timer ticks
   const weeklyWordTarget = 2500;
-  const currentWeekWords = submissions.slice(0, 7).reduce((acc, s) => acc + (s.stats?.wordCount || 0), 0) + countWords(currentEssay);
+  const currentWeekWords = React.useMemo(
+    () => submissions.slice(0, 7).reduce((acc, s) => acc + (s.stats?.wordCount || 0), 0) + countWords(currentEssay),
+    [submissions, currentEssay]
+  );
   const weeklyWordProgress = Math.min(100, Math.round((currentWeekWords / weeklyWordTarget) * 100));
 
   // 4. Timer Logic
@@ -1202,11 +1205,7 @@ export default function App() {
                 user={currentUser}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onReadingSubmitted={(sub) => {
-                  setReadingHistory(prev => {
-                    const updated = [sub, ...prev];
-                    safeSet('ielts_reading_submissions_history', updated);
-                    return updated;
-                  });
+                  setReadingHistory(prev => [sub, ...prev]);
 
                   if (marathonSession?.active && marathonSession.stage === 'reading') {
                     const band = sub?.overallBand || sub?.band || '6.5';
@@ -1261,11 +1260,7 @@ export default function App() {
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onOpenDrills={() => openModal('drills')}
                 onListeningSubmitted={(sub) => {
-                  setListeningHistory(prev => {
-                    const updated = [sub, ...prev];
-                    safeSet('ielts_listening_submissions_history', updated);
-                    return updated;
-                  });
+                  setListeningHistory(prev => [sub, ...prev]);
 
                   if (marathonSession?.active && marathonSession.stage === 'listening') {
                     const band = sub?.overallBand || sub?.band || '6.5';
@@ -1316,11 +1311,7 @@ export default function App() {
                 onOpenTheory={(opts) => openModal('theory', { skill: 'speaking', ...(typeof opts === 'object' ? opts : {}) })}
                 onSaveToVocabNotebook={(v) => setVocabList(prev => [v, ...prev])}
                 onSpeakingSubmitted={(sub) => {
-                  setSpeakingHistory(prev => {
-                    const updated = [sub, ...prev];
-                    safeSet('ielts_speaking_submissions_history', updated);
-                    return updated;
-                  });
+                  setSpeakingHistory(prev => [sub, ...prev]);
                 }}
                 openGeneratorTrigger={speakingGenTrigger}
                 openLibraryTrigger={speakingLibraryTrigger}

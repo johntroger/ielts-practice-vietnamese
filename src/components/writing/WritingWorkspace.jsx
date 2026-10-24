@@ -7,7 +7,6 @@ import TimerBar from '../TimerBar';
 import SlideOverToolPanel from '../SlideOverToolPanel';
 import SmartRecommendationBanner from '../SmartRecommendationBanner';
 import { countWords } from '../../utils/textAnalytics';
-import { brainstormIdeas } from '../../services/geminiService';
 import { safeGet, safeSet } from '../../utils/storageService';
 import { useTranslation } from '../../i18n';
 
@@ -97,6 +96,7 @@ export default function WritingWorkspace({
 
     setIsBrainstorming(true);
     try {
+      const { brainstormIdeas } = await import('../../services/geminiService');
       const res = await brainstormIdeas({
         promptText: currentTask.prompt,
         apiKey,

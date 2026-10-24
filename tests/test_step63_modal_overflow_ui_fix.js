@@ -25,8 +25,8 @@ assert(fs.existsSync(qrModalFile), 'WebsiteQRCodeModal.jsx must exist');
 const qrCode = fs.readFileSync(qrModalFile, 'utf8');
 
 assert(
-  qrCode.includes('overflow-y-auto') && qrCode.includes('max-h-[92vh]'),
-  'WebsiteQRCodeModal must constrain dialog with max-h-[92vh] and allow outer scrolling'
+  qrCode.includes('overflow-y-auto') && (qrCode.includes('max-h-[92vh]') || qrCode.includes('max-h-[92dvh]')),
+  'WebsiteQRCodeModal must constrain dialog with max-h-[92vh]/max-h-[92dvh] and allow outer scrolling'
 );
 assert(
   qrCode.includes('sticky top-0') && qrCode.includes('shrink-0'),
