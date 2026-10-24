@@ -90,7 +90,9 @@ export default function EditorPane({
     if (!isTask1 && scaffold.conclusion.trim()) parts.push(scaffold.conclusion.trim());
 
     if (parts.length === 0) {
-      alert('Vui lòng nhập ít nhất 1 ý trong khung dàn ý trước khi chèn vào bài viết.');
+      alert(isEn
+        ? 'Please enter at least 1 idea in the outline scaffold before inserting into your essay.'
+        : 'Vui lòng nhập ít nhất 1 ý trong khung dàn ý trước khi chèn vào bài viết.');
       return;
     }
 
@@ -242,7 +244,7 @@ export default function EditorPane({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 pb-24 sm:pb-20 md:pb-4 overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50 pb-1 sm:pb-2 overflow-hidden">
       
       {/* Top Editor Toolbar (Compact, Zero Overflow in Split-Screen) */}
       <div 

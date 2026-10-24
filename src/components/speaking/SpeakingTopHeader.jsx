@@ -259,7 +259,7 @@ export default function SpeakingTopHeader({
 
           {/* Mobile Tools Dropdown Popup */}
           {isMobileToolsOpen && (
-            <div className="absolute right-0 top-full mt-1.5 z-50 bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-2 min-w-[220px] max-w-[280px] space-y-1 animate-in fade-in zoom-in-95 text-slate-200">
+            <div className="absolute right-0 top-full mt-1.5 z-50 bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-2 min-w-[220px] max-w-[min(280px,calc(100vw-16px))] max-h-[calc(100dvh-110px)] overflow-y-auto space-y-1 animate-in fade-in zoom-in-95 text-slate-200">
               <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 pb-1.5 flex items-center justify-between">
                 <span>{isEn ? 'Speaking Utilities' : 'Tiện Ích Phòng Thi'}</span>
                 <Sliders className="w-3 h-3 text-purple-400" />

@@ -126,9 +126,9 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
       >
         {/* Left Pane (Prompt / Chart / Notes) */}
         <div 
-          className={`w-full md:h-full shrink-0 md:shrink overflow-y-auto bg-white border-b md:border-b-0 md:border-r border-slate-200 transition-all ${
+          className={`w-full md:h-full overflow-y-auto bg-white border-b md:border-b-0 md:border-r border-slate-200 transition-all ${
             mobileTab === 'editor' ? 'hidden md:block' : 'block'
-          } ${mobileTab === 'both' ? 'max-h-[46vh] md:max-h-none' : ''}`}
+          } ${mobileTab === 'both' ? 'max-h-[40dvh] shrink-0 md:shrink md:max-h-none' : 'flex-1 min-h-0'}`}
           style={{ width: isTabletOrDesktop ? `${splitRatio}%` : '100%' }}
         >
           {leftPane}
@@ -148,7 +148,7 @@ export default function SplitPane({ leftPane, rightPane, defaultSplit = 50 }) {
         <div 
           className={`w-full md:h-full overflow-y-auto bg-slate-50/50 flex flex-col flex-1 min-h-0 transition-all ${
             mobileTab === 'prompt' ? 'hidden md:flex' : 'flex'
-          } ${mobileTab === 'editor' ? 'min-h-[calc(100vh-140px)] md:min-h-0' : mobileTab === 'both' ? 'min-h-[48vh] md:min-h-0' : 'min-h-[300px] md:min-h-0'}`}
+          }`}
           style={{ width: isTabletOrDesktop ? `${100 - splitRatio}%` : '100%' }}
         >
           {rightPane}

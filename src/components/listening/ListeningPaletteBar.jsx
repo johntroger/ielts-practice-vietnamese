@@ -276,7 +276,7 @@ export default function ListeningPaletteBar({
                         }
                       }
                     }}
-                    className={`relative min-w-[24px] h-6 px-1 rounded text-[11px] font-mono font-bold shrink-0 flex items-center justify-center cursor-pointer ${
+                    className={`relative min-w-[26px] h-6.5 px-1 rounded text-[11px] font-mono font-bold shrink-0 flex items-center justify-center cursor-pointer ${
                       isActive
                         ? 'bg-emerald-500 text-slate-950 font-black'
                         : isAnswered
@@ -296,41 +296,41 @@ export default function ListeningPaletteBar({
 
           {/* Micro-row 2: Review flag + Prev/Next + Submit */}
           <div className="flex items-center justify-between border-t border-slate-800/80 pt-1 text-xs">
-            <label className="flex items-center space-x-1 cursor-pointer select-none text-slate-300 text-[11px]">
+            <label className="flex items-center space-x-1.5 py-0.5 cursor-pointer select-none text-slate-300 text-[11px]">
               <input
                 type="checkbox"
                 checked={isCurrentFlagged}
                 onChange={() => onToggleFlag && onToggleFlag(activeQuestionOrder)}
-                className="w-3 h-3 rounded-sm border-slate-600 bg-slate-800 text-amber-500 cursor-pointer"
+                className="w-3.5 h-3.5 rounded-sm border-slate-600 bg-slate-800 text-amber-500 cursor-pointer"
               />
-              <Flag className={`w-3 h-3 ${isCurrentFlagged ? 'text-amber-400 fill-current' : 'text-slate-400'}`} />
+              <Flag className={`w-3.5 h-3.5 ${isCurrentFlagged ? 'text-amber-400 fill-current' : 'text-slate-400'}`} />
               <span>{isEn ? 'Review' : 'Xem lại'}</span>
             </label>
 
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1.5">
               <button
                 type="button"
                 onClick={handlePrevQuestion}
                 disabled={activeQuestionOrder <= 1}
-                className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
+                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
               >
-                <ChevronLeft className="w-3 h-3 inline" />
+                <ChevronLeft className="w-3.5 h-3.5 inline" />
               </button>
 
               <button
                 type="button"
                 onClick={handleNextQuestion}
                 disabled={activeQuestionOrder >= totalQuestions}
-                className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
+                className="px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 text-[11px] font-semibold border border-slate-700 cursor-pointer"
               >
-                <ChevronRight className="w-3 h-3 inline" />
+                <ChevronRight className="w-3.5 h-3.5 inline" />
               </button>
 
               {!isSubmitted && (
                 <button
                   type="button"
                   onClick={onSubmitExam}
-                  className="px-2.5 py-0.5 rounded bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] shadow-xs cursor-pointer ml-1"
+                  className="px-3 py-1 rounded-md bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] shadow-xs cursor-pointer ml-1"
                 >
                   {t('common.submit', isEn ? 'Submit' : 'Nộp')}
                 </button>

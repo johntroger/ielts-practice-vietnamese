@@ -331,7 +331,10 @@ export default function App() {
   };
 
   const handleCancelMarathon = () => {
-    if (window.confirm('Bạn có chắc chắn muốn hủy phiên thi marathon 3 kỹ năng này? Toàn bộ tiến trình liên hoàn sẽ được đặt lại.')) {
+    const confirmMsg = language === 'en'
+      ? 'Are you sure you want to cancel this 3-skill marathon session? All marathon progress will be reset.'
+      : 'Bạn có chắc chắn muốn hủy phiên thi marathon 3 kỹ năng này? Toàn bộ tiến trình liên hoàn sẽ được đặt lại.';
+    if (window.confirm(confirmMsg)) {
       setMarathonSession(null);
       safeRemove('ielts_marathon_session');
     }
@@ -827,7 +830,9 @@ export default function App() {
   const handleSubmitEssay = async (method = 'ai') => {
     const wordCount = countWords(currentEssay);
     if (wordCount < 20) {
-      alert('Vui lòng viết ít nhất 20 từ trước khi nộp bài để giám khảo chấm điểm.');
+      alert(language === 'en'
+        ? 'Please write at least 20 words before submitting for evaluation.'
+        : 'Vui lòng viết ít nhất 20 từ trước khi nộp bài để giám khảo chấm điểm.');
       return;
     }
 
@@ -928,12 +933,14 @@ export default function App() {
         };
         setMarathonSession(finalSession);
         safeSet('ielts_marathon_session', finalSession);
-        alert(`🏆 XUẤT SẮC! BẠN ĐÃ HOÀN THÀNH TRỌN VẸN FULL CDI MARATHON 3 KỸ NĂNG LIÊN HOÀN!\n\n🎧 Listening: Band ${finalSession.listeningScore?.band || 'N/A'}\n📖 Reading: Band ${finalSession.readingScore?.band || 'N/A'}\n✍️ Writing: Band ${band}\n\nĐang mở Bảng điểm tổng kết TRF Simulator...`);
+        alert(language === 'en'
+          ? `🏆 EXCELLENT! YOU HAVE COMPLETED THE FULL 3-SKILL CDI MARATHON!\n\n🎧 Listening: Band ${finalSession.listeningScore?.band || 'N/A'}\n📖 Reading: Band ${finalSession.readingScore?.band || 'N/A'}\n✍️ Writing: Band ${band}\n\nOpening your TRF Simulator Report...`
+          : `🏆 XUẤT SẮC! BẠN ĐÃ HOÀN THÀNH TRỌN VẸN FULL CDI MARATHON 3 KỸ NĂNG LIÊN HOÀN!\n\n🎧 Listening: Band ${finalSession.listeningScore?.band || 'N/A'}\n📖 Reading: Band ${finalSession.readingScore?.band || 'N/A'}\n✍️ Writing: Band ${band}\n\nĐang mở Bảng điểm tổng kết TRF Simulator...`);
         openModal('mockTest');
       }
 
     } catch (err) {
-      alert(err.message || 'Lỗi khi chấm bài. Vui lòng thử lại.');
+      alert(err.message || (language === 'en' ? 'Error evaluating essay. Please try again.' : 'Lỗi khi chấm bài. Vui lòng thử lại.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -943,7 +950,7 @@ export default function App() {
     <div 
       data-cdi-font={cdiFontSize}
       data-cdi-contrast={cdiContrast}
-      className={`${isAboutViewOpen ? 'min-h-[100dvh] overflow-y-auto' : (activeSkill === 'reading' || activeSkill === 'listening' || activeSkill === 'speaking' || isFocusMode) ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] md:h-[100dvh] md:overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
+      className={`${isAboutViewOpen ? 'min-h-[100dvh] overflow-y-auto' : 'h-[100dvh] overflow-hidden'} flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-red-100 selection:text-red-900 relative overflow-x-hidden w-full max-w-full`}>
       
       {isAboutViewOpen ? (
         <React.Suspense fallback={
@@ -976,14 +983,14 @@ export default function App() {
       {isFocusMode && (
         <div className="fixed top-3 right-4 z-50 flex items-center space-x-2 bg-slate-900/90 text-white text-xs px-3 py-1.5 rounded-full shadow-xl border border-slate-700/80 transition-all backdrop-blur-md animate-in fade-in">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold text-slate-200">Chế độ Tập Trung</span>
+          <span className="font-semibold text-slate-200">{language === 'en' ? 'Focus Mode' : 'Chế độ Tập Trung'}</span>
           <button
             onClick={toggleFocusMode}
             className="ml-2 flex items-center space-x-1 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded-md font-bold transition-colors cursor-pointer"
-            title="Thoát chế độ tập trung (Alt + F hoặc Esc)"
+            title={language === 'en' ? 'Exit Focus Mode (Alt + F or Esc)' : 'Thoát chế độ tập trung (Alt + F hoặc Esc)'}
           >
             <Minimize2 className="w-3.5 h-3.5 text-slate-300" />
-            <span>Thoát</span>
+            <span>{language === 'en' ? 'Exit' : 'Thoát'}</span>
             <kbd className="hidden sm:inline text-[10px] text-slate-400 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">Alt+F</kbd>
           </button>
         </div>
@@ -1020,14 +1027,14 @@ export default function App() {
               onClick={() => openModal('mockTest')}
               className="px-2.5 py-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 text-white font-bold text-[11px] transition-colors cursor-pointer"
             >
-              Xem TRF
+              {language === 'en' ? 'View TRF' : 'Xem TRF'}
             </button>
             <button
               onClick={handleCancelMarathon}
               className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition-colors cursor-pointer"
-              title="Hủy phiên thi Marathon"
+              title={language === 'en' ? 'Cancel Marathon session' : 'Hủy phiên thi Marathon'}
             >
-              Hủy
+              {language === 'en' ? 'Cancel' : 'Hủy'}
             </button>
           </div>
         </div>
@@ -1183,7 +1190,7 @@ export default function App() {
               <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
                 <div className="flex items-center space-x-2">
                   <span className="w-3 h-3 rounded-full bg-blue-600 animate-ping" />
-                  <span>Đang tải phân hệ IELTS Reading Studio...</span>
+                  <span>{language === 'en' ? 'Loading IELTS Reading Studio...' : 'Đang tải phân hệ IELTS Reading Studio...'}</span>
                 </div>
               </div>
             }>
@@ -1215,7 +1222,9 @@ export default function App() {
                     };
                     setMarathonSession(updatedSession);
                     safeSet('ielts_marathon_session', updatedSession);
-                    alert(`🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH CHẶNG 2: READING (Band ${band})!\n\nHệ thống đang chuyển tiếp bạn sang Chặng 3: IELTS Writing (Task 1 & Task 2 - 60 phút).\nHãy hoàn thành nốt chặng cuối để nhận Bảng điểm Marathon TRF!`);
+                    alert(language === 'en'
+                      ? `🎉 CONGRATULATIONS ON COMPLETING STAGE 2: READING (Band ${band})!\n\nTransitioning to Stage 3: IELTS Writing (Task 1 & Task 2 - 60 mins).\nComplete the final stage to receive your Marathon TRF Report!`
+                      : `🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH CHẶNG 2: READING (Band ${band})!\n\nHệ thống đang chuyển tiếp bạn sang Chặng 3: IELTS Writing (Task 1 & Task 2 - 60 phút).\nHãy hoàn thành nốt chặng cuối để nhận Bảng điểm Marathon TRF!`);
                     setActiveSkill('writing');
                   }
                 }}
@@ -1239,7 +1248,7 @@ export default function App() {
               <div className="flex-1 flex items-center justify-center p-12 text-slate-500 font-bold text-sm">
                 <div className="flex items-center space-x-2">
                   <span className="w-3 h-3 rounded-full bg-emerald-600 animate-ping" />
-                  <span>Đang tải phân hệ IELTS Listening Studio...</span>
+                  <span>{language === 'en' ? 'Loading IELTS Listening Studio...' : 'Đang tải phân hệ IELTS Listening Studio...'}</span>
                 </div>
               </div>
             }>
@@ -1272,7 +1281,9 @@ export default function App() {
                     };
                     setMarathonSession(updatedSession);
                     safeSet('ielts_marathon_session', updatedSession);
-                    alert(`🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH CHẶNG 1: LISTENING (Band ${band})!\n\nHệ thống đang chuyển bạn sang Chặng 2: IELTS Reading (Thời lượng 60 phút).\nHãy sẵn sàng làm bài!`);
+                    alert(language === 'en'
+                      ? `🎉 CONGRATULATIONS ON COMPLETING STAGE 1: LISTENING (Band ${band})!\n\nTransitioning to Stage 2: IELTS Reading (60 mins).\nGet ready!`
+                      : `🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH CHẶNG 1: LISTENING (Band ${band})!\n\nHệ thống đang chuyển bạn sang Chặng 2: IELTS Reading (Thời lượng 60 phút).\nHãy sẵn sàng làm bài!`);
                     setActiveSkill('reading');
                   }
                 }}
@@ -1293,7 +1304,7 @@ export default function App() {
               <div className="flex-1 flex items-center justify-center p-12 text-slate-400 font-bold text-sm bg-slate-950">
                 <div className="flex items-center space-x-2">
                   <span className="w-3 h-3 rounded-full bg-purple-600 animate-ping" />
-                  <span>Đang tải phân hệ IELTS Speaking Studio...</span>
+                  <span>{language === 'en' ? 'Loading IELTS Speaking Studio...' : 'Đang tải phân hệ IELTS Speaking Studio...'}</span>
                 </div>
               </div>
             }>

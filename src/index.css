@@ -148,6 +148,17 @@
   color: #94a3b8 !important;
 }
 
+/* Hide scrollbars cleanly on horizontal pill strips */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ============================================================ */
 /* Comprehensive Website Dark Theme System                      */
 /* ============================================================ */
@@ -162,21 +173,33 @@ html.dark nav {
   border-color: #1e293b;
 }
 
-html.dark .bg-white {
+html.dark .bg-white,
+html.dark .bg-white\/95,
+html.dark .bg-white\/90,
+html.dark .bg-white\/80 {
   background-color: #0f172a;
   color: #f1f5f9;
 }
 
-html.dark .bg-slate-50 {
+html.dark .bg-slate-50,
+html.dark .bg-slate-50\/90,
+html.dark .bg-slate-50\/80,
+html.dark .bg-slate-50\/50 {
   background-color: #0b0f19;
 }
 
-html.dark .bg-slate-100 {
+html.dark .bg-slate-100,
+html.dark .bg-slate-100\/90,
+html.dark .bg-slate-100\/80 {
   background-color: #1e293b;
   color: #f1f5f9;
 }
 
-html.dark .border-slate-200 {
+html.dark .border-slate-200,
+html.dark .border-slate-200\/90,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/70,
+html.dark .border-slate-200\/60 {
   border-color: #1e293b;
 }
 
@@ -188,7 +211,8 @@ html.dark .border-slate-300 {
   border-color: #334155;
 }
 
-html.dark .text-slate-900 {
+html.dark .text-slate-900,
+html.dark .text-slate-850 {
   color: #f8fafc;
 }
 
@@ -216,8 +240,9 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
 
-/* Dark Mode Form Inputs & Textarea */
+/* Dark Mode Form Inputs, Selects & Textarea */
 html.dark textarea,
+html.dark select,
 html.dark input[type="text"],
 html.dark input[type="password"],
 html.dark input[type="search"] {

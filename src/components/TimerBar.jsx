@@ -300,7 +300,7 @@ export default function TimerBar({
                         <div className="flex-1 min-w-0">
                           <div className="font-bold flex items-center justify-between text-xs">
                             <span>{isEn ? 'Grade with AI (Cambridge)' : 'Chấm Bằng AI (Cambridge)'}</span>
-                            {submitMode === 'ai' && <span className="text-[10px] text-red-400 font-bold">✓ Đang chọn</span>}
+                            {submitMode === 'ai' && <span className="text-[10px] text-red-400 font-bold">{isEn ? '✓ Selected' : '✓ Đang chọn'}</span>}
                           </div>
                           <div className="text-[11px] text-slate-400 leading-tight mt-0.5">
                             {isEn ? '4 Cambridge criteria (TR, CC, LR, GRA) with rewrite suggestions' : 'Chấm 4 tiêu chí TR, CC, LR, GRA kèm gợi ý viết lại (Cần API Key)'}
@@ -325,7 +325,7 @@ export default function TimerBar({
                         <div className="flex-1 min-w-0">
                           <div className="font-bold flex items-center justify-between text-xs">
                             <span>{isEn ? 'Algorithm Grade (Instant)' : 'Chấm Bằng Máy (Tức Thì)'}</span>
-                            {submitMode === 'algorithmic' && <span className="text-[10px] text-amber-400 font-bold">✓ Đang chọn</span>}
+                            {submitMode === 'algorithmic' && <span className="text-[10px] text-amber-400 font-bold">{isEn ? '✓ Selected' : '✓ Đang chọn'}</span>}
                           </div>
                           <div className="text-[11px] text-slate-400 leading-tight mt-0.5">
                             {isEn ? 'Instant 0.02s check for word count, paragraphs & vocabulary diversity' : 'Chấm ngay trong 0.02s, đếm từ, kiểm tra đoạn & từ vựng (Không cần API Key)'}

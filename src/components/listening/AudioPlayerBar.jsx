@@ -13,6 +13,7 @@ import {
   RefreshCw,
   CheckCircle2
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/index.js';
 
 function formatTime(seconds) {
   if (isNaN(seconds) || seconds < 0) return '00:00';
@@ -49,6 +50,7 @@ export default function AudioPlayerBar({
     toggleMute
   } = audioEngine;
 
+  const { isEn } = useTranslation();
   const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
@@ -105,13 +107,15 @@ export default function AudioPlayerBar({
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{errorMessage}</span>
             </div>
-            <button onClick={togglePlay} className="underline text-[11px] hover:text-amber-100 font-bold ml-2">Thử lại</button>
+            <button onClick={togglePlay} className="underline text-[11px] hover:text-amber-100 font-bold ml-2">
+              {isEn ? 'Retry' : 'Thử lại'}
+            </button>
           </div>
         )}
         {isStalled && isPlaying && (
           <div className="bg-indigo-600/95 text-white text-[11px] px-3 py-0.5 flex items-center justify-center space-x-1.5 font-medium animate-pulse">
             <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
-            <span>Đang đệm ({bufferedPercent}%)...</span>
+            <span>{isEn ? `Buffering (${bufferedPercent}%)...` : `Đang đệm (${bufferedPercent}%)...`}</span>
           </div>
         )}
 
@@ -128,7 +132,7 @@ export default function AudioPlayerBar({
                     ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
                     : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
                 }`}
-                title={isLoading ? 'Đang tải...' : isPlaying ? 'Tạm dừng (Space)' : 'Phát bài nghe (Space)'}
+                title={isLoading ? (isEn ? 'Loading...' : 'Đang tải...') : isPlaying ? (isEn ? 'Pause (Space)' : 'Tạm dừng (Space)') : (isEn ? 'Play audio (Space)' : 'Phát bài nghe (Space)')}
               >
                 {isLoading ? (
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -145,7 +149,7 @@ export default function AudioPlayerBar({
                     type="button"
                     onClick={() => seek?.(Math.max(0, currentTime - 5))}
                     className="px-1.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-[10px] font-mono font-bold flex items-center space-x-0.5 border border-slate-800 cursor-pointer"
-                    title="Lùi 5s (←)"
+                    title={isEn ? 'Rewind 5s (←)' : 'Lùi 5s (←)'}
                   >
                     <RotateCcw className="w-3 h-3 text-slate-400" />
                     <span>-5s</span>
@@ -154,7 +158,7 @@ export default function AudioPlayerBar({
                     type="button"
                     onClick={() => seek?.(Math.min(duration || 0, currentTime + 5))}
                     className="px-1.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-[10px] font-mono font-bold flex items-center space-x-0.5 border border-slate-800 cursor-pointer"
-                    title="Tiến 5s (→)"
+                    title={isEn ? 'Forward 5s (→)' : 'Tiến 5s (→)'}
                   >
                     <span>+5s</span>
                     <FastForward className="w-3 h-3 text-slate-400" />
@@ -181,7 +185,7 @@ export default function AudioPlayerBar({
                   <button
                     onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)}
                     className="px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-slate-200 text-[11px] font-mono font-bold border border-slate-700 cursor-pointer"
-                    title="Tốc độ phát"
+                    title={isEn ? 'Playback speed' : 'Tốc độ phát'}
                   >
                     {playbackRate}x
                   </button>
@@ -209,7 +213,7 @@ export default function AudioPlayerBar({
               <button
                 onClick={toggleMute}
                 className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-900 transition-colors cursor-pointer"
-                title={isMuted ? 'Bật âm' : 'Tắt âm'}
+                title={isMuted ? (isEn ? 'Unmute' : 'Bật âm') : (isEn ? 'Mute' : 'Tắt âm')}
               >
                 {isMuted || volume === 0 ? (
                   <VolumeX className="w-3.5 h-3.5 text-rose-400" />
@@ -226,7 +230,7 @@ export default function AudioPlayerBar({
             className={`group relative h-2 bg-slate-800 rounded-full overflow-hidden transition-all ${
               examMode === 'strict' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer hover:h-2.5'
             }`}
-            title={examMode === 'strict' ? 'Chế độ thi thật: Không thể tua âm thanh' : 'Bấm để tua đến vị trí mong muốn'}
+            title={examMode === 'strict' ? (isEn ? 'Strict Exam Mode: Audio scrubbing disabled' : 'Chế độ thi thật: Không thể tua âm thanh') : (isEn ? 'Click to seek audio' : 'Bấm để tua đến vị trí mong muốn')}
           >
             <div 
               className="absolute left-0 top-0 bottom-0 bg-slate-700/60 transition-all duration-300"
@@ -255,7 +259,7 @@ export default function AudioPlayerBar({
             onClick={togglePlay}
             className="underline text-[11px] hover:text-amber-100 font-bold ml-2"
           >
-            Thử lại
+            {isEn ? 'Retry' : 'Thử lại'}
           </button>
         </div>
       )}
@@ -264,7 +268,7 @@ export default function AudioPlayerBar({
       {isStalled && isPlaying && (
         <div className="bg-indigo-600/95 text-white text-[11px] px-3 py-0.5 flex items-center justify-center space-x-1.5 font-medium animate-pulse">
           <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
-          <span>Mạng di động đang tải tiếp âm thanh ({bufferedPercent}% đã đệm)...</span>
+          <span>{isEn ? `Buffering audio (${bufferedPercent}% buffered)...` : `Mạng di động đang tải tiếp âm thanh (${bufferedPercent}% đã đệm)...`}</span>
         </div>
       )}
 
@@ -283,7 +287,7 @@ export default function AudioPlayerBar({
                     ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40 ring-2 ring-emerald-400/40' 
                     : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-rose-900/30'
                 }`}
-                title={isLoading ? 'Đang tải tệp âm thanh...' : isPlaying ? 'Tạm dừng bài nghe (Phím Space)' : 'Phát bài nghe (Phím Space)'}
+                title={isLoading ? (isEn ? 'Loading audio file...' : 'Đang tải tệp âm thanh...') : isPlaying ? (isEn ? 'Pause audio (Space)' : 'Tạm dừng bài nghe (Phím Space)') : (isEn ? 'Play audio (Space)' : 'Phát bài nghe (Phím Space)')}
               >
                 {isLoading ? (
                   <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
@@ -309,7 +313,7 @@ export default function AudioPlayerBar({
                   type="button"
                   onClick={() => seek?.(Math.max(0, currentTime - 5))}
                   className="px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all active:scale-95 cursor-pointer flex items-center space-x-0.5 border border-slate-800 shadow-2xs"
-                  title="Lùi 5 giây (Phím Mũi tên trái ←)"
+                  title={isEn ? 'Rewind 5 seconds (Left Arrow ←)' : 'Lùi 5 giây (Phím Mũi tên trái ←)'}
                 >
                   <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
                   <span className="text-[10px] sm:text-[11px] font-mono font-bold">-5s</span>
@@ -318,7 +322,7 @@ export default function AudioPlayerBar({
                   type="button"
                   onClick={() => seek?.(Math.min(duration || 0, currentTime + 5))}
                   className="px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-all active:scale-95 cursor-pointer flex items-center space-x-0.5 border border-slate-800 shadow-2xs"
-                  title="Tiến 5 giây (Phím Mũi tên phải →)"
+                  title={isEn ? 'Forward 5 seconds (Right Arrow →)' : 'Tiến 5 giây (Phím Mũi tên phải →)'}
                 >
                   <span className="text-[10px] sm:text-[11px] font-mono font-bold">+5s</span>
                   <FastForward className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
@@ -344,14 +348,14 @@ export default function AudioPlayerBar({
 
             {/* Buffer load status indicator */}
             {isLoading || (bufferedPercent > 0 && bufferedPercent < 90) ? (
-              <span className="hidden xs:flex px-2 py-0.5 rounded-full bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold items-center space-x-1 animate-pulse" title="Đang tải tệp âm thanh vào bộ nhớ đệm">
+              <span className="hidden xs:flex px-2 py-0.5 rounded-full bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold items-center space-x-1 animate-pulse" title={isEn ? 'Buffering audio file' : 'Đang tải tệp âm thanh vào bộ nhớ đệm'}>
                 <RefreshCw className="w-2.5 h-2.5 animate-spin" />
-                <span>Đệm: {bufferedPercent}%</span>
+                <span>{isEn ? `Buffer: ${bufferedPercent}%` : `Đệm: ${bufferedPercent}%`}</span>
               </span>
             ) : duration > 0 ? (
-              <span className="hidden sm:inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] font-bold" title="Tệp âm thanh đã tải xong và sẵn sàng phát">
+              <span className="hidden sm:inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] font-bold" title={isEn ? 'Audio loaded and ready to play' : 'Tệp âm thanh đã tải xong và sẵn sàng phát'}>
                 <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
-                <span>Đã load xong</span>
+                <span>{isEn ? 'Ready' : 'Đã load xong'}</span>
               </span>
             ) : null}
           </div>
@@ -381,14 +385,14 @@ export default function AudioPlayerBar({
             {examMode === 'strict' ? (
               <span className="hidden sm:inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-semibold">
                 <Lock className="w-3 h-3 text-amber-400" />
-                <span>Khóa tua (Strict)</span>
+                <span>{isEn ? 'Locked (Strict)' : 'Khóa tua (Strict)'}</span>
               </span>
             ) : (
               <div className="relative">
                 <button
                   onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)}
                   className="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold border border-slate-700 transition-colors"
-                  title="Tốc độ phát"
+                  title={isEn ? 'Playback speed' : 'Tốc độ phát'}
                 >
                   {playbackRate}x
                 </button>
@@ -405,7 +409,7 @@ export default function AudioPlayerBar({
                           playbackRate === rate ? 'text-emerald-400 font-bold bg-slate-800/60' : 'text-slate-300'
                         }`}
                       >
-                        {rate}x {rate === 1.0 && '(Chuẩn)'}
+                        {rate}x {rate === 1.0 && (isEn ? '(Normal)' : '(Chuẩn)')}
                       </button>
                     ))}
                   </div>
@@ -417,7 +421,7 @@ export default function AudioPlayerBar({
             <button
               onClick={toggleMute}
               className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              title={isMuted ? 'Bật âm' : 'Tắt âm'}
+              title={isMuted ? (isEn ? 'Unmute' : 'Bật âm') : (isEn ? 'Mute' : 'Tắt âm')}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-4 h-4 text-rose-400" />
@@ -435,7 +439,7 @@ export default function AudioPlayerBar({
           className={`group relative h-2 bg-slate-800 rounded-full overflow-hidden transition-all ${
             examMode === 'strict' ? 'cursor-not-allowed opacity-90' : 'cursor-pointer hover:h-2.5'
           }`}
-          title={examMode === 'strict' ? 'Chế độ thi thật: Không thể tua âm thanh' : 'Bấm để tua đến vị trí mong muốn'}
+          title={examMode === 'strict' ? (isEn ? 'Strict Exam Mode: Audio scrubbing disabled' : 'Chế độ thi thật: Không thể tua âm thanh') : (isEn ? 'Click to seek audio' : 'Bấm để tua đến vị trí mong muốn')}
         >
           {/* Buffered track */}
           <div 

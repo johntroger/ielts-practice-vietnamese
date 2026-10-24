@@ -856,7 +856,7 @@ export default function SpeakingExaminerRoom({
         <div className="flex flex-col items-center relative shrink-0">
           {/* Permission warning banner if microphone blocked */}
           {speechEngine.speechError === 'not-allowed' && (
-            <div className="absolute -top-12 bg-rose-950/95 text-rose-300 border border-rose-600/80 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center space-x-1.5 shadow-xl animate-bounce z-40 whitespace-nowrap">
+            <div className="absolute -top-14 bg-rose-950/95 text-rose-300 border border-rose-600/80 px-3 py-1 rounded-xl text-[11px] font-bold flex items-center space-x-1.5 shadow-xl animate-bounce z-40 max-w-[calc(100vw-24px)] text-center">
               <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
               <span>{isEn ? 'Microphone blocked! Click 🔒 icon in browser URL bar to ALLOW' : 'Trình duyệt đang chặn Micro! Bấm biểu tượng 🔒 trên thanh URL để BẬT'}</span>
             </div>

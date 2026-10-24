@@ -192,7 +192,7 @@ export default function PromptPane({
       });
       setThesisResult(res);
     } catch (err) {
-      alert(err.message || 'Lỗi kiểm tra câu luận đề.');
+      alert(err.message || (isEn ? 'Error validating thesis statement.' : 'Lỗi kiểm tra câu luận đề.'));
     } finally {
       setIsValidatingThesis(false);
     }
@@ -200,7 +200,9 @@ export default function PromptPane({
 
   const handleValidatePeel = async () => {
     if (!peelInput.trim() || peelInput.trim().length < 15) {
-      alert('Vui lòng nhập đoạn thân bài có ít nhất 15 ký tự để phân tích chuỗi lập luận PEEL.');
+      alert(isEn
+        ? 'Please enter a body paragraph of at least 15 characters to analyze the PEEL reasoning chain.'
+        : 'Vui lòng nhập đoạn thân bài có ít nhất 15 ký tự để phân tích chuỗi lập luận PEEL.');
       return;
     }
     setIsValidatingPeel(true);
@@ -212,7 +214,7 @@ export default function PromptPane({
       });
       setPeelResult(res);
     } catch (err) {
-      alert(err.message || 'Lỗi thẩm định chuỗi lập luận đoạn văn PEEL.');
+      alert(err.message || (isEn ? 'Error validating PEEL paragraph reasoning.' : 'Lỗi thẩm định chuỗi lập luận đoạn văn PEEL.'));
     } finally {
       setIsValidatingPeel(false);
     }

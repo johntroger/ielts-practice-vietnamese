@@ -499,7 +499,7 @@ export default function ReadingWorkspace({
   return (
     <div className={`flex-1 flex flex-col overflow-hidden h-full transition-colors ${
       cdiFullscreen 
-        ? `fixed inset-0 z-50 h-screen w-screen overflow-hidden ${themeStyles.containerClass}` 
+        ? `fixed inset-0 z-50 h-[100dvh] w-full overflow-hidden ${themeStyles.containerClass}` 
         : 'bg-slate-50'
     }`}>
       {/* CDI Official Exam Warning Notice Bar (10m / 5m alerts) */}
@@ -580,7 +580,7 @@ export default function ReadingWorkspace({
                 <button
                   type="button"
                   onClick={() => onToggleMastered(currentTest.id)}
-                  className={`p-1 rounded-xl border text-xs font-bold transition-all flex items-center shrink-0 cursor-pointer shadow-2xs ${
+                  className={`p-1.5 rounded-xl border text-xs font-bold transition-all flex items-center shrink-0 cursor-pointer shadow-2xs ${
                     masteredIds.includes(currentTest.id)
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                       : 'bg-slate-50 text-slate-400 border-slate-200 hover:text-slate-600'
@@ -601,7 +601,7 @@ export default function ReadingWorkspace({
                       setSelectedPassageNum(p.passageNumber);
                       setActiveEvidencePara(null);
                     }}
-                    className={`px-1.5 py-0.5 rounded-lg transition-all font-bold cursor-pointer text-xs ${
+                    className={`px-2 py-1 rounded-lg transition-all font-bold cursor-pointer text-xs ${
                       selectedPassageNum === p.passageNumber 
                         ? 'bg-white text-blue-900 shadow-2xs font-black' 
                         : 'text-slate-500 hover:text-slate-800'
@@ -687,7 +687,7 @@ export default function ReadingWorkspace({
                 <button
                   type="button"
                   onClick={toggleSlimHeader}
-                  className={`p-1 sm:px-2 sm:py-1 rounded-xl border font-bold text-xs flex items-center gap-1 shrink-0 cursor-pointer shadow-2xs ${
+                  className={`p-1.5 sm:px-2 sm:py-1 rounded-xl border font-bold text-xs flex items-center gap-1 shrink-0 cursor-pointer shadow-2xs ${
                     isSlimHeader
                       ? 'bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100'
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
@@ -704,7 +704,7 @@ export default function ReadingWorkspace({
                 <button
                   type="button"
                   onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                  className="p-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 shrink-0 cursor-pointer shadow-2xs"
+                  className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 shrink-0 cursor-pointer shadow-2xs"
                   title={isEn ? "More utilities" : "Tiện ích khác"}
                 >
                   <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -712,7 +712,7 @@ export default function ReadingWorkspace({
                 {isToolsDropdownOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setIsToolsDropdownOpen(false)} />
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-slate-800">
+                    <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-16px)] max-h-[calc(100dvh-110px)] overflow-y-auto bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1 text-slate-800">
                       <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         {t('reading.utilitiesMenu', 'Tiện Ích & Công Cụ')}
                       </div>

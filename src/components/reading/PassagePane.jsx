@@ -669,7 +669,7 @@ export default function PassagePane({
         <div 
           id="reading-dict-tooltip"
           style={{ top: `${tooltip.y}px`, left: `${tooltip.x}px` }}
-          className="fixed z-50 w-72 sm:w-80 bg-slate-900 text-white rounded-xl shadow-2xl p-3.5 text-xs border border-slate-700 animate-in fade-in zoom-in-95 duration-150"
+          className="fixed z-50 w-72 sm:w-80 max-w-[calc(100vw-20px)] bg-slate-900 text-white rounded-xl shadow-2xl p-3.5 text-xs border border-slate-700 animate-in fade-in zoom-in-95 duration-150"
         >
           <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2 mb-2">
             <div>

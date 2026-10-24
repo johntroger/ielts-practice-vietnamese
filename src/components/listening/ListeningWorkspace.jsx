@@ -1056,7 +1056,7 @@ export default function ListeningWorkspace({
 
             {/* Dropdown Menu */}
             {isTestDropdownOpen && (
-              <div className="absolute left-0 top-full mt-1.5 z-40 bg-white rounded-xl shadow-xl border border-cyan-200 p-2 min-w-[300px] sm:min-w-[360px] max-h-[420px] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 space-y-1.5 text-slate-800">
+              <div className="absolute left-0 top-full mt-1.5 z-40 bg-white rounded-xl shadow-xl border border-cyan-200 p-2 w-[320px] sm:w-[360px] max-w-[calc(100vw-16px)] max-h-[min(420px,calc(100dvh-140px))] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 space-y-1.5 text-slate-800">
                 <div className="px-2 py-1 flex items-center justify-between border-b border-slate-100 pb-1.5 shrink-0">
                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     {isEn ? 'Audio Tests Library' : 'Danh Sách Đề Nghe'}
@@ -1189,12 +1189,12 @@ export default function ListeningWorkspace({
 
       {/* 2. Responsive Segmented Switcher on Mobile & Portrait Tablets */}
       {!isDesktopOrLandscape && (hasStartedExam || exam.isSubmitted) && (
-        <div className="bg-slate-100 border-b border-slate-200 px-2.5 sm:px-3 py-1 flex items-center justify-between shrink-0 select-none">
+        <div className="bg-slate-100 border-b border-slate-200 px-2.5 sm:px-3 py-1.5 flex items-center justify-between shrink-0 select-none">
           <div className="flex items-center space-x-1 p-0.5 bg-slate-200/80 rounded-lg">
             <button
               type="button"
               onClick={() => setMobileTab('context')}
-              className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
                 mobileTab === 'context' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
               }`}
             >
@@ -1203,7 +1203,7 @@ export default function ListeningWorkspace({
             <button
               type="button"
               onClick={() => setMobileTab('questions')}
-              className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
                 mobileTab === 'questions' ? 'bg-white text-red-600 shadow-2xs' : 'text-slate-600'
               }`}
             >
@@ -1211,14 +1211,14 @@ export default function ListeningWorkspace({
             </button>
           </div>
 
-          {/* Quick Part Pills on Mobile */}
-          <div className="flex items-center space-x-1">
+          {/* Quick Part Pills on Mobile (< md only; tablets >= md already show Part 1-4 in header) */}
+          <div className="flex md:hidden items-center space-x-1">
             {(currentTest.parts || [{ partNumber: 1 }, { partNumber: 2 }, { partNumber: 3 }, { partNumber: 4 }]).map((p) => (
               <button
                 key={p.partNumber}
                 type="button"
                 onClick={() => handleSelectPart(p.partNumber)}
-                className={`w-6 h-6 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+                className={`w-7 h-7 rounded-md text-xs font-bold transition-all cursor-pointer ${
                   activePart === p.partNumber ? 'bg-red-600 text-white shadow-2xs' : 'bg-white text-slate-700 border border-slate-200'
                 }`}
               >
