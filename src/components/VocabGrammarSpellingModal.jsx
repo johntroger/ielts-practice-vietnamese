@@ -1074,26 +1074,26 @@ export default function VocabGrammarSpellingModal({
     }`}>
       <div className={`bg-white shadow-2xl border border-slate-200 flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
         isExpanded 
-          ? 'w-screen h-screen max-w-none max-h-none rounded-none' 
+          ? 'w-full h-[100dvh] max-w-none max-h-none rounded-none' 
           : 'rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1600px] h-[96dvh] max-h-[96dvh]'
       }`}>
         
         {/* MODAL HEADER */}
-        <div className="px-4 sm:px-6 py-3.5 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-black shadow-md">
-              <Zap className="w-5 h-5 fill-current" />
+        <div className="px-3 sm:px-6 py-3 sm:py-3.5 border-b border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 flex-1">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-black shadow-md shrink-0">
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h2 className="text-base sm:text-lg font-bold tracking-tight">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center space-x-2 min-w-0">
+                <h2 className="text-sm sm:text-lg font-bold tracking-tight truncate">
                   {isEn ? 'Vocabulary, Grammar & Spelling Studio' : t('modals.vocabGrammar.title', null, 'Luyện Từ Vựng, Ngữ Pháp & Chính Tả')}
                 </h2>
-                <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40">
+                <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 shrink-0">
                   Band 5.5 - 7.5+
                 </span>
               </div>
-              <p className="text-xs text-slate-300 hidden md:block">
+              <p className="text-xs text-slate-300 hidden md:block truncate">
                 {isEn 
                   ? 'Active recall, spelling traps & authentic Cambridge IELTS grammar architectures'
                   : t('modals.vocabGrammar.subtitle', null, 'Active Recall, bẫy chính tả & công thức ngữ pháp độc quyền chuẩn Cambridge IELTS')}
@@ -1101,7 +1101,7 @@ export default function VocabGrammarSpellingModal({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {/* Auto Share Toggle */}
             <label className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-300 bg-white/10 hover:bg-white/15 px-2.5 py-1.5 rounded-lg border border-white/10 cursor-pointer transition">
               <input
@@ -1352,7 +1352,7 @@ export default function VocabGrammarSpellingModal({
             {isTabDropdownOpen && (
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="absolute left-0 top-full mt-1.5 z-50 min-w-[280px] sm:min-w-[340px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150"
+                className="absolute left-0 top-full mt-1.5 z-50 w-[min(300px,calc(100vw-24px))] sm:min-w-[340px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150"
               >
                 <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
                   <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">

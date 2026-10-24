@@ -191,7 +191,7 @@ export default function MicroDrillAudioBar({
               }
             });
           } else {
-            setErrorMessage('Không thể phát tệp âm thanh.');
+            setErrorMessage(isEn ? 'Unable to play audio file.' : 'Không thể phát tệp âm thanh.');
             setIsPlaying(false);
           }
         });
@@ -200,7 +200,7 @@ export default function MicroDrillAudioBar({
 
     // Default: Native Precision Speech Engine
     if (!audioText || !audioText.trim()) {
-      setErrorMessage('Nội dung bài nghe trống hoặc không khả dụng.');
+      setErrorMessage(isEn ? 'Audio content is empty or unavailable.' : 'Nội dung bài nghe trống hoặc không khả dụng.');
       return;
     }
 
@@ -224,7 +224,7 @@ export default function MicroDrillAudioBar({
         console.warn('TTS playback error:', err);
         setIsPlaying(false);
         stopElapsedTimer();
-        setErrorMessage('Lỗi phát âm thanh. Vui lòng bấm thử lại.');
+        setErrorMessage(isEn ? 'Audio playback error. Please try again.' : 'Lỗi phát âm thanh. Vui lòng bấm thử lại.');
       }
     });
   };

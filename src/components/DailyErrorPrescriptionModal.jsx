@@ -118,7 +118,7 @@ export default function DailyErrorPrescriptionModal({
                   {isEn ? `Question ${currentIndex + 1} / ${total}` : `Câu hỏi ${currentIndex + 1} / ${total}`}
                 </span>
                 <span className="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 text-[11px]">
-                  {currentItem.type}
+                  {isEn ? (currentItem.typeEn || currentItem.type) : currentItem.type}
                 </span>
               </div>
 
@@ -133,8 +133,8 @@ export default function DailyErrorPrescriptionModal({
               {/* Sentence with Mistake */}
               <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-1.5">
                 <div className="flex items-center space-x-1.5 text-amber-900 text-xs font-bold">
-                  <AlertCircle className="w-4 h-4 text-amber-600" />
-                  <span>{currentItem.title}</span>
+                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>{isEn ? (currentItem.titleEn || currentItem.title) : currentItem.title}</span>
                 </div>
                 <p className="font-serif sm:font-sans text-sm sm:text-base text-slate-800 font-medium leading-relaxed">
                   "{currentItem.sentence}"
@@ -208,12 +208,12 @@ export default function DailyErrorPrescriptionModal({
                   </div>
 
                   <p className="text-slate-700 leading-relaxed font-normal">
-                    {currentItem.explanation}
+                    {isEn ? (currentItem.explanationEn || currentItem.explanation) : currentItem.explanation}
                   </p>
 
                   <div className="p-2.5 rounded-xl bg-white/80 border border-slate-200/60 text-[11px] font-medium text-slate-800 flex items-start space-x-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                    <span><strong>{isEn ? 'Golden Rule:' : 'Quy tắc vàng:'}</strong> {currentItem.ruleTip}</span>
+                    <span><strong>{isEn ? 'Golden Rule:' : 'Quy tắc vàng:'}</strong> {isEn ? (currentItem.ruleTipEn || currentItem.ruleTip) : currentItem.ruleTip}</span>
                   </div>
                 </div>
               )}

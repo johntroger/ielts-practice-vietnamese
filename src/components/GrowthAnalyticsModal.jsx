@@ -40,34 +40,34 @@ export default function GrowthAnalyticsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-5 overflow-y-auto">
       <div 
-        className="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[94dvh] animate-in fade-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="growth-analytics-title"
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 shrink-0">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-800 flex items-center justify-between gap-2 bg-slate-900/90 shrink-0">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 shrink-0">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <div>
-              <h2 id="growth-analytics-title" className="text-base sm:text-lg font-black text-white tracking-tight flex items-center space-x-2">
-                <span>{t('modals.analytics.title', null, 'Dự Báo Tăng Trưởng & Ngày Đạt Target Band')}</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
+            <div className="min-w-0">
+              <h2 id="growth-analytics-title" className="text-sm sm:text-lg font-black text-white tracking-tight flex items-center flex-wrap gap-1.5">
+                <span className="truncate">{t('modals.analytics.title', null, 'Dự Báo Tăng Trưởng & Ngày Đạt Target Band')}</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
                   Cambridge AI
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-400 truncate">
                 {t('modals.analytics.subtitle')}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 sm:w-8 sm:h-8 min-w-[36px] min-h-[36px] rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="w-9 h-9 sm:w-8 sm:h-8 min-w-[36px] min-h-[36px] rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
             aria-label={isEn ? "Close" : "Đóng"}
           >
             <X className="w-4 h-4" />
@@ -75,27 +75,27 @@ export default function GrowthAnalyticsModal({
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6 text-slate-200">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-5 sm:space-y-6 text-slate-200">
           
           {/* Target & Weekly Intensity Selector */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/60 p-3.5 sm:p-4 rounded-2xl border border-slate-800">
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-2 flex items-center space-x-1.5">
-                <Target className="w-3.5 h-3.5 text-purple-400" />
+                <Target className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                 <span>{isEn ? 'Desired Overall Band Target:' : 'Mục tiêu Overall Band mong muốn:'}</span>
               </label>
-              <div className="flex items-center space-x-2">
+              <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
                 {[6.5, 7.0, 7.5, 8.0, 8.5].map(b => (
                   <button
                     key={b}
                     onClick={() => setTargetBand(b)}
-                    className={`flex-1 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer border ${
+                    className={`py-1.5 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer border ${
                       targetBand === b
                         ? 'bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-600/30'
                         : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-slate-200'
                     }`}
                   >
-                    Band {b.toFixed(1)}
+                    {b.toFixed(1)}
                   </button>
                 ))}
               </div>
@@ -104,17 +104,17 @@ export default function GrowthAnalyticsModal({
             <div>
               <label className="text-xs font-bold text-slate-300 block mb-2 flex items-center justify-between">
                 <span className="flex items-center space-x-1.5">
-                  <Clock className="w-3.5 h-3.5 text-indigo-400" />
+                  <Clock className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                   <span>{isEn ? 'Weekly Study Pace:' : 'Thời lượng học mỗi tuần:'}</span>
                 </span>
                 <span className="text-indigo-400 font-mono font-bold">{isEn ? `${weeklyHours} hrs / week` : `${weeklyHours} giờ / tuần`}</span>
               </label>
-              <div className="flex items-center space-x-2">
+              <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
                 {[4, 6, 8, 12, 16].map(h => (
                   <button
                     key={h}
                     onClick={() => setWeeklyHours(h)}
-                    className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                    className={`py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer border ${
                       weeklyHours === h
                         ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
                         : 'bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-slate-200'

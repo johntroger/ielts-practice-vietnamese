@@ -153,7 +153,7 @@ export default function ArenaMediaViewer({ media }) {
                 <img 
                   src={media.url} 
                   alt={media.alt || 'Arena question illustration zoomed'} 
-                  className="max-h-[60vh] object-contain rounded-xl shadow-xl transition-transform duration-200"
+                  className="max-h-[60dvh] object-contain rounded-xl shadow-xl transition-transform duration-200"
                   style={{ transform: `scale(${zoomScale})` }}
                 />
               ) : null}

@@ -272,7 +272,7 @@ export default function SpeakingPart2Room({
                         category: 'part2',
                         subType: 'storytelling',
                         topicId: 'storytelling-part2',
-                        title: 'Kỹ Thuật Storytelling Dòng Thời Gian PPF (Part 2)'
+                        title: isEn ? 'PPF Timeline Storytelling Technique (Part 2)' : 'Kỹ Thuật Storytelling Dòng Thời Gian PPF (Part 2)'
                       });
                     }}
                     className="w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 text-purple-200 flex items-center space-x-2.5 cursor-pointer transition-colors"

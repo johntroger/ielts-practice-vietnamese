@@ -20,7 +20,8 @@ import { useTranslation } from '../i18n/index.js';
 import { getLocalizedVocabMeaning } from '../utils/vocabLocalization.js';
 
 const getLocalizedMistakeType = (type, isEn) => {
-  if (!isEn || !type) return type || 'Lỗi Diễn Đạt';
+  if (!type) return isEn ? 'Expression' : 'Lỗi Diễn Đạt';
+  if (!isEn) return type;
   const typeMap = {
     grammar: 'Grammar',
     spelling: 'Spelling',
@@ -122,7 +123,7 @@ export default function SlideOverToolPanel({
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
-        <div className="w-screen max-w-md sm:max-w-lg bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-250 border-l border-slate-200">
+        <div className="w-full max-w-md sm:max-w-lg h-[100dvh] bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-250 border-l border-slate-200">
           
           {/* Top Panel Header */}
           <div className="p-3.5 sm:p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">

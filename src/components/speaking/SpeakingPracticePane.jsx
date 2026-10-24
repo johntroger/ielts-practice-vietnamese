@@ -226,7 +226,7 @@ export default function SpeakingPracticePane({
       const newQ = {
         qId: `p1-q-user-${Date.now()}`,
         question: quickQText.trim(),
-        focus: 'Câu hỏi bổ sung',
+        focus: isEn ? 'Follow-up Question' : 'Câu hỏi bổ sung',
         strategy: quickQStrategy.trim() || 'A.R.E.A Framework: Answer -> Reason -> Example -> Alternative',
         vocabHints: [],
         sampleAnswer: ''
@@ -245,7 +245,7 @@ export default function SpeakingPracticePane({
       const newQ = {
         qId: `p3-q-user-${Date.now()}`,
         question: quickQText.trim(),
-        analysisType: 'Thảo luận sâu',
+        analysisType: isEn ? 'In-depth Discussion' : 'Thảo luận sâu',
         strategy: quickQStrategy.trim() || 'PEEL Framework: Point -> Explanation -> Example -> Link',
         sampleAnswer: ''
       };

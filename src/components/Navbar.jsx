@@ -278,7 +278,7 @@ export default function Navbar({
               </button>
 
               {mobileSkillMenuOpen && (
-                <div className="absolute left-0 mt-2 w-60 max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                <div className="absolute left-0 mt-2 w-60 max-h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                   <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     {isEn ? 'Switch Practice Skill' : 'Chuyển Kỹ Năng Luyện Thi'}
                   </div>
@@ -367,7 +367,7 @@ export default function Navbar({
               </button>
 
               {isSkillMenuOpen && (
-                <div className="absolute left-0 mt-2 w-64 max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                <div className="absolute left-0 mt-2 w-64 max-h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                   <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     {isEn ? 'Switch Practice Skill' : 'Chuyển Kỹ Năng Luyện Thi'}
                   </div>
@@ -489,7 +489,7 @@ export default function Navbar({
                 </button>
 
                 {isPracticeMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-[420px] sm:w-[460px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                  <div className="absolute right-0 mt-2 w-[min(420px,calc(100vw-24px))] sm:w-[460px] max-w-[calc(100vw-24px)] max-h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       {isEn ? 'Tests & Practice Modes' : 'Đề Thi & Chế Độ Luyện'}
                     </div>
@@ -666,7 +666,7 @@ export default function Navbar({
                 </button>
 
                 {isToolsMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                  <div className="absolute right-0 mt-2 w-72 max-h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       {isEn ? 'Support Tools' : 'Bộ Công Cụ Bổ Trợ'}
                     </div>
@@ -749,7 +749,7 @@ export default function Navbar({
                 </button>
 
                 {isProgressMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 max-h-[calc(100vh-80px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                  <div className="absolute right-0 mt-2 w-72 max-h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 space-y-1">
                     <div className="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       {isEn ? 'Reports & History' : 'Báo Cáo & Lịch Sử'}
                     </div>

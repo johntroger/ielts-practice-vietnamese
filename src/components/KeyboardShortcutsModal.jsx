@@ -100,7 +100,7 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-2xl max-h-[92vh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 min-w-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-2xl max-h-[92dvh] sm:max-h-[90dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200 min-w-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-0">
         
         {/* Mobile Swipe Grab Handle */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0 bg-slate-900">
@@ -134,14 +134,14 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
             onClick={onClose}
             className="p-2 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
             title={isEn ? "Close (Esc)" : "Đóng (Esc)"}
-            aria-label="Đóng"
+            aria-label={isEn ? "Close" : "Đóng"}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Shortcuts List Content */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 sm:space-y-6 bg-slate-50/50">
           {shortcutGroups.map((group, gIdx) => (
             <div key={gIdx} className="space-y-2.5">
               <h4 className="text-xs font-black uppercase tracking-wider text-slate-600 flex items-center space-x-1.5">
@@ -185,16 +185,18 @@ export default function KeyboardShortcutsModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3.5 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-          <div className="flex items-center space-x-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>Nhấn phím bất kỳ hoặc bấm nút bên dưới để đóng bảng phím tắt.</span>
+        <div className="px-4 sm:px-6 py-3.5 bg-white border-t border-slate-200 flex items-center justify-between gap-3 text-xs text-slate-500">
+          <div className="flex items-center space-x-1.5 min-w-0">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <span className="truncate">
+              {isEn ? 'Press Esc or click the button to close shortcuts.' : 'Nhấn phím bất kỳ hoặc bấm nút bên dưới để đóng bảng phím tắt.'}
+            </span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+            className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
           >
-            Đã Hiểu
+            {isEn ? 'Got It' : 'Đã Hiểu'}
           </button>
         </div>
 

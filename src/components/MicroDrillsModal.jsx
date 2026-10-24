@@ -1451,7 +1451,7 @@ export default function MicroDrillsModal({
     }`}>
       <div className={`bg-white shadow-2xl overflow-hidden overscroll-contain flex flex-col transition-all duration-200 ${
         isExpanded 
-          ? 'w-screen h-screen max-w-none max-h-none rounded-none' 
+          ? 'w-full h-[100dvh] max-w-none max-h-none rounded-none' 
           : 'rounded-none sm:rounded-2xl lg:rounded-3xl w-full max-w-[100vw] sm:max-w-[98vw] 2xl:max-w-[1600px] h-full sm:h-[96dvh] max-h-full sm:max-h-[96dvh]'
       }`}>
         
@@ -1562,7 +1562,7 @@ export default function MicroDrillsModal({
               {isRoomDropdownOpen && (
                 <div 
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute left-0 top-full mt-1.5 z-50 min-w-[280px] sm:min-w-[320px] max-w-[92vw] bg-slate-900 rounded-xl shadow-2xl border border-slate-700 p-2.5 text-xs text-slate-100 animate-in fade-in slide-in-from-top-1 duration-150"
+                  className="absolute left-0 top-full mt-1.5 z-50 w-[min(300px,calc(100vw-24px))] sm:min-w-[320px] max-w-[92vw] bg-slate-900 rounded-xl shadow-2xl border border-slate-700 p-2.5 text-xs text-slate-100 animate-in fade-in slide-in-from-top-1 duration-150"
                 >
                   <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-800">
                     <span className="font-bold text-slate-300 text-[11px] uppercase tracking-wider flex items-center gap-1">
@@ -1729,7 +1729,7 @@ export default function MicroDrillsModal({
             {isTabDropdownOpen && (
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="absolute left-0 top-full mt-1.5 z-50 min-w-[280px] sm:min-w-[340px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150"
+                className="absolute left-0 top-full mt-1.5 z-50 w-[min(300px,calc(100vw-24px))] sm:min-w-[340px] max-w-[92vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2.5 text-xs animate-in fade-in slide-in-from-top-1 duration-150"
               >
                 <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-100">
                   <span className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1">
@@ -1887,7 +1887,7 @@ export default function MicroDrillsModal({
             {isMobileToolsOpen && (
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="absolute right-0 top-full mt-1.5 z-50 min-w-[240px] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2 space-y-1 text-xs text-slate-800 animate-in fade-in zoom-in-95"
+                className="absolute right-0 top-full mt-1.5 z-50 w-[min(260px,calc(100vw-24px))] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-slate-200 p-2 space-y-1 text-xs text-slate-800 animate-in fade-in zoom-in-95"
               >
                 <div className="px-1.5 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
                   {isEn ? 'Studio Actions' : 'Tác Vụ Phòng Luyện'}

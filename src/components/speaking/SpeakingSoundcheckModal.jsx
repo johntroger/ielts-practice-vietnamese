@@ -169,7 +169,7 @@ export default function SpeakingSoundcheckModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden animate-in fade-in duration-150">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[88vh] my-auto text-slate-100">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] sm:max-h-[88dvh] my-auto text-slate-100">
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-purple-950/80 to-slate-900 shrink-0">
@@ -262,14 +262,14 @@ export default function SpeakingSoundcheckModal({
               <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px] leading-relaxed pl-1">
                 {isEn ? (
                   <>
-                    <li>Click the <strong>Lock (Security)</strong> icon in Edge address bar $\rightarrow$ Select <strong>Site permissions</strong> $\rightarrow$ Toggle <strong>Sound</strong> to <em>Allow</em>.</li>
-                    <li>Open Windows Settings: <em>Settings $\rightarrow$ Privacy & Security $\rightarrow$ Speech</em> $\rightarrow$ Turn on <strong>Online speech recognition</strong>.</li>
+                    <li>Click the <strong>Lock (Security)</strong> icon in Edge address bar → Select <strong>Site permissions</strong> → Toggle <strong>Sound</strong> to <em>Allow</em>.</li>
+                    <li>Open Windows Settings: <em>Settings → Privacy & Security → Speech</em> → Turn on <strong>Online speech recognition</strong>.</li>
                     <li><span className="text-emerald-400 font-semibold">Fastest recommendation:</span> Open this link with <strong>Google Chrome</strong> to test immediately without configuring settings.</li>
                   </>
                 ) : (
                   <>
-                    <li>Bấm vào biểu tượng <strong>Khóa (Bảo mật)</strong> trên thanh địa chỉ Edge $\rightarrow$ Chọn <strong>Quyền trang web</strong> $\rightarrow$ Bật <strong>Âm thanh (Sound)</strong> sang <em>Cho phép</em>.</li>
-                    <li>Vào Cài đặt Windows: <em>Settings $\rightarrow$ Privacy & Security $\rightarrow$ Speech</em> $\rightarrow$ Bật <strong>Online speech recognition</strong>.</li>
+                    <li>Bấm vào biểu tượng <strong>Khóa (Bảo mật)</strong> trên thanh địa chỉ Edge → Chọn <strong>Quyền trang web</strong> → Bật <strong>Âm thanh (Sound)</strong> sang <em>Cho phép</em>.</li>
+                    <li>Vào Cài đặt Windows: <em>Settings → Privacy & Security → Speech</em> → Bật <strong>Online speech recognition</strong>.</li>
                     <li><span className="text-emerald-400 font-semibold">Khuyến nghị nhanh nhất:</span> Mở đường dẫn này bằng trình duyệt <strong>Google Chrome</strong> để thi ngay mà không cần chỉnh cài đặt.</li>
                   </>
                 )}

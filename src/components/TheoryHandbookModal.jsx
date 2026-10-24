@@ -16,7 +16,9 @@ import { getLocalizedArticle, getLocalizedStage } from '../data/theoryHandbook/t
 function renderInlineText(text) {
   if (!text) return null;
   const parts = [];
-  let remaining = text;
+  let remaining = String(text)
+    .replace(/\$\\rightarrow\$/g, '→')
+    .replace(/\$\\approx\$/g, '≈');
   let key = 0;
   let safety = 0;
 

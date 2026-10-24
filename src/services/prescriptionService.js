@@ -11,6 +11,7 @@ export const DEFAULT_IELTS_TRAPS = [
     id: 'trap-article-sing-count',
     category: 'grammar',
     type: 'Mạo từ (Articles)',
+    typeEn: 'Articles',
     title: 'Thiếu mạo từ trước danh từ đếm được số ít',
     titleEn: 'Missing article before singular countable noun',
     sentence: 'Government should allocate more budget to renewable energy.',
@@ -36,12 +37,14 @@ export const DEFAULT_IELTS_TRAPS = [
     },
     explanation: 'Trong tiếng Anh học thuật, danh từ đếm được số ít "government" không được đứng trơ trọi. Phải dùng mạo từ xác định "The government" hoặc danh từ số nhiều "Governments".',
     explanationEn: 'In academic English, singular countable nouns like "government" cannot stand alone. Use the definite article "The government" or the plural form "Governments".',
-    ruleTip: 'Quy tắc: Không bao giờ để danh từ đếm được số ít (singular countable noun) đứng một mình mà không có a / an / the / my / this.'
+    ruleTip: 'Quy tắc: Không bao giờ để danh từ đếm được số ít (singular countable noun) đứng một mình mà không có a / an / the / my / this.',
+    ruleTipEn: 'Never leave a singular countable noun standing alone without a determiner (a / an / the / my / this).'
   },
   {
     id: 'trap-past-tense-task1',
     category: 'grammar',
     type: 'Thì động từ (Tense Consistency)',
+    typeEn: 'Tense Consistency',
     title: 'Nhầm lẫn thì hiện tại khi miêu tả dữ liệu quá khứ (Task 1)',
     titleEn: 'Tense error when describing historical data (Task 1)',
     sentence: 'Between 2010 and 2020, the proportion of car owners increases significantly.',
@@ -67,12 +70,14 @@ export const DEFAULT_IELTS_TRAPS = [
     },
     explanation: 'Mốc thời gian "Between 2010 and 2020" là sự kiện đã kết thúc hoàn toàn trong quá khứ, bắt buộc phải dùng thì Quá khứ đơn (Past Simple: increased).',
     explanationEn: 'The timeframe "Between 2010 and 2020" is a completed historical event, strictly requiring Past Simple ("increased").',
-    ruleTip: 'Quy tắc Task 1: Luôn kiểm tra mốc thời gian trên biểu đồ. Nếu năm trong quá khứ, 100% động từ miêu tả xu hướng phải ở quá khứ đơn.'
+    ruleTip: 'Quy tắc Task 1: Luôn kiểm tra mốc thời gian trên biểu đồ. Nếu năm trong quá khứ, 100% động từ miêu tả xu hướng phải ở quá khứ đơn.',
+    ruleTipEn: 'Task 1 Rule: Always check the chart timeframe. For historical years, 100% of trend verbs must be in Past Simple.'
   },
   {
     id: 'trap-subject-verb-everyone',
     category: 'grammar',
     type: 'Hòa hợp Chủ - Vị (Subject-Verb Agreement)',
+    typeEn: 'Subject-Verb Agreement',
     title: 'Chia sai động từ với đại từ bất định (Everyone / Everybody)',
     titleEn: 'Subject-verb disagreement with indefinite pronouns (Everyone / Everybody)',
     sentence: 'Everyone in modern society have the right to access clean water.',
@@ -98,12 +103,14 @@ export const DEFAULT_IELTS_TRAPS = [
     },
     explanation: '"Everyone / Everybody / Each person" là đại từ số ít theo ngữ pháp tiếng Anh, do đó động từ chính phải chia số ít: "has", không dùng "have".',
     explanationEn: '"Everyone / Everybody / Each person" are singular pronouns in English, so the main verb must take the singular form: "has", not "have".',
-    ruleTip: 'Quy tắc: Everyone, Everybody, Nobody, Someone, Each + Danh từ đều luôn đi với động từ số ít.'
+    ruleTip: 'Quy tắc: Everyone, Everybody, Nobody, Someone, Each + Danh từ đều luôn đi với động từ số ít.',
+    ruleTipEn: 'Everyone, Everybody, Nobody, Someone, and Each + Singular Noun always take a singular verb.'
   },
   {
     id: 'trap-although-but-redundancy',
     category: 'syntax',
     type: 'Dư thừa liên từ (Conjunction Redundancy)',
+    typeEn: 'Conjunction Redundancy',
     title: 'Dùng đồng thời "Although" và "But" trong cùng một câu',
     titleEn: 'Conjunction redundancy: using both "Although" and "But"',
     sentence: 'Although public transport is cheap, but many citizens still prefer private cars.',
@@ -129,12 +136,14 @@ export const DEFAULT_IELTS_TRAPS = [
     },
     explanation: 'Tiếng Việt thường quen nói "Mặc dù... nhưng...". Tuy nhiên trong tiếng Anh, nếu đã dùng liên từ phụ thuộc "Although/Even though" thì mệnh đề chính KHÔNG ĐƯỢC dùng "but".',
     explanationEn: 'In English, if the subordinating conjunction "Although/Even though" introduces the dependent clause, the main clause cannot include "but".',
-    ruleTip: 'Quy tắc: Chỉ chọn 1 trong 2: Hoặc dùng "Although A, B" hoặc dùng "A, but B". Không bao giờ đi chung.'
+    ruleTip: 'Quy tắc: Chỉ chọn 1 trong 2: Hoặc dùng "Although A, B" hoặc dùng "A, but B". Không bao giờ đi chung.',
+    ruleTipEn: 'Use either "Although A, B" or "A, but B" — never combine both in the same sentence.'
   },
   {
     id: 'trap-collocation-preposition',
     category: 'vocabulary',
     type: 'Giới từ đi kèm (Dependent Prepositions)',
+    typeEn: 'Dependent Prepositions',
     title: 'Sai giới từ trong Academic Collocation phổ biến',
     titleEn: 'Incorrect dependent preposition in academic collocation',
     sentence: 'The economic prosperity of a nation depends in the education of its youth.',
@@ -160,7 +169,8 @@ export const DEFAULT_IELTS_TRAPS = [
     },
     explanation: 'Động từ "depend" bắt buộc đi với giới từ "on" hoặc "upon" (depend on sth), không dùng "depend in" hay "depend with".',
     explanationEn: 'The verb "depend" strictly governs the preposition "on" or "upon" (depend on sth), never "depend in" or "depend with".',
-    ruleTip: 'Quy tắc: Nhớ theo cụm: depend on, rely on, focus on, contribute to, attribute to, result in.'
+    ruleTip: 'Quy tắc: Nhớ theo cụm: depend on, rely on, focus on, contribute to, attribute to, result in.',
+    ruleTipEn: 'Memorize exact collocation pairs: depend on, rely on, focus on, contribute to, attribute to, result in.'
   }
 ];
 
@@ -196,12 +206,15 @@ export function generateDailyPrescription(userMistakes = [], submissions = []) {
       const correctIndex = options.indexOf(corrected) >= 0 ? options.indexOf(corrected) : 0;
 
       const rule = m.rule || m.explanation || `Câu đúng chuẩn ngữ pháp Cambridge: "${corrected}".`;
+      const ruleEn = m.explanationEn || m.rule || m.explanation || `Cambridge-accurate revision: "${corrected}".`;
 
       return {
         id: `user-mistake-${m.id || index}-${Date.now()}`,
         category: m.category || m.type || 'grammar',
         type: m.category ? `${m.category.toUpperCase()}` : 'Lỗi từ bài viết của bạn',
+        typeEn: m.category ? `${m.category.toUpperCase()}` : 'Your Logged Mistake',
         title: `Sửa lỗi sai từ bài viết: "${original.slice(0, 45)}..."`,
+        titleEn: `Fix error from your essay: "${original.slice(0, 45)}..."`,
         sentence: original,
         errorSample: original,
         correctSentence: corrected,
@@ -210,12 +223,15 @@ export function generateDailyPrescription(userMistakes = [], submissions = []) {
         correctIndex,
         quiz: {
           question: `Sửa lỗi sai: "${original.slice(0, 50)}"`,
+          questionEn: `Fix mistake: "${original.slice(0, 50)}"`,
           options,
           correctIndex,
           tip: rule
         },
         explanation: rule,
-        ruleTip: 'Hãy ghi nhớ lỗi sai này để không lặp lại trong các bài thi thử tiếp theo.'
+        explanationEn: ruleEn,
+        ruleTip: 'Hãy ghi nhớ lỗi sai này để không lặp lại trong các bài thi thử tiếp theo.',
+        ruleTipEn: 'Keep this correction in mind so you do not repeat the mistake in future mock tests.'
       };
     });
 
@@ -230,7 +246,9 @@ export function generateDailyPrescription(userMistakes = [], submissions = []) {
             id: `sub-weakness-${submissionItems.length}`,
             category: 'grammar',
             type: 'Điểm yếu ghi nhận từ bài chấm AI',
+            typeEn: 'Weakness Logged by AI Examiner',
             title: `Khắc phục điểm yếu: ${w.slice(0, 45)}...`,
+            titleEn: `Target weakness: ${w.slice(0, 45)}...`,
             sentence: w,
             errorSample: w,
             correctSentence: 'Apply varied clause structures and accurate punctuation according to Cambridge Band 7.5+ criteria.',
@@ -243,6 +261,7 @@ export function generateDailyPrescription(userMistakes = [], submissions = []) {
             correctIndex: 1,
             quiz: {
               question: `Khắc phục điểm yếu: ${w.slice(0, 50)}`,
+              questionEn: `Target weakness: ${w.slice(0, 50)}`,
               options: [
                 'Continue relying on simple sentence structures without revision.',
                 'Apply varied clause structures and accurate punctuation according to Cambridge Band 7.5+ criteria.',
@@ -252,7 +271,9 @@ export function generateDailyPrescription(userMistakes = [], submissions = []) {
               tip: w
             },
             explanation: w,
-            ruleTip: 'Được ghi nhận từ bài chấm chi tiết gần đây của bạn.'
+            explanationEn: w,
+            ruleTip: 'Được ghi nhận từ bài chấm chi tiết gần đây của bạn.',
+            ruleTipEn: 'Identified from your recent detailed AI evaluation.'
           });
         }
       }

@@ -190,7 +190,30 @@ export default function WeeklyReportModal({
         recentMistakes: mistakes.slice(0, 6).map(m => `${m.type}: "${m.original}" -> "${m.corrected}"`)
       };
 
-      const prompt = `Act as an elite Cambridge IELTS Academic Director. Analyze this student's comprehensive 4-skill weekly practice portfolio (Writing, Reading, Listening, Speaking):
+      const prompt = isEn
+        ? `Act as an elite Cambridge IELTS Academic Director. Analyze this student's comprehensive 4-skill weekly practice portfolio (Writing, Reading, Listening, Speaking):
+DATA:
+${JSON.stringify(summaryPayload, null, 2)}
+
+Provide a professional, motivating, and actionable weekly diagnostic report in English:
+1. summaryHeadline: A sharp executive statement on this week's 4-skill performance and projected band score.
+2. 3 concrete strengths: Key strengths backed by actual practice metrics.
+3. 3 critical weaknesses / bottlenecks: The biggest bottlenecks holding back the Overall Band that must be fixed immediately.
+4. 4 specific actionable missions for the next 7 days: Prescribe 4 targeted action tasks across the skills that need a breakthrough.
+
+Return ONLY raw parseable JSON with this exact schema:
+{
+  "summaryHeadline": "...",
+  "strengths": ["...", "...", "..."],
+  "weaknesses": ["...", "...", "..."],
+  "actionPlan": [
+    { "task": "Specific mission 1...", "priority": "High", "targetSkill": "Writing" },
+    { "task": "Specific mission 2...", "priority": "High", "targetSkill": "Reading" },
+    { "task": "Specific mission 3...", "priority": "Medium", "targetSkill": "Speaking" },
+    { "task": "Specific mission 4...", "priority": "Medium", "targetSkill": "Listening" }
+  ]
+}`
+        : `Act as an elite Cambridge IELTS Academic Director. Analyze this student's comprehensive 4-skill weekly practice portfolio (Writing, Reading, Listening, Speaking):
 DATA:
 ${JSON.stringify(summaryPayload, null, 2)}
 

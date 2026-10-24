@@ -101,7 +101,7 @@ export default function ImageViewerModal({
       onClick={onClose}
     >
       <div
-        className="relative bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-6xl w-full h-[94vh] flex flex-col shadow-2xl overflow-hidden"
+        className="relative bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-6xl w-full h-[94dvh] flex flex-col shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Toolbar */}

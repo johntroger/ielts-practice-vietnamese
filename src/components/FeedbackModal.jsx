@@ -991,12 +991,12 @@ export default function FeedbackModal({
                           const getCriteriaGuide = (cKey) => {
                             if (cKey === 'tr') {
                               return task?.taskNumber === 1
-                                ? { topicId: 'task1-mastery', skill: 'writing', category: 'task1', title: 'Master Toàn Diện Task 1 (Overview & Band Descriptors)', label: 'Cẩm Nang Overview & TA', labelEn: 'Overview & TA Handbook' }
-                                : { topicId: 'task2-peel-structure', skill: 'writing', category: 'task2', title: 'Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2', label: 'Cẩm Nang Lập Luận TR', labelEn: 'TR Argumentation Handbook' };
+                                ? { topicId: 'task1-mastery', skill: 'writing', category: 'task1', title: isEn ? 'Comprehensive Task 1 Mastery (Overview & Band Descriptors)' : 'Master Toàn Diện Task 1 (Overview & Band Descriptors)', label: 'Cẩm Nang Overview & TA', labelEn: 'Overview & TA Handbook' }
+                                : { topicId: 'task2-peel-structure', skill: 'writing', category: 'task2', title: isEn ? 'PEEL Paragraph Structure & Complete Task 2 Outline' : 'Cấu Trúc Đoạn Văn PEEL & Dàn Bài Toàn Diện Task 2', label: 'Cẩm Nang Lập Luận TR', labelEn: 'TR Argumentation Handbook' };
                             }
-                            if (cKey === 'cc') return { topicId: 'writing-cc-thematic-progression', skill: 'writing', category: 'strategy', title: 'Tiêu Chí Coherence & Cohesion 8.0+', label: 'Cẩm Nang Liên Kết CC 8.0+', labelEn: 'Cohesion 8.0+ Handbook' };
-                            if (cKey === 'lr') return { topicId: 'writing-academic-collocations-topics', skill: 'writing', category: 'strategy', title: 'Top 60 Academic Collocations "Ăn Điểm"', label: 'Cẩm Nang Collocations LR', labelEn: 'Collocations Handbook' };
-                            if (cKey === 'gra') return { topicId: 'academic-hedging', skill: 'writing', category: 'strategy', title: 'Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+', label: 'Cẩm Nang Ngữ Pháp GRA 8.0+', labelEn: 'Grammar 8.0+ Handbook' };
+                            if (cKey === 'cc') return { topicId: 'writing-cc-thematic-progression', skill: 'writing', category: 'strategy', title: isEn ? 'Coherence & Cohesion 8.0+ Criteria' : 'Tiêu Chí Coherence & Cohesion 8.0+', label: 'Cẩm Nang Liên Kết CC 8.0+', labelEn: 'Cohesion 8.0+ Handbook' };
+                            if (cKey === 'lr') return { topicId: 'writing-academic-collocations-topics', skill: 'writing', category: 'strategy', title: isEn ? 'Top 60 High-Scoring Academic Collocations' : 'Top 60 Academic Collocations "Ăn Điểm"', label: 'Cẩm Nang Collocations LR', labelEn: 'Collocations Handbook' };
+                            if (cKey === 'gra') return { topicId: 'academic-hedging', skill: 'writing', category: 'strategy', title: isEn ? 'Academic Hedging & Band 8.0+ Grammar Structures' : 'Academic Hedging & Bộ Cấu Trúc Ngữ Pháp 8.0+', label: 'Cẩm Nang Ngữ Pháp GRA 8.0+', labelEn: 'Grammar 8.0+ Handbook' };
                             return null;
                           };
                           const guide = getCriteriaGuide(key);

@@ -107,7 +107,7 @@ export default function WebsiteQRCodeModal({ isOpen, onClose }) {
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-in zoom-in-95 duration-200 text-slate-800 max-h-[92vh] flex flex-col my-auto"
+        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-in zoom-in-95 duration-200 text-slate-800 max-h-[92dvh] flex flex-col my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Ribbon - Sticky at top */}

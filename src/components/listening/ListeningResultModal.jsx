@@ -286,11 +286,11 @@ export default function ListeningResultModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-4 md:p-6 bg-slate-900/75 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94dvh] flex flex-col overflow-hidden border border-slate-200">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white px-5 sm:px-8 py-4 sm:py-5 flex items-center justify-between shrink-0">
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white px-3.5 sm:px-8 py-3.5 sm:py-5 flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-red-600/30 border border-red-500/40 flex items-center justify-center">
               <Headphones className="w-5 h-5 text-red-400" />

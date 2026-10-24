@@ -51,9 +51,9 @@ export default function TRFSimulatorModal({
   } = trfData;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden animate-in zoom-in-95 duration-150"
+        className="w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[94dvh] overflow-hidden animate-in zoom-in-95 duration-150"
         role="dialog"
         aria-modal="true"
       >
@@ -121,29 +121,29 @@ export default function TRFSimulatorModal({
             </div>
 
             {/* Candidate & Test Centre Meta */}
-            <div className="grid grid-cols-3 gap-3 mb-5 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-              <div className="col-span-2 space-y-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div className="sm:col-span-2 space-y-1.5 min-w-0">
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Candidate:' : 'Thí sinh:'}</span>
+                  <span className="text-slate-500 font-semibold w-24 shrink-0">{isEn ? 'Candidate:' : 'Thí sinh:'}</span>
                   <span className="font-bold text-slate-900 truncate">{candidateName}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Candidate No:' : 'Mã thí sinh:'}</span>
-                  <span className="font-mono font-bold text-slate-900">{candidateNumber}</span>
+                  <span className="text-slate-500 font-semibold w-24 shrink-0">{isEn ? 'Candidate No:' : 'Mã thí sinh:'}</span>
+                  <span className="font-mono font-bold text-slate-900 truncate">{candidateNumber}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Test Centre:' : 'Hội đồng thi:'}</span>
-                  <span className="font-medium text-slate-700">{centreNumber} (IDP / BC Test Centre)</span>
+                  <span className="text-slate-500 font-semibold w-24 shrink-0">{isEn ? 'Test Centre:' : 'Hội đồng thi:'}</span>
+                  <span className="font-medium text-slate-700 truncate">{centreNumber} (IDP / BC Test Centre)</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-slate-500 font-semibold w-24">{isEn ? 'Test Date:' : 'Ngày thi:'}</span>
-                  <span className="font-medium text-slate-700">{testDate}</span>
+                  <span className="text-slate-500 font-semibold w-24 shrink-0">{isEn ? 'Test Date:' : 'Ngày thi:'}</span>
+                  <span className="font-medium text-slate-700 truncate">{testDate}</span>
                 </div>
               </div>
 
               {/* Photo Box */}
-              <div className="flex flex-col items-center justify-center border border-dashed border-slate-300 rounded-lg bg-slate-100 text-[10px] text-slate-400 p-2 text-center">
-                <ShieldCheck className="w-6 h-6 text-slate-400 mb-1" />
+              <div className="flex sm:flex-col items-center justify-center gap-2 sm:gap-0 border border-dashed border-slate-300 rounded-lg bg-slate-100 text-[10px] text-slate-400 p-2 text-center">
+                <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400 sm:mb-1 shrink-0" />
                 <span>Verified Photo</span>
               </div>
             </div>

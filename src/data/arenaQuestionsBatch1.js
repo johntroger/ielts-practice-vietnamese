@@ -845,7 +845,7 @@ export const ARENA_BATCH_1_QUESTIONS = [
     type: 'process_reading',
     cambridgeSource: 'GitBook Task 1 Flowchart & Diagram Protocol',
     prompt: 'Dựa vào mô tả quy trình lọc nước tuần hoàn, bước nào diễn ra ngay trước công đoạn khử trùng bằng tia UV?',
-    context: 'Quy trình 4 bước: (1) Lọc cặn thô $\\rightarrow$ (2) Lọc màng siêu mịn Bio-filtration $\\rightarrow$ (3) Khử trùng tia cực tím UV $\\rightarrow$ (4) Bổ sung khoáng chất vi lượng.',
+    context: 'Quy trình 4 bước: (1) Lọc cặn thô → (2) Lọc màng siêu mịn Bio-filtration → (3) Khử trùng tia cực tím UV → (4) Bổ sung khoáng chất vi lượng.',
     options: [
       'Coarse sediment screening (1)',
       'Bio-membrane filtration (2)',
@@ -1526,7 +1526,7 @@ export const ARENA_BATCH_1_QUESTIONS = [
     type: 'chart_reading',
     cambridgeSource: 'GitBook Task 1 Academic Complex Comparisons',
     prompt: 'Dựa vào mô hình chu trình kinh tế tuần hoàn (Circular Economy), công đoạn nào đóng vai trò cầu nối khép kín giữa tái chế phế phẩm công nghiệp và sản xuất nguyên liệu thô sơ cấp?',
-    context: 'Mô hình tuần hoàn: Khai thác $\\rightarrow$ Sản xuất $\\rightarrow$ Tiêu dùng $\\rightarrow$ Phân loại rác $\\rightarrow$ [Upcycling & Refining] $\\rightarrow$ Nạp lại dây chuyền sản xuất.',
+    context: 'Mô hình tuần hoàn: Khai thác → Sản xuất → Tiêu dùng → Phân loại rác → [Upcycling & Refining] → Nạp lại dây chuyền sản xuất.',
     options: [
       'Landfill incineration and ash disposal',
       'Industrial upcycling and secondary chemical refining',

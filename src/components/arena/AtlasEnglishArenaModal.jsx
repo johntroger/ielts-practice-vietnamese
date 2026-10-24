@@ -501,7 +501,7 @@ export default function AtlasEnglishArenaModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-slate-950 text-white flex flex-col w-screen h-[100dvh] overflow-hidden select-none animate-fade-in"
+      className="fixed inset-0 z-50 bg-slate-950 text-white flex flex-col w-full h-[100dvh] overflow-hidden select-none animate-fade-in"
       onClick={unlockAudio}
     >
       <div className="w-full h-full flex flex-col bg-slate-950 overflow-hidden">

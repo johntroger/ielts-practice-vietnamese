@@ -622,11 +622,15 @@ export default function BeginnerGuideModal({
                   targetBand === '5.0' ? 'border-emerald-500 bg-emerald-50/70 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'
                 }`}>
                   <div className="flex items-center justify-between">
-                    <div className="font-black text-slate-900 text-sm">Band 5.0 - Khởi Động Vững Vàng</div>
+                    <div className="font-black text-slate-900 text-sm">
+                      {isEn ? 'Band 5.0 - Solid Foundation' : 'Band 5.0 - Khởi Động Vững Vàng'}
+                    </div>
                     <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">Foundation</span>
                   </div>
                   <p className="text-slate-600 text-xs mt-2 leading-relaxed">
-                    Tập trung viết câu đơn, câu ghép đúng ngữ pháp cơ bản, tránh sai thì và chia động từ.
+                    {isEn
+                      ? 'Focus on writing grammatically accurate simple & compound sentences while avoiding tense and subject-verb agreement errors.'
+                      : 'Tập trung viết câu đơn, câu ghép đúng ngữ pháp cơ bản, tránh sai thì và chia động từ.'}
                   </p>
                   <button
                     onClick={() => handleSetStarterBand('5.0')}
@@ -636,7 +640,9 @@ export default function BeginnerGuideModal({
                         : 'bg-slate-100 text-slate-800 hover:bg-emerald-100 hover:text-emerald-900'
                     }`}
                   >
-                    {targetBand === '5.0' ? '✓ Đang chọn Band 5.0' : 'Chọn Mục Tiêu Band 5.0'}
+                    {targetBand === '5.0'
+                      ? (isEn ? '✓ Band 5.0 Selected' : '✓ Đang chọn Band 5.0')
+                      : (isEn ? 'Select Target Band 5.0' : 'Chọn Mục Tiêu Band 5.0')}
                   </button>
                 </div>
 
@@ -644,11 +650,15 @@ export default function BeginnerGuideModal({
                   targetBand === '5.5' ? 'border-emerald-500 bg-emerald-50/70 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'
                 }`}>
                   <div className="flex items-center justify-between">
-                    <div className="font-black text-slate-900 text-sm">Band 5.5 - Tự Tin Bước Tiếp</div>
+                    <div className="font-black text-slate-900 text-sm">
+                      {isEn ? 'Band 5.5 - Confident Step Up' : 'Band 5.5 - Tự Tin Bước Tiếp'}
+                    </div>
                     <span className="px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 text-[10px] font-black">Pre-IELTS</span>
                   </div>
                   <p className="text-slate-600 text-xs mt-2 leading-relaxed">
-                    Bắt đầu phát triển câu phức nhẹ nhàng, nắm được bố cục Task 1 & Task 2 chuẩn.
+                    {isEn
+                      ? 'Begin constructing natural complex sentences and mastering standard Task 1 & Task 2 paragraph structures.'
+                      : 'Bắt đầu phát triển câu phức nhẹ nhàng, nắm được bố cục Task 1 & Task 2 chuẩn.'}
                   </p>
                   <button
                     onClick={() => handleSetStarterBand('5.5')}
@@ -658,7 +668,9 @@ export default function BeginnerGuideModal({
                         : 'bg-slate-100 text-slate-800 hover:bg-emerald-100 hover:text-emerald-900'
                     }`}
                   >
-                    {targetBand === '5.5' ? '✓ Đang chọn Band 5.5' : 'Chọn Mục Tiêu Band 5.5'}
+                    {targetBand === '5.5'
+                      ? (isEn ? '✓ Band 5.5 Selected' : '✓ Đang chọn Band 5.5')
+                      : (isEn ? 'Select Target Band 5.5' : 'Chọn Mục Tiêu Band 5.5')}
                   </button>
                 </div>
               </div>
