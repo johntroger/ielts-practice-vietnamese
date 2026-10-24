@@ -3,6 +3,7 @@ import { Award, Zap, Timer, CheckCircle, RotateCcw, X, BookOpen, Crown, External
 import { useTranslation } from '../../i18n';
 import { openModal } from '../../core/modalStore.js';
 import { triggerHaptic } from '../../utils/hapticHelper.js';
+import { playArenaSfx } from '../../utils/audioHelper.js';
 
 /**
  * src/components/arena/ArenaSprintSummaryModal.jsx
@@ -40,14 +41,24 @@ export default function ArenaSprintSummaryModal({
 
   const diagnosticSkills = summary.diagnosticSkills || [];
 
-  // Tactile fanfare ripple when victory or loot is presented
+  // Tactile fanfare ripple & celebratory audio when victory or loot is presented
   useEffect(() => {
-    if (summary.mysteryLoot) {
+    if (summary.awardedSurge) {
       triggerHaptic('loot');
+      playArenaSfx('surge');
+    } else if (summary.recoveredShield) {
+      triggerHaptic('comboMilestone');
+      playArenaSfx('shield_restore');
+    } else if (summary.mysteryLoot) {
+      triggerHaptic('loot');
+      playArenaSfx('vault');
     } else if (summary.isBossCleared) {
       triggerHaptic('boss');
+      playArenaSfx('victory');
+    } else if (!summary.isDefeated) {
+      playArenaSfx('victory');
     }
-  }, [summary.mysteryLoot, summary.isBossCleared]);
+  }, [summary.mysteryLoot, summary.isBossCleared, summary.awardedSurge, summary.recoveredShield, summary.isDefeated]);
 
   return (
     <div className="w-full max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 text-white shadow-2xl flex flex-col items-center gap-3.5 text-center animate-fade-in max-h-[92vh] overflow-y-auto">

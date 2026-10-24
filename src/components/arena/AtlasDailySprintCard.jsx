@@ -7,6 +7,7 @@ import {
   isDailySprintsAllCompleted 
 } from '../../services/gamification/atlasDailyQuestService.js';
 import { triggerHaptic } from '../../utils/hapticHelper.js';
+import { playArenaSfx } from '../../utils/audioHelper.js';
 
 export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
   const { t, isEn } = useTranslation();
@@ -33,6 +34,7 @@ export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
   const handleClaim = () => {
     setIsClaiming(true);
     triggerHaptic('comboMilestone');
+    playArenaSfx('vault');
     const res = claimAtlasKnowledgeVault();
     if (res.success) {
       setData(getDailySprintsData());
