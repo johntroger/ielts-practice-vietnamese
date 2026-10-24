@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Target, CheckCircle2, ChevronRight, Gift, Sparkles, Trophy } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { 
@@ -12,6 +12,20 @@ export default function AtlasDailySprintCard({ onClaimVault, onStartSprint }) {
   const { t, isEn } = useTranslation();
   const [data, setData] = useState(() => getDailySprintsData());
   const [isClaiming, setIsClaiming] = useState(false);
+
+  useEffect(() => {
+    const handleUpdate = () => setData(getDailySprintsData());
+    if (typeof window !== 'undefined') {
+      window.addEventListener('atlas_daily_sprints_updated', handleUpdate);
+      window.addEventListener('focus', handleUpdate);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('atlas_daily_sprints_updated', handleUpdate);
+        window.removeEventListener('focus', handleUpdate);
+      }
+    };
+  }, []);
 
   const completedCount = data.quests.filter(q => q.isCompleted).length;
   const isAllDone = isDailySprintsAllCompleted(data);

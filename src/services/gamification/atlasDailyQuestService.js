@@ -108,6 +108,11 @@ export function recordDailyQuestProgress(questType, delta = 1) {
   });
 
   safeSet(DAILY_QUESTS_STORAGE_KEY, data);
+  if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+    try {
+      window.dispatchEvent(new CustomEvent('atlas_daily_sprints_updated', { detail: data }));
+    } catch (e) {}
+  }
   return { data, newlyCompleted };
 }
 

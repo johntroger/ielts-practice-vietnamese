@@ -23,6 +23,7 @@ export default function ArenaHeaderBar({
   isMuted = false,
   isFullscreen = false,
   isSpeedrunMode = false,
+  isSurgeActive = false,
   onToggleSpeedrun,
   onToggleMute,
   onToggleFullscreen,
@@ -47,6 +48,16 @@ export default function ArenaHeaderBar({
           <div className="flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-300 border border-slate-700/60 shadow-xs">
             <span>{t('arena.stageQuestionHeader', { num: currentIndex + 1, total: totalQuestions }) || `Q${currentIndex + 1}/${totalQuestions}`}</span>
           </div>
+
+          {isSurgeActive && (
+            <div 
+              className="flex items-center gap-1 bg-gradient-to-r from-amber-500/25 to-yellow-500/25 text-amber-300 border border-amber-400/60 px-2 py-0.5 rounded-full text-xs font-black shadow-xs shadow-amber-500/30 animate-pulse"
+              title={t('arena.sprintSurgeTooltip')}
+            >
+              <Zap className="w-3 h-3 fill-amber-400" />
+              <span className="font-mono text-[10px]">2x XP</span>
+            </div>
+          )}
 
           {combo >= 5 ? (
             <div className="flex items-center gap-1 bg-gradient-to-r from-amber-500/25 to-rose-500/25 text-amber-300 border border-amber-400/60 px-2.5 py-0.5 rounded-full text-xs font-black animate-combo-burst shadow-sm shadow-amber-500/30">

@@ -1164,6 +1164,7 @@ export default function AtlasEnglishArenaModal({
               isMuted={isMuted}
               isFullscreen={isFullscreen}
               isSpeedrunMode={isSpeedrunMode}
+              isSurgeActive={surgeSeconds > 0}
               onToggleSpeedrun={toggleSpeedrun}
               onToggleMute={toggleMute}
               onToggleFullscreen={toggleFullscreen}
