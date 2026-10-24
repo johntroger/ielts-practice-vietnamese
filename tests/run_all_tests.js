@@ -210,7 +210,8 @@ const testSuites = [
   { name: 'Step 201: Track 47 Business Structures Case Studies Integration', file: 'tests/test_step201_track47_audio_integration.js' },
   { name: 'Step 202: Clean Mobile UI Optimization & Ergonomics Audit', file: 'tests/test_step192_clean_mobile_ui_optimization.js' },
   { name: 'Step 203: Micro-Drills Mobile Dynamic Closable Tabs & Dropbox Pickers', file: 'tests/test_step203_micro_drills_mobile_room_tabs_and_dropbox.js' },
-  { name: 'Step 204: Hide AI Generator Buttons & Preserve Random Bank Picker', file: 'tests/test_step204_hide_ai_generator_buttons_and_keep_random_bank_pick.js' }
+  { name: 'Step 204: Hide AI Generator Buttons & Preserve Random Bank Picker', file: 'tests/test_step204_hide_ai_generator_buttons_and_keep_random_bank_pick.js' },
+  { name: 'Step 205: Cambridge Tower of Babel Roguelite Expedition Engine', file: 'tests/test_step205_arena_tower_of_babel_roguelite_engine.js' }
 ];
 
 console.log('===============================================================');

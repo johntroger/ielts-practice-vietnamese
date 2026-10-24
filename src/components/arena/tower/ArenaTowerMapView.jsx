@@ -1,0 +1,175 @@
+/**
+ * src/components/arena/tower/ArenaTowerMapView.jsx
+ * 
+ * Interactive Procedural Map for the Tower of Babel Roguelite Expedition.
+ * Displays vertical tower ascension, current floor avatar, relics HUD, and floor selection.
+ */
+
+import React from 'react';
+import { useTranslation } from '../../../i18n';
+import { 
+  TOWER_NODE_TYPES 
+} from '../../../services/gamification/towerOfBabelEngine.js';
+import { 
+  Shield, 
+  Coins, 
+  Clock, 
+  Sparkles, 
+  ChevronRight, 
+  Trophy,
+  Flame,
+  ArrowUpCircle
+} from 'lucide-react';
+
+export default function ArenaTowerMapView({
+  runState,
+  onEnterFloor,
+  onAbandonRun
+}) {
+  const { t, isEn } = useTranslation();
+
+  if (!runState) return null;
+
+  const currentFloorIdx = runState.currentFloorIndex || 0;
+  const floors = runState.floors || [];
+  const activeFloor = floors[currentFloorIdx];
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  };
+
+  const getNodeBadgeColor = (type) => {
+    switch (type) {
+      case TOWER_NODE_TYPES.BOSS:
+        return 'bg-gradient-to-r from-amber-500/30 to-rose-600/30 border-amber-500/60 text-amber-300 ring-2 ring-amber-400/40';
+      case TOWER_NODE_TYPES.ELITE:
+        return 'bg-purple-950/50 border-purple-600/50 text-purple-300';
+      case TOWER_NODE_TYPES.TREASURE:
+        return 'bg-yellow-950/50 border-yellow-500/50 text-yellow-300';
+      case TOWER_NODE_TYPES.CAMPFIRE:
+        return 'bg-emerald-950/50 border-emerald-500/50 text-emerald-300';
+      case TOWER_NODE_TYPES.SHOP:
+        return 'bg-cyan-950/50 border-cyan-500/50 text-cyan-300';
+      default:
+        return 'bg-slate-800/60 border-slate-700/60 text-slate-300';
+    }
+  };
+
+  return (
+    <div className="w-full flex-1 flex flex-col max-w-4xl mx-auto p-3 sm:p-5 overflow-hidden gap-3 animate-fade-in select-none">
+      {/* Top Expedition HUD: Gold, Shields, Relics & Timer */}
+      <div className="w-full bg-slate-900/90 border border-indigo-900/40 rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl backdrop-blur-md shrink-0">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+          {/* Gold */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-black text-sm shadow-xs">
+            <Coins className="w-4 h-4 text-amber-400" />
+            <span>{runState.gold || 0}</span>
+            <span className="text-[10px] text-amber-400 font-sans uppercase tracking-wider font-bold">Gold</span>
+          </div>
+
+          {/* Shields */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 font-mono font-black text-sm shadow-xs">
+            <Shield className="w-4 h-4 text-rose-400 fill-rose-500/30" />
+            <span>{runState.shields}/{runState.maxShields || 5}</span>
+            <span className="text-[10px] text-rose-400 font-sans uppercase tracking-wider font-bold">Shields</span>
+          </div>
+
+          {/* Time Remaining */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 font-mono font-black text-sm shadow-xs">
+            <Clock className="w-4 h-4 text-indigo-400" />
+            <span>{formatTime(runState.timeRemaining || 0)}</span>
+          </div>
+        </div>
+
+        {/* Abandon Run */}
+        <button
+          type="button"
+          onClick={onAbandonRun}
+          className="text-xs text-slate-400 hover:text-rose-400 font-medium px-2.5 py-1 rounded-lg border border-transparent hover:border-rose-900/40 hover:bg-rose-950/20 transition-all cursor-pointer"
+        >
+          {isEn ? 'Abandon Expedition' : 'Rút Lui Khỏi Tháp'}
+        </button>
+      </div>
+
+      {/* Relics Deck Bar */}
+      <div className="w-full bg-slate-900/60 border border-slate-800/80 rounded-xl px-3 py-2 flex items-center gap-2 overflow-x-auto shrink-0 shadow-inner">
+        <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>{isEn ? 'Artifact Relics:' : 'Cổ Vật Thu Thập:'}</span>
+        </span>
+        {runState.relics && runState.relics.length > 0 ? (
+          runState.relics.map((relic, idx) => (
+            <div
+              key={relic.id || idx}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-950/70 border border-indigo-700/60 text-xs text-indigo-200 font-bold shrink-0 shadow-xs cursor-help"
+              title={isEn ? `${relic.nameEn}: ${relic.descEn}` : `${relic.nameVi}: ${relic.descVi}`}
+            >
+              <span className="text-sm">{relic.icon}</span>
+              <span className="truncate max-w-[120px]">{isEn ? relic.nameEn : relic.nameVi}</span>
+            </div>
+          ))
+        ) : (
+          <span className="text-xs text-slate-500 italic">
+            {isEn ? 'No relics found yet. Defeat Elites or find Treasure!' : 'Chưa có cổ vật nào. Hãy đánh quái Tinh Anh hoặc mở hòm báu!'}
+          </span>
+        )}
+      </div>
+
+      {/* Vertical Map Floors Ascension View */}
+      <div className="w-full flex-1 bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 overflow-y-auto flex flex-col-reverse gap-2 shadow-2xl relative">
+        {floors.map((floor, idx) => {
+          const isCurrent = idx === currentFloorIdx;
+          const isPast = idx < currentFloorIdx;
+          const isFuture = idx > currentFloorIdx;
+
+          return (
+            <div
+              key={floor.floorNumber}
+              className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
+                isCurrent
+                  ? 'bg-gradient-to-r from-indigo-950/80 via-slate-900 to-purple-950/60 border-indigo-500 text-white shadow-lg ring-1 ring-indigo-400/40 scale-[1.01]'
+                  : isPast
+                    ? 'bg-slate-900/30 border-slate-800/40 text-slate-500 opacity-60'
+                    : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg border ${getNodeBadgeColor(floor.type)}`}>
+                  {floor.icon}
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-sm sm:text-base">
+                      {isEn ? floor.titleEn : floor.titleVi}
+                    </span>
+                    {isCurrent && (
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                        {isEn ? 'Current Floor' : 'Tầng Hiện Tại'}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-slate-400">
+                    {floor.type.toUpperCase()} • {floor.rewardGold ? `+${floor.rewardGold} Gold` : ''} {floor.dropsRelic ? '• 💎 Guaranteed Relic' : ''}
+                  </span>
+                </div>
+              </div>
+
+              {isCurrent && (
+                <button
+                  type="button"
+                  onClick={() => onEnterFloor?.(floor)}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+                >
+                  <span>{isEn ? 'Enter Chamber' : 'Tiến Vào Tầng'}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

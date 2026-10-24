@@ -437,6 +437,9 @@ export const vi = {
   arena: {
     title: 'Đấu Trường Anh Ngữ Atlas',
     subtitle: 'Đấu trường phản xạ 180s (3 phút) nhịp độ cao triệt tiêu bẫy Cambridge',
+    modeBlitz: '⚡ Đấu Nhanh (3 Phút)',
+    modeTower: '🏰 Tháp Babel (Roguelite)',
+    towerSubtitle: 'Chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật, kiếm vàng và diệt Trùm Khảo Thí',
     league: 'Bảng Đấu',
     bronze: 'Tân Binh Bronze',
     silver: 'Thách Đấu Silver',

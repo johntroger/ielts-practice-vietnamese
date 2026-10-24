@@ -49,6 +49,22 @@ import ArenaGhostDuelBar from './ArenaGhostDuelBar.jsx';
 import ArenaWorldBossCard from './ArenaWorldBossCard.jsx';
 import { createGhostDuel } from '../../services/gamification/ghostDuelService.js';
 import { initOfflineQueueAutoSync } from '../../services/gamification/offlineQueueService.js';
+import ArenaTowerMapView from './tower/ArenaTowerMapView.jsx';
+import ArenaTowerRelicPickerModal from './tower/ArenaTowerRelicPickerModal.jsx';
+import ArenaTowerShopModal from './tower/ArenaTowerShopModal.jsx';
+import ArenaTowerCampfireModal from './tower/ArenaTowerCampfireModal.jsx';
+import ArenaTowerBossFightCard from './tower/ArenaTowerBossFightCard.jsx';
+import {
+  startNewTowerRun,
+  getActiveTowerRun,
+  saveActiveTowerRun,
+  generateThreeRandomRelics,
+  calculateBossDamage,
+  TOWER_STORAGE_KEYS,
+  TOWER_NODE_TYPES,
+  TOWER_RELICS_CATALOG
+} from '../../services/gamification/towerOfBabelEngine.js';
+import { getQuestionsByTierAndTopic } from '../../data/arenaQuestionBank.js';
 
 /**
  * src/components/arena/AtlasEnglishArenaModal.jsx
@@ -109,6 +125,127 @@ export default function AtlasEnglishArenaModal({
 
   // Mobile Tab Navigation State: 'match' | 'leaderboard'
   const [activeMobileTab, setActiveMobileTab] = useState('match');
+
+  // Game Mode State: 'blitz' (3-Min Quick Run) | 'tower' (Roguelite Expedition)
+  const [gameMode, setGameMode] = useState(() => safeGet('ielts_arena_game_mode', 'blitz'));
+  const [towerRun, setTowerRun] = useState(() => getActiveTowerRun());
+  const [activeTowerFloor, setActiveTowerFloor] = useState(null);
+  const [isTowerRelicModalOpen, setIsTowerRelicModalOpen] = useState(false);
+  const [towerRewardRelics, setTowerRewardRelics] = useState([]);
+  const [isTowerShopModalOpen, setIsTowerShopModalOpen] = useState(false);
+  const [isTowerCampfireModalOpen, setIsTowerCampfireModalOpen] = useState(false);
+  const [towerBossState, setTowerBossState] = useState(null);
+  const [towerLastDamage, setTowerLastDamage] = useState(0);
+  const [towerIsCrit, setTowerIsCrit] = useState(false);
+
+  // Tower Actions
+  const handleStartNewTowerExpedition = useCallback(() => {
+    const newRun = startNewTowerRun(selectedDifficulty);
+    setTowerRun(newRun);
+    setActiveTowerFloor(null);
+    playChime();
+  }, [selectedDifficulty, playChime]);
+
+  const handleAbandonTowerRun = useCallback(() => {
+    saveActiveTowerRun(null);
+    setTowerRun(null);
+    setActiveTowerFloor(null);
+    setTowerBossState(null);
+  }, []);
+
+  const handleEnterTowerFloor = useCallback((floor) => {
+    if (!floor) return;
+    setActiveTowerFloor(floor);
+
+    if (floor.type === TOWER_NODE_TYPES.CAMPFIRE) {
+      setIsTowerCampfireModalOpen(true);
+      return;
+    }
+    if (floor.type === TOWER_NODE_TYPES.SHOP) {
+      setIsTowerShopModalOpen(true);
+      return;
+    }
+    if (floor.type === TOWER_NODE_TYPES.TREASURE) {
+      const owned = (towerRun?.relics || []).map(r => r.id);
+      const picks = generateThreeRandomRelics(owned);
+      setTowerRewardRelics(picks);
+      setIsTowerRelicModalOpen(true);
+      return;
+    }
+
+    // Battle, Elite, or Boss
+    const questions = getQuestionsByTierAndTopic(floor.difficulty || 'medium');
+    const shuffled = [...questions].sort(() => 0.5 - Math.random()).slice(0, floor.type === TOWER_NODE_TYPES.BOSS ? 5 : 3);
+    if (floor.type === TOWER_NODE_TYPES.BOSS) {
+      setTowerBossState(floor.boss);
+    }
+    sprint.startSprint(shuffled, floor.difficulty || 'medium', { isTowerFloor: true });
+  }, [towerRun, sprint]);
+
+  const handleSelectTowerRelic = useCallback((relic) => {
+    if (!relic || !towerRun) return;
+    const nextRelics = [...(towerRun.relics || []), relic];
+    const nextFloorIdx = Math.min((towerRun.floors?.length || 10) - 1, (towerRun.currentFloorIndex || 0) + 1);
+    const updatedRun = {
+      ...towerRun,
+      relics: nextRelics,
+      currentFloorIndex: nextFloorIdx
+    };
+    saveActiveTowerRun(updatedRun);
+    setTowerRun(updatedRun);
+    setIsTowerRelicModalOpen(false);
+    playChime();
+  }, [towerRun, playChime]);
+
+  const handleTowerBuyItem = useCallback((item, isRelic = false) => {
+    if (!item || !towerRun) return;
+    const cost = item.cost || item.price || 0;
+    if (towerRun.gold < cost) return;
+
+    let updatedRun = {
+      ...towerRun,
+      gold: towerRun.gold - cost
+    };
+
+    if (isRelic) {
+      updatedRun.relics = [...(updatedRun.relics || []), item];
+    } else if (item.effectType === 'heal_shield') {
+      updatedRun.shields = Math.min(updatedRun.maxShields || 5, (updatedRun.shields || 0) + (item.effectValue || 2));
+    } else if (item.effectType === 'add_time') {
+      updatedRun.timeRemaining = (updatedRun.timeRemaining || 0) + (item.effectValue || 20);
+    }
+
+    saveActiveTowerRun(updatedRun);
+    setTowerRun(updatedRun);
+    playSfx('correct');
+  }, [towerRun, playSfx]);
+
+  const handleTowerChooseRest = useCallback(() => {
+    if (!towerRun) return;
+    const nextFloorIdx = Math.min((towerRun.floors?.length || 10) - 1, (towerRun.currentFloorIndex || 0) + 1);
+    const updatedRun = {
+      ...towerRun,
+      shields: Math.min(towerRun.maxShields || 5, (towerRun.shields || 0) + 2),
+      currentFloorIndex: nextFloorIdx
+    };
+    saveActiveTowerRun(updatedRun);
+    setTowerRun(updatedRun);
+    setIsTowerCampfireModalOpen(false);
+    playChime();
+  }, [towerRun, playChime]);
+
+  const handleTowerChoosePurge = useCallback(() => {
+    if (!towerRun) return;
+    const nextFloorIdx = Math.min((towerRun.floors?.length || 10) - 1, (towerRun.currentFloorIndex || 0) + 1);
+    const updatedRun = {
+      ...towerRun,
+      currentFloorIndex: nextFloorIdx
+    };
+    saveActiveTowerRun(updatedRun);
+    setTowerRun(updatedRun);
+    setIsTowerCampfireModalOpen(false);
+    playSfx('correct');
+  }, [towerRun, playSfx]);
 
   const handleDifficultyChange = useCallback((diff) => {
     setSelectedDifficulty(diff);
@@ -604,7 +741,95 @@ export default function AtlasEnglishArenaModal({
 
             {/* Main Fullscreen Lobby Body */}
             <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
+              {/* Game Mode Switcher Tab Bar */}
+              <div className="w-full flex items-center justify-center gap-2 mb-2 shrink-0">
+                <div className="flex items-center p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner max-w-md w-full">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGameMode('blitz');
+                      safeSet('ielts_arena_game_mode', 'blitz');
+                      triggerHaptic('chipTap');
+                    }}
+                    className={`flex-1 py-1.5 sm:py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      gameMode === 'blitz'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>{t('arena.modeBlitz')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGameMode('tower');
+                      safeSet('ielts_arena_game_mode', 'tower');
+                      triggerHaptic('chipTap');
+                    }}
+                    className={`flex-1 py-1.5 sm:py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      gameMode === 'tower'
+                        ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>{t('arena.modeTower')}</span>
+                  </button>
+                </div>
+              </div>
+
+              {gameMode === 'tower' ? (
+                towerRun && !towerRun.isCompleted && !towerRun.isDefeated ? (
+                  <ArenaTowerMapView
+                    runState={towerRun}
+                    onEnterFloor={handleEnterTowerFloor}
+                    onAbandonRun={handleAbandonTowerRun}
+                  />
+                ) : (
+                  <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center text-center p-5 sm:p-7 bg-gradient-to-b from-amber-950/30 via-slate-900/80 to-purple-950/30 border-2 border-amber-500/40 rounded-2xl shadow-2xl gap-3.5 animate-fade-in my-auto">
+                    <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/50 text-3xl animate-bounce">
+                      🏰
+                    </div>
+                    <div className="flex flex-col gap-1 max-w-lg">
+                      <h2 className="text-lg sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-purple-300">
+                        {isEn ? 'The Cambridge Tower of Babel' : 'Tháp Khảo Thí Babel - Roguelite'}
+                      </h2>
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        {isEn
+                          ? 'Embark on a procedural 10-floor roguelite expedition. Ascend through battle chambers, discover ancient relics, visit scholar merchants, rest at campfires, and defeat the Floor 10 Inquisitor Boss!'
+                          : 'Bước vào chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật thần kỳ, kiếm vàng mua bình dược, hồi phục tại lửa trại và tiêu diệt Trùm Khảo Thí Tầng 10!'}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md my-1 text-xs">
+                      <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
+                        <span className="text-lg">⚔️</span>
+                        <span className="font-bold text-slate-200">{isEn ? '10 Floors' : '10 Tầng Tháp'}</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
+                        <span className="text-lg">💎</span>
+                        <span className="font-bold text-slate-200">{isEn ? '16+ Relics' : '16 Cổ Vật'}</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
+                        <span className="text-lg">🏪</span>
+                        <span className="font-bold text-slate-200">{isEn ? 'Merchant' : 'Nhà Buôn'}</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1">
+                        <span className="text-lg">👑</span>
+                        <span className="font-bold text-slate-200">{isEn ? 'Boss Fight' : 'Trùm Khảo Thí'}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleStartNewTowerExpedition}
+                      className="w-full sm:w-auto px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:from-amber-400 hover:to-purple-500 text-white font-black text-xs sm:text-sm shadow-xl shadow-amber-500/25 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+                    >
+                      {isEn ? 'Begin Ascension →' : 'Bắt Đầu Chuyến Leo Tháp →'}
+                    </button>
+                  </div>
+                )
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
                 {/* Left: Hero Banner, Difficulty & Action Controls */}
                 <div className={`lg:col-span-6 xl:col-span-7 flex flex-col gap-2 sm:gap-2.5 bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/30 border border-indigo-900/40 rounded-2xl p-3.5 sm:p-4.5 md:p-5 backdrop-blur-md shadow-xl ${
                   activeMobileTab === 'match' ? 'flex' : 'hidden lg:flex'
@@ -787,7 +1012,8 @@ export default function AtlasEnglishArenaModal({
                   </div>
                 </div>
               </div>
-            </main>
+            )}
+          </main>
             {/* Safe area bottom padding for mobile devices */}
             <div className="lg:hidden h-16 pb-[env(safe-area-inset-bottom,1.5rem)] shrink-0" />
           </div>
@@ -822,6 +1048,13 @@ export default function AtlasEnglishArenaModal({
                     userQuestionIndex={sprint.currentIndex}
                     totalQuestions={sprint.questions.length}
                     isEn={isEn}
+                  />
+                )}
+                {activeTowerFloor?.type === TOWER_NODE_TYPES.BOSS && towerBossState && (
+                  <ArenaTowerBossFightCard
+                    boss={towerBossState}
+                    lastDamageDealt={towerLastDamage}
+                    isCriticalHit={towerIsCrit}
                   />
                 )}
                 {currentQ && (
@@ -974,6 +1207,38 @@ export default function AtlasEnglishArenaModal({
             onClose={() => setWeeklyTransition(null)}
           />
         )}
+
+        {/* Tower of Babel Modals: Relic Picker, Merchant Shop, Campfire Sanctuary */}
+        <ArenaTowerRelicPickerModal
+          isOpen={isTowerRelicModalOpen}
+          relics={towerRewardRelics}
+          onSelectRelic={handleSelectTowerRelic}
+        />
+
+        <ArenaTowerShopModal
+          isOpen={isTowerShopModalOpen}
+          gold={towerRun?.gold || 0}
+          currentRelics={towerRun?.relics || []}
+          onBuyItem={handleTowerBuyItem}
+          onLeaveShop={() => {
+            setIsTowerShopModalOpen(false);
+            if (towerRun) {
+              const nextFloorIdx = Math.min((towerRun.floors?.length || 10) - 1, (towerRun.currentFloorIndex || 0) + 1);
+              const updated = { ...towerRun, currentFloorIndex: nextFloorIdx };
+              saveActiveTowerRun(updated);
+              setTowerRun(updated);
+            }
+          }}
+        />
+
+        <ArenaTowerCampfireModal
+          isOpen={isTowerCampfireModalOpen}
+          currentShields={towerRun?.shields || 5}
+          maxShields={towerRun?.maxShields || 5}
+          unresolvedMistakeCount={getUnresolvedMistakeCount()}
+          onChooseRest={handleTowerChooseRest}
+          onChoosePurge={handleTowerChoosePurge}
+        />
       </div>
     </div>
   );
