@@ -115,6 +115,16 @@ export default function ArenaRelativeLeaderboard({
                            (currentUserEmail && rival.email === currentUserEmail) ||
                            (currentUserEmail === 'tranthanhtung37@gmail.com' && isOwner);
 
+            const isGuest = rival.isGuest || 
+                            rival.user_id === 'guest_player' || 
+                            /bạn\s*\(khách\)/i.test(rival.display_name) || 
+                            /you\s*\(guest\)/i.test(rival.display_name) ||
+                            rival.display_name_en === 'You (Guest)';
+
+            const resolvedDisplayName = isGuest
+              ? (isEn ? 'You (Guest)' : 'Bạn (Khách)')
+              : (rival.display_name || t('arena.anonymousLearner'));
+
             const rank = rival.rank || index + 1;
             const level = rival.level || 1;
             const titanTier = rival.titanTier || {
@@ -200,21 +210,19 @@ export default function ArenaRelativeLeaderboard({
                         <span className={`font-bold truncate text-xs min-w-0 group-hover:text-white transition-colors ${
                           isOwner ? 'text-amber-300' : isUser ? 'text-indigo-200' : 'text-slate-100'
                         }`}>
-                          {rival.display_name || t('arena.anonymousLearner')}
+                          {resolvedDisplayName}
                         </span>
 
-                        {/* Prominent Badges - strictly shrink-0 & whitespace-nowrap to prevent clipping */}
-                        {isOwner && (
+                        {/* Badges - single unified badge for owner/user to prevent name truncation */}
+                        {isOwner ? (
                           <span className="text-[9px] sm:text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
-                            👑 ADMIN
+                            👑 {isUser ? (isEn ? 'ADMIN (YOU)' : 'ADMIN (BẠN)') : 'ADMIN'}
                           </span>
-                        )}
-
-                        {isUser && (
+                        ) : isUser ? (
                           <span className="text-[9px] sm:text-[10px] bg-indigo-500/30 text-indigo-300 border border-indigo-500/50 px-1.5 py-0.2 rounded font-black tracking-wide shrink-0 whitespace-nowrap">
-                            YOU
+                            {isEn ? 'YOU' : 'BẠN'}
                           </span>
-                        )}
+                        ) : null}
                       </div>
 
                       <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-slate-400 min-w-0 truncate">

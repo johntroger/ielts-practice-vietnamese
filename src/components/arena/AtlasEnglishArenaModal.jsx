@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Swords, Flame, Trophy, Play, RotateCcw, X, ShieldAlert, Maximize2, Minimize2, Share2, Check } from 'lucide-react';
+import { Swords, Flame, Trophy, Play, RotateCcw, X, ShieldAlert, Maximize2, Minimize2, Share2, Check, Target, Zap } from 'lucide-react';
 import { useTranslation } from '../../i18n';
 import { 
   useArenaSprintEngine, 
@@ -129,6 +129,8 @@ export default function AtlasEnglishArenaModal({
 
   // Mobile Tab Navigation State: 'match' | 'leaderboard'
   const [activeMobileTab, setActiveMobileTab] = useState('match');
+  // Right Column Tab: 'leaderboard' | 'sprints' | 'boss'
+  const [rightPanelTab, setRightPanelTab] = useState('leaderboard');
 
   const handleDifficultyChange = useCallback((diff) => {
     setSelectedDifficulty(diff);
@@ -1027,8 +1029,8 @@ export default function AtlasEnglishArenaModal({
                     </div>
                   </div>
 
-                  {/* Action Buttons: Primary Full-Width + Secondary Row on Mobile */}
-                  <div className="mt-1 sm:mt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  {/* Action Buttons: Primary Full-Width + Secondary Row */}
+                  <div className="mt-1 sm:mt-1.5 flex flex-col gap-2">
                     <button
                       type="button"
                       onClick={() => {
@@ -1036,13 +1038,13 @@ export default function AtlasEnglishArenaModal({
                         setCurrentTopic(nextTopic);
                         sprint.startSprint(null, selectedDifficulty);
                       }}
-                      className="w-full sm:flex-1 flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
+                      className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 px-6 rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98]"
                     >
                       <Play className="w-4 h-4 fill-white shrink-0" />
                       <span>{t('arena.startSprint')}</span>
                     </button>
 
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
                       <button
                         type="button"
                         onClick={() => {
@@ -1056,15 +1058,14 @@ export default function AtlasEnglishArenaModal({
                             sprint.startSprint(null, selectedDifficulty, { isAudioSprint: true });
                           }
                         }}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2.5 sm:py-3 px-2.5 sm:px-4 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] border border-cyan-400/40 min-w-0"
+                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black text-xs sm:text-sm py-2 sm:py-2.5 px-3 rounded-xl shadow-md shadow-cyan-600/30 transition-all cursor-pointer border border-cyan-400/40 min-w-0"
                         title={t('arena.audioBlitzDesc')}
                       >
                         <span className="shrink-0">🎧</span>
-                        <span className="sm:hidden font-black truncate">{isEn ? 'Audio Blitz' : 'Lôi Đài Nghe'}</span>
-                        <span className="hidden sm:inline truncate">{t('arena.audioBlitzTitle')}</span>
+                        <span className="truncate">{t('arena.audioBlitzTitle')}</span>
                       </button>
 
-                      {getUnresolvedMistakeCount() > 0 && (
+                      {getUnresolvedMistakeCount() > 0 ? (
                         <button
                           type="button"
                           onClick={() => {
@@ -1073,64 +1074,128 @@ export default function AtlasEnglishArenaModal({
                               sprint.startSprint(revengeQuestions, selectedDifficulty);
                             }
                           }}
-                          className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-base py-2.5 sm:py-3 px-2.5 sm:px-4 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer transform hover:scale-[1.01] active:scale-[0.98] min-w-0"
+                          className="flex items-center justify-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-xs sm:text-sm py-2 sm:py-2.5 px-3 rounded-xl shadow-md shadow-rose-600/30 transition-all cursor-pointer border border-rose-400/40 min-w-0"
                           title={t('arena.revengeSprintTitle')}
                         >
-                          <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                          <span className="sm:hidden font-black truncate">{isEn ? `Revenge (${getUnresolvedMistakeCount()})` : `Phục Thù (${getUnresolvedMistakeCount()})`}</span>
-                          <span className="hidden sm:inline truncate">{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
+                          <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
                           {streakShieldState?.shieldsRemaining < 2 && (
                             <span 
-                              className="px-1.5 py-0.5 rounded-md bg-cyan-400/20 text-cyan-200 border border-cyan-400/40 text-[10px] font-black uppercase tracking-wider shrink-0"
+                              className="px-1.5 py-0.2 rounded-md bg-cyan-400/20 text-cyan-200 border border-cyan-400/40 text-[9px] font-black uppercase tracking-wider shrink-0"
                               title={t('arena.recoverShieldHint')}
                             >
                               🛡️ +1
                             </span>
                           )}
                         </button>
+                      ) : (
+                        <div className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-500 text-xs font-semibold">
+                          <span>✨</span>
+                          <span className="truncate">{isEn ? 'Zero Unresolved Mistakes' : 'Không Có Lỗi Cần Sửa'}</span>
+                        </div>
                       )}
                     </div>
                   </div>
                 </div>
 
                 {/* Right: Real Learner Leaderboard, Atlas Daily Sprints & Daily World Boss Raid */}
-                <div className={`lg:col-span-6 xl:col-span-5 w-full flex flex-col gap-2.5 sm:gap-3 min-w-0 ${
+                <div className={`lg:col-span-6 xl:col-span-5 w-full flex flex-col gap-2 min-w-0 ${
                   activeMobileTab === 'leaderboard' ? 'flex' : 'hidden lg:flex'
                 }`}>
-                  {/* Atlas Daily Sprints & Knowledge Vault Card */}
-                  <AtlasDailySprintCard 
-                    onClaimVault={(reward) => {
-                      if (reward?.bonusXp) {
-                        playChime();
-                        submitRealSprintScore({
-                          currentUser,
-                          deltaXp: reward.bonusXp,
-                          streakCount: streak
-                        }).catch(() => {});
-                        fetchRealLeaderboard(currentUser).then(updated => {
-                          if (updated) setLeaderboardData(updated);
-                        });
-                        if (reward?.hasSurge) {
-                          setSurgeSeconds(getSurgeRemainingSeconds());
-                        }
-                        setStreakShieldState(getStreakShieldData());
-                      }
-                    }}
-                    onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
-                  />
+                  {/* Right Pane Segmented Tabs */}
+                  <div className="flex items-center p-1 bg-slate-900/95 rounded-2xl border border-slate-800 shadow-inner w-full shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRightPanelTab('leaderboard');
+                        triggerHaptic('chipTap');
+                      }}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        rightPanelTab === 'leaderboard'
+                          ? 'bg-gradient-to-r from-amber-600 to-yellow-600 text-white shadow-md shadow-amber-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <Trophy className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                      <span className="truncate">{isEn ? '30-Learner League' : 'Bảng Đấu'}</span>
+                    </button>
 
-                  <ArenaRelativeLeaderboard
-                    rivals={leaderboardData.leaderboard}
-                    currentUserId={currentUser?.id}
-                    currentUserEmail={currentUser?.email}
-                    userWeeklyXp={leaderboardData.userWeeklyXp}
-                    leagueTier={leaderboardData.leagueTier}
-                    onSelectLearner={setSelectedLearner}
-                  />
-                  <ArenaWorldBossCard 
-                    isEn={isEn} 
-                    onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
-                  />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRightPanelTab('sprints');
+                        triggerHaptic('chipTap');
+                      }}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        rightPanelTab === 'sprints'
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <Target className="w-3.5 h-3.5 text-indigo-300 shrink-0" />
+                      <span className="truncate">{isEn ? 'Daily Sprints' : 'Mục Tiêu'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRightPanelTab('boss');
+                        triggerHaptic('chipTap');
+                      }}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                        rightPanelTab === 'boss'
+                          ? 'bg-gradient-to-r from-rose-600 to-orange-600 text-white shadow-md shadow-rose-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <Flame className="w-3.5 h-3.5 text-rose-300 shrink-0" />
+                      <span className="truncate">{isEn ? 'World Boss' : 'Săn Boss'}</span>
+                    </button>
+                  </div>
+
+                  {/* Tab 1: 30-Learner Leaderboard */}
+                  <div className={rightPanelTab === 'leaderboard' ? 'block' : 'hidden'}>
+                    <ArenaRelativeLeaderboard
+                      rivals={leaderboardData.leaderboard}
+                      currentUserId={currentUser?.id}
+                      currentUserEmail={currentUser?.email}
+                      userWeeklyXp={leaderboardData.userWeeklyXp}
+                      leagueTier={leaderboardData.leagueTier}
+                      onSelectLearner={setSelectedLearner}
+                    />
+                  </div>
+
+                  {/* Tab 2: Atlas Daily Sprints & Knowledge Vault Card */}
+                  <div className={rightPanelTab === 'sprints' ? 'block' : 'hidden'}>
+                    <AtlasDailySprintCard 
+                      onClaimVault={(reward) => {
+                        if (reward?.bonusXp) {
+                          playChime();
+                          submitRealSprintScore({
+                            currentUser,
+                            deltaXp: reward.bonusXp,
+                            streakCount: streak
+                          }).catch(() => {});
+                          fetchRealLeaderboard(currentUser).then(updated => {
+                            if (updated) setLeaderboardData(updated);
+                          });
+                          if (reward?.hasSurge) {
+                            setSurgeSeconds(getSurgeRemainingSeconds());
+                          }
+                          setStreakShieldState(getStreakShieldData());
+                        }
+                      }}
+                      onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
+                    />
+                  </div>
+
+                  {/* Tab 3: Daily World Boss Raid */}
+                  <div className={rightPanelTab === 'boss' ? 'block' : 'hidden'}>
+                    <ArenaWorldBossCard 
+                      isEn={isEn} 
+                      onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
+                    />
+                  </div>
 
                   {/* Mobile Back-to-Battle Quick Action */}
                   <div className="lg:hidden pt-1 pb-3">

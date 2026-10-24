@@ -80,7 +80,10 @@ export function reconcileRealLeaderboard(rawUsers = [], currentUser = null) {
   if (Array.isArray(rawUsers)) {
     for (const u of rawUsers) {
       if (!u || !u.display_name) continue;
-      const isGuestRecord = u.user_id === 'guest_player' || u.display_name === 'Bạn (Khách)' || u.display_name === 'You (Guest)';
+      const isGuestRecord = u.user_id === 'guest_player' || 
+                            /bạn\s*\(khách\)/i.test(u.display_name) || 
+                            /you\s*\(guest\)/i.test(u.display_name) ||
+                            u.display_name_en === 'You (Guest)';
       const normalizedDisplayName = isGuestRecord
         ? (isEn ? 'You (Guest)' : 'Bạn (Khách)')
         : u.display_name;
