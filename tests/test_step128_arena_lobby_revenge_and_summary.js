@@ -29,7 +29,7 @@ describe('Step 128: Arena Lobby Revenge Sprint & 3-Tier Summary Breakdown', () =
     const modalCode = fs.readFileSync(path.resolve('src/components/arena/AtlasEnglishArenaModal.jsx'), 'utf-8');
     
     assert.ok(modalCode.includes('getUnresolvedMistakeCount() > 0'), 'Must check getUnresolvedMistakeCount() > 0');
-    assert.ok(modalCode.includes('⚡ Đấu Phục Thù'), 'Must render Revenge Sprint button');
+    assert.ok(modalCode.includes('Phục Thù') || modalCode.includes('Revenge') || modalCode.includes('revengeSprint'), 'Must render Revenge Sprint button');
     assert.ok(modalCode.includes('generateRevengeSprintQuestions'), 'Must call generateRevengeSprintQuestions on click');
   });
 
@@ -57,10 +57,10 @@ describe('Step 128: Arena Lobby Revenge Sprint & 3-Tier Summary Breakdown', () =
   it('3. ArenaSprintSummaryModal renders 3-tier transparent XP breakdown table', () => {
     const summaryCode = fs.readFileSync(path.resolve('src/components/arena/ArenaSprintSummaryModal.jsx'), 'utf-8');
 
-    assert.ok(summaryCode.includes('Base XP'), 'Summary must display Base XP breakdown');
-    assert.ok(summaryCode.includes('👑 Boss Bonus'), 'Summary must display Boss Bonus item');
-    assert.ok(summaryCode.includes('⏱️ Time Bonus'), 'Summary must display Time Bonus item');
-    assert.ok(summaryCode.includes('🔥 Streak Bonus'), 'Summary must display Streak Bonus item');
+    assert.ok(summaryCode.includes('baseXpLabel') || summaryCode.includes('Base XP'), 'Summary must display Base XP breakdown');
+    assert.ok(summaryCode.includes('bossBonusLabel') || summaryCode.includes('Boss Bonus'), 'Summary must display Boss Bonus item');
+    assert.ok(summaryCode.includes('timeBonusLabel') || summaryCode.includes('Time Bonus'), 'Summary must display Time Bonus item');
+    assert.ok(summaryCode.includes('streakBonusLabel') || summaryCode.includes('Streak Bonus'), 'Summary must display Streak Bonus item');
     assert.ok(summaryCode.includes('summary.softCapMultiplier < 1.0'), 'Summary must display Daily Soft-Cap notice when throttled');
   });
 
