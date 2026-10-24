@@ -42,6 +42,8 @@ import { ARENA_STORAGE_KEYS } from '../utils/arenaStorageKeys.js';
 import { getActiveGhostDuel, resolveGhostDuelResult } from '../services/gamification/ghostDuelService.js';
 import { dealWorldBossDamage } from '../services/gamification/worldBossRaidService.js';
 import { enqueueOfflinePayload } from '../services/gamification/offlineQueueService.js';
+import { isSurgeActive, activateSurge } from '../services/gamification/atlasSurgeService.js';
+import { getStreakShieldData, addStreakShield } from '../services/gamification/atlasStreakShieldService.js';
 
 export const ARENA_SPRINT_PHASES = {
   IDLE: 'IDLE',
@@ -686,6 +688,7 @@ export function finishSprintAction(state, user = null) {
 
   const duelBonusXp = ghostDuelResult?.bonusXp || 0;
   const bossBonusXp = worldBossDamage?.bonusXp || 0;
+  const activeSurge = isSurgeActive();
 
   const rawXpResult = calculateSprintXp({
     correctAnswers: state.score,
@@ -695,8 +698,28 @@ export function finishSprintAction(state, user = null) {
     timeRemaining: Math.max(0, state.timeRemaining),
     isBossCleared: state.isBossCleared,
     isAudioSprint: Boolean(state.isAudioSprint),
-    lootBonus
+    lootBonus,
+    isSurgeActive: activeSurge
   });
+
+  // Evaluate Flawless Sprint for Atlas Sprint Surge reward (100% accuracy, >= 5 questions)
+  let awardedSurge = false;
+  if (state.questions.length >= 5 && state.score === state.questions.length) {
+    activateSurge(15);
+    awardedSurge = true;
+  }
+
+  // Evaluate Atlas Mistake Recovery: clear >= 3 mistakes in Revenge Sprint to restore 1 Streak Shield
+  let recoveredShield = false;
+  const isRevengeRound = (state.revengeClearedCount >= 3) || 
+    (state.questions.length > 0 && Boolean(state.questions[0]?.isRevengeQuestion) && state.score >= 3);
+  if (isRevengeRound) {
+    const shieldData = getStreakShieldData();
+    if (shieldData.shieldsRemaining < 2) {
+      addStreakShield(1);
+      recoveredShield = true;
+    }
+  }
 
   const finalXpWithExtras = (rawXpResult.finalXp || 0) + (state.revengeBonusXp || 0) + duelBonusXp + bossBonusXp;
   const xpResult = {
@@ -757,6 +780,8 @@ export function finishSprintAction(state, user = null) {
     mysteryLoot,
     ghostDuelResult,
     worldBossDamage,
+    awardedSurge,
+    recoveredShield,
     diagnosticSkills: diagnostics.axes,
     weakestSkill: diagnostics.weakestSkill,
     prescription

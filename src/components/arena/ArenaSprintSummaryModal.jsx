@@ -109,6 +109,50 @@ export default function ArenaSprintSummaryModal({
         </div>
       )}
 
+      {/* Atlas Sprint Surge (x2 XP Potion) Awarded Card */}
+      {summary.awardedSurge && (
+        <div className="w-full bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-orange-500/20 border border-amber-400/50 rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 shadow-md shadow-amber-950/20 animate-in zoom-in-95 duration-200">
+          <div className="flex items-center gap-2.5 min-w-0 text-left">
+            <span className="text-2xl p-1 rounded-lg bg-amber-500/20 border border-amber-400/40 shrink-0">
+              ⚡
+            </span>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs sm:text-sm font-black text-amber-200">
+                {t('arena.sprintSurgeAwarded')}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-amber-300/80">
+                {isEn ? '2x XP multiplier activated for 15 minutes!' : 'Nhân đôi điểm kinh nghiệm trong 15 phút tới!'}
+              </span>
+            </div>
+          </div>
+          <div className="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-300 font-mono font-black text-xs whitespace-nowrap">
+            15:00 (2x)
+          </div>
+        </div>
+      )}
+
+      {/* Atlas Mistake Recovery: Streak Shield Restored Card */}
+      {summary.recoveredShield && (
+        <div className="w-full bg-gradient-to-r from-cyan-950/40 via-sky-950/30 to-indigo-950/40 border border-cyan-500/40 rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 shadow-md shadow-cyan-950/20 animate-in zoom-in-95 duration-200">
+          <div className="flex items-center gap-2.5 min-w-0 text-left">
+            <span className="text-2xl p-1 rounded-lg bg-cyan-500/20 border border-cyan-400/40 shrink-0">
+              🛡️
+            </span>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs sm:text-sm font-black text-cyan-200">
+                {t('arena.shieldRestored')}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-cyan-300/80">
+                {isEn ? 'Atlas Streak Shield restored to protect your daily streak!' : 'Đã nạp lại 1 Khiên Bảo Hiểm để bảo vệ chuỗi ngày học!'}
+              </span>
+            </div>
+          </div>
+          <div className="px-2 py-1 rounded-lg bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-mono font-black text-xs whitespace-nowrap">
+            +1 🛡️
+          </div>
+        </div>
+      )}
+
       {/* Ghost Duel Outcome Banner */}
       {summary.ghostDuelResult && (
         <div className={`w-full rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2.5 border shadow-md animate-in zoom-in-95 duration-200 ${

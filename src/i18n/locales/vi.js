@@ -561,7 +561,13 @@ export const vi = {
     streakShieldTooltip: 'Bảo Hiểm Chuỗi Atlas (Aegis): Tự động bảo vệ chuỗi khi lỡ 1 ngày!',
     streakShieldUnit: 'Khiên Bảo Hiểm',
     dailySprintsTitle: 'Mục Tiêu Nhật Trình',
-    vaultUnlockedTitle: 'Rương Tri Thức Atlas Đã Mở Khóa!'
+    vaultUnlockedTitle: 'Rương Tri Thức Atlas Đã Mở Khóa!',
+    sprintSurgeActive: '⚡ Nhân đôi XP: {time}',
+    sprintSurgeTooltip: 'Gia Tốc Atlas: Nhân đôi XP toàn bộ bài chạy trong 15 phút!',
+    sprintSurgeAwarded: 'Bài Chạy Hoàn Hảo! Kích hoạt Gia Tốc Atlas (+15 phút x2 XP)!',
+    shieldRestored: 'Khắc Phục Lỗi Sai! Hồi phục 1 Khiên Bảo Hiểm Chuỗi!',
+    recoverShieldHint: 'Luyện tập phục thù lỗi sai để hồi phục Khiên',
+    cohortBadge: 'Đấu Trường 30 Học Viên'
   },
   about: {
     badge: 'NỀN TẢNG LUYỆN THI IELTS 4 KỸ NĂNG • 100% LOCAL-FIRST & MIỄN PHÍ',

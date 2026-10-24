@@ -12,7 +12,10 @@ const RIVAL_NAMES = [
   'Alex Cambridge', 'Elena V.', 'Marcus IELTS 8.5', 'Sophia Chen', 'David Oxford',
   'Linh Nguyen', 'Minh Tri', 'Chloe Bennett', 'Liam Gallagher', 'Aria Montgomery',
   'Ethan Wright', 'Lucas Silva', 'Yuki Tanaka', 'Hanna Schmidt', 'Oliver Queen',
-  'Emma Watson', 'Daniel Craig', 'Khai Hoang', 'Phuong Anh', 'Tuan Kiet'
+  'Emma Watson', 'Daniel Craig', 'Khai Hoang', 'Phuong Anh', 'Tuan Kiet',
+  'Maya Lin', 'Sebastian Bach', 'Isabella Ross', 'Kenji Sato', 'Amira Al-Mansoor',
+  'Felix Dupont', 'Camila Rodriguez', 'Nathaniel Drake', 'Zoe Kravitz', 'Jonas Kahnwald',
+  'Thao My', 'Victor Vance', 'Grace Hopper', 'Alan Turing', 'Ada Lovelace'
 ];
 
 /**

@@ -168,7 +168,8 @@ export function evaluateMysteryLootDrop({
  * @param {boolean} [params.isBossCleared=false] - Whether question 10 (Boss) was answered correctly
  * @param {boolean} [params.isAudioSprint=false] - Whether sprint is a dedicated Audio Blitz round
  * @param {number} [params.lootBonus=0] - Additional bonus XP from Mystery Relic Loot Drop
- * @returns {{ finalXp: number, rawXp: number, baseScore: number, bossBonus: number, audioBonus: number, lootBonus: number, timeBonus: number, streakBonus: number, speedBonus: number, softCapMultiplier: number, difficulty: string, isAudioSprint: boolean }}
+ * @param {boolean} [params.isSurgeActive=false] - Whether Atlas Sprint Surge (x2 XP) is active
+ * @returns {{ finalXp: number, rawXp: number, baseScore: number, bossBonus: number, audioBonus: number, lootBonus: number, timeBonus: number, streakBonus: number, speedBonus: number, softCapMultiplier: number, isSurgeActive: boolean, surgeMultiplier: number, difficulty: string, isAudioSprint: boolean }}
  */
 export function calculateSprintXp({
   correctAnswers = 0,
@@ -178,7 +179,8 @@ export function calculateSprintXp({
   timeRemaining = 0,
   isBossCleared = false,
   isAudioSprint = false,
-  lootBonus = 0
+  lootBonus = 0,
+  isSurgeActive = false
 } = {}) {
   // Support up to 10 questions for Atlas Arena v8.0
   const validCorrect = Math.max(0, Math.min(10, Number(correctAnswers) || 0));
@@ -251,6 +253,13 @@ export function calculateSprintXp({
   const multiplier = getDailySoftCapMultiplier();
   let finalXp = Math.round(rawXp * multiplier);
 
+  // Atlas Sprint Surge (x2 XP 15-Minute Potion)
+  const surgeMultiplier = isSurgeActive ? 2 : 1;
+  if (isSurgeActive) {
+    finalXp = Math.round(finalXp * surgeMultiplier);
+    maxSprintCap = maxSprintCap * 2;
+  }
+
   // 7. Enforce Maximum Cap for selected difficulty
   finalXp = Math.max(0, Math.min(maxSprintCap, finalXp));
 
@@ -265,6 +274,8 @@ export function calculateSprintXp({
     streakBonus,
     speedBonus,
     softCapMultiplier: multiplier,
+    isSurgeActive: Boolean(isSurgeActive),
+    surgeMultiplier,
     difficulty: diffConfig.id,
     isAudioSprint: Boolean(isAudioSprint)
   };

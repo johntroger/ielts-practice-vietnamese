@@ -13,3 +13,6 @@ export * from './realLeaderboardService.js';
 export * from './levelEngine.js';
 export * from './cambridgeAnswerValidator.js';
 export * from './typingStatsService.js';
+export * from './atlasStreakShieldService.js';
+export * from './atlasDailyQuestService.js';
+export * from './atlasSurgeService.js';

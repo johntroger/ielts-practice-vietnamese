@@ -56,9 +56,14 @@ export default function ArenaRelativeLeaderboard({
           </div>
         </div>
 
-        <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${tierColors}`}>
-          {t(`arena.${leagueTier}`) || leagueTier}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="hidden sm:inline-flex text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-800/80 text-slate-400 border border-slate-700/60">
+            {t('arena.cohortBadge')}
+          </span>
+          <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${tierColors}`}>
+            {t(`arena.${leagueTier}`) || leagueTier}
+          </span>
+        </div>
       </div>
 
       {/* Ghost Rival Near-Pacing Callout */}

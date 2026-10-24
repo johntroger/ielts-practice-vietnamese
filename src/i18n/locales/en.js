@@ -561,7 +561,13 @@ export const en = {
     streakShieldTooltip: 'Atlas Streak Shield (Aegis): Automatically saves your streak if you miss a day!',
     streakShieldUnit: 'Streak Shield',
     dailySprintsTitle: 'Atlas Daily Sprints',
-    vaultUnlockedTitle: 'Atlas Knowledge Vault Unlocked!'
+    vaultUnlockedTitle: 'Atlas Knowledge Vault Unlocked!',
+    sprintSurgeActive: '⚡ 2x XP Surge: {time}',
+    sprintSurgeTooltip: 'Atlas Sprint Surge: 2x XP multiplier active on all sprints!',
+    sprintSurgeAwarded: 'Flawless Sprint! Atlas Sprint Surge activated (+15 min 2x XP)!',
+    shieldRestored: 'Mistake Recovery! 1 Atlas Streak Shield restored!',
+    recoverShieldHint: 'Clear mistakes to restore your Streak Shield',
+    cohortBadge: 'Atlas 30-Learner Division Bracket'
   },
   about: {
     badge: 'CAMBRIDGE-STANDARD 4-SKILL IELTS PLATFORM • 100% LOCAL-FIRST & FREE',

@@ -50,6 +50,7 @@ import ArenaWorldBossCard from './ArenaWorldBossCard.jsx';
 import AtlasDailySprintCard from './AtlasDailySprintCard.jsx';
 import { getStreakShieldData, evaluateStreakProtection } from '../../services/gamification/atlasStreakShieldService.js';
 import { recordDailyQuestProgress, QUEST_TYPES } from '../../services/gamification/atlasDailyQuestService.js';
+import { isSurgeActive, getSurgeRemainingSeconds, formatSurgeTimer } from '../../services/gamification/atlasSurgeService.js';
 import { createGhostDuel } from '../../services/gamification/ghostDuelService.js';
 import { initOfflineQueueAutoSync } from '../../services/gamification/offlineQueueService.js';
 import ArenaTowerMapView from './tower/ArenaTowerMapView.jsx';
@@ -136,6 +137,16 @@ export default function AtlasEnglishArenaModal({
 
   const streak = useMemo(() => getUnifiedStreakCount(), []);
   const [streakShieldState, setStreakShieldState] = useState(() => getStreakShieldData());
+  const [surgeSeconds, setSurgeSeconds] = useState(() => getSurgeRemainingSeconds());
+
+  // Real-time ticking for Atlas Sprint Surge (x2 XP)
+  useEffect(() => {
+    if (!isOpen) return;
+    const syncSurge = () => setSurgeSeconds(getSurgeRemainingSeconds());
+    syncSurge();
+    const timer = setInterval(syncSurge, 1000);
+    return () => clearInterval(timer);
+  }, [isOpen]);
 
   // Evaluate streak shield protection upon opening modal
   useEffect(() => {
@@ -425,6 +436,8 @@ export default function AtlasEnglishArenaModal({
       }
     }
     sprint.resetSprint();
+    setSurgeSeconds(getSurgeRemainingSeconds());
+    setStreakShieldState(getStreakShieldData());
     const updated = await fetchRealLeaderboard(currentUser);
     if (updated) setLeaderboardData(updated);
   }, [sprint, currentUser, streak, selectedDifficulty, stopAudio, activeTowerFloor, towerRun, towerBossState]);
@@ -748,6 +761,16 @@ export default function AtlasEnglishArenaModal({
                       <span className="font-mono">{streakShieldState.shieldsRemaining}/2</span>
                     </div>
                   )}
+                  {surgeSeconds > 0 && (
+                    <div 
+                      className="flex items-center gap-1 bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-600/20 border border-amber-400/50 px-2 py-1 rounded-lg text-amber-300 text-[11px] sm:text-xs font-black shadow-[0_0_10px_rgba(245,158,11,0.25)] animate-pulse"
+                      title={t('arena.sprintSurgeTooltip')}
+                    >
+                      <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
+                      <span className="font-mono">{formatSurgeTimer(surgeSeconds)}</span>
+                      <span className="text-[9px] uppercase tracking-wider font-extrabold text-amber-200 bg-amber-500/30 px-1 py-0.2 rounded">2x</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* 1-Click Share Direct /atlas-arena URL */}
@@ -1056,6 +1079,14 @@ export default function AtlasEnglishArenaModal({
                           <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                           <span className="sm:hidden font-black truncate">{isEn ? `Revenge (${getUnresolvedMistakeCount()})` : `Phục Thù (${getUnresolvedMistakeCount()})`}</span>
                           <span className="hidden sm:inline truncate">{t('arena.revengeSprint', { count: getUnresolvedMistakeCount() })}</span>
+                          {streakShieldState?.shieldsRemaining < 2 && (
+                            <span 
+                              className="px-1.5 py-0.5 rounded-md bg-cyan-400/20 text-cyan-200 border border-cyan-400/40 text-[10px] font-black uppercase tracking-wider shrink-0"
+                              title={t('arena.recoverShieldHint')}
+                            >
+                              🛡️ +1
+                            </span>
+                          )}
                         </button>
                       )}
                     </div>
@@ -1079,6 +1110,9 @@ export default function AtlasEnglishArenaModal({
                         fetchRealLeaderboard(currentUser).then(updated => {
                           if (updated) setLeaderboardData(updated);
                         });
+                        if (reward?.hasSurge) {
+                          setSurgeSeconds(getSurgeRemainingSeconds());
+                        }
                         setStreakShieldState(getStreakShieldData());
                       }
                     }}
