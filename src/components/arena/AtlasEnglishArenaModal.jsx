@@ -974,13 +974,14 @@ export default function AtlasEnglishArenaModal({
                       safeSet('ielts_arena_game_mode', 'blitz');
                       triggerHaptic('chipTap');
                     }}
-                    className={`flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`flex-1 py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       gameMode === 'blitz'
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    <span>{t('arena.modeBlitz')}</span>
+                    <span className="hidden sm:inline">{t('arena.modeBlitz')}</span>
+                    <span className="sm:hidden">{isEn ? '⚡ Blitz' : '⚡ Tốc Chiến'}</span>
                   </button>
                   <button
                     type="button"
@@ -989,13 +990,14 @@ export default function AtlasEnglishArenaModal({
                       safeSet('ielts_arena_game_mode', 'realms');
                       triggerHaptic('chipTap');
                     }}
-                    className={`flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`flex-1 py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       gameMode === 'realms'
                         ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    <span>{t('arena.modeRealms')}</span>
+                    <span className="hidden sm:inline">{t('arena.modeRealms')}</span>
+                    <span className="sm:hidden">{isEn ? '🏛️ Realms' : '🏛️ 4 Kỹ Năng'}</span>
                   </button>
                   <button
                     type="button"
@@ -1004,13 +1006,14 @@ export default function AtlasEnglishArenaModal({
                       safeSet('ielts_arena_game_mode', 'tower');
                       triggerHaptic('chipTap');
                     }}
-                    className={`flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`flex-1 py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       gameMode === 'tower'
                         ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    <span>{t('arena.modeTower')}</span>
+                    <span className="hidden sm:inline">{t('arena.modeTower')}</span>
+                    <span className="sm:hidden">{isEn ? '🏰 Babel' : '🏰 Tháp Babel'}</span>
                   </button>
                 </div>
               </div>

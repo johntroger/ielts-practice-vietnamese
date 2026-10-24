@@ -24,6 +24,25 @@ import {
 import ArenaGatePortalCard from './ArenaGatePortalCard.jsx';
 import { triggerHaptic } from '../../../utils/hapticHelper.js';
 
+const REALM_THEME_STYLES = {
+  listening: {
+    selected: 'bg-slate-900 border-cyan-500/70 ring-2 ring-cyan-500/40 shadow-lg shadow-cyan-950/30 scale-[1.01]',
+    badge: 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300'
+  },
+  reading: {
+    selected: 'bg-slate-900 border-emerald-500/70 ring-2 ring-emerald-500/40 shadow-lg shadow-emerald-950/30 scale-[1.01]',
+    badge: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+  },
+  writing: {
+    selected: 'bg-slate-900 border-purple-500/70 ring-2 ring-purple-500/40 shadow-lg shadow-purple-950/30 scale-[1.01]',
+    badge: 'bg-purple-500/15 border-purple-500/40 text-purple-300'
+  },
+  speaking: {
+    selected: 'bg-slate-900 border-amber-500/70 ring-2 ring-amber-500/40 shadow-lg shadow-amber-950/30 scale-[1.01]',
+    badge: 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+  }
+};
+
 export default function ArenaSkillRealmsHub({
   progress,
   activeRealmId,
@@ -96,6 +115,7 @@ export default function ArenaSkillRealmsHub({
         {SKILL_REALMS.map(realm => {
           const isSelected = realm.id === selectedRealmId;
           const rStats = getRealmStats(progress, realm.id);
+          const themeStyle = REALM_THEME_STYLES[realm.id] || REALM_THEME_STYLES.listening;
           
           return (
             <button
@@ -104,7 +124,7 @@ export default function ArenaSkillRealmsHub({
               onClick={() => handleRealmTabClick(realm.id)}
               className={`flex flex-col p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer shadow-xs active:scale-[0.98] ${
                 isSelected
-                  ? `bg-slate-900 border-${realm.themeColor}-500/70 ring-2 ${realm.ringColor} shadow-lg shadow-${realm.themeColor}-950/30 scale-[1.01]`
+                  ? themeStyle.selected
                   : 'bg-slate-900/60 hover:bg-slate-900/80 border-slate-800 hover:border-slate-700 text-slate-400'
               }`}
             >
@@ -131,9 +151,11 @@ export default function ArenaSkillRealmsHub({
 
       {/* Guardian Trial Climax Banner */}
       <div className={`w-full p-2.5 sm:p-3 rounded-xl border flex flex-wrap items-center justify-between gap-2 shrink-0 shadow-md ${
-        realmStats.isGuardianUnlocked
-          ? 'bg-gradient-to-r from-amber-950/40 via-purple-950/40 to-slate-900 border-amber-500/50'
-          : 'bg-slate-900/50 border-slate-800 text-slate-400'
+        realmStats.isGuardianDefeated
+          ? 'bg-gradient-to-r from-amber-950/60 via-purple-950/50 to-slate-900 border-amber-400/70 shadow-amber-950/30 ring-1 ring-amber-400/30'
+          : realmStats.isGuardianUnlocked
+            ? 'bg-gradient-to-r from-amber-950/40 via-purple-950/40 to-slate-900 border-amber-500/50'
+            : 'bg-slate-900/50 border-slate-800 text-slate-400'
       }`}>
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-slate-800/80 border border-amber-500/40 flex items-center justify-center text-lg shrink-0">
@@ -147,11 +169,18 @@ export default function ArenaSkillRealmsHub({
               <span className="text-xs font-extrabold text-slate-200 truncate">
                 {isEn ? activeRealm.guardian.nameEn : activeRealm.guardian.nameVi}
               </span>
+              {realmStats.isGuardianDefeated && (
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black border border-amber-400/50 animate-pulse">
+                  👑 {isEn ? 'DEFEATED' : 'ĐÃ ĐÁNH BẠI'}
+                </span>
+              )}
             </div>
             <span className="text-[11px] text-slate-400 truncate">
-              {realmStats.isGuardianUnlocked
-                ? (isEn ? 'All Gates passed! Ready to challenge the Guardian for a Legendary Relic!' : 'Đã vượt qua tất cả các ải! Sẵn sàng khiêu chiến để nhận Cổ Vật Huyền Thoại!')
-                : (isEn ? `Pass all ${activeRealm.gates.length} Gates with at least 1★ to unlock this trial.` : `Vượt qua tất cả ${activeRealm.gates.length} Ải (đạt ít nhất 1★) để mở khóa khiêu chiến.`)}
+              {realmStats.isGuardianDefeated
+                ? (isEn ? 'Guardian conquered! Replay anytime to sharpen your Climax reflex.' : 'Đã khuất phục Thủ Lĩnh! Bạn có thể khiêu chiến lại bất cứ lúc nào.')
+                : realmStats.isGuardianUnlocked
+                  ? (isEn ? 'All Gates passed! Ready to challenge the Guardian for a Legendary Relic!' : 'Đã vượt qua tất cả các ải! Sẵn sàng khiêu chiến để nhận Cổ Vật Huyền Thoại!')
+                  : (isEn ? `Pass all ${activeRealm.gates.length} Gates with at least 1★ to unlock this trial.` : `Vượt qua tất cả ${activeRealm.gates.length} Ải (đạt ít nhất 1★) để mở khóa khiêu chiến.`)}
             </span>
           </div>
         </div>
@@ -163,7 +192,7 @@ export default function ArenaSkillRealmsHub({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-black text-xs shadow-md shadow-amber-500/20 cursor-pointer active:scale-95 transition-all"
           >
             <Crown className="w-3.5 h-3.5 text-amber-200" />
-            <span>{isEn ? 'Challenge Guardian' : 'Khiêu Chiến'}</span>
+            <span>{realmStats.isGuardianDefeated ? (isEn ? 'Replay Guardian' : 'Đấu Lại Thủ Lĩnh') : (isEn ? 'Challenge Guardian' : 'Khiêu Chiến')}</span>
           </button>
         )}
       </div>

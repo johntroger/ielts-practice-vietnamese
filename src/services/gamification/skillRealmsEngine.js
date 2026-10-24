@@ -640,7 +640,22 @@ export function evaluateGateResult({
   isSurgeActive = false
 }) {
   const realm = SKILL_REALMS.find(r => r.id === realmId);
-  const gate = realm?.gates?.find(g => g.id === gateId);
+  const isGuardian = Boolean(gateId && gateId.startsWith('guardian_'));
+  let gate = realm?.gates?.find(g => g.id === gateId);
+
+  if (!gate && isGuardian && realm) {
+    gate = {
+      id: gateId,
+      realmId,
+      gateNumber: (realm.gates?.length || 4) + 1,
+      partLabel: 'GUARDIAN TRIAL',
+      titleVi: `Thủ Lĩnh: ${realm.guardian?.nameVi || 'Guardian'}`,
+      titleEn: `Guardian: ${realm.guardian?.nameEn || 'Guardian'}`,
+      baseXp: 75,
+      rewardGold: 150
+    };
+  }
+
   if (!gate) {
     return { starsAwarded: 0, finalXp: 0, rewardGold: 0, isPassed: false, isNewlyUnlocked: false };
   }
@@ -690,6 +705,14 @@ export function evaluateGateResult({
 
   currentProgress.gates[gateId] = existingGate;
 
+  // If Guardian trial is passed, mark as defeated in progress
+  if (isGuardian && isPassed) {
+    if (!currentProgress.guardianTrialsDefeated) {
+      currentProgress.guardianTrialsDefeated = {};
+    }
+    currentProgress.guardianTrialsDefeated[realmId] = true;
+  }
+
   // Recalculate total stars
   let sumStars = 0;
   Object.values(currentProgress.gates).forEach(g => {
@@ -705,6 +728,8 @@ export function evaluateGateResult({
   return {
     realmId,
     gateId,
+    isGuardianTrial: isGuardian,
+    isGuardianDefeated: Boolean(isGuardian && isPassed),
     starsAwarded,
     previousStars,
     newStars,

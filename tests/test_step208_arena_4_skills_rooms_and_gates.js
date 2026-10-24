@@ -160,6 +160,19 @@ it('5. evaluateGateResult computes correct star awards (3 Stars 100%, 2 Stars 80
   });
   assert.strictEqual(res0.starsAwarded, 0, '2/5 must award 0 stars');
   assert.strictEqual(res0.isPassed, false);
+
+  // Test Guardian trial evaluation
+  const resGuardian = evaluateGateResult({
+    realmId: 'listening',
+    gateId: 'guardian_listening',
+    score: 5,
+    totalQuestions: 5,
+    timeRemainingSeconds: 22
+  });
+  assert.strictEqual(resGuardian.isGuardianTrial, true, 'Must identify guardian trial');
+  assert.strictEqual(resGuardian.isGuardianDefeated, true, 'Must mark guardian as defeated on passing');
+  assert.strictEqual(resGuardian.starsAwarded, 3);
+  assert.ok(resGuardian.finalXp > 50, 'Guardian awards major XP');
 });
 
 // 6. XP Multipliers & Surge

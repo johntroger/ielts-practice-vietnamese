@@ -43,7 +43,17 @@ export default function ArenaGateSummaryModal({
   }, [isMastered, result.isNewlyUnlocked, isPassed]);
 
   return (
-    <div className="w-full max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 text-white shadow-2xl flex flex-col items-center gap-4 text-center animate-fade-in select-none">
+    <div className="relative w-full max-w-lg mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 text-white shadow-2xl flex flex-col items-center gap-4 text-center animate-fade-in select-none">
+      {/* Top Close Button */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-3.5 right-3.5 p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+        title={isEn ? 'Return to Hub' : 'Quay về Cung Điện'}
+      >
+        <X className="w-5 h-5" />
+      </button>
+
       {/* Top Gate Badge */}
       <div className="flex items-center gap-2">
         <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -177,6 +187,17 @@ export default function ArenaGateSummaryModal({
           </button>
         )}
       </div>
+
+      {/* Tertiary Return Link if Next Gate is shown */}
+      {isPassed && nextGate && onNextGate && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-xs text-slate-400 hover:text-indigo-300 transition-colors cursor-pointer underline underline-offset-4"
+        >
+          {isEn ? '← Return to Skill Realms Hub' : '← Quay lại Sảnh 4 Kỹ Năng'}
+        </button>
+      )}
     </div>
   );
 }
