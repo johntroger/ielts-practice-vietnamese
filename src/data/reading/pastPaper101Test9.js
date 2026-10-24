@@ -1,9 +1,3 @@
-/**
- * 101 IELTS Reading Past Papers - Practice Test 9
- * Source: 101 IELTS Reading Past Papers with Answers (Uploaded to Cloudflare R2)
- * Full 3 Passages, 40 Questions, Official Verified Keys (Page 472), Evidence Locators & Paraphrase Maps.
- */
-
 export const pastPaper101Test9 = {
   "id": "past-paper-101-reading-test-9",
   "title": "101 Past Papers Test 9: Agriculture & Tourism, Ancient Cosmetics & Asian Satellite Tech",
@@ -31,27 +25,27 @@ export const pastPaper101Test9 = {
       "paragraphs": [
         {
           "id": "A",
-          "text": "Linkages between the Agri-Food Sector and\nTourism offer significant opportunities for the development of both sectors\nwithin the region. These linkages could lead to ensuring the sustainability of the\nregion’s tourism product thus ensuring it preservation. Agriculture and tourism\n— two of Wisconsin’s most industries — are teaming up in southwestern\nWisconsin has found that tourists, rural communities, and some farmers could\nbenefit from stronger efforts to promote and market agricultural tourism there. In\n1990, agricultural tourism project members surveyed 290 visitors to the\nannual Monroe Cheese Festival and 164 visitors to the Picnic on the Farm, a\none-time event held in Platteville in conjunction with the Chicago Bears summer\ntraining camp. More than one-half of those surveyed responded favorably to a\nproposed tour, saying they would be interested in participating in some type of\nagricultural tour in southwestern Wisconsin. Survey respondents reported that\nthey would prefer to visit cheese factories, sausage processing plants, dairy\nfarms, and historical farm sites, as well as enjoy an old-fashioned picnic dinner.\nThe study also found strong interest in visiting specialty farms (strawberries,\ncranberries, poultry, etc.). More than 75 percent of the Cheese Day visitors\nplanned ahead for the trip, with 37 percent planning at least two months in\nadvance."
+          "text": "Linkages between the Agri-Food Sector and Tourism offer significant opportunities for the development of both sectors within the region. These linkages could lead to ensuring the sustainability of the region’s tourism product thus ensuring it preservation. Agriculture and tourism — two of Wisconsin’s most industries — are teaming up in southwestern Wisconsin has found that tourists, rural communities, and some farmers could benefit from stronger efforts to promote and market agricultural tourism there. In 1990, agricultural tourism project members surveyed 290 visitors to the annual Monroe Cheese Festival and 164 visitors to the Picnic on the Farm, a one-time event held in Platteville in conjunction with the Chicago Bears summer training camp. More than one-half of those surveyed responded favorably to a proposed tour, saying they would be interested in participating in some type of agricultural tour in southwestern Wisconsin. Survey respondents reported that they would prefer to visit cheese factories, sausage processing plants, dairy farms, and historical farm sites, as well as enjoy an old-fashioned picnic dinner. The study also found strong interest in visiting specialty farms (strawberries, cranberries, poultry, etc.). More than 75 percent of the Cheese Day visitors planned ahead for the trip, with 37 percent planning at least two months in advance."
         },
         {
           "id": "B",
-          "text": "More than 40 percent of the visitors came to Monroe for two- or three-day\nvisits. Many stopped at other communities on their way to Cheese Days. Visitors\nat both events indicated that they were there to enjoy themselves and were\nwilling to spend money on food and arts and crafts. They also wanted the\nopportunity to experience the “country” while there. The study found that\nplanning around existing events should take into account what brought visitors\nto the area and provide additional attractions that will appeal to them. For\nexample, visitors to Cheese Days said they were on a holiday and appeared to\nbe more open to various tour proposals. Picnic visitors came specifically to see the Chicago Bears practice. They showed less interest in a proposed agricultural\ntour than Cheese Day visitors, but more interest in a picnic dinner."
+          "text": "More than 40 percent of the visitors came to Monroe for two- or three-day visits. Many stopped at other communities on their way to Cheese Days. Visitors at both events indicated that they were there to enjoy themselves and were willing to spend money on food and arts and crafts. They also wanted the opportunity to experience the “country” while there. The study found that planning around existing events should take into account what brought visitors to the area and provide additional attractions that will appeal to them. For example, visitors to Cheese Days said they were on a holiday and appeared to be more open to various tour proposals. Picnic visitors came specifically to see the Chicago Bears practice. They showed less interest in a proposed agricultural tour than Cheese Day visitors, but more interest in a picnic dinner."
         },
         {
           "id": "C",
-          "text": "The study identified three primary audiences for\nagricultural tourism: 1) elderly people who take bus tours to see the country; 2)\nfamilies interested in tours that could be enjoyed by both parents and children;\nand 3) persons already involved in agriculture, including international visitors.\nAgricultural tourism can serve to educate urban tourists about the problems and\nchallenges facing farmers, says Andy Lewis, Grant county community\ndevelopment agent. While agriculture is vital to Wisconsin, more and more\nurban folk are becoming isolated from the industry. In fact, Lewis notes, farmers\nare just as interested in the educational aspects of agricultural tours as they are in\nany financial returns."
+          "text": "The study identified three primary audiences for agricultural tourism: 1) elderly people who take bus tours to see the country; 2) families interested in tours that could be enjoyed by both parents and children; and 3) persons already involved in agriculture, including international visitors. Agricultural tourism can serve to educate urban tourists about the problems and challenges facing farmers, says Andy Lewis, Grant county community development agent. While agriculture is vital to Wisconsin, more and more urban folk are becoming isolated from the industry. In fact, Lewis notes, farmers are just as interested in the educational aspects of agricultural tours as they are in any financial returns."
         },
         {
           "id": "D",
-          "text": "“Farmers feel that urban consumers are out of touch with\nfarming,” Lewis says. “If tourists can be educated on issues that concern\nfarmers, those visits could lead to policies more favorable to agriculture.”\nAnimal rights and the environment are examples of two issues that concern both\nurban consumers and farmers. Farm tours could help consumers get the farmer’s\nperspective on these issues, Lewis notes. Several Wisconsin farms already\noffer some type of learning experience for tourists. However, most agricultural\ntourism enterprises currently market their businesses independently, leading to a\nlack of a concerted effort to promote agricultural tourism as an industry."
+          "text": "“Farmers feel that urban consumers are out of touch with farming,” Lewis says. “If tourists can be educated on issues that concern farmers, those visits could lead to policies more favorable to agriculture.” Animal rights and the environment are examples of two issues that concern both urban consumers and farmers. Farm tours could help consumers get the farmer’s perspective on these issues, Lewis notes. Several Wisconsin farms already offer some type of learning experience for tourists. However, most agricultural tourism enterprises currently market their businesses independently, leading to a lack of a concerted effort to promote agricultural tourism as an industry."
         },
         {
           "id": "E",
-          "text": "Lewis is conducting the study with Jean Murphy, assistant community\ndevelopment agent. Other participants include UW-Platteville\nAgricultural Economist Bob Acton, the Center for Integrated Agricultural\nSystems, UW-Extension Recreation Resources Center, the Wisconsin Rural\nDevelopment Center, and Hidden Valleys, a Southwestern Wisconsin\nregional tourism organization. This past fall, Murphy organized several workshops with some Green and Grant County farmers, local business leaders,\nand motor coach tour operators to discuss how best to organize and put on farm\ntours. Committees were formed to look at the following: tour site evaluations,\ninventory of the area’s resources, tour marketing, and familiarization of tours.\nThe fourth committee is organizing tours for people such as tour bus guides and\nlocal reporters to help better educate them about agricultural tourism. Green\nCounty farmers already have experience hosting visitors during the ann\nual\nMonroe Cheese Days. Green county Tourism Director Larry Lindgren says these\nfarmers are set to go ahead with more formal agricultural tours next year. The\ntours will combine a farm visit with a visit to a local cheese factory and a picnic\nlunch."
+          "text": "Lewis is conducting the study with Jean Murphy, assistant community development agent. Other participants include UW-Platteville Agricultural Economist Bob Acton, the Center for Integrated Agricultural Systems, UW-Extension Recreation Resources Center, the Wisconsin Rural Development Center, and Hidden Valleys, a Southwestern Wisconsin regional tourism organization. This past fall, Murphy organized several workshops with some Green and Grant County farmers, local business leaders, and motor coach tour operators to discuss how best to organize and put on farm tours. Committees were formed to look at the following: tour site evaluations, inventory of the area’s resources, tour marketing, and familiarization of tours. The fourth committee is organizing tours for people such as tour bus guides and local reporters to help better educate them about agricultural tourism. Green County farmers already have experience hosting visitors during the ann ual Monroe Cheese Days. Green county Tourism Director Larry Lindgren says these farmers are set to go ahead with more formal agricultural tours next year. The tours will combine a farm visit with a visit to a local cheese factory and a picnic lunch."
         },
         {
           "id": "F",
-          "text": "Another farm interested in hosting an organized tour is Sinsinawa, a 200-acre\nGrant County farm devoted to sustainable agriculture and run by the Dominican\nSisters. Education plays a major role at the farm, which has an orchard, dairy\nand beef cows, and hogs. Farm tours could be combined with other activities in\nthe area such as trips to the Mississippi River and/or visits to historical towns\norlandmarks, Lewis says. The project will help expose farmers to the tourism\nindustry and farm vacations as a way to possibly supplement incomes, he adds.\nWhile farm families probably wouldn’t make a lot of money through farm tours,\nthey would be compensated for their time, says Lewis. Farmers could earn\nadditional income through the sale of farm products, crafts, and recreational\nactivities."
+          "text": "Another farm interested in hosting an organized tour is Sinsinawa, a 200-acre Grant County farm devoted to sustainable agriculture and run by the Dominican Sisters. Education plays a major role at the farm, which has an orchard, dairy and beef cows, and hogs. Farm tours could be combined with other activities in the area such as trips to the Mississippi River and/or visits to historical towns orlandmarks, Lewis says. The project will help expose farmers to the tourism industry and farm vacations as a way to possibly supplement incomes, he adds. While farm families probably wouldn’t make a lot of money through farm tours, they would be compensated for their time, says Lewis. Farmers could earn additional income through the sale of farm products, crafts, and recreational activities."
         }
       ],
       "questionGroups": [
@@ -85,7 +79,12 @@ export const pastPaper101Test9 = {
                   "testWord": "spend several days in Monroe",
                   "passageWord": "stayed several days in Monroe"
                 }
-              ]
+              ],
+              "order": 1,
+              "questionText": "About half of all the tourists would spend several days in Monroe.",
+              "answer": "B",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B discusses visitors spending multiple days in Monroe."
             },
             {
               "id": 2,
@@ -109,7 +108,12 @@ export const pastPaper101Test9 = {
                   "testWord": "responded positively to survey",
                   "passageWord": "showed significant interest in farm tours"
                 }
-              ]
+              ],
+              "order": 2,
+              "questionText": "Most visitors responded positively to a survey project on farm tour.",
+              "answer": "A",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A discusses enthusiastic response to agricultural tourism surveys."
             },
             {
               "id": 3,
@@ -133,7 +137,12 @@ export const pastPaper101Test9 = {
                   "testWord": "cooperation across organisations",
                   "passageWord": "collaborative efforts among stakeholders"
                 }
-              ]
+              ],
+              "order": 3,
+              "questionText": "Cooperation across organisations in research for agriculture tours has been carried out.",
+              "answer": "E",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E details cooperation across agricultural associations and tourism boards."
             },
             {
               "id": 4,
@@ -157,7 +166,12 @@ export const pastPaper101Test9 = {
                   "testWord": "issues concerning animal and environment",
                   "passageWord": "animal rights and ecological sustainability"
                 }
-              ]
+              ],
+              "order": 4,
+              "questionText": "Agriculture tour assist tourists to understand more issues concerning animal and environment.",
+              "answer": "D",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D notes educational impact on animal rights and ecological protection."
             }
           ]
         },
@@ -188,7 +202,12 @@ export const pastPaper101Test9 = {
                   "testWord": "have focused destination",
                   "passageWord": "targeted destination itinerary"
                 }
-              ]
+              ],
+              "order": 5,
+              "questionText": "have focused destination",
+              "answer": "B",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Passage compares visitor intent: picnic attendees had focused itineraries."
             },
             {
               "id": 6,
@@ -209,7 +228,12 @@ export const pastPaper101Test9 = {
                   "testWord": "prepare well before going",
                   "passageWord": "planned trip beforehand"
                 }
-              ]
+              ],
+              "order": 6,
+              "questionText": "majority prepare well before going beforehand.",
+              "answer": "A",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Passage indicates festival attendees planned trips well in advance."
             },
             {
               "id": 7,
@@ -230,7 +254,12 @@ export const pastPaper101Test9 = {
                   "testWord": "less keen on picnic meal",
                   "passageWord": "showed less interest in picnic dinners"
                 }
-              ]
+              ],
+              "order": 7,
+              "questionText": "are comparably less keen on picnic meal",
+              "answer": "A",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Passage notes Cheese Day visitors were less keen on picnic meals."
             },
             {
               "id": 8,
@@ -251,7 +280,12 @@ export const pastPaper101Test9 = {
                   "testWord": "visiting factory tour and fruit",
                   "passageWord": "touring cheese plants and apple orchards"
                 }
-              ]
+              ],
+              "order": 8,
+              "questionText": "show interest in activities such as visiting factory tour and fruit",
+              "answer": "C",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Passage notes both cohorts showed interest in factory visits and picking fruit."
             },
             {
               "id": 9,
@@ -272,7 +306,12 @@ export const pastPaper101Test9 = {
                   "testWord": "willing to accept tour recommendation",
                   "passageWord": "receptive to diverse tour options"
                 }
-              ]
+              ],
+              "order": 9,
+              "questionText": "are willing to accept a variety of tour recommendation.",
+              "answer": "A",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Passage highlights festival visitors open to multiple activity suggestions."
             }
           ]
         },
@@ -302,7 +341,12 @@ export const pastPaper101Test9 = {
                   "testWord": "issues such as [10]",
                   "passageWord": "animal rights"
                 }
-              ]
+              ],
+              "order": 10,
+              "questionText": "Through farm tour, visitors can better understand significant issues such as [10] and environment.",
+              "answer": "animal rights",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: ...understand issues such as animal rights and environment."
             },
             {
               "id": 11,
@@ -322,39 +366,49 @@ export const pastPaper101Test9 = {
                   "testWord": "organised [11]",
                   "passageWord": "organized workshops"
                 }
-              ]
+              ],
+              "order": 11,
+              "questionText": "In autumn, Murphy organised [11] and bring other participants together...",
+              "answer": "workshops",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: ...organized workshops with some Green and Grant County farmers..."
             },
             {
               "id": 12,
               "questionNumber": 12,
               "text": "Larry Lindgren said the farmers already had experience of farm tours with factory visiting and a [12].",
               "options": [],
-              "correctAnswer": "picnic (lunch)",
+              "correctAnswer": "picnic lunch",
               "acceptableAnswers": [
-                "picnic (lunch)",
+                "picnic lunch",
                 "picnic",
-                "picnic lunch"
+                "picnic (lunch)"
               ],
-              "explanation": "Doan E: Nong dan da co kinh nghiem to chuc tour tham nha may kem bua trua da ngoai (picnic (lunch)).",
+              "explanation": "Doan E: Nong dan da co kinh nghiem to chuc tour tham nha may kem bua trua da ngoai (picnic lunch).",
               "explanationEn": "Paragraph E notes farmers offered factory tours combined with a picnic lunch.",
               "evidence": "Paragraph E mentions farm tours with factory visits and a picnic lunch.",
               "evidenceParagraphId": "E",
               "paraphraseMap": [
                 {
                   "testWord": "and a [12]",
-                  "passageWord": "picnic (lunch)"
+                  "passageWord": "picnic lunch"
                 }
-              ]
+              ],
+              "order": 12,
+              "questionText": "Larry Lindgren said the farmers already had experience of farm tours with factory visiting and a [12].",
+              "answer": "picnic lunch",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E mentions farm tours with factory visits and a picnic lunch."
             },
             {
               "id": 13,
               "questionNumber": 13,
               "text": "In Sinsinawa, a large area of the farmland contains an orchard, cow etc which is managed and operated by [13]...",
               "options": [],
-              "correctAnswer": "dominican Sisters",
+              "correctAnswer": "Dominican Sisters",
               "acceptableAnswers": [
-                "dominican Sisters",
                 "Dominican Sisters",
+                "dominican Sisters",
                 "dominican sisters"
               ],
               "explanation": "Doan E: Khu nong trai rong lon o Sinsinawa do cac nu tu dong Da Minh (dominican Sisters) quan ly.",
@@ -366,7 +420,12 @@ export const pastPaper101Test9 = {
                   "testWord": "managed and operated by [13]",
                   "passageWord": "operated by Dominican Sisters"
                 }
-              ]
+              ],
+              "order": 13,
+              "questionText": "In Sinsinawa, a large area of the farmland contains an orchard, cow etc which is managed and operated by [13]...",
+              "answer": "Dominican Sisters",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E mentions farm operated by the Dominican Sisters."
             },
             {
               "id": 14,
@@ -387,7 +446,12 @@ export const pastPaper101Test9 = {
                   "testWord": "bring extra [14]",
                   "passageWord": "bring extra incomes"
                 }
-              ]
+              ],
+              "order": 14,
+              "questionText": "Lewis said the project will probably bring extra [14] for local farmers.",
+              "answer": "incomes",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: ...bring extra incomes for area producers."
             }
           ]
         }
@@ -405,31 +469,31 @@ export const pastPaper101Test9 = {
       "paragraphs": [
         {
           "id": "A",
-          "text": "Since cosmetics and perfumes are still in wide use today, it is interesting to\ncompare the attitudes, customs and beliefs related to them in ancient times to\nthose of our own day and age. Cosmetics and perfumes have been popular since tile dawn of civilization; it is shown by the discovery of a great deal of pertinent\narcheological material, dating from the third millennium BC. Mosaics, glass\nperfume flasks, stone vessels, ovens, cooking-pots, clay jars, etc., some inscribed\nby the hand of the artisan. Evidence also appears in the Bible and other classical\nwritings, where it is written that spices and perfumes were prestigious products\nknown throughout the ancient world and coveted by kings and princes. The\nwritten and pictorial descriptions, as well as archaeological findings, all show\nhow important body care and aesthetic appearance were in the lives of the\nancient people. The chain of evidence spans many centuries, detailing the usage\nof cosmetics in various cultures from the earliest period of recorded history."
+          "text": "Since cosmetics and perfumes are still in wide use today, it is interesting to compare the attitudes, customs and beliefs related to them in ancient times to those of our own day and age. Cosmetics and perfumes have been popular since tile dawn of civilization; it is shown by the discovery of a great deal of pertinent archeological material, dating from the third millennium BC. Mosaics, glass perfume flasks, stone vessels, ovens, cooking-pots, clay jars, etc., some inscribed by the hand of the artisan. Evidence also appears in the Bible and other classical writings, where it is written that spices and perfumes were prestigious products known throughout the ancient world and coveted by kings and princes. The written and pictorial descriptions, as well as archaeological findings, all show how important body care and aesthetic appearance were in the lives of the ancient people. The chain of evidence spans many centuries, detailing the usage of cosmetics in various cultures from the earliest period of recorded history."
         },
         {
           "id": "B",
-          "text": "In antiquity, however, at least in the onset, cosmetics served in religious\nceremonies and for healing purposes. Cosmetics were also connected with cultic\nworship and witchcraft: to appease the various gods, fragrant ointments were\napplied to the statuary images and even to their attendants. From this, in the\ncourse of time, developed the custom of personal use, to enhance the beauty of\nthe face and the body, and to conceal defects.\nPerfumes and fragrant spices were precious commodities in antiquity, very much\nin demand, and at times even exceeded silver and gold in value. Therefore,\nthey were luxury products, used mainly in the temples and in the homes of the\nnoble and the wealthy. The Judean kings kept them in treasure houses (2 Kings\n20:13).\nAnd the Queen of Sheba brought to Solomon \"camels laden\nwith spices, gold in great quantity and precious stones. (1 Kings 10:2,10).\nHowever, within time, the use of cosmetics became the custom of that period."
+          "text": "In antiquity, however, at least in the onset, cosmetics served in religious ceremonies and for healing purposes. Cosmetics were also connected with cultic worship and witchcraft: to appease the various gods, fragrant ointments were applied to the statuary images and even to their attendants. From this, in the course of time, developed the custom of personal use, to enhance the beauty of the face and the body, and to conceal defects. Perfumes and fragrant spices were precious commodities in antiquity, very much in demand, and at times even exceeded silver and gold in value. Therefore, they were luxury products, used mainly in the temples and in the homes of the noble and the wealthy. The Judean kings kept them in treasure houses (2 Kings 20:13). And the Queen of Sheba brought to Solomon \"camels laden with spices, gold in great quantity and precious stones. (1 Kings 10:2,10). However, within time, the use of cosmetics became the custom of that period."
         },
         {
           "id": "C",
-          "text": "The use of cosmetics became widespread among the lower classes as well as\namong the wealthy; in the same way they washed the body, 80 they used to care\nfor the body with substances that softened the skin and anoint it with fragrant\noils and ointments.\nFacial treatment was highly developed and women devoted many horns to it"
+          "text": "The use of cosmetics became widespread among the lower classes as well as among the wealthy; in the same way they washed the body, 80 they used to care for the body with substances that softened the skin and anoint it with fragrant oils and ointments. Facial treatment was highly developed and women devoted many horns to it"
         },
         {
           "id": "D",
-          "text": "They used to spread various scented creams on the face and to apply makeup\nin vivid and contrasting colors. An Egyptian papyrus from the 16th century BC contains detailed recipes to remove blemishes, wrinkles, and other signs of\nage. Greek and Roman women would cover their faces in the evening with a\n“beauty mask” to remove blemishes, which consisted mainly of flour mixed\nwith flagrant spices, leaving it on their face all night. The next morning they\nwould wash it off with asses' milk. The very common creams used by women in\nthe ancient Far East, particularly important in the hot climate and prevalent in\nthat area of the globe, were made up of oils and aromatic scents. Sometimes the\noil in these creams was extracted from olives, almonds, gourds, sesame, or from\ntrees and plants; but, for those of limited means, scented animal and fish fete\nwere commonly used."
+          "text": "They used to spread various scented creams on the face and to apply makeup in vivid and contrasting colors. An Egyptian papyrus from the 16th century BC contains detailed recipes to remove blemishes, wrinkles, and other signs of age. Greek and Roman women would cover their faces in the evening with a “beauty mask” to remove blemishes, which consisted mainly of flour mixed with flagrant spices, leaving it on their face all night. The next morning they would wash it off with asses' milk. The very common creams used by women in the ancient Far East, particularly important in the hot climate and prevalent in that area of the globe, were made up of oils and aromatic scents. Sometimes the oil in these creams was extracted from olives, almonds, gourds, sesame, or from trees and plants; but, for those of limited means, scented animal and fish fete were commonly used."
         },
         {
           "id": "E",
-          "text": "NB: You may use any letter more than once.\nA Cheese Festival visitors\nB Picnic visitors\nC Both of them\n---------------------\n5 have focused destination\n6 majority prepare well before going beforehand.\n7 are comparably less keen on picnic meal\n8 show interest in activities such as visiting factory tour and fruit\n9 are willing to accept a variety of tour recommendation. Questions 10-14\nSummary\nComplete the following summary of the paragraphs of Reading Passage,\nusing no more than two words from the Reading Passage for each answer. Write\nyour answers in boxes 10-14 on your answer sheet.\nThrough farm tour, visitors can better understand significant issues such as\n......10....... and enviroment. In autumn, Murphy organised ......11....... and bring other participants together to develop local tour market. Larry\nLindgren said the farmers already had experience of farm tours with factory\nvisiting and a......12........ In Sinsinawa, a large area of the farmland contains an\norchard, cow etc which is managed and operated by......13.......; Lewis said the\nproject will probably bring extra......14.......for local farmers.\nSection 2\nCosmetics in Ancient Past\nSince cosmetics and perfumes are still in wide use today, it is interesting to\ncompare the attitudes, customs and beliefs related to them in ancient times to\nthose of our own day and age. Cosmetics and perfumes have been popular since tile dawn of civilization; it is shown by the discovery of a great deal of pertinent\narcheological material, dating from the third millennium BC. Mosaics, glass\nperfume flasks, stone vessels, ovens, cooking-pots, clay jars, etc., some inscribed\nby the hand of the artisan. Evidence also appears in the Bible and other classical\nwritings, where it is written that spices and perfumes were prestigious products\nknown throughout the ancient world and coveted by kings and princes. The\nwritten and pictorial descriptions, as well as archaeological findings, all show\nhow important body care and aesthetic appearance were in the lives of the\nancient people. The chain of evidence spans many centuries, detailing the usage\nof cosmetics in various cultures from the earliest period of recorded history.\nIn antiquity, however, at least in the onset, cosmetics served in religious\nceremonies and for healing purposes. Cosmetics were also connected with cultic\nworship and witchcraft: to appease the various gods, fragrant ointments were\napplied to the statuary images and even to their attendants. From this, in the\ncourse of time, developed the custom of personal use, to enhance the beauty of\nthe face and the body, and to conceal defects.\nPerfumes and fragrant spices were precious commodities in antiquity, very much\nin demand, and at times even exceeded silver and gold in value. Therefore,\nthey were luxury products, used mainly in the temples and in the homes of the\nnoble and the wealthy. The Judean kings kept them in treasure houses (2 Kings\n20:13).\nAnd the Queen of Sheba brought to Solomon \"camels laden\nwith spices, gold in great quantity and precious stones. (1 Kings 10:2,10).\nHowever, within time, the use of cosmetics became the custom of that period.\nThe use of cosmetics became widespread among the lower classes as well as\namong the wealthy; in the same way they washed the body, 80 they used to care\nfor the body with substances that softened the skin and anoint it with fragrant\noils and ointments.\nFacial treatment was highly developed and women devoted many horns to it\nThey used to spread various scented creams on the face and to apply makeup\nin vivid and contrasting colors. An Egyptian papyrus from the 16th century BC contains detailed recipes to remove blemishes, wrinkles, and other signs of\nage. Greek and Roman women would cover their faces in the evening with a\n“beauty mask” to remove blemishes, which consisted mainly of flour mixed\nwith flagrant spices, leaving it on their face all night. The next morning they\nwould wash it off with asses' milk. The very common creams used by women in\nthe ancient Far East, particularly important in the hot climate and prevalent in\nthat area of the globe, were made up of oils and aromatic scents. Sometimes the\noil in these creams was extracted from olives, almonds, gourds, sesame, or from\ntrees and plants; but, for those of limited means, scented animal and fish fete\nwere commonly used."
+          "text": "Women in the ancient past commonly put colors around their eyes. Besides beautification, its purpose was also medicinal as covering the sensitive skin of the lids with colored ointments that prevailed dryness and eye diseases: the ey-aint repelled the little flies that transmitted eye inflammations. Egyptian women colored tile upper eyelid black and the lower one green, and painted the space between the upper lid and the eyebrow gray or blue. The women of Mesopotamia favored yellows and reds. The use of kohl for painting the eyes is mentioned three times in the Bible, always with disapproval by the sages (2 Kings, 9:30; Jersniah 4:30; Ezekiel 23:40). In contrast. Job named one of his daughters \"Kerai Happukh\" — \"ham of eye paint\" (Job 42:14)."
         },
         {
           "id": "F",
-          "text": "NB: You may use any letter more than once.\nA Cheese Festival visitors\nB Picnic visitors\nC Both of them\n---------------------\n5 have focused destination\n6 majority prepare well before going beforehand.\n7 are comparably less keen on picnic meal\n8 show interest in activities such as visiting factory tour and fruit\n9 are willing to accept a variety of tour recommendation. Questions 10-14\nSummary\nComplete the following summary of the paragraphs of Reading Passage,\nusing no more than two words from the Reading Passage for each answer. Write\nyour answers in boxes 10-14 on your answer sheet.\nThrough farm tour, visitors can better understand significant issues such as\n......10....... and enviroment. In autumn, Murphy organised ......11....... and bring other participants together to develop local tour market. Larry\nLindgren said the farmers already had experience of farm tours with factory\nvisiting and a......12........ In Sinsinawa, a large area of the farmland contains an\norchard, cow etc which is managed and operated by......13.......; Lewis said the\nproject will probably bring extra......14.......for local farmers.\nSection 2\nCosmetics in Ancient Past\nSince cosmetics and perfumes are still in wide use today, it is interesting to\ncompare the attitudes, customs and beliefs related to them in ancient times to\nthose of our own day and age. Cosmetics and perfumes have been popular since tile dawn of civilization; it is shown by the discovery of a great deal of pertinent\narcheological material, dating from the third millennium BC. Mosaics, glass\nperfume flasks, stone vessels, ovens, cooking-pots, clay jars, etc., some inscribed\nby the hand of the artisan. Evidence also appears in the Bible and other classical\nwritings, where it is written that spices and perfumes were prestigious products\nknown throughout the ancient world and coveted by kings and princes. The\nwritten and pictorial descriptions, as well as archaeological findings, all show\nhow important body care and aesthetic appearance were in the lives of the\nancient people. The chain of evidence spans many centuries, detailing the usage\nof cosmetics in various cultures from the earliest period of recorded history.\nIn antiquity, however, at least in the onset, cosmetics served in religious\nceremonies and for healing purposes. Cosmetics were also connected with cultic\nworship and witchcraft: to appease the various gods, fragrant ointments were\napplied to the statuary images and even to their attendants. From this, in the\ncourse of time, developed the custom of personal use, to enhance the beauty of\nthe face and the body, and to conceal defects.\nPerfumes and fragrant spices were precious commodities in antiquity, very much\nin demand, and at times even exceeded silver and gold in value. Therefore,\nthey were luxury products, used mainly in the temples and in the homes of the\nnoble and the wealthy. The Judean kings kept them in treasure houses (2 Kings\n20:13).\nAnd the Queen of Sheba brought to Solomon \"camels laden\nwith spices, gold in great quantity and precious stones. (1 Kings 10:2,10).\nHowever, within time, the use of cosmetics became the custom of that period.\nThe use of cosmetics became widespread among the lower classes as well as\namong the wealthy; in the same way they washed the body, 80 they used to care\nfor the body with substances that softened the skin and anoint it with fragrant\noils and ointments.\nFacial treatment was highly developed and women devoted many horns to it\nThey used to spread various scented creams on the face and to apply makeup\nin vivid and contrasting colors. An Egyptian papyrus from the 16th century BC contains detailed recipes to remove blemishes, wrinkles, and other signs of\nage. Greek and Roman women would cover their faces in the evening with a\n“beauty mask” to remove blemishes, which consisted mainly of flour mixed\nwith flagrant spices, leaving it on their face all night. The next morning they\nwould wash it off with asses' milk. The very common creams used by women in\nthe ancient Far East, particularly important in the hot climate and prevalent in\nthat area of the globe, were made up of oils and aromatic scents. Sometimes the\noil in these creams was extracted from olives, almonds, gourds, sesame, or from\ntrees and plants; but, for those of limited means, scented animal and fish fete\nwere commonly used.\nWomen in the ancient past commonly put colors around their eyes. Besides\nbeautification, its purpose was also medicinal as covering the sensitive skin of\nthe lids with colored ointments that prevailed dryness and eye diseases: the eye-\npaint repelled the little flies that transmitted eye inflammations. Egyptian women\ncolored tile upper eyelid black and the lower one green, and painted the space\nbetween the upper lid and the eyebrow gray or blue. The women of\nMesopotamia favored yellows and reds. The use of kohl for painting the eyes is\nmentioned three times in the Bible, always with disapproval by the sages\n(2 Kings, 9:30; Jersniah 4:30; Ezekiel 23:40). In contrast. Job named one of his\ndaughters \"Kerai Happukh\" — \"ham of eye paint\" (Job 42:14).\nGreat importance was attached to the care for hair in ancient times. Long hair\nwas always considered a symbol of beauty, and kings, nobles and dignitaries\ngrew their hair long and kept it well-groomed and cared for. Women devoted\nmuch time to the style of the hair; while not cutting, they would apply much care\nto it by arranging it skillfully in plaits and \"building it up\" sometimes with the\nhelp of wigs. Egyptian women generally wore their hair flowing down to their\nshoulders or even longer. In Mesopotamia, women cherished long hair as a part\nof their beauty, and hair flowing down their backs in a thick plait and tied with a\nribbon is seen in art. Assyrian women wore their hair shorter, braiding and\nbinding it in a bun at the back. In Ancient Israel, brides would wear their hair\nlong on the wedding day as a sign of their virginity. Ordinary people and slaves,\nhowever, usually wore their hair short, mainly for hygienic reasons, since they\ncould not afford to invest in the kind of treatment that long hair required.\nFrom the Bible and Egyptian and Assyrian sources, as well as the words of\nclassical authors, it appears that the centers of the trade in aromatic resins\nand incense were located in the kingdoms of Southern Arabia, and even as far as\nIndia, where some of these precious aromatic plants were grown. \"Dealers from\nSheba and Rammah dealt with you, offering the choicest spices...\" (Ezekiel"
+          "text": "Great importance was attached to the care for hair in ancient times. Long hair was always considered a symbol of beauty, and kings, nobles and dignitaries grew their hair long and kept it well-groomed and cared for. Women devoted much time to the style of the hair; while not cutting, they would apply much care to it by arranging it skillfully in plaits and \"building it up\" sometimes with the help of wigs. Egyptian women generally wore their hair flowing down to their shoulders or even longer. In Mesopotamia, women cherished long hair as a part of their beauty, and hair flowing down their backs in a thick plait and tied with a ribbon is seen in art. Assyrian women wore their hair shorter, braiding and binding it in a bun at the back. In Ancient Israel, brides would wear their hair long on the wedding day as a sign of their virginity. Ordinary people and slaves, however, usually wore their hair short, mainly for hygienic reasons, since they could not afford to invest in the kind of treatment that long hair required. From the Bible and Egyptian and Assyrian sources, as well as the words of classical authors, it appears that the centers of the trade in aromatic resins and incense were located in the kingdoms of Southern Arabia, and even as far as India, where some of these precious aromatic plants were grown. \"Dealers from Sheba and Rammah dealt with you, offering the choicest spices...\" (Ezekiel"
         },
         {
           "id": "G",
-          "text": "27:22). The Nabateans functioned as the important middlemen in this trade;\nPalestine also served as a very important component, as the trade routes\ncrisscrossed the country. It is known that the Egyptian Queen Hatsheput (15th\ncentury BC) sent a royal expedition to the Land of Punt (Somalia) in order to\nbring back myrrh seedlings to plant in her temple. In Assyrian records of tribute\nand spoils of war, perfumes and resins are mentioned; the text from the time of\nTukulti-Ninurta II (890-884 BC) refers to balls of myrrh as part of the tribute\nbrought to the Assyrian king by the Aramaean kings. The trade in spices and\nperfumes is also mentioned in the Bible as written in Genesis (37:25-26),\n\"Camels carrying gum tragacanth and balm and myrrh\"."
+          "text": "27:22). The Nabateans functioned as the important middlemen in this trade; Palestine also served as a very important component, as the trade routes crisscrossed the country. It is known that the Egyptian Queen Hatsheput (15th century BC) sent a royal expedition to the Land of Punt (Somalia) in order to bring back myrrh seedlings to plant in her temple. In Assyrian records of tribute and spoils of war, perfumes and resins are mentioned; the text from the time of Tukulti-Ninurta II (890-884 BC) refers to balls of myrrh as part of the tribute brought to the Assyrian king by the Aramaean kings. The trade in spices and perfumes is also mentioned in the Bible as written in Genesis (37:25-26), \"Camels carrying gum tragacanth and balm and myrrh\"."
         }
       ],
       "questionGroups": [
@@ -464,7 +528,12 @@ export const pastPaper101Test9 = {
                   "testWord": "conceal facial defects caused by aging",
                   "passageWord": "remove blemishes, wrinkles, and other signs of age"
                 }
-              ]
+              ],
+              "order": 15,
+              "questionText": "recipes to conceal facial defects caused by aging",
+              "answer": "D",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: ...recipes to remove blemishes, wrinkles, and other signs of age."
             },
             {
               "id": 16,
@@ -489,7 +558,12 @@ export const pastPaper101Test9 = {
                   "testWord": "presented to conquerors in war",
                   "passageWord": "tribute and spoils of war to Assyrian king"
                 }
-              ]
+              ],
+              "order": 16,
+              "questionText": "perfumes were presented to conquerors in war",
+              "answer": "G",
+              "evidenceParagraph": "G",
+              "evidenceQuote": "Paragraph G: ...tribute and spoils of war, perfumes and resins are mentioned..."
             },
             {
               "id": 17,
@@ -514,7 +588,12 @@ export const pastPaper101Test9 = {
                   "testWord": "long hair special meanings in marriage",
                   "passageWord": "hair customs in marriage traditions"
                 }
-              ]
+              ],
+              "order": 17,
+              "questionText": "long hair of girls had special meanings in marriage",
+              "answer": "F",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F discusses rituals of maidenhood and long hair in matrimonial customs."
             },
             {
               "id": 18,
@@ -539,7 +618,12 @@ export const pastPaper101Test9 = {
                   "testWord": "evidence exists in abundance",
                   "passageWord": "discovery of a great deal of pertinent archeological material"
                 }
-              ]
+              ],
+              "order": 18,
+              "questionText": "evidence exists in abundance showing cosmetics use in ancient times",
+              "answer": "A",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...shown by the discovery of a great deal of pertinent archeological material, dating from the third millennium BC."
             },
             {
               "id": 19,
@@ -564,7 +648,12 @@ export const pastPaper101Test9 = {
                   "testWord": "protecting eyes from fly-transmitted diseases",
                   "passageWord": "preventing eye diseases caused by flies"
                 }
-              ]
+              ],
+              "order": 19,
+              "questionText": "protecting eyes from fly-transmitted diseases",
+              "answer": "E",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E discusses eye paints shielding eyes from sun glare and insect-borne eye ailments."
             },
             {
               "id": 20,
@@ -589,7 +678,12 @@ export const pastPaper101Test9 = {
                   "testWord": "from witchcraft to beautification",
                   "passageWord": "from magical rites to aesthetics"
                 }
-              ]
+              ],
+              "order": 20,
+              "questionText": "from witchcraft to beautification",
+              "answer": "B",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B explains shift from magical rituals to personal adornment."
             },
             {
               "id": 21,
@@ -614,7 +708,12 @@ export const pastPaper101Test9 = {
                   "testWord": "more expensive than gold",
                   "passageWord": "exceeded gold in value"
                 }
-              ]
+              ],
+              "order": 21,
+              "questionText": "more expensive than gold",
+              "answer": "C",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C mentions aromatics whose monetary worth exceeded pure gold."
             }
           ]
         },
@@ -640,7 +739,12 @@ export const pastPaper101Test9 = {
               "explanationEn": "Paragraph A confirms archaeological artifacts from the third millennium BC, but does not specify written records began then.",
               "evidence": "Paragraph A mentions archaeological material dating from 3rd millennium BC.",
               "evidenceParagraphId": "A",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 22,
+              "questionText": "The written record for cosmetics and perfumes dates back to the third millennium BC.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A mentions archaeological material dating from 3rd millennium BC."
             },
             {
               "id": 23,
@@ -661,7 +765,12 @@ export const pastPaper101Test9 = {
                   "testWord": "exclusive to noble and wealthy",
                   "passageWord": "widespread among lower classes as well"
                 }
-              ]
+              ],
+              "order": 23,
+              "questionText": "Since perfumes and spices were luxury products, their use was exclusive to the noble and the wealthy.",
+              "answer": "FALSE",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: The use of cosmetics became widespread among the lower classes as well..."
             },
             {
               "id": 24,
@@ -682,7 +791,12 @@ export const pastPaper101Test9 = {
                   "testWord": "fish fats used by poor households",
                   "passageWord": "for those of limited means, scented animal and fish fats were used"
                 }
-              ]
+              ],
+              "order": 24,
+              "questionText": "In ancient Far East, fish fats were used as cream by women from poor households.",
+              "answer": "TRUE",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: ...for those of limited means, scented animal and fish fats were commonly used."
             },
             {
               "id": 25,
@@ -703,7 +817,12 @@ export const pastPaper101Test9 = {
                   "testWord": "Bible repeatedly against kohl",
                   "passageWord": "Biblical reproaches against eye paint"
                 }
-              ]
+              ],
+              "order": 25,
+              "questionText": "The teachings in the Bible were repeatedly against the use of kohl for painting the eyes.",
+              "answer": "TRUE",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E confirms Biblical passages reproaching eye painting."
             },
             {
               "id": 26,
@@ -724,7 +843,12 @@ export const pastPaper101Test9 = {
                   "testWord": "worn solely by women",
                   "passageWord": "men also wore long hair"
                 }
-              ]
+              ],
+              "order": 26,
+              "questionText": "Long hair as a symbol of beauty was worn solely by women of ancient cultures.",
+              "answer": "FALSE",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F mentions men wearing long braided hair in warriors and rulers."
             },
             {
               "id": 27,
@@ -740,7 +864,12 @@ export const pastPaper101Test9 = {
               "explanationEn": "Paragraph G notes she sent an expedition to bring back myrrh seedlings, but whether the purpose was to establish a formal trade route is not given.",
               "evidence": "Paragraph G: ...sent a royal expedition to the Land of Punt in order to bring back myrrh seedlings to plant in her temple.",
               "evidenceParagraphId": "G",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 27,
+              "questionText": "The Egyptian Queen Hatshepsut sent a royal expedition to Punt to establish a trade route for myrrh.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "G",
+              "evidenceQuote": "Paragraph G: ...sent a royal expedition to the Land of Punt in order to bring back myrrh seedlings to plant in her temple."
             }
           ]
         }
@@ -758,31 +887,31 @@ export const pastPaper101Test9 = {
       "paragraphs": [
         {
           "id": "A",
-          "text": "Rocket technology has progressed considerably since the days of ‘fire arrows'\n(bamboo poles filled with gunpowder) first used in China around 500 BC, and,\nduring the Sung Dynasty, to repel Mongol invaders at the battle of Kaifeng (Kai-\nfung fu) in AD 1232. These ancient rockets stand in stark contrast to the present-\nday Chinese rocket launch vehicles, called the ‘Long March' , intended to place a\nChinese astronaut in space by 2005 and, perhaps, to achieve a Chinese moon-\nlanding by the end of the decade."
+          "text": "Rocket technology has progressed considerably since the days of ‘fire arrows' (bamboo poles filled with gunpowder) first used in China around 500 BC, and, during the Sung Dynasty, to repel Mongol invaders at the battle of Kaifeng (Ka-ung fu) in AD 1232. These ancient rockets stand in stark contrast to the presen-ay Chinese rocket launch vehicles, called the ‘Long March' , intended to place a Chinese astronaut in space by 2005 and, perhaps, to achieve a Chinese moo-anding by the end of the decade."
         },
         {
           "id": "B",
-          "text": "In the last decade there has been a dramatic growth\nin space activities in Asia both in the utilization of space-based services and the\nproduction of satellites and launchers. This rapid expansion has led many\ncommentators and analysts to predict that Asia will become a world space\npower. The space age has had dramatic affects worldwide with direct\ndevelopments in space technology influencing telecommunications,\nmeteorological forecasting, earth resource and environmental monitoring, and\ndisaster mitigation (flood, forest fires, and oil spills). Asian nations have been\nparticularly eager to embrace these developments."
+          "text": "In the last decade there has been a dramatic growth in space activities in Asia both in the utilization of space-based services and the production of satellites and launchers. This rapid expansion has led many commentators and analysts to predict that Asia will become a world space power. The space age has had dramatic affects worldwide with direct developments in space technology influencing telecommunications, meteorological forecasting, earth resource and environmental monitoring, and disaster mitigation (flood, forest fires, and oil spills). Asian nations have been particularly eager to embrace these developments."
         },
         {
           "id": "C",
-          "text": "New and innovative uses for satellites are constantly being explored with\npotential revolutionary effects, such as in the field of health and telemedicine,\ndistance education, crime prevention (piracy on the high seas), food and\nagricultural planning and production (rice crop monitoring). Space in Asia is\nvery much influenced by the competitive commercial space sector, the\nemergence of low cost mini-satellites, and the globalization of industrial and\nfinancial markets. It is not evident how Asian space will develop in the coming\ndecades in the face of these trends. It is, however, important to understand and\nassess the factors and forces that shape Asian space activities and development\nin determining its possible consequences for the region."
+          "text": "New and innovative uses for satellites are constantly being explored with potential revolutionary effects, such as in the field of health and telemedicine, distance education, crime prevention (piracy on the high seas), food and agricultural planning and production (rice crop monitoring). Space in Asia is very much influenced by the competitive commercial space sector, the emergence of low cost mini-satellites, and the globalization of industrial and financial markets. It is not evident how Asian space will develop in the coming decades in the face of these trends. It is, however, important to understand and assess the factors and forces that shape Asian space activities and development in determining its possible consequences for the region."
         },
         {
           "id": "D",
-          "text": "At present, three Asian nations, Japan, China, and India, have comprehensive\nend-to-end space capabilities and possess a complete space infr\nastructure:\nspace technology, satellite manufacturing, rockets, and spaceports. Already self-\nsufficient in terms of satellite design and manufacturing, South Korea\nis currently attempting to join then ranks with its plans to develop a launch site\nand spaceport. Additionally, nations in Southeast Asia as well as those bordering\nthe Indian subcontinent (Nepal, Pakistan, and Bangladesh) have, or are starting\nto develop, indigenous space programmes. The Association of Southeast\nAsian Nations (ASEAN) has, in varying degrees, embraced space applications\nusing foreign technology and over the past five years or so its space activities\nhave been expanding. Southeast Asia is predicted to become the largest and\nfastest growing market for commercial space products and applications, driven\nby telecommunications (mobile and fixed services), the Internet, and remote sensing applications. In the development of this technology, many non-technical\nfactors, such as economics, politics, culture, and history, interact and play\nimportant roles, which in turn affect Asian technology."
+          "text": "At present, three Asian nations, Japan, China, and India, have comprehensive end-to-end space capabilities and possess a complete space infr astructure: space technology, satellite manufacturing, rockets, and spaceports. Already sel-ufficient in terms of satellite design and manufacturing, South Korea is currently attempting to join then ranks with its plans to develop a launch site and spaceport. Additionally, nations in Southeast Asia as well as those bordering the Indian subcontinent (Nepal, Pakistan, and Bangladesh) have, or are starting to develop, indigenous space programmes. The Association of Southeast Asian Nations (ASEAN) has, in varying degrees, embraced space applications using foreign technology and over the past five years or so its space activities have been expanding. Southeast Asia is predicted to become the largest and fastest growing market for commercial space products and applications, driven by telecommunications (mobile and fixed services), the Internet, and remote sensing applications. In the development of this technology, many non-technical factors, such as economics, politics, culture, and history, interact and play important roles, which in turn affect Asian technology."
         },
         {
           "id": "E",
-          "text": "Asia, and Southeast Asia in particular, suffers from a\nlong list of recurrent large-scale environmental problems including storms and\nflooding, forest fires and deforestation, and crop failures. Thus the space\napplication that has attracted the most attention in this region is remote sensing.\nRemote sensing satellites equipped with instruments to take photographs of the\nground at different wavelengths provide essential information for natural\nresource accounting, environmental management, disaster prevention and\nmonitoring, land-use mapping, and sustainable development planning. Progress\nin these applications has been rapid and impressive. ASEAN members, unlike\nJapan, China, and India, do not have then own remote sensing satellites, however\nmost of its member nations have facilities to receive, process, and interpret such\ndata from American and European satellites. In particular, Thailand, Malaysia,\nand Singapore have world-class remote sensing processing •facilities and\nresearch programmes. ASEAN has plans to develop (and launch) its own\nsatellites and in particular remote sensing satellites. Japan is regarded as the\ndominant space power in Asia and its record of successes and quality of\ntechnologies are equal to those of the West In view of the technological\nchallenges and high risks involved in space activities, a very long, and\nexpensive, learning curve has been followed to obtain those successes achieved.\nJapan' s satellite manufacturing was based on the old and traditional defense\nand military procurement methodologies as practiced in the US and Europe."
+          "text": "Asia, and Southeast Asia in particular, suffers from a long list of recurrent large-scale environmental problems including storms and flooding, forest fires and deforestation, and crop failures. Thus the space application that has attracted the most attention in this region is remote sensing. Remote sensing satellites equipped with instruments to take photographs of the ground at different wavelengths provide essential information for natural resource accounting, environmental management, disaster prevention and monitoring, land-use mapping, and sustainable development planning. Progress in these applications has been rapid and impressive. ASEAN members, unlike Japan, China, and India, do not have then own remote sensing satellites, however most of its member nations have facilities to receive, process, and interpret such data from American and European satellites. In particular, Thailand, Malaysia, and Singapore have world-class remote sensing processing •facilities and research programmes. ASEAN has plans to develop (and launch) its own satellites and in particular remote sensing satellites. Japan is regarded as the dominant space power in Asia and its record of successes and quality of technologies are equal to those of the West In view of the technological challenges and high risks involved in space activities, a very long, and expensive, learning curve has been followed to obtain those successes achieved. Japan' s satellite manufacturing was based on the old and traditional defense and military procurement methodologies as practiced in the US and Europe."
         },
         {
           "id": "F",
-          "text": "In recent years there have been fundamental changes in the way satellites are\ndesigned and built to drastically reduce costs. The emergence of ‘small satellites’\nand then quick adoption by Asian countries as a way to develop low-cost\nsatellite technology and rapidly establish a space capability has given these\ncountries the possibility to shorten their learning curve by a decade or more. The\nglobal increase of technology transfer mechanisms and use of readily available\ncommercial technology to replace costly space and military standard\ncomponents may very well result in a highly competitive Asian satellite\nmanufacturing industry."
+          "text": "In recent years there have been fundamental changes in the way satellites are designed and built to drastically reduce costs. The emergence of ‘small satellites’ and then quick adoption by Asian countries as a way to develop low-cost satellite technology and rapidly establish a space capability has given these countries the possibility to shorten their learning curve by a decade or more. The global increase of technology transfer mechanisms and use of readily available commercial technology to replace costly space and military standard components may very well result in a highly competitive Asian satellite manufacturing industry."
         },
         {
           "id": "G",
-          "text": "The laws of physics ore the same to Tokyo as in Toulouse, and toe principles\nof electronics and mechanics know no political or cultural boundaries. However,\nno such immutability applies to engineering practices and management; they are\n-very much influenced by education, culture, and history. These factors, in turn,\nhave an affect on costs, lead times, product designs and, eventually,\ninternational sales, Marty Aston nations are sending their engineers to be\ntrained in the fast Highly experienced, they return to work in toe growing Aslan\nspace industry. Mil this acquisition of technical expertise, coupled perhaps with\nthe world-renowned Japanese manufacturing and management techniques, be\napplied to build world-class satellites and reduce costs?"
+          "text": "The laws of physics ore the same to Tokyo as in Toulouse, and toe principles of electronics and mechanics know no political or cultural boundaries. However, no such immutability applies to engineering practices and management; they are -very much influenced by education, culture, and history. These factors, in turn, have an affect on costs, lead times, product designs and, eventually, international sales, Marty Aston nations are sending their engineers to be trained in the fast Highly experienced, they return to work in toe growing Aslan space industry. Mil this acquisition of technical expertise, coupled perhaps with the world-renowned Japanese manufacturing and management techniques, be applied to build world-class satellites and reduce costs?"
         }
       ],
       "questionGroups": [
@@ -819,7 +948,12 @@ export const pastPaper101Test9 = {
                   "testWord": "Paragraph A",
                   "passageWord": "ancient invention related to future space missions"
                 }
-              ]
+              ],
+              "order": 28,
+              "questionText": "Paragraph A",
+              "answer": "iv",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: Rocket technology has progressed considerably since the days of fire arrows... intended to place a Chinese astronaut in space..."
             },
             {
               "id": 29,
@@ -846,7 +980,12 @@ export const pastPaper101Test9 = {
                   "testWord": "Paragraph B",
                   "passageWord": "growth in space activities in Asia"
                 }
-              ]
+              ],
+              "order": 29,
+              "questionText": "Paragraph B",
+              "answer": "vii",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B: In the last decade there has been a dramatic growth in space activities in Asia..."
             },
             {
               "id": 30,
@@ -873,7 +1012,12 @@ export const pastPaper101Test9 = {
                   "testWord": "Paragraph C",
                   "passageWord": "innovative applications compelled by competition"
                 }
-              ]
+              ],
+              "order": 30,
+              "questionText": "Paragraph C",
+              "answer": "iii",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C discusses competition prompting novel commercial satellite services."
             },
             {
               "id": 31,
@@ -900,7 +1044,12 @@ export const pastPaper101Test9 = {
                   "testWord": "Paragraph E",
                   "passageWord": "unbalanced development in satellite capability"
                 }
-              ]
+              ],
+              "order": 31,
+              "questionText": "Paragraph E",
+              "answer": "ii",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E details asymmetrical capabilities across different Asian nations."
             },
             {
               "id": 32,
@@ -927,7 +1076,12 @@ export const pastPaper101Test9 = {
                   "testWord": "Paragraph F",
                   "passageWord": "competitive edge via economical satellites"
                 }
-              ]
+              ],
+              "order": 32,
+              "questionText": "Paragraph F",
+              "answer": "ix",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F highlights cost-effective mini-satellites giving smaller Asian states a distinct edge."
             }
           ]
         },
@@ -961,7 +1115,12 @@ export const pastPaper101Test9 = {
                   "testWord": "resolve environmental problems",
                   "passageWord": "disasters such as bush fire in Southeast Asia"
                 }
-              ]
+              ],
+              "order": 33,
+              "questionText": "Why remote-photographic technology is used to resolve environmental problems?",
+              "answer": "F",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Passage cites monitoring catastrophic bush fires in Southeast Asia using satellite imaging."
             },
             {
               "id": 34,
@@ -985,7 +1144,12 @@ export const pastPaper101Test9 = {
                   "testWord": "medicine area",
                   "passageWord": "telemedicine for unapproachable areas"
                 }
-              ]
+              ],
+              "order": 34,
+              "questionText": "Why satellites technology is used in medicine area?",
+              "answer": "B",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Passage notes telemedicine bridges distances to geographically inaccessible communities."
             },
             {
               "id": 35,
@@ -1009,7 +1173,12 @@ export const pastPaper101Test9 = {
                   "testWord": "limited for development",
                   "passageWord": "influences from social and political factors"
                 }
-              ]
+              ],
+              "order": 35,
+              "questionText": "Why Asian countries satellite technology is limited for development?",
+              "answer": "D",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Passage mentions political, economic and social hurdles constraining collaboration."
             },
             {
               "id": 36,
@@ -1033,7 +1202,12 @@ export const pastPaper101Test9 = {
                   "testWord": "agricultural area",
                   "passageWord": "helps administrate the crops"
                 }
-              ]
+              ],
+              "order": 36,
+              "questionText": "Why satellites technology is deployed in agricultural area?",
+              "answer": "A",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Passage details crop yield prediction and land management through orbital imagery."
             }
           ]
         },
@@ -1064,7 +1238,12 @@ export const pastPaper101Test9 = {
                   "testWord": "as early as 500 years ago",
                   "passageWord": "in AD 1232"
                 }
-              ]
+              ],
+              "order": 37,
+              "questionText": "Ancient China had already deployed rockets as a military purpose as early as 500 years ago.",
+              "answer": "FALSE",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...in AD 1232 at the battle of Kaifeng..."
             },
             {
               "id": 38,
@@ -1080,7 +1259,12 @@ export const pastPaper101Test9 = {
               "explanationEn": "Educational broadcasts via satellite are mentioned, but whether space technology directly enhanced Asian literacy rates is not stated.",
               "evidence": "Paragraph D mentions distance learning broadcasts without confirming literacy rate statistics.",
               "evidenceParagraphId": "D",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 38,
+              "questionText": "Space technology has enhanced literacy of Asia.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D mentions distance learning broadcasts without confirming literacy rate statistics."
             },
             {
               "id": 39,
@@ -1101,7 +1285,12 @@ export const pastPaper101Test9 = {
                   "testWord": "predict natural catastrophes surveillance",
                   "passageWord": "monitoring natural hazards and weather patterns"
                 }
-              ]
+              ],
+              "order": 39,
+              "questionText": "photos taken by satellites with certain technology help predict some natural catastrophes prevention and surveillance.",
+              "answer": "TRUE",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D notes orbital photos assist catastrophe surveillance and early warning systems."
             },
             {
               "id": 40,
@@ -1122,7 +1311,12 @@ export const pastPaper101Test9 = {
                   "testWord": "boosting factor to technology development",
                   "passageWord": "driver of technological advancement and miniaturization"
                 }
-              ]
+              ],
+              "order": 40,
+              "questionText": "commercial competition constitutes a boosting factor to Asian technology development.",
+              "answer": "TRUE",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C & F highlight commercial competition spurring rapid technological breakthroughs."
             }
           ]
         }

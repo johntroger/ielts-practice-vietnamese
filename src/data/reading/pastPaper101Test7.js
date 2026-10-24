@@ -1,9 +1,3 @@
-/**
- * 101 IELTS Reading Past Papers - Practice Test 7
- * Source: 101 IELTS Reading Past Papers with Answers (Uploaded to Cloudflare R2)
- * Full 3 Passages, 40 Questions, Official Verified Keys (Page 470), Evidence Locators & Paraphrase Maps.
- */
-
 export const pastPaper101Test7 = {
   "id": "past-paper-101-reading-test-7",
   "title": "101 Past Papers Test 7: Dinosaurs' Footprints, Cookbooks & Lessons from the Past",
@@ -98,7 +92,12 @@ export const pastPaper101Test7 = {
                   "testWord": "asteroid knock may lead to dinosaurs boom",
                   "passageWord": "similar impact brought about the dinosaurs rise"
                 }
-              ]
+              ],
+              "order": 1,
+              "questionText": "Dr Paul Olsen and his colleagues believe that asteroid knock may also lead to dinosaurs boom.",
+              "answer": "YES",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: a similar impact brought about the dinosaurs rise. That is the thesis proposed by Paul Olsen, of Columbia University..."
             },
             {
               "id": 2,
@@ -114,7 +113,12 @@ export const pastPaper101Test7 = {
               "explanationEn": "Paragraph B mentions Jurassic Park but only notes screen dinosaurs were actually from Cretaceous; whether they exaggerated the size is not given.",
               "evidence": "Paragraph B: the monsters depicted in the book and movie Jurassic Park. (Actually, though, the dinosaurs that appeared on screen were from the still more recent Cretaceous period.)",
               "evidenceParagraphId": "B",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 2,
+              "questionText": "Books and movie like Jurassic Park often exaggerate the size of the dinosaurs.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B: the monsters depicted in the book and movie Jurassic Park. (Actually, though, the dinosaurs that appeared on screen were from the still more recent Cretaceous period.)"
             },
             {
               "id": 3,
@@ -135,7 +139,12 @@ export const pastPaper101Test7 = {
                   "testWord": "more adequate",
                   "passageWord": "rare vs surprisingly abundant"
                 }
-              ]
+              ],
+              "order": 3,
+              "questionText": "Dinosaur footprints are more adequate than dinosaur skeletons.",
+              "answer": "YES",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C: Dinosaur skeletons are rare. Dinosaur footprints are, however, surprisingly abundant. And the sizes of the prints are as good an indication..."
             },
             {
               "id": 4,
@@ -151,7 +160,12 @@ export const pastPaper101Test7 = {
               "explanationEn": "Paragraph C explains prints were studied because skeletons are rare. The passage does not compare prints with the Earth magnetic field.",
               "evidence": "Paragraph C: Dr Olsen and his colleagues therefore concentrated on prints, not bones.",
               "evidenceParagraphId": "C",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 4,
+              "questionText": "The prints were chosen by Dr Olsen to study because they are more detectable than earth magnetic field to track a date of geological precise within thousands years.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C: Dr Olsen and his colleagues therefore concentrated on prints, not bones."
             },
             {
               "id": 5,
@@ -172,7 +186,12 @@ export const pastPaper101Test7 = {
                   "testWord": "offer exact information of individual species",
                   "passageWord": "cannot be matched precisely with the species"
                 }
-              ]
+              ],
+              "order": 5,
+              "questionText": "Ichnotaxa showed that footprints of dinosaurs offer exact information of the trace left by an individual species.",
+              "answer": "NO",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: These are recognisable types of footprint that cannot be matched precisely with the species of animal that made them."
             },
             {
               "id": 6,
@@ -193,7 +212,12 @@ export const pastPaper101Test7 = {
                   "testWord": "more Iridium in earth surface than meteorites",
                   "passageWord": "rare metal on Earth surface, but common in meteorites"
                 }
-              ]
+              ],
+              "order": 6,
+              "questionText": "We can find more Iridium in the earth surface than in meteorites.",
+              "answer": "NO",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: Iridium is a rare metal on Earth surface, but common in meteorites and asteroids."
             }
           ]
         },
@@ -220,7 +244,12 @@ export const pastPaper101Test7 = {
                   "testWord": "phenomenon named",
                   "passageWord": "phenomenon, known as ecological release"
                 }
-              ]
+              ],
+              "order": 7,
+              "questionText": "Dr Olsen and his colleagues applied a phenomenon named [7] to explain the large size of the Eubrontes...",
+              "answer": "ecological release",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I: This phenomenon, known as ecological release, occurs when a species is freed from competition..."
             },
             {
               "id": 8,
@@ -237,7 +266,12 @@ export const pastPaper101Test7 = {
                   "testWord": "where there are no competitors",
                   "passageWord": "wiping out the dinosaurs competitors"
                 }
-              ]
+              ],
+              "order": 8,
+              "questionText": "...which is a similar case to that nowadays reptiles invade a place where there are no [8]...",
+              "answer": "competitors",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I: ...wiping out the dinosaurs competitors and opening up ecological space..."
             },
             {
               "id": 9,
@@ -254,7 +288,12 @@ export const pastPaper101Test7 = {
                   "testWord": "regarding them as dragon",
                   "passageWord": "Komodo dragon"
                 }
-              ]
+              ],
+              "order": 9,
+              "questionText": "...for example, on an island called Komodo, indigenous huge lizards grow so big that people even regarding them as [9].",
+              "answer": "dragon",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I: A modern analogy is the Komodo dragon, which grew huge on isolated islands..."
             },
             {
               "id": 10,
@@ -271,18 +310,23 @@ export const pastPaper101Test7 = {
                   "testWord": "we have overlooked the evidence",
                   "passageWord": "crater might have been overlooked"
                 }
-              ]
+              ],
+              "order": 10,
+              "questionText": "However, there were no old impact trace being found? The answer may be that we have [10] the evidence.",
+              "answer": "overlooked",
+              "evidenceParagraph": "J",
+              "evidenceQuote": "Paragraph J: First, the crater might have been overlooked, eroded away, or misdated."
             },
             {
               "id": 11,
               "questionNumber": 11,
               "text": "Old craters are difficult to spot or it probably [11] due to the effect of the earth moving.",
               "options": [],
-              "correctAnswer": "(have) vanished",
+              "correctAnswer": "vanished",
               "acceptableAnswers": [
-                "(have) vanished",
                 "vanished",
-                "have vanished"
+                "have vanished",
+                "(have) vanished"
               ],
               "explanation": "Doan J chi ra rang cac mieng ho tren day dai duong co the da bien mat ((have) vanished).",
               "explanationEn": "Paragraph J notes seafloor craters could have vanished or been destroyed.",
@@ -293,7 +337,12 @@ export const pastPaper101Test7 = {
                   "testWord": "probably vanished due to earth moving",
                   "passageWord": "crater on seafloor that has since vanished"
                 }
-              ]
+              ],
+              "order": 11,
+              "questionText": "Old craters are difficult to spot or it probably [11] due to the effect of the earth moving.",
+              "answer": "vanished",
+              "evidenceParagraph": "J",
+              "evidenceQuote": "Paragraph J: ...an oceanic impact would have left a crater on seafloor that has since vanished or been destroyed."
             },
             {
               "id": 12,
@@ -313,7 +362,12 @@ export const pastPaper101Test7 = {
                   "testWord": "had been swallowed up",
                   "passageWord": "swallowed up by tectonic movement"
                 }
-              ]
+              ],
+              "order": 12,
+              "questionText": "Even a crater formed in Ocean had been [12] under the impact of crust movement.",
+              "answer": "swallowed up",
+              "evidenceParagraph": "J",
+              "evidenceQuote": "Paragraph J: ...subducted the crust containing the crater into the Earth mantle—in other words, swallowed up by tectonic movement."
             },
             {
               "id": 13,
@@ -330,7 +384,12 @@ export const pastPaper101Test7 = {
                   "testWord": "craters may be misdated",
                   "passageWord": "crater might have been... misdated"
                 }
-              ]
+              ],
+              "order": 13,
+              "questionText": "Beside the third hypothesis is that the potential evidences — some craters may be [13].",
+              "answer": "misdated",
+              "evidenceParagraph": "J",
+              "evidenceQuote": "Paragraph J: First, the crater might have been overlooked, eroded away, or misdated."
             }
           ]
         }
@@ -410,18 +469,23 @@ export const pastPaper101Test7 = {
                   "testWord": "makes them differ from each other",
                   "passageWord": "presentation varies wildly"
                 }
-              ]
+              ],
+              "order": 14,
+              "questionText": "There are a great number more cookery books published than is really necessary and it is their [14] which makes them differ from each other.",
+              "answer": "presentation",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: Although the recipes in one book are often similar to those in another, their presentation varies wildly..."
             },
             {
               "id": 15,
               "questionNumber": 15,
               "text": "There are such large numbers because they offer people an escape from their [15]...",
               "options": [],
-              "correctAnswer": "(daily) routine",
+              "correctAnswer": "daily routine",
               "acceptableAnswers": [
-                "(daily) routine",
+                "daily routine",
                 "routine",
-                "daily routine"
+                "(daily) routine"
               ],
               "explanation": "Doan A: Chung dem den cho moi nguoi su giai thoat khoi nhip song thuong ngay (escape from daily routine).",
               "explanationEn": "Paragraph A states cookbooks offer an escape from daily routine.",
@@ -432,7 +496,12 @@ export const pastPaper101Test7 = {
                   "testWord": "escape from their [15]",
                   "passageWord": "escape from daily routine"
                 }
-              ]
+              ],
+              "order": 15,
+              "questionText": "There are such large numbers because they offer people an escape from their [15]...",
+              "answer": "daily routine",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...they offer an escape from daily routine, a fantasy of domestic comfort..."
             },
             {
               "id": 16,
@@ -452,7 +521,12 @@ export const pastPaper101Test7 = {
                   "testWord": "inform themselves about other [16]",
                   "passageWord": "journey into distant cultures"
                 }
-              ]
+              ],
+              "order": 16,
+              "questionText": "...and some give the user the chance to inform themselves about other [16].",
+              "answer": "cultures",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...or an armchair journey into distant cultures."
             }
           ]
         },
@@ -489,7 +563,12 @@ export const pastPaper101Test7 = {
                   "testWord": "stability during unrest",
                   "passageWord": "streamlined kitchen operations and codified cuisine"
                 }
-              ]
+              ],
+              "order": 17,
+              "questionText": "cookery books providing a sense of stability during periods of unrest",
+              "answer": "E",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: Escoffier streamlined kitchen operations and created a comprehensive culinary bible..."
             },
             {
               "id": 18,
@@ -516,7 +595,12 @@ export const pastPaper101Test7 = {
                   "testWord": "recipes being altered as passed on",
                   "passageWord": "lifted recipes and observations from previous writers"
                 }
-              ]
+              ],
+              "order": 18,
+              "questionText": "details in recipes being altered as they were passed on",
+              "answer": "D",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: Beeton lifted recipes and observations from previous writers, but packaged them with household management advice..."
             },
             {
               "id": 19,
@@ -543,7 +627,12 @@ export const pastPaper101Test7 = {
                   "testWord": "knowledge in danger of disappearing",
                   "passageWord": "scientific approach made recipes reliable"
                 }
-              ]
+              ],
+              "order": 19,
+              "questionText": "knowledge which was in danger of disappearing",
+              "answer": "F",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: Farmer scientific approach made recipes reliable for home cooks without professional training."
             },
             {
               "id": 20,
@@ -565,7 +654,12 @@ export const pastPaper101Test7 = {
               "explanationEn": "Paragraph D discusses mass publishing developments leading to rampant borrowing of recipes.",
               "evidence": "Paragraph D discusses nineteenth century explosion in commercial publishing.",
               "evidenceParagraphId": "D",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 20,
+              "questionText": "the negative effect on cookery books of a new development",
+              "answer": "D",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D discusses nineteenth century explosion in commercial publishing."
             },
             {
               "id": 21,
@@ -592,7 +686,12 @@ export const pastPaper101Test7 = {
                   "testWord": "no need to be precise",
                   "passageWord": "lacking measurements, cooking times, or temperatures"
                 }
-              ]
+              ],
+              "order": 21,
+              "questionText": "a period when there was no need for cookery books to be precise",
+              "answer": "C",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C: Instructions were brief, lacking measurements, cooking times, or temperatures, because cooks were assumed to know the basics through apprenticeship."
             }
           ]
         },
@@ -625,7 +724,12 @@ export const pastPaper101Test7 = {
                   "testWord": "easy to follow despite attention to detail",
                   "passageWord": "scientific approach made recipes reliable for home cooks"
                 }
-              ]
+              ],
+              "order": 22,
+              "questionText": "Its recipes were easy to follow despite the writer attention to detail.",
+              "answer": "D",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: Farmer scientific approach made recipes reliable for home cooks without professional training."
             },
             {
               "id": 23,
@@ -648,7 +752,12 @@ export const pastPaper101Test7 = {
                   "testWord": "deliberately avoided passing on details",
                   "passageWord": "luxury manuals lacking practical kitchen instructions"
                 }
-              ]
+              ],
+              "order": 23,
+              "questionText": "Its writer may have deliberately avoided passing on details.",
+              "answer": "A",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B describes De re coquinaria as luxury manuals for wealthy patrons rather than instructional handbooks."
             },
             {
               "id": 24,
@@ -671,7 +780,12 @@ export const pastPaper101Test7 = {
                   "testWord": "appealed to ambitious ideas",
                   "passageWord": "inspired readers to dream of sophisticated cuisine"
                 }
-              ]
+              ],
+              "order": 24,
+              "questionText": "It appealed to ambitious ideas people have about cooking.",
+              "answer": "E",
+              "evidenceParagraph": "G",
+              "evidenceQuote": "Paragraph G: ...her lyrical descriptions of garlic, olive oil, and fresh herbs inspired readers to dream of sunnier climates and sophisticated cuisine."
             },
             {
               "id": 25,
@@ -694,7 +808,12 @@ export const pastPaper101Test7 = {
                   "testWord": "used ideas from other books but added additional info",
                   "passageWord": "lifted recipes from previous writers, but packaged them with household management advice"
                 }
-              ]
+              ],
+              "order": 25,
+              "questionText": "Its writer used ideas from other books but added additional related information.",
+              "answer": "B",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: Beeton lifted recipes and observations from previous writers, but packaged them with household management advice..."
             },
             {
               "id": 26,
@@ -717,7 +836,12 @@ export const pastPaper101Test7 = {
                   "testWord": "put into print ideas still respected today",
                   "passageWord": "culinary bible that chefs still revere today"
                 }
-              ]
+              ],
+              "order": 26,
+              "questionText": "It put into print ideas which are still respected today.",
+              "answer": "C",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: ...and created a comprehensive culinary bible that chefs still revere today."
             }
           ]
         }
@@ -787,7 +911,12 @@ export const pastPaper101Test7 = {
                   "testWord": "romantic appeal",
                   "passageWord": "fascination... spectacular and haunting beauty... mysteries"
                 }
-              ]
+              ],
+              "order": 27,
+              "questionText": "When the writer describes the impact of monumental ruins today, he emphasises",
+              "answer": "D",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B: The monumental ruins left behind by those past societies hold a fascination for all of us... We feel drawn to their often spectacular and haunting beauty, and also to the mysteries that they pose."
             },
             {
               "id": 28,
@@ -809,7 +938,12 @@ export const pastPaper101Test7 = {
                   "testWord": "come from a variety of disciplines",
                   "passageWord": "recent archaeology, paleoclimatology, and paleoecology"
                 }
-              ]
+              ],
+              "order": 28,
+              "questionText": "Recent findings concerning vanished civilisations",
+              "answer": "C",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C: But recent archaeology, paleoclimatology, and paleoecology have provided rigorous details."
             },
             {
               "id": 29,
@@ -831,7 +965,12 @@ export const pastPaper101Test7 = {
                   "testWord": "pace of decline was usually similar",
                   "passageWord": "follow somewhat similar courses... declined rapidly after peak"
                 }
-              ]
+              ],
+              "order": 29,
+              "questionText": "What does the writer say about ways in which former societies collapsed?",
+              "answer": "A",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: Those past collapses tended to follow somewhat similar courses constituting variations on a theme... they declined rapidly after reaching peak numbers and power..."
             }
           ]
         },
@@ -862,7 +1001,12 @@ export const pastPaper101Test7 = {
                   "testWord": "widely believed represent main danger",
                   "passageWord": "many people feel environmental problems overshadow all other threats"
                 }
-              ]
+              ],
+              "order": 30,
+              "questionText": "It is widely believed that environmental problems represent the main danger faced by the modern world.",
+              "answer": "YES",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: Today many people feel that environmental problems overshadow all the other threats to global civilisation."
             },
             {
               "id": 31,
@@ -883,7 +1027,12 @@ export const pastPaper101Test7 = {
                   "testWord": "accumulation of poisonous substances is a relatively modern problem",
                   "passageWord": "four new ones... build up of toxic chemicals in the environment"
                 }
-              ]
+              ],
+              "order": 31,
+              "questionText": "The accumulation of poisonous substances is a relatively modern problem.",
+              "answer": "YES",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: These environmental problems include the same eight that undermined past societies, plus four new ones: human-caused climate change, build up of toxic chemicals..."
             },
             {
               "id": 32,
@@ -904,7 +1053,12 @@ export const pastPaper101Test7 = {
                   "testWord": "general agreement",
                   "passageWord": "vigorously debated"
                 }
-              ]
+              ],
+              "order": 32,
+              "questionText": "There is general agreement that the threats posed by environmental problems are very serious.",
+              "answer": "NO",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: But the seriousness of these current environmental problems is vigorously debated. Are the risks greatly exaggerated, or conversely are they underestimated?"
             },
             {
               "id": 33,
@@ -920,7 +1074,12 @@ export const pastPaper101Test7 = {
               "explanationEn": "The passage compares modern society collectively to past societies; it does not rank which past societies resembled us more closely.",
               "evidence": "Paragraph F discusses general differences and similarities between modern society and past civilisations.",
               "evidenceParagraphId": "F",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 33,
+              "questionText": "Some past societies resembled present-day societies more closely than others.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F discusses general differences and similarities between modern society and past civilisations."
             },
             {
               "id": 34,
@@ -941,7 +1100,12 @@ export const pastPaper101Test7 = {
                   "testWord": "should be careful when drawing comparisons",
                   "passageWord": "should not be so naive... think carefully about its lessons"
                 }
-              ]
+              ],
+              "order": 34,
+              "questionText": "We should be careful when drawing comparisons between past and present.",
+              "answer": "YES",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: We should not be so naive as to think that study of the past will yield simple solutions, directly transferable to our societies today... only if we think carefully about its lessons."
             }
           ]
         },
@@ -979,7 +1143,12 @@ export const pastPaper101Test7 = {
                   "testWord": "physical structures",
                   "passageWord": "monumental ruins"
                 }
-              ]
+              ],
+              "order": 35,
+              "questionText": "Evidence of the greatness of some former civilisations",
+              "answer": "C",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph A & B: ...leaving behind monumental ruins... The scales of the ruins testify to the former wealth and power of their builders..."
             },
             {
               "id": 36,
@@ -1003,7 +1172,12 @@ export const pastPaper101Test7 = {
                   "testWord": "is not necessarily valid",
                   "passageWord": "metaphor proves erroneous"
                 }
-              ]
+              ],
+              "order": 36,
+              "questionText": "The parallel between an individual life and the life of a society",
+              "answer": "A",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D: Writers find it tempting to draw analogies between the course of human societies and the course of individual human lives... But that metaphor proves erroneous for many past societies..."
             },
             {
               "id": 37,
@@ -1027,7 +1201,12 @@ export const pastPaper101Test7 = {
                   "testWord": "number of environmental problems is greater now",
                   "passageWord": "same eight... plus four new ones"
                 }
-              ]
+              ],
+              "order": 37,
+              "questionText": "The number of environmental problems that societies face",
+              "answer": "F",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: These environmental problems include the same eight that undermined past societies, plus four new ones..."
             },
             {
               "id": 38,
@@ -1051,7 +1230,12 @@ export const pastPaper101Test7 = {
                   "testWord": "provides grounds for an optimistic outlook",
                   "passageWord": "powerful technology (ie its beneficial effects)"
                 }
-              ]
+              ],
+              "order": 38,
+              "questionText": "The power of technology",
+              "answer": "B",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: ...some of those respects often mentioned include our powerful technology (ie its beneficial effects)..."
             },
             {
               "id": 39,
@@ -1075,7 +1259,12 @@ export const pastPaper101Test7 = {
                   "testWord": "will not provide direct solution",
                   "passageWord": "will not yield simple solutions, directly transferable"
                 }
-              ]
+              ],
+              "order": 39,
+              "questionText": "A consideration of historical events and trends",
+              "answer": "E",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: We should not be so naive as to think that study of the past will yield simple solutions, directly transferable to our societies today."
             }
           ]
         },
@@ -1107,7 +1296,12 @@ export const pastPaper101Test7 = {
                   "testWord": "differences as well as similarities",
                   "passageWord": "practical lessons... but there are also differences between modern world and past societies"
                 }
-              ]
+              ],
+              "order": 40,
+              "questionText": "What is the main argument of Reading Passage 3?",
+              "answer": "A",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F: Perhaps there are practical lessons that we could learn from all those past collapses. But there are also differences between the modern world and its problems, and those past societies and their problems."
             }
           ]
         }

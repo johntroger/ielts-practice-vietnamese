@@ -1,7 +1,7 @@
 export const cambridge8Test3 = {
   "id": "cambridge-8-test-3",
-  "title": "Cambridge Practice Test 8 - Test 3: Short-Term Rentals & Urban Arts Centre",
-  "description": "Đề thi chính thức Cambridge 8 Test 3: Thuê căn hộ ngắn hạn, Giới thiệu Trung tâm Văn hóa Nghệ thuật, Dự án nghiên cứu hành vi tiêu dùng năng lượng và Động vật hoang dã thích nghi đô thị.",
+  "title": "Cambridge Practice Test 8 - Test 3: Short-Term Rentals & National Arts Centre",
+  "description": "Đề thi chính thức Cambridge 8 Test 3: Thuê căn hộ ngắn hạn, Giới thiệu Trung tâm Nghệ thuật Quốc gia, Thảo luận chương trình Nghiên cứu Mỹ Latinh và Bài giảng Quản trị nhân bản thành công.",
   "totalQuestions": 40,
   "timeLimitMinutes": 32,
   "isPublic": true,
@@ -441,19 +441,19 @@ export const cambridge8Test3 = {
     },
     {
       "partNumber": 3,
-      "title": "Part 3: Marketing Research Project on Household Energy",
-      "context": "Two undergraduate business students, Jack and Katie, discussing their survey methodology on domestic energy conservation habits.",
+      "title": "Part 3: Latin American Studies Course Consultation",
+      "context": "A university student, Paul, talking to his tutor about his recent work experience in South America and selecting modules for his Latin American Studies course.",
       "audioTimestampStart": 731,
       "audioTimestampEnd": 1170,
       "speakers": [
         {
-          "name": "Jack",
-          "gender": "Male",
+          "name": "Tutor",
+          "gender": "Female",
           "accent": "British"
         },
         {
-          "name": "Katie",
-          "gender": "Female",
+          "name": "Paul",
+          "gender": "Male",
           "accent": "British"
         }
       ],
@@ -461,25 +461,25 @@ export const cambridge8Test3 = {
         {
           "id": "c8-t3-qg5",
           "type": "multiple_choice",
-          "title": "Questions 21–30",
+          "title": "Questions 21–26",
           "instruction": "Choose the correct letter, A, B or C.",
           "questions": [
             {
               "id": 21,
               "order": 21,
-              "questionText": "Jack and Katie chose domestic energy usage because",
+              "questionText": "Paul decided to get work experience in South America because he wanted",
               "options": [
                 {
                   "key": "A",
-                  "text": "it had not been studied previously"
+                  "text": "to teach English there"
                 },
                 {
                   "key": "B",
-                  "text": "their tutor assigned the topic to them"
+                  "text": "to improve his Spanish"
                 },
                 {
                   "key": "C",
-                  "text": "it is currently a prominent public issue"
+                  "text": "to learn about Latin American life"
                 }
               ],
               "answer": "C",
@@ -487,26 +487,26 @@ export const cambridge8Test3 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Energy prices and home insulation are dominating headline news every single day.",
+              "evidenceQuote": "My main motivation was to gain first-hand insight into contemporary Latin American life and communities.",
               "evidenceTimestamp": 765,
-              "explanation": "Họ chọn chủ đề năng lượng gia đình vì đây là vấn đề xã hội đang rất được quan tâm (prominent public issue)."
+              "explanation": "Paul quyết định đi thực tập tại Nam Mỹ vì muốn tìm hiểu trực tiếp về đời sống văn hóa xã hội Mỹ Latinh."
             },
             {
               "id": 22,
               "order": 22,
-              "questionText": "What surprised Katie about their initial survey responses?",
+              "questionText": "What project work did Paul originally intend to get involved in?",
               "options": [
                 {
                   "key": "A",
-                  "text": "The low percentage of completed forms"
+                  "text": "construction"
                 },
                 {
                   "key": "B",
-                  "text": "How many elderly people participated"
+                  "text": "agriculture"
                 },
                 {
                   "key": "C",
-                  "text": "The gap between reported concern and actual habits"
+                  "text": "tourism"
                 }
               ],
               "answer": "C",
@@ -514,26 +514,26 @@ export const cambridge8Test3 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "People profess deep concern about carbon footprints, yet their thermostat settings reveal zero effort to cut waste.",
+              "evidenceQuote": "Before flying out, I had signed up to work with an eco-tourism cooperative.",
               "evidenceTimestamp": 810,
-              "explanation": "Katie bất ngờ vì sự chênh lệch lớn giữa việc thể hiện lo lắng môi trường và hành động thực tế lãng phí."
+              "explanation": "Ban đầu Paul dự định tham gia vào dự án du lịch (tourism)."
             },
             {
               "id": 23,
               "order": 23,
-              "questionText": "Why did they reject telephone interviews as a research method?",
+              "questionText": "Why did Paul change from one project to another?",
               "options": [
                 {
                   "key": "A",
-                  "text": "People were unwilling to discuss financial bills over the phone"
+                  "text": "His first job was not well organised"
                 },
                 {
                   "key": "B",
-                  "text": "Call charges exceeded their small student project budget"
+                  "text": "He found doing the routine work very boring"
                 },
                 {
                   "key": "C",
-                  "text": "It took too much time to schedule call times"
+                  "text": "The work was too physically demanding"
                 }
               ],
               "answer": "A",
@@ -541,26 +541,26 @@ export const cambridge8Test3 = {
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Householders proved extremely guarded and suspicious when asked about exact utility bill amounts by phone.",
+              "evidenceQuote": "The initial placement turned out to be chaotic and poorly organised, so I transferred to a village development scheme.",
               "evidenceTimestamp": 855,
-              "explanation": "Mọi người e dè, không sẵn sàng tiết lộ chi tiết hóa đơn tiền điện qua điện thoại."
+              "explanation": "Paul chuyển dự án vì công việc đầu tiên thiếu tính tổ chức (not well organised)."
             },
             {
               "id": 24,
               "order": 24,
-              "questionText": "What adjustment did they make to their written questionnaire?",
+              "questionText": "In the village community, he learnt how important it was to",
               "options": [
                 {
                   "key": "A",
-                  "text": "They shortened it to a single page"
+                  "text": "respect family life"
                 },
                 {
                   "key": "B",
-                  "text": "They rephrased technical jargon into plain language"
+                  "text": "develop trust"
                 },
                 {
                   "key": "C",
-                  "text": "They added multiple-choice checkboxes"
+                  "text": "use money wisely"
                 }
               ],
               "answer": "B",
@@ -568,26 +568,26 @@ export const cambridge8Test3 = {
                 "B",
                 "b"
               ],
-              "evidenceQuote": "We replaced thermal conductivity terminology with everyday layman phrases so respondents could understand.",
+              "evidenceQuote": "Working alongside the villagers taught me that you have to build mutual trust before proposing any changes.",
               "evidenceTimestamp": 895,
-              "explanation": "Họ diễn đạt lại các thuật ngữ kỹ thuật phức tạp thành ngôn ngữ bình dân dễ hiểu."
+              "explanation": "Tại cộng đồng địa phương, bài học quan trọng nhất là phải xây dựng lòng tin (develop trust)."
             },
             {
               "id": 25,
               "order": 25,
-              "questionText": "Regarding smart meters, the survey revealed that most respondents",
+              "questionText": "What does Paul say about his project manager?",
               "options": [
                 {
                   "key": "A",
-                  "text": "refused to have them installed"
+                  "text": "He let Paul give most of the ideas"
                 },
                 {
                   "key": "B",
-                  "text": "checked the real-time display constantly"
+                  "text": "He had ambitious plans for the project"
                 },
                 {
                   "key": "C",
-                  "text": "ignored the display after the initial novelty wore off"
+                  "text": "He was very supportive of Paul"
                 }
               ],
               "answer": "C",
@@ -595,26 +595,26 @@ export const cambridge8Test3 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "After three weeks of novelty, almost all householders completely stopped glancing at the monitor.",
+              "evidenceQuote": "The local project director was tremendously supportive and encouraged me throughout the placement.",
               "evidenceTimestamp": 940,
-              "explanation": "Sau vài tuần đầu tò mò, hầu hết mọi người không còn để ý đến màn hình công tơ thông minh nữa."
+              "explanation": "Người quản lý dự án rất nhiệt tình hỗ trợ Paul (very supportive of Paul)."
             },
             {
               "id": 26,
               "order": 26,
-              "questionText": "What demographic group proved most receptive to changing energy habits?",
+              "questionText": "Paul was surprised to be given",
               "options": [
                 {
                   "key": "A",
-                  "text": "Families with young school-age children"
+                  "text": "a computer to use"
                 },
                 {
                   "key": "B",
-                  "text": "Single university students"
+                  "text": "so little money to live on"
                 },
                 {
                   "key": "C",
-                  "text": "Retired homeowners"
+                  "text": "an extension to his contract"
                 }
               ],
               "answer": "A",
@@ -622,146 +622,120 @@ export const cambridge8Test3 = {
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Families where children learned eco-habits at primary school were by far the readiest to alter thermostat levels.",
+              "evidenceQuote": "I was amazed when they handed me my own laptop computer to log the village survey records.",
               "evidenceTimestamp": 985,
-              "explanation": "Các gia đình có con nhỏ học tiểu học tiếp thu và thay đổi thói quen tiết kiệm năng lượng tốt nhất."
+              "explanation": "Paul rất ngạc nhiên khi được cấp một chiếc máy tính để sử dụng (a computer to use)."
+            }
+          ]
+        },
+        {
+          "id": "c8-t3-qg5b",
+          "type": "matching",
+          "title": "Questions 27–30",
+          "instruction": "What does Paul decide about each of the following modules?\nWrite the correct letter, A, B or C, next to questions 27–30.",
+          "options": [
+            {
+              "key": "A",
+              "text": "He will do this"
             },
+            {
+              "key": "B",
+              "text": "He might do this"
+            },
+            {
+              "key": "C",
+              "text": "He won't do this"
+            }
+          ],
+          "questions": [
             {
               "id": 27,
               "order": 27,
-              "questionText": "What was the main criticism from their university supervisor?",
-              "options": [
-                {
-                  "key": "A",
-                  "text": "Their statistical test was flawed"
-                },
-                {
-                  "key": "B",
-                  "text": "Their research question was overly broad"
-                },
-                {
-                  "key": "C",
-                  "text": "Their sample size was concentrated in one wealthy suburb"
-                }
-              ],
+              "questionText": "Gender Studies in Latin America: ................",
+              "prefixText": "Gender Studies in Latin America:",
+              "suffixText": "",
               "answer": "C",
               "acceptableAnswers": [
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Dr Evans noted that 80% of our respondents resided in high-income neighborhoods, skewing our conclusions.",
+              "evidenceQuote": "I think I will rule out Gender Studies in Latin America as it overlaps too much with last year.",
               "evidenceTimestamp": 1030,
-              "explanation": "Giáo viên hướng dẫn phê bình vì mẫu khảo sát bị lệch, tập trung chủ yếu ở một khu dân cư khá giả."
+              "explanation": "Paul quyết định sẽ không học học phần Gender Studies (C)."
             },
             {
               "id": 28,
               "order": 28,
-              "questionText": "How do Jack and Katie plan to re-balance their sample?",
-              "options": [
-                {
-                  "key": "A",
-                  "text": "By distributing surveys outside suburban supermarkets"
-                },
-                {
-                  "key": "B",
-                  "text": "By emailing local social housing tenants"
-                },
-                {
-                  "key": "C",
-                  "text": "By hiring professional pollsters"
-                }
-              ],
+              "questionText": "Second Language Acquisition: ................",
+              "prefixText": "Second Language Acquisition:",
+              "suffixText": "",
               "answer": "A",
               "acceptableAnswers": [
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Standing outside two suburban supermarkets on Saturday will yield a far broader socioeconomic cross-section.",
+              "evidenceQuote": "Second Language Acquisition is definitely one I will sign up for.",
               "evidenceTimestamp": 1075,
-              "explanation": "Họ lên kế hoạch phát phiếu khảo sát bên ngoài các siêu thị ngoại ô để đa dạng đối tượng."
+              "explanation": "Paul chắc chắn sẽ đăng ký học phần Second Language Acquisition (A)."
             },
             {
               "id": 29,
               "order": 29,
-              "questionText": "What visual format will they use for their conference poster presentation?",
-              "options": [
-                {
-                  "key": "A",
-                  "text": "Pie charts showing expenditure"
-                },
-                {
-                  "key": "B",
-                  "text": "Comparative bar graphs highlighting behavioral changes"
-                },
-                {
-                  "key": "C",
-                  "text": "Infographic flowchart of energy flow"
-                }
-              ],
+              "questionText": "Indigenous Women's Lives: ................",
+              "prefixText": "Indigenous Women's Lives:",
+              "suffixText": "",
               "answer": "B",
               "acceptableAnswers": [
                 "B",
                 "b"
               ],
-              "evidenceQuote": "Color-coded comparative bar charts will make our behavioral contrast instantly readable from a distance.",
+              "evidenceQuote": "I might take Indigenous Women's Lives depending on the seminar timetable.",
               "evidenceTimestamp": 1120,
-              "explanation": "Họ sử dụng biểu đồ cột so sánh (comparative bar graphs) cho poster thuyết trình."
+              "explanation": "Paul có thể sẽ chọn học phần Indigenous Women's Lives (B)."
             },
             {
               "id": 30,
               "order": 30,
-              "questionText": "What is their ultimate conclusion regarding energy conservation campaigns?",
-              "options": [
-                {
-                  "key": "A",
-                  "text": "Direct subsidies on equipment are the only effective tool"
-                },
-                {
-                  "key": "B",
-                  "text": "Carbon taxes work better than education"
-                },
-                {
-                  "key": "C",
-                  "text": "Financial saving messages motivate people more than green altruism"
-                }
-              ],
+              "questionText": "Portuguese Language Studies: ................",
+              "prefixText": "Portuguese Language Studies:",
+              "suffixText": "",
               "answer": "C",
               "acceptableAnswers": [
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Emphasizing hard cash savings in your wallet drives action ten times more effectively than abstract environmental appeals.",
+              "evidenceQuote": "Starting Portuguese from scratch now would be too demanding, so I won't take that module.",
               "evidenceTimestamp": 1160,
-              "explanation": "Thông điệp tiết kiệm tiền mặt thúc đẩy con người hành động hiệu quả hơn nhiều so với việc kêu gọi bảo vệ môi trường chung chung."
+              "explanation": "Paul quyết định không học môn tiếng Bồ Đào Nha (C)."
             }
           ]
         }
       ],
       "transcripts": [
         {
-          "speaker": "Jack",
+          "speaker": "Tutor",
           "timestamp": 740,
-          "text": "Katie, let us synthesize our domestic energy survey data before tomorrow’s tutorial.",
-          "translation": "Katie, chúng ta hãy tổng hợp dữ liệu khảo sát năng lượng gia đình trước buổi học ngày mai."
+          "text": "Welcome back, Paul. How was your placement in South America, and which modules are you choosing for this semester?",
+          "translation": "Chào mừng trở lại, Paul. Kỳ thực tập ở Nam Mỹ của em thế nào, và em định chọn những học phần nào cho kỳ này?"
         },
         {
-          "speaker": "Katie",
-          "timestamp": 810,
-          "text": "I was genuinely startled by the contradiction between people’s green attitudes and their actual heating usage.",
-          "translation": "Tôi thực sự giật mình trước sự mâu thuẫn giữa thái độ sống xanh và mức tiêu thụ điện sưởi thực tế."
+          "speaker": "Paul",
+          "timestamp": 855,
+          "text": "The tourism project wasn't well organised, so I moved to a village community project where building trust was vital.",
+          "translation": "Dự án du lịch được tổ chức chưa tốt nên em đã chuyển sang dự án cộng đồng làng xã, nơi việc xây dựng lòng tin là tối quan trọng."
         }
       ]
     },
     {
       "partNumber": 4,
-      "title": "Part 4: Wildlife in City Environments & Urban Adaptation",
-      "context": "A biology lecture discussing the evolutionary adaptations of wild animals colonizing global urban centers.",
+      "title": "Part 4: Trying to Repeat Success in Business",
+      "context": "A business management lecture analyzing why companies struggle to replicate successful operational processes across branches.",
       "audioTimestampStart": 1171,
       "audioTimestampEnd": 1720,
       "speakers": [
         {
-          "name": "Biologist",
-          "gender": "Female",
+          "name": "Lecturer",
+          "gender": "Male",
           "accent": "British"
         }
       ],
@@ -775,19 +749,19 @@ export const cambridge8Test3 = {
             {
               "id": 31,
               "order": 31,
-              "questionText": "Urban foxes in British cities have adapted by",
+              "questionText": "Compared to introducing new business processes, attempts to copy existing processes are",
               "options": [
                 {
                   "key": "A",
-                  "text": "growing smaller paws for concrete pavements"
+                  "text": "more attractive"
                 },
                 {
                   "key": "B",
-                  "text": "adjusting their foraging schedules to avoid human commuter peaks"
+                  "text": "more frequent"
                 },
                 {
                   "key": "C",
-                  "text": "hunting domestic pets"
+                  "text": "more straightforward"
                 }
               ],
               "answer": "B",
@@ -795,203 +769,202 @@ export const cambridge8Test3 = {
                 "B",
                 "b"
               ],
-              "evidenceQuote": "Telemetry tracking reveals metropolitan foxes shift nocturnal activity patterns to emerge only after evening rush hour subsides.",
+              "evidenceQuote": "In corporate life, efforts to replicate an existing successful process occur far more frequently than inventing brand-new ones.",
               "evidenceTimestamp": 1220,
-              "explanation": "Cáo đô thị thích nghi bằng cách điều chỉnh giờ đi kiếm ăn để tránh giờ cao điểm của con người."
+              "explanation": "So với việc đưa ra quy trình mới, nỗ lực sao chép các quy trình thành công có sẵn diễn ra thường xuyên hơn (more frequent)."
             },
             {
               "id": 32,
               "order": 32,
-              "questionText": "Why do urban birds sing at a higher pitch than rural birds?",
+              "questionText": "Most research into the repetition of success in business has",
               "options": [
                 {
                   "key": "A",
-                  "text": "To attract mates over greater distances"
+                  "text": "been done outside the United States"
                 },
                 {
                   "key": "B",
-                  "text": "To cut through low-frequency city traffic rumble"
+                  "text": "produced consistent findings"
                 },
                 {
                   "key": "C",
-                  "text": "Due to vocal strain caused by smog"
+                  "text": "related to only a few contexts"
                 }
               ],
-              "answer": "B",
+              "answer": "C",
               "acceptableAnswers": [
-                "B",
-                "b"
+                "C",
+                "c"
               ],
-              "evidenceQuote": "Great tits elevate their vocal acoustic pitch specifically to avoid being drowned out by deep low-frequency traffic rumble.",
+              "evidenceQuote": "Academic studies on replicating business success have largely been confined to a very narrow range of industry contexts.",
               "evidenceTimestamp": 1280,
-              "explanation": "Chim thành phố hót ở cao độ cao hơn để tiếng hót không bị lấn át bởi tiếng ầm ầm trầm của xe cộ."
+              "explanation": "Hầu hết các nghiên cứu mới chỉ giới hạn trong một vài bối cảnh ngành nghề nhất định (related to only a few contexts)."
             },
             {
               "id": 33,
               "order": 33,
-              "questionText": "Peregrine falcons thrive on modern skyscrapers because",
+              "questionText": "What does the speaker say about consulting experts?",
               "options": [
                 {
                   "key": "A",
-                  "text": "there are no natural predators"
+                  "text": "Too few managers ever do it"
                 },
                 {
                   "key": "B",
-                  "text": "glass balconies resemble their natural cliff ledge nesting habitats"
+                  "text": "It can be useful in certain circumstances"
                 },
                 {
                   "key": "C",
-                  "text": "air currents are warmer near glass facades"
+                  "text": "Experts are sometimes unwilling to give advice"
                 }
               ],
-              "answer": "B",
+              "answer": "C",
               "acceptableAnswers": [
-                "B",
-                "b"
+                "C",
+                "c"
               ],
-              "evidenceQuote": "Tall masonry and steel skyscrapers provide an uncanny structural facsimile of sheer ocean cliff ledges.",
+              "evidenceQuote": "Internal specialists who pioneered the original system are often reluctant or unwilling to share their hard-won expertise.",
               "evidenceTimestamp": 1335,
-              "explanation": "Các tòa nhà cao tầng tạo ra địa hình mô phỏng vách đá ven biển tự nhiên nơi chim cắt quen làm tổ."
+              "explanation": "Các chuyên gia đôi khi không sẵn lòng chia sẻ kinh nghiệm hoặc lời khuyên (unwilling to give advice)."
             },
             {
               "id": 34,
               "order": 34,
-              "questionText": "What evolutionary change has been observed in urban white-footed mice?",
+              "questionText": "An employer wants to copy a successful process from one branch to another. What should they do?",
               "options": [
                 {
                   "key": "A",
-                  "text": "Genetic tolerance to heavy metals and dietary fats"
+                  "text": "reward the workers for good results"
                 },
                 {
                   "key": "B",
-                  "text": "Longer tails for climbing brick walls"
+                  "text": "encourage competition between branches"
                 },
                 {
                   "key": "C",
-                  "text": "Enhanced night vision"
+                  "text": "pick staff from the original branch"
                 }
               ],
-              "answer": "A",
+              "answer": "C",
               "acceptableAnswers": [
-                "A",
-                "a"
+                "C",
+                "c"
               ],
-              "evidenceQuote": "Genomic sequencing shows urban mice rapidly evolved hepatic genes tolerating high cholesterol junk food and heavy metal contaminants.",
+              "evidenceQuote": "The most effective strategy is to transfer experienced personnel directly from the original branch to seed the new team.",
               "evidenceTimestamp": 1395,
-              "explanation": "Chuột chân trắng thành phố biến đổi gen để gan thích nghi với đồ ăn nhiều dầu mỡ và kim loại nặng."
+              "explanation": "Nhà tuyển dụng nên điều chuyển nhân sự từ chi nhánh gốc sang (pick staff from the original branch)."
             }
           ]
         },
         {
           "id": "c8-t3-qg7",
-          "type": "summary_completion",
+          "type": "note_completion",
           "title": "Questions 35–40",
-          "instruction": "Complete the summary below.\nWrite ONE WORD ONLY for each answer.",
-          "headerTitle": "URBAN CO-EXISTENCE & PLANNING",
+          "instruction": "Complete the notes below.\nWrite ONE WORD ONLY for each answer.",
+          "headerTitle": "REPLICATING BUSINESS SUCCESS",
           "questions": [
             {
               "id": 35,
               "order": 35,
-              "questionText": "Town planners should view nature and infrastructure as an integrated ................",
-              "prefixText": "Town planners should view nature and infrastructure as an integrated",
-              "suffixText": "",
+              "questionText": "Success frequently results from a complex ................ of factors.",
+              "prefixText": "Success frequently results from a complex",
+              "suffixText": "of factors.",
               "answer": "combination",
               "acceptableAnswers": [
-                "combination",
-                "system"
+                "combination"
               ],
-              "evidenceQuote": "Modern architects must treat urban flora and human engineering as an integrated combination rather than opposing forces.",
+              "evidenceQuote": "High performance typically stems from a subtle, complex combination of interlocking factors.",
               "evidenceTimestamp": 1450,
-              "explanation": "Quy hoạch đô thị cần xem thiên nhiên và hạ tầng như một sự kết hợp (combination / system) hài hòa."
+              "explanation": "Thành công thường là kết quả của một sự kết hợp (combination) phức tạp của nhiều yếu tố."
             },
             {
               "id": 36,
               "order": 36,
-              "questionText": "Green corridors provide wildlife with pathways of physical ................",
-              "prefixText": "Green corridors provide wildlife with pathways of physical",
+              "questionText": "Rushing the replication process can compromise workplace ................",
+              "prefixText": "Rushing the replication process can compromise workplace",
               "suffixText": "",
               "answer": "safety",
               "acceptableAnswers": [
                 "safety"
               ],
-              "evidenceQuote": "Vegetated wildlife corridors grant dispersing animals essential safety from speeding road vehicles.",
+              "evidenceQuote": "When managers rush to copy output targets without proper training, operational safety is often compromised.",
               "evidenceTimestamp": 1510,
-              "explanation": "Hành lang xanh mang lại sự an toàn (safety) cho động vật hoang dã."
+              "explanation": "Việc sao chép vội vàng có thể gây nguy hại cho sự an toàn (safety) tại nơi làm việc."
             },
             {
               "id": 37,
               "order": 37,
-              "questionText": "Public awareness campaigns are vital to alter human ................ towards predators.",
-              "prefixText": "Public awareness campaigns are vital to alter human",
-              "suffixText": "towards predators.",
-              "answer": "attitudes",
+              "questionText": "Failure often occurs due to the wrong ................ among staff.",
+              "prefixText": "Failure often occurs due to the wrong",
+              "suffixText": "among staff.",
+              "answer": "attitude",
               "acceptableAnswers": [
-                "attitudes",
-                "attitude"
+                "attitude",
+                "attitudes"
               ],
-              "evidenceQuote": "Educational outreach is indispensable for shifting stubborn human attitudes away from fear toward respectful coexistence.",
+              "evidenceQuote": "Replication fails when transferred managers display an arrogant attitude toward local staff.",
               "evidenceTimestamp": 1565,
-              "explanation": "Cần tuyên truyền để thay đổi thái độ (attitudes) của con người đối với thú ăn thịt."
+              "explanation": "Thất bại thường xảy ra do thái độ (attitude) không phù hợp của đội ngũ nhân sự."
             },
             {
               "id": 38,
               "order": 38,
-              "questionText": "Municipalities must introduce stricter environmental ................ on pest poisons.",
-              "prefixText": "Municipalities must introduce stricter environmental",
-              "suffixText": "on pest poisons.",
-              "answer": "controls",
+              "questionText": "Managers may lack sufficient ................ over local market conditions.",
+              "prefixText": "Managers may lack sufficient",
+              "suffixText": "over local market conditions.",
+              "answer": "control",
               "acceptableAnswers": [
-                "controls",
-                "control"
+                "control",
+                "controls"
               ],
-              "evidenceQuote": "City councils must implement tight regulatory controls on rodenticide poisons that accumulate up the food chain.",
+              "evidenceQuote": "Executives frequently overestimate how much control they exercise over external local conditions.",
               "evidenceTimestamp": 1615,
-              "explanation": "Chính quyền thành phố cần ban hành các biện pháp kiểm soát (controls) chặt chẽ hơn đối với thuốc diệt chuột."
+              "explanation": "Các nhà quản lý có thể thiếu khả năng kiểm soát (control) đối với điều kiện địa phương."
             },
             {
               "id": 39,
               "order": 39,
-              "questionText": "Brownfield redevelopments should preserve obsolete ................ chimneys for bird roosting.",
-              "prefixText": "Brownfield redevelopments should preserve obsolete",
-              "suffixText": "chimneys for bird roosting.",
+              "questionText": "Mistakes are common when opening a duplicate ................ in a new region.",
+              "prefixText": "Mistakes are common when opening a duplicate",
+              "suffixText": "in a new region.",
               "answer": "factory",
               "acceptableAnswers": [
                 "factory",
                 "factories"
               ],
-              "evidenceQuote": "Decommissioned industrial sites should retain towering brick factory chimneys where swifts and bats roost.",
+              "evidenceQuote": "For instance, building an identical factory in another country without adapting to local suppliers invites costly delays.",
               "evidenceTimestamp": 1665,
-              "explanation": "Giữ lại các ống khói nhà máy (factory chimneys) cũ làm nơi trú ngụ cho chim và dơi."
+              "explanation": "Sai lầm thường gặp khi mở một nhà máy (factory) bản sao ở khu vực mới."
             },
             {
               "id": 40,
               "order": 40,
-              "questionText": "Living near biodiversity enhances human cognitive ................ and wellbeing.",
-              "prefixText": "Living near biodiversity enhances human cognitive",
-              "suffixText": "and wellbeing.",
+              "questionText": "Over-reliance on templates can erode workers' original ................",
+              "prefixText": "Over-reliance on templates can erode workers' original",
+              "suffixText": "",
               "answer": "skills",
               "acceptableAnswers": [
                 "skills"
               ],
-              "evidenceQuote": "Psychological research proves exposure to urban wildlife sharpens children’s attention spans and perceptual cognitive skills.",
+              "evidenceQuote": "Blindly copying rigid manuals can deskill the workforce and erode their problem-solving skills.",
               "evidenceTimestamp": 1705,
-              "explanation": "Tiếp xúc với thiên nhiên đa dạng sinh học giúp nâng cao kỹ năng (skills) nhận thức và sức khỏe tâm lý của con người."
+              "explanation": "Sự phụ thuộc quá mức vào khuôn mẫu có thể làm mai một các kỹ năng (skills) ban đầu của người lao động."
             }
           ]
         }
       ],
       "transcripts": [
         {
-          "speaker": "Biologist",
+          "speaker": "Lecturer",
           "timestamp": 1180,
-          "text": "Good morning. We usually envision modern metropolises as concrete deserts hostile to animal life.",
-          "translation": "Chào buổi sáng. Chúng ta thường hình dung các siêu đô thị hiện đại như sa mạc bê tông khắc nghiệt với động vật."
+          "text": "Good morning. Today we examine why organisations find it so difficult to repeat success from one division to another.",
+          "translation": "Chào buổi sáng. Hôm nay chúng ta phân tích lý do tại sao các tổ chức gặp nhiều khó khăn khi nhân bản thành công từ bộ phận này sang bộ phận khác."
         },
         {
-          "speaker": "Biologist",
-          "timestamp": 1280,
-          "text": "Birds raise the frequency of their song to ensure acoustic transmission through urban din.",
-          "translation": "Loài chim tăng tần số tiếng hót để đảm bảo âm thanh truyền đi qua tiếng ồn đô thị."
+          "speaker": "Lecturer",
+          "timestamp": 1450,
+          "text": "Success is rarely a single magic bullet; rather, it arises from a complex combination of staff attitude, local control, and core skills.",
+          "translation": "Thành công hiếm khi đến từ một yếu tố đơn lẻ mà bắt nguồn từ sự kết hợp phức tạp giữa thái độ nhân viên, khả năng kiểm soát và kỹ năng cốt lõi."
         }
       ]
     }

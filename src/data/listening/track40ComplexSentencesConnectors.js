@@ -38,9 +38,9 @@ export const track40ComplexSentencesConnectors = {
         }
       ],
       "transcript": "[00:00] Track 40.\n[00:02] One. I boarded a plane to Paris, which was rather exciting as I'd never done that before.\n[00:10] Two. Since I come from China, it took a long time to arrive, but when I got there, the first thing I did was go to the Louvre Museum.\n[00:22] Three. I had trouble ordering food, because I don't speak any French.",
-      "instruction": "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
-      "instructionEn": "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
-      "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ từ bài nghe.",
+      "instruction": "Complete the sentences below. Write NO MORE THAN THREE WORDS for each answer.",
+      "instructionEn": "Complete the sentences below. Write NO MORE THAN THREE WORDS for each answer.",
+      "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ BA TỪ từ bài nghe.",
       "questionGroups": [
         {
           "id": "qg-t40-p1",
@@ -52,9 +52,9 @@ export const track40ComplexSentencesConnectors = {
           "groupTitle": "Questions 1–5: Core Discourse Connectors Completion",
           "groupTitleEn": "Questions 1–5: Core Discourse Connectors Completion",
           "groupTitleVi": "Câu 1–5: Hoàn thành liên từ lập luận then chốt",
-          "instruction": "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
-          "instructionEn": "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
-          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ từ bài nghe.",
+          "instruction": "Complete the sentences below. Write NO MORE THAN THREE WORDS for each answer.",
+          "instructionEn": "Complete the sentences below. Write NO MORE THAN THREE WORDS for each answer.",
+          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ BA TỪ từ bài nghe.",
           "questions": [
             {
               "id": "t40-q1",

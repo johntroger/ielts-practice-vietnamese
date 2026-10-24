@@ -1,7 +1,7 @@
 export const cambridge8Test2 = {
   "id": "cambridge-8-test-2",
   "title": "Cambridge Practice Test 8 - Test 2: Moving Company & Honey Bees Survey",
-  "description": "Đề thi chính thức Cambridge 8 Test 2: Báo cáo bảo hiểm hàng chuyển nhà, Nông trại sinh thái Red Valley, Dự án nghiên cứu ong mật châu Á và Lịch sử xà phòng vệ sinh cá nhân.",
+  "description": "Đề thi chính thức Cambridge 8 Test 2: Báo cáo bảo hiểm hàng chuyển nhà, Công viên Nông nghiệp Agricultural Park, Nghiên cứu ong mật châu Á và Khảo sát dịch vụ y tế tại châu Phi.",
   "totalQuestions": 40,
   "timeLimitMinutes": 32,
   "isPublic": true,
@@ -220,8 +220,8 @@ export const cambridge8Test2 = {
     },
     {
       "partNumber": 2,
-      "title": "Part 2: Red Valley Nature Reserve & Farm Tour",
-      "context": "A tour manager introducing visitors to the layout and seasonal highlights of the Red Valley Agro-Tourism Reserve.",
+      "title": "Part 2: Agricultural Park Orientation Tour",
+      "context": "A welcome talk by the manager of an Agricultural Park explaining the park layout, rare breeds section, and seasonal visitor attractions.",
       "audioTimestampStart": 351,
       "audioTimestampEnd": 740,
       "speakers": [
@@ -241,29 +241,29 @@ export const cambridge8Test2 = {
             {
               "id": 11,
               "order": 11,
-              "questionText": "Visitors are advised to purchase tickets online in advance to",
+              "questionText": "According to the speaker, the main purpose of the park is",
               "options": [
                 {
                   "key": "A",
-                  "text": "receive a 20% group discount"
+                  "text": "education and entertainment"
                 },
                 {
                   "key": "B",
-                  "text": "avoid long waiting times at the gate"
+                  "text": "research and education"
                 },
                 {
                   "key": "C",
-                  "text": "reserve private golf buggy transport"
+                  "text": "research and entertainment"
                 }
               ],
-              "answer": "B",
+              "answer": "A",
               "acceptableAnswers": [
-                "B",
-                "b"
+                "A",
+                "a"
               ],
-              "evidenceQuote": "Booking through our mobile portal ensures you skip the lengthy admission queues during peak hours.",
+              "evidenceQuote": "The Agricultural Park is designed to educate the public about farming life while providing a great day out of family entertainment.",
               "evidenceTimestamp": 390,
-              "explanation": "Đặt vé trực tuyến giúp du khách tránh phải xếp hàng chờ đợi lâu (avoid long waiting times)."
+              "explanation": "Mục đích chính của công viên là kết hợp giáo dục và giải trí (education and entertainment)."
             }
           ]
         },
@@ -271,13 +271,13 @@ export const cambridge8Test2 = {
           "id": "c8-t2-qg3",
           "type": "map_labelling",
           "title": "Questions 12–14",
-          "instruction": "Label the map below.\nWrite the correct letter or name for each zone.",
+          "instruction": "Label the plan below.\nWrite NO MORE THAN TWO WORDS for each answer.",
           "questions": [
             {
               "id": 12,
               "order": 12,
-              "questionText": "Zone 12 (Northern wooded sanctuary): ................",
-              "prefixText": "Zone 12 (Northern wooded sanctuary):",
+              "questionText": "Zone 12 (Northern area): ................",
+              "prefixText": "Zone 12 (Northern area):",
               "suffixText": "",
               "answer": "Forest",
               "acceptableAnswers": [
@@ -285,40 +285,41 @@ export const cambridge8Test2 = {
                 "the Forest",
                 "forest"
               ],
-              "evidenceQuote": "Up in the northern quadrant past the bridge lies our heritage native Forest sanctuary.",
+              "evidenceQuote": "Up in the northern quadrant past the grazing fields lies our experimental Forest area.",
               "evidenceTimestamp": 440,
-              "explanation": "Khu vực rừng nguyên sinh (Forest) nằm ở phía bắc."
+              "explanation": "Khu vực phía bắc của công viên là khu rừng thực nghiệm (Forest)."
             },
             {
               "id": 13,
               "order": 13,
-              "questionText": "Zone 13 (Freshwater breeding pools): ................",
-              "prefixText": "Zone 13 (Freshwater breeding pools):",
+              "questionText": "Zone 13 (Western pools): ................",
+              "prefixText": "Zone 13 (Western pools):",
               "suffixText": "",
-              "answer": "Fish Farm",
+              "answer": "Fish Farms",
               "acceptableAnswers": [
-                "Fish Farm",
                 "Fish Farms",
+                "Fish Farm",
+                "fish farms",
                 "fish farm"
               ],
-              "evidenceQuote": "Adjacent to the central reservoir you will find the sustainable Fish Farm ponds.",
+              "evidenceQuote": "Over on the western side adjacent to the stream you will find the Fish Farms.",
               "evidenceTimestamp": 475,
-              "explanation": "Trại nuôi cá nước ngọt (Fish Farm) nằm cạnh hồ chứa nước."
+              "explanation": "Khu vực hồ nuôi cá (Fish Farms) nằm ở phía tây."
             },
             {
               "id": 14,
               "order": 14,
-              "questionText": "Zone 14 (Organic produce terraces): ................",
-              "prefixText": "Zone 14 (Organic produce terraces):",
+              "questionText": "Zone 14 (Southern plots): ................",
+              "prefixText": "Zone 14 (Southern plots):",
               "suffixText": "",
               "answer": "Market Garden",
               "acceptableAnswers": [
                 "Market Garden",
                 "market garden"
               ],
-              "evidenceQuote": "Down to the south-east corner are the lush terraces of our organic Market Garden.",
+              "evidenceQuote": "Down in the southern corner near the reception block is the intensive Market Garden.",
               "evidenceTimestamp": 510,
-              "explanation": "Vườn ươm rau hữu cơ (Market Garden) nằm ở góc đông nam."
+              "explanation": "Khu vườn trồng rau thương phẩm (Market Garden) nằm ở góc phía nam."
             }
           ]
         },
@@ -331,19 +332,19 @@ export const cambridge8Test2 = {
             {
               "id": 15,
               "order": 15,
-              "questionText": "What is special about the honey produced on the reserve?",
+              "questionText": "When are the experimental areas closed to the public?",
               "options": [
                 {
                   "key": "A",
-                  "text": "It comes from a single species of rare flower"
+                  "text": "all the year round"
                 },
                 {
                   "key": "B",
-                  "text": "It has won international culinary awards"
+                  "text": "almost all the year"
                 },
                 {
                   "key": "C",
-                  "text": "It is unfiltered and certified 100% raw organic"
+                  "text": "a short time every year"
                 }
               ],
               "answer": "C",
@@ -351,26 +352,26 @@ export const cambridge8Test2 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Our estate honey is bottled directly from hives without heating or filtration, guaranteeing certified raw organic quality.",
+              "evidenceQuote": "The experimental plots are open to visitors except for a brief period during winter harvesting.",
               "evidenceTimestamp": 560,
-              "explanation": "Mật ong tại trang trại được đóng chai nguyên chất, không qua đun nóng hay lọc công nghiệp (unfiltered raw organic)."
+              "explanation": "Các khu vực thực nghiệm chỉ đóng cửa một thời gian ngắn mỗi năm (a short time every year)."
             },
             {
               "id": 16,
               "order": 16,
-              "questionText": "During the afternoon tractor tour, children can",
+              "questionText": "How can you move around the park?",
               "options": [
                 {
                   "key": "A",
-                  "text": "feed newborn lambs and calves"
+                  "text": "by tram, walking or bicycle"
                 },
                 {
                   "key": "B",
-                  "text": "ride small ponies around the paddock"
+                  "text": "by solar car or bicycle"
                 },
                 {
                   "key": "C",
-                  "text": "help milk the dairy herd"
+                  "text": "by bicycle, walking or bus"
                 }
               ],
               "answer": "A",
@@ -378,26 +379,26 @@ export const cambridge8Test2 = {
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Kids will have the chance to bottle-feed the baby lambs and miniature calves.",
+              "evidenceQuote": "Inside the gates, visitors can get around on foot, hire a bicycle, or hop on our park tram.",
               "evidenceTimestamp": 605,
-              "explanation": "Trẻ em được trực tiếp cho cừu và bê con ăn (feed newborn lambs and calves)."
+              "explanation": "Du khách có thể di chuyển bằng xe điện (tram), đi bộ hoặc xe đạp."
             },
             {
               "id": 17,
               "order": 17,
-              "questionText": "Where can visitors purchase freshly baked bread?",
+              "questionText": "The rare breed animals kept in the park include",
               "options": [
                 {
                   "key": "A",
-                  "text": "At the riverside cafe"
+                  "text": "hens and horses"
                 },
                 {
                   "key": "B",
-                  "text": "Near the farm exit gate"
+                  "text": "goats and cows"
                 },
                 {
                   "key": "C",
-                  "text": "At the Old Mill Bakery"
+                  "text": "goats and hens"
                 }
               ],
               "answer": "C",
@@ -405,26 +406,26 @@ export const cambridge8Test2 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Warm sourdough loaves come straight out of woodfired ovens at the historic Old Mill Bakery.",
+              "evidenceQuote": "In the Rare Breeds paddock, we currently keep heritage goats and traditional laying hens.",
               "evidenceTimestamp": 645,
-              "explanation": "Bánh mì nướng nóng hổi được bán tại Old Mill Bakery."
+              "explanation": "Khu vật nuôi quý hiếm hiện có dê và gà mái (goats and hens)."
             },
             {
               "id": 18,
               "order": 18,
-              "questionText": "What rule must all visitors follow near the wildlife sanctuary?",
+              "questionText": "What is the main purpose of having the Rare Breeds Section?",
               "options": [
                 {
                   "key": "A",
-                  "text": "No flash photography allowed"
+                  "text": "to save unusual animals"
                 },
                 {
                   "key": "B",
-                  "text": "Keep strictly to designated gravel footpaths"
+                  "text": "to keep a variety of breeds"
                 },
                 {
                   "key": "C",
-                  "text": "Children must wear high-visibility vests"
+                  "text": "to educate the public"
                 }
               ],
               "answer": "B",
@@ -432,26 +433,26 @@ export const cambridge8Test2 = {
                 "B",
                 "b"
               ],
-              "evidenceQuote": "It is mandatory to stay firmly on the marked gravel tracks to prevent disturbing native nesting birds.",
+              "evidenceQuote": "The core objective is to maintain a broad genetic variety of livestock breeds for future agriculture.",
               "evidenceTimestamp": 680,
-              "explanation": "Bắt buộc phải đi trên đường sỏi chỉ định (designated footpaths) để bảo vệ động vật."
+              "explanation": "Mục đích chính là duy trì sự đa dạng các giống vật nuôi (to keep a variety of breeds)."
             },
             {
               "id": 19,
               "order": 19,
-              "questionText": "The pottery workshop requires participants to",
+              "questionText": "What can you see in the park at the present time?",
               "options": [
                 {
                   "key": "A",
-                  "text": "bring their own aprons"
+                  "text": "the arrival of wild birds"
                 },
                 {
                   "key": "B",
-                  "text": "pay for clay materials separately"
+                  "text": "fruit tree blossom"
                 },
                 {
                   "key": "C",
-                  "text": "be at least 12 years of age"
+                  "text": "a demonstration of fishing"
                 }
               ],
               "answer": "C",
@@ -459,26 +460,26 @@ export const cambridge8Test2 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Due to safety around the rotating wheels, the minimum age limit is set at 12 years old.",
+              "evidenceQuote": "Right now at the western ponds, our wardens are giving a live demonstration of traditional net fishing.",
               "evidenceTimestamp": 710,
-              "explanation": "Xưởng làm gốm yêu cầu người tham gia từ 12 tuổi trở lên vì lý do an toàn."
+              "explanation": "Hiện tại du khách có thể xem buổi trình diễn đánh bắt cá (a demonstration of fishing)."
             },
             {
               "id": 20,
               "order": 20,
-              "questionText": "How often does the farm shuttle bus run back to the train station?",
+              "questionText": "The shop contains books about",
               "options": [
                 {
                   "key": "A",
-                  "text": "Every 30 minutes"
+                  "text": "animals"
                 },
                 {
                   "key": "B",
-                  "text": "Every hour on the hour"
+                  "text": "local traditions"
                 },
                 {
                   "key": "C",
-                  "text": "Only twice a day"
+                  "text": "the history of the park"
                 }
               ],
               "answer": "A",
@@ -486,9 +487,9 @@ export const cambridge8Test2 = {
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Shuttle minibuses depart from our welcome center every half-hour without fail.",
+              "evidenceQuote": "The gift shop near the exit stocks a wide range of illustrated books all about farm and wild animals.",
               "evidenceTimestamp": 735,
-              "explanation": "Xe buýt đưa đón chạy đều đặn mỗi 30 phút một chuyến (every 30 minutes)."
+              "explanation": "Cửa hàng lưu niệm có bán nhiều sách về động vật (animals)."
             }
           ]
         }
@@ -497,20 +498,20 @@ export const cambridge8Test2 = {
         {
           "speaker": "Manager",
           "timestamp": 360,
-          "text": "Good morning ladies and gentlemen, welcome to Red Valley Reserve.",
-          "translation": "Chào buổi sáng quý vị, chào mừng đến với Khu bảo tồn Red Valley."
+          "text": "Welcome everyone to the Agricultural Park. Our aim is to combine public education with outdoor entertainment.",
+          "translation": "Chào mừng mọi người đến với Công viên Nông nghiệp. Mục tiêu của chúng tôi là kết hợp giáo dục công chúng với giải trí ngoài trời."
         },
         {
           "speaker": "Manager",
           "timestamp": 440,
-          "text": "The northern section beyond the creek is occupied by the protected forest.",
-          "translation": "Phần phía bắc bên kia suối là khu rừng được bảo tồn nghiêm ngặt."
+          "text": "Looking at the map, the northern section is occupied by the Forest, with the Fish Farms to the west and the Market Garden in the south.",
+          "translation": "Nhìn vào bản đồ, phần phía bắc là khu Rừng, với Trại cá ở phía tây và Vườn rau thương phẩm ở phía nam."
         },
         {
           "speaker": "Manager",
-          "timestamp": 605,
-          "text": "Younger guests love feeding our baby lambs in the nursery paddock.",
-          "translation": "Các du khách nhỏ tuổi rất thích cho cừu non ăn trong chuồng nuôi."
+          "timestamp": 645,
+          "text": "In our Rare Breeds section, we preserve a rich variety of breeds, including rare goats and hens.",
+          "translation": "Trong phân khu Giống quý hiếm, chúng tôi bảo tồn sự đa dạng giống loài, bao gồm dê và gà mái quý hiếm."
         }
       ]
     },
@@ -772,13 +773,13 @@ export const cambridge8Test2 = {
     },
     {
       "partNumber": 4,
-      "title": "Part 4: Early History of Keeping Clean & Soap Production",
-      "context": "A social history lecture tracing the cultural evolution of sanitation, public baths, and industrial soap manufacturing.",
+      "title": "Part 4: Research on Questions about Doctors (Shona's Medical Survey)",
+      "context": "A postgraduate presentation by Shona discussing her public health research project on men's attitudes toward medical services and doctors in Africa.",
       "audioTimestampStart": 1181,
       "audioTimestampEnd": 1740,
       "speakers": [
         {
-          "name": "Historian",
+          "name": "Shona",
           "gender": "Female",
           "accent": "British"
         }
@@ -793,46 +794,46 @@ export const cambridge8Test2 = {
             {
               "id": 31,
               "order": 31,
-              "questionText": "In ancient Sumeria, the earliest soap recipes were concocted from",
+              "questionText": "In order to set up her research programme, Shona got",
               "options": [
                 {
                   "key": "A",
-                  "text": "crushed seashells and olive oil"
+                  "text": "advice from personal friends in other countries"
                 },
                 {
                   "key": "B",
-                  "text": "rendered animal fat combined with wood ash"
+                  "text": "help from students in other countries"
                 },
                 {
                   "key": "C",
-                  "text": "scented clay and river mud"
+                  "text": "information from her tutor's contacts"
                 }
               ],
-              "answer": "B",
+              "answer": "C",
               "acceptableAnswers": [
-                "B",
-                "b"
+                "C",
+                "c"
               ],
-              "evidenceQuote": "Cuneiform clay tablets reveal ancient Sumerians boiled tallow animal fats with alkaline ashes from hardwood trees.",
+              "evidenceQuote": "My supervisor kindly put me in touch with his academic contacts at universities across the region.",
               "evidenceTimestamp": 1230,
-              "explanation": "Người Sumer cổ đại đun mỡ động vật với tro gỗ kiềm để tạo ra xà phòng nguyên sơ."
+              "explanation": "Shona nhận được thông tin hỗ trợ thông qua các mối liên hệ của giáo viên hướng dẫn (her tutor's contacts)."
             },
             {
               "id": 32,
               "order": 32,
-              "questionText": "The Romans initially used soap not for bathing, but to",
+              "questionText": "What types of people were included in the research?",
               "options": [
                 {
                   "key": "A",
-                  "text": "waterproof leather boots"
+                  "text": "young people in their first job"
                 },
                 {
                   "key": "B",
-                  "text": "clean woolen garments and dress wounds"
+                  "text": "men who were working"
                 },
                 {
                   "key": "C",
-                  "text": "lubricate carriage wheels"
+                  "text": "women who were unmarried"
                 }
               ],
               "answer": "B",
@@ -840,26 +841,26 @@ export const cambridge8Test2 = {
                 "B",
                 "b"
               ],
-              "evidenceQuote": "Early Roman writings record soap primarily as a medicinal ointment for skin ailments and a scouring agent for textile wool.",
+              "evidenceQuote": "We narrowed our target sample down specifically to adult men in full-time employment.",
               "evidenceTimestamp": 1290,
-              "explanation": "Người La Mã ban đầu dùng xà phòng để giặt tẩy len dạ và làm thuốc bôi da."
+              "explanation": "Đối tượng tham gia khảo sát là nam giới đang đi làm (men who were working)."
             },
             {
               "id": 33,
               "order": 33,
-              "questionText": "Roman communal bathhouses were primarily centers for",
+              "questionText": "Shona says that in her questionnaire her aim was",
               "options": [
                 {
                   "key": "A",
-                  "text": "social gathering, business, and relaxation"
+                  "text": "to get a wide range of data"
                 },
                 {
                   "key": "B",
-                  "text": "mandatory religious purification"
+                  "text": "to limit people's responses"
                 },
                 {
                   "key": "C",
-                  "text": "treating infectious illnesses"
+                  "text": "to guide people through interviews"
                 }
               ],
               "answer": "A",
@@ -867,26 +868,26 @@ export const cambridge8Test2 = {
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Thermae were sprawling civic complexes where citizens met friends, debated politics, negotiated deals, and relaxed.",
+              "evidenceQuote": "My goal in designing the questionnaire was to capture as broad and varied a spectrum of data as possible.",
               "evidenceTimestamp": 1350,
-              "explanation": "Nhà tắm công cộng La Mã là trung tâm giao lưu bạn bè, bàn chuyện kinh doanh và thư giãn."
+              "explanation": "Mục tiêu của bảng câu hỏi là thu thập nguồn dữ liệu đa dạng và rộng mở (get a wide range of data)."
             },
             {
               "id": 34,
               "order": 34,
-              "questionText": "During the European Middle Ages, bathing fell out of favor because people believed",
+              "questionText": "What do Shona's initial results show about medical services in Africa?",
               "options": [
                 {
                   "key": "A",
-                  "text": "water opened skin pores allowing plague miasma inside"
+                  "text": "Current concerns are misrepresented by the press"
                 },
                 {
                   "key": "B",
-                  "text": "fuel for heating water was sinful and wasteful"
+                  "text": "Financial issues are critical to the government"
                 },
                 {
                   "key": "C",
-                  "text": "church doctrine strictly outlawed water contact"
+                  "text": "Men would rather visit a doctor privately"
                 }
               ],
               "answer": "A",
@@ -894,26 +895,26 @@ export const cambridge8Test2 = {
                 "A",
                 "a"
               ],
-              "evidenceQuote": "Medieval physicians argued hot water dilated the pores, leaving the delicate body defenseless against airborne plague vapors.",
+              "evidenceQuote": "Our preliminary findings indicate that newspaper reports significantly distort what patients actually worry about.",
               "evidenceTimestamp": 1410,
-              "explanation": "Thời Trung Cổ, người ta tin rằng nước nóng làm giãn nở lỗ chân lông khiến độc khí bệnh dịch xâm nhập."
+              "explanation": "Kết quả ban đầu cho thấy báo chí truyền thông đang phản ánh sai lệch mối quan tâm thực tế của người dân."
             },
             {
               "id": 35,
               "order": 35,
-              "questionText": "In the 17th and 18th centuries, wealthy aristocrats replaced washing with",
+              "questionText": "Shona needs to do further research in order to",
               "options": [
                 {
                   "key": "A",
-                  "text": "frequent outdoor swimming"
+                  "text": "present her findings to the Ministry of Health"
                 },
                 {
                   "key": "B",
-                  "text": "rubbing salt crystals over the body"
+                  "text": "decide the level of extra funding needed"
                 },
                 {
                   "key": "C",
-                  "text": "heavy perfumes and changing linen shirts"
+                  "text": "identify the preferences of the public"
                 }
               ],
               "answer": "C",
@@ -921,36 +922,36 @@ export const cambridge8Test2 = {
                 "C",
                 "c"
               ],
-              "evidenceQuote": "Aristocrats masked bodily odor with potent musk perfumes and wore crisp white linen shirts changed several times a day.",
+              "evidenceQuote": "Follow-up interviews are essential to pinpoint the exact consultation preferences of the wider public.",
               "evidenceTimestamp": 1475,
-              "explanation": "Giới quý tộc che giấu mùi cơ thể bằng nước hoa nồng và thay áo sơ mi vải lanh trắng nhiều lần trong ngày."
+              "explanation": "Shona cần nghiên cứu thêm để xác định rõ nguyện vọng và sở thích của công chúng (identify the preferences of the public)."
             },
             {
               "id": 36,
               "order": 36,
-              "questionText": "The modern breakthrough in affordable soap manufacturing resulted from",
+              "questionText": "Shona has learnt from the research project that",
               "options": [
                 {
                   "key": "A",
-                  "text": "importing palm oil from Southeast Asia"
+                  "text": "it is important to plan projects carefully"
                 },
                 {
                   "key": "B",
-                  "text": "invention of synthetic fragrance chemicals"
+                  "text": "people do not like answering questions"
                 },
                 {
                   "key": "C",
-                  "text": "Leblanc’s chemical synthesis of cheap soda ash"
+                  "text": "colleagues do not always agree"
                 }
               ],
-              "answer": "C",
+              "answer": "A",
               "acceptableAnswers": [
-                "C",
-                "c"
+                "A",
+                "a"
               ],
-              "evidenceQuote": "Nicolas Leblanc discovered how to synthesize inexpensive soda ash from common salt, slashing industrial soap production costs.",
+              "evidenceQuote": "Above all, this fieldwork taught me that meticulous advance planning is indispensable.",
               "evidenceTimestamp": 1530,
-              "explanation": "Quy trình Leblanc tổng hợp soda ash giá rẻ từ muối ăn đã hạ giá thành sản xuất xà phòng quy mô lớn."
+              "explanation": "Bài học lớn nhất rút ra là tầm quan trọng của việc lập kế hoạch dự án kỹ lưỡng (plan projects carefully)."
             }
           ]
         },
@@ -958,119 +959,115 @@ export const cambridge8Test2 = {
           "id": "c8-t2-qg8",
           "type": "matching",
           "title": "Questions 37–40",
-          "instruction": "Which hygiene reform is associated with each individual historical figure?\nChoose the correct letter, A–G, for questions 37–40.",
+          "instruction": "What statement applies to each of the following people who were interviewed by Shona?\nChoose FOUR answers from the box and write the correct letter, A–F, next to questions 37–40.",
           "options": [
             {
               "key": "A",
-              "text": "Introduced underground ceramic sewers"
+              "text": "gave false data"
             },
             {
               "key": "B",
-              "text": "Proved antiseptic handwashing saved maternity patients"
+              "text": "decided to stop participating"
             },
             {
               "key": "C",
-              "text": "Campaigned for pure public water supply pipes"
+              "text": "refused to tell Shona about their job"
             },
             {
               "key": "D",
-              "text": "Pioneered clinical hygiene in military hospitals"
+              "text": "kept changing their mind about participating"
             },
             {
               "key": "E",
-              "text": "Invented pasteurization for dairy products"
+              "text": "became very angry with Shona"
             },
             {
               "key": "F",
-              "text": "Mapped cholera cases to a contaminated water pump"
-            },
-            {
-              "key": "G",
-              "text": "Discovered antibiotics against bacterial infections"
+              "text": "was worried about confidentiality"
             }
           ],
           "questions": [
             {
               "id": 37,
               "order": 37,
-              "questionText": "Ignaz Semmelweis: ................",
-              "prefixText": "Ignaz Semmelweis:",
+              "questionText": "a person interviewed in the street: ................",
+              "prefixText": "a person interviewed in the street:",
               "suffixText": "",
               "answer": "B",
               "acceptableAnswers": [
                 "B",
                 "b"
               ],
-              "evidenceQuote": "Dr Ignaz Semmelweis demonstrated that doctors washing hands in chlorinated lime solution drastically curtailed maternal childbed fever.",
+              "evidenceQuote": "One man I approached in the street agreed at first, but halfway through decided to pull out and stop participating.",
               "evidenceTimestamp": 1600,
-              "explanation": "Bác sĩ Ignaz Semmelweis chứng minh việc rửa tay khử trùng giúp cứu sống sản phụ khỏi sốt hậu sản."
+              "explanation": "Người được phỏng vấn trên phố đã quyết định dừng tham gia giữa chừng (decided to stop participating)."
             },
             {
               "id": 38,
               "order": 38,
-              "questionText": "John Snow: ................",
-              "prefixText": "John Snow:",
+              "questionText": "an undergraduate at the university: ................",
+              "prefixText": "an undergraduate at the university:",
               "suffixText": "",
               "answer": "F",
               "acceptableAnswers": [
                 "F",
                 "f"
               ],
-              "evidenceQuote": "Dr John Snow famously plotted London cholera deaths on a map, tracing the lethal outbreak to the Broad Street water pump.",
+              "evidenceQuote": "An undergraduate student at the campus was deeply anxious about whether his answers would remain confidential.",
               "evidenceTimestamp": 1645,
-              "explanation": "Bác sĩ John Snow lập bản đồ dịch tả và truy tìm nguồn gốc tại máy bơm nước đường Broad Street."
+              "explanation": "Sinh viên đại học tỏ ra lo lắng về tính bảo mật thông tin (worried about confidentiality)."
             },
             {
               "id": 39,
               "order": 39,
-              "questionText": "Florence Nightingale: ................",
-              "prefixText": "Florence Nightingale:",
+              "questionText": "a colleague in her department: ................",
+              "prefixText": "a colleague in her department:",
               "suffixText": "",
               "answer": "D",
               "acceptableAnswers": [
                 "D",
                 "d"
               ],
-              "evidenceQuote": "Florence Nightingale instituted rigorous hospital sanitization, clean bedding, and ventilation, collapsing mortality rates among wounded soldiers.",
+              "evidenceQuote": "A fellow researcher in my own department kept wavering and changing his mind about whether to take part.",
               "evidenceTimestamp": 1690,
-              "explanation": "Florence Nightingale cải cách tiêu chuẩn vệ sinh, giặt giũ và thông khí tại các bệnh viện dã chiến quân đội."
+              "explanation": "Một đồng nghiệp cùng khoa liên tục thay đổi ý định về việc tham gia (kept changing their mind)."
             },
             {
               "id": 40,
               "order": 40,
-              "questionText": "Edwin Chadwick: ................",
-              "prefixText": "Edwin Chadwick:",
+              "questionText": "a tutor in a foreign university: ................",
+              "prefixText": "a tutor in a foreign university:",
               "suffixText": "",
-              "answer": "C",
+              "answer": "E",
               "acceptableAnswers": [
-                "C",
-                "c"
+                "E",
+                "e"
               ],
-              "evidenceQuote": "Sanitary reformer Edwin Chadwick spearheaded the Public Health Act, mandating clean piped water supply lines into urban working-class homes.",
+              "evidenceQuote": "One senior tutor at a partner university abroad lost his temper and became quite angry with my persistent questioning.",
               "evidenceTimestamp": 1725,
-              "explanation": "Edwin Chadwick dẫn đầu phong trào cải cách y tế công cộng, ban hành luật cung cấp nước sạch qua đường ống."
+              "explanation": "Một giảng viên tại trường đại học nước ngoài đã nổi giận với Shona (became very angry)."
             }
           ]
         }
       ],
       "transcripts": [
         {
-          "speaker": "Historian",
+          "speaker": "Shona",
           "timestamp": 1200,
-          "text": "Good afternoon. Today we examine humanity’s long and complicated relationship with personal hygiene.",
-          "translation": "Chào buổi chiều. Hôm nay chúng ta cùng khám phá lịch sử lâu dài của con người đối với vệ sinh cá nhân."
+          "text": "Good afternoon. Today I will present the findings from my medical sociology survey on men's healthcare perceptions in Africa.",
+          "translation": "Chào buổi chiều. Hôm nay tôi sẽ trình bày kết quả khảo sát xã hội học y tế về nhận thức chăm sóc sức khỏe của nam giới tại châu Phi."
         },
         {
-          "speaker": "Historian",
+          "speaker": "Shona",
           "timestamp": 1230,
-          "text": "Ancient Babylonians boiled animal fats with wood ash to produce early cleansing lather.",
-          "translation": "Người Babylon cổ đại nấu mỡ động vật với tro gỗ để tạo bọt tẩy rửa."
+          "text": "To set up the programme, my tutor generously shared his academic contacts across partner universities.",
+          "translation": "Để thiết lập chương trình, giáo viên hướng dẫn đã hào phóng chia sẻ các mối liên hệ học thuật tại các trường đại học đối tác."
         },
         {
-          "speaker": "Historian",
+          "speaker": "Shona",
           "timestamp": 1600,
-          "text": "Semmelweis proved that basic antiseptic handwashing saved thousands of mothers’ lives.",
-          "translation": "Semmelweis đã chứng minh rằng rửa tay khử trùng đơn giản đã cứu sống sinh mạng hàng ngàn sản phụ."
+          "text": "Interviewing posed challenges: one street respondent stopped participating mid-way, while an undergraduate worried about confidentiality.",
+          "translation": "Việc phỏng vấn đặt ra nhiều thách thức: một người trên phố ngừng tham gia giữa chừng, còn một sinh viên lo lắng về tính bảo mật."
         }
       ]
     }

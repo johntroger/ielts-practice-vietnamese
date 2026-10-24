@@ -24,11 +24,11 @@ export const track3PropertyEnquiry = {
     {
       partNumber: 1,
       title: 'Part 1: Property Enquiry & Viewing Appointment',
-      context: 'A telephone conversation between a prospective home buyer, Caroline Prendergast, and an estate agent, Peter Elliot, from Morgan\'s Estate Agents.',
+      context: 'A telephone conversation between a prospective home buyer, Caroline Prendergast, and an estate agent, Peter Eliot, from Morgan\'s Estate Agents.',
       audioTimestampStart: 0,
       audioTimestampEnd: 174,
       speakers: [
-        { name: 'Peter Elliot (Estate Agent)', gender: 'Male', accent: 'British' },
+        { name: 'Peter Eliot (Estate Agent)', gender: 'Male', accent: 'British' },
         { name: 'Caroline Prendergast (Buyer)', gender: 'Female', accent: 'American' }
       ],
       transcript: `[00:00] Track 3.
@@ -58,7 +58,7 @@ export const track3PropertyEnquiry = {
 [02:09] How about 1:00 then, or 1:45?
 [02:13] 1:00 would be best for me.
 [02:15] Okay, great! Let's meet then. Oh, my name is Caroline Prendergast. My number is 07945 872 310.
-[02:29] I'm Peter Elliot.
+[02:29] I'm Peter Eliot.
 [02:31] Is that with two Ls?
 [02:33] No, one. E-L-I-O-T. My number is 07863 905 073. That's 07863 905 073. I look forward to seeing you then.
 [02:50] Okay, goodbye.
@@ -235,21 +235,21 @@ export const track3PropertyEnquiry = {
               id: 11,
               order: 11,
               questionText: 'What is the correct spelling of the estate agent\'s surname?',
-              answer: 'Elliot',
-              acceptableAnswers: ['Elliot', 'elliot', 'ELLIOT'],
+              answer: 'Eliot',
+              acceptableAnswers: ['Eliot', 'eliot', 'ELIOT'],
               evidenceQuote: 'Is that with two Ls? - No, one. E-L-I-O-T.',
               evidenceTimestamp: 153,
-              explanation: 'Bẫy chính tả: Tên họ Elliot chỉ có 1 chữ L (E-L-I-O-T), không phải 2 chữ L (Elliott).'
+              explanation: 'Bẫy chính tả: Tên họ Eliot chỉ có 1 chữ L (E-L-I-O-T), không phải 2 chữ L (Elliott).'
             },
             {
               id: 12,
               order: 12,
-              questionText: 'What is Peter Elliot\'s telephone number?',
+              questionText: 'What is Peter Eliot\'s telephone number?',
               answer: '07863 905 073',
               acceptableAnswers: ['07863 905 073', '07863905073', '07863 905073'],
               evidenceQuote: 'My number is 07863 905 073.',
               evidenceTimestamp: 158,
-              explanation: 'Số điện thoại của Peter Elliot là 07863 905 073.'
+              explanation: 'Số điện thoại của Peter Eliot là 07863 905 073.'
             }
           ]
         }

@@ -73,6 +73,30 @@ export function evaluateQuestionAnswer(question, rawUserAnswer) {
     }
   }
 
+  // 2b. Check wordBank / options letter <-> text equivalence
+  const bankList = question.wordBank || question.options || [];
+  if (Array.isArray(bankList) && bankList.length > 0) {
+    for (const opt of bankList) {
+      if (typeof opt === 'object' && opt !== null) {
+        const optKey = String(opt.key || opt.letter || opt.id || opt.value || '').trim().toLowerCase();
+        const optText = String(opt.text || opt.label || opt.name || '').trim().toLowerCase();
+        const targetLower = targetStr.toLowerCase();
+        if (optKey && optText) {
+          if ((targetLower === optKey && userLower === optText) || (targetLower === optText && userLower === optKey)) {
+            return {
+              isCorrect: true,
+              isAnswered: true,
+              userAnswer: userStr,
+              correctAnswer: targetStr,
+              normalizedUser: userStr,
+              normalizedTarget: targetStr
+            };
+          }
+        }
+      }
+    }
+  }
+
   // 3. Fallback for Heading matching (Roman numerals vs Letters if any formatting variance)
   if (question.type === 'matching_headings' || question.type === 'matching') {
     if (userUpper.replace(/[\s\.\-]/g, '') === targetUpper.replace(/[\s\.\-]/g, '')) {

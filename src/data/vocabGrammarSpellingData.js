@@ -282,20 +282,6 @@ export const IELTS_SPELLING_TRAPS = [
     "bandLevel": "5.5"
   },
   {
-    "id": "sp-21",
-    "correct": "accommodate",
-    "distractors": [
-      "acommodate",
-      "accomodate",
-      "acomodate"
-    ],
-    "rule": "2 chữ 'c' và 2 chữ 'm': ac-com-mo-date.",
-    "contextSentence": "The university hall can ________ up to 500 conference delegates.",
-    "explanation": "Động từ tương ứng của danh từ 'accommodation'. Cực kỳ hay viết nhầm 1 chữ 'm'.",
-    "category": "Double Letters",
-    "bandLevel": "7.0"
-  },
-  {
     "id": "sp-22",
     "correct": "assessment",
     "distractors": [
@@ -482,8 +468,8 @@ export const IELTS_SPELLING_TRAPS = [
     "correct": "accessory",
     "distractors": [
       "accesory",
-      "accessary",
-      "acessory"
+      "acessory",
+      "acccessory"
     ],
     "rule": "2 chữ 'c' và 2 chữ 's': ac-ces-so-ry.",
     "contextSentence": "Safety goggles serve as an indispensable laboratory ________ during acid testing.",
@@ -532,20 +518,6 @@ export const IELTS_SPELLING_TRAPS = [
     "explanation": "Từ vựng nâng cao Band 7.5 trong đề tài An ninh & Công nghệ.",
     "category": "Double Letters",
     "bandLevel": "7.5"
-  },
-  {
-    "id": "sp-39",
-    "correct": "privilege",
-    "distractors": [
-      "priviledge",
-      "privelege",
-      "privledge"
-    ],
-    "rule": "KHÔNG có chữ 'd': pri-vi-lege (chữ 'i' thứ hai và đuôi '-lege').",
-    "contextSentence": "Tertiary education should be an accessible universal right, not a wealthy ________.",
-    "explanation": "Hơn 60% học viên thêm chữ 'd' giống từ 'knowledge'.",
-    "category": "Vowel Traps",
-    "bandLevel": "7.0"
   },
   {
     "id": "sp-40",
@@ -930,8 +902,8 @@ export const IELTS_SPELLING_TRAPS = [
     "correct": "rhyme",
     "distractors": [
       "ryme",
-      "rime",
-      "rhyme"
+      "rhime",
+      "rhyem"
     ],
     "rule": "r-h-y-m-e.",
     "contextSentence": "Linguistic tests evaluate whether young learners can identify basic nursery ________.",
@@ -1167,9 +1139,9 @@ export const IELTS_SPELLING_TRAPS = [
     "id": "sp-84",
     "correct": "volcanoes",
     "distractors": [
-      "volcanos",
+      "volcanose",
       "volcano's",
-      "volcanose"
+      "volcannoes"
     ],
     "rule": "Thêm '-es': vol-ca-noes.",
     "contextSentence": "Active underwater ________ emit concentrated plumes of mineral-rich sulfur.",
@@ -1391,13 +1363,13 @@ export const IELTS_SPELLING_TRAPS = [
     "id": "sp-100",
     "correct": "archaeology",
     "distractors": [
-      "archeology",
+      "archaelogy",
       "archeaology",
       "archaeolagy"
     ],
-    "rule": "ar-chae-ol-o-gy (có cụm 'ae').",
+    "rule": "ar-chae-ol-o-gy (có cụm 'ae' và 'olo').",
     "contextSentence": "Undergraduate ________ students unearthed Roman mosaic tiles during their field dig.",
-    "explanation": "Chuẩn Anh-Anh viết 'archaeology' (Anh-Mỹ chấp nhận 'archeology').",
+    "explanation": "Chuẩn Anh-Anh viết 'archaeology' (chú ý không bỏ sót chữ 'o' sau 'ae').",
     "category": "Campus & Jobs",
     "bandLevel": "7.5"
   }

@@ -232,9 +232,9 @@ export const LISTENING_MICRO_DRILLS = [
     audioText: "We originally scheduled the charter coach for eight fifteen in the morning, but the driver called to say there is heavy roadwork, so we have pushed it back to eight forty-five. Actually, make that nine o'clock sharp to allow everyone time for breakfast.",
     question: 'At what time will the charter coach actually depart?',
     options: [
-      { id: 'A', text: '8:15 AM (Thời gian dự kiến ban đầu)' },
-      { id: 'B', text: '8:45 AM (Thời gian điều chỉnh lần 1)' },
-      { id: 'C', text: '9:00 AM (Thời gian chốt cuối cùng)' }
+      { id: 'A', text: '8:15 AM', textEn: '8:15 AM' },
+      { id: 'B', text: '8:45 AM', textEn: '8:45 AM' },
+      { id: 'C', text: '9:00 AM', textEn: '9:00 AM' }
     ],
     correctOption: 'C',
     distractorMechanism: "Người nói đưa ra 3 mốc giờ liên tiếp: 8:15 -> 8:45 -> 9:00 (\"Actually, make that nine o'clock sharp\"). Thí sinh vội vàng sẽ ghi ngay đáp án A hoặc B.",
@@ -401,8 +401,8 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Hiện tại căn hộ số 2 có bao nhiêu phòng ngủ thực tế?',
     questionEn: 'How many actual bedrooms does flat number 2 currently have?',
     options: [
-      { id: 'A', text: '3 phòng ngủ (đã tính cả phòng ăn)', textEn: '3 bedrooms (including the dining room conversion)' },
-      { id: 'B', text: '2 phòng ngủ (2 double bedrooms thực tế)', textEn: '2 bedrooms (2 actual double bedrooms)' },
+      { id: 'A', text: '3 phòng ngủ', textEn: '3 bedrooms' },
+      { id: 'B', text: '2 phòng ngủ', textEn: '2 bedrooms' },
       { id: 'C', text: '1 phòng ngủ đôi duy nhất', textEn: 'Only 1 double bedroom' }
     ],
     correctOption: 'B',
@@ -449,9 +449,9 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Khách hàng và môi giới đã thống nhất gặp nhau vào lúc mấy giờ?',
     questionEn: 'At what time did the client and agent ultimately agree to meet?',
     options: [
-      { id: 'A', text: '11:00 AM (Giờ khách đề xuất ban đầu nhưng môi giới bận)', textEn: '11:00 AM (Initially proposed by client but agent is busy)' },
-      { id: 'B', text: '1:00 PM (Giờ môi giới xác nhận là tốt nhất)', textEn: '1:00 PM (Confirmed as best by the agent)' },
-      { id: 'C', text: '1:45 PM (Một trong các lựa chọn dự phòng của khách)', textEn: '1:45 PM (One of the client\'s backup options)' }
+      { id: 'A', text: '11:00 AM', textEn: '11:00 AM' },
+      { id: 'B', text: '1:00 PM', textEn: '1:00 PM' },
+      { id: 'C', text: '1:45 PM', textEn: '1:45 PM' }
     ],
     correctOption: 'B',
     distractorMechanism: 'Người nói đưa ra liên tiếp 3 mốc giờ: 11:00 (bị từ chối vì bận) -> 1:00 hoặc 1:45 -> Chốt câu cuối: "1:00 would be best for me".',
@@ -520,8 +520,8 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Số tiền thực tế khách hàng phải thanh toán là bao nhiêu?',
     questionEn: 'What is the actual amount the customer needs to pay?',
     options: [
-      { id: 'A', text: '£43.72 (Khách hàng nghe nhầm)', textEn: '£43.72 (Customer misheard)' },
-      { id: 'B', text: '£53.72 (Thu ngân xác nhận)', textEn: '£53.72 (Cashier confirmed)' },
+      { id: 'A', text: '£43.72', textEn: '£43.72' },
+      { id: 'B', text: '£53.72', textEn: '£53.72' },
       { id: 'C', text: '£35.72', textEn: '£35.72' }
     ],
     correctOption: 'B',
@@ -545,8 +545,8 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Giá niêm yết chính thức hiện tại của ngôi nhà là bao nhiêu?',
     questionEn: 'What is the current official asking price of the property?',
     options: [
-      { id: 'A', text: '£340,000 (Khách hàng nhớ nhầm ban đầu)', textEn: '£340,000 (Client\'s initial mistaken recollection)' },
-      { id: 'B', text: '£350,000 (Giá niêm yết hiện tại môi giới thông báo)', textEn: '£350,000 (Current asking price confirmed by agent)' },
+      { id: 'A', text: '£340,000', textEn: '£340,000' },
+      { id: 'B', text: '£350,000', textEn: '£350,000' },
       { id: 'C', text: '£345,000', textEn: '£345,000' }
     ],
     correctOption: 'B',
@@ -570,9 +570,9 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Chiều dài đã được đính chính của phòng ngủ chính là bao nhiêu mét?',
     questionEn: 'What is the corrected length of the master bedroom in metres?',
     options: [
-      { id: 'A', text: '4.91 mét (Số môi giới lỡ miệng đọc nhầm)', textEn: '4.91 metres (Initial slip of the tongue by agent)' },
-      { id: 'B', text: '4.9 mét (Số môi giới đính chính lại sau từ "Oh sorry")', textEn: '4.9 metres (Corrected figure following "Oh sorry")' },
-      { id: 'C', text: '3.95 mét (Chiều rộng của phòng)', textEn: '3.95 metres (Room width)' }
+      { id: 'A', text: '4.91 mét', textEn: '4.91 metres' },
+      { id: 'B', text: '4.9 mét', textEn: '4.9 metres' },
+      { id: 'C', text: '3.95 mét', textEn: '3.95 metres' }
     ],
     correctOption: 'B',
     distractorMechanism: 'Người nói đọc nhầm 4.91m, sau đó dùng cụm tự sửa "Oh sorry, that\'s 4.9 meters long".',
@@ -1071,9 +1071,9 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Người nào CUỐI CÙNG được Geoff chốt sẽ phụ trách môn bóng rổ vào buổi chiều?',
     questionEn: 'Who is ULTIMATELY assigned by Geoff to coordinate the afternoon basketball?',
     options: [
-      { id: 'A', text: 'Malik (Geoff tự đổi ý sau từ "Actually, no")', textEn: 'Malik (Confirmed by Geoff following "Actually, no")' },
-      { id: 'B', text: 'Amanda (Người được gợi ý lúc đầu)', textEn: 'Amanda (Initially proposed by Geoff)' },
-      { id: 'C', text: 'Steve (Người hỗ trợ linh hoạt)', textEn: 'Steve (Flexible roving assistant)' }
+      { id: 'A', text: 'Malik', textEn: 'Malik' },
+      { id: 'B', text: 'Amanda', textEn: 'Amanda' },
+      { id: 'C', text: 'Steve', textEn: 'Steve' }
     ],
     correctOption: 'A',
     distractorMechanism: 'Người nói khởi đầu bằng phương án tạm thời cho Amanda ("so perhaps Amanda, you can do the basketball"), sau đó lập tức bẻ lái với "Actually, no. I\'ve just thought... How about you do the basketball, Malik?". Thí sinh nghe vội sẽ chọn ngay Amanda.',
@@ -1169,9 +1169,9 @@ export const LISTENING_MICRO_DRILLS = [
     question: 'Quốc gia nào xếp ở vị trí thứ hai trên bảng tổng sắp huy chương tại Thế vận hội London 2012?',
     questionEn: 'Which country finished in second place on the medal table at the London 2012 Olympics?',
     options: [
-      { id: 'A', text: 'Trung Quốc (Xếp thứ hai, ngay sau Hoa Kỳ)', textEn: 'China (Finished second, immediately following the USA)' },
-      { id: 'B', text: 'Hoa Kỳ (Đứng đầu bảng tổng sắp)', textEn: 'The United States (Finished at the top of the table)' },
-      { id: 'C', text: 'Vương quốc Anh và Bắc Ireland (Đứng thứ ba)', textEn: 'Great Britain and Northern Ireland (Finished in third place)' }
+      { id: 'A', text: 'Trung Quốc', textEn: 'China' },
+      { id: 'B', text: 'Hoa Kỳ', textEn: 'The United States' },
+      { id: 'C', text: 'Vương quốc Anh và Bắc Ireland', textEn: 'Great Britain and Northern Ireland' }
     ],
     correctOption: 'A',
     distractorMechanism: 'Người nói sử dụng chuỗi liên từ chỉ thứ tự: "top of the medals table" (hạng 1: Hoa Kỳ), "followed by" (hạng 2: Trung Quốc), và "then" (hạng 3: Great Britain & Northern Ireland).',

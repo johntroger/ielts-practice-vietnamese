@@ -138,7 +138,7 @@ export const track13SportsAndSkills = {
           id: 'qg-t13-p2',
           type: 'form_completion',
           title: 'Questions 6–10: Sport Characteristics & Requirements',
-          instruction: 'Complete the notes below.\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.',
+          instruction: 'Complete the notes below.\nWrite NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.',
           headerTitle: 'ATHLETIC SKILLS & GEAR SUMMARY',
           questions: [
             {
@@ -186,15 +186,15 @@ export const track13SportsAndSkills = {
             {
               id: 9,
               order: 9,
-              questionText: 'Weightlifters do not walk around, but depend on powerful legs to ................',
-              prefixText: 'Weightlifters do not walk around, but depend on powerful legs to',
+              questionText: 'In weightlifting, you do not walk around, but you need powerful legs to ................',
+              prefixText: 'In weightlifting, you do not walk around, but you need powerful legs to',
               suffixText: '.',
-              answer: 'support themselves',
-              acceptableAnswers: ['support themselves', 'support'],
+              answer: 'support yourself',
+              acceptableAnswers: ['support yourself', 'support themselves', 'support'],
               evidenceQuote: 'You also need to have very strong legs to support yourself, but you don\'t move around to do it.',
               evidenceTimestamp: 61,
-              explanation: 'Athletes rely on leg power to "support themselves".',
-              explanationEn: 'Athletes rely on leg power to "support themselves".',
+              explanation: 'Athletes rely on leg power to "support yourself".',
+              explanationEn: 'Athletes rely on leg power to "support yourself".',
               explanationVi: 'Chân khỏe dùng để "support yourself" (trụ vững cơ thể).'
             },
             {

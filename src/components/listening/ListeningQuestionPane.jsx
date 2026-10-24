@@ -51,7 +51,7 @@ function formatTimestamp(sec) {
 }
 
 export default function ListeningQuestionPane({
-  testId = 'cambridge-18-test-1',
+  testId = 'cambridge-8-test-1',
   partData = null,
   userAnswers = {},
   onAnswerChange,

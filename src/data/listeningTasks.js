@@ -3,10 +3,6 @@
  * Full 4 Parts, 40 Questions, Exact Answer Keys, Evidence Locators & Audio Timestamps.
  */
 
-import { cambridge20Test1 } from './listening/cambridge20Test1.js';
-import { cambridge19Test1 } from './listening/cambridge19Test1.js';
-import { cambridge18Test1 } from './listening/cambridge18Test1.js';
-import { cambridge17Test1 } from './listening/cambridge17Test1.js';
 import { cambridge8Test1 } from './listening/cambridge8Test1.js';
 import { cambridge8Test2 } from './listening/cambridge8Test2.js';
 import { cambridge8Test3 } from './listening/cambridge8Test3.js';
@@ -124,10 +120,6 @@ export const INITIAL_LISTENING_TESTS = [
   track4NumbersMeasurements,
   track3PropertyEnquiry,
   track2FlatDescriptions,
-  cambridge20Test1,
-  cambridge19Test1,
-  cambridge18Test1,
-  cambridge17Test1,
   cambridge8Test1,
   cambridge8Test2,
   cambridge8Test3

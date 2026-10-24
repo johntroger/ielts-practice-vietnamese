@@ -83,7 +83,7 @@ export const INITIAL_READING_TESTS = [
   pastPaper101Test34,
   {
     id: 'cambridge-academic-test-1',
-    title: 'Cambridge Practice Test 15: Roman Shipwrecks, Multilingualism & Air Traffic',
+    title: 'Cambridge Practice Test 15: Roman Shipwrecks, Bilingualism & Geoengineering',
     description: 'Bộ đề thi thử chuẩn Cambridge Academic gồm 3 bài đọc với đầy đủ 40 câu hỏi, thời gian làm bài 60 phút.',
     totalQuestions: 40,
     timeLimitMinutes: 60,
@@ -651,7 +651,7 @@ export const INITIAL_READING_TESTS = [
             id: 'qg-3-3',
             type: 'summary_completion',
             title: 'Questions 37–40',
-            instruction: 'Complete the summary below.\nChoose NO MORE THAN TWO WORDS from the passage for each answer.\nWrite your answers in boxes 37–40 on your answer sheet.',
+            instruction: 'Complete the summary below.\nChoose NO MORE THAN THREE WORDS from the passage for each answer.\nWrite your answers in boxes 37–40 on your answer sheet.',
             summaryText: 'Solar radiation management proposes modifying Earth’s albedo to reflect sunlight, drawing inspiration from natural [q37] occurrences such as the 1991 Mount Pinatubo eruption. However, this intervention risks introducing severe hazards. Beyond climatic disruptions to monsoons, critics fear the concept of [q38], in which the existence of an easy techno-fix diminishes the political drive to curtail carbon emissions. Furthermore, if stratospheric dispersion ceased abruptly, an effect known as [q39] would unleash extremely rapid temperature increases. Because the technology currently lacks any [q40] to govern its application, unilateral deployment remains a grave risk.',
             questions: [
               {
@@ -688,11 +688,11 @@ export const INITIAL_READING_TESTS = [
                 id: 40,
                 order: 40,
                 questionText: 'currently lacks any ... to govern its application',
-                answer: 'binding international treaty',
+                answer: 'international treaty',
                 acceptableAnswers: ['international treaty', 'binding treaty', 'binding international treaty'],
                 evidenceParagraph: 'E',
                 evidenceQuote: 'No binding international treaty exists to govern planetary temperature manipulation.',
-                explanation: 'Thiếu vắng một hiệp ước quốc tế có tính ràng buộc (binding international treaty) để quản lý.'
+                explanation: 'Thiếu vắng một hiệp ước quốc tế có tính ràng buộc (international treaty / binding international treaty) để quản lý.'
               }
             ]
           }
@@ -774,11 +774,11 @@ export const INITIAL_READING_TESTS = [
               {
                 id: 4,
                 order: 4,
-                questionText: 'Commercial solar developers in Europe have widely abandoned silicon panels in favor of pure perovskite panels.',
+                questionText: 'Commercial solar developers have widely abandoned silicon panels in favor of pure perovskite panels.',
                 answer: 'FALSE',
                 evidenceParagraph: 'C',
                 evidenceQuote: 'Despite these remarkable attributes, substantial technological hurdles impede immediate commercialization.',
-                explanation: 'Sai (False). Đoạn C khẳng định pin Perovskite chưa thể thương mại hóa ngay ("hurdles impede immediate commercialization"), do đó không hề có việc các nhà phát triển châu Âu đã từ bỏ silicon để chuyển sang perovskite thuần túy.'
+                explanation: 'Sai (False). Đoạn A khẳng định điện mặt trời thương mại vẫn phụ thuộc gần như hoàn toàn vào pin silicon ("relied almost exclusively on silicon-based photovoltaic cells"), và đoạn C chỉ rõ các rào cản kỹ thuật đang cản trở việc thương mại hóa pin Perovskite ("hurdles impede immediate commercialization").'
               },
               {
                 id: 5,

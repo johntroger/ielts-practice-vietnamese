@@ -69,18 +69,18 @@ export const CURATED_LISTENING_AUDIO_SOURCES = [
   },
   {
     id: 'src-p2-reserve',
-    title: 'Red Valley Nature Reserve & Agro-Tourism Farm Tour',
+    title: 'Agricultural Park Orientation & Rare Breeds Tour',
     audioUrl: 'https://dn710908.ca.archive.org/0/items/IELTS8Test2/IELTS_8%2C_Test_2.mp3',
     fallbackAudioUrl: 'https://archive.org/download/IELTS8Test2/IELTS_8%2C_Test_2.mp3',
     durationSeconds: 390,
     durationText: '~6.5 phút',
     accent: 'Australian (Anh - Úc tự nhiên)',
-    speakers: '1 người (Quản lý khu bảo tồn sinh thái)',
-    context: 'Giới thiệu sơ đồ bản đồ phân khu nông trại (Khu rừng bảo tồn, trại cá, vườn rau hữu cơ) và các hoạt động trải nghiệm cho trẻ em như cho cừu ăn, nướng bánh mì.',
+    speakers: '1 người (Quản lý Công viên Nông nghiệp)',
+    context: 'Giới thiệu sơ đồ bản đồ phân khu Công viên Nông nghiệp (Khu rừng thực nghiệm, trại cá, vườn rau thương phẩm) và khu bảo tồn giống vật nuôi quý hiếm (dê, gà mái).',
     suggestedParts: [2],
-    aiReasoning: 'Bài nói mô tả không gian địa lý, các góc định hướng (phía Bắc qua cầu, cạnh hồ chứa, góc Đông Nam). Đây là chất liệu vàng để AI sinh dạng bài Bản đồ (Map Labelling) đặc trưng của Part 2.',
+    aiReasoning: 'Bài nói mô tả không gian địa lý, các góc định hướng (phía Bắc, phía Tây, góc phía Nam). Đây là chất liệu vàng để AI sinh dạng bài Bản đồ (Map Labelling) đặc trưng của Part 2.',
     recommendedQuestionTypes: ['Map / Plan Labelling (Định vị phân khu)', 'Multiple Choice (Hoạt động tham quan)'],
-    sampleTranscriptSnippet: 'Welcome to Red Valley Reserve. If you look at your map, up in the northern quadrant past the bridge lies our native forest sanctuary...'
+    sampleTranscriptSnippet: 'Welcome to the Agricultural Park. If you look at your map, up in the northern quadrant lies our experimental Forest area, with the Fish Farms to the west...'
   },
 
   // PART 3 RECOMMENDED SOURCES
@@ -133,32 +133,32 @@ export const CURATED_LISTENING_AUDIO_SOURCES = [
   },
   {
     id: 'src-p4-hygiene',
-    title: 'Social History Lecture: Evolution of Personal Hygiene & Soap',
+    title: 'Public Health Lecture: Research on Questions about Doctors in Africa',
     audioUrl: 'https://dn710908.ca.archive.org/0/items/IELTS8Test2/IELTS_8%2C_Test_2.mp3',
     fallbackAudioUrl: 'https://archive.org/download/IELTS8Test2/IELTS_8%2C_Test_2.mp3',
     durationSeconds: 560,
     durationText: '~9.3 phút',
-    accent: 'British (Nhà sử học thuyết trình)',
-    speakers: '1 người (Nhà nghiên cứu lịch sử)',
-    context: 'Bài giảng lịch sử văn hóa xã hội: từ xà phòng mỡ động vật thời Babylon, nhà tắm công cộng La Mã, quan niệm né nước thời Trung Cổ đến cuộc cách mạng vệ sinh y tế thế kỷ 19.',
+    accent: 'British (Nghiên cứu sinh Y tế công cộng thuyết trình)',
+    speakers: '1 người (Nghiên cứu sinh Shona)',
+    context: 'Bài thuyết trình báo cáo kết quả khảo sát xã hội học y tế về thái độ của nam giới đang đi làm đối với dịch vụ khám chữa bệnh và bác sĩ tại châu Phi.',
     suggestedParts: [4],
-    aiReasoning: 'Bài giảng theo tiến trình lịch sử (Chronological Academic Lecture) kết hợp thành tựu của các nhà khoa học (Semmelweis, John Snow, Nightingale). Hoàn hảo cho Part 4 Multiple Choice hoặc Matching nhân vật.',
-    recommendedQuestionTypes: ['Multiple Choice học thuật', 'Matching (Nhân vật lịch sử & Phát minh vệ sinh)'],
-    sampleTranscriptSnippet: 'Today we trace the history of cleanliness. Ancient Sumerians boiled tallow with wood ash, whereas medieval physicians believed bathing weakened the body against plague...'
+    aiReasoning: 'Bài thuyết trình kết quả nghiên cứu thực địa (Academic Research Presentation) kết hợp phân tích phản ứng của từng nhóm đối tượng phỏng vấn. Hoàn hảo cho Part 4 Multiple Choice và Matching.',
+    recommendedQuestionTypes: ['Multiple Choice học thuật', 'Matching (Đối tượng phỏng vấn & Phản ứng)'],
+    sampleTranscriptSnippet: 'To set up my research programme in Africa, my tutor shared his contacts at partner universities. We focused on men in full-time employment to capture a wide range of data...'
   },
   {
     id: 'src-p4-wildlife',
-    title: 'Urban Ecology Lecture: Wildlife Adaptation to Metropolises',
+    title: 'Business Management Lecture: Trying to Repeat Success',
     audioUrl: 'https://dn710908.ca.archive.org/0/items/IELTS8Test2/IELTS_8%2C_Test_3.mp3',
     fallbackAudioUrl: 'https://archive.org/download/IELTS8Test2/IELTS_8%2C_Test_3.mp3',
     durationSeconds: 550,
     durationText: '~9.2 phút',
-    accent: 'British (Tiến sĩ sinh thái học)',
-    speakers: '1 người (Giảng viên sinh thái học)',
-    context: 'Bài giảng sinh học về các loài động vật hoang dã xâm lấn đô thị (cáo, chim cắt, chuột thành phố), biến đổi tần số tiếng hót và giải pháp quy hoạch hành lang xanh.',
+    accent: 'British (Giảng viên Quản trị kinh doanh)',
+    speakers: '1 người (Giảng viên đại học)',
+    context: 'Bài giảng quản trị phân tích lý do các doanh nghiệp thường thất bại khi cố gắng sao chép quy trình thành công từ chi nhánh này sang chi nhánh khác.',
     suggestedParts: [4],
-    aiReasoning: 'Độc thoại học thuật chuyên sâu về tập tính sinh học và quy hoạch đô thị bền vững. Đúng chuẩn 100% bài thi Part 4 của Cambridge IELTS.',
-    recommendedQuestionTypes: ['Lecture Summary Completion (ONE WORD ONLY)', 'Multiple Choice'],
-    sampleTranscriptSnippet: 'Metropolises are not sterile deserts. Urban birds elevate song frequencies to overcome low traffic rumble, while peregrine falcons nest atop steel skyscrapers...'
+    aiReasoning: 'Độc thoại học thuật chuyên sâu về quản trị vận hành, chuyển giao nhân sự và rủi ro khi sao chép máy móc. Đúng chuẩn 100% bài thi Part 4 của Cambridge IELTS.',
+    recommendedQuestionTypes: ['Lecture Notes Completion (ONE WORD ONLY)', 'Multiple Choice'],
+    sampleTranscriptSnippet: 'Compared to introducing new business processes, attempts to copy existing processes are far more frequent. Yet success results from a complex combination of factors...'
   }
 ];

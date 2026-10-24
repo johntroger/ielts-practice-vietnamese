@@ -37,10 +37,10 @@ export const track43SoleTraderProsCons = {
           "accent": "British RP Academic"
         }
       ],
-      "transcript": "[00:00] Track 43.\n[00:02] Thank you Dr Lethbridge for your introduction. I'd now like to move on to the details of each type of business structure, and discuss the advantages and disadvantages of each, starting with the sole trader.\n[00:16] This is simply a person who runs a business alone.\n[00:19] On the practical side, there's no need to register with Companies House, which means the sole trader is not legally the same as a registered company.\n[00:29] The trader can simply choose any name and start trading without paying any fees. There's no need to register an office, so the trader can even work from home.\n[00:40] There are also no legal requirements to submit financial accounts to Companies House.\n[00:46] As a result, this is the simplest and most straightforward way to start out in business and work for yourself.\n[00:53] Another benefit of being a sole trader is that you are your own boss. You don't have to answer to anybody else. You make your own decisions and you don't have to share your earnings with a partner.\n[01:05] However, it doesn't mean that you have to do everything alone. You can also employ or give contracts to other people to do work for you, though of course you need to be aware of regulations regarding employing others.",
-      "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
-      "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
-      "instructionVi": "Hoàn thành phần ghi chú dưới đây. Điền KHÔNG QUÁ HAI TỪ cho mỗi câu trả lời.",
+      "transcript": "[00:00] Track 43.\n[00:02] Thank you Dr Lethbridge for your introduction. I'd now like to move on to the details of each type of business structure, and discuss the advantages and disadvantages of each, starting with the sole trader.\n[00:16] This is simply a person who runs a business alone.\n[00:19] On the practical side, there's no need to register with Companies House, which means the sole trader is not legally the same as a registered company.\n[00:29] The trader can simply choose any name and start trading without paying any fees. There's no need to register an office, so the trader can even work from home.\n[00:40] There are also no legal requirements to submit financial accounts to Companies House.\n[00:46] As a result, this is the simplest and most straightforward way to start out in business and work for yourself.\n[00:53] Another benefit of being a sole trader is that you are your own boss. You don't have to answer to anybody else. You make your own decisions and you don't have to share your earnings with a partner.\n[01:05] However, it doesn't mean that you have to do everything alone. You can also employ or give contracts to other people to do work for you, though of course you need to be aware of regulations regarding employing others.\n[01:20] However, you do need to register with the tax office as a self-employed person. This means you have to complete an annual tax return. This is a document which you send to the tax office once a year, showing your income and expenses, so that the tax office can calculate how much tax you need to pay.",
+      "instruction": "Complete the notes below. Write NO MORE THAN THREE WORDS for each answer.",
+      "instructionEn": "Complete the notes below. Write NO MORE THAN THREE WORDS for each answer.",
+      "instructionVi": "Hoàn thành phần ghi chú dưới đây. Điền KHÔNG QUÁ BA TỪ cho mỗi câu trả lời.",
       "questionGroups": [
         {
           "id": "qg-t43-p1",
@@ -52,9 +52,9 @@ export const track43SoleTraderProsCons = {
           "groupTitle": "Questions 1–5: Practical Benefits & Operational Flexibility",
           "groupTitleEn": "Questions 1–5: Practical Benefits & Operational Flexibility",
           "groupTitleVi": "Câu 1–5: Lợi ích thực tế & Tính linh hoạt trong vận hành",
-          "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
-          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
-          "instructionVi": "Hoàn thành phần ghi chú dưới đây. Điền KHÔNG QUÁ HAI TỪ cho mỗi câu trả lời.",
+          "instruction": "Complete the notes below. Write NO MORE THAN THREE WORDS for each answer.",
+          "instructionEn": "Complete the notes below. Write NO MORE THAN THREE WORDS for each answer.",
+          "instructionVi": "Hoàn thành phần ghi chú dưới đây. Điền KHÔNG QUÁ BA TỪ cho mỗi câu trả lời.",
           "questions": [
             {
               "id": "t43-q1",

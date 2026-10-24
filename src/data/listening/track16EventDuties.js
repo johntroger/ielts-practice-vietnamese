@@ -72,16 +72,16 @@ export const track16EventDuties = {
             {
               id: 2,
               order: 2,
-              questionText: 'Duties are allocated according to each helper\'s personal ................ whenever feasible.',
-              prefixText: 'Duties are allocated according to each helper\'s personal',
-              suffixText: 'whenever feasible.',
-              answer: 'preference',
-              acceptableAnswers: ['preference', 'preferences'],
+              questionText: 'Geoff has tried to ensure each helper is in charge of the event they ................',
+              prefixText: 'Geoff has tried to ensure each helper is in charge of the event they',
+              suffixText: '.',
+              answer: 'prefer',
+              acceptableAnswers: ['prefer', 'preference', 'preferences'],
               evidenceQuote: "I've tried to work it out so that each of you can be in charge of the event you prefer, as far as possible.",
               evidenceTimestamp: 25,
-              explanation: 'Các nhiệm vụ được sắp xếp theo nguyện vọng/sở thích (preference) của từng người trong chừng mực có thể.',
-              explanationEn: 'Assignments are arranged matching what each volunteer prefers as far as possible.',
-              explanationVi: 'Các nhiệm vụ được sắp xếp theo nguyện vọng/sở thích (preference) của từng người trong chừng mực có thể.'
+              explanation: 'Các nhiệm vụ được sắp xếp theo môn mà từng người yêu thích (the event you prefer).',
+              explanationEn: 'Assignments are arranged matching the event each volunteer prefers as far as possible.',
+              explanationVi: 'Các nhiệm vụ được sắp xếp theo môn mà từng người yêu thích (the event you prefer).'
             },
             {
               id: 3,

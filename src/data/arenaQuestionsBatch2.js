@@ -98,10 +98,10 @@ export const ARENA_BATCH_2_QUESTIONS = [
     cambridgeSource: 'GitBook Spelling Demons',
     prompt: 'Chọn phương án viết đúng chính tả cho từ "bệnh tiêu chảy":',
     context: 'Contaminated tap water caused widespread cases of _____.',
-    options: ['diarrhoea', 'diarhea', 'diarrhea', 'diarrea'],
+    options: ['diarrhoea', 'diarhea', 'diarrheoa', 'diarrea'],
     correctIndex: 0,
     correctAnswer: 'diarrhoea',
-    explanation: 'Theo chuẩn tiếng Anh Anh của bài thi Cambridge: "diarrhoea" (hoặc tiếng Anh Mỹ là diarrhea, nhưng đáp án chuẩn Cambridge luôn có 2 chữ \'r\').'
+    explanation: 'Theo chuẩn tiếng Anh Anh của bài thi Cambridge: "diarrhoea" (có 2 chữ \'r\' và cụm \'hoea\' ở cuối).'
   },
   {
     id: 'b2_easy_spell_07',
@@ -382,20 +382,6 @@ export const ARENA_BATCH_2_QUESTIONS = [
   // =========================================================================
   // SECTION B: MEDIUM TIER (30 Questions) - Band 5.5 - 6.5 - Base XP: 20
   // =========================================================================
-  {
-    id: 'b2_med_spell_01',
-    difficulty: 'medium',
-    topic: 'education',
-    skillCategory: 'spelling',
-    type: 'spelling',
-    cambridgeSource: 'Cambridge 16 Test 2 Listening Part 2',
-    prompt: 'Chọn phương án viết đúng chính tả cho từ "bảng câu hỏi khảo sát":',
-    context: 'Respondents were asked to complete an anonymous online _____.',
-    options: ['questionnaire', 'questionaire', 'questionair', 'questionnare'],
-    correctIndex: 0,
-    correctAnswer: 'questionnaire',
-    explanation: '"Questionnaire" có đúng 2 chữ \'n\' (question + n + aire).'
-  },
   {
     id: 'b2_med_spell_02',
     difficulty: 'medium',
@@ -1034,20 +1020,6 @@ export const ARENA_BATCH_2_QUESTIONS = [
     explanation: 'Cấu trúc "It is widely postulated that..." (Người ta đưa ra giả thuyết rộng rãi rằng...) là mẫu câu khách quan học thuật đỉnh cao của Band 8.0+.'
   },
   {
-    id: 'b2_hard_spell_14',
-    difficulty: 'hard',
-    topic: 'education',
-    skillCategory: 'spelling',
-    type: 'spelling',
-    cambridgeSource: 'GitBook Spelling Demons',
-    prompt: 'Chọn phương án viết đúng chính tả cho từ "tinh tế, khó nắm bắt":',
-    context: 'The author employs _____ stylistic nuances to convey thematic irony.',
-    options: ['subtle', 'suttle', 'subtule', 'subtile'],
-    correctIndex: 0,
-    correctAnswer: 'subtle',
-    explanation: '"Subtle" có chữ \'b\' câm (s-u-b-t-l-e).'
-  },
-  {
     id: 'b2_hard_listen_15',
     difficulty: 'hard',
     topic: 'environment',
@@ -1075,20 +1047,6 @@ export const ARENA_BATCH_2_QUESTIONS = [
     correctIndex: 0,
     correctAnswer: 'TRUE',
     explanation: 'Dưới 8% thành công (fewer than 8%) đồng nghĩa đại đa số (>92%) thất bại trong việc đạt chuẩn thương mại hóa (majority fail to obtain market approval). Đáp án là TRUE.'
-  },
-  {
-    id: 'b2_hard_vocab_17',
-    difficulty: 'hard',
-    topic: 'health',
-    skillCategory: 'vocab',
-    type: 'synonym',
-    cambridgeSource: 'Cambridge 16 Academic Lexicon',
-    prompt: 'Từ đồng nghĩa Band 8.0 cho "pervasive and found everywhere":',
-    context: 'Microplastics have become _____ throughout marine trophic cascades.',
-    options: ['ubiquitous', 'ephemeral', 'parsimonious', 'negligible'],
-    correctIndex: 0,
-    correctAnswer: 'ubiquitous',
-    explanation: '"Ubiquitous" (có mặt khắp nơi, nhan nhản) là tính từ học thuật C2 thay thế cho "omnipresent / pervasive".'
   },
   {
     id: 'b2_hard_spell_18',
@@ -1458,10 +1416,10 @@ export const ARENA_BATCH_2_QUESTIONS = [
     cambridgeSource: 'GitBook Spelling Demons - Nightmare Band 9.0',
     prompt: 'Chọn phương án viết đúng chính tả cho từ "thuốc giảm đau, thuốc gây tê":',
     context: 'The surgical team administered a local _____ before the incision.',
-    options: ['anaesthetic', 'anesthetic', 'anaesthetic', 'anaestetic'],
+    options: ['anaesthetic', 'anestetic', 'anaestetic', 'aneasthetic'],
     correctIndex: 0,
     correctAnswer: 'anaesthetic',
-    explanation: 'Theo chuẩn Cambridge Anh - Anh: "anaesthetic" (chứa tổ hợp nguyên âm \'ae\' hai lần: a-n-a-e-s-t-h-e-t-i-c).'
+    explanation: 'Theo chuẩn Cambridge Anh - Anh: "anaesthetic" (chứa tổ hợp nguyên âm \'ae\' ở đầu và \'th\' ở giữa: a-n-a-e-s-t-h-e-t-i-c).'
   },
   {
     id: 'b2_nm_vocab_12',

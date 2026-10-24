@@ -38,9 +38,9 @@ export const track39SpeakingPart2CandidateSample = {
         }
       ],
       "transcript": "[00:00] Track 39.\n[00:02] I remember a trip I took last year, on the 12th of August, I believe. I boarded a plane to Paris, which was rather exciting as I'd never done that before. Since I come from China, it took a long time to arrive, but when I got there, the first thing I did was go to the Louvre Museum, you know, where the big triangle is by the entrance, and took some pictures.\n[00:28] After that, I boarded a subway train to the Eiffel Tower to take more pictures.\n[00:34] Because I was pretty hungry around that time, I went to a restaurant, although I had trouble ordering food because I don't speak any French.",
-      "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
+      "instruction": "Complete the notes below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+      "instructionEn": "Complete the notes below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+      "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ BA TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
       "questionGroups": [
         {
           "id": "qg-t39-p1",
@@ -52,9 +52,9 @@ export const track39SpeakingPart2CandidateSample = {
           "groupTitle": "Questions 1–5: Candidate Travel Itinerary & Sightseeing Notes",
           "groupTitleEn": "Questions 1–5: Candidate Travel Itinerary & Sightseeing Notes",
           "groupTitleVi": "Câu 1–5: Lịch trình du lịch & Ghi chú tham quan của thí sinh",
-          "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionEn": "Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
+          "instruction": "Complete the notes below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "instructionEn": "Complete the notes below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "instructionVi": "Điền vào mỗi chỗ trống KHÔNG QUÁ BA TỪ VÀ/HOẶC MỘT SỐ từ bài nghe.",
           "questions": [
             {
               "id": "t39-q1",

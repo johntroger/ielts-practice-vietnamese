@@ -4,7 +4,7 @@ import { calculateListeningBandScore } from '../data/listeningTasks';
 const STORAGE_PREFIX = 'ielts_listening_session_';
 
 export function useListeningExam({
-  testId = 'cambridge-18-test-1',
+  testId = 'cambridge-8-test-1',
   audioEngine = null,
   examMode = 'practice', // 'strict' | 'practice'
   questionsData = []

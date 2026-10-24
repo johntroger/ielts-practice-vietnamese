@@ -658,9 +658,9 @@ export const ARENA_BASE_QUESTION_BANK = [
     context: 'Is that with 2 Ls? No, E-L-I-O-T.',
     audioText: 'Is that with 2 Ls? No, E-L-I-O-T.',
     options: ['Elliot', 'Elliott', 'Eliott', 'Eliot'],
-    correctIndex: 0,
-    correctAnswer: 'Elliot',
-    explanation: 'Bẫy chính tả tên riêng: Người hỏi thắc mắc có phải "two Ls" không, nhưng ông ấy trả lời "No" và đánh vần Elliot (E-L-I-O-T).',
+    correctIndex: 3,
+    correctAnswer: 'Eliot',
+    explanation: 'Bẫy chính tả tên riêng: Người hỏi thắc mắc có phải "two Ls" không, nhưng ông ấy trả lời "No" và đánh vần Eliot (E-L-I-O-T).',
     explanationEn: "Spelling clarification: The caller clarifies whether the surname contains two Ls, and the agent responds 'No', spelling E-L-I-O-T."
   },
   {
@@ -5140,33 +5140,33 @@ export const ARENA_BASE_QUESTION_BANK = [
     topic: 'economy',
     skillCategory: 'listening',
     type: 'listening_trap',
-    prompt: 'Which regulatory authority must a Limited Liability Partnership (LLP) be legally registered with in the UK?',
-    promptEn: 'Which regulatory authority must a Limited Liability Partnership (LLP) be legally registered with in the UK?',
+    prompt: 'According to Dr Lethbridge, what is the minimum number of members who must be legally responsible for a Limited Liability Partnership (LLP)?',
+    promptEn: 'According to Dr Lethbridge, what is the minimum number of members who must be legally responsible for a Limited Liability Partnership (LLP)?',
     context: 'Dr Lethbridge: "On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership."',
     contextEn: 'Dr Lethbridge: "On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership."',
     audioText: "On the other hand, LLPs have to be legally registered with Companies House. This means that at least two of the members are legally responsible for the partnership.",
     options: [
-      'Companies House',
-      'The London Stock Exchange',
-      'The British Chamber of Commerce',
-      'The Ministry of Justice'
+      'At least two members',
+      'Only one managing partner',
+      'At least five board members',
+      'None of the individual members'
     ],
     optionsVi: [
-      'Companies House (Cơ quan đăng ký kinh doanh)',
-      'Sở giao dịch chứng khoán Luân Đôn',
-      'Phòng Thương mại Vương quốc Anh',
-      'Bộ Tư pháp'
+      'Ít nhất hai thành viên (At least two members)',
+      'Chỉ một đối tác điều hành duy nhất',
+      'Ít nhất năm thành viên hội đồng',
+      'Không có thành viên cá nhân nào'
     ],
     optionsEn: [
-      'Companies House',
-      'The London Stock Exchange',
-      'The British Chamber of Commerce',
-      'The Ministry of Justice'
+      'At least two members',
+      'Only one managing partner',
+      'At least five board members',
+      'None of the individual members'
     ],
     correctIndex: 0,
-    correctAnswer: 'Companies House',
-    explanation: 'LLP bắt buộc phải đăng ký với Companies House: "LLPs have to be legally registered with Companies House".',
-    explanationEn: 'LLPs must be formally registered with Companies House under UK commercial law.'
+    correctAnswer: 'At least two members',
+    explanation: 'TS. Lethbridge nêu rõ khi đăng ký LLP với Companies House, tối thiểu phải có hai thành viên chịu trách nhiệm pháp lý: "at least two of the members are legally responsible for the partnership".',
+    explanationEn: 'Dr Lethbridge states that in an LLP registered with Companies House, "at least two of the members are legally responsible for the partnership".'
   },
   {
     id: 'hard_lis_llp_annual_return_penalty_t44',

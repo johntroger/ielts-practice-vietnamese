@@ -270,10 +270,10 @@ export function analyzeReadingDistractor({
 
   const userStr = String(rawUserAnswer || '').trim();
   const userUpper = userStr.toUpperCase();
-  const targetStr = String(question.answer || '').trim();
+  const targetStr = String(question.answer ?? question.correctAnswer ?? '').trim();
   const targetUpper = targetStr.toUpperCase();
-  const questionText = String(question.questionText || '');
-  const quote = String(evidenceQuote || question.evidenceQuote || '');
+  const questionText = String(question.questionText || question.text || '');
+  const quote = String(evidenceQuote || question.evidenceQuote || question.evidence || '');
   const combinedContext = (quote + ' ' + (passageText || '')).toLowerCase();
 
   // Pattern sets
@@ -370,21 +370,28 @@ export function analyzeReadingDistractor({
  * Diagnoses a single question's user response against Cambridge standards:
  */
 export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstruction = '') {
+  const qOrder = question.order || question.questionNumber || question.id;
+  const qAnswer = question.answer ?? question.correctAnswer ?? '';
+  const qText = question.questionText || question.text || '';
+  const qEvPara = question.evidenceParagraph || question.evidenceParagraphId || '';
+  const qEvQuote = question.evidenceQuote || question.evidence || '';
+
   const result = {
-    order: question.order,
+    order: qOrder,
     questionId: question.id,
     passageNumber: question.passageNumber || 1,
     questionType: question.type || 'standard',
-    questionText: question.questionText || '',
+    questionText: qText,
     userAnswer: rawUserAnswer || null,
-    correctAnswer: question.answer,
+    correctAnswer: qAnswer,
     acceptableAnswers: question.acceptableAnswers || [],
     isCorrect: false,
     status: 'WRONG_ANSWER', // 'CORRECT' | 'WORD_LIMIT_ERROR' | 'PLURAL_ERROR' | 'SPELLING_ERROR' | 'TFNG_FORMAT_ERROR' | 'WRONG_ANSWER' | 'UNANSWERED'
     diagnosticMessage: '',
     explanation: question.explanation || '',
-    evidenceParagraph: question.evidenceParagraph || '',
-    evidenceQuote: question.evidenceQuote || '',
+    explanationEn: question.explanationEn || '',
+    evidenceParagraph: qEvPara,
+    evidenceQuote: qEvQuote,
     distractorAnalysis: null
   };
 
@@ -394,7 +401,7 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
         question,
         rawUserAnswer,
         status: res.status,
-        evidenceQuote: question.evidenceQuote,
+        evidenceQuote: qEvQuote,
         passageText: question.passageText
       });
     }
@@ -411,7 +418,7 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
   // 2. Multi-letter array answers (e.g. Choose TWO letters)
   if (Array.isArray(rawUserAnswer)) {
     const userArr = rawUserAnswer.map(a => String(a).trim().toUpperCase()).sort();
-    const targetArr = (Array.isArray(question.answer) ? question.answer : [question.answer])
+    const targetArr = (Array.isArray(qAnswer) ? qAnswer : [qAnswer])
       .map(a => String(a).trim().toUpperCase())
       .sort();
     
@@ -428,7 +435,7 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
   }
 
   const userNorm = normalizeReadingAnswer(rawUserAnswer);
-  const targetNorm = normalizeReadingAnswer(question.answer);
+  const targetNorm = normalizeReadingAnswer(qAnswer);
 
   // 3. Check Word Limit Violation (Crucial Cambridge Rule)
   const instruction = groupInstruction || question.instruction || '';
@@ -444,7 +451,13 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
     'fill_in_the_blank'
   ].includes(question.type);
 
-  if (isGapFillType && maxWords !== null) {
+  const hasWordBankOptions = Boolean(
+    question.hasWordBank ||
+    (Array.isArray(question.wordBank) && question.wordBank.length > 0) ||
+    (Array.isArray(question.options) && question.options.length > 0)
+  );
+
+  if (isGapFillType && maxWords !== null && !hasWordBankOptions) {
     const wordCount = countIeltsWords(userNorm);
     if (wordCount > maxWords) {
       result.isCorrect = false;
@@ -454,9 +467,9 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
     }
   }
 
-  // 4. Build complete list of acceptable variations (including brackets)
+  // 4. Build complete list of acceptable variations (including brackets & wordBank letter/text pairs)
   const allAcceptableTargets = new Set();
-  expandOptionalBrackets(question.answer).forEach(v => allAcceptableTargets.add(v));
+  expandOptionalBrackets(qAnswer).forEach(v => allAcceptableTargets.add(v));
   const acceptableList = [
     ...(Array.isArray(question.acceptableAnswers) ? question.acceptableAnswers : []),
     ...(Array.isArray(question.acceptableAlternatives) ? question.acceptableAlternatives : [])
@@ -464,6 +477,20 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
   acceptableList.forEach(ans => {
     expandOptionalBrackets(ans).forEach(v => allAcceptableTargets.add(v));
   });
+
+  const bankList = question.wordBank || question.options || [];
+  if (Array.isArray(bankList) && bankList.length > 0) {
+    bankList.forEach(opt => {
+      if (typeof opt === 'object' && opt !== null) {
+        const optKey = normalizeReadingAnswer(opt.key || opt.letter || opt.id || opt.value || '');
+        const optText = normalizeReadingAnswer(opt.text || opt.label || opt.name || '');
+        if (optKey && optText) {
+          if (allAcceptableTargets.has(optKey)) allAcceptableTargets.add(optText);
+          if (allAcceptableTargets.has(optText)) allAcceptableTargets.add(optKey);
+        }
+      }
+    });
+  }
 
   // 5. Check Exact / Bracket-Expanded Match
   if (allAcceptableTargets.has(userNorm)) {
@@ -488,7 +515,7 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
       return finalizeResult(result);
     }
     result.status = 'WRONG_ANSWER';
-    result.diagnosticMessage = `Đáp án đúng là: ${question.answer}`;
+    result.diagnosticMessage = `Đáp án đúng là: ${qAnswer}`;
     return finalizeResult(result);
   }
 
@@ -532,7 +559,7 @@ export function diagnoseReadingQuestion(question, rawUserAnswer, groupInstructio
 
   // 10. Fallback: Wrong Answer
   result.status = 'WRONG_ANSWER';
-  result.diagnosticMessage = `Đáp án chưa chính xác. Đáp án đúng: '${question.answer}'`;
+  result.diagnosticMessage = `Đáp án chưa chính xác. Đáp án đúng: '${qAnswer}'`;
   return finalizeResult(result);
 }
 
@@ -578,16 +605,21 @@ export function scoreReadingExam({
       const passageFullText = passage.paragraphs?.map(p => p.text).join(' ') || '';
 
       passage.questionGroups?.forEach(group => {
-        const groupInstruction = group.instruction || '';
+        const groupInstruction = group.instruction || group.instructions || '';
+        const groupBank = group.wordBank || group.options || group.questions?.[0]?.options || null;
         group.questions?.forEach(q => {
+          const qOrder = q.order || q.questionNumber || q.id;
           const qWithMeta = {
             ...q,
+            order: qOrder,
             passageNumber: pNum,
             type: group.type || q.type || 'standard',
             instruction: groupInstruction,
-            passageText: passageFullText
+            passageText: passageFullText,
+            hasWordBank: Boolean(groupBank),
+            wordBank: q.wordBank || q.options || groupBank
           };
-          const rawAns = userAnswers[q.order];
+          const rawAns = userAnswers[qOrder];
           const diag = diagnoseReadingQuestion(qWithMeta, rawAns, groupInstruction);
 
           allQuestions.push(diag);
@@ -625,7 +657,8 @@ export function scoreReadingExam({
       const pNum = q.passageNumber || 1;
       if (!passageStatsMap[pNum]) passageStatsMap[pNum] = { total: 0, correct: 0 };
 
-      const rawAns = userAnswers[q.order];
+      const qOrder = q.order || q.questionNumber || q.id;
+      const rawAns = userAnswers[qOrder];
       const diag = diagnoseReadingQuestion(q, rawAns, q.instruction || '');
 
       allQuestions.push(diag);

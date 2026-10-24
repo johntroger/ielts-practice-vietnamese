@@ -70,7 +70,7 @@ export const ARENA_BATCH_1_QUESTIONS = [
     cambridgeSource: 'GitBook Spelling Demons - Group 4 Silent Letters',
     prompt: 'Chọn phương án viết đúng chính tả cho từ "đồng hồ đo áp suất / thiết bị đo":',
     context: 'The engineer checked the digital pressure _____ before starting the engine.',
-    options: ['gauge', 'guage', 'gage', 'gague'],
+    options: ['gauge', 'guage', 'gaudge', 'gague'],
     correctIndex: 0,
     correctAnswer: 'gauge',
     explanation: '"Gauge" có ký tự "u" đứng sau "a" (g-a-u-g-e), người học thường đảo nhầm thành "guage".'
@@ -84,7 +84,7 @@ export const ARENA_BATCH_1_QUESTIONS = [
     cambridgeSource: 'GitBook Spelling Demons - Group 4 Silent Letters',
     prompt: 'Chọn phương án viết đúng chính tả cho từ "hạn hán":',
     context: 'The region suffered a severe five-year _____ that dried up all natural reservoirs.',
-    options: ['drought', 'drouth', 'drowght', 'draught'],
+    options: ['drought', 'drout', 'drowght', 'drowt'],
     correctIndex: 0,
     correctAnswer: 'drought',
     explanation: '"Drought" (hạn hán) có đuôi "-ought" phát âm là /draʊt/. Chú ý phân biệt với "draught" (luồng gió lùa / bia tươi).'
@@ -1385,34 +1385,6 @@ export const ARENA_BATCH_1_QUESTIONS = [
     explanation: 'Giảng viên chỉ trích việc quy kết năng lực nhận thức hoàn toàn cho song ngữ mà quên kiểm soát các biến số gây nhiễu về kinh tế xã hội ("failing to control for socioeconomic confounding variables").'
   },
   {
-    id: 'b1_nm_spell_01',
-    difficulty: 'nightmare',
-    topic: 'science',
-    skillCategory: 'spelling',
-    type: 'spelling',
-    cambridgeSource: 'GitBook Spelling Demons - Band 9.0 Demons',
-    prompt: 'Chọn phương án viết đúng chính tả cho từ "sự bắt chước / mô phỏng sinh học":',
-    context: 'Aeronautical engineers utilize biomimetic _____ to design fuel-efficient winglets.',
-    options: ['surveillance', 'surveilance', 'survaillance', 'surveillence'],
-    correctIndex: 0,
-    correctAnswer: 'surveillance',
-    explanation: '"Surveillance" là một trong những từ bẫy chính tả khó nhất với 2 chữ "l", bắt đầu bằng "sur-", kết thúc bằng "-eillance".'
-  },
-  {
-    id: 'b1_nm_syn_01',
-    difficulty: 'nightmare',
-    topic: 'culture',
-    skillCategory: 'vocab',
-    type: 'vocab',
-    cambridgeSource: 'GitBook Band 9.0 Lexicon Handbook',
-    prompt: 'Chọn danh từ Band 9.0 có nghĩa là "nguyên lý cốt lõi / giáo lý nền tảng":',
-    context: 'Adherence to the ethical _____ of peer-review integrity is non-negotiable in scientific academia.',
-    options: ['tenets', 'tenants', 'tensions', 'tendencies'],
-    correctIndex: 0,
-    correctAnswer: 'tenets',
-    explanation: '"Tenet" (/ˈten.ɪt/ - danh từ: giáo lý, nguyên lý cốt lõi), phân biệt với "tenant" (người thuê nhà) hay "tendency" (xu hướng).'
-  },
-  {
     id: 'b1_nm_cam15_r_02',
     difficulty: 'nightmare',
     topic: 'technology',
@@ -1478,34 +1450,6 @@ export const ARENA_BATCH_1_QUESTIONS = [
     correctIndex: 0,
     correctAnswer: 'TRUE',
     explanation: 'Bài đọc chỉ ra sự mệt mỏi nhận thức thúc đẩy người tiêu dùng chọn phương án mặc định bất chấp tính tối ưu kinh tế ("driving consumers toward default options irrespective of economic optimality"), hoàn toàn tương đương với "settle for default choices even when disadvantageous". Do đó là TRUE.'
-  },
-  {
-    id: 'b1_nm_spell_02',
-    difficulty: 'nightmare',
-    topic: 'culture',
-    skillCategory: 'spelling',
-    type: 'spelling',
-    cambridgeSource: 'GitBook Spelling Demons - Top Band 9.0',
-    prompt: 'Chọn phương án viết đúng chính tả cho từ "bảng câu hỏi khảo sát xã hội học":',
-    context: 'The sociological fieldwork relied on a standardized self-administered research _____.',
-    options: ['questionnaire', 'questionaire', 'questionairre', 'questionnare'],
-    correctIndex: 0,
-    correctAnswer: 'questionnaire',
-    explanation: '"Questionnaire" bắt buộc phải có 2 chữ "n" (q-u-e-s-t-i-o-n-n-a-i-r-e).'
-  },
-  {
-    id: 'b1_nm_syn_02',
-    difficulty: 'nightmare',
-    topic: 'science',
-    skillCategory: 'vocab',
-    type: 'vocab',
-    cambridgeSource: 'GitBook Band 9.0 Lexical Resource',
-    prompt: 'Chọn tính từ Band 9.0 mang nghĩa "tồn tại khắp nơi / phổ biến ở mọi thời điểm":',
-    context: 'Smartphones and connected sensors have become truly _____ across modern urban settlements.',
-    options: ['ubiquitous', 'ephemeral', 'parochial', 'superfluous'],
-    correctIndex: 0,
-    correctAnswer: 'ubiquitous',
-    explanation: '"Ubiquitous" (/juːˈbɪk.wɪ.təs/ - tính từ: có mặt ở khắp mọi nơi), tương đương với "omnipresent / pervasive".'
   },
   {
     id: 'b1_nm_cam15_l_03',

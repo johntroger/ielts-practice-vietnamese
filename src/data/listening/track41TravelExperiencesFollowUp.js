@@ -48,9 +48,9 @@ export const track41TravelExperiencesFollowUp = {
         }
       ],
       "transcript": "[00:00] Track 41.\n[00:02] A.\n[00:03] And it was a great experience. I think I'll always remember going to Tibet.\n[00:09] Do you generally enjoy visiting new places?\n[00:12] Yes, I would say I like to try new things, meet new people, so travelling is something that is very important to me.\n[00:21] B.\n[00:22] And it was a great experience. I think Paris is one of the best places on Earth for culture.\n[00:30] Would you like to visit Paris again?\n[00:32] Oh, definitely. Maybe in ten years' time, I'd like to go back and see if anything had changed.\n[00:39] Is there anywhere else you'd like to visit one day?\n[00:41] Yes, I've always thought about going to Rome. I mean, I'm a big fan of the opera and love Italian food, so it's next on my list of destinations.",
-      "instruction": "Complete the sentences below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      "instructionEn": "Complete the sentences below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-      "instructionVi": "Hoàn thành các câu dưới đây. Điền KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ cho mỗi câu trả lời.",
+      "instruction": "Complete the sentences below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+      "instructionEn": "Complete the sentences below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+      "instructionVi": "Hoàn thành các câu dưới đây. Điền KHÔNG QUÁ BA TỪ VÀ/HOẶC MỘT SỐ cho mỗi câu trả lời.",
       "questionGroups": [
         {
           "id": "qg-t41-p1",
@@ -62,9 +62,9 @@ export const track41TravelExperiencesFollowUp = {
           "groupTitle": "Questions 1–5: Travel Experiences & Aspirations",
           "groupTitleEn": "Questions 1–5: Travel Experiences & Aspirations",
           "groupTitleVi": "Câu 1–5: Trải nghiệm & Nguyện vọng du lịch",
-          "instruction": "Complete the sentences below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionEn": "Complete the sentences below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
-          "instructionVi": "Hoàn thành các câu dưới đây. Điền KHÔNG QUÁ HAI TỪ VÀ/HOẶC MỘT SỐ cho mỗi câu trả lời.",
+          "instruction": "Complete the sentences below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "instructionEn": "Complete the sentences below. Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.",
+          "instructionVi": "Hoàn thành các câu dưới đây. Điền KHÔNG QUÁ BA TỪ VÀ/HOẶC MỘT SỐ cho mỗi câu trả lời.",
           "questions": [
             {
               "id": "t41-q1",

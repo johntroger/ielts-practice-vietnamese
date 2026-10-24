@@ -198,8 +198,7 @@ export const READING_MICRO_DRILLS = [
     passageExcerpt: 'Encroaching oceanic waters jeopardize the operational integrity of critical transportation infrastructure throughout littoral cities.',
     pairs: [
       { questionWord: 'Rising sea levels', passageWord: 'Encroaching oceanic waters', meaning: 'mực nước biển dâng cao/xâm lấn', meaningEn: 'rising sea levels / encroaching oceanic waters' },
-      { questionWord: 'threaten to', passageWord: 'jeopardize', meaning: 'đe dọa, đặt vào vòng nguy hiểm', meaningEn: 'threaten to / jeopardize' },
-      { questionWord: 'submerge / damage', passageWord: 'the operational integrity', meaning: 'sự nguyên vẹn và khả năng vận hành', meaningEn: 'submerge / operational integrity' },
+      { questionWord: 'threaten to submerge', passageWord: 'jeopardize the operational integrity of', meaning: 'đe dọa nhấn chìm / hủy hoại khả năng vận hành', meaningEn: 'threaten to submerge / jeopardize the operational integrity of' },
       { questionWord: 'essential transit networks', passageWord: 'critical transportation infrastructure', meaning: 'hạ tầng giao thông trọng yếu', meaningEn: 'essential transit networks / critical infrastructure' },
       { questionWord: 'coastal metropolises', passageWord: 'littoral cities', meaning: 'các thành phố ven biển', meaningEn: 'coastal metropolises / littoral cities' }
     ]

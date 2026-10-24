@@ -145,32 +145,35 @@ export default function QuestionPane({
       return;
     }
 
-    setLoadingAiFor(q.order);
-    setAiErrorFor(prev => ({ ...prev, [q.order]: null }));
+    const qOrder = q.order || q.questionNumber || q.id;
+    const qEvPara = q.evidenceParagraph || q.evidenceParagraphId;
+
+    setLoadingAiFor(qOrder);
+    setAiErrorFor(prev => ({ ...prev, [qOrder]: null }));
 
     try {
       // Find paragraph text
-      const paraObj = passageParagraphs.find(p => p.id === q.evidenceParagraph);
+      const paraObj = passageParagraphs.find(p => p.id === qEvPara);
       const paragraphText = paraObj ? paraObj.text : '';
 
       const explanation = await explainReadingQuestion({
         passageTitle,
         paragraphText,
         question: q,
-        userAnswer: userAnswers[q.order],
+        userAnswer: userAnswers[qOrder],
         apiKey,
         model
       });
 
       setAiExplanations(prev => ({
         ...prev,
-        [q.order]: explanation
+        [qOrder]: explanation
       }));
     } catch (err) {
       console.error('Lỗi khi tải giải thích AI:', err);
       setAiErrorFor(prev => ({
         ...prev,
-        [q.order]: err.message || 'Không thể tạo giải thích AI vào lúc này.'
+        [qOrder]: err.message || (isEn ? 'Unable to generate AI explanation right now.' : 'Không thể tạo giải thích AI vào lúc này.')
       }));
     } finally {
       setLoadingAiFor(null);
@@ -448,6 +451,20 @@ export default function QuestionPane({
   };
 
   const renderCompletionGroup = (group) => {
+    const rawBank = group.wordBank || group.options || group.questions?.[0]?.options || null;
+    const resolvedWordBank = Array.isArray(rawBank)
+      ? rawBank
+          .map((item, idx) => {
+            if (typeof item === 'object' && item !== null) {
+              const key = item.key || item.letter || item.id || item.value || String.fromCharCode(65 + idx);
+              const text = item.text || item.label || item.name || '';
+              return { key, text };
+            }
+            return null;
+          })
+          .filter(item => item && item.text && String(item.text).trim() !== String(item.key).trim())
+      : null;
+
     return (
       <div className="space-y-4">
         {/* Summary Passage / Context Box if available */}
@@ -463,13 +480,13 @@ export default function QuestionPane({
         )}
 
         {/* Word Bank if available */}
-        {group.wordBank && (
+        {resolvedWordBank && resolvedWordBank.length > 0 && (
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
             <span className="text-xs font-bold text-slate-700 block">Word Bank / Reference Options:</span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              {group.wordBank.map(item => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+              {resolvedWordBank.map(item => (
                 <div key={item.key} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center gap-1.5 shadow-2xs">
-                  <span className="font-bold text-blue-700">{item.key}.</span>
+                  <span className="font-bold text-blue-700 shrink-0">{item.key}.</span>
                   <span className="text-slate-800 truncate" title={item.text}>{item.text}</span>
                 </div>
               ))}
@@ -515,7 +532,7 @@ export default function QuestionPane({
                       disabled={isSubmitted}
                       value={currentAns}
                       onChange={(e) => onAnswerChange(qOrder, e.target.value)}
-                      placeholder={group.wordBank ? "Enter letter (e.g. A, B...)" : "Type your answer..."}
+                      placeholder={resolvedWordBank && resolvedWordBank.length > 0 ? "Enter letter or phrase..." : "Type your answer..."}
                       className={`w-full sm:max-w-md px-3.5 py-2 rounded-xl text-sm border focus:outline-hidden focus:ring-2 transition-all ${
                         isSubmitted
                           ? isCorrect 
@@ -537,19 +554,35 @@ export default function QuestionPane({
   };
 
   const renderMatchingGroup = (group) => {
+    const rawRefList = group.headings || group.headingsList || group.features || group.options || group.questions?.[0]?.options || null;
+    const referenceItems = Array.isArray(rawRefList)
+      ? rawRefList
+          .map((item, idx) => {
+            if (typeof item === 'object' && item !== null) {
+              const id = item.id || item.letter || item.key || item.value || String.fromCharCode(65 + idx);
+              const text = item.text || item.name || item.label || '';
+              return { id, text };
+            }
+            return null;
+          })
+          .filter(item => item && item.text && String(item.text).trim().toUpperCase() !== String(item.id).trim().toUpperCase() && !/^Paragraph\s+[A-Z]$/i.test(String(item.text).trim()))
+      : null;
+
+    const isHeadingsGroup = Boolean(group.headings || group.headingsList || (group.type || '').includes('heading'));
+
     return (
       <div className="space-y-4">
         {/* Headings or Features Reference Box */}
-        {(group.headings || group.features) && (
+        {referenceItems && referenceItems.length > 0 && (
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
             <span className="text-xs font-bold text-slate-700 block">
-              {group.headings ? 'List of Headings:' : 'List of Features / Categories:'}
+              {isHeadingsGroup ? 'List of Headings:' : 'List of Features / Categories:'}
             </span>
             <div className="space-y-1 text-xs">
-              {(group.headings || group.features).map(item => (
-                <div key={item.id || item.letter} className="bg-white p-2 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
-                  <span className="font-bold text-blue-700 shrink-0">{item.id || item.letter}.</span>
-                  <span className="text-slate-800 leading-tight">{item.text || item.name}</span>
+              {referenceItems.map(item => (
+                <div key={item.id} className="bg-white p-2 rounded-lg border border-slate-200 flex items-start gap-2 shadow-2xs">
+                  <span className="font-bold text-blue-700 shrink-0">{item.id}.</span>
+                  <span className="text-slate-800 leading-tight">{item.text}</span>
                 </div>
               ))}
             </div>
@@ -565,13 +598,15 @@ export default function QuestionPane({
 
           const optionsList = group.headings 
             ? group.headings.map(h => h.id || h.letter) 
-            : group.features 
-              ? group.features.map(f => f.letter || f.id) 
-              : group.options && group.options.length > 0
-                ? group.options.map(o => (typeof o === 'object' ? (o.letter || o.id || o.value) : o))
-                : (q.options && q.options.length > 0)
-                  ? q.options.map(o => (typeof o === 'object' ? (o.letter || o.id || o.value) : o))
-                  : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            : group.headingsList
+              ? group.headingsList.map(h => h.id || h.letter)
+              : group.features 
+                ? group.features.map(f => f.letter || f.id) 
+                : group.options && group.options.length > 0
+                  ? group.options.map(o => (typeof o === 'object' ? (o.letter || o.id || o.value) : o))
+                  : (q.options && q.options.length > 0)
+                    ? q.options.map(o => (typeof o === 'object' ? (o.letter || o.id || o.value) : o))
+                    : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
           return (
             <div 
@@ -636,8 +671,16 @@ export default function QuestionPane({
   const renderExplanationCard = (q) => {
     if (!isSubmitted) return null;
 
-    const isExpanded = showExplanationFor === q.order;
-    const currentAns = userAnswers[q.order] || '';
+    const qOrder = q.order || q.questionNumber || q.id;
+    const qAns = q.answer ?? q.correctAnswer ?? '';
+    const qEvPara = q.evidenceParagraph || q.evidenceParagraphId || '';
+    const qEvQuote = q.evidenceQuote || q.evidence || '';
+    const qExplanation = isEn
+      ? (q.explanationEn || q.explanation || '')
+      : (q.explanation || q.explanationEn || '');
+
+    const isExpanded = showExplanationFor === qOrder;
+    const currentAns = userAnswers[qOrder] || '';
     const evalResult = evaluateQuestionAnswer(q, currentAns);
     const isCorrect = evalResult.isCorrect;
 
@@ -647,24 +690,24 @@ export default function QuestionPane({
           <div className="flex items-center gap-2">
             <span className="font-bold text-slate-600">{isEn ? 'Correct Answer:' : 'Đáp án đúng:'}</span>
             <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-black">
-              {q.answer}
+              {qAns}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            {q.evidenceParagraph && (
+            {qEvPara && (
               <button
-                onClick={() => onLocateEvidence && onLocateEvidence(q.evidenceParagraph)}
+                onClick={() => onLocateEvidence && onLocateEvidence(qEvPara)}
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md border border-blue-200 transition-colors"
                 title={isEn ? "Scroll to paragraph containing evidence" : "Cuộn tới đoạn văn chứa đáp án"}
               >
                 <Eye className="w-3 h-3" />
-                <span>{isEn ? `View Para ${q.evidenceParagraph}` : `Xem đoạn ${q.evidenceParagraph}`}</span>
+                <span>{isEn ? `View Para ${qEvPara}` : `Xem đoạn ${qEvPara}`}</span>
               </button>
             )}
 
             <button
-              onClick={() => onToggleExplanation && onToggleExplanation(q.order)}
+              onClick={() => onToggleExplanation && onToggleExplanation(qOrder)}
               className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded-md transition-colors"
             >
               <HelpCircle className="w-3 h-3 text-slate-500" />
@@ -679,9 +722,9 @@ export default function QuestionPane({
             {!isCorrect && (
               <DistractorTrapExplainer
                 question={q}
-                userAnswer={userAnswers[q.order]}
-                correctAnswer={q.answer}
-                evidenceQuote={q.evidenceQuote}
+                userAnswer={userAnswers[qOrder]}
+                correctAnswer={qAns}
+                evidenceQuote={qEvQuote}
                 skill="reading"
                 onSaveMistake={(mistake) => {
                   try {
@@ -695,30 +738,30 @@ export default function QuestionPane({
               />
             )}
 
-            {q.evidenceQuote && (
+            {qEvQuote && (
               <div className="space-y-1">
                 <span className="font-bold text-amber-900 block text-[11px]">{isEn ? 'Passage Evidence Quote:' : 'Trích dẫn bằng chứng trong bài:'}</span>
                 <p className="italic text-amber-950 font-serif bg-white/80 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed text-xs">
-                  "{q.evidenceQuote}"
+                  "{qEvQuote}"
                 </p>
               </div>
             )}
             <div className="space-y-1">
               <span className="font-bold text-amber-900 block text-[11px]">{isEn ? 'Paraphrasing Analysis & Cambridge Rationale:' : 'Phân tích Paraphrasing & Lời giải Cambridge:'}</span>
               <p className="text-slate-700 leading-relaxed bg-white/60 p-2.5 rounded-lg border border-amber-100 text-xs">
-                {q.explanation}
+                {qExplanation}
               </p>
             </div>
 
             {/* AI On-Demand Explanation Section */}
             <div className="pt-2 border-t border-amber-200/80">
-              {!aiExplanations[q.order] ? (
+              {!aiExplanations[qOrder] ? (
                 <button
-                  disabled={loadingAiFor === q.order}
+                  disabled={loadingAiFor === qOrder}
                   onClick={() => handleRequestAiExplanation(q)}
                   className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all disabled:opacity-70"
                 >
-                  {loadingAiFor === q.order ? (
+                  {loadingAiFor === qOrder ? (
                     <>
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                       <span>{isEn ? 'AI analyzing distractor traps & paraphrasing...' : 'AI đang mổ xẻ bẫy & lập bản đồ Paraphrase...'}</span>
@@ -747,34 +790,34 @@ export default function QuestionPane({
                   </div>
 
                   {/* 1. Mổ xẻ bẫy đề thi (Trap Analysis) */}
-                  {aiExplanations[q.order].trapAnalysis && (
+                  {aiExplanations[qOrder].trapAnalysis && (
                     <div className="bg-rose-50/80 border border-rose-200 p-2.5 rounded-lg space-y-1">
                       <span className="font-bold text-rose-900 block text-[11px] flex items-center gap-1">
                         <AlertCircle className="w-3 h-3 text-rose-600" />
                         <span>{isEn ? 'Exam Trap Analysis:' : 'Mổ xẻ bẫy đề thi (Trap Analysis):'}</span>
                       </span>
                       <p className="text-rose-950 text-xs leading-relaxed">
-                        {aiExplanations[q.order].trapAnalysis}
+                        {aiExplanations[qOrder].trapAnalysis}
                       </p>
                     </div>
                   )}
 
                   {/* 2. Lập luận từng bước */}
-                  {aiExplanations[q.order].stepByStepReasoning && (
+                  {aiExplanations[qOrder].stepByStepReasoning && (
                     <div className="bg-white/80 border border-amber-200 p-2.5 rounded-lg space-y-1">
                       <span className="font-bold text-slate-800 block text-[11px]">{isEn ? 'Step-by-step reasoning for this answer:' : 'Lập luận từng bước vì sao chọn đáp án này:'}</span>
                       <p className="text-slate-700 text-xs leading-relaxed">
-                        {aiExplanations[q.order].stepByStepReasoning}
+                        {aiExplanations[qOrder].stepByStepReasoning}
                       </p>
                     </div>
                   )}
 
                   {/* 3. Bản đồ Paraphrase Map */}
-                  {aiExplanations[q.order].paraphraseMap && aiExplanations[q.order].paraphraseMap.length > 0 && (
+                  {aiExplanations[qOrder].paraphraseMap && aiExplanations[qOrder].paraphraseMap.length > 0 && (
                     <div className="space-y-1.5">
                       <span className="font-bold text-amber-900 block text-[11px]">{isEn ? 'Keyword Paraphrase Map:' : 'Bản đồ biến đổi từ khóa (Paraphrase Map):'}</span>
                       <div className="grid grid-cols-1 gap-1.5">
-                        {aiExplanations[q.order].paraphraseMap.map((pMap, idx) => (
+                        {aiExplanations[qOrder].paraphraseMap.map((pMap, idx) => (
                           <div key={idx} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between text-xs gap-2">
                             <span className="font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
                               {pMap.questionKeyword}
@@ -790,21 +833,21 @@ export default function QuestionPane({
                   )}
 
                   {/* 4. Dịch song ngữ câu bằng chứng */}
-                  {aiExplanations[q.order].bilingualTranslation && (
+                  {aiExplanations[qOrder].bilingualTranslation && (
                     <div className="bg-blue-50/70 border border-blue-200 p-2.5 rounded-lg space-y-1">
                       <span className="font-bold text-blue-900 block text-[11px]">{isEn ? 'Evidence sentence translation:' : 'Dịch nghĩa tiếng Việt câu bằng chứng:'}</span>
                       <p className="text-blue-950 text-xs leading-relaxed italic">
-                        "{aiExplanations[q.order].bilingualTranslation}"
+                        "{aiExplanations[qOrder].bilingualTranslation}"
                       </p>
                     </div>
                   )}
 
                   {/* 5. Từ vựng C1/C2 & Nút 1-chạm lưu Sổ tay */}
-                  {aiExplanations[q.order].keyVocabulary && aiExplanations[q.order].keyVocabulary.length > 0 && (
+                  {aiExplanations[qOrder].keyVocabulary && aiExplanations[qOrder].keyVocabulary.length > 0 && (
                     <div className="space-y-1.5 pt-1">
                       <span className="font-bold text-amber-900 block text-[11px]">{isEn ? 'Key Academic Vocabulary:' : 'Từ vựng học thuật quan trọng:'}</span>
                       <div className="space-y-1.5">
-                        {aiExplanations[q.order].keyVocabulary.map((vItem, vIdx) => {
+                        {aiExplanations[qOrder].keyVocabulary.map((vItem, vIdx) => {
                           const isSaved = savedVocabIds[vItem.word];
                           return (
                             <div key={vIdx} className="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between gap-2 text-xs">
@@ -845,9 +888,9 @@ export default function QuestionPane({
                 </div>
               )}
 
-              {aiErrorFor[q.order] && (
+              {aiErrorFor[qOrder] && (
                 <div className="mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-xs">
-                  {aiErrorFor[q.order]}
+                  {aiErrorFor[qOrder]}
                 </div>
               )}
             </div>
@@ -872,14 +915,14 @@ export default function QuestionPane({
           <div className={`p-4 rounded-2xl border shadow-2xs space-y-2 transition-colors duration-150 ${ts.headerCard}`}>
             <div className="flex items-center justify-between">
               <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${ts.badge}`}>
-                Questions {group.questions[0]?.order} - {group.questions[group.questions.length - 1]?.order}
+                Questions {group.questions[0]?.order || group.questions[0]?.questionNumber} - {group.questions[group.questions.length - 1]?.order || group.questions[group.questions.length - 1]?.questionNumber}
               </span>
               <span className={`text-[11px] font-semibold ${ts.meta}`}>
                 {group.questions.length} {group.questions.length > 1 ? 'questions' : 'question'}
               </span>
             </div>
             <h4 className={`text-sm font-bold whitespace-pre-line leading-snug ${ts.instruction}`}>
-              {group.instruction || group.instructions}
+              {isEn ? (group.instructionEn || group.instruction || group.instructions) : (group.instruction || group.instructions || group.instructionEn)}
             </h4>
             {group.extraNotes && (
               <p className={`text-xs italic ${ts.note}`}>

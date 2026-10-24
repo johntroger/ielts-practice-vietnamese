@@ -1,9 +1,3 @@
-/**
- * 101 IELTS Reading Past Papers - Practice Test 8
- * Source: 101 IELTS Reading Past Papers with Answers (Uploaded to Cloudflare R2)
- * Full 3 Passages, 40 Questions, Official Verified Keys (Page 471), Evidence Locators & Paraphrase Maps.
- */
-
 export const pastPaper101Test8 = {
   "id": "past-paper-101-reading-test-8",
   "title": "101 Past Papers Test 8: Finches on Islands, Flight from Reality & Communicating Conflict",
@@ -31,39 +25,39 @@ export const pastPaper101Test8 = {
       "paragraphs": [
         {
           "id": "A",
-          "text": "Today, the quest continues. On Daphne Major —one of the most desolate of\nthe Galápagos Islands, an uninhabited volcanic cone where cacti and shrubs\nseldom grow higher than a researcher's knee Peter and Rosemary Grant have\nspent more than three decades watching Darwin's finches respond to the\nchallenges of storms, drought and competition for food. Biologists at Princeton\nUniversity, the Grants know and recognize many of the individual birds on the\nisland and can trace the birds’ lineages back through time. They have witnessed\nDarwin's principle in action again and again, over many generations of finches."
+          "text": "Today, the quest continues. On Daphne Major —one of the most desolate of the Galápagos Islands, an uninhabited volcanic cone where cacti and shrubs seldom grow higher than a researcher's knee Peter and Rosemary Grant have spent more than three decades watching Darwin's finches respond to the challenges of storms, drought and competition for food. Biologists at Princeton University, the Grants know and recognize many of the individual birds on the island and can trace the birds’ lineages back through time. They have witnessed Darwin's principle in action again and again, over many generations of finches."
         },
         {
           "id": "B",
-          "text": "The Grants' most dramatic insights have come from\nwatching the evolving bill of the medium ground finch. The plumage of this\nsparrow-sized bird ranges from dull brown to jet black. At first glance, it may\nnot seem particularly striking, but among scientists who study evolutionary\nbiology, the medium ground finch is a superstar. Its bill is a middling example in\nthe array of shapes and sizes found among Galapagos finches: heftier than that\nof the small ground finch, which specializes in eating small, soft seeds, but petite\ncompared to that of the large ground finch, an expert at cracking and devouring\nbig, hard seeds."
+          "text": "The Grants' most dramatic insights have come from watching the evolving bill of the medium ground finch. The plumage of this sparrow-sized bird ranges from dull brown to jet black. At first glance, it may not seem particularly striking, but among scientists who study evolutionary biology, the medium ground finch is a superstar. Its bill is a middling example in the array of shapes and sizes found among Galapagos finches: heftier than that of the small ground finch, which specializes in eating small, soft seeds, but petite compared to that of the large ground finch, an expert at cracking and devouring big, hard seeds."
         },
         {
           "id": "C",
-          "text": "When the Grants began their study in the 1970s, only two\nspecies of finch lived on Daphne Major, the medium ground finch and the cactus\nfinch. The island is so small that the researchers were able to count and\ncatalogue every bird. When a severe drought hit in 1977, the birds soon\ndevoured the last of the small, easily eaten seeds. Smaller members of the\nmedium ground finch population, lacking the bill strength to crack large seeds,\ndied out."
+          "text": "When the Grants began their study in the 1970s, only two species of finch lived on Daphne Major, the medium ground finch and the cactus finch. The island is so small that the researchers were able to count and catalogue every bird. When a severe drought hit in 1977, the birds soon devoured the last of the small, easily eaten seeds. Smaller members of the medium ground finch population, lacking the bill strength to crack large seeds, died out."
         },
         {
           "id": "D",
-          "text": "Bill and body size are inherited traits, and the next\ngeneration had a high proportion of big-billed Individuals. The Grants had\ndocumented natural selection at work the same process that over many\nmillennia, directed the evolution of the Galápagos' 14 unique finch species, all\ndescended from a common ancestor that readied the islands a few million years\nago."
+          "text": "Bill and body size are inherited traits, and the next generation had a high proportion of big-billed Individuals. The Grants had documented natural selection at work the same process that over many millennia, directed the evolution of the Galápagos' 14 unique finch species, all descended from a common ancestor that readied the islands a few million years ago."
         },
         {
           "id": "E",
-          "text": "Eight years later, heavy rains brought by an El Nino transformed the normally\nmeager vegetation on Daphne Ma ị or. vines and other plants that in most years\nstruggle for survival suddenly flourished, choking out the plants that provide\nlarge seeds to the finches. Small seeds came to dominate the food supply, and\nbig birds with big bills died out at a higher rate than smaller ones. 'Natural\nselection is observable/ Rosemary Grant says. 'It happen when the\nenvironment changes. When local conditions reverse themselves, so does the\ndirection of adaptation.'"
+          "text": "Eight years later, heavy rains brought by an El Nino transformed the normally meager vegetation on Daphne Major, vines and other plants that in most years struggle for survival suddenly flourished, choking out the plants that provide large seeds to the finches. Small seeds came to dominate the food supply, and big birds with big bills died out at a higher rate than smaller ones. 'Natural selection is observable/ Rosemary Grant says. 'It happen when the environment changes. When local conditions reverse themselves, so does the direction of adaptation.'"
         },
         {
           "id": "F",
-          "text": "Recently, die Grants witnessed another form of\nnatural selection acting on the medium ground finch: competition from bigger,\nstronger cousins. In 1982, a third finch, the large ground finch, came to live on\nDaphne Major. The stout bills of these birds resemble the business end of a\ncrescent wrench. Their arrival was the first such colonization recorded on the\nGalapagos in nearly a century of scientific observation. 'We realized,' Peter\nGrant says, 'we had a very unusual and potentially important event to follow/ For\n20 years, the large ground finch coexisted with the medium ground finch, which\nshared five supply of large seeds with its bigger-billed relative. Then, in 2002\nand 2003, another drought struck. None of the birds nested that year, and many\ndied out. Medium ground finches with large bills, crowded out of feeding areas by the more powerful large ground finches, were hit particularly hard."
+          "text": "Recently, die Grants witnessed another form of natural selection acting on the medium ground finch: competition from bigger, stronger cousins. In 1982, a third finch, the large ground finch, came to live on Daphne Major. The stout bills of these birds resemble the business end of a crescent wrench. Their arrival was the first such colonization recorded on the Galapagos in nearly a century of scientific observation. 'We realized,' Peter Grant says, 'we had a very unusual and potentially important event to follow/ For 20 years, the large ground finch coexisted with the medium ground finch, which shared five supply of large seeds with its bigger-billed relative. Then, in 2002 and 2003, another drought struck. None of the birds nested that year, and many died out. Medium ground finches with large bills, crowded out of feeding areas by the more powerful large ground finches, were hit particularly hard."
         },
         {
           "id": "G",
-          "text": "When wetter weather returned in 2004, and the finches nested again, the new\ngeneration of the medium ground finch was dominated by smaller birds with\nsmaller bills, able to survive on smaller seeds. This situation, says Peter Grant,\nmarked the first time that biologists have been able to follow the complete\nprocess of an evolutionary change due to competition between, species and the\nstrongest response to natural selection that he had seen in 33 years of tracking\nGalapagos finches."
+          "text": "When wetter weather returned in 2004, and the finches nested again, the new generation of the medium ground finch was dominated by smaller birds with smaller bills, able to survive on smaller seeds. This situation, says Peter Grant, marked the first time that biologists have been able to follow the complete process of an evolutionary change due to competition between, species and the strongest response to natural selection that he had seen in 33 years of tracking Galapagos finches."
         },
         {
           "id": "H",
-          "text": "On the inhabited island of Santa Cruz, just south of Daphne Major, Andrew\nHendry of McGill University and Jeffrey Podos of the University of\nMassachusetts at Amherst have discovered a new, man-made twist in finch\nevolution. Their study focused on birds living near the Academy Bay research\nstation, on the fringe of the town of Puerto Ayora. The human population of the\narea has been growing fast—from 900 people in 1974 to 9,582 In 2001. Today\nPuerto Ayorn is full of hotels and mai tai bars,' Hendry says. 'People have taken\ntills extremely arid place and tried to turn it Into a Caribbean resort."
+          "text": "On the inhabited island of Santa Cruz, just south of Daphne Major, Andrew Hendry of McGill University and Jeffrey Podos of the University of Massachusetts at Amherst have discovered a new, man-made twist in finch evolution. Their study focused on birds living near the Academy Bay research station, on the fringe of the town of Puerto Ayora. The human population of the area has been growing fast—from 900 people in 1974 to 9,582 In 2001. Today Puerto Ayora is full of hotels and mai tai bars,' Hendry says. 'People have taken this extremely arid place and tried to turn it into a Caribbean resort."
         },
         {
           "id": "I",
-          "text": "Academy Bay records dating back to the early 1960s show that medium\nground finches captured there had either small or large bills. Very few of the\nbirds had mid-size bills. The finches appeared to be In the early stages of a\nnew adaptive radiation: If the trend continued, the medium ground finch on\nSanta Cruz could split Into two distinct subspecies, specializing in different\ntypes of seeds. But in the late 1960s and early 70s, medium ground finches with\nmedium-sized bills began to thrive at Academy Bay along with small and large-\nbilled birds. The booming human population had introduced new food sources,\nincluding exotic plants and bird feeding stations stocked with rice. Billsize, once\ncritical to the fishes' survival, no longer made any difference. 'Now an\nintermediate bill can do fine/ Hendry says.\nJ. At a control site distant from Puerto Ayora, and relatively untouched by\nhumane, the medium ground finch population remains split between large- and\nsmall-billed birds. On undisturbed parts of Santa Cruz, there Is no ecological\nniche for a middling medium ground finch, and the birds continue to diversify.\nIn town, though there are still many finches, once-distinct populations are\nmerging.\nK. The finches of Santa Cruz demonstrate a subtle process in which human\nmeddling can stop evolution In Its tracks, outing the formation of new species.\nIn a time when global biodiversity continues Its downhill slide, Darwin's finches\nhave yet another unexpected lesson to teach. 'If we hope to regain some of the diversity that's already been lost/ Hendry says, 'we need to protect not just\nexisting creatures, but also the processes that drive the origin of new species.'\nYou should spend about 20 minutes on"
+          "text": "Academy Bay records dating back to the early 1960s show that medium ground finches captured there had either small or large bills. Very few of the birds had mid-size bills. The finches appeared to be in the early stages of a new adaptive radiation: if the trend continued, the medium ground finch on Santa Cruz could split into two distinct subspecies, specializing in different types of seeds. But in the late 1960s and early 70s, medium ground finches with medium-sized bills began to thrive at Academy Bay along with small and large-billed birds. The booming human population had introduced new food sources, including exotic plants and bird feeding stations stocked with rice. Billsize, once critical to the finches' survival, no longer made any difference. 'Now an intermediate bill can do fine,' Hendry says. J. At a control site distant from Puerto Ayora, and relatively untouched by humans, the medium ground finch population remains split between large- and small-billed birds. On undisturbed parts of Santa Cruz, there is no ecological niche for a middling medium ground finch, and the birds continue to diversify. In town, though there are still many finches, once-distinct populations are merging. K. The finches of Santa Cruz demonstrate a subtle process in which human meddling can stop evolution in its tracks, halting the formation of new species. In a time when global biodiversity continues its downhill slide, Darwin's finches have yet another unexpected lesson to teach. 'If we hope to regain some of the diversity that's already been lost,' Hendry says, 'we need to protect not just existing creatures, but also the processes that drive the origin of new species.'"
         }
       ],
       "questionGroups": [
@@ -80,11 +74,11 @@ export const pastPaper101Test8 = {
               "questionNumber": 1,
               "text": "1977 drought condition: small-beak birds failing to survive...",
               "options": [],
-              "correctAnswer": "(severe) drought",
+              "correctAnswer": "severe drought",
               "acceptableAnswers": [
-                "(severe) drought",
                 "severe drought",
-                "drought"
+                "drought",
+                "(severe) drought"
               ],
               "explanation": "Doan C/D: Dot han han khoc liet nam 1977 (severe drought) da lam thieu hut hat nho, khien chim mo nho kho ton tai.",
               "explanationEn": "Paragraph C/D indicates a severe drought hit the island in 1977.",
@@ -95,7 +89,12 @@ export const pastPaper101Test8 = {
                   "testWord": "1977 climate",
                   "passageWord": "severe drought"
                 }
-              ]
+              ],
+              "order": 1,
+              "questionText": "1977 drought condition: small-beak birds failing to survive...",
+              "answer": "severe drought",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph C/D discusses the 1977 severe drought impacting seed availability."
             },
             {
               "id": 2,
@@ -115,7 +114,12 @@ export const pastPaper101Test8 = {
                   "testWord": "open [2]",
                   "passageWord": "crack large seeds"
                 }
-              ]
+              ],
+              "order": 2,
+              "questionText": "...without the power to open [2].",
+              "answer": "large seeds",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph D discusses inability of small-beaked birds to crack large tough seeds."
             },
             {
               "id": 3,
@@ -135,7 +139,12 @@ export const pastPaper101Test8 = {
                   "testWord": "brought by El Nino",
                   "passageWord": "heavy rains brought by an El Nino"
                 }
-              ]
+              ],
+              "order": 3,
+              "questionText": "1985 [3] brought by El Nino...",
+              "answer": "heavy rains",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E: Eight years later, heavy rains brought by an El Nino transformed the normally meager vegetation..."
             },
             {
               "id": 4,
@@ -155,7 +164,12 @@ export const pastPaper101Test8 = {
                   "testWord": "main food resource",
                   "passageWord": "small seeds dominated"
                 }
-              ]
+              ],
+              "order": 4,
+              "questionText": "...big-beak birds dying out, with [4] as the main food resource.",
+              "answer": "small seeds",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E discusses small seeds becoming dominant food resource."
             }
           ]
         },
@@ -185,7 +199,12 @@ export const pastPaper101Test8 = {
                   "testWord": "study on reversal [5]",
                   "passageWord": "reversal in finch evolution"
                 }
-              ]
+              ],
+              "order": 5,
+              "questionText": "On the remote island of Santa Cruz, Andrew Hendry and Jeffrey Podos conducted a study on reversal [5] due to human activity.",
+              "answer": "finch evolution",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Paragraph H discusses reversal finch evolution on Santa Cruz."
             },
             {
               "id": 6,
@@ -205,7 +224,12 @@ export const pastPaper101Test8 = {
                   "testWord": "finches with [6] flourished",
                   "passageWord": "finches with medium-sized bills"
                 }
-              ]
+              ],
+              "order": 6,
+              "questionText": "But in the late 1960s and early 70s, finches with [6] flourished.",
+              "answer": "medium-sized bills",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Paragraph H notes birds with intermediate/medium-sized bills thriving."
             },
             {
               "id": 7,
@@ -225,7 +249,12 @@ export const pastPaper101Test8 = {
                   "testWord": "growing [7]",
                   "passageWord": "growing human population"
                 }
-              ]
+              ],
+              "order": 7,
+              "questionText": "The study speculates that it is due to the growing [7]...",
+              "answer": "human population",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I cites the growing human population on Santa Cruz."
             },
             {
               "id": 8,
@@ -245,7 +274,12 @@ export const pastPaper101Test8 = {
                   "testWord": "birds ate [8] sometimes",
                   "passageWord": "ate rice"
                 }
-              ]
+              ],
+              "order": 8,
+              "questionText": "...who brought in alien plants with intermediate-size seeds into the area and the birds ate [8] sometimes.",
+              "answer": "rice",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I mentions finches feeding on rice and human food scraps."
             }
           ]
         },
@@ -276,7 +310,12 @@ export const pastPaper101Test8 = {
                   "testWord": "questioned Darwins theory",
                   "passageWord": "witnessed Darwin principle in action"
                 }
-              ]
+              ],
+              "order": 9,
+              "questionText": "Grants discovery has questioned Darwins theory.",
+              "answer": "FALSE",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: They have witnessed Darwin principle in action again and again..."
             },
             {
               "id": 10,
@@ -292,7 +331,12 @@ export const pastPaper101Test8 = {
               "explanationEn": "The passage mentions cactus finches and ground finches, but does not state cactus finches were less affected by food.",
               "evidence": "Paragraph C mentions both species living on Daphne Major.",
               "evidenceParagraphId": "C",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 10,
+              "questionText": "The cactus finches are less affected by food than the medium ground finch.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C mentions both species living on Daphne Major."
             },
             {
               "id": 11,
@@ -313,7 +357,12 @@ export const pastPaper101Test8 = {
                   "testWord": "all birds affected by drought",
                   "passageWord": "populations hit particularly hard by drought"
                 }
-              ]
+              ],
+              "order": 11,
+              "questionText": "In 2002 and 2003, all the birds were affected by the drought.",
+              "answer": "TRUE",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Paragraph F discusses drought effects across bird populations in 2002-2003."
             },
             {
               "id": 12,
@@ -334,7 +383,12 @@ export const pastPaper101Test8 = {
                   "testWord": "same as previous studies",
                   "passageWord": "reversal in evolution"
                 }
-              ]
+              ],
+              "order": 12,
+              "questionText": "The discovery of Andrew Hendry and Jeffrey Podos was the same as that of the previous studies.",
+              "answer": "FALSE",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Paragraph H contrasts the reversal finding with historical divergent evolution."
             },
             {
               "id": 13,
@@ -355,7 +409,12 @@ export const pastPaper101Test8 = {
                   "testWord": "response to human intervention",
                   "passageWord": "driven by human intervention and alien plants"
                 }
-              ]
+              ],
+              "order": 13,
+              "questionText": "It is shown that the revolution in finches on Santa Cruz is likely a response to human intervention.",
+              "answer": "TRUE",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I: ...likely driven by human intervention and urbanization."
             }
           ]
         }
@@ -373,39 +432,39 @@ export const pastPaper101Test8 = {
       "paragraphs": [
         {
           "id": "A",
-          "text": "The potential fin problems is certainly there. Modem airliners are packed\nwith electronic devices that control the plane and handle navigation\nand communications- Each has to meet stringent safeguards to make sure it\ndoesn't emit radiation that would interfere with other devices in the plane-\nstandards that passengers’ personal electronic devices don't necessarily meet\nEmissions from inside the plane could also interfere with sensitive antennae on\nthe fixed exterior."
+          "text": "The potential for problems is certainly there. Modern airliners are packed with electronic devices that control the plane and handle navigation and communications. Each has to meet stringent safeguards to make sure it doesn't emit radiation that would interfere with other devices in the plane—standards that passengers’ personal electronic devices don't necessarily meet. Emissions from inside the plane could also interfere with sensitive antennae on the fixed exterior."
         },
         {
           "id": "B",
-          "text": "But despite running a numbs of studies, Boeing, Airbus\nand various government agencies haven’t been able to find clear evidence of\nproblems caused by personal electronic devices, incl\nuding mobile phones,\n\"We've done our own studies. We’ve found cellphones actually have no impact\non the navigation system,\" Bays Maryazme Greczyn, a spokeswoman for Airbus\nIndustries of North America in Herndon, Virginia, Nor do they affect other\ncritical systems, she says. The only impact Airbus found? \"Sometimes when a\npassenger is starting or finishing a phone call, the pilot hears a very slight beep\nin the headset,\" she says."
+          "text": "But despite running a numbs of studies, Boeing, Airbus and various government agencies haven’t been able to find clear evidence of problems caused by personal electronic devices, incl uding mobile phones, \"We've done our own studies. We’ve found cellphones actually have no impact on the navigation system,\" Bays Maryazme Greczyn, a spokeswoman for Airbus Industries of North America in Herndon, Virginia, Nor do they affect other critical systems, she says. The only impact Airbus found? \"Sometimes when a passenger is starting or finishing a phone call, the pilot hears a very slight beep in the headset,\" she says."
         },
         {
           "id": "C",
-          "text": "The best evidence yet of a problem comes from a report released this year by\nBritain's Civil Aviation Authority. Its researchers generated simulated\ncellphone transmissions inside two Boeing aircraft They concluded that the\ntransmissions could create signals at a power and frequency that would not affect\nthe latest equipment, but exceeded the safety threshold established in 1984 and\nmight therefore affect some of the older equipment on board. This doesn’t mean\n\"mission critical\" equipment such as the navigation system and flight controls.\nBut the devices that could be affected, such as smoke detectors and fuel level\nindicators, could still create serious problems for the flight crew if they\nmalfunction."
+          "text": "The best evidence yet of a problem comes from a report released this year by Britain's Civil Aviation Authority. Its researchers generated simulated cellphone transmissions inside two Boeing aircraft They concluded that the transmissions could create signals at a power and frequency that would not affect the latest equipment, but exceeded the safety threshold established in 1984 and might therefore affect some of the older equipment on board. This doesn’t mean \"mission critical\" equipment such as the navigation system and flight controls. But the devices that could be affected, such as smoke detectors and fuel level indicators, could still create serious problems for the flight crew if they malfunction."
         },
         {
           "id": "D",
-          "text": "Many planes still use equipment certified to the older standards, says Dan\nHawkes, head of avionics at the CAA’s Safety Regulation Group. The CAA\nstudy doesn't prove the equipment will actually fell when cellphone signals\nactually cause devices to fail."
+          "text": "Many planes still use equipment certified to the older standards, says Dan Hawkes, head of avionics at the CAA’s Safety Regulation Group. The CAA study doesn't prove the equipment will actually fell when cellphone signals actually cause devices to fail."
         },
         {
           "id": "E",
-          "text": "In 1996, RTCA, a consultant hired by the Federal\nAviation Administration in the US to conduct tests, determined that potential problems from personal electronic devices were '’low\". Nevertheless, it\nrecommended a ban on their use during \"critical\" periods of flight, such as take-\noff and landing. RTCA didn't actually test cellphones, but nevertheless\nrecommended then wholesale ban on flights. But if \"better safe than sorry\" is the\ncurrent policy, it's applied inconsistently, according to Marshall Cross, the\nchairman of MegaWave Corporation, based in Boylston, Massachusetts. Why\nare cellphones outlawed when no one considers a ban on laptops? \"It's like most\nthings in life. The reason is a little bit technical, a little bit economic and a little\nbit political,\" says Cross."
+          "text": "In 1996, RTCA, a consultant hired by the Federal Aviation Administration in the US to conduct tests, determined that potential problems from personal electronic devices were '’low\". Nevertheless, it recommended a ban on their use during \"critical\" periods of flight, such as tak-ff and landing. RTCA didn't actually test cellphones, but nevertheless recommended then wholesale ban on flights. But if \"better safe than sorry\" is the current policy, it's applied inconsistently, according to Marshall Cross, the chairman of MegaWave Corporation, based in Boylston, Massachusetts. Why are cellphones outlawed when no one considers a ban on laptops? \"It's like most things in life. The reason is a little bit technical, a little bit economic and a little bit political,\" says Cross."
         },
         {
           "id": "F",
-          "text": "The company wrote a report for the FAA in 1998 saying it is possible to build\nan on-board system that can detect dangerous signals from electronic devices.\nBut Cross's personal conclusion is that mobile phones aren't the real threat\n\"You'd have to stretch things pretty far to figure out how a cellphone could\ninterfere with a plane's systems,\" he says. Cellphones transmit in ranges of\naround 400, 800 or 1800 megahertz. Since no important piece of aircraft\nequipment operates at those frequencies, the possibility of interference is very\nlow. Cross says. The use of computers and electronic game systems is much\nmore worrying, he says. They can generate very strong signals at frequencies\nthat could interfere with plane electronics, especially ư a mouse is attached (the\nwire operates as an antenna or if their built-in shielding is somehow damaged.\nSome airlines are even planning to put sockets for laptops in seatbacks."
+          "text": "The company wrote a report for the FAA in 1998 saying it is possible to build an on-board system that can detect dangerous signals from electronic devices. But Cross's personal conclusion is that mobile phones aren't the real threat \"You'd have to stretch things pretty far to figure out how a cellphone could interfere with a plane's systems,\" he says. Cellphones transmit in ranges of around 400, 800 or 1800 megahertz. Since no important piece of aircraft equipment operates at those frequencies, the possibility of interference is very low. Cross says. The use of computers and electronic game systems is much more worrying, he says. They can generate very strong signals at frequencies that could interfere with plane electronics, especially if a mouse is attached (the wire operates as an antenna or if their built-in shielding is somehow damaged. Some airlines are even planning to put sockets for laptops in seatbacks."
         },
         {
           "id": "G",
-          "text": "There’s fairly convincing anecdotal evidence that some personal electronic\ndevices have interfered with systems. Air crew on one flight found that the\nautopilot was being disconnected, and narrowed the problem down to a\npassenger’s portable computer. They could actually watch the autopilot\ndisconnect when they switched the computer on. Boeing bought the computer,\ntook it to the airline's labs and even tested it on an empty flight. But as with\nevery other reported instance of interference, technicians were unable to\nreplicate the problem."
+          "text": "There’s fairly convincing anecdotal evidence that some personal electronic devices have interfered with systems. Air crew on one flight found that the autopilot was being disconnected, and narrowed the problem down to a passenger’s portable computer. They could actually watch the autopilot disconnect when they switched the computer on. Boeing bought the computer, took it to the airline's labs and even tested it on an empty flight. But as with every other reported instance of interference, technicians were unable to replicate the problem."
         },
         {
           "id": "H",
-          "text": "Some engineers, however, such as Bruce Donham of Boeing, say that\ncommon sense suggests phones are more risky than laptops. \"A device capable\nof producing a strong emission is not as safe as a device which does not have\nany intentional emission,\" he says. Nevertheless, many experts think it's illogical\nthat cellphones are prohibited when computers aren't. Besides, the problem is\nmore complicated than simply looking at power and frequency. In the air, the\nplane operates in a soup of electronic emissions, created by its own electronics\nand by ground-based radiation. Electronic devices in the cabin-especially those\nemitting a strong signal-can behave unpredictably, reinforcing other signals, for instance, or creating unforeseen harmonics that disrupt systems."
+          "text": "Some engineers, however, such as Bruce Donham of Boeing, say that common sense suggests phones are more risky than laptops. \"A device capable of producing a strong emission is not as safe as a device which does not have any intentional emission,\" he says. Nevertheless, many experts think it's illogical that cellphones are prohibited when computers aren't. Besides, the problem is more complicated than simply looking at power and frequency. In the air, the plane operates in a soup of electronic emissions, created by its own electronics and by ground-based radiation. Electronic devices in the cabin-especially those emitting a strong signal-can behave unpredictably, reinforcing other signals, for instance, or creating unforeseen harmonics that disrupt systems."
         },
         {
           "id": "I",
-          "text": "Despite the Congressional subcommittee hearings last month, no one seems to\nbe working seriously on a technical solution that would allow passengers to use\ntheir phones. That's mostly because no one -besides cellphone users themselves-\nstands to gain a lot if the phones are allowed in the air. Even the cellphone\ncompanies don't want it. They are concerned that airborne signals could cause\nproblems by flooding a number of the networks' base stations at once with the\nsame signal This effect, called big footing, happens because airborne cellphone\nsignals tend to go to many base stations at once, unlike land calls which usually\ngo to just one or two stations. In the US, even if FAA regulations didn't prohibit\ncellphones in the air, Federal Communications Commission regulations would.\nJ. Possible solutions might be to enhance airliners’ electronic insulation, or to fit\ndetectors which warned flight staff when passenger devices were\nemitting dangerous signals. But Cross complains that neither the FAA, the\nairlines nor the manufacturers are showing much interest in developing these. So\ndespite Congressional suspicions and the occasional irritated (or jailed) mobile\nuser, the industry’s \"better safe than sorry\" policy on mobile phones seems likely\nto continue. In the absence of firm evidence that the international airline industry\nis engaged in a vast conspiracy to overcharge its customers, a delayed phone\ncall seems a small price to pay for even the tiniest reduction in the chances of a\nplane crash. But you'll still be allowed to use your personal computer during a\nflight. And while that remains the case, airlines can hardly claim that logic has\nprevailed."
+          "text": "Despite the Congressional subcommittee hearings last month, no one seems to be working seriously on a technical solution that would allow passengers to use their phones. That's mostly because no one -besides cellphone users themselve-tands to gain a lot if the phones are allowed in the air. Even the cellphone companies don't want it. They are concerned that airborne signals could cause problems by flooding a number of the networks' base stations at once with the same signal This effect, called big footing, happens because airborne cellphone signals tend to go to many base stations at once, unlike land calls which usually go to just one or two stations. In the US, even if FAA regulations didn't prohibit cellphones in the air, Federal Communications Commission regulations would. J. Possible solutions might be to enhance airliners’ electronic insulation, or to fit detectors which warned flight staff when passenger devices were emitting dangerous signals. But Cross complains that neither the FAA, the airlines nor the manufacturers are showing much interest in developing these. So despite Congressional suspicions and the occasional irritated (or jailed) mobile user, the industry’s \"better safe than sorry\" policy on mobile phones seems likely to continue. In the absence of firm evidence that the international airline industry is engaged in a vast conspiracy to overcharge its customers, a delayed phone call seems a small price to pay for even the tiniest reduction in the chances of a plane crash. But you'll still be allowed to use your personal computer during a flight. And while that remains the case, airlines can hardly claim that logic has prevailed."
         }
       ],
       "questionGroups": [
@@ -435,7 +494,12 @@ export const pastPaper101Test8 = {
                   "testWord": "deal with [14]",
                   "passageWord": "handle navigation and communications"
                 }
-              ]
+              ],
+              "order": 14,
+              "questionText": "...avionic systems on modern aircraft are used to manage flight and deal with [14]...",
+              "answer": "navigation and communications",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...packed with electronic devices that control the plane and handle navigation and communications..."
             },
             {
               "id": 15,
@@ -455,7 +519,12 @@ export const pastPaper101Test8 = {
                   "testWord": "interrupting [15]",
                   "passageWord": "emit radiation that would interfere"
                 }
-              ]
+              ],
+              "order": 15,
+              "questionText": "...designed to meet the safety criteria which should be free from interrupting [15]...",
+              "answer": "radiation",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...make sure it doesn't emit radiation that would interfere with other devices..."
             },
             {
               "id": 16,
@@ -475,7 +544,12 @@ export const pastPaper101Test8 = {
                   "testWord": "cause sophisticated [16] to dysfunction",
                   "passageWord": "interfere with sensitive antennae"
                 }
-              ]
+              ],
+              "order": 16,
+              "questionText": "...personal use of mobile phone may cause the sophisticated [16] outside of plane to dysfunction.",
+              "answer": "antennae",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A: ...interfere with sensitive antennae on the fixed exterior."
             },
             {
               "id": 17,
@@ -495,7 +569,12 @@ export const pastPaper101Test8 = {
                   "testWord": "detect [17] in cabinet",
                   "passageWord": "smoke detectors"
                 }
-              ]
+              ],
+              "order": 17,
+              "questionText": "...the devices such as those which detect [17] in cabinet could be affected.",
+              "answer": "smoke",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C: But the devices that could be affected, such as smoke detectors and fuel level indicators..."
             }
           ]
         },
@@ -528,7 +607,12 @@ export const pastPaper101Test8 = {
                   "testWord": "forbidden in specific time",
                   "passageWord": "ban during critical flight periods"
                 }
-              ]
+              ],
+              "order": 18,
+              "questionText": "Mobile usages should be forbidden in a specific time.",
+              "answer": "C",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph discusses RTCA recommendation banning devices during critical phases."
             },
             {
               "id": 19,
@@ -551,7 +635,12 @@ export const pastPaper101Test8 = {
                   "testWord": "computers more dangerous than cell phones",
                   "passageWord": "Marshall Cross analysis of computer emissions"
                 }
-              ]
+              ],
+              "order": 19,
+              "questionText": "Computers are more dangerous than cell phones.",
+              "answer": "D",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Paragraph attributes comparison of computer vs cellphone risks to Marshall Cross."
             },
             {
               "id": 20,
@@ -574,7 +663,12 @@ export const pastPaper101Test8 = {
                   "testWord": "pose little risk on navigation devices",
                   "passageWord": "no impact on the navigation system"
                 }
-              ]
+              ],
+              "order": 20,
+              "questionText": "finding that the mobile phones pose little risk on flight navigation devices.",
+              "answer": "B",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Paragraph B: We've found cellphones actually have no impact on the navigation system, says Maryanne Greczyn..."
             },
             {
               "id": 21,
@@ -597,7 +691,12 @@ export const pastPaper101Test8 = {
                   "testWord": "disruption of laptops not as dangerous",
                   "passageWord": "Boeing policy permitting laptop use in flight"
                 }
-              ]
+              ],
+              "order": 21,
+              "questionText": "The disruption of laptops is not as dangerous as cellphones.",
+              "answer": "E",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph discusses Boeing stance on laptop usage during cruising altitude."
             },
             {
               "id": 22,
@@ -620,7 +719,12 @@ export const pastPaper101Test8 = {
                   "testWord": "impact on earlier devices",
                   "passageWord": "affect some of the older equipment on board"
                 }
-              ]
+              ],
+              "order": 22,
+              "questionText": "The mobile signal may have impact on earlier devices.",
+              "answer": "A",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Paragraph C: Its researchers concluded transmissions might affect some of the older equipment on board."
             }
           ]
         },
@@ -651,7 +755,12 @@ export const pastPaper101Test8 = {
                   "testWord": "all accept cellphones higher emission",
                   "passageWord": "laptops can emit broad band radiation"
                 }
-              ]
+              ],
+              "order": 23,
+              "questionText": "Almost all scientists accept that cellphones have higher emission than that of personal computers.",
+              "answer": "FALSE",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Paragraph E discusses computer emissions often exceeding phone emissions."
             },
             {
               "id": 24,
@@ -672,7 +781,12 @@ export const pastPaper101Test8 = {
                   "testWord": "radio emission interrupt equipment",
                   "passageWord": "emit radiation that would interfere with devices"
                 }
-              ]
+              ],
+              "order": 24,
+              "questionText": "Some people believe that radio emission will interrupt the equipment on plane.",
+              "answer": "TRUE",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Paragraph A confirms potential risk of radio emissions interfering with instruments."
             },
             {
               "id": 25,
@@ -693,7 +807,12 @@ export const pastPaper101Test8 = {
                   "testWord": "neither priority nor economic incentive",
                   "passageWord": "no commercial incentive and low regulatory priority"
                 }
-              ]
+              ],
+              "order": 25,
+              "questionText": "The signal interference-detecting device has not yet been developed because they are in priority for neither administrative department nor offer economic incentive.",
+              "answer": "TRUE",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Paragraph H discusses lack of regulatory priority and economic incentive to install monitors."
             },
             {
               "id": 26,
@@ -709,7 +828,12 @@ export const pastPaper101Test8 = {
               "explanationEn": "The passage mentions regulatory bodies but does not state FAA initiated an open debate with FCC.",
               "evidence": "Paragraph I mentions regulators without confirming an open debate initiative.",
               "evidenceParagraphId": "I",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 26,
+              "questionText": "FAA initiated open debate with Federal Communications Commission.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "I",
+              "evidenceQuote": "Paragraph I mentions regulators without confirming an open debate initiative."
             }
           ]
         }
@@ -727,35 +851,35 @@ export const pastPaper101Test8 = {
       "paragraphs": [
         {
           "id": "A",
-          "text": "ction A\nAs far back as Hippocrates' time (460-370 B.c.) people have tried to understand\nother people by characterizing them according to personality type or\ntemperament. Hippocrates believed there woe four different body Quids that\ninfluenced four basic types of temperament. His work was further developed 500\nyears later by Galem. These days there are any number of self-assessment tools\nthat relate to die basic descriptions developed by Galen, although we no longer\nbelieve the source to be the types of body fluid that dominate our systems."
+          "text": "ction A As far back as Hippocrates' time (460-370 B.c.) people have tried to understand other people by characterizing them according to personality type or temperament. Hippocrates believed there woe four different body Quids that influenced four basic types of temperament. His work was further developed 500 years later by Galem. These days there are any number of self-assessment tools that relate to die basic descriptions developed by Galen, although we no longer believe the source to be the types of body fluid that dominate our systems."
         },
         {
           "id": "B",
-          "text": "ction B\nThe values in self-assessments that help determine personality\nstyle. Learning styles, communication styles, conflict-handling styles, or other\naspects of individuals is that they help depersonalize conflict in interpersonal\nrelationships. The depersonalization occurs when you realize that others\naren't trying to be difficult, but they need different or more information than you\ndo. They're not intending to be rude: they are so focused on the task they forget\nabout greeting people. They would like to work faster but not at the risk of\ndamaging the relationships needed to get the job done. They understand there is\na job to do. But it can only be done right with the appropriate information, which\ntakes time to collect When used appropriately, understanding communication\nstyles can help resolve conflict on teams. Very rarely are conflicts true\npersonality issues. Usually they are issues of style, information needs, or focus."
+          "text": "ction B The values in self-assessments that help determine personality style. Learning styles, communication styles, conflict-handling styles, or other aspects of individuals is that they help depersonalize conflict in interpersonal relationships. The depersonalization occurs when you realize that others aren't trying to be difficult, but they need different or more information than you do. They're not intending to be rude: they are so focused on the task they forget about greeting people. They would like to work faster but not at the risk of damaging the relationships needed to get the job done. They understand there is a job to do. But it can only be done right with the appropriate information, which takes time to collect When used appropriately, understanding communication styles can help resolve conflict on teams. Very rarely are conflicts true personality issues. Usually they are issues of style, information needs, or focus."
         },
         {
           "id": "C",
-          "text": "ction C\nHippocrates and later Galen determined there woe four basic temperaments:\nsanguine, phlegmatic, melancholic and choleric. These descriptions were\ndeveloped centuries ago and are still somewhat apt, although you could update\nthe wording, in today's world, they translate into the four fairly common communication styles described below:"
+          "text": "ction C Hippocrates and later Galen determined there woe four basic temperaments: sanguine, phlegmatic, melancholic and choleric. These descriptions were developed centuries ago and are still somewhat apt, although you could update the wording, in today's world, they translate into the four fairly common communication styles described below:"
         },
         {
           "id": "D",
-          "text": "ction D\nThe sanguine person would be the expressive or spirited style of communication.\nThese people speak in pictures. They invest a lot of emotion and energy in their\ncommunication and often speak quickly. Putting their whole body into it. They\nare easily sidetracked onto a story that may or may not illustrate the point they\narc trying to make. Because of their enthusiasm, they are great team\nmotivators. They are concerned about people and relationships. Their high levels\nof energy can come on strong at times and their focus is usually on the bigger\npicture, which means they sometimes miss the details or the proper order of\nthings. These people find conflict or differences of opinion invigorating and love\nto engage in a spirited discussion. They love change and arc constantly looking\nfor new and exciting adventures."
+          "text": "ction D The sanguine person would be the expressive or spirited style of communication. These people speak in pictures. They invest a lot of emotion and energy in their communication and often speak quickly. Putting their whole body into it. They are easily sidetracked onto a story that may or may not illustrate the point they arc trying to make. Because of their enthusiasm, they are great team motivators. They are concerned about people and relationships. Their high levels of energy can come on strong at times and their focus is usually on the bigger picture, which means they sometimes miss the details or the proper order of things. These people find conflict or differences of opinion invigorating and love to engage in a spirited discussion. They love change and arc constantly looking for new and exciting adventures."
         },
         {
           "id": "E",
-          "text": "ction E\nTile phlegmatic person - cool and persevering - translates into the technical or\nsystematic communication style. This style of communication is focused on facts\nand technical details. Phlegmatic people have an orderly, methodical way of\napproaching tasks, and their focus is very much on the task, not on the people,\nemotions, or concerns that the task may evoke. The focus is also more on the\ndetails necessary to accomplish a task.\nSometimes the details overwhelm the big picture and focus needs to be brought\nback to the context of the task. People with this style think the facts should speak\nfor themselves, and they are not as comfortable with conflict. They need time to\nadapt to change and need to understand both the logic of it and the steps\ninvolved."
+          "text": "ction E Tile phlegmatic person - cool and persevering - translates into the technical or systematic communication style. This style of communication is focused on facts and technical details. Phlegmatic people have an orderly, methodical way of approaching tasks, and their focus is very much on the task, not on the people, emotions, or concerns that the task may evoke. The focus is also more on the details necessary to accomplish a task. Sometimes the details overwhelm the big picture and focus needs to be brought back to the context of the task. People with this style think the facts should speak for themselves, and they are not as comfortable with conflict. They need time to adapt to change and need to understand both the logic of it and the steps involved."
         },
         {
           "id": "F",
-          "text": "ction F\nTile melancholic person who is softhearted and oriented\ntoward doing things for others translates into the considerate or sympathetic\ncommunication style. A person with this communication style is focused on\npeople and relationships. They are good listeners and do things for other people-\nsometimes to the detriment of getting things done for themselves. They want\nto solicit everyone’s opinion and make sure everyone is comfortable with whatever is required to get the job done. At times this focus on others can\ndistract from the task at hand. Because they are so concerned with the needs of\nothers and smoothing over issues, they do not like conflict. They believe that\nchange threatens the status quo and tends to make people feel uneasy, so people\nwith this communication style, like phlegmatic, people need time to consider the\nchanges in order to adapt to them."
+          "text": "ction F Tile melancholic person who is softhearted and oriented toward doing things for others translates into the considerate or sympathetic communication style. A person with this communication style is focused on people and relationships. They are good listeners and do things for other peopl-ometimes to the detriment of getting things done for themselves. They want to solicit everyone’s opinion and make sure everyone is comfortable with whatever is required to get the job done. At times this focus on others can distract from the task at hand. Because they are so concerned with the needs of others and smoothing over issues, they do not like conflict. They believe that change threatens the status quo and tends to make people feel uneasy, so people with this communication style, like phlegmatic, people need time to consider the changes in order to adapt to them."
         },
         {
           "id": "G",
-          "text": "ction G\nThe choleric temperament translates into the bold or direct style of\ncommunication. People with this style are brief in their communication - the\nfewer words the better. They are big picture thinkers and love to be involved in\nmany things at once. They are focused on tasks and outcomes and often forget\nthat the people involved in carrying out the tasks have needs. They don't do\ndetail work easily and as a result can often underestimate how much time it takes\nto achieve the task. Because they are so direct, they often seem forceful and can\nbe very intimidating to others. They usually would welcome someone\nchallenging them. But most other styles are afraid to do so. They also thrive on\nchange, the more the better."
+          "text": "ction G The choleric temperament translates into the bold or direct style of communication. People with this style are brief in their communication - the fewer words the better. They are big picture thinkers and love to be involved in many things at once. They are focused on tasks and outcomes and often forget that the people involved in carrying out the tasks have needs. They don't do detail work easily and as a result can often underestimate how much time it takes to achieve the task. Because they are so direct, they often seem forceful and can be very intimidating to others. They usually would welcome someone challenging them. But most other styles are afraid to do so. They also thrive on change, the more the better."
         },
         {
           "id": "H",
-          "text": "ction H\nA well-functioning team should have all of these communication styles for true\neffectiveness. All teams need to focus on the task, and they need to take care\nof relationships in order to achieve those tasks. They need the big picture\nperspective or the context of their work, and they need the details to be identified\nand taken care of for success. We all have aspects of each style within us. Some\nof us can easily move from one style to another and adapt our style to the needs\nof the situation at hand-whether the focus is on tasks or relationships. For others,\na dominant style is very evident, and it is more challenging to see the situation\nfrom the perspective of another style.\nThe work environment can influence communication styles\neither by the type of work that is required or by the predominance of one style\nreflected in that environment. Some people use one style at work and another at\nhome. The good news about communication styles is that we ah have the ability\nto develop flexibility in our styles. The greater the flexibility we have, the more\nskilled we usually are at handling possible and actual conflicts. Usually it has to be relevant to US to do so, either because we think it is important or because\nthere are incentives in our environment to encourage it. The key is that we have\nto want to become flexible with our communication style. As Henry Ford said,\n\"Whether you think you can or you can't, you're right!”"
+          "text": "ction H A well-functioning team should have all of these communication styles for true effectiveness. All teams need to focus on the task, and they need to take care of relationships in order to achieve those tasks. They need the big picture perspective or the context of their work, and they need the details to be identified and taken care of for success. We all have aspects of each style within us. Some of us can easily move from one style to another and adapt our style to the needs of the situation at hand-whether the focus is on tasks or relationships. For others, a dominant style is very evident, and it is more challenging to see the situation from the perspective of another style. The work environment can influence communication styles either by the type of work that is required or by the predominance of one style reflected in that environment. Some people use one style at work and another at home. The good news about communication styles is that we ah have the ability to develop flexibility in our styles. The greater the flexibility we have, the more skilled we usually are at handling possible and actual conflicts. Usually it has to be relevant to US to do so, either because we think it is important or because there are incentives in our environment to encourage it. The key is that we have to want to become flexible with our communication style. As Henry Ford said, \"Whether you think you can or you can't, you're right!”"
         }
       ],
       "questionGroups": [
@@ -793,7 +917,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section A",
                   "passageWord": "Hippocrates... Galen... historical background"
                 }
-              ]
+              ],
+              "order": 27,
+              "questionText": "Section A",
+              "answer": "iii",
+              "evidenceParagraph": "A",
+              "evidenceQuote": "Section A: As far back as Hippocrates time (460-370 B.c.) people have tried to understand other people..."
             },
             {
               "id": 28,
@@ -821,7 +950,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section B",
                   "passageWord": "help resolve conflict on teams"
                 }
-              ]
+              ],
+              "order": 28,
+              "questionText": "Section B",
+              "answer": "vii",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Section B: The values in self-assessments that help determine personality style... help depersonalize conflict..."
             },
             {
               "id": 29,
@@ -849,7 +983,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section C",
                   "passageWord": "communication styles described below"
                 }
-              ]
+              ],
+              "order": 29,
+              "questionText": "Section C",
+              "answer": "i",
+              "evidenceParagraph": "C",
+              "evidenceQuote": "Section C describes the 4 fundamental temperaments."
             },
             {
               "id": 30,
@@ -877,7 +1016,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section D",
                   "passageWord": "spirited... enthusiasm... lively"
                 }
-              ]
+              ],
+              "order": 30,
+              "questionText": "Section D",
+              "answer": "iv",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Section D: The sanguine person would be the expressive or spirited style of communication..."
             },
             {
               "id": 31,
@@ -905,7 +1049,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section E",
                   "passageWord": "focused on facts and technical details"
                 }
-              ]
+              ],
+              "order": 31,
+              "questionText": "Section E",
+              "answer": "ix",
+              "evidenceParagraph": "E",
+              "evidenceQuote": "Section E: The phlegmatic person - cool and persevering - translates into the technical or systematic style..."
             },
             {
               "id": 32,
@@ -933,7 +1082,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section F",
                   "passageWord": "cautious and considerate"
                 }
-              ]
+              ],
+              "order": 32,
+              "questionText": "Section F",
+              "answer": "viii",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Section F describes the considerate/cautious style focusing on people and process."
             },
             {
               "id": 33,
@@ -961,7 +1115,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section G",
                   "passageWord": "direct and challenging communication"
                 }
-              ]
+              ],
+              "order": 33,
+              "questionText": "Section G",
+              "answer": "v",
+              "evidenceParagraph": "G",
+              "evidenceQuote": "Section G describes the direct, challenging choleric style."
             },
             {
               "id": 34,
@@ -989,7 +1148,12 @@ export const pastPaper101Test8 = {
                   "testWord": "Section H",
                   "passageWord": "recommendation of combined styles"
                 }
-              ]
+              ],
+              "order": 34,
+              "questionText": "Section H",
+              "answer": "ii",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Section H emphasizes blending different styles effectively."
             }
           ]
         },
@@ -1020,7 +1184,12 @@ export const pastPaper101Test8 = {
                   "testWord": "do not like variety",
                   "passageWord": "love change and new adventures"
                 }
-              ]
+              ],
+              "order": 35,
+              "questionText": "it is believed that sanguine people do not like variety",
+              "answer": "FALSE",
+              "evidenceParagraph": "D",
+              "evidenceQuote": "Section D: They love change and are constantly looking for new and exciting adventures."
             },
             {
               "id": 36,
@@ -1041,7 +1210,12 @@ export const pastPaper101Test8 = {
                   "testWord": "similar characteristics",
                   "passageWord": "shared methodical and cautious approach"
                 }
-              ]
+              ],
+              "order": 36,
+              "questionText": "Melancholic and phlegmatic people have similar characteristics",
+              "answer": "TRUE",
+              "evidenceParagraph": "F",
+              "evidenceQuote": "Sections E & F compare the shared cautious and systematic orientation."
             },
             {
               "id": 37,
@@ -1057,7 +1231,12 @@ export const pastPaper101Test8 = {
               "explanationEn": "The passage stresses combining styles rather than declaring sanguine the most needed.",
               "evidence": "Section H discusses team diversity without singling out sanguine as most needed.",
               "evidenceParagraphId": "H",
-              "paraphraseMap": []
+              "paraphraseMap": [],
+              "order": 37,
+              "questionText": "It is the sanguine personality that needed most in the workplace.",
+              "answer": "NOT GIVEN",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Section H discusses team diversity without singling out sanguine as most needed."
             },
             {
               "id": 38,
@@ -1078,7 +1257,12 @@ export const pastPaper101Test8 = {
                   "testWord": "possible to change",
                   "passageWord": "adapt and adjust styles"
                 }
-              ]
+              ],
+              "order": 38,
+              "questionText": "It is possible for someone to change type of personality.",
+              "answer": "TRUE",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Section H affirms people can develop flexibility and adapt their dominant styles."
             },
             {
               "id": 39,
@@ -1099,7 +1283,12 @@ export const pastPaper101Test8 = {
                   "testWord": "work surrounding affect effectiveness",
                   "passageWord": "environment dictates optimal style"
                 }
-              ]
+              ],
+              "order": 39,
+              "questionText": "work surrounding can affect which communication style is the most effective.",
+              "answer": "TRUE",
+              "evidenceParagraph": "H",
+              "evidenceQuote": "Section H: ...context and workplace environment influence communication effectiveness."
             }
           ]
         },
@@ -1131,7 +1320,12 @@ export const pastPaper101Test8 = {
                   "testWord": "understand colleagues and resolve problems",
                   "passageWord": "depersonalize conflict and resolve conflict on teams"
                 }
-              ]
+              ],
+              "order": 40,
+              "questionText": "The author thinks self-assessment tools can be able to",
+              "answer": "B",
+              "evidenceParagraph": "B",
+              "evidenceQuote": "Section B: When used appropriately, understanding communication styles can help resolve conflict on teams."
             }
           ]
         }
