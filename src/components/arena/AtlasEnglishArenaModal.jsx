@@ -58,6 +58,18 @@ import ArenaTowerRelicPickerModal from './tower/ArenaTowerRelicPickerModal.jsx';
 import ArenaTowerShopModal from './tower/ArenaTowerShopModal.jsx';
 import ArenaTowerCampfireModal from './tower/ArenaTowerCampfireModal.jsx';
 import ArenaTowerBossFightCard from './tower/ArenaTowerBossFightCard.jsx';
+import ArenaSkillRealmsHub from './realms/ArenaSkillRealmsHub.jsx';
+import ArenaGateSummaryModal from './realms/ArenaGateSummaryModal.jsx';
+import {
+  SKILL_REALMS,
+  SKILL_REALM_IDS,
+  getSkillRealmsProgress,
+  saveSkillRealmsProgress,
+  evaluateGateResult,
+  getQuestionsForGate,
+  getRealmStats,
+  getAllRealmsOverallStats
+} from '../../services/gamification/skillRealmsEngine.js';
 import {
   startNewTowerRun,
   getActiveTowerRun,
@@ -253,7 +265,7 @@ export default function AtlasEnglishArenaModal({
     }
   });
 
-  // Game Mode State: 'blitz' (3-Min Quick Run) | 'tower' (Roguelite Expedition)
+  // Game Mode State: 'blitz' (3-Min Quick Run) | 'tower' (Roguelite Expedition) | 'realms' (4 Skill Realms)
   const [gameMode, setGameMode] = useState(() => safeGet('ielts_arena_game_mode', 'blitz'));
   const [towerRun, setTowerRun] = useState(() => getActiveTowerRun());
   const [activeTowerFloor, setActiveTowerFloor] = useState(null);
@@ -264,6 +276,12 @@ export default function AtlasEnglishArenaModal({
   const [towerBossState, setTowerBossState] = useState(null);
   const [towerLastDamage, setTowerLastDamage] = useState(0);
   const [towerIsCrit, setTowerIsCrit] = useState(false);
+
+  // 4 Skill Realms State
+  const [realmsProgress, setRealmsProgress] = useState(() => getSkillRealmsProgress());
+  const [activeRealmId, setActiveRealmId] = useState(SKILL_REALM_IDS.LISTENING);
+  const [activeGate, setActiveGate] = useState(null);
+  const [gateSummaryResult, setGateSummaryResult] = useState(null);
 
   // Tower Actions (Declared after sprint is initialized)
   const handleStartNewTowerExpedition = useCallback(() => {
@@ -308,6 +326,64 @@ export default function AtlasEnglishArenaModal({
     }
     sprint.startSprint(shuffled, floor.difficulty || 'medium', { isTowerFloor: true });
   }, [towerRun, sprint]);
+
+  // Skill Realms Actions
+  const handleEnterGate = useCallback((gate) => {
+    if (!gate) return;
+    setActiveGate(gate);
+    setGateSummaryResult(null);
+    const questions = getQuestionsForGate(gate.realmId, gate.id, gate.questionCount || 5);
+    sprint.startSprint(questions, gate.difficulty || 'medium', {
+      isGateSprint: true,
+      gateId: gate.id,
+      realmId: gate.realmId,
+      duration: gate.timeLimit || 75
+    });
+    playChime();
+  }, [sprint, playChime]);
+
+  const handleChallengeGuardian = useCallback((realm) => {
+    if (!realm) return;
+    const lastGate = realm.gates[realm.gates.length - 1];
+    setActiveGate({
+      id: `guardian_${realm.id}`,
+      realmId: realm.id,
+      gateNumber: realm.gates.length + 1,
+      partLabel: 'GUARDIAN TRIAL',
+      titleVi: `Khiêu Chiến: ${realm.guardian.nameVi}`,
+      titleEn: `Climax: ${realm.guardian.nameEn}`,
+      difficulty: 'nightmare',
+      baseXp: 75,
+      rewardGold: 150,
+      questionCount: 5,
+      timeLimit: 90
+    });
+    setGateSummaryResult(null);
+    const questions = getQuestionsForGate(realm.id, lastGate?.id || 'gate_lis_4', 5);
+    sprint.startSprint(questions, 'nightmare', {
+      isGuardianSprint: true,
+      realmId: realm.id,
+      duration: 90
+    });
+    playChime();
+  }, [sprint, playChime]);
+
+  const handleReplayActiveGate = useCallback(() => {
+    if (!activeGate) return;
+    setGateSummaryResult(null);
+    handleEnterGate(activeGate);
+  }, [activeGate, handleEnterGate]);
+
+  const handleEnterNextGate = useCallback(() => {
+    if (!activeGate) return;
+    const realm = SKILL_REALMS.find(r => r.id === activeGate.realmId);
+    const curIdx = realm?.gates?.findIndex(g => g.id === activeGate.id);
+    if (curIdx !== -1 && curIdx < (realm?.gates?.length - 1)) {
+      const nextG = realm.gates[curIdx + 1];
+      setGateSummaryResult(null);
+      handleEnterGate(nextG);
+    }
+  }, [activeGate, handleEnterGate]);
 
   const handleSelectTowerRelic = useCallback((relic) => {
     if (!relic || !towerRun) return;
@@ -396,6 +472,12 @@ export default function AtlasEnglishArenaModal({
 
   const handleReturnToLobby = useCallback(async () => {
     stopAudio();
+    if (activeGate) {
+      setActiveGate(null);
+      setGateSummaryResult(null);
+      sprint.resetSprint();
+      return;
+    }
     if (activeTowerFloor) {
       if (towerRun) {
         const floorIdx = (activeTowerFloor.floorNumber || 1) - 1;
@@ -451,6 +533,10 @@ export default function AtlasEnglishArenaModal({
 
   const handleDefeatedRestart = useCallback(async () => {
     stopAudio();
+    if (activeGate) {
+      handleEnterGate(activeGate);
+      return;
+    }
     if (activeTowerFloor) {
       handleEnterTowerFloor(activeTowerFloor, true);
       return;
@@ -473,7 +559,30 @@ export default function AtlasEnglishArenaModal({
       }
     }
     sprint.startSprint(null, selectedDifficulty);
-  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio, activeTowerFloor, handleEnterTowerFloor]);
+  }, [sprint, currentUser, streak, selectedDifficulty, stopAudio, activeTowerFloor, handleEnterTowerFloor, activeGate, handleEnterGate]);
+
+  // Automatic Gate Completion Evaluation
+  useEffect(() => {
+    if (sprint.phase === ARENA_SPRINT_PHASES.COMPLETED && activeGate && !gateSummaryResult) {
+      const outcome = evaluateGateResult({
+        realmId: activeGate.realmId,
+        gateId: activeGate.id,
+        score: sprint.score || 0,
+        totalQuestions: activeGate.questionCount || 5,
+        timeRemainingSeconds: Math.max(0, sprint.timeRemaining || 0),
+        isSurgeActive: isSurgeActive()
+      });
+      setGateSummaryResult(outcome);
+      setRealmsProgress(getSkillRealmsProgress());
+      if (outcome.finalXp > 0) {
+        submitRealSprintScore({
+          currentUser,
+          deltaXp: outcome.finalXp,
+          streakCount: streak + 1
+        }).catch(() => {});
+      }
+    }
+  }, [sprint.phase, sprint.score, sprint.timeRemaining, activeGate, gateSummaryResult, currentUser, streak]);
 
   // Ensure all audio is immediately killed if modal is closed or unmounted
   useEffect(() => {
@@ -857,7 +966,7 @@ export default function AtlasEnglishArenaModal({
             <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0">
               {/* Game Mode Switcher Tab Bar */}
               <div className="w-full flex items-center justify-center gap-2 mb-2 shrink-0">
-                <div className="flex items-center p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner max-w-md w-full">
+                <div className="flex items-center p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner max-w-xl w-full">
                   <button
                     type="button"
                     onClick={() => {
@@ -865,7 +974,7 @@ export default function AtlasEnglishArenaModal({
                       safeSet('ielts_arena_game_mode', 'blitz');
                       triggerHaptic('chipTap');
                     }}
-                    className={`flex-1 py-1.5 sm:py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       gameMode === 'blitz'
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
                         : 'text-slate-400 hover:text-slate-200'
@@ -876,11 +985,26 @@ export default function AtlasEnglishArenaModal({
                   <button
                     type="button"
                     onClick={() => {
+                      setGameMode('realms');
+                      safeSet('ielts_arena_game_mode', 'realms');
+                      triggerHaptic('chipTap');
+                    }}
+                    className={`flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      gameMode === 'realms'
+                        ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>{t('arena.modeRealms')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
                       setGameMode('tower');
                       safeSet('ielts_arena_game_mode', 'tower');
                       triggerHaptic('chipTap');
                     }}
-                    className={`flex-1 py-1.5 sm:py-2 px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       gameMode === 'tower'
                         ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
                         : 'text-slate-400 hover:text-slate-200'
@@ -943,6 +1067,14 @@ export default function AtlasEnglishArenaModal({
                     </button>
                   </div>
                 )
+              ) : gameMode === 'realms' ? (
+                <ArenaSkillRealmsHub
+                  progress={realmsProgress}
+                  activeRealmId={activeRealmId}
+                  onSelectRealm={(realmId) => setActiveRealmId(realmId)}
+                  onEnterGate={handleEnterGate}
+                  onChallengeGuardian={handleChallengeGuardian}
+                />
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start pb-1 sm:pb-2">
                 {/* Left: Hero Banner, Difficulty & Action Controls */}
@@ -1368,21 +1500,39 @@ export default function AtlasEnglishArenaModal({
         )}
 
         {/* State 5: COMPLETED Screen / Summary Modal */}
-        {sprint.phase === ARENA_SPRINT_PHASES.COMPLETED && sprint.summary && (
-          <div className="flex flex-col flex-1 min-h-full items-center justify-center p-4">
-            <ArenaSprintSummaryModal
-              summary={sprint.summary}
-              onPlayAgain={() => {
-                if (activeTowerFloor) {
-                  handleEnterTowerFloor(activeTowerFloor, true);
-                } else {
-                  sprint.startSprint(null, selectedDifficulty);
-                }
-              }}
-              onClose={handleReturnToLobby}
-              onOpenTheory={handleOpenTheoryPrescription}
-            />
-          </div>
+        {sprint.phase === ARENA_SPRINT_PHASES.COMPLETED && (
+          activeGate && gateSummaryResult ? (
+            <div className="flex flex-col flex-1 min-h-full items-center justify-center p-4">
+              <ArenaGateSummaryModal
+                result={gateSummaryResult}
+                gate={activeGate}
+                realm={SKILL_REALMS.find(r => r.id === activeGate.realmId)}
+                nextGate={(() => {
+                  const realm = SKILL_REALMS.find(r => r.id === activeGate.realmId);
+                  const curIdx = realm?.gates?.findIndex(g => g.id === activeGate.id);
+                  return (curIdx !== -1 && curIdx < (realm?.gates?.length - 1)) ? realm.gates[curIdx + 1] : null;
+                })()}
+                onReplay={handleReplayActiveGate}
+                onNextGate={handleEnterNextGate}
+                onClose={handleReturnToLobby}
+              />
+            </div>
+          ) : sprint.summary ? (
+            <div className="flex flex-col flex-1 min-h-full items-center justify-center p-4">
+              <ArenaSprintSummaryModal
+                summary={sprint.summary}
+                onPlayAgain={() => {
+                  if (activeTowerFloor) {
+                    handleEnterTowerFloor(activeTowerFloor, true);
+                  } else {
+                    sprint.startSprint(null, selectedDifficulty);
+                  }
+                }}
+                onClose={handleReturnToLobby}
+                onOpenTheory={handleOpenTheoryPrescription}
+              />
+            </div>
+          ) : null
         )}
 
         {/* Public Learner Profile Modal (Peer Profile Viewer) */}

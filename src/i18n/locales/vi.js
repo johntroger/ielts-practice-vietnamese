@@ -438,6 +438,7 @@ export const vi = {
     title: 'Đấu Trường Anh Ngữ Atlas',
     subtitle: 'Đấu trường phản xạ 180s (3 phút) nhịp độ cao triệt tiêu bẫy Cambridge',
     modeBlitz: '⚡ Đấu Nhanh (3 Phút)',
+    modeRealms: '🏛️ Tứ Đại Cung Điện (4 Kỹ Năng)',
     modeTower: '🏰 Tháp Babel (Roguelite)',
     towerSubtitle: 'Chiến dịch leo 10 tầng tháp cổ: tích lũy cổ vật, kiếm vàng và diệt Trùm Khảo Thí',
     league: 'Bảng Đấu',

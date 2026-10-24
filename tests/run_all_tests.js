@@ -213,7 +213,8 @@ const testSuites = [
   { name: 'Step 204: Hide AI Generator Buttons & Preserve Random Bank Picker', file: 'tests/test_step204_hide_ai_generator_buttons_and_keep_random_bank_pick.js' },
   { name: 'Step 205: Cambridge Tower of Babel Roguelite Expedition Engine', file: 'tests/test_step205_arena_tower_of_babel_roguelite_engine.js' },
   { name: 'Step 206: Atlas Streak Shield, Daily Sprints & Harmonic Audio', file: 'tests/test_step166_atlas_streak_shield_and_daily_sprints.js' },
-  { name: 'Step 207: Atlas Sprint Surge, Mistake Recovery & 30-Learner Cohorts', file: 'tests/test_step167_atlas_sprint_surge_and_mistake_recovery.js' }
+  { name: 'Step 207: Atlas Sprint Surge, Mistake Recovery & 30-Learner Cohorts', file: 'tests/test_step167_atlas_sprint_surge_and_mistake_recovery.js' },
+  { name: 'Step 208: 4 Skill Realms & Gate Progression System', file: 'tests/test_step208_arena_4_skills_rooms_and_gates.js' }
 ];
 
 console.log('===============================================================');

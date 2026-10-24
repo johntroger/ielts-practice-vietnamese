@@ -438,6 +438,7 @@ export const en = {
     title: 'Atlas English Arena',
     subtitle: 'High-speed 180s (3-min) reflex battle against Cambridge traps',
     modeBlitz: '⚡ 3-Min Blitz Sprint',
+    modeRealms: '🏛️ 4 Skill Realms',
     modeTower: '🏰 Tower of Babel (Roguelite)',
     towerSubtitle: 'Procedural 10-floor roguelite ascension with artifacts, merchant shop and boss battles',
     league: 'League',
