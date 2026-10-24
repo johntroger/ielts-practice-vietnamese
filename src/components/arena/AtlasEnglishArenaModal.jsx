@@ -47,6 +47,9 @@ import { ARENA_PERK_LIST, getPerkById } from '../../services/gamification/tactic
 import { triggerHaptic } from '../../utils/hapticHelper.js';
 import ArenaGhostDuelBar from './ArenaGhostDuelBar.jsx';
 import ArenaWorldBossCard from './ArenaWorldBossCard.jsx';
+import AtlasDailySprintCard from './AtlasDailySprintCard.jsx';
+import { getStreakShieldData, evaluateStreakProtection } from '../../services/gamification/atlasStreakShieldService.js';
+import { recordDailyQuestProgress, QUEST_TYPES } from '../../services/gamification/atlasDailyQuestService.js';
 import { createGhostDuel } from '../../services/gamification/ghostDuelService.js';
 import { initOfflineQueueAutoSync } from '../../services/gamification/offlineQueueService.js';
 import ArenaTowerMapView from './tower/ArenaTowerMapView.jsx';
@@ -132,6 +135,19 @@ export default function AtlasEnglishArenaModal({
   }, []);
 
   const streak = useMemo(() => getUnifiedStreakCount(), []);
+  const [streakShieldState, setStreakShieldState] = useState(() => getStreakShieldData());
+
+  // Evaluate streak shield protection upon opening modal
+  useEffect(() => {
+    if (!isOpen) return;
+    const lastActiveDate = safeGet(ARENA_STORAGE_KEYS.LAST_ACTIVE_DATE, null);
+    if (lastActiveDate) {
+      const result = evaluateStreakProtection({ lastActiveDate });
+      if (result.wasProtected) {
+        setStreakShieldState(getStreakShieldData());
+      }
+    }
+  }, [isOpen]);
 
   // Fetch real users from Supabase / cache whenever modal opens or user auth changes
   useEffect(() => {
@@ -199,6 +215,16 @@ export default function AtlasEnglishArenaModal({
           deltaXp: summary.finalXp,
           streakCount: streak + 1
         });
+
+        // Record Daily Quest progress
+        recordDailyQuestProgress(QUEST_TYPES.COMPLETE_SPRINT, 1);
+        if (summary.isAudioSprint && summary.score > 0) {
+          recordDailyQuestProgress(QUEST_TYPES.AUDIO_BLITZ_ACCURACY, summary.score);
+        }
+        if (summary.worldBossDamage?.damageDealt > 0) {
+          recordDailyQuestProgress(QUEST_TYPES.DEAL_BOSS_DAMAGE, summary.worldBossDamage.damageDealt);
+        }
+
         const updated = await fetchRealLeaderboard(currentUser);
         setLeaderboardData(updated);
 
@@ -533,7 +559,7 @@ export default function AtlasEnglishArenaModal({
           ignoreAccents: true
         });
         if (isCorrect) {
-          playSfx('correct');
+          playSfx('correct', sprint.combo || 0);
           sprint.checkAnswer();
           if (isSpeedrunMode) {
             if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
@@ -705,12 +731,24 @@ export default function AtlasEnglishArenaModal({
 
               {/* Header Right Actions */}
               <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                {streak > 0 && (
-                  <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-lg text-amber-400 text-[11px] sm:text-xs font-bold">
-                    <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400" />
-                    <span>{streak} {isEn ? 'd' : 'ngày'}</span>
-                  </div>
-                )}
+                {/* Streak Badge with Atlas Streak Shield Indicator */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {streak > 0 && (
+                    <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-lg text-amber-400 text-[11px] sm:text-xs font-bold">
+                      <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400" />
+                      <span>{streak} {isEn ? 'd' : 'ngày'}</span>
+                    </div>
+                  )}
+                  {streakShieldState?.shieldsRemaining > 0 && (
+                    <div 
+                      className="flex items-center gap-1 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-1 rounded-lg text-cyan-300 text-[11px] sm:text-xs font-bold"
+                      title={t('arena.streakShieldTooltip')}
+                    >
+                      <span className="text-xs">🛡️</span>
+                      <span className="font-mono">{streakShieldState.shieldsRemaining}/2</span>
+                    </div>
+                  )}
+                </div>
 
                 {/* 1-Click Share Direct /atlas-arena URL */}
                 <button
@@ -1024,10 +1062,29 @@ export default function AtlasEnglishArenaModal({
                   </div>
                 </div>
 
-                {/* Right: Real Learner Leaderboard & Daily World Boss Raid */}
+                {/* Right: Real Learner Leaderboard, Atlas Daily Sprints & Daily World Boss Raid */}
                 <div className={`lg:col-span-6 xl:col-span-5 w-full flex flex-col gap-2.5 sm:gap-3 min-w-0 ${
                   activeMobileTab === 'leaderboard' ? 'flex' : 'hidden lg:flex'
                 }`}>
+                  {/* Atlas Daily Sprints & Knowledge Vault Card */}
+                  <AtlasDailySprintCard 
+                    onClaimVault={(reward) => {
+                      if (reward?.bonusXp) {
+                        playChime();
+                        submitRealSprintScore({
+                          currentUser,
+                          deltaXp: reward.bonusXp,
+                          streakCount: streak
+                        }).catch(() => {});
+                        fetchRealLeaderboard(currentUser).then(updated => {
+                          if (updated) setLeaderboardData(updated);
+                        });
+                        setStreakShieldState(getStreakShieldData());
+                      }
+                    }}
+                    onStartSprint={() => sprint.startSprint(null, selectedDifficulty)}
+                  />
+
                   <ArenaRelativeLeaderboard
                     rivals={leaderboardData.leaderboard}
                     currentUserId={currentUser?.id}

@@ -557,7 +557,11 @@ export const vi = {
     audioBlitzDesc: 'Thử thách 7 câu phản xạ Nghe Audio Cambridge thực chiến — Nhận thêm +25% XP và Thưởng Perfect Ear!',
     audioBonusLabel: 'Thưởng Thính Lực Thực Chiến (+25% XP)',
     mysteryLootLabel: 'Thưởng Cổ Vật Bí Ẩn',
-    mysteryRelicBadge: 'CỔ VẬT BÍ ẨN'
+    mysteryRelicBadge: 'CỔ VẬT BÍ ẨN',
+    streakShieldTooltip: 'Bảo Hiểm Chuỗi Atlas (Aegis): Tự động bảo vệ chuỗi khi lỡ 1 ngày!',
+    streakShieldUnit: 'Khiên Bảo Hiểm',
+    dailySprintsTitle: 'Mục Tiêu Nhật Trình',
+    vaultUnlockedTitle: 'Rương Tri Thức Atlas Đã Mở Khóa!'
   },
   about: {
     badge: 'NỀN TẢNG LUYỆN THI IELTS 4 KỸ NĂNG • 100% LOCAL-FIRST & MIỄN PHÍ',

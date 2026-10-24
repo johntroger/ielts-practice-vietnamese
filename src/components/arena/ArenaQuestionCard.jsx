@@ -346,18 +346,18 @@ export default function ArenaQuestionCard({
             const isSpelling = question.type === 'spelling' || question.skillCategory === 'spelling';
             const isEliminated = Array.isArray(eliminatedOptions) && eliminatedOptions.includes(idx);
             
-            let btnStyle = 'bg-slate-800/50 hover:bg-slate-800/80 border-slate-700/70 text-slate-100 hover:border-slate-600 cursor-pointer';
+            let btnStyle = 'bg-slate-800/60 hover:bg-slate-800 border-slate-700/80 text-slate-100 hover:border-slate-500 cursor-pointer shadow-[0_3px_0_0_#1e293b] active:shadow-none active:translate-y-[2px]';
             if (isEliminated) {
-              btnStyle = 'opacity-35 line-through bg-slate-950/70 border-slate-800 text-slate-500 cursor-not-allowed pointer-events-none';
+              btnStyle = 'opacity-35 line-through bg-slate-950/70 border-slate-800 text-slate-500 cursor-not-allowed pointer-events-none shadow-none';
             } else if (isSelected && !isAnswerChecked) {
-              btnStyle = 'bg-indigo-600/25 border-indigo-400 text-white ring-2 ring-indigo-500/40 cursor-pointer shadow-md shadow-indigo-950/40';
+              btnStyle = 'bg-indigo-600/30 border-indigo-400 text-white ring-2 ring-indigo-500/50 cursor-pointer shadow-[0_3px_0_0_#4338ca] translate-y-[1px]';
             } else if (isAnswerChecked) {
               if (isOptionCorrect) {
-                btnStyle = 'bg-emerald-600/25 border-emerald-400 text-emerald-100 ring-2 ring-emerald-500/40 font-bold cursor-default shadow-md shadow-emerald-950/40';
+                btnStyle = 'bg-emerald-600/30 border-emerald-400 text-emerald-100 ring-2 ring-emerald-500/50 font-bold cursor-default shadow-[0_3px_0_0_#059669] translate-y-[1px]';
               } else if (isSelected && !isCorrect) {
-                btnStyle = 'bg-red-600/25 border-red-400 text-red-100 ring-2 ring-red-500/40 cursor-default shadow-md shadow-red-950/40';
+                btnStyle = 'bg-red-600/30 border-red-400 text-red-100 ring-2 ring-red-500/50 cursor-default shadow-[0_3px_0_0_#dc2626] translate-y-[1px]';
               } else {
-                btnStyle = 'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-50 cursor-default';
+                btnStyle = 'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-50 cursor-default shadow-none';
               }
             }
 

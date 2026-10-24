@@ -51,33 +51,33 @@ export default function ArenaDifficultySelector({
       case 'easy':
         return {
           border: 'border-emerald-500/70',
-          bg: 'bg-emerald-950/30',
-          ring: 'ring-emerald-500/40',
-          badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+          bg: 'bg-emerald-950/40 shadow-lg shadow-emerald-950/30',
+          ring: 'ring-emerald-500/50',
+          badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-xs',
           text: 'text-emerald-300'
         };
       case 'medium':
         return {
           border: 'border-blue-500/70',
-          bg: 'bg-blue-950/30',
-          ring: 'ring-blue-500/40',
-          badge: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+          bg: 'bg-blue-950/40 shadow-lg shadow-blue-950/30',
+          ring: 'ring-blue-500/50',
+          badge: 'bg-blue-500/20 text-blue-300 border-blue-500/40 shadow-xs',
           text: 'text-blue-300'
         };
       case 'hard':
         return {
           border: 'border-purple-500/70',
-          bg: 'bg-purple-950/30',
-          ring: 'ring-purple-500/40',
-          badge: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+          bg: 'bg-purple-950/40 shadow-lg shadow-purple-950/30',
+          ring: 'ring-purple-500/50',
+          badge: 'bg-purple-500/20 text-purple-300 border-purple-500/40 shadow-xs',
           text: 'text-purple-300'
         };
       case 'nightmare':
         return {
           border: 'border-rose-500/70',
-          bg: 'bg-rose-950/30',
-          ring: 'ring-rose-500/40',
-          badge: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+          bg: 'bg-rose-950/40 shadow-lg shadow-rose-950/30',
+          ring: 'ring-rose-500/50',
+          badge: 'bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-xs',
           text: 'text-rose-300'
         };
       default:

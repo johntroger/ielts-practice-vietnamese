@@ -49,10 +49,10 @@ export function useArenaAudio() {
     speakArenaText(textOrQuestion, questionOrCallbacks);
   }, [isMuted]);
 
-  const playSfx = useCallback((type = 'correct') => {
+  const playSfx = useCallback((type = 'correct', comboCount = 0) => {
     triggerHaptic(type);
     if (isMuted) return;
-    playArenaSfx(type);
+    playArenaSfx(type, comboCount);
   }, [isMuted]);
 
   const stopAudio = useCallback(() => {

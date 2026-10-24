@@ -231,9 +231,10 @@ export function speakArenaText(textOrQuestion, { audioUrl, clipStart = 0, clipEn
 }
 
 /**
- * Plays subtle Web Audio SFX (Correct Ding / Wrong Buzz).
+ * Plays subtle Web Audio SFX (Correct Ding / Wrong Buzz / Dynamic Combo Scale).
+ * When combo >= 1, pitch ascends along the Pythagorean harmonic scale (C5 -> D5 -> E5 -> G5 -> A5 -> C6).
  */
-export function playArenaSfx(type = 'correct') {
+export function playArenaSfx(type = 'correct', comboCount = 0) {
   try {
     const ctx = getSharedAudioContext();
     if (!ctx) return;
@@ -242,16 +243,21 @@ export function playArenaSfx(type = 'correct') {
     const gain = ctx.createGain();
 
     if (type === 'correct') {
-      // Pleasant dual chime: 587Hz -> 880Hz
+      // Harmonic combo pitch scaling: C5 (523), D5 (587), E5 (659), F#5 (740), G5 (784), A5 (880), B5 (987), C6 (1046)
+      const comboScale = [523.25, 587.33, 659.25, 739.99, 783.99, 880.00, 987.77, 1046.50];
+      const noteIdx = Math.min(comboScale.length - 1, Math.max(0, comboCount));
+      const baseFreq = comboScale[noteIdx];
+      const targetFreq = baseFreq * 1.5;
+
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, now);
-      osc.frequency.exponentialRampToValueAtTime(880.0, now + 0.15);
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.frequency.setValueAtTime(baseFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(targetFreq, now + 0.16);
+      gain.gain.setValueAtTime(0.20, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.35);
+      osc.stop(now + 0.38);
     } else {
       // Gentle warning thud: 220Hz -> 146Hz
       osc.type = 'triangle';

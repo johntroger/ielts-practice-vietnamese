@@ -557,7 +557,11 @@ export const en = {
     audioBlitzDesc: '7-Question Cambridge Studio Audio Challenge — Earn +25% Bonus XP and Perfect Ear mastery reward!',
     audioBonusLabel: 'Audio Mastery Bonus (+25% XP)',
     mysteryLootLabel: 'Mystery Relic Bonus',
-    mysteryRelicBadge: 'MYSTERY RELIC'
+    mysteryRelicBadge: 'MYSTERY RELIC',
+    streakShieldTooltip: 'Atlas Streak Shield (Aegis): Automatically saves your streak if you miss a day!',
+    streakShieldUnit: 'Streak Shield',
+    dailySprintsTitle: 'Atlas Daily Sprints',
+    vaultUnlockedTitle: 'Atlas Knowledge Vault Unlocked!'
   },
   about: {
     badge: 'CAMBRIDGE-STANDARD 4-SKILL IELTS PLATFORM • 100% LOCAL-FIRST & FREE',
