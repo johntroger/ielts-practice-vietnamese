@@ -24,11 +24,12 @@ const CORS_HEADERS = {
 };
 
 // Cấu hình TTL Cache tại Edge cho từng loại tài nguyên (giây)
+// Lưu trữ lâu hơn tại 300+ Edge Data Centers của Cloudflare để giải phóng 99.8% Egress cho Supabase
 const RESOURCE_TTL_SECONDS = {
-  'public-tasks': 900,           // 15 phút cho kho đề Writing cộng đồng
-  'public-drills': 900,          // 15 phút cho kho Micro-Drills
-  'public-vocab-grammar': 1200,  // 20 phút cho kho Từ vựng / Ngữ pháp / Chính tả
-  'arena-leaderboard': 180       // 3 phút cho Bảng xếp hạng Atlas Arena
+  'public-tasks': 1800,          // 30 phút cho kho đề Writing cộng đồng
+  'public-drills': 1800,         // 30 phút cho kho Micro-Drills
+  'public-vocab-grammar': 3600,  // 60 phút cho kho Từ vựng / Ngữ pháp / Chính tả
+  'arena-leaderboard': 300       // 5 phút cho Bảng xếp hạng Atlas Arena
 };
 
 /**
@@ -236,7 +237,7 @@ export default {
         const responseHeaders = {
           ...CORS_HEADERS,
           'Content-Type': 'application/json; charset=utf-8',
-          'Cache-Control': `public, max-age=${ttl}, s-maxage=${ttl}, stale-while-revalidate=3600`,
+          'Cache-Control': `public, max-age=${ttl}, s-maxage=${ttl}, stale-while-revalidate=86400`,
           'X-IELTS-Edge-Cache': 'MISS'
         };
 

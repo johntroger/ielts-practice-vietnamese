@@ -33,6 +33,9 @@ export const EDGE_RESOURCE_KEYS = {
 // URL mặc định của Cloudflare Edge Worker (được tự động điền khi chạy `npm run cloudflare:deploy`)
 export const DEFAULT_CLOUDFLARE_EDGE_URL = 'https://ielts-web-edge-gateway.nttu-kts-johntroger.workers.dev';
 
+// Tên miền phân phối tĩnh Cloudflare R2 Public CDN (10 GB Free, $0.00 Egress)
+export const DEFAULT_CLOUDFLARE_R2_PUBLIC_URL = 'https://pub-b33ad70ef4c7465ea266bab37e4568fe.r2.dev';
+
 // Bộ đệm RAM siêu tốc trong phiên làm việc
 const memoryEdgeCache = new Map();
 
@@ -57,7 +60,7 @@ export function getCloudflareConfig() {
   const storedUploadToken = typeof window !== 'undefined' ? safeGet(CF_CONFIG_KEYS.R2_UPLOAD_TOKEN, '') : '';
 
   const edgeWorkerUrl = (storedEdgeUrl || envEdgeUrl || DEFAULT_CLOUDFLARE_EDGE_URL || '').replace(/\/+$/, '');
-  const r2PublicDomain = (storedR2Domain || envR2Domain || '').replace(/\/+$/, '');
+  const r2PublicDomain = (storedR2Domain || envR2Domain || DEFAULT_CLOUDFLARE_R2_PUBLIC_URL || '').replace(/\/+$/, '');
 
   return {
     edgeWorkerUrl,

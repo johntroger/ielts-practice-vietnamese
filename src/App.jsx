@@ -158,70 +158,110 @@ export default function App() {
     window.addEventListener('storage', handleStorageChange);
 
     // Supabase Realtime Channel for global cloud updates
+    // Tự động giải phóng kết nối WebSocket khi tab chạy nền > 30s để tiết kiệm hạn mức 200 concurrent connections của Supabase
     let channel = null;
-    try {
-      channel = supabase
-        .channel('realtime_public_custom_tasks')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'user_custom_tasks', filter: 'is_public=eq.true' }, (payload) => {
-          if (payload.eventType === 'DELETE') {
-            const deletedId = payload.old?.id;
-            if (deletedId) {
-              setAllTasks(prev => {
-                const updated = prev.filter(t => t.id !== deletedId);
-                safeSet('ielts_all_tasks', updated);
-                return updated;
-              });
-              setCommunityTasks(prev => {
-                const updated = prev.filter(t => t.id !== deletedId);
-                safeSet('ielts_public_community_tasks', updated);
-                return updated;
-              });
+    let visibilityTimer = null;
+
+    const subscribeRealtime = () => {
+      if (channel) return;
+      try {
+        channel = supabase
+          .channel('realtime_public_custom_tasks')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'user_custom_tasks', filter: 'is_public=eq.true' }, (payload) => {
+            if (payload.eventType === 'DELETE') {
+              const deletedId = payload.old?.id;
+              if (deletedId) {
+                setAllTasks(prev => {
+                  const updated = prev.filter(t => t.id !== deletedId);
+                  safeSet('ielts_all_tasks', updated);
+                  return updated;
+                });
+                setCommunityTasks(prev => {
+                  const updated = prev.filter(t => t.id !== deletedId);
+                  safeSet('ielts_public_community_tasks', updated);
+                  return updated;
+                });
+              }
+            } else if (payload.eventType === 'INSERT') {
+              const row = payload.new;
+              const isNonWritingRow = (row?.entity_type && row.entity_type !== 'writing_task') || (row?.id && (
+                row.id.startsWith('custom-drill-') ||
+                row.id.startsWith('drill-') ||
+                row.id.startsWith('comm-drill-') ||
+                row.id.startsWith('ai-sp-') ||
+                row.id.startsWith('ai-gr-') ||
+                row.id.startsWith('ai-card-') ||
+                row.id.startsWith('arena-score-')
+              ));
+              if (row && row.is_public && !isNonWritingRow && (!row.task_data || (!row.task_data.isDrill && row.task_data.type !== 'arena_leaderboard_entry'))) {
+                const formatted = {
+                  ...row.task_data,
+                  id: row.id,
+                  isPublic: true,
+                  creatorEmail: row.creator_email,
+                  isCommunity: true
+                };
+                setAllTasks(prev => {
+                  if (prev.some(t => t.id === formatted.id)) return prev;
+                  const next = [formatted, ...prev];
+                  safeSet('ielts_all_tasks', next);
+                  return next;
+                });
+                setCommunityTasks(prev => {
+                  if (prev.some(t => t.id === formatted.id)) return prev;
+                  const next = [formatted, ...prev];
+                  safeSet('ielts_public_community_tasks', next);
+                  return next;
+                });
+              }
             }
-          } else if (payload.eventType === 'INSERT') {
-            const row = payload.new;
-            const isNonWritingRow = (row?.entity_type && row.entity_type !== 'writing_task') || (row?.id && (
-              row.id.startsWith('custom-drill-') ||
-              row.id.startsWith('drill-') ||
-              row.id.startsWith('comm-drill-') ||
-              row.id.startsWith('ai-sp-') ||
-              row.id.startsWith('ai-gr-') ||
-              row.id.startsWith('ai-card-') ||
-              row.id.startsWith('arena-score-')
-            ));
-            if (row && row.is_public && !isNonWritingRow && (!row.task_data || (!row.task_data.isDrill && row.task_data.type !== 'arena_leaderboard_entry'))) {
-              const formatted = {
-                ...row.task_data,
-                id: row.id,
-                isPublic: true,
-                creatorEmail: row.creator_email,
-                isCommunity: true
-              };
-              setAllTasks(prev => {
-                if (prev.some(t => t.id === formatted.id)) return prev;
-                const next = [formatted, ...prev];
-                safeSet('ielts_all_tasks', next);
-                return next;
-              });
-              setCommunityTasks(prev => {
-                if (prev.some(t => t.id === formatted.id)) return prev;
-                const next = [formatted, ...prev];
-                safeSet('ielts_public_community_tasks', next);
-                return next;
-              });
-            }
-          }
-        })
-        .subscribe();
-    } catch (e) {}
+          })
+          .subscribe();
+      } catch (e) {}
+    };
+
+    const unsubscribeRealtime = () => {
+      if (channel) {
+        try { supabase.removeChannel(channel); } catch (e) {}
+        channel = null;
+      }
+    };
+
+    subscribeRealtime();
+
+    const handleVisibilityChange = () => {
+      if (typeof document === 'undefined') return;
+      if (document.hidden) {
+        // Tab bị ẩn vào nền: đóng WebSocket sau 30s để trả lại slot kết nối cho Supabase
+        visibilityTimer = setTimeout(() => {
+          unsubscribeRealtime();
+        }, 30000);
+      } else {
+        // Tab hoạt động trở lại: hủy hẹn giờ và kết nối lại tức thì
+        if (visibilityTimer) {
+          clearTimeout(visibilityTimer);
+          visibilityTimer = null;
+        }
+        subscribeRealtime();
+      }
+    };
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      }
+      if (visibilityTimer) {
+        clearTimeout(visibilityTimer);
+      }
       if (bc) {
         try { bc.close(); } catch (e) {}
       }
-      if (channel) {
-        try { supabase.removeChannel(channel); } catch (e) {}
-      }
+      unsubscribeRealtime();
     };
   }, []);
 

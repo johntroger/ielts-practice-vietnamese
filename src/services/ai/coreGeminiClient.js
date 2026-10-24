@@ -170,12 +170,15 @@ export function resolveEdgeAiProxyUrl() {
       if (import.meta.env.VITE_EDGE_AI_PROXY_URL) {
         return import.meta.env.VITE_EDGE_AI_PROXY_URL;
       }
+      if (import.meta.env.VITE_CLOUDFLARE_EDGE_URL) {
+        return `${String(import.meta.env.VITE_CLOUDFLARE_EDGE_URL).replace(/\/$/, '')}/api/ai/generate`;
+      }
       if (import.meta.env.VITE_R2_PUBLIC_BASE_URL) {
         return `${String(import.meta.env.VITE_R2_PUBLIC_BASE_URL).replace(/\/$/, '')}/api/ai/generate`;
       }
     }
   } catch (e) {}
-  return '';
+  return 'https://ielts-web-edge-gateway.nttu-kts-johntroger.workers.dev/api/ai/generate';
 }
 
 /**
