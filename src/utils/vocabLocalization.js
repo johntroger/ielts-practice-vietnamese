@@ -302,26 +302,28 @@ export function getLocalizedSpellingTrap(trap, isEn = false) {
  */
 export function getLocalizedGrammarTitle(title, isEn = false) {
   if (!title) return '';
-  if (!isEn) return title;
+  // Strip "Unit X:" or "Unit X -" prefixes
+  let cleaned = title.replace(/^Unit\s+\d+:\s*/i, '').replace(/^Unit\s+\d+\s*[-–•]\s*/i, '');
+  if (!isEn) return cleaned;
   
   // If title has English in front of bracket e.g. "Relative Clauses (Mệnh đề quan hệ)"
-  if (title.includes('(')) {
-    const head = title.split('(')[0].trim();
+  if (cleaned.includes('(')) {
+    const head = cleaned.split('(')[0].trim();
     const vnRegex = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/i;
     if (!vnRegex.test(head) && head.length > 3) {
-      return head;
+      return head.replace(/^Unit\s+\d+:\s*/i, '');
     }
     // Also check inside bracket if bracket has English e.g. "Mệnh đề quan hệ (Relative Clauses)"
-    const match = title.match(/\(([^)]+)\)/);
+    const match = cleaned.match(/\(([^)]+)\)/);
     if (match && match[1]) {
       const inside = match[1].trim();
       if (!vnRegex.test(inside) && inside.length > 3) {
-        return inside;
+        return inside.replace(/^Unit\s+\d+:\s*/i, '');
       }
     }
   }
 
-  const lower = title.toLowerCase();
+  const lower = cleaned.toLowerCase();
   if (lower.includes('quan hệ')) {
     if (lower.includes('rút gọn')) return 'Reduced Relative Clauses';
     return 'Defining & Non-defining Relative Clauses';

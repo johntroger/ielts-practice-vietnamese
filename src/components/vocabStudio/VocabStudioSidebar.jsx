@@ -229,12 +229,16 @@ export default function VocabStudioSidebar({
                 itemTitle = item.questionStem || item.term || item.title || `Item ${idx + 1}`;
               }
 
-              if (isEn && typeof itemTitle === 'string') {
-                if (activeTab === 'grammar') {
-                  itemTitle = getLocalizedGrammarTitle(itemTitle, true);
-                } else if (itemTitle.includes('(')) {
-                  const enChunk = itemTitle.split('(')[0].trim();
-                  if (enChunk.length > 3) itemTitle = enChunk;
+              if (typeof itemTitle === 'string') {
+                itemTitle = itemTitle.replace(/^Unit\s+\d+:\s*/i, '').replace(/^Unit\s+\d+\s*[-–•]\s*/i, '');
+                if (isEn) {
+                  if (activeTab === 'grammar') {
+                    itemTitle = getLocalizedGrammarTitle(itemTitle, true);
+                  } else if (itemTitle.includes('(')) {
+                    const enChunk = itemTitle.split('(')[0].trim();
+                    if (enChunk.length > 3) itemTitle = enChunk;
+                  }
+                  itemTitle = itemTitle.replace(/^Unit\s+\d+:\s*/i, '').replace(/^Unit\s+\d+\s*[-–•]\s*/i, '');
                 }
               }
               
