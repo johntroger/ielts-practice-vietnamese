@@ -43,8 +43,8 @@ const leaderboardCode = fs.readFileSync(path.resolve('src/components/arena/Arena
 // 1. Lobby main container uses compact padding and min-h-0
 it('1. AtlasEnglishArenaModal lobby main uses compact vertical padding and min-h-0', () => {
   assert.ok(
-    modalCode.includes('py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0'),
-    'Lobby main must use py-2 sm:py-3 md:py-4 and min-h-0 to avoid pushing content below fold'
+    modalCode.includes('py-2 sm:py-3 md:py-4 flex flex-col justify-start lg:justify-center min-h-0'),
+    'Lobby main must use py-2 sm:py-3 md:py-4 and min-h-0 with responsive justify-start lg:justify-center to prevent mobile clipping'
   );
   assert.ok(
     !modalCode.includes('py-6 sm:py-10 flex flex-col justify-center'),

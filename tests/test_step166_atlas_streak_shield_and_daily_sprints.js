@@ -169,7 +169,11 @@ it('8. AtlasEnglishArenaModal mounts AtlasDailySprintCard and preserves step 125
   const startBtnMatch = code.match(/onClick=\{\(\)\s*=>\s*\{[\s\S]*?sprint\.startSprint\(null,\s*selectedDifficulty\);/);
   assert(startBtnMatch, 'Start Sprint button handler must be found');
   assert(!startBtnMatch[0].includes('playChime()'), 'Start Sprint button handler must NOT call playChime()');
-  assert.ok(code.includes('py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0'), 'Must preserve step 153 viewport lock');
+  assert.ok(
+    code.includes('py-2 sm:py-3 md:py-4 flex flex-col justify-start lg:justify-center min-h-0') ||
+    code.includes('py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0'),
+    'Must preserve step 153 viewport lock'
+  );
 });
 
 it('9. audioHelper and useArenaAudio support dynamic combo pitch scaling', () => {

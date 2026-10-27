@@ -846,124 +846,126 @@ export default function AtlasEnglishArenaModal({
         {/* State 1: IDLE / Full-Screen Lobby Screen */}
         {sprint.phase === ARENA_SPRINT_PHASES.IDLE && (
           <div className="flex flex-col flex-1 h-full overflow-y-auto">
-            {/* Top Navigation Bar (Sticky on Mobile to prevent clipping) */}
-            <header className="sticky top-0 z-30 w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between shrink-0 shadow-md">
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 shrink-0">
-                  <Swords className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div className="min-w-0">
-                  <h1 className="text-xs sm:text-base font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-snug truncate">
-                    {t('arena.title')}
-                  </h1>
-                  <p className="text-[11px] text-slate-400 hidden sm:block leading-none">
-                    {t('arena.subtitle')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Header Right Actions */}
-              <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                {/* Streak Badge with Atlas Streak Shield Indicator */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {streak > 0 && (
-                    <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-lg text-amber-400 text-[11px] sm:text-xs font-bold">
-                      <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400" />
-                      <span>{streak} {isEn ? 'd' : 'ngày'}</span>
-                    </div>
-                  )}
-                  {streakShieldState?.shieldsRemaining > 0 && (
-                    <div 
-                      className="flex items-center gap-1 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-1 rounded-lg text-cyan-300 text-[11px] sm:text-xs font-bold"
-                      title={t('arena.streakShieldTooltip')}
-                    >
-                      <span className="text-xs">🛡️</span>
-                      <span className="font-mono">{streakShieldState.shieldsRemaining}/2</span>
-                    </div>
-                  )}
-                  {surgeSeconds > 0 && (
-                    <div 
-                      className="flex items-center gap-1 bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-600/20 border border-amber-400/50 px-2 py-1 rounded-lg text-amber-300 text-[11px] sm:text-xs font-black shadow-[0_0_10px_rgba(245,158,11,0.25)] animate-pulse"
-                      title={t('arena.sprintSurgeTooltip')}
-                    >
-                      <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
-                      <span className="font-mono">{formatSurgeTimer(surgeSeconds)}</span>
-                      <span className="text-[9px] uppercase tracking-wider font-extrabold text-amber-200 bg-amber-500/30 px-1 py-0.2 rounded">2x</span>
-                    </div>
-                  )}
+            {/* Unified Sticky Header & Mobile Navigation Bar */}
+            <div className="sticky top-0 z-30 w-full shrink-0 shadow-md">
+              <header className="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30 shrink-0">
+                    <Swords className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h1 className="text-xs sm:text-base font-black tracking-wide bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-snug truncate">
+                      {t('arena.title')}
+                    </h1>
+                    <p className="text-[11px] text-slate-400 hidden sm:block leading-none">
+                      {t('arena.subtitle')}
+                    </p>
+                  </div>
                 </div>
 
-                {/* 1-Click Share Direct /atlas-arena URL */}
-                <button
-                  type="button"
-                  onClick={handleShareArena}
-                  className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
-                  title={isEn ? "Copy direct link to Atlas Arena (/atlas-arena)" : "Sao chép liên kết trực tiếp Đấu Trường (/atlas-arena)"}
-                >
-                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-indigo-400" />}
-                  <span className="hidden sm:inline font-bold">
-                    {copiedLink ? t('arena.linkCopied') : t('arena.shareArena')}
-                  </span>
-                </button>
+                {/* Header Right Actions */}
+                <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                  {/* Streak Badge with Atlas Streak Shield Indicator */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {streak > 0 && (
+                      <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-lg text-amber-400 text-[11px] sm:text-xs font-bold">
+                        <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400" />
+                        <span>{streak} {isEn ? 'd' : 'ngày'}</span>
+                      </div>
+                    )}
+                    {streakShieldState?.shieldsRemaining > 0 && (
+                      <div 
+                        className="flex items-center gap-1 bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-1 rounded-lg text-cyan-300 text-[11px] sm:text-xs font-bold"
+                        title={t('arena.streakShieldTooltip')}
+                      >
+                        <span className="text-xs">🛡️</span>
+                        <span className="font-mono">{streakShieldState.shieldsRemaining}/2</span>
+                      </div>
+                    )}
+                    {surgeSeconds > 0 && (
+                      <div 
+                        className="flex items-center gap-1 bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-600/20 border border-amber-400/50 px-2 py-1 rounded-lg text-amber-300 text-[11px] sm:text-xs font-black shadow-[0_0_10px_rgba(245,158,11,0.25)] animate-pulse"
+                        title={t('arena.sprintSurgeTooltip')}
+                      >
+                        <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        <span className="font-mono">{formatSurgeTimer(surgeSeconds)}</span>
+                        <span className="text-[9px] uppercase tracking-wider font-extrabold text-amber-200 bg-amber-500/30 px-1 py-0.2 rounded">2x</span>
+                      </div>
+                    )}
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={toggleFullscreen}
-                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
-                  title={isFullscreen ? t('arena.minimizeWindow') : t('arena.fullscreenWindow')}
-                >
-                  {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
-                </button>
+                  {/* 1-Click Share Direct /atlas-arena URL */}
+                  <button
+                    type="button"
+                    onClick={handleShareArena}
+                    className="hidden sm:flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                    title={isEn ? "Copy direct link to Atlas Arena (/atlas-arena)" : "Sao chép liên kết trực tiếp Đấu Trường (/atlas-arena)"}
+                  >
+                    {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-indigo-400" />}
+                    <span className="font-bold">
+                      {copiedLink ? t('arena.linkCopied') : t('arena.shareArena')}
+                    </span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
-                  title={t('arena.exitArena')}
-                >
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              </div>
-            </header>
+                  <button
+                    type="button"
+                    onClick={toggleFullscreen}
+                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                    title={isFullscreen ? t('arena.minimizeWindow') : t('arena.fullscreenWindow')}
+                  >
+                    {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  </button>
 
-            {/* Mobile Tab Navigation Bar (Sticky Segmented Controller for < lg screens) */}
-            <div className="lg:hidden sticky top-[49px] sm:top-[53px] z-20 w-full px-3 pt-2 pb-1 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80">
-              <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveMobileTab('match');
-                    triggerHaptic('chipTap');
-                  }}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    activeMobileTab === 'match'
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  <Swords className="w-3.5 h-3.5" />
-                  <span>{isEn ? 'Arena Battle' : 'Đấu Trường'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveMobileTab('leaderboard');
-                    triggerHaptic('chipTap');
-                  }}
-                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                    activeMobileTab === 'leaderboard'
-                      ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  <Trophy className="w-3.5 h-3.5 text-amber-300" />
-                  <span>{isEn ? 'Ranks & Boss' : 'Bảng Vàng & Boss'}</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                    title={t('arena.exitArena')}
+                  >
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+              </header>
+
+              {/* Mobile Tab Navigation Bar (Segmented Controller for < lg screens) */}
+              <div className="lg:hidden w-full px-3 pt-1.5 pb-1.5 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80">
+                <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800 shadow-inner">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveMobileTab('match');
+                      triggerHaptic('chipTap');
+                    }}
+                    className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      activeMobileTab === 'match'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Swords className="w-3.5 h-3.5" />
+                    <span>{isEn ? 'Arena Battle' : 'Đấu Trường'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveMobileTab('leaderboard');
+                      triggerHaptic('chipTap');
+                    }}
+                    className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      activeMobileTab === 'leaderboard'
+                        ? 'bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-md shadow-amber-600/30'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <Trophy className="w-3.5 h-3.5 text-amber-300" />
+                    <span>{isEn ? 'Ranks & Boss' : 'Bảng Vàng & Boss'}</span>
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Main Fullscreen Lobby Body */}
-            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-center min-h-0">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 md:py-4 flex flex-col justify-start lg:justify-center min-h-0">
               {/* Game Mode Switcher Tab Bar */}
               <div className="w-full flex items-center justify-center gap-2 mb-2 shrink-0">
                 <div className="flex items-center p-1 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-inner max-w-xl w-full">
