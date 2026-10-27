@@ -8,7 +8,7 @@ import {
   ArrowRight,
   ArrowLeft
 } from 'lucide-react';
-import { getLocalizedGrammarItem } from '../../utils/vocabLocalization';
+import { getLocalizedGrammarItem, getLocalizedGrammarPrompt } from '../../utils/vocabLocalization';
 
 export default function GrammarArchitectureStage({
   isEn,
@@ -25,6 +25,10 @@ export default function GrammarArchitectureStage({
   if (!grammarItem) return null;
 
   const loc = getLocalizedGrammarItem(grammarItem, isEn);
+  const currentDrill = loc.drills?.[0] || grammarItem.drills?.[0] || null;
+  const drillPromptText = isEn
+    ? getLocalizedGrammarPrompt(currentDrill?.question || loc.prompt, loc.title, true)
+    : (currentDrill?.question || loc.prompt);
 
   const [activePhase, setActivePhase] = useState('blueprint');
   const [selectedDrillChoice, setSelectedDrillChoice] = useState(null);
@@ -56,11 +60,9 @@ export default function GrammarArchitectureStage({
   const handleCheckDrill = () => {
     if (selectedDrillChoice === null) return;
     setIsDrillChecked(true);
-    const isCorrect = selectedDrillChoice === (grammarItem.drills?.[0]?.correctIndex ?? 0);
+    const isCorrect = selectedDrillChoice === (currentDrill?.correctIndex ?? 0);
     if (onRecordAttempt) onRecordAttempt(grammarItem.id, isCorrect);
   };
-
-  const currentDrill = grammarItem.drills?.[0] || null;
 
   return (
     <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
@@ -206,7 +208,7 @@ export default function GrammarArchitectureStage({
             {currentDrill && currentDrill.options && currentDrill.options.length > 0 ? (
               <div className="space-y-4">
                 <p className="font-serif text-sm sm:text-base text-slate-800 font-semibold leading-relaxed">
-                  {currentDrill.question || loc.prompt}
+                  {drillPromptText}
                 </p>
 
                 <div className="space-y-2.5">
@@ -267,7 +269,7 @@ export default function GrammarArchitectureStage({
             ) : currentDrill?.origin ? (
               <div className="space-y-4">
                 <p className="font-serif text-sm sm:text-base text-slate-800 font-semibold leading-relaxed">
-                  {currentDrill.question || loc.prompt}
+                  {drillPromptText}
                 </p>
                 <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-1">
                   <span className="text-[10px] font-black uppercase text-amber-800">

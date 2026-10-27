@@ -477,36 +477,102 @@ export function getLocalizedGrammarPrompt(prompt, title, isEn = false) {
   if (!vnRegex.test(prompt)) return prompt;
 
   const lower = (prompt + ' ' + (title || '')).toLowerCase();
-  if (lower.includes('hòa hợp') || lower.includes('chia động từ')) {
-    return 'Correct the subject-verb agreement error in the sentence below:';
+
+  // Relative Clauses
+  if (lower.includes('quan hệ') || lower.includes('relative')) {
+    if (lower.includes('who')) {
+      return "Combine the two sentences into a complex sentence using a relative clause with 'who':";
+    }
+    if (lower.includes('which')) {
+      return "Combine the two sentences into a complex sentence using a relative clause with 'which':";
+    }
+    if (lower.includes('whose')) {
+      return "Combine the two sentences using a possessive relative clause with 'whose':";
+    }
+    if (lower.includes('rút gọn') || lower.includes('reduced')) {
+      return 'Reduce the relative clause below into an academic participial modifier:';
+    }
+    return 'Combine the two sentences into a complex sentence using an appropriate relative clause:';
   }
-  if (lower.includes('phẩy') || lower.includes('comma splice')) {
-    return 'Fix the comma splice error by adding an appropriate coordinating conjunction or semicolon:';
+
+  // Concession / Contrast
+  if (lower.includes('nhượng bộ') || lower.includes('tương phản') || lower.includes('concession') || lower.includes('contrast')) {
+    if (lower.includes('despite') || lower.includes('in spite of')) {
+      return 'Rewrite the sentences into a concession structure using "Despite" or "In spite of":';
+    }
+    if (lower.includes('while') || lower.includes('whereas')) {
+      return 'Combine the sentences into a complex contrast sentence using "While" or "Whereas":';
+    }
+    return 'Combine the sentences into a complex contrast sentence using "Although" or "While":';
   }
-  if (lower.includes('nguyên nhân') || lower.includes('leads to')) {
-    return 'Convert the cause-and-effect sentence below using "leads to" + Noun phrase:';
-  }
-  if (lower.includes('nhượng bộ') || lower.includes('while') || lower.includes('although')) {
-    return 'Combine the sentences into a complex contrast sentence using "While" or "Although":';
-  }
-  if (lower.includes('quan hệ') || lower.includes('which') || lower.includes('who')) {
-    return 'Join the sentences using an appropriate relative clause with "which" or "who":';
-  }
-  if (lower.includes('bị động')) {
+
+  // Passive voice
+  if (lower.includes('bị động') || lower.includes('passive')) {
+    if (lower.includes('impersonal') || lower.includes('khách quan')) {
+      return 'Transform the sentence into an impersonal academic passive construction ("It is widely contended that..."):';
+    }
     return 'Transform the personal active sentence into an impersonal academic passive construction:';
   }
-  if (lower.includes('phân từ') || lower.includes('v-ing')) {
+
+  // Participle clauses
+  if (lower.includes('phân từ') || lower.includes('participle') || lower.includes('v-ing')) {
     return 'Combine the result clause into a participial phrase using ", thereby V-ing":';
   }
-  if (lower.includes('câu chẻ') || lower.includes('cleft')) {
-    return 'Rewrite the sentence using a cleft structure ("It is... that") for emphasis:';
-  }
+
+  // Inversion
   if (lower.includes('đảo ngữ') || lower.includes('inversion')) {
-    return 'Rewrite the sentence using negative inversion beginning with "Not only":';
+    if (lower.includes('not only')) {
+      return 'Rewrite the sentence using negative inversion beginning with "Not only":';
+    }
+    return 'Rewrite the sentence using academic inversion to add emphasis:';
   }
+
+  // Conditionals
+  if (lower.includes('điều kiện') || lower.includes('conditional')) {
+    if (lower.includes('loại 3') || lower.includes('third')) {
+      return 'Rewrite the situation into a third conditional sentence:';
+    }
+    if (lower.includes('loại 2') || lower.includes('second')) {
+      return 'Rewrite the situation into a second conditional sentence:';
+    }
+    return 'Rewrite the sentences using an appropriate conditional structure:';
+  }
+
+  // Subject-Verb Agreement
+  if (lower.includes('hòa hợp') || lower.includes('chia động từ') || lower.includes('agreement')) {
+    return 'Correct the verb form to agree with the complex subject:';
+  }
+
+  // Comma Splice / Compound
+  if (lower.includes('phẩy') || lower.includes('comma splice') || lower.includes('câu ghép')) {
+    return 'Fix the comma splice error by adding an appropriate coordinating conjunction or semicolon:';
+  }
+
+  // Cause and effect
+  if (lower.includes('nguyên nhân') || lower.includes('kết quả') || lower.includes('hệ quả') || lower.includes('cause')) {
+    return 'Convert the cause-and-effect sentence below using "leads to" + Noun phrase:';
+  }
+
+  // Nominalization
   if (lower.includes('danh từ hóa') || lower.includes('nominalization')) {
     return 'Nominalize the sentence below to increase academic lexical density:';
   }
+
+  // Cleft sentence
+  if (lower.includes('câu chẻ') || lower.includes('nhấn mạnh') || lower.includes('cleft')) {
+    return 'Rewrite the sentence using a cleft structure ("It is... that") for emphasis:';
+  }
+
+  // Modals / Hedging
+  if (lower.includes('khuyết thiếu') || lower.includes('modal') || lower.includes('hedging')) {
+    return 'Rephrase the sentence using academic modal verbs to convey cautious hedging:';
+  }
+
+  // Generic combine sentence
+  if (lower.includes('kết hợp') || lower.includes('ghép') || lower.includes('nối câu') || lower.includes('combine')) {
+    return 'Combine the following sentences into a cohesive academic complex sentence:';
+  }
+
   return 'Rewrite the sentence to upgrade grammatical range and accuracy:';
 }
 
@@ -525,11 +591,21 @@ export function getLocalizedGrammarItem(grammar, isEn = false) {
   const rationale = grammar.rationaleEn || enData.rationale || getLocalizedGrammarRationale(grammar.rationale, title, grammar.bandLevel || grammar.bandTarget, true);
   const prompt = grammar.promptEn || enData.prompt || getLocalizedGrammarPrompt(grammar.prompt, title, true);
 
-  const drills = (grammar.drills || []).map(drill => ({
-    ...drill,
-    question: drill.questionEn || drill.question,
-    explanation: drill.explanationEn || drill.explanation
-  }));
+  const drills = (grammar.drills || []).map(drill => {
+    let q = drill.questionEn || '';
+    if (!q) {
+      q = getLocalizedGrammarPrompt(drill.question, title, true);
+    }
+    let exp = drill.explanationEn || '';
+    if (!exp) {
+      exp = getLocalizedGrammarRationale(drill.explanation, title, grammar.bandLevel, true);
+    }
+    return {
+      ...drill,
+      question: q,
+      explanation: exp
+    };
+  });
 
   return {
     ...grammar,
