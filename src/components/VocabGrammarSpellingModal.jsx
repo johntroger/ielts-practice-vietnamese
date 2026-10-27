@@ -351,6 +351,11 @@ export default function VocabGrammarSpellingModal({
     return IELTS_SPELLING_TRAPS.length + IELTS_GRAMMAR_PACK.length + totalVocabCardsCount + CAMBRIDGE_SYNONYM_PAIRS.length;
   }, [totalVocabCardsCount]);
 
+  const allMasteredCount = useMemo(() => {
+    if (!Array.isArray(masteredIds)) return 0;
+    return masteredIds.length;
+  }, [masteredIds]);
+
   // Active Track Hero Info & Definitions
   const tracksCatalog = [
     {
