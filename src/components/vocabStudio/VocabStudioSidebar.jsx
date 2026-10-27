@@ -6,7 +6,7 @@ import {
   ChevronRight,
   X
 } from 'lucide-react';
-import { getLocalizedGrammarTitle } from '../../utils/vocabLocalization';
+import { getLocalizedGrammarTitle, getLocalizedDeckTopicName } from '../../utils/vocabLocalization';
 
 export default function VocabStudioSidebar({
   isEn,
@@ -63,10 +63,7 @@ export default function VocabStudioSidebar({
 
   const getDeckLabel = (deck) => {
     const count = deck.cards?.length || 0;
-    let name = deck.topicName || deck.id;
-    if (isEn && name.includes('(')) {
-      name = name.split('(')[0].trim();
-    }
+    const name = getLocalizedDeckTopicName(deck, isEn);
     return `${name} (${count})`;
   };
 

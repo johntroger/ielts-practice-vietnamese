@@ -1586,7 +1586,9 @@ export { COLLINS_GRAMMAR_FOR_IELTS_PACK };
 export const IELTS_THEMATIC_VOCAB_DECKS = [
   {
     "id": "deck-tech",
-    "topicName": "Technology & Digital Life (Công nghệ & Đời sống số)",
+    "topicName": "Technology & Digital Life",
+    "topicNameEn": "Technology & Digital Life",
+    "topicNameVi": "Công nghệ & Đời sống số",
     "color": "from-blue-600 to-indigo-700",
     "cards": [
       {
@@ -1716,7 +1718,9 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
   },
   {
     "id": "deck-env",
-    "topicName": "Environment & Climate (Môi trường & Biến đổi khí hậu)",
+    "topicName": "Environment & Climate",
+    "topicNameEn": "Environment & Climate",
+    "topicNameVi": "Môi trường & Biến đổi khí hậu",
     "color": "from-emerald-600 to-teal-700",
     "cards": [
       {
@@ -1849,7 +1853,9 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
   },
   {
     "id": "deck-soc",
-    "topicName": "Society & Urban Life (Xã hội & Đời sống đô thị)",
+    "topicName": "Society & Urban Life",
+    "topicNameEn": "Society & Urban Life",
+    "topicNameVi": "Xã hội & Đời sống đô thị",
     "color": "from-amber-600 to-rose-700",
     "cards": [
       {

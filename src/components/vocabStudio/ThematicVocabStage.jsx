@@ -7,7 +7,7 @@ import {
   ArrowRight,
   ArrowLeft
 } from 'lucide-react';
-import { getLocalizedCardMeaning } from '../../utils/vocabLocalization';
+import { getLocalizedCardMeaning, getLocalizedDeckTopicName } from '../../utils/vocabLocalization';
 
 export default function ThematicVocabStage({
   isEn,
@@ -61,7 +61,7 @@ export default function ThematicVocabStage({
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="font-extrabold text-sm sm:text-base text-slate-800">
-                  {deck?.topicName || (isEn ? 'Thematic Deck' : 'Bộ thẻ theo chủ đề')}
+                  {getLocalizedDeckTopicName(deck, isEn)}
                 </h3>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
                   Band {card.bandScore || card.bandLevel || '7.0'}

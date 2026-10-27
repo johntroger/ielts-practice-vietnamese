@@ -12,7 +12,8 @@ import {
 import { useTranslation } from '../i18n';
 import {
   getLocalizedGrammarItem,
-  getLocalizedSpellingTrap
+  getLocalizedSpellingTrap,
+  getLocalizedDeckTopicName
 } from '../utils/vocabLocalization';
 
 // Modular Subcomponents (ForumFlash EdTech Architecture)
@@ -471,7 +472,7 @@ export default function VocabGrammarSpellingModal({
       icon: '📖',
       label: isEn ? 'Thematic Vocab' : 'Từ vựng chủ đề',
       kicker: isEn ? '• THEMATIC ACTIVE RECALL' : '• TỪ VỰNG THEMATIC & COLLOCATIONS',
-      title: currentDeck?.topicName || (isEn ? 'Thematic Vocabulary' : 'Từ Vựng Theo Chủ Đề'),
+      title: getLocalizedDeckTopicName(currentDeck, isEn),
       description: isEn
         ? 'Authentic C1/C2 collocations and 3D active recall flashcards across 25 IELTS topics.'
         : 'Thẻ ghi nhớ phản xạ 3D và cụm từ kết hợp điểm cao theo các chuyên đề IELTS then chốt.'

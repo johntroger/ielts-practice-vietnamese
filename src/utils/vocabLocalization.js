@@ -645,3 +645,42 @@ export function getLocalizedTopicName(topic, isEn = false) {
   }
   return topic;
 }
+
+/**
+ * Localizes a vocab deck topic name.
+ * When isEn is true, guarantees 100% English by using topicNameEn or stripping any Vietnamese in parentheses.
+ * @param {Object|string} deckOrTopic - Deck object or topic string
+ * @param {boolean} isEn - Language mode
+ * @returns {string}
+ */
+export function getLocalizedDeckTopicName(deckOrTopic, isEn = false) {
+  if (!deckOrTopic) return isEn ? 'Thematic Vocabulary' : 'Từ Vựng Theo Chủ Đề';
+
+  if (typeof deckOrTopic === 'object') {
+    if (isEn && deckOrTopic.topicNameEn) return deckOrTopic.topicNameEn;
+    if (!isEn && deckOrTopic.topicNameVi) return deckOrTopic.topicNameVi;
+    deckOrTopic = deckOrTopic.topicName || deckOrTopic.title || deckOrTopic.name || deckOrTopic.id || '';
+  }
+
+  let str = String(deckOrTopic).trim();
+  const vnRegex = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/i;
+
+  if (isEn) {
+    // If the topic string has parenthesized content containing Vietnamese, strip it
+    str = str.replace(/\s*\([^)]*\)/g, (match) => {
+      if (vnRegex.test(match)) {
+        return '';
+      }
+      return match;
+    }).trim();
+
+    // In case the whole string is in Vietnamese or has leftover brackets
+    if (vnRegex.test(str)) {
+      if (str.includes('Công nghệ')) return 'Technology & Digital Life';
+      if (str.includes('Môi trường')) return 'Environment & Climate';
+      if (str.includes('Xã hội')) return 'Society & Urban Life';
+    }
+  }
+
+  return str || (isEn ? 'Thematic Vocabulary' : 'Từ Vựng Theo Chủ Đề');
+}
