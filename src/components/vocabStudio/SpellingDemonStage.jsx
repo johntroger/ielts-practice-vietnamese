@@ -13,6 +13,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { getGitBookBaseUrl } from '../../core/featureRegistry';
+import { getLocalizedSpellingTrap } from '../../utils/vocabLocalization';
 
 export default function SpellingDemonStage({
   isEn,
@@ -27,6 +28,8 @@ export default function SpellingDemonStage({
   onRecordAttempt
 }) {
   if (!trap) return null;
+
+  const locTrap = getLocalizedSpellingTrap(trap, isEn);
 
   const [drillMode, setDrillMode] = useState('quiz');
   const [selectedChoice, setSelectedChoice] = useState(null);
@@ -355,20 +358,20 @@ export default function SpellingDemonStage({
                   </h4>
                 </div>
 
-                {trap.rule && (
+                {locTrap.rule && (
                   <div className="p-3 rounded-xl bg-white/80 border border-slate-200/80 text-xs text-slate-800 space-y-1">
                     <div className="flex items-center space-x-1.5 font-bold text-amber-700">
                       <Lightbulb className="w-3.5 h-3.5" />
                       <span>{isEn ? 'Examiner Mnemonic Trick:' : 'Mẹo ghi nhớ của giám khảo:'}</span>
                     </div>
-                    <p className="leading-relaxed">{trap.rule}</p>
+                    <p className="leading-relaxed">{locTrap.rule}</p>
                   </div>
                 )}
 
-                {trap.explanation && (
+                {locTrap.explanation && (
                   <p className="text-xs text-slate-700 leading-relaxed">
                     <b className="text-slate-900">{isEn ? 'Root Analysis: ' : 'Phân tích gốc từ: '}</b>
-                    {trap.explanation}
+                    {locTrap.explanation}
                   </p>
                 )}
               </div>

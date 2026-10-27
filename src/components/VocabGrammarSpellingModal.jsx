@@ -10,6 +10,10 @@ import {
   fetchPublicVocabGrammarItems
 } from '../services/dataSyncService';
 import { useTranslation } from '../i18n';
+import {
+  getLocalizedGrammarItem,
+  getLocalizedSpellingTrap
+} from '../utils/vocabLocalization';
 
 // Modular Subcomponents (ForumFlash EdTech Architecture)
 import VocabStudioHeader from './vocabStudio/VocabStudioHeader';
@@ -144,6 +148,11 @@ export default function VocabGrammarSpellingModal({
     });
   }, [rawSpellingList, selectedBandTier, selectedSpellingCategory, searchQuery, hideMastered, currentUser, masteredIds]);
 
+  const localizedSpellingList = useMemo(() => {
+    if (!isEn) return filteredSpellingList;
+    return filteredSpellingList.map(item => getLocalizedSpellingTrap(item, true));
+  }, [filteredSpellingList, isEn]);
+
   const [currentSpellingIdx, setCurrentSpellingIdx] = useState(0);
 
   useEffect(() => {
@@ -194,6 +203,11 @@ export default function VocabGrammarSpellingModal({
       hideMastered: hideMastered && currentUser
     });
   }, [rawGrammarList, selectedBandTier, searchQuery, hideMastered, currentUser, masteredIds]);
+
+  const localizedGrammarList = useMemo(() => {
+    if (!isEn) return filteredGrammarList;
+    return filteredGrammarList.map(item => getLocalizedGrammarItem(item, true));
+  }, [filteredGrammarList, isEn]);
 
   const [currentGrammarIdx, setCurrentGrammarIdx] = useState(0);
 
@@ -369,16 +383,16 @@ export default function VocabGrammarSpellingModal({
   // Resolve active items list & current index for sidebar
   const currentSidebarData = useMemo(() => {
     if (activeTab === 'spelling') {
-      return { items: filteredSpellingList, index: currentSpellingIdx, setIndex: setCurrentSpellingIdx };
+      return { items: localizedSpellingList, index: currentSpellingIdx, setIndex: setCurrentSpellingIdx };
     }
     if (activeTab === 'grammar') {
-      return { items: filteredGrammarList, index: currentGrammarIdx, setIndex: setCurrentGrammarIdx };
+      return { items: localizedGrammarList, index: currentGrammarIdx, setIndex: setCurrentGrammarIdx };
     }
     if (activeTab === 'vocab') {
       return { items: filteredCards, index: currentCardIdx, setIndex: setCurrentCardIdx };
     }
     return { items: filteredSynonymsList, index: currentSynonymIdx, setIndex: setCurrentSynonymIdx };
-  }, [activeTab, filteredSpellingList, currentSpellingIdx, filteredGrammarList, currentGrammarIdx, filteredCards, currentCardIdx, filteredSynonymsList, currentSynonymIdx]);
+  }, [activeTab, localizedSpellingList, currentSpellingIdx, localizedGrammarList, currentGrammarIdx, filteredCards, currentCardIdx, filteredSynonymsList, currentSynonymIdx]);
 
   const totalVocabCardsCount = useMemo(() => {
     return thematicDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
@@ -441,8 +455,8 @@ export default function VocabGrammarSpellingModal({
 
   if (!isOpen) return null;
 
-  const currentSpellingItem = filteredSpellingList[currentSpellingIdx] || filteredSpellingList[0];
-  const currentGrammarItem = filteredGrammarList[currentGrammarIdx] || filteredGrammarList[0];
+  const currentSpellingItem = localizedSpellingList[currentSpellingIdx] || localizedSpellingList[0];
+  const currentGrammarItem = localizedGrammarList[currentGrammarIdx] || localizedGrammarList[0];
   const currentVocabCard = filteredCards[currentCardIdx] || filteredCards[0];
   const currentSynonymPair = filteredSynonymsList[currentSynonymIdx] || filteredSynonymsList[0];
 
@@ -555,7 +569,7 @@ export default function VocabGrammarSpellingModal({
                 isEn={isEn}
                 trap={currentSpellingItem}
                 currentIndex={currentSpellingIdx}
-                totalItems={filteredSpellingList.length}
+                totalItems={localizedSpellingList.length}
                 onPrev={handlePrevItem}
                 onNext={handleNextItem}
                 isMastered={currentSpellingItem ? masteredIds.includes(currentSpellingItem.id) : false}
@@ -570,7 +584,7 @@ export default function VocabGrammarSpellingModal({
                 isEn={isEn}
                 grammarItem={currentGrammarItem}
                 currentIndex={currentGrammarIdx}
-                totalItems={filteredGrammarList.length}
+                totalItems={localizedGrammarList.length}
                 onPrev={handlePrevItem}
                 onNext={handleNextItem}
                 isMastered={currentGrammarItem ? masteredIds.includes(currentGrammarItem.id) : false}

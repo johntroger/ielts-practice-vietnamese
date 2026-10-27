@@ -6,6 +6,7 @@ import {
   ChevronRight,
   X
 } from 'lucide-react';
+import { getLocalizedGrammarTitle } from '../../utils/vocabLocalization';
 
 export default function VocabStudioSidebar({
   isEn,
@@ -215,12 +216,26 @@ export default function VocabStudioSidebar({
               const badgeColor = getIndexBadgeColor(idx, isSelected, isMastered);
 
               // Title resolution with strict English mode support
-              let itemTitle = (isEn && item.titleEn)
-                ? item.titleEn
-                : (item.correct || item.title || item.term || item.questionStem || `Item ${idx + 1}`);
-              if (isEn && typeof itemTitle === 'string' && itemTitle.includes('(')) {
-                const enChunk = itemTitle.split('(')[0].trim();
-                if (enChunk.length > 4) itemTitle = enChunk;
+              let itemTitle = '';
+              if (activeTab === 'grammar') {
+                itemTitle = isEn
+                  ? (item.titleEn || getLocalizedGrammarTitle(item.title, true))
+                  : (item.title || item.titleEn);
+              } else if (activeTab === 'spelling') {
+                itemTitle = item.correct || item.term || `Item ${idx + 1}`;
+              } else if (activeTab === 'vocab') {
+                itemTitle = item.term || item.title || `Item ${idx + 1}`;
+              } else {
+                itemTitle = item.questionStem || item.term || item.title || `Item ${idx + 1}`;
+              }
+
+              if (isEn && typeof itemTitle === 'string') {
+                if (activeTab === 'grammar') {
+                  itemTitle = getLocalizedGrammarTitle(itemTitle, true);
+                } else if (itemTitle.includes('(')) {
+                  const enChunk = itemTitle.split('(')[0].trim();
+                  if (enChunk.length > 3) itemTitle = enChunk;
+                }
               }
               
               // Clean subtitle without duplication

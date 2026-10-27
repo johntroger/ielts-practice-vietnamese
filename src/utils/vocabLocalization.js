@@ -304,16 +304,26 @@ export function getLocalizedGrammarTitle(title, isEn = false) {
   if (!title) return '';
   if (!isEn) return title;
   
-  const parts = title.split('(');
-  const head = parts[0].trim();
-  
-  const vnRegex = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/i;
-  if (!vnRegex.test(head)) {
-    return head;
+  // If title has English in front of bracket e.g. "Relative Clauses (Mệnh đề quan hệ)"
+  if (title.includes('(')) {
+    const head = title.split('(')[0].trim();
+    const vnRegex = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/i;
+    if (!vnRegex.test(head) && head.length > 3) {
+      return head;
+    }
+    // Also check inside bracket if bracket has English e.g. "Mệnh đề quan hệ (Relative Clauses)"
+    const match = title.match(/\(([^)]+)\)/);
+    if (match && match[1]) {
+      const inside = match[1].trim();
+      if (!vnRegex.test(inside) && inside.length > 3) {
+        return inside;
+      }
+    }
   }
-  
-  const lower = head.toLowerCase();
+
+  const lower = title.toLowerCase();
   if (lower.includes('quan hệ')) {
+    if (lower.includes('rút gọn')) return 'Reduced Relative Clauses';
     return 'Defining & Non-defining Relative Clauses';
   }
   if (lower.includes('nhượng bộ') || lower.includes('tương phản') || lower.includes('while') || lower.includes('although')) {
@@ -341,10 +351,10 @@ export function getLocalizedGrammarTitle(title, isEn = false) {
     return 'Logical Cause & Effect';
   }
   if (lower.includes('danh từ hóa')) {
-    return 'Nominalization';
+    return 'Academic Nominalization';
   }
-  if (lower.includes('câu điều kiện')) {
-    return 'Inverted Conditionals';
+  if (lower.includes('câu điều kiện') || lower.includes('điều kiện')) {
+    return 'Inverted & Counterfactual Conditionals';
   }
   if (lower.includes('danh ngữ') || lower.includes('mệnh đề danh')) {
     return 'Noun Clauses';
@@ -352,7 +362,35 @@ export function getLocalizedGrammarTitle(title, isEn = false) {
   if (lower.includes('trạng ngữ') || lower.includes('mệnh đề trạng')) {
     return 'Adverbial Clauses';
   }
-  return head.replace(/mệnh đề/gi, 'Clause').replace(/câu/gi, 'Sentence');
+  if (lower.includes('thì') || lower.includes('tense')) {
+    if (lower.includes('hoàn thành')) return 'Perfect Tenses in Academic Writing';
+    if (lower.includes('tiếp diễn')) return 'Continuous Tenses in Academic Writing';
+    return 'Simple & Progressive Tenses';
+  }
+  if (lower.includes('mạo từ') || lower.includes('article')) {
+    return 'Articles in Academic Writing';
+  }
+  if (lower.includes('so sánh') || lower.includes('comparative')) {
+    return 'Advanced Comparative Structures';
+  }
+  if (lower.includes('khuyết thiếu') || lower.includes('modal')) {
+    return 'Modal Verbs & Academic Hedging';
+  }
+  if (lower.includes('liên từ') || lower.includes('kết nối')) {
+    return 'Cohesive Devices & Signposting';
+  }
+
+  // Strip Vietnamese characters
+  return title
+    .replace(/[àáạảãâầấậẩẫăằắặẳẵ]/gi, 'a')
+    .replace(/[èéẹẻẽêềếệểễ]/gi, 'e')
+    .replace(/[ìíịỉĩ]/gi, 'i')
+    .replace(/[òóọỏõôồốộổỗơờớợởỡ]/gi, 'o')
+    .replace(/[ùúụủũưừứựửữ]/gi, 'u')
+    .replace(/[ỳýỵỷỹ]/gi, 'y')
+    .replace(/[đĐ]/gi, 'd')
+    .replace(/mệnh đề/gi, 'Clause')
+    .replace(/câu/gi, 'Sentence');
 }
 
 /**
