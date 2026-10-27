@@ -7,9 +7,7 @@ import {
   CAMBRIDGE_SYNONYM_PAIRS
 } from '../data/vocabGrammarSpellingData';
 import {
-  fetchPublicVocabGrammarItems,
-  savePublicVocabGrammarItem,
-  deletePublicVocabGrammarItem
+  fetchPublicVocabGrammarItems
 } from '../services/dataSyncService';
 import { useTranslation } from '../i18n';
 
@@ -148,7 +146,6 @@ export default function VocabGrammarSpellingModal({
 
   const [currentSpellingIdx, setCurrentSpellingIdx] = useState(0);
 
-  // Reset index when filter changes
   useEffect(() => {
     setCurrentSpellingIdx(0);
   }, [selectedBandTier, selectedSpellingCategory, searchQuery]);
@@ -255,14 +252,9 @@ export default function VocabGrammarSpellingModal({
 
   // Attempt & Streak handler
   const handleRecordAttempt = (itemId, isCorrect) => {
-    if (itemId) {
-      recordAttempt(itemId);
-    }
-    if (isCorrect) {
-      setStreak(prev => prev + 1);
-    } else {
-      setStreak(0);
-    }
+    if (itemId) recordAttempt(itemId);
+    if (isCorrect) setStreak(prev => prev + 1);
+    else setStreak(0);
   };
 
   // Cloud Sync
@@ -272,7 +264,6 @@ export default function VocabGrammarSpellingModal({
       if (cloudItems && cloudItems.length > 0) {
         const cloudSpelling = cloudItems.filter(item => item.id?.startsWith('ai-sp-'));
         const cloudGrammar = cloudItems.filter(item => item.id?.startsWith('ai-gr-'));
-        const cloudCards = cloudItems.filter(item => item.id?.startsWith('ai-card-'));
 
         if (cloudSpelling.length > 0) {
           setRawSpellingList(prev => {
@@ -358,7 +349,52 @@ export default function VocabGrammarSpellingModal({
     return masteredIds.length;
   }, [masteredIds]);
 
-  // Safe early return placed AFTER ALL HOOKS
+  // Active Track Hero Info & Definitions
+  const tracksCatalog = [
+    {
+      id: 'spelling',
+      icon: '🎯',
+      label: isEn ? 'Spelling Traps' : 'Bẫy chính tả',
+      kicker: isEn ? '• 100 LISTENING SPELLING DEMONS' : '• LỘ TRÌNH 100 BẪY CHÍNH TẢ',
+      title: isEn ? 'Listening Spelling Demons' : '100 Bẫy Chính Tả Listening',
+      description: isEn
+        ? 'High-frequency distractor traps, silent letters & double consonants in Cambridge Section 1 & 4.'
+        : 'Khắc phục các lỗi sai chính tả kinh điển thường làm mất điểm oan trong Listening Section 1 & 4.'
+    },
+    {
+      id: 'grammar',
+      icon: '🏛️',
+      label: isEn ? 'Grammar' : 'Ngữ pháp',
+      kicker: isEn ? '• GRAMMAR ARCHITECTURE & SCAFFOLDING' : '• LỘ TRÌNH NGỮ PHÁP ĐIỂM TỰA',
+      title: isEn ? 'Grammar Architecture' : 'Ngữ Pháp Điểm Tựa Band 7.5+',
+      description: isEn
+        ? 'Mathematical sentence formulas and inversions to push Grammatical Range & Accuracy in Writing Task 2.'
+        : 'Công thức câu phức & đảo ngữ toán học giúp bứt phá tiêu chí GRA trong Writing Task 2.'
+    },
+    {
+      id: 'vocab',
+      icon: '📖',
+      label: isEn ? 'Thematic Vocab' : 'Từ vựng chủ đề',
+      kicker: isEn ? '• THEMATIC ACTIVE RECALL' : '• TỪ VỰNG THEMATIC & COLLOCATIONS',
+      title: currentDeck?.topicName || (isEn ? 'Thematic Vocabulary' : 'Từ Vựng Theo Chủ Đề'),
+      description: isEn
+        ? 'Authentic C1/C2 collocations and 3D active recall flashcards across 25 IELTS topics.'
+        : 'Thẻ ghi nhớ phản xạ 3D và cụm từ kết hợp điểm cao theo các chuyên đề IELTS then chốt.'
+    },
+    {
+      id: 'synonyms',
+      icon: '🔄',
+      label: isEn ? 'Paraphrase' : 'Paraphrase',
+      kicker: isEn ? '• CAMBRIDGE READING PARAPHRASE' : '• LỘ TRÌNH PARAPHRASE READING',
+      title: isEn ? 'Cambridge Paraphrase Hunter' : '50 Cặp Paraphrase Cambridge',
+      description: isEn
+        ? 'Decode keyword disguise patterns used by Cambridge test makers in Academic Reading passages.'
+        : 'Bí kíp bắt bẫy từ đồng nghĩa và định vị đoạn văn chứa đáp án trong bài thi IELTS Reading.'
+    }
+  ];
+
+  const currentTrackInfo = tracksCatalog.find(t => t.id === activeTab) || tracksCatalog[0];
+
   if (!isOpen) return null;
 
   const currentSpellingItem = filteredSpellingList[currentSpellingIdx] || filteredSpellingList[0];
@@ -373,13 +409,13 @@ export default function VocabGrammarSpellingModal({
       }`}
     >
       <div
-        className={`bg-[#f7f5ef] shadow-2xl border border-stone-300 flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
+        className={`bg-[#f7f5ef] shadow-2xl border border-[#d9e3e4] flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
           isExpanded
             ? 'w-full h-[100dvh] max-w-none max-h-none rounded-none'
             : 'rounded-2xl sm:rounded-3xl w-full max-w-[98vw] 2xl:max-w-[1550px] h-[96dvh] max-h-[96dvh]'
         }`}
       >
-        {/* GLOBAL HEADER (52px) */}
+        {/* GLOBAL MINIMALIST HEADER */}
         <VocabStudioHeader
           isEn={isEn}
           t={t}
@@ -395,16 +431,13 @@ export default function VocabGrammarSpellingModal({
           streak={streak}
         />
 
-        {/* 2-COLUMN BODY (ForumFlash .map-layout: Left Sidebar ~330px + Right Stage 1fr) */}
+        {/* 2-COLUMN BODY */}
         <div className="flex-1 flex overflow-hidden relative">
           {/* LEFT SIDEBAR (ForumFlash .world-sidebar) */}
           <VocabStudioSidebar
             isEn={isEn}
             t={t}
             activeTab={activeTab}
-            onSelectTab={handleSelectTab}
-            selectedBandTier={selectedBandTier}
-            onSelectBandTier={setSelectedBandTier}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             spellingCategories={[
@@ -430,8 +463,49 @@ export default function VocabGrammarSpellingModal({
             onCloseMobile={() => setIsMobileSidebarOpen(false)}
           />
 
-          {/* RIGHT WORKSPACE / HERO STAGE (1fr) */}
+          {/* RIGHT WORKSPACE / HERO STAGE */}
           <main className="flex-1 flex flex-col overflow-hidden min-w-0 bg-[#f7f5ef]">
+            {/* HERO HEADER & SEGMENTED TRACK SWITCHER (ForumFlash style!) */}
+            <div className="px-4 sm:px-8 pt-5 pb-3.5 bg-[#f7f5ef] border-b border-[#e5e9ea] flex flex-wrap items-center justify-between gap-3.5 shrink-0">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-[#27c4b5]" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#004646]">
+                    {currentTrackInfo.kicker}
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black text-[#004646] tracking-tight mt-0.5">
+                  {currentTrackInfo.title}
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5 max-w-xl">
+                  {currentTrackInfo.description}
+                </p>
+              </div>
+
+              {/* SEGMENTED TRACK SWITCHER (Pill buttons: [ Spelling | Grammar | Vocab | Paraphrase ]) */}
+              <div className="flex items-center space-x-1 bg-white p-1 rounded-2xl border border-[#d9e3e4] shadow-2xs">
+                {tracksCatalog.map(trk => {
+                  const isActive = activeTab === trk.id;
+                  return (
+                    <button
+                      key={trk.id}
+                      type="button"
+                      onClick={() => handleSelectTab(trk.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                        isActive
+                          ? 'bg-[#004646] text-white shadow-xs'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span>{trk.icon}</span>
+                      <span className="hidden md:inline">{trk.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* STAGE CONTENT */}
             {activeTab === 'spelling' && (
               <SpellingDemonStage
                 isEn={isEn}

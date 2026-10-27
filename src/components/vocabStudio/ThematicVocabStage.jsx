@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BookOpen,
   Volume2,
   Bookmark,
   Check,
   RotateCw,
   ArrowRight,
-  ArrowLeft,
-  Sparkles,
-  Flame,
-  CheckCircle2,
-  Layers
+  ArrowLeft
 } from 'lucide-react';
 import { getLocalizedCardMeaning } from '../../utils/vocabLocalization';
 
@@ -55,26 +50,27 @@ export default function ThematicVocabStage({
   const localizedMeaning = getLocalizedCardMeaning(card, isEn);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f7f5ef] p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
-      <div className="max-w-3xl mx-auto w-full space-y-5">
-        {/* HERO VOCAB BANNER */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-[11px] font-black uppercase tracking-widest text-[#004646]">
-                {deck?.topicName || 'THEMATIC VOCABULARY & COLLOCATIONS'}
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                Band {card.bandScore || card.bandLevel || '7.0'}
-              </span>
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
+      <div className="max-w-3xl mx-auto w-full space-y-6">
+        {/* UNIT OVERVIEW BANNER */}
+        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center space-x-3.5">
+            <span className="px-3 py-1.5 rounded-xl bg-[#004646] text-[#27c4b5] font-black text-xs tracking-wider">
+              CARD #{String(currentIndex + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-800">
+                  {deck?.topicName || (isEn ? 'Thematic Deck' : 'Bộ thẻ theo chủ đề')}
+                </h3>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  Band {card.bandScore || card.bandLevel || '7.0'}
+                </span>
+              </div>
+              <p className="text-xs text-slate-500">
+                {isEn ? `${totalItems} active recall cards in this thematic deck` : `${totalItems} thẻ từ vựng & collocation phản xạ`}
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-[#004646] mt-1">
-              {card.term}
-            </h1>
-            <p className="text-xs text-slate-600 font-mono mt-0.5">
-              {card.phonetic} • <span className="italic font-sans">{card.wordType}</span>
-            </p>
           </div>
 
           {/* Quick Actions */}
@@ -82,7 +78,7 @@ export default function ThematicVocabStage({
             <button
               type="button"
               onClick={handlePlayAudio}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition cursor-pointer shadow-2xs ${
                 isAudioPlaying
                   ? 'bg-[#27c4b5] text-[#003838] border-[#27c4b5] animate-pulse'
                   : 'bg-white hover:bg-slate-50 text-slate-700 border-[#d9e3e4]'
@@ -101,8 +97,8 @@ export default function ThematicVocabStage({
                   collocations: card.collocations,
                   tag: 'Thematic Vocab'
                 })}
-                className="p-2 rounded-xl bg-white hover:bg-slate-50 border border-[#d9e3e4] text-slate-600 hover:text-amber-600 transition-colors cursor-pointer shadow-2xs"
-                title="Save word to notebook"
+                className="p-2 rounded-xl bg-white hover:bg-slate-50 border border-[#d9e3e4] text-slate-600 hover:text-amber-600 transition cursor-pointer shadow-2xs"
+                title={isEn ? "Save to notebook" : "Lưu vào sổ tay"}
               >
                 <Bookmark className="w-4 h-4" />
               </button>
@@ -111,7 +107,7 @@ export default function ThematicVocabStage({
             <button
               type="button"
               onClick={() => onToggleMastered(card.id)}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition cursor-pointer shadow-2xs ${
                 isMastered
                   ? 'bg-emerald-600 text-white border-emerald-600'
                   : 'bg-white hover:bg-slate-50 text-slate-600 border-[#d9e3e4]'
@@ -126,12 +122,13 @@ export default function ThematicVocabStage({
         {/* 3D ACTIVE RECALL FLASHCARD */}
         <div
           onClick={() => setIsFlipped(!isFlipped)}
-          className="bg-white rounded-3xl border border-[#d9e3e4] p-6 sm:p-8 shadow-xs cursor-pointer hover:border-[#27c4b5] transition-all duration-200 select-none min-h-[260px] flex flex-col justify-between group"
+          className="bg-white rounded-3xl border border-[#e5e9ea] p-6 sm:p-8 shadow-xs cursor-pointer hover:border-[#27c4b5] transition-all duration-200 select-none min-h-[260px] flex flex-col justify-between group"
         >
-          {/* Card Top Info */}
           <div className="flex items-center justify-between text-[11px] text-slate-400 font-bold">
             <span className="uppercase tracking-wider">
-              {isFlipped ? (isEn ? 'CARD BACK • MEANING & USAGE' : 'MẶT SAU • Ý NGHĨA & BỐI CẢNH') : (isEn ? 'CARD FRONT • ACTIVE RECALL' : 'MẶT TRƯỚC • PHẢN XẠ NHỚ')}
+              {isFlipped
+                ? (isEn ? 'CARD BACK • DEFINITION & COLLOCATIONS' : 'MẶT SAU • Ý NGHĨA & COLLOCATIONS')
+                : (isEn ? 'CARD FRONT • ACTIVE RECALL' : 'MẶT TRƯỚC • PHẢN XẠ NHỚ')}
             </span>
             <span className="flex items-center space-x-1 text-[#27c4b5] group-hover:text-[#004646]">
               <RotateCw className="w-3.5 h-3.5" />
@@ -139,7 +136,6 @@ export default function ThematicVocabStage({
             </span>
           </div>
 
-          {/* Card Body */}
           {!isFlipped ? (
             <div className="my-6 space-y-4 text-center">
               <h2 className="text-2xl sm:text-4xl font-black text-[#004646] tracking-tight">
@@ -149,14 +145,13 @@ export default function ThematicVocabStage({
                 {card.phonetic}
               </p>
               {card.example && (
-                <div className="p-3.5 rounded-2xl bg-[#f7f5ef] border border-slate-200 max-w-xl mx-auto text-xs sm:text-sm font-serif text-slate-700 italic">
+                <div className="p-4 rounded-2xl bg-[#f7f5ef] border border-[#e5e9ea] max-w-xl mx-auto text-xs sm:text-sm font-serif text-slate-700 italic">
                   "{card.example}"
                 </div>
               )}
             </div>
           ) : (
             <div className="my-6 space-y-4">
-              {/* Meaning */}
               <div className="p-4 rounded-2xl bg-[#e6f5f3] border border-[#27c4b5] text-center">
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#004646]">
                   {isEn ? 'ENGLISH DEFINITION' : 'Ý NGHĨA CHUẨN XÁC'}
@@ -166,7 +161,6 @@ export default function ThematicVocabStage({
                 </p>
               </div>
 
-              {/* Collocations */}
               {card.collocations && card.collocations.length > 0 && (
                 <div className="space-y-2">
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
@@ -176,7 +170,7 @@ export default function ThematicVocabStage({
                     {card.collocations.map((col, cIdx) => (
                       <span
                         key={cIdx}
-                        className="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200"
+                        className="px-2.5 py-1 rounded-xl bg-slate-50 text-slate-800 text-xs font-semibold border border-slate-200"
                       >
                         ⚡ {col}
                       </span>
@@ -187,9 +181,8 @@ export default function ThematicVocabStage({
             </div>
           )}
 
-          {/* Card Bottom Hint */}
           <div className="text-center text-[11px] text-slate-400 pt-2 border-t border-slate-100">
-            {isEn ? 'Test your memory first, then flip to verify collocations.' : 'Tự nhớ nghĩa trước trong đầu, sau đó lật thẻ để kiểm tra collocations.'}
+            {isEn ? 'Test your memory first, then flip to verify collocations.' : 'Tự nhớ nghĩa trong đầu trước, sau đó lật thẻ để kiểm tra collocations.'}
           </div>
         </div>
 
@@ -230,25 +223,25 @@ export default function ThematicVocabStage({
       </div>
 
       {/* STICKY BOTTOM ACTION BAR */}
-      <div className="max-w-3xl mx-auto w-full pt-6 mt-4 border-t border-[#d9e3e4] flex items-center justify-between gap-3">
+      <div className="max-w-3xl mx-auto w-full pt-6 mt-4 border-t border-[#e5e9ea] flex items-center justify-between gap-3">
         <button
           type="button"
           onClick={onPrev}
           disabled={currentIndex === 0}
-          className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-30 border border-[#d9e3e4] text-xs font-bold text-slate-700 transition cursor-pointer shadow-2xs"
+          className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-30 border border-[#d9e3e4] text-xs font-bold text-slate-700 transition cursor-pointer shadow-2xs"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{isEn ? 'Previous' : 'Thẻ trước'}</span>
         </button>
 
-        <div className="text-xs font-bold text-slate-500 hidden sm:block">
+        <div className="text-xs font-bold text-slate-400 hidden sm:block">
           {currentIndex + 1} / {totalItems}
         </div>
 
         <button
           type="button"
           onClick={onNext}
-          className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-white text-xs font-extrabold transition cursor-pointer shadow-sm"
+          className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-white text-xs font-extrabold transition cursor-pointer shadow-xs"
         >
           <span>{isEn ? 'Next Card' : 'Thẻ tiếp theo'}</span>
           <ArrowRight className="w-4 h-4" />

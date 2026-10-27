@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Award,
   Volume2,
   Bookmark,
   Check,
   CheckCircle2,
   XCircle,
   ArrowRight,
-  ArrowLeft,
-  Sparkles,
-  Layers,
-  Zap,
-  Code
+  ArrowLeft
 } from 'lucide-react';
 import { getLocalizedGrammarItem } from '../../utils/vocabLocalization';
 
@@ -31,7 +26,6 @@ export default function GrammarArchitectureStage({
 
   const loc = getLocalizedGrammarItem(grammarItem, isEn);
 
-  // Phase tab: 'blueprint' (Learn Architecture) vs 'drill' (Practice)
   const [activePhase, setActivePhase] = useState('blueprint');
   const [selectedDrillChoice, setSelectedDrillChoice] = useState(null);
   const [isDrillChecked, setIsDrillChecked] = useState(false);
@@ -63,34 +57,33 @@ export default function GrammarArchitectureStage({
     if (selectedDrillChoice === null) return;
     setIsDrillChecked(true);
     const isCorrect = selectedDrillChoice === (grammarItem.drills?.[0]?.correctIndex ?? 0);
-    if (onRecordAttempt) {
-      onRecordAttempt(grammarItem.id, isCorrect);
-    }
+    if (onRecordAttempt) onRecordAttempt(grammarItem.id, isCorrect);
   };
 
   const currentDrill = grammarItem.drills?.[0] || null;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f7f5ef] p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
-      <div className="max-w-3xl mx-auto w-full space-y-5">
-        {/* HERO GRAMMAR BANNER */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-500" />
-              <span className="text-[11px] font-black uppercase tracking-widest text-[#004646]">
-                {isEn ? 'GRAMMAR ARCHITECTURE & SCAFFOLDING' : 'NGỮ PHÁP ĐIỂM TỰA (GRA 7.0 - 8.0+)'}
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
-                {loc.bandTarget || `Band ${loc.bandLevel || '7.0+'}`}
-              </span>
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
+      <div className="max-w-3xl mx-auto w-full space-y-6">
+        {/* UNIT OVERVIEW BANNER */}
+        <div className="bg-white rounded-2xl border border-[#e5e9ea] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center space-x-3.5">
+            <span className="px-3 py-1.5 rounded-xl bg-[#004646] text-[#27c4b5] font-black text-xs tracking-wider">
+              RULE #{String(currentIndex + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="font-extrabold text-sm sm:text-base text-slate-800">
+                  {loc.title}
+                </h3>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  {loc.bandTarget || `Band ${loc.bandLevel || '7.0+'}`}
+                </span>
+              </div>
+              <p className="text-xs text-slate-500">
+                {isEn ? `${totalItems} high-yield Cambridge grammar architectures` : `${totalItems} kiến trúc ngữ pháp ghi điểm Writing Task 2`}
+              </p>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-[#004646] mt-1">
-              {loc.title}
-            </h1>
-            <p className="text-xs text-slate-600 mt-0.5">
-              {isEn ? 'Cambridge Writing Task 2 Complex Sentence Mastery' : 'Công thức đẩy tiêu chí Grammatical Range & Accuracy'}
-            </p>
           </div>
 
           {/* Quick Actions */}
@@ -98,12 +91,11 @@ export default function GrammarArchitectureStage({
             <button
               type="button"
               onClick={handlePlayAudio}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition cursor-pointer shadow-2xs ${
                 isAudioPlaying
                   ? 'bg-[#27c4b5] text-[#003838] border-[#27c4b5] animate-pulse'
                   : 'bg-white hover:bg-slate-50 text-slate-700 border-[#d9e3e4]'
               }`}
-              title="Listen to model sentence"
             >
               <Volume2 className="w-4 h-4 text-[#004646]" />
               <span className="hidden sm:inline">{isEn ? 'Listen Model' : 'Phát âm'}</span>
@@ -117,8 +109,8 @@ export default function GrammarArchitectureStage({
                   meaning: loc.rationale || loc.formula,
                   tag: 'Grammar Rule'
                 })}
-                className="p-2 rounded-xl bg-white hover:bg-slate-50 border border-[#d9e3e4] text-slate-600 hover:text-amber-600 transition-colors cursor-pointer shadow-2xs"
-                title="Save grammar rule to notebook"
+                className="p-2 rounded-xl bg-white hover:bg-slate-50 border border-[#d9e3e4] text-slate-600 hover:text-amber-600 transition cursor-pointer shadow-2xs"
+                title={isEn ? "Save to notebook" : "Lưu vào sổ tay"}
               >
                 <Bookmark className="w-4 h-4" />
               </button>
@@ -127,7 +119,7 @@ export default function GrammarArchitectureStage({
             <button
               type="button"
               onClick={() => onToggleMastered(grammarItem.id)}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer shadow-2xs ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition cursor-pointer shadow-2xs ${
                 isMastered
                   ? 'bg-emerald-600 text-white border-emerald-600'
                   : 'bg-white hover:bg-slate-50 text-slate-600 border-[#d9e3e4]'
@@ -139,12 +131,12 @@ export default function GrammarArchitectureStage({
           </div>
         </div>
 
-        {/* TWO-PHASE SELECTOR (ForumFlash style) */}
-        <div className="flex items-center space-x-1 bg-white p-1 rounded-2xl border border-[#d9e3e4] shadow-2xs">
+        {/* TWO-PHASE SELECTOR */}
+        <div className="flex items-center space-x-1 bg-white p-1 rounded-2xl border border-[#e5e9ea] shadow-2xs">
           <button
             type="button"
             onClick={() => setActivePhase('blueprint')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center space-x-2 ${
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center space-x-2 ${
               activePhase === 'blueprint'
                 ? 'bg-[#004646] text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-100'
@@ -156,36 +148,33 @@ export default function GrammarArchitectureStage({
           <button
             type="button"
             onClick={() => setActivePhase('drill')}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center space-x-2 ${
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center space-x-2 ${
               activePhase === 'drill'
                 ? 'bg-[#004646] text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             <span>02</span>
-            <span>{isEn ? 'Sentence Transformation Drill' : 'Luyện tập chuyển câu'}</span>
+            <span>{isEn ? 'Sentence Transformation Drill' : 'Bài tập chuyển câu'}</span>
           </button>
         </div>
 
         {/* PHASE 1: BLUEPRINT */}
         {activePhase === 'blueprint' && (
           <div className="space-y-4">
-            {/* FORMULA CARD */}
-            <div className="bg-white rounded-3xl border border-[#d9e3e4] p-5 sm:p-6 shadow-xs space-y-3">
+            <div className="bg-white rounded-3xl border border-[#e5e9ea] p-6 sm:p-7 shadow-xs space-y-3">
               <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600">
                 {isEn ? 'MATHEMATICAL GRAMMAR FORMULA' : 'CÔNG THỨC KIẾN TRÚC TOÁN HỌC'}
               </span>
-              <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 font-mono text-sm sm:text-base font-bold text-indigo-950">
+              <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 font-mono text-sm sm:text-base font-bold text-indigo-950">
                 {loc.formula}
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed pt-1">
                 {loc.rationale}
               </p>
             </div>
 
-            {/* BAND 6.0 VS BAND 8.0 COMPARISON */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {/* Band 6.0 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
               <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
                   {isEn ? 'Band 6.0 Basic Sentence' : 'Câu cơ bản Band 6.0'}
@@ -195,7 +184,6 @@ export default function GrammarArchitectureStage({
                 </p>
               </div>
 
-              {/* Band 8.0 */}
               <div className="p-4 rounded-2xl bg-[#e6f5f3] border border-[#27c4b5] shadow-2xs space-y-1.5">
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-[#004646] text-white">
                   {isEn ? 'Band 8.0+ Academic Upgrade' : 'Nâng cấp Band 8.0+'}
@@ -210,7 +198,7 @@ export default function GrammarArchitectureStage({
 
         {/* PHASE 2: DRILL */}
         {activePhase === 'drill' && (
-          <div className="bg-white rounded-3xl border border-[#d9e3e4] p-5 sm:p-7 shadow-xs space-y-4">
+          <div className="bg-white rounded-3xl border border-[#e5e9ea] p-6 sm:p-7 shadow-xs space-y-5">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#004646]">
               {isEn ? 'TASK 2 SENTENCE TRANSFORMATION' : 'BÀI TẬP CHUYỂN CÂU NÂNG BAND'}
             </span>
@@ -245,7 +233,7 @@ export default function GrammarArchitectureStage({
                         type="button"
                         disabled={isDrillChecked}
                         onClick={() => setSelectedDrillChoice(oIdx)}
-                        className={`w-full p-3.5 rounded-2xl border text-left text-xs sm:text-sm transition-all cursor-pointer shadow-2xs flex items-center justify-between ${optStyle}`}
+                        className={`w-full p-3.5 rounded-2xl border text-left text-xs sm:text-sm transition cursor-pointer shadow-2xs flex items-center justify-between ${optStyle}`}
                       >
                         <div className="flex items-center space-x-2.5">
                           <span className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-xs text-slate-600">
@@ -287,25 +275,25 @@ export default function GrammarArchitectureStage({
       </div>
 
       {/* STICKY BOTTOM ACTION BAR */}
-      <div className="max-w-3xl mx-auto w-full pt-6 mt-4 border-t border-[#d9e3e4] flex items-center justify-between gap-3">
+      <div className="max-w-3xl mx-auto w-full pt-6 mt-4 border-t border-[#e5e9ea] flex items-center justify-between gap-3">
         <button
           type="button"
           onClick={onPrev}
           disabled={currentIndex === 0}
-          className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-30 border border-[#d9e3e4] text-xs font-bold text-slate-700 transition cursor-pointer shadow-2xs"
+          className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-30 border border-[#d9e3e4] text-xs font-bold text-slate-700 transition cursor-pointer shadow-2xs"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{isEn ? 'Previous' : 'Cấu trúc trước'}</span>
         </button>
 
-        <div className="text-xs font-bold text-slate-500 hidden sm:block">
+        <div className="text-xs font-bold text-slate-400 hidden sm:block">
           {currentIndex + 1} / {totalItems}
         </div>
 
         <button
           type="button"
           onClick={onNext}
-          className="flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-white text-xs font-extrabold transition cursor-pointer shadow-sm"
+          className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#004646] hover:bg-[#003838] text-white text-xs font-extrabold transition cursor-pointer shadow-xs"
         >
           <span>{isEn ? 'Next Rule' : 'Cấu trúc tiếp theo'}</span>
           <ArrowRight className="w-4 h-4" />
