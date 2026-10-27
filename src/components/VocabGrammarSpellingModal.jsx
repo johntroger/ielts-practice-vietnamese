@@ -343,11 +343,13 @@ export default function VocabGrammarSpellingModal({
     return { items: filteredSynonymsList, index: currentSynonymIdx, setIndex: setCurrentSynonymIdx };
   }, [activeTab, filteredSpellingList, currentSpellingIdx, filteredGrammarList, currentGrammarIdx, filteredCards, currentCardIdx, filteredSynonymsList, currentSynonymIdx]);
 
-  // Overall mastered count
-  const allMasteredCount = useMemo(() => {
-    if (!Array.isArray(masteredIds)) return 0;
-    return masteredIds.length;
-  }, [masteredIds]);
+  const totalVocabCardsCount = useMemo(() => {
+    return thematicDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
+  }, [thematicDecks]);
+
+  const totalAllStudioItems = useMemo(() => {
+    return IELTS_SPELLING_TRAPS.length + IELTS_GRAMMAR_PACK.length + totalVocabCardsCount + CAMBRIDGE_SYNONYM_PAIRS.length;
+  }, [totalVocabCardsCount]);
 
   // Active Track Hero Info & Definitions
   const tracksCatalog = [
@@ -427,7 +429,7 @@ export default function VocabGrammarSpellingModal({
           onToggleMobileSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
           onClose={onClose}
           masteredCount={allMasteredCount}
-          totalItems={IELTS_SPELLING_TRAPS.length + IELTS_GRAMMAR_PACK.length + 24 + 50}
+          totalItems={totalAllStudioItems}
           streak={streak}
         />
 

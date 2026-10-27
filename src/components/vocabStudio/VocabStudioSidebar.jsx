@@ -149,11 +149,27 @@ export default function VocabStudioSidebar({
               onChange={(e) => onSelectDeckId(e.target.value)}
               className="w-full px-2.5 py-1.5 text-xs bg-white rounded-xl border border-[#d9e3e4] text-[#004646] font-bold focus:outline-none cursor-pointer shadow-2xs"
             >
-              {vocabDecks.map(deck => (
-                <option key={deck.id} value={deck.id}>
-                  📚 {deck.topicName || deck.id} ({deck.cards?.length || 0})
-                </option>
-              ))}
+              <optgroup label={isEn ? "IELTS Thematic Focus" : "Chuyên đề IELTS Trọng tâm"}>
+                {vocabDecks.filter(d => !d.id.startsWith('deck-hl-')).map(deck => (
+                  <option key={deck.id} value={deck.id}>
+                    📚 {deck.topicName || deck.id} ({deck.cards?.length || 0})
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label={isEn ? "Harold Levine 22.000 Words • Part 1 (Academic Core)" : "Harold Levine 22.000 Từ • Phần 1 (Từ vựng học thuật)"}>
+                {vocabDecks.filter(d => d.id.startsWith('deck-hl-w') && parseInt(d.id.replace('deck-hl-w', '')) <= 26).map(deck => (
+                  <option key={deck.id} value={deck.id}>
+                    🎓 {deck.topicName || deck.id} ({deck.cards?.length || 0})
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label={isEn ? "Harold Levine 22.000 Words • Part 2 (Word Roots & Prefixes)" : "Harold Levine 22.000 Từ • Phần 2 (Gốc từ & Tiền tố)"}>
+                {vocabDecks.filter(d => d.id.startsWith('deck-hl-w') && parseInt(d.id.replace('deck-hl-w', '')) > 26).map(deck => (
+                  <option key={deck.id} value={deck.id}>
+                    ⚡ {deck.topicName || deck.id} ({deck.cards?.length || 0})
+                  </option>
+                ))}
+              </optgroup>
             </select>
           )}
         </div>

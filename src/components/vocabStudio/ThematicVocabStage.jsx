@@ -152,14 +152,25 @@ export default function ThematicVocabStage({
             </div>
           ) : (
             <div className="my-6 space-y-4">
-              <div className="p-4 rounded-2xl bg-[#e6f5f3] border border-[#27c4b5] text-center">
+              <div className="p-4 rounded-2xl bg-[#e6f5f3] border border-[#27c4b5] text-center space-y-1.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#004646]">
-                  {isEn ? 'ENGLISH DEFINITION' : 'Ý NGHĨA CHUẨN XÁC'}
+                  {isEn ? 'ENGLISH DEFINITION' : 'Ý NGHĨA & ĐỊNH NGHĨA HỌC THUẬT'}
                 </span>
-                <p className="text-base sm:text-lg font-bold text-[#003838] mt-1">
+                {card.meaningEn && !isEn && (
+                  <p className="text-xs sm:text-sm font-semibold text-teal-900 italic">
+                    "{card.meaningEn}"
+                  </p>
+                )}
+                <p className="text-base sm:text-lg font-bold text-[#003838]">
                   {localizedMeaning}
                 </p>
               </div>
+
+              {card.exampleVi && !isEn && (
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 italic text-center">
+                  Dịch câu ví dụ: "{card.exampleVi}"
+                </div>
+              )}
 
               {card.collocations && card.collocations.length > 0 && (
                 <div className="space-y-2">

@@ -1,4 +1,5 @@
 // IELTS Academic Spelling, Grammar, and Thematic Decks (Categorized: Band 5.5 - 6.0, Band 6.0 - 6.5 & Band 7.0 - 7.5)
+import { HAROLD_LEVINE_22000_DECKS } from './haroldLevine22000Data.js';
 
 export const IELTS_SPELLING_TRAPS = [
   {
@@ -1973,8 +1974,11 @@ export const IELTS_THEMATIC_VOCAB_DECKS = [
         "mastery": "learning"
       }
     ]
-  }
+  },
+  ...(HAROLD_LEVINE_22000_DECKS || [])
 ];
+
+export { HAROLD_LEVINE_22000_DECKS };
 
 export const CAMBRIDGE_SYNONYM_PAIRS = [
   {
