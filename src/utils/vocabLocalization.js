@@ -480,17 +480,24 @@ export function getLocalizedGrammarItem(grammar, isEn = false) {
   if (!grammar) return {};
   if (!isEn) return grammar;
   const enData = GRAMMAR_PACK_EN[grammar.id] || {};
-  const title = enData.title || getLocalizedGrammarTitle(grammar.title, true);
-  const formula = enData.formula || getLocalizedGrammarFormula(grammar.formula, true);
-  const rationale = enData.rationale || getLocalizedGrammarRationale(grammar.rationale, title, grammar.bandLevel || grammar.bandTarget, true);
-  const prompt = enData.prompt || getLocalizedGrammarPrompt(grammar.prompt, title, true);
+  const title = grammar.titleEn || enData.title || getLocalizedGrammarTitle(grammar.title, true);
+  const formula = grammar.formulaEn || enData.formula || getLocalizedGrammarFormula(grammar.formula, true);
+  const rationale = grammar.rationaleEn || enData.rationale || getLocalizedGrammarRationale(grammar.rationale, title, grammar.bandLevel || grammar.bandTarget, true);
+  const prompt = grammar.promptEn || enData.prompt || getLocalizedGrammarPrompt(grammar.prompt, title, true);
+
+  const drills = (grammar.drills || []).map(drill => ({
+    ...drill,
+    question: drill.questionEn || drill.question,
+    explanation: drill.explanationEn || drill.explanation
+  }));
 
   return {
     ...grammar,
     title,
     formula,
     rationale,
-    prompt
+    prompt,
+    drills
   };
 }
 

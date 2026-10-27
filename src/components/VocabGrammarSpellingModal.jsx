@@ -156,10 +156,28 @@ export default function VocabGrammarSpellingModal({
   const [rawGrammarList, setRawGrammarList] = useState(() => {
     try {
       const saved = localStorage.getItem('ielts_custom_grammar_drills_v2');
-      if (saved) return [...IELTS_GRAMMAR_PACK, ...JSON.parse(saved)];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const builtInIds = new Set(IELTS_GRAMMAR_PACK.map(g => g.id));
+          const customItems = parsed.filter(g => !builtInIds.has(g.id));
+          return [...IELTS_GRAMMAR_PACK, ...customItems];
+        }
+      }
     } catch (e) {}
     return IELTS_GRAMMAR_PACK;
   });
+
+  // Self-healing: if rawGrammarList lacks Collins grammar units from an earlier session
+  useEffect(() => {
+    if (rawGrammarList.length < IELTS_GRAMMAR_PACK.length) {
+      const existingIds = new Set(rawGrammarList.map(g => g.id));
+      const missing = IELTS_GRAMMAR_PACK.filter(g => !existingIds.has(g.id));
+      if (missing.length > 0) {
+        setRawGrammarList(prev => [...prev, ...missing]);
+      }
+    }
+  }, [rawGrammarList.length]);
 
   const filteredGrammarList = useMemo(() => {
     let list = rawGrammarList;

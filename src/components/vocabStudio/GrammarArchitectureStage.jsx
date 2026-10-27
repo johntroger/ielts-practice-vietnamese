@@ -203,14 +203,14 @@ export default function GrammarArchitectureStage({
               {isEn ? 'TASK 2 SENTENCE TRANSFORMATION' : 'BÀI TẬP CHUYỂN CÂU NÂNG BAND'}
             </span>
 
-            {currentDrill ? (
+            {currentDrill && currentDrill.options && currentDrill.options.length > 0 ? (
               <div className="space-y-4">
                 <p className="font-serif text-sm sm:text-base text-slate-800 font-semibold leading-relaxed">
                   {currentDrill.question || loc.prompt}
                 </p>
 
                 <div className="space-y-2.5">
-                  {currentDrill.options?.map((opt, oIdx) => {
+                  {currentDrill.options.map((opt, oIdx) => {
                     const isSelected = selectedDrillChoice === oIdx;
                     const isCorrect = oIdx === currentDrill.correctIndex;
 
@@ -263,6 +263,28 @@ export default function GrammarArchitectureStage({
                     <p>{currentDrill.explanation || loc.rationale}</p>
                   </div>
                 )}
+              </div>
+            ) : currentDrill?.origin ? (
+              <div className="space-y-4">
+                <p className="font-serif text-sm sm:text-base text-slate-800 font-semibold leading-relaxed">
+                  {currentDrill.question || loc.prompt}
+                </p>
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-1">
+                  <span className="text-[10px] font-black uppercase text-amber-800">
+                    {isEn ? 'ORIGINAL BASIC SENTENCE' : 'CÂU GỐC CẦN NÂNG CẤP'}
+                  </span>
+                  <p className="text-xs sm:text-sm font-serif italic text-slate-800">
+                    "{currentDrill.origin}"
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl bg-[#e6f5f3] border border-[#27c4b5] space-y-1">
+                  <span className="text-[10px] font-black uppercase text-[#004646]">
+                    {isEn ? 'UPGRADED ACADEMIC PATTERN' : 'MẪU CÂU HỌC THUẬT CHUẨN MỰC'}
+                  </span>
+                  <p className="text-xs sm:text-sm font-serif font-bold text-[#003838]">
+                    "{currentDrill.correctPattern}"
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="p-6 rounded-2xl bg-[#f7f5ef] border border-slate-200 text-center text-xs text-slate-600 space-y-2">

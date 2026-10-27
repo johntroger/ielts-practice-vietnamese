@@ -214,8 +214,14 @@ export default function VocabStudioSidebar({
               const isMastered = masteredIds.includes(item.id);
               const badgeColor = getIndexBadgeColor(idx, isSelected, isMastered);
 
-              // Title resolution
-              const itemTitle = item.correct || item.title || item.term || item.questionStem || `Item ${idx + 1}`;
+              // Title resolution with strict English mode support
+              let itemTitle = (isEn && item.titleEn)
+                ? item.titleEn
+                : (item.correct || item.title || item.term || item.questionStem || `Item ${idx + 1}`);
+              if (isEn && typeof itemTitle === 'string' && itemTitle.includes('(')) {
+                const enChunk = itemTitle.split('(')[0].trim();
+                if (enChunk.length > 4) itemTitle = enChunk;
+              }
               
               // Clean subtitle without duplication
               const subText = item.bandLevel ? `Band ${item.bandLevel}` : (item.bandTarget ? `Band ${item.bandTarget}` : item.category || '');

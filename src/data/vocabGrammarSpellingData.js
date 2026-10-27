@@ -1,5 +1,6 @@
 // IELTS Academic Spelling, Grammar, and Thematic Decks (Categorized: Band 5.5 - 6.0, Band 6.0 - 6.5 & Band 7.0 - 7.5)
 import { HAROLD_LEVINE_22000_DECKS } from './haroldLevine22000Data.js';
+import { COLLINS_GRAMMAR_FOR_IELTS_PACK } from './collinsGrammarForIeltsData.js';
 
 export const IELTS_SPELLING_TRAPS = [
   {
@@ -1576,8 +1577,11 @@ export const IELTS_GRAMMAR_PACK = [
         "correctPattern": "The rapid migration of rural demographics to urban centers exerts intense pressure on public housing."
       }
     ]
-  }
+  },
+  ...(COLLINS_GRAMMAR_FOR_IELTS_PACK || [])
 ];
+
+export { COLLINS_GRAMMAR_FOR_IELTS_PACK };
 
 export const IELTS_THEMATIC_VOCAB_DECKS = [
   {
