@@ -47,6 +47,28 @@ export default function VocabStudioSidebar({
     return items.filter(item => masteredIds.includes(item.id)).length;
   }, [items, masteredIds]);
 
+  // Partition vocab decks for categorized selection
+  const coreDecks = useMemo(() => vocabDecks.filter(d => !d.id.startsWith('deck-hl-')), [vocabDecks]);
+  const hlPart1Decks = useMemo(() => vocabDecks.filter(d => {
+    if (!d.id.startsWith('deck-hl-w')) return false;
+    const num = parseInt(d.id.replace('deck-hl-w', ''), 10);
+    return num <= 26;
+  }), [vocabDecks]);
+  const hlPart2Decks = useMemo(() => vocabDecks.filter(d => {
+    if (!d.id.startsWith('deck-hl-w')) return false;
+    const num = parseInt(d.id.replace('deck-hl-w', ''), 10);
+    return num > 26;
+  }), [vocabDecks]);
+
+  const getDeckLabel = (deck) => {
+    const count = deck.cards?.length || 0;
+    let name = deck.topicName || deck.id;
+    if (isEn && name.includes('(')) {
+      name = name.split('(')[0].trim();
+    }
+    return `${name} (${count})`;
+  };
+
   const trackNames = {
     spelling: isEn ? '100 Spelling Traps' : '100 Bẫy chính tả',
     grammar: isEn ? 'Grammar Architecture' : 'Ngữ pháp điểm tựa',
@@ -149,27 +171,33 @@ export default function VocabStudioSidebar({
               onChange={(e) => onSelectDeckId(e.target.value)}
               className="w-full px-2.5 py-1.5 text-xs bg-white rounded-xl border border-[#d9e3e4] text-[#004646] font-bold focus:outline-none cursor-pointer shadow-2xs"
             >
-              <optgroup label={isEn ? "IELTS Thematic Focus" : "Chuyên đề IELTS Trọng tâm"}>
-                {vocabDecks.filter(d => !d.id.startsWith('deck-hl-')).map(deck => (
-                  <option key={deck.id} value={deck.id}>
-                    📚 {deck.topicName || deck.id} ({deck.cards?.length || 0})
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label={isEn ? "Harold Levine 22.000 Words • Part 1 (Academic Core)" : "Harold Levine 22.000 Từ • Phần 1 (Từ vựng học thuật)"}>
-                {vocabDecks.filter(d => d.id.startsWith('deck-hl-w') && parseInt(d.id.replace('deck-hl-w', '')) <= 26).map(deck => (
-                  <option key={deck.id} value={deck.id}>
-                    🎓 {deck.topicName || deck.id} ({deck.cards?.length || 0})
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label={isEn ? "Harold Levine 22.000 Words • Part 2 (Word Roots & Prefixes)" : "Harold Levine 22.000 Từ • Phần 2 (Gốc từ & Tiền tố)"}>
-                {vocabDecks.filter(d => d.id.startsWith('deck-hl-w') && parseInt(d.id.replace('deck-hl-w', '')) > 26).map(deck => (
-                  <option key={deck.id} value={deck.id}>
-                    ⚡ {deck.topicName || deck.id} ({deck.cards?.length || 0})
-                  </option>
-                ))}
-              </optgroup>
+              {coreDecks.length > 0 && (
+                <optgroup label={isEn ? `IELTS Thematic Focus (${coreDecks.length})` : `Chuyên đề IELTS Trọng tâm (${coreDecks.length})`}>
+                  {coreDecks.map(deck => (
+                    <option key={deck.id} value={deck.id}>
+                      📚 {getDeckLabel(deck)}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {hlPart1Decks.length > 0 && (
+                <optgroup label={isEn ? `Harold Levine 22,000 Words • Part 1 (${hlPart1Decks.length} Weeks)` : `Harold Levine 22.000 Từ • Phần 1 (${hlPart1Decks.length} Tuần)`}>
+                  {hlPart1Decks.map(deck => (
+                    <option key={deck.id} value={deck.id}>
+                      🎓 {getDeckLabel(deck)}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {hlPart2Decks.length > 0 && (
+                <optgroup label={isEn ? `Harold Levine 22,000 Words • Part 2 (${hlPart2Decks.length} Weeks)` : `Harold Levine 22.000 Từ • Phần 2 (${hlPart2Decks.length} Tuần)`}>
+                  {hlPart2Decks.map(deck => (
+                    <option key={deck.id} value={deck.id}>
+                      ⚡ {getDeckLabel(deck)}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           )}
         </div>

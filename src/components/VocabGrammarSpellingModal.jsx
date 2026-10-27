@@ -189,10 +189,29 @@ export default function VocabGrammarSpellingModal({
   const [thematicDecks, setThematicDecks] = useState(() => {
     try {
       const saved = localStorage.getItem('ielts_custom_thematic_decks_v2');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Always ensure built-in decks (including 72 Harold Levine decks) are present
+          const builtInIds = new Set(IELTS_THEMATIC_VOCAB_DECKS.map(d => d.id));
+          const customDecks = parsed.filter(d => !builtInIds.has(d.id));
+          return [...IELTS_THEMATIC_VOCAB_DECKS, ...customDecks];
+        }
+      }
     } catch (e) {}
     return IELTS_THEMATIC_VOCAB_DECKS;
   });
+
+  // Self-healing: if thematicDecks lacks Harold Levine decks from an earlier cached session
+  useEffect(() => {
+    if (thematicDecks.length < IELTS_THEMATIC_VOCAB_DECKS.length) {
+      const existingIds = new Set(thematicDecks.map(d => d.id));
+      const missingDecks = IELTS_THEMATIC_VOCAB_DECKS.filter(d => !existingIds.has(d.id));
+      if (missingDecks.length > 0) {
+        setThematicDecks(prev => [...prev, ...missingDecks]);
+      }
+    }
+  }, [thematicDecks.length]);
 
   const [activeDeckId, setActiveDeckId] = useState(thematicDecks[0]?.id || 'deck-tech');
   const [currentCardIdx, setCurrentCardIdx] = useState(0);
